@@ -42,7 +42,6 @@ import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 import org.jrdf.graph.Literal;
 
@@ -66,29 +65,26 @@ import fedora.server.types.gen.RepositoryInfo;
  * Provides option for client to handle HTTP redirects
  * (notably 302 status that occurs with SSL auto-redirects at server.)
  *
- *
  * @author cwilper@cs.cornell.edu
  * @author payette@cs.cornell.edu
  * @version $Id$
  */
-
 public class FedoraClient implements Constants {
 
-	private static final String LOG4J_PROPS = "fedora.client.resources.log4j";
-    private static final String LOG4J_PATTERN = "log4j\\.appender\\.(\\w+)\\.File";
     public static final String FEDORA_URI_PREFIX = "info:fedora/";
 
     /** 
      * Should FedoraClient take over log4j configuration?
      *
-     * FIXME: This is a hack until we come up with a sensible way of
-     *        dealing with log4j logging without assuming too much about
-     *        the calling app's logging desires.  For now, this gives
-     *        the calling app a chance to bypass this forced configuration
-     *        by setting FedoraClient.FORCE_LOG4J_CONFIGURATION to false
-     *        before instantiating a FedoraClient for the first time.
+     * <h2>Deprecated as of Fedora 2.2</h2>
+     *
+     * FedoraClient no longer takes over Log4J configuration, and setting
+     * this value has no effect.  Applications that use this class should
+     * configure Log4J themselves, or make a log4j.xml or log4j.properties
+     * file available from the runtime CLASSPATH.
      */
-    public static boolean FORCE_LOG4J_CONFIGURATION = true;
+    @Deprecated
+    public static boolean FORCE_LOG4J_CONFIGURATION = false;
 
     /** Seconds to wait before a connection is established. */
     public int TIMEOUT_SECONDS = 20;
@@ -105,8 +101,9 @@ public class FedoraClient implements Constants {
     /** Whether to automatically follow HTTP redirects. */
     public boolean FOLLOW_REDIRECTS = true;
 
-    private static final Logger logger =
-        Logger.getLogger(FedoraClient.class.getName());
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            FedoraClient.class.getName());
 
     private SOAPEndpoint m_accessEndpoint = new SOAPEndpoint("access");
     private SOAPEndpoint m_managementEndpoint = new SOAPEndpoint("management");
@@ -128,14 +125,24 @@ public class FedoraClient implements Constants {
      */
     private String m_uploadURL;
 
+    static {
+        // If commons-logging has not been explicitly configured yet,
+        // set it to use Log4J.  This is necessary because FedoraClient
+        // uses commons-httpclient, which uses commons-logging.
+        final String pfx = "org.apache.commons.logging.";
+        if (System.getProperty(pfx + "LogFactory") == null) {
+            System.setProperty(pfx + "LogFactory", pfx + "impl.Log4jFactory");
+            System.setProperty(pfx + "Log", pfx + "impl.Log4JLogger");
+        }
+    }
+
     public FedoraClient(String baseURL, String user, String pass) throws MalformedURLException {
-        if (FORCE_LOG4J_CONFIGURATION) initLogger();
     	m_baseURL = baseURL;
         m_user = user;
         m_pass = pass;
         if (!baseURL.endsWith("/")) m_baseURL += "/";
         URL url = new URL(m_baseURL);
-        m_authScope = new AuthScope(url.getHost(), url.getPort(), AuthScope.ANY_REALM);
+        m_authScope = new AuthScope(url.getHost(), AuthScope.ANY_PORT, AuthScope.ANY_REALM);
         m_creds = new UsernamePasswordCredentials(user, pass);
         m_cManager = new MultiThreadedHttpConnectionManager();       
     }
@@ -181,7 +188,7 @@ public class FedoraClient implements Constants {
             try { 
                 body = post.getResponseBodyAsString();
             } catch (Exception e) {
-                logger.warn("Error reading response body", e); 
+                LOG.warn("Error reading response body", e); 
             }
             if (body == null) {
                 body = "[empty response body]";
@@ -208,6 +215,9 @@ public class FedoraClient implements Constants {
         return in.replaceAll("\r", replaceWith).replaceAll("\n", replaceWith);
     }
 
+    /**
+     * Get the URL to which API-M upload requests will be sent.
+     */
     public synchronized String getUploadURL()
             throws IOException {
         if (m_uploadURL != null) {
@@ -233,7 +243,8 @@ public class FedoraClient implements Constants {
      * Note that if the HTTP response has no body, the InputStream will
      * be empty.  The success of a request can be checked with
      * getResponseCode().  Usually you'll want to see a 200.
-     * See http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for other codes.
+     * See http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for other 
+     * codes.
      * 
 	 * @param locator         A URL, relative Fedora URL, or Fedora URI that we want to 
 	 *                        do an HTTP GET upon
@@ -312,7 +323,7 @@ public class FedoraClient implements Constants {
 	public HttpInputStream get(URL url, boolean failIfNotOK, boolean followRedirects) throws IOException {
 
 		String urlString = url.toString();
-		logger.debug("FedoraClient is getting " + urlString);		
+		LOG.debug("FedoraClient is getting " + urlString);		
 		HttpClient client = getHttpClient();
 		GetMethod getMethod = new GetMethod(urlString);
 		getMethod.setDoAuthentication(true);
@@ -321,29 +332,26 @@ public class FedoraClient implements Constants {
 		int status = in.getStatusCode();
 		if (failIfNotOK) {
 			if (status != 200) {
-				//if (followRedirects && in.getStatusCode() == 302){
 				if (followRedirects && (300 <= status && status <= 399)) {
 					// Handle the redirect here !
-					logger.debug("FedoraClient is handling redirect for HTTP STATUS=" + status);
-					//System.out.println("FedoraClient is handling redirect for HTTP STATUS=" + status);
+					LOG.debug("FedoraClient is handling redirect for HTTP STATUS=" + status);
 					Header hLoc = in.getResponseHeader("location");
 					if (hLoc != null) {
-						logger.debug("FedoraClient is trying redirect location: " + hLoc.getValue());
-						//System.out.println("FedoraClient is trying redirect location: " + hLoc.getValue());
+						LOG.debug("FedoraClient is trying redirect location: " + hLoc.getValue());
 						// Try the redirect location, but don't try to handle another level of redirection.						
 						return get(hLoc.getValue(), true, false);	
 					} else {
 						try { 
 							throw new IOException("Request failed [" + status + " " + in.getStatusText() + "]");
 						} finally {
-							try { in.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
+							try { in.close(); } catch (Exception e) {LOG.error("Can't close InputStream: " + e.getMessage());}
 						}
 					}
 				} else {
 					try { 
 						throw new IOException("Request failed [" + in.getStatusCode() + " " + in.getStatusText() + "]");
 					} finally {
-						try { in.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
+						try { in.close(); } catch (Exception e) {LOG.error("Can't close InputStream: " + e.getMessage());}
 					}
 				}
 			}
@@ -381,7 +389,7 @@ public class FedoraClient implements Constants {
             }
             return buffer.toString();
         } finally {
-			try { in.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
+			try { in.close(); } catch (Exception e) {LOG.error("Can't close InputStream: " + e.getMessage());}
         }
     }
 
@@ -497,7 +505,7 @@ public class FedoraClient implements Constants {
             // Make the APIA call for describe repository
             // and make sure that HTTP 302 status is handled.
 			String desc = getResponseAsString("/describe?xml=true", true, true);
-            //System.out.println("DESCRIBE=" + desc);
+            LOG.debug("describeRepository response:\n" + desc);
             String[] parts = desc.split("<repositoryVersion>");
             if (parts.length < 2) {
                 throw new IOException("Could not find repositoryVersion element in content of /describe?xml=true");
@@ -507,7 +515,7 @@ public class FedoraClient implements Constants {
                 throw new IOException("Could not find end of repositoryVersion element in content of /describe?xml=true");
             }
             m_serverVersion = parts[1].substring(0, i).trim();
-            logger.debug("Server version is: " + m_serverVersion);
+            LOG.debug("Server version is " + m_serverVersion);
         }
         return m_serverVersion;
     }
@@ -603,7 +611,7 @@ public class FedoraClient implements Constants {
 		try {
 			in = get("/management/control?action=reloadPolicies", true, true);
 		} finally {
-			try { in.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
+			try { in.close(); } catch (Exception e) {LOG.error("Can't close InputStream: " + e.getMessage());}
 		}
 	}
 
@@ -663,79 +671,26 @@ public class FedoraClient implements Constants {
         return encoded.toString();
     }
     
-    private void initLogger() {
-        File logDir = new File(FEDORA_HOME, "client/logs");
-    	Pattern pattern = Pattern.compile(LOG4J_PATTERN);
-		Properties props = new Properties();
-		ResourceBundle res = ResourceBundle.getBundle(LOG4J_PROPS);
-		Enumeration keys = res.getKeys();
-		while(keys.hasMoreElements()) {
-			String key = (String)keys.nextElement();
-			String value = res.getString(key);
-			Matcher matcher = pattern.matcher(key);
-			// set a default location (e.g. in $FEDORA_HOME/logs/) if File appender location is empty
-			if (matcher.matches() && (value == null || value.equals(""))) {
-				value = new File(logDir, matcher.group(1).toLowerCase() + ".log").getAbsolutePath();
-			}
-			props.put(key, value);
-		}
-		PropertyConfigurator.configure(props);
-    }
-    
-        /**
-         * Ping the given endpoint to see if an HTTP 302 status code is returned.  
-         *
-         * If so, return the location given in the HTTP response header.
-         * If not, return null.
-         */    
-        private URL getRedirectURL(String location) throws IOException {
-            HttpInputStream in = get(location, false, false);
-            try {
-                if (in.getStatusCode() == 302) {
-                    Header h = in.getResponseHeader("location");
-                    if (h != null) {
-                        return new URL(h.getValue());
-                    }
+    /**
+     * Ping the given endpoint to see if an HTTP 302 status code is returned.  
+     *
+     * If so, return the location given in the HTTP response header.
+     * If not, return null.
+     */    
+    private URL getRedirectURL(String location) throws IOException {
+        HttpInputStream in = get(location, false, false);
+        try {
+            if (in.getStatusCode() == 302) {
+                Header h = in.getResponseHeader("location");
+                if (h != null) {
+                    return new URL(h.getValue());
                 }
-                return null;
-            } finally {
-                try { in.close(); } catch (Exception e) { }
             }
+            return null;
+        } finally {
+            try { in.close(); } catch (Exception e) { }
         }
-
-	// for quick testing
-	public static void main(String[] args) {
-		try {
-			String protocol = "http";
-			String host = "localhost";
-			String port = "8080";
-			String baseURL = protocol + "://" + host + ":" + port + "/fedora";
-			System.out.println(">>>baseURL = " + baseURL);
-			
-			FedoraClient fc =  
-				new FedoraClient(baseURL, "fedoraAdmin", "fedoraAdmin");
-				//new FedoraClient("https://localhost:8443/fedora", "fedoraAdmin", "fedoraAdmin");
-                /*
-			URL newAPIM = fc.getSSLRedirectLocationAPIM();
-			if (newAPIM != null) {
-				System.out.println(">>>Redirect location for APIM is: " + newAPIM.toExternalForm());
-			}
-			URL newAPIA = fc.getSSLRedirectLocationAPIA();
-			if (newAPIA != null) {
-				System.out.println(">>>Redirect location for APIA is: " + newAPIA.toExternalForm());
-			}
-            */
-
-			Administrator.APIA=fc.getAPIA();
-			Administrator.APIM=fc.getAPIM();
-            	
-			System.out.println(">>>Adminstrator is trying describeRepository using SOAP stub...");
-			RepositoryInfo info=Administrator.APIA.describeRepository();
-			System.out.println(">>>Repository baseURL from Administrator: " + info.getRepositoryBaseURL());
-		} catch (Exception e) { 
-			System.out.println("ERROR: " + e.getClass().getName() + " : " + e.getMessage());
-		}
-	}
+    }
 
     /**
      * Class for storing a Fedora SOAP endpoint, which consists of an

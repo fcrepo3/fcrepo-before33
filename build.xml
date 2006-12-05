@@ -525,6 +525,8 @@
         
         <copy file="inc/truststore" toFile="${fedora.home.build.dir}/client/truststore"/>
         
+        <copy file="src/xml/client-log4j.xml" toFile="${fedora.home.build.dir}/client/log4j.xml"/>
+        
         <copy todir="${fedora.home.build.dir}/client/lib">
             <fileset refid="client-libs.fileset"/>
         </copy>

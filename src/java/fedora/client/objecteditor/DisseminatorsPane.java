@@ -1,23 +1,3 @@
-/*
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Educational Community License (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.opensource.org/licenses/ecl1.txt">
- * http://www.opensource.org/licenses/ecl1.txt.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2006 by 
- * The Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
- */
-
 package fedora.client.objecteditor;
 
 import java.awt.*;
@@ -25,6 +5,8 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
+
+import org.apache.log4j.Logger;
 
 import fedora.client.Administrator;
 import fedora.client.actions.ViewObject;
@@ -41,6 +23,10 @@ import fedora.server.types.gen.Disseminator;
 public class DisseminatorsPane
         extends JPanel
         implements PotentiallyDirty, TabDrawer {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            DisseminatorsPane.class.getName());
 
 	private static final long serialVersionUID = 1L;
 	
@@ -93,10 +79,10 @@ public class DisseminatorsPane
     public void setDirty(String id, boolean isDirty) {
         int i=getTabIndex(id);
         if (isDirty) {
-            System.out.println("Setting " + id + " tab to '" + id + "*'");
+            LOG.debug("Setting " + id + " tab to '" + id + "*'");
             m_tabbedPane.setTitleAt(i, id + "*");
         } else {
-            System.out.println("Setting " + id + " tab to '" + id + "'");
+            LOG.debug("Setting " + id + " tab to '" + id + "'");
             m_tabbedPane.setTitleAt(i, id);
         }
     }

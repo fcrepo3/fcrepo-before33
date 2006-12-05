@@ -44,7 +44,7 @@ public class Downloader {
     public Downloader(String host, int port, String user, String pass)
             throws IOException {
         m_fedoraUrlStart=Administrator.getProtocol() + "://" + host + ":" + port + "/fedora/get/";
-        m_authScope = new AuthScope(host, port, AuthScope.ANY_REALM);
+        m_authScope = new AuthScope(host, AuthScope.ANY_PORT, AuthScope.ANY_REALM);
         m_creds=new UsernamePasswordCredentials(user, pass);
     }
 

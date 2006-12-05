@@ -17,6 +17,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Hashtable;
 
+import org.apache.log4j.Logger;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -55,6 +57,10 @@ import fedora.server.utilities.StreamUtility;
 public class DatastreamPane
         extends EditingPane 
         implements ChangeListener {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            DatastreamPane.class.getName());
 
 	private static final long serialVersionUID = 1L;
     private String m_pid;
@@ -1264,7 +1270,7 @@ public class DatastreamPane
                 dlg.setVisible(true);
                 if (dlg.getFile()!=null) {
                     File file = new File(new File(dlg.getDirectory()), dlg.getFile());
-                    System.out.println("Exporting to " + file.getPath());
+                    LOG.debug("Exporting to " + file.getPath());
                     Administrator.setLastDir(file.getParentFile()); // remember the dir for next time
                     Administrator.DOWNLOADER.getDatastreamContent(m_pid, 
                             m_ds.getID(), m_ds.getCreateDate(),

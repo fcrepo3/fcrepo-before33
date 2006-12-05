@@ -9,6 +9,9 @@ import javax.help.Map.ID;
 import javax.swing.*;
 
 import org.apache.axis.AxisFault;
+
+import org.apache.log4j.Logger;
+
 import org.w3c.dom.NodeList;
 
 import fedora.swing.jhelp.SimpleHelpBroker;
@@ -33,15 +36,17 @@ import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
 
 /**
- *
- * <p><b>Title:</b> Administrator.java</p>
- * <p><b>Description:</b> </p>
- *
+ * Fedora Administrator GUI.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
  */
 public class Administrator extends JFrame {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            Administrator.class.getName());
+
 	private static final long serialVersionUID = 1L;
 
     private static MDIDesktopPane s_desktop;
@@ -53,7 +58,7 @@ public class Administrator extends JFrame {
     private SimpleHelpBroker m_helpBroker;
 
     private static File s_lastDir;
-    /*package*/ static File batchtoolLastDir;
+    protected static File batchtoolLastDir;
 
     public static ClassLoader cl;
 
@@ -88,7 +93,7 @@ public class Administrator extends JFrame {
         ResourceBundle.getBundle("fedora.client.resources.Client");
     public static String VERSION=s_const.getString("version");
     public static String RELEASE_DATE=s_const.getString("releaseDate");
-    
+
     public static final void showErrorDialog(Component parent, String title, String explanation, Exception e) {
     	if (e instanceof AxisFault) {
         	StringBuffer authzDetail = new StringBuffer("");                		
@@ -450,8 +455,6 @@ public class Administrator extends JFrame {
         });
         toolsMenu.add(toolsSearch);
 
-	//wdn >
-        //JMenu toolsBatchSubMenu=new JMenu("Batch", KeyEvent.VK_B);
         JMenu toolsBatchSubMenu=new JMenu("Batch");
 
         JMenuItem toolsBatchBuild=new JMenuItem("Build Batch"/*, KeyEvent.VK_A*/);
@@ -478,7 +481,6 @@ public class Administrator extends JFrame {
         });
         toolsBatchSubMenu.add(toolsBatchIngest);
 
-        // rlw >
         JMenu toolsBatchModify=new JMenu("Modify Batch");
         toolsBatchModify.setMnemonic(KeyEvent.VK_M);
         JMenuItem executeBatchModify=new JMenuItem("Process Directives", KeyEvent.VK_P);
@@ -503,10 +505,8 @@ public class Administrator extends JFrame {
         toolsBatchModify.add(validateBatchModify);
 
         toolsBatchSubMenu.add(toolsBatchModify);
-        // < rlw
         toolsMenu.addSeparator();
         toolsMenu.add(toolsBatchSubMenu);
-        // < wdn
 
         //     [A]ccess Console
         JMenuItem toolsAccess=new JMenuItem("Access API",KeyEvent.VK_A);
@@ -522,25 +522,11 @@ public class Administrator extends JFrame {
                 createManagementConsole();
             }
         });
-        JMenuItem toolsWatch=new JMenuItem("Stdout/Stderr", KeyEvent.VK_S);
-        toolsWatch.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JInternalFrame viewFrame=new JInternalFrame("STDOUT/STDERR", true, true, true, true);
-                viewFrame.getContentPane().add(new JScrollPane(WATCH_AREA));
-                viewFrame.setSize(720,300);
-                viewFrame.setVisible(true);
-                Administrator.getDesktop().add(viewFrame);
-                try {
-                    viewFrame.setSelected(true);
-                } catch (java.beans.PropertyVetoException pve) {}
-            }
-        });
 
         JMenu toolsConsole=new JMenu("Console");
         toolsConsole.setMnemonic(KeyEvent.VK_C);
         toolsConsole.add(toolsAccess);
         toolsConsole.add(toolsManagement);
-        toolsConsole.add(toolsWatch);
         toolsMenu.add(toolsConsole);
 
         menuBar.add(toolsMenu);
@@ -595,7 +581,6 @@ public class Administrator extends JFrame {
           }
         });
 
-    //    JFrame dummy=new JFrame(this.getInstance);
         m_aboutDialog=new JDialog(this, "About Fedora Administrator", true);
         
         m_aboutDialog.getContentPane().add(m_aboutPic, BorderLayout.CENTER);
@@ -695,7 +680,6 @@ public class Administrator extends JFrame {
         } catch (java.beans.PropertyVetoException e) {}
     }
 
-    // wdn >
     protected void createBatchBuildConsole() {
         BatchBuildGUI frame=new BatchBuildGUI(this, s_desktop);
         frame.setVisible(true);
@@ -720,7 +704,6 @@ public class Administrator extends JFrame {
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {}
     }
-    // < wdn
 
     public Point getCenteredPos(int xSize, int ySize) {
         Dimension screenSize=getToolkit().getScreenSize();
@@ -765,29 +748,14 @@ public class Administrator extends JFrame {
             } catch (Exception e) {
             }
             APIAStubFactory.SOCKET_TIMEOUT_SECONDS = socketTimeoutSeconds;
-            APIMStubFactory.SOCKET_TIMEOUT_SECONDS = socketTimeoutSeconds;
-            System.out.println("Socket timeout is now set to " + socketTimeoutSeconds + " seconds.");
+            LOG.info("Socket timeout set to " + socketTimeoutSeconds + " seconds");
         }
-        /*
-        WatchPrintStream watchOut=new WatchPrintStream(new ByteArrayOutputStream());
-        PrintStream sysOut=System.out;
-        PrintStream sysErr=System.err;
-        */
         String protocol=null;
         String host=null;
         int port=0;
         String user=null;
         String pass=null;
-        /*
-        System.setOut(watchOut);
-        System.setErr(watchOut);
-        */
         Administrator administrator=new Administrator(protocol, host, port, user, pass);
-        System.out.println("Started Fedora Administrator.");
-        /*
-        System.setOut(sysOut);
-        System.setErr(sysErr);
-        */
     }
 
 

@@ -6,6 +6,8 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 
+import org.apache.log4j.Logger;
+
 import fedora.client.Administrator;
 
 import fedora.server.types.gen.Datastream;
@@ -20,6 +22,10 @@ import fedora.server.types.gen.Datastream;
 public class DatastreamsPane
         extends JPanel
         implements PotentiallyDirty, TabDrawer {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            DatastreamsPane.class.getName());
 	
 	private static final long serialVersionUID = 1L;
     private String m_pid;
@@ -142,7 +148,7 @@ public class DatastreamsPane
         try {
             Datastream[] versions=Administrator.APIM.getDatastreamHistory(m_pid, dsID);
             m_currentVersionMap.put(dsID, versions[0]);
-            System.out.println("New create date is: " + versions[0].getCreateDate());
+            LOG.debug("New create date is: " + versions[0].getCreateDate());
             DatastreamPane replacement=new DatastreamPane(m_owner, m_pid, versions, this);
             m_datastreamPanes[i]=replacement;
             m_tabbedPane.setComponentAt(i, replacement);

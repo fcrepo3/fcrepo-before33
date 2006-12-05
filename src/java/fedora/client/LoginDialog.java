@@ -69,8 +69,6 @@ public class LoginDialog
     public LoginDialog() {
         super(JOptionPane.getFrameForComponent(Administrator.getDesktop()), "Login", true);
         
-        System.out.println("entered login diaglog");
-
         m_servers=new HashMap();
         m_protocols=new HashMap();
         m_protocols.put("http", "");
@@ -276,7 +274,7 @@ public class LoginDialog
                 throws Exception {
                 	
 			try {
-LOG.info("Logging in...");
+                LOG.info("Logging in...");
                 // get a FedoraClient
 				String baseURL = protocol + "://" + host + ":" + port + "/fedora";
 				FedoraClient fc = new FedoraClient(baseURL, user, pass);
