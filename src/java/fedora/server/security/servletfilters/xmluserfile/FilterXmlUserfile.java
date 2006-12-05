@@ -1,48 +1,26 @@
 package fedora.server.security.servletfilters.xmluserfile;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Properties;
-import java.util.Iterator;
-import java.util.HashMap;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
-import java.util.Hashtable;
 import java.util.Set;
 
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.httpclient.Cookie;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.NamedNodeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fedora.server.security.servletfilters.Base;
-//import fedora.server.security.servletfilters.AuthFilter4Container;
-import fedora.server.security.servletfilters.FinishedParsingException;
-//import fedora.server.security.servletfilters.AttributePrincipal;
+import fedora.common.Constants;
 import fedora.server.security.servletfilters.BaseCaching;
 import fedora.server.security.servletfilters.CacheElement;
-import fedora.server.security.servletfilters.ExtendedHttpServletRequest;
-
-import java.io.File;
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.IOException; 
-import java.util.Iterator;
-import java.util.HashSet;
-import java.util.List;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
+import fedora.server.security.servletfilters.FinishedParsingException;
 
 /** 
  *  @author Bill Niebel (niebel@virginia.edu)
  */
-public class FilterXmlUserfile extends BaseCaching {
+public class FilterXmlUserfile extends BaseCaching implements Constants {
     protected static Log log = LogFactory.getLog(FilterXmlUserfile.class);
+    private static String DEFAULT_FILEPATH = FEDORA_HOME + File.separator + 
+    	"server" + File.separator + "config" + File.separator + "fedora-users.xml";
     /*
     static {
     	System.err.print(AuthFilter4TomcatUsers.class.getName() + " logging includes ");
@@ -61,21 +39,14 @@ public class FilterXmlUserfile extends BaseCaching {
     }
     */
 
-
-    private static final String FILEBASE_KEY = "filebase";
-    private String FILEBASE = "";
-    
     private static final String FILEPATH_KEY = "filepath";
     private String FILEPATH = "";
     
     private final String getFilepath() {
-    	String filepath = null;
-    	if ((FILEBASE == null) || "".equals(FILEBASE)) {
-    		filepath = FILEPATH;
-    	} else {
-    		filepath = System.getProperty(FILEBASE) + FILEPATH;
+    	if (FILEPATH == null || FILEPATH.equals("")) {
+    		FILEPATH = DEFAULT_FILEPATH;
     	}
-    	return filepath;
+    	return FILEPATH;
     }
     
     
@@ -92,10 +63,7 @@ public class FilterXmlUserfile extends BaseCaching {
 		
     	if (FILEPATH_KEY.equals(key)) {
     		FILEPATH = value; 
-        	setLocally = true;
-    	} else if (FILEBASE_KEY.equals(key)) {
-    		FILEBASE = value; 
-        	setLocally = true;        	
+        	setLocally = true;   	
     	} else {
         	if (log.isErrorEnabled()) log.error(format(method, "deferring to super"));
     		super.initThisSubclass(key, value);
@@ -157,6 +125,4 @@ public class FilterXmlUserfile extends BaseCaching {
 		cacheElement.populate(authenticated, roles, namedAttributes, errorMessage);
 		 if (log.isDebugEnabled()) log.debug(exit(method));
 	}
-
-	
 }

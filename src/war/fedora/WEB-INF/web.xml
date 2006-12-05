@@ -277,15 +277,7 @@
   <filter> 
     <filter-name>XmlUserfileFilter</filter-name>  
     <filter-class>fedora.server.security.servletfilters.xmluserfile.FilterXmlUserfile</filter-class>  
-    <init-param> 
-      <param-name>filebase</param-name>  
-      <param-value>fedora.home</param-value> 
-    </init-param> 
-    <init-param> 
-      <param-name>filepath</param-name>  
-      <param-value>/server/config/userfile.xml</param-value>
-      <!--param-value>/tomcat/webapps/fedora/WEB-INF/userfile.xml</param-value-->
-    </init-param>     
+
   </filter>  
   
   <!-- authentication-only from pubcookie.  (client to pubcookie is programmatic from filter code.) -->

@@ -1,17 +1,21 @@
 package fedora.server.security.servletfilters.xmluserfile;
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Set;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
-import fedora.server.security.servletfilters.FinishedParsingException;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
-import fedora.server.config.ServerConfiguration;
-//import fedora.server.security.servletfilters.AuthFilter4Container;
+import fedora.server.security.servletfilters.FinishedParsingException;
 
 public class ParserXmlUserfile 
         extends DefaultHandler {
@@ -78,8 +82,8 @@ public class ParserXmlUserfile
             String localName, 
             String qName,
             Attributes a) throws SAXException {
-		if (localName.equals("tomcat-users")) {
-			System.err.println("<tomcat-users> foundUser==" + foundUser);
+		if (localName.equals("users")) {
+			System.err.println("<users> foundUser==" + foundUser);
 		} else if (localName.equals("role")) {
 			System.err.println("<role> foundUser==" + foundUser);
 			validRoles.add(a.getValue("rolename"));
@@ -114,8 +118,8 @@ public class ParserXmlUserfile
 	}
 
 	public void endElement(String uri, String localName, String qName) throws SAXException {
-		if (localName.equals("tomcatusers")) {
-			System.err.println("</tomcatusers> foundUser==" + foundUser);
+		if (localName.equals("users")) {
+			System.err.println("</users> foundUser==" + foundUser);
 			authenticated =  Boolean.FALSE;
 		} else if (localName.equals("roles")) {
 				System.err.println("</roles> foundUser==" + foundUser);			
