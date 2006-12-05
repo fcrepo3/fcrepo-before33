@@ -382,7 +382,7 @@ public abstract class SQLUtility {
         Iterator nii=tSpecs.iterator();
         while (nii.hasNext()) {
             TableSpec spec=(TableSpec) nii.next();
-            if (LOG.isDebugEnabled()) {
+            if (LOG.isInfoEnabled()) {
                 StringBuffer sqlCmds=new StringBuffer();
                 Iterator iter=tcConn.getDDLConverter().getDDL(spec).iterator();
                 while (iter.hasNext()) {
@@ -390,7 +390,7 @@ public abstract class SQLUtility {
                     sqlCmds.append((String) iter.next());
                     sqlCmds.append(";");
                 }
-                LOG.debug("Attempting to create nonexisting "
+                LOG.info("Creating new "
                         + "table '" + spec.getName() + "' with command(s): "
                         + sqlCmds.toString());
             }

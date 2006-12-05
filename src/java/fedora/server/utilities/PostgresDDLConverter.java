@@ -10,16 +10,7 @@ import java.util.List;
  * This class is based on Hubert Stigler's contribution to the
  * fedora-users mailing list on April 4th, 2006.
  *
- * FIXME: Currently doesn't create indexes.
- * FIXME: DefaultDOManager.dbspec, and various java source files
- *        need to be changed in order to use Postgres with Fedora
- *        because "do" is a reserved word in Postgres.  As of Fedora 2.1,
- *        the set of files that needed changing included:
- *        1) dbspec\server\fedora\server\storage\resources\DefaultDOManager.dbspec
- *        2) java\fedora\server\storage\FastDOReader.java
- *        3) java\fedora\server\storage\replication\DBIDLookup.java
- *        4) java\fedora\server\storage\replication\DefaultDOReplicator.java
- *        5) java\fedora\server\storage\replication\RowInsertion.java
+ * It has been modified to create indexes.
  *
  * @author hubert.stigler@uni-graz.at
  * @version $Id$
@@ -42,6 +33,9 @@ public class PostgresDDLConverter
     }
 
     public List getDDL(TableSpec spec) {
+
+        ArrayList l=new ArrayList();
+
         StringBuffer out=new StringBuffer();
         StringBuffer end=new StringBuffer();
         out.append("CREATE TABLE " + spec.getName() + " (\n");
@@ -59,26 +53,26 @@ public class PostgresDDLConverter
             if (cs.isAutoIncremented()) {
                 out.append(" bigserial");
             } else {
-		    if (cs.getType().toLowerCase().indexOf("int(")==0) {
-			    // if precision was specified for int, use postgres's default int precision
-			    out.append("int");
-		    }  else if (cs.getType().toLowerCase().indexOf("smallint(")==0) {
-			    out.append("smallint");
-		    } else {
- 		    	    out.append(cs.getType());
-		    }
-		    if (cs.isNotNull()) {
-			    out.append(" NOT NULL");
-		    }
+                if (cs.getType().toLowerCase().indexOf("int(")==0) {
+                    // if precision was specified for int, use postgres's default int precision
+                    out.append("int");
+                } else if (cs.getType().toLowerCase().indexOf("smallint(")==0) {
+                    out.append("smallint");
+                } else {
+                    out.append(cs.getType());
+                }
+                if (cs.isNotNull()) {
+                    out.append(" NOT NULL");
+                }
            
-		    if (cs.getDefaultValue()!=null) {
-			    out.append(" DEFAULT ");
-			    if (cs.getType().toLowerCase().indexOf("char(") > -1 ||  cs.getType().toLowerCase().indexOf("text") > -1) out.append("'");
-			    out.append(cs.getDefaultValue());
-			    if (cs.getType().toLowerCase().indexOf("char(") > -1 ||  cs.getType().toLowerCase().indexOf("text") > -1) out.append("'");
-		    }
+                if (cs.getDefaultValue()!=null) {
+                    out.append(" DEFAULT ");
+                    if (cs.getType().toLowerCase().indexOf("char(") > -1 ||  cs.getType().toLowerCase().indexOf("text") > -1) out.append("'");
+                    out.append(cs.getDefaultValue());
+                    if (cs.getType().toLowerCase().indexOf("char(") > -1 ||  cs.getType().toLowerCase().indexOf("text") > -1) out.append("'");
+                }
             }
-	    if (cs.isUnique()) {
+            if (cs.isUnique()) {
                 if (!end.toString().equals("")) {
                     end.append(",\n");
                 }
@@ -87,19 +81,13 @@ public class PostgresDDLConverter
                 end.append(cs.getName());
                 end.append(")");
             }
-	    
-/*	    
-            if (cs.getIndexName()!=null) {
-   		if (!end.toString().equals("")) {
-                    end.append(",\n");
-                }
-                end.append("  KEY ");
-                end.append(cs.getIndexName());
-                end.append(" (");
-                end.append(cs.getName());
-                end.append(")");
+
+            if (cs.getIndexName() != null) {
+                l.add("CREATE INDEX " + spec.getName() + "_"
+                        + cs.getName() + " ON " + spec.getName()
+                        + " (" + cs.getName() + ")");
             }
-*/	    
+
             if (cs.getForeignTableName()!=null) {
                 if (!end.toString().equals("")) {
                     end.append(",\n");
@@ -130,11 +118,9 @@ public class PostgresDDLConverter
         }
         out.append("\n");
         out.append(")");
-	
-        ArrayList l=new ArrayList();
-        l.add(out.toString());
+    
+        l.add(0, out.toString());
         return l;
     }
 
 }
-
