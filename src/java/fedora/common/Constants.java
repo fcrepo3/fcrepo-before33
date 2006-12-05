@@ -10,7 +10,8 @@ import fedora.common.rdf.*;
 public interface Constants {
     public static final FedoraNamespace         FEDORA        = new FedoraNamespace();  
     
-    public static final String FEDORA_HOME = System.getProperty("fedora.home");
+    //public static final String FEDORA_HOME = System.getProperty("fedora.home");
+    public static final String FEDORA_HOME = System.getenv("FEDORA_HOME");
     
     /** The PID of the Fedora system definition object. */
     public static final PID    FEDORA_SYSTEM_DEF_PID = PID.getInstance("fedora-system:def");
