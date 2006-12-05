@@ -15,13 +15,14 @@ fi
 
 echo "Starting Fedora Administrative Client..."
 (exec "$JAVA" -Xms64m -Xmx96m \
-              -cp $FEDORA_HOME/client \
+              -cp $FEDORA_HOME/client:$FEDORA_HOME/client/fedora-client.jar \
+              -Djava.endorsed.dirs=$FEDORA_HOME/client/lib \
               -Djavax.net.ssl.trustStore=$FEDORA_HOME/client/truststore \
               -Djavax.net.ssl.trustStorePassword=tomcat \
               -Dfedora.home=$FEDORA_HOME \
               -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
               -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-              -jar $FEDORA_HOME/client/fedora-client.jar $1 $2 $3 $4 $5)
+              fedora.client.Administrator $1 $2 $3 $4 $5)
 
 restoreJavaHome
 exit 0
