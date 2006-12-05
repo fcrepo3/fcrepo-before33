@@ -1,25 +1,27 @@
 package fedora.server.storage;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
 import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.ModuleInitializationException;
+import fedora.server.DatastoreConfig;
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.utilities.DDLConverter;
 
 /**
+ * Implements <code>ConnectionPoolManager</code> to facilitate obtaining
+ * database connection pools.
  *
- * <p><b>Title:</b> ConnectionPoolManagerImpl.java</p>
- * <p><b>Description:</b> Implements ConnectionPoolManager to facilitate obtaining
- * database connection pools. This class initializes the connection pools
- * specified by parameters in the Fedora <code>fedora.fcfg</code> configuration
- * file. The Fedora server must be instantiated in order for this class to
- * function properly.</p>
+ * This class initializes the connection pools specified by parameters in 
+ * the Fedora <code>fedora.fcfg</code> configuration file. The Fedora server 
+ * must be instantiated in order for this class to function properly.
  *
  * @author rlw@virginia.edu
  * @version $Id$
@@ -96,62 +98,22 @@ public class ConnectionPoolManagerImpl extends Module
       // Initialize each connection pool
       for (int i=0; i<poolNames.length; i++)
       {
-        LOG.debug("poolName["+i+"] = "+poolNames[i]);
-        jdbcDriverClass = s_server.getDatastoreConfig(poolNames[i]).
-                 getParameter("jdbcDriverClass");
-        LOG.debug("JDBC driver: "+jdbcDriverClass);
-        dbUsername = s_server.getDatastoreConfig(poolNames[i]).
-                   getParameter("dbUsername");
-        LOG.debug("Database username: "+dbUsername);
-        dbPassword = s_server.getDatastoreConfig(poolNames[i]).
-                   getParameter("dbPassword");
-        LOG.debug("Database password: "+dbPassword);
-        jdbcURL = s_server.getDatastoreConfig(poolNames[i]).
-                  getParameter("jdbcURL");
-        LOG.debug("JDBC connection URL: "+jdbcURL);
-        Integer i3 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
-                getParameter("maxActive"));
-        maxActive = i3.intValue();
-        LOG.debug("Maximum active connections: "+maxActive);        
-        Integer i4 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
-                getParameter("maxIdle"));
-        maxIdle = i4.intValue();
-        LOG.debug("Maximum idle connections: "+maxActive);
-        Integer i5 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
-                getParameter("maxWait"));
-        maxWait = i5.intValue();
-        LOG.debug("Maximum wait time: "+maxWait);
-        Integer i6 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
-                getParameter("minIdle"));
-        minIdle = i6.intValue();
-        LOG.debug("Minimum idle time: "+minIdle);
-        Integer i7 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
-                getParameter("numTestsPerEvictionRun"));
-        numTestsPerEvictionRun = i7.intValue();
-        LOG.debug("Number of tests per eviction run: "+numTestsPerEvictionRun);        
-        Long l1 = new Long(s_server.getDatastoreConfig(poolNames[i]).
-                getParameter("minEvictableIdleTimeMillis"));
-        minEvictableIdleTimeMillis = l1.longValue();
-        LOG.debug("Minimum Evictable Idle time: "+minEvictableIdleTimeMillis);  
-        Long l2 = new Long(s_server.getDatastoreConfig(poolNames[i]).
-                getParameter("timeBetweenEvictionRunsMillis"));
-        timeBetweenEvictionRunsMillis = l2.longValue();
-        LOG.debug("Minimum Evictable Idle time: "+timeBetweenEvictionRunsMillis);
-        Boolean b1 = new Boolean(s_server.getDatastoreConfig(poolNames[i]).
-                getParameter("testOnBorrow"));
-        testOnBorrow = b1.booleanValue();
-        LOG.debug("Test on borrow: "+testOnBorrow);        
-        Boolean b2 = new Boolean(s_server.getDatastoreConfig(poolNames[i]).
-                getParameter("testOnReturn"));
-        testOnReturn = b2.booleanValue();
-        LOG.debug("Test on return: "+testOnReturn);
-        Boolean b3 = new Boolean(s_server.getDatastoreConfig(poolNames[i]).
-                getParameter("testWhileIdle"));
-        testWhileIdle = b3.booleanValue();
-        LOG.debug("Test while idle: "+testWhileIdle);
-        Byte b4 = new Byte(s_server.getDatastoreConfig(poolNames[i]).
-                getParameter("whenExhaustedAction"));
-        whenExhaustedAction = b4.byteValue();
+        DatastoreConfig config = s_server.getDatastoreConfig(poolNames[i]);
+        jdbcDriverClass = config.getParameter("jdbcDriverClass");
+        dbUsername = config.getParameter("dbUsername");
+        dbPassword = config.getParameter("dbPassword");
+        jdbcURL = config.getParameter("jdbcURL");
+        maxActive = new Integer(config.getParameter("maxActive")).intValue();
+        maxIdle = new Integer(config.getParameter("maxIdle")).intValue();
+        maxWait = new Integer(config.getParameter("maxWait")).intValue();
+        minIdle = new Integer(config.getParameter("minIdle")).intValue();
+        numTestsPerEvictionRun = new Integer(config.getParameter("numTestsPerEvictionRun")).intValue();
+        minEvictableIdleTimeMillis = new Long(config.getParameter("minEvictableIdleTimeMillis")).longValue();
+        timeBetweenEvictionRunsMillis = new Long(config.getParameter("timeBetweenEvictionRunsMillis")).longValue();
+        testOnBorrow = new Boolean(config.getParameter("testOnBorrow")).booleanValue();
+        testOnReturn = new Boolean(config.getParameter("testOnReturn")).booleanValue();
+        testWhileIdle = new Boolean(config.getParameter("testWhileIdle")).booleanValue();
+        whenExhaustedAction = new Byte(config.getParameter("whenExhaustedAction")).byteValue();
         if (whenExhaustedAction != 0 && whenExhaustedAction != 1 && whenExhaustedAction != 2) {
           LOG.debug("Valid values for whenExhaustedAction are: 0 - (fail), 1 - (block), or 2 - (grow)");
           throw new ModuleInitializationException("A connection pool could "
@@ -160,8 +122,38 @@ public class ConnectionPoolManagerImpl extends Module
                   + "Valid values are 0 - (fail), 1 - (block), or 2 - (grow). Value specified"
                   + "was \"" + whenExhaustedAction + "\".", getRole());          
         }
-        LOG.debug("whenExhaustedAction: "+whenExhaustedAction);        
-        
+
+        if (LOG.isDebugEnabled())
+        {
+          LOG.debug("poolName["+i+"] = " + poolNames[i]);
+          LOG.debug("JDBC driver: " + jdbcDriverClass);
+          LOG.debug("Database username: " + dbUsername);
+          LOG.debug("Database password: " + dbPassword);
+          LOG.debug("JDBC connection URL: " + jdbcURL);
+          LOG.debug("Maximum active connections: " + maxActive);        
+          LOG.debug("Maximum idle connections: " + maxIdle);
+          LOG.debug("Maximum wait time: " + maxWait);
+          LOG.debug("Minimum idle time: " + minIdle);
+          LOG.debug("Number of tests per eviction run: " + numTestsPerEvictionRun);        
+          LOG.debug("Minimum Evictable Idle time: "+minEvictableIdleTimeMillis);  
+          LOG.debug("Minimum Evictable Idle time: "+timeBetweenEvictionRunsMillis);
+          LOG.debug("Test on borrow: "+testOnBorrow);        
+          LOG.debug("Test on return: "+testOnReturn);
+          LOG.debug("Test while idle: "+testWhileIdle);
+          LOG.debug("whenExhaustedAction: "+whenExhaustedAction);
+        }
+  
+        // Treat any parameters whose names start with "connection."
+        // as connection parameters
+        Map<String, String> cProps = new HashMap<String, String>();
+        for (String name : (Set<String>) config.getParameters().keySet()) {
+            if (name.startsWith("connection.")) {
+                String realName = name.substring(11);
+                LOG.debug("Connection property " + realName + " = " 
+                        + config.getParameter(name));
+                cProps.put(realName, config.getParameter(name));
+            }
+        }
 
         // If a ddlConverter has been specified for the pool,
         // try to instantiate it so the ConnectionPool can use
@@ -182,10 +174,7 @@ public class ConnectionPoolManagerImpl extends Module
           } catch (Throwable th) {
             throw new ModuleInitializationException("A DDLConverter was "
                     + "specified for the pool \"" + poolNames[i]
-                    + "\", but it couldn't be instantiated.  The underlying "
-                    + "error was a " + th.getClass().getName()
-                    + "The message was \"" + th.getMessage() + "\".",
-                    getRole());
+                    + "\", but it couldn't be instantiated.", getRole(), th);
           }
         }
 
@@ -208,6 +197,7 @@ public class ConnectionPoolManagerImpl extends Module
               testOnReturn,
               testWhileIdle,
               whenExhaustedAction);
+          connectionPool.setConnectionProperties(cProps);
           LOG.debug("Initialized Pool: "+connectionPool);
           h_ConnectionPools.put(poolNames[i],connectionPool);
           LOG.debug("putPoolInHash: "+h_ConnectionPools.size());

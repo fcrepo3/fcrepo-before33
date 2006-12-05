@@ -3,11 +3,12 @@ package fedora.server.storage;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.apache.commons.dbcp.ConnectionFactory;
-import org.apache.commons.dbcp.DriverManagerConnectionFactory;
-import org.apache.commons.dbcp.PoolableConnectionFactory;
-import org.apache.commons.dbcp.PoolingDataSource;
-import org.apache.commons.pool.impl.GenericObjectPool;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp.BasicDataSourceFactory;
 
 import org.apache.log4j.Logger;
 
@@ -27,26 +28,9 @@ public class ConnectionPool
   private static final Logger LOG = Logger.getLogger(
         ConnectionPool.class.getName());
 
-  private String driver;
-  private String url;
-  private String username;
-  private String password;
-  private int maxActive = 0;
-  private int maxIdle = 0;
-  private long maxWait = 0;
-  private long minEvictableIdleTimeMillis =0;
-  private int minIdle = 0;
-  private int numTestsPerEvictionRun = 0;
-  private boolean testOnBorrow = false;
-  private boolean testOnReturn = false;
-  private boolean testWhileIdle = false;
-  private long timeBetweenEvictionRunsMillis = 0;
-  private byte whenExhaustedAction = 0;
   private DDLConverter ddlConverter;
-  
-  private PoolingDataSource dataSource;
-  private GenericObjectPool connectionPool;
 
+  private BasicDataSource dataSource;
 
   /**
    * <p>Constructs a ConnectionPool based on the calling arguments.</p>
@@ -77,7 +61,7 @@ public class ConnectionPool
    * any reason.
    */
   public ConnectionPool(String driver, 
-          							String url,
+						String url,
                         String username, 
                         String password,
                         int maxActive, 
@@ -93,81 +77,56 @@ public class ConnectionPool
                         byte whenExhaustedAction)
       throws SQLException
   {
-    this.driver = driver;
-    this.url = url;
-    this.username = username;
-    this.password = password;
-    this.maxActive = maxActive;
-    this.maxIdle = maxIdle;
-    this.maxWait = maxWait;
-    this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
-    this.minIdle = minIdle;
-    this.numTestsPerEvictionRun = numTestsPerEvictionRun;
-    this.testOnBorrow = testOnBorrow;
-    this.testOnReturn = testOnReturn;
-    this.testWhileIdle = testWhileIdle;
-    this.timeBetweenEvictionRunsMillis = timeBetweenEvictionRunsMillis;
-    this.whenExhaustedAction = whenExhaustedAction;
-        
-    connectionPool = new GenericObjectPool(null);
-    if (LOG.isDebugEnabled()) {
-        LOG.debug("default_max_active: "+GenericObjectPool.DEFAULT_MAX_ACTIVE);
-        LOG.debug("default_max_idle: "+GenericObjectPool.DEFAULT_MAX_IDLE);
-        LOG.debug("default_max_wait_time: "+GenericObjectPool.DEFAULT_MAX_WAIT);
-        LOG.debug("default_min_evict_idle_time: "+GenericObjectPool.DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS);
-        LOG.debug("default_min_idle: "+GenericObjectPool.DEFAULT_MIN_IDLE);
-        LOG.debug("default_num_tests_per_evict_run: "+GenericObjectPool.DEFAULT_NUM_TESTS_PER_EVICTION_RUN);
-        LOG.debug("default_time_between_evict_runs: "+GenericObjectPool.DEFAULT_TIME_BETWEEN_EVICTION_RUNS_MILLIS);
-        LOG.debug("default_when_exhausted_action: "+GenericObjectPool.DEFAULT_WHEN_EXHAUSTED_ACTION);
-        LOG.debug("default_when_exhausted_block: "+GenericObjectPool.WHEN_EXHAUSTED_BLOCK);
-        LOG.debug("default_when_exhausted_fail: "+GenericObjectPool.WHEN_EXHAUSTED_FAIL);
-        LOG.debug("default_when_exhausted_grow: "+GenericObjectPool.WHEN_EXHAUSTED_GROW);
-        LOG.debug("default_test_on_borrow: "+GenericObjectPool.DEFAULT_TEST_ON_BORROW);
-        LOG.debug("default_test_on_return: "+GenericObjectPool.DEFAULT_TEST_ON_RETURN);
-        LOG.debug("default_test_while_idle: "+GenericObjectPool.DEFAULT_TEST_WHILE_IDLE);
-    }
-        
-    connectionPool.setMaxActive(maxActive);
-    connectionPool.setMaxIdle(maxIdle);
-    connectionPool.setMaxWait(maxWait);
-    connectionPool.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
-    connectionPool.setMinIdle(minIdle);
-    connectionPool.setNumTestsPerEvictionRun(numTestsPerEvictionRun);
-    connectionPool.setTestOnBorrow(testOnBorrow);
-    connectionPool.setTestOnReturn(testOnReturn);
-    connectionPool.setTestWhileIdle(testWhileIdle);
-    connectionPool.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
-    connectionPool.setWhenExhaustedAction(whenExhaustedAction);
-    if (LOG.isDebugEnabled()) {
-        LOG.debug("set_max_active: "+connectionPool.getMaxActive());
-        LOG.debug("set_max_idle: "+connectionPool.getMaxIdle());
-        LOG.debug("set_max_wait_time: "+connectionPool.getMaxWait());
-        LOG.debug("set_min_evict_idle_time: "+connectionPool.getMinEvictableIdleTimeMillis());
-        LOG.debug("set_min_idle: "+connectionPool.getMinIdle());
-        LOG.debug("set_num_tests_per_evict_run: "+connectionPool.getNumTestsPerEvictionRun());
-        LOG.debug("set_time_between_evict_runs: "+connectionPool.getTimeBetweenEvictionRunsMillis());
-        LOG.debug("set_num_active: "+connectionPool.getNumActive());
-        LOG.debug("set_num_idle: "+connectionPool.getNumIdle());
-        LOG.debug("set_test_on_borrow: "+connectionPool.getTestOnBorrow());
-        LOG.debug("set_test_on_return: "+connectionPool.getTestOnReturn());
-        LOG.debug("set_test_while_idle: "+connectionPool.getTestWhileIdle());
-        LOG.debug("set_when_exhausted_action: "+connectionPool.getWhenExhaustedAction());
-    }
-    
-    // Load class for jdbc driver
+
     try {
         Class.forName(driver);
-    } catch(ClassNotFoundException cnfe)
-    {
-        cnfe.printStackTrace();
-        throw new SQLException("Can't find class for driver: " + driver);
-    }                
-    
+    } catch (ClassNotFoundException e) {
+        throw new SQLException("JDBC class not found: " + driver + "; make sure "
+              + "the JDBC driver is in the classpath");
+    }
 
-    ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(url, username, password);
-    PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(connectionFactory, connectionPool, null, null, false, true);
-    dataSource = new PoolingDataSource(connectionPool);
+    // // http://jakarta.apache.org/commons/dbcp/configuration.html
+    Properties props = new Properties();
+    props.setProperty("url", url);
+    props.setProperty("username", username);
+    props.setProperty("password", password);
+    props.setProperty("maxActive", "" + maxActive);
+    props.setProperty("maxIdle", "" + maxIdle);
+    props.setProperty("maxWait", "" + maxWait);
+    props.setProperty("minIdle", "" + minIdle);
+    props.setProperty("minEvictableIdleTimeMillis", "" + minEvictableIdleTimeMillis);
+    props.setProperty("numTestsPerEvictionRun", "" + numTestsPerEvictionRun);
+    props.setProperty("timeBetweenEvictionRunsMillis", "" + timeBetweenEvictionRunsMillis);
+    props.setProperty("testOnBorrow", "" + testOnBorrow);
+    props.setProperty("testOnReturn", "" + testOnReturn);
+    props.setProperty("testWhileIdle", "" + testWhileIdle);
 
+    if (whenExhaustedAction == 0) {
+        // fail (don't wait, just fail)
+        props.setProperty("maxWait", "0");
+    } else if (whenExhaustedAction == 1) {
+        // block (wait indefinitely)
+        props.setProperty("maxWait", "-1");
+    } else if (whenExhaustedAction == 2) {
+        // grow (override the maxActive value with -1, unlimited)
+        props.setProperty("maxActive", "-1");
+    }
+
+    try {
+        dataSource = (BasicDataSource) 
+            BasicDataSourceFactory.createDataSource(props);
+        dataSource.setDriverClassName(driver);
+    } catch (Exception e) {
+        SQLException se = new SQLException("Error initializing connection pool");
+        se.initCause(se);
+        throw se;
+    }
+  }
+
+  protected void setConnectionProperties(Map props) {
+    for (String name : (Set<String>) props.keySet()) {
+      dataSource.addConnectionProperty(name, (String) props.get(name));
+    }
   }
 
   /**
@@ -201,7 +160,7 @@ public class ConnectionPool
    *         any reason.
    */
   public ConnectionPool(String driver, 
-          							String url,
+						String url,
                         String username, 
                         String password,
                         DDLConverter ddlConverter,
@@ -271,8 +230,13 @@ public class ConnectionPool
   public Connection getConnection()
       throws SQLException
   {
-      LOG.debug("connectionPool: "+this.toString());
-      return dataSource.getConnection();
+      try {
+        return dataSource.getConnection();
+      } finally {
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("Got connection from pool (" + toString() + ")");
+        }
+      }
   }
 
   /**
@@ -283,26 +247,21 @@ public class ConnectionPool
   public void free(Connection connection)
   {
     try {
-        connection.close();
+      connection.close();
     } catch (SQLException sqle) {
         LOG.warn("Unable to close connection", sqle);
+      } finally {
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("Returned connection to pool (" + toString() + ")");
+        }
     }
   }
 
-
-  /**
-   * <p>Converts this class object into a meaningful string.</p>
-   *
-   * @return A string describing the connection pool.
-   */
-  public String toString()
-  {
-    String info =
-      "ConnectionPool(" + url + "," + username + "," + password + ")" +
-      ", numIdle=" + connectionPool.getNumIdle() +
-      ", numActive=" + connectionPool.getNumActive() +
-      ", maxIdle=" + connectionPool.getMaxIdle() +
-      ", maxActive=" + connectionPool.getMaxActive();
-    return(info);
+  public String toString() {
+    return dataSource.getUsername() + "@" + dataSource.getUrl()
+        + ", numIdle=" + dataSource.getNumIdle()
+        + ", numActive=" + dataSource.getNumActive()
+        + ", maxActive=" + dataSource.getMaxActive();
   }
+
 }
