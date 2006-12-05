@@ -23,6 +23,11 @@ public class StreamIOException
         super(null, message, null, null, null);
     }
 
+
+    public StreamIOException(String message, Throwable cause) {
+        super(null, message, null, null, cause);
+    }
+
     public StreamIOException(String bundleName, String code, String[] values,
             String[] details, Throwable cause) {
         super(bundleName, code, values, details, cause);
