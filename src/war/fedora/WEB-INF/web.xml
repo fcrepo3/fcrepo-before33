@@ -277,7 +277,6 @@
   <filter> 
     <filter-name>XmlUserfileFilter</filter-name>  
     <filter-class>fedora.server.security.servletfilters.xmluserfile.FilterXmlUserfile</filter-class>  
-
   </filter>  
   
   <!-- authentication-only from pubcookie.  (client to pubcookie is programmatic from filter code.) -->
@@ -455,61 +454,6 @@
     <url-pattern>/services/management</url-pattern>
   </filter-mapping>  
   <!-- authn always required ^^^^^ -->
-
-  <!-- authn required optionally.  installer choice to authn api-a should uncomment these filter-mappings.		
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <servlet-name>AccessServlet</servlet-name>
-  </filter-mapping>
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name> 
-    <url-pattern>/getDS</url-pattern>
-  </filter-mapping>  
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <servlet-name>DescribeRepositoryServlet</servlet-name>
-  </filter-mapping>
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <servlet-name>FieldSearchServlet</servlet-name>
-  </filter-mapping>
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <servlet-name>GetObjectHistoryServlet</servlet-name>
-  </filter-mapping>
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <servlet-name>ListDatastreamsServlet</servlet-name>
-  </filter-mapping>
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <servlet-name>ListMethodsServlet</servlet-name>
-  </filter-mapping>
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <servlet-name>MethodParameterResolverServlet</servlet-name>
-  </filter-mapping>
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <servlet-name>OAIProviderServlet</servlet-name>
-  </filter-mapping>
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <servlet-name>ReportServlet</servlet-name>
-  </filter-mapping>
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <servlet-name>RISearchServlet</servlet-name>
-  </filter-mapping>
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <servlet-name>WSDLServlet</servlet-name>
-  </filter-mapping>
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <url-pattern>/services/access</url-pattern>
-  </filter-mapping>
-  authn required optionally.  installer choice to authn api-a should uncomment these filter-mappings. ^^^^^ -->
 
   <!-- among security filters, map this one last. -->
   <filter-mapping> 
