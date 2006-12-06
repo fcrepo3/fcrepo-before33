@@ -304,6 +304,17 @@
 	<fbm:setDatastreamState pid="demo:32" dsID="DESC" dsState="I" logMessage="BatchModify - setDatastreamState"/>
 	
 	<!-- ****************************************************************** -->
+	<!-- Change the versionable attribute of datastream DS2 to false        -->
+	<!-- ****************************************************************** -->
+	<fbm:setDatastreamVersionable pid="demo:32" dsID="DS2" dsVersionable="false" logMessage="BatchModify - setDatastreamVersionable"/>	
+
+	<!-- ****************************************************************** -->
+	<!-- Compare the checksum for datastream DS1                            -->
+	<!-- ****************************************************************** -->
+	<fbm:compareDatastreamChecksum pid="demo:32" dsID="DS1"/>	
+	
+			
+	<!-- ****************************************************************** -->
 	<!-- Add a new disseminator for object demo:32 using the UVA Simple     -->
 	<!-- Image Behavior Definition (demo:1) and Fedora HTTP Getter Service  -->
 	<!-- (demo:2). Binding Key names defined for this mechanism include:    -->
