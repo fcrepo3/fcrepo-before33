@@ -54,11 +54,7 @@ public class DatastreamReferencedContent
             contentStream = s_http.get(DSLocation, true);
             DSSize = new Long(contentStream.getResponseHeaderValue("content-length","0")).longValue();
       	} catch (Throwable th) {
-      		th.printStackTrace();
-      		throw new StreamIOException("[DatastreamReferencedContent] "
-      			+ "returned an error.  The underlying error was a "
-    			+ th.getClass().getName() + "  The message "
-    			+ "was  \"" + th.getMessage() + "\"  .  ");
+      		throw new StreamIOException("Error getting content stream", th);
       	}  	
     	return(contentStream);
     }    
