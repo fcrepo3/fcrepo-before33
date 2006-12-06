@@ -39,6 +39,12 @@
 			<sch:assert test="@TYPE = 'FedoraObject' or @TYPE = 'FedoraBDefObject' or @TYPE = 'FedoraBMechObject'">Object must be of type "FedoraObject|FedoraBDefObject|FedoraBMechObject" (mets:mets: TYPE)</sch:assert>
 			<sch:report test="METS:dmdSec">The METS:dmdSec element is not supported by Fedora.   Use the METS:dmdSecFedora element instead (see the Fedora extension of the METS 1.0 schema)</sch:report>
 		</sch:rule>
+		<sch:rule context="METS:metsHdr">
+			<sch:assert test="count(METS:agent) = 1 or count(METS:agent) = 0">Currently, Fedora will only support ONE agent</sch:assert>
+		</sch:rule>
+		<sch:rule context="METS:agent">
+			<sch:assert test="@ROLE='IPOWNER'">Currently, Fedora will only support ONE agent with a role of IPOWNER</sch:assert>
+		</sch:rule>
 		<sch:rule context="METS:dmdSecFedora">
 			<sch:assert test="@ID">Every Datastream must have a DatastreamID (mets:dmdSecFedora: ID is missing)</sch:assert>
 			<sch:assert test="string-length(@ID) &lt;= 64">Datastream ID must not exceed length of 64 (mets:dmdSecFedora ID)</sch:assert>
