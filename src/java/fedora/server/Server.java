@@ -2,6 +2,7 @@ package fedora.server;
 
 import java.io.IOException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -63,8 +64,7 @@ import fedora.server.utilities.status.ServerStatusFile;
  * @version $Id$
  */
 public abstract class Server
-        extends Pluggable
-{
+        extends Pluggable{
 
 	public static final boolean USE_CACHE = true;
 	public static final boolean USE_DEFINITIVE_STORE = false;
@@ -680,27 +680,37 @@ public abstract class Server
     /**
      * Configures Log4J using a properties file.
      */
-    protected static void configureLog4J(String extension) {
+    protected static void configureLog4J(String extension) 
+            throws ServerInitializationException {
 
         File fedoraHome = new File(Constants.FEDORA_HOME);
         File homeDir = new File(fedoraHome, "server");
     	File logDir = new File(homeDir, LOG_DIR);
         logDir.mkdirs();
     	Pattern pattern = Pattern.compile(LOG4J_PATTERN);
-		Properties props = new Properties();
-		ResourceBundle res =
-            ResourceBundle.getBundle(LOG4J_PROPS);
-		Enumeration keys = res.getKeys();
-		while(keys.hasMoreElements()) {
-			String key = (String)keys.nextElement();
-			String value = res.getString(key);
-			Matcher matcher = pattern.matcher(key);
-			// set a default location (e.g. in $FEDORA_HOME/logs/) if File appender location is empty
+
+		Properties loadedProps = new Properties();
+        File propFile = new File(homeDir, "config/log4j.properties");
+        try {
+            loadedProps.load(new FileInputStream(propFile));
+        } catch (Exception e) {
+            throw new ServerInitializationException("Error reading log "
+                    + "configuration file: " + propFile.getPath(), e);
+        }
+
+        Properties props = new Properties();
+        Iterator names = loadedProps.keySet().iterator();
+        while (names.hasNext()) {
+            String name = (String) names.next();
+            String value = loadedProps.getProperty(name);
+			Matcher matcher = pattern.matcher(name);
+			// if File appender location is empty, save to $FEDORA_HOME/logs/
 			if (matcher.matches() && (value == null || value.equals(""))) {
 				value = new File(logDir, matcher.group(1).toLowerCase() + extension).getAbsolutePath();
 			}
-			props.put(key, value);
-		}
+            props.put(name, value);
+        }
+
 		PropertyConfigurator.configure(props);
 
         LOG = Logger.getLogger(Server.class.getName());

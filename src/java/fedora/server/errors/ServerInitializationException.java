@@ -24,4 +24,8 @@ public class ServerInitializationException
         super(message);
     }
 
+    public ServerInitializationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }

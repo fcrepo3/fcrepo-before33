@@ -407,13 +407,16 @@
                 <include name="**/fedora-base.fcfg"/>
                 <include name="**/fedora-*.properties"/>
                 <include name="**/logging.properties"/>
+                <include name="**/log4j.properties"/>
                 <include name="**/*.xml"/>
             </fileset>
         </copy>
-        
+
         <!-- copy initial setup defaults (in lieu of fedora-setup) -->
         <copy file="${fedora.home.build.dir}/server/fedora-internal-use/config/beSecurity-secure-apim.xml" 
             tofile="${fedora.home.build.dir}/server/config/beSecurity.xml"/>
+        <copy file="${fedora.home.build.dir}/server/fedora-internal-use/config/log4j.properties" 
+            tofile="${fedora.home.build.dir}/server/config/log4j.properties"/>
     </target>
 	
 	<target name="fedorahome" depends="server, client">
