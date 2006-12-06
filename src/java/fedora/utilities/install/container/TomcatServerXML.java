@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import org.dom4j.Attribute;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 
@@ -30,7 +29,6 @@ public class TomcatServerXML extends XMLDocument {
 		setHTTPPort();
 		setShutdownPort();
 		setSSLPort();
-		setRealm();
 	}
 	
 	public void setHTTPPort() {
@@ -70,28 +68,5 @@ public class TomcatServerXML extends XMLDocument {
 		} else if (httpsConnector != null) {
 			httpsConnector.getParent().remove(httpsConnector);
 		}
-	}
-
-	public void setRealm() {
-		// We assume at least Engine exists
-		Element realm = (Element)getDocument().selectSingleNode("/Server/Service[@name='Catalina']/Engine/Realm");
-		if (realm == null) {
-			Element engine = (Element)getDocument().selectSingleNode("/Server/Service[@name='Catalina']/Engine");
-			realm = engine.addElement("Realm");
-		} else {
-			Attribute[] atts = (Attribute[])realm.attributes().toArray(new Attribute[realm.attributeCount()]);
-			for (int i = 0; i < atts.length; i++) {
-				realm.remove(atts[i]);
-			}
-		}
-		
-		if (options.getValue(InstallOptions.TOMCAT_REALM).equalsIgnoreCase("jaas")) {
-			realm.addAttribute("className", "org.apache.catalina.realm.JAASRealm");
-			realm.addAttribute("appName", "fedora");
-			realm.addAttribute("userClassNames", "org.apache.catalina.realm.IdPasswordPrincipal");
-			realm.addAttribute("roleClassNames", "org.apache.catalina.realm.RolePrincipal");
-		} else {
-			realm.addAttribute("className", "org.apache.catalina.realm.MemoryRealm");
-		}		
 	}
 }

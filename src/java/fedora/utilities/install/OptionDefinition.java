@@ -1,7 +1,10 @@
 package fedora.utilities.install;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Properties;
 
 public class OptionDefinition {
 
@@ -11,10 +14,8 @@ public class OptionDefinition {
     private String _label;
 
     private String _description;
-    private String _descriptionIfBundled;
 
     private String[] _validValues;
-    private String[] _validValuesIfBundled;
 
     private String _defaultValue;
 
@@ -34,18 +35,14 @@ public class OptionDefinition {
     private OptionDefinition(String id,
                              String label,
                              String description,
-                             String descriptionIfBundled,
                              String[] validValues,
-                             String[] validValuesIfBundled,
                              String defaultValue) {
         _id = id;
         _label = label;
 
         _description = description;
-        _descriptionIfBundled = descriptionIfBundled;
 
         _validValues = validValues;
-        _validValuesIfBundled = validValuesIfBundled;
 
         _defaultValue = defaultValue;
     }
@@ -55,19 +52,19 @@ public class OptionDefinition {
      * if no such definition exists.
      */
     public static OptionDefinition get(String id) {
-        
         String label = _PROPS.getProperty(id + ".label");
         String description = _PROPS.getProperty(id + ".description");
-        String descriptionIfBundled = _PROPS.getProperty(id + ".descriptionIfBundled");
-
         String[] validValues = getArray(id + ".validValues");
-        String[] validValuesIfBundled = getArray(id + ".validValuesIfBundled");
-
         String defaultValue = _PROPS.getProperty(id + ".defaultValue");
-
-        return new OptionDefinition(id, label, description, 
-                descriptionIfBundled, validValues, validValuesIfBundled,
-                defaultValue);
+        
+        // Use the environment variable FEDORA_HOME as the default, if defined
+        if (id.equals(InstallOptions.FEDORA_HOME)) {
+        	String eFH = System.getenv("FEDORA_HOME");
+        	if (eFH != null && eFH.length() != 0) {
+        		defaultValue = eFH;
+        	}
+        }
+        return new OptionDefinition(id, label, description, validValues, defaultValue);
     }
 
     private static String[] getArray(String propName) {
@@ -88,36 +85,28 @@ public class OptionDefinition {
         return _label;
     }
 
-    public String getDescription(boolean bundled) {
-        if (bundled && _descriptionIfBundled != null) {
-            return _descriptionIfBundled;
-        } else {
-            return _description;
-        }
+    public String getDescription() {
+        return _description;
     }
 
-    public String[] getValidValues(boolean bundled) {
-        if (bundled && _validValuesIfBundled != null) {
-            return _validValuesIfBundled;
-        } else {
-            return _validValues;
-        }
+    public String[] getValidValues() {
+        return _validValues;
     }
 
     public String getDefaultValue() {
         return _defaultValue;
     }
     
-    public void validateValue(String value, boolean bundled) throws OptionValidationException {
-    	validateValue(value, bundled, false);
+    public void validateValue(String value) throws OptionValidationException {
+    	validateValue(value, false);
     }
 
-    public void validateValue(String value, boolean bundled, boolean unattended) 
+    public void validateValue(String value, boolean unattended) 
             throws OptionValidationException {
         if (value.length() == 0) {
             throw new OptionValidationException("Must specify a value", _id);
         }
-        String[] valids = getValidValues(bundled);
+        String[] valids = getValidValues();
         if (valids != null) {
             boolean isValid = false;
             for (int i = 0; i < valids.length; i++) {
@@ -131,12 +120,27 @@ public class OptionDefinition {
             }
         } else {
             if (_id.equals(InstallOptions.FEDORA_HOME)) {
+            	String eFH = System.getenv("FEDORA_HOME");
+            	if (eFH == null || eFH.length() == 0) {
+                	System.out.println("WARNING: The environment variable, FEDORA_HOME, is not defined");
+                	System.out.println("WARNING: Remember to define the FEDORA_HOME environment variable");
+                	System.out.println("WARNING: before starting Fedora.");
+            	} else if (!eFH.equals(value)) {
+            		System.out.println("WARNING: The environment variable, FEDORA_HOME, is defined as");
+            		System.out.println("WARNING:   " + eFH);
+            		System.out.println("WARNING: but you entered ");
+            		System.out.println("WARNING:   " + value);
+            		System.out.println("WARNING: Please ensure you have correctly defined FEDORA_HOME");
+            		System.out.println("WARNING: before starting Fedora.");
+            	}
+            	
                 File dir = new File(value);
                 if (dir.isDirectory()) {
                 	if (unattended) {
                 		System.out.println("WARNING: Overwriting existing directory: " + dir.getAbsolutePath());
                 	} else {
-	                	System.out.println("WARNING: " + dir.getAbsolutePath() + " already exists. Overwrite? (yes or no) [default is no] ==> ");
+	                	System.out.println("WARNING: " + dir.getAbsolutePath() + " already exists.");
+	                	System.out.println("WARNING: Overwrite? (yes or no) [default is no] ==> ");
 	                	String confirm = readLine().trim();
 	                    if (confirm.length() == 0 || confirm.equalsIgnoreCase("no")) {
 	                    	throw new OptionValidationException("Directory exists; delete it or choose another", _id);
@@ -175,9 +179,13 @@ public class OptionDefinition {
             } else if (_id.equals(InstallOptions.TOMCAT_SSL_PORT)) {
                 validatePort(value);
             } else if (_id.equals(InstallOptions.KEYSTORE_FILE)) {
-                if (!value.equals("default")) {
+                if (!value.equals(InstallOptions.INCLUDED)) {
                     validateExistingFile(value);
                 }
+            } else if (_id.startsWith(InstallOptions.DATABASE) && _id.endsWith(".driver")) {
+            	if (!value.equals(InstallOptions.INCLUDED)) {
+            		validateExistingFile(value);
+            	}
             }
         }
     }
@@ -208,5 +216,4 @@ public class OptionDefinition {
             throw new OptionValidationException("Not an integer", _id);
         }
     }
-
 }

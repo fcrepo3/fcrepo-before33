@@ -34,11 +34,11 @@ public class APIASecurityConstraint extends SecurityConstraint {
 	public APIASecurityConstraint(Document document, WebXMLOptions options) {
 		super(document, options);
 		
-		if (options.apiaAuth) {
-			addAuthConstraint();
-		} else {
+		//if (options.apiaAuth) {
+		//	addAuthConstraint();
+		//} else {
 			removeAuthConstraint();
-		}
+		//}
 		if (options.apiaSSL) {
 			addUserDataConstraint();
 		} else {

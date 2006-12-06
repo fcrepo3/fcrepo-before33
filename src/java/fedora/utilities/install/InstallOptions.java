@@ -1,17 +1,33 @@
 package fedora.utilities.install;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+
+import fedora.utilities.DriverShim;
+import fedora.utilities.FileUtils;
 
 public class InstallOptions {
 
+	public static final String INSTALL_TYPE			 = "install.type";
+	public static final String INSTALL_QUICK		 = "quick";
     public static final String FEDORA_HOME           = "fedora.home";
     public static final String APIA_AUTH_REQUIRED    = "apia.auth.required";
     public static final String SSL_AVAILABLE         = "ssl.available";
     public static final String APIA_SSL_REQUIRED     = "apia.ssl.required";
     public static final String APIM_SSL_REQUIRED     = "apim.ssl.required";
     public static final String SERVLET_ENGINE        = "servlet.engine";
-    public static final String BUNDLED_TOMCAT        = "bundledTomcat";
     public static final String EXISTING_TOMCAT       = "existingTomcat";
     public static final String OTHER                 = "other";
     public static final String TOMCAT_HOME           = "tomcat.home";
@@ -21,29 +37,31 @@ public class InstallOptions {
     public static final String TOMCAT_SSL_PORT       = "tomcat.ssl.port";
     public static final String KEYSTORE_FILE         = "keystore.file";
     public static final String DATABASE		         = "database";
-    public static final String EMBEDDED_MCKOI		 = "embeddedMcKoi";
-    public static final String BUNDLED_MCKOI		 = "bundledMcKoi";
-    public static final String BUNDLED_MYSQL		 = "bundledMySQL";
+    public static final String DATABASE_DRIVER		 = "database.driver";
+    public static final String DATABASE_JDBCURL		 = "database.jdbcURL";
+    public static final String DATABASE_DRIVERCLASS	 = "database.jdbcDriverClass";
+    public static final String DATABASE_USERNAME     = "database.username";
+    public static final String DATABASE_PASSWORD	 = "database.password";
+    public static final String INCLUDED				 = "included";
     public static final String MCKOI				 = "mckoi";
     public static final String MYSQL				 = "mysql";
     public static final String ORACLE		 		 = "oracle";
-    public static final String TOMCAT_REALM          = "tomcat.realm";
+    public static final String POSTGRESQL		 	 = "postgresql";
     public static final String XACML_ENABLED         = "xacml.enabled";
     public static final String DEPLOY_LOCAL_SERVICES = "deploy.local.services";
     public static final String UNATTENDED 			 = "unattended";
 
-    private Map _map;
-    private boolean _bundled;
+    private Map<Object, Object> _map;
+    private Distribution _dist;
 
     /**
      * Initialize options from the given map of String values, keyed by 
      * option id.
      */
-    public InstallOptions(Map map, boolean bundled) 
+    public InstallOptions(Distribution dist, Map<Object, Object> map) 
             throws OptionValidationException {
-    
+    	_dist = dist;
         _map = map;
-        _bundled = bundled;
 
         applyDefaults();
         validateAll();
@@ -52,11 +70,10 @@ public class InstallOptions {
     /**
      * Initialize options interactively, via input from the console.
      */
-    public InstallOptions(boolean bundled) 
+    public InstallOptions(Distribution dist) 
             throws InstallationCancelledException {
-
-        _bundled = bundled;
-        _map = new HashMap();
+    	_dist = dist;
+        _map = new HashMap<Object, Object>();
 
         System.out.println();
         System.out.println("**********************");
@@ -67,7 +84,35 @@ public class InstallOptions {
         System.out.println("You can enter CANCEL at any time to abort installation.");
         System.out.println();
 
+        inputOption(INSTALL_TYPE);
         inputOption(FEDORA_HOME);
+        inputOption(FEDORA_ADMIN_PASS);
+        
+        if (getValue(INSTALL_TYPE).equals(INSTALL_QUICK)) {
+        	// As much as possible, the 'quick' install uses the defaultValues 
+        	// defined in OptionDefinition.properties
+        	String fedoraHome = new File(getValue(InstallOptions.FEDORA_HOME)).getAbsolutePath();
+        	_map.put(APIA_AUTH_REQUIRED, null); // false
+        	_map.put(SSL_AVAILABLE, null); // true
+        	_map.put(APIM_SSL_REQUIRED, null); // true
+        	_map.put(SERVLET_ENGINE, null); // included
+        	_map.put(TOMCAT_HOME, fedoraHome + File.separator + "tomcat");
+        	_map.put(TOMCAT_HTTP_PORT, null); // 8080
+        	_map.put(TOMCAT_SHUTDOWN_PORT, null); // 8005
+        	_map.put(TOMCAT_SSL_PORT, null); // 8443
+        	_map.put(KEYSTORE_FILE, null); // included
+        	_map.put(XACML_ENABLED, null); // true
+        	_map.put(DATABASE, null); // included
+        	_map.put(DATABASE_USERNAME, "fedoraAdmin");
+        	_map.put(DATABASE_PASSWORD, "fedoraAdmin");
+			_map.put(DATABASE_JDBCURL, "jdbc:mckoi:local://" + fedoraHome + 
+					"/" + Distribution.MCKOI_BASENAME +"/db.conf?create_or_boot=true");
+        	_map.put(DATABASE_DRIVERCLASS, null); // 
+        	_map.put(DEPLOY_LOCAL_SERVICES, null); // true
+        	applyDefaults();
+        	return;
+        }
+        
         inputOption(APIA_AUTH_REQUIRED);
         inputOption(SSL_AVAILABLE);
 
@@ -76,27 +121,49 @@ public class InstallOptions {
             inputOption(APIA_SSL_REQUIRED);
             inputOption(APIM_SSL_REQUIRED);
         }
-
         inputOption(SERVLET_ENGINE);
-        
         if (!getValue(SERVLET_ENGINE).equals(OTHER)) {
             inputOption(TOMCAT_HOME);
-            inputOption(TOMCAT_SHUTDOWN_PORT);
             inputOption(TOMCAT_HTTP_PORT);
-            
+            inputOption(TOMCAT_SHUTDOWN_PORT);
             if (sslAvailable) {
             	inputOption(TOMCAT_SSL_PORT);
-            	if (getValue(SERVLET_ENGINE).equals(BUNDLED_TOMCAT) || getValue(SERVLET_ENGINE).equals(EXISTING_TOMCAT)) {
+            	if (getValue(SERVLET_ENGINE).equals(INCLUDED) || getValue(SERVLET_ENGINE).equals(EXISTING_TOMCAT)) {
                     inputOption(KEYSTORE_FILE);
                 }
             }
-
-            inputOption(TOMCAT_REALM);
+        }
+        inputOption(XACML_ENABLED);
+        
+        // Database selection
+        // Ultimately we want to provide the following properties:
+        //   database, database.username, database.password, 
+        //   database.driver, database.jdbcURL, database.jdbcDriverClass
+        inputOption(DATABASE);
+        
+        String db = DATABASE + "." + getValue(DATABASE);
+        
+        // The following lets us use the database-specific OptionDefinition.properties
+        // for the user prompts and defaults
+        String driver = db + ".driver";
+        String jdbcURL = db + ".jdbcURL";
+        String jdbcDriverClass = db + ".jdbcDriverClass";
+        
+        if ( !getValue(DATABASE).equals(INCLUDED) ) {
+        	boolean dbValidated = false;
+            while (!dbValidated) {
+	        	inputOption(driver);
+	        	_map.put(DATABASE_DRIVER, getValue(driver));
+	        	inputOption(DATABASE_USERNAME);
+	            inputOption(DATABASE_PASSWORD);
+		        inputOption(jdbcURL);
+		        _map.put(DATABASE_JDBCURL, getValue(jdbcURL));
+		        inputOption(jdbcDriverClass);
+		        _map.put(DATABASE_DRIVERCLASS, getValue(jdbcDriverClass));
+		        dbValidated = validateDatabaseConnection();
+        	}
         }
         
-        inputOption(FEDORA_ADMIN_PASS);
-        inputOption(XACML_ENABLED);
-        inputOption(DATABASE);
         inputOption(DEPLOY_LOCAL_SERVICES);
     }
 
@@ -118,14 +185,18 @@ public class InstallOptions {
             throws InstallationCancelledException {
 
         OptionDefinition opt = OptionDefinition.get(optionId);
-
+        
+        if (opt.getLabel() == null || opt.getLabel().length() == 0) {
+        	throw new InstallationCancelledException(optionId + 
+        			" is missing label (check OptionDefinition.properties?)");
+        }
         System.out.println(opt.getLabel());
         System.out.println(dashes(opt.getLabel().length()));
-        System.out.println(opt.getDescription(_bundled));
+        System.out.println(opt.getDescription());
 
         System.out.println();
 
-        String[] valids = opt.getValidValues(_bundled);
+        String[] valids = opt.getValidValues();
         if (valids != null) {
             System.out.print("Options : ");
             for (int i = 0; i < valids.length; i++) {
@@ -160,7 +231,7 @@ public class InstallOptions {
             }
 
             try {
-                opt.validateValue(value, _bundled);
+                opt.validateValue(value);
                 gotValidValue = true;
                 _map.put(optionId, value);
                 System.out.println();
@@ -276,8 +347,52 @@ public class InstallOptions {
         while (keys.hasNext()) {
             String optionId = (String) keys.next();
             OptionDefinition opt = OptionDefinition.get(optionId);
-            opt.validateValue(getValue(optionId), _bundled, unattended);
+            opt.validateValue(getValue(optionId), unattended);
         }
     }
-
+    
+    private boolean validateDatabaseConnection() {
+    	String database = getValue(DATABASE);
+    	if (database.equals(InstallOptions.INCLUDED)) {
+    		return true;
+    	}
+    	
+    	File driver = null;
+    	if (getValue(DATABASE_DRIVER).equals(InstallOptions.INCLUDED)) {
+    		InputStream is;
+    		boolean success = false;
+    		try {
+	    		if (database.equals(InstallOptions.MCKOI)) {
+		        	is = _dist.get(Distribution.JDBC_MCKOI);
+		        	driver = new File(System.getProperty("java.io.tmpdir"), Distribution.JDBC_MCKOI);
+		        	success = FileUtils.copy(is, new FileOutputStream(driver));
+		        } else if (database.equals(InstallOptions.MYSQL)) {
+		        	is = _dist.get(Distribution.JDBC_MYSQL);
+		        	driver = new File(System.getProperty("java.io.tmpdir"), Distribution.JDBC_MYSQL);
+		        	success = FileUtils.copy(is, new FileOutputStream(driver));
+		        }
+	    		if (!success) {
+	    			System.err.println("Extraction of included JDBC driver failed.");
+	    			return false;
+	    		}
+    		} catch(IOException e) {
+    			e.printStackTrace();
+    			return false;
+    		}
+    	} else {
+    		driver = new File(getValue(DATABASE_DRIVER));
+    	}
+    	try {
+	    	DriverShim.loadAndRegister(driver, getValue(DATABASE_DRIVERCLASS));
+			Connection conn = DriverManager.getConnection(getValue(DATABASE_JDBCURL), getValue(DATABASE_USERNAME),
+					getValue(DATABASE_PASSWORD));
+			DatabaseMetaData dmd = conn.getMetaData();
+			System.out.println("Successfully connected to " + dmd.getDatabaseProductName() + " " + dmd.getDatabaseMajorVersion());
+			conn.close();
+			return true;
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    		return false;
+    	}
+    }
 }

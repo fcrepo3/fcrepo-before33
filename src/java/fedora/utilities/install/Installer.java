@@ -1,13 +1,16 @@
 package fedora.utilities.install;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Properties;
 
 import org.dom4j.DocumentException;
@@ -16,11 +19,12 @@ import fedora.server.config.ServerConfiguration;
 import fedora.server.config.ServerConfigurationParser;
 import fedora.server.security.BESecurityConfig;
 import fedora.server.security.DefaultRoleConfig;
+import fedora.server.security.servletfilters.xmluserfile.FedoraUsers;
+import fedora.server.security.servletfilters.xmluserfile.User;
 import fedora.utilities.ExecUtility;
 import fedora.utilities.FileUtils;
 import fedora.utilities.Zip;
 import fedora.utilities.install.container.Container;
-import fedora.utilities.install.contextxml.ContextXML;
 import fedora.utilities.install.webxml.WebXML;
 
 public class Installer {
@@ -53,7 +57,7 @@ public class Installer {
 			deployLocalService(container, Distribution.SAXON_WAR);
 			deployLocalService(container, Distribution.DEMO_WAR);
 		}
-		if (_opts.getValue(InstallOptions.DATABASE).equals(InstallOptions.EMBEDDED_MCKOI)) {
+		if (_opts.getValue(InstallOptions.DATABASE).equals(InstallOptions.INCLUDED)) {
 			installEmbeddedMcKoi();
 		}
 		
@@ -88,6 +92,7 @@ public class Installer {
 		}
 		
 		installFCFG();
+		installFedoraUsers();
 		installBESecurity();
     }
     
@@ -106,24 +111,6 @@ public class Installer {
 	        webXML.setFedoraHome();
 	        webXML.setSecurityConstraints();	        
 	        webXML.write(distWebXML.getAbsolutePath());
-
-            // modify context.xml
-            System.out.println("Processing context.xml");
-            File distContextXML = new File(warStage, "META-INF/context.xml");
-            ContextXML contextXML = new ContextXML(distContextXML);
-            String className = "org.apache.catalina.realm.MemoryRealm";
-            String realm = _opts.getValue(InstallOptions.TOMCAT_REALM);
-            if (realm != null) {
-                if (realm.equals("jaas")) {
-                    className = "org.apache.catalina.realm.JAASRealm";
-                } else if (!realm.equals("memory")) {
-                    throw new InstallationFailedException("Unrecognized value "
-                            + "for " + InstallOptions.TOMCAT_REALM 
-                            + ": " + realm);
-                }
-            }
-            contextXML.setRealmClassName(className);
-            contextXML.write(distContextXML.getAbsolutePath());
 
 	        File fedoraWar = new File(installDir, Distribution.FEDORA_WAR);
 	        Zip.zip(fedoraWar, warStage.listFiles());
@@ -144,9 +131,6 @@ public class Installer {
     	File fcfg = new File(fedoraHome, "server/config/fedora.fcfg");
         
         Properties props = new Properties();
-        if (_opts.getValue(InstallOptions.FEDORA_ADMIN_PASS) != null) {
-        	props.put("server.adminPassword", _opts.getValue(InstallOptions.FEDORA_ADMIN_PASS));
-        }
         if (_opts.getValue(InstallOptions.TOMCAT_HTTP_PORT) != null) {
         	props.put("server.fedoraServerPort", _opts.getValue(InstallOptions.TOMCAT_HTTP_PORT));
         }
@@ -156,20 +140,29 @@ public class Installer {
         if (_opts.getValue(InstallOptions.TOMCAT_SSL_PORT) != null) {
         	props.put("server.fedoraRedirectPort", _opts.getValue(InstallOptions.TOMCAT_SSL_PORT));
         }
+        
         String database = _opts.getValue(InstallOptions.DATABASE);
-        if (database.equals(InstallOptions.BUNDLED_MCKOI) || database.equals(InstallOptions.MCKOI)) {
-        	setDatabasePools(props, "localMcKoiPool");
-        } else if (database.equals(InstallOptions.BUNDLED_MYSQL) || database.equals(InstallOptions.MYSQL)) {
-        	setDatabasePools(props, "localMySQLPool");
-        } else if (database.equals(InstallOptions.EMBEDDED_MCKOI)) {
-        	setDatabasePools(props, "localMcKoiPool");
-        	props.put("datastore.localMcKoiPool.jdbcURL", "jdbc:mckoi:local://" + fedoraHome.getAbsolutePath() + 
-        			"/" + Distribution.MCKOI_BASENAME +"/db.conf?create_or_boot=true");
-        } else if (database.equals("oracle")) {
-        	setDatabasePools(props, "localOracle9iPool");
+        String dbPoolName = "";
+        if (database.equals(InstallOptions.MCKOI) || database.equals(InstallOptions.INCLUDED)) {
+        	dbPoolName = "localMcKoiPool";
+        } else if (database.equals(InstallOptions.MYSQL)) {
+        	dbPoolName = "localMySQLPool";
+        } else if (database.equals(InstallOptions.ORACLE)) {
+        	dbPoolName = "localOraclePool";
+        } else if (database.equals(InstallOptions.POSTGRESQL)) {
+        	dbPoolName = "localPostgresqlPool";
         } else {
         	throw new InstallationFailedException("unable to configure for unknown database: " + database);
         }
+        props.put("module.fedora.server.storage.DOManager.storagePool", dbPoolName);
+    	props.put("module.fedora.server.search.FieldSearch.connectionPool", dbPoolName);
+    	props.put("module.fedora.server.storage.ConnectionPoolManager.poolNames", dbPoolName);
+    	props.put("module.fedora.server.storage.ConnectionPoolManager.defaultPoolName", dbPoolName);
+        props.put("datastore." + dbPoolName + ".jdbcURL", _opts.getValue(InstallOptions.DATABASE_JDBCURL));
+        props.put("datastore." + dbPoolName + ".dbUsername", _opts.getValue(InstallOptions.DATABASE_USERNAME));
+        props.put("datastore." + dbPoolName + ".dbPassword", _opts.getValue(InstallOptions.DATABASE_PASSWORD));
+        props.put("datastore." + dbPoolName + ".jdbcDriverClass", _opts.getValue(InstallOptions.DATABASE_DRIVERCLASS));
+
         if (_opts.getBooleanValue(InstallOptions.XACML_ENABLED, true)) {
         	props.put("module.fedora.server.security.Authorization.ENFORCE-MODE", "enforce-policies");
         } else {
@@ -177,8 +170,6 @@ public class Installer {
         }
         
         props.put("module.fedora.server.access.Access.doMediateDatastreams", _opts.getValue(InstallOptions.APIA_AUTH_REQUIRED));
-        
-        // FIXME any others?
         
         try {
 	        FileInputStream fis = new FileInputStream(fcfgBase);
@@ -188,6 +179,23 @@ public class Installer {
         } catch(IOException e) {
     		throw new InstallationFailedException(e.getMessage(), e);
     	}
+    }
+    
+    private void installFedoraUsers() throws InstallationFailedException {
+    	FedoraUsers fu = FedoraUsers.getInstance();
+    	for (User user : fu.getUsers()) {
+			if (user.getName().equals("fedoraAdmin")) {
+				user.setPassword(_opts.getValue(InstallOptions.FEDORA_ADMIN_PASS));
+			}
+		}
+    	
+    	try {
+    		Writer outputWriter = new BufferedWriter(new FileWriter(FedoraUsers.fedoraUsersXML));
+			fu.write(outputWriter);
+			outputWriter.close();
+		} catch (IOException e) {
+			throw new InstallationFailedException(e.getMessage(), e);
+		}
     }
     
     private void installBESecurity() throws InstallationFailedException {
@@ -228,7 +236,7 @@ public class Installer {
 			mckoiConf.store(new FileOutputStream(mckoiProps), null);
 			
 			String container = _opts.getValue(InstallOptions.SERVLET_ENGINE);
-			if (container.equals(InstallOptions.BUNDLED_TOMCAT) || container.equals(InstallOptions.EXISTING_TOMCAT)) {
+			if (container.equals(InstallOptions.INCLUDED) || container.equals(InstallOptions.EXISTING_TOMCAT)) {
 				File tomcatHome = new File(_opts.getValue(InstallOptions.TOMCAT_HOME));
 				File mckoidbSrc = new File(mckoiHome, "mckoidb.jar");
 				File mckoidbDest = new File(tomcatHome, "common/lib/mckoidb.jar");
@@ -254,13 +262,6 @@ public class Installer {
 		} catch (IOException e) {
 			throw new InstallationFailedException(e.getMessage(), e);
 		}
-    }
-    
-    private void setDatabasePools(Properties props, String poolName) {
-    	props.put("module.fedora.server.storage.DOManager.storagePool", poolName);
-    	props.put("module.fedora.server.search.FieldSearch.connectionPool", poolName);
-    	props.put("module.fedora.server.storage.ConnectionPoolManager.poolNames", poolName);
-    	props.put("module.fedora.server.storage.ConnectionPoolManager.defaultPoolName", poolName);
     }
 
 	/**
@@ -296,10 +297,10 @@ public class Installer {
             InstallOptions opts = null;
 
             if (args.length == 0) {
-                opts = new InstallOptions(dist.isBundled());
+                opts = new InstallOptions(dist);
             } else if (args.length == 1) {
                 Properties props = FileUtils.loadProperties(new File(args[0]));
-                opts = new InstallOptions(props, dist.isBundled());
+                opts = new InstallOptions(dist, props);
             } else {
                 System.err.println("ERROR: Too many arguments.");
                 System.err.println("Usage: java -jar fedora-install.jar [options-file]");

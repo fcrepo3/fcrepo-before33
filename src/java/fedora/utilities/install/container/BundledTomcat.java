@@ -57,7 +57,7 @@ public class BundledTomcat extends Tomcat {
 		try {
 			InputStream is;
 			File keystore = new File(getConf(), Distribution.KEYSTORE);
-	        if (keystoreFile.equals("default")) {
+	        if (keystoreFile.equals(InstallOptions.INCLUDED)) {
 	        	is = getDist().get(Distribution.KEYSTORE);
 	        } else {
 	        	is = new FileInputStream(keystoreFile);
@@ -66,24 +66,6 @@ public class BundledTomcat extends Tomcat {
 	        	throw new InstallationFailedException("Copy to " + 
 	        			keystore.getAbsolutePath() + " failed.");
 	        }
-		} catch (IOException e) {
-			throw new InstallationFailedException(e.getMessage(), e);
-		}
-	}
-	
-	protected void installJAASConfig() throws InstallationFailedException {
-		try {
-			InputStream is = getDist().get(Distribution.JAAS_CONFIG);
-	        File jaasConfig = new File(getConf(), Distribution.JAAS_CONFIG);
-	        if (!FileUtils.copy(is, new FileOutputStream(jaasConfig))) {
-	        	throw new InstallationFailedException("Copy to " + 
-	        			jaasConfig.getAbsolutePath() + " failed.");
-	        }
-	        
-	        System.out.println("Before starting Tomcat, please ensure that JAVA_OPTS points to the location of " +
-	        		"jaas.config, e.g.: \n\t" +
-	        		"export JAVA_OPTS=\"-Djava.security.auth.login.config=" + 
-	        		jaasConfig.getAbsolutePath() + "\".");
 		} catch (IOException e) {
 			throw new InstallationFailedException(e.getMessage(), e);
 		}

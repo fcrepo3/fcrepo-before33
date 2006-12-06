@@ -30,7 +30,7 @@ public class APIMSecurityConstraint extends SecurityConstraint {
 	public APIMSecurityConstraint(Document document, WebXMLOptions options) {
 		super(document, options);
 		
-		addAuthConstraint();
+		//addAuthConstraint();
 		if (options.apimSSL) {
 			addUserDataConstraint();
 		} else {

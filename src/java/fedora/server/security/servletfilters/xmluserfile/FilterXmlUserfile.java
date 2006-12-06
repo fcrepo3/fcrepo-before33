@@ -1,5 +1,4 @@
 package fedora.server.security.servletfilters.xmluserfile;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,8 +18,7 @@ import fedora.server.security.servletfilters.FinishedParsingException;
  */
 public class FilterXmlUserfile extends BaseCaching implements Constants {
     protected static Log log = LogFactory.getLog(FilterXmlUserfile.class);
-    private static String DEFAULT_FILEPATH = FEDORA_HOME + File.separator + 
-    	"server" + File.separator + "config" + File.separator + "fedora-users.xml";
+    
     /*
     static {
     	System.err.print(AuthFilter4TomcatUsers.class.getName() + " logging includes ");
@@ -44,7 +42,7 @@ public class FilterXmlUserfile extends BaseCaching implements Constants {
     
     private final String getFilepath() {
     	if (FILEPATH == null || FILEPATH.equals("")) {
-    		FILEPATH = DEFAULT_FILEPATH;
+    		FILEPATH = FedoraUsers.fedoraUsersXML.getAbsolutePath();
     	}
     	return FILEPATH;
     }

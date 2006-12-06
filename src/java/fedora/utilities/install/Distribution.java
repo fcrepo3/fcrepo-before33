@@ -27,8 +27,7 @@ public abstract class Distribution {
 	static {
 		// an up to date install.properties should be provided by the buildfile
         String path = "resources/install.properties";
-        InputStream in = OptionDefinition.class.getClassLoader().
-        getResourceAsStream(path);
+        InputStream in = OptionDefinition.class.getClassLoader().getResourceAsStream(path);
         PROPS = new Properties();
         try {
             PROPS.load(in);
@@ -38,14 +37,10 @@ public abstract class Distribution {
         }       
         TOMCAT = PROPS.getProperty("install.tomcat");
         MCKOI = PROPS.getProperty("install.mckoi");
-        JDBC_MYSQL = PROPS.getProperty("install.jdbc.mckoi");
+        JDBC_MYSQL = PROPS.getProperty("install.jdbc.mysql");
         JDBC_MCKOI = PROPS.getProperty("install.jdbc.mckoi");
         TOMCAT_BASENAME = PROPS.getProperty("install.tomcat.basename");
         MCKOI_BASENAME = PROPS.getProperty("install.mckoi.basename");
-    }
-	
-    public boolean isBundled() {
-        return contains(TOMCAT);
     }
 
     public abstract boolean contains(String path);

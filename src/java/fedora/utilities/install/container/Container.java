@@ -24,7 +24,7 @@ public abstract class Container {
 	
 	public static Container getContainer(Distribution dist, InstallOptions options) {
 		String servletEngine = options.getValue(InstallOptions.SERVLET_ENGINE);
-		if (servletEngine.equals(InstallOptions.BUNDLED_TOMCAT)) {
+		if (servletEngine.equals(InstallOptions.INCLUDED)) {
 			return new BundledTomcat(dist, options);
 		} else if (servletEngine.equals(InstallOptions.EXISTING_TOMCAT)) {
 			return new ExistingTomcat(dist, options);
