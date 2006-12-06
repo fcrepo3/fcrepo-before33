@@ -44,7 +44,6 @@ public class BasicDigitalObject
         m_extProperties=new HashMap<String, String>();
 		setNew(false);
         setContentModelId("");
-        setOwnerId("fedoraAdmin");
     }
 
     public boolean isNew() {
@@ -83,8 +82,8 @@ public class BasicDigitalObject
         return m_ownerId;
     }
 
-    public void setOwnerId(String user) {
-        m_ownerId=user;
+    public void setOwnerId(String owner) {
+        m_ownerId=owner;
     }
 
     public String getLabel() {
