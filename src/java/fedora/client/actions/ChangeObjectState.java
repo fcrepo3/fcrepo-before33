@@ -42,7 +42,7 @@ public class ChangeObjectState
                 Iterator pidIter=m_pids.iterator();
                 while (pidIter.hasNext()) {
                     String pid=(String) pidIter.next();
-                    Administrator.APIM.modifyObject(pid, m_newState, null, reason);
+                    Administrator.APIM.modifyObject(pid, m_newState, null, null, reason);
                 }
                 String s="s";
                 if (m_pids.size()==1) s="";

@@ -51,7 +51,7 @@ class MockManagementDelegateForJournalTesting implements ManagementDelegate {
     // -------------------------------------------------------------------------
 
     public Date modifyObject(Context context, String pid, String state,
-            String label, String logMessage) throws ServerException {
+            String label, String ownerId, String logMessage) throws ServerException {
         throw new RuntimeException(
                 "MockManagementDelegateForJournalTesting.modifyObject not implemented"); // KLUGE
 

@@ -968,7 +968,7 @@ public class BatchModifyParser extends DefaultHandler
 
                 // Process modifyObject only if no previous errors encountered
                 if(modifyObject) {
-                        APIM.modifyObject(m_obj.pid, m_obj.state, m_obj.label,
+                        APIM.modifyObject(m_obj.pid, m_obj.state, m_obj.label, m_obj.ownerId,
                                 "ModifyObject");
                 }
                 succeededCount++;

@@ -512,7 +512,7 @@ public class TestAPIM extends FedoraServerTestCase {
         // (2) test modifyObject
         System.out.println("Running TestAPIM.testModifyObject...");
         // test changing object demo:5 by modifying state to Inactive; leave label unchanged
-        String result = apim.modifyObject("demo:5", "I", null, "changed state to Inactive");
+        String result = apim.modifyObject("demo:5", "I", null, null, "changed state to Inactive");
         
         objectXML = apim.getObjectXML("demo:5");
         assertTrue(objectXML.length > 0);
@@ -522,7 +522,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label'and @VALUE='Image of Coliseum in Rome']",xmlIn);
         
         // test changing object demo:5 by modifying label to "changed label"; leave state unchanged from last value
-        result = apim.modifyObject("demo:5", null, "changed label", "changed label");
+        result = apim.modifyObject("demo:5", null, "changed label", null, "changed label");
         objectXML = apim.getObjectXML("demo:5");
         xmlIn = new String(objectXML, "UTF-8");
         //System.out.println("***** Testcase: TestAPIM.testModifyObject demo:5\n"+xmlIn);
@@ -530,7 +530,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='changed label']",xmlIn);
         
         // test changing object demo:5 by modifying both state and label
-        result = apim.modifyObject("demo:5", "D", "label of object to be deleted", "changed label and state");
+        result = apim.modifyObject("demo:5", "D", "label of object to be deleted", null, "changed label and state");
         objectXML = apim.getObjectXML("demo:5");
         xmlIn = new String(objectXML, "UTF-8");
         //System.out.println("***** Testcase: TestAPIM.testModifyObject demo:5\n"+xmlIn);

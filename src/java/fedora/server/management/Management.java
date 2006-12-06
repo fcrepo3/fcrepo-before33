@@ -31,6 +31,7 @@ public interface Management {
                              String pid, 
                              String state,
                              String label, 
+                             String ownerId,
                              String logMessage) throws ServerException;
 
     

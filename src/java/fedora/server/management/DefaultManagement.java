@@ -205,13 +205,14 @@ public class DefaultManagement
                              String pid, 
                              String state,
                              String label, 
+                             String ownerId,
                              String logMessage)
             throws ServerException {
         DOWriter w = null;
         try {
             LOG.info("Entered modifyObject");
 
-            m_fedoraXACMLModule.enforceModifyObject(context, pid, state); 
+            m_fedoraXACMLModule.enforceModifyObject(context, pid, state, ownerId); 
 
             checkObjectLabel(label);
 
@@ -246,32 +247,32 @@ public class DefaultManagement
             DOReader reader=m_manager.getReader(Server.USE_CACHE, context, pid);
             
             props.add(new Property(
-                        "info:fedora/fedora-system:def/fType",
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
                         reader.getFedoraObjectType()));
             
 
             props.add(new Property(
-                        "info:fedora/fedora-system:def/cModel",
+            			"info:fedora/fedora-system:def/model#contentModel",
                         reader.getContentModelId()));
                         
             props.add(new Property(
-                        "info:fedora/fedora-system:def/label",
+                        "info:fedora/fedora-system:def/model#label",
                         reader.GetObjectLabel()));
                         
             props.add(new Property(
-                        "info:fedora/fedora-system:def/state",
+                        "info:fedora/fedora-system:def/model#state",
                         reader.GetObjectState()));
                         
             props.add(new Property(
-                        "info:fedora/fedora-system:def/owner",
+                        "info:fedora/fedora-system:def/model#ownerId",
                         reader.getOwnerId()));
                         
             props.add(new Property(
-                        "info:fedora/fedora-system:def/cDate",
+                        "info:fedora/fedora-system:def/model#createdDate",
                         DateUtility.convertDateToString(reader.getCreateDate())));
                         
             props.add(new Property(
-                        "info:fedora/fedora-system:def/mDate",
+                        "info:fedora/fedora-system:def/view#lastModifiedDate",
                         DateUtility.convertDateToString(reader.getLastModDate())));
             
             //Property[] extProps=reader.getExtProperties();

@@ -99,7 +99,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 		}
 	}
 
-    public String modifyObject(String PID, String state, String label,
+    public String modifyObject(String PID, String state, String label, String ownerId,
             String logMessage)
             throws RemoteException {
     	LOG.debug("start: modifyObject, " + PID);
@@ -107,7 +107,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             return DateUtility.convertDateToString(
                     s_management.modifyObject(
-                            ReadOnlyContext.getSoapContext(), PID, state, label, logMessage));
+                            ReadOnlyContext.getSoapContext(), PID, state, label, ownerId, logMessage));
         } catch (Throwable th) {
             LOG.error("Error modifying object", th);
             throw AxisUtility.getFault(th); 			
