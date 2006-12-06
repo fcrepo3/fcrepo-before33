@@ -269,15 +269,31 @@
 	<!-- Also change its formatURI and set versionable to false.            -->
 	<!-- ****************************************************************** -->
 	<fbm:modifyDatastream pid="demo:32" dsID="DESC" dsControlGroupType="X" dsLabel="New label for DC datastream" formatURI="info:fedora/new/formatURI" versionable="false" logMessage="BatchModify - modifyDatastream"/>
+
+	<!-- ****************************************************************** -->
+	<!-- Modify datastream SCREENDUP of demo:32 object by changing its      -->
+	<!-- label.                                                             -->
+	<!-- ****************************************************************** -->
+	<fbm:modifyDatastream pid="demo:32" dsID="SCREENDUP" dsControlGroupType="R" dsLabel="Changed label for datastream SCREENDUP" logMessage="BatchModify - modifyDatastream"/>
 	
 	<!-- ****************************************************************** -->
-	<!-- Purge datastream SCREENDUP from object demo:32                     -->
+	<!-- Purge all versions of datastream SCREENDUP from object demo:32     -->
+	<!-- by specifying a start date in past and end date in the future.     -->
+	<!-- (This could also be accomplished by omitting both asOfDate and     -->
+	<!-- endDate.                                                           -->
 	<!--                                                                    -->
 	<!-- Required attributes on directive:                                  -->
 	<!-- pid - PID of the object to be purged                               -->
 	<!-- logMessage - message to be written in audit trail record           -->		
 	<!--                                                                    -->
 	<!-- Optional attributes on directive:                                  -->
+	<!--                                                                    -->
+	<!-- asOfDate - start timestamp to begin datastream version purge;      -->
+	<!--            if omitted, assumes earliest version.                   -->
+	<!-- endDate - end timestamp to end datastream version purge;           -->
+	<!--           if omitted, assumes latest version.                      -->
+	<!--         If both asOfDate and endDate are omitted, all datastream   -->
+	<!--         versions will be purged.                                   -->
 	<!-- force - boolean indicating whether to purge the object if any      -->
 	<!--         critical dependencies exist. A value of true will purge    -->
 	<!--         the object regardless of any dependencies. A value of      -->
@@ -285,7 +301,7 @@
 	<!--         purge only if no dependencies exist. This parameter is     -->
 	<!--         currently not implemented in the server.                   -->	
 	<!-- ****************************************************************** -->
-	<fbm:purgeDatastream pid="demo:32" dsID="SCREENDUP" logMessage="BatchModify - purgeDatastream"/>
+	<fbm:purgeDatastream pid="demo:32" dsID="SCREENDUP" asOfDate="1900-01-01T00:00:00.000Z" endDate="2010-01-01T00:00:00.000Z" logMessage="BatchModify - purgeDatastream"/>
 	
 	<!-- ****************************************************************** -->
 	<!-- Change the state of datastream DS1 to deleted                      -->
@@ -305,11 +321,25 @@
 	
 	<!-- ****************************************************************** -->
 	<!-- Change the versionable attribute of datastream DS2 to false        -->
+	<!--                                                                    -->
+	<!-- Required attributes on directive:                                  -->
+	<!-- pid - PID of the object                                            -->
+	<!-- dsID - ID of the datastream                                        -->
+	<!-- dsVersionable - new value for versionable                          -->
+	<!-- logMessage - message to be written in audit trail record           -->		
 	<!-- ****************************************************************** -->
 	<fbm:setDatastreamVersionable pid="demo:32" dsID="DS2" dsVersionable="false" logMessage="BatchModify - setDatastreamVersionable"/>	
 
 	<!-- ****************************************************************** -->
 	<!-- Compare the checksum for datastream DS1                            -->
+	<!--                                                                    -->
+	<!-- Required attributes on directive:                                  -->
+	<!-- pid - PID of the object                                            -->
+	<!-- dsID - ID of the datastream                                        -->
+	<!--                                                                    -->
+	<!-- optional attribute                                                 -->
+	<!--                                                                    -->
+	<!-- asOfDate - datetime stamp specifying version of datastream         -->	
 	<!-- ****************************************************************** -->
 	<fbm:compareDatastreamChecksum pid="demo:32" dsID="DS1"/>	
 	
