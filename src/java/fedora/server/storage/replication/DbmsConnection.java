@@ -5,6 +5,8 @@ import java.io.*;
 
 import org.apache.log4j.Logger;
 
+import fedora.common.Constants;
+
 import fedora.server.storage.*;
 import fedora.server.Server;
 import fedora.server.errors.ConnectionPoolNotFoundException;
@@ -85,7 +87,8 @@ public class DbmsConnection {
          {
            try
            {
-             s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+             s_server=Server.getInstance(new File(Constants.FEDORA_HOME),
+                     false);
            } catch (InitializationException ie)
            {
             LOG.error("Error getting server instance", ie);

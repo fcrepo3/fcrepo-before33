@@ -7,6 +7,8 @@ import org.apache.axis.types.NonNegativeInteger;
 
 import org.apache.log4j.Logger;
 
+import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.ReadOnlyContext;
@@ -57,12 +59,12 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
   {
     try
     {
-      String fedoraHome=System.getProperty("fedora.home");
+      String fedoraHome = Constants.FEDORA_HOME;
       if (fedoraHome == null) {
           s_initialized = false;
           s_initException = new ServerInitializationException(
-              "Server failed to initialize: The 'fedora.home' "
-              + "system property was not set.");
+              "Server failed to initialize because FEDORA_HOME "
+              + "is undefined");
       } else {
           s_server=Server.getInstance(new File(fedoraHome));
           s_initialized = true;

@@ -25,6 +25,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -495,7 +496,7 @@ public class BESecurityServlet extends HttpServlet {
      */
     public void init() throws ServletException {
         try {
-            File fedoraHome = new File(System.getProperty("fedora.home"));
+            File fedoraHome = new File(Constants.FEDORA_HOME);
             Server server = Server.getInstance(fedoraHome, false);
 
             // fieldsearch module

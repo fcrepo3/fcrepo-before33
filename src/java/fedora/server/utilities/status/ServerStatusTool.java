@@ -2,6 +2,8 @@ package fedora.server.utilities.status;
 
 import java.io.File;
 
+import fedora.common.Constants;
+
 public class ServerStatusTool {
 
     /**
@@ -341,9 +343,9 @@ public class ServerStatusTool {
             String cmd = args[0];
             if (cmd.equals("init") || cmd.equals("watch-startup") || cmd.equals("watch-shutdown") || cmd.equals("show-status")) {
                 try {
-                    String fedoraHome = System.getProperty("fedora.home");
+                    String fedoraHome = Constants.FEDORA_HOME;
                     if (fedoraHome == null) {
-                        throw new Exception("System property fedora.home is not defined");
+                        throw new Exception("FEDORA_HOME is undefined");
                     }
                     File serverHome = new File(new File(fedoraHome), "server");
                     ServerStatusTool tool = new ServerStatusTool(serverHome);

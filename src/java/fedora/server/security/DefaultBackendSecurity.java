@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import fedora.common.Constants;
+
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.BackendSecurityParserException;
@@ -59,11 +61,11 @@ public class DefaultBackendSecurity extends Module implements BackendSecurity{
         try {
 	          Server s_server = this.getServer();
 	          LOG.debug("DefaultBackendSecurity initialized");
-	          String fedoraHome = System.getProperty("fedora.home");
+	          String fedoraHome = Constants.FEDORA_HOME;
 	          if (fedoraHome == null) {
 	              throw new ModuleInitializationException(
-	                  "[DefaultBackendSecurity] Module failed to initialize: The "
-	                  + "'fedora.home' system property was not set.", getRole());
+	                  "[DefaultBackendSecurity] Module failed to initialize: "
+	                  + "FEDORA_HOME is undefined", getRole());
 	          } else {
 	              m_beSecurityPath = fedoraHome + "/server/config/beSecurity.xml";
               }	

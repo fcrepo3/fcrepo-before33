@@ -42,8 +42,6 @@ public class DefaultManagement
             Logger.getLogger(DefaultManagement.class.getName());
 
     private DOManager m_manager;
-    //private String m_fedoraServerHost; 2005.3.31 not used, so why have?
-    //private String m_fedoraServerPort; 2005.3.31 not used, so why have?
     private int m_uploadStorageMinutes;
     private int m_lastId;
     private File m_tempDir;
@@ -160,8 +158,6 @@ public class DefaultManagement
             throw new ModuleInitializationException("Can't get an ExternalContentManager "
                     + "from Server.getModule", getRole());
         }
-        //m_fedoraServerHost=getServer().getParameter("fedoraServerHost"); 2005.3.31 not used, so why have?
-        //m_fedoraServerPort=getServer().getParameter("fedoraServerPort"); 2005.3.31 not used, so why have?
         
         m_fedoraXACMLModule = (Authorization) getServer().getModule("fedora.server.security.Authorization");
         if (m_fedoraXACMLModule == null) {

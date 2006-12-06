@@ -8,6 +8,8 @@ import java.io.FileInputStream;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import fedora.common.Constants;
+
 /**
  *
  * <p><b>Title:</b> BatchTool.java</p>
@@ -203,7 +205,7 @@ public class BatchTool {
 
 	public static final void main(String[] args) throws Exception {
 		Properties defaults = new Properties();
-		String defaultsPath = System.getProperty("fedora.home") + "\\..\\batch\\default.properties";
+		String defaultsPath = Constants.FEDORA_HOME + "\\..\\batch\\default.properties";
 //System.err.println("defaultsPath=[" + defaultsPath + "]");
 		defaults.load(new FileInputStream(defaultsPath)); //"dist/batch/default.properties"));
 //System.err.println("after loading defaults");

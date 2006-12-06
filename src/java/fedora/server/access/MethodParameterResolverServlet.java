@@ -12,6 +12,7 @@ import java.util.Hashtable;
 
 import org.apache.log4j.Logger;
 
+import fedora.common.Constants;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 
@@ -52,8 +53,8 @@ public class MethodParameterResolverServlet extends HttpServlet {
 
 	public void init() throws ServletException {
 		try {
-			s_server = Server.getInstance(new File(System
-					.getProperty("fedora.home")), false);
+			s_server = Server.getInstance(new File(Constants.FEDORA_HOME),
+                    false);
 		} catch (InitializationException ie) {
 			throw new ServletException(
 					"Unable to get Fedora Server instance. -- "

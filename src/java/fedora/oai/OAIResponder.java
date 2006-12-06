@@ -16,8 +16,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
-import fedora.server.Context;
 import fedora.common.Constants;
+
+import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.errors.authorization.AuthzException;
 import fedora.server.errors.authorization.AuthzOperationalException;
@@ -25,9 +26,7 @@ import fedora.server.security.Authorization;
 
 
 /**
- *
- * <p><b>Title:</b> OAIResponder.java</p>
- * <p><b>Description:</b> </p>
+ * OAIResponder.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -47,7 +46,7 @@ public class OAIResponder {
     	if (m_authorization == null) {
             Server server;
 			try {
-				server = Server.getInstance(new File(System.getProperty("fedora.home")));
+				server = Server.getInstance(new File(Constants.FEDORA_HOME));
 			} catch (Throwable e) {
 				throw new AuthzOperationalException("couldn't attempt authz", e);
 			}

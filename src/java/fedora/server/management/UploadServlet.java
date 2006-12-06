@@ -16,6 +16,7 @@ import com.oreilly.servlet.multipart.Part;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -134,7 +135,7 @@ public class UploadServlet
      */
     public void init() throws ServletException {
         try {
-            s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
+            s_server=Server.getInstance(new File(Constants.FEDORA_HOME), false);
 			s_management=(Management) s_server.getModule("fedora.server.management.Management");
 			if (s_management==null) {
 			    throw new ServletException("Unable to get Management module from server.");

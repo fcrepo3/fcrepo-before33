@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import fedora.common.Constants;
 import fedora.server.utilities.StreamUtility;
 
 /**
@@ -38,8 +39,8 @@ public class ByteArrayInputPanel
 
     public ByteArrayInputPanel(boolean primitive) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        if (System.getProperty("fedora.home")!=null) {
-            File f=new File(System.getProperty("fedora.home"));
+        if (Constants.FEDORA_HOME != null) {
+            File f = new File(Constants.FEDORA_HOME);
             if (f.exists() && f.isDirectory()) {
                 s_lastDir=f;
             }

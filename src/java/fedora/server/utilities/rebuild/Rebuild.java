@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import fedora.common.Constants;
+
 import fedora.server.config.Configuration;
 import fedora.server.config.ModuleConfiguration;
 import fedora.server.config.Parameter;
@@ -360,8 +361,7 @@ public class Rebuild implements Constants {
 			fail("Too many arguments", true, true);
 		}
 		try {
-			String home = System.getProperties().getProperty("fedora.home");
-			File serverDir = new File(new File(home), "server");
+			File serverDir = new File(new File(Constants.FEDORA_HOME), "server");
 			if (args.length > 0)
 				profile = args[0];
 			new Rebuild(serverDir, profile);

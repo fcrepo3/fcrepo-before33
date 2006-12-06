@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import fedora.common.Constants;
 import fedora.server.utilities.RuntimeWSDL;
 
 /**
@@ -160,14 +161,14 @@ public class WSDLServlet extends HttpServlet {
 
 
     /**
-     * Initialize by setting serverDir based on fedora.home system property.
+     * Initialize by setting serverDir based on FEDORA_HOME.
      */
     public void init() throws ServletException {
 
-        String fedoraHome = System.getProperty("fedora.home");
+        String fedoraHome = Constants.FEDORA_HOME;
 
         if (fedoraHome == null || fedoraHome.length() == 0) {
-            throw new ServletException("fedora.home is not defined");
+            throw new ServletException("FEDORA_HOME is not defined");
         } else {
             _serverDir = new File(new File(fedoraHome), "server");
             if (!_serverDir.isDirectory()) {

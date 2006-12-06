@@ -14,6 +14,8 @@ import java.io.PrintStream;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 
+import fedora.common.Constants;
+
 import fedora.client.Administrator;
 import fedora.client.batch.BatchModifyParser;
 import fedora.server.utilities.StreamUtility;
@@ -178,8 +180,8 @@ public class BatchModify
         s_rootName=rootName;
         String fileName=s_rootName + "-" + System.currentTimeMillis() + ".xml";
         File outFile;
-        String fedoraHome=System.getProperty("fedora.home");
-        if (fedoraHome=="") {
+        String fedoraHome = Constants.FEDORA_HOME;
+        if (fedoraHome == null) {
             // to current dir
             outFile=new File(fileName);
         } else {

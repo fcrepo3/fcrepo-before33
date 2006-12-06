@@ -12,6 +12,8 @@ import org.trippi.TriplestoreWriter;
 import org.trippi.server.TrippiServer;
 import org.trippi.server.http.TrippiServlet;
 
+import fedora.common.Constants;
+
 import fedora.server.Server;
 import fedora.server.resourceIndex.ResourceIndex;
 
@@ -28,7 +30,7 @@ public class RISearchServlet extends TrippiServlet {
     public TriplestoreWriter getWriter() throws ServletException {
         TriplestoreWriter writer = null;
         try {
-            Server server = Server.getInstance(new File(System.getProperty("fedora.home")), false);
+            Server server = Server.getInstance(new File(Constants.FEDORA_HOME), false);
             writer = (TriplestoreWriter) server.getModule("fedora.server.resourceIndex.ResourceIndex");
         } catch (Exception e) {
             throw new ServletException("Error initting RISearchServlet.", e);

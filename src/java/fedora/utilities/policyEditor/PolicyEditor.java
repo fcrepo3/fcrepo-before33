@@ -1,4 +1,5 @@
 package fedora.utilities.policyEditor;
+
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
@@ -33,6 +34,8 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 
+import fedora.common.Constants;
+
 /**
  * An editor that allow the repository-wide XACML policies 
  * for a Fedora server configuration, to be created, modified, and installed,
@@ -42,7 +45,6 @@ import javax.swing.filechooser.FileFilter;
  *
  * @author Robert Haschart
  */
-
 public class PolicyEditor extends JFrame implements ActionListener, WindowListener
 {
 	private static final long serialVersionUID = 1L;
@@ -91,7 +93,7 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
                 // default l&f left in place
         }
         //Create and set up the window.
-        fedoraHome = System.getProperties().getProperty("fedora.home");
+        fedoraHome = Constants.FEDORA_HOME;
         if (fedoraHome == null)
         {
             setFedoraHome();

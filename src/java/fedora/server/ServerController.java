@@ -49,7 +49,7 @@ public class ServerController
         if (action.equals("status")) {
         	actionLabel = "getting server status";
         	Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
-        	File fedoraHome = new File(System.getProperty("fedora.home"));
+        	File fedoraHome = new File(Constants.FEDORA_HOME);
             if (! Server.hasInstance(fedoraHome)) {
                 throw new Unavailable503Exception(request, actionLabel, "server not available", new String[0]);	
             }
@@ -78,7 +78,7 @@ public class ServerController
         if (action.equals("reloadPolicies")) {
         	actionLabel = "reloading repository policies";
         	Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
-        	File fedoraHome = new File(System.getProperty("fedora.home"));
+        	File fedoraHome = new File(Constants.FEDORA_HOME);
             if (! Server.hasInstance(fedoraHome)) {
                 throw new Unavailable503Exception(request, actionLabel, "server not available", new String[0]);	
             }

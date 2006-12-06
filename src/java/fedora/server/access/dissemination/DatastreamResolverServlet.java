@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -101,8 +102,8 @@ public class DatastreamResolverServlet extends HttpServlet {
 	 */
 	public void init() throws ServletException {
 		try {
-			s_server = Server.getInstance(new File(System
-					.getProperty("fedora.home")));
+			s_server = Server.getInstance(new File(Constants.FEDORA_HOME),
+                    false);
 			fedoraServerPort = s_server.getParameter("fedoraServerPort");
 			fedoraServerRedirectPort = s_server
 					.getParameter("fedoraRedirectPort");

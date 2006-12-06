@@ -16,8 +16,10 @@ import org.apache.commons.httpclient.Header;
 
 import org.apache.log4j.Logger;
 
+import fedora.common.Constants;
 import fedora.common.http.WebClient;
 import fedora.common.http.HttpInputStream;
+
 import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.errors.DisseminationException;
@@ -103,15 +105,15 @@ public class DisseminationService
   {
     try
     {
-      fedoraHome = System.getProperty("fedora.home");
+      fedoraHome = Constants.FEDORA_HOME;
       if (fedoraHome == null)
       {
           throw new ServerInitializationException(
-              "[DisseminationService] Server failed to initialize: The "
-              + "'fedora.home' system property was not set.");
+              "[DisseminationService] Server failed to initialize: "
+              + "FEDORA_HOME is undefined");
       } else
       {
-        s_server = Server.getInstance(new File(fedoraHome));
+        s_server = Server.getInstance(new File(fedoraHome), false);
         fedoraServerHost = s_server.getParameter("fedoraServerHost");
         fedoraServerPort = s_server.getParameter("fedoraServerPort");
         fedoraServerRedirectPort = s_server.getParameter("fedoraRedirectPort");

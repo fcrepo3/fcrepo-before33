@@ -16,6 +16,8 @@ import javax.xml.transform.TransformerFactory; // RunXSLT works with this
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
 
+import fedora.common.Constants;
+
 /**
  *
  * <p><b>Title:</b> BatchXforms.java</p>
@@ -47,10 +49,10 @@ class BatchXforms {
     // The template format controls which xsl stylesheet is to be applied
     // Valid values are "metslikefedora1" and "foxml1.0"
     if(optValues.getProperty(BatchTool.OBJECTFORMAT).equalsIgnoreCase("foxml1.0")) {
-        xformPath = System.getProperty("fedora.home") + "/client/lib/foxml-merge.xsl";
+        xformPath = Constants.FEDORA_HOME + "/client/lib/foxml-merge.xsl";
         formatMap.put(BatchTool.OBJECTFORMAT,"FOXML");
     } else if (optValues.getProperty(BatchTool.OBJECTFORMAT).equalsIgnoreCase("metslikefedora1")) {
-        xformPath = System.getProperty("fedora.home") + "/client/lib/mets-merge.xsl";
+        xformPath = Constants.FEDORA_HOME + "/client/lib/mets-merge.xsl";
         formatMap.put(BatchTool.OBJECTFORMAT,"METS");
     } else {
         System.err.println("Unknown objectTemplate format: "+optValues.getProperty(BatchTool.OBJECTFORMAT));

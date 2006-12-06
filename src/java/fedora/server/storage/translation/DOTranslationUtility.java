@@ -5,6 +5,8 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import fedora.common.Constants;
+
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectIntegrityException;
@@ -187,7 +189,7 @@ public abstract class DOTranslationUtility {
     // initialize static class with stuff that's used by all DO Serializerers
     static {
 			// get host port from system properties (for testing without server instance)
-			String fedoraHome=System.getProperty("fedora.home");
+			String fedoraHome = Constants.FEDORA_HOME;
 			String fedoraServerHost=System.getProperty("fedoraServerHost");
 			String fedoraServerPort=System.getProperty("fedoraServerPort");
 			String fedoraServerPortSSL=System.getProperty("fedoraRedirectPort");		
@@ -205,10 +207,13 @@ public abstract class DOTranslationUtility {
 			// otherwise, get host port from the server instance if they are null			
 			if (fedoraServerHost == null || fedoraServerPort == null) {
 				// if fedoraServerHost or fedoraServerPort system properties
-                // are not defined, assume we need to get a Server instance
-                // to determine these values.
+                // are not defined, assume we need to use the running Server
+                // instance to determine these values.
+                // FIXME: Use fedora.server.config.ServerConfiguration instead,
+                //        because it doesn't require a running server instance.
+                //        See ServerUtility for an example.
 				try {
-					Server s=Server.getInstance(new File(fedoraHome));
+					Server s=Server.getInstance(new File(fedoraHome), false);
 					fedoraServerHost=s.getParameter("fedoraServerHost");
 					fedoraServerPort=s.getParameter("fedoraServerPort");
 					fedoraServerPortSSL=s.getParameter("fedoraRedirectPort");

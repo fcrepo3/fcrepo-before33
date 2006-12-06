@@ -8,6 +8,7 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 
 import org.apache.log4j.Logger;
 
+import fedora.common.Constants;
 import fedora.common.http.WebClient;
 
 import fedora.server.config.ServerConfiguration;
@@ -33,9 +34,9 @@ public class ServerUtility {
     private static ServerConfiguration CONFIG;
 
     static {
-        String fedoraHome = System.getProperty("fedora.home");
+        String fedoraHome = Constants.FEDORA_HOME;
         if (fedoraHome == null) {
-            LOG.warn("fedora.home property not set; unable to initialize");
+            LOG.warn("FEDORA_HOME not set; unable to initialize");
         } else {
             File fcfgFile = new File(fedoraHome, "server/config/fedora.fcfg");
             try {

@@ -22,6 +22,7 @@ import javax.xml.transform.TransformerFactory;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -370,8 +371,8 @@ public class GetNextPIDServlet extends HttpServlet {
 	 */
 	public void init() throws ServletException {
 		try {
-			s_server = Server.getInstance(new File(System
-					.getProperty("fedora.home")), false);
+			s_server = Server.getInstance(new File(Constants.FEDORA_HOME),
+                    false);
 			fedoraServerHost = s_server.getParameter("fedoraServerHost");
 			s_management = (Management) s_server
 					.getModule("fedora.server.management.Management");

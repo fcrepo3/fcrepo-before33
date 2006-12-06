@@ -1,6 +1,9 @@
 package fedora.client.utility.ingest;
 
 import java.io.*;
+
+import fedora.common.Constants;
+
 import fedora.server.utilities.StreamUtility;
 
 /**
@@ -14,8 +17,8 @@ public class IngestLogger {
 		
 		String fileName=logRootName + "-" + System.currentTimeMillis() + ".xml";
 		File outFile;
-		String fedoraHome=System.getProperty("fedora.home");
-		if (fedoraHome=="") {
+		String fedoraHome = Constants.FEDORA_HOME;
+		if (fedoraHome == null) {
 			// to current dir
 			outFile=new File(fileName);
 		} else {

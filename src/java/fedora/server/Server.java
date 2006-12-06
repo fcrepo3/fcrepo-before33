@@ -40,6 +40,7 @@ import org.w3c.dom.Node;
 import fedora.common.Constants;
 import fedora.common.PID;
 import fedora.common.MalformedPIDException;
+
 import fedora.server.Context;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.MalformedPidException;
@@ -681,7 +682,7 @@ public abstract class Server
      */
     protected static void configureLog4J(String extension) {
 
-        File fedoraHome = new File(System.getProperty("fedora.home"));
+        File fedoraHome = new File(Constants.FEDORA_HOME);
         File homeDir = new File(fedoraHome, "server");
     	File logDir = new File(homeDir, LOG_DIR);
         logDir.mkdirs();

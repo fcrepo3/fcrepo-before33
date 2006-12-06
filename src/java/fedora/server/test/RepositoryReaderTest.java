@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.HashMap;
 import junit.framework.TestCase;
 
+import fedora.common.Constants;
+
 import fedora.server.Server;
 import fedora.server.storage.BDefReader;
 import fedora.server.storage.BMechReader;
@@ -100,7 +102,7 @@ public class RepositoryReaderTest
     }
 
     public static void main(String[] args) {
-        RepositoryReaderTest test=new RepositoryReaderTest(System.getProperty("fedora.home"), "Testing DirectoryBasedRepositoryReader");
+        RepositoryReaderTest test=new RepositoryReaderTest(Constants.FEDORA_HOME, "Testing DirectoryBasedRepositoryReader");
         test.setUp();
         test.testList();
         test.testGetReader();

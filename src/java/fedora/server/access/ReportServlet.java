@@ -15,6 +15,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -42,7 +43,7 @@ public class ReportServlet
 	
 	public void init() throws ServletException {
 		try {
-			s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
+			s_server=Server.getInstance(new File(Constants.FEDORA_HOME), false);
 		} catch (InitializationException ie) {
 			throw new ServletException("Error getting Fedora Server instance: "
 					+ ie.getMessage());

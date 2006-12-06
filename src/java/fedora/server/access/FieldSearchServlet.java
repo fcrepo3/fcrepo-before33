@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
 import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -423,7 +424,7 @@ public class FieldSearchServlet
     /** Gets the Fedora Server instance. */
     public void init() throws ServletException {
         try {
-            s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
+            s_server=Server.getInstance(new File(Constants.FEDORA_HOME), false);
             s_access=(Access) s_server.getModule("fedora.server.access.Access");
         } catch (InitializationException ie) {
             throw new ServletException("Error getting Fedora Server instance: "

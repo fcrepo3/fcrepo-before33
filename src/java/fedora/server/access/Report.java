@@ -23,6 +23,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
@@ -314,7 +316,7 @@ public class Report {
 			String _maxResults, String _sessionToken, String _newBase,
 			String _prefix, String _dateRange) throws QueryParseException, ServerException {
 		try {
-			s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+			s_server=Server.getInstance(new File(Constants.FEDORA_HOME));
 			s_access=(Access) s_server.getModule("fedora.server.access.Access");
 		} catch (InitializationException ie) {
 			throw new GeneralException("Error getting Fedora Server instance: "

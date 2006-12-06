@@ -16,6 +16,8 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
@@ -123,8 +125,7 @@ public class FastDOReader implements DOReader
   {
     try
     {
-      s_server =
-          Server.getInstance(new File(System.getProperty("fedora.home")));
+      s_server = Server.getInstance(new File(Constants.FEDORA_HOME), false);
       fedoraServerHost = s_server.getParameter("fedoraServerHost");
       fedoraServerPort = s_server.getParameter("fedoraServerPort");
       m_manager = (DOManager) s_server.getModule(

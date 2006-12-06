@@ -18,6 +18,8 @@ import fedora.swing.jhelp.SimpleHelpBroker;
 import fedora.swing.mdi.MDIDesktopPane;
 import fedora.swing.mdi.WindowMenu;
 
+import fedora.common.Constants;
+
 import fedora.client.actions.Login;
 import fedora.client.actions.PurgeObject;
 import fedora.client.actions.ViewObjectXML;
@@ -144,8 +146,8 @@ public class Administrator extends JFrame {
             } catch (Exception e) { APIA=null; APIM=null; }
         }
         
-        if (System.getProperty("fedora.home")!=null) {
-            File f=new File(System.getProperty("fedora.home"));
+        if (Constants.FEDORA_HOME != null) {
+            File f = new File(Constants.FEDORA_HOME);
             if (f.exists() && f.isDirectory()) {
                 BASE_DIR=new File(f, "client");
                 s_lastDir=BASE_DIR;

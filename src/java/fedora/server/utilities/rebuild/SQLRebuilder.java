@@ -18,6 +18,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -105,7 +107,8 @@ public class SQLRebuilder implements Rebuilder {
         // do startup tasks
 
         try {
-            s_server=RebuildServer.getRebuildInstance(new File(System.getProperty("fedora.home")));
+            s_server = RebuildServer.getRebuildInstance(
+                    new File(Constants.FEDORA_HOME));
             // now get the connectionpool
             ConnectionPoolManager cpm=(ConnectionPoolManager) s_server.
                     getModule("fedora.server.storage.ConnectionPoolManager");

@@ -1,5 +1,7 @@
 package fedora.server.test;
 
+import fedora.common.Constants;
+
 import fedora.server.storage.types.*;
 import fedora.server.storage.translation.*;
 import fedora.server.*;
@@ -26,12 +28,12 @@ public class TranslatorTest {
             if (args.length!=3) {
                 throw new IOException("*Three* parameters needed, filename, format, and encoding.");
             }
-            if (System.getProperty("fedora.home")==null) {
-                throw new IOException("fedora.home property must be set.  Try using -Dfedora.home=path/to/fedorahome");
+            if (Constants.FEDORA_HOME == null) {
+                throw new IOException("FEDORA_HOME is not set. Try using -Dfedora.home=path/to/fedorahome");
             }
             in=new FileInputStream(new File(args[0]));
             Server server;
-            server=Server.getInstance(new File(System.getProperty("fedora.home")));
+            server=Server.getInstance(new File(Constants.FEDORA_HOME));
             DOTranslator trans=(DOTranslator) server.getModule("fedora.server.storage.translation.DOTranslator");
             if (trans==null) {
                 throw new IOException("DOTranslator module not found via getModule");

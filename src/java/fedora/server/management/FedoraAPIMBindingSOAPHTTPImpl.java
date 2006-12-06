@@ -13,6 +13,8 @@ import org.apache.axis.types.NonNegativeInteger;
 
 import org.apache.log4j.Logger;
 
+import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -27,9 +29,7 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.TypeUtility;
 
 /**
- *
- * <p><b>Title:</b> FedoraAPIMBindingSOAPHTTPImpl.java</p>
- * <p><b>Description:</b> </p>
+ * Implements the Fedora management SOAP service.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -55,14 +55,13 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     /** Before fulfilling any requests, make sure we have a server instance. */
     static {
         try {
-            String fedoraHome=System.getProperty("fedora.home");
+            String fedoraHome = Constants.FEDORA_HOME;
             if (fedoraHome==null) {
                 s_initialized=false;
                 s_initException=new ServerInitializationException(
-                    "Server failed to initialize: The 'fedora.home' "
-                    + "system property was not set.");
+                    "Server failed to initialize: FEDORA_HOME is undefined");
             } else {
-                s_server=Server.getInstance(new File(fedoraHome));
+                s_server=Server.getInstance(new File(fedoraHome), false);
                 s_initialized=true;
                 s_management=(Management) s_server.getModule("fedora.server.management.Management");
             }
