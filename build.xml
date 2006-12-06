@@ -199,7 +199,9 @@
                    optimize="${javac.optimize}" 
                    source="${javac.source}" 
                    srcdir="@{srcdir}"
-                   target="${javac.target}"/>
+                   target="${javac.target}">
+            	<compilerarg value="-Xlint"/>
+            </javac>
         </sequential>
     </macrodef>
     
@@ -318,6 +320,7 @@
             <fileset dir="${src.dir}/dbspec/server"/>
         	<fileset dir="${java.src.dir}">
         		<include name="**/*.betwixt"/>
+        		<include name="**/*.xml"/>
             </fileset>
         	<filterset>
                 <filter token="buildNumber" value="${build.tstamp}"/>
@@ -348,6 +351,7 @@
         <copy todir="${fedora.home.build.dir}/server/config">
             <fileset dir="${src.dir}/fcfg/server">
                 <include name="**/my.properties"/>
+            	<include name="**/fedora-users.xml"/>
             </fileset>
         </copy>
         
@@ -409,9 +413,10 @@
                 <include name="**/logging.properties"/>
                 <include name="**/log4j.properties"/>
                 <include name="**/*.xml"/>
+            	<exclude name="**/fedora-users.xml"/>
             </fileset>
         </copy>
-
+        
         <!-- copy initial setup defaults (in lieu of fedora-setup) -->
         <copy file="${fedora.home.build.dir}/server/fedora-internal-use/config/beSecurity-secure-apim.xml" 
             tofile="${fedora.home.build.dir}/server/config/beSecurity.xml"/>
@@ -728,7 +733,12 @@
 		<md-compile srcdir="${java.src.dir}"
             destdir="${install.build.dir}"
             includes="fedora/utilities/install/**"/>
-		<copy file="${java.src.dir}/fedora/utilities/install/OptionDefinition.properties" todir="${install.build.dir}/fedora/utilities/install"/>
+		<copy todir="${install.build.dir}">
+	    	<fileset dir="${java.src.dir}">
+	    		<include name="**/fedorausers-mapping.xml"/>
+	    		<include name="**/OptionDefinition.properties"/>
+	        </fileset>
+	    </copy>
 		<jar jarfile="${install.build.dir}/install.jar" 
 		             basedir="${install.build.dir}"
 		             includes="fedora/**">
@@ -738,7 +748,6 @@
 		</jar>
 	</target>
 	
-	<!-- FIXME this is just a skeleton for the installer task.-->
 	<target name="installer" depends="war, fedorahome, compile-installer, localservices, demo"
 		description="Builds an executable jar for installing the Fedora server">
 		<loadproperties srcFile="${properties.src.dir}/install.properties"/>
@@ -748,7 +757,7 @@
 			<fileset dir="${properties.src.dir}" includes="install.properties"/>
 			<fileset dir="${lib.dir}" includes="${install.jdbc.mckoi} ${install.jdbc.mysql}"/>
 			<fileset dir="${dist.dir}" includes="fedorahome.zip fedora.war fop.war imagemanip.war saxon.war fedora-demo.war"/>
-			<fileset dir="inc" includes="${install.tomcat} ${install.mckoi} keystore jaas.config"/>
+			<fileset dir="inc" includes="${install.tomcat} ${install.mckoi} keystore"/>
 		</copy>
 		
 		<mkdir dir="${install.build.dir}/boot"/>
@@ -756,6 +765,12 @@
 		<mkdir dir="${install.build.dir}/lib"/>
 		<copy file="${lib.dom4j}" todir="${install.build.dir}/lib"/>
 		<copy file="${lib.jaxen}" todir="${install.build.dir}/lib"/>
+		<copy file="${lib.jrdf}" todir="${install.build.dir}/lib"/>
+		<copy file="${lib.commons-beanutils}" todir="${install.build.dir}/lib"/>
+		<copy file="${lib.commons-betwixt}" todir="${install.build.dir}/lib"/>
+		<copy file="${lib.commons-collection}" todir="${install.build.dir}/lib"/>
+		<copy file="${lib.commons-digester}" todir="${install.build.dir}/lib"/>
+		<copy file="${lib.commons-logging}" todir="${install.build.dir}/lib"/>
 		<move file="${install.build.dir}/install.jar" todir="${install.build.dir}/main"/>
 		<unjar src="${lib.one-jar}" dest="${install.build.dir}/boot"/>
 		<jar jarfile="${dist.dir}/fedora-${fedora.version}-installer.jar" 
