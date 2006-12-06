@@ -180,7 +180,16 @@ public class METSLikeDOSerializer
             buf.append(" RECORDSTATUS=\"");
             buf.append(state + "\"");
         }
-        buf.append("/>\n");
+        buf.append(">\n");
+        // use agent to identify the owner of the digital object
+        String ownerId=obj.getOwnerId();
+        if (ownerId!=null && !ownerId.equals("")) {
+            buf.append("  <" + METS_PREFIX + ":agent");
+            buf.append(" ROLE=\"IPOWNER\">\n");
+            buf.append("    <" + METS_PREFIX + ":name>" + ownerId + "</" + METS_PREFIX + ":name>\n");
+            buf.append("  </" + METS_PREFIX + ":agent>\n");
+        }
+        buf.append("  </" + METS_PREFIX + ":metsHdr>\n");
     }
 
     private void appendDescriptiveMD(DigitalObject obj, StringBuffer buf,
