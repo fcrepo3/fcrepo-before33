@@ -9,10 +9,16 @@ import fedora.common.rdf.*;
  */ 
 public interface Constants {
     public static final FedoraNamespace         FEDORA        = new FedoraNamespace();  
-    
-    //public static final String FEDORA_HOME = System.getProperty("fedora.home");
-    public static final String FEDORA_HOME = System.getenv("FEDORA_HOME");
-    
+
+    /**
+     * The base directory of the Fedora installation.
+     *
+     * This is normally determined by the FEDORA_HOME environment variable,
+     * but if defined, the <code>fedora.home</code> system property will be
+     * used instead.
+     */
+    public static final String FEDORA_HOME = FedoraHome.getValue();
+
     /** The PID of the Fedora system definition object. */
     public static final PID    FEDORA_SYSTEM_DEF_PID = PID.getInstance("fedora-system:def");
     public static final String FEDORA_SYSTEM_DEF_URI = FEDORA_SYSTEM_DEF_PID.toURI();
@@ -38,4 +44,15 @@ public interface Constants {
     public static final BMechNamespace          BMECH         = BMechNamespace.getInstance();    
     public static final EnvironmentNamespace    ENVIRONMENT   = EnvironmentNamespace.getInstance();
     public static final HttpRequestNamespace    HTTP_REQUEST  = HttpRequestNamespace.getInstance();
+
+    static class FedoraHome {
+        public static final String getValue() {
+            if (System.getProperty("fedora.home") != null) {
+                return System.getProperty("fedora.home");
+            } else {
+                return System.getenv("FEDORA_HOME");
+            }
+        }
+    }
+
 }

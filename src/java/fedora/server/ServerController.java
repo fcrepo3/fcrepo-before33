@@ -23,9 +23,7 @@ import fedora.server.utilities.status.ServerState;
 import fedora.server.utilities.status.ServerStatusFile;
 
 /**
- *
- * <p><b>Title:</b> ServerController.java</p>
- * <p><b>Description:</b> </p>
+ * Server Controller.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -116,31 +114,24 @@ public class ServerController
     }
 
     public void init() throws ServletException {
-    	// make sure fedora.home is defined first
-    	String fedoraHome;
-    	fedoraHome = getInitParameter("fedora.home");
-        if (fedoraHome == null) {
-        	// try again
-        	fedoraHome = System.getProperty("fedora.home");
-        	if (fedoraHome == null) {
-	            String msg = "FATAL ERROR: System property fedora.home is undefined";
-	            throw new ServletException(msg);
-        	}
-        }
-        System.setProperty("fedora.home", fedoraHome);
 
-        File fedoraHomeDir = new File(fedoraHome);
+
+    	// make sure fedora.home is defined first
+        File fedoraHomeDir = getFedoraHomeDir();
+
+        // FIXME: This is set here for legacy server code that still picks up
+        // these values from fedora.home.  When the code is updated, this
+        // can be removed.
+        System.setProperty("fedora.home", fedoraHomeDir.getPath());
 
         // get file for writing startup status
         try {
             _status = new ServerStatusFile(new File(fedoraHomeDir, "server"));
         } catch (Throwable th) {
-            th.printStackTrace();
-            throw new ServletException(th);
+            failStartup("Error initializing server status file", th);
         }
 
         try {
-
             // Start the Fedora instance
             _status.append(ServerState.STARTING, "Starting Fedora Server instance");
             s_server = Server.getInstance(fedoraHomeDir);
@@ -150,7 +141,64 @@ public class ServerController
             try {
                 _status.appendError(ServerState.STARTUP_FAILED, th);
             } catch (Exception e) { }
-            throw new ServletException(msg, th);
+            failStartup(msg, th);
+        }
+    }
+
+    /**
+     * Validates and returns the value of FEDORA_HOME.
+     * 
+     * @return the FEDORA_HOME directory.
+     * @throws ServletException if FEDORA_HOME (or fedora.home) was not
+     *         set, does not denote an existing directory, or is not
+     *         writable by the current user.
+     */
+    private File getFedoraHomeDir() throws ServletException {
+
+        String fedoraHome = Constants.FEDORA_HOME;
+        if (fedoraHome == null) {
+            failStartup("Neither the FEDORA_HOME environment variable, "
+                    + "nor the fedora.home system property was set", null);
+        }
+        File fedoraHomeDir = new File(fedoraHome);
+        if (!fedoraHomeDir.isDirectory()) {
+            failStartup("The FEDORA_HOME directory, " 
+                    + fedoraHomeDir.getPath() + " does not exist", null);
+        }
+        File writeTest = new File(fedoraHomeDir, "writeTest.tmp");
+        String writeErrorMessage = "The FEDORA_HOME directory, "
+                + fedoraHomeDir.getPath() + " is not writable by "
+                + "the current user, " + System.getProperty("user.name");
+        try {
+            writeTest.createNewFile();
+            if (!writeTest.exists()) {
+                throw new IOException("");
+            }
+            writeTest.delete();
+        } catch (IOException e) {
+            failStartup(writeErrorMessage, null);
+        }
+
+        return fedoraHomeDir;
+    }
+
+    /**
+     * Prints a "FEDORA STARTUP ERROR" to STDERR along with the stacktrace
+     * of the Throwable (if given) and finally, throws a ServletException.
+     */
+    private void failStartup(String message, Throwable th)
+            throws ServletException {
+        System.err.println("\n**************************");
+        System.err.println("** FEDORA STARTUP ERROR **");
+        System.err.println("**************************\n");
+        System.err.println(message);
+        if (th == null) {
+            System.err.println();
+            throw new ServletException(message);
+        } else {
+            th.printStackTrace();
+            System.err.println();
+            throw new ServletException(message, th);
         }
     }
 
