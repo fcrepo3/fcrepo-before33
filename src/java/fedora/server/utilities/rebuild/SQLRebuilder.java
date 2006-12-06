@@ -395,7 +395,7 @@ public class SQLRebuilder implements Rebuilder {
         // of it in the digital object registry
         try {
             registerObject(obj.getPid(), obj.getFedoraObjectType(), 
-            "fedoraAdmin", obj.getLabel(), obj.getContentModelId(), 
+            obj.getOwnerId(), obj.getLabel(), obj.getContentModelId(), 
             obj.getCreateDate(), obj.getLastModDate());
         }
         catch (StorageDeviceException e)
