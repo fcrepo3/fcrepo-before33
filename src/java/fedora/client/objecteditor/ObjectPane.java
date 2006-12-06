@@ -161,7 +161,7 @@ public class ObjectPane
         if (i==2)
            state="D";
         Administrator.APIM.modifyObject(m_pid, state,
-                m_labelTextField.getText(), logMessage);
+                m_labelTextField.getText(), null, logMessage);
     }
 
     public void changesSaved() {
