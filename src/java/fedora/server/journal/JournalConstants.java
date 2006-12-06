@@ -133,6 +133,7 @@ public interface JournalConstants {
     String ARGUMENT_NAME_NAMESPACE = "namespace";
     String ARGUMENT_NAME_NEW_PID = "newPid";
     String ARGUMENT_NAME_NUM_PIDS = "numPids";
+    String ARGUMENT_NAME_OWNERID = "ownerId";
     String ARGUMENT_NAME_PID = "pid";
     String ARGUMENT_NAME_SERIALIZATION = "serialization";
     String ARGUMENT_NAME_STATE = "state";

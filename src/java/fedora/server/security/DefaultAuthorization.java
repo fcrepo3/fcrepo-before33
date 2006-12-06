@@ -922,7 +922,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	}
 	
-	public final void enforceModifyObject(Context context, String pid, String objectNewState) 
+	public final void enforceModifyObject(Context context, String pid, String objectNewState, String objectNewOwnerId) 
 	throws AuthzException {
 	try {
         LOG.debug("Entered enforceModifyObject");		
@@ -932,7 +932,8 @@ public class DefaultAuthorization extends Module implements Authorization {
 		MultiValueMap resourceAttributes = new MultiValueMap();
 		String name = "";
 		try {
-			name = resourceAttributes.setReturn(Constants.OBJECT.NEW_STATE.uri, objectNewState);	
+			name = resourceAttributes.setReturn(Constants.OBJECT.NEW_STATE.uri, objectNewState);
+			name = resourceAttributes.setReturn(Constants.OBJECT.OWNER.uri, objectNewOwnerId);
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	

@@ -28,6 +28,7 @@ public class ModifyObjectMethod extends ManagementMethod {
                 .getStringArgument(ARGUMENT_NAME_PID), parent
                 .getStringArgument(ARGUMENT_NAME_STATE), parent
                 .getStringArgument(ARGUMENT_NAME_LABEL), parent
+                .getStringArgument(ARGUMENT_NAME_OWNERID), parent
                 .getStringArgument(ARGUMENT_NAME_LOG_MESSAGE));
     }
 

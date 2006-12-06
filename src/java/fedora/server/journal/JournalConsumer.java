@@ -101,7 +101,7 @@ public class JournalConsumer implements JournalWorker {
      * Reject API calls from outside while we are in recovery mode.
      */
     public Date modifyObject(Context context, String pid, String state,
-            String label, String logMessage) throws ServerException {
+            String label, String ownerId, String logMessage) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 

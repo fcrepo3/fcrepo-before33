@@ -118,13 +118,14 @@ public class JournalCreator implements JournalWorker, JournalConstants {
      * Create a journal entry, add the arguments, and invoke the method.
      */
     public Date modifyObject(Context context, String pid, String state,
-            String label, String logMessage) throws ServerException {
+            String label, String ownerId, String logMessage) throws ServerException {
         try {
             CreatorJournalEntry cje = new CreatorJournalEntry(
                     METHOD_MODIFY_OBJECT, context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_STATE, state);
             cje.addArgument(ARGUMENT_NAME_LABEL, label);
+            cje.addArgument(ARGUMENT_NAME_OWNERID, ownerId);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
             return (Date) cje.invokeMethod(delegate, writer);
         } catch (JournalException e) {

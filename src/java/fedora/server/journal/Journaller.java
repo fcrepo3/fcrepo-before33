@@ -156,8 +156,8 @@ public class Journaller extends Module implements Management, JournalConstants {
      * Delegate to the JournalWorker.
      */
     public Date modifyObject(Context context, String pid, String state,
-            String label, String logMessage) throws ServerException {
-        return worker.modifyObject(context, pid, state, label, logMessage);
+            String label, String ownerId, String logMessage) throws ServerException {
+        return worker.modifyObject(context, pid, state, label, ownerId, logMessage);
     }
 
     /**

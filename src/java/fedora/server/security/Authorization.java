@@ -88,7 +88,7 @@ public interface Authorization {
 	public void enforceModifyDisseminator(Context context, String pid, String disseminatorId, String mechanismPid, String disseminatorState) 
 	throws AuthzException;
 	
-	public void enforceModifyObject(Context context, String pid, String objectState) 
+	public void enforceModifyObject(Context context, String pid, String objectState, String ownerId) 
 	throws AuthzException;
 	
 	public void enforcePurgeDatastream(Context context, String pid, String datastreamId, Date endDT) 
