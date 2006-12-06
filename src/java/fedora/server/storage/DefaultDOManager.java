@@ -1710,8 +1710,8 @@ public class DefaultDOManager
 
         // This implementation returns a string containing the 
         // total number of objects in the repository, followed by the
-        // number of objects with with systemVersion 1 through 3, 
-        // in the format: "20|10,5,2"
+        // latest object's modification date (utc millis)
+        // in the format: "10|194861293462"
 
         Connection conn = null;
         try {
@@ -1721,10 +1721,7 @@ public class DefaultDOManager
             hash.append(getNumObjectsWithVersion(conn, 0));
             hash.append("|");
 
-            for (int i = 1; i < 4; i++) {
-                if (i > 1) hash.append(",");
-                hash.append(getNumObjectsWithVersion(conn, i));
-            }
+            hash.append(getLatestModificationDate(conn));
 
             return hash.toString();
 
@@ -1757,6 +1754,23 @@ public class DefaultDOManager
             ResultSet results = st.executeQuery(query.toString());
             results.next();
             return results.getInt(1);
+        } finally {
+            if (st != null) st.close();
+        }
+    }
+
+    private long getLatestModificationDate(Connection conn)
+            throws SQLException {
+        Statement st = null;
+        try {
+            st = conn.createStatement();
+            ResultSet results = st.executeQuery("SELECT MAX(mDate) "
+                    + "FROM doFields");
+            if (results.next()) {
+                return results.getLong(1);
+            } else {
+                return 0L;
+            }
         } finally {
             if (st != null) st.close();
         }
