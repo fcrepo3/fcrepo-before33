@@ -15,6 +15,7 @@ public class DigitalObject {
     public String cModel;
     public boolean force = false;
     public String state;
+    public String ownerId;
     public String logMessage;
 
     public DigitalObject()
