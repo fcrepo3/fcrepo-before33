@@ -205,7 +205,7 @@ class ResourceAttributeFinderModule extends AttributeFinderModule {
 		} else if (Constants.OBJECT.OBJECT_TYPE.uri.equals(attributeId)) { 
 			try {
 				values = new String[1];
-				values[0] = reader.getOwnerId();
+				values[0] = reader.getFedoraObjectType();
 				LOG.debug("got " + Constants.OBJECT.OBJECT_TYPE.uri + "=" + values[0]);
 			} catch (ServerException e) {
 				LOG.debug("failed getting " + Constants.OBJECT.OBJECT_TYPE.uri);
