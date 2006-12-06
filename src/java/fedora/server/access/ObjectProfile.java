@@ -14,6 +14,7 @@ public class ObjectProfile
 {
   public String PID = null;
   public String objectLabel = null;
+  public String objectOwnerId = null;
   public String objectType = null;
   public String objectContentModel = null;
   public Date objectCreateDate = null;

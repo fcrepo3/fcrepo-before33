@@ -392,6 +392,7 @@ public class DefaultAccess extends Module implements Access
     ObjectProfile profile = new ObjectProfile();
     profile.PID = reader.GetObjectPID();
     profile.objectLabel = reader.GetObjectLabel();
+    profile.objectOwnerId = reader.getOwnerId();
     profile.objectContentModel = reader.getContentModelId();
     profile.objectCreateDate = reader.getCreateDate();
     profile.objectLastModDate = reader.getLastModDate();

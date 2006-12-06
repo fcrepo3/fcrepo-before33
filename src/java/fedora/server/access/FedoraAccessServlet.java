@@ -871,6 +871,9 @@ public class FedoraAccessServlet extends HttpServlet {
 					pw.write("<objLabel>"
 							+ StreamUtility.enc(objProfile.objectLabel)
 							+ "</objLabel>");
+					pw.write("<objOwnerId>"
+							+ StreamUtility.enc(objProfile.objectOwnerId)
+							+ "</objOwnerId>");
 					pw.write("<objContentModel>"
 							+ StreamUtility.enc(objProfile.objectContentModel)
 							+ "</objContentModel>");
