@@ -104,6 +104,7 @@ public class METSLikeDODeserializer
 
 	/** Variables to parse into */
     private boolean m_rootElementFound;
+    private String m_agentRole;
     private String m_dsId;
     private String m_dsVersId;
     private Date m_dsCreateDate;
@@ -127,7 +128,7 @@ public class METSLikeDODeserializer
     private String m_dsChecksumType;
 
     private StringBuffer m_dsXMLBuffer;
-
+    
     // are we reading binary in an FContent element? (base64-encoded)
 	private boolean m_readingContent; // indicates reading base64-encoded content
 	private boolean m_readingBinaryContent; // indicates reading base64-encoded content
@@ -283,8 +284,6 @@ public class METSLikeDODeserializer
             Disseminator diss=(Disseminator) dissemIter.next();
             m_obj.disseminators(diss.dissID).add(diss);
         }
-		// FIXME: this should somehow be gathered from the serialization, ideally.
-		m_obj.setOwnerId("fedoraAdmin");
     }
    
 	public void startPrefixMapping(String prefix, String uri) {
@@ -328,6 +327,11 @@ public class METSLikeDODeserializer
                 m_obj.setLastModDate(DateUtility.convertStringToDate(
                         grab(a, M, "LASTMODDATE")));
                 m_obj.setState(grab(a, M, "RECORDSTATUS"));
+            } else if (localName.equals("agent")) {
+                m_agentRole = grab(a, M, "ROLE");
+            } else if (localName.equals("name") && m_agentRole.equals("IPOWNER")) {
+            	m_readingContent=true;
+                m_elementContent = new StringBuffer();
             } else if (localName.equals("amdSec")) {
                 m_dsId=grab(a, M, "ID");
                 m_dsState=grab(a, M, "STATUS");
@@ -735,6 +739,14 @@ public class METSLikeDODeserializer
         	m_binaryContentTempFile = null;
 			m_readingBinaryContent=false;
 			m_elementContent = null;
+        } else {
+        	// process normal element content (for simple string values)
+        	if (localName.equals("name") && m_agentRole.equals("IPOWNER")) {
+        		m_obj.setOwnerId(m_elementContent.toString());
+        		m_elementContent = null;
+        	} else if (localName.equals("agent")) {
+        		m_agentRole = null;       		
+        	}       	
         }
         if (m_inXMLMetadata) 
         {
