@@ -287,6 +287,8 @@ public class FOXMLDODeserializer
 					m_obj.setContentModelId(grab(a, F, "VALUE"));
 				} else if (m_objPropertyName.equals(MODEL.LABEL.uri)){
 					m_obj.setLabel(grab(a, F, "VALUE"));
+				} else if (m_objPropertyName.equals(MODEL.OWNER.uri)){
+					m_obj.setOwnerId(grab(a, F, "VALUE"));
 				} else if (m_objPropertyName.equals(MODEL.CREATED_DATE.uri)){
 					m_obj.setCreateDate(DateUtility.convertStringToDate(grab(a, F, "VALUE")));
 				} else if (m_objPropertyName.equals(VIEW.LAST_MODIFIED_DATE.uri)){

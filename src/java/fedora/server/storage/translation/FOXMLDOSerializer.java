@@ -140,6 +140,7 @@ public class FOXMLDOSerializer
 		
 		String ftype = getTypeAttribute(obj);
 		String state = getStateAttribute(obj);
+		String ownerId = obj.getOwnerId();
 		String label = obj.getLabel();
 		Date cdate = obj.getCreateDate();
 		Date mdate = obj.getLastModDate();
@@ -158,6 +159,10 @@ public class FOXMLDOSerializer
 		if (label!=null && !label.equals("")) {
 			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + MODEL.LABEL.uri + "\""
 			+ " VALUE=\"" + StreamUtility.enc(label) + "\"/>\n"); 
+		}
+		if (ownerId!=null && !ownerId.equals("")) {
+			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + MODEL.OWNER.uri + "\""
+			+ " VALUE=\"" + StreamUtility.enc(ownerId) + "\"/>\n"); 
 		}
 		if (cdate!=null) {
 			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + MODEL.CREATED_DATE.uri + "\""
