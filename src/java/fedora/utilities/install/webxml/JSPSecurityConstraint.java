@@ -17,7 +17,7 @@ public class JSPSecurityConstraint extends SecurityConstraint {
 	private static final Set<String> httpMethods;
 	
 	static {
-		urlPatterns = new HashSet<String>(Arrays.asList(new String[] {"*.jsp"}));
+		urlPatterns = new HashSet<String>(Arrays.asList(new String[] {"*.jsp", "*.faces"}));
 		httpMethods = new HashSet<String>(Arrays.asList(new String[] {"GET", "HEAD", "POST"}));
 	}
 	
