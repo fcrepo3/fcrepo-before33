@@ -10,6 +10,8 @@
 				<xsd:element ref="modifyDatastream" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="purgeDatastream" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="setDatastreamState" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="setDatastreamVersionable" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="compareDatastreamChecksum" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="addDisseminator" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="modifyDisseminator" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="purgeDisseminator" minOccurs="0" maxOccurs="unbounded"/>
@@ -228,4 +230,19 @@
 			<xsd:attribute name="dsID" type="xsd:string" use="required"/>
 		</xsd:complexType>
 	</xsd:element>
+	<xsd:element name="setDatastreamVersionable">
+		<xsd:complexType>
+			<xsd:attribute name="pid" type="xsd:string" use="required"/>
+			<xsd:attribute name="dsID" type="xsd:string" use="required"/>
+			<xsd:attribute name="dsVersionable" type="xsd:boolean" use="required"/>
+			<xsd:attribute name="logMessage" type="xsd:string" use="required"/>
+		</xsd:complexType>
+	</xsd:element>	
+	<xsd:element name="compareDatastreamChecksum">
+		<xsd:complexType>
+			<xsd:attribute name="pid" type="xsd:string" use="required"/>
+			<xsd:attribute name="dsID" type="xsd:string" use="required"/>
+			<xsd:attribute name="asOfDate" type="xsd:dateTime" use="optional"/>
+		</xsd:complexType>
+	</xsd:element>	
 </xsd:schema>
