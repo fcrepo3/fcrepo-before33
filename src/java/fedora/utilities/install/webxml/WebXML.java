@@ -54,10 +54,17 @@ public class WebXML extends XMLDocument {
 		new JSPSecurityConstraint(getDocument(), options);
 		new GetDSSecurityConstraint(getDocument(), options);
 		new MControlSecurityConstraint(getDocument(), options);
+		
 		new APIMSecurityConstraint(getDocument(), options);
 		new APIASecurityConstraint(getDocument(), options);
 	}
 	
+	/**
+	 * Removes Fedora-generated security-constraint blocks.
+	 * "Fedora-generated" is determined by checking for the presence of the 
+	 * string defined by the constant <code>FEDORA_GENERATED</code> in the 
+	 * description element.
+	 */
 	private void removeSecurityConstraints() {
 		List list = getDocument().selectNodes("/web-app/*[local-name()='security-constraint']");
 		Iterator iter = list.iterator();
