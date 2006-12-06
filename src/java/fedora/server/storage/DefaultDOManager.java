@@ -73,6 +73,7 @@ import fedora.server.validation.RelsExtValidator;
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
+ * @version $Id$
  */
 public class DefaultDOManager
         extends Module implements DOManager {
@@ -568,8 +569,6 @@ public class DefaultDOManager
 				// DESERIALIZE:
 				// deserialize the ingest input stream into a digital object instance
 				obj = new BasicDigitalObject();
-				// FIXME: just setting ownerId manually for now...
-				obj.setOwnerId("fedoraAdmin");
 				obj.setNew(true);
 				LOG.debug("Deserializing from format: " + format);
 				LOG.debug("Deserializing from format: " + format);
