@@ -202,6 +202,7 @@
         <element name="pid" type="xsd:string"/>
         <element name="state" type="xsd:string"/>
         <element name="label" type="xsd:string"/>
+        <element name="ownerId" type="xsd:string"/>
         <element name="logMessage" type="xsd:string"/>
       </sequence>
     </complexType>
