@@ -78,7 +78,7 @@ public interface DigitalObject {
      *
      * @param user The userid.
      */
-    public void setOwnerId(String user);
+    public void setOwnerId(String owner);
 
     /**
      * Gets the label.
