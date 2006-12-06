@@ -100,6 +100,7 @@ public class BatchModifyParser extends DefaultHandler
     private boolean purgeDatastream = false;
     private boolean setDatastreamState = false;
     private boolean setDatastreamVersionable = false;
+    private boolean compareDatastreamChecksum = false;
     private boolean addDisseminator = false;
     private boolean purgeDisseminator = false;
     private boolean modifyDisseminator = false;
@@ -540,7 +541,7 @@ public class BatchModifyParser extends DefaultHandler
                 // Get require attributes
                 m_ds.objectPID = attrs.getValue("pid");
                 m_ds.dsID = attrs.getValue("dsID");
-                m_ds.dsState = attrs.getValue("versionable");
+                m_ds.versionable = new Boolean(attrs.getValue("versionable")).booleanValue();
                 m_ds.logMessage = attrs.getValue("logMessage");
                 setDatastreamVersionable = true;
 
@@ -548,6 +549,26 @@ public class BatchModifyParser extends DefaultHandler
                 failedCount++;
                 logFailedDirective(m_ds.objectPID, localName, e, "");
             }
+        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("compareDatastreamChecksum")) {
+
+            try {
+                m_ds = new Datastream();
+                compareDatastreamChecksum = false;
+
+                // Get require attributes
+                m_ds.objectPID = attrs.getValue("pid");
+                m_ds.dsID = attrs.getValue("dsID");
+                
+                // Get optional attributes
+                if (attrs.getValue("asOfDate")!=null && !attrs.getValue("asOfDate").equals(""))
+                    m_ds.asOfDate = attrs.getValue("asOfDate");
+                
+                compareDatastreamChecksum = true;
+
+            } catch (Exception e) {
+                failedCount++;
+                logFailedDirective(m_ds.objectPID, localName, e, "");
+            }            
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("xmlData")) {
             m_inXMLMetadata = true;
             m_dsXMLBuffer=new StringBuffer();
@@ -1151,6 +1172,55 @@ public class BatchModifyParser extends DefaultHandler
             } finally {
                 setDatastreamState = false;
             }
+        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("setDatastreamVersionable")) {
+
+            try {
+
+                // Process setDatastreamVersionable only if no previous errors encountered
+                if(setDatastreamVersionable) {
+                    APIM.setDatastreamVersionable(m_ds.objectPID, m_ds.dsID,
+                        m_ds.versionable, "SetDatastreamVersionable");
+                    succeededCount++;
+                    logSucceededDirective(m_ds.objectPID, localName,
+                        "datastream: " + m_ds.dsID
+                            + "\n    Set dsVersionable: " + m_ds.versionable);
+                }
+
+            } catch (Exception e) {
+                if (setDatastreamVersionable) {
+                    failedCount++;
+                    logFailedDirective(m_ds.objectPID, localName, e, null);
+                }
+            } finally {
+                setDatastreamVersionable = false;
+            }   
+        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("compareDatastreamChecksum")) {
+
+            try {
+
+                // Process compareDatastreamChecksum only if no previous errors encountered
+                if(compareDatastreamChecksum) {
+                    String msg = APIM.compareDatastreamChecksum(m_ds.objectPID, m_ds.dsID,
+                        m_ds.asOfDate);
+                    
+                    if (!msg.equals("Checksum validation error")) {
+                    	succeededCount++;
+                    	logSucceededDirective(m_ds.objectPID, localName,
+                    			"datastream: " + m_ds.dsID
+                    			+ "\n    compareDatastreamChecksum: " + msg);
+                    } else {
+                    	throw new Exception("Checksum validation error");
+                    }
+                }
+
+            } catch (Exception e) {
+                if (compareDatastreamChecksum) {
+                    failedCount++;
+                    logFailedDirective(m_ds.objectPID, localName, e, null);
+                }
+            } finally {
+                compareDatastreamChecksum = false;
+            }                        
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastreamBinding")) {
 
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("removeDatastreamBinding")) {
