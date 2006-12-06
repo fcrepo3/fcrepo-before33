@@ -415,6 +415,8 @@ public class BatchModifyParser extends DefaultHandler
                 // of the datastream are to be purged.
                 if (attrs.getValue("asOfDate")!=null && !attrs.getValue("asOfDate").equals(""))
                     m_ds.asOfDate = attrs.getValue("asOfDate");
+                if (attrs.getValue("endDate")!=null && !attrs.getValue("endDate").equals(""))
+                    m_ds.endDate = attrs.getValue("endDate");                
                 if ( attrs.getValue("force") != null && !attrs.getValue("force").equals(""))
                     m_ds.force = new Boolean(attrs.getValue("force")).booleanValue();
 
@@ -1076,22 +1078,36 @@ public class BatchModifyParser extends DefaultHandler
                 if (purgeDatastream) {
                     String[] versionsPurged = null;
                     versionsPurged = APIM.purgeDatastream(m_ds.objectPID,
-                        m_ds.dsID, null, m_ds.asOfDate, m_ds.logMessage, m_ds.force);
+                        m_ds.dsID, m_ds.asOfDate, m_ds.endDate, m_ds.logMessage, m_ds.force);
                     if (versionsPurged.length > 0) {
                         succeededCount++;
-                        if (m_ds.asOfDate!=null) {
+                        if (m_ds.asOfDate!=null && m_ds.endDate!=null) {
                             logSucceededDirective(m_ds.objectPID,
                                 localName,
                                 "datastreamID: " + m_ds.dsID
-                                    + "\n    Purged all versions prior to: "
-                                    + m_ds.asOfDate
+                                    + "\n    Purged all versions from: "
+                                    + m_ds.asOfDate + " to " + m_ds.endDate
                                     + "\n    Versions purged: "+versionsPurged.length);
-                        } else {
+                        } else if (m_ds.asOfDate==null && m_ds.endDate==null) {
                             logSucceededDirective(m_ds.objectPID,
-                                localName,
-                                "datastreamID: " + m_ds.dsID
-                                    + "\n    Purged all versions. "
-                                    + "\n    Versions purged: "+versionsPurged.length);
+                                    localName,
+                                    "datastreamID: " + m_ds.dsID
+                                        + "\n    Purged all versions. "
+                                        + "\n    Versions purged: "+versionsPurged.length);
+                        } else if (m_ds.asOfDate!=null && m_ds.endDate==null) {
+                            logSucceededDirective(m_ds.objectPID,
+                                    localName,
+                                    "datastreamID: " + m_ds.dsID
+                                        + "\n    Purged all versions after : "
+                                        + m_ds.asOfDate
+                                        + "\n    Versions purged: "+versionsPurged.length);                        	
+                        } else if (m_ds.asOfDate==null && m_ds.endDate!=null) {
+                            logSucceededDirective(m_ds.objectPID,
+                                    localName,
+                                    "datastreamID: " + m_ds.dsID
+                                        + "\n    Purged all versions prior to : "
+                                        + m_ds.endDate
+                                        + "\n    Versions purged: "+versionsPurged.length); 
                         }
                     } else {
                         failedCount++;

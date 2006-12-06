@@ -86,6 +86,7 @@
 			<xsd:attribute name="pid" type="xsd:string" use="required"/>
 			<xsd:attribute name="dsID" type="xsd:string" use="required"/>
 			<xsd:attribute name="asOfDate" type="xsd:dateTime" use="optional"/>
+			<xsd:attribute name="endDate" type="xsd:dateTime" use="optional"/>
 			<xsd:attribute name="force" type="xsd:boolean" use="optional"/>
 			<xsd:attribute name="logMessage" type="xsd:string" use="required"/>
 		</xsd:complexType>
