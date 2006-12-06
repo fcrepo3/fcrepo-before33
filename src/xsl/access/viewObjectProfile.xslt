@@ -95,6 +95,14 @@
 							<xsl:value-of select="objLastModDate"/>
 						</td>
 					</tr>
+					<tr>
+						<td align="right">
+							<font color="blue">Object Owner Identifier: </font>
+						</td>
+						<td align="left">
+							<xsl:value-of select="objOwnerId"/>
+						</td>
+					</tr>
 					</table>
 				</center>
 			</body>
