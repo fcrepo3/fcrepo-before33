@@ -50,6 +50,7 @@
 			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/model#createdDate']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/model#createdDate']) = 0">DUPLICATE object property: creation date (foxml:property NAME='info:fedora/fedora-system:def/model#createdDate' )</sch:assert>
 			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/view#lastModifiedDate']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/view#lastModifiedDate']) = 0">DUPLICATE object property: modification date (foxml:property NAME='info:fedora/fedora-system:def/model#lastModifiedDate' )</sch:assert>
 			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel']) = 0">DUPLICATE object property: content model (foxml:property NAME='info:fedora/fedora-system:def/model#contentModel')</sch:assert>
+			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/model#ownerId']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/model#ownerId']) = 0">DUPLICATE object property: ownerId (foxml:property NAME='info:fedora/fedora-system:def/model#ownerId')</sch:assert>
 		</sch:rule>
 		<!-- RULE: check that attributes do not exceed length limits and are not missing if required. -->
 		<sch:rule context="foxml:property[@NAME='info:fedora/fedora-system:def/model#label']">
