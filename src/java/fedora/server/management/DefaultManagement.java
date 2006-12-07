@@ -229,6 +229,9 @@ public class DefaultManagement
             if (label!=null) {
                 w.setLabel(label);
             }
+            if (ownerId!=null) {
+                w.setOwnerId(ownerId);
+            }
             w.commit(logMessage);
             return w.getLastModDate();
         } finally {

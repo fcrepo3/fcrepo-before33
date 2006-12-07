@@ -71,6 +71,13 @@ public class SimpleDOWriter
         assertNotPendingRemoval();
         m_obj.setState(state);
     }
+    
+    public void setOwnerId(String ownerId)
+    throws ObjectIntegrityException {
+    	assertNotInvalidated();
+    	assertNotPendingRemoval();
+    	m_obj.setOwnerId(ownerId);
+}    
 
     public void setDatastreamState(String datastreamID, String dsState)
             throws ServerException {

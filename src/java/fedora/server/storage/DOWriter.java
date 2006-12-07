@@ -37,6 +37,15 @@ public interface DOWriter
     public void setState(String state) throws ServerException;
 
     /**
+     * Sets the ownerId for the digital object.
+     *
+     * @param ownerId The ownerId.
+     * @throws ServerException If any type of error occurred fulfilling the
+     *         request.
+     */
+    public void setOwnerId(String ownerId) throws ServerException;    
+    
+    /**
      * Sets the state for all versions of the specified datastream.
      *
      * @param id The datastream id.
