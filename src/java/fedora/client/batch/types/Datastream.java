@@ -21,6 +21,8 @@ public class Datastream
 
   public String asOfDate;
 
+  public String endDate;
+
   public String dsControlGrp;
 
   public String dsInfoType;
