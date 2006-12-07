@@ -143,12 +143,15 @@ public class Installer {
         
         String database = _opts.getValue(InstallOptions.DATABASE);
         String dbPoolName = "";
+        String backslashIsEscape = "true";
         if (database.equals(InstallOptions.MCKOI) || database.equals(InstallOptions.INCLUDED)) {
         	dbPoolName = "localMcKoiPool";
+        	backslashIsEscape = "false";
         } else if (database.equals(InstallOptions.MYSQL)) {
         	dbPoolName = "localMySQLPool";
         } else if (database.equals(InstallOptions.ORACLE)) {
         	dbPoolName = "localOraclePool";
+        	backslashIsEscape = "false";
         } else if (database.equals(InstallOptions.POSTGRESQL)) {
         	dbPoolName = "localPostgresqlPool";
         } else {
@@ -158,11 +161,12 @@ public class Installer {
     	props.put("module.fedora.server.search.FieldSearch.connectionPool", dbPoolName);
     	props.put("module.fedora.server.storage.ConnectionPoolManager.poolNames", dbPoolName);
     	props.put("module.fedora.server.storage.ConnectionPoolManager.defaultPoolName", dbPoolName);
+    	props.put("module.fedora.server.storage.lowlevel.ILowlevelStorage.backslash_is_escape", backslashIsEscape);
         props.put("datastore." + dbPoolName + ".jdbcURL", _opts.getValue(InstallOptions.DATABASE_JDBCURL));
         props.put("datastore." + dbPoolName + ".dbUsername", _opts.getValue(InstallOptions.DATABASE_USERNAME));
         props.put("datastore." + dbPoolName + ".dbPassword", _opts.getValue(InstallOptions.DATABASE_PASSWORD));
         props.put("datastore." + dbPoolName + ".jdbcDriverClass", _opts.getValue(InstallOptions.DATABASE_DRIVERCLASS));
-
+        
         if (_opts.getBooleanValue(InstallOptions.XACML_ENABLED, true)) {
         	props.put("module.fedora.server.security.Authorization.ENFORCE-MODE", "enforce-policies");
         } else {
