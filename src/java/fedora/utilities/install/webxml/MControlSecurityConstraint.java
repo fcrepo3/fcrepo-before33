@@ -7,7 +7,7 @@ import java.util.Set;
 import org.dom4j.Document;
 
 /**
- * Required auth-constraint
+ * Required auth-constraint (now handled by servlet filters)
  * No user-data-constraint
  * @author Edwin Shin
  *
@@ -24,7 +24,7 @@ public class MControlSecurityConstraint extends SecurityConstraint {
 	public MControlSecurityConstraint(Document document, WebXMLOptions options) {
 		super(document, options);
 		
-		addAuthConstraint();
+		//addAuthConstraint();
 		removeUserDataConstraint();
 	}
 	
