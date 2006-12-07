@@ -148,7 +148,7 @@ public class OptionDefinition {
                 	}
                 } else {
                     // must be creatable
-                    boolean created = dir.mkdir();
+                    boolean created = dir.mkdirs();
                     if (!created) {
                         throw new OptionValidationException("Unable to create specified directory", _id);
                     } else {
