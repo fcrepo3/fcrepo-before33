@@ -62,6 +62,11 @@
 	<fbm:modifyObject pid="demo:32" label="Object Label was changed" logMessage="BatchModify - modifyObject"/>
 	
 	<!-- ****************************************************************** -->
+	<!-- Modify object demo:32 by changing its ownerId to objectOwner       -->
+	<!-- *******************************************************************-->
+	<fbm:modifyObject pid="demo:32" ownerId="objectOwner" logMessage="BatchModify - modifyObject"/>	
+	
+	<!-- ****************************************************************** -->
 	<!-- Modify object demo:33 by changing its state to deleted.            -->
 	<!-- *******************************************************************-->
 	<fbm:modifyObject pid="demo:33" state="D" logMessage="BatchModify - modifyObject"/>
