@@ -152,7 +152,7 @@
                  - how the service is exposed
                  - how bytestreams and java types might be marshalled/demarshalled over the wire
                  - how the storage subsystem is implemented.</comment>
-		<param name="autoChecksum" value="true">
+		<param name="autoChecksum" value="false">
 			<comment>Controls whether a checksum is automatically computed for 
 			every datastream as the datastream is added to the repository. This 
 			will allow the integrity of datastream contents to be periodically 
