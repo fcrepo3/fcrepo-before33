@@ -798,7 +798,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, "", extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	} finally {
         LOG.debug("Exiting enforceIngestObject");
 	}
