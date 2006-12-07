@@ -7,6 +7,7 @@
     <property environment="env"/>
     <property name="javac.debug"               value="on"/>
     <property name="javac.deprecation"         value="on"/>
+    <property name="javac.maxwarns"            value="100"/>
     <property name="javac.optimize"            value="off"/>
     <property name="javac.source"              value="1.5"/>
     <property name="javac.target"              value="1.5"/>
@@ -187,6 +188,8 @@
         <attribute name="fork" default="no"/>
         <attribute name="includes" default=""/>
         <attribute name="srcdir"/>
+        <attribute name="compilerargs" 
+                   default="-Xlint -Xlint:-path -Xmaxwarns ${javac.maxwarns}"/>
         <sequential>
             <mkdir dir="@{destdir}"/>
             <javac classpathref="@{classpathref}" 
@@ -200,7 +203,7 @@
                    source="${javac.source}" 
                    srcdir="@{srcdir}"
                    target="${javac.target}">
-            	<compilerarg value="-Xlint"/>
+            	<compilerarg line="@{compilerargs}"/>
             </javac>
         </sequential>
     </macrodef>
