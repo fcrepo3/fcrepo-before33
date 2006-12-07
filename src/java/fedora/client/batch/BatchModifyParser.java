@@ -316,7 +316,12 @@ public class BatchModifyParser extends DefaultHandler
                     m_obj.state = attrs.getValue("state");
                 else {
                     m_obj.state = null;
-                }                
+                }      
+                if ( attrs.getValue("ownerId") != null && !attrs.getValue("ownerId").equals(""))
+                    m_obj.ownerId = attrs.getValue("ownerId");
+                else {
+                    m_obj.ownerId = null;
+                }                 
                 modifyObject = true;
 
             } catch (Exception e) {
