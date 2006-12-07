@@ -67,12 +67,13 @@
 			<comment>The java class that determines the implementation class; 
 			default is fedora.server.storage.lowlevel.GenericFileSystem.</comment>
 		</param>
-		<param name="backslash_is_escape" value="true" oraclevalue="false">
+		<param name="backslash_is_escape" value="true">
 			<comment>Whether the escape character (i.e. (the token beginning an 
 			escape sequence) for the backing database (which includes 
 			registry tables) is the backslash character. This is needed to 
 			correctly store and retrieve filepaths from the registry 
-			tables, if running under Windows/DOS.</comment>
+			tables, if running under Windows/DOS. (Set to true for MySQL and 
+			Postgresql, false for Oracle and McKoi.</comment>
 		</param>
 	</module>
 	<module role="fedora.server.security.Authorization" class="fedora.server.security.DefaultAuthorization">
