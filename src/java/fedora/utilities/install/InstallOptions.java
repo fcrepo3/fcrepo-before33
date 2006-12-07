@@ -88,10 +88,13 @@ public class InstallOptions {
         inputOption(FEDORA_HOME);
         inputOption(FEDORA_ADMIN_PASS);
         
+        String fedoraHome = new File(getValue(InstallOptions.FEDORA_HOME)).getAbsolutePath();
+        String includedJDBCURL = "jdbc:mckoi:local://" + fedoraHome + 
+		"/" + Distribution.MCKOI_BASENAME +"/db.conf?create_or_boot=true";
+        
         if (getValue(INSTALL_TYPE).equals(INSTALL_QUICK)) {
         	// As much as possible, the 'quick' install uses the defaultValues 
         	// defined in OptionDefinition.properties
-        	String fedoraHome = new File(getValue(InstallOptions.FEDORA_HOME)).getAbsolutePath();
         	_map.put(APIA_AUTH_REQUIRED, null); // false
         	_map.put(SSL_AVAILABLE, null); // true
         	_map.put(APIM_SSL_REQUIRED, null); // true
@@ -105,8 +108,7 @@ public class InstallOptions {
         	_map.put(DATABASE, null); // included
         	_map.put(DATABASE_USERNAME, "fedoraAdmin");
         	_map.put(DATABASE_PASSWORD, "fedoraAdmin");
-			_map.put(DATABASE_JDBCURL, "jdbc:mckoi:local://" + fedoraHome + 
-					"/" + Distribution.MCKOI_BASENAME +"/db.conf?create_or_boot=true");
+			_map.put(DATABASE_JDBCURL, includedJDBCURL);
         	_map.put(DATABASE_DRIVERCLASS, null); // 
         	_map.put(DEPLOY_LOCAL_SERVICES, null); // true
         	applyDefaults();
@@ -149,7 +151,11 @@ public class InstallOptions {
         String jdbcURL = db + ".jdbcURL";
         String jdbcDriverClass = db + ".jdbcDriverClass";
         
-        if ( !getValue(DATABASE).equals(INCLUDED) ) {
+        if ( getValue(DATABASE).equals(INCLUDED) ) {
+        	_map.put(DATABASE_USERNAME, "fedoraAdmin");
+        	_map.put(DATABASE_PASSWORD, "fedoraAdmin");
+			_map.put(DATABASE_JDBCURL, includedJDBCURL);
+        } else {
         	boolean dbValidated = false;
             while (!dbValidated) {
 	        	inputOption(driver);
