@@ -18,7 +18,6 @@ import fedora.server.config.webxml.UserDataConstraint;
 import fedora.server.config.webxml.WebResourceCollection;
 import fedora.server.config.webxml.WebXML;
 import fedora.utilities.install.InstallOptions;
-import fedora.utilities.install.webxml.WebXMLOptions;
 
 /**
  * Configures the web.xml for Fedora.
