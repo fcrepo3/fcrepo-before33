@@ -27,6 +27,7 @@ import com.sun.xacml.ctx.Subject;
 import com.sun.xacml.finder.PolicyFinder;
 
 import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.errors.authorization.AuthzDeniedException;
@@ -34,6 +35,8 @@ import fedora.server.errors.authorization.AuthzException;
 import fedora.server.errors.authorization.AuthzOperationalException;
 import fedora.server.errors.authorization.AuthzPermittedException;
 import fedora.server.storage.DOManager;
+
+import fedora.utilities.Log4JRedirectFilter;
 
 /**
  * @author wdn5e@virginia.edu
@@ -69,6 +72,11 @@ public class PolicyEnforcementPoint {
 	private final URI ACTION_CONTEXT_URI;
 	private final URI RESOURCE_ID_URI;
 	private final URI RESOURCE_NAMESPACE_URI;
+
+    static {
+        // force com.sun.xacml logging to use Log4J
+        Log4JRedirectFilter.apply("com.sun.xacml.finder.AttributeFinder");
+    }
 
 	private PolicyEnforcementPoint() {
 
@@ -445,8 +453,6 @@ public class PolicyEnforcementPoint {
 					log("test env attributeValue.toString()=" + testAttributeValue.toString());
 				}
 				*/
-    				java.util.logging.Logger logger = java.util.logging.Logger.getLogger("com.sun.xacml");
-    				logger.setLevel(java.util.logging.Level.ALL);
                     LOG.debug("about to ref contextAttributeFinder=" + contextAttributeFinder);
     				contextAttributeFinder.registerContext(contextIndex, context);
 
