@@ -120,10 +120,11 @@ public class MultiFileJournalHelper implements JournalConstants,
     }
 
     /**
-     * Create the name for a Journal file, based on the prefix and the current
-     * date.
+     * Create the name for a Journal file or a log file, based on the prefix and
+     * the current date.
      */
-    static String createJournalFilename(String filenamePrefix, Date date) {
+    public static String createTimestampedFilename(String filenamePrefix,
+            Date date) {
         SimpleDateFormat formatter = new SimpleDateFormat(
                 FORMAT_JOURNAL_FILENAME_TIMESTAMP);
         formatter.setTimeZone(TimeZone.getTimeZone("GMT"));

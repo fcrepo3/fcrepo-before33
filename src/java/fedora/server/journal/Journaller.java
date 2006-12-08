@@ -59,8 +59,10 @@ public class Journaller extends Module implements Management, JournalConstants {
     public void initModule() throws ModuleInitializationException {
         Map parameters = getParameters();
         copyPropertiesOverParameters(parameters);
-        parseParameters(parameters);
         this.serverInterface = new ServerWrapper(getServer());
+        LOG.info("Journalling parameters: " + parameters);
+        parseParameters(parameters);
+
 
         if (this.inRecoveryMode) {
             worker = new JournalConsumer(parameters, getRole(),

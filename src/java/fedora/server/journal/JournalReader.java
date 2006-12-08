@@ -344,8 +344,7 @@ public abstract class JournalReader extends AbstractXmlReader implements
             ConsumerJournalEntry journalEntry, String name)
             throws XMLStreamException, JournalException {
         try {
-            File tempFile = File.createTempFile("fedora-journal-temp", ".xml");
-            tempFile.deleteOnExit();
+            File tempFile = JournalHelper.createTempFile();
             DecodingBase64OutputStream decoder = new DecodingBase64OutputStream(
                     new FileOutputStream(tempFile));
 

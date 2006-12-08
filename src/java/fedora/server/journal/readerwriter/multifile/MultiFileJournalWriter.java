@@ -137,7 +137,7 @@ public class MultiFileJournalWriter extends JournalWriter implements
 
         String newestFilename = journalFiles[journalFiles.length - 1].getName();
         String potentialFilename = MultiFileJournalHelper
-                .createJournalFilename(filenamePrefix, new Date());
+                .createTimestampedFilename(filenamePrefix, new Date());
         if (newestFilename.compareTo(potentialFilename) > 0) {
             throw new JournalException(
                     "The name of one or more existing files in the journal "

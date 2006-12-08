@@ -42,11 +42,27 @@ public class JournalHelper implements JournalConstants {
      */
     public static File copyToTempFile(InputStream serialization)
             throws IOException, FileNotFoundException {
-        File tempFile = File.createTempFile("fedora-journal-temp", ".xml");
-        tempFile.deleteOnExit();
-        StreamUtility.pipeStream(serialization, new FileOutputStream(tempFile),
-                4096);
+        File tempFile = createTempFile();
+        StreamUtility.pipeStream(serialization, new FileOutputStream(
+                tempFile), 4096);
         return tempFile;
+    }
+
+    /**
+     * Create a temporary file. The "File"
+     * object that we return is really an instance of "JournalTempFile", so we
+     * can detect it later in isTempFile().
+     */
+    public static File createTempFile() throws IOException {
+        File rawTempFile = File.createTempFile("fedora-journal-temp", ".xml");
+        return new JournalTempFile(rawTempFile);
+    }
+    
+    /**
+     * Is this file one that we created as a temp file?
+     */
+    public static boolean isTempFile(File file) {
+        return (file instanceof JournalTempFile);
     }
 
     /**

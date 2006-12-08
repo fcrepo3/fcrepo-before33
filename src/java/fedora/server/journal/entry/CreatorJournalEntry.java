@@ -52,10 +52,21 @@ public class CreatorJournalEntry extends JournalEntry {
             throws ServerException, JournalException {
         synchronized (CreatorJournalEntry.class) {
             writer.prepareToWriteJournalEntry();
-            Object result = this.method.invoke(delegate);
+            Object result = super.getMethod().invoke(delegate);
             writer.writeJournalEntry(this);
             return result;
         }
+    }
+
+    /**
+     * A convenience method that invokes the management method and then closes
+     * the JournalEntry, thereby cleaning up any temp files.
+     */
+    public Object invokeAndClose(ManagementDelegate delegate,
+            JournalWriter writer) throws ServerException, JournalException {
+        Object result = this.invokeMethod(delegate, writer);
+        this.close();
+        return result;
     }
 
 }

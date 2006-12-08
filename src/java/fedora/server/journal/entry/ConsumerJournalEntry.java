@@ -31,8 +31,8 @@ public class ConsumerJournalEntry extends JournalEntry {
             JournalRecoveryLog recoveryLog)
             throws ServerException, JournalException {
         recoveryLog.log(this);
-        this.method.invoke(delegate);
-        recoveryLog.log("Call complete:" + methodName);
+        super.getMethod().invoke(delegate);
+        recoveryLog.log("Call complete:" + super.getMethodName());
     }
 
     public void setIdentifier(String identifier) {

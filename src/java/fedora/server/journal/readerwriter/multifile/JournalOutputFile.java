@@ -108,7 +108,7 @@ class JournalOutputFile implements MultiFileJournalConstants {
      */
     private File createFilename(String filenamePrefix, File journalDirectory)
             throws JournalException {
-        String filename = MultiFileJournalHelper.createJournalFilename(
+        String filename = MultiFileJournalHelper.createTimestampedFilename(
                 filenamePrefix, new Date());
         File theFile = new File(journalDirectory, filename);
 

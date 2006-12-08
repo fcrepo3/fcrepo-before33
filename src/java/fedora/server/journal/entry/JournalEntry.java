@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,16 +25,22 @@ import fedora.server.storage.types.DSBindingMap;
  * this level, a JournalEntry is a method name, a method adapter, and a map of
  * arguments.
  * </p>
+ * <p>
+ * NOTE: when finished with the JournalEntry, call close(). This will release
+ * any temporary files associated with the entry.
+ * </p>
  * 
  * @author jblake@cs.cornell.edu
  * @version $Id$
  */
 
 public abstract class JournalEntry {
-    protected final Map arguments = new LinkedHashMap();
-    protected final String methodName;
-    protected final ManagementMethod method;
-    protected final JournalEntryContext context;
+    private boolean open = true;
+    
+    private final Map arguments = new LinkedHashMap();
+    private final String methodName;
+    private final ManagementMethod method;
+    private final JournalEntryContext context;
 
     protected JournalEntry(String methodName, JournalEntryContext context) {
         this.methodName = methodName;
@@ -42,26 +49,37 @@ public abstract class JournalEntry {
     }
 
     public JournalEntryContext getContext() {
+        checkOpen();
         return context;
     }
 
+    public ManagementMethod getMethod() {
+        checkOpen();
+        return method;
+    }
+    
     public String getMethodName() {
+        checkOpen();
         return methodName;
     }
 
     public Map getArgumentsMap() {
+        checkOpen();
         return new LinkedHashMap(arguments);
     }
 
     public void addArgument(String key, boolean value) {
+        checkOpen();
         addArgument(key, Boolean.valueOf(value));
     }
 
     public void addArgument(String key, int value) {
+        checkOpen();
         addArgument(key, new Integer(value));
     }
 
     public void addArgument(String key, Object value) {
+        checkOpen();
         arguments.put(key, value);
     }
 
@@ -71,6 +89,7 @@ public abstract class JournalEntry {
      */
     public void addArgument(String key, InputStream stream)
             throws JournalException {
+        checkOpen();
         try {
             File tempFile = JournalHelper.copyToTempFile(stream);
             arguments.put(key, tempFile);
@@ -81,11 +100,13 @@ public abstract class JournalEntry {
 
     // convenience method for setting values into the Context recovery space.
     public void setRecoveryValue(String attribute, String value) {
+        checkOpen();
         this.context.setRecoveryValue(attribute, value);
     }
 
     // convenience method for setting values into the Context recovery space.
     public void setRecoveryValues(String attribute, String[] values) {
+        checkOpen();
         this.context.setRecoveryValues(attribute, values);
     }
 
@@ -93,22 +114,27 @@ public abstract class JournalEntry {
     // Convenience methods for pulling arguments out of the argument map.
     //
     public int getIntegerArgument(String name) {
+        checkOpen();
         return ((Integer) arguments.get(name)).intValue();
     }
 
     public boolean getBooleanArgument(String name) {
+        checkOpen();
         return ((Boolean) arguments.get(name)).booleanValue();
     }
 
     public String getStringArgument(String name) {
+        checkOpen();
         return (String) arguments.get(name);
     }
 
     public Date getDateArgument(String name) {
+        checkOpen();
         return (Date) arguments.get(name);
     }
 
     public String[] getStringArrayArgument(String name) {
+        checkOpen();
         return (String[]) arguments.get(name);
     }
 
@@ -117,6 +143,7 @@ public abstract class JournalEntry {
      * map and create an InputStream on that file.
      */
     public InputStream getStreamArgument(String name) throws JournalException {
+        checkOpen();
         try {
             return new FileInputStream((File) arguments.get(name));
         } catch (FileNotFoundException e) {
@@ -125,7 +152,42 @@ public abstract class JournalEntry {
     }
 
     public DSBindingMap getDSBindingMapArgument(String name) {
+        checkOpen();
         return (DSBindingMap) arguments.get(name);
     }
 
+    /**
+     * This should be called when usage of the object is complete, to clean up
+     * any temporary files that were created for the journal entry to use.
+     */
+    public void close() {
+        checkOpen();
+        
+        open = false;
+        
+        for (Iterator args = arguments.values().iterator(); args.hasNext();) {
+            Object arg = args.next();
+            if (arg instanceof File) {
+                File file = (File) arg;
+                if (JournalHelper.isTempFile(file)) {
+                    if (file.exists()) {
+                        file.delete();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Every non-private method should call this first, to prevent accessing the
+     * object after it has been closed.
+     * 
+     * @throws IllegalStateException if the open flag has been reset.
+     */
+    private void checkOpen() throws IllegalStateException {
+        if (!open) {
+            throw new IllegalStateException("JournalEntry must not be " +
+                    "accessed after close() has been called");
+        }
+    }
 }

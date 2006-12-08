@@ -108,7 +108,7 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_FORMAT, format);
             cje.addArgument(ARGUMENT_NAME_ENCODING, encoding);
             cje.addArgument(ARGUMENT_NAME_NEW_PID, newPid);
-            return (String) cje.invokeMethod(delegate, writer);
+            return (String) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
@@ -127,7 +127,7 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_LABEL, label);
             cje.addArgument(ARGUMENT_NAME_OWNERID, ownerId);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
-            return (Date) cje.invokeMethod(delegate, writer);
+            return (Date) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
@@ -144,7 +144,7 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
             cje.addArgument(ARGUMENT_NAME_FORCE, force);
-            return (Date) cje.invokeMethod(delegate, writer);
+            return (Date) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
@@ -175,7 +175,7 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_CHECKSUM_TYPE, checksumType);
             cje.addArgument(ARGUMENT_NAME_CHECKSUM, checksum);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
-                 return (String) cje.invokeMethod(delegate, writer);
+            return (String) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
@@ -203,7 +203,7 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_CHECKSUM, checksum);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
             cje.addArgument(ARGUMENT_NAME_FORCE, force);
-            return (Date) cje.invokeMethod(delegate, writer);
+            return (Date) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
@@ -231,7 +231,7 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_CHECKSUM, checksum);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
             cje.addArgument(ARGUMENT_NAME_FORCE, force);
-            return (Date) cje.invokeMethod(delegate, writer);
+            return (Date) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
@@ -249,7 +249,7 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_DS_ID, dsID);
             cje.addArgument(ARGUMENT_NAME_DS_STATE, dsState);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
-            return (Date) cje.invokeMethod(delegate, writer);
+            return (Date) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
@@ -268,7 +268,7 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_DS_ID, dsID);
             cje.addArgument(ARGUMENT_NAME_VERSIONABLE, versionable);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
-            return (Date) cje.invokeMethod(delegate, writer);
+            return (Date) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
@@ -286,7 +286,7 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_DS_ID, dsID);
             cje.addArgument(ARGUMENT_NAME_VERSION_DATE, versionDate);
-            return (String) cje.invokeMethod(delegate, writer);
+            return (String) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
@@ -308,7 +308,7 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_END_DATE, endDT);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
             cje.addArgument(ARGUMENT_NAME_FORCE, force);
-            return (Date[]) cje.invokeMethod(delegate, writer);
+            return (Date[]) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
@@ -330,7 +330,7 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_BINDING_MAP, bindingMap);
             cje.addArgument(ARGUMENT_NAME_DISSEMINATOR_STATE, dissState);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
-            return (String) cje.invokeMethod(delegate, writer);
+            return (String) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
@@ -354,7 +354,7 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_DISSEMINATOR_STATE, dissState);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
             cje.addArgument(ARGUMENT_NAME_FORCE, force);
-            return (Date) cje.invokeMethod(delegate, writer);
+            return (Date) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
@@ -373,7 +373,7 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_DISSEMINATOR_ID, disseminatorID);
             cje.addArgument(ARGUMENT_NAME_DISSEMINATOR_STATE, dissState);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
-            return (Date) cje.invokeMethod(delegate, writer);
+            return (Date) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
@@ -392,7 +392,7 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_DISSEMINATOR_ID, disseminatorID);
             cje.addArgument(ARGUMENT_NAME_END_DATE, endDT);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
-            return (Date[]) cje.invokeMethod(delegate, writer);
+            return (Date[]) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
@@ -407,7 +407,7 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             CreatorJournalEntry cje = new CreatorJournalEntry(
                     METHOD_PUT_TEMP_STREAM, context);
             cje.addArgument(ARGUMENT_NAME_IN, in);
-            return (String) cje.invokeMethod(delegate, writer);
+            return (String) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
@@ -423,7 +423,7 @@ public class JournalCreator implements JournalWorker, JournalConstants {
                     METHOD_GET_NEXT_PID, context);
             cje.addArgument(ARGUMENT_NAME_NUM_PIDS, numPIDs);
             cje.addArgument(ARGUMENT_NAME_NAMESPACE, namespace);
-            return (String[]) cje.invokeMethod(delegate, writer);
+            return (String[]) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }

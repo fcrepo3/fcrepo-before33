@@ -79,6 +79,7 @@ public class JournalConsumerThread extends Thread {
                     break;
                 }
                 cje.invokeMethod(delegate, recoveryLog);
+                cje.close();
             }
             reader.shutdown();
 
