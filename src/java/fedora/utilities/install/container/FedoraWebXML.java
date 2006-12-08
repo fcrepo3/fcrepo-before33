@@ -79,7 +79,6 @@ public class FedoraWebXML {
 	
 	public FedoraWebXML(String webXML, WebXMLOptions options) {
 		this.options = options;
-		System.out.println("\n\n*************************************\n\t Using: " + webXML);
 		fedoraWebXML = fedora.server.config.webxml.WebXML.getInstance(webXML);
 
 		setFedoraHome();
