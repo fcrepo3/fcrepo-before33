@@ -770,6 +770,7 @@
 		<copy file="${lib.dom4j}" todir="${install.build.dir}/lib"/>
 		<copy file="${lib.jaxen}" todir="${install.build.dir}/lib"/>
 		<copy file="${lib.jrdf}" todir="${install.build.dir}/lib"/>
+		<copy file="${lib.log4j}" todir="${install.build.dir}/lib"/>
 		<copy file="${lib.commons-beanutils}" todir="${install.build.dir}/lib"/>
 		<copy file="${lib.commons-betwixt}" todir="${install.build.dir}/lib"/>
 		<copy file="${lib.commons-collection}" todir="${install.build.dir}/lib"/>

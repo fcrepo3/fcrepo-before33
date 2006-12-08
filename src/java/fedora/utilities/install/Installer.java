@@ -13,6 +13,8 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Properties;
 
+import org.apache.log4j.PropertyConfigurator;
+
 import fedora.server.config.ServerConfiguration;
 import fedora.server.config.ServerConfigurationParser;
 import fedora.server.security.BESecurityConfig;
@@ -26,6 +28,21 @@ import fedora.utilities.install.container.Container;
 import fedora.utilities.install.container.FedoraWebXML;
 
 public class Installer {
+	static {
+		//send all log4j (WARN only) output to STDOUT
+		Properties props = new Properties();
+		props.setProperty("log4j.appender.STDOUT", "org.apache.log4j.ConsoleAppender");
+		props.setProperty("log4j.rootLogger", "WARN, STDOUT");
+		PropertyConfigurator.configure(props);
+		
+		//tell commons-logging to use log4j
+		final String pfx = "org.apache.commons.logging.";
+		if (System.getProperty(pfx + "LogFactory") == null) {
+			System.setProperty(pfx + "LogFactory", pfx + "impl.Log4jFactory");
+			System.setProperty(pfx + "Log", pfx + "impl.Log4JLogger");
+		}
+	}
+	
     private Distribution _dist;
     private InstallOptions _opts;
     
