@@ -27,49 +27,46 @@ public class CacheElement {
 	private String errorMessage = null;
 	
 	public final void audit() {
-		System.err.println("userid==" + userid);
-		//System.err.println("password==" + password);
-		System.err.println("authenticated==" + authenticated);
-		System.err.print("roles==");
+		log.debug("userid==" + userid);
+		log.debug("authenticated==" + authenticated);
+		log.debug("roles==");
 		for (Iterator it = roles.iterator(); it.hasNext(); ) {
 			Object temp = it.next();
 			if (! (temp instanceof String)) {
-				System.err.print(">>>>> ROLE IS NOT STRING <<<<<");				
+				log.debug(">>>>> ROLE IS NOT STRING <<<<<");				
 			} else {
 				String role = (String) temp;
-				System.err.print(role + ",");
+				log.debug(role + ",");
 			}
 		}
-		System.err.println();
-		System.err.println("namedAttributes==");
+		log.debug("namedAttributes==");
 		for (Iterator it1 = namedValues.keySet().iterator(); it1.hasNext(); ) {
 			Object temp = it1.next();
 			if (! (temp instanceof String)) {
-				System.err.print(">>>>> NAME IS NOT STRING <<<<<");				
+				log.debug(">>>>> NAME IS NOT STRING <<<<<");				
 			} else {
 				String name = (String) temp;
-				System.err.print(name + "==");
+				log.debug(name + "==");
 				temp = namedValues.get(name);
 				if (temp instanceof String) {
-					System.err.print(temp);				
+					log.debug(temp);				
 				} else if (temp instanceof Set) {
 					Set values = (Set) temp;
-					System.err.println("in audit set n==" + values.size());
+					log.debug("in audit set n==" + values.size());
 					for (Iterator it2 = values.iterator(); it2.hasNext(); ) {
 						temp = it2.next();
 						if (! (temp instanceof String)) {
-							System.err.print(">>>>> VALUE IS NOT STRING <<<<<");				
+							log.debug(">>>>> VALUE IS NOT STRING <<<<<");				
 						} else {
 							String value = (String) temp;
-							System.err.print(value + ",");
+							log.debug(value + ",");
 						}
 					}
 				} else {
-					System.err.print(">>>>> VALUES IS NEITHER STRING NOR SET <<<<<");
+					log.debug(">>>>> VALUES IS NEITHER STRING NOR SET <<<<<");
 				}
 			}
 		}
-		System.err.println();
 	}
 	
 	public final HashSet NULL_SET =  new HashSet(); //<<<<<<<<<<<<<<new ImmutableHashSet();
@@ -77,7 +74,7 @@ public class CacheElement {
 	
 	public final void populate(Boolean authenticated, Set predicates, Map namedValues, String errorMessage) {
 		this.errorMessage = errorMessage;
-		System.err.println("in ce.pop");
+		log.debug("in ce.pop");
 		if (errorMessage == null) {
 			this.authenticated = authenticated;
 			if (predicates == null) {
@@ -86,15 +83,15 @@ public class CacheElement {
 				this.roles = predicates;
 			}
 			if (namedValues == null) {
-				System.err.println("in ce.pop(), namedValues is null");
+				log.debug("in ce.pop(), namedValues is null");
 				this.namedValues = EMPTY_MAP;
 			} else {
-				System.err.println("in ce.pop(), namedValues is not null " + namedValues);
+				log.debug("in ce.pop(), namedValues is not null " + namedValues);
 				this.namedValues = namedValues;
 			}
 			audit();
 		} else {
-			System.err.println(errorMessage);
+			log.debug(errorMessage);
 		}
 	}
 	

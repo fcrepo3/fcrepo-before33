@@ -94,7 +94,7 @@ CacheElementPopulator cacheElementPopulator
 		String key = getKey(userid/*, password, getCacheKeySeparator()*/);
 		CacheElement cacheElement  = getCacheElement(userid);
 		if (cacheElement == null) {
-			System.err.println("cache element is null for " + userid);
+			log.debug("cache element is null for " + userid);
 		} else {
 			cacheElement.audit();
 		}
@@ -113,7 +113,7 @@ CacheElementPopulator cacheElementPopulator
 		String keytemp = getKey(userid/*,password,CACHE_KEY_SEPARATOR*/);
 		Integer key = new Integer(keytemp.hashCode());
 		if (! cache.containsKey(key)) {
-			System.err.println("CREATING CACHE ELEMENT FOR KEY==" + key);
+			log.debug("CREATING CACHE ELEMENT FOR KEY==" + key);
 			CacheElement itemtemp = new CacheElement(userid, /*password,*/ this);
 			cache.put(key,itemtemp);		
 		}	
@@ -122,7 +122,7 @@ CacheElementPopulator cacheElementPopulator
 	}
 	
 	public final Boolean authenticate(CacheElementPopulator authenticator, String userid, String password) throws Throwable{
-		System.err.println("cache.authenticate() called");
+		log.debug("cache.authenticate() called");
 		CacheElement cacheElement = getCacheElement(userid /*, password*/);
 		log.fatal(this.getClass().getName() + ".authenticate() cacheElement==" + cacheElement);
 		
@@ -142,7 +142,7 @@ CacheElementPopulator cacheElementPopulator
 	}
 	
 	public final Set getPredicates(CacheElementPopulator authenticator, String userid, String password) throws Throwable{
-		System.err.println("cache.getPredicates() called");
+		log.debug("cache.getPredicates() called");
 		CacheElement cacheElement = getCacheElement(userid /*, password*/);
 		log.fatal(this.getClass().getName() + ".cacheElement==" + cacheElement);
 		Set predicates = null;
@@ -161,7 +161,7 @@ CacheElementPopulator cacheElementPopulator
 	}	
 
 	public final Map getNamedValues(CacheElementPopulator authenticator, String userid, String password) throws Throwable{
-		System.err.println("cache.getNamedValues() called");
+		log.debug("cache.getNamedValues() called");
 		CacheElement cacheElement = getCacheElement(userid /*, password*/);
 		log.fatal(this.getClass().getName() + ".cacheElement==" + cacheElement);
 		Map namedValues = null;

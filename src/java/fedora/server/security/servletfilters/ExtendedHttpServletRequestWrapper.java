@@ -363,8 +363,6 @@ public class ExtendedHttpServletRequestWrapper
     private Map getAllAttributes (Map attributeGroup) {
     	Map all = new Hashtable();
     	for (Iterator it = attributeGroup.values().iterator(); it.hasNext(); ) {
-    		//Object o = it.next();
-    		//System.err.println("before class cast exception, object is " + o.getClass().getName());
     		Map m = (Map) it.next();
     		all.putAll(m);
     	}
@@ -446,24 +444,9 @@ public class ExtendedHttpServletRequestWrapper
 			throw new Exception(exceptionMsg);
 		}
 		if (log.isInfoEnabled()) log.fatal(msg + SUCCEEDED + ", encoded==" + encoded);
-		if (log.isDebugEnabled()) {
-			System.err.println("STRING IN ==" + usernamepassword);
-			System.err.print("AS BYTES ==");
-			for (int i = 0; i < encoded.length; i++) {
-				System.err.print(encoded[i] + " ");
-			}
-			System.err.println();
-			System.err.println("BYTES AS STRING ==" + encoded.toString());			
-		}
 				
 		byte[] decodedAsByteArray = Base64.decodeBase64(encoded);
 		log.fatal(here + "got decoded bytes" + SUCCEEDED + ", decodedAsByteArray==" + decodedAsByteArray);
-		
-		System.err.print("DECODE AS BYTES ==");
-		for (int i = 0; i < decodedAsByteArray.length; i++) {
-			System.err.print(decodedAsByteArray[i] + " ");
-		}
-		System.err.println();
 
 		String decoded = new String(decodedAsByteArray); //decodedAsByteArray.toString();
 		log.fatal(here + "got decoded string" + SUCCEEDED + ", decoded==" + decoded);
@@ -500,20 +483,20 @@ public class ExtendedHttpServletRequestWrapper
 	
 	public static final String AUTHORIZATION = "Authorization";
 	public final String getAuthorizationHeader() {
-		System.err.println("getAuthorizationHeader()");		
-		System.err.println("getting this headers");				
+		log.debug("getAuthorizationHeader()");		
+		log.debug("getting this headers");				
 		for (Enumeration enu = this.getHeaderNames(); enu.hasMoreElements(); ) {
 			String name = (String) enu.nextElement();
-			System.err.println("another headername==" + name);
+			log.debug("another headername==" + name);
 			String value = this.getHeader(name);
-			System.err.println("another headervalue==" + value);
+			log.debug("another headervalue==" + value);
 		}
-		System.err.println("getting super headers");				
+		log.debug("getting super headers");				
 		for (Enumeration enu = super.getHeaderNames(); enu.hasMoreElements(); ) {
 			String name = (String) enu.nextElement();
-			System.err.println("another headername==" + name);
+			log.debug("another headername==" + name);
 			String value = super.getHeader(name);
-			System.err.println("another headervalue==" + value);
+			log.debug("another headervalue==" + value);
 		}		
 		return getHeader(AUTHORIZATION);
 	}
@@ -525,25 +508,25 @@ public class ExtendedHttpServletRequestWrapper
 	
     public final String getUser() throws Exception {
     	if (username == null) {
-    		System.err.println("username==null, so will grok now");    		
+    		log.debug("username==null, so will grok now");    		
     		String authorizationHeader = getAuthorizationHeader();
-    		System.err.println("authorizationHeader==" + authorizationHeader);    		
+    		log.debug("authorizationHeader==" + authorizationHeader);    		
     		if ((authorizationHeader != null) && ! "".equals(authorizationHeader)) {
-        		System.err.println("authorizationHeader is intact");    		
+        		log.debug("authorizationHeader is intact");    		
         		String[] usernamePassword = parseUsernamePassword(authorizationHeader);
-        		System.err.println("usernamePassword[] length==" + usernamePassword.length); 
+        		log.debug("usernamePassword[] length==" + usernamePassword.length); 
         		username = usernamePassword[0];
-        		System.err.println("username (usernamePassword[0])==" + username);    		
+        		log.debug("username (usernamePassword[0])==" + username);    		
         		if (super.getRemoteUser() == null) {
-            		System.err.println("had none before");    		
+            		log.debug("had none before");    		
         		} else if ((super.getRemoteUser() == username) || super.getRemoteUser().equals(username)) {	
-            		System.err.println("got same now");    		
+            		log.debug("got same now");    		
         		} else {
         				throw new Exception("somebody got it wrong");
         		}    			
     		}
     	}
-		System.err.println("return user==" + username);
+		log.debug("return user==" + username);
     	return username;
     }
 
@@ -555,7 +538,7 @@ public class ExtendedHttpServletRequestWrapper
 				password = usernamePassword[1];
     		}
 		}
-		System.err.println("return password==" + password);
+		log.debug("return password==" + password);
     	return password;
     }
     

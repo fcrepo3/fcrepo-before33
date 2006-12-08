@@ -27,17 +27,6 @@ import fedora.server.security.servletfilters.pubcookie.FilterPubcookie;
  */
 public class Base {
     protected static Log log = LogFactory.getLog(Base.class);
-    /*
-    static {
-    	System.err.print(AuthFilterBase.class.getName() + " logging includes ");
-    	if (log.isFatalEnabled()) System.err.print("FATAL,");
-    	if (log.isErrorEnabled()) System.err.print("ERROR,");
-    	if (log.isWarnEnabled()) System.err.print("WARN,");
-    	if (log.isInfoEnabled()) System.err.print("INFO,");
-    	if (log.isDebugEnabled()) System.err.print("DEBUG,");
-    	System.err.println();
-    }
-    */
     
     protected static final String[] StringArrayPrototype = new String[0];
     
@@ -117,7 +106,7 @@ public class Base {
     protected boolean initErrors = false;
     
     protected void initThisSubclass(String key, String value) {
-    	System.err.println("AFB.iTS");
+    	log.debug("AFB.iTS");
     	String method = "initThisSubclass() "; if (log.isDebugEnabled()) log.debug(enter(method));
     	initErrors = true;
     	if (log.isErrorEnabled()) log.error(format(method, "unknown parameter",  key, value));

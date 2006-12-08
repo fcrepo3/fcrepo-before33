@@ -83,13 +83,13 @@ public class ParserXmlUserfile
             String qName,
             Attributes a) throws SAXException {
 		if (localName.equals("users")) {
-			System.err.println("<users> foundUser==" + foundUser);
+			log.debug("<users> foundUser==" + foundUser);
 		} else if (localName.equals("role")) {
-			System.err.println("<role> foundUser==" + foundUser);
+			log.debug("<role> foundUser==" + foundUser);
 			validRoles.add(a.getValue("rolename"));
 		} else if (localName.equals("user")) {
-			System.err.println("<user> foundUser==" + foundUser);
-			System.err.println("<<user>> this node username==" + a.getValue("name") + " password==" + a.getValue("password"));
+			log.debug("<user> foundUser==" + foundUser);
+			log.debug("<<user>> this node username==" + a.getValue("name") + " password==" + a.getValue("password"));
 			if (username.equals(a.getValue("name"))) {
 				foundUser = true;
 				authenticated =  Boolean.valueOf((password != null) && password.equals(a.getValue("password")));
@@ -105,50 +105,49 @@ public class ParserXmlUserfile
 				}
 			}
 		} else if (localName.equals("attribute")) {
-			System.err.println("<attribute> foundUser==" + foundUser);
+			log.debug("<attribute> foundUser==" + foundUser);
 			if (foundUser) {
 				attributeName = a.getValue("name");				
 				attributeValues = new HashSet();
-				System.err.println("attributeName==" + attributeName);
+				log.debug("attributeName==" + attributeName);
 			}
 		} else if (localName.equals("value")) {
-			System.err.println("<value> foundUser==" + foundUser);
+			log.debug("<value> foundUser==" + foundUser);
 			inValue = true;
 		}
 	}
 
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (localName.equals("users")) {
-			System.err.println("</users> foundUser==" + foundUser);
+			log.debug("</users> foundUser==" + foundUser);
 			authenticated =  Boolean.FALSE;
 		} else if (localName.equals("roles")) {
-				System.err.println("</roles> foundUser==" + foundUser);			
+				log.debug("</roles> foundUser==" + foundUser);			
 		} else if (localName.equals("user")) {
-			System.err.println("</user> foundUser==" + foundUser);
+			log.debug("</user> foundUser==" + foundUser);
 			if (foundUser) {
-				System.err.println("at </user> (quick audit)");
-				System.err.println("authenticated==" + authenticated);
-				System.err.println("roles n=="  + roles.size());
-				System.err.println("namedAttributes n=="  + namedAttributes.size());
-//System.err.println("namedAttributes[group] n=="  + ((Set)namedAttributes.get("group")).size());
+				log.debug("at </user> (quick audit)");
+				log.debug("authenticated==" + authenticated);
+				log.debug("roles n=="  + roles.size());
+				log.debug("namedAttributes n=="  + namedAttributes.size());
 				throw new FinishedParsingException("");				
 			}
 		} else if (localName.equals("attribute")) {
-			System.err.println("</attribute> foundUser==" + foundUser);
+			log.debug("</attribute> foundUser==" + foundUser);
 			if (foundUser) {
-				System.err.println("set n=="  + attributeValues.size());
+				log.debug("set n=="  + attributeValues.size());
 				namedAttributes.put(attributeName,attributeValues);
-				System.err.println("just added values for " + attributeName);
+				log.debug("just added values for " + attributeName);
 			}
 			attributeName = null;
 			attributeValues = null;
 		} else if (localName.equals("value")) {
-			System.err.println("</value> foundUser==" + foundUser);
+			log.debug("</value> foundUser==" + foundUser);
 			if (foundUser) {
 				attributeValues.add(value.toString());
-				System.err.println("just added " + value);
+				log.debug("just added " + value);
 			}
-			System.err.println("quick audit of value string =="  + value);
+			log.debug("quick audit of value string =="  + value);
 			value.setLength(0);
 			inValue = false;
 		} 
@@ -157,7 +156,7 @@ public class ParserXmlUserfile
 	public void characters(char[] ch, int start, int length) {
 		if (inValue && foundUser && (value != null)) {
 			value.append(ch, start, length);
-			System.err.println("characters called start=="  + start + " length==" + length);
+			log.debug("characters called start=="  + start + " length==" + length);
 		}
 	}
 	

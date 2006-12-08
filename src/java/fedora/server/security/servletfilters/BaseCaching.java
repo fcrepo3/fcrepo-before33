@@ -25,17 +25,6 @@ import org.apache.commons.codec.binary.Base64;
  */
 public abstract class BaseCaching extends BaseContributing implements CacheElementPopulator {
     protected static Log log = LogFactory.getLog(BaseCaching.class);
-    /*
-    static {
-    	System.err.print(AuthFilterWithCaching.class.getName() + " logging includes ");
-    	if (log.isFatalEnabled()) System.err.print("FATAL,");
-    	if (log.isErrorEnabled()) System.err.print("ERROR,");
-    	if (log.isWarnEnabled()) System.err.print("WARN,");
-    	if (log.isInfoEnabled()) System.err.print("INFO,");
-    	if (log.isDebugEnabled()) System.err.print("DEBUG,");
-    	System.err.println();
-    }
-    */
     
     /*
     protected String getClassName() {

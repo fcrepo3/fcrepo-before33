@@ -27,17 +27,6 @@ import fedora.server.security.servletfilters.pubcookie.FilterPubcookie;
  */
 public class FilterSetup extends Base implements Filter {
     protected static Log log = LogFactory.getLog(FilterSetup.class);
-    /*
-    static {
-    	System.err.print(AuthFilter.class.getName() + " logging includes ");
-    	if (log.isFatalEnabled()) System.err.print("FATAL,");
-    	if (log.isErrorEnabled()) System.err.print("ERROR,");
-    	if (log.isWarnEnabled()) System.err.print("WARN,");
-    	if (log.isInfoEnabled()) System.err.print("INFO,");
-    	if (log.isDebugEnabled()) System.err.print("DEBUG,");
-    	System.err.println();
-    }
-    */
     
     /*
     protected String getClassName() {
@@ -80,7 +69,7 @@ public class FilterSetup extends Base implements Filter {
     
     
     protected void initThisSubclass(String key, String value) {
-    	System.err.println("AF.iTS");
+    	log.debug("AF.iTS");
     	String method = "initThisSubclass() "; if (log.isDebugEnabled()) log.debug(enter(method));
    		super.initThisSubclass(key, value);
 		if (log.isDebugEnabled()) log.debug(exit(method)); 

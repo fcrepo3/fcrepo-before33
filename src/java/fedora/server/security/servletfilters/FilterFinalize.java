@@ -28,17 +28,6 @@ import org.apache.commons.codec.binary.Base64;
  */
 public class FilterFinalize extends FilterSetup {
     protected static Log log = LogFactory.getLog(FilterFinalize.class);
-    /*
-    static {
-    	System.err.print(FinalAuthFilter.class.getName() + " logging includes ");
-    	if (log.isFatalEnabled()) System.err.print("FATAL,");
-    	if (log.isErrorEnabled()) System.err.print("ERROR,");
-    	if (log.isWarnEnabled()) System.err.print("WARN,");
-    	if (log.isInfoEnabled()) System.err.print("INFO,");
-    	if (log.isDebugEnabled()) System.err.print("DEBUG,");
-    	System.err.println();
-    }
-    */
 
     /*
     protected String getClassName() {
@@ -70,7 +59,7 @@ public class FilterFinalize extends FilterSetup {
     
 
     protected void initThisSubclass(String key, String value) {
-System.err.println("FAT.iTS");
+    	log.debug("FAT.iTS");
     	String method = "initThisSubclass() "; if (log.isDebugEnabled()) log.debug(enter(method));
 		boolean setLocally = false;
     	if (AUTHENTICATION_REQUIRED_KEY.equals(key)) {
@@ -149,7 +138,7 @@ System.err.println("FAT.iTS");
 		for (Iterator it = subjectAttributesMap.keySet().iterator(); it.hasNext(); ) {
 			String name = (String) it.next();
 			Object value = subjectAttributesMap.get(name);
-			System.err.println("IN FILTER MAP HAS " + name + "==" + value + " " + value.getClass().getName());
+			log.debug("IN FILTER MAP HAS " + name + "==" + value + " " + value.getClass().getName());
 		}
 		
 		

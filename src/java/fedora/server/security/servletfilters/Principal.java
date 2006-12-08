@@ -64,13 +64,6 @@ public class Principal implements java.security.Principal {
     	return false;
     }
     
-    /*
-    public void audit() {
-    	System.err.println("name==" + getName());
-    	System.err.println("authority==" + getAuthority());
-    }
-    */
-    
     public String[] getRoles() {
     	return new String[0];
     }

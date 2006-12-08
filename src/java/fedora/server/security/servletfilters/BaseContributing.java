@@ -32,17 +32,6 @@ import fedora.server.security.servletfilters.pubcookie.FilterPubcookie;
  */
 public abstract class BaseContributing extends FilterSetup {
     protected static Log log = LogFactory.getLog(BaseContributing.class);
-    /*
-    static {
-    	System.err.print(ContributingAuthFilter.class.getName() + " logging includes ");
-    	if (log.isFatalEnabled()) System.err.print("FATAL,");
-    	if (log.isErrorEnabled()) System.err.print("ERROR,");
-    	if (log.isWarnEnabled()) System.err.print("WARN,");
-    	if (log.isInfoEnabled()) System.err.print("INFO,");
-    	if (log.isDebugEnabled()) System.err.print("DEBUG,");
-    	System.err.println();
-    }
-    */
     
     /*
     protected String getClassName() {

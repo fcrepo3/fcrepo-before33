@@ -43,16 +43,6 @@ import fedora.server.security.servletfilters.CacheElement;
  */
 public class FilterLdap extends BaseCaching {
     protected static Log log = LogFactory.getLog(FilterLdap.class);
-    /*
-    static {
-    	System.err.print(AuthFilter4Ldap.class.getName() + " logging includes ");
-    	if (log.isFatalEnabled()) System.err.print("FATAL,");
-    	if (log.isErrorEnabled()) System.err.print("ERROR,");
-    	if (log.isWarnEnabled()) System.err.print("WARN,");
-    	if (log.isInfoEnabled()) System.err.print("INFO,");
-    	if (log.isDebugEnabled()) System.err.print("DEBUG,");
-    	System.err.println();
-    } */
     
     /*
     protected String getClassName() {

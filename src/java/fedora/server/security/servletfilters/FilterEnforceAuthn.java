@@ -28,17 +28,6 @@ import org.apache.commons.codec.binary.Base64;
  */
 public class FilterEnforceAuthn extends FilterSetup {
     protected static Log log = LogFactory.getLog(FilterEnforceAuthn.class);
-    /*
-    static {
-    	System.err.print(FinalAuthFilter.class.getName() + " logging includes ");
-    	if (log.isFatalEnabled()) System.err.print("FATAL,");
-    	if (log.isErrorEnabled()) System.err.print("ERROR,");
-    	if (log.isWarnEnabled()) System.err.print("WARN,");
-    	if (log.isInfoEnabled()) System.err.print("INFO,");
-    	if (log.isDebugEnabled()) System.err.print("DEBUG,");
-    	System.err.println();
-    }
-    */
 
     /*
     protected String getClassName() {

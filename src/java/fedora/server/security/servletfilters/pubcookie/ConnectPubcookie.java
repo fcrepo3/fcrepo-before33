@@ -121,14 +121,14 @@ public class ConnectPubcookie {
 		if (urlString.startsWith("https:") 
 		&& (null != truststoreLocation) && (! "".equals(truststoreLocation))
 		&& (null != truststorePassword) && (! "".equals(truststorePassword))) {
-			System.err.println("setting " + FilterPubcookie.TRUSTSTORE_LOCATION_KEY + " to " + truststoreLocation);
+			log.debug("setting " + FilterPubcookie.TRUSTSTORE_LOCATION_KEY + " to " + truststoreLocation);
 			System.setProperty(FilterPubcookie.TRUSTSTORE_LOCATION_KEY, truststoreLocation);
-			System.err.println("setting " + FilterPubcookie.TRUSTSTORE_PASSWORD_KEY + " to " + truststorePassword);
+			log.debug("setting " + FilterPubcookie.TRUSTSTORE_PASSWORD_KEY + " to " + truststorePassword);
 			System.setProperty(FilterPubcookie.TRUSTSTORE_PASSWORD_KEY, truststorePassword);
 
-			System.err.println("setting " + FilterPubcookie.KEYSTORE_LOCATION_KEY + " to " + truststoreLocation);
+			log.debug("setting " + FilterPubcookie.KEYSTORE_LOCATION_KEY + " to " + truststoreLocation);
 			System.setProperty(FilterPubcookie.KEYSTORE_LOCATION_KEY, truststoreLocation);
-			System.err.println("setting " + FilterPubcookie.KEYSTORE_PASSWORD_KEY + " to " + truststorePassword);
+			log.debug("setting " + FilterPubcookie.KEYSTORE_PASSWORD_KEY + " to " + truststorePassword);
 			System.setProperty(FilterPubcookie.KEYSTORE_PASSWORD_KEY, truststorePassword);
 
 			
@@ -142,24 +142,24 @@ public class ConnectPubcookie {
 			System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
 			*/
 		} else {
-			System.err.println("DIAGNOSTIC urlString==" + urlString);
-			System.err.println("didn't set " + FilterPubcookie.TRUSTSTORE_LOCATION_KEY + " to " + truststoreLocation);
-			System.err.println("didn't set " + FilterPubcookie.TRUSTSTORE_PASSWORD_KEY + " to " + truststorePassword);
+			log.debug("DIAGNOSTIC urlString==" + urlString);
+			log.debug("didn't set " + FilterPubcookie.TRUSTSTORE_LOCATION_KEY + " to " + truststoreLocation);
+			log.debug("didn't set " + FilterPubcookie.TRUSTSTORE_PASSWORD_KEY + " to " + truststorePassword);
 		}
  
 		/*
-		System.err.println("\n-a-");
+		log.debug("\n-a-");
 		Protocol easyhttps = null;
 		try {
 			easyhttps = new Protocol("https", (ProtocolSocketFactory) new EasySSLProtocolSocketFactory(), 443); 
 		} catch (Throwable t) {
-			System.err.println(t);
-			System.err.println(t.getMessage());
-			if (t.getCause() != null) System.err.println(t.getCause().getMessage());
+			log.debug(t);
+			log.debug(t.getMessage());
+			if (t.getCause() != null) log.debug(t.getCause().getMessage());
 		}
-		System.err.println("\n-b-");
+		log.debug("\n-b-");
 		Protocol.registerProtocol("https", easyhttps); 
-		System.err.println("\n-c-");
+		log.debug("\n-c-");
 		*/
 		
 		HttpClient client = new HttpClient();
@@ -175,9 +175,9 @@ public class ConnectPubcookie {
 			log.fatal(this.getClass().getName() + ".connect() " + "(with configured url) statusCode==" + statusCode);
 		} catch (Exception e) {
 			log.fatal(this.getClass().getName() + ".connect() " + "failed original connect, url==" + urlString);
-			System.err.println(e);
-			System.err.println(e.getMessage());
-			if (e.getCause() != null) System.err.println(e.getCause().getMessage());
+			log.debug(e);
+			log.debug(e.getMessage());
+			if (e.getCause() != null) log.debug(e.getCause().getMessage());
 			e.printStackTrace();
 		}
 
@@ -226,10 +226,10 @@ public class ConnectPubcookie {
 				try {
 					tidy = new Tidy();
 				} catch (Throwable t) {
-					System.err.println("new Tidy didn't");
-					System.err.println(t);
-					System.err.println(t.getMessage());
-					if (t != null) System.err.println(t.getCause().getMessage());
+					log.debug("new Tidy didn't");
+					log.debug(t);
+					log.debug(t.getMessage());
+					if (t != null) log.debug(t.getCause().getMessage());
 				}
 				log.fatal(this.getClass().getName() + ".connect() after newing Tidy, tidy==" + tidy);
 				byte[] inputBytes = content.getBytes();
