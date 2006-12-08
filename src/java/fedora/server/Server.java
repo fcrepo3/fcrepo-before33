@@ -73,7 +73,6 @@ public abstract class Server
     /** Logger for this class. */
     private static Logger LOG;
 
-   	private static final String LOG4J_PROPS = "fedora.server.resources.log4j";
     private static final String LOG4J_PATTERN = "log4j\\.appender\\.(\\w+)\\.File";
 
     /**
@@ -678,7 +677,7 @@ public abstract class Server
     }
 
     /**
-     * Configures Log4J using a properties file.
+     * Configures Log4J using FEDORA_HOME/config/log4j.properties.
      */
     protected static void configureLog4J(String extension) 
             throws ServerInitializationException {
@@ -694,7 +693,7 @@ public abstract class Server
         try {
             loadedProps.load(new FileInputStream(propFile));
         } catch (Exception e) {
-            throw new ServerInitializationException("Error reading log "
+            throw new ServerInitializationException("Error reading log4j "
                     + "configuration file: " + propFile.getPath(), e);
         }
 
@@ -715,7 +714,7 @@ public abstract class Server
 
         LOG = Logger.getLogger(Server.class.getName());
     }
-    
+
     /**
      * Builds and returns a <code>Map</code> of parameter name-value pairs
      * defined as children of the given <code>Element</code>, according to the
