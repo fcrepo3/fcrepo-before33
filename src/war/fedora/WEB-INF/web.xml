@@ -20,9 +20,7 @@
 	<servlet>
 		<display-name>Fedora Access Servlet</display-name>
 		<servlet-name>AccessServlet</servlet-name>
-		<servlet-class>
-			fedora.server.access.FedoraAccessServlet
-		</servlet-class>
+		<servlet-class>fedora.server.access.FedoraAccessServlet</servlet-class>
 	</servlet>
 	<servlet>
 		<display-name>
@@ -44,9 +42,7 @@
 		</servlet-class>
 	</servlet>
 	<servlet>
-		<display-name>
-			Fedora Repository Description Servlet
-		</display-name>
+		<display-name>Fedora Repository Description Servlet</display-name>
 		<servlet-name>DescribeRepositoryServlet</servlet-name>
 		<servlet-class>
 			fedora.server.access.DescribeRepositoryServlet
@@ -62,69 +58,47 @@
 	<servlet>
 		<display-name>Fedora PID Generator Servlet</display-name>
 		<servlet-name>GetNextPIDServlet</servlet-name>
-		<servlet-class>
-			fedora.server.management.GetNextPIDServlet
-		</servlet-class>
+		<servlet-class>fedora.server.management.GetNextPIDServlet</servlet-class>
 	</servlet>
 	<servlet>
-		<display-name>
-			Fedora Backend Security Configuration Servlet
-		</display-name>
+		<display-name>Fedora Backend Security Configuration Servlet</display-name>
 		<servlet-name>BESecurityServlet</servlet-name>
-		<servlet-class>
-			fedora.server.management.BESecurityServlet
-		</servlet-class>
+		<servlet-class>fedora.server.management.BESecurityServlet</servlet-class>
 	</servlet>
 	<servlet>
 		<display-name>Fedora Object History Servlet</display-name>
 		<servlet-name>GetObjectHistoryServlet</servlet-name>
-		<servlet-class>
-			fedora.server.access.GetObjectHistoryServlet
-		</servlet-class>
+		<servlet-class>fedora.server.access.GetObjectHistoryServlet</servlet-class>
 	</servlet>
 	<servlet>
 		<display-name>Fedora List Datastreams Servlet</display-name>
 		<servlet-name>ListDatastreamsServlet</servlet-name>
-		<servlet-class>
-			fedora.server.access.ListDatastreamsServlet
-		</servlet-class>
+		<servlet-class>fedora.server.access.ListDatastreamsServlet</servlet-class>
 	</servlet>
 	<servlet>
 		<display-name>Fedora List Methods Servlet</display-name>
 		<servlet-name>ListMethodsServlet</servlet-name>
-		<servlet-class>
-			fedora.server.access.ListMethodsServlet
-		</servlet-class>
+		<servlet-class>fedora.server.access.ListMethodsServlet</servlet-class>
 	</servlet>
 	<servlet>
 		<display-name>Fedora Method Parm Resolver Servlet</display-name>
 		<servlet-name>MethodParameterResolverServlet</servlet-name>
-		<servlet-class>
-			fedora.server.access.MethodParameterResolverServlet
-		</servlet-class>
+		<servlet-class>fedora.server.access.MethodParameterResolverServlet</servlet-class>
 	</servlet>
 	<servlet>
 		<display-name>Fedora OAI Provider Servlet</display-name>
 		<servlet-name>OAIProviderServlet</servlet-name>
-		<servlet-class>
-			fedora.server.oai.FedoraOAIProviderServlet
-		</servlet-class>
+		<servlet-class>fedora.server.oai.FedoraOAIProviderServlet</servlet-class>
 	</servlet>
 	<servlet>
 		<display-name>Fedora Report Servlet</display-name>
 		<servlet-name>ReportServlet</servlet-name>
-		<servlet-class>
-			fedora.server.access.ReportServlet
-		</servlet-class>
+		<servlet-class>fedora.server.access.ReportServlet</servlet-class>
 	</servlet>
 	<servlet>
-		<display-name>
-			Fedora Resource Index Search Servlet
-		</display-name>
+		<display-name>Fedora Resource Index Search Servlet</display-name>
 		<servlet-name>RISearchServlet</servlet-name>
-		<servlet-class>
-			fedora.server.access.RISearchServlet
-		</servlet-class>
+		<servlet-class>fedora.server.access.RISearchServlet</servlet-class>
 	</servlet>
 	<servlet>
 		<display-name>
@@ -132,45 +106,18 @@
 			and sends back an identifier)
 		</display-name>
 		<servlet-name>UploadServlet</servlet-name>
-		<servlet-class>
-			fedora.server.management.UploadServlet
-		</servlet-class>
+		<servlet-class>fedora.server.management.UploadServlet</servlet-class>
 	</servlet>
     <servlet>
-        <display-name>
-            WSDL Servlet
-        </display-name>
+        <display-name>WSDL Servlet</display-name>
         <servlet-name>WSDLServlet</servlet-name>
-        <servlet-class>
-            fedora.server.access.WSDLServlet
-        </servlet-class>
+        <servlet-class>fedora.server.access.WSDLServlet</servlet-class>
     </servlet>
     <servlet>
 		<servlet-name>FacesServlet</servlet-name>
-		<servlet-class>
-		javax.faces.webapp.FacesServlet</servlet-class>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-<!--
-	<servlet>
-		<display-name>Fedora Manager</display-name>
-		<servlet-name>ManagerServlet</servlet-name>
-		<servlet-class>fedora.server.webmanager</servlet-class>
-		<init-param>
-			<param-name>fedora.home</param-name>
-			<param-value></param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
--->
-
-	<!-- Servlet Mappings for Fedora Repository Server -->
-<!--	
-	<servlet-mapping>
-		<servlet-name>ManagerServlet</servlet-name>
-		<url-pattern>/manager</url-pattern>
-	</servlet-mapping>
--->	
 
 	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
@@ -266,306 +213,117 @@
 	</servlet-mapping>
 	
 	
-  <!-- security filters -->
-
-  <!-- refactoring after fedora 2.2 might eliminate the need for this "setup" filter.  map it first. -->	
-  <filter> 
-    <filter-name>SetupFilter</filter-name>  
-    <filter-class>fedora.server.security.servletfilters.FilterSetup</filter-class> 
-  </filter>  
-
-  <filter> 
-    <filter-name>XmlUserfileFilter</filter-name>  
-    <filter-class>fedora.server.security.servletfilters.xmluserfile.FilterXmlUserfile</filter-class>  
-  </filter>  
-  
-  <!-- authentication-only from pubcookie.  (client to pubcookie is programmatic from filter code.) -->
-  <!--filter>
-    <filter-name>PubcookieFilter</filter-name>
-    <filter-class>fedora.server.security.servletfilters.pubcookie.FilterPubcookie</filter-class>
-    <init-param>
-      <param-name>pubcookie-name</param-name>
-      <param-value>pubcookie_l</param-value>
-    </init-param>
-    <init-param>
-      <param-name>pubcookie-loginpage-url</param-name>
-      <param-value>https://netbadge.virginia.edu/</param-value>
-    </init-param>
-    <init-param>
-      <param-name>pubcookie-loginpage-form-name</param-name>
-      <param-value>query</param-value>
-    </init-param>
-    <init-param>
-      <param-name>pubcookie-loginpage-input-name-userid</param-name>
-      <param-value>user</param-value>
-    </init-param>
-    <init-param>
-      <param-name>pubcookie-loginpage-input-name-password</param-name>
-      <param-value>pass</param-value>
-    </init-param>
-    <init-param>
-      <param-name>javax.net.ssl.trustStore</param-name>
-      <param-value>/eclipse-3.1.x-workspace/2.1/dist/server/jakarta-tomcat-5.0.28/conf/truststore</param-value>
-    </init-param>
-    <init-param>
-      <param-name>javax.net.ssl.trustStorePassword</param-name>
-      <param-value>tomcat</param-value>
-    </init-param>
-  </filter-->
-  
-  <!-- supports attributes through jndi.  roles, groups, and authentication to be added. -->
-  <!--filter>
-    <filter-name>LdapFilter</filter-name>
-    <filter-class>fedora.server.security.servletfilters.ldap.FilterLdap</filter-class>   
-    <init-param>
-      <param-name>associated-filters</param-name>
-      <param-value>PubcookieFilter</param-value>
-    </init-param>
-    <init-param>
-      <param-name>surrogate-associated-filters</param-name>
-      <param-value>TomcatUsersFilter</param-value>
-    </init-param>
-    <init-param>
-      <param-name>url4attributes</param-name>
-      <param-value>ldap://ldapvs.itc.virginia.edu:389/</param-value>
-    </init-param>
-    <init-param>
-      <param-name>base4attributes</param-name>
-      <param-value>o=University of Virginia,c=US</param-value>
-    </init-param>   
-    <init-param>
-      <param-name>userid4attributes</param-name>
-      <param-value>uid</param-value>
-    </init-param>
-    <init-param>
-      <param-name>filter4attributes</param-name>
-      <param-value>(uid={0})</param-value>
-    </init-param>
-    <init-param>
-      <param-name>roles2return4attributes</param-name>
-      <param-value>eduPersonAffiliation</param-value>
-    </init-param>
-    <init-param>
-      <param-name>attributes2return4attributes</param-name>
-      <param-value>mailAlternateAddress,eduPersonAffiliation</param-value>
-    </init-param>
-    <init-param>
-      <param-name>password4attributes</param-name>
-      <param-value>UnixUid</param-value>
-    </init-param>
-    <init-param>
-      <param-name>url4groups</param-name>
-      <param-value>ldap://ldapvs.itc.virginia.edu:389/</param-value>
-    </init-param>
-    <init-param>
-      <param-name>base4groups</param-name>
-      <param-value>ou-Groups,o=University of Virginia,c=US</param-value>
-    </init-param>   
-   <init-param>
-      <param-name>userid4groups</param-name>
-      <param-value>uid</param-value>
-    </init-param>
-    <init-param>
-      <param-name>filter4groups</param-name>
-      <param-value>(uid={0})</param-value>
-    </init-param>
-    <init-param>
-      <param-name>groups2return4groups</param-name>
-      <param-value>UnixUid</param-value>
-    </init-param>
-  </filter-->
-  
-
-  <filter> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <filter-class>fedora.server.security.servletfilters.FilterEnforceAuthn</filter-class> 
-  </filter>  
-
-  <!-- refactoring after fedora 2.2 might eliminate the need for this "finalizing" filter.  map it last. -->
-  <filter> 
-    <filter-name>FinalizeFilter</filter-name>  
-    <filter-class>fedora.server.security.servletfilters.FilterFinalize</filter-class> 
-  </filter>  
-
+	<!-- security filters -->
+	
+	<!-- refactoring after fedora 2.2 might eliminate the need for this "setup" filter.  map it first. -->	
+	<filter> 
+		<filter-name>SetupFilter</filter-name>
+		<filter-class>fedora.server.security.servletfilters.FilterSetup</filter-class> 
+	</filter>
+	<filter> 
+		<filter-name>XmlUserfileFilter</filter-name>
+		<filter-class>fedora.server.security.servletfilters.xmluserfile.FilterXmlUserfile</filter-class>  
+	</filter>
+	<filter> 
+		<filter-name>EnforceAuthnFilter</filter-name>
+		<filter-class>fedora.server.security.servletfilters.FilterEnforceAuthn</filter-class> 
+	</filter>
+	<filter> 
+		<filter-name>FinalizeFilter</filter-name>
+		<filter-class>fedora.server.security.servletfilters.FilterFinalize</filter-class> 
+	</filter>
 
   <!-- among security filters, map this one first. -->
-  <filter-mapping> 
-    <filter-name>SetupFilter</filter-name>  
-    <url-pattern>/*</url-pattern> 
-  </filter-mapping>  
-
-  <filter-mapping> 
-    <filter-name>XmlUserfileFilter</filter-name>  
-    <url-pattern>/*</url-pattern> 
-  </filter-mapping>
-  
-  <!--filter-mapping> 
-    <filter-name>PubcookieFilter</filter-name>  
-    <url-pattern>/*</url-pattern> 
-  </filter-mapping-->  
-  
-  <!--filter-mapping> 
-    <filter-name>LdapFilter</filter-name>  
-    <url-pattern>/*</url-pattern> 
-  </filter-mapping-->        
-
-
-  <!-- servlet specs 2.3 and 2.4 allow filter-mappings with either a single url-pattern or a single servlet-name (but not both).  
-  the multiple filter-mappings below for a single servlet filter are to avoid requiring servlet spec 2.5, 
-  which does support multiple instances of either type (url-pattern and servlet-name can be mingled in the same filter-mapping).
-  when we require servlet containers to support 2.5, we could edit into a single filter-mapping.
-    
-  http://jcp.org/aboutJava/communityprocess/mrel/jsr154/index.html
-  http://www.javaworld.com/javaworld/jw-01-2006/jw-0102-servlet.html?page=4
-  
-   -->
-
+	<filter-mapping>
+		<filter-name>SetupFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+		<filter-name>XmlUserfileFilter</filter-name>
+		<url-pattern>/*</url-pattern> 
+	</filter-mapping>
   <!-- authn always required -->
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <servlet-name>AxisServlet</servlet-name>
-  </filter-mapping>  
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <servlet-name>BESecurityServlet</servlet-name>
-  </filter-mapping>  
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <servlet-name>ControlServlet</servlet-name>
-  </filter-mapping>  
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name> 
-    <url-pattern>/getDSAuthenticated</url-pattern>
-  </filter-mapping>  
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <servlet-name>GetNextPIDServlet</servlet-name>  
-  </filter-mapping>  
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <servlet-name>UploadServlet</servlet-name>
-  </filter-mapping>  
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <url-pattern>/index.html</url-pattern>
-  </filter-mapping>  
-  <filter-mapping> 
-    <filter-name>EnforceAuthnFilter</filter-name>  
-    <url-pattern>/services/management</url-pattern>
-  </filter-mapping>  
+	<filter-mapping> 
+		<filter-name>EnforceAuthnFilter</filter-name>
+		<servlet-name>AxisServlet</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>EnforceAuthnFilter</filter-name>
+		<servlet-name>BESecurityServlet</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>EnforceAuthnFilter</filter-name>
+		<servlet-name>ControlServlet</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>EnforceAuthnFilter</filter-name>
+		<url-pattern>/getDSAuthenticated</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>EnforceAuthnFilter</filter-name>
+		<servlet-name>GetNextPIDServlet</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>EnforceAuthnFilter</filter-name>
+		<servlet-name>UploadServlet</servlet-name>
+	</filter-mapping>  
+	<filter-mapping> 
+		<filter-name>EnforceAuthnFilter</filter-name>
+		<url-pattern>/index.html</url-pattern>
+	</filter-mapping>  
+	<filter-mapping> 
+		<filter-name>EnforceAuthnFilter</filter-name>
+		<url-pattern>/services/management</url-pattern>
+	</filter-mapping>  
   <!-- authn always required ^^^^^ -->
 
   <!-- among security filters, map this one last. -->
-  <filter-mapping> 
-    <filter-name>FinalizeFilter</filter-name>  
-    <url-pattern>/*</url-pattern> 
-  </filter-mapping>  
+	<filter-mapping> 
+		<filter-name>FinalizeFilter</filter-name>
+		<url-pattern>/*</url-pattern> 
+	</filter-mapping>  
 
-
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>
-				Fedora Repository Server
-			</web-resource-name>
-			<description>
-				Fedora-generated security-constraint
-			</description>
-			<url-pattern>/</url-pattern>
-			<http-method>TRACE</http-method>
-			<http-method>DELETE</http-method>
-			<http-method>OPTIONS</http-method>
-			<http-method>POST</http-method>
-			<http-method>HEAD</http-method>
-			<http-method>GET</http-method>
-			<http-method>PUT</http-method>
-		</web-resource-collection>
-	</security-constraint>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>
-				Fedora Repository Server
-			</web-resource-name>
-			<description>
-				Fedora-generated security-constraint
-			</description>
-			<url-pattern>*.faces</url-pattern>
-			<url-pattern>*.jsp</url-pattern>
-			<http-method>POST</http-method>
-			<http-method>HEAD</http-method>
-			<http-method>GET</http-method>
-		</web-resource-collection>
-	</security-constraint>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>
-				Fedora Repository Server
-			</web-resource-name>
-			<description>
-				Fedora-generated security-constraint
-			</description>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<description>Fedora-generated security-constraint</description>
 			<url-pattern>/getDS</url-pattern>
-			<http-method>POST</http-method>
-			<http-method>HEAD</http-method>
-			<http-method>GET</http-method>
-		</web-resource-collection>
-	</security-constraint>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>
-				Fedora Repository Server
-			</web-resource-name>
-			<description>
-				Fedora-generated security-constraint
-			</description>
 			<url-pattern>/management/control</url-pattern>
-			<http-method>POST</http-method>
-			<http-method>HEAD</http-method>
-			<http-method>GET</http-method>
 		</web-resource-collection>
 	</security-constraint>
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>
-				Fedora Repository Server
-			</web-resource-name>
-			<description>
-				Fedora-generated security-constraint
-			</description>
-			<url-pattern>/management/backendSecurity</url-pattern>
-			<url-pattern>/services/management</url-pattern>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<description>Fedora-generated security-constraint</description>
+			<description>APIM</description>
+			<url-pattern>/index.html</url-pattern>
 			<url-pattern>/getDSAuthenticated</url-pattern>
+			<url-pattern>/management/backendSecurity</url-pattern>
 			<url-pattern>/management/getNextPID</url-pattern>
 			<url-pattern>/management/upload</url-pattern>
+			<url-pattern>/services/management</url-pattern>
 			<url-pattern>*.jws</url-pattern>
-			<url-pattern>/index.html</url-pattern>
-			<http-method>POST</http-method>
-			<http-method>HEAD</http-method>
-			<http-method>GET</http-method>
 		</web-resource-collection>
 	</security-constraint>
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>
-				Fedora Repository Server
-			</web-resource-name>
-			<description>
-				Fedora-generated security-constraint
-			</description>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<description>Fedora-generated security-constraint</description>
+			<description>APIA</description>
+			<url-pattern>/describe</url-pattern>
+			<url-pattern>/get/*</url-pattern>
+			<url-pattern>/getAccessParmResolver</url-pattern>
+			<url-pattern>/getObjectHistory/*</url-pattern>
+			<url-pattern>/listDatastreams/*</url-pattern>
+			<url-pattern>/listMethods/*</url-pattern>
+			<url-pattern>/oai</url-pattern>
+			<url-pattern>/report</url-pattern>
+			<url-pattern>/risearch</url-pattern>
 			<url-pattern>/search</url-pattern>
 			<url-pattern>/services/access</url-pattern>
-			<url-pattern>/oai</url-pattern>
-			<url-pattern>/getObjectHistory/*</url-pattern>
-			<url-pattern>/describe</url-pattern>
-			<url-pattern>/getAccessParmResolver</url-pattern>
-			<url-pattern>/risearch</url-pattern>
-			<url-pattern>/listMethods/*</url-pattern>
-			<url-pattern>/listDatastreams/*</url-pattern>
-			<url-pattern>/report</url-pattern>
 			<url-pattern>/wsdl</url-pattern>
-			<url-pattern>/get/*</url-pattern>
-			<http-method>POST</http-method>
-			<http-method>HEAD</http-method>
-			<http-method>GET</http-method>
+			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
 
