@@ -1,8 +1,21 @@
 package fedora.server.storage.types;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.XMLSerializer;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -73,6 +86,52 @@ public class DatastreamXMLMetadata extends Datastream
   public InputStream getContentStream()
   {
     return(new ByteArrayInputStream(xmlContent));
+  }
+  
+  public InputStream getContentStreamForChecksum()
+  {
+    BufferedReader br;
+    try
+    {
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        OutputFormat fmt=new OutputFormat("XML", "UTF-8", false);
+        fmt.setIndent(0);
+        fmt.setLineWidth(0);
+        fmt.setPreserveSpace(false);
+        XMLSerializer ser=new XMLSerializer(outStream, fmt);
+        DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder=factory.newDocumentBuilder();
+        Document doc=builder.parse(new ByteArrayInputStream(xmlContent));
+        ser.serialize(doc);
+        
+        br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(outStream.toByteArray()), m_encoding));
+        String line;
+        StringBuffer buf = new StringBuffer();
+        while ((line = br.readLine()) != null)
+        {
+            line = line.trim();
+            buf = buf.append(line);                
+        }
+        String bufStr = buf.toString();
+        return(new ByteArrayInputStream(bufStr.getBytes(m_encoding)));
+    }
+    catch (UnsupportedEncodingException e)
+    {
+        return(getContentStream());
+    }
+    catch (IOException e)
+    {
+        return(getContentStream());
+    }
+    catch (ParserConfigurationException e)
+    {
+        return(getContentStream());
+    }
+    catch (SAXException e)
+    {
+        return(getContentStream());
+    }
   }
 
   public InputStream getContentStreamAsDocument() throws UnsupportedEncodingException {

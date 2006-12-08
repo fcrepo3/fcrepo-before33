@@ -94,12 +94,16 @@ public class Datastream
   public Datastream() {
   } 
 
-  public InputStream getContentStream()
-          throws StreamIOException
+  public InputStream getContentStream()  throws StreamIOException
   {
       return null;
   }
-  
+
+  public InputStream getContentStreamForChecksum()  throws StreamIOException
+  {
+      return getContentStream();
+  }
+
   // Note the static variable defaultChecksumType is initialized in the module initialization
   // code for the DefaultManagement module.
   
@@ -166,7 +170,7 @@ public class Datastream
           MessageDigest md = MessageDigest.getInstance(csType);
           LOG.debug("Classname = " + this.getClass().getName());
           LOG.debug("location = " + this.DSLocation);
-          InputStream is = getContentStream();          
+          InputStream is = getContentStreamForChecksum();          
           if (is != null)
           {
               byte buffer[] = new byte[5000];
