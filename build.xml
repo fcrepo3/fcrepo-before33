@@ -739,6 +739,7 @@
 		<copy todir="${install.build.dir}">
 	    	<fileset dir="${java.src.dir}">
 	    		<include name="**/fedorausers-mapping.xml"/>
+	    		<include name="**/webxml-mapping.xml"/>
 	    		<include name="**/OptionDefinition.properties"/>
 	        </fileset>
 	    </copy>
