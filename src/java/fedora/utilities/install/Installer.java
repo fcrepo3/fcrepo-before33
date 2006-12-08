@@ -13,8 +13,6 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Properties;
 
-import org.dom4j.DocumentException;
-
 import fedora.server.config.ServerConfiguration;
 import fedora.server.config.ServerConfigurationParser;
 import fedora.server.security.BESecurityConfig;
@@ -25,7 +23,7 @@ import fedora.utilities.ExecUtility;
 import fedora.utilities.FileUtils;
 import fedora.utilities.Zip;
 import fedora.utilities.install.container.Container;
-import fedora.utilities.install.webxml.WebXML;
+import fedora.utilities.install.container.FedoraWebXML;
 
 public class Installer {
     private Distribution _dist;
@@ -107,10 +105,10 @@ public class Installer {
 			// modify web.xml
 			System.out.println("Processing web.xml");
 	        File distWebXML = new File(warStage, "WEB-INF/web.xml");
-	        WebXML webXML = new WebXML(distWebXML, _opts);
-	        webXML.setFedoraHome();
-	        webXML.setSecurityConstraints();	        
-	        webXML.write(distWebXML.getAbsolutePath());
+	        FedoraWebXML webXML = new FedoraWebXML(distWebXML.getAbsolutePath(), _opts);
+	        Writer outputWriter = new BufferedWriter(new FileWriter(distWebXML));
+	        webXML.write(outputWriter);
+	        outputWriter.close();
 
 	        File fedoraWar = new File(installDir, Distribution.FEDORA_WAR);
 	        Zip.zip(fedoraWar, warStage.listFiles());
@@ -120,9 +118,7 @@ public class Installer {
 			throw new InstallationFailedException(e.getMessage(), e);
     	} catch(IOException e) {
     		throw new InstallationFailedException(e.getMessage(), e);
-    	} catch (DocumentException e) {
-    		throw new InstallationFailedException(e.getMessage(), e);
-		}
+    	}
     }
     
     private void installFCFG() throws InstallationFailedException {

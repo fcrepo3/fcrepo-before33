@@ -1,4 +1,4 @@
-package fedora.utilities.install.webxml;
+package fedora.utilities.install.container;
 
 import java.io.File;
 
