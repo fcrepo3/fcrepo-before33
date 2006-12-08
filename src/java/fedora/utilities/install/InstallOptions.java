@@ -155,6 +155,7 @@ public class InstallOptions {
         	_map.put(DATABASE_USERNAME, "fedoraAdmin");
         	_map.put(DATABASE_PASSWORD, "fedoraAdmin");
 			_map.put(DATABASE_JDBCURL, includedJDBCURL);
+			_map.put(DATABASE_DRIVERCLASS, OptionDefinition.get(DATABASE_DRIVERCLASS).getDefaultValue());
         } else {
         	boolean dbValidated = false;
             while (!dbValidated) {
