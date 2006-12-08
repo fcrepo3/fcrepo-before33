@@ -419,65 +419,72 @@
              trying to address a specific performance issue. For additional
              information regarding connection pool options, refer to the Apache
              Commons Pool API documentation at
-             http://jakarta.apache.org/commons/pool/apidocs/index.html.
-                 - driver 
-                       The JDBC driver class name.
-                 - url 
-                       The JDBC connection URL. 
-                 - username 
-                       The database user name.
-                 - password 
-                       The database password. 
-                 - maxActive 
-                       The maximum number of active instances in pool.
-                 - maxIdle
-                       The maximum number of idle instances in pool.
-                 - maxWait 
-                       The maximum amount of time in milliseconds the borrowObject() 
-                       method should wait before throwing an Exception when 
-                       whenExhaustedAction is set to WHEN_EXHAUSTED_BLOCK. A value 
-                       less than zero indicates block indefinitely.
-                 - minIdle 
-                       The minimum of idle instances in pool. 
-                 - minEvictableIdleTimeMillis 
-                       The minimum amount of time in milliseconds an object can be idle 
-                       in pool before eligible for eviction (if applicable). A value 
-                       less than zero indicates no object will be evicted due to idle time alone.
-                 - numTestsPerEvictionRun 
-                       The number of objects to be examined on each run of idle evictor thread
-                       (if applicable). A value less than zero indicates that
-                       ceil(numIdle)/abs(numTestsPerEvictionRun) will be run. 
-                 - timeBetweenEvictionRunsMillis 
-                       The time in milliseconds to sleep between runs of the idle object 
-                       evictor thread. A value less than zero indicates no idle evictor thread is run.
-                 - testOnBorrow 
-                       When true objects are validated before borrowed from the pool. 
-                 - testOnReturn 
-                       When true, objects are validated before returned to the pool.
-                 - testWhileIdle 
-                       When true, objects are validated by the idle object evictor thread.
-                 - whenExhaustedAction
-                       Action to take when a new object is requested and the the pool has
-                       reached maximum number of active objects. Valid values are:
-                           0 (fail i.e., throw Exception) 
-                           1 (block i.e., wait until pool resources are freed) 
-                           2 (grow i.e., increase the size of the pool).</comment>
-		<param name="dbUsername" value="fedoraAdmin"/>
-		<param name="dbPassword" value="fedoraAdmin"/>
-		<param name="jdbcURL" value="jdbc:mysql://localhost/fedora22?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"/>
-		<param name="jdbcDriverClass" value="com.mysql.jdbc.Driver"/>
-		<param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
-		<param name="maxActive" value="100"/>
-		<param name="maxIdle" value="10"/>
-		<param name="maxWait" value="-1"/>
-		<param name="minIdle" value="0"/>
-		<param name="minEvictableIdleTimeMillis" value="1800000"/>
-		<param name="numTestsPerEvictionRun" value="3"/>
-		<param name="timeBetweenEvictionRunsMillis" value="-1"/>
-		<param name="testOnBorrow" value="true"/>
-		<param name="testOnReturn" value="true"/>
-		<param name="testWhileIdle" value="true"/>
-		<param name="whenExhaustedAction" value="1"/>
+             http://jakarta.apache.org/commons/pool/apidocs/index.html.</comment>
+		<param name="dbUsername" value="fedoraAdmin">
+			<comment>The database user name.</comment>
+		</param>
+		<param name="dbPassword" value="fedoraAdmin">
+			<comment>The database password.</comment>
+		</param>
+		<param name="jdbcURL" value="jdbc:mysql://localhost/fedora22?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true">
+			<comment>The JDBC connection URL.</comment>
+		</param>
+		<param name="jdbcDriverClass" value="com.mysql.jdbc.Driver">
+			<comment>The JDBC driver class name.</comment>
+		</param>
+		<param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter">
+			<comment></comment>
+		</param>
+		<param name="maxActive" value="100">
+			<comment>The maximum number of active instances in pool.</comment>
+		</param>
+		<param name="maxIdle" value="10">
+			<comment>The maximum number of idle instances in pool.</comment>
+		</param>
+		<param name="maxWait" value="-1">
+			<comment>The maximum amount of time in milliseconds the 
+			borrowObject() method should wait before throwing an Exception when 
+            whenExhaustedAction is set to WHEN_EXHAUSTED_BLOCK. A value less 
+            than zero indicates block indefinitely.</comment>
+        </param>
+		<param name="minIdle" value="0">
+			<comment>The minimum of idle instances in pool. </comment>
+		</param>
+		<param name="minEvictableIdleTimeMillis" value="1800000">
+			<comment>The minimum amount of time in milliseconds an object can be 
+			idle in pool before eligible for eviction (if applicable). A value 
+            less than zero indicates no object will be evicted due to idle time 
+            alone.</comment>
+		</param>
+		<param name="numTestsPerEvictionRun" value="3">
+			<comment>The number of objects to be examined on each run of idle 
+			evictor thread (if applicable). A value less than zero indicates 
+			that ceil(numIdle)/abs(numTestsPerEvictionRun) will be run.</comment>
+		</param>
+		<param name="timeBetweenEvictionRunsMillis" value="-1">
+			<comment>The time in milliseconds to sleep between runs of the idle 
+			object evictor thread. A value less than zero indicates no idle 
+			evictor thread is run.</comment>
+		</param>
+		<param name="testOnBorrow" value="true">
+			<comment>When true objects are validated before borrowed from the 
+			pool.</comment>
+		</param> 
+		<param name="testOnReturn" value="true">
+			<comment>When true, objects are validated before returned to the 
+			pool.</comment>
+		</param>
+		<param name="testWhileIdle" value="true">
+			<comment>When true, objects are validated by the idle object evictor 
+			thread.</comment>
+		</param>
+		<param name="whenExhaustedAction" value="1">
+			<comment>Action to take when a new object is requested and the the pool has
+            reached maximum number of active objects. Valid values are:
+				0 (fail i.e., throw Exception) 
+				1 (block i.e., wait until pool resources are freed) 
+				2 (grow i.e., increase the size of the pool).</comment>
+		</param>
 	</datastore>
 	<datastore id="localMcKoiPool">
     	<comment>McKoi database on localhost running on port 9157 Each
@@ -487,65 +494,70 @@
             trying to address a specific performance issue. For additional
             information regarding connection pool options, refer to the Apache
             Commons Pool API documentation at
-            http://jakarta.apache.org/commons/pool/apidocs/index.html.
-                 - driver 
-                       The JDBC driver class name.
-                 - url 
-                       The JDBC connection URL. 
-                 - username 
-                       The database user name.
-                 - password 
-                       The database password. 
-                 - maxActive 
-                       The maximum number of active instances in pool.
-                 - maxIdle
-                       The maximum number of idle instances in pool.
-                 - maxWait 
-                       The maximum amount of time in milliseconds the borrowObject() 
-                       method should wait before throwing an Exception when 
-                       whenExhaustedAction is set to WHEN_EXHAUSTED_BLOCK. A value 
-                       less than zero indicates block indefinitely.
-                 - minIdle 
-                       The minimum of idle instances in pool. 
-                 - minEvictableIdleTimeMillis 
-                       The minimum amount of time in milliseconds an object can be idle 
-                       in pool before eligible for eviction (if applicable). A value 
-                       less than zero indicates no object will be evicted due to idle time alone.
-                 - numTestsPerEvictionRun 
-                       The number of objects to be examined on each run of idle evictor thread
-                       (if applicable). A value less than zero indicates that
-                       ceil(numIdle)/abs(numTestsPerEvictionRun) will be run. 
-                 - timeBetweenEvictionRunsMillis 
-                       The time in milliseconds to sleep between runs of the idle object 
-                       evictor thread. A value less than zero indicates no idle evictor thread is run.
-                 - testOnBorrow 
-                       When true objects are validated before borrowed from the pool. 
-                 - testOnReturn 
-                       When true, objects are validated before returned to the pool.
-                 - testWhileIdle 
-                       When true, objects are validated by the idle object evictor thread.
-                 - whenExhaustedAction
-                       Action to take when a new object is requested and the the pool has
-                       reached maximum number of active objects. Valid values are:
-                           0 (fail i.e., throw Exception) 
-                           1 (block i.e., wait until pool resources are freed) 
-                           2 (grow i.e., increase the size of the pool).</comment>    
-		<param name="dbUsername" value="fedoraAdmin"/>
-		<param name="dbPassword" value="fedoraAdmin"/>
-		<param name="jdbcURL" value="jdbc:mckoi://localhost:9157/"/>
-		<param name="jdbcDriverClass" value="com.mckoi.JDBCDriver"/>
+            http://jakarta.apache.org/commons/pool/apidocs/index.html.</comment>    
+		<param name="dbUsername" value="fedoraAdmin">
+			<comment>The database user name.</comment>
+		</param>
+		<param name="dbPassword" value="fedoraAdmin">
+			<comment>The database password.</comment>
+		</param>
+		<param name="jdbcURL" value="jdbc:mckoi://localhost:9157/">
+			<comment>The JDBC connection URL.</comment>
+		</param>
+		<param name="jdbcDriverClass" value="com.mckoi.JDBCDriver">
+			<comment>The JDBC driver class name.</comment>
+		</param>
 		<param name="ddlConverter" value="fedora.server.utilities.McKoiDDLConverter"/>
-		<param name="maxActive" value="100"/>
-		<param name="maxIdle" value="10"/>
-		<param name="maxWait" value="-1"/>
-		<param name="minIdle" value="0"/>
-		<param name="minEvictableIdleTimeMillis" value="1800000"/>
-		<param name="numTestsPerEvictionRun" value="3"/>
-		<param name="timeBetweenEvictionRunsMillis" value="-1"/>
-		<param name="testOnBorrow" value="true"/>
-		<param name="testOnReturn" value="true"/>
-		<param name="testWhileIdle" value="true"/>
-		<param name="whenExhaustedAction" value="1"/>
+		<param name="maxActive" value="100">
+			<comment>The maximum number of active instances in pool.</comment>
+		</param>
+		<param name="maxIdle" value="10">
+			<comment>The maximum number of idle instances in pool.</comment>
+		</param>
+		<param name="maxWait" value="-1">
+			<comment>The maximum amount of time in milliseconds the 
+			borrowObject() method should wait before throwing an Exception when 
+            whenExhaustedAction is set to WHEN_EXHAUSTED_BLOCK. A value less 
+            than zero indicates block indefinitely.</comment>
+        </param>
+		<param name="minIdle" value="0">
+			<comment>The minimum of idle instances in pool. </comment>
+		</param>
+		<param name="minEvictableIdleTimeMillis" value="1800000">
+			<comment>The minimum amount of time in milliseconds an object can be 
+			idle in pool before eligible for eviction (if applicable). A value 
+            less than zero indicates no object will be evicted due to idle time 
+            alone.</comment>
+		</param>
+		<param name="numTestsPerEvictionRun" value="3">
+			<comment>The number of objects to be examined on each run of idle 
+			evictor thread (if applicable). A value less than zero indicates 
+			that ceil(numIdle)/abs(numTestsPerEvictionRun) will be run.</comment>
+		</param>
+		<param name="timeBetweenEvictionRunsMillis" value="-1">
+			<comment>The time in milliseconds to sleep between runs of the idle 
+			object evictor thread. A value less than zero indicates no idle 
+			evictor thread is run.</comment>
+		</param>
+		<param name="testOnBorrow" value="true">
+			<comment>When true objects are validated before borrowed from the 
+			pool.</comment>
+		</param> 
+		<param name="testOnReturn" value="true">
+			<comment>When true, objects are validated before returned to the 
+			pool.</comment>
+		</param>
+		<param name="testWhileIdle" value="true">
+			<comment>When true, objects are validated by the idle object evictor 
+			thread.</comment>
+		</param>
+		<param name="whenExhaustedAction" value="1">
+			<comment>Action to take when a new object is requested and the the pool has
+            reached maximum number of active objects. Valid values are:
+				0 (fail i.e., throw Exception) 
+				1 (block i.e., wait until pool resources are freed) 
+				2 (grow i.e., increase the size of the pool).</comment>
+		</param>
 	</datastore>
 	<datastore id="localOraclePool">
     	<comment>Oracle database on localhost with SID=fedora22 Each
@@ -555,64 +567,70 @@
             trying to address a specific performance issue. For additional
             information regarding connection pool options, refer to the Apache
             Commons Pool API documentation at
-            http://jakarta.apache.org/commons/pool/apidocs/index.html.
-                 - driver 
-                       The JDBC driver class name.
-                 - url 
-                       The JDBC connection URL. 
-                 - username 
-                       The database user name.
-                 - password 
-                       The database password. 
-                 - maxActive 
-                       The maximum number of active instances in pool.
-                 - maxIdle
-                       The maximum number of idle instances in pool.
-                 - maxWait 
-                       The maximum amount of time in milliseconds the borrowObject() 
-                       method should wait before throwing an Exception when 
-                       whenExhaustedAction is set to WHEN_EXHAUSTED_BLOCK. A value 
-                       less than zero indicates block indefinitely.
-                 - minIdle 
-                       The minimum of idle instances in pool. 
-                 - minEvictableIdleTimeMillis 
-                       The minimum amount of time in milliseconds an object can be idle 
-                       in pool before eligible for eviction (if applicable). A value 
-                       less than zero indicates no object will be evicted due to idle time alone.
-                 - numTestsPerEvictionRun 
-                       The number of objects to be examined on each run of idle evictor thread
-                       (if applicable). A value less than zero indicates that
-                       ceil(numIdle)/abs(numTestsPerEvictionRun) will be run. 
-                 - timeBetweenEvictionRunsMillis 
-                       The time in milliseconds to sleep between runs of the idle object 
-                       evictor thread. A value less than zero indicates no idle evictor thread is run.
-                 - testOnBorrow 
-                       When true objects are validated before borrowed from the pool. 
-                 - testOnReturn 
-                       When true, objects are validated before returned to the pool.
-                 - testWhileIdle 
-                       When true, objects are validated by the idle object evictor thread.
-                 - whenExhaustedAction
-                       Action to take when a new object is requested and the the pool has
-                       reached maximum number of active objects. Valid values are:
-                           0 (fail i.e., throw Exception) 
-                           1 (block i.e., wait until pool resources are freed) 
-                           2 (grow i.e., increase the size of the pool).</comment>    <param name="dbUsername" value="fedoraAdmin"/>
-		<param name="dbPassword" value="fedoraAdmin"/>
-		<param name="jdbcURL" value="jdbc:oracle:thin:@localhost:1521:fedora22"/>
-		<param name="jdbcDriverClass" value="oracle.jdbc.driver.OracleDriver"/>
+            http://jakarta.apache.org/commons/pool/apidocs/index.html.</comment>    
+        <param name="dbUsername" value="fedoraAdmin">
+			<comment>The database user name.</comment>
+		</param>
+		<param name="dbPassword" value="fedoraAdmin">
+			<comment>The database password.</comment>
+		</param>
+		<param name="jdbcURL" value="jdbc:oracle:thin:@localhost:1521:fedora22">
+			<comment>The JDBC connection URL.</comment>
+		</param>
+		<param name="jdbcDriverClass" value="oracle.jdbc.driver.OracleDriver">
+			<comment>The JDBC driver class name.</comment>
+		</param>
 		<param name="ddlConverter" value="fedora.server.utilities.OracleDDLConverter"/>
-		<param name="maxActive" value="100"/>
-		<param name="maxIdle" value="10"/>
-		<param name="maxWait" value="-1"/>
-		<param name="minIdle" value="0"/>
-		<param name="minEvictableIdleTimeMillis" value="1800000"/>
-		<param name="numTestsPerEvictionRun" value="3"/>
-		<param name="timeBetweenEvictionRunsMillis" value="-1"/>
-		<param name="testOnBorrow" value="true"/>
-		<param name="testOnReturn" value="true"/>
-		<param name="testWhileIdle" value="true"/>
-		<param name="whenExhaustedAction" value="1"/>
+		<param name="maxActive" value="100">
+			<comment>The maximum number of active instances in pool.</comment>
+		</param>
+		<param name="maxIdle" value="10">
+			<comment>The maximum number of idle instances in pool.</comment>
+		</param>
+		<param name="maxWait" value="-1">
+			<comment>The maximum amount of time in milliseconds the 
+			borrowObject() method should wait before throwing an Exception when 
+            whenExhaustedAction is set to WHEN_EXHAUSTED_BLOCK. A value less 
+            than zero indicates block indefinitely.</comment>
+        </param>
+		<param name="minIdle" value="0">
+			<comment>The minimum of idle instances in pool. </comment>
+		</param>
+		<param name="minEvictableIdleTimeMillis" value="1800000">
+			<comment>The minimum amount of time in milliseconds an object can be 
+			idle in pool before eligible for eviction (if applicable). A value 
+            less than zero indicates no object will be evicted due to idle time 
+            alone.</comment>
+		</param>
+		<param name="numTestsPerEvictionRun" value="3">
+			<comment>The number of objects to be examined on each run of idle 
+			evictor thread (if applicable). A value less than zero indicates 
+			that ceil(numIdle)/abs(numTestsPerEvictionRun) will be run.</comment>
+		</param>
+		<param name="timeBetweenEvictionRunsMillis" value="-1">
+			<comment>The time in milliseconds to sleep between runs of the idle 
+			object evictor thread. A value less than zero indicates no idle 
+			evictor thread is run.</comment>
+		</param>
+		<param name="testOnBorrow" value="true">
+			<comment>When true objects are validated before borrowed from the 
+			pool.</comment>
+		</param> 
+		<param name="testOnReturn" value="true">
+			<comment>When true, objects are validated before returned to the 
+			pool.</comment>
+		</param>
+		<param name="testWhileIdle" value="true">
+			<comment>When true, objects are validated by the idle object evictor 
+			thread.</comment>
+		</param>
+		<param name="whenExhaustedAction" value="1">
+			<comment>Action to take when a new object is requested and the the pool has
+            reached maximum number of active objects. Valid values are:
+				0 (fail i.e., throw Exception) 
+				1 (block i.e., wait until pool resources are freed) 
+				2 (grow i.e., increase the size of the pool).</comment>
+		</param>
 		<param name="connection.SetBigStringTryClob" value="true"/>
 	</datastore>
 	<datastore id="localKowariTriplestore">
