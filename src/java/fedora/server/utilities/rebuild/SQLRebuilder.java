@@ -124,7 +124,7 @@ public class SQLRebuilder implements Rebuilder {
             h.put("useCachedObject", "false");
             h.put("userId", "fedoraAdmin");
             */
-            m_context = ReadOnlyContext.getContext("utility", "fedoraAdmin", "", null, ReadOnlyContext.DO_OP); 
+            m_context = ReadOnlyContext.getContext("utility", "fedoraAdmin", "", /*null, */ReadOnlyContext.DO_OP); 
             String registryClassTemp = s_server.getParameter("registry");
             String reason = "registry";
 

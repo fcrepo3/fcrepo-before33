@@ -177,6 +177,8 @@ public class DatastreamResolverServlet extends HttpServlet {
 
 		id = request.getParameter("id").replaceAll("T", " ");
         LOG.debug("Datastream tempID=" + id);
+        
+        System.err.println("DRS doGet()");
 
 		try {
 			// Check for required id parameter.
@@ -334,17 +336,18 @@ public class DatastreamResolverServlet extends HttpServlet {
 				throw new AuthzOperationalException(
 						"no callbackRole for this ticket");
 			}
-			String targetRole = Authorization.FEDORA_ROLE_KEY + "="
-					+ dm.callbackRole; // restrict access to role of this
+			String targetRole = //Authorization.FEDORA_ROLE_KEY + "=" + 
+					dm.callbackRole; // restrict access to role of this
 										// ticket
 			String[] targetRoles = { targetRole };
 			Context context = ReadOnlyContext.getContext(
-					Constants.HTTP_REQUEST.REST.uri, request, targetRoles);
+					Constants.HTTP_REQUEST.REST.uri, request); // , targetRoles);
 			if (request.getRemoteUser() == null) {
 				// non-authn: must accept target role of ticket
     			LOG.debug("DatastreamResolverServlet: unAuthenticated request");
 			} else {
 				// authn: check user roles for target role of ticket
+				/*
 				LOG.debug("DatastreamResolverServlet: Authenticated request getting user");
 				String[] roles = null;
 				Principal principal = request.getUserPrincipal();
@@ -359,9 +362,10 @@ public class DatastreamResolverServlet extends HttpServlet {
 				if (roles == null) {
 					roles = new String[0];
 				}
+				*/
 				//XXXXXXXXXXXXXXXXXXXXXXxif (contains(roles, targetRole)) {
 				if (((ExtendedHttpServletRequest)request).isUserInRole(targetRole)) {
-					// user has target role
+					LOG.debug("DatastreamResolverServlet: user has required role");
 				} else {
 					LOG.debug("DatastreamResolverServlet: authZ exception in validating user");
 					throw new AuthzDeniedException("wrong user for this ticket");

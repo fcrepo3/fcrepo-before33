@@ -29,7 +29,7 @@ public class ReadOnlyContext implements Context {
     private static final Logger LOG = Logger.getLogger(
             ReadOnlyContext.class.getName());
 	
-    public static ReadOnlyContext EMPTY=new ReadOnlyContext(null, null, "", true);
+    public static ReadOnlyContext EMPTY=new ReadOnlyContext(null, null, null, "", true);
     static {
     	EMPTY.setActionAttributes(null);
     	EMPTY.setResourceAttributes(null);
@@ -56,7 +56,9 @@ public class ReadOnlyContext implements Context {
     
     public static final String BACKEND_SERVICE = "backendService";
 
-    private boolean noOp = false; 
+    private boolean noOp = false;
+    
+    private ExtendedHttpServletRequest extendedHttpServletRequest = null;
 
     /**
      * Creates and initializes the <code>Context</code>.
@@ -64,7 +66,7 @@ public class ReadOnlyContext implements Context {
      * @param parameters A pre-loaded Map of name-value pairs
      *        comprising the context.
      */
-    private ReadOnlyContext(MultiValueMap environmentAttributes, MultiValueMap subjectAttributes, String password, boolean noOp) {
+    private ReadOnlyContext(HttpServletRequest request, MultiValueMap environmentAttributes, MultiValueMap subjectAttributes, String password, boolean noOp) {
         //super(parameters);
         m_environmentAttributes=environmentAttributes;
         if (m_environmentAttributes==null) {
@@ -85,6 +87,9 @@ public class ReadOnlyContext implements Context {
         }
         this.password = password;
         this.noOp = noOp;
+        if (request instanceof ExtendedHttpServletRequest){
+        	this.extendedHttpServletRequest = (ExtendedHttpServletRequest) request;
+        }
     }
  
     public Iterator environmentAttributes() {
@@ -108,15 +113,38 @@ public class ReadOnlyContext implements Context {
     }
 
     public int nSubjectValues(String name) {
-        return m_subjectAttributes.length(name);
+    	int n = m_subjectAttributes.length(name);
+    	if (extendedHttpServletRequest != null) {
+    		n++;
+    	}
+        return n;
     }
     
     public String getSubjectValue(String name) {
-        return m_subjectAttributes.getString(name);
+    	String value = null;
+    	value = m_subjectAttributes.getString(name);
+    	if (value == null)  {
+    		if (extendedHttpServletRequest.isUserInRole(name)) {
+    			value = "";
+    		}
+    	}
+        return value;
     }
     
     public String[] getSubjectValues(String name) {
-        return m_subjectAttributes.getStringArray(name);
+		int n = m_subjectAttributes.length(name);
+    	if (extendedHttpServletRequest.isUserInRole(name)) {
+    		n++;
+    	}
+    	String[] values = new String[n];
+    	String[] temp = m_subjectAttributes.getStringArray(name);
+    	for (int i = 0; i < temp.length; i++) {
+    		values[i] = temp[i];
+    	}
+    	if (extendedHttpServletRequest.isUserInRole(name)) {
+    		values[n-1] = "";
+    	}
+        return values;
     }
     
     public void setActionAttributes(MultiValueMap actionAttributes) {
@@ -213,9 +241,11 @@ public class ReadOnlyContext implements Context {
     	STRING_ARRAY_CLASS = temp.getClass();
     }
     
+    /*
     public static final String GETPASSWORD_METHOD_NAME = "getPassword";
 
-    public static final String GETROLES_METHOD_NAME = "getRoles";
+
+     public static final String GETROLES_METHOD_NAME = "getRoles";
     
     public static final String getPassword(Principal principal) throws Exception {
     	return getPassword(principal, GETPASSWORD_METHOD_NAME);
@@ -262,7 +292,10 @@ public class ReadOnlyContext implements Context {
 		}
 		return password;
     }
+    */
 
+    
+    /*
     public static final String[] getRoles(Principal principal) throws Exception {
     	return getRoles(principal, GETROLES_METHOD_NAME);
     }
@@ -334,23 +367,30 @@ public class ReadOnlyContext implements Context {
 		}		
 		return roles;
     }
+    */
     
     
-    private static final ReadOnlyContext getContext(MultiValueMap environmentMap, String subjectId, String password, String[] roles, Map auxSubjectRoles, boolean noOp) {
+    private static final ReadOnlyContext getContext(HttpServletRequest request, MultiValueMap environmentMap, String subjectId, String password, /*String[] roles,*/ Map auxSubjectRoles, boolean noOp) {
     	MultiValueMap subjectMap = new MultiValueMap(); 
       	try {		
       		subjectMap.set(Constants.SUBJECT.LOGIN_ID.uri, (subjectId == null) ? "" : subjectId);
+      		/*
       		for (int i = 0; (roles != null) && (i < roles.length); i++) {
       			String[] parts = parseRole(roles[i]);
      			if ((parts != null) && parts.length == 2) {
     				subjectMap.set(parts[0],parts[1]); //todo:  handle multiple values (ldap)
      			}
       		}
+      		*/
       		if (auxSubjectRoles == null) {
       			System.err.println("IN CONTEXT auxSubjectRoles == null");
       		} else {
-      			System.err.println("IN CONTEXT processing auxSubjectRoles");
+      			System.err.println("IN CONTEXT processing auxSubjectRoles==" + auxSubjectRoles);
+      			System.err.println("IN CONTEXT processing auxSubjectRoles.keySet()==" + auxSubjectRoles.keySet());
+      			System.err.println("IN CONTEXT processing auxSubjectRoles.keySet().isEmpty()==" + auxSubjectRoles.keySet().isEmpty());
 	      		Iterator auxSubjectRoleKeys = auxSubjectRoles.keySet().iterator();
+      			System.err.println("IN CONTEXT processing auxSubjectRoleKeys==" + auxSubjectRoleKeys);
+          		LOG.fatal("logging working");
 	      		while (auxSubjectRoleKeys.hasNext()) {
 	      			Object name = (String) auxSubjectRoleKeys.next();
 	      			System.err.println("IN CONTEXT name==" + name);
@@ -378,23 +418,30 @@ public class ReadOnlyContext implements Context {
 	          			}
 	      			}
 	      		}
+      			System.err.println("IN CONTEXT after while");
       		}
       	} catch (Exception e) {	
       		LOG.error("caught exception building subjectMap " + e.getMessage(), e);
       	} finally {
       		subjectMap.lock();
       	}
-      	return new ReadOnlyContext(environmentMap, subjectMap, (password == null) ? "" : password, noOp);
+      	return new ReadOnlyContext(request, environmentMap, subjectMap, (password == null) ? "" : password, noOp);
     }
-
-    // needed for, e.g., rebuild
-    public static final ReadOnlyContext getContext(String messageProtocol, String subjectId, String password, String[] roles, boolean noOp) throws Exception {
+    /* new; can we do without?  private static final ReadOnlyContext getContext(MultiValueMap environmentMap, String subjectId, String password, String[] roles, Map auxSubjectRoles, boolean noOp) {
+        return getContext(null, environmentMap, subjectId, password, roles, auxSubjectRoles, noOp);
+    }
+    */
+    
+    
+    // needed only for rebuild
+    public static final ReadOnlyContext getContext(String messageProtocol, String subjectId, String password, /*String[] roles,*/ boolean noOp) throws Exception {
     	MultiValueMap environmentMap = beginEnvironmentMap(messageProtocol);
   		environmentMap.lock(); // no request to grok more from 
-  		return getContext(environmentMap, subjectId, password, roles, null, noOp);
+  		return getContext(null, environmentMap, subjectId, password, /*roles,*/ null, noOp);
     }
-
-    public static final ReadOnlyContext getContext(String messageProtocol, HttpServletRequest request, String[] overrideRoles) {
+    	
+    	
+    public static final ReadOnlyContext getContext(String messageProtocol, HttpServletRequest request /*, String[] overrideRoles*/ ) {
 		MultiValueMap environmentMap = null;
 	  	try {
 	  		environmentMap = beginEnvironmentMap(messageProtocol);  			
@@ -486,9 +533,11 @@ public class ReadOnlyContext implements Context {
   	  	if (password == null) {
   	  		password = "";
   	  	}
+  	  	/*
   	  	if (overrideRoles == null) {
   	  		overrideRoles = new String[0];
   	  	}
+  	  	*/
   	  	
   	boolean noOp = true; //safest approach 
   	try {
@@ -505,13 +554,15 @@ public class ReadOnlyContext implements Context {
   	if ((testFedoraAuxSubjectAttributes != null) && (testFedoraAuxSubjectAttributes instanceof Map)) {
   		auxSubjectRoles = (Map) testFedoraAuxSubjectAttributes;
   	}
-  	return getContext(environmentMap, subjectId, password, overrideRoles, auxSubjectRoles, noOp);
+  	return getContext(request, environmentMap, subjectId, password, /*overrideRoles,*/ auxSubjectRoles, noOp);
     }
+    
+
 
     /*
      * Gets a Context appropriate for the request, and whether it is ok
      * to use the dissemination cache or not.
-     */
+     
     //form context from optional servlet request, overriding request for added parms    
     public static final ReadOnlyContext getContext(String messageProtocol, HttpServletRequest request) {
         final String here = ReadOnlyContext.class.getName() + ".getContext(String, HttpServletRequest)";
@@ -519,20 +570,24 @@ public class ReadOnlyContext implements Context {
   	  	String[] roles = null;
 	  	Principal principal = request.getUserPrincipal();
   	  	if (principal == null) {
-  	  		LOG.debug(here + ": no principal to grok roles from!!");				
+  	  		LOG.debug(here + ": no principal (authn may not be required)");				
   	  	} else {
+  	  		*
   	  		try {
 	  	  		roles = getRoles(principal);
 	  	  	} catch (Throwable t) {
 	  	  		LOG.error(here + ": exception calling getRoles()", t);
 	  	  	}
+	  	  	*
   	  	}
   	  	if (roles == null) {
   	  		roles = new String[0];
   	  	}
   	return getContext(messageProtocol, request, roles);
     }
+    */
     
+    /*
   	public static final String[] parseRole (String role) {
   		String[] parts = null;
   		if ((role == null) || (role.length() == 0)) {
@@ -556,6 +611,7 @@ public class ReadOnlyContext implements Context {
   		}
   		return parts; 
   	}
+  	*/
   	
     public String getPassword() {
     	return password;
