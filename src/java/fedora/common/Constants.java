@@ -46,6 +46,15 @@ public interface Constants {
     public static final HttpRequestNamespace    HTTP_REQUEST  = HttpRequestNamespace.getInstance();
 
     static class FedoraHome {
+
+        /**
+         * Determines the value of the FEDORA_HOME constant based on the 
+         * <code>fedora.home</code> system property (checked first) or the 
+         * <code>FEDORA_HOME</code> environment variable.
+         *
+         * @returns the value, or <code>null</code> if undefined in both 
+         *          places.
+         */
         public static final String getValue() {
             if (System.getProperty("fedora.home") != null) {
                 return System.getProperty("fedora.home");
