@@ -178,7 +178,7 @@ public class DatastreamResolverServlet extends HttpServlet {
 		id = request.getParameter("id").replaceAll("T", " ");
         LOG.debug("Datastream tempID=" + id);
         
-        System.err.println("DRS doGet()");
+        LOG.debug("DRS doGet()");
 
 		try {
 			// Check for required id parameter.

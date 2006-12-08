@@ -380,45 +380,44 @@ public class ReadOnlyContext implements Context {
      			if ((parts != null) && parts.length == 2) {
     				subjectMap.set(parts[0],parts[1]); //todo:  handle multiple values (ldap)
      			}
-      		}
+      		}	
       		*/
       		if (auxSubjectRoles == null) {
-      			System.err.println("IN CONTEXT auxSubjectRoles == null");
+      			LOG.debug("IN CONTEXT auxSubjectRoles == null");
       		} else {
-      			System.err.println("IN CONTEXT processing auxSubjectRoles==" + auxSubjectRoles);
-      			System.err.println("IN CONTEXT processing auxSubjectRoles.keySet()==" + auxSubjectRoles.keySet());
-      			System.err.println("IN CONTEXT processing auxSubjectRoles.keySet().isEmpty()==" + auxSubjectRoles.keySet().isEmpty());
+      			LOG.debug("IN CONTEXT processing auxSubjectRoles==" + auxSubjectRoles);
+      			LOG.debug("IN CONTEXT processing auxSubjectRoles.keySet()==" + auxSubjectRoles.keySet());
+      			LOG.debug("IN CONTEXT processing auxSubjectRoles.keySet().isEmpty()==" + auxSubjectRoles.keySet().isEmpty());
 	      		Iterator auxSubjectRoleKeys = auxSubjectRoles.keySet().iterator();
-      			System.err.println("IN CONTEXT processing auxSubjectRoleKeys==" + auxSubjectRoleKeys);
-          		LOG.fatal("logging working");
+      			LOG.debug("IN CONTEXT processing auxSubjectRoleKeys==" + auxSubjectRoleKeys);
 	      		while (auxSubjectRoleKeys.hasNext()) {
 	      			Object name = (String) auxSubjectRoleKeys.next();
-	      			System.err.println("IN CONTEXT name==" + name);
+	      			LOG.debug("IN CONTEXT name==" + name);
 	      			if (name instanceof String) {
-		      			System.err.println("IN CONTEXT name is string==" + name);
+		      			LOG.debug("IN CONTEXT name is string==" + name);
 	          			Object value = auxSubjectRoles.get(name);
 	          			if ((value instanceof String) || (value instanceof String[])) {
-			      			System.err.println("IN CONTEXT value is string([])");
+			      			LOG.debug("IN CONTEXT value is string([])");
 			      			if (value instanceof String) {
-				      			System.err.println("IN CONTEXT value is string==" + (String) value);			      				
+				      			LOG.debug("IN CONTEXT value is string==" + (String) value);			      				
 			      			}
 			      			if (value instanceof String[]) {
-				      			System.err.println("IN CONTEXT value is string[]");
+				      			LOG.debug("IN CONTEXT value is string[]");
 				      			for (int z=0; z<((String[])value).length; z++) {
-					      			System.err.println("IN CONTEXT this value==" + ((String[])value)[z]);				      				
+					      			LOG.debug("IN CONTEXT this value==" + ((String[])value)[z]);				      				
 				      			}
 			      			}
 	        				subjectMap.set((String) name, value);
 	          			} else if (value instanceof Set) {
 	          				for (Iterator setIterator = ((Set)value).iterator(); setIterator.hasNext(); ) {
 	          					String singleValue = (String) setIterator.next();
-				      			System.err.println("IN CONTEXT singleValue is string==" + (String) singleValue);			      				
+				      			LOG.debug("IN CONTEXT singleValue is string==" + (String) singleValue);			      				
 	          					subjectMap.set((String) name, singleValue);
 	          				}
 	          			}
 	      			}
 	      		}
-      			System.err.println("IN CONTEXT after while");
+      			LOG.debug("IN CONTEXT after while");
       		}
       	} catch (Exception e) {	
       		LOG.error("caught exception building subjectMap " + e.getMessage(), e);
