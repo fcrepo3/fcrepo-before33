@@ -44,19 +44,14 @@ public class DriverShim implements Driver {
 	 * Loads the driver from the given jar file and registers it with the driver
 	 * manager.
 	 */
-	public static final void loadAndRegister(String driverJarFile,
-			String driverClassName) throws Exception {
-		loadAndRegister(new File(driverJarFile), driverClassName);
-	}
-	
-	/**
-	 * Loads the driver from the given jar file and registers it with the driver
-	 * manager.
-	 */
 	public static final void loadAndRegister(File driverJarFile,
 			String driverClassName) throws Exception {
-		URL url = new URL("jar:" + driverJarFile.toURI() + "!/");
-		URLClassLoader urlCL = new URLClassLoader(new URL[] { url });
+		loadAndRegister(new URL("jar:" + driverJarFile.toURI() + "!/"), driverClassName);
+	}
+	
+	public static final void loadAndRegister(URL driverURL,
+			String driverClassName) throws Exception {
+		URLClassLoader urlCL = new URLClassLoader(new URL[] { driverURL });
 		Driver driver = (Driver)Class.forName(driverClassName, true, urlCL).newInstance();
 		DriverManager.registerDriver(new DriverShim(driver));
 	}
