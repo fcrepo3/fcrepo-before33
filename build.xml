@@ -119,6 +119,7 @@
         	<pathelement location="${lib.commons-beanutils}"/>
         	<pathelement location="${lib.commons-betwixt}"/>
         	<pathelement location="${lib.commons-codec}"/>
+        	<pathelement location="${lib.commons-digester}"/>
             <pathelement location="${lib.commons-httpclient}"/>
             <pathelement location="${lib.saxon}"/>
 
