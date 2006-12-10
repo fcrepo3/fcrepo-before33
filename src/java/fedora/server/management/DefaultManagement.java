@@ -108,38 +108,29 @@ public class DefaultManagement
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
             throw new ModuleInitializationException("Error while initializing "
                     + "temporary storage area: " + e.getClass().getName() + ": "
-                    + e.getMessage(), getRole());
+                    + e.getMessage(), getRole(), e);
         }
         
         // initialize variables pertaining to checksumming datastreams.
         if (Datastream.defaultChecksumType == null)
         {
             Datastream.defaultChecksumType = "DISABLED";
-            try 
+            String auto =getParameter("autoChecksum");
+            LOG.debug("Got Parameter: autoChecksum = " + auto);
+            if (auto.equalsIgnoreCase("true"))
             {
-                String auto =getParameter("autoChecksum");
-                LOG.debug("Got Parameter: autoChecksum = " + auto);
-                if (auto.equalsIgnoreCase("true"))
-                {
-                    Datastream.autoChecksum = true;
-                    Datastream.defaultChecksumType = getParameter("checksumAlgorithm");
-                }
-                else
-                {
-                    Datastream.autoChecksum = false;
-                    Datastream.defaultChecksumType = "DISABLED";
-                }
-                LOG.info("autoChecksum is "+ auto);
-                LOG.info("defaultChecksumType is "+ Datastream.defaultChecksumType);
+                Datastream.autoChecksum = true;
+                Datastream.defaultChecksumType = getParameter("checksumAlgorithm");
             }
-            catch (Exception e)
+            else
             {
-                LOG.warn("Exception in getting default checksum type", e);
-                // IGNORE  
+                Datastream.autoChecksum = false;
+                Datastream.defaultChecksumType = "DISABLED";
             }
+            LOG.debug("autoChecksum is "+ auto);
+            LOG.debug("defaultChecksumType is "+ Datastream.defaultChecksumType);
         }
 
     }
