@@ -136,7 +136,7 @@ public class TableSpec {
      *         table specifications.
      * @throws IOException if an IO error occurs.
      */
-    public static List getTableSpecs(InputStream in)
+    public static List<TableSpec> getTableSpecs(InputStream in)
             throws InconsistentTableSpecException,
                    IOException {
         try {
