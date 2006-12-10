@@ -2,6 +2,7 @@ package fedora.utilities.install;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
 
 public abstract class Distribution {
@@ -13,12 +14,14 @@ public abstract class Distribution {
 	public static final String FEDORA_HOME = "fedorahome.zip";
 	public static final String KEYSTORE = "keystore";
 	public static final String TRUSTSTORE = "truststore";
-	public static final String JAAS_CONFIG = "jaas.config";
+	public static final String DBSPEC = "DefaultDOManager.dbspec";
+	
 	
 	public static final String TOMCAT;
 	public static final String MCKOI;
 	public static final String JDBC_MYSQL;
 	public static final String JDBC_MCKOI;
+	public static final String JDBC_POSTGRESQL;
 	
 	public static final String TOMCAT_BASENAME;
 	public static final String MCKOI_BASENAME;
@@ -37,8 +40,9 @@ public abstract class Distribution {
         }       
         TOMCAT = PROPS.getProperty("install.tomcat");
         MCKOI = PROPS.getProperty("install.mckoi");
-        JDBC_MYSQL = PROPS.getProperty("install.jdbc.mysql");
         JDBC_MCKOI = PROPS.getProperty("install.jdbc.mckoi");
+        JDBC_MYSQL = PROPS.getProperty("install.jdbc.mysql");
+        JDBC_POSTGRESQL = PROPS.getProperty("install.jdbc.postgresql");
         TOMCAT_BASENAME = PROPS.getProperty("install.tomcat.basename");
         MCKOI_BASENAME = PROPS.getProperty("install.mckoi.basename");
     }
@@ -46,5 +50,7 @@ public abstract class Distribution {
     public abstract boolean contains(String path);
 
     public abstract InputStream get(String path) throws IOException;
+    
+    public abstract URL getURL(String path);
 
 }

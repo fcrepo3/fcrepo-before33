@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -21,15 +22,12 @@ import fedora.utilities.FileUtils;
 public class InstallOptions {
 
 	public static final String INSTALL_TYPE			 = "install.type";
-	public static final String INSTALL_QUICK		 = "quick";
     public static final String FEDORA_HOME           = "fedora.home";
     public static final String APIA_AUTH_REQUIRED    = "apia.auth.required";
     public static final String SSL_AVAILABLE         = "ssl.available";
     public static final String APIA_SSL_REQUIRED     = "apia.ssl.required";
     public static final String APIM_SSL_REQUIRED     = "apim.ssl.required";
     public static final String SERVLET_ENGINE        = "servlet.engine";
-    public static final String EXISTING_TOMCAT       = "existingTomcat";
-    public static final String OTHER                 = "other";
     public static final String TOMCAT_HOME           = "tomcat.home";
     public static final String FEDORA_ADMIN_PASS     = "fedora.admin.pass";
     public static final String TOMCAT_SHUTDOWN_PORT  = "tomcat.shutdown.port";
@@ -42,14 +40,19 @@ public class InstallOptions {
     public static final String DATABASE_DRIVERCLASS	 = "database.jdbcDriverClass";
     public static final String DATABASE_USERNAME     = "database.username";
     public static final String DATABASE_PASSWORD	 = "database.password";
+    public static final String XACML_ENABLED         = "xacml.enabled";
+    public static final String DEPLOY_LOCAL_SERVICES = "deploy.local.services";
+    public static final String UNATTENDED 			 = "unattended";
+    public static final String DATABASE_UPDATE		 = "database.update";
+    
+    public static final String INSTALL_QUICK		 = "quick";
     public static final String INCLUDED				 = "included";
     public static final String MCKOI				 = "mckoi";
     public static final String MYSQL				 = "mysql";
     public static final String ORACLE		 		 = "oracle";
     public static final String POSTGRESQL		 	 = "postgresql";
-    public static final String XACML_ENABLED         = "xacml.enabled";
-    public static final String DEPLOY_LOCAL_SERVICES = "deploy.local.services";
-    public static final String UNATTENDED 			 = "unattended";
+    public static final String OTHER                 = "other";
+    public static final String EXISTING_TOMCAT       = "existingTomcat";
 
     private Map<Object, Object> _map;
     private Distribution _dist;
@@ -394,7 +397,16 @@ public class InstallOptions {
 			Connection conn = DriverManager.getConnection(getValue(DATABASE_JDBCURL), getValue(DATABASE_USERNAME),
 					getValue(DATABASE_PASSWORD));
 			DatabaseMetaData dmd = conn.getMetaData();
-			System.out.println("Successfully connected to " + dmd.getDatabaseProductName() + " " + dmd.getDatabaseMajorVersion());
+			System.out.println("Successfully connected to " + dmd.getDatabaseProductName());
+
+			// check if we need to update old table
+			ResultSet rs = dmd.getTables(null, null, "%", null);
+			while (rs.next()) {
+				if (rs.getString("TABLE_NAME").equals("do")) {
+					inputOption(DATABASE_UPDATE);
+					break;
+				}
+			}
 			conn.close();
 			return true;
     	} catch(Exception e) {

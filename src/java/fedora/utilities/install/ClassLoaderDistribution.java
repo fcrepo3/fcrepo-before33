@@ -3,6 +3,7 @@ package fedora.utilities.install;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 public class ClassLoaderDistribution extends Distribution {
 
@@ -20,6 +21,9 @@ public class ClassLoaderDistribution extends Distribution {
         return _cl.getResource(rewritePath(path)) != null;
     }
     
+    /**
+     * Requested resources will automatically be prefixed with "resources/".
+     */
     public InputStream get(String path) throws IOException {
         InputStream stream = _cl.getResourceAsStream(rewritePath(path));
         if (stream == null) {
@@ -29,8 +33,12 @@ public class ClassLoaderDistribution extends Distribution {
         }
     }
     
+    public URL getURL(String path) {
+    	return _cl.getResource(rewritePath(path));
+    }
+    
     /**
-     * Note: we don't check for backtracking
+     * Note: we don't check for backtracking.
      * @param path
      * @return
      */
@@ -41,5 +49,4 @@ public class ClassLoaderDistribution extends Distribution {
     	// Note, ClassLoader paths are always absolute, so , so no leading slash
     	return "resources/" + path;
     }
-
 }

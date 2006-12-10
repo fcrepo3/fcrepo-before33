@@ -11,9 +11,7 @@ import org.dom4j.Element;
 import fedora.utilities.XMLDocument;
 import fedora.utilities.install.InstallOptions;
 
-public class TomcatServerXML extends XMLDocument {
-	public static final String FEDORA_ADMIN_ROLE = "fedoraRole=administrator";
-	
+public class TomcatServerXML extends XMLDocument {	
 	private InstallOptions options;
 	
 	public TomcatServerXML(File serverXML, InstallOptions installOptions) throws FileNotFoundException, DocumentException {

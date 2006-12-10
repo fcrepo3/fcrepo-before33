@@ -16,7 +16,7 @@ public abstract class Tomcat extends Container {
 	private File conf;
 	private File common_lib;
 	
-	public Tomcat(Distribution dist, InstallOptions options) {
+	Tomcat(Distribution dist, InstallOptions options) {
 		super(dist, options);
 		tomcatHome = new File(getOptions().getValue(InstallOptions.TOMCAT_HOME));
 		webapps = new File(tomcatHome, "webapps" + File.separator);

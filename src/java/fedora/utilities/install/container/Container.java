@@ -22,17 +22,6 @@ public abstract class Container {
 		this.options = options;
 	}
 	
-	public static Container getContainer(Distribution dist, InstallOptions options) {
-		String servletEngine = options.getValue(InstallOptions.SERVLET_ENGINE);
-		if (servletEngine.equals(InstallOptions.INCLUDED)) {
-			return new BundledTomcat(dist, options);
-		} else if (servletEngine.equals(InstallOptions.EXISTING_TOMCAT)) {
-			return new ExistingTomcat(dist, options);
-		} else {
-			return new DefaultContainer(dist, options);
-		}
-	}
-	
 	public abstract void deploy(File war) throws InstallationFailedException;
 	
 	public abstract void install() throws InstallationFailedException;
