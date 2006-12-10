@@ -10,9 +10,9 @@ public abstract class XacmlNamespace {
 	
     public String uri;
 
-	private Vector memberNamespaces = new Vector();
+	private Vector<XacmlNamespace> memberNamespaces = new Vector<XacmlNamespace>();
 
-	private Vector memberNames = new Vector();
+	private Vector<XacmlName> memberNames = new Vector<XacmlName>();
 	
 	protected XacmlNamespace(XacmlNamespace parent, String localName) {
    		this.parent = parent;
@@ -36,7 +36,7 @@ public abstract class XacmlNamespace {
 		return result;
 	}
 	
-	public void flatRep(Vector flatRep) {
+	public void flatRep(Vector<XacmlName> flatRep) {
 		flatRep.addAll(memberNames);		
 		for (int i=0; i<memberNamespaces.size(); i++) {
 			((XacmlNamespace)memberNamespaces.get(i)).flatRep(flatRep);
