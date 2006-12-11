@@ -24,8 +24,10 @@ public class ObjectPane
     private String m_pid;
     private String m_state;
     private String m_label;
+    private String m_ownerId;
     private JComboBox m_stateComboBox;
     private JTextField m_labelTextField;
+    private JTextField m_ownerIdTextField;
     private Dimension m_labelDims;
 
     /**
@@ -38,7 +40,9 @@ public class ObjectPane
         m_pid=pid;
         m_state=state;
         m_label=label;
+        m_ownerId=ownerId;
         m_labelDims=new JLabel("Content Model").getPreferredSize();
+
 
         // mainPane(valuePane, actionPane)
 
@@ -92,6 +96,10 @@ public class ObjectPane
                     m_labelTextField=new JTextField(label);
                     m_labelTextField.getDocument().addDocumentListener(
                             dataChangeListener);
+                    m_ownerIdTextField=new JTextField(ownerId);
+                    m_ownerIdTextField.getDocument().addDocumentListener(
+                            dataChangeListener);
+                    // non-editables:
                     JTextArea cModelValueLabel=new JTextArea(cModel);
                     cModelValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
                     cModelValueLabel.setEditable(false);
@@ -101,12 +109,10 @@ public class ObjectPane
                     JTextArea mDateValueLabel=new JTextArea(mDate);
                     mDateValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
                     mDateValueLabel.setEditable(false);
-                    JTextArea ownerIdValueLabel=new JTextArea(ownerId);
-                    ownerIdValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
-                    ownerIdValueLabel.setEditable(false);
+
                     JComponent[] values=new JComponent[] { m_stateComboBox,
                             m_labelTextField, cModelValueLabel, cDateValueLabel,
-                            mDateValueLabel, ownerIdValueLabel };
+                            mDateValueLabel, m_ownerIdTextField };
 
                 JPanel northValuePane=new JPanel();
                 GridBagLayout gridBag=new GridBagLayout();
@@ -140,6 +146,7 @@ public class ObjectPane
 
     public boolean isDirty() {
         if (!m_labelTextField.getText().equals(m_label)) return true;
+        if (!m_ownerIdTextField.getText().equals(m_ownerId)) return true;
         int origIndex=0;
         if (m_state.equals("I")) {
             origIndex=1;
@@ -161,7 +168,7 @@ public class ObjectPane
         if (i==2)
            state="D";
         Administrator.APIM.modifyObject(m_pid, state,
-                m_labelTextField.getText(), null, logMessage);
+                m_labelTextField.getText(), m_ownerIdTextField.getText(), logMessage);
     }
 
     public void changesSaved() {
@@ -173,6 +180,7 @@ public class ObjectPane
         if (i==2)
            m_state="D";
         m_label=m_labelTextField.getText();
+        m_ownerId=m_ownerIdTextField.getText();
     }
 
     public void undoChanges() {
@@ -187,6 +195,7 @@ public class ObjectPane
             m_stateComboBox.setBackground(Administrator.DELETED_COLOR);
         }
         m_labelTextField.setText(m_label);
+        m_ownerIdTextField.setText(m_ownerId);
     }
 
 }
