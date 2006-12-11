@@ -57,7 +57,7 @@
 	<!-- Test where contentDigest specifed: DIGEST=MD5hash TYPE=MD5 -->
 	<foxml:datastream ID="DESC3" CONTROL_GROUP="X" STATE="A">
 		<foxml:datastreamVersion ID="DESC3.0" MIMETYPE="text/xml" LABEL="DC Record for Coliseum image object">
-			<foxml:contentDigest TYPE="MD5" DIGEST="d54a1b103b111958a2773d772fef6ea4"/>
+			<foxml:contentDigest TYPE="MD5" DIGEST="b518acfcd6bb487827f1ad50442ade8c"/>
 			<foxml:xmlContent>
 				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
 					<dc:title>Coliseum in Rome</dc:title>
