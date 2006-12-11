@@ -51,9 +51,9 @@ public class Installer {
     /**
      * Install the distribution based on the options.
      */
-    public void install() throws InstallationFailedException {        
-    	FedoraHome fHome = new FedoraHome(_dist, _opts);
-    	fHome.install();
+    public void install() throws InstallationFailedException {
+    	installDir.mkdirs();
+    	new FedoraHome(_dist, _opts).install();
     	
     	Container container = ContainerFactory.getContainer(_dist, _opts);
     	container.install();

@@ -136,15 +136,17 @@ public class OptionDefinition {
             	
                 File dir = new File(value);
                 if (dir.isDirectory()) {
-                	if (unattended) {
-                		System.out.println("WARNING: Overwriting existing directory: " + dir.getAbsolutePath());
-                	} else {
-	                	System.out.println("WARNING: " + dir.getAbsolutePath() + " already exists.");
-	                	System.out.println("WARNING: Overwrite? (yes or no) [default is no] ==> ");
-	                	String confirm = readLine().trim();
-	                    if (confirm.length() == 0 || confirm.equalsIgnoreCase("no")) {
-	                    	throw new OptionValidationException("Directory exists; delete it or choose another", _id);
-	                    }
+                	if (dir.listFiles().length != 0) {
+	                	if (unattended) {
+	                		System.out.println("WARNING: Overwriting existing directory: " + dir.getAbsolutePath());
+	                	} else {
+		                	System.out.println("WARNING: " + dir.getAbsolutePath() + " already exists.");
+		                	System.out.print("WARNING: Overwrite? (yes or no) [default is no] ==> ");
+		                	String confirm = readLine().trim();
+		                    if (confirm.length() == 0 || confirm.equalsIgnoreCase("no")) {
+		                    	throw new OptionValidationException("Directory exists; delete it or choose another", _id);
+		                    }
+	                	}
                 	}
                 } else {
                     // must be creatable
