@@ -5,6 +5,7 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Behavior Mechanism Object implementing the FO contract using the Fedora Local Saxon Service with TEI-FO stylesheets"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BMECH"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
 	</foxml:objectProperties>
 	<foxml:datastream CONTROL_GROUP="X" ID="DC" STATE="A">
 		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="Dublin Core Metadata">

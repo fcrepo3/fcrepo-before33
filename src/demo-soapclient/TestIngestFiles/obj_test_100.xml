@@ -12,6 +12,7 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Sandy's Test Object"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="TEST"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
 		<!-- ALLOW EXTENSIBLE PROPERTIES (Fedora will retain these, but not operate on them.) -->
 		<foxml:extproperty NAME="http://www.openarchives.org/OAI/1.1/oai-identifier.xsd" VALUE="oai:cornell.edu:test:100"/>
 	</foxml:objectProperties>

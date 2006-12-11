@@ -5,7 +5,7 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Image of Coliseum in Rome"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UVA_STD_IMAGE"/>
-		<foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="payette"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
 	</foxml:objectProperties>
 	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
 		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="DC Record for Coliseum image object">

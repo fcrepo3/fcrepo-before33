@@ -5,6 +5,7 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Rita Brown Papers Finding Aid"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UVA_EAD_FINDING_AID"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
 	</foxml:objectProperties>
 	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
 		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="DC Record for Rita Mae Brown EAD-encoded Finding Aid object">

@@ -6,6 +6,7 @@
     <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
     <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Dual Resolution Image Collection"/>
     <foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BMECH"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
   </foxml:objectProperties>
   <foxml:datastream CONTROL_GROUP="X" ID="WSDL"> 
     <foxml:datastreamVersion ID="WSDL1.0" MIMETYPE="text/xml" LABEL="WSDL definition of service">
