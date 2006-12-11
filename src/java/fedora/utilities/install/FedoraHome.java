@@ -78,15 +78,14 @@ public class FedoraHome {
     	File fcfg = new File(_installDir, "server/config/fedora.fcfg");
         
         Properties props = new Properties();
-        if (_opts.getValue(InstallOptions.TOMCAT_HTTP_PORT) != null) {
+        if (_opts.getValue(InstallOptions.TOMCAT_HTTP_PORT) != null)
         	props.put("server.fedoraServerPort", _opts.getValue(InstallOptions.TOMCAT_HTTP_PORT));
-        }
-        if (_opts.getValue(InstallOptions.TOMCAT_SHUTDOWN_PORT) != null) {
+        if (_opts.getValue(InstallOptions.TOMCAT_SHUTDOWN_PORT) != null)
         	props.put("server.fedoraShutdownPort", _opts.getValue(InstallOptions.TOMCAT_SHUTDOWN_PORT));
-        }
-        if (_opts.getValue(InstallOptions.TOMCAT_SSL_PORT) != null) {
+        if (_opts.getValue(InstallOptions.TOMCAT_SSL_PORT) != null)
         	props.put("server.fedoraRedirectPort", _opts.getValue(InstallOptions.TOMCAT_SSL_PORT));
-        }
+        if (_opts.getValue(InstallOptions.FEDORA_SERVERHOST) != null)
+        	props.put("server.fedoraServerHost", _opts.getValue(InstallOptions.FEDORA_SERVERHOST));
         
         String database = _opts.getValue(InstallOptions.DATABASE);
         String dbPoolName = "";
