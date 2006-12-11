@@ -23,6 +23,7 @@ public class InstallOptions {
 
 	public static final String INSTALL_TYPE			 = "install.type";
     public static final String FEDORA_HOME           = "fedora.home";
+    public static final String FEDORA_SERVERHOST	 = "fedora.serverHost";
     public static final String APIA_AUTH_REQUIRED    = "apia.auth.required";
     public static final String SSL_AVAILABLE         = "ssl.available";
     public static final String APIA_SSL_REQUIRED     = "apia.ssl.required";
@@ -118,6 +119,7 @@ public class InstallOptions {
         	return;
         }
         
+        inputOption(FEDORA_SERVERHOST);
         inputOption(APIA_AUTH_REQUIRED);
         inputOption(SSL_AVAILABLE);
 

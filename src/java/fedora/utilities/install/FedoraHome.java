@@ -69,6 +69,7 @@ public class FedoraHome {
 		configureFCFG();
 		configureFedoraUsers();
 		configureBeSecurity();
+		configureXACML();
 	}
 	
 	private void configureFCFG() throws InstallationFailedException {
@@ -155,6 +156,15 @@ public class FedoraHome {
     	boolean apiaSSL = _opts.getBooleanValue(InstallOptions.APIA_SSL_REQUIRED, false);
     	//boolean apimSSL = _opts.getBooleanValue(InstallOptions.APIM_SSL_REQUIRED, false);
     	
+    	String[] ipList;
+    	String host = _opts.getValue(InstallOptions.FEDORA_SERVERHOST);
+    	if (host != null  && host.length() != 0 && 
+    			!(host.equals("localhost") || host.equals("127.0.01"))) {
+    		ipList = new String[] {"127.0.0.1", host};
+    	} else {
+    		ipList = new String[] {"127.0.0.1"};
+    	}
+
     	PrintWriter pwriter;
 		try {
 			pwriter = new PrintWriter(new FileOutputStream(beSecurity));
@@ -165,12 +175,41 @@ public class FedoraHome {
 
     	becfg.setDefaultConfig(new DefaultRoleConfig());
     	becfg.setInternalBasicAuth(new Boolean(apiaAuth));
-    	becfg.setInternalIPList(new String[] {"127.0.0.1"});
+    	becfg.setInternalIPList(ipList);
     	becfg.setInternalPassword("changeme");
     	becfg.setInternalSSL(new Boolean(apiaSSL));
     	becfg.setInternalUsername("fedoraIntCallUser");
     	becfg.write(true, true, pwriter);
     	pwriter.close();
+    }
+    
+    /**
+     * Add the serverHost to the following XACML policies:
+     * 		deny-apim-if-not-localhost.xml
+     * 		deny-reloadPolicies-if-not-localhost.xml
+     * 		deny-serverShutdown-if-not-localhost.xml
+     * if not already present.
+     * 
+     * @throws InstallationFailedException
+     */
+    private void configureXACML() throws InstallationFailedException {
+    	String host = _opts.getValue(InstallOptions.FEDORA_SERVERHOST);
+    	String[] policies = new String[] {
+    			"deny-apim-if-not-localhost.xml",
+    			"deny-reloadPolicies-if-not-localhost.xml",
+    			"deny-serverShutdown-if-not-localhost.xml"
+    	};
+    	File defaultPolicyDir = new File(_installDir + "/server/fedora-internal-use/fedora-internal-use-repository-policies-approximating-2.0");
+    	try {
+    		for (String policy : policies) {
+    			File pFile = new File(defaultPolicyDir, policy);
+    			XACMLPolicy xacml = new XACMLPolicy(pFile, _opts);
+    			xacml.addServerHost(host);
+    			xacml.write(pFile.getAbsolutePath());
+    		}
+		} catch (Exception e) {
+			throw new InstallationFailedException(e.getMessage(), e);
+		}
     }
 	
 	/**
