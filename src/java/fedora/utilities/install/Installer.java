@@ -22,7 +22,12 @@ public class Installer {
 	static {
 		//send all log4j (WARN only) output to STDOUT
 		Properties props = new Properties();
-		props.setProperty("log4j.appender.STDOUT", "org.apache.log4j.ConsoleAppender");
+		props.setProperty("log4j.appender.STDOUT",
+		         "org.apache.log4j.ConsoleAppender");
+        props.setProperty("log4j.appender.STDOUT.layout", 
+                "org.apache.log4j.PatternLayout");
+        props.setProperty("log4j.appender.TESTLOG.layout.ConversionPattern",
+                "%p (%c{1}) %m%n");
 		props.setProperty("log4j.rootLogger", "WARN, STDOUT");
 		PropertyConfigurator.configure(props);
 		
