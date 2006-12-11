@@ -4,6 +4,11 @@
 <!-- Note: Sample Template Object used with Batch Utility -->
 <!---************************************************************************-->
 <METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="template:objectPid" TYPE="FedoraObject" LABEL="template: Object Label" PROFILE="UVA_STD_IMG">
+<METS:metsHdr>
+<METS:agent ROLE="IPOWNER">
+	<METS:name>fedoraAdmin</METS:name>
+</METS:agent>
+</METS:metsHdr>
 	<!-- Note: The value for createdDate is assigned dynamically by the Fedora server at ingest time if the CREATEDATE attribute on     -->
 	<!-- the METS:metsHdr element is not present in the object being ingested. Therefore, it is recommended that the METS:metsHdr      -->
 	<!-- element be omitted from the object template so this date will be assigned dynamically by the Fedora server. If included in the        -->

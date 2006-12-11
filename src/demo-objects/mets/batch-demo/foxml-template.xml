@@ -4,6 +4,7 @@
 		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="template:Object Label"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
 		<!-- Note: The value for createdDate is assigned dynamically by the Fedora server at ingest time if the createdDate property is not      -->
 		<!-- present in the object being ingested. Therefore, it is recommended that this property be omitted from the object template so this   -->
 		<!-- date will be assigned dynamically by the Fedora server. If included in the template file, this value will be carried through to the        -->

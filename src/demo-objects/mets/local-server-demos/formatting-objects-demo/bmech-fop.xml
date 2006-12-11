@@ -5,6 +5,11 @@
 <!-- Custodian: Cornell -->
 <!---********************************************************************************************-->
 <METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:20" TYPE="FedoraBMechObject" LABEL="Behavior Mechanism Object implementing the PDF contract using the Fedora Local FOP Service" PROFILE="fedora:BMECH">
+<METS:metsHdr>
+<METS:agent ROLE="IPOWNER">
+	<METS:name>fedoraAdmin</METS:name>
+</METS:agent>
+</METS:metsHdr>
 	<!---*******************************************************************************************************************************************-->
 	<!--  INLINE METADATA DATASTREAMS FOR THIS BEHAVIOR MECHANISM OBJECT: -->
 	<!---*******************************************************************************************************************************************-->
