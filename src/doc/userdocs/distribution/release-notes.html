@@ -81,7 +81,7 @@
 					 option provides additional choices that include installing fedora using the
 					 bundled 5.0.28 version of tomcat, external versions of tomcat (5.0.x or 5.5.x), 
 					 and other servlet containers. The custom option also includes additional choices regarding the
-					 bacend SQL database confgiguration. In addition to configuring the type of servlet 
+					 backend SQL database confgiguration. In addition to configuring the type of servlet 
 					 container where Fedora is to be installed, the installer also configures XACML policy 
 					 configuration, and configuration of the Fedora security configuration. 
 					 For full details on the new installer, please see the <a href="installation.html">
@@ -102,9 +102,9 @@
 				</li>			
 				
 				<li>new method "compareDatastreamChecksum" added to API-M<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
-					<p>In response to the Fedora community, support for
-					comparing the current datastream checksum stored in the Fedora xml object with a freshly computed checksum.
-					Here is the new signature:</p>
+					<p>In response to the Fedora community, support for	adding checksums on datastreams has been added to API-M.
+					A new method called compareDatastreamChecksum has been added to API-M for comparing the current datastream 
+					checksum stored in the Fedora xml object with a freshly computed checksum. Here is the new method signature:</p>
 					<div class="code">
 						<pre>
 public String compareDatastreamChecksum(String PID, 
@@ -112,26 +112,21 @@ public String compareDatastreamChecksum(String PID,
                                         String versionDate)				
 						</pre>
 					</div>		
+					<p>There are also several new configuration parameters in fedora.fcfg related to the new checksum feature. The
+					<i>autoChecksum</i> parameter controls whether checksums are to be computed for every datastream. By default <i>autoChecksum</i> 
+					is set to false which disables automatice checksums. When set to true, checksums will automatically be computed
+					for each datastream during the API-M operations for ingest, addDatastream, modifyDatastreamByReference, 
+					and modifyDatastreambyValue. For complete details on the new checksum feature, please refer to the document
+					<a href="../server/features/checksum.html">Datastream Checksum Feature</a></p> 
 				</li>				
 				
 				<li>Journaling<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
 					<p>Fedora 2.2 includes a new Journaling feature that keeps a full log of all object 
 						modifications to a Fedora repository.  These logs can be used in a live leader/follower configuration 
 						to support automatic replication to an identical Fedora repository, as well as for diagnostic or 
-						auditing purposes.</p>
-				</li>				
-
-				<li>Fedora Generic Search integrated into Fedora Service Framework<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
-					<p>The Fedora Generic Search application developed by Gert 
-					Schmeltz Pedersen as part of the Fedora Search Working group has now been integrated into the Fedora 
-					services framework. Fedora Generic Search represents a great example of how contributed work from the Fedora 
-					community can be migrated from the user community into the Fedora framework and then made available 
-					to the entire Fedora community. Fedora Generic Search represents an extensible generic search service that 
-					can be plugged into the Fedora Services Framework. It current supports both Lucene and Zebra as 
-					backend search engines.  When the messaging components are finalized in a future release, it will 
-					be possible to further decouple the gSearch service from Fedora and treat it as a "message reciever" 
-					in the service framework.</p>
-				</li>				
+						auditing purposes. For additional details on the new journaling feature, please refer to
+						the document <a href="../server/journaling/index.html">Journaling Guide</a></p>
+				</li>								
 
 				<li>Add ownerId object property for a digital object<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
 					<p>In response to the Fedora community, Fedora 2.2 adds support for the construct of an ownerId object property on a digital object.
@@ -174,6 +169,24 @@ public String modifyObject(String PID, String state, String label, String ownerI
 					</div>										
 					<p>For additional details regarding the new onwerID feature, please see the document entitled
 					<a href="??.html">Object ownerId Feature</a></p>
+				</li>
+				
+				<li>Fedora Supports Log4j Logging<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
+					<p>Fedora 2.2 includes extensive refactoring of the code to now use Log4j as the logging mechanism. This new addition
+					makes the configuration of logging for both the Fedora server and client much cleaner and simpler. See the <a href="./installation.html">
+					Fedora Installation And Configuration Guide</a> for additional details on configuring the logs.</p>
+				</li>
+				
+				<li>Fedora Generic Search integrated into Fedora Service Framework<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
+					<p>The Fedora Generic Search application developed by Gert 
+					Schmeltz Pedersen as part of the Fedora Search Working group has now been integrated into the Fedora 
+					services framework. Fedora Generic Search represents a great example of how contributed work from the Fedora 
+					community can be migrated from the user community into the Fedora framework and then made available 
+					to the entire Fedora community. Fedora Generic Search represents an extensible generic search service that 
+					can be plugged into the Fedora Services Framework. It current supports both Lucene and Zebra as 
+					backend search engines.  When the messaging components are finalized in a future release, it will 
+					be possible to further decouple the gSearch service from Fedora and treat it as a "message reciever" 
+					in the service framework.</p>
 				</li>				
 				
 				<li>New support for Postres SQL database<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
@@ -406,6 +419,19 @@ public String[ ] purgeDatastream(String PID,
 					on the originating repository.</p>
 				</li>
 				
+				<li>Changes to Batch Modify Client Utility
+					<p>Fedora 2.2 updates the Batch Modify client utility to include changes related to the API-M method signature
+					changes previously mentioned. For details about specific changes to the Batch Modify directives schema,
+					please refer to the <a href="http://www.fedora.info/definitions/1/0/api/batchModify.xsd">batchModify.xsd schema
+					file.</a></p>
+				</li>
+				
+				<li>Updates To Services In Fedora Services Framework
+					<p>All of the services included in the Fedora Services Framework are updated to include the latest versions
+					of the Fedora standard libraries and jar files. This change synchronizes library versions in the Service Framework
+					with changes included in Fedora 2.2 server and client code.
+				</li>
+				
 				<li>JUnit Refactoring
 					<p>The refactoring of the codebase necessary to make Fedora a standalone webapp 
 					also required extensive refactoring of the JUnit tests. Fedora 2.2 includes streamlining and simplification 
@@ -499,21 +525,23 @@ public String[ ] purgeDatastream(String PID,
 				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=201">Bug #201</a>: 
 					RFC 2616 Section 3.6.1 not supported for transfer-encoding=chunked</li>
 				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=202">Bug #202</a>: 
-					Fedora server and client limited to 2 GB max file size transfer</li>																																							
+					Fedora server and client limited to 2 GB max file size transfer</li>
+				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=203">Bug #203</a>: 
+					DefaultAuthorization.enforceIngestObject ignores PID</li>																																				
 			</ul>
 			<br/>					
 		</li>
 		
 		<li><a id="issues" name="issues">Known Issues</a>
+			<p>The following list includes bugs that are still listed as open as of the release
+			date for Fedora 2.2. For details on these issues, please refer to the links
+			below or visit the <a href="http://www.fedora.info/bugzilla"> Fedora Bugzilla Database</a>
+			for the most current updates. 
 			<ul>
 				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=10">Bug #10</a>: 
 					Behavior Mechanisms with SOAP Bindings Not Yet Supported</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=24">Bug #24</a>: 
-					java.lang.NullPointerException when calling getDatastream with "DC" DatastreamID in a Data Object</li>
 				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=118">Bug #118</a>: 
 					fix soap/axis error detail</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=120">Bug #120</a>: 
-					ant build sometimes requires priming action, e.g., deleting a file</li>
 				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=122">Bug #122</a>: 
 					size attribute only works with "X" datastreams</li>
 				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=126">Bug #126</a>: 
@@ -524,8 +552,6 @@ public String[ ] purgeDatastream(String PID,
 					Minor typos in tutorial2.pdf</li>
 				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=164">Bug #164</a>: 
 					Invalid policies embedded in POLICY datastream of objects makes objects inaccessible</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=166">Bug #166</a>: 
-					Fedora with ResourceIndex enabled stops responding</li>
 				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=168">Bug #168</a>: 
 					SRB LowlevelStore Issues (for pre Fedora 2.2)</li>
 				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=170">Bug #170</a>: 
