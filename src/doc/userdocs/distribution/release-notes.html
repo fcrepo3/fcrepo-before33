@@ -133,25 +133,25 @@ public String compareDatastreamChecksum(String PID,
 					Currently the new ownerId property is an opaque single-valued string. This will be expanded in the next release
 					of Fedora to allow for multiple ownerIds. The FOXML schema is updated to include the new object property name of:
 					info:fedora/fedora-system:def/model#ownerId. e.g.,</p>
-					<p><pre>
-						&lt;foxml:objectProperties&gt;
-							&lt;foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/&gt;
-							&lt;foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/&gt;
-							&lt;foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Image of Coliseum in Rome"/&gt;
-							&lt;foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UVA_STD_IMAGE"/&gt;
-							&lt;foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="payette"/&gt;
-						&lt;/foxml:objectProperties&gt;
-					</pre></p>
+					<p><div class="code"><pre>
+&lt;foxml:objectProperties&gt;
+	&lt;foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/&gt;
+	&lt;foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/&gt;
+	&lt;foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Image of Coliseum in Rome"/&gt;
+	&lt;foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UVA_STD_IMAGE"/&gt;
+	&lt;foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="payette"/&gt;
+&lt;/foxml:objectProperties&gt;
+					</pre></div></p>
 					<p>The METS schema used by Fedora is also been updated to include the attribute for ownerId.
 					In the METS schema, the ownerId attribute is stored in the &lt;agent&gt; element under the &lt;metsHeader&gt; element
-					with a ROLE of IPOWNER. e.g.,</p>p>
-					<p><pre>
-						&lt;METS:metsHdr CREATEDATE="2006-12-07T13:23:46.962Z" LASTMODDATE="2006-12-07T13:23:46.962Z" RECORDSTATUS="A"&gt;
-							&lt;METS:agent ROLE="IPOWNER"&gt;
-								&lt;METS:name&gt;payette&lt;/METS:name&gt;
-							&lt;/METS:agent&gt;
-						&lt;/METS:metsHdr&gt;
-					</pre>pre></p>
+					with a ROLE of IPOWNER. e.g.,</p>
+					<p><div class="code"><pre>
+&lt;METS:metsHdr CREATEDATE="2006-12-07T13:23:46.962Z" LASTMODDATE="2006-12-07T13:23:46.962Z" RECORDSTATUS="A"&gt;
+	&lt;METS:agent ROLE="IPOWNER"&gt;
+		&lt;METS:name&gt;payette&lt;/METS:name&gt;
+	&lt;/METS:agent&gt;
+&lt;/METS:metsHdr&gt;
+					</pre></div></p>
 					<p>It is now possible to assign a single owner to the ownerId object property of a digital object. Once specified, 
 					you can also write XACML policies against the ownerId policy attribute. The implementation of the ownerId feature 
 					also modifies the signature of the API-M method called modifyObject to enabled setting or changing the value
@@ -535,8 +535,8 @@ public String[ ] purgeDatastream(String PID,
 		<li><a id="issues" name="issues">Known Issues</a>
 			<p>The following list includes bugs that are still listed as open as of the release
 			date for Fedora 2.2. For details on these issues, please refer to the links
-			below or visit the <a href="http://www.fedora.info/bugzilla"> Fedora Bugzilla Database</a>
-			for the most current updates. 
+			below or visit Fedora's <a href="http://www.fedora.info/bugzilla"> Bugzilla </a>
+			for the most current information. 
 			<ul>
 				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=10">Bug #10</a>: 
 					Behavior Mechanisms with SOAP Bindings Not Yet Supported</li>
