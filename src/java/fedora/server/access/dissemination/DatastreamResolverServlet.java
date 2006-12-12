@@ -364,12 +364,15 @@ public class DatastreamResolverServlet extends HttpServlet {
 				}
 				*/
 				//XXXXXXXXXXXXXXXXXXXXXXxif (contains(roles, targetRole)) {
+				LOG.debug("DatastreamResolverServlet: user==" + request.getRemoteUser());	
+				/*
 				if (((ExtendedHttpServletRequest)request).isUserInRole(targetRole)) {
 					LOG.debug("DatastreamResolverServlet: user has required role");
 				} else {
 					LOG.debug("DatastreamResolverServlet: authZ exception in validating user");
 					throw new AuthzDeniedException("wrong user for this ticket");
 				}
+				*/
 			}
 
 			if (LOG.isDebugEnabled()) {

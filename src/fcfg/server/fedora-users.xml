@@ -5,11 +5,10 @@
 			<value>administrator</value>
 		</attribute>
 	</user>
-
-	<user name="fedoraIntCallUser" password="changeme" roles="fedoraInternalCall-1">
-		<!--attribute name="fedoraRole">
+	<user name="fedoraIntCallUser" password="changeme" >
+		<attribute name="fedoraRole">
 			<value>fedoraInternalCall-1</value>
 			<value>fedoraInternalCall-2</value>
-		</attribute-->
+		</attribute>
 	</user>
 </users>
