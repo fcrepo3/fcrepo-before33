@@ -97,24 +97,24 @@ public class InstallOptions {
 		"/" + Distribution.MCKOI_BASENAME +"/db.conf?create_or_boot=true";
         
         if (getValue(INSTALL_TYPE).equals(INSTALL_QUICK)) {
-        	// As much as possible, the 'quick' install uses the defaultValues 
-        	// defined in OptionDefinition.properties
+        	// See the defaultValues defined in OptionDefinition.properties
+        	// for the null values below
         	_map.put(FEDORA_SERVERHOST, null); // localhost
         	_map.put(APIA_AUTH_REQUIRED, null); // false
-        	_map.put(SSL_AVAILABLE, null); // true
-        	_map.put(APIM_SSL_REQUIRED, null); // true
+        	_map.put(SSL_AVAILABLE, Boolean.toString(false));
+        	_map.put(APIM_SSL_REQUIRED, Boolean.toString(false));
         	_map.put(SERVLET_ENGINE, null); // included
         	_map.put(TOMCAT_HOME, fedoraHome + File.separator + "tomcat");
         	_map.put(TOMCAT_HTTP_PORT, null); // 8080
         	_map.put(TOMCAT_SHUTDOWN_PORT, null); // 8005
-        	_map.put(TOMCAT_SSL_PORT, null); // 8443
-        	_map.put(KEYSTORE_FILE, null); // included
-        	_map.put(XACML_ENABLED, null); // true
-        	_map.put(DATABASE, null); // included
+        	//_map.put(TOMCAT_SSL_PORT, null); // 8443
+        	//_map.put(KEYSTORE_FILE, null); // included
+        	_map.put(XACML_ENABLED, Boolean.toString(false));
+        	_map.put(DATABASE, INCLUDED); // included
         	_map.put(DATABASE_USERNAME, "fedoraAdmin");
         	_map.put(DATABASE_PASSWORD, "fedoraAdmin");
 			_map.put(DATABASE_JDBCURL, includedJDBCURL);
-        	_map.put(DATABASE_DRIVERCLASS, null); // 
+        	_map.put(DATABASE_DRIVERCLASS, "com.mckoi.JDBCDriver");
         	_map.put(DEPLOY_LOCAL_SERVICES, null); // true
         	applyDefaults();
         	return;
