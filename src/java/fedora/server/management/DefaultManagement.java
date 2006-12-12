@@ -621,7 +621,8 @@ public class DefaultManagement
             if (mimeType == null) mimeType = orig.DSMIME;
             if (formatURI == null) formatURI = orig.DSFormatURI;
             if (altIDs == null) altIDs = orig.DatastreamAltIDs;
-            
+            if (checksumType == null) checksumType = orig.DSChecksumType;
+           
             // In cases where an empty attribute value is not allowed, then
             // NULL or EMPTY PARM means no change to ds attribute...
             if (dsLocation==null || dsLocation.equals("")) {
@@ -679,21 +680,21 @@ public class DefaultManagement
             }
             newds.DSLocation=dsLocation;
             newds.DSChecksumType = checksumType;
-            if (checksumType == null)
+            
+            // next, add the datastream via the object writer
+            w.addDatastream(newds, orig.DSVersionable);
+            
+            // if a checksum is passed in verify that the checksum computed for the datastream 
+            // matches the one that is passed in.
+            if (checksum != null)
             {
-                newds.DSChecksumType = Datastream.getDefaultChecksumType();
-            }
-            if (checksum != null && checksumType != null)
-            {
+                if (checksumType == null) newds.DSChecksumType = orig.DSChecksumType;
                 String check = newds.getChecksum();
                 if (!checksum.equals(check))
                 {
                     throw new ValidationException("Checksum Mismatch: " + check);
                 }
             }
-            
-            // next, add the datastream via the object writer
-            w.addDatastream(newds, orig.DSVersionable);
 
             // add the audit record
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
@@ -784,6 +785,7 @@ public class DefaultManagement
             if (mimeType == null) mimeType = orig.DSMIME;
             if (formatURI == null) formatURI = orig.DSFormatURI;
             if (altIDs == null) altIDs = orig.DatastreamAltIDs;
+            if (checksumType == null) checksumType = orig.DSChecksumType;
             
             // If "force" is false and the mime type changed, validate the
             // original datastream with respect to any disseminators it is
@@ -833,11 +835,13 @@ public class DefaultManagement
             newds.DSCreateDT=nowUTC;
             
             newds.DSChecksumType = checksumType;
-            if (checksumType == null)
-            {
-                newds.DSChecksumType = Datastream.getDefaultChecksumType();
-            }
-            if (checksum != null && checksumType != null)
+
+            // next, add the datastream via the object writer
+            w.addDatastream(newds, orig.DSVersionable);
+                        
+            // if a checksum is passed in verify that the checksum computed for the datastream 
+            // matches the one that is passed in.
+            if (checksum != null)
             {
                 String check = newds.getChecksum();
                 if (!checksum.equals(check))
@@ -845,9 +849,7 @@ public class DefaultManagement
                     throw new ValidationException("Checksum Mismatch: " + check);
                 }
             }
-            // next, add the datastream via the object writer
-            w.addDatastream(newds, orig.DSVersionable);
-                        
+
             // add the audit record
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
