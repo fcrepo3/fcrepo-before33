@@ -130,8 +130,8 @@ public class METSLikeDODeserializer
     private StringBuffer m_dsXMLBuffer;
     
     // are we reading binary in an FContent element? (base64-encoded)
-	private boolean m_readingContent; // indicates reading base64-encoded content
-	private boolean m_readingBinaryContent; // indicates reading base64-encoded content
+	private boolean m_readingContent; // indicates reading element content
+	private boolean m_readingBinaryContent; // indicates reading binary element content
 	private File m_binaryContentTempFile;
 	private StringBuffer m_elementContent; // single element
 
@@ -510,7 +510,8 @@ public class METSLikeDODeserializer
 				  instantiateDatastream(new DatastreamManagedContent());
                 }
             } else if (localName.equals("FContent")) {
-                // signal that we want to suck it in
+            	// In the version of METS that Fedora supports, the FContent element
+            	// contains base64 encoded data.
                 m_readingContent=true;
 				m_elementContent = new StringBuffer();
             	if (m_dsControlGrp.equalsIgnoreCase("M")) 
@@ -708,46 +709,7 @@ public class METSLikeDODeserializer
     }
 
     public void endElement(String uri, String localName, String qName) throws SAXException {
-        m_readingContent=false;
-        if (m_readingBinaryContent)
-        {
-        	if (uri.equals(M) && localName.equals("FContent"))
-        	{
-            	if (m_binaryContentTempFile != null)
-                {
-    				try {
-    	            	FileOutputStream os = new FileOutputStream(m_binaryContentTempFile);
-    	            	// remove all spaces and newlines, this might not be necessary.
-    	            	String elementStr = m_elementContent.toString().replaceAll("\\s", "");
-    	        		byte elementBytes[] =  StreamUtility.decodeBase64(elementStr);
-    	        		os.write(elementBytes);
-    	        		os.close();
-    	            	m_dsLocationType="INTERNAL_ID";
-    					m_dsLocation="temp://"+m_binaryContentTempFile.getAbsolutePath();
-    					instantiateDatastream(new DatastreamManagedContent());
-    				}
-    				catch (FileNotFoundException fnfe)
-    				{
-    					throw new SAXException(new StreamIOException("Unable to open temporary file created for binary content"));
-    				}
-    				catch (IOException fnfe)
-    				{
-    					throw new SAXException(new StreamIOException("Error writing to temporary file created for binary content"));				 
-    				}
-                }
-        	}
-        	m_binaryContentTempFile = null;
-			m_readingBinaryContent=false;
-			m_elementContent = null;
-        } else {
-        	// process normal element content (for simple string values)
-        	if (localName.equals("name") && m_agentRole.equals("IPOWNER")) {
-        		m_obj.setOwnerId(m_elementContent.toString());
-        		m_elementContent = null;
-        	} else if (localName.equals("agent")) {
-        		m_agentRole = null;       		
-        	}       	
-        }
+    	// first, deal with the situation when we are processing a block of inline XML
         if (m_inXMLMetadata) 
         {
             if (uri.equals(M) && localName.equals("xmlData")
@@ -805,6 +767,54 @@ public class METSLikeDODeserializer
                     }
                 }
             }
+        // ALL OTHER ELEMENT CASES: we are NOT processing a block of inline XML metadata
+        } else {
+            if (m_readingBinaryContent)
+            {
+            	// In the version of METS Fedora uses, FContent assumes base64-encoded content
+            	if (uri.equals(M) && localName.equals("FContent"))
+            	{
+                	if (m_binaryContentTempFile != null)
+                    {
+        				try {
+        	            	FileOutputStream os = new FileOutputStream(m_binaryContentTempFile);
+        	            	// remove all spaces and newlines, this might not be necessary.
+        	            	String elementStr = m_elementContent.toString().replaceAll("\\s", "");
+        	        		byte elementBytes[] =  StreamUtility.decodeBase64(elementStr);
+        	        		os.write(elementBytes);
+        	        		os.close();
+        	            	m_dsLocationType="INTERNAL_ID";
+        					m_dsLocation="temp://"+m_binaryContentTempFile.getAbsolutePath();
+        					instantiateDatastream(new DatastreamManagedContent());
+        				}
+        				catch (FileNotFoundException fnfe)
+        				{
+        					throw new SAXException(new StreamIOException("Unable to open temporary file created for binary content"));
+        				}
+        				catch (IOException fnfe)
+        				{
+        					throw new SAXException(new StreamIOException("Error writing to temporary file created for binary content"));				 
+        				}
+                    }
+            	}
+            	m_binaryContentTempFile = null;
+    			m_readingBinaryContent=false;
+    			m_elementContent = null;  			
+    		// all other cases...
+            } else {
+	            if (m_readingContent) {
+	    	        // elements for which we were reading regular content
+	    	        if (uri.equals(M) && localName.equals("name") && m_agentRole.equals("IPOWNER")) {
+	    	        	m_obj.setOwnerId(m_elementContent.toString());
+	    	        } else if (uri.equals(M) && localName.equals("agent")) {
+	    	        	m_agentRole = null;       		
+	    	        } 
+		            m_readingContent=false;
+		        	m_elementContent = null;
+	            } else {
+	            	// no other processing requirements at this time
+	            }
+    		}
         }
     }
     
