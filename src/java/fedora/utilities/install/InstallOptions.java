@@ -99,6 +99,7 @@ public class InstallOptions {
         if (getValue(INSTALL_TYPE).equals(INSTALL_QUICK)) {
         	// As much as possible, the 'quick' install uses the defaultValues 
         	// defined in OptionDefinition.properties
+        	_map.put(FEDORA_SERVERHOST, null); // localhost
         	_map.put(APIA_AUTH_REQUIRED, null); // false
         	_map.put(SSL_AVAILABLE, null); // true
         	_map.put(APIM_SSL_REQUIRED, null); // true
