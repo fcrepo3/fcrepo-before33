@@ -673,6 +673,8 @@ public class DatastreamsPane
                     String checksum = null;
                     if (csType.equals("Default"))  csType = null;
                     else if (csType.equals("DISABLED"))  checksum = null;
+                    else if (m_checksumValue.getText().length() == 0)  checksum = null;
+                    else if (m_checksumValue.getText().equalsIgnoreCase("none"))  checksum = null;
                     else checksum = m_checksumValue.getText();
                     boolean versionable = m_versionableComboBox.getSelectedIndex() == NEW_VERSION_ON_UPDATE ? true : false;
                     String newID = Administrator.APIM.addDatastream(

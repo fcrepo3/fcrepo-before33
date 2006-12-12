@@ -405,6 +405,9 @@ public class DatastreamPane
         private JButton m_importButton;
         private JButton m_exportButton;
         private JButton m_separateViewButton;
+        private JComboBox m_checksumTypeComboBox;
+        private JTextField m_checksumTextField;
+        private JPanel m_checksumPanel;
 
         private ContentEditor m_editor;
         private ContentViewer m_viewer;
@@ -561,8 +564,49 @@ public class DatastreamPane
             JTextField urlTextField=new JTextField(getFedoraURL(m_ds, false));
             urlTextField.setEditable(false);  // so they can copy, but not modify
             // Datastream checksum field
-            JTextField checksumTextField=new JTextField(getFormattedChecksumTypeAndChecksum(m_ds));
-            checksumTextField.setEditable(false);  // so they can copy, but not modify
+            m_checksumTypeComboBox = new JComboBox(new String[] {"DISABLED",
+                                                                 "MD5",
+                                                                 "SHA-1",
+                                                                 "SHA-256",
+                                                                 "SHA-384",
+                                                                 "SHA-512"});
+            setSelectedChecksumType(m_checksumTypeComboBox, ds.getChecksumType());
+            m_checksumTextField = new JTextField(m_ds.getChecksum());
+            m_checksumPanel = new JPanel();
+            m_checksumPanel.setLayout(new BorderLayout());
+            m_checksumPanel.add(m_checksumTypeComboBox, BorderLayout.WEST);
+            m_checksumPanel.add(m_checksumTextField, BorderLayout.CENTER);   
+            m_checksumTypeComboBox.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) 
+                {
+                    String csType = m_checksumTypeComboBox.getSelectedItem().toString();
+                    dataChangeListener.dataChanged();
+                    if (csType.equals("DISABLED") || !csType.equals(m_ds.getChecksumType())) 
+                    {
+                        if (m_checksumTextField != null)
+                        {
+                            m_checksumPanel.remove(m_checksumTextField);
+                            m_checksumTextField = null;
+                            m_checksumPanel.validate();
+                            m_checksumPanel.repaint();
+                        }
+                    } 
+                    else 
+                    {
+                        if (m_checksumTextField != null)
+                        {
+                            m_checksumPanel.remove(m_checksumTextField);
+                        }
+                        m_checksumTextField = new JTextField(m_ds.getChecksum());
+                        m_checksumPanel.add(m_checksumTextField, BorderLayout.CENTER);            
+                        m_checksumPanel.validate();
+                        m_checksumPanel.repaint();
+                    } 
+                }
+            });
+
+//            JTextField checksumTextField=new JTextField(getFormattedChecksumTypeAndChecksum(m_ds));
+//            checksumTextField.setEditable(false);  // so they can copy, but not modify
 			// ds location URL text field (R and E datastreams only)
             if (R || E) {
                 m_locationTextField=new JTextField(m_ds.getLocation());
@@ -578,7 +622,7 @@ public class DatastreamPane
                     						 m_altIDsTextField, 
                                              m_locationTextField, 
                                              urlTextField,
-                                             checksumTextField};
+                                             m_checksumPanel};
                                              
                 } else {
                     JTextArea cDateTextArea=new JTextArea(m_ds.getCreateDate());
@@ -591,7 +635,7 @@ public class DatastreamPane
 											 m_altIDsTextField,  
                                              m_locationTextField, 
                                              urlTextField,
-                                             checksumTextField};
+                                             m_checksumPanel};
                 }
             } else {
                 if (m_versionSlider!=null) {
@@ -600,7 +644,7 @@ public class DatastreamPane
                     						 m_formatURITextField,
 											 m_altIDsTextField, 
                                              urlTextField,
-                                             checksumTextField};
+                                             m_checksumPanel};
                 } else {
                     JTextArea cDateTextArea=new JTextArea(m_ds.getCreateDate());
                     cDateTextArea.setBackground(Administrator.BACKGROUND_COLOR);
@@ -611,7 +655,7 @@ public class DatastreamPane
                                              m_formatURITextField,
 											 m_altIDsTextField,  
                                              urlTextField,
-                                             checksumTextField};
+                                             m_checksumPanel};
                 }
             }
 
@@ -757,6 +801,18 @@ public class DatastreamPane
             add(actionPane, BorderLayout.SOUTH);
         }
 
+        private void setSelectedChecksumType(JComboBox typeComboBox, String checksumType)
+        {
+            for (int i = 0; i < typeComboBox.getItemCount(); i++)
+            {
+                if (typeComboBox.getItemAt(i).toString().equals(checksumType))
+                {
+                    typeComboBox.setSelectedIndex(i);
+                    break;
+                }
+            }            
+        }
+
         public Datastream getDatastream() {
             return m_ds;
         }
@@ -823,6 +879,8 @@ public class DatastreamPane
 			String mimeType=m_MIMETextField.getText().trim();
 	        String formatURI=m_formatURITextField.getText().trim();
 			String[] altIDs = m_altIDsTextField.getText().trim().split(" ");
+            String checksumType = m_checksumTypeComboBox.getSelectedItem().toString();
+            if (checksumType.equals(m_ds.getChecksumType()))  checksumType = null;
 			if (X) {
 			    byte[] content=new byte[0];
 			    if (m_editor!=null && m_editor.isDirty()) {
@@ -838,7 +896,8 @@ public class DatastreamPane
 	                                                       mimeType,
 	                                                       formatURI,
 			                                               content, 
-                                                           null, null, // checksum type and checksum
+                                                           checksumType,
+                                                           null, // checksum
 			                                               logMessage, 
 	                                                       force);
 			} else if (M) {
@@ -858,7 +917,8 @@ public class DatastreamPane
 	                                                           mimeType,
 	                                                           formatURI,
 	                                                           loc, 
-                                                               null, null, // checksum type and checksum
+                                                               checksumType,
+                                                               null, // checksum
 	                                                           logMessage, 
 	                                                           force);
 	        } else {
@@ -870,7 +930,8 @@ public class DatastreamPane
 	                                                           mimeType,
 	                                                           formatURI,
 	                                                           m_locationTextField.getText(), 
-                                                               null, null, // checksum type and checksum
+                                                               checksumType, 
+                                                               null, // checksum
                                                                logMessage, 
 	                                                           force);
 			}
@@ -910,6 +971,9 @@ public class DatastreamPane
                     && !m_locationTextField.getText().equals(m_ds.getLocation())) {
                  return true;
             }
+            if (!m_checksumTypeComboBox.getSelectedItem().toString().equals(m_ds.getChecksumType())) {
+                 return true;
+            }
             if (m_importFile!=null) return true;
             return false;
         }
@@ -921,6 +985,7 @@ public class DatastreamPane
 			m_altIDsTextField.setText(m_origAltIDs);
             if (m_locationTextField!=null) m_locationTextField.setText(m_ds.getLocation());
             if (m_editor!=null) m_editor.undoChanges();
+            setSelectedChecksumType(m_checksumTypeComboBox, m_ds.getChecksumType());
             if (m_importFile!=null) {
                 m_importFile=null;
                 // and remove the viewer if it's up, and re-enable the view
