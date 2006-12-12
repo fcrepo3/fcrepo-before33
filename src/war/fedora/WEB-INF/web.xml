@@ -311,6 +311,7 @@
 			<web-resource-name>Fedora Repository Server</web-resource-name>
 			<description>Fedora-generated security-constraint</description>
 			<description>APIA</description>
+			<url-pattern>/</url-pattern>
 			<url-pattern>/describe</url-pattern>
 			<url-pattern>/get/*</url-pattern>
 			<url-pattern>/getAccessParmResolver</url-pattern>
