@@ -761,10 +761,8 @@ public class DefaultDOManager
                     releaseWriteLock(obj.getPid());
                 }
 
-				String message = e.getMessage();
-				if (message == null) message = e.getClass().getName();
-				e.printStackTrace();
-				throw new GeneralException("Error reading/writing temporary ingest file: " + message);
+				throw new GeneralException("Error reading/writing temporary "
+				        + "ingest file", e);
 			} catch (Exception e) {
 
                 if (w != null) {
@@ -775,9 +773,8 @@ public class DefaultDOManager
 					ServerException se = (ServerException) e;
 					throw se;
 				}
-				String message = e.getMessage();
-				if (message == null) message = e.getClass().getName();
-				throw new GeneralException("Ingest failed: " + message);
+				throw new GeneralException("Ingest failed: " 
+				    + e.getClass().getName(), e);
 			} finally {
 				if (tempFile != null) {
 					LOG.debug("Finally, removing temp file");
