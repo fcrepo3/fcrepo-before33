@@ -147,21 +147,21 @@ public class CacheElement {
 	public final synchronized Boolean authenticate(Cache cache, String password) {
 		CacheElementPopulator cacheElementPopulator = cache.getCacheElementPopulator();
 		Calendar now = Calendar.getInstance();
-		log.fatal(this.getClass().getName() + ".authenticate");
+		log.debug(this.getClass().getName() + ".authenticate");
 		if ((expiration != null) && now.before(expiration)) {
-			log.fatal(this.getClass().getName() + " cache valid");
+			log.debug(this.getClass().getName() + " cache valid");
 			//previous authentication is still set and valid 
 		} else { //previous authentication has timed out (or no previous authentication)
-			log.fatal(this.getClass().getName() + " new authentication needed");
+			log.debug(this.getClass().getName() + " new authentication needed");
 			cacheElementPopulator.populateCacheElement(this, password);
 			if (authenticated == null) {
-				log.fatal(this.getClass().getName() + " couldn't authenticate");
+				log.debug(this.getClass().getName() + " couldn't authenticate");
 				expiration = getExpiration(cache.getAuthExceptionTimeoutDuration(), cache.getAuthExceptionTimeoutUnit());				
 			} else if (((Boolean)authenticated).booleanValue()) {
-				log.fatal(this.getClass().getName() + " authentication succeeded");
+				log.debug(this.getClass().getName() + " authentication succeeded");
 				expiration = getExpiration(cache.getAuthSuccessTimeoutDuration(), cache.getAuthSuccessTimeoutUnit());				
 			} else {
-				log.fatal(this.getClass().getName() + " authentication failed");
+				log.debug(this.getClass().getName() + " authentication failed");
 				expiration = getExpiration(cache.getAuthFailureTimeoutDuration(), cache.getAuthFailureTimeoutUnit());				
 			}
 		}
@@ -174,11 +174,11 @@ public class CacheElement {
 	public final synchronized Set getPredicates(Cache cache, String password) {
 		CacheElementPopulator cacheElementPopulator = cache.getCacheElementPopulator();
 		Calendar now = Calendar.getInstance();
-		log.fatal(this.getClass().getName() + ".getPredicates()");
+		log.debug(this.getClass().getName() + ".getPredicates()");
 		if ((expiration != null) && now.before(expiration)) {
-			log.fatal(this.getClass().getName() + " cache valid"); 
+			log.debug(this.getClass().getName() + " cache valid"); 
 		} else { //previous X has timed out (or no previous X)
-			log.fatal(this.getClass().getName() + " new X needed");
+			log.debug(this.getClass().getName() + " new X needed");
 			roles = null;
 			try {
 				cacheElementPopulator.populateCacheElement(this, password);
@@ -195,11 +195,11 @@ public class CacheElement {
 	public final synchronized Map getNamedValues(Cache cache, String password) {
 		CacheElementPopulator cacheElementPopulator = cache.getCacheElementPopulator();
 		Calendar now = Calendar.getInstance();
-		log.fatal(this.getClass().getName() + ".getNamedValues()");
+		log.debug(this.getClass().getName() + ".getNamedValues()");
 		if ((expiration != null) && now.before(expiration)) {
-			log.fatal(this.getClass().getName() + " cache valid"); 
+			log.debug(this.getClass().getName() + " cache valid"); 
 		} else { //previous X has timed out (or no previous X)
-			log.fatal(this.getClass().getName() + " new X needed");
+			log.debug(this.getClass().getName() + " new X needed");
 			namedValues = null;
 			try {
 				cacheElementPopulator.populateCacheElement(this, password);

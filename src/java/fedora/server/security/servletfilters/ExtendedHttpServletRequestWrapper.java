@@ -125,22 +125,31 @@ public class ExtendedHttpServletRequestWrapper
     public boolean isUserInRole(String role) {
     	boolean isUserInRole = false;
     	Map map = null;
+    	log.debug("in isUserInRole(" + role + ")");
     	if (isUserSponsored()) {
     		map = sponsoredRoles;
+    		log.debug("using sponsored-roles map==" + map);
     	} else {
     		isUserInRole = super.isUserInRole(role);
+    		log.debug("user is not sponsored, super.isUserInRole()==" + isUserInRole);
     		if (! isUserInRole) {
     			map = addedAuthenticatedRoles;
+        		log.debug("using authenticated-roles map==" + map);
     		}
     	}
-    	if (! isUserInRole) {
+    	if (isUserInRole) {
+    		log.debug("already know that isUserInRole==true");
+    	} else {
+    		log.debug("still don't know if isUserInRole");
 	    	for (Iterator iterator = map.values().iterator(); iterator.hasNext(); ) {
 	    		Set roles = (Set) iterator.next();
 	    		isUserInRole = roles.contains(role);
+	    		log.debug("another role set, has isUserInRole==" + isUserInRole);
 	    		if (isUserInRole) {
 	    			break;
 	    		}
 	    	}    			
+    		log.debug("in isUserInRole(), after loop isUserInRole==" + isUserInRole);	    	
     	}
     	return isUserInRole;
     }
@@ -406,7 +415,7 @@ public class ExtendedHttpServletRequestWrapper
 			log.fatal(exceptionMsg + ", header==" + header);
 			throw new Exception(exceptionMsg);
 		}
-		log.fatal(msg + SUCCEEDED);
+		log.debug(msg + SUCCEEDED);
 		
 		String authschemeUsernamepassword[] = header.split("\\s+");
 		
@@ -416,7 +425,7 @@ public class ExtendedHttpServletRequestWrapper
 			log.fatal(exceptionMsg + ", header==" + header);
 			throw new Exception(exceptionMsg);
 		}
-		log.fatal(msg + SUCCEEDED);
+		log.debug(msg + SUCCEEDED);
 
 		msg = here + "auth scheme";
 		String authscheme = authschemeUsernamepassword[0];
@@ -425,7 +434,7 @@ public class ExtendedHttpServletRequestWrapper
 			log.fatal(exceptionMsg + ", authscheme==" + authscheme);
 			throw new Exception(exceptionMsg);
 		}
-		log.fatal(msg + SUCCEEDED);
+		log.debug(msg + SUCCEEDED);
 
 		msg = here + "digest non-null";
 		String usernamepassword = authschemeUsernamepassword[1];
@@ -434,7 +443,7 @@ public class ExtendedHttpServletRequestWrapper
 			log.fatal(exceptionMsg + ", usernamepassword==" + usernamepassword);
 			throw new Exception(exceptionMsg);
 		}
-		log.fatal(msg + SUCCEEDED + ", usernamepassword==" + usernamepassword);
+		log.debug(msg + SUCCEEDED + ", usernamepassword==" + usernamepassword);
 		
 		byte[] encoded = usernamepassword.getBytes();
 		msg = here + "digest base64-encoded";
@@ -443,13 +452,13 @@ public class ExtendedHttpServletRequestWrapper
 			log.fatal(exceptionMsg + ", encoded==" + encoded);
 			throw new Exception(exceptionMsg);
 		}
-		if (log.isInfoEnabled()) log.fatal(msg + SUCCEEDED + ", encoded==" + encoded);
+		if (log.isDebugEnabled()) log.debug(msg + SUCCEEDED + ", encoded==" + encoded);
 				
 		byte[] decodedAsByteArray = Base64.decodeBase64(encoded);
-		log.fatal(here + "got decoded bytes" + SUCCEEDED + ", decodedAsByteArray==" + decodedAsByteArray);
+		log.debug(here + "got decoded bytes" + SUCCEEDED + ", decodedAsByteArray==" + decodedAsByteArray);
 
 		String decoded = new String(decodedAsByteArray); //decodedAsByteArray.toString();
-		log.fatal(here + "got decoded string" + SUCCEEDED + ", decoded==" + decoded);
+		log.debug(here + "got decoded string" + SUCCEEDED + ", decoded==" + decoded);
 
 		msg = here + "digest decoded";
 		if ((decoded == null) || "".equals(decoded)) {
@@ -457,7 +466,7 @@ public class ExtendedHttpServletRequestWrapper
 			log.fatal(exceptionMsg + ", digest decoded==" + decoded);
 			throw new Exception(exceptionMsg);
 		}
-		log.fatal(msg + SUCCEEDED);
+		log.debug(msg + SUCCEEDED);
 		
 		String DELIMITER = ":";
 		if ((decoded == null) || (decoded.indexOf(DELIMITER) < 0) || (decoded.startsWith(DELIMITER)) ) {
@@ -476,7 +485,7 @@ public class ExtendedHttpServletRequestWrapper
 			log.fatal(exceptionMsg + ", digest decoded==" + decoded);
 			throw new Exception(exceptionMsg);
 		}
-		log.fatal(msg + SUCCEEDED);
+		log.debug(msg + SUCCEEDED);
 		
 		return usernamePassword;
 	}

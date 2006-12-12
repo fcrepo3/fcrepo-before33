@@ -124,7 +124,7 @@ CacheElementPopulator cacheElementPopulator
 	public final Boolean authenticate(CacheElementPopulator authenticator, String userid, String password) throws Throwable{
 		log.debug("cache.authenticate() called");
 		CacheElement cacheElement = getCacheElement(userid /*, password*/);
-		log.fatal(this.getClass().getName() + ".authenticate() cacheElement==" + cacheElement);
+		log.debug(this.getClass().getName() + ".authenticate() cacheElement==" + cacheElement);
 		
 		Boolean authenticated = null;
 		try {
@@ -136,7 +136,7 @@ CacheElementPopulator cacheElementPopulator
 
 			throw t;
 		}
-		log.fatal(this.getClass().getName() + ".authenticated() returning==" + authenticated);
+		log.debug(this.getClass().getName() + ".authenticated() returning==" + authenticated);
 
 		return authenticated;
 	}
@@ -144,7 +144,7 @@ CacheElementPopulator cacheElementPopulator
 	public final Set getPredicates(CacheElementPopulator authenticator, String userid, String password) throws Throwable{
 		log.debug("cache.getPredicates() called");
 		CacheElement cacheElement = getCacheElement(userid /*, password*/);
-		log.fatal(this.getClass().getName() + ".cacheElement==" + cacheElement);
+		log.debug(this.getClass().getName() + ".cacheElement==" + cacheElement);
 		Set predicates = null;
 		try {
 			predicates = cacheElement.getPredicates(this, password);
@@ -155,7 +155,7 @@ CacheElementPopulator cacheElementPopulator
 
 			throw t;
 		}
-		log.fatal(this.getClass().getName() + ".authenticated==" + predicates);
+		log.debug(this.getClass().getName() + ".authenticated==" + predicates);
 
 		return predicates;
 	}	
@@ -163,7 +163,7 @@ CacheElementPopulator cacheElementPopulator
 	public final Map getNamedValues(CacheElementPopulator authenticator, String userid, String password) throws Throwable{
 		log.debug("cache.getNamedValues() called");
 		CacheElement cacheElement = getCacheElement(userid /*, password*/);
-		log.fatal(this.getClass().getName() + ".cacheElement==" + cacheElement);
+		log.debug(this.getClass().getName() + ".cacheElement==" + cacheElement);
 		Map namedValues = null;
 		try {
 			namedValues = cacheElement.getNamedValues(this, password);
@@ -174,7 +174,7 @@ CacheElementPopulator cacheElementPopulator
 
 			throw t;
 		}
-		log.fatal(this.getClass().getName() + ".authenticated==" + namedValues);
+		log.debug(this.getClass().getName() + ".authenticated==" + namedValues);
 
 		return namedValues;
 	}	
