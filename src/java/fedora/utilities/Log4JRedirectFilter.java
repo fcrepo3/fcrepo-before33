@@ -157,7 +157,7 @@ public class Log4JRedirectFilter
      * classname and source methodname into the Log4J LoggingEvent.
      */
     class CustomLoggingEvent extends LoggingEvent {
-
+    	private static final long serialVersionUID = 1L;
         private LogRecord _record;
         private LocationInfo _locationInfo;
 
@@ -186,8 +186,8 @@ public class Log4JRedirectFilter
      * <code>CustomLoggingEvent</code> class.
      */
     class CustomLocationInfo extends LocationInfo {
-
-        private String _sourceClassName;
+		private static final long serialVersionUID = 1L;
+		private String _sourceClassName;
         private String _sourceMethodName;
 
         public CustomLocationInfo(Throwable stackInfo, String sourceClassName,

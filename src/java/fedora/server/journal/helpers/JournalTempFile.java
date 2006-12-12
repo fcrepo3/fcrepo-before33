@@ -14,6 +14,7 @@ import java.io.File;
  */
 
 public class JournalTempFile extends File {
+	private static final long serialVersionUID = 1L;
     public JournalTempFile(File file) {
         super(file.getPath());
     }

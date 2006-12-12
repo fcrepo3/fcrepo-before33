@@ -6,7 +6,8 @@ import java.util.Collection;
  *  @author Bill Niebel (niebel@virginia.edu)
  */
 public class ImmutableHashSet extends HashSet {
-       
+	private static final long serialVersionUID = 1L;
+	
     public boolean add(Object o) {
     	return false;
     }
