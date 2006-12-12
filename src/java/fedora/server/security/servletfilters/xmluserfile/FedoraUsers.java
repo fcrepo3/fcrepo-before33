@@ -41,7 +41,7 @@ public class FedoraUsers implements Serializable, Constants {
 
 		try {
 			reader.registerMultiMapping(getBetwixtMapping());
-			fu = (FedoraUsers)reader.parse(fedoraUsersXML);			
+			fu = (FedoraUsers)reader.parse(fedoraUsersXML);	
 		} catch (IntrospectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

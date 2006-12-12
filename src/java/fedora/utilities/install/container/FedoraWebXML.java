@@ -62,12 +62,12 @@ public class FedoraWebXML {
 	
 	private static final String[] SC_APIM_URL_PATTERNS = new String[] {
 		"/index.html", 
-		"*.jws",
-		"/services/management",
+		"/getDSAuthenticated",
 		"/management/backendSecurity",
 		"/management/getNextPID",
 		"/management/upload",
-		"/getDSAuthenticated"};
+		"/services/management",
+		"*.jws"};
 	
 	
 	private WebXMLOptions options;
@@ -119,33 +119,53 @@ public class FedoraWebXML {
 	/**
 	 * Adds a user-data-constraint with transport-guarantee CONFIDENTIAL to the
 	 * security-constraint that contains <code>urlPatterns</code>.
+	 * If an existing security-constraint contains a partial match against 
+	 * urlPatterns (i.e., a subset or a superset), the matching url-patterns
+	 * will be removed and a new security-constraint containing urlPatterns
+	 * will be created.
 	 * If no security-constraint contains <code>urlPatterns</code>, a new 
 	 * security-constraint block will be created.
+	 * 
 	 * @param urlPatterns
 	 */
 	private void addUserDataConstraint(String[] urlPatterns) {
-		List<String> up = Arrays.asList(urlPatterns);
-		boolean hasUrlPatterns = false;
-		scLoop:
+		Set<String> targetSet = new HashSet<String>(Arrays.asList(urlPatterns));
+		Set<String> candidateSet;
+		boolean hasUserDataConstraint = false;
+		Set<SecurityConstraint> removalSet = new HashSet<SecurityConstraint>();
+
 		for (SecurityConstraint sc : fedoraWebXML.getSecurityConstraints()) {
+			candidateSet = new HashSet<String>();
 			for (WebResourceCollection wrc : sc.getWebResourceCollections()) {
-				if (wrc.getUrlPatterns().containsAll(up)) {
-					hasUrlPatterns = true;
+				candidateSet.addAll(wrc.getUrlPatterns());
+			}
+			
+			if (targetSet.equals(candidateSet)) {
+				if (!hasUserDataConstraint) {
 					if (sc.getUserDataConstraint() == null) {
 						sc.setUserDataConstraint(new UserDataConstraint(CONFIDENTIAL));
 					} else if (sc.getUserDataConstraint().getTransportGuarantee() == null || 
 							!sc.getUserDataConstraint().getTransportGuarantee().equals(CONFIDENTIAL)) {
 						sc.getUserDataConstraint().setTransportGuarantee(CONFIDENTIAL);
 					}
-					break scLoop;
-				} 
+					hasUserDataConstraint = true;
+				} else {
+					removalSet.add(sc);
+				}
+			} else if (targetSet.containsAll(candidateSet) || candidateSet.containsAll(targetSet)) {
+				candidateSet.removeAll(targetSet);
+				if (candidateSet.isEmpty())
+					removalSet.add(sc);
 			}
 		}
 		
-		if (!hasUrlPatterns) {
+		for (SecurityConstraint sc : removalSet)
+			fedoraWebXML.removeSecurityConstraint(sc);
+		
+		if (!hasUserDataConstraint) {
 			WebResourceCollection wrc = new WebResourceCollection();
 			wrc.addDescription(FEDORA_GENERATED);
-			for (String urlPattern : up) {
+			for (String urlPattern : targetSet) {
 				wrc.addUrlPattern(urlPattern);
 			}
 			SecurityConstraint sc = new SecurityConstraint();

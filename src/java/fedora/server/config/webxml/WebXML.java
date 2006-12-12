@@ -133,6 +133,10 @@ public class WebXML implements Serializable {
 		securityConstraints.add(securityConstraint);
 	}
 	
+	public void removeSecurityConstraint(SecurityConstraint securityConstraint) {
+		securityConstraints.remove(securityConstraint);
+	}
+	
 	public WelcomeFileList getWelcomeFileList() {
 		return welcomeFileList;
 	}
@@ -173,7 +177,7 @@ public class WebXML implements Serializable {
 		//
 		
 		
-		outputWriter.write("<?xml version='1.0' ?>\n");
+		outputWriter.write("<?xml version=\"1.0\" ?>\n");
 		
 		BeanWriter beanWriter = new BeanWriter(outputWriter);
 		beanWriter.getBindingConfiguration().setMapIDs(false);
