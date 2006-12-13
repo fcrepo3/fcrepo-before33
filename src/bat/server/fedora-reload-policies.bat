@@ -5,7 +5,7 @@ goto checkEnv
 :envOk
 set _CP=%CATALINA_HOME%\webapps\fedora\WEB-INF\classes
 set _ED=%CATALINA_HOME%\webapps\fedora\WEB-INF\lib;%CATALINA_HOME%\common\endorsed;%CATALINA_HOME%\common\lib
-"%JAVA_HOME%\bin\java" -cp "%_CP%" -Djava.endorsed.dirs="%_ED%" -Dfedora.home="%FEDORA_HOME%" fedora.server.utilities.ServerUtility reloadPolicies %1
+"%JAVA_HOME%\bin\java" -cp "%_CP%" -Djavax.net.ssl.trustStore="%FEDORA_HOME%\server\truststore" -Djavax.net.ssl.trustStorePassword=tomcat -Djava.endorsed.dirs="%_ED%" -Dfedora.home="%FEDORA_HOME%" fedora.server.utilities.ServerUtility %1 %2 %3
 if errorlevel 1 goto endWithError
 set _CP=
 set _ED=

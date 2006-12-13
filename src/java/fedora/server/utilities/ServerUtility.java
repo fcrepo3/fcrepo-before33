@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.io.File;
 import java.io.FileInputStream;
 
+import java.util.Properties;
+
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import fedora.common.Constants;
 import fedora.common.http.WebClient;
@@ -54,17 +57,12 @@ public class ServerUtility {
      */
     public static boolean pingServer(String protocol, String user,
             String pass) {
-        String url = null;
         try {
-            url = getBaseURL(protocol) + "/describe";
-            UsernamePasswordCredentials creds = 
-                    new UsernamePasswordCredentials(user, pass);
-            new WebClient().getResponseAsString(url, true, creds);
-            LOG.debug("Successfully pinged server at " + url);
+            getServerResponse(protocol, user, pass, "/describe");
             return true;
         } catch (Exception e) {
             LOG.debug("Assuming the server isn't running because "
-                    + "request to " + url + " failed", e);
+                    + "describe request failed", e);
             return false;
         }
     }
@@ -75,10 +73,41 @@ public class ServerUtility {
      * It will look like http://localhost:8080/fedora
      */
     public static String getBaseURL(String protocol) {
+        String port;
+        if (protocol.equals("http")) {
+            port = CONFIG.getParameter(FEDORA_SERVER_PORT).getValue();
+        } else if (protocol.equals("https")) {
+            port = CONFIG.getParameter(FEDORA_REDIRECT_PORT).getValue();
+        } else {
+            throw new RuntimeException("Unrecogonized protocol: " + protocol);
+        }
         return protocol + "://"
                 + CONFIG.getParameter(FEDORA_SERVER_HOST).getValue() + ":"
-                + CONFIG.getParameter(FEDORA_SERVER_PORT).getValue()
-                + "/fedora";
+                + port + "/fedora";
+    }
+
+    /**
+     * Signals for the server to reload its policies.
+     */
+    public static void reloadPolicies(String protocol, String user,
+            String pass)
+            throws IOException {
+        getServerResponse(protocol, user, pass, 
+                 "/management/control?action=reloadPolicies");
+    }
+
+    /**
+     * Hits the given Fedora Server URL and returns the response
+     * as a String. Throws an IOException if the response code is not 200(OK).
+     */
+    private static String getServerResponse(String protocol, String user,
+            String pass, String path)
+            throws IOException {
+        String url = getBaseURL(protocol) + path;
+        LOG.info("Getting URL: " + url);
+        UsernamePasswordCredentials creds =
+                new UsernamePasswordCredentials(user, pass);
+        return new WebClient().getResponseAsString(url, true, creds);
     }
 
     /**
@@ -103,6 +132,52 @@ public class ServerUtility {
             return false;
         }
             
-    }    
+    }
+
+    /**
+     * Initializes logging to use Log4J and to send WARN messages to STDOUT for 
+     * command-line use.
+     */
+    private static void initLogging() {
+		// send all log4j output to STDOUT and configure levels
+		Properties props = new Properties();
+		props.setProperty("log4j.appender.STDOUT",
+		         "org.apache.log4j.ConsoleAppender");
+        props.setProperty("log4j.appender.STDOUT.layout", 
+                "org.apache.log4j.PatternLayout");
+        props.setProperty("log4j.appender.STDOUT.layout.ConversionPattern",
+                "%p: %m%n");
+		props.setProperty("log4j.rootLogger", "WARN, STDOUT");
+		PropertyConfigurator.configure(props);
+
+        // tell commons-logging to use Log4J
+        final String pfx = "org.apache.commons.logging.";
+        System.setProperty(pfx + "LogFactory", pfx + "impl.Log4jFactory");
+        System.setProperty(pfx + "Log", pfx + "impl.Log4JLogger");
+    }
+
+    /**
+     * Command-line entry point to reload policies.
+     *
+     * Takes 3 args: protocol user pass
+     */
+    public static void main(String[] args) {
+        initLogging();
+        if (args.length == 3) {
+            try {
+                reloadPolicies(args[0], args[1], args[2]);
+                System.out.println("SUCCESS: Policies have been reloaded");
+                System.exit(0);
+            } catch (Throwable th) {
+                th.printStackTrace();
+                System.err.println("ERROR: Reloading policies failed; see above");
+                System.exit(1);
+            }
+        } else {
+            System.err.println("ERROR: Three arguments required: "
+                    + "http|https username password");
+            System.exit(1);
+        }
+    }
     
 }
