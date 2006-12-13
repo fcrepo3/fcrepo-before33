@@ -26,7 +26,7 @@ public class Installer {
 		         "org.apache.log4j.ConsoleAppender");
         props.setProperty("log4j.appender.STDOUT.layout", 
                 "org.apache.log4j.PatternLayout");
-        props.setProperty("log4j.appender.TESTLOG.layout.ConversionPattern",
+        props.setProperty("log4j.appender.STDOUT.layout.ConversionPattern",
                 "%p (%c{1}) %m%n");
 		props.setProperty("log4j.rootLogger", "WARN, STDOUT");
 		PropertyConfigurator.configure(props);
