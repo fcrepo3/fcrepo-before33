@@ -6,6 +6,9 @@ import java.io.UnsupportedEncodingException;
 
 import java.net.URI;
 
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
+
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -387,13 +390,59 @@ public class RelsExtValidator
     				+ " The value specified for " + relName 
     				+ " is not a valid 'double' value");
             }
+        } else if (datatypeURI.equals(Constants.XSD.DATE_TIME.uri)) {
+            if (!isValidDateTime(value)) {
+    			throw new SAXException("RelsExtValidator:"
+    				+ " The value specified for " + relName 
+    				+ " is not a valid 'dateTime' value.\n"
+    				+ "The following dateTime formats are allowed:\n"
+    				+ "  yyyy-MM-ddTHH:mm:ss\n"
+    				+ "  yyyy-MM-ddTHH:mm:ss.S\n"
+    				+ "  yyyy-MM-ddTHH:mm:ss.SS\n"
+    				+ "  yyyy-MM-ddTHH:mm:ss.SSS\n"
+    				+ "  yyyy-MM-ddTHH:mm:ss.SSSZ");
+            }
         } else {
 			throw new SAXException("RelsExtValidator:"
 				+ " Error in relationship '" + relName + "'.\n"
 				+ " The RELS-EXT datastream does not support the specified"
 				+ " datatype.\n"
                 + "If specified, the RDF 'datatype' must be the URI of one of\n"
-                + "the following W3C XML Schema data types: int, long, float, double");
+                + "the following W3C XML Schema data types: int, long, float,\n"
+                + "double, or dateTime");
+        }
+    }
+
+    /**
+     * Tells whether the given string is a valid lexical representation of
+     * a dateTime value.  Passing this test will ensure successful indexing
+     * later.
+     */
+    private static boolean isValidDateTime(String lex) {
+        SimpleDateFormat format = new SimpleDateFormat();
+        if (lex.length() == 19) {
+            format.applyPattern("yyyy-MM-dd'T'HH:mm:ss");
+        } else if (lex.length() == 21) {
+            format.applyPattern("yyyy-MM-dd'T'HH:mm:ss.S");
+        } else if (lex.length() == 22) {
+            format.applyPattern("yyyy-MM-dd'T'HH:mm:ss.SS");
+        } else if (lex.length() == 23) {
+            format.applyPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        } else if (lex.length() == 24) {
+            format.applyPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        } else {
+            LOG.warn("Not a valid dateTime: " + lex);
+            return false;
+        }
+        try {
+            format.parse(lex);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Validated dateTime: " + lex);
+            }
+            return true;
+        } catch (ParseException e) {
+            LOG.warn("Not a valid dateTime: " + lex);
+            return false;
         }
     }
 }
