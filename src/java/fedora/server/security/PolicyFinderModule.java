@@ -110,7 +110,7 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 		}
 		
 		
-		repositoryPolicies = getRepositoryPolicies(filelist);
+		repositoryPolicies = loadRepositoryPolicies(filelist);
 
 		this.doManager = doManager;
 
@@ -172,9 +172,9 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 		return abstractPolicy;
 	}
 	
-	private static int classErrors = 0;
-	public static final int getClassErrors() {
-		return classErrors;
+	private int loadErrors = 0;
+	public final int getLoadErrors() {
+		return loadErrors;
 	}
 
 	private final int logNgo(int errors, String msg, String detail) {
@@ -185,7 +185,7 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
         return errors + 1;
 	}
 	
-	private final Vector getRepositoryPolicies(List filelist) throws GeneralException {
+	private final Vector loadRepositoryPolicies(List filelist) throws GeneralException {
 		Vector repositoryPolicies = new Vector();
 		Iterator it = filelist.iterator();
 		int methodErrors = 0;
@@ -232,9 +232,9 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 				}
             }
 		}
-		classErrors += methodErrors;
-		log("classErrors=" + classErrors);
-		if (classErrors != 0) {
+		loadErrors += methodErrors;
+		log("loadErrors=" + loadErrors);
+		if (loadErrors != 0) {
 			repositoryPolicies.clear();
 			throw new GeneralException("problems loading repo-wide policies");			
 		}

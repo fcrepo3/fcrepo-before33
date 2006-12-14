@@ -190,8 +190,8 @@ public class PolicyEnforcementPoint {
 		LOG.debug("o after setting policy finder hashset into policy finder");
 		
 		PDP pdp = null;
-		LOG.debug(PolicyFinderModule.getClassErrors() + "class errors");
-		if (PolicyFinderModule.getClassErrors() == 0) {
+		LOG.debug(combinedPolicyModule.getLoadErrors() + " load errors");
+		if (combinedPolicyModule.getLoadErrors() == 0) {
 			LOG.debug("0 class errors");
 			pdp = new PDP(new PDPConfig(attrFinder, policyFinder, null));
 		}	
