@@ -404,11 +404,15 @@ public class DatastreamResolverServlet extends HttpServlet {
 									+ name + "=" + value);
 				}
 			}
+			/*
+			// Enforcement of Backend Security is temporarily disabled pending refactoring.
+			//
             LOG.debug("DatastreamResolverServlet: about to do final authZ check");
 			Authorization authorization = (Authorization) s_server
 					.getModule("fedora.server.security.Authorization");
 			authorization.enforceResolveDatastream(context, keyTimestamp);
 			LOG.debug("DatastreamResolverServlet: final authZ check suceeded.....");
+			*/
 
 			if (dsControlGroupType.equalsIgnoreCase("E")) {
 				// testing to see what's in request header that might be of
