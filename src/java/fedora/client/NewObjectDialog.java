@@ -202,14 +202,12 @@ public class NewObjectDialog extends JDialog implements ItemListener {
 						xml.append(">\n");
 					}
 					xml.append("  <foxml:objectProperties>\n");
-					xml
-							.append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"FedoraObject\"/>\n");
-					xml
-							.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\""
+					xml.append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"FedoraObject\"/>\n");
+					xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\""
 									+ StreamUtility.enc(label) + "\"/>\n");
-					xml
-							.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#contentModel\" VALUE=\""
+					xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#contentModel\" VALUE=\""
 									+ StreamUtility.enc(cModel) + "\"/>\n");
+                    xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#ownerId\" VALUE=\""+Administrator.getUser()+"\"/>");
 					xml.append("  </foxml:objectProperties>\n");
 					xml.append("</foxml:digitalObject>");
 					String objXML = xml.toString();

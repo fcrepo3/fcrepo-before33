@@ -41,6 +41,7 @@ public class ObjectPane
         m_state=state;
         m_label=label;
         m_ownerId=ownerId;
+        if (ownerId == null) m_ownerId = "";
         m_labelDims=new JLabel("Content Model").getPreferredSize();
 
 

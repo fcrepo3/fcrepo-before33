@@ -434,14 +434,7 @@ public class DatastreamPane
             m_origFormatURI=m_ds.getFormatURI();
             if (m_origFormatURI==null) m_origFormatURI="";
             // create a string from alt ids array 
-			m_origAltIDs = "";
-			String[] altIDs = m_ds.getAltIDs();
-			if (altIDs != null) {
-				for (int z = 0; z < altIDs.length; z++) {
-					if (z > 0) m_origAltIDs += " ";
-					m_origAltIDs += altIDs[z];
-				}
-			}
+			m_origAltIDs = getAltIdsString();
             
             if (ds.getControlGroup().toString().equals("X")) {
                 X=true;
@@ -572,6 +565,7 @@ public class DatastreamPane
                                                                  "SHA-512"});
             setSelectedChecksumType(m_checksumTypeComboBox, ds.getChecksumType());
             m_checksumTextField = new JTextField(m_ds.getChecksum());
+            m_checksumTextField.setEditable(false);
             m_checksumPanel = new JPanel();
             m_checksumPanel.setLayout(new BorderLayout());
             m_checksumPanel.add(m_checksumTypeComboBox, BorderLayout.WEST);
@@ -598,6 +592,7 @@ public class DatastreamPane
                             m_checksumPanel.remove(m_checksumTextField);
                         }
                         m_checksumTextField = new JTextField(m_ds.getChecksum());
+                        m_checksumTextField.setEditable(false);
                         m_checksumPanel.add(m_checksumTextField, BorderLayout.CENTER);            
                         m_checksumPanel.validate();
                         m_checksumPanel.repaint();
@@ -801,6 +796,21 @@ public class DatastreamPane
             add(actionPane, BorderLayout.SOUTH);
         }
 
+        private String getAltIdsString()
+        {
+            String altIDStr = "";
+            String[] altIDs = m_ds.getAltIDs();
+            if (altIDs != null) 
+            {
+                for (int z = 0; z < altIDs.length; z++) 
+                {
+                    if (z > 0)  altIDStr += " ";
+                    altIDStr += altIDs[z];
+                }
+            }
+            return(altIDStr);
+        }
+        
         private void setSelectedChecksumType(JComboBox typeComboBox, String checksumType)
         {
             for (int i = 0; i < typeComboBox.getItemCount(); i++)
@@ -871,7 +881,7 @@ public class DatastreamPane
             viewFrame.setVisible(true);
             viewFrame.toFront();
         }
-
+        
 		public void saveChanges(String logMessage, boolean force)
 	            throws Exception 
 	    {
@@ -936,6 +946,7 @@ public class DatastreamPane
 	                                                           force);
 			}
 	    }
+        
         public boolean isDirty() {
             if (m_editor!=null) {
                 if (m_editor.isDirty()) {
