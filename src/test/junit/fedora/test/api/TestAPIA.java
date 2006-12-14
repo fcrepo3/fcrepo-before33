@@ -8,11 +8,14 @@ import org.custommonkey.xmlunit.SimpleXpathEngine;
 
 import fedora.client.FedoraClient;
 import fedora.server.access.FedoraAPIA;
+import fedora.server.types.gen.ComparisonOperator;
+import fedora.server.types.gen.Condition;
 import fedora.server.types.gen.DatastreamDef;
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.types.gen.MIMETypedStream;
 import fedora.server.types.gen.MethodParmDef;
+import fedora.server.types.gen.ObjectFields;
 import fedora.server.types.gen.ObjectMethodsDef;
 import fedora.server.types.gen.ObjectProfile;
 import fedora.server.types.gen.Property;
@@ -55,9 +58,11 @@ public class TestAPIA extends FedoraServerTestCase {
 		//TODO
 		String[] resultFields = {"pid"};
 		NonNegativeInteger maxResults = new NonNegativeInteger("" + 100);
-		FieldSearchQuery query = null;
+		Condition[] condition = {new Condition("pid", ComparisonOperator.eq, "true")};
+		FieldSearchQuery query = new FieldSearchQuery(condition, "demo:5");
 		FieldSearchResult result = apia.findObjects(resultFields, maxResults, query);
-		assertEquals(result, result);
+		ObjectFields[] fields = result.getResultList();
+		assertEquals(fields[0].getPid(), "demo:5");
 	}
 	
 	public void testGetDatastreamDissemination() throws Exception {
