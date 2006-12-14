@@ -124,7 +124,18 @@ public class ServerUtility {
         if (url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/fedora/") ||
             url.startsWith("http://"+fedoraServerHost+"/fedora/") ||   
             url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/fedora/") ||
-            url.startsWith("https://"+fedoraServerHost+"/fedora/") ) {
+            url.startsWith("https://"+fedoraServerHost+"/fedora/")
+            // This is an ugly hack to fix backend security bug when authentication enabled
+            // for api-a. The getDS target is intentionally unsecure to allow backend services
+            // that cannot handle authentication or ssl a callback channel. If not excluded
+            // here, it can result in the incorrect assignment of fedoraRole=fedoraInternalCall-1
+            // elsewhere in the code to be associated with the getDS target. Additional
+            // refactoring is needed to eliminate the need for this hack.
+            &&
+            !(url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/fedora/getDS?") ||
+              url.startsWith("http://"+fedoraServerHost+"/fedora/getDS?") ||   
+              url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/fedora/getDS?") ||
+              url.startsWith("https://"+fedoraServerHost+"/fedora/getDS?")) ) {
             LOG.debug("URL was Fedora-to-Fedora callback: "+url);
             return true;
         } else {
