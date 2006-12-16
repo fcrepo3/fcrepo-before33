@@ -635,21 +635,84 @@
 	</datastore>
 	<datastore id="localKowariTriplestore">
 		<comment>local Kowari Triplestore used by the Resource Index</comment>
-		<param name="connectorClassName" value="org.trippi.impl.kowari.KowariConnector"/>
-		<param name="remote" value="false"/>
-		<param name="path" value="data/resourceIndex" isFilePath="true"/>
-		<param name="serverName" value="fedora"/>
-		<param name="modelName" value="ri"/>
-		<param name="poolInitialSize" value="3"/>
-		<param name="poolMaxGrowth" value="-1"/>
-		<param name="readOnly" value="false"/>
-		<param name="autoCreate" value="true"/>
-		<param name="autoTextIndex" value="false"/>
-		<param name="memoryBuffer" value="true"/>
-		<param name="autoFlushDormantSeconds" value="5"/>
-		<param name="autoFlushBufferSize" value="20000"/>
-		<param name="bufferFlushBatchSize" value="20000"/>
-		<param name="bufferSafeCapacity" value="40000"/>
+		<param name="connectorClassName" value="org.trippi.impl.kowari.KowariConnector">
+			<comment>The name of the Trippi Connector class used to communicate 
+			with the triplestore.</comment>
+		</param>
+		<param name="remote" value="false">
+			<comment>Tells the connector to communicate with Kowari in remote or 
+			local mode. If true, the host parameter must be defined. If false,
+			the path parameter must be defined.</comment>
+		</param>
+		<param name="path" value="data/resourceIndex" isFilePath="true">
+			<comment>The local path to the main triplestore directory.</comment>
+		</param>
+		<param name="serverName" value="fedora">
+			<comment>The server name for rmi binding.</comment>
+		</param>
+		<param name="modelName" value="ri">
+			<comment>The name of the model to use.</comment>
+		</param>
+		<param name="poolInitialSize" value="3">
+			<comment>The initial size of the session pool used for queries. 
+			Note: A value of 0 will cause the Resource Index to operate in 
+			synchronized mode: concurrent read/write requests are put in a queue 
+			and handled in FIFO order; this will severely impair performance and 
+			is only intended for debugging.</comment>
+		</param>
+		<param name="poolMaxGrowth" value="-1">
+			<comment>Maximum number of additional sessions the pool may add. If 
+			specified as -1, no limit will be placed on pool growth.</comment>
+		</param>
+		<param name="readOnly" value="false">
+			<comment>Whether the triplestore should be read-only. Most Fedora 
+			repositories will set this to false.</comment>
+		</param>
+		<param name="autoCreate" value="true">
+			<comment>Create the model if it doesn't already exist. 
+			At startup, the model will be automatically created. In addition, an 
+			XML schema datatyped model named "xsd" will also be automatically 
+			created.</comment>
+		</param>
+		<param name="autoTextIndex" value="false">
+			<comment>Whether to propagate adds/deletes to a full-text 
+			[Full-Text] model automatically. While a very useful feature, 
+			enabling full-text indexing adds significantly to object ingest 
+			times. If true, the text model will be named modelName-fullText. 
+			Note that if this is true and autoCreate is true, the text model 
+			will also be created if it doesn't already exist.</comment>
+		</param>
+		<param name="memoryBuffer" value="true">
+			<comment>Whether to use a memory buffer or a database buffer for 
+			write operations. The buffer is where triples are stored before 
+			they're actually written. Normally, a memory buffer will be 
+			sufficient. However, in certain server environments, a database 
+			buffer is the better option, offering higher capacity and 
+			persistence.</comment>
+		</param>
+		<param name="autoFlushDormantSeconds" value="5">
+			<comment>Seconds of buffer inactivity that will trigger an 
+			auto-flush. If this threshold is reached, flushing will occur in the 
+			background, during which time the buffer is still available for 
+			writing.</comment>
+		</param>
+		<param name="autoFlushBufferSize" value="20000">
+			<comment>The size at which the buffer should be auto-flushed. If 
+			this threshold is reached, flushing will occur in the background, 
+			during which time the buffer is still available for 
+			writing.</comment>
+		</param>
+		<param name="bufferFlushBatchSize" value="20000">
+			<comment>The number of updates to send to the triplestore at a time. 
+			This should be the same size as, or smaller than 
+			autoFlushBufferSize.</comment>
+		</param>
+		<param name="bufferSafeCapacity" value="40000">
+			<comment>The maximum size the buffer can reach before being forcibly 
+			flushed. If this threshold is reached, flushing will occur in the 
+			foreground and the buffer will be locked for writing until it is 
+			finished. This should be larger than autoFlushBufferSize.</comment>
+		</param>
 	</datastore>
 	<datastore id="localPostgresMPTTriplestore">
 		<comment>
