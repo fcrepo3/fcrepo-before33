@@ -28,11 +28,13 @@
             	<ol>
             		<li><a href="#intro.prereq">Prerequisites</a></li>
             		<li><a href="#intro.download">Download Fedora</a></li>
+            		<li><a href="#intro.env">Environment Variables</a></li>
             	</ol>
       		<li><a href="#installer">Installation</a>
       			<ol>
       				<li><a href="#installer.quick">Quick Install</a></li>
       				<li><a href="#installer.custom">Custom Install</a></li>
+      				<li><a href="#installer.client">Client Install</a></li>
       				<li><a href="#installer.source">Source Install</a></li>
       			</ol>
       		</li>
@@ -42,7 +44,7 @@
       				<li><a href="#running.logs">Server Logs</a></li>
       			</ol>
        		</li>
-            <li><a href="#db">Database</a>
+            <li><a href="#database">Database</a>
             	<ol>
             		<li>MySQL</li>
             		<li>Oracle</li>
@@ -76,7 +78,7 @@ installing and compiling the complete source code distribution.</p>
         <ul>
 			<li>Database<br /> 
 			The Fedora server is backed in part by a relational database. 
-			For ease of installation, the Fedora installer includes and can
+			To simplify installation, the Fedora installer includes and can
 			configure an embedded instance of the 
 			<a href="http://mckoi.com/database/">McKoi SQL Database 1.0.3</a>. 
 			Fedora also supports <a href="http://www.mysql.com/">MySQL</a>, 
@@ -85,8 +87,9 @@ installing and compiling the complete source code distribution.</p>
 			If the included McKoi database will not be used, another database 
 			server must be installed, configured and running before proceeding 
 			with the installation.
-			To configure Fedora to use MySQL, Oracle, or PostgreSQL, please see 
-			below for more instructions.</li>
+			To configure Fedora to use another database, please see the 
+			<a href="#database">Database</a> section below for further 
+			instructions.</li>
             <li>Servlet Container<br />
             The Fedora installer includes Tomcat 5.0.28. Optionally, Fedora may 
             be installed into any existing servlet container that implements 
@@ -161,19 +164,30 @@ installing and compiling the complete source code distribution.</p>
 	command prompt.</p>
 	
     <div class="subsect">
-		<h3><a name="intro.env">A. Quick</a></h3>
-		<p>blah blah</p>
+		<h3><a name="installer.quick">A. Quick</a></h3>
+		<p>Fedora home directory: This is the directory where Fedora will be 
+		installed. This should match the FEDORA_HOME environment variable 
+		described above.</p>
+		<p>Fedora administrator password: The password to use for the Fedora 
+		administrator (fedoraAdmin) account.</p>
 	</div>
 	
 	<div class="subsect">
-		<h3><a name="intro.env">B. Custom</a></h3>
-		<p>blah blah</p>
+		<h3><a name="installer.custom">B. Custom</a></h3>
+		<p>SSL: If you </p>
 		
 		<p>SSL, database upgrade...</p>
 	</div>
 	
 	<div class="subsect">
-		<h3><a name="intro.env">C. Source</a></h3>
+		<h3><a name="installer.client">C. Client</a></h3>
+		<p>SSL: If you </p>
+		
+		<p>SSL, database upgrade...</p>
+	</div>
+	
+	<div class="subsect">
+		<h3><a name="installer.source">D. Source</a></h3>
 		<p>After unpacking the source distribution, change into the newly 
 		extracted directory. To build the installer, enter 
 		<code>ant installer</code>. 
@@ -250,16 +264,14 @@ installing and compiling the complete source code distribution.</p>
 </div>
 
 <div class="sect">
-<h2><a name="running">5. Database</a></h2>
-	<p>Fedora is designed to be RDBMS-independent, but comes with
-	a pure java database called McKoi. It has been tested and
-	works with McKoi, MySQL, Oracle and PostgreSQL. If you choose to use
-	any database but McKoi, we assume here that it is already
-	installed.</p>
+<h2><a name="database">5. Database</a></h2>
+	<p>Fedora is designed to be RDBMS-independent. It has been tested with 
+	McKoi, MySQL, Oracle and PostgreSQL. If you choose to use any database other 
+	than the embedded McKoi provided by the Fedora Installer, we assume here 
+	that the database is already installed.</p>
 
-	<p>Follow the below instructions for the RDBMS of your choice
-	in order to create the user and tablespace so that the Fedora
-	software can use the database.</p>
+	<p>Follow the instructions below for the RDBMS of your choice in order to 
+	create the user and tables required by Fedora.</p>
 	
 	<div class="subsect">
 		<h3><a name="intro.env">A. MySQL</a></h3>
@@ -276,7 +288,7 @@ installing and compiling the complete source code distribution.</p>
 		manually create 1) the Fedora user on the database, and 2) the 
 		tablespace on which that user has complete control.</p>
 		
-		<p>Do to distribution license restrictions, the Fedora Installer does 
+		<p>Due to distribution license restrictions, the Fedora Installer does 
 		not include the Oracle JDBC driver. Oracle JDBC drivers are available
 		from <a href="http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html"
 		target="_top">http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</a>.
@@ -286,76 +298,66 @@ installing and compiling the complete source code distribution.</p>
 	
 	<div class="subsect">
 		<h3><a name="intro.env">C. Other Databases</a></h3>
-        <p>If you want to use a different database, it's an option,
-        but it will take some extra work. Here's how it can be
-        done:</p>
+        <p>To use a database other than McKoi, MySQL, Oracle or PostgreSQL, 
+        the database must support common SQL-92 syntax and you must a have a 
+        JDBC version 3 driver available.</p>
         
-          <ul type="disc">
-            <li>
-              <p>The database needs to be JDBC-compliant and must
-              support common SQL-92 syntax. The driver will need to
-              be put in the server's jakarta-tomcat-5.0.28/common/lib directory
+        <p>The Fedora Installer does not support The driver will need to be put in the server's jakarta-tomcat-5.0.28/common/lib directory
               so that Fedora picks it up, and the JDBC url will
               need to be configured appropriately in the Fedora Server 
 				Configuration File.</p>
-            </li>
-          </ul>
 
-        <p>Upon startup, Fedora checks the database for all
-        required tables. If they don't exist, it creates them.
-        Creation of tables is a much less standardized task across
-        RDBMSs than regular SQL queries. Thus, you must either</p>
+        <p>Upon startup, Fedora checks the database for all required tables. If 
+        the tables do not exist, Fedora will them. Because table creation is 
+        much less standardized task across RDBMSs than SQL queries you must do
+        one of the following:</p>
 
-          <ol type="1">
-            <li>
-              <p>create the tables and indexes and auto-increments
-              yourself in your own database (see the file:
-              src/dbspec/server/fedora/server/storage/resources/DefaultDOManager.dbspec
-              in the source distribution for the RDBMS-neutral
-              table specifications),</p>
-            </li>
+		<ol>
+			<li>Create the tables and indexes and auto-increments yourself in 
+			your own database (see the file:
+			src/dbspec/server/fedora/server/storage/resources/DefaultDOManager.dbspec
+			in the source distribution for the RDBMS-neutral table 
+			specifications).</li>
 
-            <li>
-              <p>write your own subclass of
-              fedora.utilities.DDLConverter for your database
-              software, include it in a jar file in
-              server/jakarta-tomcat-5.0.28/common/lib, and associate it with the
-              JDBC driver inside the server/config/fedora.fcfg file
-              (see how it's done by looking at the
-              MySQLDDLConverter and McKoiDDLConverter associations
-              with their respective drivers in the fedora.fcfg
-              file, and the classes' implementations in the source
-              distribution).</p>
-            </li>
-          </ol>
+            <li>Write a subclass of fedora.utilities.DDLConverter for your 
+            database software, include it in the Fedora WEB-INF/classes 
+            directory or in a jar file in the Fedora WEB-INF/lib directory, and 
+            associate it with the JDBC driver inside the 
+            FEDORA_HOME/server/config/fedora.fcfg file
+			(see how it's done by looking at the MySQLDDLConverter and 
+			McKoiDDLConverter associations with their respective drivers in the 
+			fedora.fcfg file, and the classes' implementations in the source
+ 			distribution).</li>
+		</ol>
 
-        <p>If you choose option #2, please tell us about it, as it
-        will be useful for other users of Fedora! Option 2 is
-        harder, but it will make future installations of new
-        versions of Fedora (where the db schema will likely change)
-        much easier for you if you plan on using that database
+        <p>If you choose option #2, please tell us about it, as it will be 
+        useful for other users of Fedora! Option 2 is harder, but it will make 
+        future installations of new versions of Fedora (where the db schema will 
+        likely change) much easier for you if you plan on using that database
         later.</p>
 	</div>
 </div>
 
 <div class="sect">
 <h2><a name="running">6. Configuring the Fedora Server</a></h2>
-	<p>Edit the Fedora Server Configuration File (fedora.fcfg) to override default settings.</p>
-
+	<p>The Fedora Server's configuration is chiefly governed by the Fedora
+	Server Configuration File (fedora.fcfg) located at 
+	FEDORA_HOME/server/config/fedora.fcfg.</p>
+	
 	<p>The Fedora server configuration file contains: (1) global parameters 
-		for the Fedora server, (2) configuration parameters for each server 
-		module, and configuration parameters for each persistent data store of 
-		the Fedora server.&nbsp;&nbsp; The configuration file is located at FEDORA_HOME/server/config/fedora.fcfg.</p>
-		<p>The configuration file has a simple schema.&nbsp; It starts
-        with a server element, under which a series of parameter
-        elements occur, followed by a series of module elements,
-        followed by a series of datastore elements.&nbsp; The parameter elements directly following the root server
-        element are used to control what are considered generic
-        server functionality. Examples include the level of logging
-        to do, the port on which the server should be exposed, and
-        the superuser password.</p>
+	for the Fedora server, (2) configuration parameters for each server 
+	module, and configuration parameters for each persistent data store of 
+	the Fedora server.</p>
 
-        <p>The module elements are used to configure specific parts
+	<p>The configuration file has a simple schema. It starts with a server 
+	element, under which a series of parameter elements occur, followed by a 
+	series of module elements, followed by a series of datastore elements. 
+	The parameter elements directly following the root server element are used 
+	to control what are considered generic server functionality. 
+	Examples include the level of logging to do, and the port on which the 
+	server is exposed.</p>
+
+	<p>The module elements are used to configure specific parts
         of Fedora. For instance, the module with the role
         attribute, "fedora.server.search.FieldSearch" is used to
         configure the field-searching component of the server.
@@ -365,7 +367,7 @@ installing and compiling the complete source code distribution.</p>
         currently be found in the configuration file itself.
         Important ones will be listed below.</p>
 
-        <p>The datastore elements are used to configure various
+	<p>The datastore elements are used to configure various
         databases that might be used by the system. Although the
         sample configuration file holds several, you will typically
         only need one. The datastore elements are associated with
@@ -375,7 +377,7 @@ installing and compiling the complete source code distribution.</p>
         fedora.server.storage.ConnectionPoolManager module refers
         to one of the datastore elements in its value.</p>
         
-      <p>There are many other parameters you can configure with Fedora. See the 
+	<p>There are many other parameters you can configure with Fedora. See the 
         Fedora Server Configuration File itself (fedora.fcfg) for internal documentation on all the parameters.</p>
 </div>
 
