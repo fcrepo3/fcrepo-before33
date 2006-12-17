@@ -140,11 +140,11 @@ public class OptionDefinition {
 	                	if (unattended) {
 	                		System.out.println("WARNING: Overwriting existing directory: " + dir.getAbsolutePath());
 	                	} else {
-		                	System.out.println("WARNING: " + dir.getAbsolutePath() + " already exists.");
+		                	System.out.println("WARNING: " + dir.getAbsolutePath() + " is not empty.");
 		                	System.out.print("WARNING: Overwrite? (yes or no) [default is no] ==> ");
 		                	String confirm = readLine().trim();
 		                    if (confirm.length() == 0 || confirm.equalsIgnoreCase("no")) {
-		                    	throw new OptionValidationException("Directory exists; delete it or choose another", _id);
+		                    	throw new OptionValidationException("Directory is not empty; delete it or choose another", _id);
 		                    }
 	                	}
                 	}
@@ -181,7 +181,7 @@ public class OptionDefinition {
             } else if (_id.equals(InstallOptions.TOMCAT_SSL_PORT)) {
                 validatePort(value);
             } else if (_id.equals(InstallOptions.KEYSTORE_FILE)) {
-                if (!value.equals(InstallOptions.INCLUDED)) {
+                if (!(value.equals(InstallOptions.INCLUDED) || value.equals(InstallOptions.DEFAULT))) {
                     validateExistingFile(value);
                 }
             } else if (_id.startsWith(InstallOptions.DATABASE) && _id.endsWith(".driver")) {

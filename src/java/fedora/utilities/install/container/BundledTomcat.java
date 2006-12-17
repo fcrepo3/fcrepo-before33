@@ -1,7 +1,6 @@
 package fedora.utilities.install.container;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +20,7 @@ public class BundledTomcat extends Tomcat {
 	}
 	
 	protected void installTomcat() throws InstallationFailedException {
+		System.out.println("Installing Tomcat...");
 		try {
 			Zip.unzip(getDist().get(Distribution.TOMCAT), 
 					System.getProperty("java.io.tmpdir"));
@@ -48,20 +48,16 @@ public class BundledTomcat extends Tomcat {
 		}
 	}
 	
-	protected void installKeystore() throws InstallationFailedException {
+	protected void installIncludedKeystore() throws InstallationFailedException {
 		String keystoreFile = getOptions().getValue(InstallOptions.KEYSTORE_FILE);
-		if (keystoreFile == null) {
+		if (keystoreFile == null || !keystoreFile.equals(InstallOptions.INCLUDED)) {
 			// nothing to do
 			return;
 		}
 		try {
-			InputStream is;
-			File keystore = new File(getConf(), Distribution.KEYSTORE);
-	        if (keystoreFile.equals(InstallOptions.INCLUDED)) {
-	        	is = getDist().get(Distribution.KEYSTORE);
-	        } else {
-	        	is = new FileInputStream(keystoreFile);
-	        }
+			InputStream is = getDist().get(Distribution.KEYSTORE);
+			File keystore = getIncludedKeystore();
+
 	        if (!FileUtils.copy(is, new FileOutputStream(keystore))) {
 	        	throw new InstallationFailedException("Copy to " + 
 	        			keystore.getAbsolutePath() + " failed.");

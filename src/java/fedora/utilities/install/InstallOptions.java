@@ -35,6 +35,8 @@ public class InstallOptions {
     public static final String TOMCAT_HTTP_PORT      = "tomcat.http.port";
     public static final String TOMCAT_SSL_PORT       = "tomcat.ssl.port";
     public static final String KEYSTORE_FILE         = "keystore.file";
+    public static final String KEYSTORE_PASSWORD     = "keystore.password";
+    public static final String KEYSTORE_TYPE         = "keystore.type";
     public static final String DATABASE		         = "database";
     public static final String DATABASE_DRIVER		 = "database.driver";
     public static final String DATABASE_JDBCURL		 = "database.jdbcURL";
@@ -46,7 +48,9 @@ public class InstallOptions {
     public static final String UNATTENDED 			 = "unattended";
     public static final String DATABASE_UPDATE		 = "database.update";
     
+    public static final String DEFAULT				 = "default";
     public static final String INSTALL_QUICK		 = "quick";
+    public static final String INSTALL_CLIENT		 = "client";
     public static final String INCLUDED				 = "included";
     public static final String MCKOI				 = "mckoi";
     public static final String MYSQL				 = "mysql";
@@ -80,16 +84,22 @@ public class InstallOptions {
         _map = new HashMap<Object, Object>();
 
         System.out.println();
-        System.out.println("**********************");
+        System.out.println("***********************");
         System.out.println("  Fedora Installation ");
-        System.out.println("**********************");
+        System.out.println("***********************");
         System.out.println();
-        System.out.println("Please answer the following questions to install Fedora.");
-        System.out.println("You can enter CANCEL at any time to abort installation.");
+        System.out.println("To install Fedora, please answer the following questions.");
+        System.out.println("Enter CANCEL at any time to abort the installation.");
+        System.out.println("Detailed installation instructions are available at:");
+        System.out.println("\thttp://www.fedora.info/download/");
         System.out.println();
 
         inputOption(INSTALL_TYPE);
         inputOption(FEDORA_HOME);
+        
+        if (getValue(INSTALL_TYPE).equals(INSTALL_CLIENT))
+        	return;
+        
         inputOption(FEDORA_ADMIN_PASS);
         
         String fedoraHome = new File(getValue(InstallOptions.FEDORA_HOME)).getAbsolutePath();
@@ -107,8 +117,6 @@ public class InstallOptions {
         	_map.put(TOMCAT_HOME, fedoraHome + File.separator + "tomcat");
         	_map.put(TOMCAT_HTTP_PORT, null); // 8080
         	_map.put(TOMCAT_SHUTDOWN_PORT, null); // 8005
-        	//_map.put(TOMCAT_SSL_PORT, null); // 8443
-        	//_map.put(KEYSTORE_FILE, null); // included
         	_map.put(XACML_ENABLED, Boolean.toString(false));
         	_map.put(DATABASE, INCLUDED); // included
         	_map.put(DATABASE_USERNAME, "fedoraAdmin");
@@ -138,6 +146,10 @@ public class InstallOptions {
             	inputOption(TOMCAT_SSL_PORT);
             	if (getValue(SERVLET_ENGINE).equals(INCLUDED) || getValue(SERVLET_ENGINE).equals(EXISTING_TOMCAT)) {
                     inputOption(KEYSTORE_FILE);
+                    if (!getValue(KEYSTORE_FILE).equals(INCLUDED)) {
+                    	inputOption(KEYSTORE_PASSWORD);
+                    	inputOption(KEYSTORE_TYPE);
+                    }
                 }
             }
         }

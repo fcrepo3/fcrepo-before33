@@ -11,17 +11,25 @@ import fedora.utilities.install.InstallOptions;
 import fedora.utilities.install.InstallationFailedException;
 
 public abstract class Tomcat extends Container {
+	public static final String CONF = "conf";
+	public static final String KEYSTORE = "keystore";
 	private File tomcatHome;
 	private File webapps;
 	private File conf;
 	private File common_lib;
 	
+	/**
+	 * Target location of the included keystore file.
+	 */
+	private File includedKeystore;
+	
 	Tomcat(Distribution dist, InstallOptions options) {
 		super(dist, options);
 		tomcatHome = new File(getOptions().getValue(InstallOptions.TOMCAT_HOME));
 		webapps = new File(tomcatHome, "webapps" + File.separator);
-		conf = new File(tomcatHome, "conf" + File.separator);
+		conf = new File(tomcatHome, CONF + File.separator);
 		common_lib = new File(tomcatHome, "common" + File.separator + "lib" + File.separator);
+		includedKeystore = new File(conf, KEYSTORE);
 	}
 
 	public void deploy(File war) throws InstallationFailedException {
@@ -36,7 +44,7 @@ public abstract class Tomcat extends Container {
 	public void install() throws InstallationFailedException {
 		installTomcat();
 		installServerXML();
-		installKeystore();
+		installIncludedKeystore();
 		installJDBCDriver();
 	}
 	
@@ -44,7 +52,7 @@ public abstract class Tomcat extends Container {
 	
 	protected abstract void installServerXML() throws InstallationFailedException;
 	
-	protected abstract void installKeystore() throws InstallationFailedException;
+	protected abstract void installIncludedKeystore() throws InstallationFailedException;
 	
 	protected void installJDBCDriver() throws InstallationFailedException {
 		String database = getOptions().getValue(InstallOptions.DATABASE);
@@ -84,5 +92,9 @@ public abstract class Tomcat extends Container {
 	
 	protected final File getCommonLib() {
 		return common_lib;
+	}
+	
+	protected final File getIncludedKeystore() {
+		return includedKeystore;
 	}
 }

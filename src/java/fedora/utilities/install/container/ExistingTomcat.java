@@ -1,7 +1,6 @@
 package fedora.utilities.install.container;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,24 +44,22 @@ public class ExistingTomcat extends Tomcat {
 		}
 	}
 
-	protected void installKeystore() throws InstallationFailedException {
+	protected void installIncludedKeystore() throws InstallationFailedException {
 		String keystoreFile = getOptions().getValue(InstallOptions.KEYSTORE_FILE);
-		if (keystoreFile == null) {
+		if (keystoreFile == null || !keystoreFile.equals(InstallOptions.INCLUDED)) {
 			// nothing to do
 			return;
 		}
 		try {
-			InputStream is;
-			File keystore = new File(getConf(), Distribution.KEYSTORE);
-	        if (keystoreFile.equals(InstallOptions.INCLUDED)) {
-	        	is = getDist().get(Distribution.KEYSTORE);
-	        } else {
-	        	is = new FileInputStream(keystoreFile);
-	        }
+			InputStream is = getDist().get(Distribution.KEYSTORE);
+
+	        File keystore = getIncludedKeystore();
 	        if (keystore.exists()) {
-	        	System.out.println("Will not overwrite existing " + keystore.getAbsolutePath() + ".");
+	        	System.out.println("WARNING: A keystore file already exists at: " + 
+	        			keystore.getAbsolutePath() + ".");
 	        	keystore = new File(installDir, Distribution.KEYSTORE);
-	        	System.out.println("Wrote example to: \n\t" +
+	        	System.out.println("WARNING: The existing keystore will not be overwritten.");
+	        	System.out.println("WARNING: The installer-provided keystore will not be installed, it will be copied to: \n\t" +
 	        			keystore.getAbsolutePath());
 	        }
 	        if (!FileUtils.copy(is, new FileOutputStream(keystore))) {

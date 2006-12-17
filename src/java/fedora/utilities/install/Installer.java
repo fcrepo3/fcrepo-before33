@@ -60,18 +60,20 @@ public class Installer {
     	installDir.mkdirs();
     	new FedoraHome(_dist, _opts).install();
     	
-    	Container container = ContainerFactory.getContainer(_dist, _opts);
-    	container.install();
-		container.deploy(buildWAR());
-		if (_opts.getBooleanValue(InstallOptions.DEPLOY_LOCAL_SERVICES, true)) {
-			deployLocalService(container, Distribution.FOP_WAR);
-			deployLocalService(container, Distribution.IMAGEMANIP_WAR);
-			deployLocalService(container, Distribution.SAXON_WAR);
-			deployLocalService(container, Distribution.DEMO_WAR);
-		}
-		
-		Database database = new Database(_dist, _opts);
-		database.install();
+    	if (!_opts.getValue(InstallOptions.INSTALL_TYPE).equals(InstallOptions.INSTALL_CLIENT)) {
+	    	Container container = ContainerFactory.getContainer(_dist, _opts);
+	    	container.install();
+			container.deploy(buildWAR());
+			if (_opts.getBooleanValue(InstallOptions.DEPLOY_LOCAL_SERVICES, true)) {
+				deployLocalService(container, Distribution.FOP_WAR);
+				deployLocalService(container, Distribution.IMAGEMANIP_WAR);
+				deployLocalService(container, Distribution.SAXON_WAR);
+				deployLocalService(container, Distribution.DEMO_WAR);
+			}
+			
+			Database database = new Database(_dist, _opts);
+			database.install();
+    	}
 		
 		// Write out the install options used to a properties file in the install directory
 		try {

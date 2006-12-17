@@ -26,16 +26,20 @@ public class FedoraHome {
 	private Distribution _dist;
 	private InstallOptions _opts;
 	private File _installDir;
+	private boolean _clientOnlyInstall;
 	
 	public FedoraHome(Distribution dist, InstallOptions opts) {
 		_dist = dist;
 		_opts = opts;
 		_installDir = new File(_opts.getValue(InstallOptions.FEDORA_HOME));
+		_clientOnlyInstall = _opts.getValue(InstallOptions.INSTALL_TYPE).equals(InstallOptions.INSTALL_CLIENT);
 	}
 	
 	public void install() throws InstallationFailedException {
 		unpack();
-		configure();
+		
+		if (!_clientOnlyInstall)
+			configure();
 	}
 	
 	
@@ -55,7 +59,12 @@ public class FedoraHome {
 		try {
 			Zip.unzip(_dist.get(Distribution.FEDORA_HOME), _installDir);
             setScriptsExecutable(new File(_installDir, "client" + File.separator + "bin"));
-            setScriptsExecutable(new File(_installDir, "server" + File.separator + "bin"));
+            
+            if (_clientOnlyInstall) {
+            	FileUtils.delete(new File(_installDir, "server"));
+            } else {
+            	setScriptsExecutable(new File(_installDir, "server" + File.separator + "bin"));
+            }
 		} catch (IOException e) {
 			throw new InstallationFailedException(e.getMessage(), e);
 		}
