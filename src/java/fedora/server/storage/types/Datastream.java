@@ -142,13 +142,17 @@ public class Datastream
   
   public boolean compareChecksum()
   {
-      if (DSChecksum == null || DSChecksum.equals("none"))
-      {
-          return(false);         
-      }
       if (DSChecksumType == null || DSChecksumType.equals("") || DSChecksumType.equals("none"))
       {
           return(false);
+      }
+      if (DSChecksum == null)
+      {
+          return(false);         
+      }
+      if (DSChecksumType.equals(CHECKSUMTYPE_DISABLED))
+      {
+          return(true);
       }
       String curChecksum = computeChecksum(DSChecksumType);
       if (curChecksum.equals(DSChecksum)) return(true);

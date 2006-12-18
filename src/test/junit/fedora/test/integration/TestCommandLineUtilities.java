@@ -2,6 +2,7 @@ package fedora.test.integration;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -168,11 +169,11 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
             
             if (expectValid)
             {
-                assertEquals(err.length() == 0, true);
+                assertTrue(out.indexOf("Validation successful") != -1);
             }
             else
             {
-                assertEquals(err.length() == 0, false);
+                assertTrue(out.indexOf("Validation failed")!= -1);
             }                 
         }        
     }
@@ -268,7 +269,7 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
             sbOut.reset();
             sbErr.reset();
             ExecUtility.execCommandLineUtility(cmd + " " + args, sbOut, sbErr);
-        }
+         }
         else
         {
             ExecUtility.execCommandLineUtility(cmd + " " + args);

@@ -76,6 +76,18 @@ public class ExecUtility {
 						}
 					}
 				}
+                // Read any remaining buffered output from the process 
+                // after it terminates
+                while (error.ready())
+                {
+                    err_line = error.readLine();
+                    perr.println(err_line);
+                } 
+                while (input.ready()) 
+                {
+                    in_line = input.readLine();
+                    pout.println(in_line);
+                }
 				input.close();
 				error.close();
 			}
