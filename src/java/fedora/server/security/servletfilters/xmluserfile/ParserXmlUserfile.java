@@ -27,16 +27,16 @@ public class ParserXmlUserfile
 	
 	
     public ParserXmlUserfile(InputStream xmlStream) throws IOException {
-		log.fatal(this.getClass().getName() + ".init<> " + " begin");			
+		log.debug(this.getClass().getName() + ".init<> " + " begin");			
 
         m_xmlStream = xmlStream;
         try {
             SAXParserFactory spf = SAXParserFactory.newInstance();
-    		log.fatal(this.getClass().getName() + ".init<> " + " after newInstance");			
+    		log.debug(this.getClass().getName() + ".init<> " + " after newInstance");			
             spf.setNamespaceAware(true);
-    		log.fatal(this.getClass().getName() + ".init<> " + " after setNamespaceAware");			
+    		log.debug(this.getClass().getName() + ".init<> " + " after setNamespaceAware");			
             m_parser=spf.newSAXParser();
-    		log.fatal(this.getClass().getName() + ".init<> " + " after newSAXParser");			
+    		log.debug(this.getClass().getName() + ".init<> " + " after newSAXParser");			
         } catch (Exception e) {
             e.printStackTrace();
             throw new IOException("Error getting XML parser: " + e.getMessage());

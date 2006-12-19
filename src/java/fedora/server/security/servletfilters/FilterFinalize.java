@@ -99,7 +99,7 @@ public class FilterFinalize extends FilterSetup {
 		if (REQUEST_ATTRIBUTE_INPUT_NAME != null) {
 		  	Object testFedoraAuxSubjectAttributes = request.getAttribute(REQUEST_ATTRIBUTE_INPUT_NAME);
 			if (testFedoraAuxSubjectAttributes == null) {
-				if (log.isWarnEnabled()) log.warn(format(method, "no aux subject attributes found"));
+				if (log.isInfoEnabled()) log.info(format(method, "no aux subject attributes found"));
 			} else if (! (testFedoraAuxSubjectAttributes instanceof Map)) {
 				if (log.isErrorEnabled()) log.error(format(method, "aux subject attributes found, but not a Map"));
 			} else {
