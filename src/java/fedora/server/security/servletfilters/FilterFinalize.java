@@ -99,7 +99,7 @@ public class FilterFinalize extends FilterSetup {
 		if (REQUEST_ATTRIBUTE_INPUT_NAME != null) {
 		  	Object testFedoraAuxSubjectAttributes = request.getAttribute(REQUEST_ATTRIBUTE_INPUT_NAME);
 			if (testFedoraAuxSubjectAttributes == null) {
-				if (log.isInfoEnabled()) log.info(format(method, "no aux subject attributes found"));
+				if (log.isDebugEnabled()) log.debug(format(method, "no aux subject attributes found"));
 			} else if (! (testFedoraAuxSubjectAttributes instanceof Map)) {
 				if (log.isErrorEnabled()) log.error(format(method, "aux subject attributes found, but not a Map"));
 			} else {
@@ -138,10 +138,8 @@ public class FilterFinalize extends FilterSetup {
 		for (Iterator it = subjectAttributesMap.keySet().iterator(); it.hasNext(); ) {
 			String name = (String) it.next();
 			Object value = subjectAttributesMap.get(name);
-			log.debug("IN FILTER MAP HAS " + name + "==" + value + " " + value.getClass().getName());
+			log.debug("IN FILTER MAP HAS ATTRIBUTE " + name + "==" + value + " " + value.getClass().getName());
 		}
-		
-		
 		
 		request.setAttribute(DELIVERY_NAME, subjectAttributesMap);
 /*
