@@ -59,6 +59,18 @@
 			of an alternate triplestore database engine, integration of Gert Pedersen's 
 			FedoraGSearch generic search application into the Fedora Services Framework, 
 			and refactoring of the JUnit tests.</p>
+			<p>Note that the Backend Security feature is disabled in Fedora 2.2 pending future
+			redesign of backend security. Backend Security is only in scope when using 
+			authentication for API-A and when using custom user-defined disseminators. 
+			Backend security controls communication between the Fedora server and backend services
+			that are used with custom user-defined disseminators through a set of XACML policies
+			auto-generated from the <i>beSecurity.xml</i> file. With the feature disabled, these generated
+			beSecurity policies are not enforced. Repository administrators who desire more
+			rigid security for backend services should use additional security measures provided by
+			the Servlet Container for the <i>/fedora/getDSAuthenticated</i> and <i>/fedora/getDS</i> 
+			URL targets	or use other means to contorl outside access to the <i>getDS</i> and 
+			<i>getDSAuthenticated</i> targets.
+			</p>
 			<p/>
 			<p><b>New Features and Enhancements</b></p>
 			</p>
@@ -527,7 +539,9 @@ public String[ ] purgeDatastream(String PID,
 				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=202">Bug #202</a>: 
 					Fedora server and client limited to 2 GB max file size transfer</li>
 				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=203">Bug #203</a>: 
-					DefaultAuthorization.enforceIngestObject ignores PID</li>																																				
+					DefaultAuthorization.enforceIngestObject ignores PID</li>
+				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=204">Bug #204</a>: 
+					PolicyFinderModule classErrors static, necessitates reboot</li>																																			
 			</ul>
 			<br/>					
 		</li>
