@@ -713,7 +713,30 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathExists("foxml:digitalObject/foxml:datastream[@ID='NEWDS2'][//dc:identifier='Identifier 5']",xmlIn);
         assertXpathEvaluatesTo("7", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);          
 
-        // (4) test purgeDatastream
+        // (4) test modifyDatastreamByValue for checksumming and compareDatastreamChecksum
+        System.out.println("Running TestAPIM.compareDatastreamChecksum...");
+        datastreamId = apim.modifyDatastreamByValue("demo:14", "NEWDS2", null, null, null, null, null, "MD5", null, "turned on checksumming", false);
+
+        // test that datastream has a checksum that compares correctly
+        String checksum = apim.compareDatastreamChecksum("demo:14", "NEWDS2", null);
+        assertTrue(checksum.length() > 0);
+        assertTrue(!checksum.equals("none"));
+
+        datastreamId = apim.modifyDatastreamByValue("demo:14", "NEWDS2", null, null, null, null, null, "MD5", checksum, "turned off checksumming", false);
+
+        // test that datastream has a checksum that compares correctly
+        String checksum2 = apim.compareDatastreamChecksum("demo:14", "NEWDS2", null);
+        assertTrue(checksum2.length() > 0);
+        assertTrue(checksum2.equals(checksum));
+        
+        datastreamId = apim.modifyDatastreamByValue("demo:14", "NEWDS2", null, null, null, null, null, "DISABLED", null, "turned off checksumming", false);
+
+        // test that datastream has a checksum that compares correctly
+        checksum = apim.compareDatastreamChecksum("demo:14", "NEWDS2", null);
+        assertTrue(checksum.length() > 0);
+        assertTrue(checksum.equals("none"));
+ 
+        // (5) test purgeDatastream
         System.out.println("Running TestAPIM.testPurgeDatastream...");
         // test specifying null for endDate
         String[] results = apim.purgeDatastream("demo:14", "NEWDS2", null, null, "purging datastream NEWDS2", false);
@@ -729,7 +752,7 @@ public class TestAPIM extends FedoraServerTestCase {
         }        
         assertTrue(results.length > 0);
 
-        // (5) test getDatastream
+        // (6) test getDatastream
         System.out.println("Running TestAPIM.testGetDatastream...");
         // test getting datastream id FOPDISSEM for object demo:26 specifying null for datetime
         Datastream ds = apim.getDatastream("demo:26", "FOPDISSEM", null);
@@ -774,7 +797,7 @@ public class TestAPIM extends FedoraServerTestCase {
             assertEquals(dsArray[0].getAltIDs()[0],"");
         }
         
-        // (6) test getDatastreams
+        // (7) test getDatastreams
         System.out.println("Running TestAPIM.testGetDatastreams...");
         // test getting all datastreams for object demo:26 specifying null for datetime and state
         dsArray = apim.getDatastreams("demo:26", null, null);
@@ -927,7 +950,7 @@ public class TestAPIM extends FedoraServerTestCase {
             assertEquals(dsArray[2].getAltIDs()[0],"");
         }            
         
-        // (7) test getDatastreamHistory
+        // (8) test getDatastreamHistory
         System.out.println("Running TestAPIM.testGetDatastreamHistory...");
         // test getting datastream history for datastream DS1 of object demo:10
         dsArray = apim.getDatastreamHistory("demo:10", "DS1");
