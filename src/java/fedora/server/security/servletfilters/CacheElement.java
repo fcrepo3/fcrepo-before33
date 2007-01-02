@@ -18,7 +18,7 @@ public class CacheElement {
 	
 	private final String userid;
 	
-	//private final String password;
+	private String credentialsCheck;
 
 	private Boolean authenticated = null;
 	private Set roles = null;
@@ -145,15 +145,20 @@ public class CacheElement {
 	(protect against overlapping calls resulting in redundant authenticator calls)
 	*/
 	public final synchronized Boolean authenticate(Cache cache, String password) {
+		Boolean authenticated = null;
 		CacheElementPopulator cacheElementPopulator = cache.getCacheElementPopulator();
 		Calendar now = Calendar.getInstance();
 		log.debug(this.getClass().getName() + ".authenticate");
 		if ((expiration != null) && now.before(expiration)) {
 			log.debug(this.getClass().getName() + " cache valid");
-			//previous authentication is still set and valid 
+			//previous authentication is still set and valid
+			if (password != null) {
+				authenticated =	password.equals(credentialsCheck);
+			}
 		} else { //previous authentication has timed out (or no previous authentication)
 			log.debug(this.getClass().getName() + " new authentication needed");
 			cacheElementPopulator.populateCacheElement(this, password);
+			credentialsCheck = password;
 			if (authenticated == null) {
 				log.debug(this.getClass().getName() + " couldn't authenticate");
 				expiration = getExpiration(cache.getAuthExceptionTimeoutDuration(), cache.getAuthExceptionTimeoutUnit());				
@@ -164,6 +169,7 @@ public class CacheElement {
 				log.debug(this.getClass().getName() + " authentication failed");
 				expiration = getExpiration(cache.getAuthFailureTimeoutDuration(), cache.getAuthFailureTimeoutUnit());				
 			}
+			authenticated = this.authenticated;
 		}
 		return authenticated;
 	}
