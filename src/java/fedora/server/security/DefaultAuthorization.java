@@ -545,7 +545,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	throws AuthzException { 
 	try {
         LOG.debug("Entered enforceExportObject");		
-		String target = Constants.ACTION.EXPORT_OBJECT.uri;
+		String target = Constants.ACTION.EXPORT.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);		
 		MultiValueMap resourceAttributes = new MultiValueMap();
@@ -785,7 +785,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	throws AuthzException {
 	try {
         LOG.debug("Entered enforceIngestObject");		
-		String target = Constants.ACTION.INGEST_OBJECT.uri;
+		String target = Constants.ACTION.INGEST.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
