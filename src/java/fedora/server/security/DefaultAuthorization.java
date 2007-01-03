@@ -1078,8 +1078,8 @@ public class DefaultAuthorization extends Module implements Authorization {
     public final void enforceCompareDatastreamChecksum(Context context, String pid, String datastreamId, Date versionDate) 
     throws AuthzException {
     try {
-        LOG.debug("Entered enforceSetDatastreamChecksum");     
-        String target = Constants.ACTION.SET_DATASTREAM_CHECKSUM.uri;
+        LOG.debug("Entered enforceCompareDatastreamChecksum");     
+        String target = Constants.ACTION.COMPARE_DATASTREAM_CHECKSUM.uri;
         log("enforcing " + target);
         context.setActionAttributes(null);
         MultiValueMap resourceAttributes = new MultiValueMap();
