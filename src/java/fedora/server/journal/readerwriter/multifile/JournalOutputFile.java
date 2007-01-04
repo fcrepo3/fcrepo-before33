@@ -15,6 +15,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 import fedora.server.journal.JournalException;
+import fedora.server.journal.JournalWriter;
 import fedora.server.journal.helpers.FileMovingUtil;
 
 /**
@@ -29,9 +30,10 @@ import fedora.server.journal.helpers.FileMovingUtil;
  * <p>
  * <b>CAUTION:</b> This file includes an asynchronous timer thread that can
  * close the file. The {@link #isOpen()} and {@link #close()} methods are
- * synchronized to guard against problems. Any other operations on the file or
- * on its <code>XMLEventWriter</code> should also be synchronized against the
- * file.
+ * synchronized against the {@link JournalWriter#SYNCHRONIZER} to guard against
+ * problems. Any other operations on the file or on its
+ * <code>XMLEventWriter</code> should also be synchronized against the
+ * {@link JournalWriter#SYNCHRONIZER}.
  * </p>
  * 
  * @author jblake@cs.cornell.edu
@@ -171,7 +173,8 @@ class JournalOutputFile implements MultiFileJournalConstants {
 
     /**
      * Get an XMLEventWriter that we can write the JournalEvents to. NOTE: any
-     * operations against this writer should be synchronized on thie file.
+     * operations against this writer should be synchronized on the
+     * {@link JournalWriter#SYNCHRONIZER}.
      */
     public XMLEventWriter getXmlWriter() {
         return this.xmlWriter;
@@ -182,60 +185,66 @@ class JournalOutputFile implements MultiFileJournalConstants {
      * could also check the age limit here, but we trust the timer to handle
      * that.
      */
-    public synchronized void closeIfAppropriate() throws JournalException {
-        if (!open) {
-            return;
-        }
+    public void closeIfAppropriate() throws JournalException {
+        synchronized (JournalWriter.SYNCHRONIZER) {
+            if (!open) {
+                return;
+            }
 
-        // if the size limit is 0 or negative, treat it as "no limit".
-        long currentSize = this.tempFile.length();
-        if ((sizeLimit > 0) && (currentSize > sizeLimit)) {
-            close();
+            // if the size limit is 0 or negative, treat it as "no limit".
+            long currentSize = this.tempFile.length();
+            if ((sizeLimit > 0) && (currentSize > sizeLimit)) {
+                close();
+            }
         }
     }
 
     /**
      * Is this file available for writing?
      */
-    public synchronized boolean isOpen() {
-        return open;
+    public boolean isOpen() {
+        synchronized (JournalWriter.SYNCHRONIZER) {
+            return open;
+        }
     }
 
     /**
      * Write the document trailer, clean up everything and rename the file. Set
      * the flag saying we are closed.
      */
-    public synchronized void close() throws JournalException {
-        if (!open) {
-            return;
-        }
-
-        try {
-            parent.getDocumentTrailer(xmlWriter);
-            xmlWriter.close();
-            fileWriter.close();
-            timer.cancel();
-
-            /*
-             * java.io.File.renameTo() has a known bug when working across
-             * file-systems, see:
-             * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4073756
-             * 
-             * So instead of this call: tempFile.renameTo(file);
-             * 
-             * We use the following line...
-             */
-            boolean renamed = FileMovingUtil.move(tempFile, file);
-            if (!renamed) {
-                throw new JournalException("Unable to rename file '" + tempFile
-                        + "' to '" + file + "'.");
+    public void close() throws JournalException {
+        synchronized (JournalWriter.SYNCHRONIZER) {
+            if (!open) {
+                return;
             }
 
-            open = false;
-        } catch (XMLStreamException e) {
-            throw new JournalException(e);
-        } catch (IOException e) {
-            throw new JournalException(e);
+            try {
+                parent.getDocumentTrailer(xmlWriter);
+                xmlWriter.close();
+                fileWriter.close();
+                timer.cancel();
+
+                /*
+                 * java.io.File.renameTo() has a known bug when working across
+                 * file-systems, see:
+                 * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4073756
+                 * 
+                 * So instead of this call: tempFile.renameTo(file);
+                 * 
+                 * We use the following line...
+                 */
+                boolean renamed = FileMovingUtil.move(tempFile, file);
+                if (!renamed) {
+                    throw new JournalException("Unable to rename file '" 
+                            + tempFile + "' to '" + file + "'.");
+                }
+    
+                open = false;
+            } catch (XMLStreamException e) {
+                throw new JournalException(e);
+            } catch (IOException e) {
+                throw new JournalException(e);
+            }
         }
     }
 

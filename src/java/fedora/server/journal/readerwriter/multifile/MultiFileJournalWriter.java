@@ -171,7 +171,7 @@ public class MultiFileJournalWriter extends JournalWriter implements
             throws JournalException {
         if (open) {
             try {
-                synchronized (this.currentJournal) {
+                synchronized (JournalWriter.SYNCHRONIZER) {
                     XMLEventWriter xmlWriter = this.currentJournal
                             .getXmlWriter();
                     super.writeJournalEntry(journalEntry, xmlWriter);

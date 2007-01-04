@@ -50,7 +50,7 @@ public class CreatorJournalEntry extends JournalEntry {
      */
     public Object invokeMethod(ManagementDelegate delegate, JournalWriter writer)
             throws ServerException, JournalException {
-        synchronized (CreatorJournalEntry.class) {
+        synchronized (JournalWriter.SYNCHRONIZER) {
             writer.prepareToWriteJournalEntry();
             Object result = super.getMethod().invoke(delegate);
             writer.writeJournalEntry(this);

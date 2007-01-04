@@ -46,6 +46,15 @@ public abstract class JournalWriter extends AbstractXmlWriter {
             JournalWriter.class.getName());
 
     /**
+     * A single object on which to synchronize all writing operations. The most
+     * obvious use is in CreatorJournalEntry to be sure that Management methods
+     * are single-threaded. A less obvious, but necessary use is to synchronize
+     * the timeout on JournalFiles, so a file is not closed in the middle of an
+     * operation.
+     */
+    public static final Object SYNCHRONIZER = new Object();
+
+    /**
      * Create an instance of the proper JournalWriter child class, as determined
      * by the server parameters.
      */
