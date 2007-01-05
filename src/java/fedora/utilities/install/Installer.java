@@ -146,7 +146,9 @@ public class Installer {
                 System.err.println("Usage: java -jar fedora-install.jar [options-file]");
                 System.exit(1);
             }
-
+            
+            // set fedora.home
+            System.setProperty("fedora.home", opts.getValue(InstallOptions.FEDORA_HOME));
             new Installer(dist, opts).install();
 
         } catch (Exception e) {
