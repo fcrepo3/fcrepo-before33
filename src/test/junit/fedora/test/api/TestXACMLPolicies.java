@@ -1,30 +1,43 @@
 package fedora.test.api;
 
+import java.beans.IntrospectionException;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.apache.commons.betwixt.io.BeanReader;
+import org.apache.commons.logging.Log;
 import org.custommonkey.xmlunit.SimpleXpathEngine;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import fedora.client.FedoraClient;
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
+import fedora.server.security.servletfilters.xmluserfile.Attribute;
+import fedora.server.security.servletfilters.xmluserfile.FedoraUsers;
+import fedora.server.security.servletfilters.xmluserfile.User;
 import fedora.server.types.gen.Property;
 import fedora.server.utilities.ServerUtility;
 import fedora.server.utilities.StreamUtility;
 import fedora.test.DemoObjectTestSetup;
 import fedora.test.FedoraServerTestCase;
+import fedora.utilities.install.InstallationFailedException;
 
 /**
  * Test of the Fedora Access Service (API-A).
@@ -54,9 +67,10 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
     private FedoraClient testuser4;
 	private static int EXPECT_FAILURE = 0;
     private static int EXPECT_SUCCESS = 1;
+    private File fedoraUsersBackup = null;
     
-    
-	public static Test suite() {
+	public static Test suite() 
+    {
 		TestSuite suite = new TestSuite("XACML Policy TestSuite");
 		suite.addTestSuite(TestXACMLPolicies.class);
 		return new DemoObjectTestSetup(suite);
@@ -523,6 +537,159 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
         }
     }
     
+    private void backupFedoraUsersFile()
+    {
+        fedoraUsersBackup = new File(FedoraUsers.fedoraUsersXML.getAbsolutePath()+".backup");
+        System.out.println("Backing Up Fedora Users");
+        if (!fedoraUsersBackup.exists())
+        {
+            try
+            {
+                fedoraUsersBackup.createNewFile();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        copyFile(FedoraUsers.fedoraUsersXML, fedoraUsersBackup);                  
+    }
+
+    private void restoreFedoraUsersFile()
+    {
+        System.out.println("Restoring Fedora Users");
+        if (!fedoraUsersBackup.exists())
+        {
+            return;
+        }
+        copyFile(fedoraUsersBackup, FedoraUsers.fedoraUsersXML);                  
+    }
+
+    private void createNewFedoraUsersFileWithTestUsers()
+    {
+        String sep = System.getProperty("line.seperator");
+        if (sep == null) sep = "\n";
+        String data = "<?xml version='1.0' ?>  " + sep +
+                "<fedora-users>" + sep +
+                "    <user name=\""+getUsername()+"\" password=\""+getPassword()+"\">" + sep +
+                "      <attribute name=\"fedoraRole\">" + sep +
+                "        <value>administrator</value>" + sep +
+                "      </attribute>" + sep +
+                "    </user>" + sep +
+                "    <user name=\"fedoraIntCallUser\" password=\"changeme\">" + sep +
+                "      <attribute name=\"fedoraRole\">" + sep +
+                "        <value>fedoraInternalCall-1</value>" + sep +
+                "        <value>fedoraInternalCall-2</value>" + sep +
+                "      </attribute>" + sep +
+                "    </user>" + sep +
+                "    <user name=\"testuser1\" password=\"testuser1\"/>" + sep +
+                "    <user name=\"testuser2\" password=\"testuser2\"/>" + sep +
+                "    <user name=\"testuser3\" password=\"testuser3\"/>" + sep +
+                "    <user name=\"testuser4\" password=\"testuser4\"/>" + sep +
+                "    <user name=\"testuserroleA\" password=\"testuserroleA\">" + sep +
+                "      <attribute name=\"fedoraRole\">" + sep +
+                "        <value>roleA</value>" + sep +
+                "      </attribute>" + sep +
+                "    </user>" + sep +
+                "    <user name=\"testuserroleB\" password=\"testuserroleB\">" + sep +
+                "      <attribute name=\"fedoraRole\">" + sep +
+                "        <value>roleB</value>" + sep +
+                "      </attribute>" + sep +
+                "    </user>" + sep +
+                "    <user name=\"testuserroleC\" password=\"testuserroleC\">" + sep +
+                "      <attribute name=\"fedoraRole\">" + sep +
+                "        <value>roleC</value>" + sep +
+                "      </attribute>" + sep +
+                "    </user>" + sep +
+                "  </fedora-users>";
+        try
+        {
+            FileOutputStream fu = new FileOutputStream(FedoraUsers.fedoraUsersXML);
+            OutputStreamWriter pw = new OutputStreamWriter(fu);
+            pw.write(data);
+            pw.close();
+        }
+        catch (FileNotFoundException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+ /*   public static FedoraUsers getFedoraUsers() 
+    {
+        System.out.println("Getting Fedora Users");
+        FedoraUsers fu = null;
+        BeanReader reader = new BeanReader();
+        if (reader == null) System.out.println("Reader is null");
+        reader.getXMLIntrospector().getConfiguration().setAttributesForPrimitives(false);
+        reader.getBindingConfiguration().setMapIDs(false);
+        System.out.println("Got Reader");
+
+        try {
+            reader.registerMultiMapping(getBetwixtMapping());
+            System.out.println("GotBetwixtMapping");
+            fu = (FedoraUsers)reader.parse(FedoraUsers.fedoraUsersXML);
+            System.out.println("Got f u ");
+            if (fu == null) System.out.println("FU is null");
+            
+        } catch (IntrospectionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (SAXException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return fu;
+    }
+    private static final String BETWIXT_MAPPING = "/fedora/server/security/servletfilters/xmluserfile/fedorausers-mapping.xml";
+
+    private static InputSource getBetwixtMapping() 
+    {
+        InputSource is = new InputSource(FedoraUsers.class.getResourceAsStream(BETWIXT_MAPPING));
+        if (is == null) System.out.println("Betwixt mapping is null");
+        return(is);
+    }
+    
+    private void addNewTestUsersToFedoraUsers() throws IOException
+    {
+        System.out.println("Adding new Users");
+        System.out.println("Fedora Users: " + FedoraUsers.fedoraUsersXML.getAbsolutePath());
+        FedoraUsers users = getFedoraUsers();
+        users.addUser(makeNewUser("testuser1", "testuser1", null));
+        users.addUser(makeNewUser("testuser2", "testuser2", null));
+        users.addUser(makeNewUser("testuser3", "testuser3", null));
+        users.addUser(makeNewUser("testuser4", "testuser4", null));
+        users.addUser(makeNewUser("testuserroleA", "testuserroleA", "roleA"));
+        users.addUser(makeNewUser("testuserroleB", "testuserroleB", "roleB"));
+        users.addUser(makeNewUser("testuserroleC", "testuserroleC", "roleC"));
+        Writer outputWriter = new BufferedWriter(new FileWriter(FedoraUsers.fedoraUsersXML));
+        users.write(outputWriter);
+        outputWriter.close();        
+    }
+    
+    private User makeNewUser(String name, String password, String fedoraRole)
+    {
+        User user = new User();
+        user.setName(name);
+        user.setPassword(password);
+        if (fedoraRole != null)
+        {
+            Attribute att = new Attribute();
+            att.setName("fedoraRole");
+            att.addValue(fedoraRole);
+            user.addAttribute(att);
+        }
+        return(user);
+    }
+*/
     public void setUp() throws Exception {
         
         System.out.println("setting Up XACML test");
@@ -530,6 +697,10 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
 
         SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
         SimpleXpathEngine.registerNamespace("uvalibadmin", "http://dl.lib.virginia.edu/bin/admin/admin.dtd/");
+        backupFedoraUsersFile();
+        //addNewTestUsersToFedoraUsers();
+        createNewFedoraUsersFileWithTestUsers();
+        
         installJunitPolicies();
         reloadPolicies();
         System.out.println("creating alternate users");
@@ -543,14 +714,15 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
         System.out.println("done setting up");
     }
     
-	public void tearDown() 
+    public void tearDown() 
     {
     	SimpleXpathEngine.clearNamespaces();
+        restoreFedoraUsersFile();
         deleteJunitPolicies();
         reloadPolicies();
     }
 	    
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 		junit.textui.TestRunner.run(TestXACMLPolicies.class);
 	}
 
