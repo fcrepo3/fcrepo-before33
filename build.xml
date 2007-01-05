@@ -760,7 +760,7 @@
 		<mkdir dir="${install.build.dir}/resources"/>
 		<copy todir="${install.build.dir}/resources">
 			<fileset dir="${properties.src.dir}" includes="install.properties"/>
-			<fileset dir="${lib.dir}" includes="${install.jdbc.mckoi} ${install.jdbc.mysql} ${install.postgresql}"/>
+			<fileset dir="${lib.dir}" includes="${install.jdbc.mckoi} ${install.jdbc.mysql} ${install.jdbc.postgresql}"/>
 			<fileset dir="${dist.dir}" includes="fedorahome.zip fedora.war fop.war imagemanip.war saxon.war fedora-demo.war"/>
 			<fileset dir="inc" includes="${install.tomcat} ${install.mckoi} keystore"/>
 			<fileset dir="${src.dir}/dbspec/server/fedora/server/storage/resources" includes="DefaultDOManager.dbspec"/>
