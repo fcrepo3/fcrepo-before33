@@ -744,7 +744,7 @@
 	    		<include name="**/OptionDefinition.properties"/>
 	        </fileset>
 	    </copy>
-		<jar jarfile="${install.build.dir}/install.jar" 
+		<jar jarfile="${install.build.dir}/main.jar" 
 		             basedir="${install.build.dir}"
 		             includes="fedora/**">
 			<manifest>
@@ -778,7 +778,7 @@
 		<copy file="${lib.commons-collection}" todir="${install.build.dir}/lib"/>
 		<copy file="${lib.commons-digester}" todir="${install.build.dir}/lib"/>
 		<copy file="${lib.commons-logging}" todir="${install.build.dir}/lib"/>
-		<move file="${install.build.dir}/install.jar" todir="${install.build.dir}/main"/>
+		<move file="${install.build.dir}/main.jar" todir="${install.build.dir}/main"/>
 		<unjar src="${lib.one-jar}" dest="${install.build.dir}/boot"/>
 		<jar jarfile="${dist.dir}/fedora-${fedora.version}-installer.jar" 
 			 manifest="${install.build.dir}/boot/boot-manifest.mf">
