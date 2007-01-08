@@ -14,7 +14,7 @@
 	<a href="../index.html" id="logo"></a>
 	<div id="title">
 		<h1>Fedora 2.2 Release Notes</h1>
-		<h2>January XX, 2007</h2>
+		<h2>January 19, 2007</h2>
 	</div>
 </div>
 
@@ -23,7 +23,6 @@
 
 	<div id="tocbox">
 		<ol>
-			<!--<li><a href="#features">New Features</a></li>-->
 			<li><a href="#fedora22">Fedora 2.2 Release</a></li>
 			<li><a href="#bugs">Bug Fixes</a></li>
 			<li><a href="#issues">Known Issues</a></li>
@@ -60,16 +59,14 @@
 			FedoraGSearch generic search application into the Fedora Services Framework, 
 			and refactoring of the JUnit tests.</p>
 			<p>Note that the Backend Security feature is disabled in Fedora 2.2 pending future
-			redesign of backend security. Backend Security is only in scope when using 
-			authentication for API-A and when using custom user-defined disseminators. 
+			redesign of backend security. Backend Security is only in scope when 
+			authentication is enabled for API-A and when using custom user-defined disseminators. 
 			Backend security controls communication between the Fedora server and backend services
 			that are used with custom user-defined disseminators through a set of XACML policies
 			auto-generated from the <i>beSecurity.xml</i> file. With the feature disabled, these generated
-			beSecurity policies are not enforced. Repository administrators who desire more
-			rigid security for backend services should use additional security measures provided by
-			the Servlet Container for the <i>/fedora/getDSAuthenticated</i> and <i>/fedora/getDS</i> 
-			URL targets	or use other means to contorl outside access to the <i>getDS</i> and 
-			<i>getDSAuthenticated</i> targets.
+			beSecurity policies are not being enforced. For additional details on the disabling of the
+			the backend security feature, see the document entitled <a href="../server/security/beSecurityConfig.html">
+			Backend Services Security Configuration</a>.
 			</p>
 			<p/>
 			<p><b>New Features and Enhancements</b></p>
@@ -128,8 +125,7 @@ public String compareDatastreamChecksum(String PID,
 					<i>autoChecksum</i> parameter controls whether checksums are to be computed for every datastream. By default <i>autoChecksum</i> 
 					is set to false which disables automatice checksums. When set to true, checksums will automatically be computed
 					for each datastream during the API-M operations for ingest, addDatastream, modifyDatastreamByReference, 
-					and modifyDatastreambyValue. For complete details on the new checksum feature, please refer to the document
-					<a href="../server/features/checksum.html">Datastream Checksum Feature</a></p> 
+					and modifyDatastreambyValue.  
 				</li>				
 				
 				<li>Journaling<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
@@ -179,8 +175,6 @@ public String modifyObject(String PID, String state, String label, String logMes
 public String modifyObject(String PID, String state, String label, String ownerId, String logMessage) 
 						</pre>
 					</div>										
-					<p>For additional details regarding the new onwerID feature, please see the document entitled
-					<a href="??.html">Object ownerId Feature</a></p>
 				</li>
 				
 				<li>Fedora Supports Log4j Logging<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
@@ -204,9 +198,7 @@ public String modifyObject(String PID, String state, String label, String ownerI
 				<li>New support for Postres SQL database<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
 					<p>Fedora 2.2 adds a DDLConverter class for Postgres which enables use of the Postgress database as a backend SQL database
 					with Fedora. This new addition is based on a contribution from Hubert Stigler made to the fedora-users mailing list on 
-					April 4th, 2006. For existing Fedora installations, this change requires a renaming of the SQL table named "do" 
-					to "dobj" because the table name of "do" is a reserved name in Postgres. See the document <a href="migration.html">Fedora 
-					Upgrade And Migration Guide</a>	for complete details on migrating.</p>
+					April 4th, 2006. 
 				</li>
 				
 				<li>VERSIONABLE attribute on datastreams fully implemented
@@ -615,7 +607,7 @@ public String[ ] purgeDatastream(String PID,
 </div>
 
 <div id="footer">
-	<div id="copyright"> Copyright &copy; 2006 Fedora Project </div>
+	<div id="copyright"> Copyright &#xA9; 2006 Fedora Project </div>
 	<div id="lastModified">
       Last Modified <script type="text/javascript">
       //<![CDATA[
