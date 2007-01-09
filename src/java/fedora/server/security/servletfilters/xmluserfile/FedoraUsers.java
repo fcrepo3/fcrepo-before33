@@ -77,7 +77,7 @@ public class FedoraUsers implements Serializable, Constants {
 		beanWriter.enablePrettyPrint();
 		try {
 			beanWriter.getXMLIntrospector().register(getBetwixtMapping());
-			beanWriter.write("fedora-users", this);
+			beanWriter.write("users", this);
 		} catch (IntrospectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
