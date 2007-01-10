@@ -264,21 +264,25 @@ public class DefaultAuthorization extends Module implements Authorization {
 		File srcDir = new File(path);
 		slog("srcDir = " + srcDir);
 		slog("exists?=" + srcDir.exists());
-		slog("canRead?=" + srcDir.canRead());
-		String[] paths = srcDir.list();
-		slog("paths = " + paths);		
-		slog("copying " + paths.length + " files");
-		try {
-		for (int i=0; i<paths.length; i++) {
-			slog("up = " + paths[i]);			
-			String absPath = path + File.separator + paths[i];
-			File f = new File(absPath);
-			f.delete();
-		}
-		} catch (Exception x) {
-			slog("caught Exception: " + x.getClass().getName() + " " + x.getMessage());
-			throw x;			
-		}
+        if (srcDir.exists()) {
+    		slog("canRead?=" + srcDir.canRead());
+    		String[] paths = srcDir.list();
+    		slog("paths = " + paths);		
+    		slog("copying " + paths.length + " files");
+    		try {
+    		for (int i=0; i<paths.length; i++) {
+    			slog("up = " + paths[i]);			
+    			String absPath = path + File.separator + paths[i];
+    			File f = new File(absPath);
+    			f.delete();
+    		}
+    		} catch (Exception x) {
+    			slog("caught Exception: " + x.getClass().getName() + " " + x.getMessage());
+    			throw x;			
+    		}
+        } else {
+            srcDir.mkdirs();
+        }
 	}
 
 	private final void generateBackendPolicies() throws Exception{
