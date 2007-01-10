@@ -188,8 +188,8 @@
         <attribute name="fork" default="no"/>
         <attribute name="includes" default=""/>
         <attribute name="srcdir"/>
-        <attribute name="compilerargs" 
-                   default="-Xlint -Xlint:-path -Xmaxwarns ${javac.maxwarns}"/>
+        <attribute name="compilerargs" default=""/>
+        <!-- default="-Xlint -Xlint:-path -Xmaxwarns ${javac.maxwarns}" -->
         <sequential>
             <mkdir dir="@{destdir}"/>
             <javac classpathref="@{classpathref}" 
