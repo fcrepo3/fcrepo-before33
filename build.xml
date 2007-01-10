@@ -315,7 +315,6 @@
         <mkdir dir="${fedora.home.build.dir}/server/fedora-internal-use/deploy"/>
         <mkdir dir="${fedora.home.build.dir}/server/fedora-internal-use/fedora-internal-use-backend-service-policies"/>
         <mkdir dir="${fedora.home.build.dir}/server/fedora-internal-use/fedora-internal-use-repository-policies-approximating-2.0"/>
-        <mkdir dir="${fedora.home.build.dir}/server/fedora-internal-use/fedora-internal-use-surrogate-policies"/>
         
         <copy todir="${server.build.dir}/classes">
             <fileset dir="${src.dir}/properties/server"/>
@@ -395,9 +394,6 @@
         <copy file="${xacml.src.dir}/readme-design-choices.txt" todir="${fedora.home.build.dir}/server/fedora-internal-use"/>
         <copy todir="${fedora.home.build.dir}/server/fedora-internal-use/fedora-internal-use-repository-policies-approximating-2.0">
             <fileset dir="${xacml.src.dir}/default/default-repository-policies-approximating-2.0"/>
-        </copy>
-        <copy todir="${fedora.home.build.dir}/server/fedora-internal-use/fedora-internal-use-surrogate-policies">
-            <fileset dir="${xacml.src.dir}/default/default-surrogate-policies"/>
         </copy>
         
         <java classname="fedora.common.policy.Release2_1Namespace" 

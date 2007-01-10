@@ -209,10 +209,6 @@
                         action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-serverStatus</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
                         resource="<AnyResource/>">
             </resource>
-            <resource name="Act As Surrogate For" shortname="surrogate" value="seeParent" value1="seeParent"
-                        action=""
-                        resource="<AnyResource/>">
-            </resource>
             <resource name="OAI" shortname="OAI" value="seeParent" value1="seeParent"
                         action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-oai</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
                         resource="<AnyResource/>">

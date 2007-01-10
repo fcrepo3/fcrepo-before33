@@ -121,7 +121,6 @@ into subdirectories of dist/server/config/xml-policies/active; specifically:
 from examples/repository-policies-approximating-2.0 into active/repository-policies;
 or from examples/other-repository-policies into active/repository-policies;
 or from examples/object-policies into active/object-policies, renaming files if appropriate;
-or from examples/surrogate-policies into active/surrogate-policies.
 The example repository policies in examples/repository-policies-approximating-2.0 approximate
 the protection hardcoded into Fedora 2.0
 
@@ -244,11 +243,5 @@ this.
 2005/04/20:  added second repository policy directory for programmatically generated policies
 A policy in this directory is treated by Fedora authz code just like those in the original repository policy directory.
 
-surrogate representing end-user
 
-web front ends can authenticate as such to fedora, but give an end-user identity in the http
-From header.  If fedora authenticates the front end -and- there are policies allowing the
-front end to actAsSurrogateFor the subjectRepresented, then the request is treated as if the
-end-user had been authenticated by fedora.   active/repository-policies and active/object-policies
-are then used to authorize the end-user as usual.
  

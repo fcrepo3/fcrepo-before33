@@ -48,7 +48,6 @@ public class ActionNamespace extends XacmlNamespace {
 	public final XacmlName LIST_METHODS;		
 	public final XacmlName LIST_OBJECT_IN_FIELD_SEARCH_RESULTS;
 	public final XacmlName LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS;
-	public final XacmlName SURROGATE_PING;
 	public final XacmlName SERVER_SHUTDOWN;
 	public final XacmlName SERVER_STATUS;
 	public final XacmlName OAI;	
@@ -103,7 +102,6 @@ public class ActionNamespace extends XacmlNamespace {
     	LIST_METHODS               = addName(new XacmlName(this, "id-listMethods"));		
     	LIST_OBJECT_IN_FIELD_SEARCH_RESULTS               = addName(new XacmlName(this, "id-listObjectInFieldSearchResults"));
     	LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS               = addName(new XacmlName(this, "id-listObjectInResourceIndexResults"));
-    	SURROGATE_PING = addName(new XacmlName(this, "id-actAsSurrogateFor"));
     	SERVER_SHUTDOWN = addName(new XacmlName(this, "id-serverShutdown")); 
     	SERVER_STATUS = addName(new XacmlName(this, "id-serverStatus"));    
     	OAI = addName(new XacmlName(this, "id-oai"));     	

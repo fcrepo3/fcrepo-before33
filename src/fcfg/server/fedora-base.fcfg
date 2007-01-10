@@ -78,9 +78,7 @@
 	</module>
 	<module role="fedora.server.security.Authorization" class="fedora.server.security.DefaultAuthorization">
 		<comment>Builds and manages Fedora's authorization structure.</comment>
-		<param name="ALLOW-SURROGATES" value="false"/>
 		<param name="REPOSITORY-POLICIES-DIRECTORY" value="data/fedora-xacml-policies/repository-policies" isFilePath="true"/>
-		<param name="SURROGATE-POLICIES-DIRECTORY" value="data/fedora-xacml-policies/surrogate-policies" isFilePath="true"/>
 		<param name="REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY" value="data/fedora-xacml-policies/repository-policies-generated-by-policyguitool" isFilePath="true">
 			<comment>This parameter is for future use.</comment>
 		</param>
@@ -90,7 +88,6 @@
 		<param name="VALIDATE-REPOSITORY-POLICIES" value="true"/>
 		<param name="VALIDATE-OBJECT-POLICIES-FROM-FILE" value="false"/>
 		<param name="VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM" value="false"/>
-		<param name="VALIDATE-SURROGATE-POLICIES" value="false"/>
 	</module>
 	<module role="fedora.server.security.BackendSecurity" class="fedora.server.security.DefaultBackendSecurity">
 		<comment>Description: Interface to the backend service security 

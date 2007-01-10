@@ -51,12 +51,10 @@ public class DefaultAuthorization extends Module implements Authorization {
 
 	private String repositoryPoliciesActiveDirectory = "";
 	private String repositoryPolicyGuitoolDirectory = "";	
-	private String surrogatePoliciesActiveDirectory = "";
 
 	private String combiningAlgorithm = ""; //"com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg";
 	private String enforceMode = "";
 
-	private final String SURROGATE_POLICIES_DIRECTORY_KEY = "SURROGATE-POLICIES-DIRECTORY";
 	private final String REPOSITORY_POLICIES_DIRECTORY_KEY = "REPOSITORY-POLICIES-DIRECTORY";
 	private final String REPOSITORY_POLICY_GUITOOL_DIRECTORY_KEY = "REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY";	
 	private final String COMBINING_ALGORITHM_KEY = "XACML-COMBINING-ALGORITHM";
@@ -64,11 +62,8 @@ public class DefaultAuthorization extends Module implements Authorization {
 	private final String POLICY_SCHEMA_PATH_KEY = "POLICY-SCHEMA-PATH";
 	private final String VALIDATE_REPOSITORY_POLICIES_KEY = "VALIDATE-REPOSITORY-POLICIES";
 	private final String VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM_KEY = "VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM";
-	private final String VALIDATE_SURROGATE_POLICIES_KEY = "VALIDATE-SURROGATE-POLICIES";
-	private final String ALLOW_SURROGATE_POLICIES_KEY = "ALLOW-SURROGATE-POLICIES";
 	
 	private static final String XACML_DIST_BASE = "fedora-internal-use";	
-	private static final String DEFAULT_SURROGATE_POLICIES_DIRECTORY = XACML_DIST_BASE + "/fedora-internal-use-surrogate-policies"; 
 	private static final String DEFAULT_REPOSITORY_POLICIES_DIRECTORY = XACML_DIST_BASE + "/fedora-internal-use-repository-policies-approximating-2.0"; 
 	private static final String BE_SECURITY_PROPERTIES_LOCATION = "config/beSecurity.properties"; 
 	private static final String BE_SECURITY_XML_LOCATION = "config/beSecurity.xml";	
@@ -97,10 +92,6 @@ public class DefaultAuthorization extends Module implements Authorization {
 		throw new ModuleInitializationException("couldn't get server home", role, e1);
 	}
 
-    if (moduleParameters.containsKey(SURROGATE_POLICIES_DIRECTORY_KEY)) {
-    	surrogatePoliciesActiveDirectory = getParameter(SURROGATE_POLICIES_DIRECTORY_KEY, true);
-    	log("surrogatePoliciesDirectory=" + surrogatePoliciesActiveDirectory);
-    }
     if (moduleParameters.containsKey(REPOSITORY_POLICIES_DIRECTORY_KEY)) {
     	repositoryPoliciesActiveDirectory = getParameter(REPOSITORY_POLICIES_DIRECTORY_KEY, true);
     	log("repositoryPoliciesDirectory=" + repositoryPoliciesActiveDirectory);
@@ -153,20 +144,6 @@ public class DefaultAuthorization extends Module implements Authorization {
     		throw new ModuleInitializationException("bad init parm boolean value for " + VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM_KEY, role, e);
     	}
     }
-    if (moduleParameters.containsKey(VALIDATE_SURROGATE_POLICIES_KEY)) {
-    	try {
-    		validateSurrogatePolicies = Boolean.parseBoolean((String) moduleParameters.get(VALIDATE_SURROGATE_POLICIES_KEY));
-    	} catch (Exception e) {
-    		throw new ModuleInitializationException("bad init parm boolean value for " + VALIDATE_SURROGATE_POLICIES_KEY, role, e);
-    	}
-    }    
-    if (moduleParameters.containsKey(ALLOW_SURROGATE_POLICIES_KEY)) {
-    	try {
-    		allowSurrogatePolicies = Boolean.parseBoolean((String) moduleParameters.get(ALLOW_SURROGATE_POLICIES_KEY));
-    	} catch (Exception e) {
-    		throw new ModuleInitializationException("bad init parm boolean value for " + ALLOW_SURROGATE_POLICIES_KEY, role, e);
-    	}
-    }
 	log("DefaultAuthorization constructor end");
   }
 
@@ -185,8 +162,6 @@ public class DefaultAuthorization extends Module implements Authorization {
 	// SDP: removed since object policies directory is obsolete in Fedora 2.1
   	//private boolean validateObjectPoliciesFromFile = false;
   	private boolean validateObjectPoliciesFromDatastream = false;
-	private boolean validateSurrogatePolicies = false;
-	private boolean allowSurrogatePolicies = false;
 	
 	private static boolean mkdir(String dirPath) {
 		boolean createdOnThisCall = false;
@@ -339,17 +314,6 @@ public class DefaultAuthorization extends Module implements Authorization {
 		mkdir(repositoryPoliciesActiveDirectory);
 		if (mkdir(repositoryPoliciesActiveDirectory + File.separator + DEFAULT)) {		
 			dircopy(fedoraHome + File.separator + DEFAULT_REPOSITORY_POLICIES_DIRECTORY, repositoryPoliciesActiveDirectory + File.separator + DEFAULT);
-		}
-		// SDP: removed since object policies directory is obsolete in Fedora 2.1
-		/*		
-		mkdir(objectPoliciesActiveDirectory);
-		if (mkdir(objectPoliciesActiveDirectory + File.separator + DEFAULT)) {	
-			dircopy(fedoraHome + File.separator + DEFAULT_OBJECT_POLICIES_DIRECTORY, objectPoliciesActiveDirectory + File.separator + DEFAULT);		
-		}
-		*/		
-		mkdir(surrogatePoliciesActiveDirectory);    	
-		if (mkdir(surrogatePoliciesActiveDirectory + File.separator + DEFAULT)) {
-			dircopy(fedoraHome + File.separator + DEFAULT_SURROGATE_POLICIES_DIRECTORY, surrogatePoliciesActiveDirectory + File.separator + DEFAULT);
 		}
 		generateBackendPolicies();
     	log("in DefaultAuthorization.setupActivePolicyDirectories() l");		
