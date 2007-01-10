@@ -49,14 +49,14 @@ public class ParserXmlUserfile
         }
     }
     
-    private Set validRoles = null;
+    //private Set validRoles = null;
 
     private String username = null;
     private String password = null;
     private Boolean authenticated = null;
 
     private Map namedAttributes = null;
-    private Set roles = null;
+    //private Set roles = null;
     
     private String attributeName = null;
     private Set attributeValues = null;
@@ -64,11 +64,11 @@ public class ParserXmlUserfile
     public final Boolean getAuthenticated() {
     	return authenticated;
     }
-
+/*
     public final Set getUserRoles() {
     	return roles;
     }
-
+*/
     public final Map getNamedAttributes() {
     	return namedAttributes;
     }
@@ -84,15 +84,18 @@ public class ParserXmlUserfile
             Attributes a) throws SAXException {
 		if (localName.equals("users")) {
 			log.debug("<users> foundUser==" + foundUser);
+			/*
 		} else if (localName.equals("role")) {
 			log.debug("<role> foundUser==" + foundUser);
 			validRoles.add(a.getValue("rolename"));
+			*/
 		} else if (localName.equals("user")) {
 			log.debug("<user> foundUser==" + foundUser);
 			log.debug("<<user>> this node username==" + a.getValue("name") + " password==" + a.getValue("password"));
 			if (username.equals(a.getValue("name"))) {
 				foundUser = true;
 				authenticated =  Boolean.valueOf((password != null) && password.equals(a.getValue("password")));
+				/*
 				String rolesCSV = a.getValue("roles");
 				if (rolesCSV != null) {
 					String[] rolesArray = rolesCSV.split(",");
@@ -103,6 +106,7 @@ public class ParserXmlUserfile
 						}
 					}
 				}
+				*/
 			}
 		} else if (localName.equals("attribute")) {
 			log.debug("<attribute> foundUser==" + foundUser);
@@ -121,14 +125,16 @@ public class ParserXmlUserfile
 		if (localName.equals("users")) {
 			log.debug("</users> foundUser==" + foundUser);
 			authenticated =  Boolean.FALSE;
+			/*
 		} else if (localName.equals("roles")) {
-				log.debug("</roles> foundUser==" + foundUser);			
+				log.debug("</roles> foundUser==" + foundUser);
+				*/			
 		} else if (localName.equals("user")) {
 			log.debug("</user> foundUser==" + foundUser);
 			if (foundUser) {
 				log.debug("at </user> (quick audit)");
 				log.debug("authenticated==" + authenticated);
-				log.debug("roles n=="  + roles.size());
+				//log.debug("roles n=="  + roles.size());
 				log.debug("namedAttributes n=="  + namedAttributes.size());
 				throw new FinishedParsingException("");				
 			}
@@ -164,10 +170,10 @@ public class ParserXmlUserfile
     	this.username = username;
     	this.password = password;    	
 	    try {
-	    	validRoles = new HashSet();
+	    	//validRoles = new HashSet();
 			value = new StringBuffer();	    	
 	    	authenticated = null;
-	    	roles =  new HashSet();
+	    	//roles =  new HashSet();
 	    	namedAttributes = new Hashtable();
 	    	foundUser = false;
 	        m_parser.parse(m_xmlStream, this);

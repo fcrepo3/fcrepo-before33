@@ -92,7 +92,7 @@ public class FilterXmlUserfile extends BaseCaching implements Constants {
 				throw new IOException(msg);
 			}
 			authenticated = parser.getAuthenticated();
-			roles = parser.getUserRoles();
+			//roles = parser.getUserRoles();
 			namedAttributes = parser.getNamedAttributes();
 		} catch (Throwable t) {
 			authenticated = null;
