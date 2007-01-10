@@ -158,6 +158,16 @@ class ContextAttributeFinderModule extends AttributeFinderModule {
 						default:
 							values = context.getSubjectValues(attributeId);
 					}
+					if (values == null) {
+						LOG.debug("RETURNING NO VALUES FOR " + attributeId);
+					} else {
+						StringBuffer sb = new StringBuffer();
+						sb.append("RETURNING " + ((String[])values).length + " VALUES FOR " + attributeId + " ==");
+						for (int i = 0; i < ((String[])values).length; i++) {
+							sb.append(" " + ((String[])values)[i]);							
+						}
+						LOG.debug(sb);
+					}
 				}
 				break;
 			case AttributeDesignator.ACTION_TARGET:

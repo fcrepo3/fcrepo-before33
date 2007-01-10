@@ -276,7 +276,7 @@ public class ExtendedHttpServletRequestWrapper
     
     public boolean hasAttributeValues(String key) throws AuthzOperationalException {
     	Set temp = getAttributeValues(key);
-    	return temp.contains(key);
+    	return ! temp.isEmpty();
     }
 
     private void putIntoMap(Map map, String key, Object value) throws Exception {
@@ -284,14 +284,15 @@ public class ExtendedHttpServletRequestWrapper
     		throw new Exception();
     	}    	
     	if (! isAuthenticated()) {
-    		throw new Exception("can't collect user roles/attributes/groupos until after authentication");
+    		throw new Exception("can't collect user roles/attributes/groups until after authentication");
     	}
     	if ((map == null) || (key == null) || (value == null)) {
     		throw new Exception("null parm, map==" + map + ", key==" + key + ", value==" + value);
     	}
-    	if (map.containsKey(authority)) {
-    		throw new Exception("map already contains this key");
+    	if (map.containsKey(key)) {
+    		throw new Exception("map already contains key==" + key);
     	}
+    	log.debug("mapping " + key + " => " + value + " in " + map);
     	map.put(key,value);
     }
     
@@ -576,6 +577,15 @@ public class ExtendedHttpServletRequestWrapper
     @Deprecated
     public boolean isRequestedSessionIdFromUrl() {
         return isRequestedSessionIdFromURL();
+    }
+    
+    public boolean isSecure() {
+		log.debug("super.isSecure()==" + super.isSecure());
+		log.debug("this.getLocalPort()==" + this.getLocalPort());
+		log.debug("this.getProtocol()==" + this.getProtocol());
+		log.debug("this.getServerPort()==" + this.getServerPort());
+		log.debug("this.getRequestURI()==" + this.getRequestURI());
+    	return super.isSecure();
     }
     
 }

@@ -140,6 +140,7 @@ public class FilterFinalize extends FilterSetup {
 			Object value = subjectAttributesMap.get(name);
 			log.debug("IN FILTER MAP HAS ATTRIBUTE " + name + "==" + value + " " + value.getClass().getName());
 		}
+		log.debug("IN FILTER ROLE eduPersonAffiliation?==" + request.isUserInRole("eduPersonAffiliation"));
 		
 		request.setAttribute(DELIVERY_NAME, subjectAttributesMap);
 /*

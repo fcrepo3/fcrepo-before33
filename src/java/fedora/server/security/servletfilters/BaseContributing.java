@@ -61,6 +61,10 @@ public abstract class BaseContributing extends FilterSetup {
     private static String SURROGATE_ROLE_DEFAULT = null;   
     protected String SURROGATE_ROLE = SURROGATE_ROLE_DEFAULT; 
     
+    public static final String SURROGATE_ATTRIBUTE_KEY = "surrogate-attribute";
+    private static String SURROGATE_ATTRIBUTE_DEFAULT = null;   
+    protected String SURROGATE_ATTRIBUTE = SURROGATE_ATTRIBUTE_DEFAULT;
+    
     public void init(FilterConfig filterConfig) {
     	String method = "init() "; if (log.isDebugEnabled()) log.debug(enter(method));
     	super.init(filterConfig);
@@ -148,7 +152,8 @@ public abstract class BaseContributing extends FilterSetup {
 				}
 			}
 			
-			if (extendedHttpServletRequest.isUserInRole(SURROGATE_ROLE)) {
+			if (((SURROGATE_ROLE != null) && (! "".equals(SURROGATE_ROLE)) && extendedHttpServletRequest.isUserInRole(SURROGATE_ROLE))
+			||  ((SURROGATE_ATTRIBUTE != null) && (! "".equals(SURROGATE_ATTRIBUTE)) && extendedHttpServletRequest.hasAttributeValues(SURROGATE_ATTRIBUTE))) {
 				extendedHttpServletRequest.setSponsoredUser();
 			}
 
