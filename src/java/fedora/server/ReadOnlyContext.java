@@ -114,6 +114,7 @@ public class ReadOnlyContext implements Context {
 
     public int nSubjectValues(String name) {
     	int n = m_subjectAttributes.length(name);
+    	LOG.debug("N SUBJECT VALUES == " + n);
     	if (extendedHttpServletRequest != null) {
     		n++;
     	}
@@ -144,6 +145,16 @@ public class ReadOnlyContext implements Context {
     	if (extendedHttpServletRequest.isUserInRole(name)) {
     		values[n-1] = "";
     	}
+		if (values == null) {
+			LOG.debug("INNER RETURNING NO VALUES FOR " + name);
+		} else {
+			StringBuffer sb = new StringBuffer();
+			sb.append("INNER RETURNING " + ((String[])values).length + " VALUES FOR " + name + " ==");
+			for (int i = 0; i < ((String[])values).length; i++) {
+				sb.append(" " + ((String[])values)[i]);							
+			}
+			LOG.debug(sb.toString());
+		}
         return values;
     }
     
@@ -409,11 +420,14 @@ public class ReadOnlyContext implements Context {
 			      			}
 	        				subjectMap.set((String) name, value);
 	          			} else if (value instanceof Set) {
+	          				String temp[] = new String[((Set)value).size()];
+	          				int i = 0;
 	          				for (Iterator setIterator = ((Set)value).iterator(); setIterator.hasNext(); ) {
 	          					String singleValue = (String) setIterator.next();
 				      			LOG.debug("IN CONTEXT singleValue is string==" + (String) singleValue);			      				
-	          					subjectMap.set((String) name, singleValue);
+				      			temp[i++] = singleValue;
 	          				}
+          					subjectMap.set((String) name, temp);
 	          			}
 	      			}
 	      		}
