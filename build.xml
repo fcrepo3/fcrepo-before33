@@ -201,7 +201,8 @@
                    includes="@{includes}"
                    source="${javac.source}" 
                    srcdir="@{srcdir}"
-                   target="${javac.target}">
+                   target="${javac.target}"
+            	   encoding="UTF-8">
             	<compilerarg line="@{compilerargs}"/>
             </javac>
         </sequential>
