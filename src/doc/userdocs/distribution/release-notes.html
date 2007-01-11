@@ -56,18 +56,27 @@
 			modification of several API-M methods to enhance functionality, new checksum 
 			support for datastreams, enhancements to the Resource Index enabling selection 
 			of an alternate triplestore database engine, integration of Gert Pedersen's 
-			FedoraGSearch generic search application into the Fedora Services Framework, 
+			Fedora Generic Search application into the Fedora Services Framework, 
 			and refactoring of the JUnit tests.</p>
+			
 			<p>Note that the Backend Security feature is disabled in Fedora 2.2 pending future
 			redesign of backend security. Backend Security is only in scope when 
-			authentication is enabled for API-A and when using custom user-defined disseminators. 
+			Datastream Mediation is enabled and when using custom user-defined disseminators. 
 			Backend security controls communication between the Fedora server and backend services
 			that are used with custom user-defined disseminators through a set of XACML policies
 			auto-generated from the <i>beSecurity.xml</i> file. With the feature disabled, these generated
-			beSecurity policies are not being enforced. For additional details on the disabling of the
+			beSecurity policies are NOT being enforced. For additional details on the disabling of the
 			the backend security feature, see the document entitled <a href="../server/security/beSecurityConfig.html">
-			Backend Services Security Configuration</a>.
-			</p>
+			Backend Services Security Configuration</a>.</p>
+			
+			<p>Fedora 2.2 includes a number of public API changes that are documented below. There
+			is also a page on the Fedora Wiki that summarizes the API changes in Fedora 2.2 that may
+			be of interest to developers. You can access the wiki page at
+			<a href="http://fedora.info/wiki/index.php/UpgradingYourApplicationForFedora2.2">
+			http://fedora.info/wiki/index.php/UpgradingYourApplicationForFedora2.2</a>.</p>
+			<p/>
+			<p/>
+			<p/>
 			<p/>
 			<p><b>New Features and Enhancements</b></p>
 			</p>
@@ -90,18 +99,18 @@
 					 option provides additional choices that include installing fedora using the
 					 bundled 5.0.28 version of tomcat, external versions of tomcat (5.0.x or 5.5.x), 
 					 and other servlet containers. The custom option also includes additional choices regarding the
-					 backend SQL database confgiguration. In addition to configuring the type of servlet 
+					 backend SQL database configuration. In addition to configuring the type of servlet 
 					 container where Fedora is to be installed, the installer also configures XACML policy 
-					 configuration, and configuration of the Fedora security configuration. 
-					 For full details on the new installer, please see the <a href="installation.html">
-					 Fedora Installation And Configuration Guide</a>.</p>
+					 configuration, and configuration of the Fedora security configuration. The new installer
+					 greatly simplifies the task of installing and configuring Fedora wheter you are a novice
+					 user or a veteran developer. For complete details on the new installer and options, please 
+					 see the <a href="installation.html">Fedora Installation And Configuration Guide</a>.</p>
 				</li>
 				
 				<li>Refactoring authentication using ServletFilters<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
-					<p>One of the goals in refactoring
-					the distribution into a war file was to lessen the dependence of the codebase on a
+					<p>One of the goals in repackaging Fedora as a war file was to lessen the dependence of the codebase on a
 					particular servlet container. However, the authentication implementation in use prior to
-					Fedora 2.2 was heavily dependent on tomcat-5.0.28. There also existed a known bug (see 
+					Fedora 2.2 was heavily dependent on the tomcat-5.0.28 servlet container. There also existed a known bug (see 
 					<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=144">bugzilla #144</a>) that
 					proved to be difficult to resolve. Using the ServletFilter approach to authentication
 					removes the dependencies on tomcat, makes the authentication mechanism more flexible,
@@ -121,11 +130,15 @@ public String compareDatastreamChecksum(String PID,
                                         String versionDate)				
 						</pre>
 					</div>		
-					<p>There are also several new configuration parameters in fedora.fcfg related to the new checksum feature. The
+					<p>There are two new configuration parameters in fedora.fcfg related to the new checksum feature. The
 					<i>autoChecksum</i> parameter controls whether checksums are to be computed for every datastream. By default <i>autoChecksum</i> 
-					is set to false which disables automatice checksums. When set to true, checksums will automatically be computed
+					is set to false which disables automatic checksums. When set to true, checksums will automatically be computed
 					for each datastream during the API-M operations for ingest, addDatastream, modifyDatastreamByReference, 
-					and modifyDatastreambyValue.  
+					and modifyDatastreambyValue. The config parameter <i>checksumAlgorithm</i> defines the checksum
+					algorithm to be used when automatically computing checksums. Fedora currently supports the
+					following checksum algorithms: MD5, SHA-1, SHA-256, SHA-384, and SHA-512. 
+					For complete details on the new checksum feature, refer to the document
+					<a href="../server/features/checksum.html">Datastream Checksum Feature</a>.
 				</li>				
 				
 				<li>Journaling<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
@@ -175,12 +188,15 @@ public String modifyObject(String PID, String state, String label, String logMes
 public String modifyObject(String PID, String state, String label, String ownerId, String logMessage) 
 						</pre>
 					</div>										
+					<p>OwnerId can either be included in the FOXML or METS xml and will be assigned at
+					time of ingest or you can use the admin client to change the ownerID using the modifyObject
+					method of API-M.
 				</li>
 				
 				<li>Fedora Supports Log4j Logging<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
 					<p>Fedora 2.2 includes extensive refactoring of the code to now use Log4j as the logging mechanism. This new addition
 					makes the configuration of logging for both the Fedora server and client much cleaner and simpler. See the <a href="./installation.html">
-					Fedora Installation And Configuration Guide</a> for additional details on configuring the logs.</p>
+					Fedora Installation And Configuration Guide</a> for more details on configuring the logs.</p>
 				</li>
 				
 				<li>Fedora Generic Search integrated into Fedora Service Framework<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
@@ -191,14 +207,17 @@ public String modifyObject(String PID, String state, String label, String ownerI
 					to the entire Fedora community. Fedora Generic Search represents an extensible generic search service that 
 					can be plugged into the Fedora Services Framework. It current supports both Lucene and Zebra as 
 					backend search engines.  When the messaging components are finalized in a future release, it will 
-					be possible to further decouple the gSearch service from Fedora and treat it as a "message reciever" 
+					be possible to further decouple the Fedora Generic Search service from Fedora and treat it as a "message receiver" 
 					in the service framework.</p>
 				</li>				
 				
-				<li>New support for Postres SQL database<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
-					<p>Fedora 2.2 adds a DDLConverter class for Postgres which enables use of the Postgress database as a backend SQL database
-					with Fedora. This new addition is based on a contribution from Hubert Stigler made to the fedora-users mailing list on 
-					April 4th, 2006. 
+				<li>New support for Postgres SQL database<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
+					<p>Fedora 2.2 adds a DDLConverter class for Postgres which enables use of the Postgres database as a backend SQL database
+					with Fedora. This new addition is based on a contribution from Hubert Stigler that was made to the fedora-users mailing list on 
+					April 4th, 2006. The Postgres addition requires a table name change for the backend SQL database table named "do" to the
+					new name of "dobj". The change was necessary because the name of "do" is considered a reserved word for Postgres. The new
+					installer will automatically handle the table name change for existing repositories migrating to Fedora 2.2. For additional details
+					on migrating from an earlier release of Fedora to Fedora 2.2, see the <a href="migration.html">Fedora Upgrade and Migrattion Guide</a>
 				</li>
 				
 				<li>VERSIONABLE attribute on datastreams fully implemented
@@ -222,7 +241,10 @@ public String setDatastreamVersionable(String PID,
 				<li>Changes to "addDatastream" method in API-M
 					<p>As part of the refactoring to fully implement 
 					the VERSIONABLE attribute on datastreams, the signature for the method addDatastream has changed. 
-					The changes the addition of checksumType and checksum arguments.</p>
+					The changes also include two new arguments named "checksumType" and "checksum". The
+					"checksumType" argument specifies the checksum algorithm to use in computing the checksum
+					value. Valid values are MD5, SHA-1, SHA-256, SHA-385, and SHA-512. The "checksum" argument 
+					is the value of the checksum represented as a hexidecimal string.</p>
 					<p>Here are the old and new signature for the method:</p>
 					<div class="code">
 						<p><b>Old</b></p>
@@ -262,8 +284,12 @@ public String addDatastream(String pid,
 					<p>As part of the refactoring to 
 					fully implement the VERSIONABLE attribute on datastreams, the signature for the method 
 					modifyDatastreamByReference has changed. The changes include removal of the "versionable" 
-					and "dsState "arguments. Changes to the state or versionable status of a datastream should be 
-					handled using the setDatastreamState and setDatastreamVersionable methods, respectively.</p>
+					and "dsState" arguments. Changes to the state or versionable status of a datastream should be 
+					handled using the setDatastreamState and setDatastreamVersionable methods, respectively.
+					The changes also include two new arguments named "checksumType" and "checksum". The
+					"checksumType" argument specifies the checksum algorithm to use in computing the checksum
+					value. Valid values are MD5, SHA-1, SHA-256, SHA-385, and SHA-512. The "checksum" argument 
+					is the value of the checksum represented as a hexidecimal string.</p>
 					<p>Here are the old and new signature for the method:</p>
 					<div class="code">
 						<p><b>Old</b></p>
@@ -303,7 +329,10 @@ public String modifyDatastreamByReference(String PID,
 					the VERSIONABLE attribute on datastreams, the signature for the method modifyDatastreamByValue has changed. 
 					The changes include removal of the "versionable" and "dsState " arguments. Changes to the state or 
 					versionable status of a datastream should be handled using the setDatastreamState and setDatastreamVersionable 
-					methods, respectively.</p>
+					methods, respectively. The changes also include two new arguments named "checksumType" and "checksum". The
+					"checksumType" argument specifies the checksum algorithm to use in computing the checksum
+					value. Valid values are MD5, SHA-1, SHA-256, SHA-385, and SHA-512. The "checksum" argument 
+					is the value of the checksum represented as a hexidecimal string.</p>
 					<p>Here are the old and new signature for the method:</p>
 					<div class="code">
 						<p><b>Old</b></p>
@@ -439,7 +468,7 @@ public String[ ] purgeDatastream(String PID,
 				<li>JUnit Refactoring
 					<p>The refactoring of the codebase necessary to make Fedora a standalone webapp 
 					also required extensive refactoring of the JUnit tests. Fedora 2.2 includes streamlining and simplification 
-					of the the JUnit tests that will make future code testing much easier.</p>
+					of the JUnit tests that will make future code testing much easier.</p>
 				</li>	
 			</ol>
 		</li>
@@ -580,10 +609,7 @@ public String[ ] purgeDatastream(String PID,
 		<li><a id="install" name="features">Installation</a>
 			<p>For instructions on installing and upgrading Fedora, please consult the 
 			<a href="installation.html">Installation Guide</a>  and the 
-			<a href="migration.html">Upgrade and Migrate Guide</a>.<br/>
-			<br/>
-			<i><b>NOTE</b></i>: Fedora 2.2 represents a complete refactoring of
-			the distribution into a standalone war file.</p>
+			<a href="migration.html">Fedora Upgrade and Migration Guide</a>.</p>
 		</li>
 		<li><a name="history">Historic Release Notes</a></li>		
 	</ol>
