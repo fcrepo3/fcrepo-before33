@@ -307,17 +307,17 @@ public class BatchModifyParser extends DefaultHandler
                 }
                 
                 // Get optional attributes
-                if ( attrs.getValue("label") != null && !attrs.getValue("label").equals(""))
+                if ( attrs.getValue("label") != null)
                     m_obj.label = attrs.getValue("label");
                 else {
                     m_obj.label = null;
                 }
-                if ( attrs.getValue("state") != null && !attrs.getValue("state").equals(""))
+                if ( attrs.getValue("state") != null)
                     m_obj.state = attrs.getValue("state");
                 else {
                     m_obj.state = null;
                 }      
-                if ( attrs.getValue("ownerId") != null && !attrs.getValue("ownerId").equals(""))
+                if ( attrs.getValue("ownerId") != null)
                     m_obj.ownerId = attrs.getValue("ownerId");
                 else {
                     m_obj.ownerId = null;
@@ -347,7 +347,7 @@ public class BatchModifyParser extends DefaultHandler
                 }
                 
                 // Get optional attributes
-                if ( attrs.getValue("force") != null && !attrs.getValue("force").equals(""))
+                if ( attrs.getValue("force") != null)
                     m_obj.force = new Boolean(attrs.getValue("force")).booleanValue();
                 else {
                     m_obj.force = false;
@@ -384,7 +384,11 @@ public class BatchModifyParser extends DefaultHandler
                 if ( attrs.getValue("versionable") != null && !attrs.getValue("versionable").equals(""))
                     m_ds.versionable = new Boolean(attrs.getValue("versionable")).booleanValue();
                 if ( attrs.getValue("altIDs") != null && !attrs.getValue("altIDs").equals(""))
-                    m_ds.altIDs = attrs.getValue("altIDs").split(" ");             
+                    m_ds.altIDs = attrs.getValue("altIDs").split(" ");   
+                if ( attrs.getValue("checksumType") != null && !attrs.getValue("checksumType").equals(""))
+                    m_ds.checksumType = attrs.getValue("checksumType");                 
+                if ( attrs.getValue("checksum") != null && !attrs.getValue("checksum").equals(""))
+                    m_ds.checksum = attrs.getValue("checksum");                
                 // Check that MIME type is text/xml if datastream is XMLMetadata datastream
                 if (m_ds.dsControlGrp.equalsIgnoreCase("X") &&
                         !m_ds.dsMIME.equalsIgnoreCase("text/xml") ) {
@@ -505,7 +509,13 @@ public class BatchModifyParser extends DefaultHandler
                         m_ds.formatURI = attrs.getValue("formatURI");
                     } else {
                         m_ds.formatURI = dsOrig.getFormatURI();
+                    }   
+                    if ( attrs.getValue("checksumType") != null) {
+                        m_ds.checksumType = attrs.getValue("checksumType");
                     }                    
+                    if ( attrs.getValue("checksum") != null) {
+                        m_ds.checksum = attrs.getValue("checksum");
+                    }                                        
 
                     modifyDatastream = true;
 
@@ -1036,8 +1046,8 @@ public class BatchModifyParser extends DefaultHandler
                                 m_ds.dsLocation, 
                                 m_ds.dsControlGrp, 
                                 m_ds.dsState, 
-                                null, 
-                                null, 
+                                m_ds.checksumType, 
+                                m_ds.checksum, 
                                 m_ds.logMessage);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
                             	 m_ds.dsControlGrp.equalsIgnoreCase("M") ||
@@ -1052,8 +1062,8 @@ public class BatchModifyParser extends DefaultHandler
                                 m_ds.dsLocation, 
                                 m_ds.dsControlGrp, 
                                 m_ds.dsState,
-                                null,
-                                null,
+                                m_ds.checksumType,
+                                m_ds.checksum,
                                 m_ds.logMessage);
                     }
                     if (datastreamID!=null) {
@@ -1140,8 +1150,8 @@ public class BatchModifyParser extends DefaultHandler
                                 m_ds.dsMIME,
                                 m_ds.formatURI,
                                 m_ds.xmlContent,
-                                null, 
-                                null,
+                                m_ds.checksumType, 
+                                m_ds.checksum,
                                 m_ds.logMessage, 
                                 m_ds.force);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
@@ -1153,8 +1163,8 @@ public class BatchModifyParser extends DefaultHandler
                                 m_ds.dsMIME,
                                 m_ds.formatURI,
                                 m_ds.dsLocation,
-                                null,
-                                null,
+                                m_ds.checksumType,
+                                m_ds.checksum,
                                 m_ds.logMessage,
                                 m_ds.force);
                     }

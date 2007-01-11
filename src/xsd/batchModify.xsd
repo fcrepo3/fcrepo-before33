@@ -79,6 +79,19 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
+			<xsd:attribute name="checksumType" use="optional">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="MD5"/>
+						<xsd:enumeration value="SHA-1"/>
+						<xsd:enumeration value="SHA-256"/>
+						<xsd:enumeration value="SHA-384"/>
+						<xsd:enumeration value="SHA-512"/>
+						<xsd:enumeration value="DISABLED"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="checksum" type="xsd:string" use="optional"/>			
 			<xsd:attribute name="logMessage" type="xsd:string" use="required"/>
 		</xsd:complexType>
 	</xsd:element>
@@ -125,6 +138,19 @@
 			<xsd:attribute name="versionable" type="xsd:boolean" use="optional"/>			
 			<xsd:attribute name="altIDs" type="xsd:string" use="optional"/>
 			<xsd:attribute name="force" type="xsd:boolean" use="optional"/>
+			<xsd:attribute name="checksumType" use="optional">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="MD5"/>
+						<xsd:enumeration value="SHA-1"/>
+						<xsd:enumeration value="SHA-256"/>
+						<xsd:enumeration value="SHA-384"/>
+						<xsd:enumeration value="SHA-512"/>
+						<xsd:enumeration value="DISABLED"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="checksum" type="xsd:string" use="optional"/>			
 			<xsd:attribute name="logMessage" type="xsd:string" use="required"/>
 		</xsd:complexType>
 	</xsd:element>

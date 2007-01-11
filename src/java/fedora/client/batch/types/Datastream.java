@@ -44,6 +44,10 @@ public class Datastream
   public String[] altIDs = new String[0];
   
   public String logMessage;
+  
+  public String checksumType;
+  
+  public String checksum;
 
 
 

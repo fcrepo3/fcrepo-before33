@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ********************************************************************** -->
 <!-- This is a sample modify directives file that performs a variety of     -->
-<!-- modfications on the datastreams and disseminators of two new demo      -->
+<!-- modifications on the datastreams and disseminators of two new demo     -->
 <!-- objects (demo:32 and demo:33) that the script will create. In general, -->
 <!-- one should always validate a modify directives file against the        -->
 <!-- modifyBatch.xsd schema prior to processing to catch any syntax errors. -->
@@ -31,7 +31,7 @@
 	<!-- PID value after ingestion. Leaving the pid attribute empty         -->
 	<!-- (i.e., "") will force the repository to assign a PID to the new    -->
 	<!-- object using the namespace specified by the PidNamespace parameter -->
-	<!-- in the fedora.fcf config file.                                     -->
+	<!-- in the fedora.fcfg config file.                                    -->
 	<!--                                                                    -->
 	<!-- Required attributes on directive:                                  -->
 	<!-- pid - PID of the object; leave blank if you want repository to     -->
@@ -97,7 +97,7 @@
 	<!--                                                                    -->
 	<!-- Required attributes on directive:                                  -->
 	<!-- pid - PID of the object                                            -->
-	<!-- dsLabel - label fo the datastream                                  -->
+	<!-- dsLabel - label for the datastream                                 -->
 	<!-- dsMIME - MIME type of the datastream                               -->
 	<!-- logMessage - message to be written in audit trail record           -->
 	<!-- dsState - state of the object                                      -->
@@ -115,6 +115,16 @@
 	<!-- altIDs - space delimited string of alternated identifiers for the  -->
 	<!--          datastream. This info is currently maintained in the      -->
 	<!--          object, but not acted on.                                 -->
+	<!-- checksumType - checksum algorithm (MD5,SHA-1,SHA-256,SHA-384,      -->
+	<!--                SHA-512); if omitted default value configured in    -->
+	<!--                fedora.fcfg is used.                                -->
+	<!-- checksum - checksum value to be used to validate datastream upon   -->
+	<!--            ingest; if specified the value of this checksum will be -->
+	<!--            used to validate the contents of the datastream at      -->
+	<!--            ingest time using the specified checksumType. The       -->
+	<!--            checksum value must be created using the same algorithm -->
+	<!--            that will be used at ingest time by the Fedora server   -->
+	<!--            or a checksum mismatch will occur.                      -->
 	<!-- ****************************************************************** -->
 	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum thumbnail jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg" dsControlGroupType="E" dsState="A" logMessage="BatchModify - addDatastream"/>
 	
@@ -138,9 +148,9 @@
 	<!-- Add a 4th datastream to demo:32 object. The new datastream will be -->
 	<!-- a very high resolution image and will be assigned a dsID of DS4    -->
 	<!-- since no dsID is specified and this is the fourth datastream for   -->
-	<!-- this object.                                                       -->
+	<!-- this object. Change the checksumType to use the MD5 algorithm.     -->
 	<!-- ****************************************************************** -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum veryhigh jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg" dsControlGroupType="M" dsState="A" logMessage="BatchModify - addDatastream"/>
+	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum veryhigh jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg" dsControlGroupType="M" dsState="A" checksumType="MD5" logMessage="BatchModify - addDatastream"/>
 	
 	<!-- ****************************************************************** -->
 	<!-- Add a 5th datastream to demo:32 object. The new datastream will be -->
@@ -153,9 +163,10 @@
 	<!-- ****************************************************************** -->
 	<!-- Add a 6th datastream to demo:32 object. The new datastream will be -->
 	<!-- a user-defined inline descriptive metadata datastream and will     -->
-	<!-- have dsID of DESC.                                                 -->
+	<!-- have dsID of DESC. Change the checksumType to use the SHA-1        -->
+	<!-- algorithm.                                                         -->
 	<!-- ****************************************************************** -->
-	<fbm:addDatastream pid="demo:32" dsID="DESC" dsLabel="Descriptive metadata for Thorny's Coliseum screen size jpg image" dsMIME="text/xml" dsControlGroupType="X" dsState="A" logMessage="BatchModify - addDatastream">
+	<fbm:addDatastream pid="demo:32" dsID="DESC" dsLabel="Descriptive metadata for Thorny's Coliseum screen size jpg image" dsMIME="text/xml" dsControlGroupType="X" dsState="A" checksumType="SHA-1" logMessage="BatchModify - addDatastream">
 		<fbm:xmlData>
 			<uvalibdesc:desc xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd">
 				<uvalibdesc:time>
@@ -203,11 +214,11 @@
 	<!-- ****************************************************************** -->
 	<!-- Modify datastream DS1 of demo:5 object by changing its label.      -->
 	<!--                                                                    -->
-	<!-- NOTE: Optional attributes that are omitted indicate that that      -->
-	<!-- attribute is to remain uncahnged and the original value of of the  -->
+	<!-- NOTE: Optional attributes that are omitted indicate that           -->
+	<!-- attribute is to remain unchanged and the original value of the     -->
 	<!-- datastream attribute in the object will be preserved. Optional     -->
 	<!-- attributes that are set to the empty string indicate that the      -->
-	<!-- atrribute value will be blanked out in the datastream.             -->
+	<!-- attribute value will be blanked out in the datastream.             -->
 	<!-- In this example the datastream location and state attributes are   -->
 	<!-- not modified.                                                      -->
 	<!--                                                                    -->
@@ -218,7 +229,7 @@
 	<!-- logMessage - message to be written in audit trail record           -->		
 	<!--                                                                    -->
 	<!-- Optional attributes on directive:                                  -->
-	<!-- dsLabel - label fo the datastream                                  -->
+	<!-- dsLabel - label for the datastream                                 -->
 	<!-- dsState - state of the object                                      -->
 	<!-- dsLocation - location of the datastream                            -->
 	<!-- dsMIME - MIME type of the datastream                               -->
@@ -230,29 +241,41 @@
 	<!-- force - boolean indicating whether to purge the object if any      -->
 	<!--         critical dependencies exist. A value of true will purge    -->
 	<!--         the object regardless of any dependencies. A value of      -->
-	<!--         false will allow the purge only if no dependencies exist.  -->	
+	<!--         false will allow the purge only if no dependencies exist.  -->
+	<!-- checksumType - checksum algorithm (MD5,SHA-1,SHA-256,SHA-384,      -->
+	<!--                SHA-512); if omitted default value configured in    -->
+	<!--                fedora.fcfg is used.                                -->
+	<!-- checksum - checksum value to be used to validate datastream upon   -->
+	<!--            ingest; if specified the value of this checksum will be -->
+	<!--            used to validate the contents of the datastream at      -->
+	<!--            ingest time using the specified checksumType. The       -->
+	<!--            checksum value must be created using the same algorithm -->
+	<!--            that will be used at ingest time by the Fedora server   -->
+	<!--            or a checksum mismatch will occur.                      -->
 	<!-- ****************************************************************** -->
 	<fbm:modifyDatastream pid="demo:32" dsID="DS1" dsControlGroupType="E" dsLabel="New label for datastream DS1" logMessage="BatchModify - modifyDatastream"/>
 	
 	<!-- ****************************************************************** -->
 	<!-- Modify datastream SCREEN of demo:32 object by changing its label   -->
 	<!-- and datastream location so that it points to the same content as   -->
-	<!-- that of datastream DS3 which is a high-res image.                  -->
+	<!-- that of datastream DS3 which is a high-res image. Change the       -->
+	<!-- checksum algorithm from its current value to sue the SHA-512       -->
+	<!-- algorithm.                                                         -->
 	<!--                                                                    -->
-	<!-- NOTE: Optional attributes that are omitted indicate that that      -->
-	<!-- attribute is to remain uncahnged and the original value of of the  -->
+	<!-- NOTE: Optional attributes that are omitted indicate that           -->
+	<!-- attribute is to remain unchanged and the original value of the     -->
 	<!-- datastream attribute in the object will be preserved. Optional     -->
 	<!-- attributes that are set to the empty string indicate that the      -->
-	<!-- atrribute value will be blanked out in the datastream.             -->
+	<!-- attribute value will be blanked out in the datastream.             -->
 	<!-- ****************************************************************** -->
-	<fbm:modifyDatastream pid="demo:32" dsID="SCREEN" dsControlGroupType="E" dsLabel="Changed label for datastream SCREEN" dsLocation="http://localhost:8080/fedora/get/demo:5/DS4" logMessage="BatchModify - modifyDatastream"/>
+	<fbm:modifyDatastream pid="demo:32" dsID="SCREEN" dsControlGroupType="E" dsLabel="Changed label for datastream SCREEN" dsLocation="http://localhost:8080/fedora/get/demo:5/DS4" checksumType="SHA-512" logMessage="BatchModify - modifyDatastream"/>
 	
 	<!-- ****************************************************************** -->
 	<!-- Modify datastream DC of demo:32 object by changing its label and   -->
 	<!-- its xml content so that its content is replaced by the block of    -->
-	<!-- xml below.                                                         -->
+	<!-- xml below. Change the checksum algorithm to use the MD5 algorithm. -->
 	<!-- ****************************************************************** -->
-	<fbm:modifyDatastream pid="demo:32" dsID="DC" dsControlGroupType="X" dsLabel="New label for DC datastream" logMessage="BatchModify - modifyDatastream">
+	<fbm:modifyDatastream pid="demo:32" dsID="DC" dsControlGroupType="X" dsLabel="New label for DC datastream" checksumType="MD5" logMessage="BatchModify - modifyDatastream">
 		<fbm:xmlData>
 			<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:my="http//foo.bar.none">
 				<dc:title>Coliseum in Rome</dc:title>
@@ -391,11 +414,11 @@
 	<!-- the datastream binding for DS3 and replace it with a new binding   -->
 	<!-- that maps to dsID SCREEN for the high resolution image.            -->
 	<!--                                                                    -->
-	<!-- NOTE: Optional attributes that are omitted indicate that that      -->
-	<!-- attribute is to remain uncahnged and the original value of of the  -->
+	<!-- NOTE: Optional attributes that are omitted indicate that           -->
+	<!-- attribute is to remain unchanged and the original value of the     -->
 	<!-- datastream attribute in the object will be preserved. Optional     -->
 	<!-- attributes that are set to the empty string indicate that the      -->
-	<!-- atrribute value will be blanked out in the datastream.             -->
+	<!-- attribute value will be blanked out in the datastream.             -->
 	<!--                                                                    -->
 	<!-- Required attributes on directive:                                  -->
 	<!-- pid - PID of the object                                            -->
