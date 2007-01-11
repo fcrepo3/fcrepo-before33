@@ -16,6 +16,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Date;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -171,10 +172,13 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
             Class getDDArgs[] = { String.class, String.class, String.class };
             Object getDDParms[] = { "demo:5", "DS3", null };
             Object getDDParms2[] = { "demo:29", "DS1", null };
+            Object getDDParms3[] = { "demo:31", "DS1", null };
 
             Class getDissArgs[] = { String.class, String.class, String.class, Property[].class, String.class };
             Object getDissParms[] = {"demo:5", "demo:1", "getHigh", null, null };
             Object getDissParms2[] = {"demo:29", "demo:27", "grayscaleImage", null, null};
+            Class modObjArgs[] = { String.class, String.class, String.class, String.class, String.class };
+            Object modObjParms[] = { "demo:31", null, null, null, null };
             
             
             // APIA access by user without access- should fail
@@ -208,6 +212,24 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
             // APIA access by user with access- should succeed
             // testuser1 does have permission to access demo:5 datastreams, so this should succeed
             invokeAPIASuccess(testuser1, "testuser1", "getDatastreamDissemination", getDDArgs, getDDParms);       
+            
+            // APIA access by user who is not owner should fail
+            // testuser1 is not currently owner of demo:31, so this should fail
+            invokeAPIAFailure(testuser1, "testuser1", "getDatastreamDissemination", getDDArgs, getDDParms3);       
+            
+            modObjParms[3] = "testuser1";
+            String dateOfSuccess = invokeAPIMSuccessString(admin, "fedoraAdmin", "modifyObject", modObjArgs, modObjParms);
+            assertTrue(dateOfSuccess != null);
+            System.out.println("  Modify Object from admin succeeded.");
+ 
+            // APIA access by user who is now the owner, should succeed
+            // testuser1 is now currently owner of demo:31, so this should succeed
+            invokeAPIASuccess(testuser1, "testuser1", "getDatastreamDissemination", getDDArgs, getDDParms3);       
+
+            modObjParms[3] = "fedoraAdmin";
+            dateOfSuccess = invokeAPIMSuccessString(admin, "fedoraAdmin", "modifyObject", modObjArgs, modObjParms);
+            assertTrue(dateOfSuccess != null);
+            System.out.println("  Modify Object from admin succeeded.");
         }
         else
         {
