@@ -161,7 +161,7 @@ p {
 
 
 #relnotes ol {
-	margin-left: 20px;
+	margin-left:20px;
 	padding-left: 0px;
 }
 
@@ -186,7 +186,7 @@ p {
 	margin-top: 10px;
 	color: #4C7C8E;
 	font-size: 12pt;
-	list-style: lower-alpha outside none;
+	list-style: upper-alpha outside none;
 }
 
 #relnotes ol li ol li p{
