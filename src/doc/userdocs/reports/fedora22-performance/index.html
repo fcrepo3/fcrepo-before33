@@ -75,58 +75,67 @@
     <h2><a name="results">Test Results</a></h2>
 
     <pre>
-Fedora DB  RILv  RIImpl    RIFlush Test         Objects  Avg. Millis/Obj
----------  ----  --------  ------- -----        -------  ----------------
-                                                          2.1.1     2.2
-                                                         ------    ------
+Fedora DB  AuthZ RILv  RIImpl    RIFlush Test          Avg. Millis/Obj
+---------  ----- ----  --------  ------- -----         ---------------
+                                                       2.1.1     2.2
+                                                       -----    ------
 
-MySQL      0     NA        NA      ingestObjI     10000      --     37.83
-                                   ingestObjP     10000   58.31     45.07
-                                   modDSByRefV    10000  204.42     32.51
-                                   modDSByValV    10000  197.11     26.11
-                                   purgeDSIV      10000  196.34     24.18
-                                   purgeDSMV      10000  223.34     26.01
-                                   purgeObj       10000  208.65     14.58
+MySQL      off   0     NA        NA      ingestObjI       --     37.83
+                                         ingestObjP    49.94     45.07
+                                         modDSByRefV  204.42     32.51
+                                         modDSByValV  197.11     26.11
+                                         purgeDSIV    196.34     24.18
+                                         purgeDSMV    223.34     26.01
+                                         purgeObj     208.65     14.58
 
-Postgres   0     NA        NA      ingestObjI     10000      --     43.25
-                                   ingestObjP     10000      --     45.26
-                                   modDSByRefV    10000      --     36.92
-                                   modDSByValV    10000      --     29.01
-                                   purgeDSIV      10000      --     29.48
-                                   purgeDSMV      10000      --     33.34
-                                   purgeObj       10000      --     21.10
+MySQL      on    0     NA        NA      ingestObjI       --     58.54
+                                         ingestObjP    49.33     63.33
+                                         modDSByRefV  232.74     50.77
+                                         modDSByValV  235.96*    41.58
+                                         purgeDSIV    237.25*    39.67
+                                         purgeDSMV    235.23*    41.58
+                                         purgeObj     227.88*    32.62
 
-MySQL      2     Kowari    Async   ingestObjI     10000      --     59.97
-                                   ingestObjP     10000   64.77     62.10
-                                   modDSByRefV      500  782.87     51.62
-                                   modDSByValV      500 1046.43     45.44
-                                   purgeDSIV        500 1272.63     45.99
-                                   purgeDSMV        500  886.66     48.04
-                                   purgeObj        2000  271.18     40.12
+Postgres   off   0     NA        NA      ingestObjI       --     43.25
+                                         ingestObjP       --     45.26
+                                         modDSByRefV      --     36.92
+                                         modDSByValV      --     29.01
+                                         purgeDSIV        --     29.48
+                                         purgeDSMV        --     33.34
+                                         purgeObj         --     21.10
 
-MySQL      2     Kowari    Sync    ingestObjI       500      --    966.41
-                                   ingestObjP       500      --    931.51
-                                   modDSByRefV      500      --    533.46
-                                   modDSByValV      500      --    546.00
-                                   purgeDSIV        500      --    705.09
-                                   purgeDSMV        500      --    743.15
-                                   purgeObj         500      --    977.60
- 
-MySQL      2     MPTStore  Async   ingestObjI     10000      --    61.49
-                                   ingestObjP     10000      --    61.49
-                                   modDSByRefV    10000      --    52.17
-                                   modDSByValV    10000      --    45.48
-                                   purgeDSIV      10000      --    44.38
-                                   purgeDSMV      10000      --    46.08
-                                   purgeObj       10000      --    33.22
+MySQL      off   2     Kowari    Async   ingestObjI       --     59.97
+                                         ingestObjP    64.77     62.10
+                                         modDSByRefV  782.87*    51.62
+                                         modDSByValV 1046.43*    45.44
+                                         purgeDSIV   1272.63*    45.99
+                                         purgeDSMV    886.66*    48.04
+                                         purgeObj     271.18*    40.12
 
-MySQL      2     MPTStore  Sync    ingestObjI     10000      --    60.34
-                                   ingestObjP     10000      --    67.19
-                                   modDSByRefV    10000      --    53.26
-                                   modDSByValV    10000      --    46.59
-                                   purgeDSIV      10000      --    47.08
-                                   purgeDSMV      10000      --    48.81
-                                   purgeObj       10000      --    42.28
+MySQL      off   2     Kowari    Sync    ingestObjI       --    966.41*
+                                         ingestObjP       --    931.51*
+                                         modDSByRefV      --    533.46*
+                                         modDSByValV      --    546.00*
+                                         purgeDSIV        --    705.09*
+                                         purgeDSMV        --    743.15*
+                                         purgeObj         --    977.60*
+
+MySQL      off   2     MPTStore  Async   ingestObjI       --    61.49
+                                         ingestObjP       --    61.49
+                                         modDSByRefV      --    52.17
+                                         modDSByValV      --    45.48
+                                         purgeDSIV        --    44.38
+                                         purgeDSMV        --    46.08
+                                         purgeObj         --    33.22
+
+MySQL      off   2     MPTStore  Sync    ingestObjI       --    60.34
+                                         ingestObjP       --    67.19
+                                         modDSByRefV      --    53.26
+                                         modDSByValV      --    46.59
+                                         purgeDSIV        --    47.08
+                                         purgeDSMV        --    48.81
+                                         purgeObj         --    42.28
+
     </pre>
   </div>
 
