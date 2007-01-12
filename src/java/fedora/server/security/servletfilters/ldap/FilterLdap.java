@@ -218,7 +218,15 @@ public class FilterLdap extends BaseCaching {
         		env.put(Context.SECURITY_AUTHENTICATION, SECURITY_AUTHENTICATION);
         		if (AUTHENTICATE && ((PASSWORD == null) || "".equals(PASSWORD))) {
             		if (log.isDebugEnabled()) log.debug(format(method, "setting up to bind user"));
-            		env.put(Context.SECURITY_PRINCIPAL, cacheElement.getUserid());
+            		String directoryUserToBind = cacheElement.getUserid();
+            		
+            		//vvvvv begin code to simulate test against user-bind at directory server
+            		if ((SECURITY_PRINCIPAL != null) && ! "".equals(SECURITY_PRINCIPAL)) {
+            			directoryUserToBind = SECURITY_PRINCIPAL;
+            		}
+            		//^^^^^ end test code
+            		
+            		env.put(Context.SECURITY_PRINCIPAL, directoryUserToBind);
             		env.put(Context.SECURITY_CREDENTIALS, password);        			
         		} else {
             		if (log.isDebugEnabled()) log.debug(format(method, "setting up to bind system access"));
