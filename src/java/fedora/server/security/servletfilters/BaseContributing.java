@@ -68,6 +68,7 @@ public abstract class BaseContributing extends FilterSetup {
     public void init(FilterConfig filterConfig) {
     	String method = "init() "; if (log.isDebugEnabled()) log.debug(enter(method));
     	super.init(filterConfig);
+    	inited = false;
     	if (! initErrors) {
     		if (FILTERS_CONTRIBUTING_AUTHENTICATED_ATTRIBUTES.isEmpty()) {
         		if ((FILTER_NAME == null) || "".equals(FILTER_NAME)) {
@@ -82,6 +83,7 @@ public abstract class BaseContributing extends FilterSetup {
     	if (initErrors) {
 			if (log.isErrorEnabled()) log.error(format(method, "FILTERS_CONTRIBUTING_AUTHENTICATED_ATTRIBUTES not set; see previous error"));
     	}
+    	inited = true;
 		if (log.isDebugEnabled()) log.debug(exit(method)); 
     }
 

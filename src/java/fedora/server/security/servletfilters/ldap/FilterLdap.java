@@ -83,36 +83,94 @@ public class FilterLdap extends BaseCaching {
 		try {
         	if (log.isDebugEnabled()) log.debug(enter(method));
 			super.init(filterConfig);
-			Set temp = new HashSet();
-			/*
-			if (ROLES2RETURN == null) {
-				ROLES2RETURN = new String[0];
-			} else {
-				for (int i = 0; i < ROLES2RETURN.length; i++) {
-					temp.add(ROLES2RETURN[i]);
-				}				
-			}
-			*/
-			if (ATTRIBUTES2RETURN == null) {
-				ATTRIBUTES2RETURN = new String[0];
-			} else {
-				for (int i = 0; i < ATTRIBUTES2RETURN.length; i++) {
-					temp.add(ATTRIBUTES2RETURN[i]);
-				}				
-			}
-    		if (AUTHENTICATE && (PASSWORD != null) && ! "".equals(PASSWORD)) {
-				temp.add(PASSWORD);
-    		}
-			/*
-			if (GROUPS2RETURN == null) {
-				GROUPS2RETURN = new String[0];
-			} else {
-				for (int i = 0; i < GROUPS2RETURN.length; i++) {
-					temp.add(GROUPS2RETURN[i]);
-				}							
-			}
-			*/
-			DIRECTORY_ATTRIBUTES_NEEDED = (String[]) temp.toArray(StringArrayPrototype);
+	    	inited = false;
+	    	if (! initErrors) {
+				Set temp = new HashSet();
+				/*
+				if (ROLES2RETURN == null) {
+					ROLES2RETURN = new String[0];
+				} else {
+					for (int i = 0; i < ROLES2RETURN.length; i++) {
+						temp.add(ROLES2RETURN[i]);
+					}				
+				}
+				*/
+				if (ATTRIBUTES2RETURN == null) {
+					ATTRIBUTES2RETURN = new String[0];
+				} else {
+					for (int i = 0; i < ATTRIBUTES2RETURN.length; i++) {
+						temp.add(ATTRIBUTES2RETURN[i]);
+					}				
+				}
+	    		if (AUTHENTICATE && (PASSWORD != null) && ! "".equals(PASSWORD)) {
+					temp.add(PASSWORD);
+	    		}
+				/*
+				if (GROUPS2RETURN == null) {
+					GROUPS2RETURN = new String[0];
+				} else {
+					for (int i = 0; i < GROUPS2RETURN.length; i++) {
+						temp.add(GROUPS2RETURN[i]);
+					}							
+				}
+				*/
+				DIRECTORY_ATTRIBUTES_NEEDED = (String[]) temp.toArray(StringArrayPrototype);				
+
+				boolean haveBindMethod = false;
+				if ((SECURITY_AUTHENTICATION != null) && ! "".equals(SECURITY_AUTHENTICATION)) {
+					haveBindMethod = true;
+				}
+
+				boolean haveSuperUser = false;
+				if ((SECURITY_PRINCIPAL != null) && ! "".equals(SECURITY_PRINCIPAL)) {
+					haveSuperUser = true;
+				}
+
+				boolean haveSuperUserPassword = false;
+				if ((SECURITY_CREDENTIALS != null) && ! "".equals(SECURITY_CREDENTIALS)) {
+					haveSuperUserPassword = true;
+				}
+
+				boolean haveUserPasswordAttributeName = false;
+				if ((PASSWORD != null) && ! "".equals(PASSWORD)) {
+					haveUserPasswordAttributeName = true;
+				}
+				
+				boolean commonBindConfigured = false;
+				if (haveBindMethod && haveSuperUserPassword) {
+					boolean error = false;
+					if (!haveSuperUser) {
+						error = true;
+					}
+					if (error) {
+						initErrors = true;
+					} else {						
+						commonBindConfigured = true;
+					}					
+				}
+
+				boolean individualBindConfigured = false;
+				boolean individualBindTestConfigured = false;
+
+				if (haveBindMethod && !haveSuperUserPassword) {
+					if (haveSuperUser) {
+						individualBindTestConfigured = true;
+					} else {
+						individualBindConfigured = true;
+					}
+				}
+				
+				
+				boolean individualCompareConfigured = false;
+				if (haveUserPasswordAttributeName) {
+					individualCompareConfigured = true;
+				}
+				
+	    	}
+	    	if (initErrors) {
+				if (log.isErrorEnabled()) log.error(format(method, "ATTRIBUTES2RETURN not initialized; see previous error"));
+	    	}
+	    	inited = true;
 		} finally {
 			if (log.isDebugEnabled()) log.debug(exit(method));
 		}

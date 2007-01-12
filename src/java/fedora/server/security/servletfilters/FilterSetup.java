@@ -37,7 +37,7 @@ public class FilterSetup extends Base implements Filter {
     
     protected static final String NOT_SET = "NOT SET";
     protected String FILTER_NAME = NOT_SET;
-  	private boolean inited = false;
+  	protected boolean inited = false;
     
     public void init(FilterConfig filterConfig) {
     	String method = "init() "; if (log.isDebugEnabled()) log.debug(enter(method));

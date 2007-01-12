@@ -48,12 +48,19 @@ public abstract class BaseCaching extends BaseContributing implements CacheEleme
     public void init(FilterConfig filterConfig) {
     	String method = "init()"; if (log.isDebugEnabled()) log.debug(enter(method));
     	super.init(filterConfig);
+    	inited = false;
     	//String filterName = filterConfig.getFilterName();
-    	Cache cache = getCache(FILTER_NAME);
-    	if (cache == null) {
-    		cache = getNewCache();
-    		putCache(FILTER_NAME, cache);
+    	if (! initErrors) {
+	    	Cache cache = getCache(FILTER_NAME);
+	    	if (cache == null) {
+	    		cache = getNewCache();
+	    		putCache(FILTER_NAME, cache);
+	    	}
     	}
+    	if (initErrors) {
+			if (log.isErrorEnabled()) log.error(format(method, "cache not set up correctly; see previous error"));
+    	}
+    	inited = true;
     	if (log.isDebugEnabled()) log.debug(exit(method));
     }
     
