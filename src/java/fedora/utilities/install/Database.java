@@ -1,7 +1,6 @@
 package fedora.utilities.install;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -150,18 +149,6 @@ public class Database {
 			Properties mckoiConf = FileUtils.loadProperties(mckoiProps);
 			mckoiConf.setProperty("root_path", "configuration");
 			mckoiConf.store(new FileOutputStream(mckoiProps), null);
-			
-			String container = _opts.getValue(InstallOptions.SERVLET_ENGINE);
-			if (container.equals(InstallOptions.INCLUDED) || container.equals(InstallOptions.EXISTING_TOMCAT)) {
-				File tomcatHome = new File(_opts.getValue(InstallOptions.TOMCAT_HOME));
-				File mckoidbSrc = new File(mckoiHome, "mckoidb.jar");
-				File mckoidbDest = new File(tomcatHome, "common/lib/mckoidb.jar");
-				if (!FileUtils.copy(new FileInputStream(mckoidbSrc),
-						new FileOutputStream(mckoidbDest))) {
-					throw new InstallationFailedException("Copy to " + 
-							mckoidbDest.getAbsolutePath() + " failed.");
-				}
-			}
     	} catch(IOException e) {
     		throw new InstallationFailedException(e.getMessage(), e);
     	}

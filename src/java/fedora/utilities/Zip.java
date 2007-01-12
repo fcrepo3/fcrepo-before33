@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -32,6 +33,43 @@ public class Zip {
 			zip(null, source[i], zout);
 		}
 		zout.close();
+	}
+	
+	public static void extractFile(File zipFile, String entryName, File destination) throws IOException {
+		ZipFile zip = new ZipFile(zipFile);
+		
+		try {
+			ZipEntry entry = zip.getEntry(entryName);
+
+	        if (entry != null) {
+	        	// Get an input stream for the entry.
+	        	InputStream entryStream = zip.getInputStream(entry);
+	        	try {
+	        		// Create the output file
+	        		destination.getParentFile().mkdirs();
+	                FileOutputStream file = new FileOutputStream(destination);
+
+	                try {
+	                   // Allocate a buffer for reading the entry data.
+	                   byte[] buffer = new byte[1024];
+	                   int bytesRead;
+
+	                   // Read the entry data and write it to the output file.
+	                   while ((bytesRead = entryStream.read(buffer)) != -1) {
+	                	   file.write(buffer, 0, bytesRead);
+	                   }
+	                } finally {
+	                   file.close();
+	                }
+	             } finally {
+	                entryStream.close();
+	             }
+	          } else {
+	        	  throw new IOException(zipFile.getName() + " does not contain: " + entryName);
+	          }
+	       } finally {
+	          zip.close();
+	       }
 	}
 	
 	public static void unzip(InputStream is, File destDir) throws FileNotFoundException, IOException {		

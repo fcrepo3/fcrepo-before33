@@ -172,6 +172,7 @@ public class InstallOptions {
         if ( getValue(DATABASE).equals(INCLUDED) ) {
         	_map.put(DATABASE_USERNAME, "fedoraAdmin");
         	_map.put(DATABASE_PASSWORD, "fedoraAdmin");
+        	_map.put(DATABASE_DRIVER, INCLUDED);
 			_map.put(DATABASE_JDBCURL, includedJDBCURL);
         	_map.put(DATABASE_DRIVERCLASS, "com.mckoi.JDBCDriver");
         } else {

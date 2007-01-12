@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Properties;
@@ -102,6 +103,24 @@ public class Installer {
 	        Writer outputWriter = new BufferedWriter(new FileWriter(distWebXML));
 	        webXML.write(outputWriter);
 	        outputWriter.close();
+	        
+	        // Remove commons-collections, commons-dbcp, and commons-pool 
+	        // from fedora.war if using Tomcat 5.0
+	        String container = _opts.getValue(InstallOptions.SERVLET_ENGINE);
+	        File tomcatHome = new File(_opts.getValue(InstallOptions.TOMCAT_HOME));
+	        File webinfLib = new File(warStage, "WEB-INF/lib/");
+	        File dbcp55 = new File(tomcatHome, "common/lib/naming-factory-dbcp.jar");
+        	File dbcp6 = new File(tomcatHome, "lib/tomcat-dbcp.jar");
+	        if ( container.equals(InstallOptions.INCLUDED) || 
+	        		(container.equals(InstallOptions.EXISTING_TOMCAT) && !(dbcp55.exists() || dbcp6.exists())) ) {
+	        	new File(webinfLib, Distribution.COMMONS_COLLECTIONS).delete();
+	        	new File(webinfLib, Distribution.COMMONS_DBCP).delete();
+	        	new File(webinfLib, Distribution.COMMONS_POOL).delete();
+	        	// JDBC driver installation into common/lib for Tomcat 5.0 is 
+	        	// handled by ExistingTomcat50
+	        } else {
+	        	installJDBCDriver(_dist, _opts, webinfLib);
+	        }
 
 	        File fedoraWar = new File(installDir, Distribution.FEDORA_WAR);
 	        Zip.zip(fedoraWar, warStage.listFiles());
@@ -112,6 +131,46 @@ public class Installer {
     	} catch(IOException e) {
     		throw new InstallationFailedException(e.getMessage(), e);
     	}
+    }
+    
+    public static void installJDBCDriver(Distribution dist, InstallOptions opts, File destDir) throws InstallationFailedException {
+    	String databaseDriver = opts.getValue(InstallOptions.DATABASE_DRIVER);
+    	String database = opts.getValue(InstallOptions.DATABASE);
+        InputStream is;
+        File driver = null;
+        boolean success = true;
+        try {
+        	if (databaseDriver.equals(InstallOptions.INCLUDED)) {
+        		if (database.equals(InstallOptions.INCLUDED)) {
+        			File zipFile = File.createTempFile("mckoi", ".zip");
+        			FileUtils.copy(dist.get(Distribution.MCKOI), new FileOutputStream(zipFile));
+        			Zip.extractFile(zipFile, Distribution.MCKOI_BASENAME + "/mckoidb.jar", new File(destDir, "mckoidb.jar"));
+        		} else if (database.equals(InstallOptions.MCKOI)) {
+    	        	is = dist.get(Distribution.JDBC_MCKOI);
+    	        	driver = new File(destDir, Distribution.JDBC_MCKOI);
+    	        	success = FileUtils.copy(is, new FileOutputStream(driver));
+    	        } else if (database.equals(InstallOptions.MYSQL)) {
+    	        	is = dist.get(Distribution.JDBC_MYSQL);
+    	        	driver = new File(destDir, Distribution.JDBC_MYSQL);
+    	        	success = FileUtils.copy(is, new FileOutputStream(driver));
+    	        } else if (database.equals(InstallOptions.POSTGRESQL)) {
+    	        	is = dist.get(Distribution.JDBC_POSTGRESQL);
+    	        	driver = new File(destDir, Distribution.JDBC_POSTGRESQL);
+    	        	success = FileUtils.copy(is, new FileOutputStream(driver));
+    	        }
+        	} else {
+        		File f = new File(opts.getValue(InstallOptions.DATABASE_DRIVER));
+        		driver = new File(destDir, f.getName());
+	        	success = FileUtils.copy(f, driver);
+        	}
+
+	        if (!success) {
+	        	throw new InstallationFailedException("Copy to " + 
+	        			driver.getAbsolutePath() + " failed.");
+	        }
+        } catch (IOException e) {
+        	throw new InstallationFailedException(e.getMessage(), e);
+		}
     }
     
     private void deployLocalService(Container container, String filename) throws InstallationFailedException {

@@ -1,5 +1,7 @@
 package fedora.utilities.install.container;
 
+import java.io.File;
+
 import fedora.utilities.install.Distribution;
 import fedora.utilities.install.InstallOptions;
 
@@ -15,7 +17,14 @@ public class ContainerFactory {
 		if (servletEngine.equals(InstallOptions.INCLUDED)) {
 			return new BundledTomcat(dist, options);
 		} else if (servletEngine.equals(InstallOptions.EXISTING_TOMCAT)) {
-			return new ExistingTomcat(dist, options);
+			File tomcatHome = new File(options.getValue(InstallOptions.TOMCAT_HOME));
+        	File dbcp55 = new File(tomcatHome, "common/lib/naming-factory-dbcp.jar");
+        	File dbcp6 = new File(tomcatHome, "lib/tomcat-dbcp.jar");
+        	if (dbcp55.exists() || dbcp6.exists()) {
+        		return new ExistingTomcat(dist, options);
+        	} else {
+        		return new ExistingTomcat50(dist, options);
+        	}
 		} else {
 			return new DefaultContainer(dist, options);
 		}

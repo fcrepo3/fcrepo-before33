@@ -141,6 +141,11 @@
             <pathelement location="${lib.saaj}"/>
             <pathelement location="${lib.tt-bytecode}"/>
             <pathelement location="${lib.wsdl4j}"/>
+        	
+        	<!-- DBCP libs (removed by installer if installed to Tomcat 5.0.x-->
+        	<pathelement location="${lib.commons-collections}"/>
+        	<pathelement location="${lib.commons-dbcp}"/>
+        	<pathelement location="${lib.commons-pool}"/>
         </path>
         <map from="${lib.dir}${file.separator}" to=""/>
     </pathconvert>

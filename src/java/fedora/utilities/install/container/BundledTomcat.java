@@ -19,6 +19,11 @@ public class BundledTomcat extends Tomcat {
 		super(dist, options);
 	}
 	
+	public void install() throws InstallationFailedException {
+		super.install();
+		installJDBCDriver();
+	}
+	
 	protected void installTomcat() throws InstallationFailedException {
 		System.out.println("Installing Tomcat...");
 		try {
@@ -64,6 +69,34 @@ public class BundledTomcat extends Tomcat {
 	        }
 		} catch (IOException e) {
 			throw new InstallationFailedException(e.getMessage(), e);
+		}
+	}
+	
+	protected void installJDBCDriver() throws InstallationFailedException {
+		String database = getOptions().getValue(InstallOptions.DATABASE);
+        InputStream is;
+        File driver = null;
+        boolean success = true;
+        try {
+	        if (database.equals(InstallOptions.MCKOI)) {
+	        	is = getDist().get(Distribution.JDBC_MCKOI);
+	        	driver = new File(getCommonLib(), Distribution.JDBC_MCKOI);
+	        	success = FileUtils.copy(is, new FileOutputStream(driver));
+	        } else if (database.equals(InstallOptions.MYSQL)) {
+	        	is = getDist().get(Distribution.JDBC_MYSQL);
+	        	driver = new File(getCommonLib(), Distribution.JDBC_MYSQL);
+	        	success = FileUtils.copy(is, new FileOutputStream(driver));
+	        } else if (database.equals(InstallOptions.POSTGRESQL)) {
+	        	is = getDist().get(Distribution.JDBC_POSTGRESQL);
+	        	driver = new File(getCommonLib(), Distribution.JDBC_POSTGRESQL);
+	        	success = FileUtils.copy(is, new FileOutputStream(driver));
+	        }
+	        if (!success) {
+	        	throw new InstallationFailedException("Copy to " + 
+	        			driver.getAbsolutePath() + " failed.");
+	        }
+        } catch (IOException e) {
+        	throw new InstallationFailedException(e.getMessage(), e);
 		}
 	}
 }

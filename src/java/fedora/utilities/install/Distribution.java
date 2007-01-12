@@ -26,6 +26,10 @@ public abstract class Distribution {
 	public static final String TOMCAT_BASENAME;
 	public static final String MCKOI_BASENAME;
 	
+	public static final String COMMONS_COLLECTIONS;
+	public static final String COMMONS_DBCP;
+	public static final String COMMONS_POOL;
+	
 	private static Properties PROPS;
 	static {
 		// an up to date install.properties should be provided by the buildfile
@@ -45,6 +49,11 @@ public abstract class Distribution {
         JDBC_POSTGRESQL = PROPS.getProperty("install.jdbc.postgresql");
         TOMCAT_BASENAME = PROPS.getProperty("install.tomcat.basename");
         MCKOI_BASENAME = PROPS.getProperty("install.mckoi.basename");
+        
+        COMMONS_COLLECTIONS = PROPS.getProperty("install.commons.collections");
+        COMMONS_DBCP = PROPS.getProperty("install.commons.dbcp");
+        COMMONS_POOL = PROPS.getProperty("install.commons.pool");
+        
     }
 
     public abstract boolean contains(String path);
