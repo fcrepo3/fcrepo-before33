@@ -20,6 +20,8 @@ public class CacheElement {
 	
 	private String credentialsCheck;
 
+	
+	private boolean valid = false;
 	private Boolean authenticated = null;
 	private Set roles = null;
 	private Map namedValues = null;
@@ -76,6 +78,7 @@ public class CacheElement {
 		this.errorMessage = errorMessage;
 		log.debug("in ce.pop");
 		if (errorMessage == null) {
+			valid = true;
 			this.authenticated = authenticated;
 			if (predicates == null) {
 				this.roles = NULL_SET;
@@ -157,18 +160,21 @@ public class CacheElement {
 			}
 		} else { //previous authentication has timed out (or no previous authentication)
 			log.debug(this.getClass().getName() + " new authentication needed");
+			valid = false;
 			cacheElementPopulator.populateCacheElement(this, password);
 			credentialsCheck = password;
-			if (authenticated == null) {
+			if (valid && (authenticated != null)) {
+				if (((Boolean)authenticated).booleanValue()) {
+					log.debug(this.getClass().getName() + " authentication succeeded");
+					expiration = getExpiration(cache.getAuthSuccessTimeoutDuration(), cache.getAuthSuccessTimeoutUnit());				
+				} else {
+					log.debug(this.getClass().getName() + " authentication failed");
+					expiration = getExpiration(cache.getAuthFailureTimeoutDuration(), cache.getAuthFailureTimeoutUnit());				
+				}
+			} else {
 				log.debug(this.getClass().getName() + " couldn't authenticate");
 				expiration = getExpiration(cache.getAuthExceptionTimeoutDuration(), cache.getAuthExceptionTimeoutUnit());				
-			} else if (((Boolean)authenticated).booleanValue()) {
-				log.debug(this.getClass().getName() + " authentication succeeded");
-				expiration = getExpiration(cache.getAuthSuccessTimeoutDuration(), cache.getAuthSuccessTimeoutUnit());				
-			} else {
-				log.debug(this.getClass().getName() + " authentication failed");
-				expiration = getExpiration(cache.getAuthFailureTimeoutDuration(), cache.getAuthFailureTimeoutUnit());				
-			}
+			} 
 			authenticated = this.authenticated;
 		}
 		return authenticated;
@@ -181,19 +187,24 @@ public class CacheElement {
 		CacheElementPopulator cacheElementPopulator = cache.getCacheElementPopulator();
 		Calendar now = Calendar.getInstance();
 		log.debug(this.getClass().getName() + ".getPredicates()");
-		if ((expiration != null) && now.before(expiration)) {
+		if (valid && (expiration != null) && now.before(expiration)) {
 			log.debug(this.getClass().getName() + " cache valid"); 
 		} else { //previous X has timed out (or no previous X)
 			log.debug(this.getClass().getName() + " new X needed");
 			roles = null;
-			try {
+			try {		
+				valid = false;
 				cacheElementPopulator.populateCacheElement(this, password);
+				if (valid) {
+					expiration = getExpiration(cache.getAuthSuccessTimeoutDuration(), cache.getAuthSuccessTimeoutUnit());				
+				} else {
+					expiration = getExpiration(cache.getAuthExceptionTimeoutDuration(), cache.getAuthExceptionTimeoutUnit());				
+				} 				
 			} catch (Throwable t) {
 			}
 		}
 		return roles;
 	}	
-	
 	
 	/* synchronize so evaluation of cache item state will be sequential, non-interlaced
 	(protect against overlapping calls resulting in redundant authenticator calls)
@@ -202,13 +213,28 @@ public class CacheElement {
 		CacheElementPopulator cacheElementPopulator = cache.getCacheElementPopulator();
 		Calendar now = Calendar.getInstance();
 		log.debug(this.getClass().getName() + ".getNamedValues()");
-		if ((expiration != null) && now.before(expiration)) {
+		log.debug(this.getClass().getName() + ".getNamedValues() expiration==" + expiration);
+		log.debug(this.getClass().getName() + ".getNamedValues() now==" + now);
+		if (expiration != null) {
+			log.debug(this.getClass().getName() + ".getNamedValues() expiration==" + expiration.toString());
+			log.debug(this.getClass().getName() + ".getNamedValues() cmp==" + now.before(expiration));
+		}
+		if (now != null) {
+			log.debug(this.getClass().getName() + ".getNamedValues() now==" + now.toString());
+		}
+		if (valid && (expiration != null) && now.before(expiration)) {
 			log.debug(this.getClass().getName() + " cache valid"); 
 		} else { //previous X has timed out (or no previous X)
 			log.debug(this.getClass().getName() + " new X needed");
 			namedValues = null;
 			try {
+				valid = false;
 				cacheElementPopulator.populateCacheElement(this, password);
+				if (valid) {
+					expiration = getExpiration(cache.getAuthSuccessTimeoutDuration(), cache.getAuthSuccessTimeoutUnit());				
+				} else {
+					expiration = getExpiration(cache.getAuthExceptionTimeoutDuration(), cache.getAuthExceptionTimeoutUnit());				
+				}
 				if (namedValues == null) {
 					namedValues = EMPTY_MAP;
 				}
