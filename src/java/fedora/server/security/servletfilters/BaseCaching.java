@@ -157,14 +157,17 @@ public abstract class BaseCaching extends BaseContributing implements CacheEleme
 			}
 			setLocally = true;
 		} else if (SPONSORED_USER_KEY.equals(key)) {
+			log.error(format(method, null, "\"SPONSORED_USER_KEY\"", SPONSORED_USER_KEY));
+			log.error(format(method, null, "other filters associated with this filter for surrogates", value));
 			String[] temp = value.split(",");
 			FILTERS_CONTRIBUTING_SPONSORED_ATTRIBUTES = new Vector(temp.length);
 			for (int i = 0; i < temp.length; i++) {
+				log.error(format(method, null, "adding", temp[i]));
 				FILTERS_CONTRIBUTING_SPONSORED_ATTRIBUTES.add(temp[i]);
 			}
 			setLocally = true;			
     	} else {
-        	if (log.isErrorEnabled()) log.error(format(method, "deferring to super"));
+        	if (log.isDebugEnabled()) log.debug(format(method, "deferring to super"));
     		super.initThisSubclass(key, value);
     	}
 		if (setLocally) {

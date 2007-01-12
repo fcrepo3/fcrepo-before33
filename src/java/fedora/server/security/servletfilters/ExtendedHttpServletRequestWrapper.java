@@ -51,15 +51,18 @@ public class ExtendedHttpServletRequestWrapper
     private String sponsoredUser = null;  // null == not yet set; "" == no sponsored user; other values valid
 
     private void setSponsoredUser(String sponsoredUser) throws Exception {
-    	if (sponsoredUser == null) {
+    	if (this.sponsoredUser == null) {
         	this.sponsoredUser = sponsoredUser;
     	}
     }
 
     public void setSponsoredUser() throws Exception {
+    	String method = "setSponsoredUser";
     	String sponsoredUser = "";
+		log.debug(method + " , isSponsoredUserRequested()==" + isSponsoredUserRequested());
     	if (isSponsoredUserRequested()) {
         	sponsoredUser = getFromHeader();
+    		log.debug(method + " , sponsoredUser==" + sponsoredUser);
     	}
     	setSponsoredUser(sponsoredUser);
     }
@@ -247,6 +250,25 @@ public class ExtendedHttpServletRequestWrapper
     		log.debug("===AUDIT===\n");
     	}
     }
+
+    public boolean getAttributeDefined(String key) throws AuthzOperationalException {
+    	boolean defined = false;
+    	Map map = null;
+    	if (isUserSponsored()) {
+    		map = sponsoredAttributes;
+    	} else {
+   			map = authenticatedAttributes;
+    	}
+    	for (Iterator iterator = map.values().iterator(); iterator.hasNext(); ) {
+    		Map attributesFromOneAuthority = (Map) iterator.next();
+    		if (attributesFromOneAuthority.containsKey(key)) {
+    			defined = true;
+    			break;
+    		}
+    	}    			
+    	return defined;
+    }    	
+
     
     public Set getAttributeValues(String key) throws AuthzOperationalException {
     	Set accumulatedValues4Key = null;
@@ -277,6 +299,12 @@ public class ExtendedHttpServletRequestWrapper
     public boolean hasAttributeValues(String key) throws AuthzOperationalException {
     	Set temp = getAttributeValues(key);
     	return ! temp.isEmpty();
+    }
+    
+    public boolean isAttributeDefined(String key) throws AuthzOperationalException {
+    	boolean  isAttributeDefined;
+    	isAttributeDefined = getAttributeDefined(key);
+    	return isAttributeDefined;
     }
 
     private void putIntoMap(Map map, String key, Object value) throws Exception {

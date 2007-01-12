@@ -56,6 +56,8 @@ public interface ExtendedHttpServletRequest
     public Set getAttributeValues(String key) throws AuthzOperationalException;
     
     public boolean hasAttributeValues(String key) throws AuthzOperationalException;
+    
+    public boolean isAttributeDefined(String key) throws AuthzOperationalException;
 
     public void addRoles(String authority, Set roles) throws Exception;
 
