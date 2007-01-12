@@ -51,7 +51,7 @@ public class FilterXmlUserfile extends BaseCaching implements Constants {
     		FILEPATH = value; 
         	setLocally = true;   	
     	} else {
-        	if (log.isErrorEnabled()) log.error(format(method, "deferring to super"));
+        	if (log.isDebugEnabled()) log.debug(format(method, "deferring to super"));
     		super.initThisSubclass(key, value);
     	}
 		if (setLocally) {
