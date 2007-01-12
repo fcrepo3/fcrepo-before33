@@ -24,6 +24,7 @@
 	<div id="tocbox">
 		<ol>
 			<li><a href="#fedora22">Fedora 2.2 Release</a></li>
+			<li><a href="#new">New Features And Enhancements</a></li>
 			<li><a href="#bugs">Bug Fixes</a></li>
 			<li><a href="#issues">Known Issues</a></li>
 			<li><a href="#install">Installation</a></li>
@@ -78,8 +79,8 @@
 			<p/>
 			<p/>
 			<p/>
-			<p><b>New Features and Enhancements</b></p>
-			</p>
+		</li>
+		<li><h3><a name="new">New Features and Enhancements</b></a></h3>
 			<ol>
 
 				<li>Fedora now requires Java 1.5 or higher<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
@@ -102,7 +103,7 @@
 					 backend SQL database configuration. In addition to configuring the type of servlet 
 					 container where Fedora is to be installed, the installer also configures XACML policy 
 					 configuration, and configuration of the Fedora security configuration. The new installer
-					 greatly simplifies the task of installing and configuring Fedora wheter you are a novice
+					 greatly simplifies the task of installing and configuring Fedora whether you are a novice
 					 user or a veteran developer. For complete details on the new installer and options, please 
 					 see the <a href="installation.html">Fedora Installation And Configuration Guide</a>.</p>
 				</li>
@@ -119,9 +120,10 @@
 					<a href="../server/security/securingrepo.html">Securing Your Repo</a>.</p>
 				</li>			
 				
-				<li>new method "compareDatastreamChecksum" added to API-M<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
-					<p>In response to the Fedora community, support for	adding checksums on datastreams has been added to API-M.
-					A new method called compareDatastreamChecksum has been added to API-M for comparing the current datastream 
+				<li>New method "compareDatastreamChecksum" added to API-M<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
+					<p>In response to the Fedora community and the Fedora Preservation Working Group's recommendations, 
+					support for	adding checksums on datastreams has been added to the Fedora core. A new method named 
+					"compareDatastreamChecksum" has been added to API-M for comparing the current datastream 
 					checksum stored in the Fedora xml object with a freshly computed checksum. Here is the new method signature:</p>
 					<div class="code">
 						<pre>
@@ -130,7 +132,7 @@ public String compareDatastreamChecksum(String PID,
                                         String versionDate)				
 						</pre>
 					</div>		
-					<p>There are two new configuration parameters in fedora.fcfg related to the new checksum feature. The
+					<p>There are also two new configuration parameters in fedora.fcfg related to the new checksum feature. The
 					<i>autoChecksum</i> parameter controls whether checksums are to be computed for every datastream. By default <i>autoChecksum</i> 
 					is set to false which disables automatic checksums. When set to true, checksums will automatically be computed
 					for each datastream during the API-M operations for ingest, addDatastream, modifyDatastreamByReference, 
@@ -138,7 +140,7 @@ public String compareDatastreamChecksum(String PID,
 					algorithm to be used when automatically computing checksums. Fedora currently supports the
 					following checksum algorithms: MD5, SHA-1, SHA-256, SHA-384, and SHA-512. 
 					For complete details on the new checksum feature, refer to the document
-					<a href="../server/features/checksum.html">Datastream Checksum Feature</a>.
+					<a href="../server/features/checksumming.html">Checksums on Datastreams in Fedora</a>.
 				</li>				
 				
 				<li>Journaling<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
@@ -146,7 +148,7 @@ public String compareDatastreamChecksum(String PID,
 						modifications to a Fedora repository.  These logs can be used in a live leader/follower configuration 
 						to support automatic replication to an identical Fedora repository, as well as for diagnostic or 
 						auditing purposes. For additional details on the new journaling feature, please refer to
-						the document <a href="../server/journaling/index.html">Journaling Guide</a></p>
+						the document <a href="../server/journal/index.html">Journaling Guide</a></p>
 				</li>								
 
 				<li>Add ownerId object property for a digital object<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
@@ -179,11 +181,11 @@ public String compareDatastreamChecksum(String PID,
 					of ownerId on a digital object.</p>
 					<p>Here are the old and new signature for the method:</p>
 					<div class="code">
-						<p><b>Old</b></p>
+					<b>Old</b>
 						<pre>
 public String modifyObject(String PID, String state, String label, String logMessage) 		
 						</pre>
-						<p><b>New</b></p>
+						<b>New</b>
 						<pre>
 public String modifyObject(String PID, String state, String label, String ownerId, String logMessage) 
 						</pre>
@@ -217,17 +219,16 @@ public String modifyObject(String PID, String state, String label, String ownerI
 					April 4th, 2006. The Postgres addition requires a table name change for the backend SQL database table named "do" to the
 					new name of "dobj". The change was necessary because the name of "do" is considered a reserved word for Postgres. The new
 					installer will automatically handle the table name change for existing repositories migrating to Fedora 2.2. For additional details
-					on migrating from an earlier release of Fedora to Fedora 2.2, see the <a href="migration.html">Fedora Upgrade and Migrattion Guide</a>
+					on migrating from an earlier release of Fedora to Fedora 2.2, see the <a href="migration.html">Fedora Upgrade and Migration Guide</a>
 				</li>
 				
 				<li>VERSIONABLE attribute on datastreams fully implemented
 					<p>Fedora 2.2 fully implements the VERSIONABLE 
-					attribute on datastreams and adds a new method named setDatastreamVersionable to API-M to enable changing 
+					attribute on datastreams and adds a new method named "setDatastreamVersionable" to API-M to enable changing 
 					the versionable state of a datastream. This functionality enables repository managers to selectively turn 
-					versioning on or off for selected datastreams. This new feature can also be controlled used XACML policies 
+					versioning on or off for selected datastreams. This new feature can also be controlled using XACML policies 
 					by restricting access to the setDatastreamVersionable method in API-M which allows repository managers to 
 					decide if they want to enable this feature or not. The signature for the new method is as follows:</p>
-					<p>Here are the old and new signature for the method:</p>
 					<div class="code">
 						<pre>
 public String setDatastreamVersionable(String PID, 
@@ -236,18 +237,27 @@ public String setDatastreamVersionable(String PID,
                                        String logMessage)	
 						</pre>		
 					</div>
+					<p>The versionable attribute is an optional attribute in the FOXML schema. If omitted from the object xml,
+					it defaults to the value of true enabling versioning. If set to false, it disables versioning for the
+					datastream. When versioning is disabled, subsequent modifications to the datastream replace the current
+					datastream contents and no versioning history is preserved. Once an object has been ingested, the
+					"setDatastreamVersionable" method of API-M can be used to alter the versionable state of a datastream.
+					For details regarding the syntax of the versionable attribute in the object xml, refer to the 
+					<a href="http://www.fedora.info/definitions/1/0/api/foxml1-0.xsd">FOXML</a> 
+					and/or <a href="http://www.fedora.info/definitions/1/0/api/mets-fedora-ext.xsd">METS</a> schemas.
 				</li>				
 				
 				<li>Changes to "addDatastream" method in API-M
-					<p>As part of the refactoring to fully implement 
-					the VERSIONABLE attribute on datastreams, the signature for the method addDatastream has changed. 
-					The changes also include two new arguments named "checksumType" and "checksum". The
-					"checksumType" argument specifies the checksum algorithm to use in computing the checksum
-					value. Valid values are MD5, SHA-1, SHA-256, SHA-385, and SHA-512. The "checksum" argument 
-					is the value of the checksum represented as a hexidecimal string.</p>
-					<p>Here are the old and new signature for the method:</p>
+					<p>The implementation of the new checksum feature for datastreams includes some argument changes
+					for the "addDatastream" method of API-M. The changes include two new arguments named "checksumType" 
+					and "checksum". The	"checksumType" argument specifies the checksum algorithm to use in computing 
+					the checksum value. Valid values are MD5, SHA-1, SHA-256, SHA-385, and SHA-512. The "checksum" 
+					argument is the value of the checksum represented as a hexadecimal string. The "versionable"
+					argument is also fully implemented now and can be used to control whether the datastream is
+					to use versioning or not.</p>
+					<p>Here are the old and new signatures for the method:</p>
 					<div class="code">
-						<p><b>Old</b></p>
+						<b>Old</b>
 						<pre>
 public String addDatastream(String pid,
                             String dsID,
@@ -261,7 +271,7 @@ public String addDatastream(String pid,
                             String dsState,
                             String logMessage) 		
 						</pre>
-						<p><b>New</b></p>
+						<b>New</b>
 						<pre>
 public String addDatastream(String pid,
                             String dsID,
@@ -282,17 +292,17 @@ public String addDatastream(String pid,
 				
 				<li>Changes to "modifyDatastreamByReference" method in API-M
 					<p>As part of the refactoring to 
-					fully implement the VERSIONABLE attribute on datastreams, the signature for the method 
-					modifyDatastreamByReference has changed. The changes include removal of the "versionable" 
+					fully implement the VERSIONABLE attribute on datastreams, the signature for the API-M method 
+					named "modifyDatastreamByReference" has changed. The changes include removal of the "versionable" 
 					and "dsState" arguments. Changes to the state or versionable status of a datastream should be 
-					handled using the setDatastreamState and setDatastreamVersionable methods, respectively.
+					handled using the "setDatastreamState" and "setDatastreamVersionable" methods, respectively.
 					The changes also include two new arguments named "checksumType" and "checksum". The
 					"checksumType" argument specifies the checksum algorithm to use in computing the checksum
 					value. Valid values are MD5, SHA-1, SHA-256, SHA-385, and SHA-512. The "checksum" argument 
-					is the value of the checksum represented as a hexidecimal string.</p>
+					is the value of the checksum represented as a hexadecimal string.</p>
 					<p>Here are the old and new signature for the method:</p>
 					<div class="code">
-						<p><b>Old</b></p>
+						<b>Old</b>
 						<pre>
 public String modifyDatastreamByReference(String PID, 
                                           String datastreamID,
@@ -306,8 +316,7 @@ public String modifyDatastreamByReference(String PID,
                                           String logMessage, 
                                           boolean force)
 						</pre>
-						<p><b>New</b></p>
-						<p>
+						<b>New</b>
 						<pre>
 public String modifyDatastreamByReference(String PID, 
                                           String datastreamID,
@@ -325,17 +334,18 @@ public String modifyDatastreamByReference(String PID,
 				</li>
 				
 				<li>Changes to "modifyDatastreamByValue" method in API-M
-					<p>As part of the refactoring to fully implement 
-					the VERSIONABLE attribute on datastreams, the signature for the method modifyDatastreamByValue has changed. 
-					The changes include removal of the "versionable" and "dsState " arguments. Changes to the state or 
-					versionable status of a datastream should be handled using the setDatastreamState and setDatastreamVersionable 
-					methods, respectively. The changes also include two new arguments named "checksumType" and "checksum". The
-					"checksumType" argument specifies the checksum algorithm to use in computing the checksum
-					value. Valid values are MD5, SHA-1, SHA-256, SHA-385, and SHA-512. The "checksum" argument 
-					is the value of the checksum represented as a hexidecimal string.</p>
+					<p>As part of the refactoring to fully implement the VERSIONABLE attribute on datastreams, 
+					the signature for the API-M method "modifyDatastreamByValue" has changed. The changes 
+					include removal of the "versionable" and "dsState " arguments. Changes to the state or 
+					versionable status of a datastream should be handled using the "setDatastreamState" and 
+					"setDatastreamVersionable" methods, respectively. The changes also include two new arguments 
+					named "checksumType" and "checksum". The "checksumType" argument specifies the checksum 
+					algorithm to use in computing the checksum value. Valid values are MD5, SHA-1, SHA-256, 
+					SHA-385, and SHA-512. The "checksum" argument is the value of the checksum represented as 
+					a hexadecimal string.</p>
 					<p>Here are the old and new signature for the method:</p>
 					<div class="code">
-						<p><b>Old</b></p>
+						<b>Old</b>
 						<pre>
 public String modifyDatastreamByValue(String PID, 
                                       String datastreamID, 
@@ -349,7 +359,7 @@ public String modifyDatastreamByValue(String PID,
                                       String logMessage, 
                                       boolean force) 		
 						</pre>
-						<p><b>New</b></p>
+						<b>New</b>
 						<pre>
 public String modifyDatastreamByValue(String PID, 
                                       String datastreamID, 
@@ -368,26 +378,27 @@ public String modifyDatastreamByValue(String PID,
 				
 				<li>Change to "purgeDatastream" method in API-M
 					<p>In response to the Fedora community, the signature for 
-					the method named purgeDatastream has been changed. The new signature and underlying changes to the method 
-					enable the purging of a specific datastream version or purging of a range of datastream versions. Here are 
-					the old and new signatures:</p>
+					the API-M method named "purgeDatastream" has been changed to provide additional
+					functionality. The new signature and underlying changes to the method 
+					enable the purging of a specific datastream version or purging of a range 
+					of datastream versions. Here are the old and new signatures:</p>
 					<div class="code">
-						<p><b>Old</b></p>
+						<b>Old</b>
 						<pre>
 public String[ ] purgeDatastream(String pid,
-						         String datastreamID, 
-						         String endDT,
-						         String logMessage,
-						         boolean force)
+                                 String datastreamID,
+                                 String endDT,
+                                 String logMessage,
+                                 boolean force)
 						</pre>
-						<p><b>New</b></p>
+						<b>New</b>
 						<pre>
-public String[ ] purgeDatastream(String PID, 
-                                String datastreamID, 
-                                String startDT,
-                                String endDT,
-                                String logMessage,
-                                boolean force)			
+public String[ ] purgeDatastream(String PID,
+                                 String datastreamID,
+                                 String startDT,
+                                 String endDT,
+                                 String logMessage,
+                                 boolean force)			
 						</pre>			
 					</div>
 					<p>Changes supporting this new functionality have also been made in the Fedora administrative client.</p>		
@@ -439,8 +450,8 @@ public String[ ] purgeDatastream(String PID,
 					implements support for the contentDigest element with this change to the schema. In addition, the new value
 					of <i>info:fedora/fedora-system:def/model#ownerId</i> was added to the enumeration list for propertyType
 					to support the new property of ownerId.
-					(see: <a href="http://www.fedora.info/definitions/1/0/api/foxml1.0.xsd">
-					www.fedora.info/definitions/1/0/api/foxml1.0.xsd</a> for complete details)</p>
+					(see: <a href="http://www.fedora.info/definitions/1/0/api/foxml1-0.xsd">
+					www.fedora.info/definitions/1/0/api/foxml1-0.xsd</a> for complete details)</p>
 				</li>
 				
 				<li>Export Context Of "Archive" Implemented
@@ -454,7 +465,8 @@ public String[ ] purgeDatastream(String PID,
 				
 				<li>Changes to Batch Modify Client Utility
 					<p>Fedora 2.2 updates the Batch Modify client utility to include changes related to the API-M method signature
-					changes previously mentioned. For details about specific changes to the Batch Modify directives schema,
+					changes previously mentioned. Changes also include support for new features like datastream checksums and
+					the ownerId property. For details about specific changes to the Batch Modify directives schema,
 					please refer to the <a href="http://www.fedora.info/definitions/1/0/api/batchModify.xsd">batchModify.xsd schema
 					file.</a></p>
 				</li>
