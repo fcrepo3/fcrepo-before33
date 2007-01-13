@@ -67,21 +67,45 @@
                 <li> An average FOXML size of 4kb</li>
              </ul>
         </li>
-        <li> Disabled policy enforcement</li>
       </ul>
   </div>
 
   <div class="sec2">
     <h2><a name="results">Test Results</a></h2>
 
+    <img src="summary.png"/>
+
     <pre>
-Fedora DB  AuthZ RILv  RIImpl    RIFlush Test          Avg. Millis/Obj
----------  ----- ----  --------  ------- -----         ---------------
+            Fedora API-M Performance Results (Commodity Hardware)
+            =====================================================
+
+Measurements were taken from the client, running on the same machine.
+
+Each object started with four inline XML datastreams, two managed content
+datastreams, and no disseminators.  For the purpose of consistency, the
+size each datastream was kept to a minimum (under 200 bytes)
+
+Test Type    Description
+-----------  -----------------------------------------------------------------
+ingestObjI   Ingest objects with managed content base64-encoded
+ingestObjP   Ingest objects with managed content uploaded via HTTP POST
+             prior to the ingest call (the upload is part of the measurement)
+modDSByRefV  Modify versionable managed content by first uploading the value
+             via HTTP POST, then making the modifyDatastreamByReference call
+             (the upload is part of the measurement)
+modDSByValV  Modify versionable inline XML content via modifyDatastreamByValue
+purgeDSIV    Purge all versions (2) of a versionable inline XML datastream
+purgeDSMV    Purge all versions (2) of a versionable managed datastream
+purgeObj     Purge the entire object
+
+
+Fedora DB  AuthZ RILv  RIImpl    RIFlush Test Type     Avg. Millis/Obj
+---------  ----- ----  --------  ------- -----------   ---------------
                                                        2.1.1     2.2
                                                        -----    ------
 
 MySQL      off   0     NA        NA      ingestObjI       --     37.83
-                                         ingestObjP    49.94     45.07
+                                         ingestObjP    49.33     45.07
                                          modDSByRefV  204.42     32.51
                                          modDSByValV  197.11     26.11
                                          purgeDSIV    196.34     24.18
@@ -89,7 +113,7 @@ MySQL      off   0     NA        NA      ingestObjI       --     37.83
                                          purgeObj     208.65     14.58
 
 MySQL      on    0     NA        NA      ingestObjI       --     58.54
-                                         ingestObjP    49.33     63.33
+                                         ingestObjP    49.94     63.33
                                          modDSByRefV  232.74     50.77
                                          modDSByValV  235.96*    41.58
                                          purgeDSIV    237.25*    39.67
@@ -119,7 +143,7 @@ MySQL      off   2     Kowari    Sync    ingestObjI       --    966.41*
                                          purgeDSIV        --    705.09*
                                          purgeDSMV        --    743.15*
                                          purgeObj         --    977.60*
-
+ 
 MySQL      off   2     MPTStore  Async   ingestObjI       --    61.49
                                          ingestObjP       --    61.49
                                          modDSByRefV      --    52.17
@@ -136,7 +160,13 @@ MySQL      off   2     MPTStore  Sync    ingestObjI       --    60.34
                                          purgeDSMV        --    48.81
                                          purgeObj         --    42.28
 
+-------------------------------------------------------------------------
+* Due to time constraints, only 500 operations were run for these tests.
+
     </pre>
+
+    For raw results, please see <a href="raw-results.zip">raw-results.zip</a>.
+    This zip file also includes the program used to run the tests.
   </div>
 
 
