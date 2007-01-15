@@ -21,6 +21,80 @@ public abstract class ConnectionWrapper
         m_wrappedConnection=wrapped;
     }
 
+/*  
+    NOTE: To compile with JDK 1.6, uncomment the following methods
+
+    ///// start of 1.6 methods /////
+
+    public boolean isWrapperFor(Class<?> iface) {
+        throw new UnsupportedOperationException(
+                "Java 1.6 Connection methods are not supported");
+    }
+
+    public <T> T unwrap(Class<T> a) {
+        throw new UnsupportedOperationException(
+                "Java 1.6 Connection methods are not supported");
+    }
+
+    public Struct createStruct(String a, Object[] b) {
+        throw new UnsupportedOperationException(
+                "Java 1.6 Connection methods are not supported");
+    }
+
+    public Array createArrayOf(String a, Object[] b) {
+        throw new UnsupportedOperationException(
+                "Java 1.6 Connection methods are not supported");
+    }
+
+    public java.util.Properties getClientInfo() {
+        throw new UnsupportedOperationException(
+                "Java 1.6 Connection methods are not supported");
+    }
+
+    public void setClientInfo(java.util.Properties a) {
+        throw new UnsupportedOperationException(
+                "Java 1.6 Connection methods are not supported");
+    }
+
+    public void setClientInfo(String a, String b) {
+        throw new UnsupportedOperationException(
+                "Java 1.6 Connection methods are not supported");
+    }
+
+    public boolean isValid(int a) {
+        throw new UnsupportedOperationException(
+                "Java 1.6 Connection methods are not supported");
+    }
+
+    public Clob createClob() {
+        throw new UnsupportedOperationException(
+                "Java 1.6 Connection methods are not supported");
+    }
+
+    public Blob createBlob() {
+        throw new UnsupportedOperationException(
+                "Java 1.6 Connection methods are not supported");
+    }
+
+    public NClob createNClob() {
+        throw new UnsupportedOperationException(
+                "Java 1.6 Connection methods are not supported");
+    }
+
+    public SQLXML createSQLXML() {
+        throw new UnsupportedOperationException(
+                "Java 1.6 Connection methods are not supported");
+    }
+
+    public String getClientInfo(String a) {
+        throw new UnsupportedOperationException(
+                "Java 1.6 Connection methods are not supported");
+    }
+
+    ///// end of 1.6 methods /////
+
+    */
+
     public Statement createStatement()
             throws SQLException {
         return m_wrappedConnection.createStatement();
