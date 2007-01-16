@@ -775,7 +775,7 @@
 		<copy file="${lib.log4j}" todir="${install.build.dir}/lib"/>
 		<copy file="${lib.commons-beanutils}" todir="${install.build.dir}/lib"/>
 		<copy file="${lib.commons-betwixt}" todir="${install.build.dir}/lib"/>
-		<copy file="${lib.commons-collection}" todir="${install.build.dir}/lib"/>
+		<copy file="${lib.commons-collections}" todir="${install.build.dir}/lib"/>
 		<copy file="${lib.commons-digester}" todir="${install.build.dir}/lib"/>
 		<copy file="${lib.commons-logging}" todir="${install.build.dir}/lib"/>
 		<move file="${install.build.dir}/main.jar" todir="${install.build.dir}/main"/>
