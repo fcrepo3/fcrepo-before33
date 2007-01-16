@@ -22,10 +22,25 @@ import java.util.zip.ZipOutputStream;
 public class Zip {
 	private static final int BUFFER = 2048;
 	
+	/**
+	 * Create a zip file.
+	 * 
+	 * @param destination The zip file to create.
+	 * @param source The file or directory to be zipped.
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	public static void zip(File destination, File source) throws FileNotFoundException, IOException {
 		zip(destination, new File[] {source});
 	}
 	
+	/**
+	 * Create a zip file.
+	 * @param destination The zip file to create.
+	 * @param source The File array to be zipped.
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	public static void zip(File destination, File[] source) throws FileNotFoundException, IOException {
 		FileOutputStream dest = new FileOutputStream(destination);
 		ZipOutputStream zout = new ZipOutputStream(new BufferedOutputStream(dest));
@@ -35,6 +50,14 @@ public class Zip {
 		zout.close();
 	}
 	
+	/**
+	 * Extracts the file given by entryName to destination.
+	 * 
+	 * @param zipFile
+	 * @param entryName
+	 * @param destination The extracted destination File.
+	 * @throws IOException
+	 */
 	public static void extractFile(File zipFile, String entryName, File destination) throws IOException {
 		ZipFile zip = new ZipFile(zipFile);
 		
@@ -46,23 +69,27 @@ public class Zip {
 	        	InputStream entryStream = zip.getInputStream(entry);
 	        	try {
 	        		// Create the output file
-	        		destination.getParentFile().mkdirs();
+	        		File parent = destination.getParentFile();
+	        		if (parent != null) {
+	        			parent.mkdirs();
+	        		}
+
 	                FileOutputStream file = new FileOutputStream(destination);
 
 	                try {
-	                   // Allocate a buffer for reading the entry data.
-	                   byte[] buffer = new byte[1024];
-	                   int bytesRead;
+	                	// Allocate a buffer for reading the entry data.
+	                	byte[] data = new byte[BUFFER];
+	                	int bytesRead;
 
-	                   // Read the entry data and write it to the output file.
-	                   while ((bytesRead = entryStream.read(buffer)) != -1) {
-	                	   file.write(buffer, 0, bytesRead);
-	                   }
+	                	// Read the entry data and write it to the output file.
+	                	while ((bytesRead = entryStream.read(data)) != -1) {
+	                		file.write(data, 0, bytesRead);
+	                	}
 	                } finally {
-	                   file.close();
+	                	file.close();
 	                }
 	             } finally {
-	                entryStream.close();
+	            	 entryStream.close();
 	             }
 	          } else {
 	        	  throw new IOException(zipFile.getName() + " does not contain: " + entryName);
@@ -72,6 +99,13 @@ public class Zip {
 	       }
 	}
 	
+	/**
+	 * Unzips the InputStream to the given destination directory.
+	 * @param is
+	 * @param destDir
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	public static void unzip(InputStream is, File destDir) throws FileNotFoundException, IOException {		
 		BufferedOutputStream dest = null;
         ZipInputStream zis = new ZipInputStream(new BufferedInputStream(is));
@@ -166,30 +200,4 @@ public class Zip {
 			}
 		}
 	}
-	
-	protected static boolean deleteDirectory(String directory) {
-        boolean result = false;
-
-        if (directory != null) {
-            File file = new File(directory);
-            if (file.exists() && file.isDirectory()) {
-                // 1. delete content of directory:
-                File[] files = file.listFiles();
-                result = true; //init result flag
-                int count = files.length;
-                for (int i = 0; i < count; i++) { //for each file:
-                    File f = files[i];
-                    if (f.isFile()) {
-                        result = result && f.delete();
-                    } else if (f.isDirectory()) {
-                        result = result && deleteDirectory(f.getAbsolutePath());
-                    }
-                }//next file
-
-                file.delete(); //finally delete (empty) input directory
-            }//else: input directory does not exist or is not a directory
-        }//else: no input value
-
-        return result;
-    }//deleteDirectory()
 }
