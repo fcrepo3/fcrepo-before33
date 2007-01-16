@@ -127,9 +127,10 @@ CacheElementPopulator cacheElementPopulator
 		return authenticated;
 	}
 	
+	/*
 	public final Set getPredicates(CacheElementPopulator authenticator, String userid, String password) throws Throwable{
 		log.debug("cache.getPredicates() called");
-		CacheElement cacheElement = getCacheElement(userid /*, password*/);
+		CacheElement cacheElement = getCacheElement(userid -*, password*-);
 		log.debug(this.getClass().getName() + ".cacheElement==" + cacheElement);
 		Set predicates = null;
 		try {
@@ -143,7 +144,8 @@ CacheElementPopulator cacheElementPopulator
 		}
 		log.debug(this.getClass().getName() + ".authenticated==" + predicates);
 		return predicates;
-	}	
+	}
+*/
 
 	public final Map getNamedValues(CacheElementPopulator authenticator, String userid, String password) throws Throwable{
 		log.debug("cache.getNamedValues() called");

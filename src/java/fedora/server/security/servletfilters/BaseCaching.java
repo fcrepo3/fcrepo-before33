@@ -207,11 +207,13 @@ public abstract class BaseCaching extends BaseContributing implements CacheEleme
 		}
 		try {
 			Cache cache = getCache(FILTER_NAME);
+			/*
 			if (log.isDebugEnabled()) log.debug(format(method, "calling cache.getPredicates()"));
 			Set predicates = cache.getPredicates(this, userid, password);
+			*/
 			if (log.isDebugEnabled()) log.debug(format(method, "calling cache.getNamedValues()"));
 			Map namedValues = cache.getNamedValues(this, userid, password);
-			extendedHttpServletRequest.addRoles(FILTER_NAME, predicates);
+			//extendedHttpServletRequest.addRoles(FILTER_NAME, predicates);
 			extendedHttpServletRequest.addAttributes(FILTER_NAME, namedValues);
 			if (log.isDebugEnabled()) log.debug(format(method, "gatherAttributes calling audit"));
 			cache.audit(userid);

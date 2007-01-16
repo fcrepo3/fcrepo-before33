@@ -49,8 +49,8 @@ public class FilterPubcookie extends BaseCaching {
 	private String PUBCOOKIE_LOGINPAGE_INPUT_NAME_USERID = "";
 	private String PUBCOOKIE_LOGINPAGE_INPUT_NAME_PASSWORD = ""; 
 	
-	private String TRUSTSTORE_LOCATION = "/fedora/server/truststore";
-	private String TRUSTSTORE_PASSWORD = "tomcat";
+	private String TRUSTSTORE_LOCATION = null;
+	private String TRUSTSTORE_PASSWORD = null;
 	
 	public void destroy() {
 		String method = "destroy()"; if (log.isDebugEnabled()) log.debug(enter(method));

@@ -57,7 +57,7 @@ public class FilterXmlUserfile extends BaseCaching implements Constants {
 	public void populateCacheElement(CacheElement cacheElement, String password) {
     	String method = "populateCacheElement()"; if (log.isDebugEnabled()) log.debug(enter(method));
 		Boolean authenticated = null;
-		Set roles = null; 
+		//Set roles = null; 
 		Map namedAttributes = null;
 		String errorMessage = null;
 		authenticated = Boolean.FALSE;
@@ -88,19 +88,19 @@ public class FilterXmlUserfile extends BaseCaching implements Constants {
 			namedAttributes = parser.getNamedAttributes();
 		} catch (Throwable t) {
 			authenticated = null;
-			roles = null; 
+			//roles = null; 
 			namedAttributes = null;
 		}
 		if (log.isDebugEnabled()) {
 			log.debug(format(method, null, "authenticated"));
 			log.debug(authenticated);
 			log.debug(format(method, null, "roles"));
-			log.debug(roles);
+			//log.debug(roles);
 			log.debug(format(method, null, "namedAttributes"));
 			log.debug(namedAttributes);
 			log.debug(format(method, null, "errorMessage", errorMessage));
 		}
-		cacheElement.populate(authenticated, roles, namedAttributes, errorMessage);
+		cacheElement.populate(authenticated, null, namedAttributes, errorMessage);
 		 if (log.isDebugEnabled()) log.debug(exit(method));
 	}
 }

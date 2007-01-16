@@ -108,12 +108,13 @@ public class ExtendedHttpServletRequestWrapper
     	return remoteUser;
     }
 
-    private final Map addedAuthenticatedRoles = new Hashtable();
-    private final Map sponsoredRoles = new Hashtable();
+    //private final Map addedAuthenticatedRoles = new Hashtable();
+    //private final Map sponsoredRoles = new Hashtable();
 
     private final Map authenticatedAttributes = new Hashtable();
     private final Map sponsoredAttributes = new Hashtable();
 
+/*
     public boolean isUserInRole(String role) {
     	boolean isUserInRole = false;
     	Map map = null;
@@ -145,6 +146,7 @@ public class ExtendedHttpServletRequestWrapper
     	}
     	return isUserInRole;
     }
+    */
     
     public final void auditInnerMap(Map map) {
     	if (log.isDebugEnabled()) {
@@ -232,9 +234,9 @@ public class ExtendedHttpServletRequestWrapper
     	if (log.isDebugEnabled()) {
     		log.debug("\n===AUDIT===");
     		log.debug("auditing wrapped request");
-    		auditOuterMap(addedAuthenticatedRoles, "addedAuthenticatedRoles");
+    		//auditOuterMap(addedAuthenticatedRoles, "addedAuthenticatedRoles");
     		auditOuterMap(authenticatedAttributes, "authenticatedAttributes");
-    		auditOuterMap(sponsoredRoles, "sponsoredRoles");
+    		//auditOuterMap(sponsoredRoles, "sponsoredRoles");
     		auditOuterMap(sponsoredAttributes, "sponsoredAttributes");
     		log.debug("===AUDIT===\n");
     	}
@@ -313,12 +315,14 @@ public class ExtendedHttpServletRequestWrapper
     	map.put(key,value);
     }
     
+    /*
     private void putSetIntoMap(Map map, String key, Object value) throws Exception {
     	if (!(value instanceof Set)) {
     		throw new Exception("input parm must be a set");
     	}
     	putIntoMap(map, key, value);
     }
+    */
 
     private void putMapIntoMap(Map map, String key, Object value) throws Exception {    	
     	if (!(value instanceof Map)) {
@@ -327,6 +331,7 @@ public class ExtendedHttpServletRequestWrapper
     	putIntoMap(map, key, value);
     }
 
+    /*
     public void addRoles(String authority, Set roles) throws Exception {
     	if (isUserSponsored()) {
     		// after user is sponsored, only sponsored-user roles/attributes/groups are collected
@@ -338,6 +343,7 @@ public class ExtendedHttpServletRequestWrapper
     		putSetIntoMap(addedAuthenticatedRoles, authority, roles);
     	}
     }
+    */
 
     public void addAttributes(String authority, Map attributes) throws Exception {
     	if (isUserSponsored()) {

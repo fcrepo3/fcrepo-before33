@@ -22,7 +22,7 @@ public class CacheElement {
 
 	private boolean valid = false;
 	private Boolean authenticated = null;
-	private Set roles = null;
+	//private Set roles = null;
 	private Map namedValues = null;
 	
 	private String errorMessage = null;
@@ -30,6 +30,7 @@ public class CacheElement {
 	public final void audit() {
 		log.debug("userid==" + userid);
 		log.debug("authenticated==" + authenticated);
+		/*
 		log.debug("roles==");
 		for (Iterator it = roles.iterator(); it.hasNext(); ) {
 			Object temp = it.next();
@@ -40,6 +41,7 @@ public class CacheElement {
 				log.debug(role + ",");
 			}
 		}
+		*/
 		log.debug("namedAttributes==");
 		for (Iterator it1 = namedValues.keySet().iterator(); it1.hasNext(); ) {
 			Object temp = it1.next();
@@ -79,11 +81,13 @@ public class CacheElement {
 		if (errorMessage == null) {
 			valid = true;
 			this.authenticated = authenticated;
+			/*
 			if (predicates == null) {
 				this.roles = NULL_SET;
 			} else {
 				this.roles = predicates;
 			}
+			*/
 			if (namedValues == null) {
 				log.debug("in ce.pop(), namedValues is null");
 				this.namedValues = EMPTY_MAP;
@@ -163,6 +167,7 @@ public class CacheElement {
 	/* synchronize so evaluation of cache item state will be sequential, non-interlaced
 	(protect against overlapping calls resulting in redundant authenticator calls)
 	*/
+	/*
 	public final synchronized Set getPredicates(Cache cache, String password) {
 		CacheElementPopulator cacheElementPopulator = cache.getCacheElementPopulator();
 		Calendar now = Calendar.getInstance();
@@ -184,7 +189,8 @@ public class CacheElement {
 			}
 		}
 		return roles;
-	}	
+	}
+	*/	
 	
 	/* synchronize so evaluation of cache item state will be sequential, non-interlaced
 	(protect against overlapping calls resulting in redundant authenticator calls)
