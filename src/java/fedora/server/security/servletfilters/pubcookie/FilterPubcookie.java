@@ -93,7 +93,7 @@ public class FilterPubcookie extends BaseCaching {
 		if (log.isDebugEnabled()) log.debug(exit(method));
 	}
 	
-	private /*static*/ final String getAction(Node parent, String pubcookieLoginpageFormName) {
+	private  final String getAction(Node parent, String pubcookieLoginpageFormName) {
 		String method = "getAction()"; if (log.isDebugEnabled()) log.debug(enter(method));
 		String action = "";
         NodeList children = parent.getChildNodes();
@@ -120,7 +120,7 @@ public class FilterPubcookie extends BaseCaching {
 	}
 
 	//initial, setup call
-	private /*static*/ final Map getFormFields(Node parent) {
+	private  final Map getFormFields(Node parent) {
 		String method = "getFormFields(Node parent)";  if (log.isDebugEnabled()) log.debug(enter(method));
 		Map formfields = new Hashtable();
 		getFormFields(parent, formfields);
@@ -129,7 +129,7 @@ public class FilterPubcookie extends BaseCaching {
 	}
 	
 	//inner, recursive call
-	private /*static*/ final void getFormFields(Node parent, Map formfields) {
+	private  final void getFormFields(Node parent, Map formfields) {
 		String method = "getFormFields(Node parent, Map formfields)"; if (log.isDebugEnabled()) log.debug(enter(method));
         NodeList children = parent.getChildNodes();
 	    for (int i = 0; i < children.getLength(); i++) {
