@@ -114,7 +114,7 @@ public class Installer {
 		        File dbcp55 = new File(tomcatHome, "common/lib/naming-factory-dbcp.jar");
 	        	File dbcp6 = new File(tomcatHome, "lib/tomcat-dbcp.jar");
 	        	
-	        	if (dbcp55.exists() || dbcp6.exists()) {
+	        	if (!dbcp55.exists() && !dbcp6.exists()) {
 		        	new File(webinfLib, Distribution.COMMONS_COLLECTIONS).delete();
 		        	new File(webinfLib, Distribution.COMMONS_DBCP).delete();
 		        	new File(webinfLib, Distribution.COMMONS_POOL).delete();
