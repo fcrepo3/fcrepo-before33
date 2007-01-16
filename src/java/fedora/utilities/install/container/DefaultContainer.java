@@ -18,6 +18,6 @@ public class DefaultContainer extends Container {
 	}
 
 	public void install() {
-		System.out.println("Nothing to install for this container.");
+		//Nothing to install for this container.
 	}
 }

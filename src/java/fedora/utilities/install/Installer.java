@@ -107,17 +107,22 @@ public class Installer {
 	        // Remove commons-collections, commons-dbcp, and commons-pool 
 	        // from fedora.war if using Tomcat 5.0
 	        String container = _opts.getValue(InstallOptions.SERVLET_ENGINE);
-	        File tomcatHome = new File(_opts.getValue(InstallOptions.TOMCAT_HOME));
 	        File webinfLib = new File(warStage, "WEB-INF/lib/");
-	        File dbcp55 = new File(tomcatHome, "common/lib/naming-factory-dbcp.jar");
-        	File dbcp6 = new File(tomcatHome, "lib/tomcat-dbcp.jar");
-	        if ( container.equals(InstallOptions.INCLUDED) || 
-	        		(container.equals(InstallOptions.EXISTING_TOMCAT) && !(dbcp55.exists() || dbcp6.exists())) ) {
-	        	new File(webinfLib, Distribution.COMMONS_COLLECTIONS).delete();
-	        	new File(webinfLib, Distribution.COMMONS_DBCP).delete();
-	        	new File(webinfLib, Distribution.COMMONS_POOL).delete();
-	        	// JDBC driver installation into common/lib for Tomcat 5.0 is 
-	        	// handled by ExistingTomcat50
+	        if (container.equals(InstallOptions.INCLUDED) || 
+	        		container.equals(InstallOptions.EXISTING_TOMCAT)) {
+	        	File tomcatHome = new File(_opts.getValue(InstallOptions.TOMCAT_HOME));
+		        File dbcp55 = new File(tomcatHome, "common/lib/naming-factory-dbcp.jar");
+	        	File dbcp6 = new File(tomcatHome, "lib/tomcat-dbcp.jar");
+	        	
+	        	if (dbcp55.exists() || dbcp6.exists()) {
+		        	new File(webinfLib, Distribution.COMMONS_COLLECTIONS).delete();
+		        	new File(webinfLib, Distribution.COMMONS_DBCP).delete();
+		        	new File(webinfLib, Distribution.COMMONS_POOL).delete();
+		        	// JDBC driver installation into common/lib for Tomcat 5.0 is 
+		        	// handled by ExistingTomcat50
+	        	} else {
+		        	installJDBCDriver(_dist, _opts, webinfLib);
+		        }
 	        } else {
 	        	installJDBCDriver(_dist, _opts, webinfLib);
 	        }
