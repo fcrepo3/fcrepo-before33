@@ -10,6 +10,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Properties;
 
 import fedora.server.config.ServerConfiguration;
@@ -27,6 +29,7 @@ public class FedoraHome {
 	private InstallOptions _opts;
 	private File _installDir;
 	private boolean _clientOnlyInstall;
+	private InetAddress _host;
 	
 	public FedoraHome(Distribution dist, InstallOptions opts) {
 		_dist = dist;
@@ -168,7 +171,7 @@ public class FedoraHome {
     	String host = _opts.getValue(InstallOptions.FEDORA_SERVERHOST);
     	if (host != null  && host.length() != 0 && 
     			!(host.equals("localhost") || host.equals("127.0.01"))) {
-    		ipList = new String[] {"127.0.0.1", host};
+    		ipList = new String[] {"127.0.0.1", getHost()};
     	} else {
     		ipList = new String[] {"127.0.0.1"};
     	}
@@ -201,7 +204,6 @@ public class FedoraHome {
      * @throws InstallationFailedException
      */
     private void configureXACML() throws InstallationFailedException {
-    	String host = _opts.getValue(InstallOptions.FEDORA_SERVERHOST);
     	String[] policies = new String[] {
     			"deny-apim-if-not-localhost.xml",
     			"deny-reloadPolicies-if-not-localhost.xml",
@@ -212,7 +214,7 @@ public class FedoraHome {
     		for (String policy : policies) {
     			File pFile = new File(defaultPolicyDir, policy);
     			XACMLPolicy xacml = new XACMLPolicy(pFile, _opts);
-    			xacml.addServerHost(host);
+    			xacml.addServerHost(getHost());
     			xacml.write(pFile.getAbsolutePath());
     		}
 		} catch (Exception e) {
@@ -220,6 +222,18 @@ public class FedoraHome {
 		}
     }
 	
+    private String getHost() throws InstallationFailedException {
+    	if (_host == null) {
+    		String host = _opts.getValue(InstallOptions.FEDORA_SERVERHOST);
+			try {
+				_host = InetAddress.getByName(host);
+			} catch (UnknownHostException e) {
+				throw new InstallationFailedException(e.getMessage(), e);
+			}
+    	}
+    	return _host.getHostAddress();
+    }
+    
 	/**
      * Make scripts (ending with .sh) executable on *nix systems.
      */
