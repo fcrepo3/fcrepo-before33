@@ -20,7 +20,6 @@ public class CacheElement {
 	
 	private String credentialsCheck;
 
-	
 	private boolean valid = false;
 	private Boolean authenticated = null;
 	private Set roles = null;
@@ -102,32 +101,13 @@ public class CacheElement {
 	
 	public CacheElement(String userid, /*String password,*/ Cache cache) {
 		this.userid = userid;
-		//this.password = password;
-		/*
-		this.cache = cache;
-		try {
-			log.fatal("AUTHENTICATOR_IMPLEMENTATION==" + authentication);
-			Class authenticatorClass = Class.forName(cache.getAuthenticatorImplementation());			
-			log.fatal("authenticatorClass==" + authenticatorClass);
-			authenticator = (Authenticator) authenticatorClass.newInstance();
-			authenticator.setProperties(properties);
-			log.fatal("authenticator==" + authenticator);
-		} catch (Throwable t) {
-			log.fatal(this.getClass().getName() + ".NetvouchCacheElement() " + "couldn't construct authenticator instance "
-					+ t.getMessage() + ((t.getCause() == null) ? "" : t.getCause().getMessage()) 
-					);			
-		}
-		*/
+		//this.cache = cache;
 	}
 	
 	public String getUserid() {
 		return userid;
 	}
-	/*
-	public String getPassword() {
-		return password;
-	}
-	*/
+
 	private static final Calendar getExpiration(int duration, String unit) {
 		Calendar expiration = Calendar.getInstance();
 		if ("second".equalsIgnoreCase(unit) || "seconds".equalsIgnoreCase(unit)) {

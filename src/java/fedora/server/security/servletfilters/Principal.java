@@ -16,39 +16,18 @@ import java.util.Hashtable;
  */
 public class Principal implements java.security.Principal {
     private Log log = LogFactory.getLog(Principal.class);
-       
-    //private final String authority;
     
     private final String name;
-    
-    /*
-    public BasePrincipal(String authority, String name) {
-    	this.authority = authority;
-    	this.name = name;
-    }
-    */
     
     public Principal(String name) {
     	//this.authority = null;
     	this.name = name;
     }
 
-    /*
-    public String getAuthority() {
-    	return authority;
-    }
-    */
-    
     public String getName() {
     	return name;
     }
 
-    /*
-    public String getPassword() {
-    	return null; 
-    }
-    */
-    
     public String toString() {
     	//need to re-implement this    	
     	return "Principal[" + getName() + "]";

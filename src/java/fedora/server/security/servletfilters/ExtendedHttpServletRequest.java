@@ -25,27 +25,14 @@ public interface ExtendedHttpServletRequest
 	public static final String FAILED = "failed";
 	
 	public static final ImmutableHashSet IMMUTABLE_NULL_SET = new ImmutableHashSet();
-
-	/*
-	private static final int INITIAL = 0;
-	private static final int UNAUTHENTICATED = 1;
-	private static final int AUTHENTICATED = 2;
-	private static final int SPONSORED_REQUEST = 3;
-	private static final int SPONSORING = 4;
-	private int state = INITIAL;
-	*/
 	
 	public void audit();
 	
 	public void lockWrapper() throws Exception;
 	
-    //public void setSponsoredUser(String sponsoredUser) throws Exception;
-
     public void setSponsoredUser() throws Exception;
     
     public void lockSponsoredUser() throws Exception;
-    
-    //public boolean isSponsoredUserRequested();
     
     public void setAuthenticated(Principal userPrincipal, String authority) throws Exception;
     

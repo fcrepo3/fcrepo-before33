@@ -142,13 +142,6 @@ public class ConnectPubcookie {
 			
 			System.setProperty("javax.net.debug","ssl,handshake,data,trustmanager");
 			
-			/*
-			System.setProperty("javax.net.ssl.TRUSTSTORE", "C:\\Program Files\\Apache Software Foundation\\Tomcat 5.0\\TRUSTSTORE.p12");
-			System.setProperty("javax.net.ssl.TRUSTSTOREPassword", "mypass");
-			System.setProperty("javax.net.ssl.TRUSTSTOREType", "pkcs12");
-			System.setProperty("javax.net.ssl.trustStore", "C:\\j2sdk1.4.2_05\\jre\\lib\\security\\cacerts");
-			System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
-			*/
 		} else {
 			log.debug("DIAGNOSTIC urlString==" + urlString);
 			log.debug("didn't set " + FilterPubcookie.TRUSTSTORE_LOCATION_KEY + " to " + truststoreLocation);

@@ -18,12 +18,6 @@ import fedora.server.security.servletfilters.FinishedParsingException;
  */
 public class FilterXmlUserfile extends BaseCaching implements Constants {
     protected static Log log = LogFactory.getLog(FilterXmlUserfile.class);
-    
-    /*
-    protected String getClassName() {
-    	return this.getClass().getName();
-    }
-    */
 
     private static final String FILEPATH_KEY = "filepath";
     private String FILEPATH = "";
@@ -34,7 +28,6 @@ public class FilterXmlUserfile extends BaseCaching implements Constants {
     	}
     	return FILEPATH;
     }
-    
     
 	public void destroy() {
 		String method = "destroy()"; if (log.isDebugEnabled()) log.debug(enter(method));
@@ -92,7 +85,6 @@ public class FilterXmlUserfile extends BaseCaching implements Constants {
 				throw new IOException(msg);
 			}
 			authenticated = parser.getAuthenticated();
-			//roles = parser.getUserRoles();
 			namedAttributes = parser.getNamedAttributes();
 		} catch (Throwable t) {
 			authenticated = null;

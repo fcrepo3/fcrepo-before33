@@ -57,23 +57,12 @@ public class Cache {
     	return cacheElementPopulator;
     }
     
-    /*
-    private final Properties properties;
-    
-    / *package* / final String getProperty(String key) {
-    	return (String) properties.get(key);
-    }
-    */
-    
-    
     public Cache(String cacheId, 
 String CACHE_KEY_SEPARATOR,
 String AUTH_SUCCESS_TIMEOUT_UNIT, int AUTH_SUCCESS_TIMEOUT_DURATION,
 String AUTH_FAILURE_TIMEOUT_UNIT, int AUTH_FAILURE_TIMEOUT_DURATION,  
 String AUTH_EXCEPTION_TIMEOUT_UNIT, int AUTH_EXCEPTION_TIMEOUT_DURATION,    
 CacheElementPopulator cacheElementPopulator
-//, Attributor attributor
-//, Properties properties
 ) {
     	this.cacheId = cacheId;
     	this.CACHE_KEY_SEPARATOR = CACHE_KEY_SEPARATOR;
@@ -84,8 +73,6 @@ CacheElementPopulator cacheElementPopulator
     	this.AUTH_EXCEPTION_TIMEOUT_UNIT = AUTH_EXCEPTION_TIMEOUT_UNIT; 
     	this.AUTH_EXCEPTION_TIMEOUT_DURATION = AUTH_EXCEPTION_TIMEOUT_DURATION;    
     	this.cacheElementPopulator = cacheElementPopulator;
-    	//this.attributor = attributor;
-    	//this.properties = properties;
     }
 
 	private final Map cache = new Hashtable();	
@@ -133,7 +120,6 @@ CacheElementPopulator cacheElementPopulator
 			log.fatal(this.getClass().getName() + ".authenticate() catch");
 			log.fatal(this.getClass().getName() + t.getMessage());
 			log.fatal(this.getClass().getName() + ((t.getCause() == null) ? "" : t.getCause().getMessage()));
-
 			throw t;
 		}
 		log.debug(this.getClass().getName() + ".authenticated() returning==" + authenticated);
@@ -156,7 +142,6 @@ CacheElementPopulator cacheElementPopulator
 			throw t;
 		}
 		log.debug(this.getClass().getName() + ".authenticated==" + predicates);
-
 		return predicates;
 	}	
 

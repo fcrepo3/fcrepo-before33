@@ -252,134 +252,7 @@ public class ReadOnlyContext implements Context {
     	STRING_ARRAY_CLASS = temp.getClass();
     }
     
-    /*
-    public static final String GETPASSWORD_METHOD_NAME = "getPassword";
 
-
-     public static final String GETROLES_METHOD_NAME = "getRoles";
-    
-    public static final String getPassword(Principal principal) throws Exception {
-    	return getPassword(principal, GETPASSWORD_METHOD_NAME);
-    }
-    
-    public static final String getPassword(Principal principal, String getPasswordMethodName) throws Exception {
-        final String here = ReadOnlyContext.class.getName() + ".getPassword()";
-		LOG.debug(here);
-    	
-		Class principalClass = principal.getClass();
-		
-		String password = null;			
-		if ((getPasswordMethodName == null) || "".equals(getPasswordMethodName)) {
-			String msg = here + ": getpassword method not configured";
-			LOG.debug(msg);
-			throw new Exception(msg);
-		} else {
-			LOG.debug(here + ": cando getpassword");
-			Method getPasswordMethod = null;
-			try {
-				getPasswordMethod = principalClass.getDeclaredMethod(getPasswordMethodName, (Class[])null);
-			} catch (NoSuchMethodException nsme) {
-				String msg = here + ": Principal-implementing class has no get-password method";
-				LOG.error(msg, nsme);
-				throw new Exception();
-			}					
-			Class passwordClass = getPasswordMethod.getReturnType();
-			if (passwordClass != String.class) {
-				String msg = here + ": get-password method does not return a String";
-				LOG.debug(msg);
-				throw new Exception();		
-			}
-			try {
-				password = (String) getPasswordMethod.invoke(principal, (Object[])null);
-			} catch (Throwable t) {
-				String msg = here + ": get-password method failed";
-				LOG.error(msg, t);
-				throw new Exception();
-			}
-			LOG.debug(here + ": extracted password");
-			if (LOG.isDebugEnabled()) {
-				LOG.debug(here + ": password==" + password); 
-			}
-		}
-		return password;
-    }
-    */
-
-    
-    /*
-    public static final String[] getRoles(Principal principal) throws Exception {
-    	return getRoles(principal, GETROLES_METHOD_NAME);
-    }
-
-    
-    public static final String[] getRoles(Principal principal, String getRolesMethodName) throws Exception {
-        final String here = ReadOnlyContext.class.getName() + ".getRoles()";
-		LOG.debug(here);
-
-		Class principalClass = principal.getClass();
-		
-		String[] roles = null;			
-		if ((getRolesMethodName == null) || "".equals(getRolesMethodName)) {
-			String msg = here + ": getroles method not configured";
-			LOG.debug(msg);
-			throw new Exception(msg);
-		} else {
-			LOG.debug(here + ": cando getroles");
-			Method getRolesMethod = null;
-			try {
-				getRolesMethod = principalClass.getDeclaredMethod(getRolesMethodName, (Class[])null);
-			} catch (NoSuchMethodException nsme) {
-				String msg = here + ": Principal-implementing class has no get-roles method";
-				LOG.error(msg, nsme);
-				throw new Exception(msg);
-			} catch (Throwable t) {
-				String msg = here + ": trouble getting get-roles method";
-				LOG.error(msg, t);
-				throw new Exception(msg);				
-			}					
-
-			if (getRolesMethod == null) {
-				String msg = here + ": null get-roles method";
-				LOG.debug(msg);
-				throw new Exception(msg);				
-			}
-			
-			Class rolesClass = null;
-			try {
-				rolesClass = getRolesMethod.getReturnType();
-			} catch (Throwable t) {
-				String msg = here + ": trouble getting get-role method return type";
-				LOG.error(msg, t);
-				throw new Exception(msg);
-			}
-
-			LOG.debug(ReadOnlyContext.class.getName() + ": rolesClass==" + " " + rolesClass);
-			if (rolesClass != STRING_ARRAY_CLASS) {
-				String msg = here + ": get-roles method does not return a String array";
-				LOG.debug(msg);
-				throw new Exception(msg);		
-			}
-			
-			try {
-				LOG.debug(here + ": about to get roles");
-				roles = (String[]) getRolesMethod.invoke(principal, (Object[])null);
-				LOG.debug(here + ": get-roles method succeeded"); //, roles==" + roles);
-			} catch (Throwable t) {
-				String msg = here + ": get-roles method failed";
-				LOG.error(msg, t);
-				throw new Exception(msg);
-			}
-			LOG.debug(here + ": extracted roles");
-		}
-		if (LOG.isDebugEnabled() && (roles != null)) {
-			for (int i = 0; i < roles.length; i++) {
-				LOG.debug(here + ": another role==" + roles[i]);					
-			}
-		}		
-		return roles;
-    }
-    */
-    
     
     private static final ReadOnlyContext getContext(HttpServletRequest request, MultiValueMap environmentMap, String subjectId, String password, /*String[] roles,*/ Map auxSubjectRoles, boolean noOp) {
     	MultiValueMap subjectMap = new MultiValueMap(); 
@@ -527,30 +400,12 @@ public class ReadOnlyContext implements Context {
   	  		LOG.error("in context, can't grok password from extended request " + th.getMessage());				  	  		
   	  	}
   	  	
-  	  	/*
-  	  	Principal principal = request.getUserPrincipal();
-  	  	if (principal == null) {
-  	  		LOG.debug("in context, no principal to grok password from!!");				
-  	  	} else {
-  	  		try {
-	  	  		password = getPassword(principal);
-	  	  	} catch (Throwable t) {
-	  	  	}
-  	  	}
-  	  	*/
-  	  	
-  	  	
   	  	if (subjectId == null) {
   	  		subjectId = "";
   	  	}
   	  	if (password == null) {
   	  		password = "";
   	  	}
-  	  	/*
-  	  	if (overrideRoles == null) {
-  	  		overrideRoles = new String[0];
-  	  	}
-  	  	*/
   	  	
   	boolean noOp = true; //safest approach 
   	try {
@@ -570,62 +425,6 @@ public class ReadOnlyContext implements Context {
   	return getContext(request, environmentMap, subjectId, password, /*overrideRoles,*/ auxSubjectRoles, noOp);
     }
     
-
-
-    /*
-     * Gets a Context appropriate for the request, and whether it is ok
-     * to use the dissemination cache or not.
-     
-    //form context from optional servlet request, overriding request for added parms    
-    public static final ReadOnlyContext getContext(String messageProtocol, HttpServletRequest request) {
-        final String here = ReadOnlyContext.class.getName() + ".getContext(String, HttpServletRequest)";
-		LOG.debug(here);
-  	  	String[] roles = null;
-	  	Principal principal = request.getUserPrincipal();
-  	  	if (principal == null) {
-  	  		LOG.debug(here + ": no principal (authn may not be required)");				
-  	  	} else {
-  	  		*
-  	  		try {
-	  	  		roles = getRoles(principal);
-	  	  	} catch (Throwable t) {
-	  	  		LOG.error(here + ": exception calling getRoles()", t);
-	  	  	}
-	  	  	*
-  	  	}
-  	  	if (roles == null) {
-  	  		roles = new String[0];
-  	  	}
-  	return getContext(messageProtocol, request, roles);
-    }
-    */
-    
-    /*
-  	public static final String[] parseRole (String role) {
-  		String[] parts = null;
-  		if ((role == null) || (role.length() == 0)) {
-  		} else {
-  			int i = role.indexOf('=');
-  			if (i == 0) {
-  			} else {
-  				parts = new String[2];	
-  				if (i < 0) {
-  					parts[0] = role;
-  					parts[1] = ""; //Boolean.toString(true);
-  				} else {
-  					parts[0] = role.substring(0,i);
-  					if (i == (role.length()-1)) {
-  						parts[1] = ""; //Boolean.toString(true);
-  					} else {
-  						parts[1] = role.substring(i+1);
-  					}
-  				}
-  			}
-  		}
-  		return parts; 
-  	}
-  	*/
-  	
     public String getPassword() {
     	return password;
     }

@@ -55,7 +55,6 @@ public class FilterLdap extends BaseCaching {
 	public static final String FILTER_KEY = "search-filter";
 	public static final String USERID_KEY = "id-attribute";   
 	public static final String PASSWORD_KEY = "password-attribute";
-	//public static final String ROLES2RETURN_KEY = "directory-attributes-as-roles";
 	public static final String ATTRIBUTES2RETURN_KEY = "attributes";
 	public static final String GROUPS_NAME_KEY = "attributes-common-name";
 	
@@ -70,7 +69,6 @@ public class FilterLdap extends BaseCaching {
 	private String USERID = "";
 	private String FILTER = "";
 	private String PASSWORD = "";
-	//private String[] ROLES2RETURN = null;
 	private String[] ATTRIBUTES2RETURN = null;
 	private String GROUPS_NAME = null;
 	
@@ -86,15 +84,6 @@ public class FilterLdap extends BaseCaching {
 	    	inited = false;
 	    	if (! initErrors) {
 				Set temp = new HashSet();
-				/*
-				if (ROLES2RETURN == null) {
-					ROLES2RETURN = new String[0];
-				} else {
-					for (int i = 0; i < ROLES2RETURN.length; i++) {
-						temp.add(ROLES2RETURN[i]);
-					}				
-				}
-				*/
 				if (ATTRIBUTES2RETURN == null) {
 					ATTRIBUTES2RETURN = new String[0];
 				} else {
@@ -105,15 +94,6 @@ public class FilterLdap extends BaseCaching {
 	    		if (AUTHENTICATE && (PASSWORD != null) && ! "".equals(PASSWORD)) {
 					temp.add(PASSWORD);
 	    		}
-				/*
-				if (GROUPS2RETURN == null) {
-					GROUPS2RETURN = new String[0];
-				} else {
-					for (int i = 0; i < GROUPS2RETURN.length; i++) {
-						temp.add(GROUPS2RETURN[i]);
-					}							
-				}
-				*/
 				DIRECTORY_ATTRIBUTES_NEEDED = (String[]) temp.toArray(StringArrayPrototype);				
 
 				boolean haveBindMethod = false;
@@ -201,20 +181,6 @@ public class FilterLdap extends BaseCaching {
     		} else if (USERID_KEY.equals(key)) {
     			USERID = value;
     			setLocally = true;
-    			/*
-    		} else if (ROLES2RETURN_KEY.equals(key)) {			
-    			if (value.indexOf(",") < 0) {
-    				if ("".equals(value)) {
-    					ROLES2RETURN = null;
-    				} else {
-    					ROLES2RETURN = new String[1];
-    					ROLES2RETURN[0] = value;
-    				}
-    			} else {
-    				ROLES2RETURN = value.split(",");  							
-    			}
-    			setLocally = true;
-    			*/
     		} else if (ATTRIBUTES2RETURN_KEY.equals(key)) {			
     			if (value.indexOf(",") < 0) {
     				if ("".equals(value)) {
@@ -262,7 +228,6 @@ public class FilterLdap extends BaseCaching {
     	try {
         	if (log.isDebugEnabled()) log.debug(enter(method));
     		Boolean authenticated = null;
-    		//String[] roles = null;
     		Set v = new HashSet();
     		Map m = new Hashtable();
     		
@@ -300,7 +265,6 @@ public class FilterLdap extends BaseCaching {
 			if (log.isDebugEnabled()) log.debug(format(method, "IN LDAP afgter newing IDC ctx==" + ctx));
 			String filter = new String(FILTER);
 
-			//filter = filter.replaceFirst("{0}", USERID_ATTRIBUTE);
 			filter = filter.replaceFirst("\\{0}", cacheElement.getUserid());
 			if (log.isDebugEnabled()) log.debug(format(method, "IN LDAP filter becomes " + filter));
 
@@ -326,11 +290,7 @@ public class FilterLdap extends BaseCaching {
 					DIRECTORY_ATTRIBUTES_NEEDED,
                     retobj,
                     deref);
-			
-			
-			
-			//NamingEnumeration ne = ctx.search(SEARCH_ROOT, matchingAttributes, ATTRIBUTES2RETURN);
-
+					
     		if (AUTHENTICATE && SECURITY_AUTHENTICATION.equals("simple") && ((PASSWORD == null) || "".equals(PASSWORD))) {
         		if (log.isDebugEnabled()) log.debug(format(method, "before authenticating search thru bind, tentatively marking unauthenticated"));
     			authenticated = Boolean.FALSE; 
@@ -352,86 +312,50 @@ public class FilterLdap extends BaseCaching {
 				if (item instanceof SearchResult) {	
 					SearchResult s = (SearchResult) item;
 					Attributes attributes = s.getAttributes();
-					/* if (ATTRIBUTES2RETURN4ATTRIBUTES == null) {
-						NamingEnumeration nee = attributes.getAll();
-						while ( nee.hasMoreElements() ) {
-							log.fatal(this.getClass().getName() + "IN LDAP another inner item");
-							Object itemm = nee.nextElement();
-							if (itemm instanceof Attribute) {
-								Attribute attributee = (Attribute) itemm;
-								log.fatal(this.getClass().getName() + "IN LDAP another inner attribute, id=="+attributee.getID()+", value=="+attributee.get());
-								m.put(attributee.getID(), attributee.get());
+		    		if (AUTHENTICATE && (PASSWORD != null) && ! "".equals(PASSWORD)) {
+	            		if (log.isDebugEnabled()) log.debug(format(method, "setting up to authenticate user \"manually\""));
+						Attribute attributee = attributes.get(PASSWORD);
+						int size = attributee.size();
+						for (int j = 0; j < size; j++) {
+							Object o = attributee.get(j);
+							if (log.isDebugEnabled()) log.debug(format(method, "another ldap role==" + o.getClass().getName() + " " + o));
+							if (password.equals(o)) {
+			            		if (log.isDebugEnabled()) log.debug(format(method, "manually authenticated"));
+								authenticated = Boolean.TRUE;
+							} else {
+			            		if (log.isDebugEnabled()) log.debug(format(method, "manually unauthenticated"));
+								authenticated = Boolean.FALSE;									
 							}
 						}
-					} else { */
-					
-			    		if (AUTHENTICATE && (PASSWORD != null) && ! "".equals(PASSWORD)) {
-		            		if (log.isDebugEnabled()) log.debug(format(method, "setting up to authenticate user \"manually\""));
-							Attribute attributee = attributes.get(PASSWORD);
+		    		}
+		    		
+		    		if (AUTHENTICATE && ! Boolean.TRUE.equals(authenticated)) {
+	            		if (log.isDebugEnabled()) log.debug(format(method, "don't get attributes if authentication failed"));			    			
+		    		} else {
+	            		if (log.isDebugEnabled()) log.debug(format(method, "get roles/attributes (authentication succeeded or wasn't configured)"));
+						for (int i = 0; i < ATTRIBUTES2RETURN.length; i++) {
+							String key = ATTRIBUTES2RETURN[i];
+							Attribute attributee = attributes.get(key);
+							if ((GROUPS_NAME != null) && ! "".equals(GROUPS_NAME)) {
+								key = GROUPS_NAME;
+							}
+							Set x;
+							if (m.containsKey(key)) {
+								x = (Set) m.get(key);
+							} else {
+								x = new HashSet();
+								m.put(key, x);
+							}
 							int size = attributee.size();
 							for (int j = 0; j < size; j++) {
 								Object o = attributee.get(j);
-								if (log.isDebugEnabled()) log.debug(format(method, "another ldap role==" + o.getClass().getName() + " " + o));
-								if (password.equals(o)) {
-				            		if (log.isDebugEnabled()) log.debug(format(method, "manually authenticated"));
-									authenticated = Boolean.TRUE;
-								} else {
-				            		if (log.isDebugEnabled()) log.debug(format(method, "manually unauthenticated"));
-									authenticated = Boolean.FALSE;									
-								}
+								x.add(o);
+					    		if (log.isDebugEnabled()) log.debug(format(method, "another ldap attr==" + o.getClass().getName() + " " + o));
 							}
-			    		}
-			    		
-			    		if (AUTHENTICATE && ! Boolean.TRUE.equals(authenticated)) {
-		            		if (log.isDebugEnabled()) log.debug(format(method, "don't get attributes if authentication failed"));			    			
-			    		} else {
-		            		if (log.isDebugEnabled()) log.debug(format(method, "get roles/attributes (authentication succeeded or wasn't configured)"));
-		            		/*
-							for (int i = 0; i < ROLES2RETURN.length; i++) {
-								Attribute attributee = attributes.get(ROLES2RETURN[i]);
-								int size = attributee.size();
-								for (int j = 0; j < size; j++) {
-									Object o = attributee.get(j);
-									if (log.isDebugEnabled()) log.debug(format(method, "another ldap role==" + o.getClass().getName() + " " + o));
-									if (! v.contains(o)) {
-										v.add(o);
-									}
-								}
-							}
-							*/
-							for (int i = 0; i < ATTRIBUTES2RETURN.length; i++) {
-								String key = ATTRIBUTES2RETURN[i];
-								Attribute attributee = attributes.get(key);
-								if ((GROUPS_NAME != null) && ! "".equals(GROUPS_NAME)) {
-									key = GROUPS_NAME;
-								}
-								Set x;
-								if (m.containsKey(key)) {
-									x = (Set) m.get(key);
-								} else {
-									x = new HashSet();
-									m.put(key, x);
-								}
-								int size = attributee.size();
-								for (int j = 0; j < size; j++) {
-									Object o = attributee.get(j);
-									x.add(o);
-						    		if (log.isDebugEnabled()) log.debug(format(method, "another ldap attr==" + o.getClass().getName() + " " + o));
-								}
-							}			    				
-			    		}
-					
-					//}
+						}			    				
+		    		}
 				}
-				//v.add(item.toString());
-				//log.fatal(this.getClass().getName() + "LDAP ADDING item==" + item.toString());
 			}
-			/*
-			roles = new String[v.size()];
-			for (int i = 0; i < v.size(); i++) {
-				roles[i] = (String) v.get(i);
-			}
-			*/
     		cacheElement.populate(authenticated, null, m, null);
 		} catch (Throwable th) {
 			showThrowable(th, log, "ldap filter failure");

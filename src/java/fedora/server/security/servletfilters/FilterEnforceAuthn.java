@@ -29,12 +29,6 @@ import org.apache.commons.codec.binary.Base64;
 public class FilterEnforceAuthn extends FilterSetup {
     protected static Log log = LogFactory.getLog(FilterEnforceAuthn.class);
 
-    /*
-    protected String getClassName() {
-    	return this.getClass().getName();
-    }
-    */
-
 	public void doThisSubclass(ExtendedHttpServletRequest request, HttpServletResponse response) throws Throwable {
 		String method = "doThisSubclass() "; if (log.isDebugEnabled()) log.debug(enter(method));
 		super.doThisSubclass(request, response);

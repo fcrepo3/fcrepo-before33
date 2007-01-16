@@ -25,12 +25,6 @@ import org.apache.commons.codec.binary.Base64;
  */
 public abstract class BaseCaching extends BaseContributing implements CacheElementPopulator {
     protected static Log log = LogFactory.getLog(BaseCaching.class);
-    
-    /*
-    protected String getClassName() {
-    	return this.getClass().getName();
-    }
-    */
 	
 	//use additional indirection level to distinguish multiple uses of the same code for different filter instances
 	private static final Map superCache = new Hashtable();
@@ -49,7 +43,6 @@ public abstract class BaseCaching extends BaseContributing implements CacheEleme
     	String method = "init()"; if (log.isDebugEnabled()) log.debug(enter(method));
     	super.init(filterConfig);
     	inited = false;
-    	//String filterName = filterConfig.getFilterName();
     	if (! initErrors) {
 	    	Cache cache = getCache(FILTER_NAME);
 	    	if (cache == null) {
@@ -90,7 +83,6 @@ public abstract class BaseCaching extends BaseContributing implements CacheEleme
     
     protected boolean SPONSORING = false;
 	
-  	//public static final String CACHE_KEY_SEPARATOR_KEY = "cache-key-separator";
   	public static final String LOOKUP_SUCCESS_TIMEOUT_UNIT_KEY = "lookup-success-timeout-unit";
   	public static final String LOOKUP_SUCCESS_TIMEOUT_DURATION_KEY = "lookup-success-timeout-duration";
   	public static final String AUTHN_FAILURE_TIMEOUT_UNIT_KEY = "authn-failure-timeout-unit";
@@ -98,10 +90,6 @@ public abstract class BaseCaching extends BaseContributing implements CacheEleme
   	public static final String LOOKUP_EXCEPTION_TIMEOUT_UNIT_KEY = "lookup-exception-timeout-unit";
   	public static final String LOOKUP_EXCEPTION_TIMEOUT_DURATION_KEY = "lookup-exception-timeout-duration";
 	
-	//public static final String AUTHN_OVER_CONTAINER = "authn-over-container"; 
-    
-    //private String CACHE_KEY_SEPARATOR = "|";
-
   	//defaults
     private String LOOKUP_SUCCESS_TIMEOUT_UNIT_DEFAULT = "MINUTE";
     private int LOOKUP_SUCCESS_TIMEOUT_DURATION_DEFAULT = 10;
@@ -126,10 +114,6 @@ public abstract class BaseCaching extends BaseContributing implements CacheEleme
     protected void initThisSubclass(String key, String value) {
     	String method = "initThisSubclass()"; if (log.isDebugEnabled()) log.debug(enter(method));
 		boolean setLocally = false;
-		/* if (CACHE_KEY_SEPARATOR_KEY.equals(key)) {
-			CACHE_KEY_SEPARATOR = value;
-			setLocally = true;
-		} else */
 		if (LOOKUP_SUCCESS_TIMEOUT_UNIT_KEY.equals(key)) {
 			LOOKUP_SUCCESS_TIMEOUT_UNIT = value;
 			setLocally = true;

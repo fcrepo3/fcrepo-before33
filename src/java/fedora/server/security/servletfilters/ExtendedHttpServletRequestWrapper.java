@@ -23,23 +23,12 @@ public class ExtendedHttpServletRequestWrapper
 	extends HttpServletRequestWrapper implements ExtendedHttpServletRequest {
 	
     private static Log log = LogFactory.getLog(ExtendedHttpServletRequestWrapper.class);
-
-	/*
-	private static final int INITIAL = 0;
-	private static final int UNAUTHENTICATED = 1;
-	private static final int AUTHENTICATED = 2;
-	private static final int SPONSORED_REQUEST = 3;
-	private static final int SPONSORING = 4;
-	private int state = INITIAL;
-	*/
     
     private String username = null;
     private String password = null;
 	
     private String authority;
     private Principal userPrincipal;
-
-    
     
     private boolean wrapperWriteLocked = false;
     
@@ -338,42 +327,6 @@ public class ExtendedHttpServletRequestWrapper
     	putIntoMap(map, key, value);
     }
 
-    /*
-    private void addAuthenticatedRoles(String authority, Set roles) throws Exception {
-    	if (isUserSponsored()) {
-    		throw new Exception("after user is sponsored, only sponsored-user roles/attributes/groups are collected");
-    	}
-    	putSetIntoMap(addedAuthenticatedRoles, authority, roles);
-    }
-    */
-    
-    /*
-    private void addSponsoredRoles(String authority, Set roles) throws Exception {
-    	if (! isUserSponsored()) {
-    		throw new Exception("before user is sponsored, only authenticated-user roles/attributes/groups are collected");
-    	}
-    	putSetIntoMap(sponsoredRoles, authority, roles);
-    }
-    */
-
-    /*
-    private void addAuthenticatedAttributes(String authority, Map attributes) throws Exception {
-    	if (isUserSponsored()) {
-    		throw new Exception("after user is sponsored, only sponsored-user roles/attributes/groups are collected");
-    	}
-    	putMapIntoMap(authenticatedAttributes, authority, attributes);
-    }
-    */
-    
-    /*
-    private void addSponsoredAttributes(String authority, Map attributes) throws Exception {
-    	if (! isUserSponsored()) {
-    		throw new Exception("before user is sponsored, only authenticated-user roles/attributes/groups are collected");
-    	}
-    	putMapIntoMap(sponsoredAttributes, authority, attributes);
-    }
-    */
-    
     public void addRoles(String authority, Set roles) throws Exception {
     	if (isUserSponsored()) {
     		// after user is sponsored, only sponsored-user roles/attributes/groups are collected
@@ -407,27 +360,11 @@ public class ExtendedHttpServletRequestWrapper
     	return all;
     }
     
-    /*
-    private Map getAllAuthenticatedAttributes() {
-    	Map all = getAllAttributes(authenticatedAttributes);
-    	return all;
-    }
-    */
-
-    /*
-    private Map getAllSponsoredAttributes() {
-    	Map all = getAllAttributes(sponsoredAttributes);
-    	return all;
-    }
-    */
-    
     public Map getAllAttributes() throws AuthzOperationalException {
     	Map all = null;
     	if (isUserSponsored()) {
-    		//all = getAllSponsoredAttributes();
     		all = getAllAttributes(sponsoredAttributes);
     	} else {
-    		//all = getAllAuthenticatedAttributes();    		
     		all = getAllAttributes(authenticatedAttributes);
     	}
     	return all;

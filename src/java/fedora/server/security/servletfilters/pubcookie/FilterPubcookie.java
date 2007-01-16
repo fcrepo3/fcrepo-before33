@@ -27,13 +27,6 @@ import fedora.server.security.servletfilters.CacheElement;
  */
 public class FilterPubcookie extends BaseCaching {
     protected static Log log = LogFactory.getLog(FilterPubcookie.class);
-    
-    /*
-    protected String getClassName() {
-    	return this.getClass().getName();
-    }
-    */
-
 	
 	private static final Map NO_REQUEST_PARAMETERS = new HashMap();
 	private static final Cookie[] NO_COOKIES = new Cookie[0];

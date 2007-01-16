@@ -32,27 +32,17 @@ import fedora.server.security.servletfilters.pubcookie.FilterPubcookie;
  */
 public abstract class BaseContributing extends FilterSetup {
     protected static Log log = LogFactory.getLog(BaseContributing.class);
-    
-    /*
-    protected String getClassName() {
-    	return this.getClass().getName();
-    }
-    */
-    
-    
+        
 	public static final HashSet NULL_SET =  new HashSet();
 	public static final Hashtable EMPTY_MAP = new Hashtable();
 
 	public static final String[] EMPTY_ARRAY = new String[] {};
-    //defaults
 
+	//defaults
     private static boolean AUTHENTICATE_DEFAULT = true;
     private static Collection FILTERS_CONTRIBUTING_SPONSORED_ATTRIBUTES_DEFAULT = NULL_SET;
     
     
-    //variables
-
-   
     protected boolean AUTHENTICATE = AUTHENTICATE_DEFAULT;
     protected Collection FILTERS_CONTRIBUTING_AUTHENTICATED_ATTRIBUTES = NULL_SET;
     protected Collection FILTERS_CONTRIBUTING_SPONSORED_ATTRIBUTES = FILTERS_CONTRIBUTING_SPONSORED_ATTRIBUTES_DEFAULT;
@@ -121,10 +111,6 @@ public abstract class BaseContributing extends FilterSetup {
 		
 		if (log.isDebugEnabled()) {
 			log.debug(format(method, null, "alreadyAuthenticated") + alreadyAuthenticated);
-			/*
-			log.debug(format(method, null, "AUTHENTICATE_ALWAYS", AUTHENTICATE_ALWAYS));
-			log.debug(format(method, null, "AUTHENTICATE_IFF_NOT_ALREADY_AUTHENTICATED", AUTHENTICATE_IFF_NOT_ALREADY_AUTHENTICATED));
-			*/
 			log.debug(format(method, null, "AUTHENTICATE") + AUTHENTICATE);
 		}
 		
@@ -133,16 +119,6 @@ public abstract class BaseContributing extends FilterSetup {
 			authenticate(extendedHttpServletRequest); //"authenticate" is really a conditional cache refresh . . . refactor name?
 		} else {
 			if (log.isDebugEnabled()) log.debug(format(method, "not calling authenticate()"));				
-		}
-
-		//boolean authenticatedHere = ((extendedHttpServletRequest.getUserPrincipal() != null) && ! alreadyAuthenticated); 
-		
-		if (log.isDebugEnabled()) {
-			//log.debug(format(method, null, "authenticatedHere") + authenticatedHere);
-			//log.debug(format(method, null, "GATHER_ATTRIBUTES_IFF_ALREADY_AUTHENTICATED", GATHER_ATTRIBUTES_IFF_ALREADY_AUTHENTICATED));
-			//log.debug(format(method, null, "GATHER_ATTRIBUTES_IFF_AUTHENTICATED_HERE", GATHER_ATTRIBUTES_IFF_AUTHENTICATED_HERE));
-			//log.debug(format(method, null, "FILTERS_CONTRIBUTING_AUTHENTICATED_ATTRIBUTES", FILTERS_CONTRIBUTING_AUTHENTICATED_ATTRIBUTES));
-			//log.debug(format(method, null, "GATHER_SPONSORED_ATTRIBUTES", GATHER_SPONSORED_ATTRIBUTES));
 		}
 
 		String authority = extendedHttpServletRequest.getAuthority();

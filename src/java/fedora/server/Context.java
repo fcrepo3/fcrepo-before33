@@ -12,10 +12,6 @@ import java.util.Iterator;
  * @version $Id$
  */
 public interface Context {
-
-    //public abstract String get(String name);
-
-    //public abstract Iterator names();
     
     public MultiValueMap getEnvironmentAttributes();
     
