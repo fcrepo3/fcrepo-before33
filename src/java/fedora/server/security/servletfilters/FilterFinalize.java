@@ -29,13 +29,6 @@ import org.apache.commons.codec.binary.Base64;
 public class FilterFinalize extends FilterSetup {
     protected static Log log = LogFactory.getLog(FilterFinalize.class);
 
-    /*
-    protected String getClassName() {
-    	return this.getClass().getName();
-    }
-    */
-
-
     private static final boolean AUTHENTICATION_REQUIRED_DEFAULT = true;
     private boolean AUTHENTICATION_REQUIRED = AUTHENTICATION_REQUIRED_DEFAULT;
     private static final String AUTHENTICATION_REQUIRED_KEY = "authentication-required";

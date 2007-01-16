@@ -58,12 +58,12 @@ public class Cache {
     }
     
     public Cache(String cacheId, 
-String CACHE_KEY_SEPARATOR,
-String AUTH_SUCCESS_TIMEOUT_UNIT, int AUTH_SUCCESS_TIMEOUT_DURATION,
-String AUTH_FAILURE_TIMEOUT_UNIT, int AUTH_FAILURE_TIMEOUT_DURATION,  
-String AUTH_EXCEPTION_TIMEOUT_UNIT, int AUTH_EXCEPTION_TIMEOUT_DURATION,    
-CacheElementPopulator cacheElementPopulator
-) {
+		String CACHE_KEY_SEPARATOR,
+		String AUTH_SUCCESS_TIMEOUT_UNIT, int AUTH_SUCCESS_TIMEOUT_DURATION,
+		String AUTH_FAILURE_TIMEOUT_UNIT, int AUTH_FAILURE_TIMEOUT_DURATION,  
+		String AUTH_EXCEPTION_TIMEOUT_UNIT, int AUTH_EXCEPTION_TIMEOUT_DURATION,    
+		CacheElementPopulator cacheElementPopulator
+		) {
     	this.cacheId = cacheId;
     	this.CACHE_KEY_SEPARATOR = CACHE_KEY_SEPARATOR;
     	this.AUTH_SUCCESS_TIMEOUT_UNIT = AUTH_SUCCESS_TIMEOUT_UNIT; 
@@ -126,26 +126,6 @@ CacheElementPopulator cacheElementPopulator
 
 		return authenticated;
 	}
-	
-	/*
-	public final Set getPredicates(CacheElementPopulator authenticator, String userid, String password) throws Throwable{
-		log.debug("cache.getPredicates() called");
-		CacheElement cacheElement = getCacheElement(userid -*, password*-);
-		log.debug(this.getClass().getName() + ".cacheElement==" + cacheElement);
-		Set predicates = null;
-		try {
-			predicates = cacheElement.getPredicates(this, password);
-		} catch (Throwable t) {
-			log.fatal(this.getClass().getName() + ".authenticate");
-			log.fatal(this.getClass().getName() + t.getMessage());
-			log.fatal(this.getClass().getName() + ((t.getCause() == null) ? "" : t.getCause().getMessage()));
-
-			throw t;
-		}
-		log.debug(this.getClass().getName() + ".authenticated==" + predicates);
-		return predicates;
-	}
-*/
 
 	public final Map getNamedValues(CacheElementPopulator authenticator, String userid, String password) throws Throwable{
 		log.debug("cache.getNamedValues() called");

@@ -108,45 +108,8 @@ public class ExtendedHttpServletRequestWrapper
     	return remoteUser;
     }
 
-    //private final Map addedAuthenticatedRoles = new Hashtable();
-    //private final Map sponsoredRoles = new Hashtable();
-
     private final Map authenticatedAttributes = new Hashtable();
     private final Map sponsoredAttributes = new Hashtable();
-
-/*
-    public boolean isUserInRole(String role) {
-    	boolean isUserInRole = false;
-    	Map map = null;
-    	log.debug("in isUserInRole(" + role + ")");
-    	if (isUserSponsored()) {
-    		map = sponsoredRoles;
-    		log.debug("using sponsored-roles map==" + map);
-    	} else {
-    		isUserInRole = super.isUserInRole(role);
-    		log.debug("user is not sponsored, super.isUserInRole()==" + isUserInRole);
-    		if (! isUserInRole) {
-    			map = addedAuthenticatedRoles;
-        		log.debug("using authenticated-roles map==" + map);
-    		}
-    	}
-    	if (isUserInRole) {
-    		log.debug("already know that isUserInRole==true");
-    	} else {
-    		log.debug("still don't know if isUserInRole");
-	    	for (Iterator iterator = map.values().iterator(); iterator.hasNext(); ) {
-	    		Set roles = (Set) iterator.next();
-	    		isUserInRole = roles.contains(role);
-	    		log.debug("another role set, has isUserInRole==" + isUserInRole);
-	    		if (isUserInRole) {
-	    			break;
-	    		}
-	    	}    			
-    		log.debug("in isUserInRole(), after loop isUserInRole==" + isUserInRole);	    	
-    	}
-    	return isUserInRole;
-    }
-    */
     
     public final void auditInnerMap(Map map) {
     	if (log.isDebugEnabled()) {
@@ -234,9 +197,7 @@ public class ExtendedHttpServletRequestWrapper
     	if (log.isDebugEnabled()) {
     		log.debug("\n===AUDIT===");
     		log.debug("auditing wrapped request");
-    		//auditOuterMap(addedAuthenticatedRoles, "addedAuthenticatedRoles");
     		auditOuterMap(authenticatedAttributes, "authenticatedAttributes");
-    		//auditOuterMap(sponsoredRoles, "sponsoredRoles");
     		auditOuterMap(sponsoredAttributes, "sponsoredAttributes");
     		log.debug("===AUDIT===\n");
     	}
@@ -315,15 +276,6 @@ public class ExtendedHttpServletRequestWrapper
     	map.put(key,value);
     }
     
-    /*
-    private void putSetIntoMap(Map map, String key, Object value) throws Exception {
-    	if (!(value instanceof Set)) {
-    		throw new Exception("input parm must be a set");
-    	}
-    	putIntoMap(map, key, value);
-    }
-    */
-
     private void putMapIntoMap(Map map, String key, Object value) throws Exception {    	
     	if (!(value instanceof Map)) {
     		throw new Exception("input parm must be a map");
@@ -331,28 +283,12 @@ public class ExtendedHttpServletRequestWrapper
     	putIntoMap(map, key, value);
     }
 
-    /*
-    public void addRoles(String authority, Set roles) throws Exception {
-    	if (isUserSponsored()) {
-    		// after user is sponsored, only sponsored-user roles/attributes/groups are collected
-    		//addSponsoredRoles(authority, roles);
-    		putSetIntoMap(sponsoredRoles, authority, roles);
-    	} else {
-    		// before user is sponsored, only authenticated-user roles/attributes/groups are collected
-    		//addAuthenticatedRoles(authority, roles);
-    		putSetIntoMap(addedAuthenticatedRoles, authority, roles);
-    	}
-    }
-    */
-
     public void addAttributes(String authority, Map attributes) throws Exception {
     	if (isUserSponsored()) {
     		// after user is sponsored, only sponsored-user roles/attributes/groups are collected
-    		//addSponsoredAttributes(authority, attributes);
     		putMapIntoMap(sponsoredAttributes, authority, attributes);
     	} else {
     		// before user is sponsored, only authenticated-user roles/attributes/groups are collected
-    		//addAuthenticatedAttributes(authority, attributes);    		
     		putMapIntoMap(authenticatedAttributes, authority, attributes);
     	}
     }

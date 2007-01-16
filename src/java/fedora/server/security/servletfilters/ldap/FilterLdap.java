@@ -43,12 +43,6 @@ import fedora.server.security.servletfilters.CacheElement;
  */
 public class FilterLdap extends BaseCaching {
     protected static Log log = LogFactory.getLog(FilterLdap.class);
-    
-    /*
-    protected String getClassName() {
-    	return this.getClass().getName();
-    }
-    */
 
 	public static final String URL_KEY = "url";   
 	public static final String BASE_KEY = "search-base";   

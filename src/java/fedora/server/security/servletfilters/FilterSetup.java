@@ -28,13 +28,6 @@ import fedora.server.security.servletfilters.pubcookie.FilterPubcookie;
 public class FilterSetup extends Base implements Filter {
     protected static Log log = LogFactory.getLog(FilterSetup.class);
     
-    /*
-    protected String getClassName() {
-    	return this.getClass().getName();
-    }
-    */
-
-    
     protected static final String NOT_SET = "NOT SET";
     protected String FILTER_NAME = NOT_SET;
   	protected boolean inited = false;
@@ -65,8 +58,6 @@ public class FilterSetup extends Base implements Filter {
 		String method = "destroy()"; if (log.isDebugEnabled()) log.debug(enter(method));
 		if (log.isDebugEnabled()) log.debug(exit(method));
     }
-    
-    
     
     protected void initThisSubclass(String key, String value) {
     	log.debug("AF.iTS");
