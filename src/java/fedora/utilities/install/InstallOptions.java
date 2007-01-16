@@ -119,6 +119,7 @@ public class InstallOptions {
         	_map.put(TOMCAT_SHUTDOWN_PORT, null); // 8005
         	_map.put(XACML_ENABLED, Boolean.toString(false));
         	_map.put(DATABASE, INCLUDED); // included
+        	_map.put(DATABASE_DRIVER, INCLUDED);
         	_map.put(DATABASE_USERNAME, "fedoraAdmin");
         	_map.put(DATABASE_PASSWORD, "fedoraAdmin");
 			_map.put(DATABASE_JDBCURL, includedJDBCURL);
