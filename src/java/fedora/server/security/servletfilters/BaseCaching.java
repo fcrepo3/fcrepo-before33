@@ -76,12 +76,12 @@ public abstract class BaseCaching extends BaseContributing implements CacheEleme
     	Cache cache = new Cache(
 				FILTER_NAME,
 				"", //CACHE_KEY_SEPARATOR
-				AUTH_SUCCESS_TIMEOUT_UNIT,
-				AUTH_SUCCESS_TIMEOUT_DURATION,
-				AUTH_FAILURE_TIMEOUT_UNIT,
-				AUTH_FAILURE_TIMEOUT_DURATION,  
-				AUTH_EXCEPTION_TIMEOUT_UNIT,
-				AUTH_EXCEPTION_TIMEOUT_DURATION, 
+				LOOKUP_SUCCESS_TIMEOUT_UNIT,
+				LOOKUP_SUCCESS_TIMEOUT_DURATION,
+				AUTHN_FAILURE_TIMEOUT_UNIT,
+				AUTHN_FAILURE_TIMEOUT_DURATION,  
+				LOOKUP_EXCEPTION_TIMEOUT_UNIT,
+				LOOKUP_EXCEPTION_TIMEOUT_DURATION, 
 				this
 				);
     	if (log.isDebugEnabled()) log.debug(exit(method));
@@ -91,32 +91,32 @@ public abstract class BaseCaching extends BaseContributing implements CacheEleme
     protected boolean SPONSORING = false;
 	
   	//public static final String CACHE_KEY_SEPARATOR_KEY = "cache-key-separator";
-  	public static final String AUTH_SUCCESS_TIMEOUT_UNIT_KEY = "auth-success-timeout-unit";
-  	public static final String AUTH_SUCCESS_TIMEOUT_DURATION_KEY = "auth-success-timeout-duration";
-  	public static final String AUTH_FAILURE_TIMEOUT_UNIT_KEY = "auth-failure-timeout-unit";
-  	public static final String AUTH_FAILURE_TIMEOUT_DURATION_KEY = "auth-failure-timeout-duration";
-  	public static final String AUTH_EXCEPTION_TIMEOUT_UNIT_KEY = "auth-exception-timeout-unit";
-  	public static final String AUTH_EXCEPTION_TIMEOUT_DURATION_KEY = "auth-exception-timeout-duration";
+  	public static final String LOOKUP_SUCCESS_TIMEOUT_UNIT_KEY = "lookup-success-timeout-unit";
+  	public static final String LOOKUP_SUCCESS_TIMEOUT_DURATION_KEY = "lookup-success-timeout-duration";
+  	public static final String AUTHN_FAILURE_TIMEOUT_UNIT_KEY = "authn-failure-timeout-unit";
+  	public static final String AUTHN_FAILURE_TIMEOUT_DURATION_KEY = "authn-failure-timeout-duration";
+  	public static final String LOOKUP_EXCEPTION_TIMEOUT_UNIT_KEY = "lookup-exception-timeout-unit";
+  	public static final String LOOKUP_EXCEPTION_TIMEOUT_DURATION_KEY = "lookup-exception-timeout-duration";
 	
 	//public static final String AUTHN_OVER_CONTAINER = "authn-over-container"; 
     
     //private String CACHE_KEY_SEPARATOR = "|";
 
   	//defaults
-    private String AUTH_SUCCESS_TIMEOUT_UNIT_DEFAULT = "MINUTE";
-    private int AUTH_SUCCESS_TIMEOUT_DURATION_DEFAULT = 10;
-    private String AUTH_FAILURE_TIMEOUT_UNIT_DEFAULT = "SECOND";
-    private int AUTH_FAILURE_TIMEOUT_DURATION_DEFAULT = 1;  
-    private String AUTH_EXCEPTION_TIMEOUT_UNIT_DEFAULT = "SECOND";
-    private int AUTH_EXCEPTION_TIMEOUT_DURATION_DEFAULT = 1;    
+    private String LOOKUP_SUCCESS_TIMEOUT_UNIT_DEFAULT = "MINUTE";
+    private int LOOKUP_SUCCESS_TIMEOUT_DURATION_DEFAULT = 10;
+    private String AUTHN_FAILURE_TIMEOUT_UNIT_DEFAULT = "SECOND";
+    private int AUTHN_FAILURE_TIMEOUT_DURATION_DEFAULT = 1;  
+    private String LOOKUP_EXCEPTION_TIMEOUT_UNIT_DEFAULT = "SECOND";
+    private int LOOKUP_EXCEPTION_TIMEOUT_DURATION_DEFAULT = 1;    
 
   	
-    private String AUTH_SUCCESS_TIMEOUT_UNIT = AUTH_SUCCESS_TIMEOUT_UNIT_DEFAULT;
-    private int AUTH_SUCCESS_TIMEOUT_DURATION = AUTH_SUCCESS_TIMEOUT_DURATION_DEFAULT;
-    private String AUTH_FAILURE_TIMEOUT_UNIT = AUTH_FAILURE_TIMEOUT_UNIT_DEFAULT;
-    private int AUTH_FAILURE_TIMEOUT_DURATION = AUTH_FAILURE_TIMEOUT_DURATION_DEFAULT;  
-    private String AUTH_EXCEPTION_TIMEOUT_UNIT = AUTH_EXCEPTION_TIMEOUT_UNIT_DEFAULT;
-    private int AUTH_EXCEPTION_TIMEOUT_DURATION = AUTH_EXCEPTION_TIMEOUT_DURATION_DEFAULT;    
+    private String LOOKUP_SUCCESS_TIMEOUT_UNIT = LOOKUP_SUCCESS_TIMEOUT_UNIT_DEFAULT;
+    private int LOOKUP_SUCCESS_TIMEOUT_DURATION = LOOKUP_SUCCESS_TIMEOUT_DURATION_DEFAULT;
+    private String AUTHN_FAILURE_TIMEOUT_UNIT = AUTHN_FAILURE_TIMEOUT_UNIT_DEFAULT;
+    private int AUTHN_FAILURE_TIMEOUT_DURATION = AUTHN_FAILURE_TIMEOUT_DURATION_DEFAULT;  
+    private String LOOKUP_EXCEPTION_TIMEOUT_UNIT = LOOKUP_EXCEPTION_TIMEOUT_UNIT_DEFAULT;
+    private int LOOKUP_EXCEPTION_TIMEOUT_DURATION = LOOKUP_EXCEPTION_TIMEOUT_DURATION_DEFAULT;    
     
     public String AUTHENTICATE_KEY = "authenticate";
     public String AUTHENTICATED_USER_KEY = "associated-filters";
@@ -130,23 +130,23 @@ public abstract class BaseCaching extends BaseContributing implements CacheEleme
 			CACHE_KEY_SEPARATOR = value;
 			setLocally = true;
 		} else */
-		if (AUTH_SUCCESS_TIMEOUT_UNIT_KEY.equals(key)) {
-			AUTH_SUCCESS_TIMEOUT_UNIT = value;
+		if (LOOKUP_SUCCESS_TIMEOUT_UNIT_KEY.equals(key)) {
+			LOOKUP_SUCCESS_TIMEOUT_UNIT = value;
 			setLocally = true;
-		} else if (AUTH_SUCCESS_TIMEOUT_DURATION_KEY.equals(key)) {
-			AUTH_SUCCESS_TIMEOUT_DURATION = Integer.parseInt(value);
+		} else if (LOOKUP_SUCCESS_TIMEOUT_DURATION_KEY.equals(key)) {
+			LOOKUP_SUCCESS_TIMEOUT_DURATION = Integer.parseInt(value);
 			setLocally = true;
-		} else if (AUTH_FAILURE_TIMEOUT_UNIT_KEY.equals(key)) {
-			AUTH_FAILURE_TIMEOUT_UNIT = value;
+		} else if (AUTHN_FAILURE_TIMEOUT_UNIT_KEY.equals(key)) {
+			AUTHN_FAILURE_TIMEOUT_UNIT = value;
 			setLocally = true;
-		} else if (AUTH_FAILURE_TIMEOUT_DURATION_KEY.equals(key)) {
-			AUTH_FAILURE_TIMEOUT_DURATION = Integer.parseInt(value);
+		} else if (AUTHN_FAILURE_TIMEOUT_DURATION_KEY.equals(key)) {
+			AUTHN_FAILURE_TIMEOUT_DURATION = Integer.parseInt(value);
 			setLocally = true;
-		} else if (AUTH_EXCEPTION_TIMEOUT_UNIT_KEY.equals(key)) {
-			AUTH_EXCEPTION_TIMEOUT_UNIT = value;
+		} else if (LOOKUP_EXCEPTION_TIMEOUT_UNIT_KEY.equals(key)) {
+			LOOKUP_EXCEPTION_TIMEOUT_UNIT = value;
 			setLocally = true;
-		} else if (AUTH_EXCEPTION_TIMEOUT_DURATION_KEY.equals(key)) {
-			AUTH_EXCEPTION_TIMEOUT_DURATION = Integer.parseInt(value);
+		} else if (LOOKUP_EXCEPTION_TIMEOUT_DURATION_KEY.equals(key)) {
+			LOOKUP_EXCEPTION_TIMEOUT_DURATION = Integer.parseInt(value);
 			setLocally = true;
 		} else if (AUTHENTICATE_KEY.equals(key)) {
     		try {
