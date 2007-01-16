@@ -110,13 +110,16 @@
 		</param>
 	</module>
 	<module role="fedora.server.storage.DOManager" class="fedora.server.storage.DefaultDOManager">
-    	<comment>The interface to the storage subsystem. This provides 
+    	<comment>The interface to the storage subsystem.  This provides 
     	context-appropriate DOReaders and DOWriters for reflecting on and 
     	writing to the objects stored in the repository. It also provides 
     	methods for reflecting on the contents of the repository as a whole. 
-    	This implementation uses DefinitiveDOReader/Writer for an "application" 
-    	of "apim" and a FastDOReader/Writer for an "application" of "apia" 
-    	(from the Context). Other context-specific logic TBD.</comment>
+        NOTE: If you are using the Fedora Generic Search service, you can
+        enable automatic signaling to the service by changing the class
+        of this module to "fedora.server.storage.GSearchDOManager", then
+        populating the gSearchRESTURL, gSearchUsername, and gSearchPassword
+        parameters as needed.
+    	</comment>
 		<param name="pidNamespace" value="changeme">
 	    	<comment>This is the namespace id for pids of newly-created objects. 
 	    	This should be unique for a repository. It can be from 1 to 17 
@@ -143,6 +146,23 @@
 	    	character encoding that should be used. Default is UTF-8.</comment>
 	   	</param>
 	    <param name="defaultExportFormat" value="foxml1.0"/>
+        <param name="gSearchRESTURL" value="http://localhost:8080/fedoragsearch/rest">
+            <comment>The REST endpoint of the Fedora Generic Search service.
+            This parameter is only required if GSearchDOManager is 
+            used.</comment>
+        </param>
+        <param name="gSearchUsername" value="exampleUsername">
+            <comment>The username for accessing the REST endpoint of the
+            Fedora Generic Search service.  This parameter is only required if
+            GSearchDOManager is used, and the service requires 
+            authentication.</comment>
+        </param>
+        <param name="gSearchPassword" value="examplePassword">
+            <comment>The associated password for accessing the REST endpoint
+            of the Fedora Generic Search service.  This parameter is only 
+            required if GSearchDOManager is used, and the service requires 
+            authentication.</comment>
+        </param>
 	</module>
 	<module role="fedora.server.management.Management" class="fedora.server.management.DefaultManagement">
 		<comment>The management subsystem. This implements the methods necessary 
