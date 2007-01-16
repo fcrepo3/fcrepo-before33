@@ -20,7 +20,7 @@ public abstract class XacmlNamespace {
    		this.uri = ((parent == null) ? "" : (parent.uri) + ":") + localName;
     }
 
-	/*package*/ XacmlNamespace addNamespace(XacmlNamespace namespace) {
+	 XacmlNamespace addNamespace(XacmlNamespace namespace) {
 		XacmlNamespace result = null;
 		if (memberNamespaces.add(namespace)) {
 			result = namespace;
@@ -28,7 +28,7 @@ public abstract class XacmlNamespace {
 		return result;
 	}
 	
-	/*package*/ XacmlName addName(XacmlName name) {
+	 XacmlName addName(XacmlName name) {
 		XacmlName result = null;
 		if (memberNames.add(name)) {
 			result = name;

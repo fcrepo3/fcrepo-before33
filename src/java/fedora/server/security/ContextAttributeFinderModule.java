@@ -248,12 +248,12 @@ class ContextAttributeFinderModule extends AttributeFinderModule {
 		return values;
 	}
 	
-	/*package*/ final void registerContext(Object key, Context value) {
+	 final void registerContext(Object key, Context value) {
 		LOG.debug("registering " + key);
 		contexts.put(key, value);
 	}
 	
-	/*package*/ final void unregisterContext(Object key) {
+	 final void unregisterContext(Object key) {
 		LOG.debug("unregistering " + key);
 		contexts.remove(key);
 	}
