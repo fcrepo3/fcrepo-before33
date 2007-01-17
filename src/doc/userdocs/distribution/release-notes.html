@@ -51,11 +51,12 @@
 			that Fedora can now be installed as a standalone webapp in any servlet 
 			container. In addition to the war file repackaging, the Fedora 2.2 release 
 			includes several feature enhancements including new Fedora installer application, 
-			new web-based Fedora configuration tool, refactoring of authentication 
+			refactoring of authentication 
 			code using ServletFilters, enhancements to the WSDL for the Management 
 			and Access APIs, new Journaling feature useful for replicating repositories, 
 			modification of several API-M methods to enhance functionality, new checksum 
-			support for datastreams, enhancements to the Resource Index enabling selection 
+			support for datastreams, new support for object ownerId property,
+			enhancements to the Resource Index enabling selection 
 			of an alternate triplestore database engine, integration of Gert Pedersen's 
 			Fedora Generic Search application into the Fedora Services Framework, 
 			and refactoring of the JUnit tests.</p>
@@ -177,7 +178,7 @@ public String compareDatastreamChecksum(String PID,
 					</pre></div></p>
 					<p>It is now possible to assign a single owner to the ownerId object property of a digital object. Once specified, 
 					you can also write XACML policies against the ownerId policy attribute. The implementation of the ownerId feature 
-					also modifies the signature of the API-M method called modifyObject to enabled setting or changing the value
+					also modifies the signature of the API-M method named "modifyObject" to enabled setting or changing the value
 					of ownerId on a digital object.</p>
 					<p>Here are the old and new signature for the method:</p>
 					<div class="code">
