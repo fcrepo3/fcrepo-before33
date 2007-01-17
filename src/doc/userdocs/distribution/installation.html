@@ -30,10 +30,12 @@
             		<li><a href="#intro.download">Download Fedora</a></li>
             		<li><a href="#intro.env">Environment Variables</a></li>
             	</ol>
+            </li>
       		<li><a href="#installer">Installation</a>
       			<ol>
       				<li><a href="#installer.quick">Quick Install</a></li>
       				<li><a href="#installer.custom">Custom Install</a></li>
+      				<li><a href="#installer.client">Client Install</a></li>
       				<li><a href="#installer.source">Source Install</a></li>
       			</ol>
       		</li>
@@ -154,71 +156,71 @@ installing and compiling the complete source code distribution.</p>
 <div class="sect">
 <h2><a name="installer">2. Installation</a></h2>
 	<p>The Fedora Installer provides three installation options: quick, custom, 
-	and client. 
-	The quick option is designed to get Fedora up and running as quickly as 
-	possible, with a minimum of advanced options. The quick install will 
-	automatically install a servlet container and database. Neither SSL 
-	support nor XACML policy enforcement is enabled by the quick install.</p>
-	
-	<p>The custom option, on the other hand, provides the most flexibility in 
-	configuring your installation. In addition to being able to select your own 
-	servlet container or database, you can also configure the host and ports 
-	Fedora will be running on as well as security options including SSL and 
-	XACML policy enforcement.</p>
-	
-	<p>Both the quick and custom options will install the Fedora client software
-	in addition to the Fedora server. The client option, however, will install 
-	only the Fedora client software.
-	
+	and client.</p>
+
 	<p>To start the installer, change to the directory where you downloaded the 
-	installer and enter <code>java -jar fedora-2.2-installer.jar</code> at a 
-	command prompt.</p>
+	installer and at a command prompt, enter</p>
+	<div class="code">java -jar fedora-2.2-installer.jar</div>
 	
     <div class="subsect">
 		<h3><a name="installer.quick">A. Quick</a></h3>
-		<dl>
-			<dt>Fedora home directory</dt>
-				<dd>The directory where Fedora will be installed. 
-				This should match the FEDORA_HOME environment variable described 
-				above.</dd>	
-			<dt>Fedora administrator password</dt>
-				<dd>The password to use for the Fedora administrator 
-				(fedoraAdmin) account.</dd>
-		</dl>
+		<p>The quick option is designed to get Fedora up and running as quickly 
+		as possible, with a minimum of advanced options. 
+		The quick install will automatically install a servlet container and 
+		database.
+		Neither SSL support nor XACML policy enforcement is enabled by the 
+		quick install.</p>
 	</div>
 	
 	<div class="subsect">
 		<h3><a name="installer.custom">B. Custom</a></h3>
-		Servlet Container
-		The installer will automatically configure and deploy to Tomcat 5.0.x 
+		<p>The custom option provides the most flexibility in configuring an 
+		installation. Installation choices include the servlet container,
+		database, the host and ports Fedora will be running on, as well as 
+		security options including SSL and XACML policy enforcement.</p>
+		
+		<dl>
+			<dt>Servlet Container</dt>
+			<dd>The installer will automatically configure and deploy to Tomcat 5.0.x 
 		and 5.5.x servlet containers. Other servlet containers will require 
 		manual deployment of the Fedora web application. The installer will 
-		copy the WAR files to FEDORA_HOME/install.
+		copy the WAR files to FEDORA_HOME/install.</dd>
 		
-		SSL
-		Configuring SSL support for Fedora's API-M interface is strongly 
+			<dt>SSL</dt>
+			<dd>Configuring SSL support for Fedora's API-M interface is strongly 
 		recommended. If the Tomcat servlet container is selected, the installer 
 		will configure server.xml accordingly. Please consult your servlet 
 		container's documentation for certificate generation and installation. 
 		(In particular, the example certificate provided by the installer for
-		Tomcat should not be used in a production environment).
+		Tomcat should not be used in a production environment).</dd>
+		</dl>
 	</div>
 	
 	<div class="subsect">
-		<h3><a name="installer.source">C. Source</a></h3>
+		<h3><a name="installer.client">C. Client</a></h3>
+		<p>Both the quick and custom options will install the Fedora client 
+		software in addition to the Fedora server. The client option, however, 
+		will install only the Fedora client software.</p>
+	</div>
+	
+	<div class="subsect">
+		<h3><a name="installer.source">D. Source</a></h3>
 		<p>After unpacking the source distribution, change into the newly 
-		extracted directory. To build the installer, enter 
-		<code>ant installer</code>. 
-		To see a list of build targets, enter <code>ant -projecthelp</code>.</p>
+		extracted directory. To build the installer, at a command prompt, 
+		enter</p>
+		<div class="code">ant installer</div>
+		<p>To see a list of build targets, at a command prompt, enter</p>
+		<div class="code">ant -projecthelp</div>
 	</div>
 </div>
 
 <div class="sect">
 <h2><a name="running">3. Running Fedora</a></h2>
 	<p>If you selected the quick install option, you will find Tomcat 
-	installed in FEDORA_HOME/tomcat. Start Tomcat by entering
-	<code>FEDORA_HOME/tomcat/bin/startup.sh</code> 
-	(or <code>FEDORA_HOME\tomcat\bin\startup.bat</code> in Windows).</p>
+	installed in FEDORA_HOME/tomcat. To run Fedora, start Tomcat by entering</p>
+	<div class="code">$FEDORA_HOME/tomcat/bin/startup.sh</div> 
+	<p>(or for Windows)</p> 
+	<div class="code">%FEDORA_HOME%\tomcat\bin\startup.bat</div>
 
 	<p>If you selected the custom install option, ensure that your database 
 	server is running (unless you selected the embedded McKoi option) and start 
@@ -299,26 +301,23 @@ installing and compiling the complete source code distribution.</p>
 		<p>Please note that the MySQL JDBC driver provided by the installer 
 		requires MySQL v3.23.x or higher.</p>
 		
-		<ol>
-			<li>Create the database (e.g. <code>fedora22</code><br />
-			<code>mysqladmin -u root -ppassword -h localhost create fedora22</code></li>
-			<li>Set username, password and permissions for the database.<br />
-			<code>grant all privileges on fedora22.* to fedoraAdmin@localhost identified by 'fedoraAdmin' with grant option;</code><br />
-			<code>grant all privileges on fedora22.* to fedoraAdmin@'%' identified by 'fedoraAdmin' with grant option;</code>
-			</li>
-			<li></li>
-			<li></li>
-			<li></li>
-			<li></li>
-		</ol>
+		<p>Create the database. For example, to create a database named 
+		<code>fedora22</code>, enter:</p>
+		<div class="code">CREATE DATABASE fedora22;</div>
+		
+		<p>Set username, password and permissions for the database.
+		For example, to set the permissions for user 
+		<code>fedoraAdmin</code> with password <code>fedoraAdmin</code> on 
+		database <code>fedora22</code>, enter:</p>
+		<div class="code">GRANT ALL ON fedora22.* TO fedoraAdmin@localhost IDENTIFIED BY 'fedoraAdmin';
+GRANT ALL ON fedora22.* to fedoraAdmin@'%' IDENTIFIED BY 'fedoraAdmin';</div>
+
 		<p>MySQL 4.1.x users must also specify the default character set for the 
 		Fedora database as "utf8" and the default collation as "utf8_bin". 
 		For example, to set the default character set and collation on a 
-		database named "fedora22":</p>
-		<blockquote>
-		<code>alter database fedora22 default character set utf8;</code><br />
-		<code>alter database fedora22 default collate utf8_bin;</code>
-		</blockquote>
+		database named "fedora22", enter:</p>
+		<div class="code">ALTER DATABASE fedora22 DEFAULT CHARACTER SET utf8;
+ALTER DATABASE fedora22 DEFAULT COLLATE utf8_bin;</div>
 	</div>
 	
 	<div class="subsect">
