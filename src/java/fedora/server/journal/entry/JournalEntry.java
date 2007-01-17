@@ -84,17 +84,22 @@ public abstract class JournalEntry {
     }
 
     /**
-     * If handed an InputStream as an argument, copy it to a temp file and store
-     * that File in the arguments map instead.
+     * If handed an InputStream as an argument, copy it to a temp file and
+     * store that File in the arguments map instead.  If the InputStream is
+     * null, store null in the arguments map.
      */
     public void addArgument(String key, InputStream stream)
             throws JournalException {
         checkOpen();
-        try {
-            File tempFile = JournalHelper.copyToTempFile(stream);
-            arguments.put(key, tempFile);
-        } catch (IOException e) {
-            throw new JournalException(e);
+        if (stream == null) {
+            arguments.put(key, null);
+        } else {
+            try {
+                File tempFile = JournalHelper.copyToTempFile(stream);
+                arguments.put(key, tempFile);
+            } catch (IOException e) {
+                throw new JournalException(e);
+            }
         }
     }
 
@@ -140,14 +145,20 @@ public abstract class JournalEntry {
 
     /**
      * If they ask for an InputStream argument, get the File from the arguments
-     * map and create an InputStream on that file.
+     * map and create an InputStream on that file.  If the value from the
+     * map is null, return null.
      */
     public InputStream getStreamArgument(String name) throws JournalException {
         checkOpen();
-        try {
-            return new FileInputStream((File) arguments.get(name));
-        } catch (FileNotFoundException e) {
-            throw new JournalException(e);
+        File file = (File) arguments.get(name);
+        if (file == null) {
+            return null;
+        } else {
+            try {
+                return new FileInputStream(file);
+            } catch (FileNotFoundException e) {
+                throw new JournalException(e);
+            }
         }
     }
 
