@@ -40,6 +40,7 @@ public class JournalConsumer implements JournalWorker {
     private final JournalConsumerThread consumerThread;
     private final JournalReader reader;
     private final JournalRecoveryLog recoveryLog;
+    private ManagementDelegate delegate;
 
     /**
      * Get the appropriate JournalReader and JournalRecoveryLog, based on the
@@ -63,6 +64,7 @@ public class JournalConsumer implements JournalWorker {
      * JournalConsumerThread, so it can start working.
      */
     public void setManagementDelegate(ManagementDelegate delegate) {
+        this.delegate = delegate;
         this.consumerThread.setManagementDelegate(delegate);
     }
 
@@ -268,10 +270,16 @@ public class JournalConsumer implements JournalWorker {
     }
 
     /**
-     * Reject API calls from outside while we are in recovery mode.
+     * Delegate to the ManagementDelegate.
+     *
+     * Note: Unlike other methods of the Management interface, this method
+     * is not exposed at the service level.  Therefore, it is safe to forward
+     * the call to the delegate.  It is also necessary because, in the
+     * course of fulfilling API-M requests that involve uploaded content,
+     * this method is invoked by internal server code.
      */
     public InputStream getTempStream(String id) throws ServerException {
-        throw rejectCallsFromOutsideWhileInRecoveryMode();
+        return delegate.getTempStream(id);
     }
 
     /**
