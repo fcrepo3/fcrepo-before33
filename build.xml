@@ -429,8 +429,12 @@
     </target>
 	
 	<target name="fedorahome" depends="server, client">
-		<zip destfile="${dist.dir}/fedorahome.zip"
-			basedir="${fedora.home.build.dir}"/>
+		<mkdir dir="${docs.build.dir}" />
+		<zip destfile="${dist.dir}/fedorahome.zip">
+			<fileset dir="${fedora.home.build.dir}"/>
+			<zipfileset dir="${docs.build.dir}" prefix="docs" />
+			<zipfileset dir="license" prefix="docs/license" />
+		</zip>
 	</target>
     
     <target name="war" depends="server"
@@ -820,5 +824,15 @@
             <fileset dir="${src.dir}/demo-content"/>
         </copy>
 		<jar destfile="${dist.dir}/fedora-demo.war" basedir="${demo.war.build.dir}"/>
+	</target>
+	
+	<target name="release" depends="clean, docs, installer"
+		description="">
+		<!-- TODO: 
+			add description
+			add license boilerplate to source code in fedora/ package
+			zip src (pruning CVS dirs)
+			create checksums for src zip and installer jar
+		-->
 	</target>
 </project>
