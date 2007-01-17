@@ -42,15 +42,14 @@
        		<li><a href="#running">Running the Server</a>
        			<ol>
       				<li><a href="#running.demo">Demo Objects</a></li>
-      				<li><a href="#running.logs">Server Logs</a></li>
       			</ol>
        		</li>
             <li><a href="#database">Database</a>
             	<ol>
-            		<li>MySQL</li>
-            		<li>Oracle</li>
-            		<li>PostgreSQL</li>
-            		<li>Other</li>
+            		<li><a href="#database.mysql">MySQL</a></li>
+            		<li><a href="#database.oracle">Oracle</a></li>
+            		<li><a href="#database.postgresql">PostgreSQL</a></li>
+            		<li><a href="#database.other">Other</a></li>
            		</ol>
             </li>
             <li><a href="#config">Configuring the Fedora Server</a>
@@ -59,7 +58,6 @@
             		<li>Logging</li>
            		</ol>
             </li>
-            <li><a href="#references">Where from Here?</a></li>
         </ol>
     </div>
 </div>
@@ -175,24 +173,29 @@ installing and compiling the complete source code distribution.</p>
 	<div class="subsect">
 		<h3><a name="installer.custom">B. Custom</a></h3>
 		<p>The custom option provides the most flexibility in configuring an 
-		installation. Installation choices include the servlet container,
+		installation. Options include the choice of servlet container,
 		database, the host and ports Fedora will be running on, as well as 
 		security options including SSL and XACML policy enforcement.</p>
 		
 		<dl>
 			<dt>Servlet Container</dt>
-			<dd>The installer will automatically configure and deploy to Tomcat 5.0.x 
-		and 5.5.x servlet containers. Other servlet containers will require 
-		manual deployment of the Fedora web application. The installer will 
-		copy the WAR files to FEDORA_HOME/install.</dd>
+			<dd>The installer will automatically configure and deploy to Tomcat 
+			5.0.x and 5.5.x servlet containers. However, other servlet 
+			containers will require manual deployment of the WAR files located 
+			at <code>FEDORA_HOME/install</code>.</dd>
 		
 			<dt>SSL</dt>
 			<dd>Configuring SSL support for Fedora's API-M interface is strongly 
-		recommended. If the Tomcat servlet container is selected, the installer 
-		will configure server.xml accordingly. Please consult your servlet 
-		container's documentation for certificate generation and installation. 
-		(In particular, the example certificate provided by the installer for
-		Tomcat should not be used in a production environment).</dd>
+			recommended for production environments. If the Tomcat servlet 
+			container is selected, the installer will configure 
+			<code>server.xml</code> accordingly (however, the installer will not
+			overwrite an existing <code>server.xml</code>, but rather, 
+			place a modified copy at <code>FEDORA_HOME/install</code> which you 
+			will need to install yourself). 
+			Please consult your servlet container's documentation 
+			for certificate generation and installation. (In particular, the 
+			example certificate provided by the installer for Tomcat should not 
+			be used in a production environment).</dd>
 		</dl>
 	</div>
 	
@@ -224,67 +227,44 @@ installing and compiling the complete source code distribution.</p>
 
 	<p>If you selected the custom install option, ensure that your database 
 	server is running (unless you selected the embedded McKoi option) and start 
-	your servlet container.</p>
+	your servlet container if necessary.</p>
 	
 	<div class="subsect">
 		<h3><a name="running.demo">A. Demo Objects</a></h3>
-		<p>blah blah</p>
+		<p>If you've just gotten your Fedora server up and running, it's a
+		good idea to check out the demonstration objects to get an idea of how 
+		Fedora works. See <a href="demos.html">the Demo Manual</a> for complete 
+		descriptions of the demos.</p>
 		
-		<p>If you have changed the values of either <span class=
-          "emphasis"><em>fedoraServerHost</em></span> and <span class="emphasis"><em>fedoraServerPort</em></span>, 
-	then you must run the <i><b>demo object converter utility </b></i>script to 
-	change the host and/or port in the demo object ingest files.&nbsp;&nbsp; The 
-	demo object conversion is only required if you are ingesting demo objects.&nbsp;&nbsp; 
-	If the demo objects are already ingested into the repository, they will be 
-	fine!&nbsp; The 
-	demo objects are shipped with references to &quot;localhost:8080&quot; and these 
-	references must reflect the new values of <span class=
-          "emphasis"><em>fedoraServerHost</em></span> and <span class="emphasis">
-	<em>fedoraServerPort</em></span> .&nbsp; Refer to the 
-	<a href=
-          "../client/cmd-line/index.html" target=
-          "_top">Command-line Utilities documentation</a> for additional details 
-          on running the demo object converter.</p>
-    <p>If you've just got your Fedora server up and running, it's a
-    good idea to check out the demonstration objects to get an idea
-    of how Fedora works. See <a href="demos.html" target="_top">the
-    Demo Manual</a> for complete descriptions of the demos.</p>
-
-    <p>The demos may be ingested via the Fedora Admin GUI tool or
-    from the command line. If you ingest the from the Admin GUI,
-    you must be sure to ingest bdef objects first, then bmech
-    objects, then regular objects.</p>
-
-    <p>To access the Admin GUI use the command:</p>
-
-    <p><span class="emphasis"><em>fedora-admin [hostname] [port]
-    [username] [password]</em></span></p>
-
-    <p>To ingest the demos from the command line (recommended), use
-    the command:</p>
-
-    <p><span class="emphasis"><em>fedora-ingest-demos [hostname]
-    [port] [username] [password] [protocol]</em></span></p>
-
-    <p>For additional information on the fedora-ingest-demos command,
-    see the documentation for the <a href="../client/cmd-line/index.html#indemo">
-    client command-line utilities</a>. Please note that 
-    the demo objects must be ingested before they can be discovered 
-    using the default search interface.</p>
-	</div>
+		<p>NOTE: If, during the custom install, you entered values other than 
+		the defaults for <em>fedoraServerHost</em> (localhost) or 
+		<em>fedoraServerPort</em> (8080), you must run the 
+		<i><b>demo object converter utility</b></i> script to change the host 
+		and/or port in the demo object ingest files.
+		The demo object conversion is only required if you are ingesting demo 
+		objects. If the demo objects are already ingested into the repository 
+		(e.g. from a previous installation), there is no need for conversion. 
+		The demo objects are shipped with references to 
+		&quot;localhost:8080&quot; and these references must reflect the new 
+		values of <em>fedoraServerHost</em> <em>fedoraServerPort</em>.
+		Refer to the 
+		<a href="../client/cmd-line/index.html">Command-line Utilities documentation</a> 
+		for additional details on running the demo object converter.</p>
+    
+	    <p>To ingest the demos, at a command prompt, enter:</p>
 	
-	<div class="subsect">
-		<h3><a name="running.logs">B. Server Logs</a></h3>
-		<p>While the server is running, it writes logs to
-    	FEDORA_HOME/server/logs. These are timestamped files, written
-    	in a simple XML format. You can use these logs to get more
-    	extensive information about what the server is doing or to
-    	diagnose problems.</p>
-	</div>
+		<div class="code">fedora-ingest-demos [hostname] [port] [username] [password] [protocol]</div>
+	
+	    <p>For additional information on the fedora-ingest-demos command,
+	    see the documentation for the <a href="../client/cmd-line/index.html#indemo">
+	    client command-line utilities</a>. Please note that 
+	    the demo objects must be ingested before they can be discovered 
+	    using the default search interface.</p>
+		</div>
 </div>
 
 <div class="sect">
-<h2><a name="database">5. Database</a></h2>
+<h2><a name="database">4. Database</a></h2>
 	<p>Fedora is designed to be RDBMS-independent. Fedora has been tested with 
 	McKoi, MySQL, Oracle and PostgreSQL. The embedded version of McKoi included 
 	with the installer is provided as a convenience. Large repositories or 
@@ -297,9 +277,13 @@ installing and compiling the complete source code distribution.</p>
 	create the user and tables required by Fedora.</p>
 	
 	<div class="subsect">
-		<h3><a name="intro.env">A. MySQL</a></h3>
+		<h3><a name="database.mysql">A. MySQL</a></h3>
 		<p>Please note that the MySQL JDBC driver provided by the installer 
 		requires MySQL v3.23.x or higher.</p>
+		
+		<p>The MySQL commands listed below can be run within the 
+		<code>mysql</code> program, which may be invoked as follows:</p>
+		<div class="code">mysql -u root -p</div>
 		
 		<p>Create the database. For example, to create a database named 
 		<code>fedora22</code>, enter:</p>
@@ -321,7 +305,7 @@ ALTER DATABASE fedora22 DEFAULT COLLATE utf8_bin;</div>
 	</div>
 	
 	<div class="subsect">
-		<h3><a name="intro.env">B. Oracle</a></h3>
+		<h3><a name="database.oracle">B. Oracle</a></h3>
 		<p>With Oracle, you will need to use an administrative account to 
 		manually create 1) the Fedora user on the database, and 2) the 
 		tablespace on which that user has complete control.</p>
@@ -335,21 +319,25 @@ ALTER DATABASE fedora22 DEFAULT COLLATE utf8_bin;</div>
 	</div>
 	
 	<div class="subsect">
-		<h3><a name="intro.env">C. PostgreSQL</a></h3>
-		<p>With Oracle, you will need to use an administrative account to 
-		manually create 1) the Fedora user on the database, and 2) the 
-		tablespace on which that user has complete control.</p>
+		<h3><a name="database.postgresql">C. PostgreSQL</a></h3>
+		<p>Please consult the documentation at 
+		<a href="http://www.postgresql.org/docs/">http://www.postgresql.org/docs/</a>
+		for more detailed information about configuring PostgreSQL.</p>
 		
-		<p>Due to distribution license restrictions, the Fedora Installer does 
-		not include the Oracle JDBC driver. Oracle JDBC drivers are available
-		from <a href="http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html"
-		target="_top">http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</a>.
-        The installer will prompt you for the location of the driver on your 
-        filesystem.</p>
+		<p>Launch the PostgreSQL interactive terminal, <code>psql</code>, 
+		(optionally appending the <code>-U</code> argument to connect as a
+		different user).</p>
+		<div class="code">psql -d postgres</div>
+		
+		<p>To create a user <code>fedoraAdmin</code> with password 
+		<code>fedoraAdmin</code> and  database named <code>fedora22</code>, 
+		enter the following:</p>
+		<div class="code">CREATE ROLE "fedoraAdmin" LOGIN PASSWORD 'fedoraAdmin';
+CREATE DATABASE "fedora22" WITH ENCODING='UTF8' OWNER="fedoraAdmin";</div>
 	</div>
 	
 	<div class="subsect">
-		<h3><a name="intro.env">D. Other Databases</a></h3>
+		<h3><a name="database.other">D. Other Databases</a></h3>
         <p>To use a database other than McKoi, MySQL, Oracle or PostgreSQL, 
         the database must support common SQL-92 syntax and you must a have a 
         JDBC version 3 driver available.</p>
@@ -392,35 +380,35 @@ ALTER DATABASE fedora22 DEFAULT COLLATE utf8_bin;</div>
 </div>
 
 <div class="sect">
-<h2><a name="running">6. Configuring the Fedora Server</a></h2>
-	<p>The Fedora Server's configuration is chiefly governed by the Fedora
-	Server Configuration File (fedora.fcfg) located at 
-	FEDORA_HOME/server/config/fedora.fcfg.</p>
+<h2><a name="config">5. Configuring the Fedora Server</a></h2>
+	<div class="subsect">
+		<h3><a name="config.fcfg">A. fedora.fcfg</a></h3>
+		<p>The Fedora Server's configuration is chiefly governed by the Fedora 
+		Server Configuration File (fedora.fcfg) located at 
+		<code>FEDORA_HOME/server/config/fedora.fcfg</code>.</p>
 	
-	<p>The Fedora server configuration file contains: (1) global parameters 
-	for the Fedora server, (2) configuration parameters for each server 
-	module, and configuration parameters for each persistent data store of 
-	the Fedora server.</p>
+		<p>The Fedora server configuration file contains: 
+		(1) global parameters for the Fedora server, 
+		(2) configuration parameters for each server module, and 
+		(3) configuration parameters for each persistent data store.</p>
 
-	<p>The configuration file has a simple schema. It starts with a server 
-	element, under which a series of parameter elements occur, followed by a 
-	series of module elements, followed by a series of datastore elements. 
-	The parameter elements directly following the root server element are used 
-	to control what are considered generic server functionality. 
-	Examples include the level of logging to do, and the port on which the 
-	server is exposed.</p>
+		<p>The configuration file has a simple schema. It starts with a server 
+		element, under which a series of parameter elements occur, followed by a 
+		series of module elements, followed by a series of datastore elements. 
+		The parameter elements directly following the root server element are used 
+		to control what are considered generic server functionality; for example: 
+		the port on which the server is exposed.</p>
 
-	<p>The module elements are used to configure specific parts
+		<p>The module elements are used to configure specific parts
         of Fedora. For instance, the module with the role
         attribute, "fedora.server.search.FieldSearch" is used to
         configure the field-searching component of the server.
         Inside the module element, several param elements are
         included. These are specific to that module's
         implementation. Descriptions of each parameter can
-        currently be found in the configuration file itself.
-        Important ones will be listed below.</p>
+        currently be found in the configuration file itself.</p>
 
-	<p>The datastore elements are used to configure various
+		<p>The datastore elements are used to configure various
         databases that might be used by the system. Although the
         sample configuration file holds several, you will typically
         only need one. The datastore elements are associated with
@@ -430,12 +418,65 @@ ALTER DATABASE fedora22 DEFAULT COLLATE utf8_bin;</div>
         fedora.server.storage.ConnectionPoolManager module refers
         to one of the datastore elements in its value.</p>
         
-	<p>There are many other parameters you can configure with Fedora. See the 
-        Fedora Server Configuration File itself (fedora.fcfg) for internal documentation on all the parameters.</p>
-</div>
+		<p>There are many other parameters you can configure with Fedora. 
+		Refer to the Fedora Server Configuration File itself (fedora.fcfg) for 
+		internal documentation on all the parameters.</p>
+	</div>
+	
+	<div class="subsect">
+		<h3><a name="config.log">B. Logging</a></h3>
+		<p>Fedora uses Log4J for logging. For detailed information about using 
+		Log4J, consult the Log4J Manual: 
+		<a href="http://logging.apache.org/log4j/docs/manual.html">http://logging.apache.org/log4j/docs/manual.html</a>.</p>
+		
+		<p>The log configuration file is located at 
+		<code>FEDORA_HOME/server/config/log4j.properties</code>. 
+		Changes to the logging configuration will not be reflected until Fedora 
+		is restarted.</p>
+		
+		<p>Normally, coarse-grained logs for Fedora are written to 
+		<code>FEDORA_HOME/server/logs/fedora.log</code>. The following examples 
+		show the kinds of configuration changes you can make to aid in 
+		debugging.</p>
 
-<div class="sect">
-<h2><a name="running">7. Where From Here?</a></h2>
+		<p>To change the level to DEBUG for all Fedora classes, change the 
+		<code>log4j.logger.fedora</code> line to the following:</p>
+		<div class="code">log4j.logger.fedora = DEBUG, FEDORA</div>
+		
+		<p>To change the level to DEBUG for just one class, add the following 
+		lines:</p>
+		<div class="code">log4j.logger.fedora.server.utilities.SQLUtility = DEBUG, FEDORA
+log4j.additivity.fedora.server.utilities.SQLUtility = false</div>
+
+		<p>To change the level to DEBUG for a whole package, add the following 
+		lines:</p>
+		<div class="code">log4j.logger.fedora.server.resourceIndex = DEBUG, FEDORA
+log4j.additivity.fedora.server.resourceIndex = false</div>
+
+		<p>To send all DEBUG messages for a package to STDERR, with methods and 
+		line numbers add the following lines:</p>
+		<div class="code">log4j.logger.fedora.server.security = DEBUG, SECURITY
+log4j.additivity.fedora.server.security = false
+log4j.appender.SECURITY = org.apache.log4j.ConsoleAppender
+log4j.appender.SECURITY.target = System.err
+log4j.appender.SECURITY.layout = org.apache.log4j.PatternLayout
+log4j.appender.SECURITY.layout.ConversionPattern = %p %d{HH:mm:ss.SSS} [%t] (%c{1}.%M:%L) %m%n</div>
+		
+		<p>To send all DEBUG messages for a package to a dedicated file, with 
+		methods and line numbers, add the following lines:</p>
+		<div class="code">log4j.logger.fedora.server.security = DEBUG, SECURITY
+log4j.additivity.fedora.server.security = false
+log4j.appender.SECURITY = org.apache.log4j.RollingFileAppender
+log4j.appender.SECURITY.File =
+log4j.appender.SECURITY.MaxFileSize = 20MB
+log4j.appender.SECURITY.MaxBackupIndex = 5
+log4j.appender.SECURITY.layout = org.apache.log4j.PatternLayout
+log4j.appender.SECURITY.layout.ConversionPattern = %p %d{HH:mm:ss.SSS} [%t] (%c{1}.%M:%L) %m%n</div>
+
+		<p>Note: if <code>log4j.appender.SECURITY.File</code> is left empty, 
+		the file will be automatically created at 
+		<code>FEDORA_HOME/server/logs/security.log</code></p>
+	</div>
 	
 </div>
 
