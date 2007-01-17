@@ -149,16 +149,16 @@ p {
     font-family: Lucida Console, Courier New, Courier, monospace;
     margin: 5px 5px 5px 5px;
     min-width: 600px;
+    max-width: 800px;
     padding: 5px;
     color: #000000;
     white-space: pre;
+    overflow: auto;
 }
 
 .reference {
     text-decoration: none;
 }
-
-
 
 #relnotes ol {
 	margin-left:20px;
