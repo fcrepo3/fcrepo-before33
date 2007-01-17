@@ -208,8 +208,8 @@ public class FedoraAccessServlet extends HttpServlet {
 		boolean isGetDatastreamDisseminationRequest = false;
 		boolean xml = false;
 
-		requestURI = request.getRequestURL().toString() + "?"
-				+ request.getQueryString();
+		requestURI = request.getRequestURL().toString()
+				+ (request.getQueryString()!=null ? "?"+request.getQueryString() : "");
         LOG.info("Got request: " + requestURI);
 		fedoraServerProtocol = requestURI.substring(0, requestURI.indexOf(":"));
 
