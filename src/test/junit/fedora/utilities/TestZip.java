@@ -15,7 +15,7 @@ public class TestZip extends TestCase {
 
 	protected void setUp() throws Exception {
         super.setUp();
-        Zip.deleteDirectory(TEST_DIR);
+        FileUtils.delete(TEST_DIR);
         File testDir = new File(TEST_DIR);
 		File foo = new File(testDir, "foo");
 		File bar = new File(testDir, "bar");
