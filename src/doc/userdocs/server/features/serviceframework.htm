@@ -8,16 +8,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
 <meta name=ProgId content=Word.Document>
 <meta name=Generator content="Microsoft Word 11">
 <meta name=Originator content="Microsoft Word 11">
-<link rel=File-List href="serviceframework_files/filelist.xml">
 <link rel=Edit-Time-Data href="serviceframework_files/editdata.mso">
-<!--[if !mso]>
-<style>
-v\:* {behavior:url(#default#VML);}
-o\:* {behavior:url(#default#VML);}
-w\:* {behavior:url(#default#VML);}
-.shape {behavior:url(#default#VML);}
-</style>
-<![endif]-->
 <title>Fedora Service Framework</title>
 <!--[if gte mso 9]><xml>
  <w:WordDocument>
@@ -188,7 +179,7 @@ div.Section1
 	mso-list-template-ids:1147408838;}
 @list l0:level1
 	{mso-level-number-format:bullet;
-	mso-level-text:;
+	mso-level-text:·;
 	mso-level-tab-stop:.5in;
 	mso-level-number-position:left;
 	text-indent:-.25in;
@@ -224,8 +215,6 @@ p.MsoNormal
 	{margin-left:15.0pt;}
 </style>
 <![endif]><!--[if gte mso 9]><xml>
- <o:shapedefaults v:ext="edit" spidmax="2050"/>
-</xml><![endif]--><!--[if gte mso 9]><xml>
  <o:shapelayout v:ext="edit">
   <o:idmap v:ext="edit" data="1"/>
  </o:shapelayout></xml><![endif]-->
@@ -263,7 +252,7 @@ Contents<o:p></o:p></span></h2>
      tab-stops:list .5in'><span style='font-family:Arial'><a href="#INTRO">Introduction</a><o:p></o:p></span></li>
  <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l1 level1 lfo1;
      tab-stops:list .5in'><span style='font-family:Arial'><a href="#FRAMEWORK1">Fedora
-     Service Framework (2005-2007)</a><o:p></o:p></span></li>
+     Service Framework</a></span></li>
  <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l1 level1 lfo1;
      tab-stops:list .5in'><span style='font-family:Arial'><a href="#REPO">Fedora
      Core Repository Service</a><o:p></o:p></span></li>
@@ -280,17 +269,17 @@ Contents<o:p></o:p></span></h2>
 <h2 style='mso-line-height-alt:15.0pt'><a name=INTRO></a><span
 style='font-family:Arial'>1&nbsp; Introduction<o:p></o:p></span></h2>
 
-<p style='line-height:15.0pt'><span style='font-size:9.0pt;font-family:Arial;
+<p style='line-height:15.0pt'><span style='font-family:Arial;
 color:black'>As of Fedora 2.1, the<a href="serviceframework.htm"> Fedora
-Service Framework</a> is being introduced to facilitate the integration of new
+Service Framework</a> was introduced to facilitate the integration of new
 services with the Fedora repository. &nbsp; The framework takes a
 service-oriented architecture approach to building new functionality around a
 Fedora repository.&nbsp; While the Fedora repository, itself, exposes its
 functionality as a set of web service interfaces, all of these interfaces
 belong to the Fedora web application that runs in its own Tomcat&nbsp;&nbsp;
 The new Fedora Service Framework allows new services to be built around the
-core repository - <i>as stand-alone web applications that run independently of
-the Fedora repository.</i>&nbsp;&nbsp; While Fedora repository functionality
+core repository - as stand-alone web applications that run independently of
+the Fedora repository.&nbsp;&nbsp; While Fedora repository functionality
 can still be extended with new modules, the intent is to keep the repository
 service focused on the core functions of a repository.&nbsp;&nbsp; Yet, there
 are many other services that are beneficial companions to a repository, such as
@@ -306,8 +295,7 @@ released an initial set of services (<a
 href="../../services/diringest-service.html">Directory Ingest</a> and <a
 href="../../services/oaiprovider-service.html">OAI Provider </a>described
 below), and will continue to develop new services over the coarse of Fedora Phase
-2 (2005-2007), especially services for workflow, preservation, and
-search.&nbsp;&nbsp; Services that are part of the framework will be packaged as
+2 (2005-2007) and beyond, especially services for workflow and preservation.&nbsp;&nbsp; Services that are part of the framework will be packaged as
 part of the Fedora open-source software distribution and will be kept up to
 date with new versions of the core Fedora repository service.&nbsp;&nbsp;
 Members of the Fedora community will be collaborating on the development of
@@ -322,7 +310,7 @@ Arial;color:black'><o:p></o:p></span></p>
 
 <h2 style='mso-line-height-alt:15.0pt'><a name=FRAMEWORK1><span
 style='font-family:Arial'>2 </span></a><span style='font-family:Arial'>&nbsp;
-The Fedora Service Framework (2005-2007)<o:p></o:p></span></h2>
+The Fedora Service Framework</span></h2>
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
 
@@ -331,18 +319,27 @@ Fedora Service Framework, establishes a means for coupling new services with
 the core Fedora repository service.&nbsp; The framework allows for the creation
 of atomic, modular services that can interact with the Fedora repository or
 each other.&nbsp;&nbsp;&nbsp; The diagram below depicts the Fedora Service
-Framework as it is envision to evolve during 2005-2007.&nbsp;&nbsp; The first
-two services introduced with Fedora 2.1 are depicted in orange: the OAI
-Provider and the Directory Ingest services.&nbsp;&nbsp; &nbsp; During Phase 2
-of the Fedora Project (2005-2007), both the Fedora development team, and the
+Framework as it is envision to evolve during 2005-2007.&nbsp;&nbsp; The 
+repository service was the first deliverable of the Fedora Project 
+(2002-present).&nbsp;&nbsp; In 2006, the next
+two services were introduced with Fedora 2.1: the OAI
+Provider Service and the Directory Ingest services.&nbsp;&nbsp; &nbsp;In January 
+2007, the Fedora Search Service is being deployed as part of the framework.&nbsp;&nbsp; 
+The Search Service (known as GSearch) was contributed to the Fedora Project by 
+community member Gert Schmeltz Pedersen of the Danish Technical University.&nbsp; During 
+the rest of Phase 2
+of the Fedora Project, both the Fedora development team, and the
 Fedora community will develop the other services to fit into the
-framework.&nbsp; The Fedora Search and Workflow services are planned for Fedora
-2.2 (estimated early Q3 2006).<o:p></o:p></span></p>
+framework.&nbsp; IN 2007, development will begin on the Fedora Preservation, 
+Event/Messaging, and Workflow services.<o:p>&nbsp;&nbsp;&nbsp; During this phase 
+of development we will move Fedora towards an &quot;enterprise&quot; architectural 
+pattern.</o:p></span></p>
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
 
-<p style='line-height:15.0pt'><span style='font-family:Arial;color:black'><img
-border=0 width=947 height=576 id="_x0000_i1025" src="images/svcframe2.jpg"><o:p></o:p></span></p>
+<p style='line-height:15.0pt'>
+<img border="0" src="images/serviceframework.jpg" width="711" height="494"></p>
+<p style='line-height:15.0pt'>&nbsp;</p>
 
 </div>
 
@@ -353,18 +350,25 @@ service, links to specifications when available, and status. <o:p></o:p></span><
 
 <ul type=disc>
  <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo2;
-     tab-stops:list .5in'><b><span style='font-family:Arial'><a
-     href="../../services/oaiprovider-service.html">OAI Provider</a> </span></b><span
-     style='font-family:Arial'>(Fedora 2.1):&nbsp; a configurable OAI Provider
+     tab-stops:list .5in'><span style="font-family: Arial"><b><a href="#REPO">
+	Repository Service</a>:&nbsp; </b>at the heart of Fedora is the repository 
+	service that enables the creation, management, storage, access, and reuse of 
+	digital objects.&nbsp; <br>
+&nbsp;</span></li>
+	<li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo2;
+     tab-stops:list .5in'><b><span style='font-family:Arial'>
+	<a
+     href="../../services/oaiprovider-service.html">OAI Provider Service</a></span></b><span
+     style='font-family:Arial'>:&nbsp; a configurable OAI Provider
      service for harvesting metadata out of a Fedora repository via
      OAI-PMH.&nbsp; The service can be configured to harvest any type
      datastream of dissemination from objects in the repository.&nbsp; It also
-     supports OAI sets.<br>
-     &nbsp;<o:p></o:p></span></li>
- <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo2;
-     tab-stops:list .5in'><b><span style='font-family:Arial'><a
-     href="../../services/diringest-service.html">Directory Ingest</a> </span></b><span
-     style='font-family:Arial'>(Fedora 2.1):&nbsp; a service to ingest a
+     supports OAI sets.<br>&nbsp;<o:p></o:p></span></li>
+	<li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo2;
+     tab-stops:list .5in'><b><span style='font-family:Arial'>
+	<a
+     href="../../services/diringest-service.html">Directory Ingest Service</a></span></b><span
+     style='font-family:Arial'>:&nbsp; a service to ingest a
      hierarchical directory of files into a Fedora repository.&nbsp;&nbsp; The
      service will accept a Submission Information Package (SIP) in the form of
      a .zip archive that contains directories of files along with a METS-based
@@ -379,46 +383,43 @@ service, links to specifications when available, and status. <o:p></o:p></span><
      creating the SIP will be made available in Q2 2006.&nbsp; This client will
      enable a user select files from a file system, add metadata about files,
      and assert semantically-meaningful relationships, and ultimately submit
-     the SIP to a Fedora repository.&nbsp; </i><br>
-     &nbsp;<o:p></o:p></span></li>
- <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo2;
-     tab-stops:list .5in'><b><span style='font-family:Arial'>Search Service</span></b><span
-     style='font-family:Arial'> (planned for Fedora 2.2):&nbsp; a configurable
+     the SIP to a Fedora repository.&nbsp; </i><br>&nbsp;<o:p></o:p></span></li>
+	<li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo2;
+     tab-stops:list .5in'><b><span style='font-family:Arial'>
+	<a href="http://www.fedora.info/download/2.2/services/genericsearch/doc/index.html">Search Service</a></span></b><span
+     style='font-family:Arial'>:&nbsp; a configurable
      search service that can index any datastream or dissemination of Fedora
      digital objects.&nbsp; The service is pluggable, and will provide adapters
      for Lucene and Zebra as the default backend search engines.&nbsp; Other
-     search adapters can be developed to plug into other engines.<br>
-     &nbsp;<o:p></o:p></span></li>
- <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo2;
+     search adapters can be developed to plug into other engines.<br>&nbsp;<o:p></o:p></span></li>
+	<li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo2;
      tab-stops:list .5in'><b><span style='font-family:Arial'>Workflow and
-     Orchestration Service</span></b><span style='font-family:Arial'> (planned
-     in beta in Q3 2006)<br>
-     &nbsp;<o:p></o:p></span></li>
- <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo2;
+     Orchestration Service</span></b><span style='font-family:Arial'> (planned 
+	2007, under specification by Fedora Workflow Working Group and Fedora 
+	Development Team)<br>&nbsp;<o:p></o:p></span></li>
+	<li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo2;
      tab-stops:list .5in'><b><span style='font-family:Arial'>Preservation
-     Integrity Service</span></b><span style='font-family:Arial'> (currently
-     under specification by Fedora Preservation Working Group)<br>
-     &nbsp;<o:p></o:p></span></li>
- <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo2;
+     Integrity Service</span></b><span style='font-family:Arial'> (planned 2007, currently
+     under specification by Fedora Preservation Working Group)<br>&nbsp;<o:p></o:p></span></li>
+	<li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo2;
      tab-stops:list .5in'><b><span style='font-family:Arial'>Preservation
-     Monitoring and Alerting Services </span></b><span style='font-family:Arial'>(currently
-     under specification by Fedora Preservation Working Group)<br>
-     &nbsp;<o:p></o:p></span></li>
- <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo2;
+     Monitoring and Alerting Services </span></b>
+	<span style='font-family:Arial'>(planned 2007, currently
+     under specification by Fedora Preservation Working Group)<br>&nbsp;<o:p></o:p></span></li>
+	<li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo2;
      tab-stops:list .5in'><b><span style='font-family:Arial'>Event Notification
-     Service (Publish/Subscribe)</span></b><span style='font-family:Arial'><br>
-     &nbsp;<o:p></o:p></span></li>
- <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo2;
+     Service (Messaging)</span></b><span style='font-family:Arial'> (planned 
+	2007)<br>&nbsp;<o:p></o:p></span></li>
+	<li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo2;
      tab-stops:list .5in'><b><span style='font-family:Arial'>Persistent
-     Identifier Resolution Service</span></b><span style='font-family:Arial'><br>
-     &nbsp;<o:p></o:p></span></li>
- <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo2;
-     tab-stops:list .5in'><b><span style='font-family:Arial'>Open URL Access
-     Point:</span></b><span style='font-family:Arial'>&nbsp; an OpenURL
+     Identifier Resolution Service</span></b><span style='font-family:Arial'><br>&nbsp;<o:p></o:p></span></li>
+	<li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo2;
+     tab-stops:list .5in'><b><span style='font-family:Arial'>
+	<a href="http://www.openarchives.org/ore/">Object Reuse and Exchange</a> 
+	(ORE) Access
+     Point:</span></b><span style='font-family:Arial'>&nbsp; an 
      interface to a Fedora repository to facilitate cross-repository
-     interoperability as defined by the <a
-     href="http://www.infosci.cornell.edu/pathways/">Pathways Project</a>
-     (Cornell/LANL)<o:p></o:p></span></li>
+     interoperability (2007-2008)</span></li>
 </ul>
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>The
@@ -432,14 +433,12 @@ Arial'>3&nbsp; Fedora Core Repository Service <o:p></o:p></span></h2>
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
 
-<p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>As of
-Fedora 2.1, the Fedora Core Repository Service can now be situated within the
+<p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>Fedora Core Repository Service can 
+be run as a stand-alone service, or it can be situated within the
 Fedora Service Framework, where a suite of companion services can be loosely
-coupled with the core repository to provide additional functionality that is
-essential to ensuring that the repository can be well-integrated into a broader
-service or application environment.&nbsp;&nbsp; The Fedora repository service
-was developed with the vision that it would to fit into a broader service-based
-architecture (SOA), and it provide web services interfaces to its core
+coupled with the repository to provide additional functionality for integrating 
+the repository into a broader service-oriented
+architecture (SOA) pattern.&nbsp; The core repository can be accessed via web service interfaces to its core
 functionality.&nbsp; The core repository service actually has several web
 service APIs:&nbsp; an interface for repository management (API-M); an
 interface for repository access (API-A); interface for basic repository search;
