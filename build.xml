@@ -703,7 +703,7 @@
         </copy>
     </target>
     
-    <target name="docs" depends="init, wsdl2java"
+    <target name="docs" depends="init, wsdl2java, compile-util"
         description="Generate documentation">
     	
     	<!-- Build javadocs -->
@@ -723,7 +723,7 @@
     	<!-- generate the Fedora xacml vocabulary listing -->
 		<mkdir dir="${docs.build.dir}/userdocs/server/security/xacml-policies"/>
 		<java classname="fedora.common.policy.Release2_1Namespace" 
-			classpath="${tomcat.server.dir}/classes;${lib.jrdf}" 
+			classpath="${tomcat.server.dir}/classes;${lib.jrdf};${util.build.dir}" 
 			output="${docs.build.dir}/userdocs/server/security/xacml-policies/vocabulary.txt"/>
 		<!-- copy the default repository-wide policies for linking to documentation -->
 		<mkdir dir="${docs.build.dir}/userdocs/server/security/xacml-policies/default/repository-wide"/>
@@ -825,14 +825,37 @@
         </copy>
 		<jar destfile="${dist.dir}/fedora-demo.war" basedir="${demo.war.build.dir}"/>
 	</target>
-	
-	<target name="release" depends="clean, docs, installer"
-		description="">
-		<!-- TODO: 
-			add description
-			add license boilerplate to source code in fedora/ package
-			zip src (pruning CVS dirs)
-			create checksums for src zip and installer jar
-		-->
+
+    <target name="src-release" depends="clean">
+		<copy todir="${dist.dir}/release/fedora-${fedora.version}-src">
+			<fileset dir=".">
+				<exclude name="src/java/fedora/**/*.java"/>
+			</fileset>
+		</copy>
+		<!-- prepend license boilerplate to all Fedora java source code -->
+		<copy todir="${dist.dir}/release/fedora-${fedora.version}-src">
+			<fileset dir=".">
+				<include name="src/java/fedora/**/*.java"/>
+			</fileset>
+			<filterchain>
+				<concatfilter prepend="license/exhibitA-java.txt"/>
+			</filterchain>
+		</copy>
+        <zip zipfile="${dist.dir}/release/fedora-${fedora.version}-src.zip"
+            basedir="${dist.dir}/release" 
+            includes="fedora-${fedora.version}-src/**"/>
+        <delete dir="${dist.dir}/release/fedora-${fedora.version}-src"/>
+    </target>
+
+	<target name="release" depends="src-release, docs, installer"
+		description="build source and binary releases, with checksums">
+        <copy todir="${dist.dir}/release"
+            file="${dist.dir}/fedora-${fedora.version}-installer.jar"/>
+        <checksum fileext=".md5">
+            <fileset dir="${dist.dir}/release">
+                <include name="*.zip"/>
+                <include name="*.jar"/>
+            </fileset>
+        </checksum>
 	</target>
 </project>
