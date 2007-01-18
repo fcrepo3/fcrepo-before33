@@ -35,7 +35,6 @@
       				<li><a href="#installer.quick">Quick Install</a></li>
       				<li><a href="#installer.custom">Custom Install</a></li>
       				<li><a href="#installer.client">Client Install</a></li>
-      				<li><a href="#installer.source">Source Install</a></li>
       			</ol>
       		</li>
        		<li><a href="#running">Running the Server</a>
@@ -53,10 +52,11 @@
             </li>
             <li><a href="#config">Configuring the Fedora Server</a>
             	<ol>
-            		<li>fedora.fcfg</li>
-            		<li>Logging</li>
+            		<li><a href="#config.fcfg">fedora.fcfg</a></li>
+            		<li><a href="#config.log">Logging</a></li>
            		</ol>
             </li>
+            <li><a href="#source">Installation from Source</a></li>
         </ol>
     </div>
 </div>
@@ -221,16 +221,6 @@
 		<p>Both the quick and custom options will install the Fedora client 
 		software in addition to the Fedora server. The client option, however, 
 		will install only the Fedora client software.</p>
-	</div>
-	
-	<div class="subsect">
-		<h3><a name="installer.source">D. Source</a></h3>
-		<p>After unpacking the source distribution, change into the newly 
-		extracted directory. To build the installer, at a command prompt, 
-		enter</p>
-		<div class="code">ant installer</div>
-		<p>To see a list of build targets, at a command prompt, enter</p>
-		<div class="code">ant -projecthelp</div>
 	</div>
 </div>
 
@@ -495,6 +485,17 @@ log4j.appender.SECURITY.layout.ConversionPattern = %p %d{HH:mm:ss.SSS} [%t] (%c{
 		<code>FEDORA_HOME/server/logs/security.log</code></p>
 	</div>
 	
+</div>
+
+<div class="sect">
+	<h2><a name="source">6. Installation from Source</a></h2>
+	
+	<p>After unpacking the source distribution, change into the newly 
+	extracted directory. To build the installer, at a command prompt, 
+	enter</p>
+	<div class="code">ant installer</div>
+	<p>To see a list of build targets, at a command prompt, enter</p>
+	<div class="code">ant -projecthelp</div>
 </div>
 
 <div id="footer">
