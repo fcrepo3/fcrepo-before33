@@ -75,9 +75,11 @@ public class ReadOnlyContext implements Context {
         m_environmentAttributes.lock();
         m_subjectAttributes=subjectAttributes;
         if (m_subjectAttributes==null) {
+        	LOG.debug("subject map parm is null");
             m_subjectAttributes=new MultiValueMap();
         }
         m_subjectAttributes.lock(); 
+    	LOG.debug("subject attributes in readonlycontext constructor == " + m_subjectAttributes);        
         m_actionAttributes=new MultiValueMap();
         m_actionAttributes.lock();
         m_resourceAttributes=new MultiValueMap();
@@ -114,27 +116,29 @@ public class ReadOnlyContext implements Context {
 
     public int nSubjectValues(String name) {
     	int n = m_subjectAttributes.length(name);
-    	LOG.debug("N SUBJECT VALUES == " + n);
-    	if (extendedHttpServletRequest != null) {
+    	LOG.debug("N SUBJECT VALUES without == " + n);
+    	if ((extendedHttpServletRequest != null) && extendedHttpServletRequest.isUserInRole(name)) {
     		n++;
     	}
+    	LOG.debug("N SUBJECT VALUES with == " + n);
         return n;
     }
     
     public String getSubjectValue(String name) {
     	String value = null;
-    	value = m_subjectAttributes.getString(name);
-    	if (value == null)  {
-    		if (extendedHttpServletRequest.isUserInRole(name)) {
-    			value = "";
-    		}
+    	if (m_subjectAttributes.length(name) == 1) {
+        	value = m_subjectAttributes.getString(name);    		
+        	LOG.debug("SINGLE SUBJECT VALUE from map == " + value);
+    	} else if ((extendedHttpServletRequest != null) && extendedHttpServletRequest.isUserInRole(name)) {
+    		value = "";
+        	LOG.debug("SINGLE SUBJECT VALUE from iuir() == " + value);
     	}
         return value;
     }
     
     public String[] getSubjectValues(String name) {
 		int n = m_subjectAttributes.length(name);
-    	if (extendedHttpServletRequest.isUserInRole(name)) {
+    	if ((extendedHttpServletRequest != null) && extendedHttpServletRequest.isUserInRole(name)) {
     		n++;
     	}
     	String[] values = new String[n];
@@ -142,7 +146,7 @@ public class ReadOnlyContext implements Context {
     	for (int i = 0; i < temp.length; i++) {
     		values[i] = temp[i];
     	}
-    	if (extendedHttpServletRequest.isUserInRole(name)) {
+    	if ((extendedHttpServletRequest != null) && extendedHttpServletRequest.isUserInRole(name)) {
     		values[n-1] = "";
     	}
 		if (values == null) {

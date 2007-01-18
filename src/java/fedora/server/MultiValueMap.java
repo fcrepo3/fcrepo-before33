@@ -92,8 +92,19 @@ public class MultiValueMap {
         Iterator it = attributes.keySet().iterator();
         while (it.hasNext()) {
         	String key = (String) it.next();
-        	String value = (String) attributes.get(key);
-        	buffer.append(key + "=" + value + "\n");
+        	buffer.append(key + "=[");
+        	if (attributes.get(key) instanceof String) {
+            	String value = (String) attributes.get(key);        		
+            	buffer.append(value);
+        	} else if (attributes.get(key) instanceof String[]) {
+        		String[] temp = (String[]) attributes.get(key);
+        		String comma = "";
+        		for (int i=0; i<temp.length; i++) {
+                	buffer.append(comma + temp[i]);
+                	comma = ",";
+        		}
+        	}
+        	buffer.append("]\n");
         }
         return buffer.toString();
     }
