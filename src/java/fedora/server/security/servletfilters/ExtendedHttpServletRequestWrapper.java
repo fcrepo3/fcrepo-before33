@@ -377,13 +377,25 @@ public class ExtendedHttpServletRequestWrapper
 		log.debug(msg + SUCCEEDED);
 		
 		String DELIMITER = ":";
-		if ((decoded == null) || (decoded.indexOf(DELIMITER) < 0) || (decoded.startsWith(DELIMITER)) ) {
-			usernamePassword = new String[0];
+		if (decoded == null) {
+			log.error("decoded user/password is null . . . returning 0-length strings");
+			usernamePassword = new String[2];
+			usernamePassword[0] = "";
+			usernamePassword[1] = "";
+		} else if (decoded.indexOf(DELIMITER) < 0) {
+			String exceptionMsg = "decoded user/password lacks delimiter";
+			log.fatal(exceptionMsg + " . . . throwing exception");
+			throw new Exception(exceptionMsg);
+		} else if (decoded.startsWith(DELIMITER)) {
+			log.error("decoded user/password is lacks user . . . returning 0-length strings");
+			usernamePassword = new String[2];
+			usernamePassword[0] = "";
+			usernamePassword[1] = "";
 		} else if (decoded.endsWith(DELIMITER)) { // no password, e.g., user == "guest"
 			usernamePassword = new String[2];
 			usernamePassword[0] = decoded.substring(0,decoded.length()-1);
 			usernamePassword[1] = "";			
-		} else {
+		} else { // usual, expected case
 			usernamePassword = decoded.split(DELIMITER);	
 		}
 		
