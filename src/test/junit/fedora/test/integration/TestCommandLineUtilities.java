@@ -263,6 +263,11 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
     
     public static void execute(String cmd, String args) 
     {
+    	String osName = System.getProperty("os.name");
+		if (!osName.startsWith("Windows")) {
+			// needed for the Fedora shell scripts
+			cmd = cmd + ".sh";
+		}
  //       System.out.println("Executing cmd:" + cmd + " " + args);
         if (sbOut != null && sbErr != null)
         {
