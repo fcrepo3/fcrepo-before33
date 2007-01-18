@@ -56,38 +56,29 @@
     	</ol>
 </div>
 <div class="sect">
-	<h2><a href="server/index.html">Fedora Repository and Service Framework</a></h2>
+	<h2><a href="server/index.html">Fedora Repository </a></h2>
 	<ol>
-		<li><h3><img border="0" src="images/newstar.jpg" width="48" height="43"/>New Features</h3>
+		<li><h3><img border="0" src="images/newstar.jpg" width="48" height="43"/>New 
+		Features in Release 2.2</h3>
 			<ol>
 				<li><a href="server/security/securingrepo.html">Security 
-				Architecture - Configurations, Authentication, and SSL</a></li>
-				<li><a href="server/security/AuthorizationXACML.htm">Security 
-				Architecture - XACML-based Policy Enforcement</a><ol>
-				<li><a href="server/security/XACMLPolicyGuide.htm">Writing XACML 
-				Policies for Fedora</a></li>
-				<li><a href="server/cmd-line/index.html#validate">Policy 
-				Validation Utility</a></li>
-				<li><a href="server/cmd-line/index.html#reload">Reload Policies 
-				Utility</a></li>
-			</ol></li>
-				<li><a href="server/security/beSecurityConfig.html">Security 
-				Architecture - Backend Security for Remote Service Callbacks</a></li>
+				Architecture - Servlet Filters for Authentication</a></li>
 				<li><a href="server/features/serviceframework.htm">Fedora 
 				Service Framework</a><ol>
-					<li> <a href="services/diringest-service.html">Directory Ingest Service (DirIngest)</a></li>
-					<li> <a href="services/oaiprovider-service.html">OAI Provider Service (Proai-based)</a></li>
+					<li> Fedora Generic Search Service</li>
+					<li> Fedora Journaling Service (for mirroring and backup)</li>
 				</ol></li>
-				<li><a href="server/cmd-line/index.html#rebuild">Repository 
-				Rebuilder Utility</a></li>
+				<li>Datastream Checksum Features</li>
+				<li>MPTStore - new triplestore option for the Resource Index</li>
+				<li>still working here...</li>
 			</ol>
 	    <p>&nbsp;</p></li>
 		<li>
-		<h3>Standard Features</h3>
+		<h3>Standard Repository Features</h3>
 		<ol>
 			<li>Open Source<b> </b>Software</li>
-			<li>Service-oriented architecture</li>
-			<li>Repository access and management as web service</li>
+			<li><a href="server/features/serviceframework.htm">Service-oriented architecture</a></li>
+			<li><a href="#webservices">Repository access and management web services</a></li>
 			<li><a href="digitalobjects/index.html">Flexible Digital Object Model
 			</a></li>
 			<li><a href="server/features/identifiers.html">Digital Object Identifiers and URIs</a></li>
@@ -106,20 +97,33 @@
 			<li><a href="server/webservices/search/index.html">Basic Search</a></li>
 			<li><a href="server/resourceIndex/index.html">RDF-based Resource Index 
 			with Search</a></li>
+				<li><a href="server/security/AuthorizationXACML.htm">Security 
+				Architecture - XACML-based Policy Enforcement</a><ol>
+				<li><a href="server/security/XACMLPolicyGuide.htm">Writing XACML 
+				Policies for Fedora</a></li>
+				<li><a href="server/cmd-line/index.html#validate">Policy 
+				Validation Utility</a></li>
+				<li><a href="server/cmd-line/index.html#reload">Reload Policies 
+				Utility</a></li>
+			</ol></li>
 			<li><a href="server/cmd-line/index.html">Server Command Line 
 			Utilities</a></li>
+			<li><a href="server/cmd-line/index.html#rebuild">Repository 
+				Rebuilder Utility</a></li>
+			<li><a href="server/security/beSecurityConfig.html">Security 
+				Architecture - Backend Security for Remote Service Callbacks</a> 
+			(disabled in Fedora 2.2)</li>
 			<li>Object Disseminators<ol>
 				<li>Binding to <a href="server/localservices/index.html">Fedora Local Services</a></li>
 				<li>Binding to Remote Web Services</li>
 			</ol></li>
-			<li>Basic OAI Provider Interface</li>
-			<li>Migration Utility</li>
+			<li><a href="server/webservices/oai/index.html">Basic OAI Provider Interface</a></li>
 			<li>Reporting Utility</li>
 			<li>and more</li>
 		</ol>
 		<p>&nbsp;</p></li>
 		<li>
-		<h3>Fedora Repository - Web Service Interfaces</h3>
+		<h3><a name="webservices"></a>Fedora Repository - Web Service Interfaces</h3>
 		<ol>
 			<li><strong>API-A</strong>: Fedora Access Service (SOAP) [<a href="http://www.fedora.info/definitions/1/0/api/#apia">WSDL</a>]</li>
 			<li><strong>API-A-LITE</strong>: Fedora Access Service (REST) [<a href="http://www.fedora.info/definitions/1/0/api/#apialite">WSDL</a>] 
@@ -140,7 +144,17 @@
 </div>
 
 <div class="sect">
-	<h2>&nbsp;</h2>
+	<h2><a href="client/index.html">Fedora Framework Services</a></h2>
+			<ol>
+				<li><a href="services/diringest-service.html">Directory Ingest Service (DirIngest)</a>&nbsp; 
+				- ingest directories of files into Fedora</li>
+				<li><a href="services/oaiprovider-service.html">OAI Provider Service (PROAI)</a> 
+				- a configurable, flexible OAI Provider service</li>
+				<li>Fedora Generic Search Service (GSearch) - index datastreams 
+				and disseminations with either a Lucene or Zebra backend</li>
+				<li>Fedora Journaling Service - create a backup or mirror 
+				repository</li>
+			</ol>
 	<h2><a href="client/index.html">Fedora Clients</a></h2>
 	<div class="itemizedlist">
 		<ol>
