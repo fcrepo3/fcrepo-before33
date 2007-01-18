@@ -29,7 +29,8 @@
                	<li><a href="#WHY">Why are Fedora Digital Object Relationships Important? </a></li>
                	<li><a href="#WHERE">Where is Digital Object Relationship Metadata Stored?</a></li>
                 <li><a href="#HOW">How is Digital Object Relationship Metadata Encoded? </a></li>
-               	<li><a href="#INDEXED"> Is the Digital Object Relationship Metadata Indexed in Fedora?</a></li>
+               	<li><a href="#INDEXED">Resource Index - RDF-based Indexing and 
+				Searching for Digital Objects</a></li>
            </ol>
     </div>
 </div>
@@ -41,13 +42,31 @@
     and other objects that are members of that collection.  Also, it may be the 
     case that one object is considered a part of another object, a derivation of 
     another object, a description of another object, or even equivalent to 
-    another object.</p>
+    another object.&nbsp;&nbsp; For example, consider a network of digital 
+	objects pertaining to Thomas Jefferson, in which scholarly works are stored 
+	as digital objects, which are related to other digital objects representing 
+	primary source materials in libraries or museums.&nbsp;&nbsp; The composite 
+	scholary objects can be considered a graph of related digital objects.&nbsp;&nbsp; 
+	Other types of objects can also be related to the scholarly object over 
+	time, for instance annotations about the scholarly object can be created by 
+	others and related to the original object.&nbsp;&nbsp; Also, digital objects 
+	can be created to act as &quot;surrogates&quot; or &quot;proxies&quot; for dynamically produced 
+	web content such as an Amazon page for a book relevant to the scholarly 
+	object.&nbsp;&nbsp; Such a network of digital objects can be created using 
+	Fedora, which in the abstract, would look like this:</p>
+	<p>&nbsp;</p>
+	<p>
+	<img border="0" src="images/jefferson-graph.jpg" width="658" height="361"></p>
     
-    <p>Digital object relationship metadata is a way of asserting these various 
+    <p>&nbsp;</p>
+	<p>Digital object relationship metadata is a way of asserting these various 
     kinds of relationships for Fedora objects. A default set of common 
     relationships is defined in the 
-    <a href="http://www.fedora.info/definitions/1/0/fedora-relsext-ontology.rdfs">Fedora relationship ontology</a>, 
-    although other community or user-defined relationships may also be asserted. 
+    <a href="http://www.fedora.info/definitions/1/0/fedora-relsext-ontology.rdfs">Fedora relationship ontology</a> 
+	(actually, a simple RDF schema) which defines a set of common generic 
+	relationships useful in creating digital object networks.&nbsp;&nbsp; These 
+	relationships can be refined or extended.&nbsp; Also, communities can define 
+	their own ontologies to encode relationships among Fedora digital objects. 
     Relationships are asserted from the perspective of one object to another 
     object as in the following general pattern:</p>
     <div class="code">&lt;subjectFedoraObject&gt;&nbsp;&nbsp;&lt;relationshipProperty&gt;&nbsp;&nbsp;&lt;targetFedoraObject&gt;<br/></div>
@@ -97,7 +116,7 @@
     the RELS-EXT datastream are made via the Fedora management interface 
     (i.e., modifyDatastream). </p>
 
-    <p>In Fedora 2.1, the RELS-EXT datastream should be encoded as an Inline XML 
+    <p>In Fedora 2.2, the RELS-EXT datastream should be encoded as an Inline XML 
     datastream, meaning that the relationships metadata is expressed directly as 
     XML within the digital object XML file (as opposed the relationship metadata 
     existing in a separate XML file that the digital object points to by 
@@ -119,7 +138,8 @@
       &nbsp;&lt;/rdf:Description&gt;<br/> <br/>
       &lt;/rdf:RDF&gt;
       </div>
-      <p>The above RDF fragment indicates that the Fedora digital object 
+      <p>&nbsp;</p>
+	<p>The above RDF fragment indicates that the Fedora digital object 
       identified as &quot;info:fedora/demo:99&quot; is the subject that is being 
       described (as specified by the rdf:about attribute).  This object has two 
       relationships to other digital objects.  It has an 
@@ -141,12 +161,15 @@
 	<li>There must be no nesting of assertions.  Specifically, there cannot be an &lt;rdf:Description&gt; within an &lt;rdf:Description&gt;.  In terms of XML &quot;depth,&quot; the RDF root is considered at the depth of zero.  The must be one &lt;rdf:Description&gt; element that must exist at the depth of one.  The relationship assertions are RDF properties of the &lt;rdf:Description&gt; that exist at a depth of two. <br/><br/></li>
 	<li>Assertions of properties from certain namespaces for forbidden in RELS-EXT.  There must NOT be any assertion of properties from the Dublin Core namespace or from the FOXML namespace. This is because these assertions exist elsewhere in Fedora objects and may conflict if asserted in two places. The RELS-EXT datasream is intended to be dedicated to solely object-to-object relationships and not used to make general descriptive assertions about objects.</li>
         </ol>
-          <br/> <br/>
+          <br/> 
  </div>
 
  <div class="sec1">
-     <h2><a name="INDEXED">5.  Is the Digital Object Relationship Metadata Indexed in Fedora?</a></h2>
-    	<p>Yes!  The Fedora repository service automatically indexes the RELS-EXT datastreams for all objects as part of the RDF-based Resource Index.   This provides a unified &quot;graph&quot; of all the objects in the repository and their relationships to each other.  The Resource Index graph can be queried using RDQL or ITQL which are SQL-like query languages for RDF.  The Fedora repository service exposes an web service interface to search the Resource Index.  Please refer to the Resource Index documentation for details.</p>
+     <h2><a name="INDEXED">5.  Resource Index - RDF-based Indexing and Searching 
+		for Digital Objects</a></h2>
+    	<p>Yes!  The Fedora repository service automatically indexes the RELS-EXT datastreams for all objects as part of the 
+		<a href="../server/resourceIndex/index.html">RDF-based Resource Index</a>.   </p>
+		<p>This provides a unified &quot;graph&quot; of all the objects in the repository and their relationships to each other.  The Resource Index graph can be queried using RDQL or ITQL which are SQL-like query languages for RDF.&nbsp;&nbsp; The Fedora repository service exposes an web service interface to search the Resource Index.  Please refer to the Resource Index documentation for details.</p>
  </div>
   <div id="footer">
     <div id="copyright">
