@@ -392,9 +392,22 @@ public class DatastreamResolverServlet extends HttpServlet {
 				Iterator it = context.subjectAttributes();
 				while (it.hasNext()) {
 					String name = (String) it.next();
-					String value = context.getSubjectValue(name);
-					LOG.debug("another subject attribute from context "
-									+ name + "=" + value);
+					int n = context.nSubjectValues(name);
+					switch (n) {
+						case 0:
+							LOG.debug("no subject attributes for " + name);
+							break;
+						case 1:
+							String value = context.getSubjectValue(name);
+							LOG.debug("single subject attributes for " + name + "=" + value);
+							break;
+						default:
+							String[] values = context.getSubjectValues(name);
+							for (int i=0; i<values.length; i++) {
+								LOG.debug("another subject attribute from context "
+										+ name + "=" + values[i]);								
+							}
+					}
 				}
 				it = context.environmentAttributes();
 				while (it.hasNext()) {
