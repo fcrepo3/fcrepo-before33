@@ -126,27 +126,30 @@
     <div class="subsect">
 		<h3><a name="intro.env">C. Prepare Environment Variables</a></h3>
 		<p>The following environment variables must be correctly defined:</p>
-		<ul>
-			<li>JAVA_HOME
-				<p>This should point to the base directory of your Java 
+		<dl>
+			<dt>JAVA_HOME</dt>
+				<dd><p>This should point to the base directory of your Java 
 				installation. On Windows systems, this might be C:\java.
 				For UNIX derivatives, this might be something like 
-				/usr/local/java-1.5.0-sun</p>
-			</li>
-			<li>FEDORA_HOME
-				<p>This is the directory where Fedora will be installed,
-				for example, C:\fedora or /usr/local/fedora.</p>
-			</li>
-			<li>PATH
-				<p>This must include the Java and Fedora bin directories. 
+				/usr/local/java-1.5.0-sun</p></dd>
+
+			<dt>FEDORA_HOME</dt>
+				<dd><p>This is the directory where Fedora will be installed,
+				for example, C:\fedora or /usr/local/fedora.</p></dd>
+			<dt>PATH</dt>
+				<dd><p>This must include the Java and Fedora bin directories. 
 				For UNIX derivatives, this will be $FEDORA_HOME/server/bin, 
 				$FEDORA_HOME/client/bin and usually $JAVA_HOME/bin.
 				For Windows, this will be %FEDORA_HOME%\server\bin, 
 				%FEDORA_HOME%\client\bin and usually %JAVA_HOME%\bin.</p>
 				<p>If you will be building from source, Ant should also also be
-				on your path.</p>
-			</li>
-		</ul>
+				on your path.</p></dd>
+			<dt>JAVA_OPTS</dt>
+				<dd><p>If Fedora is configured to use SSL, JAVA_OPTS must 
+				include the <code>javax.net.ssl.trustStore</code> and 
+				<code>javax.net.ssl.trustStorePassword</code> properties.
+				See the SSL section below for more information.</p></dd>
+		</dl>
     </div>
 </div>
 
@@ -178,23 +181,38 @@
 		
 		<dl>
 			<dt>Servlet Container</dt>
-			<dd>The installer will automatically configure and deploy to Tomcat 
-			5.0.x and 5.5.x servlet containers. However, other servlet 
-			containers will require manual deployment of the WAR files located 
-			at <code>FEDORA_HOME/install</code>.</dd>
+			<dd><p>The installer will automatically configure and deploy to 
+			Tomcat 5.0.x and 5.5.x servlet containers. 
+			However, if an existing Tomcat installation (as opposed to the 
+			Tomcat bundled with the installer) was selected, the installer will 
+			not overwrite your existing <code>server.xml</code>, but rather, 
+			place a modified copy at <code>FEDORA_HOME/install</code> so that 
+			you may review it before before installing it yourself.</p>
+			<p>Other servlet containers will require manual deployment of the 
+			.war files located at <code>FEDORA_HOME/install</code>.</p></dd>
 		
 			<dt>SSL</dt>
-			<dd>Configuring SSL support for Fedora's API-M interface is strongly 
-			recommended for production environments. If the Tomcat servlet 
-			container is selected, the installer will configure 
-			<code>server.xml</code> accordingly (however, the installer will not
-			overwrite an existing <code>server.xml</code>, but rather, 
-			place a modified copy at <code>FEDORA_HOME/install</code> which you 
-			will need to install yourself). 
-			Please consult your servlet container's documentation 
+			<dd><p>Configuring SSL support for Fedora's API-M interface is 
+			strongly recommended for production environments.</p>
+			<p>If the Tomcat servlet container is selected, the installer will 
+			configure <code>server.xml</code> for you. However, as noted above, 
+			if an existing Tomcat installation was selected, the installer will 
+			not overwrite your existing <code>server.xml</code>.</p>
+			<p>Please consult your servlet container's documentation 
 			for certificate generation and installation. (In particular, the 
 			example certificate provided by the installer for Tomcat should not 
-			be used in a production environment).</dd>
+			be used in a production environment).</p>
+			<p>If Fedora is configured to use SSL, the <code>JAVA_OPTS</code> 
+			environment variable must include the 
+			<code>javax.net.ssl.trustStore</code> and 
+			<code>javax.net.ssl.trustStorePassword</code> properties.
+			The value of <code>javax.net.ssl.trustStore</code> should be the 
+			location of the truststore file and the value of 
+			<code>javax.net.ssl.trustStorePassword</code> is the password for 
+			the keystore. The following values may be used with the sample 
+			keystore included with the installer: </p>
+			<div class="code">-Djavax.net.ssl.trustStore="$FEDORA_HOME/server/truststore"
+-Djavax.net.ssl.trustStorePassword=tomcat</div></dd>
 		</dl>
 	</div>
 	
@@ -230,12 +248,12 @@
 	
 	<div class="subsect">
 		<h3><a name="running.demo">A. Demo Objects</a></h3>
-		<p>If you've just gotten your Fedora server up and running, it's a
+		<p>If you just started Fedora for the first time, it's a
 		good idea to check out the demonstration objects to get an idea of how 
 		Fedora works. See <a href="demos.html">the Demo Manual</a> for complete 
 		descriptions of the demos.</p>
 		
-		<p>NOTE: If, during the custom install, you entered values other than 
+		<p>NOTE: If, during a custom install, you entered values other than 
 		the defaults for <em>fedoraServerHost</em> (localhost) or 
 		<em>fedoraServerPort</em> (8080), you must run the 
 		<i><b>demo object converter utility</b></i> script to change the host 
