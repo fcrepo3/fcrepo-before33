@@ -1,75 +1,134 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
-                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-                      
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
 <head>
-    <title>Fedora Distribution Structure Documentation</title>
-    <link rel="stylesheet" type="text/css" href="../docstyle.css" />
+  <title>Fedora Distribution Structure Documentation</title>
+  <link rel="stylesheet" type="text/css" href="../docstyle.css" />
 </head>
 
 <body>
 <div id="header">
-    <a href="../index.html" id="logo"></a>
-    <div id="title">
-        <h1>Fedora Distribution Structure Documentation</h1>
-        <h2>Fedora Release 2.2</h2>
+	<a href="../index.html" id="logo"></a>
+	
+	<div id="title">
+		<h1>Fedora Distribution Structure Documentation</h1>
+		<h2>Fedora Release 2.2</h2>
+	</div>
+</div>
+
+
+<div id="toc">
+    <h2>Table of Contents</h2>
+    <div id="tocbox">
+        <ol>
+        	<li><a href="#intro">Introduction</a></li>
+            <li><a href="#server">Server</a></li>
+            <li><a href="#client">Client</a></li>
+            <li><a href="#docs">Docs</a></li>
+        </ol>
     </div>
 </div>
-    
-    <div class="toc"><p><b>Table of Contents</b></p><dl><dt><a href="#d0e48">Directory Structure</a></dt></dl></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e48"></a>Directory Structure</h2></div></div><p>The application's base directory contains several entries
-          you should be aware of.</p><div class="itemizedlist"><p class="title"><b>Key directories:</b></p><ul type="disc"><li><p>
-						<span class="emphasis"><em>bin/</em></span>
-          - Contains executables for the server and client tools (.bat files
-          for Windows and shell scripts for unix)</p></li><li><p>
-						<span class="emphasis"><em>config/</em></span>
-          - Contains the server configuration file, fedora.fcfg.</p></li><li><p>
-						<span class="emphasis"><em>demo/</em></span>
-          - Contains sample digital objects that can be used as examples.</p></li><li><p>
-						<span class="emphasis"><em>doc/</em></span>
-          - Contains the software documentation.</p></li><li><p>
-						<span class="emphasis"><em>logs/</em></span>
-          - Contains the logfiles that the server writes to while it's
-          running.</p></li></ul></div><p>
-		</p><p>Besides these key directories, you will notice several others.
-          These are important to the server's operation, but their
-          contents don't need to be understood in order to administer the
-          server.</p><div class="itemizedlist"><p class="title"><b>Other directories:</b></p><ul type="disc"><li><p>
-						<span class="emphasis"><em>access/</em></span>
-          - Stylesheets for the default disseminator. All objects in the
-          repository automatically subscribe to this disseminator, which
-          provides methods for listing and retrieving the components of the
-          object.</p></li><li><p>
-						<span class="emphasis"><em>client/</em></span>
-          - The java classes necessary to run the client applications.</p></li><li><p>
-						<span class="emphasis"><em>mckoi094/</em></span>
-          - A bundled java-based database that can be used as the underlying
-          RDBMS for the server.</p></li><li><p>
-						<span class="emphasis"><em>pidgen/</em></span>
-          - Files supporting the PID generator, the component of the server
-          that provides unique ids for new objects.</p></li><li><p>
-						<span class="emphasis"><em>schematron/</em></span>
-          - Files supporting the validation of serialized digital objects.</p></li><li><p>
-						<span class="emphasis"><em>jakarta-tomcat-5.0.28/</em></span>
-          - The bundled web server, which makes the repository web-accessible.</p></li><li><p>
-						<span class="emphasis"><em>work/</em></span>
-          - A temporary directory used by to support various server
-          activities.</p></li><li><p>
-						<span class="emphasis"><em>xsd/</em></span>
-          - W3 XML schemas, for reference and validation support.</p></li></ul></div><p>
-		</p></div>
-		<div id="footer">
-    <div id="copyright">
-        Copyright &#xA9; 2006 Fedora Project
-    </div>
+
+<div class="sect">
+	<h2><a name="dir">1. Introduction</a></h2>
+	<p>All of the directories named below are relative to <code>FEDORA_HOME</code></p>.
+	
+	<dl>
+		<dt>server</dt>
+		<dd></dd>
+		
+		<dt>client</dt>
+		<dd></dd>
+		
+		<dt>docs</dt>
+		<dd></dd>
+	</dl>
+</div>
+
+
+<div class="sect">
+	<h2><a name="dir">2. Server</a></h2>
+	
+	<dl>
+		<dt>server/bin</dt>
+		<dd>Contains server command-line utilities, including 
+		fedora-rebuild, fedora-reload-policies, and validate-policy.</dd>
+		
+		<dt>server/config</dt>
+		<dd>Contains the server configuration files, including 
+		fedora.fcfg and log4j.properties</dd>
+		
+		<dt>server/logs</dt>
+		<dd>Contains the server log files.</dd>
+		
+		<dt>server/access</dt>
+		<dd>Stylesheets for the default disseminator. All objects in the 
+		repository automatically subscribe to this disseminator, which
+		provides methods for listing and retrieving the components of the
+		object.</dd>
+		
+		<dt>server/xsd</dt>
+		<dd>W3 XML schemas, for reference and validation support.</dd>
+		
+		<dt>server/schematron</dt>
+		<dd>Files supporting the validation of serialized digital objects.</dd>
+	</dl>
+	
+	<p>If the included Tomcat servlet container was chosen during the 
+	installation (i.e. either a "quick" install or "included" servlet container
+	was selected as part of a custom install), <code>tomcat</code> will contain 
+	an installation of Tomcat 5.0.28.</p>
+	
+	<p>If the included McKoi database was chosen during the installation
+	(i.e. either a "quick" install or "included" was selected as part of a 
+	custom install, <code>mckoi1.0.3</code> will contain the configuration and 
+	data for the embedded McKoi instance.</p>
+</div>
+
+<div class="sect">
+	<h2><a name="dir">3. Client</a></h2>
+	
+	<dl>
+		<dt>client/fedora-client.jar</dt>
+		<dd></dd>
+		
+		<dt>client/log4j.xml</dt>
+		<dd></dd>
+		
+		<dt>client/bin</dt>
+		<dd>Contains client command-line utilities, including 
+		fedora-admin, fedora-convert-demos, fedora-ingest-demos and various 
+		batch utilities.</dd>
+		
+		<dt>client/demo</dt>
+		<dd>Contains sample digital objects that can be used as examples.</dd>
+	</dl>
+</div>
+
+<div class="sect">
+	<h2><a name="dir">4. Docs</a></h2>
+	
+	<dl>
+		<dt>docs/license</dt>
+		<dd>Contains license documentation for Fedora and third-party licenses 
+		and attributions.</dd>
+	</dl>
+</div>
+
+<div id="footer">
+    <div id="copyright">Copyright &copy; 2007 Fedora Project</div>
+
     <div id="lastModified">
-        Last Modified
-        <script type="text/javascript">
+      Last Modified <script type="text/javascript">
+      //<![CDATA[
             var cvsDate = "$Date$";
             var parts = cvsDate.split(" ");
             var modifiedDate = parts[1];
             document.write(modifiedDate);
-        </script>
+      //]]>
+      </script>
     </div>
 </div>
 		</body></html>
