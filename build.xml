@@ -728,12 +728,12 @@
 		<!-- copy the default repository-wide policies for linking to documentation -->
 		<mkdir dir="${docs.build.dir}/userdocs/server/security/xacml-policies/default/repository-wide"/>
 		<copy todir="${docs.build.dir}/userdocs/server/security/xacml-policies/default/repository-wide">
-			<fileset dir="src/xml/xacml-policies/default/default-repository-policies-approximating-2.0"/>
+			<fileset dir="${xacml.src.dir}/default/default-repository-policies-approximating-2.0"/>
 		</copy>
 		<!-- copy the sample policy collection for linking to documentation -->
 		<mkdir dir="${docs.build.dir}/userdocs/server/security/xacml-policies/examples"/>
 		<copy todir="${docs.build.dir}/userdocs/server/security/xacml-policies/examples">
-			<fileset dir="src/xml/xacml-policies/examples"/>
+			<fileset dir="${xacml.src.dir}/examples"/>
 		</copy>
     </target>
     
