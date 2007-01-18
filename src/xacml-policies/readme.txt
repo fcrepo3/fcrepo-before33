@@ -120,7 +120,7 @@ into subdirectories of dist/server/config/xml-policies/active; specifically:
  
 from examples/repository-policies-approximating-2.0 into active/repository-policies;
 or from examples/other-repository-policies into active/repository-policies;
-or from examples/object-policies into active/object-policies, renaming files if appropriate.
+or from examples/object-policies into active/object-policies, renaming files if appropriate;
 The example repository policies in examples/repository-policies-approximating-2.0 approximate
 the protection hardcoded into Fedora 2.0
 
@@ -242,5 +242,6 @@ this.
 
 2005/04/20:  added second repository policy directory for programmatically generated policies
 A policy in this directory is treated by Fedora authz code just like those in the original repository policy directory.
+
 
  
