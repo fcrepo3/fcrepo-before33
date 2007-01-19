@@ -355,8 +355,7 @@ Contents<o:p></o:p></span></h2>
       href="#CONFIG-VALIDATE">2.4 Enabling/Disabling Policy Validation</a><o:p></o:p></span></li>
   <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l6 level2 lfo1;
       tab-stops:list 1.0in'><span style='font-family:Arial'><a
-      href="#CONFIG-SURROG">2.5 Configuring “Surrogate” Policies (and what are
-      they?)</a><o:p></o:p></span></li>
+      href="#CONFIG-SURROG">2.5 Surrogate feature no longer requires policies.</a><o:p></o:p></span></li>
  </ul>
 </ol>
 
@@ -399,7 +398,7 @@ Contents<o:p></o:p></span></h2>
  <ul type=circle>
   <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l6 level2 lfo1;
       tab-stops:list 1.0in'><span style='font-family:Arial'><a href="#ATTR1">4.1
-      Tomcat-users attributes</a><o:p></o:p></span></li>
+      fedora-users attributes</a><o:p></o:p></span></li>
   <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l6 level2 lfo1;
       tab-stops:list 1.0in'><span style='font-family:Arial'><a href="#ATTR2">4.2
       LDAP attributes</a><o:p></o:p></span></li>
@@ -596,8 +595,6 @@ Arial;color:black'><o:p>&nbsp;</o:p></span></p>
 background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
 Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
 
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>    </span>&lt;param name=&quot;ALLOW-SURROGATES&quot; value=&quot;false&quot;/&gt;<o:p></o:p></span></pre>
 
 <p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
 background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
@@ -618,8 +615,6 @@ Arial;color:black'><o:p>&nbsp;</o:p></span></p>
 background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
 Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
 
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>    </span>&lt;param name=&quot;SURROGATE-POLICIES-DIRECTORY&quot; value=&quot;/fedora-xacml-policies/surrogate-policies&quot;/&gt;<o:p></o:p></span></pre>
 
 <p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
 background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
@@ -684,8 +679,6 @@ Arial;color:black'><o:p>&nbsp;</o:p></span></p>
 background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
 Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
 
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>    </span>&lt;param name=&quot;VALIDATE-SURROGATE-POLICIES&quot; value=&quot;false&quot;/&gt;<o:p></o:p></span></pre>
 
 <p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
 background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
@@ -722,7 +715,7 @@ name=CONFIG-ENABLE>.1 Enabling/Disabling XACML Policy Enforcement</a><o:p></o:p>
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>To
 enable/disable XACML policy enforcement in Fedora, use the Fedora configuration
 file (fedora.fcfg).&nbsp; Whether Fedora uses XACML for authorization decisions
-is controlled by the “ENFORCE-MODE” parameter in the Authorization module:<o:p></o:p></span></p>
+is controlled by the “ENFORCE-MODE�? parameter in the Authorization module:<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
 Arial;color:black'>&nbsp;<o:p></o:p></span></p>
@@ -780,10 +773,10 @@ style='font-family:Arial;color:black'><o:p></o:p></span></p>
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>The
-“enforce-policies” setting is used to enable the enforcement of XACML policies,
+“enforce-policies�? setting is used to enable the enforcement of XACML policies,
 and is the default setting for a Fedora repository.&nbsp; The
-“permit-all-requests” setting can facilitate testing code independent of
-security.&nbsp; The “deny-all-requests” setting can be used to quickly shut
+“permit-all-requests�? setting can facilitate testing code independent of
+security.&nbsp; The “deny-all-requests�? setting can be used to quickly shut
 down access to the server, but requires a server restart to affect this.<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
@@ -826,7 +819,7 @@ Configured Location<o:p></o:p></span></h4>
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>Repository-wide
 policies are broad policies that are intended to be in play for the entire
-Fedora repository.&nbsp; By saying that these policies are “broad,” does not
+Fedora repository.&nbsp; By saying that these policies are “broad,�? does not
 mean they must be course-grained.&nbsp; Repository-wide policies can &nbsp;be
 fine-grained and they can be written to control access to any Fedora API
 operation, to groups of digital objects, or even to sets of specifically
@@ -1235,9 +1228,7 @@ Arial;color:black'><span style='mso-spacerun:yes'>      </span><o:p></o:p><
 
 <p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
 Arial;color:black'>By default all repository-wide policies will be validated by
-the repository when they are loaded.&nbsp; It is up to the repository
-administrator to pre-validate for object-specific and surrogate policies before
-placing them in the active policy storage location. &nbsp;&nbsp; In general it
+the repository when they are loaded.&nbsp;  In general it
 is recommended that all new policies are validated before they are put into the
 active policy location.&nbsp; Use the <a href="../cmd-line/index.html#validate">validate-policy</a>
 command line utility to validate an XACML policy file. A policy failing
@@ -1249,20 +1240,13 @@ case.<o:p></o:p></span></p>
      tab-stops:list .5in'><span style='font-family:Arial'>repository policy:
      authorization module failure at server startup time, server not properly
      started<o:p></o:p></span></li>
- <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l1 level1 lfo3;
-     tab-stops:list .5in'><span style='font-family:Arial'>object policy: authorization
-     enforcement failure at request time, authorization denied<o:p></o:p></span></li>
- <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l1 level1 lfo3;
-     tab-stops:list .5in'><span style='font-family:Arial'>surrogate policy:
-     authorization enforcement failure at request time, authorization denied<o:p></o:p></span></li>
 </ul>
 
 <p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
 Arial;color:black'>Object policies are not set to validate by default because
 they are loaded dynamically at each use, and neither testing to prove adequate
-performance nor caching to ensure it has been done. Surrogate policies are not
-set to validate by default because surrogate support is not by default turned
-on. Either of these policy validation checks can be enabled by the appropriate
+performance nor caching to ensure it has been done. 
+This policy validation check can be enabled by the appropriate
 fedora.fcfg setting. <o:p></o:p></span></p>
 
 <p style='line-height:15.0pt;text-autospace:none'><b><i><span style='font-family:
@@ -1270,445 +1254,35 @@ Arial;color:black'>&nbsp;&nbsp;</span></i></b><span style='font-family:Arial;
 color:black'><o:p></o:p></span></p>
 
 <h3 style='line-height:15.0pt'><span style='font-family:Arial'>2<a
-name=CONFIG-SURROG>.5 Configuring “Surrogate” Policies (and what are they?)</a><o:p></o:p></span></h3>
+name=CONFIG-SURROG>.5 Surrogate feature no longer requires policies.</a><o:p></o:p></span></h3>
 
 <p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
 Arial;color:black'>&nbsp;<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
-Arial;color:black'>This is an<b><i> experimental feature</i></b> provided with
-Fedora 2.1 that enables a higher level application or service (e.g., a Web
+Arial;color:black'>This is an<b><i> experimental feature</i></b> continued with
+Fedora 2.2 that enables a higher level application or service (e.g., a Web
 front end, middleware, or other web service) to authenticate to Fedora with its
 own identity, but pass along the identity of an end-user that authenticated
 with the service.&nbsp;&nbsp; The higher level application or service is thus
 acting as a &quot;surrogate&quot; for the ultimate end user.&nbsp;&nbsp; The surrogate
-user can pass through to Fedora the identity identity of the end-user it is
+user can pass through to Fedora the identity of the end-user it is
 representing in the HTTP request header (using the From: attribute).&nbsp; If
 Fedora authenticates the identity of the service-as-surrogate, then the
 identity of the ultimate end user can be used in XACML policies.&nbsp;&nbsp;
-The way this is done is to create special &quot;surrogate&quot; policies that
-should reside in the special surrogate policies directory configured in the
-Fedora Server Configuration File (fedora.fcfg).&nbsp;&nbsp; To enable the
-surrogate policy feature, you must set the ALLOW-SURROGATES parameter to
-&quot;true&quot; as depicted below.&nbsp; Also note the setting for where
-surrogate policies are stored, as well as the option to have the server
-validate surrogate policies.<o:p></o:p></span></p>
+<o:p></o:p></span></p>
+
+
+<p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>
+Refer to the <a href="securingrepo.html#AUTHN">Authentication and User
+Attributes</a> section of the <a href="securingrepo.html">Securing Your
+Repository</a> guide for information on configuring servlet filters in support 
+of the surrogate feature.&nbsp;&nbsp;<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
 Arial;color:black'>&nbsp;<o:p></o:p></span></p>
 
-<div style='border:solid black 1.0pt;mso-border-alt:solid black .75pt;
-padding:4.0pt 4.0pt 4.0pt 4.0pt;margin-left:3.75pt;margin-top:3.75pt;
-margin-right:3.75pt;margin-bottom:3.75pt'>
 
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'>&lt;module role=&quot;fedora.server.security.Authorization&quot; class=&quot;fedora.server.security.DefaultAuthorization&quot;&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>    </span>&lt;comment&gt;Builds and manages Fedora's authorization structure.&lt;/comment&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>   </span><b><span style='mso-spacerun:yes'> </span>&lt;param name=&quot;ALLOW-SURROGATES&quot; value=&quot;true&quot;/&gt;</b><o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>    </span>&lt;param name=&quot;REPOSITORY-POLICIES-DIRECTORY&quot; value=&quot;/fedora-xacml-policies/repository-policies&quot;/&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>   </span><b><span style='mso-spacerun:yes'> </span>&lt;param name=&quot;SURROGATE-POLICIES-DIRECTORY&quot; value=&quot;/fedora-xacml-policies/surrogate-policies&quot;/&gt;</b><o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>    </span>&lt;param name=&quot;XACML-COMBINING-ALGORITHM&quot; value=&quot;com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg&quot;/&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>    </span>&lt;param name=&quot;ENFORCE-MODE&quot; value=&quot;enforce-policies&quot;/&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>    </span>&lt;param name=&quot;POLICY-SCHEMA-PATH&quot; value=&quot;xsd/cs-xacml-schema-policy-01.xsd&quot;/&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>    </span>&lt;param name=&quot;VALIDATE-REPOSITORY-POLICIES&quot; value=&quot;true&quot;/&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>    </span>&lt;param name=&quot;VALIDATE-OBJECT-POLICIES-FROM-FILE&quot; value=&quot;false&quot;/&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>    </span>&lt;param name=&quot;VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM&quot; value=&quot;false&quot;/&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>   </span><b><span style='mso-spacerun:yes'> </span>&lt;param name=&quot;VALIDATE-SURROGATE-POLICIES&quot; value=&quot;false&quot;/&gt;</b><o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'>&lt;/module&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-spacerun:yes'>      </span><o:p></o:p></span></p>
-
-</div>
-
-<p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
-Arial;color:black'>Given that there are policies in the surrogate-policies
-directory that permit a service to act as a surrogate for and end user, <b>&nbsp;</b>then
-incoming Fedora API requests are treated as if the end-user had been
-authenticated by Fedora.&nbsp;&nbsp; The surrogate policies refer necessarily
-to the action <b>&quot;actAsSurrogateFor&quot;</b> to determine whether the a
-service with a certain identity can participate in the surrogate policy
-enforcement capability.&nbsp; This attribute is defined in the Fedora XACML
-vocabulary.&nbsp; Once the surrogate identify is permitted by Fedora (via
-enforcement of&nbsp; a surrogate policy), then Fedora API requests can proceed
-further where they will ultimately be subject to any normal repository-wide or
-object-specific XACML policies that enforce policies based on actual end user
-identity.&nbsp; <i>&nbsp;</i><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
-Arial;color:black'>Below is an example of a surrogate policy that allows a web
-front-end application (whose identity is &quot;webfrontend&quot; to be
-permitted by Fedora to acts as a surrogate for other end-user identities:<o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
-Arial;color:black'>&nbsp;<o:p></o:p></span></p>
-
-<div style='border:solid black 1.0pt;mso-border-alt:solid black .75pt;
-padding:4.0pt 4.0pt 4.0pt 4.0pt;margin-left:3.75pt;margin-top:3.75pt;
-margin-right:3.75pt;margin-bottom:3.75pt'>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&lt;?xml
-version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;<br style='mso-special-character:
-line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'><span
-style='mso-tab-count:1'>  </span>&lt;Policy
-xmlns=&quot;urn:oasis:names:tc:xacml:1.0:policy&quot;
-xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; <o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'><span
-style='mso-tab-count:1'>  </span>PolicyId=&quot;permit-surrogate&quot;
-RuleCombiningAlgId=&quot;urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable&quot;&gt;<br
-style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'><span
-style='mso-tab-count:1'>  </span>&lt;Description&gt;note that other policies
-may provide exceptions to this broad <o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'><span
-style='mso-tab-count:1'>  </span>policy&lt;/Description&gt;<br
-style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;
-&lt;Target&gt;<br style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;Subjects&gt;<br style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;Subject&gt;<br style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;SubjectMatch
-MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;<br
-style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'><span
-style='mso-tab-count:1'>  </span>&lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;webfrontend&lt;/AttributeValue&gt;<br
-style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'><span
-style='mso-tab-count:1'>  </span>&lt;SubjectAttributeDesignator
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; <o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'><span
-style='mso-tab-count:1'>  </span>AttributeId=&quot;fedoraRole&quot;
-MustBePresent=&quot;false&quot;/&gt;<br style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;/SubjectMatch&gt;<br style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;/Subject&gt;<br style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;/Subjects&gt;<br style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;Resources&gt;<br style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;AnyResource/&gt;<br style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;/Resources&gt;<br style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;Actions&gt;<br style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;Action&gt;<br style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;ActionMatch
-MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;<br
-style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'><span
-style='mso-tab-count:1'>  </span>&lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:<b>action:id-actAsSurrogateFor</b>&lt;/AttributeValue&gt;<br
-style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'><span
-style='mso-tab-count:1'>  </span>&lt;ActionAttributeDesignator
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; <o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'><span
-style='mso-tab-count:1'>  </span>AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot;/&gt;<br
-style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;/ActionMatch&gt;<br style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;/Action&gt;<br style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'>&nbsp;&nbsp;&nbsp;
-&lt;/Actions&gt;<br style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'><span
-style='mso-tab-count:1'>  </span>&lt;/Target&gt;<br style='mso-special-character:
-line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'><span
-style='mso-tab-count:1'>  </span>&lt;Rule RuleId=&quot;1&quot;
-Effect=&quot;Permit&quot;/&gt;<br style='mso-special-character:line-break'>
-<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
-<![endif]><o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='font-family:"Lucida Console";mso-bidi-font-family:Arial;color:black'><span
-style='mso-tab-count:1'>  </span>&lt;/Policy&gt;<o:p></o:p></span></p>
-
-</div>
-
-<p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
-
-<p style='line-height:15.0pt;text-autospace:none'><b><span style='font-family:
-Arial;color:black'>NOTE</span></b><span style='font-family:Arial;color:black'>!&nbsp;
-<i>Since surrogate policies is an <b>experimental feature</b> with Fedora 2.1
-it is not fully guaranteed yet.&nbsp; However, please contact the Fedora team (<a
-href="http://www.fedora.info/about/contact.shtml">http://www.fedora.info/about/contact.shtml</a>)
-if you would like to experiment with this feature.</i><o:p></o:p></span></p>
 
 <p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
 Arial;color:black'>&nbsp;<o:p></o:p></span></p>
@@ -1733,10 +1307,10 @@ functions in the role of the Policy Enforcement Point (PEP) if it guards access
 to a set of resources and asks the Policy Determination Point (PDP) for an
 authorization decision.&nbsp; The PEP MUST abide by the authorization decision
 in the following way:&nbsp; A PEP SHALL allow access to the resource only if a
-valid XACML response of “Permit” is returned by the PDP.&nbsp; The PEP SHALL deny
-access to the resource in all other cases.&nbsp; An XACML response of “Permit”
+valid XACML response of “Permit�? is returned by the PDP.&nbsp; The PEP SHALL deny
+access to the resource in all other cases.&nbsp; An XACML response of “Permit�?
 SHALL be considered valid only if the PEP understands all of the obligations
-contained in the response.”&nbsp;&nbsp; <o:p></o:p></span></p>
+contained in the response.�?&nbsp;&nbsp; <o:p></o:p></span></p>
 
 <p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
 Arial;color:black'>The Fedora Policy Enforcement Module fulfills the
@@ -1817,7 +1391,7 @@ Arial;color:black'><o:p>&nbsp;</o:p></span></p>
 parameter sets the XACML policy combining algorithm that controls how the
 Fedora Policy Enforcement Module will deal with multiple policies that may be
 applicable to a Fedora service request.&nbsp; &nbsp;The default value in Fedora
-is the “Ordered Deny Overrides” policy combining algorithm.&nbsp; It allows a
+is the “Ordered Deny Overrides�? policy combining algorithm.&nbsp; It allows a
 single evaluation of <b><i>deny</i></b> <b><i>to take precedence</i></b> over
 any number of permit, not applicable or indeterminate results.&nbsp; Note that
 this uses the regular Deny Overrides implementation since it is also
@@ -2196,111 +1770,73 @@ they are configured as described in <a href="securingrepo.html#AUTHN">Authentica
 and User Attributes</a>.<o:p></o:p></span></p>
 
 <h3 style='line-height:15.0pt'><a name=ATTR1><span style='font-family:Arial'>4.1&nbsp;
-Tomcat-users attributes</span></a><span style='font-family:Arial'><o:p></o:p></span></h3>
+fedora-users attributes</span></a><span style='font-family:Arial'><o:p></o:p></span></h3>
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>In
-Fedora, XACML policies can refer to user identity and role information that is
-specified within the Tomcat-users file.&nbsp;&nbsp; This file is part of the
-Tomcat configuration files and is auto-generated from the
-tomcat-user_fedoraTemplate.xml file. It contains username and password
-information about &quot;authenticated&quot; users. Roles can also be assigned
-to user entries. These roles can then be used as attributes in related XACML
+Fedora, XACML policies can refer to user identity and attribute information that is
+specified within the fedora-users.xml file.&nbsp;&nbsp; This file is one of the
+Fedora configuration files and is created initially on running the installer. It contains username and password
+information about &quot;authenticated&quot; users. Attributes can also be assigned
+to user entries. These attributes are then available as attributes in related XACML
 policies.<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>By
-default, the template contains the following users, passwords, and roles:<o:p></o:p></span></p>
+default, the fedora-users file contains the following users, passwords, and attributes:<o:p></o:p></span></p>
 
 <div style='border:solid black 1.0pt;mso-border-alt:solid black .75pt;
 padding:4.0pt 4.0pt 4.0pt 4.0pt;margin-left:3.75pt;margin-top:3.75pt;
 margin-right:3.75pt;margin-bottom:3.75pt'><pre style='line-height:15.0pt;
 background:#DDDDFF'><span style='color:black'><o:p>&nbsp;</o:p></span></pre><pre
-style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>  </span>&lt;tomcat-users&gt;<o:p></o:p></span></pre><pre
-style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>      </span>&lt;user name=&quot;#1&quot; password=&quot;#2&quot; roles=&quot;fedoraRole=administrator&quot;/&gt;<o:p></o:p></span></pre><pre
-style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>      </span>&lt;user name=&quot;fedoraIntCallUser&quot; password=&quot;changeme&quot; roles=&quot;fedoraRole=fedoraInternalCall-1&quot;/&gt;<o:p></o:p></span></pre><pre
-style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>      </span>&lt;user name=&quot;surrogate64&quot; password=&quot;surrogate64&quot; roles=&quot;webfrontend&quot;/&gt;<o:p></o:p></span></pre><pre
-style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>      </span>&lt;user name=&quot;testuser1&quot; password=&quot;testuser1&quot; roles=&quot;fedoraRole=professor&quot;/&gt;<o:p></o:p></span></pre><pre
-style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>      </span>&lt;user name=&quot;testuser2&quot; password=&quot;testuser2&quot; roles=&quot;fedoraRole=researcher&quot;/&gt;<o:p></o:p></span></pre><pre
-style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>      </span>&lt;user name=&quot;testuser3&quot; password=&quot;testuser3&quot; roles=&quot;fedoraRole=student&quot;/&gt;<o:p></o:p></span></pre><pre
-style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>      </span>&lt;user name=&quot;testuser4&quot; password=&quot;testuser4&quot; roles=&quot;fedoraRole=visitor&quot;/&gt;<o:p></o:p></span></pre><pre
-style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>      </span>&lt;user name=&quot;guest&quot; password=&quot;&quot; roles=&quot;&quot;/&gt;<o:p></o:p></span></pre><pre
-style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>  </span>&lt;/tomcat-users&gt;<o:p></o:p></span></pre></div>
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>  </span>&lt;users&gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>      </span>&lt;user name=&quot;fedoraAdmin&quot; password=&quot;fedoraAdmin&quot; &gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>          </span>&lt;attribute name=&quot;fedoraRole&quot; &gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>              </span>&lt;value&gt;administrator&lt;/value&gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>          </span>&lt;/attribute&gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>      </span>&lt;/user&gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>      </span>&lt;user name=&quot;fedoraIntCallUser&quot; password=&quot;changeme&quot; &gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>          </span>&lt;attribute name=&quot;fedoraRole&quot; &gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>              </span>&lt;value&gt;fedoraInternalCall-1&lt;/value&gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>              </span>&lt;value&gt;fedoraInternalCall-2&lt;/value&gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>          </span>&lt;/attribute&gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>      </span>&lt;/user&gt;<o:p></o:p></span></pre><pre
+
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>  </span>&lt;/users&gt;<o:p></o:p></span></pre></div>
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
 
-<p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>Two
-aspects of tomcat-users use need pointing out.&nbsp; User roles are normally
-defined in Tomcat-users as &lt;user .....
-roles=&quot;value1,value2,value3&quot;/&gt;,&nbsp; where a user can have
-multiple roles, and each role name is separated by a comma.&nbsp;&nbsp; <o:p></o:p></span></p>
+<p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>
+Notice that each attribute has a name and can have multiple values.  The cases of one or two values
+are shown; not shown here is that an attribute can have any number of values, including none,
+depending on your need.
+  
+The second of these entries is for Fedora internal use, and should be left intact as installed.
+You will probably leave the first entry in place, also as-is.  But if you change the default policies, 
+you may require additional values of the <em>fedoraRole</em> attribute, or additional named attributes
+with their own values.  
+
+Additional users (with unique names) can be added with attributes as needed.
+This is a convenient place to define repository managers, a small number of users, 
+or a surrogate user.  An example of an additional user follows:
+&nbsp;&nbsp; <o:p></o:p></span></p>
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
+
 
 <div style='border:solid black 1.0pt;mso-border-alt:solid black .75pt;
 padding:4.0pt 4.0pt 4.0pt 4.0pt;margin-left:3.75pt;margin-top:3.75pt;
-margin-right:3.75pt;margin-bottom:3.75pt'>
+margin-right:3.75pt;margin-bottom:3.75pt'><pre style='line-height:15.0pt;
+background:#DDDDFF'><span style='color:black'><o:p>&nbsp;</o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>  </span>&lt;users&gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>      </span>&lt;user name=&quot;testuser1&quot; password=&quot;testuser1&quot; &gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>          </span>&lt;attribute name=&quot;someAttribute&quot; &gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>              </span>&lt;value&gt;xyz&lt;/value&gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>          </span>&lt;/attribute&gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>          </span>&lt;attribute name=&quot;fedoraRole&quot; &gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>              </span>&lt;value&gt;researcher&lt;/value&gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>          </span>&lt;/attribute&gt;<o:p></o:p></span></pre><pre
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>      </span>&lt;/user&gt;<o:p></o:p></span></pre><pre
 
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><o:p>&nbsp;</o:p></span></pre><pre
-style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>  </span>&lt;user name=&quot;testuser2&quot; password=&quot;testuser2&quot; <b>roles=&quot;someRole,someOtherRole&quot;</b>/&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-</div>
-
-<p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
-
-<p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>Fedora
-allows an enhancement of this specification of roles which allows each role <b><i>value</i></b>
-to itself be a name-value pair - essentially making each role value an
-attribute/value string.&nbsp; This is a simple concept that does not break the
-normal workings of Tomcat, but conveniently permits more meaning user attribute
-information to be recorded.&nbsp; The reason for doing this is to allow user
-attributes (attributeName=attributeValue) to be recorded in Tomcat-users in such
-a way that such attributes can be later used inside XACML policies.&nbsp;&nbsp;
-The basic idea is that each Tomcat role <b><i>value</i></b> is just a string,
-and as such, there is no reason we can't embed an equal sign within such a
-string.&nbsp;&nbsp; Thus, within the the &quot;roles=&quot; part of the user
-element in Tomcat-users, we can put a series of inner name/value pairs as in
-the following example:&nbsp; <o:p></o:p></span></p>
-
-<div style='border:solid black 1.0pt;mso-border-alt:solid black .75pt;
-padding:4.0pt 4.0pt 4.0pt 4.0pt;margin-left:3.75pt;margin-top:3.75pt;
-margin-right:3.75pt;margin-bottom:3.75pt'>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><o:p>&nbsp;</o:p></span></pre><pre
-style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>  </span>&lt;user name=&quot;testuser2&quot; password=&quot;testuser2&quot; roles=&quot;<b>someAttribute=xyz</b>,<b>fedoraRole=researcher</b>&quot;/&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-</div>
-
+style='line-height:15.0pt;background:#DDDDFF'><span style='color:black'><span style='mso-spacerun:yes'>  </span>&lt;/users&gt;<o:p></o:p></span></pre></div>
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>The
 above example indicates that the user has two attributes (an attribute named<b>
 &quot;someAttriibute&quot;</b> whose value is <i>xyz</i>, and an attribute
@@ -2308,7 +1844,7 @@ named<b> &quot;fedoraRole&quot;</b> whose value is <i>researcher</i>).&nbsp;
 These attribute names can be used in SubjectAttributeDesignator specifications
 in XACML policies and the values can be used in AttributeValue specifications
 in policies.&nbsp;&nbsp; Below is a snippet of an XACML policy that refers to
-attributes from Tomcat-users (refer to the <a href="XACMLPolicyGuide.htm">Fedora
+attributes from fedora-users (refer to the <a href="XACMLPolicyGuide.htm">Fedora
 XACML Policy Guide</a> for more info on policy syntax):<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
@@ -2354,10 +1890,10 @@ LDAP attributes</span></a><span style='font-family:Arial'><o:p></o:p></span></h3
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>In
 Fedora, XACML policies can refer to user attribute names and values that are
-registered in an LDAP that is configured with Fedora's Tomcat.&nbsp;&nbsp;
+registered in an LDAP that is configured with Fedora's Ldap servlet filter.&nbsp;&nbsp;
 Refer to the <a href="securingrepo.html#AUTHN">Authentication and User
 Attributes</a> section of the <a href="securingrepo.html">Securing Your
-Repository</a> guide for information on authentication configuration
+Repository</a> guide for information on servlet filter configuration
 options.&nbsp;&nbsp; Given that an LDAP is properly configured with Fedora, the
 Fedora XACML-based Policy Enforcement module will be able to access LDAP user
 attributes, which means that you can refer to LDAP attributes in reference to a
