@@ -120,20 +120,6 @@ public class OptionDefinition {
             }
         } else {
             if (_id.equals(InstallOptions.FEDORA_HOME)) {
-            	String eFH = System.getenv("FEDORA_HOME");
-            	if (eFH == null || eFH.length() == 0) {
-                	System.out.println("WARNING: The environment variable, FEDORA_HOME, is not defined");
-                	System.out.println("WARNING: Remember to define the FEDORA_HOME environment variable");
-                	System.out.println("WARNING: before starting Fedora.");
-            	} else if (!eFH.equals(value)) {
-            		System.out.println("WARNING: The environment variable, FEDORA_HOME, is defined as");
-            		System.out.println("WARNING:   " + eFH);
-            		System.out.println("WARNING: but you entered ");
-            		System.out.println("WARNING:   " + value);
-            		System.out.println("WARNING: Please ensure you have correctly defined FEDORA_HOME");
-            		System.out.println("WARNING: before starting Fedora.");
-            	}
-            	
                 File dir = new File(value);
                 if (dir.isDirectory()) {
                 	if (dir.listFiles().length != 0) {
@@ -157,7 +143,8 @@ public class OptionDefinition {
                         dir.delete();
                     }
                 }
-            } else if (_id.equals(InstallOptions.TOMCAT_HOME)) {
+            	printEnvWarning("FEDORA_HOME", value);
+            } else if (_id.equals(InstallOptions.TOMCAT_HOME)) {            	
                 File dir = new File(value);
                 if (dir.exists()) {
                     // must have webapps subdir
@@ -174,6 +161,7 @@ public class OptionDefinition {
                         dir.delete();
                     }
                 }
+                printEnvWarning("CATALINA_HOME", value);
             } else if (_id.equals(InstallOptions.TOMCAT_SHUTDOWN_PORT)) {
                 validatePort(value);
             } else if (_id.equals(InstallOptions.TOMCAT_HTTP_PORT)) {
@@ -217,5 +205,21 @@ public class OptionDefinition {
         } catch (NumberFormatException e) {
             throw new OptionValidationException("Not an integer", _id);
         }
+    }
+    
+    private void printEnvWarning(String envVarName, String value) {
+    	String env = System.getenv(envVarName);
+    	if (env == null || env.length() == 0) {
+        	System.out.println("WARNING: The environment variable, " + envVarName + ", is not defined");
+        	System.out.println("WARNING: Remember to define the " + envVarName + " environment variable");
+        	System.out.println("WARNING: before starting Fedora.");
+    	} else if (!env.equals(value)) {
+    		System.out.println("WARNING: The environment variable, " + envVarName + ", is defined as");
+    		System.out.println("WARNING:   " + env);
+    		System.out.println("WARNING: but you entered ");
+    		System.out.println("WARNING:   " + value);
+    		System.out.println("WARNING: Please ensure you have correctly defined " + envVarName);
+    		System.out.println("WARNING: before starting Fedora.");
+    	}
     }
 }
