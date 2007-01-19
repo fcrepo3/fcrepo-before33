@@ -149,6 +149,11 @@
 				include the <code>javax.net.ssl.trustStore</code> and 
 				<code>javax.net.ssl.trustStorePassword</code> properties.
 				See the SSL section below for more information.</p></dd>
+			<dt>CATALINA_HOME</dt>
+				<dd><p>If Fedora is configured to use Tomcat, CATALINA_HOME 
+				must be set before starting Fedora. If using the quick install 
+				option, CATALINA_HOME should be set to 
+				$FEDORA_HOME/tomcat (or %FEDORA_HOME%\tomcat in Windows).</p></dd>
 		</dl>
     </div>
 </div>
@@ -161,6 +166,11 @@
 	<p>To start the installer, change to the directory where you downloaded the 
 	installer and at a command prompt, enter</p>
 	<div class="code">java -jar fedora-2.2-installer.jar</div>
+	
+	<p>Please ensure that the user account that is running the installer has 
+	sufficient permissions to write to the directories where Fedora will be 
+	installed (if deploying to an existing Tomcat installation, this includes 
+	permissions to the Tomcat directory).</p>
 	
     <div class="subsect">
 		<h3><a name="installer.quick">A. Quick</a></h3>
@@ -211,7 +221,7 @@
 			<code>javax.net.ssl.trustStorePassword</code> is the password for 
 			the keystore. The following values may be used with the sample 
 			keystore included with the installer: </p>
-			<div class="code">-Djavax.net.ssl.trustStore="$FEDORA_HOME/server/truststore"
+			<div class="code">-Djavax.net.ssl.trustStore=$FEDORA_HOME/server/truststore
 -Djavax.net.ssl.trustStorePassword=tomcat</div></dd>
 		</dl>
 	</div>
