@@ -32,7 +32,50 @@
 
 <div class="sect">
 	<h2><a name="intro">1. Upgrading from Fedora 2.1.1 to Fedora 2.2</a></h2>
-	<p></p>
+	<p>Upgrading from Fedora 2.1.1 to Fedora 2.2 does not require 
+	migration of objects or rebuilding of the Resource Index.
+	However, there are important changes to the packaging and configuration 
+	between 2.1.1 and 2.2. Notably, neither the Fedora Configuration File 
+	(fedora.fcfg) nor Fedora Web Deployment Descriptor (web.xml) of previous 
+	versions is compatible with Fedora 2.2.</p>
+	
+	<ol type="A">
+		<li>Backup
+			<p>It is highly recommended you backup your existing Fedora 
+			repository.</p>
+		</li>
+		<li>Install Fedora 2.2
+			<p>Review the <a href="installation.html">Installation and 
+			Configuration Guide</a>. Note the following critical steps of the 
+			installation process:</p>
+			<ol>
+				<li><p>When prompted for the installation type, select 
+				"custom".</p></li>
+				<li><p>When prompted for the Fedora home directory, 
+				<strong>DO NOT</strong> select the Fedora home directory of your 
+				previous installation: select a new directory.</p></li>
+				<li><p>When prompted for the Servlet engine, if you select an 
+				existing Tomcat installation, <strong>DO NOT</strong> select the 
+				servlet container of your previous Fedora installation.</p>
+				<p>If you select an existing servlet container, please make 
+				sure it is not running (or, ensure that it is not configured to 
+				automatically deploy web applications).</p></li>
+				<li>When prompted for the Database, select the database 
+				(i.e., mysql, oracle, etc.) you used with your previous 
+				installation of Fedora.</li>
+				<li>When prompted for the JDBC URL, </li>
+				
+			</ol>
+			
+		</li>
+		<li>Post install, edit fedora.fcfg
+			<ol>
+				<li>object_store_base</li>
+				<li>datastream_store_base</li>
+				<li>RI path</li>
+			</ol>
+		</li>
+	</ol>
 
 </div>
 
@@ -168,6 +211,11 @@ C:\fedora-2.1.1&gt;</b></pre></div>
     </li>
     <li><i><b>You are done! </b></i></li>
   </ol>
+</div>
+
+<div class="sect">
+	<h2><a name="migrate21">2. Upgrading From Fedora 2.1 to Fedora 2.2</a></h2>
+	<p></p>
 </div>
 
 <div class="sect">
