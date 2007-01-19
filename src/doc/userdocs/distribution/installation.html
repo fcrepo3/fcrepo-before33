@@ -170,7 +170,10 @@
 	<p>Please ensure that the user account that is running the installer has 
 	sufficient permissions to write to the directories where Fedora will be 
 	installed (if deploying to an existing Tomcat installation, this includes 
-	permissions to the Tomcat directory).</p>
+	permissions to the Tomcat directory). Installer created files will usually 
+	be owned by the user running the installer. Consequently, for example, 
+	after installation users of the Fedora Admin client will need write 
+	permissions to the the installer created FEDORA_HOME/client log directories.</p>
 	
     <div class="subsect">
 		<h3><a name="installer.quick">A. Quick</a></h3>
