@@ -628,7 +628,7 @@ Arial;color:black'><o:p>&nbsp;</o:p></span></p>
 main body of a policy consists of a <b>Policy Target</b> and one or more <b>Rules</b>
 which are described in the next sections.&nbsp; Note that in the root element
 of a policy, the rule combining algorithm (i.e., attribute
-â€œRuleCombiningAlgIDâ€?), specifies how the Fedora Policy Enforcement Module will
+&ldquo;RuleCombiningAlgID&rdquo;), specifies how the Fedora Policy Enforcement Module will
 deal with multiple Rules in a policy (how those rules are combined and
 evaluated together).&nbsp; This algorithm is valid for only the specific policy
 containing it, and is independent of similar algorithms in other policies. It
@@ -719,7 +719,7 @@ advanced way of grouping policies together).&nbsp; &nbsp;A &lt;Target&gt;
 element is defined at the Policy level (as a child of the root &lt;Policy&gt;
 element).&nbsp; A Policy Target applies to any contained Rules that are
 expressed in that policy.&nbsp; However, a Rule may have its own Target, in
-which case the Rule-level Target overrides - for that Rule only â€“ the Policy level
+which case the Rule-level Target overrides &mdash; for that Rule only &mdash; the Policy level
 Target.&nbsp; Typically, a Target defined at the Rule level is used to replace
 and so tighten a broader match specification found at the overall Policy level.
 (This is described below.)<o:p></o:p></span></p>
@@ -799,10 +799,10 @@ specifications must match the attributes of the requested Fedora resource.&nbsp;
 The AttributeID in the &lt;ResourceAttributeDesignator&gt; element is used to
 identify a particular resource attribute by a URN, as defined in the Fedora
 policy vocabulary.&nbsp; In the example below, there are two attributes to
-match on: â€œurn:â€¦datastream:idâ€? and â€œurn:â€¦mimeTypeâ€?.&nbsp; The snippet says that
+match on: &ldquo;urn:&hellip;datastream:id&rdquo; and &ldquo;urn:&hellip;mimeType&rdquo;.&nbsp; The snippet says that
 a policy match will occur if the incoming request context indicates that the
 requested resource has the datastream id of THESIS and the MIME type of
-â€œapplication/pdf.â€?<o:p></o:p></span></p>
+&ldquo;application/pdf.&rdquo;<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
 Arial;color:black'>&nbsp;<o:p></o:p></span></p>
@@ -861,7 +861,7 @@ OR-ed together</b>.&nbsp; This means that a match on only one of the Resource
 specifications is necessary for the policy to apply to a service request.&nbsp;
 For example, the snippet below says that a resource match will occur if the
 incoming request is for a digital object that has the content model type of
-either â€œUVA_STD_IMAGEâ€? or â€œMRSID.â€?<o:p></o:p></span></p>
+either &ldquo;UVA_STD_IMAGE&rdquo; or &ldquo;MRSID.&rdquo;<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
 Arial;color:black'>&nbsp;<o:p></o:p></span></p>
@@ -1069,7 +1069,7 @@ with &lt;SubjectMatch&gt; and &lt;ResourceMatch&gt; specifications, multiple <b>
 </b>elements are <b>logically AND-ed together</b>. &nbsp;&nbsp;&nbsp; For
 example the following snippet says that the policy will match if the incoming
 request pertains to the Fedora API-A service AND the service request is for the
-the â€œgetDatastreamDisseminationâ€? operation.<o:p></o:p></span></p>
+the &ldquo;getDatastreamDissemination&rdquo; operation.<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
 
@@ -1206,7 +1206,7 @@ will vary depending on what a repository uses as the source of user information
 (e.g., tomcat-users.xml, LDAP, Shibboleth).&nbsp; &nbsp;Fedora XACML policies
 can make reference to the identifiers of any subject attribute that can be
 passed into Fedora from authenticating sources. &nbsp;See the section below on
-â€œGetting User Attributes into the Fedora Policy Enforcement Moduleâ€? for more
+&ldquo;Getting User Attributes into the Fedora Policy Enforcement Module&rdquo; for more
 information on the sources of subject attributes.</span></i><span
 style='font-family:Arial;color:black'><o:p></o:p></span></p>
 
@@ -1256,12 +1256,12 @@ name/value of an attribute of a user/agent.<b> </b>&nbsp;Multiple <b>&lt;Subject
 AND-ed together</b>.&nbsp; This means that for a policy to be applicable to an
 incoming service request, <b><i>all</i></b> &lt;SubjectMatch&gt; specifications
 must match the attributes of the requesting user/agent.&nbsp; In the example
-below, there is only one attribute to match on (i.e., â€œfedoraRoleâ€?).&nbsp; The
+below, there is only one attribute to match on (i.e., &ldquo;fedoraRole&rdquo;).&nbsp; The
 AttributeID in the &lt;SubjectAttributeDesignator&gt; element is used to
 identify a particular subject attribute by its local or global identifier.&nbsp;
 The snippet says that a policy match will occur if the incoming request context
 indicates that the user/agent has a role attribute with the value of
-â€œadministrator.â€?<o:p></o:p></span></p>
+&ldquo;administrator.&rdquo;<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
 Arial;color:black'>&nbsp;<o:p></o:p></span></p>
@@ -1309,7 +1309,7 @@ wrapper component, the &lt;Subject&gt; elements are <b>logically OR-ed together<
 This means that a match on only one of the Subject specifications is necessary
 for the policy to apply to a service request.&nbsp; For example, the snippet
 below says that a subject match will occur if the requesting user has the role
-of either â€œadministratorâ€? or â€œsuperuser.â€?<o:p></o:p></span></p>
+of either &ldquo;administrator&rdquo; or &ldquo;superuser.&rdquo;<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
 
@@ -1911,7 +1911,7 @@ style='font-family:Arial;color:black'><o:p></o:p></span></p>
      should use simplest rule-combining algorithm which gives desired outcome.
      Avoid a more complicated algorithm which happens to work, but which
      confuses because it implies more than what's there.&nbsp; A simple choice
-     is the â€œfirst-applicableâ€? rule combining algorithm which give precedence
+     is the &ldquo;first-applicable&rdquo; rule combining algorithm which give precedence
      to the first rule in a policy to apply to a situation. <o:p></o:p></span></li>
 </ol>
 
@@ -1942,7 +1942,7 @@ style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
 <ol start=5 type=1>
  <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo6;
      tab-stops:list .5in;text-autospace:none'><span style='font-family:Arial'>Try
-     to stick with â€œsingle-effectâ€? policies, that is a policy should either
+     to stick with &ldquo;single-effect&rdquo; policies, that is a policy should either
      permit or deny.&nbsp; Things can get confusing if a single policy has some
      rules that permit and some that deny.&nbsp;&nbsp; If most policies are
      single-effect, try to have them all be single-effect.&nbsp; You may wind
@@ -2195,8 +2195,8 @@ level<o:p></o:p></span></h3>
   <td style='padding:.75pt .75pt .75pt .75pt'>
   <p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt'><span
   style='font-size:10.0pt;font-family:Arial;color:black;background:white'>Deny
-  access to all API-A methods to users who are â€œLibrariansâ€? or â€œInfo
-  Technologistsâ€? (as indicated by their LDAP attributes).</span><span
+  access to all API-A methods to users who are &ldquo;Librarians&rdquo; or &ldquo;Info
+  Technologists&rdquo; (as indicated by their LDAP attributes).</span><span
   style='font-family:Arial;color:black'><o:p></o:p></span></p>
   </td>
  </tr>
@@ -2219,11 +2219,11 @@ level<o:p></o:p></span></h3>
   <p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt'><span
   style='font-size:10.0pt;font-family:Arial;color:black;background:white'>This
   policy will DENY access to ALL API-A methods to users who are NOT in the
-  â€œadministratorâ€? or â€œprofessorâ€? ROLES.</span><span style='font-family:Arial;
+  &ldquo;administrator&rdquo; or &ldquo;professor&rdquo; ROLES.</span><span style='font-family:Arial;
   color:black'><o:p></o:p></span></p>
   </td>
  </tr>
- <tr style='mso-yfti-irow:3;mso-yfti-lastrow:yes'>
+ <tr style='mso-yfti-irow:3'>
   <td width=41 style='width:30.75pt;padding:.75pt .75pt .75pt .75pt'>
   <p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt'><span
   style='font-family:Arial;color:black'>4.1.3<o:p></o:p></span></p>
@@ -2243,6 +2243,33 @@ level<o:p></o:p></span></h3>
   style='font-size:10.0pt;font-family:Arial;color:black;background:white'>This
   policy will deny access to all API-A methods to a particular user based on
   login id (as registered in the tomcat-users.xml file).</span><span
+  style='font-family:Arial;color:black'><o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:4;mso-yfti-lastrow:yes'>
+  <td width=41 style='width:30.75pt;padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt'><span
+  style='font-family:Arial;color:black'>4.1.4<o:p></o:p></span></p>
+  </td>
+  <td width=64 style='width:48.0pt;padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt'><span
+  style='font-family:Arial;color:black'>API-A<o:p></o:p></span></p>
+  </td>
+  <td width=316 style='width:237.0pt;padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt'><span
+  style='font-size:10.0pt;font-family:Arial;color:black;background:white'><a
+  href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-all-methods/deny-apia-except-by-owner.xml">deny-apia-except-by-owner.xml</a></span><span
+  style='font-family:Arial;color:black'><o:p></o:p></span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt'><span
+  style='font-size:10.0pt;font-family:Arial;color:black;background:white'>Deny access to 
+  all API-A methods to any user unless that user is the owner of the object being accessed. 
+  This sample policy primarily exists to show how to create a policy that compares the 
+  owner-id of an object to the login-id of the current user. It is important to note that 
+  due to how XACML policies are processed, you <b>cannot</b> do this comparison in the &lt;Subject&gt; 
+  section of the XACML policy. The comparison must appear in a &lt;Condition&gt; specification 
+  in the &lt;Rule&gt; section.</span><span
   style='font-family:Arial;color:black'><o:p></o:p></span></p>
   </td>
  </tr>
@@ -2303,8 +2330,8 @@ attributes</i><o:p></o:p></span></h3>
   APIA access to users of particular ROLES.&nbsp; NOTE:&nbsp; As a
   repository-wide policy, this policy demonstrates how to control access to
   specific objects (identified by PID).&nbsp; As an alternative, it is possible
-  to create â€˜object-specificâ€™ policies that either resides in the digital
-  objectâ€™s POLICY datastream, or that is stored in the object-specific policy
+  to create &lsquo;object-specific&rsquo; policies that either resides in the digital
+  object's POLICY datastream, or that is stored in the object-specific policy
   directory.&nbsp; (See the Fedora system documentation on XACML policies for
   more information.)</span><span style='font-family:Arial;color:black'><o:p></o:p></span></p>
   </td>
@@ -2329,7 +2356,7 @@ attributes</i><o:p></o:p></span></h3>
   style='font-size:10.0pt;font-family:Arial;color:black;background:white'>This
   policy will DENY all APIA access to digital objects that are EAD Finding
   AIDS.&nbsp; This is based on the object content model attribute having a
-  value of &quot;UVA_EAD_FINDING_AID.&nbsp; Specifically, the policy will DENY
+  value of &quot;UVA_EAD_FINDING_AID.&quot;&nbsp; Specifically, the policy will DENY
   access to users that belong to a particular LDAP-defined GROUP.</span><span
   style='font-family:Arial;color:black'><o:p></o:p></span></p>
   </td>
@@ -2361,9 +2388,9 @@ attributes</i><o:p></o:p></span></h3>
   datastream, or a lesser quality view, or a less complete view of the raw
   datastream content.&nbsp; Given that an object is of a certain content model
   (in this case UVA_STD_IMAGE), this policy will DENY datastream access to
-  users who do NOT have the ROLE of 'administrator' or 'professor. It will also
-  DENY dissemination access to users who do NOT have the ROLE of â€˜student,'
-  â€˜administrator,â€™ or 'professor.'</span><span style='font-family:Arial;
+  users who do NOT have the ROLE of &lsquo;administrator&rsquo; or &lsquo;professor&rsquo;. It will also
+  DENY dissemination access to users who do NOT have the ROLE of &lsquo;student,&rsquo;
+  &lsquo;administrator,&rsquo; or &lsquo;professor.&rsquo;</span><span style='font-family:Arial;
   color:black'><o:p></o:p></span></p>
   </td>
  </tr>
