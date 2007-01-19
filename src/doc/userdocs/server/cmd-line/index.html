@@ -45,16 +45,26 @@
     useful command-line utilities.
     A description and usage instructions for each follows.</p>
 
+    <p>
+    The scripts are located in FEDORA_HOME/server/bin/. In
+    Windows, these commands resolve to batch files (.bat); in
+    <span class="GramE">Unix</span>, they resolve to shell scripts
+    (.sh).
+    </p>
+
     <p>This guide assumes you have correctly installed the Fedora
     server distribution as per the install guide, including having
     set up your PATH and FEDORA_HOME appropriately.
     <p>
 
+    <hr size="1"/>
     <p>
-    The scripts are located in FEDORA_HOME/server/bin/. In
-    Windows, these commands resolve to batch files (.bat); in
-    <span class="GramE">Unix</span>, they resolve to shell scripts
-    (.sh).</p>
+    <b>NOTE: Currently, if you are running Fedora with a servlet container 
+    other than Tomcat</b>, these scripts will need to be manually modified
+    for your environment to pick up the paths to the Fedora classes and 
+    required libraries from a location other than <code>CATALINA_HOME</code>.
+    </p>
+    <hr size="1"/>
   </div>
 
   <div class="sec1">
