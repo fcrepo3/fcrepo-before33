@@ -559,6 +559,19 @@ in which Fedora runs in (Environment in XACML), and common subject (i.e., user)
 attributes.&nbsp; (Other user attributes are named according to site-usage and
 so their names aren't included in the Fedora XACML vocabulary.) <o:p></o:p></span></p>
 
+<p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>Please note that this vocabulary includes action identifiers 
+for the relatively new methods, <em>ingest</em> and <em>export</em>.  Policies written to protect these actions will protect equivalently the 
+deprecated methods <em>ingestObject</em> and <em>exportObject</em>, respectively.<o:p></o:p></span></p>
+
+<p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>Also, exposed method <em>describeUser</em>
+does not have an explicit entry in the vocabulary.  Policies written to  
+protect its underlying method <em>adminPing</em> will protect 
+<em>describeUser</em> equivalently.<o:p></o:p></span></p>
+
+
+
+
+
 <p style='line-height:15.0pt'><span style='font-size:10.0pt;font-family:"Courier New";
 color:black'>&nbsp;</span><span style='font-family:Arial;color:black'><o:p></o:p></span></p>
 
@@ -615,7 +628,7 @@ Arial;color:black'><o:p>&nbsp;</o:p></span></p>
 main body of a policy consists of a <b>Policy Target</b> and one or more <b>Rules</b>
 which are described in the next sections.&nbsp; Note that in the root element
 of a policy, the rule combining algorithm (i.e., attribute
-“RuleCombiningAlgID”), specifies how the Fedora Policy Enforcement Module will
+“RuleCombiningAlgID�?), specifies how the Fedora Policy Enforcement Module will
 deal with multiple Rules in a policy (how those rules are combined and
 evaluated together).&nbsp; This algorithm is valid for only the specific policy
 containing it, and is independent of similar algorithms in other policies. It
@@ -786,10 +799,10 @@ specifications must match the attributes of the requested Fedora resource.&nbsp;
 The AttributeID in the &lt;ResourceAttributeDesignator&gt; element is used to
 identify a particular resource attribute by a URN, as defined in the Fedora
 policy vocabulary.&nbsp; In the example below, there are two attributes to
-match on: “urn:…datastream:id” and “urn:…mimeType”.&nbsp; The snippet says that
+match on: “urn:…datastream:id�? and “urn:…mimeType�?.&nbsp; The snippet says that
 a policy match will occur if the incoming request context indicates that the
 requested resource has the datastream id of THESIS and the MIME type of
-“application/pdf.”<o:p></o:p></span></p>
+“application/pdf.�?<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
 Arial;color:black'>&nbsp;<o:p></o:p></span></p>
@@ -848,7 +861,7 @@ OR-ed together</b>.&nbsp; This means that a match on only one of the Resource
 specifications is necessary for the policy to apply to a service request.&nbsp;
 For example, the snippet below says that a resource match will occur if the
 incoming request is for a digital object that has the content model type of
-either “UVA_STD_IMAGE” or “MRSID.”<o:p></o:p></span></p>
+either “UVA_STD_IMAGE�? or “MRSID.�?<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
 Arial;color:black'>&nbsp;<o:p></o:p></span></p>
@@ -1056,7 +1069,7 @@ with &lt;SubjectMatch&gt; and &lt;ResourceMatch&gt; specifications, multiple <b>
 </b>elements are <b>logically AND-ed together</b>. &nbsp;&nbsp;&nbsp; For
 example the following snippet says that the policy will match if the incoming
 request pertains to the Fedora API-A service AND the service request is for the
-the “getDatastreamDissemination” operation.<o:p></o:p></span></p>
+the “getDatastreamDissemination�? operation.<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
 
@@ -1193,7 +1206,7 @@ will vary depending on what a repository uses as the source of user information
 (e.g., tomcat-users.xml, LDAP, Shibboleth).&nbsp; &nbsp;Fedora XACML policies
 can make reference to the identifiers of any subject attribute that can be
 passed into Fedora from authenticating sources. &nbsp;See the section below on
-“Getting User Attributes into the Fedora Policy Enforcement Module” for more
+“Getting User Attributes into the Fedora Policy Enforcement Module�? for more
 information on the sources of subject attributes.</span></i><span
 style='font-family:Arial;color:black'><o:p></o:p></span></p>
 
@@ -1243,12 +1256,12 @@ name/value of an attribute of a user/agent.<b> </b>&nbsp;Multiple <b>&lt;Subject
 AND-ed together</b>.&nbsp; This means that for a policy to be applicable to an
 incoming service request, <b><i>all</i></b> &lt;SubjectMatch&gt; specifications
 must match the attributes of the requesting user/agent.&nbsp; In the example
-below, there is only one attribute to match on (i.e., “fedoraRole”).&nbsp; The
+below, there is only one attribute to match on (i.e., “fedoraRole�?).&nbsp; The
 AttributeID in the &lt;SubjectAttributeDesignator&gt; element is used to
 identify a particular subject attribute by its local or global identifier.&nbsp;
 The snippet says that a policy match will occur if the incoming request context
 indicates that the user/agent has a role attribute with the value of
-“administrator.”<o:p></o:p></span></p>
+“administrator.�?<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
 Arial;color:black'>&nbsp;<o:p></o:p></span></p>
@@ -1296,7 +1309,7 @@ wrapper component, the &lt;Subject&gt; elements are <b>logically OR-ed together<
 This means that a match on only one of the Subject specifications is necessary
 for the policy to apply to a service request.&nbsp; For example, the snippet
 below says that a subject match will occur if the requesting user has the role
-of either “administrator” or “superuser.”<o:p></o:p></span></p>
+of either “administrator�? or “superuser.�?<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
 
@@ -1898,7 +1911,7 @@ style='font-family:Arial;color:black'><o:p></o:p></span></p>
      should use simplest rule-combining algorithm which gives desired outcome.
      Avoid a more complicated algorithm which happens to work, but which
      confuses because it implies more than what's there.&nbsp; A simple choice
-     is the “first-applicable” rule combining algorithm which give precedence
+     is the “first-applicable�? rule combining algorithm which give precedence
      to the first rule in a policy to apply to a situation. <o:p></o:p></span></li>
 </ol>
 
@@ -1929,7 +1942,7 @@ style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
 <ol start=5 type=1>
  <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l0 level1 lfo6;
      tab-stops:list .5in;text-autospace:none'><span style='font-family:Arial'>Try
-     to stick with “single-effect” policies, that is a policy should either
+     to stick with “single-effect�? policies, that is a policy should either
      permit or deny.&nbsp; Things can get confusing if a single policy has some
      rules that permit and some that deny.&nbsp;&nbsp; If most policies are
      single-effect, try to have them all be single-effect.&nbsp; You may wind
@@ -2182,8 +2195,8 @@ level<o:p></o:p></span></h3>
   <td style='padding:.75pt .75pt .75pt .75pt'>
   <p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt'><span
   style='font-size:10.0pt;font-family:Arial;color:black;background:white'>Deny
-  access to all API-A methods to users who are “Librarians” or “Info
-  Technologists” (as indicated by their LDAP attributes).</span><span
+  access to all API-A methods to users who are “Librarians�? or “Info
+  Technologists�? (as indicated by their LDAP attributes).</span><span
   style='font-family:Arial;color:black'><o:p></o:p></span></p>
   </td>
  </tr>
@@ -2206,7 +2219,7 @@ level<o:p></o:p></span></h3>
   <p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt'><span
   style='font-size:10.0pt;font-family:Arial;color:black;background:white'>This
   policy will DENY access to ALL API-A methods to users who are NOT in the
-  “administrator” or “professor” ROLES.</span><span style='font-family:Arial;
+  “administrator�? or “professor�? ROLES.</span><span style='font-family:Arial;
   color:black'><o:p></o:p></span></p>
   </td>
  </tr>
