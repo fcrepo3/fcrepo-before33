@@ -51,7 +51,7 @@
 			a complete repackaging of the Fedora source and binary distribution so 
 			that Fedora can now be installed as a standalone webapp in any servlet 
 			container. In addition to the war file repackaging, the Fedora 2.2 release 
-			includes several feature enhancements including new Fedora installer application, 
+			includes several feature enhancements including a new Fedora installer application, 
 			refactoring of authentication 
 			code using ServletFilters, enhancements to the WSDL for the Management 
 			and Access APIs, new Journaling feature useful for replicating repositories, 
@@ -77,14 +77,9 @@
 			be of interest to developers. You can access the wiki page at
 			<a href="http://fedora.info/wiki/index.php/UpgradingYourApplicationForFedora2.2">
 			http://fedora.info/wiki/index.php/UpgradingYourApplicationForFedora2.2</a>.</p>
-			<p/>
-			<p/>
-			<p/>
-			<p/>
 		</li>
-		<li><h3><a name="new">New Features and Enhancements</b></a></h3>
+		<li><a name="new">New Features and Enhancements</a>
 			<ol>
-
 				<li>Fedora now requires Java 1.5 or higher<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
 					<p>Fedora 2.2 is the first release of Fedora that requires Java 1.5 to compile and run.
 					There are several reasons behind the move to Java 1.5 including compatibility with latest 
@@ -94,7 +89,7 @@
 
 		        <li>Fedora WAR file repackaging and installer<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
 					<p>Fedora 2.2 represents a complete repackaging 
-					 of the binary and source distribution that now enables fedora to be 
+					 of the binary and source distribution that now enables Fedora to be 
 					 built and installed as a standalone webapp. The new distribution and 
 					 installer enable two primary modes of installation: 1) quick and 2) custom.
 					 The quick configuration option is designed for the novice user wanting
@@ -127,13 +122,9 @@
 					support for	adding checksums on datastreams has been added to the Fedora core. A new method named 
 					"compareDatastreamChecksum" has been added to API-M for comparing the current datastream 
 					checksum stored in the Fedora xml object with a freshly computed checksum. Here is the new method signature:</p>
-					<div class="code">
-						<pre>
-public String compareDatastreamChecksum(String PID, 
+					<div class="code">public String compareDatastreamChecksum(String PID,  
                                         String datastreamID, 
-                                        String versionDate)				
-						</pre>
-					</div>		
+                                        String versionDate)</div>		
 					<p>There are also two new configuration parameters in fedora.fcfg related to the new checksum feature. The
 					<i>autoChecksum</i> parameter controls whether checksums are to be computed for every datastream. By default <i>autoChecksum</i> 
 					is set to false which disables automatic checksums. When set to true, checksums will automatically be computed
@@ -142,7 +133,7 @@ public String compareDatastreamChecksum(String PID,
 					algorithm to be used when automatically computing checksums. Fedora currently supports the
 					following checksum algorithms: MD5, SHA-1, SHA-256, SHA-384, and SHA-512. 
 					For complete details on the new checksum feature, refer to the document
-					<a href="../server/features/checksumming.html">Checksums on Datastreams in Fedora</a>.
+					<a href="../server/features/checksumming.html">Checksums on Datastreams in Fedora</a>.</p>
 				</li>				
 				
 				<li>Journaling<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
@@ -158,43 +149,35 @@ public String compareDatastreamChecksum(String PID,
 					Currently the new ownerId property is an opaque single-valued string. This will be expanded in the next release
 					of Fedora to allow for multiple ownerIds. The FOXML schema is updated to include the new object property name of:
 					info:fedora/fedora-system:def/model#ownerId. e.g.,</p>
-					<p><div class="code"><pre>
-&lt;foxml:objectProperties&gt;
+					<div class="code">&lt;foxml:objectProperties&gt;
 	&lt;foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/&gt;
 	&lt;foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/&gt;
 	&lt;foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Image of Coliseum in Rome"/&gt;
 	&lt;foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UVA_STD_IMAGE"/&gt;
 	&lt;foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="payette"/&gt;
-&lt;/foxml:objectProperties&gt;
-					</pre></div></p>
+&lt;/foxml:objectProperties&gt;</div>
 					<p>The METS schema used by Fedora is also been updated to include the attribute for ownerId.
 					In the METS schema, the ownerId attribute is stored in the &lt;agent&gt; element under the &lt;metsHeader&gt; element
 					with a ROLE of IPOWNER. e.g.,</p>
-					<p><div class="code"><pre>
-&lt;METS:metsHdr CREATEDATE="2006-12-07T13:23:46.962Z" LASTMODDATE="2006-12-07T13:23:46.962Z" RECORDSTATUS="A"&gt;
+					<div class="code">&lt;METS:metsHdr CREATEDATE="2006-12-07T13:23:46.962Z" LASTMODDATE="2006-12-07T13:23:46.962Z" RECORDSTATUS="A"&gt;
 	&lt;METS:agent ROLE="IPOWNER"&gt;
 		&lt;METS:name&gt;payette&lt;/METS:name&gt;
 	&lt;/METS:agent&gt;
-&lt;/METS:metsHdr&gt;
-					</pre></div></p>
+&lt;/METS:metsHdr&gt;</div>
 					<p>It is now possible to assign a single owner to the ownerId object property of a digital object. Once specified, 
 					you can also write XACML policies against the ownerId policy attribute. The implementation of the ownerId feature 
 					also modifies the signature of the API-M method named "modifyObject" to enabled setting or changing the value
 					of ownerId on a digital object.</p>
 					<p>Here are the old and new signature for the method:</p>
-					<div class="code">
-					<b>Old</b>
-						<pre>
-public String modifyObject(String PID, String state, String label, String logMessage) 		
-						</pre>
-						<b>New</b>
-						<pre>
-public String modifyObject(String PID, String state, String label, String ownerId, String logMessage) 
-						</pre>
+					<div class="code"><b>Old</b>
+public String modifyObject(String PID, String state, String label, String logMessage)
+
+<b>New</b>
+public String modifyObject(String PID, String state, String label, String ownerId, String logMessage)
 					</div>										
 					<p>OwnerId can either be included in the FOXML or METS xml and will be assigned at
 					time of ingest or you can use the admin client to change the ownerID using the modifyObject
-					method of API-M.
+					method of API-M.</p>
 				</li>
 				
 				<li>Fedora Supports Log4j Logging<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
@@ -217,13 +200,13 @@ public String modifyObject(String PID, String state, String label, String ownerI
 					Fedora Generic Search Service</a></p>
 				</li>				
 				
-				<li>New support for Postgres SQL database<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
-					<p>Fedora 2.2 adds a DDLConverter class for Postgres which enables use of the Postgres database as a backend SQL database
+				<li>New support for PostgreSQL database<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
+					<p>Fedora 2.2 adds a DDLConverter class for PostgreSQL which enables the use of PostgreSQL as a backend SQL database
 					with Fedora. This new addition is based on a contribution from Hubert Stigler that was made to the fedora-users mailing list on 
-					April 4th, 2006. The Postgres addition requires a table name change for the backend SQL database table named "do" to the
-					new name of "dobj". The change was necessary because the name of "do" is considered a reserved word for Postgres. The new
+					April 4th, 2006. The PostgreSQL addition requires a table name change for the backend SQL database table named "do" to the
+					new name of "dobj". The change was necessary because the name of "do" is considered a reserved word for PostgreSQL. The new
 					installer will automatically handle the table name change for existing repositories migrating to Fedora 2.2. For additional details
-					on migrating from an earlier release of Fedora to Fedora 2.2, see the <a href="migration.html">Fedora Upgrade and Migration Guide</a>
+					on migrating from an earlier release of Fedora to Fedora 2.2, see the <a href="migration.html">Fedora Upgrade and Migration Guide</a></p>
 				</li>
 				
 				<li>VERSIONABLE attribute on datastreams fully implemented
@@ -233,14 +216,10 @@ public String modifyObject(String PID, String state, String label, String ownerI
 					versioning on or off for selected datastreams. This new feature can also be controlled using XACML policies 
 					by restricting access to the setDatastreamVersionable method in API-M which allows repository managers to 
 					decide if they want to enable this feature or not. The signature for the new method is as follows:</p>
-					<div class="code">
-						<pre>
-public String setDatastreamVersionable(String PID, 
+					<div class="code">public String setDatastreamVersionable(String PID, 
                                        String datastreamID, 
                                        boolean versionable, 
-                                       String logMessage)	
-						</pre>		
-					</div>
+                                       String logMessage)</div>
 					<p>The versionable attribute is an optional attribute in the FOXML schema. If omitted from the object xml,
 					it defaults to the value of true enabling versioning. If set to false, it disables versioning for the
 					datastream. When versioning is disabled, subsequent modifications to the datastream replace the current
@@ -248,7 +227,7 @@ public String setDatastreamVersionable(String PID,
 					"setDatastreamVersionable" method of API-M can be used to alter the versionable state of a datastream.
 					For details regarding the syntax of the versionable attribute in the object xml, refer to the 
 					<a href="http://www.fedora.info/definitions/1/0/api/foxml1-0.xsd">FOXML</a> 
-					and/or <a href="http://www.fedora.info/definitions/1/0/api/mets-fedora-ext.xsd">METS</a> schemas.
+					and/or <a href="http://www.fedora.info/definitions/1/0/api/mets-fedora-ext.xsd">METS</a> schemas.</p>
 				</li>				
 				
 				<li>Changes to "addDatastream" method in API-M
@@ -260,9 +239,7 @@ public String setDatastreamVersionable(String PID,
 					argument is also fully implemented now and can be used to control whether the datastream is
 					to use versioning or not.</p>
 					<p>Here are the old and new signatures for the method:</p>
-					<div class="code">
-						<b>Old</b>
-						<pre>
+					<div class="code"><b>Old</b>
 public String addDatastream(String pid,
                             String dsID,
                             String[] altIds,
@@ -273,10 +250,9 @@ public String addDatastream(String pid,
                             String location,
                             String controlGroup,
                             String dsState,
-                            String logMessage) 		
-						</pre>
-						<b>New</b>
-						<pre>
+                            String logMessage) 	
+                            	
+<b>New</b>
 public String addDatastream(String pid,
                             String dsID,
                             String[] altIds,
@@ -289,9 +265,7 @@ public String addDatastream(String pid,
                             String dsState,
                             String checksumType,
                             String checksum,
-                            String logMessage) 
-						</pre>
-					</div>
+                            String logMessage)</div>
 				</li>
 				
 				<li>Changes to "modifyDatastreamByReference" method in API-M
@@ -305,9 +279,7 @@ public String addDatastream(String pid,
 					value. Valid values are MD5, SHA-1, SHA-256, SHA-385, and SHA-512. The "checksum" argument 
 					is the value of the checksum represented as a hexadecimal string.</p>
 					<p>Here are the old and new signature for the method:</p>
-					<div class="code">
-						<b>Old</b>
-						<pre>
+					<div class="code"><b>Old</b>
 public String modifyDatastreamByReference(String PID, 
                                           String datastreamID,
                                           String[] altIDs,
@@ -319,9 +291,8 @@ public String modifyDatastreamByReference(String PID,
                                           String dsState,
                                           String logMessage, 
                                           boolean force)
-						</pre>
-						<b>New</b>
-						<pre>
+
+<b>New</b>
 public String modifyDatastreamByReference(String PID, 
                                           String datastreamID,
                                           String[] altIDs,
@@ -332,9 +303,7 @@ public String modifyDatastreamByReference(String PID,
                                           String checksumType,
                                           String checksum,
                                           String logMessage, 
-                                          boolean force)
-						</pre>
-					</div>
+                                          boolean force)</div>
 				</li>
 				
 				<li>Changes to "modifyDatastreamByValue" method in API-M
@@ -348,9 +317,7 @@ public String modifyDatastreamByReference(String PID,
 					SHA-385, and SHA-512. The "checksum" argument is the value of the checksum represented as 
 					a hexadecimal string.</p>
 					<p>Here are the old and new signature for the method:</p>
-					<div class="code">
-						<b>Old</b>
-						<pre>
+					<div class="code"><b>Old</b>
 public String modifyDatastreamByValue(String PID, 
                                       String datastreamID, 
                                       String[] altIDs,
@@ -362,9 +329,8 @@ public String modifyDatastreamByValue(String PID,
                                       String dsState,
                                       String logMessage, 
                                       boolean force) 		
-						</pre>
-						<b>New</b>
-						<pre>
+
+<b>New</b>
 public String modifyDatastreamByValue(String PID, 
                                       String datastreamID, 
                                       String[] altIDs,
@@ -375,9 +341,7 @@ public String modifyDatastreamByValue(String PID,
                                       String checksumType,
                                       String checksum,
                                       String logMessage, 
-                                      boolean force) 
-						</pre>
-					</div>
+                                      boolean force)</div>
 				</li>
 				
 				<li>Change to "purgeDatastream" method in API-M
@@ -386,25 +350,20 @@ public String modifyDatastreamByValue(String PID,
 					functionality. The new signature and underlying changes to the method 
 					enable the purging of a specific datastream version or purging of a range 
 					of datastream versions. Here are the old and new signatures:</p>
-					<div class="code">
-						<b>Old</b>
-						<pre>
+					<div class="code"><b>Old</b>
 public String[ ] purgeDatastream(String pid,
                                  String datastreamID,
                                  String endDT,
                                  String logMessage,
                                  boolean force)
-						</pre>
-						<b>New</b>
-						<pre>
+
+<b>New</b>
 public String[ ] purgeDatastream(String PID,
                                  String datastreamID,
                                  String startDT,
                                  String endDT,
                                  String logMessage,
-                                 boolean force)			
-						</pre>			
-					</div>
+                                 boolean force)</div>
 					<p>Changes supporting this new functionality have also been made in the Fedora administrative client.</p>		
 				</li>				
 				
@@ -478,7 +437,7 @@ public String[ ] purgeDatastream(String PID,
 				<li>Updates To Services In Fedora Services Framework
 					<p>All of the services included in the Fedora Services Framework are updated to include the latest versions
 					of the Fedora standard libraries and jar files. This change synchronizes library versions in the Service Framework
-					with changes included in Fedora 2.2 server and client code.
+					with changes included in Fedora 2.2 server and client code.</p>
 				</li>
 				
 				<li>JUnit Refactoring
