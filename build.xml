@@ -566,7 +566,9 @@
             <fileset dir="${src.dir}/demo-objects/foxml"/>
         </copy>
         <copy todir="${fedora.home.build.dir}/client/demo/mets">
-            <fileset dir="${src.dir}/demo-objects/mets"/>
+            <fileset dir="${src.dir}/demo-objects/mets">
+            	<exclude name="**/batch-demo/**" />
+        	</fileset>
         </copy>
         <!-- SOAP demo client (simple java reference client) -->
         <copy todir="${fedora.home.build.dir}/client/demo/soapclient">
