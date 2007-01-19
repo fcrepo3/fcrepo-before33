@@ -517,6 +517,7 @@ log4j.appender.SECURITY.layout.ConversionPattern = %p %d{HH:mm:ss.SSS} [%t] (%c{
 		<p>Note: if <code>log4j.appender.SECURITY.File</code> is left empty, 
 		the file will be automatically created at 
 		<code>FEDORA_HOME/server/logs/security.log</code></p>
+		<p>&nbsp;</p>
 	</div>
 	
 </div>
@@ -528,7 +529,18 @@ log4j.appender.SECURITY.layout.ConversionPattern = %p %d{HH:mm:ss.SSS} [%t] (%c{
 	extracted directory. To build the installer, at a command prompt, 
 	enter</p>
 	<div class="code">ant installer</div>
-	<p>To see a list of build targets, at a command prompt, enter</p>
+	<p>Once the installer target has been run, you will be able to run the 
+	Fedora installer application.&nbsp; To start the installer, change to the <code>FEDORA_HOME/dist </code>directory and at a command prompt, enter</p>
+	<div class="code">java -jar fedora-2.2-installer.jar</div>
+	
+	<p>Please ensure that the user account that is running the installer has 
+	sufficient permissions to write to the directories where Fedora will be 
+	installed (if deploying to an existing Tomcat installation, this includes 
+	permissions to the Tomcat directory).&nbsp;&nbsp; For more information of 
+	the Installer, see the <a href="#installer">Installer</a> instructions in 
+	Section 2 of this document.</p>
+	
+    <p>To see a list of other build targets in the source distribution, at a command prompt, enter</p>
 	<div class="code">ant -projecthelp</div>
 </div>
 
