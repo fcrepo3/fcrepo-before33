@@ -1,32 +1,39 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
-                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-                      
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
 <head>
-    <title>Fedora Upgrade and Migration Guide</title>
-    <link rel="stylesheet" type="text/css" href="../docstyle.css" />
+	<title>Fedora Upgrade and Migration Guide</title>
+	<link rel="stylesheet" type="text/css" href="../docstyle.css" />
 </head>
 
 <body>
 <div id="header">
-    <a href="../index.html" id="logo"></a>
+	<a href="../index.html" id="logo"></a>
+
     <div id="title">
-        <h1>Fedora Upgrade and Migration Guide</h1>
-        <h2>Fedora Release 2.2</h2>
+		<h1>Fedora Upgrade and Migration Guide</h1>
+		<h2>Fedora Release 2.2</h2>
+	</div>
+</div>
+
+<div id="toc">
+    <h2>Table of Contents</h2>
+    <div id="tocbox">
+        <ol>
+      		<li><a href="#migrate211">Upgrading from Fedora 2.1.1 to Fedora 2.2</a></li>
+      		<li><a href="#migrate21">Upgrading from Fedora 2.1 to Fedora 2.2</a></li>
+      		<li><a href="#migrate20">Upgrading from Fedora 2.0 to Fedora 2.2</a></li>
+      		<li><a href="#migratepre20">Upgrading from versions prior to 2.0</a></li>
+        </ol>
     </div>
 </div>
 
-<div class="toc">
-    <h2>Table of Contents</h2>
-    <div class="tocbox">
-        
-    <ol>
-		<li><a href="#migrate21-211">Upgrading from Fedora 2.1 to Fedora 2.1.1</a></li>
-		<li><a href="#migrate20-211">Upgrading from Fedora 2.0 to Fedora 2.1.1</a></li>
-		<li><a href="#migratepre20">Upgrading from versions prior to 2.0</a></li>
-    </ol>
-    </div>
+<div class="sect">
+	<h2><a name="intro">1. Upgrading from Fedora 2.1.1 to Fedora 2.2</a></h2>
+	<p></p>
+
 </div>
 
 <div class="sec2">
@@ -163,34 +170,33 @@ C:\fedora-2.1.1&gt;</b></pre></div>
   </ol>
 </div>
 
-<div class="sec2">
-	<h2><a name="migrate20-211" id="migrate0">2. Upgrading From Fedora 2.0 to 
-	Fedora 2.1.1</a></h2>
-    <p>When moving from Fedora 2.0 to Fedora 2.1.1 you will be able to do a simple 
+<div class="sect">
+	<h2><a name="migrate20">3. Upgrading From Fedora 2.0 to Fedora 2.2</a></h2>
+	<p>When moving from Fedora 2.0 to Fedora 2.2, you will be able to do a simple 
     software <i><b>upgrade</b></i> without having to migrate digital objects via 
-    a mass export and ingest. After you install Fedora 2.1.1, you can 
+    a mass export and ingest. After installing Fedora 2.2, you can 
     configure it to point to your existing repository datastores (both the existing 
-    repository directory storage locations and the existing relational database).&nbsp; 
-    This involves changing parameters in the Fedora 2.1.1 server configuration file 
-    (fedora.fcfg) that define the storage directory paths and database location.&nbsp; 
+    repository directory storage locations and the existing relational database).
+    This involves changing parameters in the Fedora 2.2 server configuration file 
+    (fedora.fcfg) that define the storage directory paths and database location.
     See the instructions in section 1 above for details.</p>
     
     <p>Note that the Resource Index model changed between 2.0 and 2.1, hence a 
-    rebuild of the Resource Index is necessary if upgrading from 2.0 to 2.1.1. 
+    rebuild of the Resource Index is necessary if upgrading from 2.0 to 2.2. 
     See the intructions for 
     <a href="../server/cmd-line/index.html#rebuild">rebuilding the Resource Index</a>.</p>
 </div>
 
-<div class="sec2">
-	<h2><a name="migratepre20" id="migrate0">3. Upgrading from versions prior to 2.0</a></h2>
-    <p>To upgrade from a Fedora version prior to 2.0, you must first
-       <a href="http://fedora.info/download/2.0/userdocs/distribution/migration.html">migrate to version 2.0</a>, then follow the appropriate upgrade steps above.</p>
+<div class="sect">
+	<h2><a name="migratepre20">4. Upgrading from versions prior to 2.0</a></h2>
+	<p>To upgrade from a Fedora version prior to 2.0, you must first
+	<a href="http://fedora.info/download/2.0/userdocs/distribution/migration.html">migrate 
+	to version 2.0</a>, then follow the appropriate upgrade steps above.</p>
+	
 </div>
 
 <div id="footer">
-    <div id="copyright">
-      Copyright &#xA9; 2006 Fedora Project
-    </div>
+    <div id="copyright">Copyright &copy; 2007 Fedora Project</div>
 
     <div id="lastModified">
       Last Modified <script type="text/javascript">
