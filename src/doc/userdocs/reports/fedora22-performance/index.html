@@ -24,35 +24,48 @@
       <ol>
         <li> <a href="#intro">Introduction</a></li>
         <li> <a href="#environ">Test Environment</a></li>
+        <li> <a href="#configs">Configurations Tested</a></li>
         <li> <a href="#results">Test Results</a></li>
+        <li> <a href="#prev">Previous Reports</a></li>
       </ol>
     </div>
   </div>
   
+  <p>&nbsp;</p>
+
   <div class="sec1">
     <h2><a name="intro">Introduction</a></h2>
 
     <p>
-      Intro here.
+      With release 2.2, Fedora now runs as a proper webapp.  Other
+      significant changes include a refactoring of the Resource Index
+      (bug fixes and efficiency improvements), and Servlet Filter-based
+      authentication. This set of tests was executed in order
+      to understand the impact of these changes on API-M (modify) operations,
+      and to compare the performance impact of various
+      configuration options.
     </p>
   </div>
+
+  <p>&nbsp;</p>
 
   <div class="sec2">
     <h2><a name="environ">Test Environment</a></h2>
 
     <p>
-      Hardware:</p>
+      Hardware (Desktop PC):</p>
       <ul>
         <li> CPU: (1) Athlon 64 3400+</li>
         <li> Physical Memory: 3.2GB</li>
+        <li> Disk: (1) 7200rpm IDE</li>
       </ul>
 
     <p>
       Software:</p>
       <ul>
         <li> OS: Linux 2.6.9-11 (64-bit)</li>
-        <li> Database 1: MySQL v4.1.20 (local instance)</li>
-        <li> Database 2: PostgreSQL 8.1 (local instance)</li>
+        <li> Database 1: MySQL v4.1.20 (local instance, MyISAM)</li>
+        <li> Database 2: PostgreSQL 8.1 (local instance, fsync=off)</li>
         <li> Java: 1.5.0_06-b05 (64-bit)</li>
       </ul>
 
@@ -68,108 +81,116 @@
              </ul>
         </li>
       </ul>
+    </p>
+
+    <p>
+Each object started with four inline XML datastreams, two managed content
+datastreams, and no disseminators.  For the purpose of consistency, the
+size each datastream was kept to a minimum (under 200 bytes)
+    </p>
+
+    <p>
+      Measurements were taken from the client, running on the same machine.
+      After running each API-M request back-to-back for 10,000 objects*, 
+      an average roundtrip
+      time was recorded for each operation.
+    </p>
+
+    <p>
+      <i>* For tests that had an average roundtrip time of 250ms or more 
+           per operation, only 500 operations in a row were performed
+           due to time constraints.</i>
+    </p>
   </div>
+
+  <p>&nbsp;</p>
+
+  <div class="sec2">
+    <h2><a name="configs">Configurations Tested</a></h2>
+
+    <p>
+      Tests were run for each of the following Fedora configurations.
+      These configurations are shown in the same order, left to right,
+      in the result graphs.
+    </p>
+    <p>Fedora 2.1.1 Configurations:
+      <ul>
+        <li> Using MySQL, with the Resource Index OFF and XACML policy
+             enforcement disabled</li>
+        <li> Using MySQL, with the Resource Index OFF and <b>XACML policy
+             enforcement enabled</b></li>
+        <li> Using MySQL, with the <b>Resource Index ON (using Kowari, with
+             asynchronous flushing)</b>, and XACML policy
+             enforcement disabled</li>
+      </ul>
+    </p>
+    <p>Fedora 2.2 Configurations:
+      <ul>
+        <li> Using MySQL, with the Resource Index OFF and XACML policy
+             enforcement disabled</li>
+        <li> <b>Using PostgreSQL</b>, with the Resource Index OFF and XACML policy
+             enforcement disabled</li>
+        <li> Using MySQL, with the Resource Index OFF and <b>XACML policy
+             enforcement enabled</b></li>
+        <li> Using MySQL, with the <b>Resource Index ON (using Kowari, with
+             asynchronous flushing)</b>, and XACML policy
+             enforcement disabled</li>
+        <li> Using MySQL, with the Resource Index ON (using Kowari, with
+             <b>synchronous</b> flushing), and XACML policy
+             enforcement disabled</li>
+        <li> Using MySQL, with the Resource Index ON (<b>using MPTStore</b>, with
+             <b>asynchronous flushing</b>), and XACML policy
+             enforcement disabled</li>
+        <li> Using MySQL, with the Resource Index ON (using MPTStore, with
+             <b>synchronous</b> flushing), and XACML policy
+             enforcement disabled</li>
+      </ul>
+    </p>
+
+    <p>All tests were executed:
+      <ul>
+        <li> ...using the bundled Tomcat software as the servlet container.</li>
+        <li> ...over regular HTTP (not SSL), with basic authentication</li>
+      </ul>
+    </p>
+  </div>
+
+  <p>&nbsp;</p>
 
   <div class="sec2">
     <h2><a name="results">Test Results</a></h2>
 
+    <p>This graph shows the average roundtrip time for each operation,
+    in each configuration (lower is better):</p>
+
     <img src="apim-time.png"/>
-    <p/>
+
+    <p>&nbsp;</p>
+
+    <p>The next graph shows the same results, but in terms of
+    operations per second (higher is better):</p>
+    
     <img src="apim-rate.png"/>
 
-    <pre>
-            Fedora API-M Performance Results (Commodity Hardware)
-            =====================================================
-
-Measurements were taken from the client, running on the same machine.
-
-Each object started with four inline XML datastreams, two managed content
-datastreams, and no disseminators.  For the purpose of consistency, the
-size each datastream was kept to a minimum (under 200 bytes)
-
-Test Type    Description
------------  -----------------------------------------------------------------
-ingestObjI   Ingest objects with managed content base64-encoded
-ingestObjP   Ingest objects with managed content uploaded via HTTP POST
-             prior to the ingest call (the upload is NOT part of the 
-             measurement)
-modDSByRefV  Modify versionable managed content by first uploading the value
-             via HTTP POST, then making the modifyDatastreamByReference call
-             (the upload is NOT part of the measurement)
-modDSByValV  Modify versionable inline XML content via modifyDatastreamByValue
-purgeDSIV    Purge all versions (2) of a versionable inline XML datastream
-purgeDSMV    Purge all versions (2) of a versionable managed datastream
-purgeObj     Purge the entire object
-
-
-Fedora DB  AuthZ RILv  RIImpl    RIFlush Test Type     Avg. Millis/Obj
----------  ----- ----  --------  ------- -----------   ---------------
-                                                       2.1.1     2.2
-                                                       -----    ------
-
-MySQL      off   0     NA        NA      ingestObjI       --     37.83
-                                         ingestObjP    49.33     45.07
-                                         modDSByRefV  204.42     32.51
-                                         modDSByValV  197.11     26.11
-                                         purgeDSIV    196.34     24.18
-                                         purgeDSMV    223.34     26.01
-                                         purgeObj     208.65     14.58
-
-MySQL      on    0     NA        NA      ingestObjI       --     58.54
-                                         ingestObjP    49.94     63.33
-                                         modDSByRefV  232.74     50.77
-                                         modDSByValV  235.96*    41.58
-                                         purgeDSIV    237.25*    39.67
-                                         purgeDSMV    235.23*    41.58
-                                         purgeObj     227.88*    32.62
-
-Postgres   off   0     NA        NA      ingestObjI       --     43.25
-                                         ingestObjP       --     45.26
-                                         modDSByRefV      --     36.92
-                                         modDSByValV      --     29.01
-                                         purgeDSIV        --     29.48
-                                         purgeDSMV        --     33.34
-                                         purgeObj         --     21.10
-
-MySQL      off   2     Kowari    Async   ingestObjI       --     59.97
-                                         ingestObjP    64.77     62.10
-                                         modDSByRefV  782.87*    51.62
-                                         modDSByValV 1046.43*    45.44
-                                         purgeDSIV   1272.63*    45.99
-                                         purgeDSMV    886.66*    48.04
-                                         purgeObj     271.18*    40.12
-
-MySQL      off   2     Kowari    Sync    ingestObjI       --    966.41*
-                                         ingestObjP       --    931.51*
-                                         modDSByRefV      --    533.46*
-                                         modDSByValV      --    546.00*
-                                         purgeDSIV        --    705.09*
-                                         purgeDSMV        --    743.15*
-                                         purgeObj         --    977.60*
- 
-MySQL      off   2     MPTStore  Async   ingestObjI       --    61.49
-                                         ingestObjP       --    61.49
-                                         modDSByRefV      --    52.17
-                                         modDSByValV      --    45.48
-                                         purgeDSIV        --    44.38
-                                         purgeDSMV        --    46.08
-                                         purgeObj         --    33.22
-
-MySQL      off   2     MPTStore  Sync    ingestObjI       --    60.34
-                                         ingestObjP       --    67.19
-                                         modDSByRefV      --    53.26
-                                         modDSByValV      --    46.59
-                                         purgeDSIV        --    47.08
-                                         purgeDSMV        --    48.81
-                                         purgeObj         --    42.28
-
--------------------------------------------------------------------------
-* Due to time constraints, only 500 operations were run for these tests.
-
-    </pre>
-
+    <p>
     For raw results, please see <a href="raw-results.zip">raw-results.zip</a>.
     This zip file also includes the program used to run the tests.
+    </p>
+  </div>
+
+  <p>&nbsp;</p>
+
+  <div class="sec1">
+    <h2><a name="prev">Previous Reports</a></h2>
+
+    <p>
+      For reference, here are the performance test results from prior
+      Fedora releases:
+      <ul>
+        <li> <a href="../performancetest.html">Fedora 2.0</a> - Concurrent dissemination tests</li>
+        <li> <a href="../apim-performance/index.html">Fedora 2.1.1</a> - API-M tests</li>
+      </ul>
+    </p>
   </div>
 
 
