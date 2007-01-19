@@ -8,7 +8,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
 <meta name=ProgId content=Word.Document>
 <meta name=Generator content="Microsoft Word 11">
 <meta name=Originator content="Microsoft Word 11">
-<link rel=File-List href="AuthorizationXACML_files/filelist.xml">
+<!--<link rel=File-List href="AuthorizationXACML_files/filelist.xml">-->
 <title>Authorization:&nbsp;XACML Policy Enforcement for Fedora</title>
 <!--[if gte mso 9]><xml>
  <w:WordDocument>
@@ -715,7 +715,7 @@ name=CONFIG-ENABLE>.1 Enabling/Disabling XACML Policy Enforcement</a><o:p></o:p>
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>To
 enable/disable XACML policy enforcement in Fedora, use the Fedora configuration
 file (fedora.fcfg).&nbsp; Whether Fedora uses XACML for authorization decisions
-is controlled by the â€œENFORCE-MODEâ€? parameter in the Authorization module:<o:p></o:p></span></p>
+is controlled by the â€œENFORCE-MODEï¿½? parameter in the Authorization module:<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
 Arial;color:black'>&nbsp;<o:p></o:p></span></p>
@@ -773,10 +773,10 @@ style='font-family:Arial;color:black'><o:p></o:p></span></p>
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>The
-â€œenforce-policiesâ€? setting is used to enable the enforcement of XACML policies,
+â€œenforce-policiesï¿½? setting is used to enable the enforcement of XACML policies,
 and is the default setting for a Fedora repository.&nbsp; The
-â€œpermit-all-requestsâ€? setting can facilitate testing code independent of
-security.&nbsp; The â€œdeny-all-requestsâ€? setting can be used to quickly shut
+â€œpermit-all-requestsï¿½? setting can facilitate testing code independent of
+security.&nbsp; The â€œdeny-all-requestsï¿½? setting can be used to quickly shut
 down access to the server, but requires a server restart to affect this.<o:p></o:p></span></p>
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
@@ -819,7 +819,7 @@ Configured Location<o:p></o:p></span></h4>
 
 <p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>Repository-wide
 policies are broad policies that are intended to be in play for the entire
-Fedora repository.&nbsp; By saying that these policies are â€œbroad,â€? does not
+Fedora repository.&nbsp; By saying that these policies are â€œbroad,ï¿½? does not
 mean they must be course-grained.&nbsp; Repository-wide policies can &nbsp;be
 fine-grained and they can be written to control access to any Fedora API
 operation, to groups of digital objects, or even to sets of specifically
@@ -1307,10 +1307,10 @@ functions in the role of the Policy Enforcement Point (PEP) if it guards access
 to a set of resources and asks the Policy Determination Point (PDP) for an
 authorization decision.&nbsp; The PEP MUST abide by the authorization decision
 in the following way:&nbsp; A PEP SHALL allow access to the resource only if a
-valid XACML response of â€œPermitâ€? is returned by the PDP.&nbsp; The PEP SHALL deny
-access to the resource in all other cases.&nbsp; An XACML response of â€œPermitâ€?
+valid XACML response of â€œPermitï¿½? is returned by the PDP.&nbsp; The PEP SHALL deny
+access to the resource in all other cases.&nbsp; An XACML response of â€œPermitï¿½?
 SHALL be considered valid only if the PEP understands all of the obligations
-contained in the response.â€?&nbsp;&nbsp; <o:p></o:p></span></p>
+contained in the response.ï¿½?&nbsp;&nbsp; <o:p></o:p></span></p>
 
 <p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
 Arial;color:black'>The Fedora Policy Enforcement Module fulfills the
@@ -1391,7 +1391,7 @@ Arial;color:black'><o:p>&nbsp;</o:p></span></p>
 parameter sets the XACML policy combining algorithm that controls how the
 Fedora Policy Enforcement Module will deal with multiple policies that may be
 applicable to a Fedora service request.&nbsp; &nbsp;The default value in Fedora
-is the â€œOrdered Deny Overridesâ€? policy combining algorithm.&nbsp; It allows a
+is the â€œOrdered Deny Overridesï¿½? policy combining algorithm.&nbsp; It allows a
 single evaluation of <b><i>deny</i></b> <b><i>to take precedence</i></b> over
 any number of permit, not applicable or indeterminate results.&nbsp; Note that
 this uses the regular Deny Overrides implementation since it is also
