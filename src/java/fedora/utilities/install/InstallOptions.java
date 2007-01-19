@@ -211,7 +211,7 @@ public class InstallOptions {
     private void inputOption(String optionId) 
             throws InstallationCancelledException {
 
-        OptionDefinition opt = OptionDefinition.get(optionId);
+        OptionDefinition opt = OptionDefinition.get(optionId, this);
         
         if (opt.getLabel() == null || opt.getLabel().length() == 0) {
         	throw new InstallationCancelledException(optionId + 
@@ -356,7 +356,7 @@ public class InstallOptions {
             String name = (String) names.next();
             String val = (String) _map.get(name);
             if (val == null || val.length() == 0) {
-                OptionDefinition opt = OptionDefinition.get(name);
+                OptionDefinition opt = OptionDefinition.get(name, this);
                 _map.put(name, opt.getDefaultValue());
             }
         }
@@ -373,7 +373,7 @@ public class InstallOptions {
         Iterator keys = getOptionNames();
         while (keys.hasNext()) {
             String optionId = (String) keys.next();
-            OptionDefinition opt = OptionDefinition.get(optionId);
+            OptionDefinition opt = OptionDefinition.get(optionId, this);
             opt.validateValue(getValue(optionId), unattended);
         }
     }

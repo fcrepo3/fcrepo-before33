@@ -18,6 +18,8 @@ public class OptionDefinition {
     private String[] _validValues;
 
     private String _defaultValue;
+    
+    private InstallOptions _options;
 
     static {
         String path = "fedora/utilities/install/OptionDefinition.properties";
@@ -36,7 +38,8 @@ public class OptionDefinition {
                              String label,
                              String description,
                              String[] validValues,
-                             String defaultValue) {
+                             String defaultValue,
+                             InstallOptions options) {
         _id = id;
         _label = label;
 
@@ -45,13 +48,15 @@ public class OptionDefinition {
         _validValues = validValues;
 
         _defaultValue = defaultValue;
+        
+        _options = options;
     }
 
     /**
      * Get the definition of the identified option, or <code>null</code>
      * if no such definition exists.
      */
-    public static OptionDefinition get(String id) {
+    public static OptionDefinition get(String id, InstallOptions options) {
         String label = _PROPS.getProperty(id + ".label");
         String description = _PROPS.getProperty(id + ".description");
         String[] validValues = getArray(id + ".validValues");
@@ -64,7 +69,17 @@ public class OptionDefinition {
         		defaultValue = eFH;
         	}
         }
-        return new OptionDefinition(id, label, description, validValues, defaultValue);
+        
+        // Use CATALINA_HOME as the default, if defined.
+        if (id.equals(InstallOptions.TOMCAT_HOME)) {
+        	String eCH = System.getenv("CATALINA_HOME");
+        	if (eCH != null && eCH.length() != 0) {
+        		defaultValue = eCH;
+        	} else if (options.getValue(InstallOptions.SERVLET_ENGINE).equals(InstallOptions.INCLUDED)) {
+        		defaultValue = options.getValue(InstallOptions.FEDORA_HOME) + File.separator + "tomcat";
+        	}
+        }
+        return new OptionDefinition(id, label, description, validValues, defaultValue, options);
     }
 
     private static String[] getArray(String propName) {
@@ -144,24 +159,25 @@ public class OptionDefinition {
                     }
                 }
             	printEnvWarning("FEDORA_HOME", value);
-            } else if (_id.equals(InstallOptions.TOMCAT_HOME)) {            	
+            } else if (_id.equals(InstallOptions.TOMCAT_HOME)) {  
+            	printEnvWarning("CATALINA_HOME", value);
                 File dir = new File(value);
-                if (dir.exists()) {
+                if (dir.exists() && 
+                		_options.getValue(InstallOptions.SERVLET_ENGINE).equals(InstallOptions.EXISTING_TOMCAT)) {
                     // must have webapps subdir
                     File webapps = new File(dir, "webapps");
                     if (!webapps.exists()) {
                         throw new OptionValidationException("Directory exists but does not contain a webapps subdirectory", _id);
                     }
-                } else {
-                    // or must be creatable
-                    boolean created = dir.mkdir();
+                } else if (!dir.exists()) {
+                    // must be creatable
+                    boolean created = dir.mkdirs();
                     if (!created) {
                         throw new OptionValidationException("Unable to create specified directory", _id);
                     } else {
                         dir.delete();
                     }
                 }
-                printEnvWarning("CATALINA_HOME", value);
             } else if (_id.equals(InstallOptions.TOMCAT_SHUTDOWN_PORT)) {
                 validatePort(value);
             } else if (_id.equals(InstallOptions.TOMCAT_HTTP_PORT)) {
