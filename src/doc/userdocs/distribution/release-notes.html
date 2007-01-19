@@ -25,6 +25,7 @@
 		<ol>
 			<li><a href="#fedora22">Fedora 2.2 Release</a></li>
 			<li><a href="#new">New Features And Enhancements</a></li>
+			<li><a href="#tune">Performance Tuning</a></li>
 			<li><a href="#bugs">Bug Fixes</a></li>
 			<li><a href="#issues">Known Issues</a></li>
 			<li><a href="#install">Installation</a></li>
@@ -211,7 +212,9 @@ public String modifyObject(String PID, String state, String label, String ownerI
 					can be plugged into the Fedora Services Framework. It current supports both Lucene and Zebra as 
 					backend search engines.  When the messaging components are finalized in a future release, it will 
 					be possible to further decouple the Fedora Generic Search service from Fedora and treat it as a "message receiver" 
-					in the service framework.</p>
+					in the service framework. For additional details on Fedora Generic Search see the document entitled
+					<a href="http://www.fedora.info/download/2.2/services/genericsearch/doc/index.html">
+					Fedora Generic Search Service</a></p>
 				</li>				
 				
 				<li>New support for Postgres SQL database<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
@@ -486,6 +489,14 @@ public String[ ] purgeDatastream(String PID,
 			</ol>
 		</li>
 		
+		<li><a name="tune">Performance Tuning</a><img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>	
+		<p>Fedora 2.2 includes significant performance enhancements for API-M and the Resource Index
+		as compared with Fedora 2.1.1. Please consult the
+		<a href="../reports/fedora22-performance/index.html">Fedora API-M Performance Report</a>
+		which contains before/after performance 
+		measurements between a typical Fedora 2.1.1 and Fedora 2.2 server.</p>
+		</li>		
+		
 		<li><a id="bugs" name="bugs">Bug Fixes</a>
 		<p>Refer to Fedora's <a href="http://www.fedora.info/bugzilla/">Bugzilla</a> 
 		for full descriptions of the resolved bugs.</p>
@@ -522,6 +533,8 @@ public String[ ] purgeDatastream(String PID,
 					Object Editor window always acts as if modification has occurred</li>
 				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=169">Bug #169</a>: 
 					fedora-start.bat script failure due to certain characters</li>	
+				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=170">Bug #170</a>: 
+					DefaultAuthorization.postInitModule ModuleInitializationException</li>
 				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=171">Bug #171</a>: 
 					Delayed shutdown while deleting Trippi tempfiles</li>
 				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=172">Bug #172</a>: 
@@ -604,8 +617,6 @@ public String[ ] purgeDatastream(String PID,
 					Invalid policies embedded in POLICY datastream of objects makes objects inaccessible</li>
 				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=168">Bug #168</a>: 
 					SRB LowlevelStore Issues (for pre Fedora 2.2)</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=170">Bug #170</a>: 
-					DefaultAuthorization.postInitModule ModuleInitializationException</li>
 				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=174">Bug #174</a>: 
 					iTQL less-than queries only work on xsd:double datatyped values</li>
 				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=175">Bug #175</a>: 
