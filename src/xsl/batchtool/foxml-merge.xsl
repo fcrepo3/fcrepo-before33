@@ -81,6 +81,19 @@ xmlns:fbm="http://www.fedora.info/definitions/"
     		</xsl:copy>
 		<xsl:apply-templates select="node()"/>
 	</xsl:template>	
+	
+	<!-- substitute per-object ownerId -->
+	<xsl:template match="foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#ownerId']">
+		<xsl:copy>
+			<xsl:apply-templates select="@*"/>
+			<xsl:if test="$substitutions/fbm:input/@OWNERID">
+				<xsl:attribute name="VALUE">
+					<xsl:value-of select="$substitutions/fbm:input/@OWNERID"/>
+				</xsl:attribute>
+			</xsl:if>			
+			<xsl:apply-templates select="node()"/>
+		</xsl:copy>
+	</xsl:template>		
 
 	<!-- substitute xmlContent found in old-style metadata element tag -->
 	<xsl:template match="foxml:datastream/foxml:datastreamVersion/foxml:xmlContent">

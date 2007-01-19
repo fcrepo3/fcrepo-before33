@@ -13,6 +13,7 @@ xmlns:fbm="http://www.fedora.info/definitions/"
 	<xsl:param name="date" select="NO-DATE-PARAM"/>
 	<xsl:param name="subfilepath" select="NO-SUBFILEPATH-PARAM"/>
 	<xsl:variable name="substitutions" select="document($subfilepath)"/>
+	<xsl:variable name="foo"><xsl:value-of select="$substitutions/fbm:input/@LABEL"/></xsl:variable>
 
 	<xsl:output method="xml" indent="yes" />
 
@@ -63,8 +64,30 @@ xmlns:fbm="http://www.fedora.info/definitions/"
 			<xsl:apply-templates select="@*"/>	
 			<xsl:apply-templates select="node()"/>
     		</xsl:copy>
-		<xsl:apply-templates select="node()"/>    		
+		<!--<xsl:apply-templates select="node()"/>-->    		
 	</xsl:template>
+	
+	<xsl:template match="METS:agent[@ROLE='IPOWNER']" xmlns:METS="http://www.loc.gov/METS/" >
+		<xsl:copy>
+			<xsl:apply-templates select="@*"/>	
+			<xsl:apply-templates select="node()"/>					
+
+		</xsl:copy>
+	</xsl:template>
+	
+	<xsl:template match="METS:name" xmlns:METS="http://www.loc.gov/METS/" >
+		<xsl:copy>
+			<xsl:choose>
+				<xsl:when test="$substitutions/fbm:input/@OWNERID">
+					<xsl:value-of select="$substitutions/fbm:input/@OWNERID"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:apply-templates select="@*"/>	
+					<xsl:apply-templates select="node()"/>					
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:copy>
+	</xsl:template>	
 	
 	<!-- substitute xform param date for @CREATED -->
 	<xsl:template match="METS:techMD|METS:rightsMD|METS:sourceMD|METS:digiprovMD|METS:descMD|METS:serviceBinding" xmlns:METS="http://www.loc.gov/METS/">

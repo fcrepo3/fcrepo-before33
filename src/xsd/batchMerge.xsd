@@ -16,6 +16,7 @@
 			</xsd:sequence>
 			<xsd:attribute name="OBJID" type="xsd:string" use="required"/>
 			<xsd:attribute name="LABEL" type="xsd:string" use="optional"/>
+			<xsd:attribute name="OWNERID" type="xsd:string" use="optional"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="metadata">
