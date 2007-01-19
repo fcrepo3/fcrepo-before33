@@ -313,11 +313,33 @@ ALTER DATABASE fedora22 DEFAULT COLLATE utf8_bin;</div>
 	
 	<div class="subsect">
 		<h3><a name="database.oracle">B. Oracle</a></h3>
-		<p>With Oracle, you will need to use an administrative account to 
-		manually create 1) the Fedora user on the database, and 2) the 
-		tablespace on which that user has complete control.</p>
-		
-		<p>Due to distribution license restrictions, the Fedora Installer does 
+		<p>To prepare Oracle for use with Fedora, the following steps should
+           be taken by an administrative user.</p>
+        <p>First, using the Database Configuration Assistant, ensure that the 
+           database you'll be using is created with the UTF8 charset.</p>
+        <p>Next, you'll need to create a Fedora tablespace and user in the 
+           database.
+           Assuming the administrative user is <code>sys</code> and the
+           SID is <code>fedora22</code>, log in using SQL*Plus using the
+           following command:
+        </p>
+        <div class="code">sqlplus sys/PASSWORD@fedora22 as sysdba</div>
+        <p>To create a tablespace named <code>fedora_tblspace</code> with
+        data in <code>/var/lib/oracle</code>, enter the following:</p>
+        <div class="code">CREATE TABLESPACE fedora_tblspace
+ DATAFILE '/var/lib/oracle/fedora_tblspace.dat' SIZE 1024M REUSE
+ AUTOEXTEND ON NEXT 256M MAXSIZE UNLIMITED
+ SEGMENT SPACE MANAGEMENT AUTO;</div>
+        <p>To create a user <code>fedoraAdmin</code> with password
+        <code>fedoraAdmin</code>, using the <code>fedora_tblspace</code>,
+        enter the following:</p>
+        <div class="code">CREATE USER fedoraAdmin IDENTIFIED BY fedoraAdmin
+ DEFAULT TABLESPACE fedora_tblspace;</div>
+        <p>Using the <code>GRANT</code> command, make sure the user has 
+        permission to connect, create, alter, and drop tables sequences, 
+        triggers, and indexes in this tablespaces.  For example,</p>
+        <div class="code">GRANT ALL PRIVILEGES TO fedoraAdmin;</div>
+		<p>NOTE: Due to distribution license restrictions, the Fedora Installer does 
 		not include the Oracle JDBC driver. Oracle JDBC drivers are available
 		from <a href="http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html"
 		target="_top">http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</a>.
