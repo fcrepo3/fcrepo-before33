@@ -52,6 +52,7 @@
     <div id="tocbox">
         <ol>
             <li><a href="#intro">Introduction</a></li>
+            <li><a href="#whatsnew">What's New</a></li>
             <li><a href="#impl">Implementation</a>
                 <ol>
                     <li><a href="#impl.system">System Relationships &amp; Properties</a></li>
@@ -61,7 +62,8 @@
             <li><a href="#config">Configuration</a>
                 <ol>
                     <li><a href="#config.module">Module Configuration</a></li>
-                    <li><a href="#config.datastore">Datastore Configuration</a></li>
+                    <li><a href="#config.datastore.kowari">Kowari Datastore Configuration</a></li>
+                    <li><a href="#config.datastore.mptstore">MPTStore Datastore Configuration</a></li>
                 </ol>
             </li>
             <li><a href="#search">Search Interface</a></li>
@@ -75,8 +77,8 @@
 
 <div id="introduction">
 <h2><a name="intro">1. Introduction</a></h2>
-<p>The latest release of Fedora includes the Resource Index, a service which 
-provides the infrastructure for expressing relationships among objects and their 
+<p>The Resource Index is the Fedora module that provides the infrastructure 
+for indexing relationships among objects and their 
 components. Examples of relationships between digital objects include well-known 
 management relationships such as the part-whole links between individual 
 chapters and a book, and semantic relationships useful in digital library 
@@ -90,12 +92,54 @@ ontology. Assertions from other ontologies may also be included along with the
 base Fedora relationships. All relationships are represented as a graph that can 
 be queried using an RDF query language. The query interface to the Resource 
 Index is exposed as a web service [<a href="#ref.risearch">risearch</a>], 
-providing a rich information foundation for external services 
+
 [<a href="#ref.rels" class="reference">Fedora Relationships</a>].</p>
 </div>
 
+
 <div class="sect">
-<h2><a name="impl">2. Implementation</a></h2>
+<h2><a name="whatsnew">2. What's New</a></h2>
+<p>With release 2.2, Fedora's Resource Index has improved in several
+significant ways:
+<ul>
+  <li> In addition to Kowari, the RI can now be backed by 
+       <a href="http://mptstore.sourceforge.net/">MPTStore</a>.
+       MPTStore is a fast, highly scalable RDBMS-based triplestore,
+       useful for applications that need fast, synchronous writes
+       and the ability to work with the triplestore using familiar
+       RDBMS utilities.
+       Note, however, that MPTStore does not yet support a rich, 
+       native RDF query language like SPARQL or Kowari's iTQL.  
+       See the <a href="#config.datastore.mptstore">
+       MPTStore Datastore Configuration</a> section for more information
+       on configuring MPTStore for use with the Resource Index.
+  </li>
+  <li> The Resource Index module has been refactored
+       for efficiency and stability.  As noted in the 
+       <a href="../../distribution/release-notes.html">release notes</a>,
+       several RI-related bugs have been eliminated for this release.
+       In addition, the strategy for sending triple updates to the
+       underlying triplestore has been streamlined to be much more
+       efficient.  This has resulted in a significant performance
+       improvement over Fedora 2.1.1's Resource Index.
+  </li>
+  <li>Automatic, synchronous writes are now supported.  Using the new 
+      <code>syncUpdates</code> module parameter, Fedora can be configured
+      to provide the guarantee that the triples associated with a given
+      API-M operation have been flushed <i>before the API-M call returns</i>.
+  </li>
+</ul>
+</p>
+<p>
+  See the <a href="../../reports/fedora22-performance/index.html">Fedora 2.2 API-M Performance Report</a>
+  for more details on how these changes and configuration options affect
+  performance.
+</p>
+</div>
+
+
+<div class="sect">
+<h2><a name="impl">3. Implementation</a></h2>
 <p>The Fedora object model can be abstractly viewed as a directed 
 graph, consisting of <em>internal</em> arcs that relate digital object nodes to 
 their dissemination nodes and <em>external</em> arcs between digital objects. 
@@ -145,9 +189,9 @@ Object-to-Object Relationships</a> for more information.</p>
 </div>
 
 <div class="sect">
-<h2><a name="config">3. Configuration</a></h2>
-<p>Please note that many configuration changes require a full dump-and-load of 
-the Fedora repository to ensure consistency. 
+<h2><a name="config">4. Configuration</a></h2>
+<p>Please note that many configuration changes require a full rebuild of
+the Resource Index to ensure consistency. 
 For example, turning the Resource Index Module off and on again will result in 
 an inconsistent state, as the Resource Index will know nothing about the digital 
 objects created or modified while the module was not loaded. Similarly, enabling 
@@ -158,22 +202,35 @@ limited to the performance-related pool, buffer and flush parameters. In all
 cases, configuration changes require a restart of the Fedora server before 
 taking effect.</p>
 
-<p>A utility to manage configuration changes that will not require a full dump-
-and-load of the repository is planned for the next release of Fedora.</p>
-
-<p>The Resource Index is configured within two sections of fedora.fcfg, module and 
-datastore.</p>
+<p>The Resource Index is configured within two sections of fedora.fcfg, 
+module and datastore.</p>
 
 <div class="subsect">
 <h3><a name="config.module">A. Module Configuration</a></h3>
+
+<p>
+  The Resource Index module is configured with <code>fedora.fcfg</code>
+</p>
     
-<p>An example of the module configuration within fedora.fcfg: </p>
+<p>Here's an example of a Resource Index module configuration that uses
+Kowari with delayed updates: </p>
 
 <div class="code"><pre>
 &lt;module role="fedora.server.resourceIndex.ResourceIndex" 
         class="fedora.server.resourceIndex.ResourceIndexModule"&gt;
-  &lt;param name="level" value="1"/&gt;
+  &lt;param name="level" value="2"/&gt;
   &lt;param name="datastore" value="localKowariTriplestore"/&gt;
+  &lt;param name="syncUpdates" value="false"/&gt;
+&lt;/module&gt;</pre></div>
+
+<p>Here's another example, this time using MPTStore with immediate updates: </p>
+
+<div class="code"><pre>
+&lt;module role="fedora.server.resourceIndex.ResourceIndex" 
+        class="fedora.server.resourceIndex.ResourceIndexModule"&gt;
+  &lt;param name="level" value="2"/&gt;
+  &lt;param name="datastore" value="localPostgresMPTTriplestore"/&gt;
+  &lt;param name="syncUpdates" value="true"/&gt;
 &lt;/module&gt;</pre></div>
 
 <p>An explanation of the parameters and their possible values: </p>
@@ -218,12 +275,24 @@ datastore.</p>
             parameter with a valid Trippi Connector class.
         </div>
     </li>
+    <li>syncUpdates
+        <div class="description">
+            Whether to flush the triple buffer before
+            returning from object modification operations.
+            This defaults to false.
+            Specifying this as true will ensure that RI queries 
+            immediately reflect the latest triples.
+            Specifying false will not provide this guarantee,
+            but can reduce roundtrip time for
+            API-M operations (especially when using Kowari).
+        </div>
+    </li>
 </ul>        
 </div>
 </div>
 
 <div class="subsect">
-<h3><a name="config.datastore">B. Datastore Configuration</a></h3>
+<h3><a name="config.datastore.kowari">B. Kowari Datastore Configuration</a></h3>
 <p>The example datastore configuration below (with the path parameter modified 
 for the installation environment) would provide a local Kowari triplestore that 
 buffers up to 20,000 triples in memory at a time or waits for 5 seconds of 
@@ -256,16 +325,15 @@ memory capacity.</p>
 parameters require other parameters, as indicated in the hierarchy below. 
 Optional parameters are also indicated below. As noted previously, many of these 
 parameters, with the exception of the pool, buffer, and flush parameters, cannot 
-be changed on a running repository without a full dump-and-load of the 
-repository.</p>
+be changed on a running repository without a full rebuild of the Resource
+Index.</p>
 
 <div class="boxed">
 <ul class="parameter">
     <li>connectorClassName
         <div class="description">
             The name of the Trippi Connector class used to communicate with the 
-            triplestore. In this initial release, the only Connector
-            implementation is for Kowari.
+            triplestore. When using Kowari, the value should be as follows:
         </div>
         <ul class="domain">
             <li>org.trippi.impl.kowari.KowariConnector</li>
@@ -495,16 +563,63 @@ repository.</p>
 </ul>        
 </div>
 </div>
+
+<div class="subsect">
+<h3><a name="config.datastore.mptstore">C. MPTStore Datastore Configuration</a></h3>
+<p>The example datastore configuration below would provide a
+local MPTStore triplestore backed by Postgres.
+</p>
+
+<div class="code"><pre>
+
+
+&lt;datastore id="localPostgresMPTTriplestore"&gt;
+  &lt;comment&gt;
+    Example local MPTStore backed by Postgres.
+    To use this triplestore for the Resource Index:
+    1) In fedora.fcfg, change the "datastore" parameter of the
+       ResourceIndex module to localPostgresMPTTriplestore.
+    2) Login to your Postgres server as an administrative user and
+       run the following commands:
+         CREATE ROLE "fedoraAdmin" LOGIN PASSWORD 'fedoraAdmin'
+           NOINHERIT CREATEDB
+           VALID UNTIL 'infinity';
+         CREATE DATABASE "riTriples"
+           WITH ENCODING='SQL_ASCII'
+           OWNER="fedoraAdmin";
+    3) Make sure you can login to your Postgres server as fedoraAdmin.
+    4) Download the appropriate Postgres JDBC 3 driver from 
+       http://jdbc.postgresql.org/download.html
+       and make sure it's accessible to your servlet container.
+       If you're running Tomcat, putting it in common/lib/ will work.
+  &lt;/comment&gt;
+  &lt;param name="connectorClassName" value="org.trippi.impl.mpt.MPTConnector"/&gt;
+  &lt;param name="ddlGenerator" value="org.nsdl.mptstore.impl.postgres.PostgresDDLGenerator"/&gt;
+  &lt;param name="jdbcDriver" value="org.postgresql.Driver"/&gt;
+  &lt;param name="jdbcURL" value="jdbc:postgresql://localhost/riTriples"/&gt;
+  &lt;param name="username" value="fedoraAdmin"/&gt;
+  &lt;param name="password" value="fedoraAdmin"/&gt;
+  &lt;param name="poolInitialSize" value="3"/&gt;
+  &lt;param name="poolMaxSize" value="10"/&gt;
+  &lt;param name="backslashIsEscape" value="true"/&gt;
+  &lt;param name="fetchSize" value="1000"/&gt;
+  &lt;param name="autoFlushDormantSeconds" value="5"/&gt;
+  &lt;param name="autoFlushBufferSize" value="1000"/&gt;
+  &lt;param name="bufferFlushBatchSize" value="1000"/&gt;
+  &lt;param name="bufferSafeCapacity" value="2000"/&gt;
+&lt;/datastore&gt;</pre></div>
+
 </div>
 
 <div class="sect">
-<h2><a name="search">4. Search Interface</a></h2>
+<h2><a name="search">5. Search Interface</a></h2>
 <p>The Resource Index Search interface is exposed in a REST architectural style, 
 providing a stateless query interface that accepts queries by value or by 
 reference [<a href="#ref.rels" class="reference">Fedora Relationships</a>].</p>
     
 <p>The query interface to the Resource Index currently supports three RDF query 
-languages, RDQL, iTQL, and SPO. However, as of Fedora 2.1, RDQL support is now 
+languages, RDQL (Kowari-only), iTQL (Kowari-only), and SPO (Kowari and MPTStore).
+NOTE: As of Fedora 2.1, RDQL support is now 
 deprecated and may be entirely absent in future releases. 
 Support for SPARQL is planned for a future release.</p>
 
@@ -521,7 +636,7 @@ for more information.</p>
 </div>
 
 <div id="references" class="sect">
-    <h2><a name="#references">6. References</a></h2>
+    <h2><a name="#references">7. References</a></h2>
     <dl>
         <dt><a name="ref.rels">[Fedora Relationships]</a></dt>
         <dd><a href="http://www.arxiv.org/pdf/cs.DL/0501012">Fedora: An 
