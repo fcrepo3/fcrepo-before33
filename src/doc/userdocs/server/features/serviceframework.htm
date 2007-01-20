@@ -111,30 +111,25 @@ towards an &quot;enterprise&quot; architectural pattern.</span></p>
 The Fedora Service Framework can evolve to include new services conceived of by 
 the Fedora community. &nbsp;&nbsp; Listed below is a brief description of each service, 
 links to specifications when available, and status. </span></p>
-<p class="MsoNormal" style="margin-left: 0.5in; text-indent: -0.25in; line-height: 15pt;"><!--[if !supportLists]-->
-<span style="font-size: 10pt; font-family: Symbol; color: black">·<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><!--[endif]--><b><span style="font-family: Arial; color: black;">
-<a href="#REPO">
-Repository Service</a>:&nbsp; </span></b>
-<span style="font-family: Arial; color: black;">at the heart of Fedora is the 
+<ul>
+	<li>
+	<p style="line-height: 15pt;"><b>
+	<span style="font-family: Arial; color: black;"><a href="#REPO">Repository Service</a>:&nbsp; 
+	</span></b><span style="font-family: Arial; color: black;">at the heart of Fedora is the 
 repository service that enables the creation, management, storage, access, and 
-reuse of digital objects.&nbsp; <br>
-&nbsp;</span></p>
-<p class="MsoNormal" style="margin-left: 0.5in; text-indent: -0.25in; line-height: 15pt;"><!--[if !supportLists]-->
-<span style="font-size: 10pt; font-family: Symbol; color: black">·<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><!--[endif]--><b><span style="font-family: Arial; color: black;">
-<a href="http://www.fedora.info/download/2.2/services/oaiprovider/doc/index.html">
-OAI Provider Service</a></span></b><span style="font-family: Arial; color: black;">:&nbsp; 
+reuse of digital objects.&nbsp; </span></p></li>
+	<li>
+	<p style="line-height: 15pt;"><b>
+	<span style="font-family: Arial; color: black;">
+	<a href="http://www.fedora.info/download/2.2/services/oaiprovider/doc/index.html">OAI Provider Service</a></span></b><span style="font-family: Arial; color: black;">:&nbsp; 
 a configurable OAI Provider service for harvesting metadata out of a Fedora 
 repository via OAI-PMH.&nbsp; The service can be configured to harvest any type 
 datastream of dissemination from objects in the repository.&nbsp; It also supports 
-OAI sets.<br>
-&nbsp;</span></p>
-<p class="MsoNormal" style="margin-left: 0.5in; text-indent: -0.25in; line-height: 15pt;"><!--[if !supportLists]-->
-<span style="font-size: 10pt; font-family: Symbol; color: black">·<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><!--[endif]--><b><span style="font-family: Arial; color: black;">
-<a href="http://www.fedora.info/download/2.2/services/diringest/doc/index.html">
-Directory Ingest Service</a></span></b><span style="font-family: Arial; color: black;">:&nbsp; 
+OAI sets. </span></p></li>
+	<li>
+	<p style="line-height: 15pt;"><b>
+	<span style="font-family: Arial; color: black;">
+	<a href="http://www.fedora.info/download/2.2/services/diringest/doc/index.html">Directory Ingest Service</a></span></b><span style="font-family: Arial; color: black;">:&nbsp; 
 a service to ingest a hierarchical directory of files into a Fedora 
 repository.&nbsp;&nbsp; The service will accept a Submission Information Package (SIP) in 
 the form of a .zip archive that contains directories of files along with a 
@@ -145,60 +140,51 @@ folder-document).&nbsp; Upon receipt of the SIP, the Directory Ingest service wi
 process the .zip archive and create a Fedora digital object in the repository 
 for every file and every directory, plus it will record the relationships among 
 them in Fedora's RDF-based relationships datastream.&nbsp;&nbsp;&nbsp; <i>A new web-based 
-client for creating the SIP will be made available in Q2 2006.&nbsp; This client will 
+client for creating the SIP is now available (see
+	<a href="http://www.fedora.info/download/2.2/services/sipcreator/doc/index.html">
+	SIP Creator)</a>.&nbsp; This client will 
 enable a user select files from a file system, add metadata about files, and 
 assert semantically-meaningful relationships, and ultimately submit the SIP to a 
-Fedora repository.&nbsp; </i><br>
-&nbsp;</span></p>
-<p class="MsoNormal" style="margin-left: 0.5in; text-indent: -0.25in; line-height: 15pt;"><!--[if !supportLists]-->
-<span style="font-size: 10pt; font-family: Symbol; color: black">·<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><!--[endif]--><b><span style="font-family: Arial; color: black;">
-<a href="http://www.fedora.info/download/2.2/services/genericsearch/doc/index.html">
-Search Service</a></span></b><span style="font-family: Arial; color: black;">:&nbsp; 
+Fedora repository.&nbsp; </i></span></p></li>
+	<li>
+	<p style="line-height: 15pt;"><b>
+	<span style="font-family: Arial; color: black;">
+	<a href="http://www.fedora.info/download/2.2/services/genericsearch/doc/index.html">Search Service</a></span></b><span style="font-family: Arial; color: black;">:&nbsp; 
 a configurable search service that can index any datastream or dissemination of 
 Fedora digital objects.&nbsp; The service is pluggable, and will provide adapters for 
 Lucene and Zebra as the default backend search engines.&nbsp; Other search adapters 
-can be developed to plug into other engines.<br>
-&nbsp;</span></p>
-<p class="MsoNormal" style="margin-left: 0.5in; text-indent: -0.25in; line-height: 15pt;"><!--[if !supportLists]-->
-<span style="font-size: 10pt; font-family: Symbol; color: black">·<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><!--[endif]--><b><span style="font-family: Arial; color: black;">
-Workflow and Orchestration Service</span></b><span style="font-family: Arial; color: black;"> 
+can be developed to plug into other engines. </span></p></li>
+	<li>
+	<p style="line-height: 15pt;"><b>
+	<span style="font-family: Arial; color: black;">Workflow and Orchestration Service</span></b><span style="font-family: Arial; color: black;"> 
 (planned 2007, under specification by Fedora Workflow Working Group and Fedora 
-Development Team)<br>
-&nbsp;</span></p>
-<p class="MsoNormal" style="margin-left: 0.5in; text-indent: -0.25in; line-height: 15pt;"><!--[if !supportLists]-->
-<span style="font-size: 10pt; font-family: Symbol; color: black">·<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><!--[endif]--><b><span style="font-family: Arial; color: black;">
-Preservation Integrity Service</span></b><span style="font-family: Arial; color: black;"> 
+Development Team) </span></p></li>
+	<li>
+	<p style="line-height: 15pt;"><b>
+	<span style="font-family: Arial; color: black;">Preservation Integrity Service</span></b><span style="font-family: Arial; color: black;"> 
 (planned 2007, currently under specification by Fedora Preservation Working 
-Group)<br>
-&nbsp;</span></p>
-<p class="MsoNormal" style="margin-left: 0.5in; text-indent: -0.25in; line-height: 15pt;"><!--[if !supportLists]-->
-<span style="font-size: 10pt; font-family: Symbol; color: black">·<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><!--[endif]--><b><span style="font-family: Arial; color: black;">
-Preservation Monitoring and Alerting Services </span></b>
-<span style="font-family: Arial; color: black;">(planned 2007, currently under 
-specification by Fedora Preservation Working Group)<br>
-&nbsp;</span></p>
-<p class="MsoNormal" style="margin-left: 0.5in; text-indent: -0.25in; line-height: 15pt;"><!--[if !supportLists]-->
-<span style="font-size: 10pt; font-family: Symbol; color: black">·<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><!--[endif]--><b><span style="font-family: Arial; color: black;">
-Event Notification Service (Messaging)</span></b><span style="font-family: Arial; color: black;"> 
-(planned 2007)<br>
-&nbsp;</span></p>
-<p class="MsoNormal" style="margin-left: 0.5in; text-indent: -0.25in; line-height: 15pt;"><!--[if !supportLists]-->
-<span style="font-size: 10pt; font-family: Symbol; color: black">·<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><!--[endif]--><b><span style="font-family: Arial; color: black;">
-Persistent Identifier Resolution Service</span></b><span style="font-family: Arial; color: black;"><br>
-&nbsp;</span></p>
-<p class="MsoNormal" style="margin-left: 0.5in; text-indent: -0.25in; line-height: 15pt;"><!--[if !supportLists]-->
-<span style="font-size: 10pt; font-family: Symbol; color: black">·<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><!--[endif]--><b><span style="font-family: Arial; color: black;">
-<a href="http://www.openarchives.org/ore/">Object Reuse and Exchange</a> (<st1:place w:st="on"><st1:state w:st="on">ORE</st1:state></st1:place>) 
+Group) </span></p></li>
+	<li>
+	<p style="line-height: 15pt;"><b>
+	<span style="font-family: Arial; color: black;">Preservation Monitoring and Alerting Services 
+	</span></b><span style="font-family: Arial; color: black;">(planned 2007, currently under 
+specification by Fedora Preservation Working Group)</span></p></li>
+	<li>
+	<p style="line-height: 15pt;"><b>
+	<span style="font-family: Arial; color: black;">Event Notification Service (Messaging)</span></b><span style="font-family: Arial; color: black;"> 
+(planned 2007)</span></p></li>
+	<li>
+	<p style="line-height: 15pt;">
+	<span style="font-family: Arial; color: black;"><b>Persistent Identifier Resolution Service</b>
+	</span></p></li>
+	<li>
+	<p style="line-height: 15pt;"><b>
+	<span style="font-family: Arial; color: black;">
+	<a href="http://www.openarchives.org/ore/">Object Reuse and Exchange</a> (<st1:place w:st="on"><st1:state w:st="on">ORE</st1:state></st1:place>) 
 Access Point:</span></b><span style="font-family: Arial; color: black;">&nbsp; an 
 interface to a Fedora repository to facilitate cross-repository interoperability 
-(2007-2008)</span></p>
+(2007-2008)</span></p></li>
+</ul>
 <p style="line-height: 15pt;"><span style="font-family: Arial; color: black;">
 The Fedora Service Framework provides building blocks for higher-level 
 customized services and user applications.&nbsp;&nbsp; </span></p>
