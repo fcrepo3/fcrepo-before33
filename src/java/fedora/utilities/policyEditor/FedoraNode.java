@@ -1,3 +1,8 @@
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also 
+ * available online at http://www.fedora.info/license/).
+ */
+
 package fedora.utilities.policyEditor;
 import java.io.File;
 import java.io.FileWriter;

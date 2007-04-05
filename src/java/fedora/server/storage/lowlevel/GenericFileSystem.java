@@ -1,3 +1,8 @@
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also 
+ * available online at http://www.fedora.info/license/).
+ */
+
 //synch issues
 //assume that there might be a registry rebuild process which might erroneously add
 //entries from orphaned files

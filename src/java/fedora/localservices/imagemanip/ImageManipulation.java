@@ -1,3 +1,8 @@
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also 
+ * available online at http://www.fedora.info/license/).
+ */
+
 /**
  * Image manipulations (with the exception of the watermarking function)
  * are handled by ImageJ, a Java API written for image processing.
