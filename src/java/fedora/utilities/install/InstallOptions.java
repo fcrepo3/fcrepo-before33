@@ -2,22 +2,13 @@ package fedora.utilities.install;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
-
-import fedora.utilities.DriverShim;
-import fedora.utilities.FileUtils;
 
 public class InstallOptions {
 
@@ -384,50 +375,20 @@ public class InstallOptions {
     		return true;
     	}
     	
-    	File driver = null;
-    	if (getValue(DATABASE_DRIVER).equals(InstallOptions.INCLUDED)) {
-    		InputStream is;
-    		boolean success = false;
-    		try {
-	    		if (database.equals(InstallOptions.MCKOI)) {
-		        	is = _dist.get(Distribution.JDBC_MCKOI);
-		        	driver = new File(System.getProperty("java.io.tmpdir"), Distribution.JDBC_MCKOI);
-		        	success = FileUtils.copy(is, new FileOutputStream(driver));
-		        } else if (database.equals(InstallOptions.MYSQL)) {
-		        	is = _dist.get(Distribution.JDBC_MYSQL);
-		        	driver = new File(System.getProperty("java.io.tmpdir"), Distribution.JDBC_MYSQL);
-		        	success = FileUtils.copy(is, new FileOutputStream(driver));
-		        }
-	    		if (!success) {
-	    			System.err.println("Extraction of included JDBC driver failed.");
-	    			return false;
-	    		}
-    		} catch(IOException e) {
-    			e.printStackTrace();
-    			return false;
-    		}
-    	} else {
-    		driver = new File(getValue(DATABASE_DRIVER));
-    	}
+    	Database db = new Database(_dist, this);
+    	
     	try {
-	    	DriverShim.loadAndRegister(driver, getValue(DATABASE_DRIVERCLASS));
-			Connection conn = DriverManager.getConnection(getValue(DATABASE_JDBCURL), getValue(DATABASE_USERNAME),
-					getValue(DATABASE_PASSWORD));
-			DatabaseMetaData dmd = conn.getMetaData();
-			System.out.println("Successfully connected to " + dmd.getDatabaseProductName());
-
+    		// validate the user input by attempting a database connection
+    		db.test();
 			// check if we need to update old table
-			ResultSet rs = dmd.getTables(null, null, "%", null);
-			while (rs.next()) {
-				if (rs.getString("TABLE_NAME").equals("do")) {
-					inputOption(DATABASE_UPDATE);
-					break;
-				}
+			if (db.usesDOTable()) {
+				inputOption(DATABASE_UPDATE);
 			}
-			conn.close();
+			
+			db.close();
 			return true;
     	} catch(Exception e) {
-    		e.printStackTrace();
+    		System.err.println(e.getMessage());
     		return false;
     	}
     }
