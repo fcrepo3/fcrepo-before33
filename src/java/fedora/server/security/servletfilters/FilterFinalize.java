@@ -88,7 +88,7 @@ public class FilterFinalize extends FilterSetup {
     	if (log.isDebugEnabled()) log.debug(exit(method)); 
 	}
     
-	public void doThisSubclass(ExtendedHttpServletRequest request, HttpServletResponse response) throws Throwable {
+	public boolean doThisSubclass(ExtendedHttpServletRequest request, HttpServletResponse response) throws Throwable {
 		String method = "doThisSubclass() "; if (log.isDebugEnabled()) log.debug(enter(method));
 		super.doThisSubclass(request, response);
 		request.lockWrapper();
@@ -141,6 +141,7 @@ public class FilterFinalize extends FilterSetup {
 		log.debug("IN FILTER ROLE eduPersonAffiliation?==" + request.isUserInRole("eduPersonAffiliation"));
 		
 		request.setAttribute(DELIVERY_NAME, subjectAttributesMap);
+		return false; // i.e., don't signal to terminate servlet filter chain
 	}
 
 	public void destroy() {

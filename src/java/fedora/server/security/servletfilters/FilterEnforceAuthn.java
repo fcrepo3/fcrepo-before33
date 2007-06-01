@@ -34,12 +34,13 @@ import org.apache.commons.codec.binary.Base64;
 public class FilterEnforceAuthn extends FilterSetup {
     protected static Log log = LogFactory.getLog(FilterEnforceAuthn.class);
 
-	public void doThisSubclass(ExtendedHttpServletRequest request, HttpServletResponse response) throws Throwable {
+	public boolean doThisSubclass(ExtendedHttpServletRequest request, HttpServletResponse response) throws Throwable {
 		String method = "doThisSubclass() "; if (log.isDebugEnabled()) log.debug(enter(method));
 		super.doThisSubclass(request, response);
 		request.lockWrapper();
 				
-		if (request.getUserPrincipal() == null) {
+		boolean terminateServletFilterChain = (request.getUserPrincipal() == null);		
+		if (terminateServletFilterChain) {
 			if (log.isDebugEnabled()) log.debug(format(method, "no principal found, sending 401"));
 			String realm = "fedora";
 			String value = "BASIC realm=\"" + realm + "\"";
@@ -65,7 +66,7 @@ public class FilterEnforceAuthn extends FilterSetup {
 				showThrowable(e, log, "response flush error");
 			}
 		}
-		
+		return terminateServletFilterChain;
 	}
 
 	public void destroy() {

@@ -108,8 +108,8 @@ public abstract class BaseContributing extends FilterSetup {
     	}
     	if (log.isDebugEnabled()) log.debug(exit(method)); 
 	}
-    
-	public void doThisSubclass(ExtendedHttpServletRequest extendedHttpServletRequest, HttpServletResponse response) throws Throwable {
+	
+	public boolean doThisSubclass(ExtendedHttpServletRequest extendedHttpServletRequest, HttpServletResponse response) throws Throwable {
 		String method = "doThisSubclass() "; if (log.isDebugEnabled()) log.debug(enter(method));
 		super.doThisSubclass(extendedHttpServletRequest, response);
 		boolean alreadyAuthenticated = (extendedHttpServletRequest.getUserPrincipal() != null);
@@ -186,7 +186,7 @@ public abstract class BaseContributing extends FilterSetup {
 			}
 
 		}
-		
+		return false; // i.e., don't signal to terminate servlet filter chain		
 	}
 	
 	// NO CACHING AT THIS SUBCLASSING
