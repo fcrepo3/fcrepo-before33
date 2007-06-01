@@ -78,7 +78,7 @@ public class FilterSetup extends Base implements Filter {
 		return wrap;
 	}
 	
-	public void doThisSubclass(ExtendedHttpServletRequest extendedHttpServletRequest, HttpServletResponse response) throws Throwable {
+	public boolean doThisSubclass(ExtendedHttpServletRequest extendedHttpServletRequest, HttpServletResponse response) throws Throwable {
 		String method = "doThisSubclass() "; if (log.isDebugEnabled()) log.debug(enter(method));
 		String test = null;
 
@@ -100,7 +100,9 @@ public class FilterSetup extends Base implements Filter {
 		}
 		if (log.isDebugEnabled()) log.debug(pass(method,test));								
 
-		if (log.isDebugEnabled()) log.debug(exit(method)); 
+		if (log.isDebugEnabled()) log.debug(exit(method));
+		
+		return false; // i.e., don't signal to terminate servlet filter chain
 	}
 		
     
@@ -109,7 +111,7 @@ public class FilterSetup extends Base implements Filter {
 		if (log.isDebugEnabled()) log.debug(format(method, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"));
 		if (log.isDebugEnabled()) log.debug(format(method, "FILTER_NAME", FILTER_NAME));
 		String test = null;
-
+		boolean terminateServletFilterChain = false;
 		ExtendedHttpServletRequest extendedHttpServletRequest = null;
 		try {
 			
@@ -130,7 +132,7 @@ public class FilterSetup extends Base implements Filter {
 			}
 			if (log.isDebugEnabled()) log.debug(pass(method,test));
 			
-			doThisSubclass(extendedHttpServletRequest, (HttpServletResponse)response);
+			terminateServletFilterChain = doThisSubclass(extendedHttpServletRequest, (HttpServletResponse)response);
 			
 						
 		} catch (Throwable th) {
@@ -145,7 +147,11 @@ public class FilterSetup extends Base implements Filter {
 				log.debug(format(method, "extendedHttpServletRequest", extendedHttpServletRequest.getClass().getName()));
 				log.debug(format(method, null, "response" + response));
 			}
-			chain.doFilter(extendedHttpServletRequest, response);
+			if (terminateServletFilterChain) {
+				log.debug(format(method, "terminating servlet filter chain"));
+			} else {
+				chain.doFilter(extendedHttpServletRequest, response);
+			}
 			if (log.isDebugEnabled()) log.debug("back from next doFilter()");
 		} catch (Throwable th) {
 			showThrowable(th, log, "can't do next doFilter()");
