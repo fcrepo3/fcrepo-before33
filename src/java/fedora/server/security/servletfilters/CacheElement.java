@@ -2,7 +2,7 @@ package fedora.server.security.servletfilters;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import java.util.Set;
-import java.util.HashSet;
+//import java.util.HashSet;
 import java.util.Map;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -13,173 +13,637 @@ import java.util.Calendar;
  *  @author Bill Niebel (niebel@virginia.edu)
  */
 public class CacheElement {
+    
+    
+    
+    private static final Calendar EARLIER;
+    static {
+        Calendar temp = Calendar.getInstance();
+        temp.set(Calendar.YEAR, 1999);
+        EARLIER = temp;
+    }
+    
+    private static final boolean s_expired_default = true; // safest
+    
+    private static final Log LOG = LogFactory.getLog(CacheElement.class);
+    
+    private final String m_cacheid;
+    private final String m_cacheabbrev;
 	
-    private Log log = LogFactory.getLog(CacheElement.class);
-	
-	private final String userid;
-	
-	private String credentialsCheck;
+    private final String m_userid;
+    private String m_password = null;
+    private boolean m_valid = false;
+    private Calendar m_expiration = null; 
+    private Boolean m_authenticated = null;
+    private Map m_namedValues = null;
+    
+    private String m_errorMessage = null;
 
-	private boolean valid = false;
-	private Boolean authenticated = null;
-	private Map namedValues = null;
-	
-	private String errorMessage = null;
-	
-	public final void audit() {
-		log.debug("userid==" + userid);
-		log.debug("authenticated==" + authenticated);
-		log.debug("namedAttributes==");
-		for (Iterator it1 = namedValues.keySet().iterator(); it1.hasNext(); ) {
-			Object temp = it1.next();
-			if (! (temp instanceof String)) {
-				log.debug(">>>>> NAME IS NOT STRING <<<<<");				
-			} else {
-				String name = (String) temp;
-				log.debug(name + "==");
-				temp = namedValues.get(name);
-				if (temp instanceof String) {
-					log.debug(temp);				
-				} else if (temp instanceof Set) {
-					Set values = (Set) temp;
-					log.debug("in audit set n==" + values.size());
-					for (Iterator it2 = values.iterator(); it2.hasNext(); ) {
-						temp = it2.next();
-						if (! (temp instanceof String)) {
-							log.debug(">>>>> VALUE IS NOT STRING <<<<<");				
-						} else {
-							String value = (String) temp;
-							log.debug(value + ",");
-						}
-					}
-				} else {
-					log.debug(">>>>> VALUES IS NEITHER STRING NOR SET <<<<<");
-				}
-			}
-		}
-	}
-	
-	public final HashSet NULL_SET =  new HashSet(); //<<<<<<<<<<<<<<new ImmutableHashSet();
-	public final Hashtable EMPTY_MAP = new Hashtable(); //<<<<<<<<<<<<<<
-	
-	public final void populate(Boolean authenticated, Set predicates, Map namedValues, String errorMessage) {
-		this.errorMessage = errorMessage;
-		log.debug("in ce.pop");
-		if (errorMessage == null) {
-			valid = true;
-			this.authenticated = authenticated;
-			if (namedValues == null) {
-				log.debug("in ce.pop(), namedValues is null");
-				this.namedValues = EMPTY_MAP;
-			} else {
-				log.debug("in ce.pop(), namedValues is not null " + namedValues);
-				this.namedValues = namedValues;
-			}
-			audit();
-		} else {
-			log.debug(errorMessage);
-		}
-	}
-	
-	private Calendar expiration = null;	
-	
-	public CacheElement(String userid, /*String password,*/ Cache cache) {
-		this.userid = userid;
-		//this.cache = cache;
-	}
-	
-	public String getUserid() {
-		return userid;
-	}
+    //public final HashSet NULL_SET =  new HashSet(); 
+    private final Hashtable m_empty_map = new Hashtable();
+    
+    public CacheElement(String userid, String cacheid, String cacheabbrev) {
+        this.m_cacheid = cacheid;
+        this.m_cacheabbrev = cacheabbrev;
+        this.m_userid = userid;
+        this.invalidate();
+        //to do:  refactor to remove unused parm "cache"  
+    }
 
-	private static final Calendar getExpiration(int duration, String unit) {
-		Calendar expiration = Calendar.getInstance();
-		if ("second".equalsIgnoreCase(unit) || "seconds".equalsIgnoreCase(unit)) {
-			expiration.add(Calendar.SECOND, duration);
-		} else if ("minute".equalsIgnoreCase(unit) || "minutes".equalsIgnoreCase(unit)) {
-			expiration.add(Calendar.MINUTE, duration);			
-		} else if ("hour".equalsIgnoreCase(unit) || "hours".equalsIgnoreCase(unit)) {
-			expiration.add(Calendar.HOUR, duration);			
-		} else {
-			//properties read failure
-			LogFactory.getLog(CacheElement.class).fatal(CacheElement.class.getName() + ".getExpiration() " + "bad expiration properties");			
-			expiration.add(Calendar.YEAR, -666);			
-		}
-		return expiration;
-	}
+    public String getCacheid() {
+        return this.m_cacheid;
+    }
+    
+    public String getCacheAbbrev() {
+        return this.m_cacheabbrev;
+    }
+    
+    public String getUserid() {
+        return this.m_userid;
+    }
 
-	/* synchronize so evaluation of cache item state will be sequential, non-interlaced
-	(protect against overlapping calls resulting in redundant authenticator calls)
-	*/
-	public final synchronized Boolean authenticate(Cache cache, String password) {
-		Boolean authenticated = null;
-		CacheElementPopulator cacheElementPopulator = cache.getCacheElementPopulator();
-		Calendar now = Calendar.getInstance();
-		log.debug(this.getClass().getName() + ".authenticate");
-		if ((expiration != null) && now.before(expiration)) {
-			log.debug(this.getClass().getName() + " cache valid");
-			//previous authentication is still set and valid
-			if (password != null) {
-				authenticated =	password.equals(credentialsCheck);
-			}
-		} else { //previous authentication has timed out (or no previous authentication)
-			log.debug(this.getClass().getName() + " new authentication needed");
-			valid = false;
-			cacheElementPopulator.populateCacheElement(this, password);
-			credentialsCheck = password;
-			if (valid && (authenticated != null)) {
-				if (((Boolean)authenticated).booleanValue()) {
-					log.debug(this.getClass().getName() + " authentication succeeded");
-					expiration = getExpiration(cache.getAuthSuccessTimeoutDuration(), cache.getAuthSuccessTimeoutUnit());				
-				} else {
-					log.debug(this.getClass().getName() + " authentication failed");
-					expiration = getExpiration(cache.getAuthFailureTimeoutDuration(), cache.getAuthFailureTimeoutUnit());				
-				}
-			} else {
-				log.debug(this.getClass().getName() + " couldn't authenticate");
-				expiration = getExpiration(cache.getAuthExceptionTimeoutDuration(), cache.getAuthExceptionTimeoutUnit());				
-			} 
-			authenticated = this.authenticated;
-		}
-		return authenticated;
-	}
-		
-	/* synchronize so evaluation of cache item state will be sequential, non-interlaced
-	(protect against overlapping calls resulting in redundant authenticator calls)
-	*/
-	public final synchronized Map getNamedValues(Cache cache, String password) {
-		CacheElementPopulator cacheElementPopulator = cache.getCacheElementPopulator();
-		Calendar now = Calendar.getInstance();
-		log.debug(this.getClass().getName() + ".getNamedValues()");
-		log.debug(this.getClass().getName() + ".getNamedValues() expiration==" + expiration);
-		log.debug(this.getClass().getName() + ".getNamedValues() now==" + now);
-		if (expiration != null) {
-			log.debug(this.getClass().getName() + ".getNamedValues() expiration==" + expiration.toString());
-			log.debug(this.getClass().getName() + ".getNamedValues() cmp==" + now.before(expiration));
-		}
-		if (now != null) {
-			log.debug(this.getClass().getName() + ".getNamedValues() now==" + now.toString());
-		}
-		if (valid && (expiration != null) && now.before(expiration)) {
-			log.debug(this.getClass().getName() + " cache valid"); 
-		} else { //previous X has timed out (or no previous X)
-			log.debug(this.getClass().getName() + " new X needed");
-			namedValues = null;
-			try {
-				valid = false;
-				cacheElementPopulator.populateCacheElement(this, password);
-				if (valid) {
-					expiration = getExpiration(cache.getAuthSuccessTimeoutDuration(), cache.getAuthSuccessTimeoutUnit());				
-				} else {
-					expiration = getExpiration(cache.getAuthExceptionTimeoutDuration(), cache.getAuthExceptionTimeoutUnit());				
-				}
-				if (namedValues == null) {
-					namedValues = EMPTY_MAP;
-				}
-			} catch (Throwable t) {
-			}
-		}
-		return namedValues;
-	}		
+    public void setPassword(String password) {
+        this.m_password = password;
+    }
+
+    public String getPassword() {
+        return this.m_password;
+    }
+
+    public void setValid(boolean valid) {
+        this.m_valid = valid;
+    }
+
+    public boolean isValid() {
+        return this.m_valid;
+    }
+    
+    public void setExpiration(Calendar expiration) {
+        this.m_expiration = expiration;
+    }
+
+    public Calendar getExpiration() {
+        return this.m_expiration;
+    }
+    
+    public Boolean getAuthenticated() {
+        return this.m_authenticated;
+    }    
+    
+    public boolean isAuthenticated() {
+        boolean rc = false;
+        if (getAuthenticated() == null) {    
+        } else {
+            rc = this.getAuthenticated().booleanValue();
+        }
+        return rc;
+    }
+    
+    public void setAuthenticated(Boolean authenticated) {
+        this.m_authenticated = authenticated;
+    }
+    
+    private Map getNamedValues() {
+        return this.m_namedValues;
+    }
+
+    private void setNamedValues(Map namedValues) {
+        this.m_namedValues = namedValues;  
+    }
+    
+    public String getErrorMessage() {
+        return this.m_errorMessage;
+    }
+    
+    public void setErrorMessage(String errorMessage) {
+        this.m_errorMessage = errorMessage;
+    }
+    
+    public String getInstanceId() {
+        String rc = this.toString();
+        int i = rc.indexOf("@");
+        if (i > 0) {
+            rc = rc.substring(i + 1);
+        }
+        return rc;
+    }
+
+    public void invalidate(String errorMessage) {
+        String m =   this.getCacheAbbrev() + " invalidate() ";
+        this.setValid(false);
+        this.m_errorMessage = errorMessage;
+        this.setAuthenticated(null);
+        this.setNamedValues(null);
+        this.setExpiration(EARLIER);
+        this.setPassword(null);
+        if (getErrorMessage() != null) {
+            LOG.debug(m + getErrorMessage());
+        }
+    }
+    
+    public void invalidate() {
+        invalidate(null);
+    }
+    
+
+    
+    private final void assertInvalid() {
+        assert(this.getAuthenticated() == null);
+        assert(this.getNamedValues() == null);
+        assert(! this.isValid());
+        assert(isExpired(this.getExpiration(), false));
+        assert(this.getPassword() == null);        
+    }
+    
+    public static final void checkCalcExpiration(int duration, int unit) 
+            throws IllegalArgumentException {
+        if (duration < 0) {
+            throw new IllegalArgumentException("bad duration==" + duration);            
+        }
+        switch (unit) {
+        case Calendar.MILLISECOND :
+        case Calendar.SECOND :
+        case Calendar.MINUTE : 
+        case Calendar.HOUR : 
+            break;
+        default:
+            throw new IllegalArgumentException("bad unit==" + unit);
+        }
+    }
+    
+    private void validate(Boolean authenticated, Map namedValues) {
+        this.assertInvalid();
+        this.setAuthenticated(authenticated);
+        this.setNamedValues(namedValues); 
+        this.setErrorMessage(null);
+        this.setValid(true);        
+    }
+	
+    public static final void auditNamedValues(String m, Map namedValues) {
+        if (LOG.isDebugEnabled()) {
+            assert(namedValues != null);
+            for (Iterator outer = namedValues.keySet().iterator();
+                    outer.hasNext(); ) {
+                Object name = outer.next();
+                assert (name instanceof String) : "not a string, name==" + name;
+                StringBuffer sb = new StringBuffer(m + name + "==");
+                Object temp = namedValues.get((String)name);
+                assert ((temp instanceof String) || (temp instanceof Set))  
+                        : "neither string nor set, temp==" + temp;
+                if (temp instanceof String) {
+                    sb.append(temp.toString());
+                } else if (temp instanceof Set) {
+                    Set values = (Set) temp;
+                    sb.append("(" + values.size() + ") {");
+                    String punct = "";
+                    for (Iterator it = values.iterator(); it.hasNext(); ) {
+                        temp = it.next();
+                        if (! (temp instanceof String)) {
+                            LOG.error(m + "set member not string, ==" + temp);               
+                        } else {
+                            String value = (String) temp;
+                            sb.append(punct + value);
+                            punct = ",";
+                        }
+                    }
+                    sb.append("}");
+                }
+                LOG.debug(sb.toString());
+            }            
+        }
+    }
+    
+    public static final String pad(long i, String pad, boolean padLeft) {
+        String rc = "";
+        String st = Long.toString(i);
+        if (st.length() == pad.length()) {
+            rc = st;
+        } else if (st.length() > pad.length()) {
+            rc = st.substring(0, pad.length());
+        } else {
+            String padNeeded = pad.substring(0, pad.length() - st.length());
+            if (padLeft) {
+                rc = padNeeded + st;                
+            } else {
+                rc = st + padNeeded;
+            }
+        }
+        return rc;
+    }
+    
+    public static final String pad(long i, String pad) {
+        return CacheElement.pad(i, pad, true);
+    }
+    
+    public static final String format(long day, long hour, long minute, 
+            long second, long millisecond, String dayPad) {
+        StringBuffer sb = new StringBuffer();
+        if (dayPad != null) {
+            sb.append(CacheElement.pad(day,"00"));
+            sb.append(" ");
+        } else {
+            sb.append(Long.toString(day));
+            sb.append(" days ");
+        }
+        sb.append(CacheElement.pad(hour,"00"));
+        sb.append(":");
+        sb.append(CacheElement.pad(minute,"00"));
+        sb.append(":");
+        sb.append(CacheElement.pad(second,"00"));
+        sb.append(".");
+        sb.append(CacheElement.pad(millisecond,"000"));
+        return sb.toString();
+    }
+    
+    public static final String format(long year, long month, long day, 
+            long hour, long minute, long second, long millisecond) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(CacheElement.pad(year,"0000"));
+        sb.append("-");
+        sb.append(CacheElement.pad(month,"00"));
+        sb.append("-");
+        sb.append(format(day, hour, minute, second, millisecond, "00"));
+        return sb.toString();
+    }
+    
+    public static final String format(Calendar time) {
+        return format(time.get(Calendar.YEAR), time.get(Calendar.MONTH)+1,
+            time.get(Calendar.DATE), time.get(Calendar.HOUR_OF_DAY),
+            time.get(Calendar.MINUTE), time.get(Calendar.SECOND), 
+            time.get(Calendar.MILLISECOND));
+        /*
+        StringBuffer sb = new StringBuffer();
+        sb.append(CacheElement.pad(time.get(Calendar.YEAR),"0000"));
+        sb.append("/");
+        sb.append(CacheElement.pad((time.get(Calendar.MONTH) + 1),"00"));
+        sb.append("/");
+        sb.append(CacheElement.pad(time.get(Calendar.DATE),"00"));
+        sb.append(" ");
+        sb.append(CacheElement.pad(time.get(Calendar.HOUR_OF_DAY),"00"));
+        sb.append(":");
+        sb.append(CacheElement.pad(time.get(Calendar.MINUTE),"00"));
+        sb.append(":");
+        sb.append(CacheElement.pad(time.get(Calendar.SECOND),"00"));
+        sb.append(" (");
+        sb.append(CacheElement.pad(time.get(Calendar.MILLISECOND),"000"));
+        sb.append(")");
+        return sb.toString();
+        */
+    }    
+    
+    public static final long MILLIS_IN_SECOND = 1000;
+    public static final long MILLIS_IN_MINUTE = 60 * MILLIS_IN_SECOND;
+    public static final long MILLIS_IN_HOUR = 60 * MILLIS_IN_MINUTE;
+    public static final long MILLIS_IN_DAY = 24 * MILLIS_IN_HOUR;
+    
+    public static final String difference(Calendar earlier, Calendar later) {
+        long milliseconds = later.getTimeInMillis() - earlier.getTimeInMillis();
+
+        long days = milliseconds / MILLIS_IN_DAY;
+        milliseconds = milliseconds % MILLIS_IN_DAY;
+        long hours = milliseconds / MILLIS_IN_HOUR;
+        milliseconds = milliseconds % MILLIS_IN_HOUR;
+        long minutes = milliseconds / MILLIS_IN_MINUTE;
+        milliseconds = milliseconds % MILLIS_IN_MINUTE;
+        long seconds = milliseconds / MILLIS_IN_SECOND;
+        milliseconds = milliseconds % MILLIS_IN_SECOND;
+        String rc = format(days, hours, minutes, seconds, milliseconds, null);
+        return rc;
+    }
+    
+    public static final String compareForExpiration(Calendar first, Calendar second) {
+        String rc = null;
+        if (first.before(second)) {
+            rc = "expires in " + difference(first, second);
+        } else {
+            rc = "expired " + difference(second, first) + " ago";
+        }
+        return rc;
+    }
+    
+    public final void audit() {
+        String m = this.getCacheAbbrev() + " audit() ";
+        if (LOG.isDebugEnabled()) {
+            try {
+                Calendar now = Calendar.getInstance();                    
+                LOG.debug(m + "> " + this.getCacheid() + " " + this.getInstanceId() + " @ " + format(now));
+                LOG.debug(m + "valid==" + this.isValid());
+                LOG.debug(m + "userid==" + this.getUserid());
+                LOG.debug(m + "password==" + this.getPassword());
+                LOG.debug(m + "authenticated==" + this.getAuthenticated());
+                LOG.debug(m + "errorMessage==" + this.getErrorMessage());
+                LOG.debug(m + "expiration==" + format(this.getExpiration()));
+                LOG.debug(m + compareForExpiration(now, this.getExpiration()));
+                if (this.getNamedValues() == null) {
+                    LOG.debug(m + "(no named attributes");                    
+                } else {
+                    CacheElement.auditNamedValues(m, this.getNamedValues());
+                }
+            } finally {
+                LOG.debug(m + "<");            
+            }
+        }
+    }
+	
+    //callback
+    public final void populate(Boolean authenticated, Set predicates, 
+            Map namedValues, String errorMessage) {
+        String m = this.getCacheAbbrev() + " populate() ";
+        LOG.debug(m + ">");
+        try {
+            if (predicates != null) {
+                //to do:  remove parm predicates as unused
+                LOG.warn(m + "non-null parm predicates");
+            }
+            assertInvalid();
+            if (errorMessage != null) {
+                LOG.error(m + "errorMessage==" + errorMessage);
+                throw new Exception(errorMessage);
+            } else {
+                this.validate(authenticated, namedValues);
+                //can't set expiration here -- don't have cache reference
+                //can't set pwd here, don't have it
+            }
+        } catch (Throwable t) {
+            LOG.error(m + "invalidating to be sure");
+            this.invalidate(errorMessage);
+        } finally {
+            LOG.debug(m + "<");
+        }
+    }
+    
+    private static final Calendar calcExpiration(int duration, int unit) {
+        String m = "- calcExpiration(int,int) ";
+        LOG.debug(m + ">");
+        Calendar now = Calendar.getInstance();
+        Calendar rc = Calendar.getInstance();
+        try {
+            CacheElement.checkCalcExpiration(duration, unit);
+            if (duration > 0) {
+                rc.add(unit, duration);
+                LOG.debug(m + CacheElement.compareForExpiration(now, rc));
+            } else {
+                LOG.debug(m + "timeout set to now (effectively, no caching)");
+            }
+        } finally {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(m + "< " + format(rc));
+            }
+        }
+        return rc;
+    }
+    
+    public static final int calcCalendarUnit(String unit) {
+        String m = "- calcCalendarUnit() ";
+        int rc = Calendar.SECOND;
+        if (! unit.endsWith("s")) {
+            unit += "s";
+        }
+        if ("milliseconds".equalsIgnoreCase(unit)) {
+            rc = Calendar.MILLISECOND;        
+        } else if ("seconds".equalsIgnoreCase(unit)) {
+            rc = Calendar.SECOND;
+        } else if ("minutes".equalsIgnoreCase(unit)) {
+            rc = Calendar.MINUTE;
+        } else if ("hours".equalsIgnoreCase(unit)) {
+            rc = Calendar.HOUR;
+        } else {
+            String msg = "illegal Calendar unit: " + unit;
+            LOG.error(m + "(" + msg + ")");
+            throw new IllegalArgumentException(msg);
+        }
+        return rc;
+    }
+    
+    private static final Calendar calcExpiration(int duration, String unit) {
+        String m = "- calcExpiration(int,String) ";
+        //LOG.debug(m + ">");
+        Calendar rc = Calendar.getInstance();
+        int calendarUnit = Calendar.SECOND;
+        try {
+            calendarUnit = calcCalendarUnit(unit);
+        } catch (Throwable t) {
+            duration = 0;
+            LOG.error(m + "using duration==" + duration);
+            LOG.error(m + "using calendarUnit==" + calendarUnit);
+        } finally {
+            rc = CacheElement.calcExpiration(duration, calendarUnit);
+            /*
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(m + "< " + format(rc));
+            }
+            */
+        }
+        return rc;
+    }
+    
+    public static final boolean isExpired(Calendar now, Calendar expiration,
+            boolean verbose) {
+        String m = "- isExpired() ";
+        if (verbose) {
+            LOG.debug(m + ">");
+        }
+        boolean rc = CacheElement.s_expired_default;
+        try {
+            if (now == null) {
+                String msg = "illegal parm now==" + now;
+                LOG.error(m + "(" + msg + ")");
+                throw new IllegalArgumentException(msg);
+            }
+            if (expiration == null) {
+                String msg = "illegal parm expiration==" + expiration;
+                LOG.error(m + "(" + msg + ")");
+                throw new IllegalArgumentException(msg);
+            }
+            if (verbose) {
+                LOG.debug(m + "now==" + format(now));              
+                LOG.debug(m + "exp==" + format(expiration));
+            }
+            rc = ! now.before(expiration);
+        } catch (Throwable th) {
+            LOG.error(m + "failed comparison");                       
+            rc = CacheElement.s_expired_default; 
+        } finally {
+            if (verbose) {
+                LOG.debug(m + compareForExpiration(now, expiration));
+                LOG.debug(m + "< " + rc);                
+            }
+        }
+        return rc;
+    }
+
+    public static final boolean isExpired(Calendar now, Calendar expiration) {
+        return isExpired(now, expiration, true);
+    }
+    
+    
+    public static final boolean isExpired(Calendar expiration,
+            boolean verbose) {
+        String m = "- isExpired() ";
+        /*
+        if (verbose) {
+            LOG.debug(m + ">");
+        }
+        */
+        boolean rc = CacheElement.s_expired_default;
+        try {
+            if (expiration == null) {
+                String msg = "illegal parm expiration==" + expiration;
+                LOG.error(m + "(" + msg + ")");
+                throw new IllegalArgumentException(msg);
+            }
+            Calendar now = Calendar.getInstance();               
+            rc = CacheElement.isExpired(now, expiration, verbose);
+        } catch (Throwable th) {
+            LOG.error(m + "failed comparison");                       
+            rc = CacheElement.s_expired_default;
+        } finally {
+            /*
+            if (verbose) {
+                LOG.debug(m + "< " + rc);
+            }
+            */
+        }
+        return rc;
+    }
+
+    public static final boolean isExpired(Calendar now) {
+        return isExpired(now, true);
+    }
+
+    
+    /** synchronize so evaluation of cache item state will be sequential, 
+	non-interlaced (protect against overlapping calls resulting in redundant 
+	authenticator calls)
+    */
+    public final synchronized Boolean authenticate(Cache cache, String pwd) {
+        String m = this.getCacheAbbrev() + " authenticate() ";
+        LOG.debug(m + ">");
+        Boolean rc = null;
+        try {
+            LOG.debug(m + "isValid()==" + this.isValid());
+            if (this.isValid() && 
+                    ! CacheElement.isExpired(this.getExpiration())) {
+                LOG.debug(m + "valid and not expired, so use");                
+                if (! this.isAuthenticated()) {
+                    LOG.debug(m + "auth==" + this.getAuthenticated());
+                    rc = this.getAuthenticated();
+                } else { 
+                    LOG.debug(m + "already authd, request password==" + pwd);				
+                    if (pwd == null) {
+                        LOG.debug(m + "null request password");             
+                        rc = Boolean.FALSE;
+                    } else if ("".equals(pwd)) {
+                        LOG.debug(m + "zero-length request password");             
+                        rc = Boolean.FALSE;                        
+                    } else {
+                        LOG.debug(m + "stored password==" + this.getPassword());
+                        rc = pwd.equals(this.getPassword());
+                    }
+                }
+            }
+            else { // expired or invalid
+                LOG.debug(m + "expired or invalid, so try to repopulate");
+                this.invalidate();
+                CacheElementPopulator cePop = cache.getCacheElementPopulator();
+                cePop.populateCacheElement(this, pwd);
+                int duration = 0;
+                String unit = null;
+                this.setPassword(null); 
+                if ((this.getAuthenticated() == null) || ! this.isValid()) {
+                    duration = cache.getAuthExceptionTimeoutDuration();
+                    unit = cache.getAuthExceptionTimeoutUnit();               
+                    LOG.debug(m + "couldn't complete population");
+                } else {               
+                    LOG.debug(m + "populate completed");
+                    if (this.isAuthenticated()) { 
+                        this.setPassword(pwd); 
+                        duration = cache.getAuthSuccessTimeoutDuration();
+                        unit = cache.getAuthSuccessTimeoutUnit();
+                        LOG.debug(m + "populate succeeded");
+                    } else {
+                        duration = cache.getAuthFailureTimeoutDuration();
+                        unit = cache.getAuthFailureTimeoutUnit();               
+                        LOG.debug(m + "populate failed");
+                    }
+                } 
+                this.setExpiration(CacheElement.calcExpiration(duration, unit));
+                rc = this.getAuthenticated();
+            }
+        } catch (Throwable th) {
+            this.invalidate();            
+            rc = this.getAuthenticated();
+            LOG.error(m + "invalidating to be sure");
+        } finally {
+            this.audit();
+            LOG.debug(m + "< " + rc);			
+        }	
+        return rc;
+    }
+    	
+    /* synchronize so evaluation of cache item state will be sequential, non-
+interlaced
+    (protect against overlapping calls resulting in redundant authenticator
+calls)
+    */
+    public final synchronized Map getNamedValues(Cache cache, String pwd) {
+        //to do:  refactor method name so that it doesn't look like "getter"
+        String m = this.getCacheAbbrev() + " getNamedValues() ";
+        LOG.debug(m + ">");
+        Map rc = null;
+        try {
+            LOG.debug(m + "isValid()==" + this.isValid());
+            if (this.isValid() && 
+                    ! CacheElement.isExpired(this.getExpiration())) {
+                LOG.debug(m + "valid and not expired, so use");
+            } else {
+                LOG.debug(m + "expired or invalid, so try to repopulate");
+                this.invalidate();
+                CacheElementPopulator cePop = cache.getCacheElementPopulator();
+                cePop.populateCacheElement(this, pwd);
+                int duration = 0;
+                String unit = null; 
+                if ((this.getNamedValues() == null) || ! this.isValid()) {
+                    duration = cache.getAuthExceptionTimeoutDuration();
+                    unit = cache.getAuthExceptionTimeoutUnit();               
+                    LOG.debug(m + "couldn't complete population");
+                } else {               
+                    LOG.debug(m + "populate completed");
+                    if (this.getNamedValues() == null) {
+                        duration = cache.getAuthFailureTimeoutDuration();
+                        unit = cache.getAuthFailureTimeoutUnit();               
+                        LOG.debug(m + "populate failed");
+                    } else {
+                        duration = cache.getAuthSuccessTimeoutDuration();
+                        unit = cache.getAuthSuccessTimeoutUnit();
+                        LOG.debug(m + "populate succeeded");
+                    }
+                } 
+                this.setExpiration(CacheElement.calcExpiration(duration, unit));                
+            }
+        } catch (Throwable th) {
+            String msg = m + "invalidating to be sure";
+            this.invalidate(msg);
+            LOG.error(msg);
+        } finally {
+            this.audit();
+            rc = this.getNamedValues();
+            if (rc == null) {
+                rc = this.m_empty_map;
+            }
+            LOG.debug(m + "< " + rc);           
+        }   
+        return rc;        
+                
+    }		
+    
+    static {
+        String[] args = {};
+        CacheElement.main(args);
+    }
+    
+    public static final void main(String[] args) {
+        
+    }
 
 }
