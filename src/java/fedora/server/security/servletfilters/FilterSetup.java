@@ -37,6 +37,23 @@ public class FilterSetup extends Base implements Filter {
     protected String FILTER_NAME = NOT_SET;
   	protected boolean inited = false;
     
+    public static final String getFilterNameAbbrev(String filterName) {
+        LogFactory.getLog(FilterSetup.class).debug(">>>>>>>>>>>>>>>>>>" + filterName);
+        String rc = filterName;
+        if ("XmlUserfileFilter".equals(filterName)) {
+            rc = "X";
+        } else if ("PubcookieFilter".equals(filterName)) {
+            rc = "P";
+        } else if ("LdapFilter".equals(filterName)) {
+            rc = "L";            
+        } else if ("LdapFilterForAttributes".equals(filterName)) {
+            rc = "A";
+        } else if ("LdapFilterForGroups".equals(filterName)) {
+            rc = "G";            
+        }
+        return rc;
+    }
+    
     public void init(FilterConfig filterConfig) {
     	String method = "init() "; if (log.isDebugEnabled()) log.debug(enter(method));
     	inited = false;
@@ -102,7 +119,7 @@ public class FilterSetup extends Base implements Filter {
 
 		if (log.isDebugEnabled()) log.debug(exit(method));
 		
-		return false; // i.e., don't signal to terminate servlet filter chain
+		return false; // i.e., don't signal to terminate servlet filter chain		 
 	}
 		
     

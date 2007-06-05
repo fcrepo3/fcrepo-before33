@@ -1,8 +1,3 @@
-/* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
- * available online at http://www.fedora.info/license/).
- */
-
 package fedora.server.security.servletfilters;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,9 +13,12 @@ import java.util.Set;
  */
 public class Cache {
 
-    private Log log = LogFactory.getLog(Cache.class);
+    private static final Log LOG = LogFactory.getLog(Cache.class);
+
+    static boolean firstCall = true;
     
     private final String cacheId;
+    private final String cacheAbbrev;
     
     private final String CACHE_KEY_SEPARATOR;
     private final String AUTH_SUCCESS_TIMEOUT_UNIT;
@@ -34,6 +32,10 @@ public class Cache {
 
     public final String getCacheId() {
     	return cacheId;
+    }
+    
+    public final String getCacheAbbrev() {
+        return cacheAbbrev;
     }
     
     public final String getCacheKeySeparator() { 
@@ -77,16 +79,18 @@ public class Cache {
     	this.AUTH_FAILURE_TIMEOUT_DURATION = AUTH_FAILURE_TIMEOUT_DURATION;  
     	this.AUTH_EXCEPTION_TIMEOUT_UNIT = AUTH_EXCEPTION_TIMEOUT_UNIT; 
     	this.AUTH_EXCEPTION_TIMEOUT_DURATION = AUTH_EXCEPTION_TIMEOUT_DURATION;    
-    	this.cacheElementPopulator = cacheElementPopulator;
+    	this.cacheElementPopulator = cacheElementPopulator;        
+        this.cacheAbbrev = FilterSetup.getFilterNameAbbrev(this.getCacheId());
     }
 
 	private final Map cache = new Hashtable();	
 	
 	public final void audit(String userid) {
+        String m = this.getCacheAbbrev() + " audit() ";
 		String key = getKey(userid/*, password, getCacheKeySeparator()*/);
 		CacheElement cacheElement  = getCacheElement(userid);
 		if (cacheElement == null) {
-			log.debug("cache element is null for " + userid);
+			LOG.debug(m + "cache element is null for " + userid);
 		} else {
 			cacheElement.audit();
 		}
@@ -101,55 +105,101 @@ public class Cache {
 	note that expiration logic of cache element changes the element's state -- elements are never removed from cache or replaced
 	*/
 	private final synchronized CacheElement getCacheElement(String userid /*, String password*/)  {
+        String m = this.getCacheAbbrev() + " getCacheElement() ";
 		CacheElement cacheElement = null;
 		String keytemp = getKey(userid/*,password,CACHE_KEY_SEPARATOR*/);
 		Integer key = new Integer(keytemp.hashCode());
-		if (! cache.containsKey(key)) {
-			log.debug("CREATING CACHE ELEMENT FOR KEY==" + key);
-			CacheElement itemtemp = new CacheElement(userid, /*password,*/ this);
+        LOG.debug(m + "keytemp==" + keytemp);
+        LOG.debug(m + "key==" + key);        
+		if (cache.containsKey(key)) {
+            LOG.debug(m + "cache already has element");
+        } else {
+			LOG.debug(m + "cache does not have element; create and put");
+			CacheElement itemtemp = new CacheElement(userid, this.getCacheId(),
+                    this.getCacheAbbrev());
 			cache.put(key,itemtemp);		
 		}	
 		cacheElement = (CacheElement) cache.get(key);
+        if (cacheElement == null) {
+            LOG.error(m + "cache does not contain element");
+        } else {
+            LOG.debug(m + "element retrieved from cache successfully");            
+        }
 		return cacheElement;
 	}
-	
+    
+    public static final void testAssert() {
+        try {
+            assert(false);
+            LOG.info("asserts are not turned on");
+        } catch (Throwable t) {
+            LOG.info("asserts are turned on");            
+        }
+    }   
+    
 	public final Boolean authenticate(CacheElementPopulator authenticator, String userid, String password) throws Throwable{
-		log.debug("cache.authenticate() called");
+        if (firstCall) {
+            testAssert();
+            firstCall = false;
+        }
+        String m = this.getCacheAbbrev() + " authenticate() ";
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(m + "----------------------------------------------");
+            LOG.debug(m + "> " + this.getCacheId() + " [" + userid + "] [" 
+                    + password + "]");
+        } else {
+            LOG.info(m + "> " + this.getCacheId() + " [" + userid + "]");            
+        }
+        
 		CacheElement cacheElement = getCacheElement(userid /*, password*/);
-		log.debug(this.getClass().getName() + ".authenticate() cacheElement==" + cacheElement);
+		LOG.debug(m + "cacheElement==" + cacheElement.getInstanceId());
 		
 		Boolean authenticated = null;
 		try {
 			authenticated = cacheElement.authenticate(this, password);
 		} catch (Throwable t) {
-			log.fatal(this.getClass().getName() + ".authenticate() catch");
-			log.fatal(this.getClass().getName() + t.getMessage());
-			log.fatal(this.getClass().getName() + ((t.getCause() == null) ? "" : t.getCause().getMessage()));
+			LOG.fatal(m + ".authenticate() catch");
+			LOG.fatal(m + t.getMessage());
+			LOG.fatal(m + ((t.getCause() == null) ? "" : t.getCause().getMessage()));
 			throw t;
 		}
-		log.debug(this.getClass().getName() + ".authenticated() returning==" + authenticated);
+		LOG.debug(m + "< " + authenticated);
 
 		return authenticated;
 	}
 
 	public final Map getNamedValues(CacheElementPopulator authenticator, String userid, String password) throws Throwable{
-		log.debug("cache.getNamedValues() called");
-		CacheElement cacheElement = getCacheElement(userid /*, password*/);
-		log.debug(this.getClass().getName() + ".cacheElement==" + cacheElement);
+        if (firstCall) {
+            testAssert();
+            firstCall = false;
+        }
+        String m = this.getCacheAbbrev() + " getNamedValues() ";
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(m + "----------------------------------------------");
+            LOG.debug(m + "> " + this.getCacheId() + " [" + userid + "] [" 
+                    + password + "]");
+        } else {
+            LOG.info(m + "> " + this.getCacheId() + " [" + userid + "]");            
+        }
+
+        CacheElement cacheElement = getCacheElement(userid /*, password*/);
+		LOG.debug(m + "cacheElement==" + cacheElement.getInstanceId());
 		Map namedValues = null;
 		try {
 			namedValues = cacheElement.getNamedValues(this, password);
 		} catch (Throwable t) {
-			log.fatal(this.getClass().getName() + ".authenticate");
-			log.fatal(this.getClass().getName() + t.getMessage());
-			log.fatal(this.getClass().getName() + ((t.getCause() == null) ? "" : t.getCause().getMessage()));
+			LOG.fatal(m + ".authenticate");
+			LOG.fatal(m + t.getMessage());
+			LOG.fatal(m + ((t.getCause() == null) ? "" : t.getCause().getMessage()));
 
 			throw t;
 		}
-		log.debug(this.getClass().getName() + ".authenticated==" + namedValues);
+		LOG.debug(m + "< " + namedValues);
 
 		return namedValues;
 	}	
-	
+
 	
 }
