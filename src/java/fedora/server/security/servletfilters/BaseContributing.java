@@ -59,6 +59,27 @@ public abstract class BaseContributing extends FilterSetup {
     public static final String SURROGATE_ATTRIBUTE_KEY = "surrogate-attribute";
     private static String SURROGATE_ATTRIBUTE_DEFAULT = null;   
     protected String SURROGATE_ATTRIBUTE = SURROGATE_ATTRIBUTE_DEFAULT;
+
+    public static final String USE_FILTER = "use-filter";
+    public static final String SKIP_FILTER = "skip-filter";
+    public static final String UNAUTHENTICATE_USER_UNCONDITIONALLY = "unauthenticate-user-unconditionally";
+    public static final String UNAUTHENTICATE_USER_CONDITIONALLY = "unauthenticate-user-conditionally";
+    
+    public static final String PW_NULL_KEY = "null-password";
+    private static String PW_NULL_DEFAULT = USE_FILTER;
+    public String PW_NULL = PW_NULL_DEFAULT;
+    
+    public static final String PW_0_KEY = "zerolength-password";
+    private static String PW_0_DEFAULT = USE_FILTER;
+    public String PW_0 = PW_0_DEFAULT;
+
+    public static final String EMPTY_RESULTS_KEY = "empty-results";
+    private static String EMPTY_RESULTS_DEFAULT = UNAUTHENTICATE_USER_CONDITIONALLY;
+    public String EMPTY_RESULTS = EMPTY_RESULTS_DEFAULT;
+    
+    public static final String LOG_STACK_TRACES_KEY = "log-stack-traces";
+    private static boolean LOG_STACK_TRACES_DEFAULT = false;   
+    protected boolean LOG_STACK_TRACES = LOG_STACK_TRACES_DEFAULT;
     
     public void init(FilterConfig filterConfig) {
     	String method = "init() "; if (log.isDebugEnabled()) log.debug(enter(method));
@@ -91,24 +112,60 @@ public abstract class BaseContributing extends FilterSetup {
 
     
     protected void initThisSubclass(String key, String value) {
-    	String method = "initThisSubclass() "; if (log.isDebugEnabled()) log.debug(enter(method));
-		boolean setLocally = false;
+    	String m = "initThisSubclass() "; 
+        log.debug(m + ">");
     	if (SURROGATE_ROLE_KEY.equals(key)) {
     		SURROGATE_ROLE = value;
-    		setLocally = true;
+            log.info(m + key + "==" + SURROGATE_ROLE);      
     	} else if (SURROGATE_ATTRIBUTE_KEY.equals(key)) {
-        		SURROGATE_ATTRIBUTE = value;
-        		setLocally = true;    		
+    		SURROGATE_ATTRIBUTE = value;
+            log.info(m + key + "==" + SURROGATE_ATTRIBUTE);      
+        } else if (LOG_STACK_TRACES_KEY.equals(key)) {
+            try {
+                LOG_STACK_TRACES = BaseContributing.booleanValue(value);
+                log.info(m + key + "==" + LOG_STACK_TRACES);      
+            } catch (Throwable t) {
+                this.initErrors = true;
+                log.error(m + "bad config " + key + "==" + value);                
+            }
+        } else if (PW_NULL_KEY.equals(key)) {
+            if (SKIP_FILTER.equalsIgnoreCase(value)
+                    || (USE_FILTER.equalsIgnoreCase(value)) 
+                    || (UNAUTHENTICATE_USER_UNCONDITIONALLY.equalsIgnoreCase(value))) { 
+                PW_NULL = value;
+                log.info(m + key + "==" + PW_NULL);      
+            } else {
+                this.initErrors = true;
+                log.error(m + "bad config " + key + "==" + value);
+            }
+        } else if (PW_0_KEY.equals(key)) {
+            if (SKIP_FILTER.equalsIgnoreCase(value)
+                    || (USE_FILTER.equalsIgnoreCase(value)) 
+                    || (UNAUTHENTICATE_USER_UNCONDITIONALLY.equalsIgnoreCase(value))) { 
+                PW_0 = value;
+                log.info(m + key + "==" + PW_0);      
+            } else {
+                this.initErrors = true;
+                log.error(m + "bad config " + key + "==" + value);
+            }            
+        } else if (EMPTY_RESULTS_KEY.equals(key)) {
+            if (SKIP_FILTER.equalsIgnoreCase(value)
+                    || (USE_FILTER.equalsIgnoreCase(value))                     
+                    || (UNAUTHENTICATE_USER_UNCONDITIONALLY.equalsIgnoreCase(value)) 
+                    || (UNAUTHENTICATE_USER_CONDITIONALLY.equalsIgnoreCase(value))) { 
+                EMPTY_RESULTS = value;
+                log.info(m + key + "==" + EMPTY_RESULTS);      
+            } else {
+                this.initErrors = true;
+                log.error(m + "bad config " + key + "==" + value);
+            }
     	} else {
+            log.debug(m + "deferring " + key + " to super");
     		super.initThisSubclass(key, value);    		
     	} 
-    	if (setLocally) {
-        	if (log.isDebugEnabled()) log.debug(format(method, "deferring to super"));
-    		if (log.isInfoEnabled()) log.info(format(method, "known parameter", key, value));		
-    	}
-    	if (log.isDebugEnabled()) log.debug(exit(method)); 
-	}
-	
+        log.debug(m + "<");
+    }
+    
 	public boolean doThisSubclass(ExtendedHttpServletRequest extendedHttpServletRequest, HttpServletResponse response) throws Throwable {
 		String method = "doThisSubclass() "; if (log.isDebugEnabled()) log.debug(enter(method));
 		super.doThisSubclass(extendedHttpServletRequest, response);
