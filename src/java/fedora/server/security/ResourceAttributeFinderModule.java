@@ -34,6 +34,8 @@ class ResourceAttributeFinderModule extends AttributeFinderModule {
 		return false;
 	}
 
+	private String ownerIdSeparator = ",";
+	
 	static private final ResourceAttributeFinderModule singleton = new ResourceAttributeFinderModule();
 
 	private ResourceAttributeFinderModule() {
@@ -73,6 +75,11 @@ class ResourceAttributeFinderModule extends AttributeFinderModule {
 		if (this.doManager == null) {
 			this.doManager = doManager;
 		}
+	}
+	
+	public void setOwnerIdSeparator(String ownerIdSeparator) {
+		this.ownerIdSeparator = ownerIdSeparator;
+		LOG.debug("resourceAttributeFinder just set ownerIdSeparator ==[" + this.ownerIdSeparator + "]");
 	}
 	
 	private final String getResourceId(EvaluationCtx context) {
@@ -213,9 +220,16 @@ class ResourceAttributeFinderModule extends AttributeFinderModule {
 			}			
 		} else if (Constants.OBJECT.OWNER.uri.equals(attributeId)) { 
 				try {
-					values = new String[1];
-					values[0] = reader.getOwnerId();
-					LOG.debug("got " + Constants.OBJECT.OWNER.uri + "=" + values[0]);
+					LOG.debug("ResourceAttributeFinder.getAttributeLocally using ownerIdSeparator==[" + ownerIdSeparator + "]");
+					values = reader.getOwnerId().split(ownerIdSeparator);
+					String temp = "got " + Constants.OBJECT.OWNER.uri + "=";						
+					for (int i = 0; i < values.length; i++) {
+						temp += (" [" + values[i] + "]");						
+					}
+					LOG.debug(temp);
+					//values = new String[1];
+					//values[0] = reader.getOwnerId();
+					//LOG.debug("got " + Constants.OBJECT.OWNER.uri + "=" + values[0]);
 				} catch (ServerException e) {
 					LOG.debug("failed getting " + Constants.OBJECT.OWNER.uri);
 					return null;					
