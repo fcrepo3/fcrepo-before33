@@ -1,8 +1,3 @@
-/* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
- * available online at http://www.fedora.info/license/).
- */
-
 package fedora.server.security;
 
 import java.io.File;
@@ -59,6 +54,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 
 	private String combiningAlgorithm = ""; //"com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg";
 	private String enforceMode = "";
+	private String ownerIdSeparator = ",";
 
 	private final String REPOSITORY_POLICIES_DIRECTORY_KEY = "REPOSITORY-POLICIES-DIRECTORY";
 	private final String REPOSITORY_POLICY_GUITOOL_DIRECTORY_KEY = "REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY";	
@@ -67,6 +63,8 @@ public class DefaultAuthorization extends Module implements Authorization {
 	private final String POLICY_SCHEMA_PATH_KEY = "POLICY-SCHEMA-PATH";
 	private final String VALIDATE_REPOSITORY_POLICIES_KEY = "VALIDATE-REPOSITORY-POLICIES";
 	private final String VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM_KEY = "VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM";
+	private final String OWNER_ID_SEPARATOR_KEY = "OWNER-ID-SEPARATOR";
+	
 	
 	private static final String XACML_DIST_BASE = "fedora-internal-use";	
 	private static final String DEFAULT_REPOSITORY_POLICIES_DIRECTORY = XACML_DIST_BASE + "/fedora-internal-use-repository-policies-approximating-2.0"; 
@@ -119,6 +117,10 @@ public class DefaultAuthorization extends Module implements Authorization {
     }
     if (moduleParameters.containsKey(ENFORCE_MODE_KEY)) {
     	enforceMode = (String) moduleParameters.get(ENFORCE_MODE_KEY);
+    }
+    if (moduleParameters.containsKey(OWNER_ID_SEPARATOR_KEY)) {
+    	ownerIdSeparator = (String) moduleParameters.get(OWNER_ID_SEPARATOR_KEY);
+        LOG.debug("ownerIdSeparator from config set == [" + ownerIdSeparator + "]");
     }
     log("looking for POLICY_SCHEMA_PATH");
     if (moduleParameters.containsKey(POLICY_SCHEMA_PATH_KEY)) {
@@ -347,7 +349,7 @@ public class DefaultAuthorization extends Module implements Authorization {
         //xacmlPep.initPep(enforceMode, combiningAlgorithm, repositoryPoliciesActiveDirectory, fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY, repositoryPolicyGuitoolDirectory, objectPoliciesActiveDirectory, m_manager, 
        	//	validateRepositoryPolicies, validateObjectPoliciesFromFile, validateObjectPoliciesFromDatastream, policySchemaPath);
 		xacmlPep.initPep(enforceMode, combiningAlgorithm, repositoryPoliciesActiveDirectory, fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY, repositoryPolicyGuitoolDirectory, m_manager, 
-			validateRepositoryPolicies, validateObjectPoliciesFromDatastream, policySchemaPath);
+			validateRepositoryPolicies, validateObjectPoliciesFromDatastream, policySchemaPath, ownerIdSeparator);
       	log("in DefaultAuthorization.postInitModule() 7");
     } catch (Throwable e1) {
       	log("in DefaultAuthorization.postInitModule() 8");

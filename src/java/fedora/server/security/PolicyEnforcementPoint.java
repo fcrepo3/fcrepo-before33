@@ -1,8 +1,3 @@
-/* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
- * available online at http://www.fedora.info/license/).
- */
-
 package fedora.server.security;
 
 import java.io.File;
@@ -152,6 +147,7 @@ public class PolicyEnforcementPoint {
 		ResourceAttributeFinderModule resourceAttributeFinder = ResourceAttributeFinderModule.getInstance();
 		resourceAttributeFinder.setServletContext(servletContext);
 		resourceAttributeFinder.setDOManager(manager);
+		resourceAttributeFinder.setOwnerIdSeparator(this.ownerIdSeparator); 
 		attrModules.add(resourceAttributeFinder);		
 		try {
         LOG.debug("about to set contextAttributeFinder in original");
@@ -219,13 +215,15 @@ public class PolicyEnforcementPoint {
 	boolean validateRepositoryPolicies = false;
 	boolean validateObjectPoliciesFromDatastream = false; 
 	String policySchemaPath = null;
+	String ownerIdSeparator = ",";
 
 	public void initPep(String enforceMode, String combiningAlgorithm, String globalPolicyConfig, 
 		String globalBackendPolicyConfig, String globalPolicyGuiToolConfig, 
 		DOManager manager,
 		boolean validateRepositoryPolicies,
 		boolean validateObjectPoliciesFromDatastream, 
-		String policySchemaPath
+		String policySchemaPath, 
+		String ownerIdSeparator
 	) throws Exception {
 		LOG.debug("in initPep()");
 		destroy();
@@ -249,6 +247,7 @@ public class PolicyEnforcementPoint {
 		//this.validateObjectPoliciesFromFile = validateObjectPoliciesFromFile;
 		this.validateObjectPoliciesFromDatastream = validateObjectPoliciesFromDatastream;
 		this.policySchemaPath = policySchemaPath;
+		this.ownerIdSeparator = ownerIdSeparator;
 		LOG.debug("***in initPep(), before calling newPdp()");	
 		newPdp();
 		LOG.debug("***exiting initPep()");
