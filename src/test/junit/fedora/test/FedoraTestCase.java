@@ -37,7 +37,11 @@ public abstract class FedoraTestCase extends XMLTestCase implements FedoraTestCo
     }
     
     public static String getBaseURL() {
-        return getProtocol() + "://" + getHost() + ":" + getPort() + "/fedora";  
+        if (System.getProperty("fedora.baseURL") != null) {
+            return System.getProperty("fedora.baseURL");
+        } else {
+            return getProtocol() + "://" + getHost() + ":" + getPort() + "/fedora";
+        }
     }
     
     public static String getHost() {
@@ -55,7 +59,7 @@ public abstract class FedoraTestCase extends XMLTestCase implements FedoraTestCo
     }
 
     // hack to dynamically set protocol based on settings in beSecurity
-    // Settings for fedoraInternalCall-1 should have callSSL=true when server is secure    
+    // Settings for fedoraInternalCall-1 should have callSSL=true when server is secure
     public static String getProtocol() {
         BufferedReader br = null;
         try {
@@ -93,6 +97,13 @@ public abstract class FedoraTestCase extends XMLTestCase implements FedoraTestCo
     }
     
     public static FedoraClient getFedoraClient() throws Exception {
-    	return new FedoraClient(getBaseURL(), getUsername(), getPassword());
+        return getFedoraClient(getBaseURL(), getUsername(), getPassword());
     }    
+    
+    public static FedoraClient getFedoraClient(String baseURL, String username,
+            String password) throws Exception {
+        System.out.println("Creating FedoraClient(" + baseURL + ", "
+                + username + ", " + password + ")");
+    	return new FedoraClient(baseURL, username, password);
+    }
 }
