@@ -817,6 +817,7 @@
 				<propertyref name="javax.net.ssl.trustStore"/>
 				<propertyref name="fedora.username"/>
 				<propertyref name="fedora.password"/>
+				<propertyref name="fedora.baseURL"/>
 			</syspropertyset>
 			<classpath refid="junit.classpath"/>
 			<formatter type="plain" usefile="false"/>

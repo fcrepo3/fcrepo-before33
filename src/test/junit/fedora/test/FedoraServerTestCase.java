@@ -44,13 +44,17 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
      * @throws Exception
      */
     public Document getXMLQueryResult(String location) throws Exception {
+        return getXMLQueryResult(getFedoraClient(), location);
+    }
+
+    public Document getXMLQueryResult(FedoraClient client, String location) throws Exception {
     	if (factory == null) {
     		factory = DocumentBuilderFactory.newInstance();
     	}
     	if (builder == null) {
     		builder = factory.newDocumentBuilder();
     	}
-        InputStream is = getFedoraClient().get(getBaseURL() + location, true, true);
+        InputStream is = client.get(getBaseURL() + location, true, true);
         Document result = builder.parse(is);
         is.close();
         return result;
