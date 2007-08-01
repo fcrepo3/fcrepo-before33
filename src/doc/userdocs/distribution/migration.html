@@ -14,7 +14,7 @@
 
     <div id="title">
 		<h1>Fedora Upgrade and Migration Guide</h1>
-		<h2>Fedora Release 2.2</h2>
+		<h2>Fedora Release 2.2.1</h2>
 	</div>
 </div>
 
@@ -22,16 +22,25 @@
     <h2>Table of Contents</h2>
     <div id="tocbox">
         <ol>
-      		<li><a href="#migrate211">Upgrading from Fedora 2.1.1 to Fedora 2.2</a></li>
-      		<li><a href="#migrate21">Upgrading from Fedora 2.1 to Fedora 2.2</a></li>
-      		<li><a href="#migrate20">Upgrading from Fedora 2.0 to Fedora 2.2</a></li>
+      		<li><a href="#migrate22">Upgrading from Fedora 2.2 to Fedora 2.2.1</a></li>
+      		<li><a href="#migrate211">Upgrading from Fedora 2.1.1 to Fedora 2.2.1</a></li>
+      		<li><a href="#migrate21">Upgrading from Fedora 2.1 to Fedora 2.2.1</a></li>
+      		<li><a href="#migrate20">Upgrading from Fedora 2.0 to Fedora 2.2.1</a></li>
       		<li><a href="#migratepre20">Upgrading from versions prior to 2.0</a></li>
         </ol>
     </div>
 </div>
 
 <div class="sect">
-	<h2><a name="intro">1. Upgrading from Fedora 2.1.1 to Fedora 2.2</a></h2>
+    <a name="migrate22"> </a>
+	<h2><a name="intro">1. Upgrading from Fedora 2.2 to Fedora 2.2.1</a></h2>
+	<p>This is a minor upgrade.  Option 1) Patch, Option 2) Full upgrade,
+	Reminder: Admin client also needs to be patched (just version info, no
+	code)</p>
+</div>
+
+<div class="sect">
+	<h2><a name="intro">2. Upgrading from Fedora 2.1.1 to Fedora 2.2</a></h2>
 	<p>Upgrading from Fedora 2.1.1 to Fedora 2.2 does not require 
 	migration of objects or rebuilding of the Resource Index.
 	However, there are important changes to the packaging and configuration 
@@ -89,29 +98,29 @@
 
 
 <div class="sect">
-	<h2><a name="migrate21">2. Upgrading From Fedora 2.1 to Fedora 2.2</a></h2>
+	<h2><a name="migrate21">3. Upgrading From Fedora 2.1 to Fedora 2.2.1</a></h2>
 	<p>Follow the steps in section 1 for upgrading from 2.1.1.</p>
 </div>
 
 <div class="sect">
-	<h2><a name="migrate20">3. Upgrading From Fedora 2.0 to Fedora 2.2</a></h2>
-	<p>When moving from Fedora 2.0 to Fedora 2.2, you will be able to do a simple 
+	<h2><a name="migrate20">4. Upgrading From Fedora 2.0 to Fedora 2.2.1</a></h2>
+	<p>When moving from Fedora 2.0 to Fedora 2.2.1, you will be able to do a simple 
     software <i><b>upgrade</b></i> without having to migrate digital objects via 
-    a mass export and ingest. After installing Fedora 2.2, you can 
+    a mass export and ingest. After installing Fedora 2.2.1, you can 
     configure it to point to your existing repository datastores (both the existing 
     repository directory storage locations and the existing relational database).
-    This involves changing parameters in the Fedora 2.2 server configuration file 
+    This involves changing parameters in the Fedora 2.2.1 server configuration file 
     (fedora.fcfg) that define the storage directory paths and database location.
     See the instructions in section 1 above for details.</p>
     
     <p>Note that the Resource Index model changed between 2.0 and 2.1, hence a 
-    rebuild of the Resource Index is necessary if upgrading from 2.0 to 2.2. 
+    rebuild of the Resource Index is necessary if upgrading from 2.0 to 2.2.1. 
     See the instructions for 
     <a href="../server/cmd-line/index.html#rebuild">rebuilding the Resource Index</a>.</p>
 </div>
 
 <div class="sect">
-	<h2><a name="migratepre20">4. Upgrading from versions prior to 2.0</a></h2>
+	<h2><a name="migratepre20">5. Upgrading from versions prior to 2.0</a></h2>
 	<p>To upgrade from a Fedora version prior to 2.0, you must first
 	<a href="http://fedora.info/download/2.0/userdocs/distribution/migration.html">migrate 
 	to version 2.0</a>, then follow the appropriate upgrade steps above.</p>
