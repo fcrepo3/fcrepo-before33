@@ -53,6 +53,14 @@
 			<p>It is highly recommended you backup your existing Fedora 
 			repository.</p>
 		</li>
+        <li>
+          Use your database's administrative tool or SQL command line
+          utility to rename the "do" table to "dobj".  This is normally
+          done via the SQL command:
+          <code>
+            ALTER TABLE do RENAME TO dobj
+          </code>
+        </li>
 		<li>Install Fedora 2.2
 			<p>Review the <a href="installation.html">Installation and 
 			Configuration Guide</a>. Note the following critical steps of the 
