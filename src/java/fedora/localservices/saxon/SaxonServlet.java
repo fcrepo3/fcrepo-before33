@@ -175,7 +175,9 @@ public class SaxonServlet extends HttpServlet {
             }
 
             // Transform
-            transformer.transform(new StreamSource(sourceStream), 
+            StreamSource ss = new StreamSource(sourceStream);
+            ss.setSystemId(source);
+            transformer.transform(ss,
                                   new StreamResult(res.getOutputStream()));
 
         } finally {
@@ -193,7 +195,9 @@ public class SaxonServlet extends HttpServlet {
             synchronized (m_cache) {
                 if (!m_cache.containsKey(url)) {
                     TransformerFactory factory = TransformerFactory.newInstance();
-                    x = factory.newTemplates(new StreamSource(getInputStream(url)));
+                    StreamSource ss = new StreamSource(getInputStream(url));
+                    ss.setSystemId(url);
+                    x = factory.newTemplates(ss);
                     m_cache.put(url, x);
                 }
             }
