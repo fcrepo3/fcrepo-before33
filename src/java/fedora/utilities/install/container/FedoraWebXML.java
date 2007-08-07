@@ -35,7 +35,7 @@ public class FedoraWebXML {
 		"FieldSearchServlet", "GetObjectHistoryServlet", 
 		"ListDatastreamsServlet", "ListMethodsServlet", 
 		"MethodParameterResolverServlet", "OAIProviderServlet", 
-		"ReportServlet", "RISearchServlet", "WSDLServlet"};
+		"ReportServlet", "RISearchServlet"};
 	private static final String[] FILTER_APIA_URL_PATTERNS = new String[] { 
 		"/services/access"};
 	private static final String[] FILTER_APIM_SERVLET_NAMES = new String[] { 
