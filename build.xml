@@ -716,6 +716,7 @@
     	<mkdir dir="${docs.build.dir}/javadocs" />
     	<javadoc packagenames="fedora.*" 
     		sourcepath="${java.src.dir};${wsdl.build.dir}" 
+            maxmemory="256m"
     		classpathref="compile.classpath" 
     		destdir="${docs.build.dir}/javadocs" 
     		author="true" 
