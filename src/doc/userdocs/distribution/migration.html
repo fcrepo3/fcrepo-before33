@@ -34,9 +34,22 @@
 <div class="sect">
     <a name="migrate22"> </a>
 	<h2><a name="intro">1. Upgrading from Fedora 2.2 to Fedora 2.2.1</a></h2>
-	<p>This is a minor upgrade.  Option 1) Patch, Option 2) Full upgrade,
-	Reminder: Admin client also needs to be patched (just version info, no
-	code)</p>
+	<p>This is a minor upgrade that fixes the <a href="release-notes.html">bugs
+    addressed by the Fedora 2.2.1 release</a>.  We have developed a
+    utility to make this process as quick as possible.  
+    <ol>
+      <li> <a href="http://sourceforge.net/project/showfiles.php?group_id=177054&package_id=219723">Download fedora-2.2.1-upgrade.jar</a> from Sourceforge.</li>
+      <li> Stop the webapp container in which Fedora is running.</li>
+      <li> Run the upgrade utility: <code>java -jar fedora-2.2.1-upgrade.jar</code> and
+           follow the prompts.</li>
+      <li> Restart the webapp container.</li>
+    </ol>
+	<p>
+    NOTE: Although the <i>Fedora Administrator</i> Java application will be upgraded as part
+    of this process, existing tools and services that use <code>fedora-client.jar</code>
+    version 2.2 <i>do not need the updated version of this library</i>
+    in order to continue working properly with your upgraded server.
+    <p>
 </div>
 
 <div class="sect">
