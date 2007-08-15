@@ -1,9 +1,7 @@
-<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=us-ascii">
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<html                                                       lang="en-US">
+<html>
 <head>
     <title>Journalling Guide</title>
     <link rel="stylesheet" type="text/css" href="../../docstyle.css" /> 
@@ -63,7 +61,7 @@
     <h2>Table of Contents</h2>
     <div id="tocbox">
         <ol>
-            <li><a href="#intro">Introduction</a></li>
+            <li><a href="#intro">Introduction</a>
                 <ol>
                     <li><a href="#intro.goals">Goals</a></li>
                     <li><a href="#intro.equiv">Repository equivalence</a></li>
@@ -71,7 +69,7 @@
                     <li><a href="#intro.status">Status</a></li>
                 </ol>
             </li>
-            <li><a href="#design">Design</a></li>
+            <li><a href="#design">Design</a>
                 <ol>
                     <li><a href="#design.decorator">A decorator on the Management module</a></li>
                     <li><a href="#design.modes">Modes of operation</a></li>
@@ -81,7 +79,7 @@
                     <li><a href="#design.extend">Extensibility</a></li>
                 </ol>
             </li>
-            <li><a href="#options">Options</a></li>
+            <li><a href="#options">Options</a>
                 <ol>
                     <li><a href="#options.general">General options</a></li>
                     <li><a href="#options.single">Options for single-file operation</a></li>
@@ -89,7 +87,7 @@
                     <li><a href="#options.log">Options for recovery log</a></li>
                 </ol>
             </li>
-            <li><a href="#impl">Implementation</a></li>
+            <li><a href="#impl">Implementation</a>
                 <ol>
                     <li><a href="#impl.fcfg">Configurations in fedora.fcfg</a></li>
                     <li><a href="#impl.journal">Journal content example</a></li>
@@ -105,7 +103,7 @@
 	<h2><a name="intro">1. Introduction</a></h2>
 	<p>The Fedora configuration now includes an optional Journalling module. 
 	This module creates Journal files which capture all calls 
-	against the Fedora Management API â&#8364;&#8220; or rather, all calls that have changed the 
+	against the Fedora Management API ï¿½&#8364;&#8220; or rather, all calls that have changed the 
 	state of the repository. The Journal files can be replayed against another 
 	Fedora instance with the same initial state, resulting in a repository 
 	which is a mirror of the original.</p>
@@ -186,7 +184,7 @@
 		configured (without Journalling).</p>
 		<p class="caption">Class diagram for Management module </p>
 		<img src="./images/ClassDiagramManagement.png" 
-			alt="Class diagram for Management module">
+			alt="Class diagram for Management module"/>
 		<p class="caption">Configuring the Management module within fedora.fcfg:</p>
 		<div class="code"><pre>&lt;module role=&quot;fedora.server.management.Management&quot;
     class=&quot;fedora.server.management.DefaultManagement&quot;&gt;
@@ -198,7 +196,7 @@
 		DefaultManagement class has moved to implement ManagementDelegate.
 		<p class="caption">Class diagram for the Journaller and Management modules</p>
 		<img src="./images/ClassDiagramJournalManagement.png" 
-			alt="Class diagram for the Journaller and Management modules">
+			alt="Class diagram for the Journaller and Management modules"/>
 		<p class="caption">Configuring the Journaller and Management modules within fedora.fcfg:</p>
 		<div class="code"><pre>&lt;module role=&quot;fedora.server.management.Management&quot;
     class=&quot;fedora.server.journal.Journaller&quot;&gt;
@@ -512,9 +510,9 @@ with any configurable components.
             respectively. Optional. The default is &quot;1D&quot;.
         </div>
     </li>
-    <br>
+    <br />
     <span class="caption">options for following readers only:</span>
-    <hr>
+    <hr />
     <li>followPollingInterval
     	<div class="description">
     		The length of time to wait between checking for new journal files.
@@ -525,9 +523,9 @@ with any configurable components.
             respectively. Optional. The default is &quot;3&quot;.
     	</div>
     </li>
-    <br>
+    <br />
     <span class="caption">options for LockingFollowingJournalReader only:</span>
-    <hr>
+    <hr />
     <li>lockRequestedFilename
     	<div class="description">
     		The full path of a file which indicates a lock request. After 
@@ -802,12 +800,12 @@ components.</p>
 		<p class="caption">Creating the journal (click on image to enlarge).</p>
 		<a href="./images/CreatingtheJournal.png">
 			<img src="./images/CreatingtheJournalReduced.png" 
-				alt="Sequence diagram for creating the Journal">
+				alt="Sequence diagram for creating the Journal"/>
 		</a>
 		<p class="caption">Consuming the journal (click on image to enlarge).</p>
 		<a href="./images/ConsumingtheJournal.png">
 			<img src="./images/ConsumingtheJournalReduced.png" 
-				alt="Sequence diagram for consuming the Journal">
+				alt="Sequence diagram for consuming the Journal"/>
 		</a>
 
 	</div>
@@ -820,7 +818,12 @@ components.</p>
     </div>
     <div id="lastModified">
         Last Modified
-        
+        <script type="text/javascript">
+            var cvsDate = "$Date$";
+            var parts = cvsDate.split(" ");
+            var modifiedDate = parts[1];
+            document.write(modifiedDate);
+        </script>
     </div>
 </div>
     
