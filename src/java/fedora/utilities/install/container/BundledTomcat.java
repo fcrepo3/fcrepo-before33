@@ -18,8 +18,16 @@ import fedora.utilities.install.Distribution;
 import fedora.utilities.install.FedoraHome;
 import fedora.utilities.install.InstallOptions;
 import fedora.utilities.install.InstallationFailedException;
-import fedora.utilities.install.Installer;
 
+/**
+ * The profile for the servlet container bundled with the Fedora installer.
+ * History:
+ * 		Release 3.0 bundled Tomcat 5.5.23.
+ * 		Release 2.2 bundled Tomcat 5.0.28.
+ * 		
+ * @author Edwin Shin
+ *
+ */
 public class BundledTomcat extends Tomcat {
 	public BundledTomcat(Distribution dist, InstallOptions options) {
 		super(dist, options);
@@ -27,7 +35,6 @@ public class BundledTomcat extends Tomcat {
 	
 	public void install() throws InstallationFailedException {
 		super.install();
-		Installer.installJDBCDriver(getDist(), getOptions(), getCommonLib());
 	}
 	
 	protected void installTomcat() throws InstallationFailedException {
