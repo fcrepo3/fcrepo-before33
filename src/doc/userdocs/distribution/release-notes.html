@@ -4,7 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
 <head>
-	<title>Fedora 2.2 Release Notes</title>
+	<title>Fedora 2.2.1 Release Notes</title>
 	<link rel="stylesheet" type="text/css" href="../docstyle.css" />
 </head>
 
@@ -13,8 +13,8 @@
 <div id="header">
 	<a href="../index.html" id="logo"></a>
 	<div id="title">
-		<h1>Fedora 2.2 Release Notes</h1>
-		<h2>January 19, 2007</h2>
+		<h1>Fedora 2.2.1 Release Notes</h1>
+		<h2>August 13th, 2007</h2>
 	</div>
 </div>
 
@@ -23,9 +23,6 @@
 
 	<div id="tocbox">
 		<ol>
-			<li><a href="#fedora22">Fedora 2.2 Release</a></li>
-			<li><a href="#new">New Features And Enhancements</a></li>
-			<li><a href="#tune">Performance Tuning</a></li>
 			<li><a href="#bugs">Bug Fixes</a></li>
 			<li><a href="#issues">Known Issues</a></li>
 			<li><a href="#install">Installation</a></li>
@@ -36,559 +33,52 @@
 
 <div id="introduction">
 	<br/>
-	<p>The <a href="http://www.fedora.info">Fedora Project</a> 
-	is proud to announce the release of version 2.2 of the Fedora open-source 
-	digital repository system. Fedora 2.2 represents a milestone release that
-	includes a complete repackaging of the source and binary distribution along
-	with a number of new features and enhancements. It also resolves 
-	a number of reported bugs.</p>
+	<p>Fedora 2.2.1 is a minor maintenance release that addresses several
+	installation and security-related bugs discovered with Fedora 2.2.</p>
 </div>
 
 <div id="relnotes">
 	<ol type="1">
-		<li><a name="fedora22">Fedora 2.2 Release</a>		
-			<p>Fedora 2.2 represents a significant release of Fedora because it includes 
-			a complete repackaging of the Fedora source and binary distribution so 
-			that Fedora can now be installed as a standalone webapp in any servlet 
-			container. In addition to the war file repackaging, the Fedora 2.2 release 
-			includes several feature enhancements including a new Fedora installer application, 
-			refactoring of authentication 
-			code using ServletFilters, enhancements to the WSDL for the Management 
-			and Access APIs, new Journaling feature useful for replicating repositories, 
-			modification of several API-M methods to enhance functionality, new checksum 
-			support for datastreams, new support for object ownerId property,
-			enhancements to the Resource Index enabling selection 
-			of an alternate triplestore database engine, integration of Gert Pedersen's 
-			Fedora Generic Search application into the Fedora Services Framework, 
-			and refactoring of the JUnit tests.</p>
-			
-			<p>Note that the Backend Security feature is disabled in Fedora 2.2 pending future
-			redesign of backend security. Backend Security is only in scope when 
-			Datastream Mediation is enabled and when using custom user-defined disseminators. 
-			Backend security controls communication between the Fedora server and backend services
-			that are used with custom user-defined disseminators through a set of XACML policies
-			auto-generated from the <i>beSecurity.xml</i> file. With the feature disabled, these generated
-			beSecurity policies are NOT being enforced. For additional details on the disabling of the
-			the backend security feature, see the document entitled <a href="../server/security/beSecurityConfig.html">
-			Backend Services Security Configuration</a>.</p>
-			
-			<p>Fedora 2.2 includes a number of public API changes that are documented below. There
-			is also a page on the Fedora Wiki that summarizes the API changes in Fedora 2.2 that may
-			be of interest to developers. You can access the wiki page at
-			<a href="http://fedora.info/wiki/index.php/UpgradingYourApplicationForFedora2.2">
-			http://fedora.info/wiki/index.php/UpgradingYourApplicationForFedora2.2</a>.</p>
-		</li>
-		<li><a name="new">New Features and Enhancements</a>
-			<ol>
-				<li>Fedora now requires Java 1.5 or higher<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
-					<p>Fedora 2.2 is the first release of Fedora that requires Java 1.5 to compile and run.
-					There are several reasons behind the move to Java 1.5 including compatibility with latest 
-					versions of open source libraries used in the Fedora codebase, new programming features,
-					ease of development and code quality, and general Java VM improvements.</p>	
-				</li>
-
-		        <li>Fedora WAR file repackaging and installer<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
-					<p>Fedora 2.2 represents a complete repackaging 
-					 of the binary and source distribution that now enables Fedora to be 
-					 built and installed as a standalone webapp. The new distribution and 
-					 installer enable two primary modes of installation: 1) quick and 2) custom.
-					 The quick configuration option is designed for the novice user wanting
-					 to get Fedora setup and installed with minimal effort. The custom
-					 option provides additional choices that include installing fedora using the
-					 bundled 5.0.28 version of tomcat, external versions of tomcat (5.0.x or 5.5.x), 
-					 and other servlet containers. The custom option also includes additional choices regarding the
-					 backend SQL database configuration. In addition to configuring the type of servlet 
-					 container where Fedora is to be installed, the installer also configures XACML policy 
-					 configuration, and configuration of the Fedora security configuration. The new installer
-					 greatly simplifies the task of installing and configuring Fedora whether you are a novice
-					 user or a veteran developer. For complete details on the new installer and options, please 
-					 see the <a href="installation.html">Fedora Installation And Configuration Guide</a>.</p>
-				</li>
-				
-				<li>Refactoring authentication using ServletFilters<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
-					<p>One of the goals in repackaging Fedora as a war file was to lessen the dependence of the codebase on a
-					particular servlet container. However, the authentication implementation in use prior to
-					Fedora 2.2 was heavily dependent on the tomcat-5.0.28 servlet container. There also existed a known bug (see 
-					<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=144">bugzilla #144</a>) that
-					proved to be difficult to resolve. Using the ServletFilter approach to authentication
-					removes the dependencies on tomcat, makes the authentication mechanism more flexible,
-					resolves bug #144, and better positions Fedora to function as a true standalone webapp.
-					For complete details on the authentication changes, please refer to the document  
-					<a href="../server/security/securingrepo.html">Securing Your Repo</a>.</p>
-				</li>			
-				
-				<li>New method "compareDatastreamChecksum" added to API-M<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
-					<p>In response to the Fedora community and the Fedora Preservation Working Group's recommendations, 
-					support for	adding checksums on datastreams has been added to the Fedora core. A new method named 
-					"compareDatastreamChecksum" has been added to API-M for comparing the current datastream 
-					checksum stored in the Fedora xml object with a freshly computed checksum. Here is the new method signature:</p>
-					<div class="code">public String compareDatastreamChecksum(String PID,  
-                                        String datastreamID, 
-                                        String versionDate)</div>		
-					<p>There are also two new configuration parameters in fedora.fcfg related to the new checksum feature. The
-					<i>autoChecksum</i> parameter controls whether checksums are to be computed for every datastream. By default <i>autoChecksum</i> 
-					is set to false which disables automatic checksums. When set to true, checksums will automatically be computed
-					for each datastream during the API-M operations for ingest, addDatastream, modifyDatastreamByReference, 
-					and modifyDatastreambyValue. The config parameter <i>checksumAlgorithm</i> defines the checksum
-					algorithm to be used when automatically computing checksums. Fedora currently supports the
-					following checksum algorithms: MD5, SHA-1, SHA-256, SHA-384, and SHA-512. 
-					For complete details on the new checksum feature, refer to the document
-					<a href="../server/features/checksumming.html">Checksums on Datastreams in Fedora</a>.</p>
-				</li>				
-				
-				<li>Journaling<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
-					<p>Fedora 2.2 includes a new Journaling feature that keeps a full log of all object 
-						modifications to a Fedora repository.  These logs can be used in a live leader/follower configuration 
-						to support automatic replication to an identical Fedora repository, as well as for diagnostic or 
-						auditing purposes. For additional details on the new journaling feature, please refer to
-						the document <a href="../server/journal/index.html">Journaling Guide</a></p>
-				</li>								
-
-				<li>Add ownerId object property for a digital object<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
-					<p>In response to the Fedora community, Fedora 2.2 adds support for the construct of an ownerId object property on a digital object.
-					Currently the new ownerId property is an opaque single-valued string. This will be expanded in the next release
-					of Fedora to allow for multiple ownerIds. The FOXML schema is updated to include the new object property name of:
-					info:fedora/fedora-system:def/model#ownerId. e.g.,</p>
-					<div class="code">&lt;foxml:objectProperties&gt;
-	&lt;foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/&gt;
-	&lt;foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/&gt;
-	&lt;foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Image of Coliseum in Rome"/&gt;
-	&lt;foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UVA_STD_IMAGE"/&gt;
-	&lt;foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="payette"/&gt;
-&lt;/foxml:objectProperties&gt;</div>
-					<p>The METS schema used by Fedora is also been updated to include the attribute for ownerId.
-					In the METS schema, the ownerId attribute is stored in the &lt;agent&gt; element under the &lt;metsHeader&gt; element
-					with a ROLE of IPOWNER. e.g.,</p>
-					<div class="code">&lt;METS:metsHdr CREATEDATE="2006-12-07T13:23:46.962Z" LASTMODDATE="2006-12-07T13:23:46.962Z" RECORDSTATUS="A"&gt;
-	&lt;METS:agent ROLE="IPOWNER"&gt;
-		&lt;METS:name&gt;payette&lt;/METS:name&gt;
-	&lt;/METS:agent&gt;
-&lt;/METS:metsHdr&gt;</div>
-					<p>It is now possible to assign a single owner to the ownerId object property of a digital object. Once specified, 
-					you can also write XACML policies against the ownerId policy attribute. The implementation of the ownerId feature 
-					also modifies the signature of the API-M method named "modifyObject" to enabled setting or changing the value
-					of ownerId on a digital object.</p>
-					<p>Here are the old and new signature for the method:</p>
-					<div class="code"><b>Old</b>
-public String modifyObject(String PID, String state, String label, String logMessage)
-
-<b>New</b>
-public String modifyObject(String PID, String state, String label, String ownerId, String logMessage)
-					</div>										
-					<p>OwnerId can either be included in the FOXML or METS xml and will be assigned at
-					time of ingest or you can use the admin client to change the ownerID using the modifyObject
-					method of API-M.</p>
-				</li>
-				
-				<li>Fedora Supports Log4j Logging<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
-					<p>Fedora 2.2 includes extensive refactoring of the code to now use Log4j as the logging mechanism. This new addition
-					makes the configuration of logging for both the Fedora server and client much cleaner and simpler. See the <a href="./installation.html">
-					Fedora Installation And Configuration Guide</a> for more details on configuring the logs.</p>
-				</li>
-				
-				<li>Fedora Generic Search integrated into Fedora Service Framework<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
-					<p>The Fedora Generic Search application developed by Gert 
-					Schmeltz Pedersen as part of the Fedora Search Working group has now been integrated into the Fedora 
-					services framework. Fedora Generic Search represents a great example of how contributed work from the Fedora 
-					community can be migrated from the user community into the Fedora framework and then made available 
-					to the entire Fedora community. Fedora Generic Search represents an extensible generic search service that 
-					can be plugged into the Fedora Services Framework. It current supports both Lucene and Zebra as 
-					backend search engines.  When the messaging components are finalized in a future release, it will 
-					be possible to further decouple the Fedora Generic Search service from Fedora and treat it as a "message receiver" 
-					in the service framework. For additional details on Fedora Generic Search see the document entitled
-					<a href="http://www.fedora.info/download/2.2/services/genericsearch/doc/index.html">
-					Fedora Generic Search Service</a></p>
-				</li>				
-				
-				<li>New support for PostgreSQL database<img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
-					<p>Fedora 2.2 adds a DDLConverter class for PostgreSQL which enables the use of PostgreSQL as a backend SQL database
-					with Fedora. This new addition is based on a contribution from Hubert Stigler that was made to the fedora-users mailing list on 
-					April 4th, 2006. The PostgreSQL addition requires a table name change for the backend SQL database table named "do" to the
-					new name of "dobj". The change was necessary because the name of "do" is considered a reserved word for PostgreSQL. The new
-					installer will automatically handle the table name change for existing repositories migrating to Fedora 2.2. For additional details
-					on migrating from an earlier release of Fedora to Fedora 2.2, see the <a href="migration.html">Fedora Upgrade and Migration Guide</a></p>
-				</li>
-				
-				<li>VERSIONABLE attribute on datastreams fully implemented
-					<p>Fedora 2.2 fully implements the VERSIONABLE 
-					attribute on datastreams and adds a new method named "setDatastreamVersionable" to API-M to enable changing 
-					the versionable state of a datastream. This functionality enables repository managers to selectively turn 
-					versioning on or off for selected datastreams. This new feature can also be controlled using XACML policies 
-					by restricting access to the setDatastreamVersionable method in API-M which allows repository managers to 
-					decide if they want to enable this feature or not. The signature for the new method is as follows:</p>
-					<div class="code">public String setDatastreamVersionable(String PID, 
-                                       String datastreamID, 
-                                       boolean versionable, 
-                                       String logMessage)</div>
-					<p>The versionable attribute is an optional attribute in the FOXML schema. If omitted from the object xml,
-					it defaults to the value of true enabling versioning. If set to false, it disables versioning for the
-					datastream. When versioning is disabled, subsequent modifications to the datastream replace the current
-					datastream contents and no versioning history is preserved. Once an object has been ingested, the
-					"setDatastreamVersionable" method of API-M can be used to alter the versionable state of a datastream.
-					For details regarding the syntax of the versionable attribute in the object xml, refer to the 
-					<a href="http://www.fedora.info/definitions/1/0/api/foxml1-0.xsd">FOXML</a> 
-					and/or <a href="http://www.fedora.info/definitions/1/0/api/mets-fedora-ext.xsd">METS</a> schemas.</p>
-				</li>				
-				
-				<li>Changes to "addDatastream" method in API-M
-					<p>The implementation of the new checksum feature for datastreams includes some argument changes
-					for the "addDatastream" method of API-M. The changes include two new arguments named "checksumType" 
-					and "checksum". The	"checksumType" argument specifies the checksum algorithm to use in computing 
-					the checksum value. Valid values are MD5, SHA-1, SHA-256, SHA-385, and SHA-512. The "checksum" 
-					argument is the value of the checksum represented as a hexadecimal string. The "versionable"
-					argument is also fully implemented now and can be used to control whether the datastream is
-					to use versioning or not.</p>
-					<p>Here are the old and new signatures for the method:</p>
-					<div class="code"><b>Old</b>
-public String addDatastream(String pid,
-                            String dsID,
-                            String[] altIds,
-                            String label,
-                            boolean versionable,
-                            String MIMEType,
-                            String formatURI,
-                            String location,
-                            String controlGroup,
-                            String dsState,
-                            String logMessage) 	
-                            	
-<b>New</b>
-public String addDatastream(String pid,
-                            String dsID,
-                            String[] altIds,
-                            String label,
-                            boolean versionable,
-                            String MIMEType,
-                            String formatURI,
-                            String location,
-                            String controlGroup,
-                            String dsState,
-                            String checksumType,
-                            String checksum,
-                            String logMessage)</div>
-				</li>
-				
-				<li>Changes to "modifyDatastreamByReference" method in API-M
-					<p>As part of the refactoring to 
-					fully implement the VERSIONABLE attribute on datastreams, the signature for the API-M method 
-					named "modifyDatastreamByReference" has changed. The changes include removal of the "versionable" 
-					and "dsState" arguments. Changes to the state or versionable status of a datastream should be 
-					handled using the "setDatastreamState" and "setDatastreamVersionable" methods, respectively.
-					The changes also include two new arguments named "checksumType" and "checksum". The
-					"checksumType" argument specifies the checksum algorithm to use in computing the checksum
-					value. Valid values are MD5, SHA-1, SHA-256, SHA-385, and SHA-512. The "checksum" argument 
-					is the value of the checksum represented as a hexadecimal string.</p>
-					<p>Here are the old and new signature for the method:</p>
-					<div class="code"><b>Old</b>
-public String modifyDatastreamByReference(String PID, 
-                                          String datastreamID,
-                                          String[] altIDs,
-                                          String dsLabel, 
-                                          boolean versionable,
-                                          String mimeType,
-                                          String formatURI,
-                                          String dsLocation, 
-                                          String dsState,
-                                          String logMessage, 
-                                          boolean force)
-
-<b>New</b>
-public String modifyDatastreamByReference(String PID, 
-                                          String datastreamID,
-                                          String[] altIDs,
-                                          String dsLabel, 
-                                          String mimeType,
-                                          String formatURI,
-                                          String dsLocation, 
-                                          String checksumType,
-                                          String checksum,
-                                          String logMessage, 
-                                          boolean force)</div>
-				</li>
-				
-				<li>Changes to "modifyDatastreamByValue" method in API-M
-					<p>As part of the refactoring to fully implement the VERSIONABLE attribute on datastreams, 
-					the signature for the API-M method "modifyDatastreamByValue" has changed. The changes 
-					include removal of the "versionable" and "dsState " arguments. Changes to the state or 
-					versionable status of a datastream should be handled using the "setDatastreamState" and 
-					"setDatastreamVersionable" methods, respectively. The changes also include two new arguments 
-					named "checksumType" and "checksum". The "checksumType" argument specifies the checksum 
-					algorithm to use in computing the checksum value. Valid values are MD5, SHA-1, SHA-256, 
-					SHA-385, and SHA-512. The "checksum" argument is the value of the checksum represented as 
-					a hexadecimal string.</p>
-					<p>Here are the old and new signature for the method:</p>
-					<div class="code"><b>Old</b>
-public String modifyDatastreamByValue(String PID, 
-                                      String datastreamID, 
-                                      String[] altIDs,
-                                      String dsLabel, 
-                                      boolean versionable,
-                                      String mimeType,
-                                      String formatURI,
-                                      byte[] dsContent, 
-                                      String dsState,
-                                      String logMessage, 
-                                      boolean force) 		
-
-<b>New</b>
-public String modifyDatastreamByValue(String PID, 
-                                      String datastreamID, 
-                                      String[] altIDs,
-                                      String dsLabel, 
-                                      String mimeType,
-                                      String formatURI,
-                                      byte[] dsContent, 
-                                      String checksumType,
-                                      String checksum,
-                                      String logMessage, 
-                                      boolean force)</div>
-				</li>
-				
-				<li>Change to "purgeDatastream" method in API-M
-					<p>In response to the Fedora community, the signature for 
-					the API-M method named "purgeDatastream" has been changed to provide additional
-					functionality. The new signature and underlying changes to the method 
-					enable the purging of a specific datastream version or purging of a range 
-					of datastream versions. Here are the old and new signatures:</p>
-					<div class="code"><b>Old</b>
-public String[ ] purgeDatastream(String pid,
-                                 String datastreamID,
-                                 String endDT,
-                                 String logMessage,
-                                 boolean force)
-
-<b>New</b>
-public String[ ] purgeDatastream(String PID,
-                                 String datastreamID,
-                                 String startDT,
-                                 String endDT,
-                                 String logMessage,
-                                 boolean force)</div>
-					<p>Changes supporting this new functionality have also been made in the Fedora administrative client.</p>		
-				</li>				
-				
-				<li>Resource Index Enhancements
-					<p>In Fedora 2.2 an alternate (RDBMS-based, more stable, less feature-rich) 
-					triplestore database can now be plugged in as Fedora's Resource Index.  In addition, we are currently 
-					working on the messaging components necessary to support an optional, external Resource Index.</p>
-				</li>
-				
-				<li>WSDL changes
-					<p>In response to requests from the Fedora community, the WSDL encoding for API-A and
-					API-M have been changed from the former "rpc-encoded" encoding to the more widely supported 
-					"document/literal" encoding, using the "wrapped" convention. The "document/literal" encoding reflects 
-					current best practice  and simplifies how Fedora API calls are represented over the network and 
-					increases interoperability with other WSDL-aware tools.</p>
-				</li>
-				
-				<li>WSDL servlet
-					<p>In response to requests from the Fedora community, an alternative method of 
-					exporting the Fedora WSDL has been implemented. The live WSDL for any Fedora repository is now 
-					available via HTTP GET at the path:</p>
-					<pre>      /fedora/wsdl</pre>
-					<p>The WSDL provided under this path is publicly available, whereas the service endpoints themselves 
-					may or may not be protected.  This is a change from previous versions, where the live WSDL was 
-					available at the service endpoint URL, by appending "?wsdl" to the URL.  The change was made due to 
-					problems encountered with Apache Axis' live wsdl functionality. The new alternative should greatly 
-					improve interoperability between Fedora and other WSDL-aware software.</p> 
-				</li>
-				
-				<li>METS schema changes
-					<p>Prior to Fedora 2.2, there were some attributes available in the foxml1.0 
-					schema that were not available in the metslikefedora1 schema. Fedora 2.2 updated the metslikefedora1 
-					schema to bring it in compliance with the set of attributes available in the foxml1.0 schema. In particular, 
-					the metslikefedora1 schema now supports the attributes for VERSIONABLE, FORMAT_URI, and ALT_IDS on 
-					datastreams. In addition to these changes, support for the attributes of CHECKSUM and
-					CHECKSUMTYPE on datastreams and support for the ownerId property of an object (using agent element in
-					metsHeader element) were also incorporated into the metslikefedora1 schema. 
-					(see: <a href="http://www.fedora.info/definitions/1/0/api/mets-fedora-ext.xsd">
-					www.fedora.info/definitions/1/0/api/mets-fedora-ext.xsd</a> for complete details)</p>
-				</li>
-				
-				<li>FOXML schema changes
-					<p>Fedora 2.2 updated the foxml1.0 schema to move the contentDigest element so
-					that it now is the first element in the sequence rather than the last element. This change should not
-					impact any existing objects since prior to Fedora 2.2, the contentDigest element existed in the foxml1.0 schema
-					but was not implemented in the code so any use of this element was ignored by Fedora. Fedora 2.2
-					implements support for the contentDigest element with this change to the schema. In addition, the new value
-					of <i>info:fedora/fedora-system:def/model#ownerId</i> was added to the enumeration list for propertyType
-					to support the new property of ownerId.
-					(see: <a href="http://www.fedora.info/definitions/1/0/api/foxml1-0.xsd">
-					www.fedora.info/definitions/1/0/api/foxml1-0.xsd</a> for complete details)</p>
-				</li>
-				
-				<li>Export Context Of "Archive" Implemented
-					<p>Fedora 2.2 enhances the functionality of the API-M export 
-					method by implementing the "archive" context. When exporting objects using the "archive" context, all 
-					Managed Content and External Referenced Content datastreams will be embedded as base64-encoded binary 
-					blobs in the exported object xml. This enables the ability to completely export an object and all of its 
-					content in a single package that can easily be transported to a different repository with no dependencies 
-					on the originating repository.</p>
-				</li>
-				
-				<li>Changes to Batch Modify Client Utility
-					<p>Fedora 2.2 updates the Batch Modify client utility to include changes related to the API-M method signature
-					changes previously mentioned. Changes also include support for new features like datastream checksums and
-					the ownerId property. For details about specific changes to the Batch Modify directives schema,
-					please refer to the <a href="http://www.fedora.info/definitions/1/0/api/batchModify.xsd">batchModify.xsd schema
-					file.</a></p>
-				</li>
-				
-				<li>Updates To Services In Fedora Services Framework
-					<p>All of the services included in the Fedora Services Framework are updated to include the latest versions
-					of the Fedora standard libraries and jar files. This change synchronizes library versions in the Service Framework
-					with changes included in Fedora 2.2 server and client code.</p>
-				</li>
-				
-				<li>JUnit Refactoring
-					<p>The refactoring of the codebase necessary to make Fedora a standalone webapp 
-					also required extensive refactoring of the JUnit tests. Fedora 2.2 includes streamlining and simplification 
-					of the JUnit tests that will make future code testing much easier.</p>
-				</li>	
-			</ol>
-		</li>
-		
-		<li><a name="tune">Performance Tuning</a><img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>	
-		<p>Fedora 2.2 includes significant performance enhancements for API-M and the Resource Index
-		as compared with Fedora 2.1.1. Please consult the
-		<a href="../reports/fedora22-performance/index.html">Fedora API-M Performance Report</a>
-		which contains before/after performance 
-		measurements between a typical Fedora 2.1.1 and Fedora 2.2 server.</p>
-		</li>		
-		
 		<li><a id="bugs" name="bugs">Bug Fixes</a>
-		<p>Refer to Fedora's <a href="http://www.fedora.info/bugzilla/">Bugzilla</a> 
-		for full descriptions of the resolved bugs.</p>
+            <p>The following bugs have been addressed for this release.</p>
 			<ul>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=28">Bug #28</a>: 
-					purging object does not close object pane in Admin GUI</li>			
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=30">Bug #030</a>: 
-					Admin GUI--if datastreams entered first, can't bind disseminators</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=119">Bug #119</a>: 
-					backslash in dc:anything fails sometimes</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=120">Bug #120</a>: 
-					ant  build sometimes requires priming action, e.g., deleting a file</li>					
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=121">Bug #121</a>: 
-					ant clean nulls mckoi db</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=123">Bug #123</a>: 
-					autoFlushDoemantSeconds takes an integer value, not a boolean</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=124">Bug #124</a>: 
-					API-A Lite search does not correctly handle international characters</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=128">Bug #128</a>: 
-					Proai rcAdmin date should be per-format</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=129">Bug #129</a>: 
-					Proai robustness - transactions and error recovery</li>					
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=140">Bug #140</a>: 
-					Problems using Fedora-API-A WSDL in .NET framework</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=141">Bug #141</a>: 
-					using WSDL tool to create C# class</li>				
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=160">Bug #160</a>: 
-					fedora-reload-policies.sh gives Usage error if run with no arguments</li>				
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=163">Bug #163</a>: 
-					OAI Provider update query fails when sets are not configured</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=165">Bug #165</a>: 
-					API-M ingest has 'xml' as param name, which causes soap:lite problems</li>						
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=167">Bug #167</a>: 
-					Object Editor window always acts as if modification has occurred</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=169">Bug #169</a>: 
-					fedora-start.bat script failure due to certain characters</li>	
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=170">Bug #170</a>: 
-					DefaultAuthorization.postInitModule ModuleInitializationException</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=171">Bug #171</a>: 
-					Delayed shutdown while deleting Trippi tempfiles</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=172">Bug #172</a>: 
-					OAI Provider Service: deleted status via custom property not working</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=173">Bug #173</a>: 
-					FedoraClient takes over logging</li>	
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=176">Bug #176</a>: 
-					"log_dir does not exist" error message when log directory does exist</li>					
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=177">Bug #177</a>: 
-					fedora-start.bat script: sleep is not a command</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=179">Bug #179</a>: 
-					PID namespace syntax: conflicting definitions</li>				
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=180">Bug #180</a>: 
-					Too Many Open Files error message</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=182">Bug #182</a>: 
-					bMech Builder does not properly serialize multiple mimetypes in DSInputSpec</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=183">Bug #183</a>: 
-					Datastream ID beginning with a alphanumeric allowed by admin client</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=184">Bug #184</a>: 
-					Problem exporting objects as METS that were originally ingested in METS format</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=185">Bug #185</a>: 
-					Concurrent modification of same object can cause deletion</li>				
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=186">Bug #186</a>: 
-					Double URL encoding for PIDs that contain escape characters</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=189">Bug #189</a>: 
-					Oracle CLOB size limit for FieldSearch indexing</li>					
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=190">Bug #190</a>: 
-					Dupes in RI (triples not being deleted?); duplicate of #193</li>					
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=191">Bug #191</a>: 
-					MIMETYPE not properly xml-escaped in FOXML and METS serializations</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=193">Bug #193</a>: 
-					Missing/duplicate RDF triples from Resource Index</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=194">Bug #194</a>: 
-					ResourceIndex disseminationTypes incorrect when parm is unfixed</li>	
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=195">Bug #195</a>: 
-					ResourceIndex leaves triples for purged datastreams and disseminators</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=196">Bug #196</a>: 
-					ResourceIndex gives extra dissType when user param is required</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=197">Bug #197</a>: 
-					Various incorrect use of Boolean.getBoolean(String)</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=198">Bug #198</a>: 
-					Lots of character encoding problems in Fedora documentation</li>					
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=199">Bug #199</a>: 
-					POLICY datastream parsing fails when description is empty</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=200">Bug #200</a>: 
-					BasicPIDGenerator lazy initialization can create multi instances</li>	
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=201">Bug #201</a>: 
-					RFC 2616 Section 3.6.1 not supported for transfer-encoding=chunked</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=202">Bug #202</a>: 
-					Fedora server and client limited to 2 GB max file size transfer</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=203">Bug #203</a>: 
-					DefaultAuthorization.enforceIngestObject ignores PID</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=204">Bug #204</a>: 
-					PolicyFinderModule classErrors static, necessitates reboot</li>	
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=205">Bug #205</a>: 
-					policy file deny-inactive-or-deleted-disseminations-if-not-administrator.xml incorrect</li>																																		
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1661682&group_id=177054&atid=879703">
+                  Bug #1661682</a>: 
+                  Bundled Postgres fails to copy during install
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1661683&group_id=177054&atid=879703">
+                  Bug #1661683</a>: 
+                  Postgres NumberFormatException at startup
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1686346&group_id=177054&atid=879703">
+                  Bug #1686346</a>: 
+                  WSDL provided under target /fedora/wsdl is not public
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1721620&group_id=177054&atid=879703">
+                  Bug #1721620</a>: 
+                  IllegalStateException when authorization header not provided
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1731608&group_id=177054&atid=879703">
+                  Bug #1731608</a>: 
+                  LDAP, JNDI, and Servlet Filter Cache issues
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1768738&group_id=177054&atid=879703">
+                  Bug #1768738</a>: 
+                  Saxon Servlet not respecting base URLs
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1772984&group_id=177054&atid=879703">
+                  Bug #1772984</a>: 
+                  Automatic rename of do table to dobj sometimes fails
+                </li>
 			</ul>
 			<br/>					
 		</li>
 		
 		<li><a id="issues" name="issues">Known Issues</a>
-			<p>The following list includes bugs that are still listed as open as of the release
-			date for Fedora 2.2. For details on these issues, please refer to the links
-			below or visit Fedora's <a href="http://www.fedora.info/bugzilla"> Bugzilla </a>
-			for the most current information. 
-			<ul>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=10">Bug #10</a>: 
-					Behavior Mechanisms with SOAP Bindings Not Yet Supported</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=118">Bug #118</a>: 
-					fix soap/axis error detail</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=122">Bug #122</a>: 
-					size attribute only works with "X" datastreams</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=126">Bug #126</a>: 
-					LLStore pluggability</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=153">Bug #153</a>: 
-					validation error when namespace for in-line XML datastreams is in root element</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=161">Bug #161</a>: 
-					Minor typos in tutorial2.pdf</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=164">Bug #164</a>: 
-					Invalid policies embedded in POLICY datastream of objects makes objects inaccessible</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=168">Bug #168</a>: 
-					SRB LowlevelStore Issues (for pre Fedora 2.2)</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=174">Bug #174</a>: 
-					iTQL less-than queries only work on xsd:double datatyped values</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=175">Bug #175</a>: 
-					User-provided logMessages NOT recorded for object-level API-M methods</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=178">Bug #178</a>: 
-					Shutdown relies on servlet container to ensure requests are complete</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=187">Bug #187</a>: 
-					Unhelpful error from server when adding/modding disseminator with invalid binding</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=188">Bug #188</a>: 
-					WSDL should declare faults</li>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=192">Bug #192</a>: 
-					Hash collision can cause rebuilder to skip some objects</li>						
-			</ul>
+			<p>Please see the <a href="http://sourceforge.net/tracker/?group_id=177054&atid=879703">
+            Fedora Commons Bug Tracker</a> for an 
+            up-to-date list of outstanding bugs.
+            </p>
 		</li>
 		
 		<li><a id="install" name="features">Installation</a>
@@ -602,6 +92,7 @@ public String[ ] purgeDatastream(String PID,
   
 <div>
 &nbsp;&nbsp;&nbsp;&nbsp; Release notes for previous versions of Fedora:  
+	[<a href="http://fedora.info/download/2.2/userdocs/distribution/release-notes.html">2.2</a>], 
 	[<a href="http://fedora.info/download/2.1.1/userdocs/distribution/release-notes.html">2.1.1</a>], 
 	[<a href="http://fedora.info/download/2.1/userdocs/distribution/release-notes.html">2.1</a>], 
 	[<a href="http://fedora.info/download/2.1b/userdocs/distribution/release-notes.html">2.1b</a>], 

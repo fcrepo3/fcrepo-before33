@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
@@ -30,11 +31,13 @@ public class Database {
 	private Distribution _dist;
 	private InstallOptions _opts;
 	private String _db;
+	private Connection _conn;
 	
 	public Database(Distribution dist, InstallOptions opts) {
 		_dist = dist;
 		_opts = opts;
 		_db = _opts.getValue(InstallOptions.DATABASE);
+		_conn = null;
 	}
 	
 	public void install() throws InstallationFailedException {
@@ -70,11 +73,7 @@ public class Database {
     		return; // no need to update embedded
     	}
 		try {
-	    	DriverShim.loadAndRegister(getDriver(), _opts.getValue(InstallOptions.DATABASE_DRIVERCLASS));
-			Connection conn = DriverManager.getConnection(
-					_opts.getValue(InstallOptions.DATABASE_JDBCURL), 
-					_opts.getValue(InstallOptions.DATABASE_USERNAME),
-					_opts.getValue(InstallOptions.DATABASE_PASSWORD));
+			Connection conn = getConnection();
 			DatabaseMetaData dmd = conn.getMetaData();
 			ResultSet rs = dmd.getTables(null, null, "%", null);
 			while (rs.next()) {
@@ -108,13 +107,12 @@ public class Database {
 				}
 			}
 			rs.close();
-			conn.close();
     	} catch(Exception e) {
     		throw new InstallationFailedException(e.getMessage(), e);
     	}
 	}
 	
-	private File getDriver() throws IOException {
+	protected File getDriver() throws IOException {
 		File driver = null;
     	if (_opts.getValue(InstallOptions.DATABASE_DRIVER).equals(InstallOptions.INCLUDED)) {
     		InputStream is;
@@ -159,33 +157,62 @@ public class Database {
     	}
     }
 	
-	private void test() throws Exception {
-		/*
-		DriverShim.loadAndRegister(getDriver(), _opts.getValue(InstallOptions.DATABASE_DRIVERCLASS));
-		Connection conn = DriverManager.getConnection(
-				_opts.getValue(InstallOptions.DATABASE_JDBCURL), 
-				_opts.getValue(InstallOptions.DATABASE_USERNAME),
-				_opts.getValue(InstallOptions.DATABASE_PASSWORD));
-		List<TableSpec> specs = TableSpec.getTableSpecs(_dist.get(Distribution.DBSPEC));
-		for (TableSpec spec : specs) {
-			if (spec.getName().equals("dobj")) {
-				TableCreatingConnection tcc = new TableCreatingConnection(conn, new McKoiDDLConverter());
-				tcc.createTable(spec);
-				break;
-			}
-		}
-		*/
-		
-		
-		DriverShim.loadAndRegister(getDriver(), _opts.getValue(InstallOptions.DATABASE_DRIVERCLASS));
-		Connection conn = DriverManager.getConnection(
-				_opts.getValue(InstallOptions.DATABASE_JDBCURL), 
-				_opts.getValue(InstallOptions.DATABASE_USERNAME),
-				_opts.getValue(InstallOptions.DATABASE_PASSWORD));
+	/**
+	 * Simple sanity check of user-supplied database options.
+	 * Tries to establish a database connection and issue a 
+	 * Connection.getMetaData() using the supplied InstallOptions values for 
+	 * DATABASE_DRIVER, DATABASE_DRIVERCLASS, DATABASE_JDBCURL, 
+	 * DATABASE_USERNAME, and DATABASE_PASSWORD.
+	 * @throws Exception
+	 */
+	protected void test() throws Exception {
+		Connection conn = getConnection();
+
 		DatabaseMetaData dmd = conn.getMetaData();
-		
 		dmd.getTables(null, null, "%", null);
 		System.out.println("Successfully connected to " + dmd.getDatabaseProductName());
+	}
+	
+	/**
+	 * Determines whether or not the database has a table named "do".
+	 * @return true if the database contains a table with the name "do".
+	 * @throws Exception
+	 */
+	protected boolean usesDOTable() throws Exception {
+		Connection conn = getConnection();
+		DatabaseMetaData dmd = conn.getMetaData();
+		
+		// check if we need to update old table
+		ResultSet rs = dmd.getTables(null, null, "%", null);
+		while (rs.next()) {
+			if (rs.getString("TABLE_NAME").equals("do")) {
+				rs.close();
+				return true;
+			}
+		}
+		rs.close();
+		return false;
+	}
+	
+	private Connection getConnection() throws Exception {
+		if (_conn == null) {
+			DriverShim.loadAndRegister(getDriver(), _opts.getValue(InstallOptions.DATABASE_DRIVERCLASS));
+			_conn = DriverManager.getConnection(
+				_opts.getValue(InstallOptions.DATABASE_JDBCURL), 
+				_opts.getValue(InstallOptions.DATABASE_USERNAME),
+				_opts.getValue(InstallOptions.DATABASE_PASSWORD));
+		}
+		return _conn;
+	}
+	
+	/**
+	 * Closes any underlying connection with the database if necessary.
+	 * @throws SQLException
+	 */
+	public void close() throws SQLException {
+		if (_conn != null) {
+			_conn.close();
+		}
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -206,5 +233,6 @@ public class Database {
         InstallOptions opts = new InstallOptions(dist, map);
         Database db = new Database(dist, opts);
         db.test();
+        db.close();
 	}
 }

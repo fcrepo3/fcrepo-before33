@@ -116,7 +116,7 @@ public class FedoraHome {
         	dbPoolName = "localOraclePool";
         	backslashIsEscape = "false";
         } else if (database.equals(InstallOptions.POSTGRESQL)) {
-        	dbPoolName = "localPostgresqlPool";
+        	dbPoolName = "localPostgreSQLPool";
         } else {
         	throw new InstallationFailedException("unable to configure for unknown database: " + database);
         }
