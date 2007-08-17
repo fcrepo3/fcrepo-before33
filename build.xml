@@ -189,6 +189,13 @@
     <!-- -->
     <taskdef resource="axis-tasks.properties" classpathref="axis.classpath" />
     
+	<!-- As of 2.2, we require at least Java 5. So we assume here that if the 
+	specification version is not 1.5, it is Java 6 or greater, and hence, at 
+	least jdbc4 or above -->
+	<condition property="jdbc3">
+		<equals arg1="${java.specification.version}" arg2="1.5"/>
+	</condition>
+	
     <!-- MacroDefs -->
     <macrodef name="md-compile">
         <attribute name="classpathref" default="compile.classpath"/>
@@ -284,8 +291,20 @@
         <md-compile srcdir="${java.src.dir}/fedora/localservices" 
                     destdir="${localservices.build.dir}"/>
     </target>
+	
+	<target name="prepare-jdbc3" if="jdbc3">
+		<echo message="Commenting out jdbc4 additional methods."/>
+		<replace dir="${java.src.dir}" token="/* JDBC_4_ANT_TOKEN_BEGIN */" value="/* JDBC_4_ANT_TOKEN_BEGIN -"/>
+		<replace dir="${java.src.dir}" token="/* JDBC_4_ANT_TOKEN_END */" value="- JDBC_4_ANT_TOKEN_END */"/>
+	</target>
+	
+	<target name="prepare-jdbc4" unless="jdbc3">
+		<echo message="Uncommenting jdbc4 additional methods."/>
+		<replace dir="${java.src.dir}" token="/* JDBC_4_ANT_TOKEN_BEGIN -" value="/* JDBC_4_ANT_TOKEN_BEGIN */"/>
+		<replace dir="${java.src.dir}" token="- JDBC_4_ANT_TOKEN_END */" value="/* JDBC_4_ANT_TOKEN_END */"/>
+	</target>
     
-    <target name="compile-server" depends="init, wsdl2java">
+    <target name="compile-server" depends="init, prepare-jdbc3, prepare-jdbc4, wsdl2java">
         <md-compile 
             srcdir="${java.src.dir}:${wsdl.build.dir}" 
             destdir="${server.build.dir}/classes" 

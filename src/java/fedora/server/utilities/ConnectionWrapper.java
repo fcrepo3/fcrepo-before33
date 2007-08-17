@@ -26,10 +26,7 @@ public abstract class ConnectionWrapper
         m_wrappedConnection=wrapped;
     }
 
-/*  
-    NOTE: To compile with JDK 1.6, uncomment the following methods
-
-    ///// start of 1.6 methods /////
+    /* JDBC_4_ANT_TOKEN_BEGIN -
 
     public boolean isWrapperFor(Class<?> iface) {
         throw new UnsupportedOperationException(
@@ -96,9 +93,7 @@ public abstract class ConnectionWrapper
                 "Java 1.6 Connection methods are not supported");
     }
 
-    ///// end of 1.6 methods /////
-
-    */
+    - JDBC_4_ANT_TOKEN_END */
 
     public Statement createStatement()
             throws SQLException {
