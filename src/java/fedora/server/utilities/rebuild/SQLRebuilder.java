@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -23,6 +24,8 @@ import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
+import fedora.server.config.DatastoreConfiguration;
+import fedora.server.config.ModuleConfiguration;
 import fedora.server.config.ServerConfiguration;
 import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.InitializationException;
@@ -102,10 +105,12 @@ public class SQLRebuilder implements Rebuilder {
      */
     public void start(Map options) throws Exception 
     {
-        long startupDelay = 0;
-
-        // do startup tasks
-
+        // This must be done before starting "RebuildServer"
+        // rather than after, so any application caches 
+        // (in particular the hash map held by PIDGenerator)
+        // don't get out of sync with the database.
+        blankExistingTables( );
+            
         try {
             s_server = RebuildServer.getRebuildInstance(
                     new File(Constants.FEDORA_HOME));
@@ -118,18 +123,10 @@ public class SQLRebuilder implements Rebuilder {
                         "ConnectionPoolManager not loaded.", "ConnectionPoolManager");
             }
             m_connectionPool = cpm.getPool();
-            /*
-            HashMap h = new HashMap();
-            h.put("application", "rebuild");
-            h.put("useCachedObject", "false");
-            h.put("userId", "fedoraAdmin");
-            */
             m_context = ReadOnlyContext.getContext("utility", "fedoraAdmin", "", /*null, */ReadOnlyContext.DO_OP); 
             String registryClassTemp = s_server.getParameter("registry");
             String reason = "registry";
 
-            blankExistingTables( );
-            
             ILowlevelStorage llstore = (ILowlevelStorage) s_server.
             getModule("fedora.server.storage.lowlevel.ILowlevelStorage");
             try
@@ -201,7 +198,7 @@ public class SQLRebuilder implements Rebuilder {
     {
         Connection connection = null;
         try {
-            connection = m_connectionPool.getConnection();
+            connection = getDefaultConnection();
             List existingTables = getExistingTables(connection);
             List fedoraTables = getFedoraTables();
             for (int i = 0; i < existingTables.size(); i++)
@@ -224,20 +221,12 @@ public class SQLRebuilder implements Rebuilder {
         }
         catch (SQLException e)
         {
-            e.printStackTrace();
+            throw new RuntimeException("DB error while blanking existing tables", e);
         }
         finally 
         {
-            try {
-                if (connection != null) m_connectionPool.free(connection);
-            } 
-            catch (Exception e2) 
-            { // purposely general to include uninstantiated statement, connection
-                e2.printStackTrace();
-            } 
+            try { connection.close(); } catch (Exception e) { }
         }
-
-
     }
 
     /**
@@ -387,7 +376,7 @@ public class SQLRebuilder implements Rebuilder {
         } 
         catch (IOException e) 
         {
-          //  throw new GeneralException("Error calling pidGenerator.neverGeneratePID(): " + e.getMessage());
+            throw new RuntimeException("Error calling pidGenerator.neverGeneratePID(): " + e.getMessage(), e);
         }
  
         // REGISTRY:
@@ -629,6 +618,36 @@ public class SQLRebuilder implements Rebuilder {
         } catch (Throwable th) {
             System.out.println("Error shutting down RebuildServer:");
             th.printStackTrace();
+        }
+    }
+
+    /**
+     * Gets a connection to the database specified in 
+     * connection pool module's "defaultPoolName" config value.
+     *
+     * This allows us to the connect to the database without
+     * the server running.
+     */
+    private Connection getDefaultConnection() {
+        ModuleConfiguration poolConfig = m_serverConfig.getModuleConfiguration(
+                "fedora.server.storage.ConnectionPoolManager");
+        String datastoreID = poolConfig.getParameter("defaultPoolName")
+                .getValue();
+        DatastoreConfiguration dbConfig = m_serverConfig
+                .getDatastoreConfiguration(datastoreID);
+        return getConnection(dbConfig.getParameter("jdbcDriverClass").getValue(),
+                dbConfig.getParameter("jdbcURL").getValue(),
+                dbConfig.getParameter("dbUsername").getValue(),
+                dbConfig.getParameter("dbPassword").getValue());
+    }
+
+    private static Connection getConnection(String driverClass,
+            String url, String username, String password) {
+        try {
+            Class.forName(driverClass);
+            return DriverManager.getConnection(url, username, password);
+        } catch (Exception e) {
+            throw new RuntimeException("Error getting database connection", e);
         }
     }
 
