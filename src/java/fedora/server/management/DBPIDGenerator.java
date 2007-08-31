@@ -1,8 +1,3 @@
-/* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
- * available online at http://www.fedora.info/license/).
- */
-
 package fedora.server.management;
 
 import java.io.BufferedReader;
@@ -149,6 +144,7 @@ public class DBPIDGenerator
      */
     public synchronized void neverGeneratePID(String pid)
             throws IOException {
+        LOG.debug("Never generating PID: " + pid);
         try {
             PID p = new PID(pid);
             String ns = p.getNamespaceId();
@@ -178,6 +174,7 @@ public class DBPIDGenerator
      */
     private void setHighestID(String namespace, int id)
             throws IOException {
+        LOG.debug("Setting highest ID for " + namespace + " to " + id);
         m_highestID.put(namespace, new Integer(id));
         // write the new highest id in the database, too
         Connection conn=null;
