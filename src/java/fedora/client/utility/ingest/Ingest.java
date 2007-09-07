@@ -81,6 +81,10 @@ public class Ingest {
             multiFromDirectory(dir, ingestFormat, 'M', targetRepoAPIA, 
                                targetRepoAPIM, logMessage, log, c);
         }
+        if (tps.indexOf("C")!=-1) {
+            multiFromDirectory(dir, ingestFormat, 'C', targetRepoAPIA, 
+                               targetRepoAPIM, logMessage, log, c);
+        }
         if (tps.indexOf("O")!=-1) {
             multiFromDirectory(dir, ingestFormat, 'O', targetRepoAPIA, 
                                targetRepoAPIM, logMessage, log, c);
@@ -90,11 +94,17 @@ public class Ingest {
     private static String getSearchString(char fType) {
         if (fType == 'D') {
             return "FedoraBDefObject";
-        } else if (fType == 'M') {
+        } 
+        else if (fType == 'M') {
             return "FedoraBMechObject";
-        } else if (fType == 'O') {
+        } 
+        else if (fType == 'O') {
             return "FedoraObject";
-        } else {
+        } 
+        else if (fType == 'C') {
+            return "FedoraCModelObject";
+        } 
+        else {
             throw new RuntimeException("Unrecognized fType: " + fType);
         }
     }
@@ -222,6 +232,12 @@ public class Ingest {
             multiFromRepository(sourceProtocol, sourceHost, sourcePort,
                                 sourceRepoAPIA, sourceRepoAPIM,
                                 sourceExportFormat, 'M', targetRepoAPIA,
+                                targetRepoAPIM, logMessage, log, c);
+        }
+        if (tps.indexOf("C")!=-1) {
+            multiFromRepository(sourceProtocol, sourceHost, sourcePort,
+                                sourceRepoAPIA, sourceRepoAPIM,
+                                sourceExportFormat, 'C', targetRepoAPIA,
                                 targetRepoAPIM, logMessage, log, c);
         }
         if (tps.indexOf("O")!=-1) {

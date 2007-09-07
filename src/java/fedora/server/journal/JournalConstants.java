@@ -96,7 +96,9 @@ public interface JournalConstants {
     String METHOD_PURGE_DISSEMINATOR = "purgeDisseminator";
     String METHOD_PUT_TEMP_STREAM = "putTempStream";
     String METHOD_GET_NEXT_PID = "getNextPid";
-
+    String METHOD_ADD_RELATIONSHIP = "addRelationship";
+    String METHOD_PURGE_RELATIONSHIP = "purgeRelationship";
+    
     // Types of arguments to the management methods, as written to the Journal
     String ARGUMENT_TYPE_STRING = "string";
     String ARGUMENT_TYPE_STRINGARRAY = "stringarray";
@@ -144,6 +146,11 @@ public interface JournalConstants {
     String ARGUMENT_NAME_STATE = "state";
     String ARGUMENT_NAME_VERSIONABLE = "versionable";
     String ARGUMENT_NAME_VERSION_DATE = "versionDate";
+    String ARGUMENT_NAME_RELATIONSHIP = "relationship";
+    String ARGUMENT_NAME_SUBJECT_URI = "subjectURI";
+    String ARGUMENT_NAME_OBJECT_URI = "objectURI";
+    String ARGUMENT_NAME_OBJECT_LITERAL = "objectLiteral";
+    String ARGUMENT_NAME_LITERAL_TYPE = "literalType";
 
     // Names of maps in the Context object, as written to the Journal
     String CONTEXT_MAPNAME_ACTION = "action";

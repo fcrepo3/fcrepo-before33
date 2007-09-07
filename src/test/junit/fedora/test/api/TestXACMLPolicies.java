@@ -87,17 +87,17 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
         String URL2 = getBaseURL()+"-demo/simple-image-demo/col2.jpg";
         String URL3 = getBaseURL()+"-demo/simple-image-demo/col3.jpg";
         Class modDSArgs[] = { String.class, String.class, String[].class, String.class, String.class, String.class, String.class, String.class, String.class, String.class, Boolean.TYPE };
-        Object modDSParms1[] = { "demo:5", "DS3", null, null, null, null, null, null, null, null, Boolean.FALSE };
-//        Object modDSParms2[] = { "demo:5", "DS3", null, ", null, null, null, null, false };
+        Object modDSParms1[] = { "demo:5", "THUMBRES_IMG", null, null, null, null, null, null, null, null, Boolean.FALSE };
+//        Object modDSParms2[] = { "demo:5", "THUMBRES_IMG", null, ", null, null, null, null, false };
         Class purgeDSArgs[] = { String.class, String.class, String.class, String.class, String.class, Boolean.TYPE };
-        Object purgeDSParms1[] = { "demo:5", "DS3", null, null, null, Boolean.FALSE };
+        Object purgeDSParms1[] = { "demo:5", "THUMBRES_IMG", null, null, null, Boolean.FALSE };
         Class setVersionableArgs[] = { String.class, String.class, Boolean.TYPE, String.class };
-        Object setVersionableFalse[] = { "demo:5", "DS3", Boolean.FALSE, null };
-        Object setVersionableTrue[] = { "demo:5", "DS3", Boolean.TRUE, null };
+        Object setVersionableFalse[] = { "demo:5", "THUMBRES_IMG", Boolean.FALSE, null };
+        Object setVersionableTrue[] = { "demo:5", "THUMBRES_IMG", Boolean.TRUE, null };
         
-        //        Object modDSParms2[] = { "demo:5", "DS3", null, null, null, null, URL2, null, false };
-//        Object modDSParms3[] = { "demo:5", "DS3", null, null, null, null, null, null, false };
-//        Object modDSParms4[] = { "demo:5", "DS3", null, null, null, null, URL3, null, false };
+        //        Object modDSParms2[] = { "demo:5", "THUMBRES_IMG", null, null, null, null, URL2, null, false };
+//        Object modDSParms3[] = { "demo:5", "THUMBRES_IMG", null, null, null, null, null, null, false };
+//        Object modDSParms4[] = { "demo:5", "THUMBRES_IMG", null, null, null, null, URL3, null, false };
         
         // APIM access by user without access- should fail
         // testuserroleA does not have permission to modify a datastream, so this should fail
@@ -170,8 +170,8 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
         if (isAPIAAuthzOn())
         {
             Class getDDArgs[] = { String.class, String.class, String.class };
-            Object getDDParms[] = { "demo:5", "DS3", null };
-            Object getDDParms2[] = { "demo:29", "DS1", null };
+            Object getDDParms[] = { "demo:5", "THUMBRES_IMG", null };
+            Object getDDParms2[] = { "demo:29", "url", null };
             Object getDDParms3[] = { "demo:31", "DS1", null };
 
             Class getDissArgs[] = { String.class, String.class, String.class, Property[].class, String.class };
@@ -186,7 +186,7 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
        //     invokeAPIAFailure(testuser2, "testuser2", "getDatastreamDissemination", getDDArgs, getDDParms);
 
             // APIA access by user without access- should fail
-            // testuser3 does not have permission to access Datastreams named DS3, so this should fail
+            // testuser3 does not have permission to access Datastreams named THUMBRES_IMG, so this should fail
             invokeAPIAFailure(testuser3, "testuser3", "getDatastreamDissemination", getDDArgs, getDDParms);
             
             // APIA access by user without access- should fail

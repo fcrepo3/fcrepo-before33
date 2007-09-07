@@ -30,6 +30,7 @@ public class FTypeDialog
     
     private JCheckBox dButton;
     private JCheckBox mButton;
+    private JCheckBox cButton;
     private JCheckBox oButton;
 
     public FTypeDialog() {
@@ -49,11 +50,14 @@ public class FTypeDialog
         dButton.setMnemonic(KeyEvent.VK_D);
         mButton=new JCheckBox("Behavior Mechanisms");
         mButton.setMnemonic(KeyEvent.VK_M);
+        cButton=new JCheckBox("Content Models");
+        cButton.setMnemonic(KeyEvent.VK_C);
         oButton=new JCheckBox("Data Objects");
         oButton.setMnemonic(KeyEvent.VK_O);
         oButton.setSelected(true);
         inputPane.add(dButton);
         inputPane.add(mButton);
+        inputPane.add(cButton);
         inputPane.add(oButton);
 
         JButton okButton=new JButton(new AbstractAction() {
@@ -69,6 +73,9 @@ public class FTypeDialog
                 }
                 if (oButton.isSelected()) {
                     selections+="O";
+                }
+                if (cButton.isSelected()) {
+                    selections+="C";
                 }
                 if (selections.equals("")) selections=null; 
                 dispose();

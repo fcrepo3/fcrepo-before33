@@ -24,27 +24,20 @@
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
           <rdf:Description rdf:about="info:fedora/demo:SmileyBeerGlass">
             <rel:isMemberOf rdf:resource="info:fedora/demo:SmileyStuff"/>
+            <rel:hasFormalContentModel rdf:resource="info:fedora/demo:CmodelForBMech_DualResImageImpl"/>
           </rdf:Description>
         </rdf:RDF>
       </foxml:xmlContent>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:datastream CONTROL_GROUP="E" ID="MediumSize.jpg"> 
+  <foxml:datastream CONTROL_GROUP="E" ID="MEDIUM_SIZE"> 
     <foxml:datastreamVersion ID="MediumSize.jpg.0" MIMETYPE="image/jpeg" LABEL="Medium-size image">
       <foxml:contentLocation REF="http://localhost:8080/fedora-demo/image-collection-demo/SmileyBeerGlass-MediumSize.jpg" TYPE="URL"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:datastream CONTROL_GROUP="E" ID="FullSize.jpg"> 
+  <foxml:datastream CONTROL_GROUP="E" ID="FULL_SIZE"> 
     <foxml:datastreamVersion ID="FullSize.jpg.0" MIMETYPE="image/jpeg" LABEL="Full-size image">
       <foxml:contentLocation REF="http://localhost:8080/fedora-demo/image-collection-demo/SmileyBeerGlass-FullSize.jpg" TYPE="URL"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:disseminator BDEF_CONTRACT_PID="demo:DualResImage" ID="DualResImage">
-    <foxml:disseminatorVersion BMECH_SERVICE_PID="demo:DualResImageImpl" ID="DualResImage1.0" LABEL="Dual Resolution Disseminator">
-      <foxml:serviceInputMap>
-        <foxml:datastreamBinding DATASTREAM_ID="FullSize.jpg" KEY="FULL_SIZE" LABEL="Binding to Full-size image" ORDER="0"/>
-        <foxml:datastreamBinding DATASTREAM_ID="MediumSize.jpg" KEY="MEDIUM_SIZE" LABEL="Binding to Medium-size image" ORDER="0"/>
-      </foxml:serviceInputMap>
-    </foxml:disseminatorVersion>
-  </foxml:disseminator>
 </foxml:digitalObject>

@@ -36,7 +36,7 @@
 		</sch:rule>
 		<!-- RULE:  check that the Fedora object type (fType) contains a valid value (FedoraObject, FedoraBDefObject, or FedoraBMechObject).-->
 		<sch:rule context="foxml:property[@NAME='http://www.w3.org/1999/02/22-rdf-syntax-ns#type']">
-			<sch:assert test="@VALUE = 'FedoraObject' or @VALUE = 'FedoraBDefObject' or @VALUE = 'FedoraBMechObject' or @VALUE = 'info:fedora/fedora-system:def/model#FedoraObject' or @VALUE = 'info:fedora/fedora-system:def/model#FedoraBDefObject' or @VALUE = 'info:fedora/fedora-system:def/model#FedoraBMechObject'">Object must be of type "FedoraObject|FedoraBDefObject|FedoraBMechObject" (foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" has an invalid VALUE).</sch:assert>
+			<sch:assert test="@VALUE = 'FedoraObject' or @VALUE = 'FedoraBDefObject' or @VALUE = 'FedoraBMechObject' or @VALUE = 'FedoraCModelObject' or @VALUE = 'info:fedora/fedora-system:def/model#FedoraObject' or @VALUE = 'info:fedora/fedora-system:def/model#FedoraBDefObject' or @VALUE = 'info:fedora/fedora-system:def/model#FedoraBMechObject' or @VALUE = 'info:fedora/fedora-system:def/model#FedoraCModelObject'">Object must be of type "FedoraObject|FedoraBDefObject|FedoraBMechObject|FedoraCModelObject" (foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" has an invalid VALUE).</sch:assert>
 		</sch:rule>
 		<!-- RULE:  check that the Fedora AUDIT datastream is not versioned.-->
 		<sch:rule context="foxml:datastream[@ID='AUDIT']">

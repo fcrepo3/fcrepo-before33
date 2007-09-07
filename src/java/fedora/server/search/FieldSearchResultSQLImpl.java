@@ -29,7 +29,8 @@ import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.RepositoryReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
-import fedora.server.storage.types.Disseminator;
+import fedora.server.storage.types.DigitalObject;
+//import fedora.server.storage.types.Disseminator;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.MD5Utility;
 
@@ -433,7 +434,7 @@ public class FieldSearchResultSQLImpl
             f=new ObjectFields();
         }
         // add non-dc values from doReader for the others in m_resultFields[]
-        Disseminator[] disses=null;
+//        Disseminator[] disses=null;
         for (int i=0; i<m_resultFields.length; i++) {
             String n=m_resultFields[i];
             if (n.equals("pid")) {
@@ -443,7 +444,7 @@ public class FieldSearchResultSQLImpl
                 f.setLabel(r.GetObjectLabel());
             }
             if (n.equals("fType")) {
-                f.setFType(r.getFedoraObjectType());
+                f.setFType(r.getFedoraObjectTypes());
             }
             if (n.equals("cModel")) {
                 f.setCModel(r.getContentModelId());
@@ -461,28 +462,29 @@ public class FieldSearchResultSQLImpl
                 f.setMDate(r.getLastModDate());
             }
             if (n.equals("bDef")) {
-                if (disses==null) {
-                    disses=r.GetDisseminators(null, null);
-                }
-                for (int i2=0; i2<disses.length; i2++) {
-                    f.bDefs().add(disses[i2].bDefID);
-                }
+//                if (disses==null) {
+//                    disses=r.GetDisseminators(null, null);
+//                }
+//                for (int i2=0; i2<disses.length; i2++) {
+//                    f.bDefs().add(disses[i2].bDefID);
+//                }
                 // also, if the object is a bMech, add the bDefs
                 // it implements!
-                if (r.getFedoraObjectType().equals("M")) {
+                if (r.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
+                {
                     BMechReader mechReader=m_repoReader.getBMechReader(Server.USE_DEFINITIVE_STORE, 
                     		ReadOnlyContext.EMPTY, pid);
                     f.bDefs().add(mechReader.getServiceDSInputSpec(null).bDefPID);
                 }
             }
-            if (n.equals("bMech")) {
-                if (disses==null) {
-                    disses=r.GetDisseminators(null, null);
-                }
-                for (int i2=0; i2<disses.length; i2++) {
-                    f.bMechs().add(disses[i2].bMechID);
-                }
-            }
+//            if (n.equals("bMech")) {
+//                if (disses==null) {
+//                    disses=r.GetDisseminators(null, null);
+//                }
+//                for (int i2=0; i2<disses.length; i2++) {
+//                    f.bMechs().add(disses[i2].bMechID);
+//                }
+//            }
         }
         return f;
     }
@@ -522,7 +524,8 @@ public class FieldSearchResultSQLImpl
      * @return String a suitable string for use in a SQL WHERE clause,
      *         as described above
      */
-    private static String toSql(String name, String in) {
+    private static String toSql(String name, String in) 
+    {
         if (   !name.endsWith("pid") 
             && !name.endsWith("bDef") 
             && !name.endsWith("bMech")) in=in.toLowerCase(); // if it's not a PID-type field, 

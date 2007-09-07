@@ -30,6 +30,7 @@ public class FedoraModelNamespace extends RDFNamespace {
     // Types
     public final RDFName BDEF_OBJECT;
     public final RDFName BMECH_OBJECT;
+    public final RDFName CMODEL_OBJECT;
     public final RDFName DATA_OBJECT;
 
     public FedoraModelNamespace() {
@@ -60,6 +61,7 @@ public class FedoraModelNamespace extends RDFNamespace {
         // Types
         this.BDEF_OBJECT          = new RDFName(this, "FedoraBDefObject");
         this.BMECH_OBJECT         = new RDFName(this, "FedoraBMechObject");
+        this.CMODEL_OBJECT        = new RDFName(this, "FedoraCModelObject");
         this.DATA_OBJECT          = new RDFName(this, "FedoraObject");
     }
 

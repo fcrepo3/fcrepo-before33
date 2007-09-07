@@ -31,12 +31,4 @@
 			<foxml:contentLocation REF="http://myserver.edu/mydir/somefile.html" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="fedora-system:1" STATE="A">
-		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="fedora-system:2" LABEL="Bootstrap Behaviors">
-			<foxml:serviceInputMap>
-				<foxml:datastreamBinding DATASTREAM_ID="METHODMAP" KEY="BDEF-METHODMAP" LABEL="Abstract behavior definition in Fedora Method Map format"/>
-				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="BDEF-GUIDE" LABEL="The Official Guide to the FO Behavior Definition"/>
-			</foxml:serviceInputMap>
-		</foxml:disseminatorVersion>
-	</foxml:disseminator>
 </foxml:digitalObject>

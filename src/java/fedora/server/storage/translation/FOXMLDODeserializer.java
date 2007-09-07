@@ -298,17 +298,30 @@ public class FOXMLDODeserializer
 					m_obj.setCreateDate(DateUtility.convertStringToDate(grab(a, F, "VALUE")));
 				} else if (m_objPropertyName.equals(VIEW.LAST_MODIFIED_DATE.uri)){
 					m_obj.setLastModDate(DateUtility.convertStringToDate(grab(a, F, "VALUE")));
-				} else if (m_objPropertyName.equals(RDF.TYPE.uri)) {
+				} 
+                else if (m_objPropertyName.equals(RDF.TYPE.uri)) 
+                {
 					String oType = grab(a, F, "VALUE");
 					if (oType==null || oType.equals("")) { oType=MODEL.DATA_OBJECT.localName; }
-                    if (MODEL.BDEF_OBJECT.looselyMatches(oType, false)) {
-						m_obj.setFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
-					} else if (MODEL.BMECH_OBJECT.looselyMatches(oType, false)) {
-						m_obj.setFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
-					} else {
-						m_obj.setFedoraObjectType(DigitalObject.FEDORA_OBJECT);
-					}
-				} else {
+                    if (MODEL.BDEF_OBJECT.looselyMatches(oType, false)) 
+                    {
+						m_obj.addFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
+					} 
+                    if (MODEL.BMECH_OBJECT.looselyMatches(oType, false)) 
+                    {
+						m_obj.addFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
+					} 
+                    if (MODEL.CMODEL_OBJECT.looselyMatches(oType, false)) 
+                    {
+                        m_obj.addFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT);
+                    }
+                    if (MODEL.DATA_OBJECT.looselyMatches(oType, false)) 
+                    {
+                        m_obj.addFedoraObjectType(DigitalObject.FEDORA_OBJECT);
+                    }
+				} 
+                else 
+                {
 					// add an extensible property in the property map
 					m_obj.setExtProperty(m_objPropertyName, grab(a, F, "VALUE"));
 				}
@@ -687,13 +700,19 @@ public class FOXMLDODeserializer
 			m_dsInfoType="";
 			m_dsOtherInfoType="";
 			m_dsMDClass=0;
-		} else if (localName.equals("serviceInputMap")) {
+		} 
+        else if (localName.equals("serviceInputMap")) 
+        {
 			m_diss.dsBindMap.dsBindings=(DSBinding[])m_dsBindings.toArray(new DSBinding[0]);
 			m_dsBindings=null;
-		} else if (uri.equals(F) && localName.equals("disseminatorVersion")) {
+		} 
+        else if (uri.equals(F) && localName.equals("disseminatorVersion")) 
+        {
 			m_obj.disseminators(m_diss.dissID).add(m_diss);
 			m_diss=null;
-        } else if (uri.equals(F) && localName.equals("disseminator")) {
+        } 
+        else if (uri.equals(F) && localName.equals("disseminator")) 
+        {
 			m_dissID="";
 			m_bDefID="";
 			m_dissState="";
@@ -834,13 +853,16 @@ public class FOXMLDODeserializer
 			// Relative Repository URL processing... 
 			// For selected inline XML datastreams look for relative repository URLs
 			// and make them absolute.
-			if ( m_obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT &&
-				 (m_dsId.equals("SERVICE-PROFILE") || m_dsId.equals("WSDL")) ) {
-					ds.xmlContent=
-						(DOTranslationUtility.normalizeInlineXML(
-							xmlString, m_transContext))
-							.getBytes(m_characterEncoding);
-			} else {
+			if ( m_obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT) &&
+				 (m_dsId.equals("SERVICE-PROFILE") || m_dsId.equals("WSDL")) ) 
+            {
+				ds.xmlContent=
+					(DOTranslationUtility.normalizeInlineXML(
+						xmlString, m_transContext))
+						.getBytes(m_characterEncoding);
+			} 
+            else 
+            {
 				ds.xmlContent = xmlString.getBytes(m_characterEncoding);
 			}
 			//LOOK! this sets bytes, not characters.  Do we want to set this?

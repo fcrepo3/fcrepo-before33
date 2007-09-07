@@ -19,6 +19,7 @@ import fedora.server.storage.DOReader;
 import fedora.server.storage.translation.DOTranslatorImpl;
 import fedora.server.storage.translation.METSLikeDODeserializer;
 import fedora.server.storage.translation.METSLikeDOSerializer;
+import fedora.server.storage.types.DigitalObject;
 
 /**
  *
@@ -81,7 +82,8 @@ public class RepositoryReaderTest
             String[] pids=m_repoReader.listObjectPIDs(null);
             for (int i=0; i<pids.length; i++) {
                 DOReader r=m_repoReader.getReader(Server.USE_DEFINITIVE_STORE, null, pids[i]);
-                if (r.getFedoraObjectType().equals("D")) {
+                if (r.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) 
+                {
                     BDefReader dr=m_repoReader.getBDefReader(Server.USE_DEFINITIVE_STORE, null, pids[i]);
                     System.out.println(dr.GetObjectPID() + " found via getBDefReader.");
                 }
@@ -96,7 +98,8 @@ public class RepositoryReaderTest
             String[] pids=m_repoReader.listObjectPIDs(null);
             for (int i=0; i<pids.length; i++) {
                 DOReader r=m_repoReader.getReader(Server.USE_DEFINITIVE_STORE, null, pids[i]);
-                if (r.getFedoraObjectType().equals("M")) {
+                if (r.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
+                {
                     BMechReader mr=m_repoReader.getBMechReader(Server.USE_DEFINITIVE_STORE, null, pids[i]);
                     System.out.println(mr.GetObjectPID() + " found via getBMechReader.");
                 }

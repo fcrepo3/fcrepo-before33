@@ -40,8 +40,8 @@ public interface Authorization {
 			String MIMEType, String formatURI, String dsLocation, String controlGroup, String dsState, String checksumType, String checksum) 
 	throws AuthzException;
 	
-	public void enforceAddDisseminator(Context context, String pid, String bDefPid, String bMechPid, String dissState) 
-	throws AuthzException;
+//	public void enforceAddDisseminator(Context context, String pid, String bDefPid, String bMechPid, String dissState) 
+//	throws AuthzException;
 	
 	public void enforceExportObject(Context context, String pid, String format, String exportContext, String exportEncoding) 
 	throws AuthzException;
@@ -55,14 +55,14 @@ public interface Authorization {
 	public void enforceGetDatastreams(Context context, String pid, Date asOfDate, String state) 
 	throws AuthzException;
 	
-	public void enforceGetDisseminator(Context context, String pid, String disseminatorId, Date asOfDateTime) 
-	throws AuthzException;
-	
-	public void enforceGetDisseminators(Context context, String pid, Date asOfDate, String disseminatorState) 
-	throws AuthzException;
-
-	public void enforceGetDisseminatorHistory(Context context, String pid, String disseminatorPid) 
-	throws AuthzException;
+//	public void enforceGetDisseminator(Context context, String pid, String disseminatorId, Date asOfDateTime) 
+//	throws AuthzException;
+//	
+//	public void enforceGetDisseminators(Context context, String pid, Date asOfDate, String disseminatorState) 
+//	throws AuthzException;
+//
+//	public void enforceGetDisseminatorHistory(Context context, String pid, String disseminatorPid) 
+//	throws AuthzException;
 	
 	public void enforceGetNextPid(Context context, String namespace, int nNewPids) 
 	throws AuthzException; 
@@ -90,8 +90,8 @@ public interface Authorization {
 			String mimeType, String formatURI, String checksumType, String checksum)
 	throws AuthzException;
 	
-	public void enforceModifyDisseminator(Context context, String pid, String disseminatorId, String mechanismPid, String disseminatorState) 
-	throws AuthzException;
+//	public void enforceModifyDisseminator(Context context, String pid, String disseminatorId, String mechanismPid, String disseminatorState) 
+//	throws AuthzException;
 	
 	public void enforceModifyObject(Context context, String pid, String objectState, String ownerId) 
 	throws AuthzException;
@@ -99,8 +99,8 @@ public interface Authorization {
 	public void enforcePurgeDatastream(Context context, String pid, String datastreamId, Date endDT) 
 	throws AuthzException;
 
-	public void enforcePurgeDisseminator(Context context, String pid, String disseminatorId, Date endDT) //x
-	throws AuthzException;
+//	public void enforcePurgeDisseminator(Context context, String pid, String disseminatorId, Date endDT) //x
+//	throws AuthzException;
 
 	public void enforcePurgeObject(Context context, String pid) 
 	throws AuthzException;
@@ -113,9 +113,18 @@ public interface Authorization {
     
     public void enforceCompareDatastreamChecksum(Context context, String pid, String datastreamId, Date versionDate) 
     throws AuthzException;    
+    
+    public void enforceGetRelationships(Context context, String pid, String subjectURI, String predicate)
+    throws AuthzException;    
 
-	public void enforceSetDisseminatorState(Context context, String pid, String disseminatorId, String disseminatorNewState) 
-	throws AuthzException;
+    public void enforceAddRelationship(Context context, String pid, String subjectURI, String predicate, String objectURI, String objectLit, String literalType)
+    throws AuthzException;    
+
+    public void enforcePurgeRelationship(Context context, String pid, String subjectURI, String predicate, String objectURI, String objectLit, String literalType)
+    throws AuthzException;    
+
+//	public void enforceSetDisseminatorState(Context context, String pid, String disseminatorId, String disseminatorNewState) 
+//	throws AuthzException;
 
 	//APIA
 

@@ -42,7 +42,7 @@ import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
-import fedora.server.storage.types.Disseminator;
+//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.DSBinding;
 import fedora.server.utilities.DateUtility;
@@ -164,10 +164,10 @@ public class METSLikeDODeserializer
      * by structMapId */
     private HashMap m_dissems;
 
-    /**
-     * Currently-being-initialized disseminator, during structmap parsing.
-     */
-    private Disseminator m_diss;
+//    /**
+//     * Currently-being-initialized disseminator, during structmap parsing.
+//     */
+//    private Disseminator m_diss;
 
     /**
      * Whether, while in structmap, we've already seen a div
@@ -283,12 +283,12 @@ public class METSLikeDODeserializer
 		// datastream, if one does not already exist.
 		createRelsInt();        
 		        		
-        // DISSEMINATORS... put disseminators in the instantiated digital object
-        Iterator dissemIter=m_dissems.values().iterator();
-        while (dissemIter.hasNext()) {
-            Disseminator diss=(Disseminator) dissemIter.next();
-            m_obj.disseminators(diss.dissID).add(diss);
-        }
+//        // DISSEMINATORS... put disseminators in the instantiated digital object
+//        Iterator dissemIter=m_dissems.values().iterator();
+//        while (dissemIter.hasNext()) {
+//            Disseminator diss=(Disseminator) dissemIter.next();
+//            m_obj.disseminators(diss.dissID).add(diss);
+//        }
     }
    
 	public void startPrefixMapping(String prefix, String uri) {
@@ -319,12 +319,21 @@ public class METSLikeDODeserializer
                 m_obj.setContentModelId(grab(a, M, "PROFILE"));
                 String objType=grab(a, M, "TYPE");
                 if (objType==null || objType.equals("")) { objType="FedoraObject"; }
-                if (objType.equalsIgnoreCase("FedoraBDefObject")) {
-                    m_obj.setFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
-                } else if (objType.equalsIgnoreCase("FedoraBMechObject")) {
-                    m_obj.setFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
-                } else {
-                    m_obj.setFedoraObjectType(DigitalObject.FEDORA_OBJECT);
+                if (objType.indexOf("FedoraBDefObject")!= -1) 
+                {
+                    m_obj.addFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
+                } 
+                if (objType.equalsIgnoreCase("FedoraBMechObject")) 
+                {
+                    m_obj.addFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
+                } 
+                if (objType.equalsIgnoreCase("FedoraCModelObject")) 
+                {
+                    m_obj.addFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
+                } 
+                if (objType.equalsIgnoreCase("FedoraObject")) 
+                {
+                    m_obj.addFedoraObjectType(DigitalObject.FEDORA_OBJECT);
                 }
             } else if (localName.equals("metsHdr")) {
                 m_obj.setCreateDate(DateUtility.convertStringToDate(
@@ -532,101 +541,119 @@ public class METSLikeDODeserializer
 					}
                 }
 
-            } else if (localName.equals("structMap")) {
-                // this is a component of a disseminator.  here we assume the rest
-                // of the disseminator's information will be seen later, so we
-                // construct a new Disseminator object to hold the structMap...
-                // and later, the other info
-                //
-                // Building up a global map of Disseminators, m_dissems,
-                // keyed by bindingmap ID.
-                //
-                if (grab(a,M,"TYPE").equals("fedora:dsBindingMap")) {
-                    String bmId=grab(a,M,"ID");
-                    if ( (bmId==null) || (bmId.equals("")) ) {
-                        throw new SAXException("structMap with TYPE fedora:dsBindingMap must specify a non-empty ID attribute.");
-                    } else {
-                        Disseminator diss=new Disseminator();
-                        diss.dsBindMapID=bmId;
-                        m_dissems.put(bmId,diss);
-                        m_diss=diss;
-                        m_diss.dsBindMap=new DSBindingMap();
-                        m_diss.dsBindMap.dsBindMapID=bmId;
-                        m_indiv=false; // flag that we're not looking at inner part yet
-                    }
-                } else {
-                    throw new SAXException("StructMap must have TYPE fedora:dsBindingMap");
-                }
-            } else if (localName.equals("div")) {
-                if (m_indiv) {
-                    // inner part of structmap
-                    DSBinding binding=new DSBinding();
-                    if (m_diss.dsBindMap.dsBindings==null) {
-                        // none yet.. create array of size one
-                        DSBinding[] bindings=new DSBinding[1];
-                        m_diss.dsBindMap.dsBindings=bindings;
-                        m_diss.dsBindMap.dsBindings[0]=binding;
-                    } else {
-                        // need to expand the array size by one,
-                        // and do an array copy.
-                        int curSize=m_diss.dsBindMap.dsBindings.length;
-                        DSBinding[] oldArray=m_diss.dsBindMap.dsBindings;
-                        DSBinding[] newArray=new DSBinding[curSize+1];
-                        for (int i=0; i<curSize; i++) {
-                            newArray[i]=oldArray[i];
-                        }
-                        newArray[curSize]=binding;
-                        m_diss.dsBindMap.dsBindings=newArray;
-                    }
-                    // now populate 'binding' values...we'll have
-                    // everything at this point except datastreamID...
-                    // that comes as a child: <fptr FILEID="DS2"/>
-                    binding.bindKeyName=grab(a,M,"TYPE");
-                    binding.bindLabel=grab(a,M,"LABEL");
-                    binding.seqNo=grab(a,M,"ORDER");
-                } else {
-                    m_indiv=true;
-                    // first (outer div) part of structmap
-                    m_diss.dsBindMap.dsBindMechanismPID=grab(a,M,"TYPE");
-                    m_diss.dsBindMap.dsBindMapLabel=grab(a,M,"LABEL");
-                }
-            } else if (localName.equals("fptr")) {
-                // assume we're inside the inner div... that's the
-                // only place the fptr element is valid.
-                DSBinding binding=m_diss.dsBindMap.dsBindings[
-                        m_diss.dsBindMap.dsBindings.length-1];
-                binding.datastreamID=grab(a,M,"FILEID");
-            } else if (localName.equals("behaviorSec")) {
+            } 
+//            else if (localName.equals("structMap")) 
+//            {
+//                // this is a component of a disseminator.  here we assume the rest
+//                // of the disseminator's information will be seen later, so we
+//                // construct a new Disseminator object to hold the structMap...
+//                // and later, the other info
+//                //
+//                // Building up a global map of Disseminators, m_dissems,
+//                // keyed by bindingmap ID.
+//                //
+//                if (grab(a,M,"TYPE").equals("fedora:dsBindingMap")) 
+//                {
+//                    String bmId=grab(a,M,"ID");
+//                    if ( (bmId==null) || (bmId.equals("")) ) 
+//                    {
+//                        throw new SAXException("structMap with TYPE fedora:dsBindingMap must specify a non-empty ID attribute.");
+//                    } 
+//                    else 
+//                    {
+//                        Disseminator diss=new Disseminator();
+//                        diss.dsBindMapID=bmId;
+//                        m_dissems.put(bmId,diss);
+//                        m_diss=diss;
+//                        m_diss.dsBindMap=new DSBindingMap();
+//                        m_diss.dsBindMap.dsBindMapID=bmId;
+//                        m_indiv=false; // flag that we're not looking at inner part yet
+//                    }
+//                } else {
+//                    throw new SAXException("StructMap must have TYPE fedora:dsBindingMap");
+//                }
+//            } 
+//            else if (localName.equals("div")) 
+//            {
+//                if (m_indiv) {
+//                    // inner part of structmap
+//                    DSBinding binding=new DSBinding();
+//                    if (m_diss.dsBindMap.dsBindings==null) {
+//                        // none yet.. create array of size one
+//                        DSBinding[] bindings=new DSBinding[1];
+//                        m_diss.dsBindMap.dsBindings=bindings;
+//                        m_diss.dsBindMap.dsBindings[0]=binding;
+//                    } else {
+//                        // need to expand the array size by one,
+//                        // and do an array copy.
+//                        int curSize=m_diss.dsBindMap.dsBindings.length;
+//                        DSBinding[] oldArray=m_diss.dsBindMap.dsBindings;
+//                        DSBinding[] newArray=new DSBinding[curSize+1];
+//                        for (int i=0; i<curSize; i++) {
+//                            newArray[i]=oldArray[i];
+//                        }
+//                        newArray[curSize]=binding;
+//                        m_diss.dsBindMap.dsBindings=newArray;
+//                    }
+//                    // now populate 'binding' values...we'll have
+//                    // everything at this point except datastreamID...
+//                    // that comes as a child: <fptr FILEID="DS2"/>
+//                    binding.bindKeyName=grab(a,M,"TYPE");
+//                    binding.bindLabel=grab(a,M,"LABEL");
+//                    binding.seqNo=grab(a,M,"ORDER");
+//                } else {
+//                    m_indiv=true;
+//                    // first (outer div) part of structmap
+//                    m_diss.dsBindMap.dsBindMechanismPID=grab(a,M,"TYPE");
+//                    m_diss.dsBindMap.dsBindMapLabel=grab(a,M,"LABEL");
+//                }
+//            } 
+//            else if (localName.equals("fptr")) 
+//            {
+//                // assume we're inside the inner div... that's the
+//                // only place the fptr element is valid.
+//                DSBinding binding=m_diss.dsBindMap.dsBindings[
+//                        m_diss.dsBindMap.dsBindings.length-1];
+//                binding.datastreamID=grab(a,M,"FILEID");
+//            } 
+            else if (localName.equals("behaviorSec")) 
+            {
                 // looks like we're in a disseminator... it should be in the
                 // hash by now because we've already gone through structmaps
                 // ...keyed by structmap id... remember the id (group id)
                 // so we can put it in when parsing serviceBinding
                 m_dissemId=grab(a,M,"ID");
                 m_dissemState=grab(a,M,"STATUS");
-            } else if (localName.equals("serviceBinding")) {
-                // remember the structId so we can grab the right dissem
-                // when parsing children
-                m_structId=grab(a,M,"STRUCTID");
-                // grab the disseminator associated with the provided structId
-                Disseminator dissem=(Disseminator) m_dissems.get(m_structId);
-                // plug known items in..
-                dissem.dissID=m_dissemId;
-                dissem.dissState=m_dissemState;
-                // then grab the new stuff for the dissem for this element, and
-                // put it in.
-                dissem.dissVersionID=grab(a,M,"ID");
-                dissem.bDefID=grab(a,M,"BTYPE");
-                dissem.dissCreateDT=DateUtility.convertStringToDate(grab(a,M,"CREATED"));
-                dissem.dissLabel=grab(a,M,"LABEL");
-            } else if (localName.equals("interfaceMD")) {
-                Disseminator dissem=(Disseminator) m_dissems.get(m_structId);
-                // already have the id from containing element, just need label
-                //dissem.bDefLabel=grab(a,M,"LABEL");
-            } else if (localName.equals("serviceBindMD")) {
-                Disseminator dissem=(Disseminator) m_dissems.get(m_structId);
-                //dissem.bMechLabel=grab(a,M,"LABEL");
-                dissem.bMechID=grab(a,XLINK_NAMESPACE,"href");
-            }
+            } 
+//            else if (localName.equals("serviceBinding")) 
+//            {
+//                // remember the structId so we can grab the right dissem
+//                // when parsing children
+//                m_structId=grab(a,M,"STRUCTID");
+//                // grab the disseminator associated with the provided structId
+//                Disseminator dissem=(Disseminator) m_dissems.get(m_structId);
+//                // plug known items in..
+//                dissem.dissID=m_dissemId;
+//                dissem.dissState=m_dissemState;
+//                // then grab the new stuff for the dissem for this element, and
+//                // put it in.
+//                dissem.dissVersionID=grab(a,M,"ID");
+//                dissem.bDefID=grab(a,M,"BTYPE");
+//                dissem.dissCreateDT=DateUtility.convertStringToDate(grab(a,M,"CREATED"));
+//                dissem.dissLabel=grab(a,M,"LABEL");
+//            } 
+//            else if (localName.equals("interfaceMD")) 
+//            {
+//                Disseminator dissem=(Disseminator) m_dissems.get(m_structId);
+//                // already have the id from containing element, just need label
+//                //dissem.bDefLabel=grab(a,M,"LABEL");
+//            } 
+//            else if (localName.equals("serviceBindMD")) 
+//            {
+//                Disseminator dissem=(Disseminator) m_dissems.get(m_structId);
+//                //dissem.bMechLabel=grab(a,M,"LABEL");
+//                dissem.bMechID=grab(a,XLINK_NAMESPACE,"href");
+//            }
         } else {
             if (m_inXMLMetadata) {
                 // must be in xmlData... just output it, remembering the number
@@ -922,13 +949,16 @@ public class METSLikeDODeserializer
 			// Relative Repository URL processing... 
 			// For selected inline XML datastreams look for relative repository URLs
 			// and make them absolute.
-			if ( m_obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT &&
-				 (m_dsId.equals("SERVICE-PROFILE") || m_dsId.equals("WSDL")) ) {
-					ds.xmlContent=
-						(DOTranslationUtility.normalizeInlineXML(
-							xmlString, m_transContext))
-							.getBytes(m_characterEncoding);
-			} else {
+			if ( m_obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT) &&
+				 (m_dsId.equals("SERVICE-PROFILE") || m_dsId.equals("WSDL")) ) 
+            {
+				ds.xmlContent=
+					(DOTranslationUtility.normalizeInlineXML(
+						xmlString, m_transContext))
+						.getBytes(m_characterEncoding);
+			} 
+            else 
+            {
 				ds.xmlContent = xmlString.getBytes(m_characterEncoding);
 			}
 			//LOOK! this sets bytes, not characters.  Do we want to set this?
@@ -1228,7 +1258,7 @@ public class METSLikeDODeserializer
 		m_dsChecksumType="";
 		
 		// temporary variables for processing disseminators
-		m_diss=null;
+//		m_diss=null;
 		m_dissems=new HashMap();
 	
 		// temporary variables for processing audit records

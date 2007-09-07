@@ -102,6 +102,21 @@ public class BaseTripleGenerator implements Constants, TripleGenerator {
 
         return set;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Set<Triple> getTriplesForCModelObject(DOReader reader)
+            throws ResourceIndexException {
+
+        Set<Triple> set = new HashSet<Triple>();
+
+        URIReference objURI = addCommonTriples(reader, set);
+        add(objURI, RDF.TYPE, MODEL.DATA_OBJECT, set);
+        addContentModelTriples(objURI, reader, set);
+
+        return set;
+    }
 
     /**
      * Add a "defines" statement for the given bDef for each abstract
@@ -142,6 +157,17 @@ public class BaseTripleGenerator implements Constants, TripleGenerator {
             throw new ResourceIndexException("Error adding implements bdef "
                     + "triples", e);
         }
+    }
+    
+    /**
+     * Add an "implements" statement for the given content model.
+     */
+    private void addContentModelTriples(URIReference objURI,
+                                          DOReader reader,
+                                          Set<Triple> set)
+            throws ResourceIndexException 
+    {
+        //  Are there any content model specific triples ??
     }
 
     /**

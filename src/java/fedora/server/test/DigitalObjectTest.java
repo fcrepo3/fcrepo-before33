@@ -12,7 +12,7 @@ import junit.framework.TestCase;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DigitalObject;
-import fedora.server.storage.types.Disseminator;
+//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.Datastream;
 
 /**
@@ -32,7 +32,7 @@ public class DigitalObjectTest
     private String m_namespacePrefix;
     private String m_namespaceURI;
     private Datastream m_ds1_0, m_ds1_1, m_ds2_0;
-    private Disseminator m_diss1_0, m_diss1_1, m_diss2_0;
+//    private Disseminator m_diss1_0, m_diss1_1, m_diss2_0;
     private AuditRecord m_audit1, m_audit2, m_audit3, m_audit4,
             m_audit5, m_audit6, m_audit7;
 
@@ -51,7 +51,7 @@ public class DigitalObjectTest
         m_obj=new BasicDigitalObject();
         m_obj.setContentModelId("cModel1");
         m_obj.setCreateDate(m_startTime);
-        m_obj.setFedoraObjectType(DigitalObject.FEDORA_OBJECT);
+        m_obj.addFedoraObjectType(DigitalObject.FEDORA_OBJECT);
         m_obj.setLabel("Test Object");
         m_obj.setLastModDate(m_startTime);
         m_obj.setOwnerId("userId1");
@@ -69,15 +69,15 @@ public class DigitalObjectTest
         m_ds2_0.DatastreamID="DS2.0";
         m_ds2_0.DSVersionID="DS2";
         // ... and some disseminators
-        m_diss1_0=new Disseminator();
-        m_diss1_0.dissID="DISS1.0";
-        m_diss1_0.dissVersionID="DISS1";
-        m_diss1_1=new Disseminator();
-        m_diss1_1.dissID="DISS1.1";
-        m_diss1_1.dissVersionID="DISS1";
-        m_diss2_0=new Disseminator();
-        m_diss2_0.dissID="DISS2.0";
-        m_diss2_0.dissVersionID="DISS2";
+//        m_diss1_0=new Disseminator();
+//        m_diss1_0.dissID="DISS1.0";
+//        m_diss1_0.dissVersionID="DISS1";
+//        m_diss1_1=new Disseminator();
+//        m_diss1_1.dissID="DISS1.1";
+//        m_diss1_1.dissVersionID="DISS1";
+//        m_diss2_0=new Disseminator();
+//        m_diss2_0.dissID="DISS2.0";
+//        m_diss2_0.dissVersionID="DISS2";
         // ... and some audit records
         m_audit1=new AuditRecord();
         m_audit1.id="AUDIT1";
@@ -104,7 +104,7 @@ public class DigitalObjectTest
         m_bdef=new BasicDigitalObject();
         m_bdef.setContentModelId("cModel2");
         m_bdef.setCreateDate(m_startTime);
-        m_bdef.setFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
+        m_bdef.addFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
         m_bdef.setLabel("Test Behavior Definition Object");
         m_bdef.setLastModDate(m_startTime);
         m_bdef.setOwnerId("userId2");
@@ -115,7 +115,7 @@ public class DigitalObjectTest
         m_bmech=new BasicDigitalObject();
         m_bmech.setContentModelId("cModel3");
         m_bmech.setCreateDate(m_startTime);
-        m_bmech.setFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
+        m_bmech.addFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
         m_bmech.setLabel("Test Behavior Mechanism Object");
         m_bmech.setLastModDate(m_startTime);
         m_bmech.setOwnerId("userId3");
@@ -131,9 +131,9 @@ public class DigitalObjectTest
         assertEquals(m_obj.getCreateDate(), m_startTime);
         assertEquals(m_bdef.getCreateDate(), m_startTime);
         assertEquals(m_bmech.getCreateDate(), m_startTime);
-        assertEquals(m_obj.getFedoraObjectType(), DigitalObject.FEDORA_OBJECT);
-        assertEquals(m_bdef.getFedoraObjectType(), DigitalObject.FEDORA_BDEF_OBJECT);
-        assertEquals(m_bmech.getFedoraObjectType(), DigitalObject.FEDORA_BMECH_OBJECT);
+        assertEquals(m_obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT), true);
+        assertEquals(m_bdef.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT), true);
+        assertEquals(m_bmech.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT), true);
         assertEquals(m_obj.getLabel(), "Test Object");
         assertEquals(m_bdef.getLabel(), "Test Behavior Definition Object");
         assertEquals(m_bmech.getLabel(), "Test Behavior Mechanism Object");

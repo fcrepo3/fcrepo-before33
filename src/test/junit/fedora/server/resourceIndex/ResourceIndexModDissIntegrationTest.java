@@ -42,8 +42,8 @@ public class ResourceIndexModDissIntegrationTest
         addEDatastream(original, "DS1");
 
         DigitalObject modified = deepCopy(original);
-        addDisseminator(modified, "DISS1", bDef.getPid(), bMech.getPid(), 
-                getBindings(1));
+//        addDisseminator(modified, "DISS1", bDef.getPid(), bMech.getPid(), 
+//                getBindings(1));
 
         doModifyTest(riLevel, getObjectSet(bMech, bDef, original), modified);
     }
@@ -74,11 +74,11 @@ public class ResourceIndexModDissIntegrationTest
 
         DigitalObject original = getTestObject("test:1", "test");
         addEDatastream(original, "DS1");
-        addDisseminator(original, "DISS1", bDef.getPid(), bMech.getPid(), 
-                getBindings(1));
+//        addDisseminator(original, "DISS1", bDef.getPid(), bMech.getPid(), 
+//                getBindings(1));
 
         DigitalObject modified = deepCopy(original);
-        modified.disseminators("DISS1").clear();
+//        modified.disseminators("DISS1").clear();
 
         doModifyTest(riLevel, getObjectSet(bDef, bMech, original), modified);
     }

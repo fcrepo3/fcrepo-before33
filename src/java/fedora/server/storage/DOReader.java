@@ -31,8 +31,9 @@ public interface DOReader
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public String getFedoraObjectType() throws ServerException;
-
+    public String getFedoraObjectTypes() throws ServerException;
+    public boolean isFedoraObjectType(int type) throws ServerException;
+    
     /**
      * Gets the content model of the object.
      *
@@ -161,27 +162,27 @@ public interface DOReader
      */
     public Date[] getDatastreamVersions(String datastreamID) throws ServerException;
 
-    /**
-     * Gets the creation dates of all versions of a particular disseminator,
-     * in no particular order.
-     *
-     * @param dissID The disseminator identifier
-     * @return the creation dates.
-     * @throws ServerException If any type of error occurred fulfilling the
-     *         request.
-     */
-    public Date[] getDisseminatorVersions(String dissID) throws ServerException;
-
+//    /**
+//     * Gets the creation dates of all versions of a particular disseminator,
+//     * in no particular order.
+//     *
+//     * @param dissID The disseminator identifier
+//     * @return the creation dates.
+//     * @throws ServerException If any type of error occurred fulfilling the
+//     *         request.
+//     */
+//    public Date[] getDisseminatorVersions(String dissID) throws ServerException;
+//
     /**
      * Gets all datastreams as of a certain date and in a certain state.
-	 *
+     *
      * This iterates through all datastreams in the object and
      * returns only those that existed at the given date/time,
      * and currently have a certain state.
-	 *
+     *
      * If the date/time given is null, the most recent version of
      * each datastream is obtained.  If the state is null, all datastreams
-	 * as of the given time will be returned, regardless of state.
+     * as of the given time will be returned, regardless of state.
      *
      * @param versDateTime The date-time stamp to get appropriate Datastream versions
      * @param state The state, null for any.
@@ -207,90 +208,90 @@ public interface DOReader
     public Datastream GetDatastream(String datastreamID, Date versDateTime) throws ServerException;
 
     /**
-	 * Gets a particular datastream in the digital object.
-	 * This is an alternative to retrieving a datastream if all that is known
-	 * is the version id (and not the date).
-	 * The datastream id and version id must match actual ids of an existing
-	 * datastream in the object.  Otherwise, null will be returned.
-	 *
-	 * @param datastreamID The datastream identifier
-	 * @param versionID The identifier of the particular version
-	 * @return a particular Datastream in the digital object
-	 * @throws ServerException If any time of error occurred fulfilling the
-	 *         request.
-	 */
+     * Gets a particular datastream in the digital object.
+     * This is an alternative to retrieving a datastream if all that is known
+     * is the version id (and not the date).
+     * The datastream id and version id must match actual ids of an existing
+     * datastream in the object.  Otherwise, null will be returned.
+     *
+     * @param datastreamID The datastream identifier
+     * @param versionID The identifier of the particular version
+     * @return a particular Datastream in the digital object
+     * @throws ServerException If any time of error occurred fulfilling the
+     *         request.
+     */
     public Datastream getDatastream(String datastreamID, String versionID) throws ServerException;
 
-   /**
-     * Same as getDatastreams, but for disseminators.
-     *
-     * @param versDateTime The date-time stamp to get appropriate Disseminator version
-     * @param state The state of the disseminator.
-     * @return all Disseminators as of a certain date.
-     * @throws ServerException If any type of error occurred fulfilling the
-     *         request.
-     */
-    public Disseminator[] GetDisseminators(Date versDateTime, String state) throws ServerException;
-
-   /**
-     * Same as listDatastreamIds, but for disseminators.
-     *
-     * @param state The state of the Disseminators to be listed.
-     * @return a list of Disseminator identifiers for all Disseminators in the
-     *         digital object.
-     * @throws ServerException If any type of error occurred fulfilling the
-     *         request.
-     */
-    public String[] ListDisseminatorIDs(String state) throws ServerException;
-
-   /**
-     * Same as getDatastream, but for disseminators.
-     *
-     * @param disseminatorID The Disseminator identifier
-     * @param versDateTime The date-time stamp to get appropriate Disseminator version
-     * @return a particular Disseminator in the digital object.
-     * @throws ServerException If any type of error occurred fulfilling the
-     *         request.
-     */
-    public Disseminator GetDisseminator(String disseminatorID, Date versDateTime) throws ServerException;
-
-   /**
-     * Gets PIDs of Behavior Definitions to which object subscribes.  This is
-     * done by looking at all the Disseminators for the object, and reflecting
-     * on what Behavior Definitions objects the Disseminators refer to.
-     * The given date is used to query for disseminators.  The disseminators
-     * as they existed during the given date are used.  If the date
-     * is given as null, the most recent version of each disseminator
-     * is used.
-     *
-     * @param versDateTime The date-time stamp to get appropriate version
-     * @return a list of PIDs of Behavior Definitions to which object subscribes.
-     * @throws ServerException If any type of error occurred fulfilling the
-     *         request.
-     */
-    public String[] GetBehaviorDefs(Date versDateTime) throws ServerException;
-
-    /**
-     * Gets list of method definitions that are available on a particular
-     * Disseminator. This is done by reflecting on the Disseminator
-     * that subscribes to the Behavior Definition that is specified in the
-     * method input parameter.  Then, by reflecting on that Disseminator,
-     * the PID of the Behavior Mechanism object can be obtained.
-     * Finally, method implementation information can be found in the
-     * Behavior Mechanism object to which that Disseminator refers.
-     *
-     * @param bDefPID The PID of a Behavior Definition to which the object
-     *        subscribes.  If this is the special bootstrap bdef,
-     *        this method returns null.
-     * @param versDateTime The date-time stamp to get appropriate version.
-     *        If this is given as null, the most recent version is used.
-     * @return a list of method definitions that are available on a particular
-     *         Disseminator.
-     * @throws ServerException If any type of error occurred fulfilling the
-     *         request.
-     */
-    public MethodDef[] listMethods(String bDefPID, Date versDateTime) throws ServerException;
-
+//   /**
+//     * Same as getDatastreams, but for disseminators.
+//     *
+//     * @param versDateTime The date-time stamp to get appropriate Disseminator version
+//     * @param state The state of the disseminator.
+//     * @return all Disseminators as of a certain date.
+//     * @throws ServerException If any type of error occurred fulfilling the
+//     *         request.
+//     */
+//    public Disseminator[] GetDisseminators(Date versDateTime, String state) throws ServerException;
+//
+//   /**
+//     * Same as listDatastreamIds, but for disseminators.
+//     *
+//     * @param state The state of the Disseminators to be listed.
+//     * @return a list of Disseminator identifiers for all Disseminators in the
+//     *         digital object.
+//     * @throws ServerException If any type of error occurred fulfilling the
+//     *         request.
+//     */
+//    public String[] ListDisseminatorIDs(String state) throws ServerException;
+//
+//   /**
+//     * Same as getDatastream, but for disseminators.
+//     *
+//     * @param disseminatorID The Disseminator identifier
+//     * @param versDateTime The date-time stamp to get appropriate Disseminator version
+//     * @return a particular Disseminator in the digital object.
+//     * @throws ServerException If any type of error occurred fulfilling the
+//     *         request.
+//     */
+//    public Disseminator GetDisseminator(String disseminatorID, Date versDateTime) throws ServerException;
+//
+//   /**
+//     * Gets PIDs of Behavior Definitions to which object subscribes.  This is
+//     * done by looking at all the Disseminators for the object, and reflecting
+//     * on what Behavior Definitions objects the Disseminators refer to.
+//     * The given date is used to query for disseminators.  The disseminators
+//     * as they existed during the given date are used.  If the date
+//     * is given as null, the most recent version of each disseminator
+//     * is used.
+//     *
+//     * @param versDateTime The date-time stamp to get appropriate version
+//     * @return a list of PIDs of Behavior Definitions to which object subscribes.
+//     * @throws ServerException If any type of error occurred fulfilling the
+//     *         request.
+//     */
+//    public String[] GetBehaviorDefs(Date versDateTime) throws ServerException;
+//
+//    /**
+//     * Gets list of method definitions that are available on a particular
+//     * Disseminator. This is done by reflecting on the Disseminator
+//     * that subscribes to the Behavior Definition that is specified in the
+//     * method input parameter.  Then, by reflecting on that Disseminator,
+//     * the PID of the Behavior Mechanism object can be obtained.
+//     * Finally, method implementation information can be found in the
+//     * Behavior Mechanism object to which that Disseminator refers.
+//     *
+//     * @param bDefPID The PID of a Behavior Definition to which the object
+//     *        subscribes.  If this is the special bootstrap bdef,
+//     *        this method returns null.
+//     * @param versDateTime The date-time stamp to get appropriate version.
+//     *        If this is given as null, the most recent version is used.
+//     * @return a list of method definitions that are available on a particular
+//     *         Disseminator.
+//     * @throws ServerException If any type of error occurred fulfilling the
+//     *         request.
+//     */
+//    public MethodDef[] listMethods(String bDefPID, Date versDateTime) throws ServerException;
+//
     /**
      * Gets list of ALL method definitions that are available on a particular
      * digital object. This is done by reflecting on EACH Disseminator
@@ -308,51 +309,51 @@ public interface DOReader
     public ObjectMethodsDef[] listMethods(Date versDateTime)
           throws ServerException;
 
-    /**
-     * Gets list of method parameter definitions that are available on a
-     * particular method. This is done by reflecting on the Disseminator
-     * that subscribes to the Behavior Definition that is specified in the
-     * method input parameter.  Then, by reflecting on that Disseminator,
-     * the PID of the Behavior Mechanism object can be obtained.
-     * Finally, method implementation information can be found in the
-     * Behavior Mechanism object to which that Disseminator refers.
-     *
-     * @param bDefPID The PID of a Behavior Definition to which the object
-     *        subscribes.  If this is the special bootstrap bdef,
-     *        this method returns null.
-     * @param methodName The name of the method.
-     * @param versDateTime The date-time stamp to get appropriate version
-     * @return a list of method parameter definitions that are available on a
-     *         particular method.
-     * @throws ServerException If any type of error occurred fulfilling the
-     *         request.
-     */
-    public MethodParmDef[] getObjectMethodParms(String bDefPID, String methodName,
-        Date versDateTime) throws ServerException;
+//    /**
+//     * Gets list of method parameter definitions that are available on a
+//     * particular method. This is done by reflecting on the Disseminator
+//     * that subscribes to the Behavior Definition that is specified in the
+//     * method input parameter.  Then, by reflecting on that Disseminator,
+//     * the PID of the Behavior Mechanism object can be obtained.
+//     * Finally, method implementation information can be found in the
+//     * Behavior Mechanism object to which that Disseminator refers.
+//     *
+//     * @param bDefPID The PID of a Behavior Definition to which the object
+//     *        subscribes.  If this is the special bootstrap bdef,
+//     *        this method returns null.
+//     * @param methodName The name of the method.
+//     * @param versDateTime The date-time stamp to get appropriate version
+//     * @return a list of method parameter definitions that are available on a
+//     *         particular method.
+//     * @throws ServerException If any type of error occurred fulfilling the
+//     *         request.
+//     */
+//    public MethodParmDef[] getObjectMethodParms(String bDefPID, String methodName,
+//        Date versDateTime) throws ServerException;
+//
+//    /**
+//     * Gets datastream binding map.
+//     *
+//     * @param versDateTime versioning datetime stamp
+//     * @return DSBindingMapAugmented[] array of datastream binding maps
+//     * @throws ServerException If anything went wrong
+//     */
+//    public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
+//          throws ServerException;
 
-    /**
-     * Gets datastream binding map.
-     *
-     * @param versDateTime versioning datetime stamp
-     * @return DSBindingMapAugmented[] array of datastream binding maps
-     * @throws ServerException If anything went wrong
-     */
-    public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
-          throws ServerException;
-
-    /**
-     * Gets the dissemination binding info necessary to perform a particular
-     * dissemination.
-     *
-     * @param bDefPID the behavior definition pid
-     * @param methodName the method name
-     * @param versDateTime versioning datetime stamp
-     * @return the dissemination binding info necessary to perform a particular
-     *         dissemination.
-     * @throws ServerException If anything went wrong
-     */
-    public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,
-          String methodName, Date versDateTime) throws ServerException;
+//    /**
+//     * Gets the dissemination binding info necessary to perform a particular
+//     * dissemination.
+//     *
+//     * @param bDefPID the behavior definition pid
+//     * @param methodName the method name
+//     * @param versDateTime versioning datetime stamp
+//     * @return the dissemination binding info necessary to perform a particular
+//     *         dissemination.
+//     * @throws ServerException If anything went wrong
+//     */
+//    public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,
+//          String methodName, Date versDateTime) throws ServerException;
 
     /**
      * <p>Gets the change history of an object by returning a list of timestamps
@@ -367,4 +368,5 @@ public interface DOReader
      */
     public String[] getObjectHistory(String PID) throws ServerException;
 
+    public RelationshipTuple[] getRelationships(String subjectURI, String relationship) throws ServerException;
 }

@@ -175,7 +175,6 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:disseminator BDEF_CONTRACT_PID="demo:1" ID="DISS1" STATE="A" VERSIONABLE="true">
 		<!-- Note: The value for createdDate is assigned dynamically by the Fedora server at ingest time if the CREATED attribute is not        -->
 		<!-- present on the component in the object being ingested. Therefore, it is recommended that this attribute be omitted from the          -->
 		<!-- object template so this date will be assigned dynamically by the Fedora server. If included in the template file, this value will be    -->
@@ -185,6 +184,8 @@
 		<!-- Uncomment the the following line if you want the DISS1 disseminator for all abjects built with this template to retain the specified         -->
 		<!-- createdDate after ingest.                                                                                                                                                                                -->
 		<!-- <foxml:disseminatorVersion CREATED="2005-03-15T12:57:07.241Z" BMECH_SERVICE_PID="demo:2" ID="DISS1.0" LABEL="UVA Std Image Behaviors"> -->
+    <!--
+	<foxml:disseminator BDEF_CONTRACT_PID="demo:1" ID="DISS1" STATE="A" VERSIONABLE="true">
 		<foxml:disseminatorVersion BMECH_SERVICE_PID="demo:2" ID="DISS1.0" LABEL="UVA Std Image Behaviors">
 			<foxml:serviceInputMap>
 				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="THUMBRES_IMG" LABEL="THUMBNAIL res jpg image" ORDER="0"/>
@@ -194,4 +195,5 @@
 			</foxml:serviceInputMap>
 		</foxml:disseminatorVersion>
 	</foxml:disseminator>
+    -->
 </foxml:digitalObject>

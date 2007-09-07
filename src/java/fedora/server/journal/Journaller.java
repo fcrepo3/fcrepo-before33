@@ -22,8 +22,9 @@ import fedora.server.management.Management;
 import fedora.server.management.ManagementDelegate;
 import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.Disseminator;
+//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.Property;
+import fedora.server.storage.types.RelationshipTuple;
 
 /**
  * <p>
@@ -275,61 +276,61 @@ public class Journaller extends Module implements Management, JournalConstants {
         return worker.getDatastreamHistory(context, pid, datastreamID);
     }
 
-    /**
-     * Delegate to the JournalWorker.
-     */
-    public String addDisseminator(Context context, String pid, String bDefPID,
-            String bMechPid, String dissLabel, DSBindingMap bindingMap,
-            String dissState, String logMessage) throws ServerException {
-        return worker.addDisseminator(context, pid, bDefPID, bMechPid,
-                dissLabel, bindingMap, dissState, logMessage);
-    }
-
-    /**
-     * Delegate to the JournalWorker.
-     */
-    public Date modifyDisseminator(Context context, String pid,
-            String disseminatorID, String bMechPid, String dissLabel,
-            DSBindingMap bindingMap, String dissState, String logMessage,
-            boolean force) throws ServerException {
-        return worker.modifyDisseminator(context, pid, disseminatorID,
-                bMechPid, dissLabel, bindingMap, dissState, logMessage, force);
-    }
-
-    /**
-     * Delegate to the JournalWorker.
-     */
-    public Date[] purgeDisseminator(Context context, String pid,
-            String disseminatorID, Date endDT, String logMessage)
-            throws ServerException {
-        return worker.purgeDisseminator(context, pid, disseminatorID, endDT,
-                logMessage);
-    }
-
-    /**
-     * Delegate to the JournalWorker.
-     */
-    public Disseminator getDisseminator(Context context, String pid,
-            String disseminatorID, Date asOfDateTime) throws ServerException {
-        return worker.getDisseminator(context, pid, disseminatorID,
-                asOfDateTime);
-    }
-
-    /**
-     * Delegate to the JournalWorker.
-     */
-    public Disseminator[] getDisseminators(Context context, String pid,
-            Date asOfDateTime, String dissState) throws ServerException {
-        return worker.getDisseminators(context, pid, asOfDateTime, dissState);
-    }
-
-    /**
-     * Delegate to the JournalWorker.
-     */
-    public Disseminator[] getDisseminatorHistory(Context context, String pid,
-            String disseminatorID) throws ServerException {
-        return worker.getDisseminatorHistory(context, pid, disseminatorID);
-    }
+//    /**
+//     * Delegate to the JournalWorker.
+//     */
+//    public String addDisseminator(Context context, String pid, String bDefPID,
+//            String bMechPid, String dissLabel, DSBindingMap bindingMap,
+//            String dissState, String logMessage) throws ServerException {
+//        return worker.addDisseminator(context, pid, bDefPID, bMechPid,
+//                dissLabel, bindingMap, dissState, logMessage);
+//    }
+//
+//    /**
+//     * Delegate to the JournalWorker.
+//     */
+//    public Date modifyDisseminator(Context context, String pid,
+//            String disseminatorID, String bMechPid, String dissLabel,
+//            DSBindingMap bindingMap, String dissState, String logMessage,
+//            boolean force) throws ServerException {
+//        return worker.modifyDisseminator(context, pid, disseminatorID,
+//                bMechPid, dissLabel, bindingMap, dissState, logMessage, force);
+//    }
+//
+//    /**
+//     * Delegate to the JournalWorker.
+//     */
+//    public Date[] purgeDisseminator(Context context, String pid,
+//            String disseminatorID, Date endDT, String logMessage)
+//            throws ServerException {
+//        return worker.purgeDisseminator(context, pid, disseminatorID, endDT,
+//                logMessage);
+//    }
+//
+//    /**
+//     * Delegate to the JournalWorker.
+//     */
+//    public Disseminator getDisseminator(Context context, String pid,
+//            String disseminatorID, Date asOfDateTime) throws ServerException {
+//        return worker.getDisseminator(context, pid, disseminatorID,
+//                asOfDateTime);
+//    }
+//
+//    /**
+//     * Delegate to the JournalWorker.
+//     */
+//    public Disseminator[] getDisseminators(Context context, String pid,
+//            Date asOfDateTime, String dissState) throws ServerException {
+//        return worker.getDisseminators(context, pid, asOfDateTime, dissState);
+//    }
+//
+//    /**
+//     * Delegate to the JournalWorker.
+//     */
+//    public Disseminator[] getDisseminatorHistory(Context context, String pid,
+//            String disseminatorID) throws ServerException {
+//        return worker.getDisseminatorHistory(context, pid, disseminatorID);
+//    }
 
     /**
      * Delegate to the JournalWorker.
@@ -375,14 +376,14 @@ public class Journaller extends Module implements Management, JournalConstants {
                 versionDate);
     }
 
-    /**
-     * Delegate to the JournalWorker.
-     */
-    public Date setDisseminatorState(Context context, String pid, String dsID,
-            String dsState, String logMessage) throws ServerException {
-        return worker.setDisseminatorState(context, pid, dsID, dsState,
-                logMessage);
-    }
+//    /**
+//     * Delegate to the JournalWorker.
+//     */
+//    public Date setDisseminatorState(Context context, String pid, String dsID,
+//            String dsState, String logMessage) throws ServerException {
+//        return worker.setDisseminatorState(context, pid, dsID, dsState,
+//                logMessage);
+//    }
 
     /**
      * Delegate to the JournalWorker.
@@ -397,6 +398,30 @@ public class Journaller extends Module implements Management, JournalConstants {
      */
     public boolean adminPing(Context context) throws ServerException {
         return worker.adminPing(context);
+    }
+
+    /**
+     * Delegate to the JournalWorker.
+     */
+    public RelationshipTuple[] getRelationships(Context context, String pid, String dsID, String relationship) throws ServerException
+    {
+        return worker.getRelationships(context, pid, dsID, relationship);
+    }
+
+    /**
+     * Delegate to the JournalWorker.
+     */
+    public RelationshipTuple addRelationship(Context context, String pid, String dsID, String relationship, String objURI, String objLiteral, String literalType) throws ServerException
+    {
+        return worker.addRelationship(context, pid, dsID, relationship, objURI, objLiteral, literalType);
+    }
+
+    /**
+     * Delegate to the JournalWorker.
+     */
+    public RelationshipTuple purgeRelationship(Context context, String pid, String dsID, String relationship, String objURI, String objLiteral, String literalType) throws ServerException
+    {
+        return worker.purgeRelationship(context, pid, dsID, relationship, objURI, objLiteral, literalType);
     }
 
 }

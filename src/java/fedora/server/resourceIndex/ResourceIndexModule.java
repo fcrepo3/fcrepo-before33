@@ -276,6 +276,14 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
             throws ResourceIndexException {
         _ri.addDataObject(reader);
     }
+   
+    /**
+     * {@inheritDoc}
+     */
+    public void addCModelObject(DOReader reader)
+            throws ResourceIndexException {
+        _ri.addCModelObject(reader);
+    }
 
     /**
      * {@inheritDoc}
@@ -300,6 +308,14 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
             throws ResourceIndexException {
         _ri.modifyDataObject(oldReader, newReader);
     }
+ 
+    /**
+     * {@inheritDoc}
+     */
+    public void modifyCModelObject(DOReader oldReader, DOReader newReader)
+            throws ResourceIndexException {
+        _ri.modifyCModelObject(oldReader, newReader);
+    }
 
     /**
      * {@inheritDoc}
@@ -323,6 +339,14 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
     public void deleteDataObject(DOReader oldReader)
             throws ResourceIndexException {
         _ri.deleteDataObject(oldReader);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void deleteCModelObject(DOReader oldReader)
+            throws ResourceIndexException {
+        _ri.deleteCModelObject(oldReader);
     }
 	
     /**

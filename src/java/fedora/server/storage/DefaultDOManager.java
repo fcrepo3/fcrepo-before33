@@ -5,6 +5,7 @@
 
 package fedora.server.storage;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -13,13 +14,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -29,10 +33,12 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
+import fedora.common.PID;
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.RecoveryContext;
 import fedora.server.Server;
+import fedora.server.access.DefaultAccess;
 import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.InvalidContextException;
@@ -55,14 +61,17 @@ import fedora.server.search.FieldSearch;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
-import fedora.server.storage.replication.DOReplicator;
+//import fedora.server.storage.replication.DOReplicator;
 import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.types.BasicDigitalObject;
+import fedora.server.storage.types.DSBinding;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
+import fedora.server.storage.types.RelationshipTuple;
+//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.utilities.DCFields;
 import fedora.server.utilities.SQLUtility;
@@ -95,7 +104,7 @@ public class DefaultDOManager
     protected PIDGenerator m_pidGenerator;
     protected DOTranslator m_translator;
     protected ILowlevelStorage m_permanentStore;
-    protected DOReplicator m_replicator;
+//    protected DOReplicator m_replicator;
     protected DOValidator m_validator;
     protected FieldSearch m_fieldSearch;
     protected ExternalContentManager m_contentManager;
@@ -110,6 +119,10 @@ public class DefaultDOManager
     protected ConnectionPool m_connectionPool;
     protected Connection m_connection;
 
+    protected HashMap<String,String> m_cModelBMechMap;
+    protected HashSet<String> m_allBMechPIDS;
+ //   protected long m_lastBMechModDate;
+    
     public static String DEFAULT_STATE="L";
 
     private static long THIRD_HEAPSIZE;
@@ -142,6 +155,9 @@ public class DefaultDOManager
     public void initModule()
             throws ModuleInitializationException {
         // pidNamespace (required, 1-17 chars, a-z, A-Z, 0-9 '-' '.')
+        m_cModelBMechMap = null;
+        m_allBMechPIDS = null;
+   //     m_lastBMechModDate = 0;
         m_pidNamespace=getParameter("pidNamespace");
         if (m_pidNamespace==null) {
             throw new ModuleInitializationException(
@@ -290,8 +306,8 @@ public class DefaultDOManager
         m_translator=(DOTranslator) getServer().
                 getModule("fedora.server.storage.translation.DOTranslator");
         // get ref to replicator
-        m_replicator=(DOReplicator) getServer().
-                getModule("fedora.server.storage.replication.DOReplicator");
+//        m_replicator=(DOReplicator) getServer().
+//                getModule("fedora.server.storage.replication.DOReplicator");
         // get ref to digital object validator
         m_validator=(DOValidator) getServer().
                 getModule("fedora.server.validation.DOValidator");
@@ -348,7 +364,98 @@ public class DefaultDOManager
             throw new ModuleInitializationException(
                     "LowlevelStorage not loaded", getRole());
         }
+        
+    }
 
+    public String lookupBmechForCModel(String cModelPid, String bDefPid)
+    {
+        String key = cModelPid + "+" + bDefPid;
+        String result = (m_cModelBMechMap == null) ? null : m_cModelBMechMap.get(key);
+        return(result);
+    }
+    
+    public void initializeCModelBmechHashMap(Context context) throws ServerException
+    {
+        // Initialize Map containing links from Content Models to the Bmechs.
+    //    long curBMechModDate = getLatestModificationDate("WHERE fType LIKE '%m%'");
+   //     if (m_lastBMechModDate < curBMechModDate)
+        // if hashMap already initialized, do nothing.
+        if (m_cModelBMechMap == null && m_allBMechPIDS == null)
+        {
+            // Initialize Map containing links from Content Models to the Bmechs.
+            m_cModelBMechMap = new HashMap();
+            m_allBMechPIDS = new HashSet();
+    
+            LOG.debug("Initializing ContentModel-BMech hash map");
+            Connection conn = null;
+            Statement s = null;
+            ResultSet results = null;
+            String[] newBMechPIDS = getPIDs("WHERE foType LIKE '%M%' ");
+//            HashSet curBMechPIDSToBeDeleted = (HashSet)m_allBMechPIDS.clone();
+            for (int i = 0; i < newBMechPIDS.length; i++) 
+            {
+                // if the list doesnt contain the BMech pid, add it.
+                if (!m_allBMechPIDS.contains(newBMechPIDS[i]))
+                {
+                    updateCModelBmechHashMap(context, newBMechPIDS[i], true);
+                    m_allBMechPIDS.add(newBMechPIDS[i]);
+                }
+                // if the list does contain the BMech pid, check if it was modified.
+//                else
+//                {
+////                    long bmechDate = getLatestModificationDate("WHERE PID = '" + newBMechPIDS[i] + "'");
+//                    // if it has been modified since the late update of the map, remove and re-add it.
+////                    if (bmechDate > m_lastBMechModDate)
+//                    {
+//                        updateCModelBmechHashMap(context, newBMechPIDS[i], false);           
+//                        updateCModelBmechHashMap(context, newBMechPIDS[i], true);                               
+//                    }
+//                    // other wise simply remove it from the list of BMechs to be remove from the map
+////                    curBMechPIDSToBeDeleted.remove(newBMechPIDS[i]);
+//                }
+            }
+//            Iterator iter = curBMechPIDSToBeDeleted.iterator();
+//            while (iter.hasNext())
+//            {
+//                String deletedPID = (String)iter.next();
+//                updateCModelBmechHashMap(context, deletedPID, false);           
+//            } 
+//            m_lastBMechModDate = curBMechModDate;
+        }
+    }
+
+    public void addCModelBmechHashMap(DOReader reader) throws ServerException
+    {
+        RelationshipTuple bdef[] = reader.getRelationships(null, Constants.RELS_EXT.HAS_BDEF.uri);        
+        RelationshipTuple cmodels[] = reader.getRelationships(null, Constants.RELS_EXT.IS_CONTRACTOR.uri);
+        if (cmodels == null) return;
+        for (int i = 0; i < cmodels.length; i++)
+        {
+            String key = cmodels[i].getObjectPID() + "+" + bdef[0].getObjectPID();
+            m_cModelBMechMap.put(key, reader.GetObjectPID());
+        }
+    }
+        
+    public void updateCModelBmechHashMap(Context context, String pid, boolean addPid) throws ServerException
+    {
+        if (addPid)
+        {
+            DOReader reader = getReader(false, context, pid);
+            addCModelBmechHashMap(reader);
+        }
+        else
+        {
+            Collection coll = m_cModelBMechMap.values();
+            Iterator iter = coll.iterator();
+            while (iter.hasNext())
+            {
+                String value = (String)iter.next();
+                if (value.equals(pid))
+                {
+                    iter.remove();
+                }
+            }           
+        }
     }
 
     public void shutdownModule() {
@@ -407,9 +514,9 @@ public class DefaultDOManager
         return m_validator;
     }
 
-    public DOReplicator getReplicator() {
-        return m_replicator;
-    }
+//    public DOReplicator getReplicator() {
+//        return m_replicator;
+//    }
 
     public String[] getRequiredModuleRoles() {
         // FIXME add "fedora.server.resourceIndex.ResourceIndex" once
@@ -421,7 +528,7 @@ public class DefaultDOManager
                 "fedora.server.storage.lowlevel.ILowlevelStorage",
                 "fedora.server.storage.ExternalContentManager",
                 "fedora.server.storage.translation.DOTranslator",
-                "fedora.server.storage.replication.DOReplicator",
+//                "fedora.server.storage.replication.DOReplicator",
                 "fedora.server.validation.DOValidator" };
     }
 
@@ -449,10 +556,13 @@ public class DefaultDOManager
         long getReaderStartTime = System.currentTimeMillis();
         String source = null;
         try {
-            if (cachedObjectRequired) {
-                source = "database";
-                return new FastDOReader(context, pid);
-            } else {
+//            if (cachedObjectRequired) 
+//            {
+//                source = "database";
+//                return new FastDOReader(context, pid);
+//            } 
+//            else 
+            {
                 DOReader reader = null;
                 if (m_readerCache != null) {
                     reader = m_readerCache.get(pid);
@@ -482,10 +592,14 @@ public class DefaultDOManager
 	 * Gets a reader on an an existing behavior mechanism object.
 	 */
     public BMechReader getBMechReader(boolean cachedObjectRequired, Context context, String pid)
-            throws ServerException {
-        if (cachedObjectRequired) {
-            return new FastBmechReader(context, pid);
-        } else {
+            throws ServerException 
+    {
+//        if (cachedObjectRequired) 
+//        {
+//            return new FastBmechReader(context, pid);
+//        } 
+//        else 
+        {
             return new SimpleBMechReader(context, this, m_translator,
                     m_defaultExportFormat, m_defaultStorageFormat,
                     m_storageCharacterEncoding,
@@ -498,9 +612,12 @@ public class DefaultDOManager
 	 */
     public BDefReader getBDefReader(boolean cachedObjectRequired, Context context, String pid)
             throws ServerException {
-        if (cachedObjectRequired) {
-            return new FastBdefReader(context, pid);
-        } else {
+//        if (cachedObjectRequired) 
+//        {
+//            return new FastBdefReader(context, pid);
+//        } 
+//        else 
+        {
             return new SimpleBDefReader(context, this, m_translator,
                     m_defaultExportFormat, m_defaultStorageFormat,
                     m_storageCharacterEncoding,
@@ -551,9 +668,12 @@ public class DefaultDOManager
         BasicDigitalObject obj = null;
 
 		File tempFile = null;
-		if (cachedObjectRequired) {
+		if (cachedObjectRequired) 
+        {
 			throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
-		} else {
+		} 
+        else 
+        {
 			try {
 				// CURRENT TIME:
 				// Get the current time to use for created dates on object
@@ -579,7 +699,7 @@ public class DefaultDOManager
 				LOG.debug("Deserializing from format: " + format);
 				m_translator.deserialize(new FileInputStream(tempFile), obj, format, encoding, 
 					DOTranslationUtility.DESERIALIZE_INSTANCE);
-                	
+                                
 				// SET OBJECT PROPERTIES:
 				LOG.debug("Setting object/component states and create dates if unset");
 				// set object state to "A" (Active) if not already set
@@ -609,22 +729,22 @@ public class DefaultDOManager
 						}
 					}
 				}
-				// SET DISSEMINATOR PROPERTIES...
-				Iterator dissIter=obj.disseminatorIdIterator();
-				while (dissIter.hasNext()) {
-					List dissList=(List) obj.disseminators((String) dissIter.next());
-					for (int i=0; i<dissList.size(); i++) {
-						Disseminator diss=(Disseminator) dissList.get(i);
-						// Set create date to UTC if not already set
-						if (diss.dissCreateDT==null || diss.dissCreateDT.equals("")) {
-							diss.dissCreateDT=nowUTC;
-						}
-						// Set state to "A" (Active) if not already set
-						if (diss.dissState==null || diss.dissState.equals("")) {
-							diss.dissState="A";
-						}
-					}
-				}
+//				// SET DISSEMINATOR PROPERTIES...
+//				Iterator dissIter=obj.disseminatorIdIterator();
+//				while (dissIter.hasNext()) {
+//					List dissList=(List) obj.disseminators((String) dissIter.next());
+//					for (int i=0; i<dissList.size(); i++) {
+//						Disseminator diss=(Disseminator) dissList.get(i);
+//						// Set create date to UTC if not already set
+//						if (diss.dissCreateDT==null || diss.dissCreateDT.equals("")) {
+//							diss.dissCreateDT=nowUTC;
+//						}
+//						// Set state to "A" (Active) if not already set
+//						if (diss.dissState==null || diss.dissState.equals("")) {
+//							diss.dissState="A";
+//						}
+//					}
+//				}
 
 				// PID VALIDATION:
 				// validate and normalized the provided pid, if any
@@ -646,25 +766,34 @@ public class DefaultDOManager
 					} catch (IOException e) {
 						throw new GeneralException("Error calling pidGenerator.neverGeneratePID(): " + e.getMessage());
 					}
-				} else {
-					if (newPid) {
+				} 
+                else 
+                {
+					if (newPid) 
+                    {
 						LOG.debug("Client wants a new PID");
 						// yes... so do that, then set it in the obj.
 						String p=null;
-						try {
+						try 
+                        {
                             // If the context contains a recovery PID, use that.
                             // Otherwise, generate a new PID as usual.
-                            if (context instanceof RecoveryContext) {
+                            if (context instanceof RecoveryContext) 
+                            {
                                 RecoveryContext rContext = (RecoveryContext) context;
                                 p = rContext.getRecoveryValue(Constants.RECOVERY.PID.uri);
                             }
-                            if (p == null) {
+                            if (p == null) 
+                            {
                                 p=m_pidGenerator.generatePID(m_pidNamespace).toString();
-                            } else {
+                            } 
+                            else 
+                            {
                                 LOG.debug("Using new PID from recovery context");
                                 m_pidGenerator.neverGeneratePID(p);
                             }
-						} catch (Exception e) {
+						} 
+                        catch (Exception e) {
 							throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: ("
 									+ e.getClass().getName() + ") - " + e.getMessage());
 						}
@@ -676,7 +805,7 @@ public class DefaultDOManager
 				}
 
                 LOG.info("New object PID is " + obj.getPid());
-                
+                 
 				// CHECK REGISTRY:
 				// ensure the object doesn't already exist
 				if (objectExists(obj.getPid())) {
@@ -690,6 +819,97 @@ public class DefaultDOManager
 				w=new SimpleDOWriter(context, this, m_translator,
 						m_defaultExportFormat, m_storageCharacterEncoding, obj);
 
+                // Translate Disseminators to CMDA
+                // If Content Model property is defined see if object named that is in repository
+                if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT))
+                { 
+                    Iterator dissIDs = obj.disseminatorIdIterator();
+                    if (dissIDs.hasNext())
+                    {
+                        throw new GeneralException("Object containing Disseminators no longer supported under the CMDA model. ");
+//                        String dissID = (String)dissIDs.next();
+//                        List<Disseminator> dissList = obj.disseminators(dissID);
+//                        Disseminator diss = dissList.get(dissList.size()-1);
+//                        String cModelPid = obj.getContentModelId();
+//                        String pidPrefix = obj.getPid().substring(0, obj.getPid().indexOf(":"));
+//                        if (cModelPid == null || cModelPid.length() == 0)
+//                        {
+//                            String bMechPidSuffix = diss.bMechID;
+//                            bMechPidSuffix = bMechPidSuffix.substring(bMechPidSuffix.indexOf(":")+1);
+//                            cModelPid = "CmodelForBMech_"+ bMechPidSuffix;
+//                        }
+//                        if (cModelPid.indexOf(":") == -1) 
+//                        {
+//                            cModelPid = pidPrefix + ":" + cModelPid;                        
+//                        }
+//                        String cModelPidToUse = cModelPid;
+//                        boolean done = false;
+//                        int secondMethod = 0;
+//                        boolean fallbackPosition = false;
+//                        while (!done)
+//                        {
+//                            if (!objectExists(cModelPidToUse))                                                      
+//                            {
+//                                // CModel Object doesn't exist, create it.
+//                                CreateContentModelFromDisseminators(context, cModelPidToUse, diss);
+//                                done = true;
+//                            }
+//                            else
+//                            {
+////                                  check to see if it is a valid Content Model for these disseminators
+//                                if (VerifyExistingContentModel(context, cModelPidToUse, diss))
+//                                {
+//                                    done = true;
+//                                }
+//                                else if (secondMethod < 5)
+//                                {
+//                                    // make a new pid and try again
+//                                    secondMethod++;
+//                                    cModelPidToUse = cModelPidToUse + "_" + secondMethod;                        
+//                                }
+//                                else  // just add a DS-COMPOSITE-MODEL Datastream to the data object.
+//                                {
+//                                    throw new GeneralException("Object containing Disseminators no longer supported under the CMDA model. ");
+////                                    fallbackPosition = true;
+////                                    done = true;
+////                                    CreateAndAddDSCompositeModel(context, w, diss);
+////                                    obj.addFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT);
+////                                    w.addRelationship(PID.toURI(obj.getPid()), "rel:hasFormalContentModel", "info:fedora/self", null);
+////                                    w.addRelationship(PID.toURI(obj.getPid()), "rel:hasContractualBMech", PID.toURI(diss.bMechID), null);
+//                                }
+//                            }
+//                        }
+//                        if (!fallbackPosition)
+//                        {
+//                            w.addRelationship(PID.toURI(obj.getPid()), "rel:hasFormalContentModel", PID.toURI(cModelPidToUse), null);
+//                        }
+//                        RenameDatastreamsBasedOnDisseminator(context, w, diss);
+                    }
+                }                
+                // If Object is BMech, make sure it has a relationship hasBDef linking it to the corresponding BDef
+                if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
+                {
+                    DatastreamXMLMetadata ds = (DatastreamXMLMetadata) w.GetDatastream("DSINPUTSPEC", null);
+                    InputStream is = ds.getContentStream();
+                    BufferedReader  sr = new BufferedReader(new InputStreamReader(is));
+                    String line = sr.readLine();
+                    int offset;
+                    String bdefPid = null;
+                    while ((offset = line.indexOf("bDefPID")) == -1)
+                    {
+                        line = sr.readLine(); 
+                    }
+                    if (line != null)
+                    {
+                        int q1 = line.indexOf('"', offset);
+                        int q2 = line.indexOf('"', q1+1);
+                        bdefPid = line.substring(q1+1, q2);
+                    }
+                    if (bdefPid != null)
+                    {
+                        w.addRelationship(PID.toURI(obj.getPid()), Constants.RELS_EXT.HAS_BDEF.uri, PID.toURI(bdefPid), null, null);
+                    }                                       
+                }
                 // WRITE LOCK:
                 // ensure no one else can modify the object now
                 getWriteLock(obj.getPid());
@@ -704,7 +924,8 @@ public class DefaultDOManager
 				// is the PID
 				DatastreamXMLMetadata dc=(DatastreamXMLMetadata) w.GetDatastream("DC", null);
 				DCFields dcf;
-				if (dc==null) {
+				if (dc==null) 
+                {
 					dc=new DatastreamXMLMetadata("UTF-8");
 					dc.DSMDClass=0;
 					//dc.DSMDClass=DatastreamXMLMetadata.DESCRIPTIVE;
@@ -718,21 +939,27 @@ public class DefaultDOManager
 					dc.DSState="A";
 					dc.DSVersionable=true;
 					dcf=new DCFields();
-					if (obj.getLabel()!=null && !(obj.getLabel().equals(""))) {
+					if (obj.getLabel()!=null && !(obj.getLabel().equals(""))) 
+                    {
 						dcf.titles().add(obj.getLabel());
 					}
 					w.addDatastream(dc, dc.DSVersionable);
-				} else {
+				} 
+                else 
+                {
 					dcf=new DCFields(new ByteArrayInputStream(dc.xmlContent));
 				}
 				// ensure one of the dc:identifiers is the pid
 				boolean sawPid=false;
-				for (int i=0; i<dcf.identifiers().size(); i++) {
-					if ( ((String) dcf.identifiers().get(i)).equals(obj.getPid()) ) {
+				for (int i = 0; i < dcf.identifiers().size(); i++) 
+                {
+					if ( ((String) dcf.identifiers().get(i)).equals(obj.getPid()) ) 
+                    {
 						sawPid=true;
 					}
 				}
-				if (!sawPid) {
+				if (!sawPid) 
+                {
 					dcf.identifiers().add(obj.getPid());
 				}
 				// set the value of the dc datastream according to what's in the DCFields object
@@ -756,7 +983,7 @@ public class DefaultDOManager
 				// REGISTRY:
 				// at this point the object is valid, so make a record 
 				// of it in the digital object registry
-				registerObject(obj.getPid(), obj.getFedoraObjectType(), 
+				registerObject(obj.getPid(), obj.getFedoraObjectTypes(), 
 					getUserId(context), obj.getLabel(), obj.getContentModelId(), 
 					obj.getCreateDate(), obj.getLastModDate());
 				return w;
@@ -792,6 +1019,137 @@ public class DefaultDOManager
 			}
 		}
 	}
+//
+//    private void RenameDatastreamsBasedOnDisseminator(Context context, DOWriter w, Disseminator diss) throws ServerException
+//    {
+//      for (int i = 0; i < diss.dsBindMap.dsBindings.length; i++)
+//      {
+//          DSBinding binding = diss.dsBindMap.dsBindings[i];
+//          Datastream ds = w.GetDatastream(binding.datastreamID, null);
+//          ds.DatastreamID = binding.bindKeyName;
+//      }
+//    }
+//
+//    private boolean VerifyExistingContentModel(Context context, String modelPid, Disseminator diss)
+//    {
+//        try
+//        {
+//            RelationshipTuple bdefs[] = m_management.getRelationships(context, modelPid, null, "hasBDef");
+//            for (int i = 0; i < bdefs.length; i++)
+//            {
+//                if (bdefs[i].getObjectPID().equals(diss.bDefID))
+//                {
+//                    return(true);
+//                }
+//            }
+//        }
+//        catch (ServerException e)
+//        {
+//        }
+//        return(false);
+//    }
+//
+//    private void CreateContentModelFromDisseminators(Context context, String modelPid, Disseminator diss) throws ServerException
+//    {
+//        Date nowUTC = null;
+//        try {
+//            // CURRENT TIME:
+//            // Get the current time to use for created dates on object
+//            // and object components (if they are not already there).
+//            nowUTC = Server.getCurrentDate(context);
+//        }
+//        catch (GeneralException ge)
+//        {}
+//        DigitalObject obj = new BasicDigitalObject();
+//        obj.setNamespaceMapping(new HashMap());
+//        obj.setPid(modelPid);
+//        obj.setNew(true);
+//        obj.setState("A");
+//        obj.setCreateDate(nowUTC);
+//        obj.setLastModDate(nowUTC);
+//        obj.setOwnerId("fedoraAdmin");
+//        obj.setLabel("Generated Content Model");
+//        obj.addFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT);
+//        DatastreamXMLMetadata dc = null;
+//        DCFields dcf;
+//        dc = new DatastreamXMLMetadata("UTF-8");
+//        dc.DSMDClass=0;
+//        //dc.DSMDClass=DatastreamXMLMetadata.DESCRIPTIVE;
+//        dc.DatastreamID="DC";
+//        dc.DSVersionID="DC1.0";
+//        dc.DSControlGrp="X";
+//        dc.DSCreateDT=nowUTC;
+//        dc.DSLabel="Dublin Core Metadata";
+//        dc.DSMIME="text/xml";
+//        dc.DSSize=0;
+//        dc.DSState="A";
+//        dc.DSVersionable=true;
+//        dcf = new DCFields();
+//        if (obj.getLabel() != null && !(obj.getLabel().equals(""))) 
+//        {
+//            dcf.titles().add(obj.getLabel());                
+//        }
+//        dcf.identifiers().add(obj.getPid());            
+//        // set the value of the dc datastream according to what's in the DCFields object
+//        try {
+//            dc.xmlContent = dcf.getAsXML().getBytes("UTF-8");
+//        } catch (UnsupportedEncodingException uee) {
+//            // safely ignore... we know UTF-8 works
+//        }
+//        obj.addDatastreamVersion(dc, dc.DSVersionable);
+//        
+//        DOWriter w = new SimpleDOWriter(context, this, m_translator,
+//                            m_defaultExportFormat, m_storageCharacterEncoding, obj);
+//        
+//   //     CreateAndAddDSCompositeModel(context, w, diss);
+//
+//        w.addRelationship(PID.toURI(obj.getPid()), "rel:hasBDef", PID.toURI(diss.bDefID), null);
+//        // add realtionship from bmech to this content model
+//        m_management.addRelationship(context, diss.bMechID, null, "rel:isContractor", PID.toURI(obj.getPid()), null, null);
+//
+//        // REGISTRY:
+//        // at this point the object is valid, so make a record 
+//        // of it in the digital object registry
+//        registerObject(obj.getPid(), obj.getFedoraObjectTypes(), 
+//            getUserId(context), obj.getLabel(), obj.getContentModelId(), 
+//            obj.getCreateDate(), obj.getLastModDate());
+//        w.commit("Automagic Content Model");
+//    }
+
+//    private void CreateAndAddDSCompositeModel( Context context, DOWriter w, Disseminator diss) throws ServerException
+//    {
+//        DatastreamXMLMetadata ds = new DatastreamXMLMetadata("UTF-8");
+//        ds.DatastreamID = "DS-COMPOSITE-MODEL";
+//        ds.DSVersionID="DS-COMPOSITE-MODEL1.0";
+//        ds.DSControlGrp = "X";
+//        ds.DSMIME = "text/xml";
+//        try {
+//            ds.DSCreateDT = Server.getCurrentDate(context);
+//        }
+//        catch (GeneralException ge)
+//        {            
+//        }
+//        ds.DSLabel="Generated Content Model";
+//        ds.DSSize=0;
+//        ds.DSState="A";
+//        ds.DSVersionable=true;
+//        ds.xmlContent = CreateDSCompositeModelFromDisseminators(diss).getBytes();
+//        w.addDatastream(ds, ds.DSVersionable);
+//    }
+//    
+//    private String CreateDSCompositeModelFromDisseminators( Disseminator diss) throws ServerException
+//    {
+//        StringBuffer dsContents = new StringBuffer();
+//       
+//        dsContents.append("            <dsCompositeModel>\n"); 
+//        for (int i = 0; i < diss.dsBindMap.dsBindings.length; i++)
+//        {
+//            DSBinding binding = diss.dsBindMap.dsBindings[i];
+//            dsContents.append("                    <dsTypeModel ID=\""+ binding.datastreamID +"\" ORDERED=\"false\" SEMANTIC_ID=\"" + binding.bindKeyName + "\" MIN=\"1\" MAX=\"1\"/>\n");
+//        }
+//        dsContents.append("            </dsCompositeModel>\n"); 
+//        return (dsContents.toString());
+//     }
 
     /**
      * The doCommit method finalizes an ingest/update/remove of a digital object. 
@@ -812,42 +1170,49 @@ public class DefaultDOManager
             System.gc();
             LOG.debug("Done requesting full GC.  Free bytes = " + Runtime.getRuntime().freeMemory());
         }
-
+        
+        // make sure the Hash map is initialized
+        initializeCModelBmechHashMap(context);
+        
         // OBJECT REMOVAL...
         if (remove) {
 
             LOG.info("Committing removal of " + obj.getPid());
 
-            // REFERENTIAL INTEGRITY:
-            // Before removing an object, verify that there are no other objects
-            // in the repository that depend on the object being deleted.
-            int fType = obj.getFedoraObjectType();
-            if (fType == DigitalObject.FEDORA_BDEF_OBJECT) {
-                FieldSearchResult result = findObjects(context,
-                    new String[] {"pid"}, 10,
-                    new FieldSearchQuery(Condition.getConditions("bDef~"+obj.getPid())));
-                if (result.objectFieldsList().size() > 0) {
-                    throw new ObjectDependencyException("The digital object \""
-                        + obj.getPid() + "\" is used by one or more other objects "
-                        + "in the repository. All related objects must be removed "
-                        + "before this object may be deleted. Use the search "
-                        + "interface with the query \"bDef~" + obj.getPid()
-                        + "\" to obtain a list of dependent objects.");
-                }
-            } else if (fType == DigitalObject.FEDORA_BMECH_OBJECT) {
-                FieldSearchResult result = findObjects(context,
-                    new String[] {"pid"}, 10,
-                    new FieldSearchQuery(Condition.getConditions("bMech~"+obj.getPid())));
-                if (result.objectFieldsList().size() > 0) {
-                    throw new ObjectDependencyException("The digital object \""
-                        + obj.getPid() + "\" is used by one or more other objects "
-                        + "in the repository. All related objects must be removed "
-                        + "before this object may be deleted. Use the search "
-                        + "interface with the query \"bMech~" + obj.getPid()
-                        + "\" to obtain a list of dependent objects.");
-                }
+//            // REFERENTIAL INTEGRITY:
+//            // Before removing an object, verify that there are no other objects
+//            // in the repository that depend on the object being deleted.
+//            int fType = obj.getFedoraObjectType();
+//            if (fType == DigitalObject.FEDORA_BDEF_OBJECT) {
+//                FieldSearchResult result = findObjects(context,
+//                    new String[] {"pid"}, 10,
+//                    new FieldSearchQuery(Condition.getConditions("bDef~"+obj.getPid())));
+//                if (result.objectFieldsList().size() > 0) {
+//                    throw new ObjectDependencyException("The digital object \""
+//                        + obj.getPid() + "\" is used by one or more other objects "
+//                        + "in the repository. All related objects must be removed "
+//                        + "before this object may be deleted. Use the search "
+//                        + "interface with the query \"bDef~" + obj.getPid()
+//                        + "\" to obtain a list of dependent objects.");
+//                }
+//            } else if (fType == DigitalObject.FEDORA_BMECH_OBJECT) {
+//                FieldSearchResult result = findObjects(context,
+//                    new String[] {"pid"}, 10,
+//                    new FieldSearchQuery(Condition.getConditions("bMech~"+obj.getPid())));
+//                if (result.objectFieldsList().size() > 0) {
+//                    throw new ObjectDependencyException("The digital object \""
+//                        + obj.getPid() + "\" is used by one or more other objects "
+//                        + "in the repository. All related objects must be removed "
+//                        + "before this object may be deleted. Use the search "
+//                        + "interface with the query \"bMech~" + obj.getPid()
+//                        + "\" to obtain a list of dependent objects.");
+//                }
+//            }
+            // IF OBJECT IS A BMECH  REMOVE IT FROM HASHMAP
+            if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
+            {
+                updateCModelBmechHashMap(context, obj.getPid(), false);
             }
-
             // DATASTREAM STORAGE:
             // remove any managed content datastreams associated with object
             // from persistent storage.
@@ -916,18 +1281,18 @@ public class DefaultDOManager
             } catch (ServerException se) {
                 LOG.warn("Object couldn't be removed from registry, but that might be ok; continuing with purge");
             }
-            if (wasInRegistry) {
-                LOG.info("Deleting from dissemination index");
-                try {
-                    // Set entry for this object to "D" in the replication jobs table
-                    addReplicationJob(obj.getPid(), true);
-                    // tell replicator to do deletion
-                    m_replicator.delete(obj.getPid());
-                    removeReplicationJob(obj.getPid());
-                } catch (ServerException se) {
-                    LOG.warn("Object couldn't be deleted from the cached copy (" + se.getMessage() + "); leaving replication job unfinished");
-                }
-            }
+//            if (wasInRegistry) {
+//                LOG.info("Deleting from dissemination index");
+//                try {
+//                    // Set entry for this object to "D" in the replication jobs table
+//                    addReplicationJob(obj.getPid(), true);
+//                    // tell replicator to do deletion
+////                    m_replicator.delete(obj.getPid());
+//                    removeReplicationJob(obj.getPid());
+//                } catch (ServerException se) {
+//                    LOG.warn("Object couldn't be deleted from the cached copy (" + se.getMessage() + "); leaving replication job unfinished");
+//                }
+//            }
 			// FIELD SEARCH INDEX:
 			// remove digital object from the default search index
             try {
@@ -942,17 +1307,26 @@ public class DefaultDOManager
             if (m_resourceIndex.getIndexLevel() != ResourceIndex.INDEX_LEVEL_OFF) {
                 try {
                     LOG.info("Deleting from ResourceIndex");
-                    if (obj.getFedoraObjectType() == 
-                            DigitalObject.FEDORA_BDEF_OBJECT) {
+                    if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT))
+                    {
                         m_resourceIndex.deleteBDefObject(
                                 new SimpleBDefReader(null, null, null, null, 
                                 null, origObj));
-                    } else if (obj.getFedoraObjectType() == 
-                            DigitalObject.FEDORA_BMECH_OBJECT) {
+                    } 
+                    if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)) 
+                    {
                         m_resourceIndex.deleteBMechObject(
                                 new SimpleBMechReader(null, null, null, null, 
                                 null, origObj));
-                    } else {
+                    }
+                    if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) 
+                    {
+                        m_resourceIndex.deleteCModelObject(
+                                new SimpleDOReader(null, null, null, null, 
+                                null, origObj));
+                    }
+                    if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT)) 
+                    {
                         m_resourceIndex.deleteDataObject(
                                 new SimpleDOReader(null, null, null, null, 
                                 null, origObj));
@@ -1089,35 +1463,56 @@ public class DefaultDOManager
                 if (m_resourceIndex != null && m_resourceIndex.getIndexLevel() != ResourceIndex.INDEX_LEVEL_OFF) {
                     LOG.info("Adding to ResourceIndex");
                     if (obj.isNew()) {
-                        if (obj.getFedoraObjectType() ==
-                                DigitalObject.FEDORA_BDEF_OBJECT) {
+                        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT))
+                        {
                             m_resourceIndex.addBDefObject(
                                     new SimpleBDefReader(null, null, null, null,
                                     null, obj));
-                        } else if (obj.getFedoraObjectType() ==
-                                DigitalObject.FEDORA_BMECH_OBJECT) {
+                        } 
+                        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
+                        {
                             m_resourceIndex.addBMechObject(
                                     new SimpleBMechReader(null, null, null, null,
                                     null, obj));
-                        } else {
-                            m_resourceIndex.addDataObject(
+                        } 
+                        if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT))
+                        {
+                           m_resourceIndex.addCModelObject(
                                     new SimpleDOReader(null, null, null, null,
                                     null, obj));
                         }
-                    } else {
-                        if (obj.getFedoraObjectType() ==
-                                DigitalObject.FEDORA_BDEF_OBJECT) {
+                        if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT))
+                        {
+                             m_resourceIndex.addDataObject(
+                                    new SimpleDOReader(null, null, null, null,
+                                    null, obj));
+                        }
+                    } 
+                    else 
+                    {
+                        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT))
+                        {
                             m_resourceIndex.modifyBDefObject(
                                     getBDefReader(false, null, obj.getPid()),
                                     new SimpleBDefReader(null, null, null, null,
                                     null, obj));
-                        } else if (obj.getFedoraObjectType() ==
-                                DigitalObject.FEDORA_BMECH_OBJECT) {
+                        } 
+                        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
+                        {
                             m_resourceIndex.modifyBMechObject(
                                     getBMechReader(false, null, obj.getPid()),
                                     new SimpleBMechReader(null, null, null, null,
                                     null, obj));
-                        } else {
+                        } 
+                        if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT))
+                        {
+                            m_resourceIndex.modifyCModelObject(
+                                    getReader(false, null, obj.getPid()),
+                                    new SimpleDOReader(null, null, null, null,
+                                    null, obj));
+                        } 
+                        if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT))
+                        {
                             m_resourceIndex.modifyDataObject(
                                     getReader(false, null, obj.getPid()),
                                     new SimpleDOReader(null, null, null, null,
@@ -1184,34 +1579,50 @@ public class DefaultDOManager
                 // REPLICATE:
                 // add to replication jobs table and do replication to db
                 LOG.info("Updating dissemination index");
-                addReplicationJob(obj.getPid(), false);
-                String whichIndex = "dissemination";
+//                addReplicationJob(obj.getPid(), false);
+                String whichIndex = "FieldSearch";
+
                 try {
-                    if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) {
+                    if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) 
+                    {
                         BDefReader reader=getBDefReader(cachedObjectRequired, context, obj.getPid());
-                        m_replicator.replicate(reader);
                         LOG.info("Updating FieldSearch index");
-                        whichIndex = "FieldSearch";
                         m_fieldSearch.update(reader);
-                    } else if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
+                    } 
+                    if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)) 
+                    {
                         BMechReader reader=getBMechReader(cachedObjectRequired, context, obj.getPid());
-                        m_replicator.replicate(reader);
                         LOG.info("Updating FieldSearch index");
-                        whichIndex = "FieldSearch";
                         m_fieldSearch.update(reader);
-                    } else {
+                        // IF OBJECT IS A BMECH  REMOVE IT FROM HASHMAP
+                        if (!obj.isNew()) 
+                        {
+                            updateCModelBmechHashMap(context, obj.getPid(), false);
+                        }
+                        addCModelBmechHashMap(reader);
+                    } 
+                    if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT)) 
+                    {
                         DOReader reader=getReader(cachedObjectRequired, context, obj.getPid());
-                        m_replicator.replicate(reader);
                         LOG.info("Updating FieldSearch index");
-                        whichIndex = "FieldSearch";
+                        m_fieldSearch.update(reader);
+                    }
+                    if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) 
+                    {
+                        DOReader reader=getReader(cachedObjectRequired, context, obj.getPid());
+                        LOG.info("Updating FieldSearch index");
                         m_fieldSearch.update(reader);
                     }
                     // FIXME: also remove from temp storage if this is successful
-                    removeReplicationJob(obj.getPid());
-                } catch (ServerException se) {
+//                    removeReplicationJob(obj.getPid());
+                } 
+                catch (ServerException se) 
+                {
                     LOG.error("Error updating " + whichIndex + " index", se);
                     throw se;
-                } catch (Throwable th) {
+                } 
+                catch (Throwable th) 
+                {
                     String msg = "Error updating " + whichIndex + " index";
                     LOG.error(msg, th);
                     throw new GeneralException(msg, th);
@@ -1279,54 +1690,54 @@ public class DefaultDOManager
         }
     }
 
-    /**
-     * Add an entry to the replication jobs table.
-     */
-    private void addReplicationJob(String pid, boolean deleted)
-            throws StorageDeviceException {
-        Connection conn=null;
-        String[] columns=new String[] {"doPID", "action"};
-        String action="M";
-        if (deleted) {
-            action="D";
-        }
-        String[] values=new String[] {pid, action};
-        try {
-            conn=m_connectionPool.getConnection();
-            SQLUtility.replaceInto(conn, "doRepJob", columns,
-                    values, "doPID");
-        } catch (SQLException sqle) {
-            throw new StorageDeviceException("Error creating replication job: " + sqle.getMessage());
-        } finally {
-            if (conn!=null) {
-                m_connectionPool.free(conn);
-            }
-        }
-    }
-
-    private void removeReplicationJob(String pid)
-            throws StorageDeviceException {
-        Connection conn=null;
-        Statement s=null;
-        try {
-            conn=m_connectionPool.getConnection();
-            s=conn.createStatement();
-            s.executeUpdate("DELETE FROM doRepJob "
-                    + "WHERE doPID = '" + pid + "'");
-        } catch (SQLException sqle) {
-            throw new StorageDeviceException("Error removing entry from replication jobs table: " + sqle.getMessage());
-        } finally {
-
-            try {
-                if (s!=null) s.close();
-                if (conn!=null) m_connectionPool.free(conn);
-            } catch (SQLException sqle) {
-                throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
-            } finally {
-                s=null;
-            }
-        }
-    }
+//    /**
+//     * Add an entry to the replication jobs table.
+//     */
+//    private void addReplicationJob(String pid, boolean deleted)
+//            throws StorageDeviceException {
+//        Connection conn=null;
+//        String[] columns=new String[] {"doPID", "action"};
+//        String action="M";
+//        if (deleted) {
+//            action="D";
+//        }
+//        String[] values=new String[] {pid, action};
+//        try {
+//            conn=m_connectionPool.getConnection();
+//            SQLUtility.replaceInto(conn, "doRepJob", columns,
+//                    values, "doPID");
+//        } catch (SQLException sqle) {
+//            throw new StorageDeviceException("Error creating replication job: " + sqle.getMessage());
+//        } finally {
+//            if (conn!=null) {
+//                m_connectionPool.free(conn);
+//            }
+//        }
+//    }
+//
+//    private void removeReplicationJob(String pid)
+//            throws StorageDeviceException {
+//        Connection conn=null;
+//        Statement s=null;
+//        try {
+//            conn=m_connectionPool.getConnection();
+//            s=conn.createStatement();
+//            s.executeUpdate("DELETE FROM doRepJob "
+//                    + "WHERE doPID = '" + pid + "'");
+//        } catch (SQLException sqle) {
+//            throw new StorageDeviceException("Error removing entry from replication jobs table: " + sqle.getMessage());
+//        } finally {
+//
+//            try {
+//                if (s!=null) s.close();
+//                if (conn!=null) m_connectionPool.free(conn);
+//            } catch (SQLException sqle) {
+//                throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
+//            } finally {
+//                s=null;
+//            }
+//        }
+//    }
 
 
     /**
@@ -1417,7 +1828,7 @@ public class DefaultDOManager
      * The caller *must* ensure the object does not already exist in the
      * registry before calling this method.
      */
-    private void registerObject(String pid, int fedoraObjectType, String userId,
+    private void registerObject(String pid, String fedoraObjectType, String userId,
             String label, String contentModelId, Date createDate, Date lastModDate)
             throws StorageDeviceException {
         // label or contentModelId may be null...set to blank if so
@@ -1431,13 +1842,14 @@ public class DefaultDOManager
         }
         Connection conn=null;
         Statement st=null;
-        String foType="O";
-        if (fedoraObjectType==DigitalObject.FEDORA_BDEF_OBJECT) {
-            foType="D";
-        }
-        if (fedoraObjectType==DigitalObject.FEDORA_BMECH_OBJECT) {
-            foType="M";
-        }
+        String foType=fedoraObjectType;
+//        "O";
+//        if (fedoraObjectType==DigitalObject.FEDORA_BDEF_OBJECT) {
+//            foType="D";
+//        }
+//        if (fedoraObjectType==DigitalObject.FEDORA_BMECH_OBJECT) {
+//            foType="M";
+//        }
         try {
             String query="INSERT INTO doRegistry (doPID, foType, "
                                                    + "ownerId, label, "
@@ -1722,7 +2134,7 @@ public class DefaultDOManager
             hash.append(getNumObjectsWithVersion(conn, 0));
             hash.append("|");
 
-            hash.append(getLatestModificationDate(conn));
+            hash.append(getLatestModificationDate(conn, ""));
 
             return hash.toString();
 
@@ -1760,20 +2172,68 @@ public class DefaultDOManager
         }
     }
 
-    private long getLatestModificationDate(Connection conn)
-            throws SQLException {
+//    private long getLatestModificationDate(Connection conn)
+//            throws SQLException {
+//        Statement st = null;
+//        try {
+//            st = conn.createStatement();
+//            ResultSet results = st.executeQuery("SELECT MAX(mDate) "
+//                    + "FROM doFields");
+//            if (results.next()) {
+//                return results.getLong(1);
+//            } else {
+//                return 0L;
+//            }
+//        } finally {
+//            if (st != null) st.close();
+//        }
+//    }
+    
+    private long getLatestModificationDate(Connection conn, String whereClause) 
+            throws SQLException 
+    {
         Statement st = null;
         try {
             st = conn.createStatement();
             ResultSet results = st.executeQuery("SELECT MAX(mDate) "
-                    + "FROM doFields");
-            if (results.next()) {
+                    + "FROM doFields " + whereClause);
+            if (results.next()) 
+            {
                 return results.getLong(1);
-            } else {
+            } 
+            else 
+            {
                 return 0L;
             }
-        } finally {
+        } 
+        finally 
+        {
             if (st != null) st.close();
         }
     }
+    
+    private long getLatestModificationDate(String whereClause) 
+           throws GeneralException 
+    {
+        Connection conn = null;
+        try {
+            conn = m_connectionPool.getConnection();
+
+            long date = getLatestModificationDate(conn, whereClause);
+            return(date);
+
+        } 
+        catch (SQLException e) 
+        {
+            throw new GeneralException("SQL error encountered while getting "
+                    + "last modified date", e);
+        } 
+        finally 
+        {
+            if (conn != null) m_connectionPool.free(conn);
+        }
+    }
+
+
+
 }

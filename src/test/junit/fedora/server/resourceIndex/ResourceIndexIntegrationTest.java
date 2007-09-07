@@ -57,7 +57,7 @@ import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DigitalObject;
-import fedora.server.storage.types.Disseminator;
+//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.DSBinding;
 
@@ -408,15 +408,23 @@ public abstract class ResourceIndexIntegrationTest {
     protected void modify(DigitalObject origObject, 
                           DigitalObject modifiedObject,
                           boolean flush) throws Exception {
-        if (origObject.getFedoraObjectType() ==
-                    DigitalObject.FEDORA_BDEF_OBJECT) {
+        if (origObject.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT))
+        {
             _ri.modifyBDefObject(getBDefReader(origObject),
                                  getBDefReader(modifiedObject));
-        } else if (origObject.getFedoraObjectType() ==
-                    DigitalObject.FEDORA_BMECH_OBJECT) {
+        } 
+        if (origObject.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
+        {
             _ri.modifyBMechObject(getBMechReader(origObject),
                                   getBMechReader(modifiedObject));
-        } else {
+        } 
+        if (origObject.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT))
+        {
+//            _ri.modifyCModelObject(getDOReader(origObject),
+//                                 getDOReader(modifiedObject));
+        }
+        if (origObject.isFedoraObjectType(DigitalObject.FEDORA_OBJECT))
+        {
             _ri.modifyDataObject(getDOReader(origObject),
                                  getDOReader(modifiedObject));
         }
@@ -455,42 +463,55 @@ public abstract class ResourceIndexIntegrationTest {
     }
 
     private void addOrDelAll(Set<DigitalObject> objects,
-            boolean flush, boolean add) throws Exception {
-        for (DigitalObject obj : objects) {
-            if (add) {
-                if (obj.getFedoraObjectType() == 
-                        DigitalObject.FEDORA_BDEF_OBJECT) {
+            boolean flush, boolean add) throws Exception 
+    {
+        for (DigitalObject obj : objects) 
+        {
+            if (add) 
+            {
+                if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT))
+                {
                     _ri.addBDefObject(getBDefReader(obj));
                     _ri.flushBuffer();
                 }
-            } else {
-                if (obj.getFedoraObjectType() == 
-                        DigitalObject.FEDORA_OBJECT) {
+            } 
+            else 
+            {
+                if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT))
+                {
                     _ri.deleteDataObject(getDOReader(obj));
                 }
             }
         }
-        for (DigitalObject obj : objects) {
-            if (obj.getFedoraObjectType() == 
-                    DigitalObject.FEDORA_BMECH_OBJECT) {
-                if (add) {
+        for (DigitalObject obj : objects) 
+        {
+            if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
+            {
+                if (add) 
+                {
                     _ri.addBMechObject(getBMechReader(obj));
                     _ri.flushBuffer();
-                } else {
+                } 
+                else 
+                {
                     _ri.deleteBMechObject(getBMechReader(obj));
                     _ri.flushBuffer();
                 }
             }
         }
-        for (DigitalObject obj : objects) {
-            if (add) {
-                if (obj.getFedoraObjectType() == 
-                        DigitalObject.FEDORA_OBJECT) {
+        for (DigitalObject obj : objects) 
+        {
+            if (add) 
+            {
+                if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT))
+                {
                     _ri.addDataObject(getDOReader(obj));
                 }
-            } else {
-                if (obj.getFedoraObjectType() == 
-                        DigitalObject.FEDORA_BDEF_OBJECT) {
+            } 
+            else 
+            {
+                if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT))
+                {
                     _ri.deleteBDefObject(getBDefReader(obj));
                     _ri.flushBuffer();
                 }
@@ -521,9 +542,10 @@ public abstract class ResourceIndexIntegrationTest {
         Set<Triple> expected = new HashSet<Triple>();
 
         // get triples for all bdefs
-        for (DigitalObject obj : objects) {
-            if (obj.getFedoraObjectType() == 
-                    DigitalObject.FEDORA_BDEF_OBJECT) {
+        for (DigitalObject obj : objects) 
+        {
+            if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT))
+            {
                 BDefReader reader = repo.getBDefReader(false, null, 
                         obj.getPid());
                 methodInfo.putBDefInfo(reader);
@@ -532,9 +554,10 @@ public abstract class ResourceIndexIntegrationTest {
         }
 
         // get triples for all bmechs
-        for (DigitalObject obj : objects) {
-            if (obj.getFedoraObjectType() == 
-                    DigitalObject.FEDORA_BMECH_OBJECT) {
+        for (DigitalObject obj : objects) 
+        {
+            if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
+            {
                 BMechReader reader = repo.getBMechReader(false, null, 
                         obj.getPid());
                 methodInfo.putBMechInfo(reader);
@@ -543,8 +566,10 @@ public abstract class ResourceIndexIntegrationTest {
         }
 
         // get triples for all data objects
-        for (DigitalObject obj : objects) {
-            if (obj.getFedoraObjectType() == DigitalObject.FEDORA_OBJECT) {
+        for (DigitalObject obj : objects) 
+        {
+            if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT))
+            {
                 DOReader reader = repo.getReader(false, null, obj.getPid());
                 expected.addAll(generator.getTriplesForDataObject(reader));
             }
@@ -876,35 +901,35 @@ public abstract class ResourceIndexIntegrationTest {
         return _ri.findTriples("spo", query, -1, false);
     }
 
-    protected static void addDisseminator(DigitalObject obj, String id,
-            String bDefPID, String bMechPID, Map<String, String> bindings) {
-        List dissems = obj.disseminators(id);
-        Disseminator diss = new Disseminator();
-        diss.bDefID = bDefPID;
-        diss.bMechID = bMechPID;
-        diss.dissCreateDT = new Date();
-        diss.dissID = id;
-        diss.dissLabel = "disseminator";
-        diss.dissState = "A";
-        diss.dissVersionID = id + "." + dissems.size();
-        DSBindingMap bindMap = new DSBindingMap();
-        bindMap.dsBindMapLabel = "bindmap";
-        bindMap.dsBindMechanismPID = bMechPID;
-        DSBinding[] dsBindings = new DSBinding[bindings.size()];
-        int i = 0;
-        for (String key : bindings.keySet()) {
-            String dsID = bindings.get(key);
-            dsBindings[i] = new DSBinding();
-            dsBindings[i].bindKeyName = key;
-            dsBindings[i].bindLabel = "bindlabel";
-            dsBindings[i].datastreamID = dsID;
-            dsBindings[i].seqNo = "1";
-            i++;
-        }
-        bindMap.dsBindings = dsBindings;
-        diss.dsBindMap = bindMap; 
-        dissems.add(diss);
-    }
+//    protected static void addDisseminator(DigitalObject obj, String id,
+//            String bDefPID, String bMechPID, Map<String, String> bindings) {
+//        List dissems = obj.disseminators(id);
+//        Disseminator diss = new Disseminator();
+//        diss.bDefID = bDefPID;
+//        diss.bMechID = bMechPID;
+//        diss.dissCreateDT = new Date();
+//        diss.dissID = id;
+//        diss.dissLabel = "disseminator";
+//        diss.dissState = "A";
+//        diss.dissVersionID = id + "." + dissems.size();
+//        DSBindingMap bindMap = new DSBindingMap();
+//        bindMap.dsBindMapLabel = "bindmap";
+//        bindMap.dsBindMechanismPID = bMechPID;
+//        DSBinding[] dsBindings = new DSBinding[bindings.size()];
+//        int i = 0;
+//        for (String key : bindings.keySet()) {
+//            String dsID = bindings.get(key);
+//            dsBindings[i] = new DSBinding();
+//            dsBindings[i].bindKeyName = key;
+//            dsBindings[i].bindLabel = "bindlabel";
+//            dsBindings[i].datastreamID = dsID;
+//            dsBindings[i].seqNo = "1";
+//            i++;
+//        }
+//        bindMap.dsBindings = dsBindings;
+//        diss.dsBindMap = bindMap; 
+//        dissems.add(diss);
+//    }
 
     protected static void addEDatastream(DigitalObject obj, String id) {
         DatastreamReferencedContent ds = new DatastreamReferencedContent();
@@ -1010,7 +1035,7 @@ public abstract class ResourceIndexIntegrationTest {
                                                  Date lastModDate) {
         DigitalObject obj = new BasicDigitalObject();
         obj.setPid(pid);
-        obj.setFedoraObjectType(fedoraObjectType);
+        obj.addFedoraObjectType(fedoraObjectType);
         obj.setState(state);
         obj.setOwnerId(ownerId);
         obj.setLabel(label);
@@ -1299,7 +1324,7 @@ public abstract class ResourceIndexIntegrationTest {
                                               int numKeys) throws Exception {
         DigitalObject obj = getTestObject("test:1", "test");
         addEDatastream(obj, "DS1");
-        addDisseminator(obj, "DISS1", bDefPID, bMechPID, getBindings(numKeys));
+//        addDisseminator(obj, "DISS1", bDefPID, bMechPID, getBindings(numKeys));
         return obj;
     }
 

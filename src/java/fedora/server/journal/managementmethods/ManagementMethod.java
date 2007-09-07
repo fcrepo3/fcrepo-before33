@@ -50,15 +50,24 @@ public abstract class ManagementMethod implements JournalConstants {
             return new SetDatastreamVersionableMethod(parent);
         } else if (METHOD_PURGE_DATASTREAM.equals(methodName)) {
             return new PurgeDatastreamMethod(parent);
-        } else if (METHOD_ADD_DISSEMINATOR.equals(methodName)) {
-            return new AddDisseminatorMethod(parent);
-        } else if (METHOD_MODIFY_DISSEMINATOR.equals(methodName)) {
-            return new ModifyDisseminatorMethod(parent);
-        } else if (METHOD_SET_DISSEMINATOR_STATE.equals(methodName)) {
-            return new SetDisseminatorStateMethod(parent);
-        } else if (METHOD_PURGE_DISSEMINATOR.equals(methodName)) {
-            return new PurgeDisseminatorMethod(parent);
-        } else if (METHOD_PUT_TEMP_STREAM.equals(methodName)) {
+        } 
+//        else if (METHOD_ADD_DISSEMINATOR.equals(methodName)) 
+//        {
+//            return new AddDisseminatorMethod(parent);
+//        } 
+//        else if (METHOD_MODIFY_DISSEMINATOR.equals(methodName)) 
+//        {
+//            return new ModifyDisseminatorMethod(parent);
+//        } 
+//        else if (METHOD_SET_DISSEMINATOR_STATE.equals(methodName)) 
+//        {
+//            return new SetDisseminatorStateMethod(parent);
+//        } 
+//        else if (METHOD_PURGE_DISSEMINATOR.equals(methodName)) 
+//        {
+//            return new PurgeDisseminatorMethod(parent);
+//        } 
+        else if (METHOD_PUT_TEMP_STREAM.equals(methodName)) {
             return new PutTempStreamMethod(parent);
         } else if (METHOD_GET_NEXT_PID.equals(methodName)) {
             return new GetNextPidMethod(parent);

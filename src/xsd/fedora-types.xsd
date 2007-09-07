@@ -306,27 +306,6 @@
     </complexType>
   </element>
 
-  <element name="addDisseminator">
-    <complexType>
-      <sequence>
-        <element name="pid" type="xsd:string"/>
-        <element name="bDefPID" type="xsd:string"/>
-        <element name="bMechPID" type="xsd:string"/>
-        <element name="dissLabel" type="xsd:string"/>
-        <element name="bindingMap" type="fedora-types:DatastreamBindingMap"/>
-        <element name="dissState" type="xsd:string"/>
-        <element name="logMessage" type="xsd:string"/>
-      </sequence>
-    </complexType>
-  </element>
-  <element name="addDisseminatorResponse">
-    <complexType>
-      <sequence>
-        <element name="disseminatorID" type="xsd:string"/>
-      </sequence>
-    </complexType>
-  </element>
-
   <element name="describeUser">
     <complexType>
       <sequence>
@@ -392,27 +371,6 @@
     </complexType>
   </element>
 
-  <element name="modifyDisseminator">
-    <complexType>
-      <sequence>
-        <element name="pid" type="xsd:string"/>
-        <element name="dissID" type="xsd:string"/>
-        <element name="bMechPID" type="xsd:string"/>
-        <element name="dissLabel" type="xsd:string"/>
-        <element name="bindingMap" type="fedora-types:DatastreamBindingMap"/>
-        <element name="dissState" type="xsd:string"/>
-        <element name="logMessage" type="xsd:string"/>
-        <element name="force" type="xsd:boolean"/>
-      </sequence>
-    </complexType>
-  </element>
-  <element name="modifyDisseminatorResponse">
-    <complexType>
-      <sequence>
-        <element name="modifiedDate" type="xsd:string"/>
-      </sequence>
-    </complexType>
-  </element>
 
   <element name="setDatastreamState">
     <complexType>
@@ -467,24 +425,6 @@
     </complexType>
   </element>
 
-  <element name="setDisseminatorState">
-    <complexType>
-      <sequence>
-        <element name="pid" type="xsd:string"/>
-        <element name="dissID" type="xsd:string"/>
-        <element name="dissState" type="xsd:string"/>
-        <element name="logMessage" type="xsd:string"/>
-      </sequence>
-    </complexType>
-  </element>
-  <element name="setDisseminatorStateResponse">
-    <complexType>
-      <sequence>
-        <element name="modifiedDate" type="xsd:string"/>
-      </sequence>
-    </complexType>
-  </element>
-
   <element name="getDatastream">
     <complexType>
       <sequence>
@@ -535,55 +475,6 @@
     </complexType>
   </element>
 
-  <element name="getDisseminator">
-    <complexType>
-      <sequence>
-        <element name="pid" type="xsd:string"/>
-        <element name="dissID" type="xsd:string"/>
-        <element name="asOfDateTime" type="xsd:string"/>
-      </sequence>
-    </complexType>
-  </element>
-  <element name="getDisseminatorResponse">
-    <complexType>
-      <sequence>
-        <element name="disseminator" type="fedora-types:Disseminator"/>
-      </sequence>
-    </complexType>
-  </element>
-
-  <element name="getDisseminators">
-    <complexType>
-      <sequence>
-        <element name="pid" type="xsd:string"/>
-        <element name="asOfDateTime" type="xsd:string"/>
-        <element name="dissState" type="xsd:string"/>
-      </sequence>
-    </complexType>
-  </element>
-  <element name="getDisseminatorsResponse">
-    <complexType>
-      <sequence>
-        <element name="disseminator" minOccurs="0" maxOccurs="unbounded" type="fedora-types:Disseminator"/>
-      </sequence>
-    </complexType>
-  </element>
-
-  <element name="getDisseminatorHistory">
-    <complexType>
-      <sequence>
-        <element name="pid" type="xsd:string"/>
-        <element name="dissID" type="xsd:string"/>
-      </sequence>
-    </complexType>
-  </element>
-  <element name="getDisseminatorHistoryResponse">
-    <complexType>
-      <sequence>
-        <element name="disseminator" minOccurs="0" maxOccurs="unbounded" type="fedora-types:Disseminator"/>
-      </sequence>
-    </complexType>
-  </element>
 
   <element name="purgeDatastream">
     <complexType>
@@ -605,23 +496,6 @@
     </complexType>
   </element>
 
-  <element name="purgeDisseminator">
-    <complexType>
-      <sequence>
-        <element name="pid" type="xsd:string"/>
-        <element name="dissID" type="xsd:string"/>
-        <element name="endDT" nillable="true" type="xsd:string"/>
-        <element name="logMessage" nillable="true" type="xsd:string"/>
-      </sequence>
-    </complexType>
-  </element>
-  <element name="purgeDisseminatorResponse">
-    <complexType>
-      <sequence>
-        <element name="purgedVersionDate" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
-      </sequence>
-    </complexType>
-  </element>
 
   <element name="getNextPID">
     <complexType>
@@ -635,6 +509,63 @@
     <complexType>
       <sequence>
         <element name="pid" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+      </sequence>
+    </complexType>
+  </element>
+
+  <element name="getRelationships">
+    <complexType>
+      <sequence>
+        <element name="pid" type="xsd:string"/>
+        <element name="subjectURI" nillable="true" type="xsd:string"/>
+        <element name="relationship" nillable="true" type="xsd:string"/>
+      </sequence>
+    </complexType>
+  </element>
+  <element name="getRelationshipsResponse">
+    <complexType>
+      <sequence>
+        <element name="relationships" minOccurs="0" maxOccurs="unbounded" type="fedora-types:RelationshipTuple"/>
+      </sequence>
+    </complexType>
+  </element>
+
+  <element name="addRelationship">
+    <complexType>
+      <sequence>
+        <element name="pid" type="xsd:string"/>
+        <element name="subjectURI" nillable="true" type="xsd:string"/>
+        <element name="relationship" type="xsd:string"/>
+        <element name="objURI" type="xsd:string"/>
+        <element name="objLit" type="xsd:string"/>
+        <element name="litType" type="xsd:string"/>
+      </sequence>
+    </complexType>
+  </element>
+  <element name="addRelationshipResponse">
+    <complexType>
+      <sequence>
+        <element name="relationship" type="fedora-types:RelationshipTuple"/>
+      </sequence>
+    </complexType>
+  </element>
+
+  <element name="purgeRelationship">
+    <complexType>
+      <sequence>
+        <element name="pid" type="xsd:string"/>
+        <element name="subjectURI" nillable="true" type="xsd:string"/>
+        <element name="relationship" type="xsd:string"/>
+        <element name="objURI" type="xsd:string"/>
+        <element name="objLit" type="xsd:string"/>
+        <element name="litType" type="xsd:string"/>
+      </sequence>
+    </complexType>
+  </element>
+  <element name="purgeRelationshipResponse">
+    <complexType>
+      <sequence>
+        <element name="relationship" type="fedora-types:RelationshipTuple"/>
       </sequence>
     </complexType>
   </element>
@@ -740,19 +671,6 @@
       <element name="ID" nillable="true" type="xsd:string"/>
       <element name="label" nillable="true" type="xsd:string"/>
       <element name="MIMEType" nillable="true" type="xsd:string"/>
-    </sequence>
-  </complexType>
-
-  <complexType name="Disseminator">
-    <sequence>
-      <element name="bDefPID" type="xsd:string"/>
-      <element name="bMechPID" type="xsd:string"/>
-      <element name="createDate" type="xsd:string"/>
-      <element name="ID" type="xsd:string"/>
-      <element name="label" nillable="true" type="xsd:string"/>
-      <element name="versionID" type="xsd:string"/>
-      <element name="dsBindMap" type="fedora-types:DatastreamBindingMap"/>
-      <element name="state" type="xsd:string"/>
     </sequence>
   </complexType>
 
@@ -886,6 +804,16 @@
     <sequence>
       <element name="name" type="xsd:string"/>
       <element name="value" type="xsd:string"/>
+    </sequence>
+  </complexType>
+
+  <complexType name="RelationshipTuple">
+    <sequence>
+      <element name="subURI" type="xsd:string"/>
+      <element name="predicate" type="xsd:string"/>
+      <element name="objURI" nillable="true" type="xsd:string"/>
+      <element name="objLiteral" nillable="true" type="xsd:string"/>
+      <element name="literalType" nillable="true" type="xsd:string"/>
     </sequence>
   </complexType>
 

@@ -9,7 +9,8 @@ import java.util.Date;
 
 import fedora.server.errors.ServerException;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.Disseminator;
+//import fedora.server.storage.types.Disseminator;
+import fedora.server.storage.types.RelationshipTuple;
 
 /**
  *
@@ -80,7 +81,7 @@ public interface DOWriter
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public void setDisseminatorState(String id, String state) throws ServerException;
+//    public void setDisseminatorState(String id, String state) throws ServerException;
 
     /**
      * Sets the label of the digital object.
@@ -115,8 +116,8 @@ public interface DOWriter
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public void addDisseminator(Disseminator disseminator)
-            throws ServerException;
+//    public void addDisseminator(Disseminator disseminator)
+//            throws ServerException;
 
     /**
      * Removes a range of datastream versions from an object without leaving
@@ -151,8 +152,8 @@ public interface DOWriter
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public Date[] removeDisseminator(String id, Date start, Date end)
-            throws ServerException;
+//    public Date[] removeDisseminator(String id, Date start, Date end)
+//            throws ServerException;
 
     /**
      * Saves the changes thus far to the permanent copy of the digital object.
@@ -181,17 +182,17 @@ public interface DOWriter
     /**
      * Generate a unique id for a disseminator.
      */
-    public String newDisseminatorID();
+//    public String newDisseminatorID();
 
     /**
      * Generate a unique id for a disseminator version.
      */
-    public String newDisseminatorID(String dissID);
+//    public String newDisseminatorID(String dissID);
 
-    /**
-     * Generate a unique id for a datastreamBindingMap.
-     */
-    public String newDatastreamBindingMapID();
+//    /**
+//     * Generate a unique id for a datastreamBindingMap.
+//     */
+//    public String newDatastreamBindingMapID();
 
     /**
      * Generate a unique id for an audit record.
@@ -207,5 +208,15 @@ public interface DOWriter
      * Marks whether the object is new.
      */
     public boolean isNew();
+    
+    /**
+     * Adds a RDF triple to the RELS-EXT datastream
+     */
+    public RelationshipTuple addRelationship(String subjectURI, String relationship, String objURI, String objLiteral, String literalType) throws ServerException;
+
+    /**
+     * Purges a RDF triple from the RELS-EXT datastream 
+     */
+    public RelationshipTuple purgeRelationship(String subjectURI, String relationship, String objURI, String objLiteral, String literalType) throws ServerException;
 
 }

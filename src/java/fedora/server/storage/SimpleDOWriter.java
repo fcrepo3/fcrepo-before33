@@ -5,21 +5,44 @@
 
 package fedora.server.storage;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.jrdf.graph.GraphElementFactoryException;
+import org.jrdf.graph.Literal;
+import org.jrdf.graph.ObjectNode;
+import org.jrdf.graph.SubjectNode;
+import org.jrdf.graph.Triple;
+import org.trippi.RDFFormat;
+import org.trippi.RDFUtil;
+import org.trippi.TripleIterator;
+import org.trippi.TrippiException;
 
 import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ObjectIntegrityException;
+import fedora.server.management.DefaultManagement;
 import fedora.server.storage.DefaultDOManager;
 import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
-import fedora.server.storage.types.Disseminator;
+//import fedora.server.storage.types.Disseminator;
+import fedora.server.storage.types.RelationshipTuple;
+import fedora.server.utilities.FilteredTripleIterator;
 
 /**
  * A DigitalObject-backed DOWriter.
@@ -112,20 +135,20 @@ public class SimpleDOWriter
         }
     }      
     
-    public void setDisseminatorState(String disseminatorID, String dissState)
-           throws ServerException {
-      assertNotInvalidated();
-      assertNotPendingRemoval();
-      List allVersions = m_obj.disseminators(disseminatorID);
-      Iterator dissIter = allVersions.iterator();
-
-      // Set all versions of this disseminatorID to the specified state
-      while (dissIter.hasNext()) {
-          Disseminator diss = (Disseminator) dissIter.next();
-          diss.dissState=dissState;
-      }
-
-    }
+//    public void setDisseminatorState(String disseminatorID, String dissState)
+//           throws ServerException {
+//      assertNotInvalidated();
+//      assertNotPendingRemoval();
+//      List allVersions = m_obj.disseminators(disseminatorID);
+//      Iterator dissIter = allVersions.iterator();
+//
+//      // Set all versions of this disseminatorID to the specified state
+//      while (dissIter.hasNext()) {
+//          Disseminator diss = (Disseminator) dissIter.next();
+//          diss.dissState=dissState;
+//      }
+//
+//    }
 
     public void setLabel(String label)
             throws ObjectIntegrityException {
@@ -169,12 +192,12 @@ public class SimpleDOWriter
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public void addDisseminator(Disseminator disseminator)
-            throws ServerException {
-        assertNotInvalidated();
-        assertNotPendingRemoval();
-        m_obj.disseminators(disseminator.dissID).add(disseminator);
-    }
+//    public void addDisseminator(Disseminator disseminator)
+//            throws ServerException {
+//        assertNotInvalidated();
+//        assertNotPendingRemoval();
+//        m_obj.disseminators(disseminator.dissID).add(disseminator);
+//    }
 
     /**
      * Removes a datastream from the object.
@@ -251,50 +274,50 @@ public class SimpleDOWriter
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public Date[] removeDisseminator(String id, Date start, Date end)
-            throws ServerException {
-        assertNotInvalidated();
-        assertNotPendingRemoval();
-        List versions=m_obj.disseminators(id);
-        ArrayList removeList=new ArrayList();
-        for (int i=0; i<versions.size(); i++) {
-            Disseminator diss=(Disseminator) versions.get(i);
-            boolean doRemove=false;
-            if (start!=null) {
-                if (end!=null) {
-                    if ( (diss.dissCreateDT.compareTo(start)>=0)
-                            && (diss.dissCreateDT.compareTo(end)<=0) ) {
-                        doRemove=true;
-                    }
-                } else {
-                    if (diss.dissCreateDT.compareTo(start)>=0) {
-                        doRemove=true;
-                    }
-                }
-            } else {
-                if (end!=null) {
-                    if (diss.dissCreateDT.compareTo(end)<=0) {
-                        doRemove=true;
-                    }
-                } else {
-                    doRemove=true;
-                }
-            }
-            if (doRemove) {
-                // Note: We don't remove old audit records by design.
-
-                // add this disseminator to the disseminator to-be-removed list.
-                removeList.add(diss);
-            }
-        }
-        versions.removeAll(removeList);
-        // finally, return the dates of each deleted item
-        Date[] deletedDates=new Date[removeList.size()];
-        for (int i=0; i<removeList.size(); i++) {
-            deletedDates[i]=((Disseminator) removeList.get(i)).dissCreateDT;
-        }
-        return deletedDates;
-    }
+//    public Date[] removeDisseminator(String id, Date start, Date end)
+//            throws ServerException {
+//        assertNotInvalidated();
+//        assertNotPendingRemoval();
+//        List versions=m_obj.disseminators(id);
+//        ArrayList removeList=new ArrayList();
+//        for (int i=0; i<versions.size(); i++) {
+//            Disseminator diss=(Disseminator) versions.get(i);
+//            boolean doRemove=false;
+//            if (start!=null) {
+//                if (end!=null) {
+//                    if ( (diss.dissCreateDT.compareTo(start)>=0)
+//                            && (diss.dissCreateDT.compareTo(end)<=0) ) {
+//                        doRemove=true;
+//                    }
+//                } else {
+//                    if (diss.dissCreateDT.compareTo(start)>=0) {
+//                        doRemove=true;
+//                    }
+//                }
+//            } else {
+//                if (end!=null) {
+//                    if (diss.dissCreateDT.compareTo(end)<=0) {
+//                        doRemove=true;
+//                    }
+//                } else {
+//                    doRemove=true;
+//                }
+//            }
+//            if (doRemove) {
+//                // Note: We don't remove old audit records by design.
+//
+//                // add this disseminator to the disseminator to-be-removed list.
+//                removeList.add(diss);
+//            }
+//        }
+//        versions.removeAll(removeList);
+//        // finally, return the dates of each deleted item
+//        Date[] deletedDates=new Date[removeList.size()];
+//        for (int i=0; i<removeList.size(); i++) {
+//            deletedDates[i]=((Disseminator) removeList.get(i)).dissCreateDT;
+//        }
+//        return deletedDates;
+//    }
 
     /**
      * Remove the audit records with ids given in the list.
@@ -319,6 +342,415 @@ public class SimpleDOWriter
             }
         }
         objectAuditRecords.removeAll(removeAuditList);
+    }
+
+    public RelationshipTuple addRelationship(String subjectURIStr, String relationship, 
+                                             String objURI, String objLiteral, String literalType)
+        throws ServerException 
+    {
+
+        RelationshipTuple relsExtData = null;
+        String datastreamID = DefaultManagement.s_RelsExt_Datastream;
+        RDFUtil util;
+        Triple toAdd = null;
+        URI subjectURI = null;
+        try 
+        { 
+            if (subjectURIStr == null) 
+            {
+                subjectURI = makeURIFromPID(this.GetObjectPID());
+            }
+            else
+            {
+                subjectURI = new URI(subjectURIStr);
+            }
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        } // won't happen
+        try
+        {
+            Datastream relsExt = GetDatastream(datastreamID, null);
+            if (relsExt == null)
+            {
+                DatastreamXMLMetadata newds = new DatastreamXMLMetadata();
+                newds.DatastreamID = datastreamID;
+                newds.DatastreamAltIDs = new String[0];
+                newds.DSFormatURI = null;
+                newds.DSMIME = "text/xml"; 
+                newds.DSControlGrp = "X";
+                newds.DSInfoType = null;
+                newds.DSState = "A";
+                newds.DSVersionable = false;
+                newds.DSVersionID = datastreamID + ".0";
+                newds.DSLabel = "Relationships";
+                newds.DSCreateDT = Server.getCurrentDate(m_context);
+
+                newds.DSLocation = null;
+                newds.DSLocationType = null;
+                newds.DSChecksumType = Datastream.getDefaultChecksumType();
+                
+                
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                Map<String,String> map = new HashMap<String,String>();
+                map.put("rel", "info:fedora/fedora-system:def/relations-external#");
+                map.put("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+
+                util = new RDFUtil(); 
+                toAdd = util.createTriple(util.createResource(subjectURI),
+                                             util.createResource(makePredicateFromRel(relationship, map)),
+                                             makeObjectFromURIandLiteral(util, objURI, objLiteral, literalType));
+
+                
+                TripleIterator iter = new FilteredTripleIterator(map, toAdd, true);
+                
+                iter.toStream(out, RDFFormat.RDF_XML, false);
+                newds.xmlContent = out.toByteArray();
+                newds.DSSize = newds.xmlContent.length;
+
+                addDatastream(newds, false);
+            }
+            else // (relsExt != null)
+            {
+                InputStream relsExtIS = relsExt.getContentStream();
+
+                TripleIterator iter =  null;
+                FilteredTripleIterator newIter =  null;
+                boolean done = false;
+                try 
+                {
+                    iter = TripleIterator.fromStream(relsExtIS, RDFFormat.RDF_XML);
+                    util = new RDFUtil(); 
+                    toAdd = util.createTriple(util.createResource(subjectURI),
+                            util.createResource(makePredicateFromRel(relationship, iter.getAliasMap())),
+                            makeObjectFromURIandLiteral(util, objURI, objLiteral, literalType));
+                    newIter = new FilteredTripleIterator(iter, toAdd, true);
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    
+                    try 
+                    {
+                        newIter.toStream(out, RDFFormat.RDF_XML, false);
+                    }
+                    catch (Error e)
+                    {
+                        serializeRDFtoStream(newIter, out); // Uses RDFFormat.RDF_XML
+                    }
+                    String xmlContent = new String(out.toByteArray());
+                    if (newIter.wasChangeMade())
+                    {
+                        DatastreamXMLMetadata newds = new DatastreamXMLMetadata();
+                        newds.DSMDClass=((DatastreamXMLMetadata) relsExt).DSMDClass;
+                        newds.DatastreamID = datastreamID;
+                        newds.DatastreamAltIDs = relsExt.DatastreamAltIDs;
+                        newds.DSFormatURI = relsExt.DSFormatURI;
+                        newds.DSMIME = "text/xml"; 
+                        newds.DSControlGrp = "X";
+                        newds.DSInfoType = relsExt.DSInfoType;
+                        newds.DSState = relsExt.DSState;
+                        newds.DSVersionable = relsExt.DSVersionable;
+                        newds.DSVersionID =  newDatastreamID(datastreamID);
+                        newds.DSLabel = relsExt.DSLabel;
+                        newds.DSCreateDT = new Date(); // rathen than Server.getCurrentDate(m_context);
+
+                        newds.DSLocation = null;
+                        newds.DSLocationType = null;
+                        newds.DSChecksumType = relsExt.DSChecksumType;
+                        newds.xmlContent = xmlContent.getBytes(); //out.toByteArray();
+                        newds.DSSize = newds.xmlContent.length;
+    
+                        addDatastream(newds, newds.DSVersionable);
+                    }
+                    else
+                    {
+                        // No change made, so nothing to commit
+                        return(null);
+                    }
+                }
+                catch (TrippiException e)
+                {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    return(null);
+                } 
+                finally 
+                {
+                    try
+                    {
+                        newIter.close(); // which also closes the contained iter
+                    }
+                    catch (TrippiException e)
+                    {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                } 
+            }
+            relsExtData = new RelationshipTuple(subjectURI.toString(), relationship, objURI, objLiteral, literalType);
+            return(relsExtData);
+        }
+        catch (TrippiException e)
+        {
+            e.printStackTrace();
+            return(null);
+        }
+        catch (GraphElementFactoryException e)
+        {
+            e.printStackTrace();
+            return(null);
+        }
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+            return(null);
+        }
+        finally
+        {
+        }
+        
+    }
+
+    public RelationshipTuple purgeRelationship(String subjectURIStr, String relationship, 
+                                               String objURI, String objLiteral, String literalType)
+        throws ServerException 
+    {
+    
+        RelationshipTuple relsExtData = null;
+    //     ArrayList relsExtDataTmp = new ArrayList();
+        String datastreamID = DefaultManagement.s_RelsExt_Datastream;
+        RDFUtil util;
+        Triple toPurge = null;
+        URI subjectURI = null;
+        try 
+        { 
+            if (subjectURIStr == null) 
+            {
+                subjectURI = makeURIFromPID(this.GetObjectPID());
+            }
+            else
+            {
+                subjectURI = new URI(subjectURIStr);
+            }
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        } // won't happen
+        try
+        {
+            Datastream relsExt = GetDatastream(datastreamID, null);
+            if (relsExt == null)
+            {
+                return(null);
+            }
+            else // (relsExt != null)
+            {
+                InputStream relsExtIS = relsExt.getContentStream();
+    
+                TripleIterator iter =  null;
+                FilteredTripleIterator newIter =  null;
+                boolean done = false;
+                try 
+                {
+                    iter = TripleIterator.fromStream(relsExtIS, RDFFormat.RDF_XML);
+                    util = new RDFUtil(); 
+                    toPurge = util.createTriple(util.createResource(subjectURI),
+                                                util.createResource(makePredicateFromRel(relationship, iter.getAliasMap())),
+                                                makeObjectFromURIandLiteral(util, objURI, objLiteral, literalType));
+
+                    newIter = new FilteredTripleIterator(iter, toPurge, false);
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    
+                    try 
+                    {
+                        newIter.toStream(out, RDFFormat.RDF_XML, false);
+                    }
+                    catch (Error e)
+                    {
+                        serializeRDFtoStream(newIter, out); // Uses RDFFormat.RDF_XML
+                    }
+                    
+                    String xmlContent = new String(out.toByteArray());
+                    System.out.println(xmlContent);
+                    if (newIter.wasChangeMade())
+                    {
+                        DatastreamXMLMetadata newds = new DatastreamXMLMetadata();
+                        newds.DSMDClass=((DatastreamXMLMetadata) relsExt).DSMDClass;
+                        newds.DatastreamID = datastreamID;
+                        newds.DatastreamAltIDs = relsExt.DatastreamAltIDs;
+                        newds.DSFormatURI = relsExt.DSFormatURI;
+                        newds.DSMIME = "text/xml"; 
+                        newds.DSControlGrp = "X";
+                        newds.DSInfoType = relsExt.DSInfoType;
+                        newds.DSState = relsExt.DSState;
+                        newds.DSVersionable = relsExt.DSVersionable;
+                        newds.DSVersionID =  newDatastreamID(datastreamID);
+                        newds.DSLabel = relsExt.DSLabel;
+                        newds.DSCreateDT = new Date(); // rathan than Server.getCurrentDate(m_context);
+
+                        newds.DSLocation = null;
+                        newds.DSLocationType = null;
+                        newds.DSChecksumType = relsExt.DSChecksumType;
+                        newds.xmlContent = out.toByteArray();
+                        newds.DSSize = newds.xmlContent.length;
+    
+                        addDatastream(newds, newds.DSVersionable);
+                    }
+                    else
+                    {
+                        // No change made, so nothing to commit
+                        return(null);
+                    }
+                }
+                catch (TrippiException e)
+                {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    return(null);
+                }
+                catch (GraphElementFactoryException e)
+                {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    return(null);
+                } 
+                finally 
+                {
+                    try
+                    {
+                        newIter.close(); // which also closes the contained iter
+                    }
+                    catch (TrippiException e)
+                    {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                } 
+            }
+            relsExtData = new RelationshipTuple(subjectURI.toString(), relationship, objURI, objLiteral, literalType);
+            return(relsExtData);
+        }
+        finally
+        {
+        }
+        
+    }
+
+    
+    private void serializeRDFtoStream(TripleIterator iter, OutputStream out) throws TrippiException
+    {
+        PrintWriter pr = new PrintWriter(out);
+        pr.println("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:rel=\"info:fedora/fedora-system:def/relations-external#\">");
+        Triple triple = null;
+        String subject = null;        
+        while (iter.hasNext())
+        {
+            triple = iter.next();
+            if (subject == null)  
+            {
+                subject = triple.getSubject().toString();
+                pr.println("    <rdf:Description rdf:about=\"" + subject + "\" >");
+            }
+            ObjectNode object = triple.getObject();
+            String predicate = triple.getPredicate().toString();
+            predicate = predicate.replaceFirst("info:fedora/fedora-system:def/relations-external#", "rel:");
+            if (object instanceof Literal)
+            {
+                pr.println("        <"+predicate + " rdf:literal=\"" + 
+                        triple.getObject().toString() + "\" />");
+            }
+            else
+            {
+                pr.println("        <"+predicate + " rdf:resource=\"" + 
+                        triple.getObject().toString() + "\" />");
+            }
+        }
+        pr.println("    </rdf:Description>");
+        pr.println("</rdf:RDF>");
+        pr.flush();
+
+    //<rel:hasFormalContentModel rdf:resource="info:fedora/demo:CMSID"></rel:hasFormalContentModel>
+                
+
+    }
+
+    private ObjectNode makeObjectFromURIandLiteral(RDFUtil util, String objURI, String objLiteral, String literalType)
+    {
+        ObjectNode obj = null;
+        if (objLiteral == null)
+        {
+            try
+            {
+                obj = util.createResource(new URI(objURI));                
+            }
+            catch (GraphElementFactoryException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            catch (URISyntaxException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        else 
+        {
+            try
+            {
+                if (objURI == null)
+                {
+                    obj = util.createLiteral(objLiteral);
+                }
+                else
+                {
+                    obj = util.createLiteral(objLiteral, literalType);
+                }
+            }
+            catch (GraphElementFactoryException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return obj;
+    }
+
+    private URI makePredicateFromRel(String relationship, Map map)
+    {
+        String predicate = relationship;
+        Set keys = map.keySet();
+        Iterator iter = keys.iterator();
+        while (iter.hasNext())
+        {
+            String key = (String)(iter.next());
+            if (predicate.startsWith(key + ":"))
+            {
+                predicate = predicate.replaceFirst(key + ":", (String)(map.get(key)));
+            }
+        }
+
+        URI retVal = null;
+        try {
+            retVal = new URI(predicate);
+        }
+        catch (URISyntaxException ufe)
+        {
+            ufe.printStackTrace();
+        }
+        return(retVal);
+    }
+
+    private URI makeURIFromPID(String pid)
+    {
+        String uriStr = "info:fedora/" + pid;
+        URI retVal = null;
+        try {
+            retVal = new URI(uriStr);
+        }
+        catch (URISyntaxException ufe)
+        {}
+        return(retVal);
     }
 
     /**
@@ -354,26 +786,26 @@ public class SimpleDOWriter
         return m_obj.newDatastreamID(dsID);
     }
 
-    /**
-     * Generate a unique id for a disseminator.
-     */
-    public String newDisseminatorID() {
-        return m_obj.newDisseminatorID();
-    }
-
-    /**
-     * Generate a unique id for a disseminator version.
-     */
-    public String newDisseminatorID(String dissID) {
-        return m_obj.newDisseminatorID(dissID);
-    }
-
-    /**
-     * Generate a unique id for a datastreamBindingMap.
-     */
-    public String newDatastreamBindingMapID() {
-        return m_obj.newDatastreamBindingMapID();
-    }
+//    /**
+//     * Generate a unique id for a disseminator.
+//     */
+//    public String newDisseminatorID() {
+//        return m_obj.newDisseminatorID();
+//    }
+//
+//    /**
+//     * Generate a unique id for a disseminator version.
+//     */
+//    public String newDisseminatorID(String dissID) {
+//        return m_obj.newDisseminatorID(dissID);
+//    }
+//
+//    /**
+//     * Generate a unique id for a datastreamBindingMap.
+//     */
+//    public String newDatastreamBindingMapID() {
+//        return m_obj.newDatastreamBindingMapID();
+//    }
 
     /**
      * Generate a unique id for an audit record.

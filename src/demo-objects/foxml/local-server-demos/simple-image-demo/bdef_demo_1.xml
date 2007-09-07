@@ -34,12 +34,4 @@
 			<foxml:contentLocation REF=" http://uva.lib.edu/bdef/image/doc/simpleImage.html" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="fedora-system:1" STATE="A">
-		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="fedora-system:2" LABEL="Bootstrap Behaviors">
-			<foxml:serviceInputMap>
-				<foxml:datastreamBinding DATASTREAM_ID="METHODMAP" KEY="BDEF-METHODMAP" LABEL="Abstract behavior definition for UVA Simple Image in Fedora Method Map format"/>
-				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="BDEF-GUIDE" LABEL="The Official Guide to the UVA Simple Image Behavior Definition"/>
-			</foxml:serviceInputMap>
-		</foxml:disseminatorVersion>
-	</foxml:disseminator>
 </foxml:digitalObject>

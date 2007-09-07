@@ -63,7 +63,7 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
     public static void ingestDemoObjects() throws Exception {
 		File dir = new File(FEDORA_HOME, "client/demo/foxml/");
 		String ingestFormat = "foxml1.0";
-		String fTypes = "DMO";
+		String fTypes = "DMOC";
 		FedoraClient client = FedoraTestCase.getFedoraClient();
 		
 		Ingest.multiFromDirectory(dir,
@@ -85,7 +85,7 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
      */
     public static Set getDemoObjects(String[] fTypes) throws Exception {
         if (fTypes == null || fTypes.length == 0) {
-            fTypes = new String[] {"O", "M", "D"};
+            fTypes = new String[] {"O", "M", "D", "C"};
         }
         
         FedoraClient client = getFedoraClient();
@@ -105,7 +105,7 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
     	FedoraClient client = getFedoraClient();
     	FedoraAPIM apim = client.getAPIM();
     	
-        String[] fTypes = {"O", "M", "D"};
+        String[] fTypes = {"O", "M", "D", "C"};
         Set pids = getDemoObjects(fTypes);
         Iterator it = pids.iterator();
         while (it.hasNext()) {

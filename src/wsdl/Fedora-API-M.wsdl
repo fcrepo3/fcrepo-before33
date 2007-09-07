@@ -70,13 +70,6 @@
     <part name="parameters" element="fedora-types:addDatastreamResponse"/>
   </message>
 
-  <message name="addDisseminatorRequest">
-    <part name="parameters" element="fedora-types:addDisseminator"/>
-  </message>
-  <message name="addDisseminatorResponse">
-    <part name="parameters" element="fedora-types:addDisseminatorResponse"/>
-  </message>
-
   <message name="describeUserRequest">
     <part name="parameters" element="fedora-types:describeUser"/>
   </message>
@@ -96,13 +89,6 @@
   </message>
   <message name="modifyDatastreamByValueResponse">
     <part name="parameters" element="fedora-types:modifyDatastreamByValueResponse"/>
-  </message>
-
-  <message name="modifyDisseminatorRequest">
-    <part name="parameters" element="fedora-types:modifyDisseminator"/>
-  </message>
-  <message name="modifyDisseminatorResponse">
-    <part name="parameters" element="fedora-types:modifyDisseminatorResponse"/>
   </message>
 
   <message name="setDatastreamStateRequest">
@@ -126,13 +112,6 @@
     <part name="parameters" element="fedora-types:compareDatastreamChecksumResponse"/>
   </message>
 
-  <message name="setDisseminatorStateRequest">
-    <part name="parameters" element="fedora-types:setDisseminatorState"/>
-  </message>
-  <message name="setDisseminatorStateResponse">
-    <part name="parameters" element="fedora-types:setDisseminatorStateResponse"/>
-  </message>
-
   <message name="getDatastreamRequest">
     <part name="parameters" element="fedora-types:getDatastream"/>
   </message>
@@ -154,27 +133,6 @@
     <part name="parameters" element="fedora-types:getDatastreamHistoryResponse"/>
   </message>
 
-  <message name="getDisseminatorRequest">
-    <part name="parameters" element="fedora-types:getDisseminator"/>
-  </message>
-  <message name="getDisseminatorResponse">
-    <part name="parameters" element="fedora-types:getDisseminatorResponse"/>
-  </message>
-
-  <message name="getDisseminatorsRequest">
-    <part name="parameters" element="fedora-types:getDisseminators"/>
-  </message>
-  <message name="getDisseminatorsResponse">
-    <part name="parameters" element="fedora-types:getDisseminatorsResponse"/>
-  </message>
-
-  <message name="getDisseminatorHistoryRequest">
-    <part name="parameters" element="fedora-types:getDisseminatorHistory"/>
-  </message>
-  <message name="getDisseminatorHistoryResponse">
-    <part name="parameters" element="fedora-types:getDisseminatorHistoryResponse"/>
-  </message>
-
   <message name="purgeDatastreamRequest">
     <part name="parameters" element="fedora-types:purgeDatastream"/>
   </message>
@@ -182,18 +140,32 @@
     <part name="parameters" element="fedora-types:purgeDatastreamResponse"/>
   </message>
 
-  <message name="purgeDisseminatorRequest">
-    <part name="parameters" element="fedora-types:purgeDisseminator"/>
-  </message>
-  <message name="purgeDisseminatorResponse">
-    <part name="parameters" element="fedora-types:purgeDisseminatorResponse"/>
-  </message>
-
   <message name="getNextPIDRequest">
     <part name="parameters" element="fedora-types:getNextPID"/>
   </message>
   <message name="getNextPIDResponse">
     <part name="parameters" element="fedora-types:getNextPIDResponse"/>
+  </message>
+
+  <message name="getRelationshipsRequest">
+    <part name="parameters" element="fedora-types:getRelationships"/>
+  </message>
+  <message name="getRelationshipsResponse">
+    <part name="parameters" element="fedora-types:getRelationshipsResponse"/>
+  </message>
+
+  <message name="addRelationshipRequest">
+    <part name="parameters" element="fedora-types:addRelationship"/>
+  </message>
+  <message name="addRelationshipResponse">
+    <part name="parameters" element="fedora-types:addRelationshipResponse"/>
+  </message>
+
+  <message name="purgeRelationshipRequest">
+    <part name="parameters" element="fedora-types:purgeRelationship"/>
+  </message>
+  <message name="purgeRelationshipResponse">
+    <part name="parameters" element="fedora-types:purgeRelationshipResponse"/>
   </message>
 
   <portType name="Fedora-API-M">
@@ -233,20 +205,12 @@
       <input message="fedora-api:addDatastreamRequest"/>
       <output message="fedora-api:addDatastreamResponse"/>
     </operation>
-    <operation name="addDisseminator">
-      <input message="fedora-api:addDisseminatorRequest"/>
-      <output message="fedora-api:addDisseminatorResponse"/>
-    </operation>
     <operation name="modifyDatastreamByReference">
       <input message="fedora-api:modifyDatastreamByReferenceRequest"/>
       <output message="fedora-api:modifyDatastreamByReferenceResponse"/>
     </operation> <operation name="modifyDatastreamByValue">
       <input message="fedora-api:modifyDatastreamByValueRequest"/>
       <output message="fedora-api:modifyDatastreamByValueResponse"/>
-    </operation>
-    <operation name="modifyDisseminator">
-      <input message="fedora-api:modifyDisseminatorRequest"/>
-      <output message="fedora-api:modifyDisseminatorResponse"/>
     </operation>
     <operation name="setDatastreamState">
       <input message="fedora-api:setDatastreamStateRequest"/>
@@ -260,10 +224,6 @@
       <input message="fedora-api:compareDatastreamChecksumRequest"/>
       <output message="fedora-api:compareDatastreamChecksumResponse"/>
     </operation>
-    <operation name="setDisseminatorState">
-      <input message="fedora-api:setDisseminatorStateRequest"/>
-      <output message="fedora-api:setDisseminatorStateResponse"/>
-    </operation>
     <operation name="getDatastream">
       <input message="fedora-api:getDatastreamRequest"/>
       <output message="fedora-api:getDatastreamResponse"/>
@@ -276,29 +236,25 @@
       <input message="fedora-api:getDatastreamHistoryRequest"/>
       <output message="fedora-api:getDatastreamHistoryResponse"/>
     </operation>
-    <operation name="getDisseminator">
-      <input message="fedora-api:getDisseminatorRequest"/>
-      <output message="fedora-api:getDisseminatorResponse"/>
-    </operation>
-    <operation name="getDisseminators">
-      <input message="fedora-api:getDisseminatorsRequest"/>
-      <output message="fedora-api:getDisseminatorsResponse"/>
-    </operation>
-    <operation name="getDisseminatorHistory">
-      <input message="fedora-api:getDisseminatorHistoryRequest"/>
-      <output message="fedora-api:getDisseminatorHistoryResponse"/>
-    </operation>
     <operation name="purgeDatastream">
       <input message="fedora-api:purgeDatastreamRequest"/>
       <output message="fedora-api:purgeDatastreamResponse"/>
     </operation>
-    <operation name="purgeDisseminator">
-      <input message="fedora-api:purgeDisseminatorRequest"/>
-      <output message="fedora-api:purgeDisseminatorResponse"/>
-    </operation>
     <operation name="getNextPID">
       <input message="fedora-api:getNextPIDRequest"/>
       <output message="fedora-api:getNextPIDResponse"/>
+    </operation>
+    <operation name="getRelationships">
+      <input message="fedora-api:getRelationshipsRequest"/>
+      <output message="fedora-api:getRelationshipsResponse"/>
+    </operation>
+    <operation name="addRelationship">
+      <input message="fedora-api:addRelationshipRequest"/>
+      <output message="fedora-api:addRelationshipResponse"/>
+    </operation>
+    <operation name="purgeRelationship">
+      <input message="fedora-api:purgeRelationshipRequest"/>
+      <output message="fedora-api:purgeRelationshipResponse"/>
     </operation>
   </portType>
 
@@ -385,15 +341,6 @@
         <soap:body use="literal"/>
       </output>
     </operation>
-    <operation name="addDisseminator">
-      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#addDisseminator"/>
-      <input>
-        <soap:body use="literal"/>
-      </input>
-      <output>
-        <soap:body use="literal"/>
-      </output>
-    </operation>
     <operation name="modifyDatastreamByReference">
       <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#modifyDatastreamByReference"/>
       <input>
@@ -405,15 +352,6 @@
     </operation>
     <operation name="modifyDatastreamByValue">
       <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#modifyDatastreamByValue"/>
-      <input>
-        <soap:body use="literal"/>
-      </input>
-      <output>
-        <soap:body use="literal"/>
-      </output>
-    </operation>
-    <operation name="modifyDisseminator">
-      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#modifyDisseminator"/>
       <input>
         <soap:body use="literal"/>
       </input>
@@ -448,15 +386,6 @@
         <soap:body use="literal"/>
       </output>
     </operation>
-    <operation name="setDisseminatorState">
-      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#setDisseminatorState"/>
-      <input>
-        <soap:body use="literal"/>
-      </input>
-      <output>
-        <soap:body use="literal"/>
-      </output>
-    </operation>
     <operation name="getDatastream">
       <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastream"/>
       <input>
@@ -484,33 +413,6 @@
         <soap:body use="literal"/>
       </output>
     </operation>
-    <operation name="getDisseminator">
-      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#getDisseminator"/>
-      <input>
-        <soap:body use="literal"/>
-      </input>
-      <output>
-        <soap:body use="literal"/>
-      </output>
-    </operation>
-    <operation name="getDisseminators">
-      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#getDisseminators"/>
-      <input>
-        <soap:body use="literal"/>
-      </input>
-      <output>
-        <soap:body use="literal"/>
-      </output>
-    </operation>
-    <operation name="getDisseminatorHistory">
-      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#getDisseminatorHistory"/>
-      <input>
-        <soap:body use="literal"/>
-      </input>
-      <output>
-        <soap:body use="literal"/>
-      </output>
-    </operation>
     <operation name="purgeDatastream">
       <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#purgeDatastream"/>
       <input>
@@ -520,8 +422,8 @@
         <soap:body use="literal"/>
       </output>
     </operation>
-    <operation name="purgeDisseminator">
-      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#purgeDisseminator"/>
+    <operation name="getNextPID">
+      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#getNextPID"/>
       <input>
         <soap:body use="literal"/>
       </input>
@@ -529,8 +431,26 @@
         <soap:body use="literal"/>
       </output>
     </operation>
-    <operation name="getNextPID">
-      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#getNextPID"/>
+    <operation name="getRelationships">
+      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#getRelationships"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="addRelationship">
+      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#addRelationship"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="purgeRelationship">
+      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#purgeRelationship"/>
       <input>
         <soap:body use="literal"/>
       </input>

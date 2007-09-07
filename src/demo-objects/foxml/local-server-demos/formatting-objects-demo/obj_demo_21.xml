@@ -24,8 +24,8 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream CONTROL_GROUP="X" ID="FOPSAMPLE" STATE="A">
-		<foxml:datastreamVersion ID="FOPSAMPLE1.0" MIMETYPE="text/xml" LABEL="FOP Sample">
+	<foxml:datastream CONTROL_GROUP="X" ID="XML_SOURCE" STATE="A">
+		<foxml:datastreamVersion ID="XML_SOURCE1.0" MIMETYPE="text/xml" LABEL="FOP Sample">
 			<foxml:xmlContent>
 				<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xml.apache.org/fop/extensions">
 					<fo:layout-master-set>
@@ -392,11 +392,15 @@ This font contains no embedding license restrictions
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="demo:19" STATE="A">
-		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="demo:20" LABEL="PDF Disseminator">
-			<foxml:serviceInputMap>
-				<foxml:datastreamBinding DATASTREAM_ID="FOPSAMPLE" KEY="XML_SOURCE" LABEL="FOP Source file to be transformed"/>
-			</foxml:serviceInputMap>
-		</foxml:disseminatorVersion>
-	</foxml:disseminator>
+  	<foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="false">
+    	<foxml:datastreamVersion ID="RELS-EXT.0" LABEL="Relationships" MIMETYPE="text/xml">
+      		<foxml:xmlContent>
+        		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+          			<rdf:Description rdf:about="info:fedora/demo:21">
+             			<rel:hasFormalContentModel rdf:resource="info:fedora/demo:FO_TO_PDFDOC"/>
+          			</rdf:Description>
+        		</rdf:RDF>
+      		</foxml:xmlContent>
+    	</foxml:datastreamVersion>
+  	</foxml:datastream>
 </foxml:digitalObject>

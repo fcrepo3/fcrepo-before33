@@ -59,16 +59,16 @@ public class TestAPIALite extends FedoraServerTestCase {
 				"wavelet", "/uvalibadmin:admin/uvalibadmin:technical/uvalibadmin:compression/text( )", result);
 		
 		// test for type E datastream 			
-		HttpInputStream his = client.get("/get/demo:11/DS1", true);
+		HttpInputStream his = client.get("/get/demo:11/MRSID", true);
 		assertEquals(his.getContentType(),"image/x-mrsid-image");
 		assertTrue(his.getContentLength() > 0);	
 		
 		// test for type R datastream
-		his = client.get("/get/demo:30/DS1", false, false);
+		his = client.get("/get/demo:30/THUMBRES_IMG", false, false);
 		assertEquals(his.getStatusCode(),302);
 		
 		// test for type M datastream 			
-		his = client.get("/get/demo:5/DS1", true);
+		his = client.get("/get/demo:5/THUMBRES_IMG", true);
 		assertEquals(his.getContentType(),"image/jpeg");
 		
 		his.close();
@@ -113,7 +113,7 @@ public class TestAPIALite extends FedoraServerTestCase {
     public void testListDatastreams() throws Exception {
     	Document result;
         result = getXMLQueryResult("/listDatastreams/demo:11?xml=true");
-		assertXpathEvaluatesTo("8", "count(/objectDatastreams/datastream)", result);
+		assertXpathEvaluatesTo("9", "count(/objectDatastreams/datastream)", result);
 	}
     
     public void testListMethods() throws Exception {

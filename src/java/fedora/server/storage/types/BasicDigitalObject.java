@@ -27,7 +27,7 @@ public class BasicDigitalObject
         implements DigitalObject {
 
     private boolean m_isNew;
-    private int m_fedoraObjectType;
+    private String m_fedoraObjectType;
     private String m_pid;
     //private String m_uri;
     private String m_state;
@@ -38,6 +38,7 @@ public class BasicDigitalObject
     private Date m_lastModDate;
     private ArrayList m_auditRecords;
     private HashMap<String, ArrayList<Datastream>> m_datastreams;
+    //used for deserializing old-style objects for conversion to CMDA-style objects
     private HashMap<String, ArrayList<Disseminator>> m_disseminators;
     private Map m_prefixes;
 	private Map<String, String> m_extProperties;
@@ -45,10 +46,12 @@ public class BasicDigitalObject
     public BasicDigitalObject() {
         m_auditRecords=new ArrayList();
         m_datastreams=new HashMap<String, ArrayList<Datastream>>();
-        m_disseminators=new HashMap<String, ArrayList<Disseminator>>();
+        // only used for translating old-style disseminator objects to CMDA objects
+        m_disseminators = new HashMap<String, ArrayList<Disseminator>>();
         m_extProperties=new HashMap<String, String>();
 		setNew(false);
         setContentModelId("");
+        m_fedoraObjectType = "";
     }
 
     public boolean isNew() {
@@ -58,13 +61,32 @@ public class BasicDigitalObject
     public void setNew(boolean isNew) {
 	    m_isNew=isNew;
 	}
+    
+    public boolean isFedoraObjectType(int type)
+    {
+        return(m_fedoraObjectType.indexOf(type) != -1);
+    }
 
-    public int getFedoraObjectType() {
+
+    public String getFedoraObjectTypes() 
+    {
         return m_fedoraObjectType;
     }
 
-    public void setFedoraObjectType(int t) {
-        m_fedoraObjectType=t;
+    public void addFedoraObjectType(int type) 
+    {
+        if (m_fedoraObjectType.indexOf(type) == -1)
+        {
+            m_fedoraObjectType = m_fedoraObjectType + (char)type;
+        }
+    }
+    
+    public void removeFedoraObjectType(int type) 
+    {
+        if (m_fedoraObjectType.indexOf(type) != -1)
+        {
+            m_fedoraObjectType = m_fedoraObjectType.replaceAll(""+(char)type, "");
+        }
     }
 
     public String getPid() {
@@ -183,14 +205,17 @@ public class BasicDigitalObject
    		datastreams.add(ds);
     }
     
-    public Iterator disseminatorIdIterator() {
+    public Iterator disseminatorIdIterator() 
+    {
         return copyOfKeysForNonEmptyLists(m_disseminators).iterator();
     }
 
-    public List<Disseminator> disseminators(String id) {
+    public List<Disseminator> disseminators(String id) 
+    {
         ArrayList<Disseminator> ret=(ArrayList<Disseminator>) m_disseminators.get(id);
-        if (ret==null) {
-            ret=new ArrayList<Disseminator>();
+        if (ret == null) 
+        {
+            ret = new ArrayList<Disseminator>();
             m_disseminators.put(id, ret);
         }
         return ret;
@@ -210,39 +235,39 @@ public class BasicDigitalObject
         return newID(versionIDs.iterator(), id + ".");
     }
 
-    public String newDisseminatorID() {
-        return newID(disseminatorIdIterator(), "DISS");
-    }
-
-    public String newDisseminatorID(String id) {
-        ArrayList<String> versionIDs=new ArrayList<String>();
-        Iterator iter=((ArrayList) m_disseminators.get(id)).iterator();
-        while (iter.hasNext()) {
-            Disseminator diss=(Disseminator) iter.next();
-            versionIDs.add(diss.dissVersionID);
-        }
-        return newID(versionIDs.iterator(), id + ".");
-    }
-
-    public String newDatastreamBindingMapID() {
-        ArrayList<String> mapIDs=new ArrayList<String>(); // the list we'll put
-                                          // allbinding map ids in
-        Iterator dissIter=m_disseminators.keySet().iterator();
-        // for every List of disseminators...
-        while (dissIter.hasNext()) {
-            // get the dissID
-            String id=(String) dissIter.next();
-            Iterator iter=((ArrayList) m_disseminators.get(id)).iterator();
-            // then for every version with that id...
-            while (iter.hasNext()) {
-                Disseminator diss=(Disseminator) iter.next();
-                // add its dsBindMapID to the mapIDs list
-                mapIDs.add(diss.dsBindMapID);
-            }
-        }
-        // get a new, unique binding map id, starting with "S" given the complete list
-        return newID(mapIDs.iterator(), "S");
-    }
+//    public String newDisseminatorID() {
+//        return newID(disseminatorIdIterator(), "DISS");
+//    }
+//
+//    public String newDisseminatorID(String id) {
+//        ArrayList<String> versionIDs=new ArrayList<String>();
+//        Iterator iter=((ArrayList) m_disseminators.get(id)).iterator();
+//        while (iter.hasNext()) {
+//            Disseminator diss=(Disseminator) iter.next();
+//            versionIDs.add(diss.dissVersionID);
+//        }
+//        return newID(versionIDs.iterator(), id + ".");
+//    }
+//
+//    public String newDatastreamBindingMapID() {
+//        ArrayList<String> mapIDs=new ArrayList<String>(); // the list we'll put
+//                                          // allbinding map ids in
+//        Iterator dissIter=m_disseminators.keySet().iterator();
+//        // for every List of disseminators...
+//        while (dissIter.hasNext()) {
+//            // get the dissID
+//            String id=(String) dissIter.next();
+//            Iterator iter=((ArrayList) m_disseminators.get(id)).iterator();
+//            // then for every version with that id...
+//            while (iter.hasNext()) {
+//                Disseminator diss=(Disseminator) iter.next();
+//                // add its dsBindMapID to the mapIDs list
+//                mapIDs.add(diss.dsBindMapID);
+//            }
+//        }
+//        // get a new, unique binding map id, starting with "S" given the complete list
+//        return newID(mapIDs.iterator(), "S");
+//    }
 
     public String newAuditRecordID() {
         ArrayList<String> auditIDs=new ArrayList<String>();

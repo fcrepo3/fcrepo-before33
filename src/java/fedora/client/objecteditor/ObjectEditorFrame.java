@@ -29,7 +29,7 @@ public class ObjectEditorFrame
 	private static final long serialVersionUID = 1L;
     private ObjectPane m_objectPane;
     private DatastreamsPane m_datastreamsPane;
-    private DisseminatorsPane m_disseminatorsPane;
+ //   private DisseminatorsPane m_disseminatorsPane;
     private JTabbedPane m_tabbedPane;
     private String m_pid;
     private String m_fType;
@@ -85,13 +85,13 @@ public class ObjectEditorFrame
             m_tabbedPane.addTab("Datastreams", m_datastreamsPane);
             m_tabbedPane.setBackgroundAt(1, Administrator.DEFAULT_COLOR);
             m_tabbedPane.setIconAt(1, dsIcon);
-            if (fType.equals("O")) {
-                // only do the disseminators tab if it's a data object
-                m_disseminatorsPane=new DisseminatorsPane(this, pid);
-                m_tabbedPane.addTab("Disseminators", m_disseminatorsPane);
-                m_tabbedPane.setBackgroundAt(2, Administrator.DEFAULT_COLOR);
-                m_tabbedPane.setIconAt(2, dissIcon);
-            }
+//            if (fType.equals("O")) {
+//                // only do the disseminators tab if it's a data object
+//                m_disseminatorsPane=new DisseminatorsPane(this, pid);
+//                m_tabbedPane.addTab("Disseminators", m_disseminatorsPane);
+//                m_tabbedPane.setBackgroundAt(2, Administrator.DEFAULT_COLOR);
+//                m_tabbedPane.setIconAt(2, dissIcon);
+//            }
             m_tabbedPane.setSelectedIndex(startTab);
 
         JPanel outerPane=new JPanel();        
@@ -143,7 +143,8 @@ public class ObjectEditorFrame
 
     public boolean isDirty() {
         return ( m_objectPane.isDirty() || m_datastreamsPane.isDirty()
-                || (m_disseminatorsPane!=null && m_disseminatorsPane.isDirty()) );
+//                || (m_disseminatorsPane!=null && m_disseminatorsPane.isDirty()) 
+                );
     }
 
     public void indicateDirtiness() {
@@ -160,12 +161,15 @@ public class ObjectEditorFrame
         } else {
             m_tabbedPane.setTitleAt(1, "Datastreams");
         }
-        if (m_disseminatorsPane!=null && m_disseminatorsPane.isDirty()) {
-            dirtyCount++;
-            m_tabbedPane.setTitleAt(2, "Disseminators*");
-        } else {
-            if (m_disseminatorsPane!=null) m_tabbedPane.setTitleAt(2, "Disseminators");
-        }
+//        if (m_disseminatorsPane!=null && m_disseminatorsPane.isDirty()) 
+//        {
+//            dirtyCount++;
+//            m_tabbedPane.setTitleAt(2, "Disseminators*");
+//        } 
+//        else 
+//        {
+//            if (m_disseminatorsPane!=null) m_tabbedPane.setTitleAt(2, "Disseminators");
+//        }
         if (dirtyCount>0) {
             doTitle(true);
         } else {

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject PID="demo:35" xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+	<foxml:objectProperties>
+		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Image of Coliseum in Rome"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UVA_STD_IMAGE"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
+	</foxml:objectProperties>
+	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="DC Record for Coliseum image object">
+			<foxml:xmlContent>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+					<dc:title>Coliseum in Rome</dc:title>
+					<dc:creator>Thornton Staples</dc:creator>
+					<dc:subject>Architecture, Roman</dc:subject>
+					<dc:description>Image of Coliseum in Rome</dc:description>
+					<dc:publisher>University of Virginia Library</dc:publisher>
+					<dc:format>image/jpeg</dc:format>
+					<dc:identifier>demo:35</dc:identifier>
+				</oai_dc:dc>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream ID="THUMB" CONTROL_GROUP="M" STATE="A">
+		<foxml:datastreamVersion ID="DS1.0" MIMETYPE="image/jpeg" LABEL="Thorny's Coliseum thumbnail jpg image">
+			<foxml:contentLocation REF="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream ID="MEDIUM" CONTROL_GROUP="M" STATE="A">
+		<foxml:datastreamVersion ID="DS2.0" MIMETYPE="image/jpeg" LABEL="Thorny's Coliseum medium jpg image">
+			<foxml:contentLocation REF="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-medium.jpg" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream ID="HIGH" CONTROL_GROUP="M" STATE="A">
+		<foxml:datastreamVersion ID="DS3.0" MIMETYPE="image/jpeg" LABEL="Thorny's Coliseum high jpg image">
+			<foxml:contentLocation REF="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-high.jpg" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream ID="VERYHIGH" CONTROL_GROUP="M" STATE="A">
+		<foxml:datastreamVersion ID="DS4.0" MIMETYPE="image/jpeg" LABEL="Thorny's Coliseum veryhigh jpg image">
+			<foxml:contentLocation REF="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT"> 
+    <foxml:datastreamVersion ID="RELS-EXT.0" MIMETYPE="text/xml" LABEL="Relationships to other objects">
+      <foxml:xmlContent>
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+          <rdf:Description rdf:about="info:fedora/demo:35">
+            <rel:hasFormalContentModel rdf:resource="info:fedora/demo:CMImage"/>
+          </rdf:Description>
+        </rdf:RDF>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+</foxml:digitalObject>

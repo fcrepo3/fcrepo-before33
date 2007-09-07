@@ -7,8 +7,8 @@
     <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Collection of Smiley Stuff"/>
     <foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
   </foxml:objectProperties>
-  <foxml:datastream CONTROL_GROUP="E" ID="MemberQuery.txt"> 
-    <foxml:datastreamVersion ID="MemberQuery.txt.0" MIMETYPE="text/plain" LABEL="RDF Query to list members">
+  <foxml:datastream CONTROL_GROUP="E" ID="QUERY"> 
+    <foxml:datastreamVersion ID="QUERY.0" MIMETYPE="text/plain" LABEL="RDF Query to list members">
       <foxml:contentLocation REF="http://localhost:8080/fedora-demo/image-collection-demo/SmileyStuff-MemberQuery.txt" TYPE="URL"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
@@ -23,26 +23,25 @@
       </foxml:xmlContent>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:datastream CONTROL_GROUP="E" ID="ViewStylesheet.xsl">
-    <foxml:datastreamVersion ID="ViewStylesheet.xsl.0" MIMETYPE="text/xml" LABEL="Stylesheet to view list dissemination as html">
+  <foxml:datastream CONTROL_GROUP="E" ID="XSLT">
+    <foxml:datastreamVersion ID="XSLT.0" MIMETYPE="text/xml" LABEL="Stylesheet to view list dissemination as html">
       <foxml:contentLocation REF="http://localhost:8080/fedora-demo/image-collection-demo/SmileyStuff-ViewStylesheet.xsl" TYPE="URL"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:datastream CONTROL_GROUP="E" ID="MemberList.xml">
-    <foxml:datastreamVersion ID="MemberList.xml.0" MIMETYPE="text/xml" LABEL="Result of list dissemination">
+  <foxml:datastream CONTROL_GROUP="E" ID="LIST">
+    <foxml:datastreamVersion ID="LIST.0" MIMETYPE="text/xml" LABEL="Result of list dissemination">
       <foxml:contentLocation REF="http://local.fedora.server/fedora/get/demo:SmileyStuff/demo:Collection/list" TYPE="URL"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:disseminator BDEF_CONTRACT_PID="demo:Collection" ID="Collection">
-    <foxml:disseminatorVersion BMECH_SERVICE_PID="demo:DualResImageCollection" ID="DISS1.0" LABEL="Collection disseminator">
-      <foxml:serviceInputMap>
-        <foxml:datastreamBinding DATASTREAM_ID="ViewStylesheet.xsl" KEY="XSLT"
-          LABEL="Binding to Stylesheet to view list dissemination as html" ORDER="0"/>
-        <foxml:datastreamBinding DATASTREAM_ID="MemberList.xml" KEY="LIST"
-          LABEL="Binding to Result of list dissemination" ORDER="0"/>
-        <foxml:datastreamBinding DATASTREAM_ID="MemberQuery.txt" KEY="QUERY"
-          LABEL="Binding to RDF Query to list members" ORDER="0"/>
-      </foxml:serviceInputMap>
-    </foxml:disseminatorVersion>
-  </foxml:disseminator>
+  <foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="false">
+    <foxml:datastreamVersion ID="RELS-EXT.0" LABEL="Relationships" MIMETYPE="text/xml">
+      <foxml:xmlContent>
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+          <rdf:Description rdf:about="info:fedora/demo:SmileyStuff">
+            <rel:hasFormalContentModel rdf:resource="info:fedora/demo:CmodelForBMech_DualResImageCollection"/>
+          </rdf:Description>
+        </rdf:RDF>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
 </foxml:digitalObject>

@@ -11,9 +11,9 @@ import java.util.Date;
 import fedora.server.Context;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.Property;
+import fedora.server.storage.types.RelationshipTuple;
 
 /**
  *
@@ -121,44 +121,6 @@ public interface Management {
                                              String pid, 
                                              String datastreamID) throws ServerException;
 
-	public String addDisseminator(Context context,
-								  String pid,
-								  String bDefPID,
-								  String bMechPid,
-								  String dissLabel,
-								  DSBindingMap bindingMap,
-								  String dissState,
-								  String logMessage) throws ServerException;
-
-    public Date modifyDisseminator(Context context, 
-                                   String pid, 
-                                   String disseminatorID, 
-                                   String bMechPid, 
-                                   String dissLabel, 
-                                   DSBindingMap bindingMap, 
-                                   String dissState,
-                                   String logMessage,
-                                   boolean force) throws ServerException;
-
-    public Date[] purgeDisseminator(Context context, 
-                                    String pid, 
-                                    String disseminatorID, 
-                                    Date endDT,
-                                    String logMessage) throws ServerException;
-
-    public Disseminator getDisseminator(Context context, 
-                                        String pid, 
-                                        String disseminatorID, 
-                                        Date asOfDateTime) throws ServerException;
-
-    public Disseminator[] getDisseminators(Context context, 
-                                           String pid, 
-                                           Date asOfDateTime, 
-                                           String dissState) throws ServerException;
-
-    public Disseminator[] getDisseminatorHistory(Context context, 
-                                                 String pid, 
-                                                 String disseminatorID) throws ServerException;
 
     public String putTempStream(Context context, InputStream in) throws ServerException;
 
@@ -181,16 +143,31 @@ public interface Management {
                                             String dsID, 
                                             Date asOfDateTime) throws ServerException;
 
-    public Date setDisseminatorState(Context context,
-                                     String pid, 
-                                     String dsID, 
-                                     String dsState, 
-                                     String logMessage) throws ServerException;
-
     public String[] getNextPID(Context context, 
                                int numPIDs, 
                                String namespace) throws ServerException;
 
+    public RelationshipTuple[] getRelationships(Context context,
+                                                String pid, 
+                                                String dsID, 
+                                                String relationship)  throws ServerException;
+    
+    public RelationshipTuple addRelationship(Context context,
+                                              String pid, 
+                                              String dsID, 
+                                              String relationship, 
+                                              String objURI,
+                                              String objLiteral,
+                                              String literalType)  throws ServerException;
+    
+    public RelationshipTuple purgeRelationship(Context context,
+                                               String pid, 
+                                               String dsID, 
+                                               String relationship, 
+                                               String objURI,
+                                               String objLiteral,
+                                               String literalType)  throws ServerException;
+    
     public boolean adminPing(Context context) throws ServerException;
     
 }

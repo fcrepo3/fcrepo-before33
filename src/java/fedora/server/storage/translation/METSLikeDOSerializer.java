@@ -24,7 +24,7 @@ import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
-import fedora.server.storage.types.Disseminator;
+//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DSBinding;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
@@ -89,8 +89,8 @@ public class METSLikeDOSerializer
         appendAuditRecordAdminMD(obj, buf);
         appendOtherAdminMD(obj, buf, encoding);
         appendFileSecs(obj, buf);
-        appendStructMaps(obj, buf);
-        appendDisseminators(obj, buf);
+//        appendStructMaps(obj, buf);
+//        appendDisseminators(obj, buf);
         appendRootElementEnd(buf);
         writeToStream(buf, out, encoding, true);
     }
@@ -153,18 +153,30 @@ public class METSLikeDOSerializer
                 + FEDORA_AUDIT_NS + "\"\n");
     }
 
-    private String getTypeAttribute(DigitalObject obj)
-            throws ObjectIntegrityException {
-        int t=obj.getFedoraObjectType();
-        if (t==DigitalObject.FEDORA_BDEF_OBJECT) {
-            return "FedoraBDefObject";
-        } else if (t==DigitalObject.FEDORA_BMECH_OBJECT) {
-            return "FedoraBMechObject";
-        } else if (t==DigitalObject.FEDORA_OBJECT) {
-            return "FedoraObject";
-        } else {
+    private String getTypeAttribute(DigitalObject obj) throws ObjectIntegrityException 
+    {
+        String retVal = "";
+        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT))
+        {
+            retVal = (retVal.length() == 0 ? "" : retVal + ";" ) + "FedoraBDefObject";
+        } 
+        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
+        {
+            retVal = (retVal.length() == 0 ? "" : retVal + ";" ) + "FedoraBMechObject";            
+        } 
+        if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT))
+        {
+            retVal = (retVal.length() == 0 ? "" : retVal + ";" ) + "FedoraCModelObject";
+        } 
+        if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT))
+        {
+            retVal = (retVal.length() == 0 ? "" : retVal + ";" ) + "FedoraObject";
+        } 
+        if (retVal.length() == 0)
+        {
             throw new ObjectIntegrityException("Object must have a FedoraObjectType.");
         }
+        return(retVal);
     }
 
     private void appendHdr(DigitalObject obj, StringBuffer buf) {
@@ -287,12 +299,15 @@ public class METSLikeDOSerializer
 			// If WSDL or SERVICE-PROFILE datastream (in BMech) 
 			// make sure that any embedded URLs are encoded 
 			// appropriately for either EXPORT or STORE.
-            if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT
+            if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)
                     && (ds.DatastreamID.equals("SERVICE-PROFILE")) 
-                    || (ds.DatastreamID.equals("WSDL")) ) {
+                    || (ds.DatastreamID.equals("WSDL")) ) 
+            {
 				buf.append(DOTranslationUtility.normalizeInlineXML(
 					new String(ds.xmlContent, "UTF-8"), m_transContext));
-            } else {
+            } 
+            else 
+            {
                 appendStream(ds.getContentStream(), buf, encoding);
             }
             buf.append("        </" + METS_PREFIX + ":xmlData>");
@@ -516,106 +531,106 @@ public class METSLikeDOSerializer
         }
     }   
 
-    private void appendStructMaps(DigitalObject obj, StringBuffer buf)
-            throws ObjectIntegrityException {
-        Iterator dissIdIter=obj.disseminatorIdIterator();
-        while (dissIdIter.hasNext()) {
-            String did=(String) dissIdIter.next();
-            Iterator dissIter=obj.disseminators(did).iterator();
-            while (dissIter.hasNext()) {
-                Disseminator diss=
-                	DOTranslationUtility.setDisseminatorDefaults(
-                		(Disseminator) dissIter.next());
-                String labelAttr="";
-                if ( diss.dsBindMap.dsBindMapLabel!=null
-                        && !diss.dsBindMap.dsBindMapLabel.equals("") ) {
-                    labelAttr=" LABEL=\"" + StreamUtility.enc(diss.dsBindMap.dsBindMapLabel) + "\"";
-                }
-                buf.append("  <" + METS_PREFIX + ":structMap ID=\""
-                        + diss.dsBindMapID + "\" TYPE=\"fedora:dsBindingMap\">\n");
-                buf.append("    <" + METS_PREFIX + ":div TYPE=\"" + diss.bMechID
-                        + "\"" + labelAttr 
-                        + ">\n");
-                DSBinding[] bindings=diss.dsBindMap.dsBindings;
-                for (int i=0; i<bindings.length; i++) {
-                    if (bindings[i].bindKeyName==null
-                            || bindings[i].bindKeyName.equals("")) {
-                        throw new ObjectIntegrityException("Object's disseminator"
-                        	+ " binding map binding must have a binding key name.");
-                    }
-                    buf.append("      <" + METS_PREFIX + ":div TYPE=\"");
-                    buf.append(bindings[i].bindKeyName);
-                    if (bindings[i].bindLabel!=null
-                            && !bindings[i].bindLabel.equals("")) {
-                        buf.append("\" LABEL=\"");
-                        buf.append(StreamUtility.enc(bindings[i].bindLabel));
-                    }
-                    if (bindings[i].seqNo!=null && !bindings[i].seqNo.equals("")) {
-                        buf.append("\" ORDER=\"");
-                        buf.append(bindings[i].seqNo);
-                    }
-                    if (bindings[i].datastreamID==null
-                            || bindings[i].datastreamID.equals("")) {
-                        throw new ObjectIntegrityException("Object's disseminator"
-                        	+ " binding map binding must point to a datastream.");
-                    }
-                    buf.append("\">\n        <" + METS_PREFIX + ":fptr FILEID=\""
-                            + bindings[i].datastreamID + "\"/>\n" 
-                            + "      </"  + METS_PREFIX + ":div>\n");
-                }
-                buf.append("    </" + METS_PREFIX + ":div>\n");
-                buf.append("  </" + METS_PREFIX + ":structMap>\n");
-            }
-        }
-    }
-
-    private void appendDisseminators(DigitalObject obj, StringBuffer buf)
-            throws ObjectIntegrityException {
-        Iterator dissIdIter=obj.disseminatorIdIterator();
-        while (dissIdIter.hasNext()) {
-            String did=(String) dissIdIter.next();
-            Iterator dissIter=obj.disseminators(did).iterator();
-            Disseminator diss=
-				DOTranslationUtility.setDisseminatorDefaults(
-            		(Disseminator) obj.disseminators(did).get(0));
-            buf.append("  <" + METS_PREFIX + ":behaviorSec ID=\"" + did
-                    + "\" STATUS=\"" + diss.dissState + "\">\n");
-            for (int i=0; i<obj.disseminators(did).size(); i++) {
-                diss=DOTranslationUtility.setDisseminatorDefaults(
-                	(Disseminator) obj.disseminators(did).get(i));
-                String dissLabelAttr="";
-                if (diss.dissLabel!=null && !diss.dissLabel.equals("")) {
-                    dissLabelAttr=" LABEL=\"" + StreamUtility.enc(diss.dissLabel) + "\"";
-                }
-                /*
-                String bDefLabelAttr="";
-                if (diss.bDefLabel!=null && !diss.bDefLabel.equals("")) {
-                    bDefLabelAttr=" LABEL=\"" + StreamUtility.enc(diss.bDefLabel) + "\"";
-                }
-                String bMechLabelAttr="";
-                if (diss.bMechLabel!=null && !diss.bMechLabel.equals("")) {
-                    bMechLabelAttr=" LABEL=\"" + StreamUtility.enc(diss.bMechLabel) + "\"";
-                }
-                */
-                buf.append("    <" + METS_PREFIX + ":serviceBinding ID=\""
-                        + diss.dissVersionID + "\" STRUCTID=\"" + diss.dsBindMapID
-                        + "\" BTYPE=\"" + diss.bDefID + "\" CREATED=\""
-                        + DateUtility.convertDateToString(diss.dissCreateDT) + "\""
-                        + dissLabelAttr + ">\n");
-                //buf.append("      <" + METS_PREFIX + ":interfaceMD" + bDefLabelAttr
-				buf.append("      <" + METS_PREFIX + ":interfaceMD"
-						+ " LOCTYPE=\"URN\" " + m_XLinkPrefix + ":href=\""
-                        + diss.bDefID + "\"/>\n");
-                //buf.append("      <" + METS_PREFIX + ":serviceBindMD" + bMechLabelAttr
-				buf.append("      <" + METS_PREFIX + ":serviceBindMD"
-						+ " LOCTYPE=\"URN\" " + m_XLinkPrefix + ":href=\""
-                        + diss.bMechID + "\"/>\n");
-
-                buf.append("    </" + METS_PREFIX + ":serviceBinding>\n");
-            }
-            buf.append("  </" + METS_PREFIX + ":behaviorSec>\n");
-        }
-    }
+//    private void appendStructMaps(DigitalObject obj, StringBuffer buf)
+//            throws ObjectIntegrityException {
+//        Iterator dissIdIter=obj.disseminatorIdIterator();
+//        while (dissIdIter.hasNext()) {
+//            String did=(String) dissIdIter.next();
+//            Iterator dissIter=obj.disseminators(did).iterator();
+//            while (dissIter.hasNext()) {
+//                Disseminator diss=
+//                	DOTranslationUtility.setDisseminatorDefaults(
+//                		(Disseminator) dissIter.next());
+//                String labelAttr="";
+//                if ( diss.dsBindMap.dsBindMapLabel!=null
+//                        && !diss.dsBindMap.dsBindMapLabel.equals("") ) {
+//                    labelAttr=" LABEL=\"" + StreamUtility.enc(diss.dsBindMap.dsBindMapLabel) + "\"";
+//                }
+//                buf.append("  <" + METS_PREFIX + ":structMap ID=\""
+//                        + diss.dsBindMapID + "\" TYPE=\"fedora:dsBindingMap\">\n");
+//                buf.append("    <" + METS_PREFIX + ":div TYPE=\"" + diss.bMechID
+//                        + "\"" + labelAttr 
+//                        + ">\n");
+//                DSBinding[] bindings=diss.dsBindMap.dsBindings;
+//                for (int i=0; i<bindings.length; i++) {
+//                    if (bindings[i].bindKeyName==null
+//                            || bindings[i].bindKeyName.equals("")) {
+//                        throw new ObjectIntegrityException("Object's disseminator"
+//                        	+ " binding map binding must have a binding key name.");
+//                    }
+//                    buf.append("      <" + METS_PREFIX + ":div TYPE=\"");
+//                    buf.append(bindings[i].bindKeyName);
+//                    if (bindings[i].bindLabel!=null
+//                            && !bindings[i].bindLabel.equals("")) {
+//                        buf.append("\" LABEL=\"");
+//                        buf.append(StreamUtility.enc(bindings[i].bindLabel));
+//                    }
+//                    if (bindings[i].seqNo!=null && !bindings[i].seqNo.equals("")) {
+//                        buf.append("\" ORDER=\"");
+//                        buf.append(bindings[i].seqNo);
+//                    }
+//                    if (bindings[i].datastreamID==null
+//                            || bindings[i].datastreamID.equals("")) {
+//                        throw new ObjectIntegrityException("Object's disseminator"
+//                        	+ " binding map binding must point to a datastream.");
+//                    }
+//                    buf.append("\">\n        <" + METS_PREFIX + ":fptr FILEID=\""
+//                            + bindings[i].datastreamID + "\"/>\n" 
+//                            + "      </"  + METS_PREFIX + ":div>\n");
+//                }
+//                buf.append("    </" + METS_PREFIX + ":div>\n");
+//                buf.append("  </" + METS_PREFIX + ":structMap>\n");
+//            }
+//        }
+//    }
+//
+//    private void appendDisseminators(DigitalObject obj, StringBuffer buf)
+//            throws ObjectIntegrityException {
+//        Iterator dissIdIter=obj.disseminatorIdIterator();
+//        while (dissIdIter.hasNext()) {
+//            String did=(String) dissIdIter.next();
+//            Iterator dissIter=obj.disseminators(did).iterator();
+//            Disseminator diss=
+//				DOTranslationUtility.setDisseminatorDefaults(
+//            		(Disseminator) obj.disseminators(did).get(0));
+//            buf.append("  <" + METS_PREFIX + ":behaviorSec ID=\"" + did
+//                    + "\" STATUS=\"" + diss.dissState + "\">\n");
+//            for (int i=0; i<obj.disseminators(did).size(); i++) {
+//                diss=DOTranslationUtility.setDisseminatorDefaults(
+//                	(Disseminator) obj.disseminators(did).get(i));
+//                String dissLabelAttr="";
+//                if (diss.dissLabel!=null && !diss.dissLabel.equals("")) {
+//                    dissLabelAttr=" LABEL=\"" + StreamUtility.enc(diss.dissLabel) + "\"";
+//                }
+//                /*
+//                String bDefLabelAttr="";
+//                if (diss.bDefLabel!=null && !diss.bDefLabel.equals("")) {
+//                    bDefLabelAttr=" LABEL=\"" + StreamUtility.enc(diss.bDefLabel) + "\"";
+//                }
+//                String bMechLabelAttr="";
+//                if (diss.bMechLabel!=null && !diss.bMechLabel.equals("")) {
+//                    bMechLabelAttr=" LABEL=\"" + StreamUtility.enc(diss.bMechLabel) + "\"";
+//                }
+//                */
+//                buf.append("    <" + METS_PREFIX + ":serviceBinding ID=\""
+//                        + diss.dissVersionID + "\" STRUCTID=\"" + diss.dsBindMapID
+//                        + "\" BTYPE=\"" + diss.bDefID + "\" CREATED=\""
+//                        + DateUtility.convertDateToString(diss.dissCreateDT) + "\""
+//                        + dissLabelAttr + ">\n");
+//                //buf.append("      <" + METS_PREFIX + ":interfaceMD" + bDefLabelAttr
+//				buf.append("      <" + METS_PREFIX + ":interfaceMD"
+//						+ " LOCTYPE=\"URN\" " + m_XLinkPrefix + ":href=\""
+//                        + diss.bDefID + "\"/>\n");
+//                //buf.append("      <" + METS_PREFIX + ":serviceBindMD" + bMechLabelAttr
+//				buf.append("      <" + METS_PREFIX + ":serviceBindMD"
+//						+ " LOCTYPE=\"URN\" " + m_XLinkPrefix + ":href=\""
+//                        + diss.bMechID + "\"/>\n");
+//
+//                buf.append("    </" + METS_PREFIX + ":serviceBinding>\n");
+//            }
+//            buf.append("  </" + METS_PREFIX + ":behaviorSec>\n");
+//        }
+//    }
 
     private void appendRootElementEnd(StringBuffer buf) {
         buf.append("</" + METS_PREFIX + ":mets>");

@@ -49,10 +49,10 @@ import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.DOWriter;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
-import fedora.server.storage.replication.DOReplicator;
+//import fedora.server.storage.replication.DOReplicator;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
-import fedora.server.storage.types.Disseminator;
+//import fedora.server.storage.types.Disseminator;
 import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.TableSpec;
 
@@ -299,7 +299,7 @@ public class SQLRebuilder implements Rebuilder {
         // and object components (if they are not already there).
         Date nowUTC=new Date();
 
-        DOReplicator replicator=(DOReplicator) s_server.getModule("fedora.server.storage.replication.DOReplicator");
+//        DOReplicator replicator=(DOReplicator) s_server.getModule("fedora.server.storage.replication.DOReplicator");
         DOManager manager=(DOManager) s_server.getModule("fedora.server.storage.DOManager");
         FieldSearch fieldSearch=(FieldSearch) s_server.getModule("fedora.server.search.FieldSearch");
         PIDGenerator pidGenerator=(PIDGenerator) s_server.getModule("fedora.server.management.PIDGenerator");
@@ -346,22 +346,22 @@ public class SQLRebuilder implements Rebuilder {
                 }
             }
         }
-        // SET DISSEMINATOR PROPERTIES...
-        Iterator dissIter=obj.disseminatorIdIterator();
-        while (dissIter.hasNext()) {
-            List dissList=(List) obj.disseminators((String) dissIter.next());
-            for (int i=0; i<dissList.size(); i++) {
-                Disseminator diss=(Disseminator) dissList.get(i);
-                // Set create date to UTC if not already set
-                if (diss.dissCreateDT==null || diss.dissCreateDT.equals("")) {
-                    diss.dissCreateDT=nowUTC;
-                }
-                // Set state to "A" (Active) if not already set
-                if (diss.dissState==null || diss.dissState.equals("")) {
-                    diss.dissState="A";
-                }
-            }
-        }
+//        // SET DISSEMINATOR PROPERTIES...
+//        Iterator dissIter=obj.disseminatorIdIterator();
+//        while (dissIter.hasNext()) {
+//            List dissList=(List) obj.disseminators((String) dissIter.next());
+//            for (int i=0; i<dissList.size(); i++) {
+//                Disseminator diss=(Disseminator) dissList.get(i);
+//                // Set create date to UTC if not already set
+//                if (diss.dissCreateDT==null || diss.dissCreateDT.equals("")) {
+//                    diss.dissCreateDT=nowUTC;
+//                }
+//                // Set state to "A" (Active) if not already set
+//                if (diss.dissState==null || diss.dissState.equals("")) {
+//                    diss.dissState="A";
+//                }
+//            }
+//        }
         
         // GET DIGITAL OBJECT WRITER:
         // get an object writer configured with the DEFAULT export format
@@ -388,7 +388,7 @@ public class SQLRebuilder implements Rebuilder {
         // at this point the object is valid, so make a record 
         // of it in the digital object registry
         try {
-            registerObject(obj.getPid(), obj.getFedoraObjectType(), 
+            registerObject(obj.getPid(), obj.getFedoraObjectTypes(), 
             obj.getOwnerId(), obj.getLabel(), obj.getContentModelId(), 
             obj.getCreateDate(), obj.getLastModDate());
         }
@@ -398,41 +398,49 @@ public class SQLRebuilder implements Rebuilder {
         
         // REPLICATE:
         // add to replication jobs table and do replication to db
-        LOG.debug("COMMIT: Adding replication job...");
-        try {
-            addReplicationJob(obj.getPid(), false);
-        }
-        catch (StorageDeviceException e)
-        {
-        }
+//        LOG.debug("COMMIT: Adding replication job...");
+//        try {
+//            addReplicationJob(obj.getPid(), false);
+//        }
+//        catch (StorageDeviceException e)
+//        {
+//        }
         
         try {
-            if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) 
+            if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) 
             {
                 LOG.info("COMMIT: Attempting replication as bdef object: " + obj.getPid());
                 BDefReader reader = manager.getBDefReader(Server.USE_DEFINITIVE_STORE, m_context, obj.getPid());
-                replicator.replicate(reader);
+//                replicator.replicate(reader);
                 LOG.info("COMMIT: Updating FieldSearch indexes...");
                 fieldSearch.update(reader);
             } 
-            else if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) 
+            if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)) 
             {
                 LOG.info("COMMIT: Attempting replication as bmech object: " + obj.getPid());
                 BMechReader reader = manager.getBMechReader(Server.USE_DEFINITIVE_STORE, m_context, obj.getPid());
-                replicator.replicate(reader);
+//                replicator.replicate(reader);
                 LOG.info("COMMIT: Updating FieldSearch indexes...");
                 fieldSearch.update(reader);
             } 
-            else 
+            if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) 
+            {
+                LOG.info("COMMIT: Attempting replication as bmech object: " + obj.getPid());
+                DOReader reader = manager.getReader(Server.USE_DEFINITIVE_STORE, m_context, obj.getPid());
+//                replicator.replicate(reader);
+                LOG.info("COMMIT: Updating FieldSearch indexes...");
+                fieldSearch.update(reader);
+            } 
+            if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT))  
             {
                 LOG.info("COMMIT: Attempting replication as normal object: " + obj.getPid());
                 DOReader reader = manager.getReader(Server.USE_DEFINITIVE_STORE, m_context, obj.getPid());
-                replicator.replicate(reader);
+//                replicator.replicate(reader);
                 LOG.info("COMMIT: Updating FieldSearch indexes...");
                 fieldSearch.update(reader);
             }
             // FIXME: also remove from temp storage if this is successful
-            removeReplicationJob(obj.getPid());
+//            removeReplicationJob(obj.getPid());
         } 
         catch (ServerException se) 
         {
@@ -450,65 +458,65 @@ public class SQLRebuilder implements Rebuilder {
     /**
      * Add an entry to the replication jobs table.
      */
-    private void addReplicationJob(String pid, boolean deleted)
-            throws StorageDeviceException {
-        Connection conn=null;
-        String[] columns=new String[] {"doPID", "action"};
-        String action="M";
-        if (deleted) {
-            action="D";
-        }
-        String[] values=new String[] {pid, action};
-        try {
-            conn=m_connectionPool.getConnection();
-            SQLUtility.replaceInto(conn, "doRepJob", columns,
-                    values, "doPID");
-        } catch (SQLException sqle) {
-            throw new StorageDeviceException("Error creating replication job: " + sqle.getMessage());
-        } finally {
-            if (conn!=null) {
-                m_connectionPool.free(conn);
-            }
-        }
-    }
-    
-    private void removeReplicationJob(String pid)
-                  throws StorageDeviceException 
-    {
-        Connection conn=null;
-        Statement s=null;
-        try {
-            conn=m_connectionPool.getConnection();
-            s=conn.createStatement();
-            s.executeUpdate("DELETE FROM doRepJob "+ "WHERE doPID = '" + pid + "'");
-        } 
-        catch (SQLException sqle) 
-        {
-            throw new StorageDeviceException("Error removing entry from replication jobs table: " + sqle.getMessage());
-        } 
-        finally 
-        {
-        
-            try {
-                if (s!=null) s.close();
-                if (conn!=null) m_connectionPool.free(conn);
-            } 
-            catch (SQLException sqle) 
-            {
-                throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
-            } 
-            finally 
-            {
-                s=null;
-            }
-        }
-    }
+//    private void addReplicationJob(String pid, boolean deleted)
+//            throws StorageDeviceException {
+//        Connection conn=null;
+//        String[] columns=new String[] {"doPID", "action"};
+//        String action="M";
+//        if (deleted) {
+//            action="D";
+//        }
+//        String[] values=new String[] {pid, action};
+//        try {
+//            conn=m_connectionPool.getConnection();
+//            SQLUtility.replaceInto(conn, "doRepJob", columns,
+//                    values, "doPID");
+//        } catch (SQLException sqle) {
+//            throw new StorageDeviceException("Error creating replication job: " + sqle.getMessage());
+//        } finally {
+//            if (conn!=null) {
+//                m_connectionPool.free(conn);
+//            }
+//        }
+//    }
+//    
+//    private void removeReplicationJob(String pid)
+//                  throws StorageDeviceException 
+//    {
+//        Connection conn=null;
+//        Statement s=null;
+//        try {
+//            conn=m_connectionPool.getConnection();
+//            s=conn.createStatement();
+//            s.executeUpdate("DELETE FROM doRepJob "+ "WHERE doPID = '" + pid + "'");
+//        } 
+//        catch (SQLException sqle) 
+//        {
+//            throw new StorageDeviceException("Error removing entry from replication jobs table: " + sqle.getMessage());
+//        } 
+//        finally 
+//        {
+//        
+//            try {
+//                if (s!=null) s.close();
+//                if (conn!=null) m_connectionPool.free(conn);
+//            } 
+//            catch (SQLException sqle) 
+//            {
+//                throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
+//            } 
+//            finally 
+//            {
+//                s=null;
+//            }
+//        }
+//    }
 
 
     /**
      * Adds a new object.
      */
-    private void registerObject(String pid, int fedoraObjectType, String userId,
+    private void registerObject(String pid, String fedoraObjectType, String userId,
             String label, String contentModelId, Date createDate, Date lastModDate)
             throws StorageDeviceException 
     {
@@ -523,13 +531,14 @@ public class SQLRebuilder implements Rebuilder {
         }
         Connection conn=null;
         Statement s1=null;
-        String foType="O";
-        if (fedoraObjectType==DigitalObject.FEDORA_BDEF_OBJECT) {
-            foType="D";
-        }
-        if (fedoraObjectType==DigitalObject.FEDORA_BMECH_OBJECT) {
-            foType="M";
-        }
+        String foType = fedoraObjectType;
+//        "O";
+//        if (fedoraObjectType==DigitalObject.FEDORA_BDEF_OBJECT) {
+//            foType="D";
+//        }
+//        if (fedoraObjectType==DigitalObject.FEDORA_BMECH_OBJECT) {
+//            foType="M";
+//        }
         try 
         {
             String query="INSERT INTO doRegistry (doPID, foType, "

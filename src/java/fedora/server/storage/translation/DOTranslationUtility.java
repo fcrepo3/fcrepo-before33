@@ -17,7 +17,7 @@ import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
-import fedora.server.storage.types.Disseminator;
+//import fedora.server.storage.types.Disseminator;
 import fedora.server.utilities.DateUtility;
 
 /**
@@ -595,16 +595,16 @@ public abstract class DOTranslationUtility {
 		return ds;
 	}
 
-	public static Disseminator setDisseminatorDefaults(Disseminator diss) throws ObjectIntegrityException 
-	{
-
-		// Until future when we implement selective versioning,
-		// set default to true.
-		diss.dissVersionable=true;
-		
-		if (diss.dissState==null || diss.dissState.equals("")) {
-				diss.dissState="A";
-		}
-		return diss;
-	}
+//	public static Disseminator setDisseminatorDefaults(Disseminator diss) throws ObjectIntegrityException 
+//	{
+//
+//		// Until future when we implement selective versioning,
+//		// set default to true.
+//		diss.dissVersionable=true;
+//		
+//		if (diss.dissState==null || diss.dissState.equals("")) {
+//				diss.dissState="A";
+//		}
+//		return diss;
+//	}
 }

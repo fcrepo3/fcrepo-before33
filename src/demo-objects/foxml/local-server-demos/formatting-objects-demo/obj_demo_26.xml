@@ -23,13 +23,13 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream ID="FOPDISSEM" CONTROL_GROUP="E" STATE="A">
-		<foxml:datastreamVersion ID="FOPRENDITION" MIMETYPE="text/xml" LABEL="FOP Dissemination as Datastream">
+	<foxml:datastream ID="XML_SOURCE" CONTROL_GROUP="E" STATE="A">
+		<foxml:datastreamVersion ID="XML_SOURCE1.0" MIMETYPE="text/xml" LABEL="FOP Dissemination as Datastream">
 			<foxml:contentLocation REF="http://localhost:8080/fedora/get/demo:26/demo:22/getFO" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream ID="TEISOURCE" CONTROL_GROUP="X" STATE="A">
-		<foxml:datastreamVersion ID="TEISOURCE1.0" MIMETYPE="text/xml" LABEL="TEI Source">
+	<foxml:datastream ID="TEI_SOURCE" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="TEI_SOURCE1.0" MIMETYPE="text/xml" LABEL="TEI Source">
 			<foxml:xmlContent>
 				<TEI.2>
 					<teiHeader>
@@ -64,18 +64,15 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="demo:19" STATE="A">
-		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="demo:20" LABEL="PDF Disseminator">
-			<foxml:serviceInputMap>
-				<foxml:datastreamBinding DATASTREAM_ID="FOPDISSEM" KEY="XML_SOURCE" LABEL="FOP Source file to be transformed"/>
-			</foxml:serviceInputMap>
-		</foxml:disseminatorVersion>
-	</foxml:disseminator>
-	<foxml:disseminator ID="DISS2" BDEF_CONTRACT_PID="demo:22" STATE="A">
-		<foxml:disseminatorVersion ID="DISS2.0" BMECH_SERVICE_PID="demo:25" LABEL="FO Disseminator">
-			<foxml:serviceInputMap>
-				<foxml:datastreamBinding DATASTREAM_ID="TEISOURCE" KEY="TEI_SOURCE" LABEL="TEI Source file to be transformed to FO"/>
-			</foxml:serviceInputMap>
-		</foxml:disseminatorVersion>
-	</foxml:disseminator>
+  	<foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="false">
+    	<foxml:datastreamVersion ID="RELS-EXT.2" LABEL="Relationships" MIMETYPE="text/xml">
+      		<foxml:xmlContent>
+        		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+          			<rdf:Description rdf:about="info:fedora/demo:26">
+            			<rel:hasFormalContentModel rdf:resource="info:fedora/demo:TEI_TO_PDFDOC"/>
+          			</rdf:Description>
+        		</rdf:RDF>
+      		</foxml:xmlContent>
+    	</foxml:datastreamVersion>
+  	</foxml:datastream>
 </foxml:digitalObject>

@@ -319,7 +319,7 @@ public class ObjectInfoAsXML
         String label=reader.GetObjectLabel();
         if (label==null) label="";
         out.append("<label>" + StreamUtility.enc(label) + "</label>\n");
-        out.append("<fType>" + StreamUtility.enc(reader.getFedoraObjectType()) + "</fType>\n");
+        out.append("<fType>" + StreamUtility.enc(reader.getFedoraObjectTypes()) + "</fType>\n");
         String cModel=reader.getContentModelId();
         if (cModel==null) cModel="";
         out.append("<cModel>" + StreamUtility.enc(cModel) + "</cModel>\n");

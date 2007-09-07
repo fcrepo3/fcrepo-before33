@@ -21,8 +21,9 @@ import fedora.server.journal.helpers.JournalHelper;
 import fedora.server.management.ManagementDelegate;
 import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.Disseminator;
+//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.Property;
+import fedora.server.storage.types.RelationshipTuple;
 
 /**
  * 
@@ -434,6 +435,44 @@ public class JournalCreator implements JournalWorker, JournalConstants {
         }
     }
 
+    public RelationshipTuple addRelationship(Context context, String pid, String subjectURI, 
+                                               String relationship, String objURI, 
+                                               String objLiteral, String literalType) throws ServerException
+    {
+        try {
+            CreatorJournalEntry cje = new CreatorJournalEntry(
+                    METHOD_ADD_RELATIONSHIP, context);
+            cje.addArgument(ARGUMENT_NAME_PID, pid);
+            cje.addArgument(ARGUMENT_NAME_SUBJECT_URI, subjectURI);
+            cje.addArgument(ARGUMENT_NAME_RELATIONSHIP, relationship);
+            cje.addArgument(ARGUMENT_NAME_OBJECT_URI, objURI);
+            cje.addArgument(ARGUMENT_NAME_OBJECT_LITERAL, objLiteral);            
+            cje.addArgument(ARGUMENT_NAME_LITERAL_TYPE, literalType);            
+            return (RelationshipTuple) cje.invokeAndClose(delegate, writer);
+        } catch (JournalException e) {
+            throw new GeneralException("Problem creating the Journal", e);
+        }
+    }
+
+    public RelationshipTuple purgeRelationship(Context context, String pid, String subjectURI, 
+                                                String relationship, String objURI, 
+                                                String objLiteral, String literalType) throws ServerException
+    {
+        try {
+            CreatorJournalEntry cje = new CreatorJournalEntry(
+                    METHOD_PURGE_RELATIONSHIP, context);
+            cje.addArgument(ARGUMENT_NAME_PID, pid);
+            cje.addArgument(ARGUMENT_NAME_SUBJECT_URI, subjectURI);
+            cje.addArgument(ARGUMENT_NAME_RELATIONSHIP, relationship);
+            cje.addArgument(ARGUMENT_NAME_OBJECT_URI, objURI);
+            cje.addArgument(ARGUMENT_NAME_OBJECT_LITERAL, objLiteral);            
+            cje.addArgument(ARGUMENT_NAME_LITERAL_TYPE, literalType);            
+            return (RelationshipTuple) cje.invokeAndClose(delegate, writer);
+        } catch (JournalException e) {
+            throw new GeneralException("Problem creating the Journal", e);
+        }
+    }
+
     //
     // -------------------------------------------------------------------------
     // 
@@ -448,6 +487,14 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     public Property[] getObjectProperties(Context context, String pid)
             throws ServerException {
         return delegate.getObjectProperties(context, pid);
+    }
+    
+    /**
+     * Let the delegate do it.
+     */
+    public RelationshipTuple[] getRelationships(Context context, String pid, String dsID, String relationship) throws ServerException
+    {
+        return delegate.getRelationships(context, pid, dsID, relationship);
     }
 
     /**
@@ -491,31 +538,31 @@ public class JournalCreator implements JournalWorker, JournalConstants {
         return delegate.getDatastreamHistory(context, pid, datastreamID);
     }
 
-    /**
-     * Let the delegate do it.
-     */
-    public Disseminator getDisseminator(Context context, String pid,
-            String disseminatorID, Date asOfDateTime) throws ServerException {
-        return delegate.getDisseminator(context, pid, disseminatorID,
-                asOfDateTime);
-    }
-
-    /**
-     * Let the delegate do it.
-     */
-    public Disseminator[] getDisseminators(Context context, String pid,
-            Date asOfDateTime, String dissState) throws ServerException {
-        return delegate.getDisseminators(context, pid, asOfDateTime, dissState);
-    }
-
-    /**
-     * Let the delegate do it.
-     */
-    public Disseminator[] getDisseminatorHistory(Context context, String pid,
-            String disseminatorID) throws ServerException {
-        return delegate.getDisseminatorHistory(context, pid, disseminatorID);
-    }
-
+//    /**
+//     * Let the delegate do it.
+//     */
+//    public Disseminator getDisseminator(Context context, String pid,
+//            String disseminatorID, Date asOfDateTime) throws ServerException {
+//        return delegate.getDisseminator(context, pid, disseminatorID,
+//                asOfDateTime);
+//    }
+//
+//    /**
+//     * Let the delegate do it.
+//     */
+//    public Disseminator[] getDisseminators(Context context, String pid,
+//            Date asOfDateTime, String dissState) throws ServerException {
+//        return delegate.getDisseminators(context, pid, asOfDateTime, dissState);
+//    }
+//
+//    /**
+//     * Let the delegate do it.
+//     */
+//    public Disseminator[] getDisseminatorHistory(Context context, String pid,
+//            String disseminatorID) throws ServerException {
+//        return delegate.getDisseminatorHistory(context, pid, disseminatorID);
+//    }
+//
     /**
      * Let the delegate do it.
      */
@@ -529,5 +576,6 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     public boolean adminPing(Context context) throws ServerException {
         return delegate.adminPing(context);
     }
+
 
 }

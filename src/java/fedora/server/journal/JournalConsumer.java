@@ -18,8 +18,9 @@ import fedora.server.journal.recoverylog.JournalRecoveryLog;
 import fedora.server.management.ManagementDelegate;
 import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.Disseminator;
+//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.Property;
+import fedora.server.storage.types.RelationshipTuple;
 
 /**
  * 
@@ -242,29 +243,29 @@ public class JournalConsumer implements JournalWorker {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
-    /**
-     * Reject API calls from outside while we are in recovery mode.
-     */
-    public Disseminator getDisseminator(Context context, String pid,
-            String disseminatorID, Date asOfDateTime) throws ServerException {
-        throw rejectCallsFromOutsideWhileInRecoveryMode();
-    }
-
-    /**
-     * Reject API calls from outside while we are in recovery mode.
-     */
-    public Disseminator[] getDisseminators(Context context, String pid,
-            Date asOfDateTime, String dissState) throws ServerException {
-        throw rejectCallsFromOutsideWhileInRecoveryMode();
-    }
-
-    /**
-     * Reject API calls from outside while we are in recovery mode.
-     */
-    public Disseminator[] getDisseminatorHistory(Context context, String pid,
-            String disseminatorID) throws ServerException {
-        throw rejectCallsFromOutsideWhileInRecoveryMode();
-    }
+//    /**
+//     * Reject API calls from outside while we are in recovery mode.
+//     */
+//    public Disseminator getDisseminator(Context context, String pid,
+//            String disseminatorID, Date asOfDateTime) throws ServerException {
+//        throw rejectCallsFromOutsideWhileInRecoveryMode();
+//    }
+//
+//    /**
+//     * Reject API calls from outside while we are in recovery mode.
+//     */
+//    public Disseminator[] getDisseminators(Context context, String pid,
+//            Date asOfDateTime, String dissState) throws ServerException {
+//        throw rejectCallsFromOutsideWhileInRecoveryMode();
+//    }
+//
+//    /**
+//     * Reject API calls from outside while we are in recovery mode.
+//     */
+//    public Disseminator[] getDisseminatorHistory(Context context, String pid,
+//            String disseminatorID) throws ServerException {
+//        throw rejectCallsFromOutsideWhileInRecoveryMode();
+//    }
 
     /**
      * Reject API calls from outside while we are in recovery mode.
@@ -336,6 +337,31 @@ public class JournalConsumer implements JournalWorker {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
+
+    /**
+     * Reject API calls from outside while we are in recovery mode.
+     */
+    public RelationshipTuple[] getRelationships(Context context, String pid, String dsID, String relationship) throws ServerException
+    {
+        throw rejectCallsFromOutsideWhileInRecoveryMode();
+    }
+
+    /**
+     * Reject API calls from outside while we are in recovery mode.
+     */
+    public RelationshipTuple addRelationship(Context context, String pid, String dsID, String relationship, String objURI, String objLiteral, String literalType) throws ServerException
+    {
+        throw rejectCallsFromOutsideWhileInRecoveryMode();
+    }
+
+    /**
+     * Reject API calls from outside while we are in recovery mode.
+     */
+    public RelationshipTuple purgeRelationship(Context context, String pid, String dsID, String relationship, String objURI, String objLiteral, String literalType) throws ServerException
+    {
+        throw rejectCallsFromOutsideWhileInRecoveryMode();
+    }
+    
     /**
      * While the server is reading a Journal to recover its state, block any
      * attempt to use the Management API.

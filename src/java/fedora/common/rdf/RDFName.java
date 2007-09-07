@@ -46,6 +46,7 @@ public class RDFName implements URIReference {
     public boolean looselyMatches(String in, boolean tryFirstLocalNameChar) {
         if (in == null || in.length() == 0) return false;
         if (in.equalsIgnoreCase(this.localName)) return true;
+        if (in.indexOf(this.localName)!= -1) return true;
         if (in.equals(uri)) return true;
         if (tryFirstLocalNameChar
                 && in.length() == 1 

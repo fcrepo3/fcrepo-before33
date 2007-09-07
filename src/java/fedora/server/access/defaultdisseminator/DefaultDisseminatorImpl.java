@@ -23,6 +23,7 @@ import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
+import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.MIMETypedStream;
@@ -136,8 +137,7 @@ public class DefaultDisseminatorImpl extends InternalService implements DefaultD
   {
     // sdp: the dissemination index is disabled for bdef and bmech objects
     // so send back a message saying so.
-    if ((reader.getFedoraObjectType().equalsIgnoreCase("D")) ||
-        (reader.getFedoraObjectType().equalsIgnoreCase("M")))
+    if (!(reader.isFedoraObjectType(DigitalObject.FEDORA_OBJECT)))
     {
       return noMethodIndexMsg();
     }
@@ -280,7 +280,7 @@ public class DefaultDisseminatorImpl extends InternalService implements DefaultD
   private MIMETypedStream noMethodIndexMsg() throws GeneralException
   {
 	  String msg = new String("The Dissemination Index is not available"
-		+ " for Behavior Definition or Behavior Mechanism objects."
+		+ " for Content Model objects, \n or Behavior Definition objects or Behavior Mechanism objects.\n"
 		+ " The addition of this feature is not currently scheduled.");
 	  StringBuffer sb = new StringBuffer();
 	  sb.append("<html><head><title>Dissemination Index Not Available</title></head>");

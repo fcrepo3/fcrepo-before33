@@ -492,29 +492,29 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	}
 	
-	public final void enforceAddDisseminator(Context context, String pid, String bDefPid, String bMechPid, String dissState)
-	throws AuthzException { 
-	try {
-        LOG.debug("Entered enforceAddDisseminator");		
-		String target = Constants.ACTION.ADD_DISSEMINATOR.uri;
-		log("enforcing " + target);
-		context.setActionAttributes(null);
-		MultiValueMap resourceAttributes = new MultiValueMap();
-		String name = "";
-		try {
-			name = resourceAttributes.setReturn(Constants.BDEF.PID.uri, bDefPid);
-			name = resourceAttributes.setReturn(Constants.BMECH.PID.uri, bMechPid);			
-			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.STATE.uri, dissState);
-		} catch (Exception e) {
-			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
-		}
-		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-	} finally {
-        LOG.debug("Exiting enforceAddDisseminator");
-	}
-	}
+//	public final void enforceAddDisseminator(Context context, String pid, String bDefPid, String bMechPid, String dissState)
+//	throws AuthzException { 
+//	try {
+//        LOG.debug("Entered enforceAddDisseminator");		
+//		String target = Constants.ACTION.ADD_DISSEMINATOR.uri;
+//		log("enforcing " + target);
+//		context.setActionAttributes(null);
+//		MultiValueMap resourceAttributes = new MultiValueMap();
+//		String name = "";
+//		try {
+//			name = resourceAttributes.setReturn(Constants.BDEF.PID.uri, bDefPid);
+//			name = resourceAttributes.setReturn(Constants.BMECH.PID.uri, bMechPid);			
+//			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.STATE.uri, dissState);
+//		} catch (Exception e) {
+//			context.setResourceAttributes(null);		
+//			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
+//		}
+//		context.setResourceAttributes(resourceAttributes);
+//		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+//	} finally {
+//        LOG.debug("Exiting enforceAddDisseminator");
+//	}
+//	}
 		
 	public final void enforceExportObject(Context context, String pid, String format, String exportContext, String exportEncoding)
 	throws AuthzException { 
@@ -541,27 +541,27 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	
 	
-	public final void enforceGetDisseminatorHistory(Context context, String pid, String disseminatorId) 
-	throws AuthzException {
-	try {
-        LOG.debug("Entered enforceGetDisseminatorHistory");		
-		String target = Constants.ACTION.GET_DISSEMINATOR_HISTORY.uri;
-		log("enforcing " + target);
-		context.setActionAttributes(null);
-		MultiValueMap resourceAttributes = new MultiValueMap();
-		String name = "";
-		try {
-			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.ID.uri, disseminatorId);	
-		} catch (Exception e) {
-			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
-		}
-		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-	} finally {
-        LOG.debug("Exiting enforceGetDisseminatorHistory");
-	}
-	}
+//	public final void enforceGetDisseminatorHistory(Context context, String pid, String disseminatorId) 
+//	throws AuthzException {
+//	try {
+//        LOG.debug("Entered enforceGetDisseminatorHistory");		
+//		String target = Constants.ACTION.GET_DISSEMINATOR_HISTORY.uri;
+//		log("enforcing " + target);
+//		context.setActionAttributes(null);
+//		MultiValueMap resourceAttributes = new MultiValueMap();
+//		String name = "";
+//		try {
+//			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.ID.uri, disseminatorId);	
+//		} catch (Exception e) {
+//			context.setResourceAttributes(null);		
+//			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
+//		}
+//		context.setResourceAttributes(resourceAttributes);
+//		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+//	} finally {
+//        LOG.debug("Exiting enforceGetDisseminatorHistory");
+//	}
+//	}
 
 	public final void enforceGetNextPid(Context context, String namespace, int nNewPids) 
 	throws AuthzException {
@@ -674,51 +674,51 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	}
 
-	public final void enforceGetDisseminator(Context context, String pid, String disseminatorId, Date asOfDate) 
-	throws AuthzException { 
-	try {
-        LOG.debug("Entered enforceGetDisseminator");		
-		String target = Constants.ACTION.GET_DISSEMINATOR.uri;
-		log("enforcing " + target);
-		context.setActionAttributes(null);
-		MultiValueMap resourceAttributes = new MultiValueMap();
-		String name = "";
-		try {
-			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.ID.uri, disseminatorId);	
-			name = resourceAttributes.setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri, ensureDate(asOfDate, context));	
-		} catch (Exception e) {
-			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
-		}
-		context.setResourceAttributes(resourceAttributes);		
-		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-	} finally {
-        LOG.debug("Exiting enforceGetDisseminator");
-	}
-	}
+//	public final void enforceGetDisseminator(Context context, String pid, String disseminatorId, Date asOfDate) 
+//	throws AuthzException { 
+//	try {
+//        LOG.debug("Entered enforceGetDisseminator");		
+//		String target = Constants.ACTION.GET_DISSEMINATOR.uri;
+//		log("enforcing " + target);
+//		context.setActionAttributes(null);
+//		MultiValueMap resourceAttributes = new MultiValueMap();
+//		String name = "";
+//		try {
+//			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.ID.uri, disseminatorId);	
+//			name = resourceAttributes.setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri, ensureDate(asOfDate, context));	
+//		} catch (Exception e) {
+//			context.setResourceAttributes(null);		
+//			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
+//		}
+//		context.setResourceAttributes(resourceAttributes);		
+//		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+//	} finally {
+//        LOG.debug("Exiting enforceGetDisseminator");
+//	}
+//	}
 	
-	public final void enforceGetDisseminators(Context context, String pid, Date asOfDate, String disseminatorState) 
-	throws AuthzException { 
-	try {
-        LOG.debug("Entered enforceGetDisseminators");		
-		String target = Constants.ACTION.GET_DISSEMINATORS.uri;
-		log("enforcing " + target);
-		context.setActionAttributes(null);
-		MultiValueMap resourceAttributes = new MultiValueMap();
-		String name = "";
-		try {
-			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.STATE.uri, disseminatorState);	
-			name = resourceAttributes.setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri, ensureDate(asOfDate, context));	
-		} catch (Exception e) {
-			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
-		}
-		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-	} finally {
-        LOG.debug("Exiting enforceGetDisseminators");
-	}
-	}
+//	public final void enforceGetDisseminators(Context context, String pid, Date asOfDate, String disseminatorState) 
+//	throws AuthzException { 
+//	try {
+//        LOG.debug("Entered enforceGetDisseminators");		
+//		String target = Constants.ACTION.GET_DISSEMINATORS.uri;
+//		log("enforcing " + target);
+//		context.setActionAttributes(null);
+//		MultiValueMap resourceAttributes = new MultiValueMap();
+//		String name = "";
+//		try {
+//			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.STATE.uri, disseminatorState);	
+//			name = resourceAttributes.setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri, ensureDate(asOfDate, context));	
+//		} catch (Exception e) {
+//			context.setResourceAttributes(null);		
+//			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
+//		}
+//		context.setResourceAttributes(resourceAttributes);	
+//		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+//	} finally {
+//        LOG.debug("Exiting enforceGetDisseminators");
+//	}
+//	}
 	
 	public final void enforceGetObjectProperties(Context context, String pid) 
 	throws AuthzException {
@@ -872,30 +872,30 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	}
 
-	public final void enforceModifyDisseminator(Context context, String pid, String disseminatorId, String bmechNewPid, String disseminatorNewState) 
-	throws AuthzException {
-	try {
-        LOG.debug("Entered enforceModifyDisseminator");		
-		String target = Constants.ACTION.MODIFY_DISSEMINATOR.uri;
-		log("enforcing " + target);
-		context.setActionAttributes(null);		
-		MultiValueMap resourceAttributes = new MultiValueMap();
-		String name = "";
-		try {
-			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.ID.uri, disseminatorId);
-			name = resourceAttributes.setReturn(Constants.BMECH.NEW_PID.uri, bmechNewPid);	
-			name = resourceAttributes.setReturn(Constants.BMECH.NEW_NAMESPACE.uri, extractNamespace(bmechNewPid));		
-			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.NEW_STATE.uri, extractNamespace(disseminatorNewState));		
-		} catch (Exception e) {
-			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
-		}
-		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-	} finally {
-        LOG.debug("Exiting enforceModifyDisseminator");
-	}
-	}
+//	public final void enforceModifyDisseminator(Context context, String pid, String disseminatorId, String bmechNewPid, String disseminatorNewState) 
+//	throws AuthzException {
+//	try {
+//        LOG.debug("Entered enforceModifyDisseminator");		
+//		String target = Constants.ACTION.MODIFY_DISSEMINATOR.uri;
+//		log("enforcing " + target);
+//		context.setActionAttributes(null);		
+//		MultiValueMap resourceAttributes = new MultiValueMap();
+//		String name = "";
+//		try {
+//			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.ID.uri, disseminatorId);
+//			name = resourceAttributes.setReturn(Constants.BMECH.NEW_PID.uri, bmechNewPid);	
+//			name = resourceAttributes.setReturn(Constants.BMECH.NEW_NAMESPACE.uri, extractNamespace(bmechNewPid));		
+//			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.NEW_STATE.uri, extractNamespace(disseminatorNewState));		
+//		} catch (Exception e) {
+//			context.setResourceAttributes(null);		
+//			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
+//		}
+//		context.setResourceAttributes(resourceAttributes);	
+//		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+//	} finally {
+//        LOG.debug("Exiting enforceModifyDisseminator");
+//	}
+//	}
 	
 	public final void enforceModifyObject(Context context, String pid, String objectNewState, String objectNewOwnerId) 
 	throws AuthzException {
@@ -944,28 +944,28 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	}
 
-	public final void enforcePurgeDisseminator(Context context, String pid, String disseminatorId, Date endDT)
-	throws AuthzException {
-	try {
-        LOG.debug("Entered enforcePurgeDisseminator");		
-		String target = Constants.ACTION.PURGE_DISSEMINATOR.uri;
-		log("enforcing " + target);
-		String name = "";
-		context.setActionAttributes(null);		
-		MultiValueMap resourceAttributes = new MultiValueMap();
-		try {
-			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.ID.uri, disseminatorId);
-			name = resourceAttributes.setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri, ensureDate (endDT, context));	
-		} catch (Exception e) {
-			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
-		}
-		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-	} finally {
-        LOG.debug("Exiting enforcePurgeDisseminator");
-	}
-	}
+//	public final void enforcePurgeDisseminator(Context context, String pid, String disseminatorId, Date endDT)
+//	throws AuthzException {
+//	try {
+//        LOG.debug("Entered enforcePurgeDisseminator");		
+//		String target = Constants.ACTION.PURGE_DISSEMINATOR.uri;
+//		log("enforcing " + target);
+//		String name = "";
+//		context.setActionAttributes(null);		
+//		MultiValueMap resourceAttributes = new MultiValueMap();
+//		try {
+//			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.ID.uri, disseminatorId);
+//			name = resourceAttributes.setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri, ensureDate (endDT, context));	
+//		} catch (Exception e) {
+//			context.setResourceAttributes(null);		
+//			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
+//		}
+//		context.setResourceAttributes(resourceAttributes);	
+//		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+//	} finally {
+//        LOG.debug("Exiting enforcePurgeDisseminator");
+//	}
+//	}
 	
 	public final void enforcePurgeObject(Context context, String pid) 
 	throws AuthzException {
@@ -1027,28 +1027,28 @@ public class DefaultAuthorization extends Module implements Authorization {
     }
     }
 	
-	public final void enforceSetDisseminatorState(Context context, String pid, String disseminatorId, String disseminatorNewState) 
-	throws AuthzException {
-	try {
-        LOG.debug("Entered enforceSetDisseminatorState");		
-		String target = Constants.ACTION.SET_DISSEMINATOR_STATE.uri;
-		log("enforcing " + target);
-		context.setActionAttributes(null);
-		MultiValueMap resourceAttributes = new MultiValueMap();
-		String name = "";
-		try {
-			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.ID.uri, disseminatorId);	
-			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.NEW_STATE.uri, disseminatorNewState);	
-		} catch (Exception e) {
-			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
-		}
-		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-	} finally {
-        LOG.debug("Exiting enforceSetDisseminatorState");
-	}
-	}
+//	public final void enforceSetDisseminatorState(Context context, String pid, String disseminatorId, String disseminatorNewState) 
+//	throws AuthzException {
+//	try {
+//        LOG.debug("Entered enforceSetDisseminatorState");		
+//		String target = Constants.ACTION.SET_DISSEMINATOR_STATE.uri;
+//		log("enforcing " + target);
+//		context.setActionAttributes(null);
+//		MultiValueMap resourceAttributes = new MultiValueMap();
+//		String name = "";
+//		try {
+//			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.ID.uri, disseminatorId);	
+//			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.NEW_STATE.uri, disseminatorNewState);	
+//		} catch (Exception e) {
+//			context.setResourceAttributes(null);		
+//			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
+//		}
+//		context.setResourceAttributes(resourceAttributes);	
+//		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+//	} finally {
+//        LOG.debug("Exiting enforceSetDisseminatorState");
+//	}
+//	}
 	
     public final void enforceCompareDatastreamChecksum(Context context, String pid, String datastreamId, Date versionDate) 
     throws AuthzException {
@@ -1417,6 +1417,81 @@ public class DefaultAuthorization extends Module implements Authorization {
 	  	if (slog) {
             LOG.debug(msg);
 	  	}
-	  }	  
+	  }
+
+
+    public void enforceGetRelationships(Context context, String pid, String subjectURI, String predicate) throws AuthzException
+    {
+        try {
+            LOG.debug("Entered enforceGetRelationships");       
+            String target = Constants.ACTION.GET_RELATIONSHIPS.uri;
+            log("enforcing " + target);
+            context.setActionAttributes(null);  
+            MultiValueMap resourceAttributes = new MultiValueMap();     
+            String name = "";
+            try {
+                name = resourceAttributes.setReturn(Constants.OBJECT.PID.uri, pid);   
+            } 
+            catch (Exception e) {
+                context.setResourceAttributes(null);        
+                throw new AuthzOperationalException(target + " couldn't set " + name, e);   
+            }       
+            context.setResourceAttributes(resourceAttributes);          
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+        } 
+        finally {
+            LOG.debug("Exiting enforceGetRelationships");
+        }
+    }
+
+
+    public void enforceAddRelationship(Context context, String pid, String subjectURI, String predicate, String objectURI, String objectLit, String literalType) throws AuthzException
+    {
+        try {
+            LOG.debug("Entered enforceAddRelationship");       
+            String target = Constants.ACTION.ADD_RELATIONSHIP.uri;
+            log("enforcing " + target);
+            context.setActionAttributes(null);  
+            MultiValueMap resourceAttributes = new MultiValueMap();     
+            String name = "";
+            try {
+                name = resourceAttributes.setReturn(Constants.OBJECT.PID.uri, pid);   
+            } 
+            catch (Exception e) {
+                context.setResourceAttributes(null);        
+                throw new AuthzOperationalException(target + " couldn't set " + name, e);   
+            }       
+            context.setResourceAttributes(resourceAttributes);          
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+        } 
+        finally {
+            LOG.debug("Exiting enforceAddRelationship");
+        }
+    }
+
+
+    public void enforcePurgeRelationship(Context context, String pid, String subjectURI, String predicate, String objectURI, String objectLit, String literalType) throws AuthzException
+    {
+        try {
+            LOG.debug("Entered enforcePurgeRelationship");       
+            String target = Constants.ACTION.PURGE_RELATIONSHIP.uri;
+            log("enforcing " + target);
+            context.setActionAttributes(null);  
+            MultiValueMap resourceAttributes = new MultiValueMap();     
+            String name = "";
+            try {
+                name = resourceAttributes.setReturn(Constants.OBJECT.PID.uri, pid);   
+            } 
+            catch (Exception e) {
+                context.setResourceAttributes(null);        
+                throw new AuthzOperationalException(target + " couldn't set " + name, e);   
+            }       
+            context.setResourceAttributes(resourceAttributes);          
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+        } 
+        finally {
+            LOG.debug("Exiting enforcePurgeRelationship");
+        }
+    }	  
 
 }

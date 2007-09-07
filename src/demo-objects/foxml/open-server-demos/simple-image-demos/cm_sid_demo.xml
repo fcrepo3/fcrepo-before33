@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject PID="demo:CMSID" xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+	<foxml:objectProperties>
+		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Content Model for MrSID Images"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UVA_STD_IMAGE"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
+	</foxml:objectProperties>
+	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="DC Record for Content Model for MrSID Images">
+			<foxml:xmlContent>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+					<dc:title>Content Model for MrSID model for CMDA proof of concept</dc:title>
+					<dc:identifier>demo:CMSID</dc:identifier>
+				</oai_dc:dc>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream ID="DS-COMPOSITE-MODEL" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="DS-COMPOSITE-MODEL1.0" MIMETYPE="text/xml" LABEL="Definition of Image Content Model">
+			<foxml:xmlContent>
+				<dsCompositeModel>  
+					<dsTypeModel ID="MRSID" ORDERED="false" SEMANTIC_ID="MRSID" MIN="1" MAX="1">
+              				<!-- The images must be a Mr SID image -->
+              				<form MIME="image/x-mrsid-image" FORMAT_URIS="info:pathways/fmt/pronom/20"/>
+    					</dsTypeModel>
+				</dsCompositeModel>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+  	<foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT"> 
+    	<foxml:datastreamVersion ID="RELS-EXT.0" MIMETYPE="text/xml" LABEL="Relationships to other objects">
+      		<foxml:xmlContent>
+    			<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+      				<rdf:Description rdf:about="info:fedora/demo:CMSID">
+        				<rel:BDef rdf:resource="info:fedora/demo:1"/>
+      				</rdf:Description>
+    			</rdf:RDF>
+      		</foxml:xmlContent>
+    	</foxml:datastreamVersion>
+  	</foxml:datastream>
+</foxml:digitalObject>

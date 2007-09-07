@@ -71,11 +71,15 @@ public class MockRepositoryReader implements RepositoryReader {
     public synchronized DOReader getReader(boolean cachedObjectRequired, 
                               Context context, 
                               String pid)
-            throws ServerException {
+            throws ServerException 
+    {
         DigitalObject obj = getObject(pid);
-        if (obj.getFedoraObjectType() != DigitalObject.FEDORA_OBJECT) {
+        if (!obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT))
+        {
             throw new GeneralException("Not a data object: " + pid);
-        } else {
+        } 
+        else 
+        {
             return new SimpleDOReader(null, this, null, null, null, obj);
         }
     }
@@ -86,11 +90,15 @@ public class MockRepositoryReader implements RepositoryReader {
     public synchronized BMechReader getBMechReader(boolean cachedObjectRequired,
                                       Context context,
                                       String pid)
-            throws ServerException {
+            throws ServerException 
+    {
         DigitalObject obj = getObject(pid);
-        if (obj.getFedoraObjectType() != DigitalObject.FEDORA_BMECH_OBJECT) {
+        if (!obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
+        {
             throw new GeneralException("Not a bmech object: " + pid);
-        } else {
+        } 
+        else 
+        {
             return new SimpleBMechReader(null, this, null, null, null, obj);
         }
     }
@@ -101,11 +109,15 @@ public class MockRepositoryReader implements RepositoryReader {
     public synchronized BDefReader getBDefReader(boolean cachedObjectRequired, 
                                     Context context, 
                                     String pid)
-            throws ServerException {
+            throws ServerException 
+    {
         DigitalObject obj = getObject(pid);
-        if (obj.getFedoraObjectType() != DigitalObject.FEDORA_BDEF_OBJECT) {
+        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT))
+        {
             throw new GeneralException("Not a bdef object: " + pid);
-        } else {
+        } 
+        else 
+        {
             return new SimpleBDefReader(null, this, null, null, null, obj);
         }
     }
@@ -114,11 +126,13 @@ public class MockRepositoryReader implements RepositoryReader {
      * {@inheritDoc}
      */
     public synchronized String[] listObjectPIDs(Context context)
-            throws ServerException {
+            throws ServerException 
+    {
         String[] pids = new String[_objects.keySet().size()];
         Iterator iter = _objects.keySet().iterator();
         int i = 0;
-        while (iter.hasNext()) {
+        while (iter.hasNext()) 
+        {
             pids[i++] = (String) iter.next();
         }
         return pids;

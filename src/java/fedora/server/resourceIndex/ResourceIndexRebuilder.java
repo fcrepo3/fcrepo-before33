@@ -174,17 +174,26 @@ public class ResourceIndexRebuilder implements Rebuilder {
      * @throws ResourceIndexException
      */
     public void addObject(DigitalObject obj) throws ResourceIndexException {
-        if (obj.getFedoraObjectType() ==
-                DigitalObject.FEDORA_BDEF_OBJECT) {
+        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) 
+        {
             m_ri.addBDefObject(
                     new SimpleBDefReader(null, null, null, null,
                     null, obj));
-        } else if (obj.getFedoraObjectType() ==
-                DigitalObject.FEDORA_BMECH_OBJECT) {
+        } 
+        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)) 
+        {
             m_ri.addBMechObject(
                     new SimpleBMechReader(null, null, null, null,
                     null, obj));
-        } else {
+        } 
+        if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) 
+        {
+//            m_ri.addCModelObject(
+//                    new SimpleDOReader(null, null, null, null,
+//                    null, obj));
+        }
+        if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT)) 
+        {
             m_ri.addDataObject(
                     new SimpleDOReader(null, null, null, null,
                     null, obj));

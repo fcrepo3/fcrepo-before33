@@ -8,8 +8,9 @@ import fedora.server.errors.ServerException;
 import fedora.server.management.ManagementDelegate;
 import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.Disseminator;
+//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.Property;
+import fedora.server.storage.types.RelationshipTuple;
 
 class MockManagementDelegateForJournalTesting implements ManagementDelegate {
 
@@ -172,26 +173,26 @@ class MockManagementDelegateForJournalTesting implements ManagementDelegate {
 
     }
 
-    public Disseminator getDisseminator(Context context, String pid,
-            String disseminatorID, Date asOfDateTime) throws ServerException {
-        throw new RuntimeException(
-                "MockManagementDelegateForJournalTesting.getDisseminator not implemented"); // KLUGE
-
-    }
-
-    public Disseminator[] getDisseminators(Context context, String pid,
-            Date asOfDateTime, String dissState) throws ServerException {
-        throw new RuntimeException(
-                "MockManagementDelegateForJournalTesting.getDisseminators not implemented"); // KLUGE
-
-    }
-
-    public Disseminator[] getDisseminatorHistory(Context context, String pid,
-            String disseminatorID) throws ServerException {
-        throw new RuntimeException(
-                "MockManagementDelegateForJournalTesting.getDisseminatorHistory not implemented"); // KLUGE
-
-    }
+//    public Disseminator getDisseminator(Context context, String pid,
+//            String disseminatorID, Date asOfDateTime) throws ServerException {
+//        throw new RuntimeException(
+//                "MockManagementDelegateForJournalTesting.getDisseminator not implemented"); // KLUGE
+//
+//    }
+//
+//    public Disseminator[] getDisseminators(Context context, String pid,
+//            Date asOfDateTime, String dissState) throws ServerException {
+//        throw new RuntimeException(
+//                "MockManagementDelegateForJournalTesting.getDisseminators not implemented"); // KLUGE
+//
+//    }
+//
+//    public Disseminator[] getDisseminatorHistory(Context context, String pid,
+//            String disseminatorID) throws ServerException {
+//        throw new RuntimeException(
+//                "MockManagementDelegateForJournalTesting.getDisseminatorHistory not implemented"); // KLUGE
+//
+//    }
 
     public String putTempStream(Context context, InputStream in)
             throws ServerException {
@@ -234,28 +235,46 @@ class MockManagementDelegateForJournalTesting implements ManagementDelegate {
     }
 
 	public Date modifyDatastreamByReference(Context context, String pid, String datastreamID, String[] altIDs, String dsLabel, String mimeType, String formatURI, String dsLocation, String logMessage, boolean force) throws ServerException {
-		// TODO Auto-generated method stub
-		return null;
+        throw new RuntimeException(
+        "MockManagementDelegateForJournalTesting.modifyDatastreamByReference not implemented"); // KLUGE
 	}
 
 	public Date modifyDatastreamByValue(Context context, String pid, String datastreamID, String[] altIDs, String dsLabel, String mimeType, String formatURI, InputStream dsContent, String logMessage, boolean force) throws ServerException {
-		// TODO Auto-generated method stub
-		return null;
+        throw new RuntimeException(
+        "MockManagementDelegateForJournalTesting.modifyDatastreamByValue not implemented"); // KLUGE
 	}
 
 	public Date[] purgeDatastream(Context context, String pid, String datastreamID, Date startDT, Date endDT, String logMessage, boolean force) throws ServerException {
-		// TODO Auto-generated method stub
-		return null;
+        throw new RuntimeException(
+        "MockManagementDelegateForJournalTesting.purgeDatastream not implemented"); // KLUGE
 	}
 
 	public Date setDatastreamVersionable(Context context, String pid, String dsID, boolean versionable, String logMessage) throws ServerException {
-		// TODO Auto-generated method stub
-		return null;
+        throw new RuntimeException(
+        "MockManagementDelegateForJournalTesting.setDatastreamVersionable not implemented"); // KLUGE
 	}
        
     public String compareDatastreamChecksum(Context context, String pid, String dsID, Date versionDate) throws ServerException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new RuntimeException(
+        "MockManagementDelegateForJournalTesting.compareDatastreamChecksum not implemented"); // KLUGE
+    }
+
+    public RelationshipTuple[] getRelationships(Context context, String pid, String dsID, String relationship) throws ServerException
+    {
+        throw new RuntimeException(
+        "MockManagementDelegateForJournalTesting.getRelationships not implemented"); // KLUGE
+    }
+
+    public RelationshipTuple addRelationship(Context context, String pid, String dsID, String relationship, String objURI, String objLiteral, String literalType) throws ServerException
+    {
+        throw new RuntimeException(
+        "MockManagementDelegateForJournalTesting.addRelationship not implemented"); // KLUGE
+    }
+
+    public RelationshipTuple purgeRelationship(Context context, String pid, String dsID, String relationship, String objURI, String objLiteral, String literalType) throws ServerException
+    {
+        throw new RuntimeException(
+        "MockManagementDelegateForJournalTesting.purgeRelationship not implemented"); // KLUGE
     }
 
 }

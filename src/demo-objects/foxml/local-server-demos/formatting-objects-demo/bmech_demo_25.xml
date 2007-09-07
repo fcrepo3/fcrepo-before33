@@ -115,15 +115,16 @@
 			<foxml:contentLocation REF="http://localhost:8080/saxon/" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="fedora-system:1" STATE="A">
-		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="fedora-system:2" LABEL="Bootstrap Behaviors">
-			<foxml:serviceInputMap>
-				<foxml:datastreamBinding DATASTREAM_ID="SERVICE-PROFILE" KEY="SERVICE-PROFILE" LABEL="Service profile metadata"/>
-				<foxml:datastreamBinding DATASTREAM_ID="DSINPUTSPEC" KEY="FEDORA-TO-WSDL-DSINPUTSPEC" LABEL="XML data that serves describes the requirements for Datastreams that will be used as input to the service"/>
-				<foxml:datastreamBinding DATASTREAM_ID="METHODMAP" KEY="FEDORA-TO-WSDL-METHODMAP" LABEL="XML data that enables FEDORA to understand how to use the service WSDL"/>
-				<foxml:datastreamBinding DATASTREAM_ID="WSDL" KEY="WSDL" LABEL="Service definitions in WSDL format"/>
-				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="PROGGUIDE" LABEL="The Programmer's user guide for using the service"/>
-			</foxml:serviceInputMap>
-		</foxml:disseminatorVersion>
-	</foxml:disseminator>
+  	<foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="false">
+    	<foxml:datastreamVersion ID="RELS-EXT.2" LABEL="Relationships" MIMETYPE="text/xml">
+      		<foxml:xmlContent>
+        		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+          			<rdf:Description rdf:about="info:fedora/demo:25">
+            			<rel:hasBDef rdf:resource="info:fedora/demo:22"/>
+            			<rel:isContractor rdf:resource="info:fedora/demo:TEI_TO_PDFDOC"/>
+          			</rdf:Description>
+        		</rdf:RDF>
+      		</foxml:xmlContent>
+    	</foxml:datastreamVersion>
+  	</foxml:datastream>
 </foxml:digitalObject>

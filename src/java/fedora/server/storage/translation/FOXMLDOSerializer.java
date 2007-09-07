@@ -24,7 +24,7 @@ import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
-import fedora.server.storage.types.Disseminator;
+//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DSBinding;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
@@ -82,7 +82,7 @@ public class FOXMLDOSerializer
         appendProperties(obj, buf, encoding);
         appendAudit(obj, buf, encoding);
         appendDatastreams(obj, buf, encoding);
-        appendDisseminators(obj, buf);
+//        appendDisseminators(obj, buf);
         appendRootElementEnd(buf);
         writeToStream(buf, out, encoding, true);
     }
@@ -182,7 +182,8 @@ public class FOXMLDOSerializer
 			+ " VALUE=\"" + StreamUtility.enc(cmodel) + "\"/>\n");	
 		}
 		Iterator iter = obj.getExtProperties().keySet().iterator();
-		while (iter.hasNext()){
+		while (iter.hasNext())
+        {
 			String name = (String)iter.next();
 			buf.append("        <" + FOXML_PREFIX + ":extproperty NAME=\"" + name + "\""
 			+ " VALUE=\"" + obj.getExtProperty(name) + "\"/>\n"); 
@@ -283,9 +284,10 @@ public class FOXMLDOSerializer
 						+ "\"/>\n");	
 				    }
 				// if X insert inline XML
-				} else if (vds.DSControlGrp.equalsIgnoreCase("X")) {
-					appendInlineXML(obj.getFedoraObjectType(), 
-						(DatastreamXMLMetadata)vds, buf, encoding);
+				} 
+                else if (vds.DSControlGrp.equalsIgnoreCase("X")) 
+                {
+					appendInlineXML(obj, (DatastreamXMLMetadata)vds, buf, encoding);
 				}					
 					 
 				buf.append("        </" + FOXML_PREFIX + ":datastreamVersion>\n");
@@ -360,9 +362,10 @@ public class FOXMLDOSerializer
 		}
 	}
 
-	private void appendInlineXML(int fedoraObjectType, DatastreamXMLMetadata ds, 
+	private void appendInlineXML(DigitalObject obj, DatastreamXMLMetadata ds, 
 		StringBuffer buf, String encoding)
-		throws ObjectIntegrityException, UnsupportedEncodingException, StreamIOException {
+		throws ObjectIntegrityException, UnsupportedEncodingException, StreamIOException 
+    {
 			
 		buf.append("            <" + FOXML_PREFIX + ":xmlContent>\n");
 				
@@ -370,15 +373,18 @@ public class FOXMLDOSerializer
 		// in a BMech object search for any embedded URLs that are relative to
 		// the local repository (like internal service URLs) and make sure they
 		// are converted appropriately for the translation context.
-        if ( fedoraObjectType==DigitalObject.FEDORA_BMECH_OBJECT &&
+        if ( obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT) &&
              (ds.DatastreamID.equals("SERVICE-PROFILE") || 
-			  ds.DatastreamID.equals("WSDL")) ) {
+			  ds.DatastreamID.equals("WSDL")) ) 
+        {
 			  	// FIXME! We need a more efficient way than to search
 			  	// the whole block of inline XML. We really only want to 
 			  	// look at service URLs in the XML.
 	            buf.append(DOTranslationUtility.normalizeInlineXML(
 	            	new String(ds.xmlContent, "UTF-8"), m_transContext));
-        } else {
+        } 
+        else 
+        {
             appendXMLStream(ds.getContentStream(), buf, encoding);
         }
         buf.append("            </" + FOXML_PREFIX + ":xmlContent>\n");
@@ -410,69 +416,69 @@ public class FOXMLDOSerializer
         }
     }
 
-    private void appendDisseminators(DigitalObject obj, StringBuffer buf)
-            throws ObjectIntegrityException {
-
-        Iterator dissIdIter=obj.disseminatorIdIterator();
-        while (dissIdIter.hasNext()) {
-            String did=(String) dissIdIter.next();
-            Iterator dissIter=obj.disseminators(did).iterator();
-            List dissList = obj.disseminators(did);
-            
-            for (int i=0; i<dissList.size(); i++) {
-                Disseminator vdiss = 
-					DOTranslationUtility.setDisseminatorDefaults((Disseminator) obj.disseminators(did).get(i));              
-				// insert the disseminator elements common to all versions.
-				if (i==0) {
-					buf.append("    <" + FOXML_PREFIX + ":disseminator ID=\"" + did
-							+ "\" BDEF_CONTRACT_PID=\"" + vdiss.bDefID 
-							+ "\" STATE=\"" + vdiss.dissState 
-							+ "\" VERSIONABLE=\"" + vdiss.dissVersionable +"\">\n");
-				}
-				// insert the disseminator version-level elements
-				String dissLabelAttr="";
-				if (vdiss.dissLabel!=null && !vdiss.dissLabel.equals("")) {
-					dissLabelAttr=" LABEL=\"" + StreamUtility.enc(vdiss.dissLabel) + "\"";
-				}
-				String dateAttr="";
-				if (vdiss.dissCreateDT!=null) {
-					dateAttr=" CREATED=\"" + DateUtility.convertDateToString(vdiss.dissCreateDT) + "\"";
-				}
-				buf.append("        <" + FOXML_PREFIX 
-					+ ":disseminatorVersion ID=\"" + vdiss.dissVersionID + "\"" 
-					+ dissLabelAttr
-					+ " BMECH_SERVICE_PID=\"" + vdiss.bMechID + "\""
-					+ dateAttr 
-					+  ">\n");
-				
-				// datastream bindings...	
-				DSBinding[] bindings = vdiss.dsBindMap.dsBindings;
-				buf.append("            <" + FOXML_PREFIX + ":serviceInputMap>\n");
-				for (int j=0; j<bindings.length; j++){
-					if (bindings[j].seqNo==null) { 
-						bindings[j].seqNo = "";
-					}
-					String labelAttr="";
-					if (bindings[j].bindLabel!=null && !bindings[j].bindLabel.equals("")) {
-						labelAttr=" LABEL=\"" + StreamUtility.enc(bindings[j].bindLabel) + "\"";
-					}
-					String orderAttr="";
-					if (bindings[j].seqNo!=null && !bindings[j].seqNo.equals("")) {
-						orderAttr=" ORDER=\"" + bindings[j].seqNo + "\"";
-					}				
-	                buf.append("                <" + FOXML_PREFIX + ":datastreamBinding KEY=\""
-	                        + bindings[j].bindKeyName + "\""
-							+ " DATASTREAM_ID=\"" + bindings[j].datastreamID + "\""
-							+ labelAttr
-	                        + orderAttr
-							+ "/>\n");
-				}
-				buf.append("            </" + FOXML_PREFIX + ":serviceInputMap>\n");
-				buf.append("        </" + FOXML_PREFIX + ":disseminatorVersion>\n");
-            }
-			buf.append("    </" + FOXML_PREFIX + ":disseminator>\n");
-        }
-    }
+//    private void appendDisseminators(DigitalObject obj, StringBuffer buf)
+//            throws ObjectIntegrityException {
+//
+//        Iterator dissIdIter=obj.disseminatorIdIterator();
+//        while (dissIdIter.hasNext()) {
+//            String did=(String) dissIdIter.next();
+//            Iterator dissIter=obj.disseminators(did).iterator();
+//            List dissList = obj.disseminators(did);
+//            
+//            for (int i=0; i<dissList.size(); i++) {
+//                Disseminator vdiss = 
+//					DOTranslationUtility.setDisseminatorDefaults((Disseminator) obj.disseminators(did).get(i));              
+//				// insert the disseminator elements common to all versions.
+//				if (i==0) {
+//					buf.append("    <" + FOXML_PREFIX + ":disseminator ID=\"" + did
+//							+ "\" BDEF_CONTRACT_PID=\"" + vdiss.bDefID 
+//							+ "\" STATE=\"" + vdiss.dissState 
+//							+ "\" VERSIONABLE=\"" + vdiss.dissVersionable +"\">\n");
+//				}
+//				// insert the disseminator version-level elements
+//				String dissLabelAttr="";
+//				if (vdiss.dissLabel!=null && !vdiss.dissLabel.equals("")) {
+//					dissLabelAttr=" LABEL=\"" + StreamUtility.enc(vdiss.dissLabel) + "\"";
+//				}
+//				String dateAttr="";
+//				if (vdiss.dissCreateDT!=null) {
+//					dateAttr=" CREATED=\"" + DateUtility.convertDateToString(vdiss.dissCreateDT) + "\"";
+//				}
+//				buf.append("        <" + FOXML_PREFIX 
+//					+ ":disseminatorVersion ID=\"" + vdiss.dissVersionID + "\"" 
+//					+ dissLabelAttr
+//					+ " BMECH_SERVICE_PID=\"" + vdiss.bMechID + "\""
+//					+ dateAttr 
+//					+  ">\n");
+//				
+//				// datastream bindings...	
+//				DSBinding[] bindings = vdiss.dsBindMap.dsBindings;
+//				buf.append("            <" + FOXML_PREFIX + ":serviceInputMap>\n");
+//				for (int j=0; j<bindings.length; j++){
+//					if (bindings[j].seqNo==null) { 
+//						bindings[j].seqNo = "";
+//					}
+//					String labelAttr="";
+//					if (bindings[j].bindLabel!=null && !bindings[j].bindLabel.equals("")) {
+//						labelAttr=" LABEL=\"" + StreamUtility.enc(bindings[j].bindLabel) + "\"";
+//					}
+//					String orderAttr="";
+//					if (bindings[j].seqNo!=null && !bindings[j].seqNo.equals("")) {
+//						orderAttr=" ORDER=\"" + bindings[j].seqNo + "\"";
+//					}				
+//	                buf.append("                <" + FOXML_PREFIX + ":datastreamBinding KEY=\""
+//	                        + bindings[j].bindKeyName + "\""
+//							+ " DATASTREAM_ID=\"" + bindings[j].datastreamID + "\""
+//							+ labelAttr
+//	                        + orderAttr
+//							+ "/>\n");
+//				}
+//				buf.append("            </" + FOXML_PREFIX + ":serviceInputMap>\n");
+//				buf.append("        </" + FOXML_PREFIX + ":disseminatorVersion>\n");
+//            }
+//			buf.append("    </" + FOXML_PREFIX + ":disseminator>\n");
+//        }
+//    }
 
     private void appendRootElementEnd(StringBuffer buf) {
         buf.append("</" + FOXML_PREFIX + ":digitalObject>");
@@ -501,17 +507,30 @@ public class FOXMLDOSerializer
 	}
 	
 	private String getTypeAttribute(DigitalObject obj)
-			throws ObjectIntegrityException {
-		int t=obj.getFedoraObjectType();
-		if (t==DigitalObject.FEDORA_BDEF_OBJECT) {
-            return MODEL.BDEF_OBJECT.localName;
-		} else if (t==DigitalObject.FEDORA_BMECH_OBJECT) {
-            return MODEL.BMECH_OBJECT.localName;
-		} else if (t==DigitalObject.FEDORA_OBJECT) {
-            return MODEL.DATA_OBJECT.localName;
-		} else {
+			throws ObjectIntegrityException 
+    {
+		String retVal = "";
+        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT))
+        {
+            retVal = (retVal.length() == 0 ? "" : retVal + ";" ) + MODEL.BDEF_OBJECT.localName;
+		} 
+        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
+        {
+            retVal = (retVal.length() == 0 ? "" : retVal + ";" ) + MODEL.BMECH_OBJECT.localName;            
+		} 
+        if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT))
+        {
+            retVal = (retVal.length() == 0 ? "" : retVal + ";" ) + MODEL.CMODEL_OBJECT.localName;
+        } 
+        if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT))
+        {
+            retVal = (retVal.length() == 0 ? "" : retVal + ";" ) + MODEL.DATA_OBJECT.localName;
+        } 
+        if (retVal.length() == 0)
+        {
 			throw new ObjectIntegrityException("Object must have a FedoraObjectType.");
 		}
+        return(retVal);
 	}
 	
     private String getStateAttribute(DigitalObject obj) {

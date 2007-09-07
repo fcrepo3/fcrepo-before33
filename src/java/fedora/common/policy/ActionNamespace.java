@@ -20,28 +20,28 @@ public class ActionNamespace extends XacmlNamespace {
 	
     // Values of ID   
 	public final XacmlName ADD_DATASTREAM;	
-	public final XacmlName ADD_DISSEMINATOR;	
+//	public final XacmlName ADD_DISSEMINATOR;	
 	public final XacmlName ADMIN_PING;
 	public final XacmlName EXPORT;	
 	public final XacmlName GET_DATASTREAM;	
 	public final XacmlName GET_DATASTREAM_HISTORY;	
 	public final XacmlName GET_DATASTREAMS;	
-	public final XacmlName GET_DISSEMINATOR;
-	public final XacmlName GET_DISSEMINATORS;	
-	public final XacmlName GET_DISSEMINATOR_HISTORY;	
+//	public final XacmlName GET_DISSEMINATOR;
+//	public final XacmlName GET_DISSEMINATORS;	
+//	public final XacmlName GET_DISSEMINATOR_HISTORY;	
 	public final XacmlName GET_NEXT_PID;
 	public final XacmlName GET_OBJECT_PROPERTIES;	
 	public final XacmlName GET_OBJECT_XML;	
 	public final XacmlName INGEST;
 	public final XacmlName MODIFY_DATASTREAM_BY_REFERENCE;	
 	public final XacmlName MODIFY_DATASTREAM_BY_VALUE;
-	public final XacmlName MODIFY_DISSEMINATOR;		
+//	public final XacmlName MODIFY_DISSEMINATOR;		
 	public final XacmlName MODIFY_OBJECT;
 	public final XacmlName PURGE_OBJECT;
 	public final XacmlName PURGE_DATASTREAM;
-	public final XacmlName PURGE_DISSEMINATOR;	
+//	public final XacmlName PURGE_DISSEMINATOR;	
 	public final XacmlName SET_DATASTREAM_STATE;	
-	public final XacmlName SET_DISSEMINATOR_STATE;	
+//	public final XacmlName SET_DISSEMINATOR_STATE;	
 	public final XacmlName DESCRIBE_REPOSITORY;	
 	public final XacmlName FIND_OBJECTS;
 	public final XacmlName RI_FIND_OBJECTS;	
@@ -62,6 +62,9 @@ public class ActionNamespace extends XacmlNamespace {
 	public final XacmlName RELOAD_POLICIES;	
 	public final XacmlName SET_DATASTREAM_VERSIONABLE;
 	public final XacmlName COMPARE_DATASTREAM_CHECKSUM;
+    public final XacmlName GET_RELATIONSHIPS;
+    public final XacmlName ADD_RELATIONSHIP;
+    public final XacmlName PURGE_RELATIONSHIP;
 
     private ActionNamespace(XacmlNamespace parent, String localName) {
     	super(parent, localName);
@@ -72,28 +75,28 @@ public class ActionNamespace extends XacmlNamespace {
     	ID = addName(new XacmlName(this, "id", StringAttribute.identifier));
     	// derived from respective Java methods in Access.java or Management.java    	
     	ADD_DATASTREAM               = addName(new XacmlName(this, "id-addDatastream"));	
-    	ADD_DISSEMINATOR               = addName(new XacmlName(this, "id-addDisseminator"));	
+//    	ADD_DISSEMINATOR               = addName(new XacmlName(this, "id-addDisseminator"));	
     	ADMIN_PING               = addName(new XacmlName(this, "id-adminPing")); 
     	EXPORT               = addName(new XacmlName(this, "id-export"));    	
     	GET_DATASTREAM               = addName(new XacmlName(this, "id-getDatastream"));	
     	GET_DATASTREAM_HISTORY               = addName(new XacmlName(this, "id-getDatastreamHistory"));	
     	GET_DATASTREAMS               = addName(new XacmlName(this, "id-getDatastreams"));	
-    	GET_DISSEMINATOR               = addName(new XacmlName(this, "id-getDisseminator"));
-    	GET_DISSEMINATORS               = addName(new XacmlName(this, "id-getDisseminators"));	
-    	GET_DISSEMINATOR_HISTORY               = addName(new XacmlName(this, "id-getDisseminatorHistory"));	
+//    	GET_DISSEMINATOR               = addName(new XacmlName(this, "id-getDisseminator"));
+//    	GET_DISSEMINATORS               = addName(new XacmlName(this, "id-getDisseminators"));	
+//    	GET_DISSEMINATOR_HISTORY               = addName(new XacmlName(this, "id-getDisseminatorHistory"));	
     	GET_NEXT_PID               = addName(new XacmlName(this, "id-getNextPid"));
     	GET_OBJECT_PROPERTIES               = addName(new XacmlName(this, "id-getObjectProperties"));	
     	GET_OBJECT_XML               = addName(new XacmlName(this, "id-getObjectXML"));	
     	INGEST               = addName(new XacmlName(this, "id-ingest"));
     	MODIFY_DATASTREAM_BY_REFERENCE               = addName(new XacmlName(this, "id-modifyDatastreamByReference"));	
     	MODIFY_DATASTREAM_BY_VALUE               = addName(new XacmlName(this, "id-modifyDatastreamByValue"));
-    	MODIFY_DISSEMINATOR               = addName(new XacmlName(this, "id-modifyDisseminator"));		
+//    	MODIFY_DISSEMINATOR               = addName(new XacmlName(this, "id-modifyDisseminator"));		
     	MODIFY_OBJECT               = addName(new XacmlName(this, "id-modifyObject"));
     	PURGE_OBJECT               = addName(new XacmlName(this, "id-purgeObject"));
     	PURGE_DATASTREAM               = addName(new XacmlName(this, "id-purgeDatastream"));
-    	PURGE_DISSEMINATOR               = addName(new XacmlName(this, "id-purgeDisseminator"));	
+//    	PURGE_DISSEMINATOR               = addName(new XacmlName(this, "id-purgeDisseminator"));	
     	SET_DATASTREAM_STATE               = addName(new XacmlName(this, "id-setDatastreamState"));	
-    	SET_DISSEMINATOR_STATE               = addName(new XacmlName(this, "id-setDisseminatorState"));	
+//    	SET_DISSEMINATOR_STATE               = addName(new XacmlName(this, "id-setDisseminatorState"));	
     	SET_DATASTREAM_VERSIONABLE               = addName(new XacmlName(this, "id-setDatastreamVersionable"));
     	COMPARE_DATASTREAM_CHECKSUM               = addName(new XacmlName(this, "id-compareDatastreamChecksum"));
     	DESCRIBE_REPOSITORY               = addName(new XacmlName(this, "id-describeRepository"));	
@@ -113,7 +116,10 @@ public class ActionNamespace extends XacmlNamespace {
     	UPLOAD = addName(new XacmlName(this, "id-upload"));     	
     	INTERNAL_DSSTATE = addName(new XacmlName(this, "id-dsstate"));
     	RESOLVE_DATASTREAM = addName(new XacmlName(this, "id-resolveDatastream"));    	
-    	RELOAD_POLICIES = addName(new XacmlName(this, "id-reloadPolicies"));    	
+    	RELOAD_POLICIES = addName(new XacmlName(this, "id-reloadPolicies"));  
+        GET_RELATIONSHIPS = addName(new XacmlName(this, "id-getRelationships"));
+        ADD_RELATIONSHIP = addName(new XacmlName(this, "id-addRelationship"));
+        PURGE_RELATIONSHIP = addName(new XacmlName(this, "id-purgeRelationship"));
     	CONTEXT_ID = addName(new XacmlName(this, "contextId", StringAttribute.identifier)); //internal callback support
     	// Values of CONTEXT_ID are sequential numerals, hence not enumerated here.
     	

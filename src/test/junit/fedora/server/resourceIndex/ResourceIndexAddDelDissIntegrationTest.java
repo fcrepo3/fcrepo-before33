@@ -239,8 +239,8 @@ public class ResourceIndexAddDelDissIntegrationTest
         addEDatastream(obj, "DS1");
         Map<String, String> bindings = new HashMap<String, String>();
         bindings.put("KEY1", "DS1");
-        addDisseminator(obj, "DISS1", "test:bdef1", "test:bmech1", bindings);
-        addDisseminator(obj, "DISS2", "test:bdef1c", "test:bmech1c", bindings);
+//        addDisseminator(obj, "DISS1", "test:bdef1", "test:bmech1", bindings);
+//        addDisseminator(obj, "DISS2", "test:bdef1c", "test:bmech1c", bindings);
 
         Set<DigitalObject> objects = new HashSet<DigitalObject>();
         objects.add(obj);
@@ -282,7 +282,7 @@ public class ResourceIndexAddDelDissIntegrationTest
         Map<String, String> bindings = new HashMap<String, String>();
         bindings.put("KEY1", "DS1");
         bindings.put("KEY2", "DS2");
-        addDisseminator(obj, "DISS1", "test:bdef1", "test:bmech1d", bindings);
+//        addDisseminator(obj, "DISS1", "test:bdef1", "test:bmech1d", bindings);
 
         Set<DigitalObject> objects = new HashSet<DigitalObject>();
         objects.add(obj);

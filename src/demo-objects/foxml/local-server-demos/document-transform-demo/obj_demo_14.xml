@@ -40,13 +40,15 @@
 			<foxml:contentLocation REF="http://localhost:8080/fedora-demo/document-transform-demo/wsdlToSummaryTbl.xsl" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="demo:12" STATE="A">
-		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="demo:13" LABEL="NSDL Exhibit Disseminator">
-			<foxml:serviceInputMap>
-				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="XML_SOURCE" LABEL="XML Source file to be transformed"/>
-				<foxml:datastreamBinding DATASTREAM_ID="DS2" KEY="XSL_STYLESHEET1" LABEL="Stylesheet 1"/>
-				<foxml:datastreamBinding DATASTREAM_ID="DS3" KEY="XSL_STYLESHEET2" LABEL="Stylesheet 2"/>
-			</foxml:serviceInputMap>
-		</foxml:disseminatorVersion>
-	</foxml:disseminator>
+	<foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="false">
+  		<foxml:datastreamVersion ID="RELS-EXT.0" LABEL="Relationships" MIMETYPE="text/xml">
+  			<foxml:xmlContent>
+    			<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+      				<rdf:Description rdf:about="info:fedora/demo:14">
+        				<rel:hasFormalContentModel rdf:resource="info:fedora/demo:XML_TO_HTMLDOC"/>
+      				</rdf:Description>
+    			</rdf:RDF>
+  			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+  	</foxml:datastream>
 </foxml:digitalObject>

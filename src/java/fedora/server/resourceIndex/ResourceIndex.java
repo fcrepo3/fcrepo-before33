@@ -97,6 +97,15 @@ public interface ResourceIndex extends TriplestoreWriter {
             throws ResourceIndexException;
 
     /**
+     * Adds a content model object.
+     *
+     * @param reader the content model object to add.
+     * @throws ResourceIndexException if the operation fails for any reason.
+     */
+    void addCModelObject(DOReader reader)
+            throws ResourceIndexException;
+
+    /**
      * Modifies a behavior definition object.
      *
      * @param oldReader the original behavior definition.
@@ -127,6 +136,16 @@ public interface ResourceIndex extends TriplestoreWriter {
             throws ResourceIndexException;
 
     /**
+     * Modifies a CModel object.
+     *
+     * @param oldReader the original content model object.
+     * @param newReader the modified content model object.
+     * @throws ResourceIndexException if the operation fails for any reason.
+     */
+    void modifyCModelObject(DOReader oldReader, DOReader newReader)
+            throws ResourceIndexException;
+
+    /**
      * Deletes a behavior definition object.
      *
      * @param oldReader the original behavior definition.
@@ -135,7 +154,7 @@ public interface ResourceIndex extends TriplestoreWriter {
             throws ResourceIndexException;
 
     /**
-     * Deletes a behavior definition object.
+     * Deletes a behavior mechanism object.
      *
      * @param oldReader the original behavior mechanism.
      */
@@ -143,11 +162,19 @@ public interface ResourceIndex extends TriplestoreWriter {
             throws ResourceIndexException;
 
     /**
-     * Deletes a behavior definition object.
+     * Deletes a data object.
      *
      * @param oldReader the original data object.
      */
     void deleteDataObject(DOReader oldReader)
+            throws ResourceIndexException;
+  
+    /**
+     * Deletes a content model object.
+     *
+     * @param oldReader the original content model object.
+     */
+    void deleteCModelObject(DOReader oldReader)
             throws ResourceIndexException;
 	
     /**

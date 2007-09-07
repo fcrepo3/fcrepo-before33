@@ -27,7 +27,8 @@ import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.RepositoryReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
-import fedora.server.storage.types.Disseminator;
+//import fedora.server.storage.types.Disseminator;
+import fedora.server.storage.types.RelationshipTuple;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.DCFields;
@@ -135,7 +136,7 @@ public class FieldSearchSQLImpl
             v=reader.GetObjectLabel();
             if (v!=null) v=v.toLowerCase();
             dbRowValues[1]=v;
-            dbRowValues[2]=reader.getFedoraObjectType().toLowerCase();
+            dbRowValues[2]=reader.getFedoraObjectTypes().toLowerCase();
             v=reader.getContentModelId();
             if (v!=null) v=v.toLowerCase();
             dbRowValues[3]=v;
@@ -156,14 +157,40 @@ public class FieldSearchSQLImpl
             // add bdef and bmech ids for each active disseminator
             // and if the object is a bMech, add the bDefPID (from the
             // datastream input spec) to its list of bDefs
-            Disseminator[] disses=reader.GetDisseminators(null, null);
+//            Disseminator[] disses=reader.GetDisseminators(null, null);
             ArrayList bDefs=new ArrayList();
             ArrayList bMechs=new ArrayList();
-            for (int i=0; i<disses.length; i++) {
-                bDefs.add(disses[i].bDefID);
-                bMechs.add(disses[i].bMechID);
-            }
-            if (dbRowValues[2].equals("m")) {
+//            for (int i=0; i<disses.length; i++) {
+//                bDefs.add(disses[i].bDefID);
+//                bMechs.add(disses[i].bMechID);
+//            }
+//            RelationshipTuple cmPIDs[] = reader.getRelationships(null, "hasFormalContentModel");
+//            DOReader cmReader = null, bmechreader = null;
+//            boolean done = false;
+//            if (cmPIDs != null && cmPIDs.length > 0)
+//            {
+//                for (int i = 0; i < cmPIDs.length && !done; i++)
+//                {
+//                    cmReader = m_manager.getReader(false, context, cmPIDs[i].getObjectPID());
+//                    RelationshipTuple bMechPIDs[] = cmReader.getRelationships(null, "hasContractualBMech");
+//                    for (int j = 0; j < bMechPIDs.length && !done; j++)
+//                    {
+//                        bmechreader = m_manager.getBMechReader(asOfDateTime == null, context, bMechPIDs[j].getObjectPID());
+//                        RelationshipTuple bDefPIDs[] = bmechreader.getRelationships(null, "hasBDef");
+//                        for (int k = 0; k < bDefPIDs.length && !done; k++)
+//                        {
+//                            if (bDefPIDs[k].getObjectPID().endsWith(bDefPID))
+//                            {
+//                                done = true;
+//                                doCMDA = true;
+//                                break;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+            if (dbRowValues[2].indexOf("m")!= -1) 
+            {
                 // get it as a BMechReader and add the bDefPID
                 BMechReader mechReader=m_repoReader.getBMechReader(Server.USE_DEFINITIVE_STORE,
                         ReadOnlyContext.EMPTY,

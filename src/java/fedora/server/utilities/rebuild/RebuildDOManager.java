@@ -19,7 +19,7 @@ import fedora.server.storage.ConnectionPoolManager;
 import fedora.server.storage.DefaultDOManager;
 import fedora.server.storage.ExternalContentManager;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
-import fedora.server.storage.replication.DOReplicator;
+//import fedora.server.storage.replication.DOReplicator;
 import fedora.server.storage.translation.DOTranslator;
 import fedora.server.utilities.SQLUtility;
 import fedora.server.validation.DOValidator;
@@ -81,9 +81,9 @@ public class RebuildDOManager  extends DefaultDOManager
         // get ref to translator and derive storageFormat default if not given
         m_translator=(DOTranslator) getServer().
                 getModule("fedora.server.storage.translation.DOTranslator");
-        // get ref to replicator
-        m_replicator=(DOReplicator) getServer().
-                getModule("fedora.server.storage.replication.DOReplicator");
+//        // get ref to replicator
+//        m_replicator=(DOReplicator) getServer().
+//                getModule("fedora.server.storage.replication.DOReplicator");
         // get ref to digital object validator
         m_validator=(DOValidator) getServer().
                 getModule("fedora.server.validation.DOValidator");

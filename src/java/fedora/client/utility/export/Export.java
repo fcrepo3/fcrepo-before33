@@ -84,6 +84,10 @@ public class Export {
             System.out.println("Exporting all FedoraBMechObjects");
             count += multi(apia, apim, 'M', format, exportContext, dir);
         }
+        if (fTypes.indexOf("C") != -1) {
+            System.out.println("Exporting all FedoraCModelObjects");
+            count += multi(apia, apim, 'C', format, exportContext, dir);
+        }
         if (fTypes.indexOf("O") != -1) {
             System.out.println("Exporting all FedoraObjects");
             count += multi(apia, apim, 'O', format, exportContext, dir);

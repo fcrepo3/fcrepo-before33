@@ -878,24 +878,39 @@ public abstract class TypeUtility
     return genProperty;
   }
 
-  public static fedora.server.types.gen.Disseminator
-          convertDisseminatorToGenDisseminator(
-          fedora.server.storage.types.Disseminator in)
-  {
-      fedora.server.types.gen.Disseminator out=
-              new fedora.server.types.gen.Disseminator();
-      out.setCreateDate(DateUtility.convertDateToString(in.dissCreateDT));
-      out.setBDefPID(in.bDefID);
-      out.setBMechPID(in.bMechID);
-      out.setID(in.dissID);
-      out.setLabel(in.dissLabel);
-      out.setState(in.dissState);
-      out.setVersionID(in.dissVersionID);
-      out.setDsBindMap(convertDSBindingMapToGenDatastreamBindingMap(in.dsBindMap));
-      return out;
-    }
+//  public static fedora.server.types.gen.Disseminator
+//          convertDisseminatorToGenDisseminator(
+//          fedora.server.storage.types.Disseminator in)
+//  {
+//      fedora.server.types.gen.Disseminator out=
+//              new fedora.server.types.gen.Disseminator();
+//      out.setCreateDate(DateUtility.convertDateToString(in.dissCreateDT));
+//      out.setBDefPID(in.bDefID);
+//      out.setBMechPID(in.bMechID);
+//      out.setID(in.dissID);
+//      out.setLabel(in.dissLabel);
+//      out.setState(in.dissState);
+//      out.setVersionID(in.dissVersionID);
+//      out.setDsBindMap(convertDSBindingMapToGenDatastreamBindingMap(in.dsBindMap));
+//      return out;
+//    }
 
-    public static fedora.server.types.gen.DatastreamDef
+  public static fedora.server.types.gen.RelationshipTuple
+          convertRelsTupleToGenRelsTuple(
+                          fedora.server.storage.types.RelationshipTuple in)
+    {
+        if (in == null) return(null);
+        fedora.server.types.gen.RelationshipTuple out=
+              new fedora.server.types.gen.RelationshipTuple();
+        out.setSubURI(in.subjectURI);
+        out.setPredicate(in.predicate);
+        out.setObjURI(in.objectURI);
+        out.setObjLiteral(in.objectLiteral);
+        out.setLiteralType(in.literalType);
+        return out;
+    }
+  
+   public static fedora.server.types.gen.DatastreamDef
             convertDatastreamDefToGenDatastreamDef(
             fedora.server.storage.types.DatastreamDef in)
     {
@@ -925,93 +940,93 @@ public abstract class TypeUtility
       return datastreamDef;
   }
 
-    public static fedora.server.types.gen.DatastreamBindingMap
-            convertDSBindingMapToGenDatastreamBindingMap(
-            fedora.server.storage.types.DSBindingMap in)
-    {
-        fedora.server.types.gen.DatastreamBindingMap out=
-                new fedora.server.types.gen.DatastreamBindingMap();
-        fedora.server.types.gen.DatastreamBinding datastreamBinding =
-            new fedora.server.types.gen.DatastreamBinding();
-        out.setDsBindings(convertDSBindingArrayToGenDatastreamBindingArray(in.dsBindings));
-        out.setDsBindMapID(in.dsBindMapID);
-        out.setDsBindMapLabel(in.dsBindMapLabel);
-        out.setDsBindMechanismPID(in.dsBindMechanismPID);
-        out.setState(in.state);
+//    public static fedora.server.types.gen.DatastreamBindingMap
+//            convertDSBindingMapToGenDatastreamBindingMap(
+//            fedora.server.storage.types.DSBindingMap in)
+//    {
+//        fedora.server.types.gen.DatastreamBindingMap out=
+//                new fedora.server.types.gen.DatastreamBindingMap();
+//        fedora.server.types.gen.DatastreamBinding datastreamBinding =
+//            new fedora.server.types.gen.DatastreamBinding();
+//        out.setDsBindings(convertDSBindingArrayToGenDatastreamBindingArray(in.dsBindings));
+//        out.setDsBindMapID(in.dsBindMapID);
+//        out.setDsBindMapLabel(in.dsBindMapLabel);
+//        out.setDsBindMechanismPID(in.dsBindMechanismPID);
+//        out.setState(in.state);
+//
+//        return out;
+//    }
 
-        return out;
-    }
+//    public static fedora.server.storage.types.DSBindingMap
+//        convertGenDatastreamBindingMapToDSBindingMap(
+//        fedora.server.types.gen.DatastreamBindingMap genDatastreamBindingMap)
+//    {
+//      fedora.server.storage.types.DSBindingMap dsBindingMap =
+//            new fedora.server.storage.types.DSBindingMap();
+//      if (genDatastreamBindingMap != null)
+//      {
+//        dsBindingMap.dsBindings = convertGenDatastreamBindingArrayToDSBindingArray(genDatastreamBindingMap.getDsBindings());
+//        dsBindingMap.dsBindMapID = genDatastreamBindingMap.getDsBindMapID();
+//        dsBindingMap.dsBindMapLabel = genDatastreamBindingMap.getDsBindMapLabel();
+//        dsBindingMap.dsBindMechanismPID = genDatastreamBindingMap.getDsBindMechanismPID();
+//        dsBindingMap.state = genDatastreamBindingMap.getState();
+//      }
+//      return dsBindingMap;
+//  }
 
-    public static fedora.server.storage.types.DSBindingMap
-        convertGenDatastreamBindingMapToDSBindingMap(
-        fedora.server.types.gen.DatastreamBindingMap genDatastreamBindingMap)
-    {
-      fedora.server.storage.types.DSBindingMap dsBindingMap =
-            new fedora.server.storage.types.DSBindingMap();
-      if (genDatastreamBindingMap != null)
-      {
-        dsBindingMap.dsBindings = convertGenDatastreamBindingArrayToDSBindingArray(genDatastreamBindingMap.getDsBindings());
-        dsBindingMap.dsBindMapID = genDatastreamBindingMap.getDsBindMapID();
-        dsBindingMap.dsBindMapLabel = genDatastreamBindingMap.getDsBindMapLabel();
-        dsBindingMap.dsBindMechanismPID = genDatastreamBindingMap.getDsBindMechanismPID();
-        dsBindingMap.state = genDatastreamBindingMap.getState();
-      }
-      return dsBindingMap;
-  }
-
-    public static fedora.server.types.gen.DatastreamBinding
-            convertDSBindingToGenDatastreamBinding(
-            fedora.server.storage.types.DSBinding in)
-    {
-        fedora.server.types.gen.DatastreamBinding out=
-                new fedora.server.types.gen.DatastreamBinding();
-        out.setBindKeyName(in.bindKeyName);
-        out.setBindLabel(in.bindLabel);
-        out.setDatastreamID(in.datastreamID);
-        out.setSeqNo(in.seqNo);
-        return out;
-    }
-
-    public static fedora.server.storage.types.DSBinding
-        convertGenDatastreamBindingToDSBinding(
-        fedora.server.types.gen.DatastreamBinding genDatastreamBinding)
-    {
-
-      fedora.server.storage.types.DSBinding dsBinding =
-            new fedora.server.storage.types.DSBinding();
-      if (genDatastreamBinding != null)
-      {
-        dsBinding.bindKeyName = genDatastreamBinding.getBindKeyName();
-        dsBinding.bindLabel = genDatastreamBinding.getBindLabel();
-        dsBinding.datastreamID = genDatastreamBinding.getDatastreamID();
-        dsBinding.seqNo = genDatastreamBinding.getSeqNo();
-      }
-      return dsBinding;
-  }
-
-    public static fedora.server.types.gen.DatastreamBinding[]
-        convertDSBindingArrayToGenDatastreamBindingArray(
-        fedora.server.storage.types.DSBinding[] dsBindings)
-    {
-
-      if (dsBindings != null)
-      {
-        fedora.server.types.gen.DatastreamBinding[] genDatastreamBindings =
-            new fedora.server.types.gen.DatastreamBinding[dsBindings.length];
-        for (int i=0; i<genDatastreamBindings.length; i++)
-        {
-          fedora.server.types.gen.DatastreamBinding genDatastreamBinding =
-                   new fedora.server.types.gen.DatastreamBinding();
-          genDatastreamBindings[i] =
-              convertDSBindingToGenDatastreamBinding(dsBindings[i]);
-        }
-        return genDatastreamBindings;
-
-      } else
-      {
-        return null;
-      }
-  }
+//    public static fedora.server.types.gen.DatastreamBinding
+//            convertDSBindingToGenDatastreamBinding(
+//            fedora.server.storage.types.DSBinding in)
+//    {
+//        fedora.server.types.gen.DatastreamBinding out=
+//                new fedora.server.types.gen.DatastreamBinding();
+//        out.setBindKeyName(in.bindKeyName);
+//        out.setBindLabel(in.bindLabel);
+//        out.setDatastreamID(in.datastreamID);
+//        out.setSeqNo(in.seqNo);
+//        return out;
+//    }
+//
+//    public static fedora.server.storage.types.DSBinding
+//        convertGenDatastreamBindingToDSBinding(
+//        fedora.server.types.gen.DatastreamBinding genDatastreamBinding)
+//    {
+//
+//      fedora.server.storage.types.DSBinding dsBinding =
+//            new fedora.server.storage.types.DSBinding();
+//      if (genDatastreamBinding != null)
+//      {
+//        dsBinding.bindKeyName = genDatastreamBinding.getBindKeyName();
+//        dsBinding.bindLabel = genDatastreamBinding.getBindLabel();
+//        dsBinding.datastreamID = genDatastreamBinding.getDatastreamID();
+//        dsBinding.seqNo = genDatastreamBinding.getSeqNo();
+//      }
+//      return dsBinding;
+//  }
+//
+//    public static fedora.server.types.gen.DatastreamBinding[]
+//        convertDSBindingArrayToGenDatastreamBindingArray(
+//        fedora.server.storage.types.DSBinding[] dsBindings)
+//    {
+//
+//      if (dsBindings != null)
+//      {
+//        fedora.server.types.gen.DatastreamBinding[] genDatastreamBindings =
+//            new fedora.server.types.gen.DatastreamBinding[dsBindings.length];
+//        for (int i=0; i<genDatastreamBindings.length; i++)
+//        {
+//          fedora.server.types.gen.DatastreamBinding genDatastreamBinding =
+//                   new fedora.server.types.gen.DatastreamBinding();
+//          genDatastreamBindings[i] =
+//              convertDSBindingToGenDatastreamBinding(dsBindings[i]);
+//        }
+//        return genDatastreamBindings;
+//
+//      } else
+//      {
+//        return null;
+//      }
+//  }
 
   public static fedora.server.types.gen.DatastreamDef[]
       convertDatastreamDefArrayToGenDatastreamDefArray(
@@ -1037,30 +1052,30 @@ public abstract class TypeUtility
     }
   }
 
-  public static fedora.server.storage.types.DSBinding[]
-      convertGenDatastreamBindingArrayToDSBindingArray(
-      fedora.server.types.gen.DatastreamBinding[] genDatastreamBindings)
-  {
-
-    if (genDatastreamBindings != null)
-    {
-      fedora.server.storage.types.DSBinding[] dsBindings =
-          new fedora.server.storage.types.DSBinding[genDatastreamBindings.length];
-      for (int i=0; i<genDatastreamBindings.length; i++)
-      {
-        fedora.server.storage.types.DSBinding dsBinding =
-                 new fedora.server.storage.types.DSBinding();
-        dsBinding =
-            convertGenDatastreamBindingToDSBinding(genDatastreamBindings[i]);
-        dsBindings[i] = dsBinding;
-      }
-      return dsBindings;
-
-    } else
-    {
-      return null;
-    }
-  }
+//  public static fedora.server.storage.types.DSBinding[]
+//      convertGenDatastreamBindingArrayToDSBindingArray(
+//      fedora.server.types.gen.DatastreamBinding[] genDatastreamBindings)
+//  {
+//
+//    if (genDatastreamBindings != null)
+//    {
+//      fedora.server.storage.types.DSBinding[] dsBindings =
+//          new fedora.server.storage.types.DSBinding[genDatastreamBindings.length];
+//      for (int i=0; i<genDatastreamBindings.length; i++)
+//      {
+//        fedora.server.storage.types.DSBinding dsBinding =
+//                 new fedora.server.storage.types.DSBinding();
+//        dsBinding =
+//            convertGenDatastreamBindingToDSBinding(genDatastreamBindings[i]);
+//        dsBindings[i] = dsBinding;
+//      }
+//      return dsBindings;
+//
+//    } else
+//    {
+//      return null;
+//    }
+//  }
 
   public static fedora.server.storage.types.DatastreamDef[]
       convertGenDatastreamDefArrayToDatastreamDefArray(

@@ -121,6 +121,16 @@ public class ResourceIndexImpl implements ResourceIndex {
             updateTriples(_generator.getTriplesForDataObject(reader), false);
         }
     }
+  
+    /**
+     * {@inheritDoc}
+     */
+    public void addCModelObject(DOReader reader)
+            throws ResourceIndexException {
+        if (_indexLevel > INDEX_LEVEL_OFF) {
+            updateTriples(_generator.getTriplesForCModelObject(reader), false);
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -156,6 +166,17 @@ public class ResourceIndexImpl implements ResourceIndex {
                         _generator.getTriplesForDataObject(newReader));
         }
     }
+   
+    /**
+     * {@inheritDoc}
+     */
+    public void modifyCModelObject(DOReader oldReader, DOReader newReader)
+            throws ResourceIndexException {
+        if (_indexLevel > INDEX_LEVEL_OFF) {
+            updateTripleDiffs(_generator.getTriplesForCModelObject(oldReader),
+                        _generator.getTriplesForCModelObject(newReader));
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -186,6 +207,16 @@ public class ResourceIndexImpl implements ResourceIndex {
             throws ResourceIndexException {
         if (_indexLevel > INDEX_LEVEL_OFF) {
             updateTriples(_generator.getTriplesForDataObject(oldReader), true);
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void deleteCModelObject(DOReader oldReader)
+            throws ResourceIndexException {
+        if (_indexLevel > INDEX_LEVEL_OFF) {
+            updateTriples(_generator.getTriplesForCModelObject(oldReader), true);
         }
     }
 	

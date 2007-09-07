@@ -31,14 +31,20 @@ import java.util.Map;
  */
 public interface DigitalObject {
 
-    public static int FEDORA_OBJECT=0;
-    public static int FEDORA_BDEF_OBJECT=1;
-    public static int FEDORA_BMECH_OBJECT=2;
+    public static int FEDORA_OBJECT = 'O';
+    public static int FEDORA_BDEF_OBJECT = 'D';
+    public static int FEDORA_BMECH_OBJECT = 'M';
+    public static int FEDORA_CONTENT_MODEL_OBJECT = 'C';
 
-    public int getFedoraObjectType();
+    public String getFedoraObjectTypes();
 
-    public void setFedoraObjectType(int t);
-
+//    public void setFedoraObjectType(int t);
+    public boolean isFedoraObjectType(int type);
+    
+    public void addFedoraObjectType(int type);
+    
+    public void removeFedoraObjectType(int type);
+    
     public boolean isNew();
 
     public void setNew(boolean isNew);
@@ -228,20 +234,20 @@ public interface DigitalObject {
      */
     public String newDatastreamID(String dsID);
 
-    /**
-     * Generate a unique id for a disseminator.
-     */
-    public String newDisseminatorID();
-
-    /**
-     * Generate a unique id for a disseminator version.
-     */
-    public String newDisseminatorID(String dissID);
-
-    /**
-     * Generate a unique id for a datastreamBindingMap.
-     */
-    public String newDatastreamBindingMapID();
+//    /**
+//     * Generate a unique id for a disseminator.
+//     */
+//    public String newDisseminatorID();
+//
+//    /**
+//     * Generate a unique id for a disseminator version.
+//     */
+//    public String newDisseminatorID(String dissID);
+//
+//    /**
+//     * Generate a unique id for a datastreamBindingMap.
+//     */
+//    public String newDatastreamBindingMapID();
 
     /**
      * Generate a unique id for an audit record.

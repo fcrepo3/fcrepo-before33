@@ -53,7 +53,7 @@ public class DefaultManagement
     private Hashtable<String, Long> m_uploadStartTime;
     private ExternalContentManager m_contentManager;
     private Authorization m_fedoraXACMLModule;
-
+    public final static String s_RelsExt_Datastream = "RELS-EXT";
     /**
      * Creates and initializes the Management Module.
      * <p></p>
@@ -247,7 +247,7 @@ public class DefaultManagement
             
             props.add(new Property(
                         "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                        reader.getFedoraObjectType()));
+                        reader.getFedoraObjectTypes()));
             
 
             props.add(new Property(
@@ -499,76 +499,6 @@ public class DefaultManagement
         }
     }
 
-    public String addDisseminator(Context context,
-                                    String pid, String bDefPid, String bMechPid,
-                                    String dissLabel,
-                                    DSBindingMap bindingMap,
-                                    String dissState,
-                                    String logMessage) throws ServerException {
-
-        DOWriter w=null;
-        try {
-            LOG.info("Entered addDisseminator");
-                
-            m_fedoraXACMLModule.enforceAddDisseminator(context, pid, 
-                    bDefPid, bMechPid, dissState);
-
-            checkDisseminatorLabel(dissLabel);
-
-            w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
-            Disseminator diss = new Disseminator();
-            diss.isNew=true;
-            diss.parentPID = pid;
-
-            if (!dissState.equals("A") && !dissState.equals("D") && !dissState.equals("I")) {
-                throw new InvalidStateException("The disseminator state of \"" + dissState
-                        + "\" is invalid. The allowed values for state are: "
-                        + " A (active), D (deleted), and I (inactive).");
-            }
-            diss.dissState= dissState;
-            diss.dissLabel = dissLabel;
-            diss.bMechID = bMechPid;
-            diss.bDefID = bDefPid;
-            Date nowUTC = Server.getCurrentDate(context);
-            diss.dissCreateDT = nowUTC;
-
-            // See if we can get the new disseminator ID from the RecoveryContext
-            String dissID = null;
-            if (context instanceof RecoveryContext) {
-                RecoveryContext rContext = (RecoveryContext) context;
-                dissID = rContext.getRecoveryValue(Constants.RECOVERY.DISSEMINATOR_ID.uri);
-            }
-            if (dissID == null) {
-                diss.dissID = w.newDisseminatorID();
-            } else {
-                diss.dissID = dissID;
-                LOG.debug("Using new dissID from recovery context");
-            }
-
-            diss.dissVersionID = diss.dissID + ".0";
-            // Generate the binding map ID here - ignore the value passed in
-            // and set the field on both the disseminator and the binding map,
-            // then set the disseminator's binding map to the one passed in.
-            diss.dsBindMapID=w.newDatastreamBindingMapID();
-                            bindingMap.dsBindMapID=diss.dsBindMapID;
-            diss.dsBindMap=bindingMap;
-            AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-            audit.id=w.newAuditRecordID();
-            audit.processType="Fedora API-M";
-            audit.action="addDisseminator";
-            audit.componentID=diss.dissID;
-            audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
-            audit.date=nowUTC;
-            audit.justification=logMessage;
-            w.getAuditRecords().add(audit);
-            w.addDisseminator(diss);
-            w.commit("Added a new disseminator");
-            return diss.dissID;
-        } finally {
-            finishModification(w, "addDisseminator");
-        }
-    }
-
     public Date modifyDatastreamByReference(Context context, 
                                             String pid,
                                             String datastreamId, 
@@ -647,11 +577,11 @@ public class DefaultManagement
             // involved in, and keep a record of that information for later
             // (so we can determine whether the mime type change would cause
             // data contract invalidation)
-            Map oldValidationReports = null;
-            if ( !mimeType.equals(orig.DSMIME) && !force) {
-                oldValidationReports = getAllBindingMapValidationReports(
-                                           context, w, datastreamId);
-            }
+//            Map oldValidationReports = null;
+//            if ( !mimeType.equals(orig.DSMIME) && !force) {
+//                oldValidationReports = getAllBindingMapValidationReports(
+//                                           context, w, datastreamId);
+//            }
 
             // instantiate the right class of datastream
             // (inline xml "X" datastreams have already been rejected)
@@ -713,13 +643,13 @@ public class DefaultManagement
             w.getAuditRecords().add(audit);                        
             
             // if all went ok, check if we need to validate, then commit.
-            if (oldValidationReports != null) { // mime changed and force=false
-                rejectMimeChangeIfCausedInvalidation(
-                        oldValidationReports,
-                        getAllBindingMapValidationReports(context, 
-                                                          w, 
-                                                          datastreamId));
-            }
+//            if (oldValidationReports != null) { // mime changed and force=false
+//                rejectMimeChangeIfCausedInvalidation(
+//                        oldValidationReports,
+//                        getAllBindingMapValidationReports(context, 
+//                                                          w, 
+//                                                          datastreamId));
+//            }
             w.commit(logMessage);
             return nowUTC;
         } finally {
@@ -797,11 +727,11 @@ public class DefaultManagement
             // involved in, and keep a record of that information for later
             // (so we can determine whether the mime type change would cause
             // data contract invalidation)
-            Map oldValidationReports = null;
-            if ( !mimeType.equals(orig.DSMIME) && !force) {
-                oldValidationReports = getAllBindingMapValidationReports(
-                                           context, w, datastreamId);
-            }
+//            Map oldValidationReports = null;
+//            if ( !mimeType.equals(orig.DSMIME) && !force) {
+//                oldValidationReports = getAllBindingMapValidationReports(
+//                                           context, w, datastreamId);
+//            }
 
             DatastreamXMLMetadata newds=new DatastreamXMLMetadata();
             newds.DSMDClass=((DatastreamXMLMetadata) orig).DSMDClass;
@@ -867,138 +797,19 @@ public class DefaultManagement
             w.getAuditRecords().add(audit);
             
             // if all went ok, check if we need to validate, then commit.
-            if (oldValidationReports != null) { // mime changed and force=false
-                rejectMimeChangeIfCausedInvalidation(
-                        oldValidationReports,
-                        getAllBindingMapValidationReports(context, 
-                                                          w, 
-                                                          datastreamId));
-            }
+//            if (oldValidationReports != null) { // mime changed and force=false
+//                rejectMimeChangeIfCausedInvalidation(
+//                        oldValidationReports,
+//                        getAllBindingMapValidationReports(context, 
+//                                                          w, 
+//                                                          datastreamId));
+//            }
             w.commit(logMessage);
             return nowUTC;
         } finally {
             finishModification(w, "modifyDatastreamByValue");
         }
     }
-
-    public Date modifyDisseminator(Context context, 
-                                   String pid,
-                                   String disseminatorId, 
-                                   String bMechPid, 
-                                   String dissLabel,
-                                   DSBindingMap dsBindingMap,
-                                   String dissState,
-                                   String logMessage,
-                                   boolean force)
-            throws ServerException {
-        DOWriter w=null;
-        DOReader r=null;
-        try {
-            LOG.info("Entered modifyDisseminator");
-            m_fedoraXACMLModule.enforceModifyDisseminator(context, pid, disseminatorId, bMechPid, dissState);
-
-            checkDisseminatorLabel(dissLabel);
-            w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
-            fedora.server.storage.types.Disseminator orig=w.GetDisseminator(disseminatorId, null);
-            String oldValidationReport = null;
-            if (!force) {
-                oldValidationReport = getBindingMapValidationReport(context,
-                                                                    w,
-                                                                    orig.bMechID);
-            }
-            r=m_manager.getReader(Server.USE_DEFINITIVE_STORE, context,pid);  // FIXME: Unnecessary?  Is 
-                                                 // there a reason "w" isn't 
-                                                 // used for the call below?
-            Date[] d=r.getDisseminatorVersions(disseminatorId);
-
-            Disseminator newdiss=new Disseminator();
-            // use original diss values for attributes that can't be changed by client
-            newdiss.dissID=orig.dissID;
-            newdiss.bDefID=orig.bDefID;
-            newdiss.parentPID=orig.parentPID;
-            
-            // make sure disseminator has a new version id
-            newdiss.dissVersionID=w.newDisseminatorID(disseminatorId);
-            // make sure disseminator has a new version date
-            Date nowUTC = Server.getCurrentDate(context);
-            newdiss.dissCreateDT=nowUTC;
-           
-            // for testing; null indicates a new (uninitialized) instance
-            // of dsBindingMap was passed in which is what you get if
-            // you pass null in for dsBindingMap using MangementConsole
-            if (dsBindingMap.dsBindMapID!=null) {
-              newdiss.dsBindMap=dsBindingMap;
-            } else {
-              newdiss.dsBindMap=orig.dsBindMap;
-            }
-            // make sure dsBindMapID has a different id
-            newdiss.dsBindMapID=w.newDatastreamBindingMapID();
-            newdiss.dsBindMap.dsBindMapID=w.newDatastreamBindingMapID();
-
-            
-            // NULL INPUT PARMS MEANS NO CHANGE in these cases:
-            // set any diss attributes whose input parms value
-            // is NULL to the original attribute value on the disseminator
-            if (dissLabel==null) {
-            //if (dissLabel==null || dissLabel.equals("")) {
-              newdiss.dissLabel=orig.dissLabel;
-            } else {
-              newdiss.dissLabel=dissLabel;
-            }
-            
-            // NULL OR "" INPUT PARM MEANS NO CHANGE:
-            // for diss attributes whose values MUST NOT be empty,
-            // either NULL or "" on the input parm indicates no change 
-            // (keep original value)
-            if (bMechPid==null || bMechPid.equals("")) {
-              newdiss.bMechID=orig.bMechID;
-            } else {
-              newdiss.bMechID=bMechPid;
-            }
-            if (dissState==null || dissState.equals("")) {
-              // If reference unspecified leave state unchanged
-              newdiss.dissState=orig.dissState;
-            } else {
-              // Check that supplied value for state is one of the allowable values
-              if (!dissState.equals("A") && !dissState.equals("D") && !dissState.equals("I")) {
-                  throw new InvalidStateException("The disseminator state of \"" + dissState
-                          + "\" is invalid. The allowed values for state are: "
-                          + " A (active), D (deleted), and I (inactive).");
-              }                        
-              newdiss.dissState=dissState;
-            }
-            
-            // just add the disseminator
-            w.addDisseminator(newdiss);
-            if (!orig.dissState.equals(newdiss.dissState)) {
-                w.setDisseminatorState(disseminatorId, newdiss.dissState); }            
-            // add the audit record
-            fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-            audit.id=w.newAuditRecordID();
-            audit.processType="Fedora API-M";
-            audit.action="modifyDisseminator";
-            audit.componentID=newdiss.dissID;
-            audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
-            audit.date=nowUTC;
-            audit.justification=logMessage;
-            w.getAuditRecords().add(audit);
-            // if all went ok, check if we need to validate, then commit.
-            if (!force && oldValidationReport == null) {
-                String cause = getBindingMapValidationReport(context,
-                                                             w,
-                                                             newdiss.bMechID);
-                if (cause != null) {
-                    throw new GeneralException("That change would invalidate "
-                            + "the disseminator: " + cause);
-                }
-            }
-            w.commit(logMessage);
-            return nowUTC;
-        } finally {
-            finishModification(w, "modifyDisseminator");
-        }
-    }
-
 
     public Date[] purgeDatastream(Context context, 
                                   String pid,
@@ -1032,25 +843,25 @@ public class DefaultManagement
                 if (datastreamID.equals("DC")) {
                     usedList.add("The default disseminator");
                 }
-                // ...for each disseminator
-                Disseminator[] disses=w.GetDisseminators(null, null);
-                for (int i=0; i<disses.length; i++) {
-                    Date[] dates=w.getDisseminatorVersions(disses[i].dissID);
-                    // ...for each of its versions
-                    for (int j=0; j<dates.length; j++) {
-                        Disseminator diss=w.GetDisseminator(disses[i].dissID, dates[j]);
-                        DSBinding[] dsBindings=diss.dsBindMap.dsBindings;
-                        // ...for each of its datastream bindings
-                        for (int k=0; k<dsBindings.length; k++) {
-                            // ...is the datastream id referenced?
-                            if (dsBindings[k].datastreamID.equals(datastreamID)) {
-                                usedList.add(diss.dissID + " ("
-                                        + formatter.format(diss.dissCreateDT)
-                                        + ")");
-                            }
-                        }
-                    }
-                }
+//                // ...for each disseminator
+//                Disseminator[] disses=w.GetDisseminators(null, null);
+//                for (int i=0; i<disses.length; i++) {
+//                    Date[] dates=w.getDisseminatorVersions(disses[i].dissID);
+//                    // ...for each of its versions
+//                    for (int j=0; j<dates.length; j++) {
+//                        Disseminator diss=w.GetDisseminator(disses[i].dissID, dates[j]);
+//                        DSBinding[] dsBindings=diss.dsBindMap.dsBindings;
+//                        // ...for each of its datastream bindings
+//                        for (int k=0; k<dsBindings.length; k++) {
+//                            // ...is the datastream id referenced?
+//                            if (dsBindings[k].datastreamID.equals(datastreamID)) {
+//                                usedList.add(diss.dissID + " ("
+//                                        + formatter.format(diss.dissCreateDT)
+//                                        + ")");
+//                            }
+//                        }
+//                    }
+//                }
                 if (usedList.size()>0) {
                     StringBuffer msg=new StringBuffer();
                     msg.append("Cannot purge entire datastream because it\n");
@@ -1206,116 +1017,6 @@ public class DefaultManagement
         }
     }
 
-    public Date[] purgeDisseminator(Context context, 
-                                    String pid,
-                                    String disseminatorID, 
-                                    Date endDT,
-                                    String logMessage)
-            throws ServerException {
-        DOWriter w=null;
-        try {
-            LOG.info("Entered purgeDisseminator");
-            
-            m_fedoraXACMLModule.enforcePurgeDisseminator(context, pid, disseminatorID, endDT);
-            
-            w=m_manager.getWriter(Server.GLOBAL_CHOICE, context, pid);
-            Date start=null;
-            Date[] deletedDates=w.removeDisseminator(disseminatorID, start, endDT);
-            // add an explanation of what happened to the user-supplied message.
-            if (logMessage == null) {
-                logMessage = "";
-            } else {
-                logMessage += " . . . ";
-            }
-            logMessage += getPurgeLogMessage("disseminator", 
-                                             disseminatorID,
-                                             start, 
-                                             endDT, 
-                                             deletedDates);
-            Date nowUTC = Server.getCurrentDate(context);
-            fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-            audit.id=w.newAuditRecordID();
-            audit.processType="Fedora API-M";
-            audit.action="purgeDisseminator";
-            audit.componentID=disseminatorID;
-            audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
-            audit.date=nowUTC;
-            audit.justification=logMessage;
-            // Normally we associate an audit record with a specific version
-            // of a disseminator, but in this case we are talking about a range
-            // of versions.  So we'll just add it to the object, but not associate
-            // it with anything.
-            w.getAuditRecords().add(audit);
-            // It looks like all went ok, so commit
-            // ... then give the response
-            w.commit(logMessage);
-            return deletedDates;
-        } finally {
-            finishModification(w, "purgeDisseminator");
-        }
-    }
-
-    public Disseminator getDisseminator(Context context, 
-                                        String pid,
-                                        String disseminatorId, 
-                                        Date asOfDateTime)
-            throws ServerException {
-        try {
-            LOG.info("Entered getDisseminator");
-            
-            m_fedoraXACMLModule.enforceGetDisseminator(context, pid, disseminatorId, asOfDateTime);
-            
-            DOReader r=m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
-            return r.GetDisseminator(disseminatorId, asOfDateTime);
-        } finally {
-            LOG.info("Exiting getDisseminator");
-        }
-    }
-
-    public Disseminator[] getDisseminators(Context context, 
-                                           String pid,
-                                           Date asOfDateTime, 
-                                           String dissState)
-            throws ServerException {
-        try {
-            LOG.info("Entered getDisseminators");
-            m_fedoraXACMLModule.enforceGetDisseminators(context, pid, asOfDateTime, dissState);
-            DOReader r=m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
-            return r.GetDisseminators(asOfDateTime, dissState);
-        } finally {
-            LOG.info("Exiting getDisseminators");
-        }
-    }
-
-    public Disseminator[] getDisseminatorHistory(Context context, 
-                                                 String pid, 
-                                                 String disseminatorID)
-            throws ServerException {
-        try {
-            LOG.info("Entered getDisseminatorHistory");
-
-            m_fedoraXACMLModule.enforceGetDisseminatorHistory(context, 
-                    pid, disseminatorID); 
-
-            DOReader r=m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);
-            Date[] versionDates=r.getDisseminatorVersions(disseminatorID);
-            Disseminator[] versions=new Disseminator[versionDates.length];
-            for (int i=0; i<versionDates.length; i++) {
-                versions[i]=r.GetDisseminator(disseminatorID, versionDates[i]);
-            }
-            // sort, ascending
-            Arrays.sort(versions, new DisseminatorDateComparator());
-            // reverse it (make it descend, so most recent date is element 0)
-            Disseminator[] out=new Disseminator[versions.length];
-            for (int i=0; i<versions.length; i++) {
-                out[i]=versions[versions.length-1-i];
-            }
-            return out;
-        } finally {
-            LOG.info("Exiting getDisseminatorHistory");
-        }
-    }
-
     public String[] getNextPID(Context context, 
                                int numPIDs,
                                String namespace)
@@ -1346,19 +1047,6 @@ public class DefaultManagement
 
         } finally {
             LOG.info("Exiting getNextPID");
-        }
-    }
-
-
-    public class DisseminatorDateComparator
-            implements Comparator {
-
-        public int compare(Object o1, Object o2) {
-            long ms1=((Disseminator) o1).dissCreateDT.getTime();
-            long ms2=((Disseminator) o2).dissCreateDT.getTime();
-            if (ms1<ms2) return -1;
-            if (ms1>ms2) return 1;
-            return 0;
         }
     }
 
@@ -1554,43 +1242,6 @@ public class DefaultManagement
         }   
     }
 
-    public Date setDisseminatorState(Context context, String pid, 
-            String disseminatorID, String dissState, String logMessage)
-            throws ServerException {
-      DOWriter w=null;
-      try {
-          LOG.info("Entered setDisseminatorState");
-          m_fedoraXACMLModule.enforceSetDisseminatorState(context, pid, disseminatorID, dissState);  
-
-          w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
-          if (!dissState.equals("A") && !dissState.equals("D") && !dissState.equals("I")) {
-              throw new InvalidStateException("The disseminator state of \"" + dissState
-                      + "\" is invalid. The allowed values for state are: "
-                      + " A (active), D (deleted), and I (inactive).");
-          }          
-          fedora.server.storage.types.Disseminator diss=w.GetDisseminator(disseminatorID, null);
-          w.setDisseminatorState(disseminatorID, dissState);
-
-          // add the audit record
-          fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-          audit.id=w.newAuditRecordID();
-          audit.processType="Fedora API-M";
-          audit.action="setDisseminatorState";
-          audit.componentID=disseminatorID;
-          audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
-          Date nowUTC = Server.getCurrentDate(context);
-          audit.date=nowUTC;
-          audit.justification=logMessage;
-          w.getAuditRecords().add(audit);
-
-          // if all went ok, commit
-          w.commit(logMessage);
-          return nowUTC;
-      } finally {
-          finishModification(w, "setDisseminatorState");
-      }
-   }
-
     /**
      * Get a byte array containing an xml chunk that is safe to embed in 
      * another UTF-8 xml document.
@@ -1641,25 +1292,25 @@ public class DefaultManagement
      * datastreams within the object.  If these conditions are not met, an 
      * exception is thrown.
      */
-    private String getBindingMapValidationReport(Context context,
-                                                 DOReader doReader,
-                                                 String bMechPID)
-            throws ServerException {
-
-        // find the associated datastream binding map, else use an empty one.
-        DSBindingMapAugmented augMap = new DSBindingMapAugmented();
-        DSBindingMapAugmented[] augMaps = doReader.GetDSBindingMaps(null);
-        for (int i = 0; i < augMaps.length; i++) {
-            if (augMaps[i].dsBindMechanismPID.equals(bMechPID)) {
-                augMap = augMaps[i];
-            }
-        }
-
-        // load the bmech, then validate the bindings
-        BMechReader mReader = m_manager.getBMechReader(Server.USE_CACHE, context, bMechPID);
-        BMechDSBindSpec spec = mReader.getServiceDSInputSpec(null);
-        return spec.validate(augMap.dsBindingsAugmented);
-    }
+//    private String getBindingMapValidationReport(Context context,
+//                                                 DOReader doReader,
+//                                                 String bMechPID)
+//            throws ServerException {
+//
+//        // find the associated datastream binding map, else use an empty one.
+//        DSBindingMapAugmented augMap = new DSBindingMapAugmented();
+//        DSBindingMapAugmented[] augMaps = doReader.GetDSBindingMaps(null);
+//        for (int i = 0; i < augMaps.length; i++) {
+//            if (augMaps[i].dsBindMechanismPID.equals(bMechPID)) {
+//                augMap = augMaps[i];
+//            }
+//        }
+//
+//        // load the bmech, then validate the bindings
+//        BMechReader mReader = m_manager.getBMechReader(Server.USE_CACHE, context, bMechPID);
+//        BMechDSBindSpec spec = mReader.getServiceDSInputSpec(null);
+//        return spec.validate(augMap.dsBindingsAugmented);
+//    }
 
     /**
      * Get a combined report indicating failure or success of data contract 
@@ -1676,69 +1327,69 @@ public class DefaultManagement
      * existing datastreams within the object.  If these conditions are not 
      * met, an exception is thrown.
      */
-    private Map getAllBindingMapValidationReports(Context context,
-                                                  DOReader doReader,
-                                                  String dsID)
-            throws ServerException {
-        HashMap<Disseminator, String> map = new HashMap<Disseminator, String>();
-        // for all disseminators in the object,
-        Disseminator[] disses = doReader.GetDisseminators(null, null);
-        for (int i = 0; i < disses.length; i++) {
-            DSBinding[] bindings = disses[i].dsBindMap.dsBindings; 
-            boolean isUsed = false;
-            // check each binding to see if it's the indicated datastream
-            for (int j = 0; j < bindings.length && !isUsed; j++) {
-                if (bindings[j].datastreamID.equals(dsID)) isUsed = true;
-            }
-            if (isUsed) {
-                // if it's used, add it's validation information to the map.
-                map.put(disses[i], 
-                        getBindingMapValidationReport(context,
-                                                      doReader,
-                                                      disses[i].bMechID));
-            }
-        }
-        return map;
-    }
+//    private Map getAllBindingMapValidationReports(Context context,
+//                                                  DOReader doReader,
+//                                                  String dsID)
+//            throws ServerException {
+//        HashMap<Disseminator, String> map = new HashMap<Disseminator, String>();
+//        // for all disseminators in the object,
+//        Disseminator[] disses = doReader.GetDisseminators(null, null);
+//        for (int i = 0; i < disses.length; i++) {
+//            DSBinding[] bindings = disses[i].dsBindMap.dsBindings; 
+//            boolean isUsed = false;
+//            // check each binding to see if it's the indicated datastream
+//            for (int j = 0; j < bindings.length && !isUsed; j++) {
+//                if (bindings[j].datastreamID.equals(dsID)) isUsed = true;
+//            }
+//            if (isUsed) {
+//                // if it's used, add it's validation information to the map.
+//                map.put(disses[i], 
+//                        getBindingMapValidationReport(context,
+//                                                      doReader,
+//                                                      disses[i].bMechID));
+//            }
+//        }
+//        return map;
+//    }
 
-    private Map getNewFailedValidationReports(Map oldReport,
-                                              Map newReport) {
-        HashMap<Disseminator, String> map = new HashMap<Disseminator, String>();
-        Iterator newIter = newReport.keySet().iterator();
-        // For each disseminator in the new report:
-        while (newIter.hasNext()) {
-            Disseminator diss = (Disseminator) newIter.next();
-            String failedMessage = (String) newReport.get(diss);
-            // Did it fail in the new report . . .
-            if (failedMessage != null) {
-                // . . . but not in the old one?
-                if (oldReport.get(diss) == null) {
-                    map.put(diss, failedMessage);
-                }
-            }
-        }
-        return map;
-    }
+//    private Map getNewFailedValidationReports(Map oldReport,
+//                                              Map newReport) {
+//        HashMap<Disseminator, String> map = new HashMap<Disseminator, String>();
+//        Iterator newIter = newReport.keySet().iterator();
+//        // For each disseminator in the new report:
+//        while (newIter.hasNext()) {
+//            Disseminator diss = (Disseminator) newIter.next();
+//            String failedMessage = (String) newReport.get(diss);
+//            // Did it fail in the new report . . .
+//            if (failedMessage != null) {
+//                // . . . but not in the old one?
+//                if (oldReport.get(diss) == null) {
+//                    map.put(diss, failedMessage);
+//                }
+//            }
+//        }
+//        return map;
+//    }
 
-    private void rejectMimeChangeIfCausedInvalidation(Map oldReports,
-                                                      Map newReports)
-            throws ServerException {
-        Map causedFailures = getNewFailedValidationReports(oldReports, 
-                                                           newReports);
-        int numFailures = causedFailures.keySet().size();
-        if (numFailures > 0) {
-            StringBuffer buf = new StringBuffer();
-            buf.append("This mime type change would invalidate " 
-                    + numFailures + " disseminator(s):");
-            Iterator iter = causedFailures.keySet().iterator();
-            while (iter.hasNext()) {
-                Disseminator diss = (Disseminator) iter.next();
-                String reason = (String) causedFailures.get(diss);
-                buf.append("\n" + diss.dissID + ": " + reason);
-            }
-            throw new GeneralException(buf.toString());
-        }
-    }
+//    private void rejectMimeChangeIfCausedInvalidation(Map oldReports,
+//                                                      Map newReports)
+//            throws ServerException {
+//        Map causedFailures = getNewFailedValidationReports(oldReports, 
+//                                                           newReports);
+//        int numFailures = causedFailures.keySet().size();
+//        if (numFailures > 0) {
+//            StringBuffer buf = new StringBuffer();
+//            buf.append("This mime type change would invalidate " 
+//                    + numFailures + " disseminator(s):");
+//            Iterator iter = causedFailures.keySet().iterator();
+//            while (iter.hasNext()) {
+//                Disseminator diss = (Disseminator) iter.next();
+//                String reason = (String) causedFailures.get(diss);
+//                buf.append("\n" + diss.dissID + ": " + reason);
+//            }
+//            throw new GeneralException(buf.toString());
+//        }
+//    }
     
     private void validateRelsExt(String pid, InputStream relsext)
         throws ServerException {            
@@ -1810,6 +1461,81 @@ public class DefaultManagement
         throws ServerException {    
         m_fedoraXACMLModule.enforceAdminPing(context);  
         return true;
+    }
+
+    public RelationshipTuple[] getRelationships(Context context, 
+                                                String pid, 
+                                                String subjectURI, 
+                                                String relationship) 
+        throws ServerException
+    {
+        DOReader r = null;    
+        try {   
+            LOG.info("Entered getRelationships");      
+   
+            m_fedoraXACMLModule.enforceGetRelationships(context, pid, subjectURI, relationship);
+   
+            LOG.debug("Getting Reader");
+            r = m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);   
+            LOG.debug("Getting Relationships:  subjectURI = " + subjectURI + " predicate = "+ relationship);
+            RelationshipTuple rels[] = r.getRelationships(subjectURI, relationship);     
+            LOG.debug("Got Relationships");
+       
+            return rels;      
+        } 
+        finally {   
+            LOG.info("Exiting getRelationships");      
+        }   
+    }
+
+    public RelationshipTuple addRelationship(Context context, String pid, String subjectURI, 
+                                             String relationship, String objURI, 
+                                             String objLiteral, String literalType) throws ServerException
+    {
+        DOWriter w = null;
+        try {
+            LOG.info("Entered addRelationship");
+            m_fedoraXACMLModule.enforceAddRelationship(context, pid, subjectURI, relationship, objURI, objLiteral, literalType);
+
+            w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
+            RelationshipTuple result = w.addRelationship(subjectURI, relationship, objURI, objLiteral, literalType);            
+            
+            // if all went ok, commit   
+            if (result != null)
+            {
+                w.commit(null);   
+            }
+            return result;      
+        }
+        finally 
+        {
+            finishModification(w, "addRelationship");
+        }       
+    }
+
+    public RelationshipTuple purgeRelationship(Context context, String pid, String subjectURI, 
+                                                String relationship, String objURI, 
+                                                String objLiteral, String literalType) throws ServerException
+    {
+        DOWriter w = null;
+        try {
+            LOG.info("Entered purgeRelationship");
+            m_fedoraXACMLModule.enforcePurgeRelationship(context, pid, subjectURI, relationship, objURI, objLiteral, literalType);
+
+            w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
+            RelationshipTuple result = w.purgeRelationship(subjectURI, relationship, objURI, objLiteral, literalType);
+            
+            // if all went ok, commit   
+            if (result != null)
+            {
+                w.commit(null);   
+            }
+            return result;      
+        }
+        finally 
+        {
+            finishModification(w, "purgeRelationship");
+        }
     }
 
 

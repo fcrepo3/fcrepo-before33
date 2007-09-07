@@ -6,6 +6,7 @@
 package fedora.server.access;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -21,7 +22,17 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.net.URLDecoder;
 
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.apache.log4j.Logger;
+import org.jrdf.graph.Triple;
+import org.trippi.RDFFormat;
+import org.trippi.TripleIterator;
+import org.trippi.TrippiException;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import fedora.common.Constants;
 import fedora.server.Context;
@@ -31,9 +42,14 @@ import fedora.server.access.dissemination.DisseminationService;
 import fedora.server.errors.DatastreamNotFoundException;
 import fedora.server.errors.DisseminatorNotFoundException;
 import fedora.server.errors.InvalidUserParmException;
+import fedora.server.errors.MethodNotFoundException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.GeneralException;
+import fedora.server.errors.ObjectIntegrityException;
+import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.ServerException;
+import fedora.server.errors.StreamIOException;
+import fedora.server.management.DefaultManagement;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.security.Authorization;
@@ -42,18 +58,24 @@ import fedora.server.storage.BDefReader;
 import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.ExternalContentManager;
+import fedora.server.storage.SimpleDOReader;
+import fedora.server.storage.types.DSBinding;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamDef;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DisseminationBindingInfo;
-import fedora.server.storage.types.Disseminator;
+//import fedora.server.storage.types.Disseminator;
+import fedora.server.storage.types.MethodDef;
+import fedora.server.storage.types.MethodDefOperationBind;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.Property;
+import fedora.server.storage.types.RelationshipTuple;
 import fedora.server.utilities.DateUtility;
+import fedora.server.utilities.ParserUtilityHandler;
 
 /**
  *
@@ -163,7 +185,7 @@ public class DefaultAccess extends Module implements Access
 
   private static final Hashtable accessActionAttributes = new Hashtable();
   static {
-  	accessActionAttributes.put("api","apia");
+    accessActionAttributes.put("api","apia");
   }  
 
   /**
@@ -190,21 +212,59 @@ public class DefaultAccess extends Module implements Access
     bDefPID = Server.getPID(bDefPID).toString();
     long initStartTime = new Date().getTime();
     long startTime = new Date().getTime();
-       
-    DOReader reader = m_manager.getReader(asOfDateTime == null, context, PID);
-
+    long stopTime;
+    long interval;
+    BMechReader bmechreader = null;
+    
     // DYNAMIC!! If the behavior definition (bDefPID) is defined as dynamic, then
     // perform the dissemination via the DynamicAccess module.
     if (m_dynamicAccess.isDynamicBehaviorDefinition(context, PID, bDefPID))
     {
-      return
-        m_dynamicAccess.getDissemination(context, PID, bDefPID, methodName,
-          userParms, asOfDateTime);
+        MIMETypedStream retVal = 
+            m_dynamicAccess.getDissemination(context, PID, bDefPID, methodName,
+                                            userParms, asOfDateTime);
+        stopTime = new Date().getTime();
+        interval = stopTime - startTime;
+        LOG.debug("Roundtrip DynamicDisseminator: " + interval + " milliseconds.");
+        return(retVal);
     }
-    long stopTime = new Date().getTime();
-    long interval = stopTime - startTime;
-    LOG.debug("Roundtrip DynamicDisseminator: " + interval + " milliseconds.");
-
+    boolean doCMDA = false;
+    
+    DOReader reader = m_manager.getReader(asOfDateTime == null, context, PID);
+    DOReader cmReader = null;
+    RelationshipTuple cmPIDs[] = reader.getRelationships(null, Constants.RELS_EXT.HAS_FORMAL_CONTENT_MODEL.uri);
+    boolean done = false;
+    m_manager.initializeCModelBmechHashMap(context);
+    if (cmPIDs != null && cmPIDs.length > 0)
+    {
+        for (int i = 0; i < cmPIDs.length && !done; i++)
+        {
+            String cModelPid = cmPIDs[i].getObjectPID();
+            if (cModelPid.equals("self"))
+            {
+                cmReader = reader;
+                cModelPid = PID;
+            }
+            else
+            {
+                cmReader = m_manager.getReader(asOfDateTime == null, context, cModelPid);
+            }
+            RelationshipTuple bDefPIDs[] = cmReader.getRelationships(null, Constants.RELS_EXT.HAS_BDEF.uri);
+            for (int j = 0; j < bDefPIDs.length && !done; j++)
+            {
+                if (bDefPIDs[j].getObjectPID().endsWith(bDefPID))
+                {
+                    bmechreader = FindBMechForBDefAndCModel(context, bDefPID, cModelPid);
+                    if (bmechreader != null)
+                    {
+                        done = true;
+                        doCMDA = true;
+                    }
+                }
+            }
+        }
+    }
+ 
     String authzAux_objState = reader.GetObjectState();
     
     BDefReader bDefReader = m_manager.getBDefReader(asOfDateTime == null, context, bDefPID);
@@ -215,24 +275,30 @@ public class DefaultAccess extends Module implements Access
     // SDP: get a bmech reader to get information that is specific to
     // a mechanism.
     Date versDateTime = asOfDateTime;
-    BMechReader bmechreader = null;
-    Disseminator[] dissSet = reader.GetDisseminators(versDateTime, null);
-    startTime = new Date().getTime();
-    for (int i=0; i<dissSet.length; i++)
+//    BMechReader bmechreader = null;
+    if (!doCMDA)
     {
-      if (dissSet[i].bDefID.equalsIgnoreCase(bDefPID))
-      {
-      	authzAux_dissState = dissSet[i].dissState;
-        bmechreader = m_manager.getBMechReader(asOfDateTime == null, context, dissSet[i].bMechID);
-        break;
-      }
+        String message = "[DefaultAccess] Disseminators are no longer supported ";
+        throw new DisseminatorNotFoundException(message);
+//        Disseminator[] dissSet = reader.GetDisseminators(versDateTime, null);
+//        startTime = new Date().getTime();
+//        for (int i=0; i<dissSet.length; i++)
+//        {
+//          if (dissSet[i].bDefID.equalsIgnoreCase(bDefPID))
+//          {
+//            authzAux_dissState = dissSet[i].dissState;
+//            bmechreader = m_manager.getBMechReader(asOfDateTime == null, context, dissSet[i].bMechID);
+//            break;
+//          }
+//        }
     }
 
     // if bmechreader is null, it means that no disseminators matched the specified bDef PID
     // This can occur if a date/time stamp value is specified that is earlier than the creation
     // date of all disseminators or if the specified bDef PID does not match the bDef of
     // any disseminators in the object.
-    if(bmechreader == null) {
+    if(bmechreader == null) 
+    {
         String message = "[DefaultAccess] Either there are no disseminators found in "
             + "the object \"" + PID + "\" that match the specified date/time stamp "
             + "of \"" + DateUtility.convertDateToString(asOfDateTime) + "\"  OR "
@@ -249,8 +315,8 @@ public class DefaultAccess extends Module implements Access
     String authzAux_bmechPID = bmechreader.GetObjectPID();
 
     m_authorizationModule.enforceGetDissemination(context, PID, bDefPID, methodName, asOfDateTime,
-    		authzAux_objState, authzAux_bdefState, authzAux_bmechPID, authzAux_bmechState, authzAux_dissState);
-	
+            authzAux_objState, authzAux_bdefState, authzAux_bmechPID, authzAux_bmechState, authzAux_dissState);
+    
     // Get method parms
     Hashtable h_userParms = new Hashtable();
     MIMETypedStream dissemination = null;
@@ -260,15 +326,22 @@ public class DefaultAccess extends Module implements Access
     // Put any user-supplied method parameters into hash table
     if (userParms != null)
     {
-      for (int i=0; i<userParms.length; i++)
-      {
-        h_userParms.put(userParms[i].name, userParms[i].value);
-      }
+        for (int i = 0; i < userParms.length; i++)
+        {
+            h_userParms.put(userParms[i].name, userParms[i].value);
+        }
     }
 
-    // Validate user-supplied parameters
-    validateUserParms(context, PID, bDefPID, methodName,
-                      h_userParms, versDateTime);
+    if (!doCMDA)
+    {
+        // Validate user-supplied parameters
+        validateUserParms(context, PID, bDefPID, null, methodName, h_userParms, versDateTime);
+    }
+    else
+    {
+        // Validate user-supplied parameters
+        validateUserParms(context, PID, bDefPID, bmechreader, methodName, h_userParms, versDateTime);
+    }
 
     stopTime = new Date().getTime();
     interval = stopTime - startTime;
@@ -281,19 +354,25 @@ public class DefaultAccess extends Module implements Access
     defaultMethodParms = bmechreader.getServiceMethodParms(methodName, versDateTime);
     for (int i=0; i<defaultMethodParms.length; i++)
     {
-      if (!defaultMethodParms[i].parmType.equals(MethodParmDef.DATASTREAM_INPUT)) {
-          if (!h_userParms.containsKey(defaultMethodParms[i].parmName)) {
+      if (!defaultMethodParms[i].parmType.equals(MethodParmDef.DATASTREAM_INPUT)) 
+      {
+          if (!h_userParms.containsKey(defaultMethodParms[i].parmName)) 
+          {
             LOG.debug("addedDefaultName: "+defaultMethodParms[i].parmName);
             String pdv=defaultMethodParms[i].parmDefaultValue;
             try {
                 // here we make sure the PID is decoded so that encoding
                 // later won't doubly-encode it
-                if (pdv.equalsIgnoreCase("$pid")) {
+                if (pdv.equalsIgnoreCase("$pid")) 
+                {
                     pdv=URLDecoder.decode(PID, "UTF-8");
-                } else if (pdv.equalsIgnoreCase("$objuri")) {
+                } 
+                else if (pdv.equalsIgnoreCase("$objuri")) 
+                {
                     pdv="info:fedora/" + URLDecoder.decode(PID, "UTF-8");
                 }
-            } catch (UnsupportedEncodingException uee) { }
+            } 
+            catch (UnsupportedEncodingException uee) { }
             LOG.debug("addedDefaultValue: "+pdv);
             h_userParms.put(defaultMethodParms[i].parmName, pdv);
           }
@@ -305,16 +384,29 @@ public class DefaultAccess extends Module implements Access
     LOG.debug("Roundtrip Get BMech Parms: " + interval + " milliseconds.");
 
     startTime = new Date().getTime();
-    // Get dissemination binding info.
-    DisseminationBindingInfo[] dissBindInfo =
-        reader.getDisseminationBindingInfo(bDefPID, methodName, versDateTime);
+    DisseminationBindingInfo[] dissBindInfo;
+    if (doCMDA)
+    {
+        // Get dissemination binding info.
+        dissBindInfo = GetCMDADisseminationBindingInfo(
+            reader, cmReader, bmechreader, methodName, versDateTime);
+        
+    }
+    else
+    {
+        String message = "[DefaultAccess] Disseminators are no longer supported ";
+        throw new DisseminatorNotFoundException(message);
+//        // Get dissemination binding info.
+//        dissBindInfo =
+//            reader.getDisseminationBindingInfo(bDefPID, methodName, versDateTime);
+    }
 
     // Assemble and execute the dissemination request from the binding info.
     String reposBaseURL = getReposBaseURL(
-          	context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri).equals(Constants.HTTP_REQUEST.SECURE.uri) 
-      			? "https" : "http",
-      		context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri)
-      	);
+            context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri).equals(Constants.HTTP_REQUEST.SECURE.uri) 
+                ? "https" : "http",
+            context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri)
+        );
     DisseminationService dissService = new DisseminationService();
     dissemination =
         dissService.assembleDissemination(context, PID, h_userParms, dissBindInfo, authzAux_bmechPID, methodName);
@@ -328,7 +420,173 @@ public class DefaultAccess extends Module implements Access
     LOG.debug("Roundtrip GetDissemination: " + interval + " milliseconds.");
     return dissemination;
   }
+  
+/*  No longer needed if the datastream name MUST match the parameter name in the BMech */
+//  private DSBinding[] getBindingInfoFromContentModel(DOReader cmReader, Date versDateTime) throws ServerException
+//  {
+//      Datastream compositeModel = cmReader.GetDatastream("DS-COMPOSITE-MODEL", versDateTime);
+//      return(getBindingInfoFromDatastream( compositeModel ));
+//  }
+//  
+//  public static DSBinding[] getBindingInfoFromDatastream(Datastream ds) throws ServerException
+//  {
+//      ArrayList list = new ArrayList();
+//      DSBinding result[] = null;
+//      ParserUtilityHandler handler = new ParserUtilityHandler(list)
+//      {          
+//          ArrayList list = null;
+//          public void startDocument()
+//          {
+//              list = (ArrayList)(parm1);
+//          }
+//          
+//          public void startElement(String uri, String localName, String qName, Attributes attrs) 
+//          {
+//              if (localName.equals("dsTypeModel"))
+//              {
+//                  DSBinding ds = new DSBinding();
+//                  for (int i = 0; i < attrs.getLength(); i++)
+//                  {
+//                      if (attrs.getLocalName(i).equals("SEMANTIC_ID"))
+//                      {
+//                          ds.bindKeyName = attrs.getValue(i).toString();
+//                      }
+//                      if (attrs.getLocalName(i).equals("ID"))
+//                      {
+//                          ds.datastreamID = attrs.getValue(i).toString();
+//                      }
+//                  }
+//                  ds.bindLabel = "";
+//                  ds.seqNo = "";
+//                  list.add(ds);
+//              }
+//           }              
+//      };
+//      
+//      if (ds != null)
+//      {
+//          SAXParser parser = null;
+//          try 
+//          {
+//              SAXParserFactory spf = SAXParserFactory.newInstance();
+//              spf.setNamespaceAware(true);
+//              parser = spf.newSAXParser();
+//          } 
+//          catch (Exception e) 
+//          {
+//              throw new RepositoryConfigurationException("Error getting SAX "
+//                      + "parser for Content Model info: " + e.getClass().getName()
+//                      + ": " + e.getMessage());
+//          }
+//          try  
+//          {
+//              parser.parse(ds.getContentStream(), handler);
+//          } 
+//          catch (SAXException saxe) 
+//          {
+//              throw new ObjectIntegrityException("Parse error parsing Composite Model Metadata: " + saxe.getMessage());
+//          } 
+//          catch (IOException ioe) 
+//          {
+//              throw new StreamIOException("Stream error parsing Composite Model Metadata: " + ioe.getMessage());
+//          }
+//          finally
+//          {
+//              int size = list.size();
+//              if (size > 0)
+//              {
+//                  result = new DSBinding[size];
+//              }
+//              for (int i = 0; i < size; i++)
+//              {
+//                  result[i] = (DSBinding)list.get(i);
+//              }
+//          }
+//      }  
+//      return(result);
+//  }
+    
+private BMechReader FindBMechForBDefAndCModel(Context context, String bDefPID, String cModelPID) throws ServerException
+{
+    String bMechPID = m_manager.lookupBmechForCModel(cModelPID, bDefPID);
+    BMechReader bmReader = m_manager.getBMechReader(false, context, bMechPID);
+    return(bmReader);
+}
 
+private DisseminationBindingInfo[] GetCMDADisseminationBindingInfo(
+          DOReader dObj, DOReader cmReader, BMechReader bmReader, 
+          String methodName, Date versDateTime) throws MethodNotFoundException, ServerException
+  {
+      // Results will be returned in this array, one item per datastream
+      DisseminationBindingInfo[] bindingInfo;
+
+//      DSBinding[] dsBindings = getBindingInfoFromContentModel(cmReader, versDateTime);
+//      int dsCount = dsBindings.length;
+      String[] dsNames = dObj.ListDatastreamIDs(null);
+      int dsCount = dsNames.length;
+      bindingInfo = new DisseminationBindingInfo[dsCount];
+      // The bmech reader provides information about the service and params.
+      //wdn5e 2005.04.24 for 2.1 : using false here becuase of versDateTime
+ //     BMechReader mech = m_repoReader.getBMechReader(false, m_context, diss.bMechID);
+      MethodParmDef[] methodParms = bmReader.getServiceMethodParms(methodName, versDateTime);
+      // Find the operation bindings for the method in question
+      MethodDefOperationBind[] opBindings = bmReader.getServiceMethodBindings(versDateTime);
+      String addressLocation = null;
+      String operationLocation = null;
+      String protocolType = null;
+      boolean foundMethod = false;
+      for (int i = 0; i < opBindings.length; i++) 
+      {
+          if (opBindings[i].methodName.equals(methodName)) 
+          {
+              foundMethod = true;
+              addressLocation = opBindings[i].serviceBindingAddress;
+              operationLocation = opBindings[i].operationLocation;
+              protocolType = opBindings[i].protocolType;
+          }
+      }
+      if (!foundMethod) 
+      {
+          throw new MethodNotFoundException("Method " + methodName
+                  + " was not found in " + bmReader.GetObjectPID() + "'s operation "
+                  + " binding.");
+      }
+      // For each datastream referenced by the disseminator's ds bindings,
+      // add an element to the output array which includes key information
+      // on the operation and the datastream.
+      for (int i=0; i < dsCount; i++) 
+      {
+//          String dsID = dsBindings[i].datastreamID;
+//          bindingInfo[i] = new DisseminationBindingInfo();
+//          bindingInfo[i].DSBindKey = dsBindings[i].bindKeyName;
+          String dsID = dsNames[i];
+          bindingInfo[i] = new DisseminationBindingInfo();
+          bindingInfo[i].DSBindKey = dsNames[i];
+          // get key info about the datastream and put it here
+          Datastream ds = dObj.GetDatastream(dsID, versDateTime);
+          if (ds == null) 
+          {
+              String message = "The object \"" + dObj.GetObjectPID()+"\" "
+                  + "contains no datastream for dsID \""+dsID+"\" "
+                  + "that was created on or before the specified date/timestamp "
+                  + " of \"" + DateUtility.convertDateToString(versDateTime)
+                  + "\" .";
+              throw new DatastreamNotFoundException(message);
+          }
+          bindingInfo[i].dsLocation = ds.DSLocation;
+          bindingInfo[i].dsControlGroupType = ds.DSControlGrp;
+          bindingInfo[i].dsID = dsID;
+          bindingInfo[i].dsVersionID = ds.DSVersionID;
+          bindingInfo[i].dsState = ds.DSState;
+          // these will be the same for all elements of the array
+          bindingInfo[i].methodParms = methodParms;
+          bindingInfo[i].AddressLocation = addressLocation;
+          bindingInfo[i].OperationLocation = operationLocation;
+          bindingInfo[i].ProtocolType = protocolType;
+      }
+      return bindingInfo;
+  }
+  
   public ObjectMethodsDef[] listMethods(Context context, String PID,
       Date asOfDateTime) throws ServerException
   {
@@ -338,8 +596,7 @@ public class DefaultAccess extends Module implements Access
     DOReader reader =
         m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, PID);
 
-    ObjectMethodsDef[] methodDefs =
-        reader.listMethods(asOfDateTime);
+    ObjectMethodsDef[] methodDefs = reader.listMethods(asOfDateTime);
     long stopTime = new Date().getTime();
     long interval = stopTime - startTime;
     LOG.debug("Roundtrip listMethods: " + interval + " milliseconds.");
@@ -401,13 +658,13 @@ public class DefaultAccess extends Module implements Access
     profile.objectContentModel = reader.getContentModelId();
     profile.objectCreateDate = reader.getCreateDate();
     profile.objectLastModDate = reader.getLastModDate();
-    profile.objectType = reader.getFedoraObjectType();
+    profile.objectType = reader.getFedoraObjectTypes();
 
     String reposBaseURL = getReposBaseURL(
-    	context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri).equals(Constants.HTTP_REQUEST.SECURE.uri) 
-			? "https" : "http",
-		context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri)
-	);
+        context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri).equals(Constants.HTTP_REQUEST.SECURE.uri) 
+            ? "https" : "http",
+        context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri)
+    );
     profile.dissIndexViewURL = getDissIndexViewURL(reposBaseURL, reader.GetObjectPID(), versDateTime);
     profile.itemIndexViewURL = getItemIndexViewURL(reposBaseURL, reader.GetObjectPID(), versDateTime);
       return profile;
@@ -462,16 +719,16 @@ public class DefaultAccess extends Module implements Access
     RepositoryInfo repositoryInfo = new RepositoryInfo();
     repositoryInfo.repositoryName = getServer().getParameter("repositoryName");
     String reposBaseURL = getReposBaseURL(
-        	context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri).equals(Constants.HTTP_REQUEST.SECURE.uri) 
-    			? "https" : "http",
-    		context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri)
-    	);    
+            context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri).equals(Constants.HTTP_REQUEST.SECURE.uri) 
+                ? "https" : "http",
+            context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri)
+        );    
     repositoryInfo.repositoryBaseURL = reposBaseURL + "/fedora";
     repositoryInfo.repositoryVersion =
       Server.VERSION_MAJOR + "." + Server.VERSION_MINOR;
     Module domgr = getServer().getModule("fedora.server.storage.DOManager");
     repositoryInfo.repositoryPIDNamespace = domgr.getParameter("pidNamespace");
-	repositoryInfo.defaultExportFormat = domgr.getParameter("defaultExportFormat");
+    repositoryInfo.defaultExportFormat = domgr.getParameter("defaultExportFormat");
     repositoryInfo.OAINamespace = m_repositoryDomainName;
     repositoryInfo.adminEmailList = getAdminEmails();
     repositoryInfo.samplePID = repositoryInfo.repositoryPIDNamespace + ":100";
@@ -567,7 +824,7 @@ public class DefaultAccess extends Module implements Access
    *         request.
    *
    */
-  private void validateUserParms(Context context, String PID, String bDefPID,
+  private void validateUserParms(Context context, String PID, String bDefPID, BMechReader bmechreader,
       String methodName, Hashtable h_userParms, Date versDateTime)
       throws ServerException
   {
@@ -579,10 +836,38 @@ public class DefaultAccess extends Module implements Access
     Hashtable h_validParms = new Hashtable();
     boolean isValid = true;
 
-    DOReader reader =
-      m_manager.getReader(Server.GLOBAL_CHOICE, context, PID);
-    methodParms = reader.getObjectMethodParms(bDefPID,
-        methodName, versDateTime);
+    DOReader reader = null;
+        
+    if (bmechreader != null)  // this code will be used for the CMDA example
+    {
+        MethodDef[] methods = bmechreader.getServiceMethods(versDateTime);
+        // Filter out parms that are internal to the mechanism and not part
+        // of the abstract method definition.  We just want user parms.
+        reader = m_manager.getReader(false, context, PID);
+        for (int i=0; i<methods.length; i++)
+        {
+          if (methods[i].methodName.equalsIgnoreCase(methodName))
+          {
+              ArrayList filteredParms = new ArrayList();
+              MethodParmDef[] parms = methods[i].methodParms;
+              for (int j=0; j<parms.length; j++)
+              {
+                if (parms[j].parmType.equalsIgnoreCase(MethodParmDef.USER_INPUT))
+                {
+                  filteredParms.add(parms[j]);
+                }
+              }
+              methodParms = (MethodParmDef[])filteredParms.toArray(new MethodParmDef[0]);
+          }
+        }
+    }
+    else
+    {
+        String message = "[DefaultAccess] Disseminators are no longer supported ";
+        throw new DisseminatorNotFoundException(message);
+//        reader = m_manager.getReader(Server.GLOBAL_CHOICE, context, PID);
+//        methodParms = reader.getObjectMethodParms(bDefPID, methodName, versDateTime);
+    }
 
     // Put valid method parameters and their attributes into hashtable
     if (methodParms != null)
@@ -792,7 +1077,7 @@ public class DefaultAccess extends Module implements Access
     if (fedoraServerHost==null || fedoraServerHost.equals("")) {
         fedoraServerHost=hostIP.getHostName();
     }
-	reposBaseURL = protocol + "://" + fedoraServerHost + ":" + port;
+    reposBaseURL = protocol + "://" + fedoraServerHost + ":" + port;
     return reposBaseURL;
   }
 

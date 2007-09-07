@@ -235,6 +235,7 @@
 	<!--- FEDORA DATASTREAM BINDING MAPS  -->
 	<!--  In Fedora the METS structure maps are associated with the DISSEMINATOR mechanisms (see METS:behaviorSec).-->
 	<!---*******************************************************************************************************************************************-->
+    <!--
 	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
 		<METS:div TYPE="demo:2" LABEL="DS Binding Map for UVA Standard Image mechanism">
 			<METS:div TYPE="THUMBRES_IMG" LABEL="THUMBNAIL image" ORDER="0">
@@ -251,6 +252,7 @@
 			</METS:div>
 		</METS:div>
 	</METS:structMap>
+    -->
 	<!---*******************************************************************************************************************************************-->
 	<!--- DISSEMINATORS-->
 	<!-- A disseminator provides a "behavior-centric" view of the object.  It has an attribute STRUCTID -->
@@ -260,7 +262,6 @@
 	<!---*******************************************************************************************************************************************-->
 	<!--- THE UVA STANDARD IMAGE DISSEMINATOR -->
 	<!---*******************************************************************************************************************************************-->
-	<METS:behaviorSec ID="DISS1" STATUS="A">
 		<!-- Note: The value for createdDate is assigned dynamically by the Fedora server at ingest time if the CREATED attribute is not        -->
 		<!-- present on the component in the object being ingested. Therefore, it is recommended that this attribute be omitted from the          -->
 		<!-- object template so this date will be assigned dynamically by the Fedora server. If included in the template file, this value will be    -->
@@ -270,14 +271,17 @@
 		<!-- Uncomment the the following line if you want the DC datastream for all abjects built with this template to retain the specified         -->
 		<!-- createdDate after ingest.                                                                                                                                                                                -->
 		<!-- <METS:serviceBinding CREATED="2005-03-15T12:57:07.241Z" ID="DISS1.0" STRUCTID="S1" BTYPE="demo:1" LABEL="UVA Std Image Behaviors"> -->
+        <!--
+	<METS:behaviorSec ID="DISS1" STATUS="A">
 		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:1" LABEL="UVA Std Image Behaviors">
+        -->
 			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
 			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
 			<!-- the disseminator subscribes -->
+            <!--
 			<METS:interfaceMD LABEL="UVA Std Image Behavior Definition" LOCTYPE="URN" xlink:href="demo:1"/>
-			<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
-			<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
 			<METS:serviceBindMD LABEL="UVA Std Image Behavior Mechanism" LOCTYPE="URN" xlink:href="demo:2"/>
 		</METS:serviceBinding>
 	</METS:behaviorSec>
+    -->
 </METS:mets>

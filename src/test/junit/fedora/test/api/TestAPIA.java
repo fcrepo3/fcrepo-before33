@@ -81,17 +81,17 @@ public class TestAPIA extends FedoraServerTestCase {
 			"wavelet", "/uvalibadmin:admin/uvalibadmin:technical/uvalibadmin:compression/text( )", dsXML);
 
 		// test for type E datastream 			
-		ds = apia.getDatastreamDissemination("demo:11", "DS1", null);
+		ds = apia.getDatastreamDissemination("demo:11", "MRSID", null);
 		assertEquals(ds.getMIMEType(),"image/x-mrsid-image");
 		assertTrue(ds.getStream().length > 0);	
 		
 		// test for type R datastream 			
-		ds = apia.getDatastreamDissemination("demo:30", "DS1", null);
+		ds = apia.getDatastreamDissemination("demo:30", "THUMBRES_IMG", null);
 		assertEquals(ds.getMIMEType(),"application/fedora-redirect");
 		assertTrue(ds.getStream().length > 0);
 		
 		// test for type M datastream 			
-		ds = apia.getDatastreamDissemination("demo:5", "DS1", null);
+		ds = apia.getDatastreamDissemination("demo:5", "THUMBRES_IMG", null);
 		assertEquals(ds.getMIMEType(),"image/jpeg");
 		assertTrue(ds.getStream().length > 0);
 	}
@@ -147,7 +147,7 @@ public class TestAPIA extends FedoraServerTestCase {
 	
 	public void testListDatastreams() throws Exception {
 		DatastreamDef[] dsDefs = apia.listDatastreams("demo:11", null);
-		assertEquals(dsDefs.length,8);
+		assertEquals(9, dsDefs.length);
 		verifyDatastreamDefs(dsDefs, "testListDatastream: ");
 	}
 	

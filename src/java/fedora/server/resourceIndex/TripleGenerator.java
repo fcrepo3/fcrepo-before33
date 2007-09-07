@@ -48,4 +48,13 @@ public interface TripleGenerator {
     Set<Triple> getTriplesForDataObject(DOReader reader)
             throws ResourceIndexException;
 
+    /**
+     * Get the triples for the given Fedora content model object.
+     *
+     * @param reader the data object.
+     * @return the set of triples.
+     */
+    Set<Triple> getTriplesForCModelObject(DOReader reader)
+            throws ResourceIndexException;
+
 }

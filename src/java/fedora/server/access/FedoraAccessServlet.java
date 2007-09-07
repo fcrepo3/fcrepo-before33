@@ -890,13 +890,22 @@ public class FedoraAccessServlet extends HttpServlet {
 					pw.write("<objLastModDate>" + mDate + "</objLastModDate>");
 					String objType = objProfile.objectType;
 					pw.write("<objType>");
-					if (objType.equalsIgnoreCase("O")) {
+					if (objType.indexOf("O") != -1) 
+                    {
 						pw.write("Fedora Data Object");
-					} else if (objType.equalsIgnoreCase("D")) {
+					} 
+                    if (objType.indexOf("D") != -1) 
+                    {
 						pw.write("Fedora Behavior Definition Object");
-					} else if (objType.equalsIgnoreCase("M")) {
-						pw.write("Fedora Behavior Mechanism Object");
-					}
+					} 
+                    if (objType.indexOf("M") != -1) 
+                    {
+                        pw.write("Fedora Behavior Mechanism Object");
+                    }
+                    if (objType.indexOf("C") != -1) 
+                    {
+                        pw.write("Fedora Content Model Object");
+                    }
 					pw.write("</objType>");
 					pw.write("<objDissIndexViewURL>"
 							+ StreamUtility.enc(objProfile.dissIndexViewURL)
