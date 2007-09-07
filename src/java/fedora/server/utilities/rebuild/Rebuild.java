@@ -117,6 +117,7 @@ public class Rebuild implements Constants {
 					rebuildFromDirectory(rebuilder, dir, "FedoraBDefObject");
 					rebuildFromDirectory(rebuilder, dir, "FedoraBMechObject");
 					rebuildFromDirectory(rebuilder, dir, "FedoraObject");
+					rebuildFromDirectory(rebuilder, dir, "FedoraCModelObject");
 				} finally {
 					rebuilder.finish();
 				}
