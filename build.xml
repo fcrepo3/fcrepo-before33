@@ -791,8 +791,10 @@
 		<copy file="${lib.commons-logging}" todir="${install.build.dir}/lib"/>
 		<move file="${install.build.dir}/main.jar" todir="${install.build.dir}/main"/>
 		<unjar src="${lib.one-jar}" dest="${install.build.dir}/boot"/>
-		<jar jarfile="${dist.dir}/fedora-${fedora.version}-installer.jar" 
-			 manifest="${install.build.dir}/boot/boot-manifest.mf">
+		<jar jarfile="${dist.dir}/fedora-${fedora.version}-installer.jar">
+            <manifest>
+                <attribute name="Main-Class" value="com.simontuffs.onejar.Boot"/>
+            </manifest>
 			<fileset dir="${install.build.dir}/boot"/>
 			<fileset dir="${install.build.dir}"
 					 includes="main/** lib/** resources/**"/>
