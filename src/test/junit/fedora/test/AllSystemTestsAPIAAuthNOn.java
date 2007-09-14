@@ -1,0 +1,27 @@
+package fedora.test;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	fedora.test.AllCommonSystemTests.class,
+	fedora.test.api.TestAuthentication.class,
+	fedora.test.api.TestXACMLPolicies.class
+})
+
+public class AllSystemTestsAPIAAuthNOn {
+
+    // Supports legacy tests runners
+    public static junit.framework.Test suite() throws Exception {
+
+        junit.framework.TestSuite suite = 
+                new junit.framework.TestSuite(AllSystemTestsAPIAAuthNOn.class.getName());
+   
+        suite.addTest(fedora.test.AllCommonSystemTests.suite());
+        suite.addTest(fedora.test.api.TestAuthentication.suite());
+        suite.addTest(fedora.test.api.TestXACMLPolicies.suite());
+
+        return suite;
+    }
+}

@@ -825,7 +825,7 @@
 		<property name="fedora.username" value="fedoraAdmin" />
 		<property name="fedora.password" value="fedoraAdmin" />
 		<property name="javax.net.ssl.trustStore" value="inc/keystore"/>
-		<property name="test" value="fedora.test.api.AllAPITests"/>
+		<property name="test" value="fedora.test.AllOfflineTests"/>
 		
 		<copy todir="${junit.build.dir}" includeEmptyDirs="false">
 	        <fileset dir="${junit.src.dir}">

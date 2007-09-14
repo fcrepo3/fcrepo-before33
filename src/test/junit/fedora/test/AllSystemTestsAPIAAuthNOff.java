@@ -1,22 +1,22 @@
-package fedora;
+package fedora.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	fedora.server.AllUnitTests.class
+	fedora.test.AllCommonSystemTests.class
 })
 
-public class AllUnitTests {
+public class AllSystemTestsAPIAAuthNOff {
 
     // Supports legacy tests runners
     public static junit.framework.Test suite() throws Exception {
 
         junit.framework.TestSuite suite = 
-                new junit.framework.TestSuite(AllUnitTests.class.getName());
+                new junit.framework.TestSuite(AllSystemTestsAPIAAuthNOff.class.getName());
    
-        suite.addTest(fedora.server.AllUnitTests.suite());    
+        suite.addTest(fedora.test.AllCommonSystemTests.suite());
 
         return suite;
     }
