@@ -57,7 +57,6 @@ import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DigitalObject;
-//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.DSBinding;
 
@@ -901,36 +900,6 @@ public abstract class ResourceIndexIntegrationTest {
         return _ri.findTriples("spo", query, -1, false);
     }
 
-//    protected static void addDisseminator(DigitalObject obj, String id,
-//            String bDefPID, String bMechPID, Map<String, String> bindings) {
-//        List dissems = obj.disseminators(id);
-//        Disseminator diss = new Disseminator();
-//        diss.bDefID = bDefPID;
-//        diss.bMechID = bMechPID;
-//        diss.dissCreateDT = new Date();
-//        diss.dissID = id;
-//        diss.dissLabel = "disseminator";
-//        diss.dissState = "A";
-//        diss.dissVersionID = id + "." + dissems.size();
-//        DSBindingMap bindMap = new DSBindingMap();
-//        bindMap.dsBindMapLabel = "bindmap";
-//        bindMap.dsBindMechanismPID = bMechPID;
-//        DSBinding[] dsBindings = new DSBinding[bindings.size()];
-//        int i = 0;
-//        for (String key : bindings.keySet()) {
-//            String dsID = bindings.get(key);
-//            dsBindings[i] = new DSBinding();
-//            dsBindings[i].bindKeyName = key;
-//            dsBindings[i].bindLabel = "bindlabel";
-//            dsBindings[i].datastreamID = dsID;
-//            dsBindings[i].seqNo = "1";
-//            i++;
-//        }
-//        bindMap.dsBindings = dsBindings;
-//        diss.dsBindMap = bindMap; 
-//        dissems.add(diss);
-//    }
-
     protected static void addEDatastream(DigitalObject obj, String id) {
         DatastreamReferencedContent ds = new DatastreamReferencedContent();
         ds.DSControlGrp = "E";
@@ -1315,17 +1284,6 @@ public abstract class ResourceIndexIntegrationTest {
                        "KEY2", new String[] {"text/xml"}),
                 getMap("methodOne", new String[] {"text/xml"},
                        "methodTwo", new String[] {"text/xml"}));
-    }
-
-    // get an object named test:1 with one datastream (DS1) and one 
-    // disseminator that has any number of keys (KEY1, etc) pointing to the ds.
-    protected DigitalObject getObjectWithDissem(String bDefPID,
-                                              String bMechPID,
-                                              int numKeys) throws Exception {
-        DigitalObject obj = getTestObject("test:1", "test");
-        addEDatastream(obj, "DS1");
-//        addDisseminator(obj, "DISS1", bDefPID, bMechPID, getBindings(numKeys));
-        return obj;
     }
 
     protected Map<String, String> getBindings(int numKeys) {

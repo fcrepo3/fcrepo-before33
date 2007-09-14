@@ -23,11 +23,9 @@ public class AllIntegrationTests {
    
         suite.addTest(ResourceIndexDatePrecisionIntegrationTest.suite());
    
-        suite.addTest(ResourceIndexAddDelDissIntegrationTest.suite());
         suite.addTest(ResourceIndexAddDelDSIntegrationTest.suite());
         suite.addTest(ResourceIndexAddDelMiscIntegrationTest.suite());
 
-        suite.addTest(ResourceIndexModDissIntegrationTest.suite());
         suite.addTest(ResourceIndexModDSIntegrationTest.suite());
         suite.addTest(ResourceIndexModMiscIntegrationTest.suite());
 
