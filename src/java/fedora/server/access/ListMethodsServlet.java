@@ -303,10 +303,8 @@ public class ListMethodsServlet extends HttpServlet {
 		} catch (AuthzException ae) {
 			throw ae;
 		} catch (Throwable th) {
-            LOG.error("Error listing methods", th);
-			String message = "[ListMethodsServlet] An error has occured. "
-					+ " The error was a \" " + th.getClass().getName()
-					+ " \". Reason: " + th.getMessage();
+            String message = "Error listing methods";
+            LOG.error(message, th);
 			throw new GeneralException(message);
 		} finally {
 			try {

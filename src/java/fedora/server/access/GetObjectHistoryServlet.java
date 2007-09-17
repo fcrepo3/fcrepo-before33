@@ -222,12 +222,12 @@ public class GetObjectHistoryServlet extends HttpServlet {
 				// getObjectHistory request returned nothing.
 				LOG.error("No object history returned");
 			}
+		} catch (AuthzException ae) {
+            throw ae;
 		} catch (Throwable th) {
-			String message = "[GetObjectHistoryServlet] An error has occured. "
-					+ " The error was a \" " + th.getClass().getName()
-					+ " \". Reason: " + th.getMessage();
-            LOG.error("Error getting object history", th);
-			throw new GeneralException(message);
+            String msg = "Error getting object history";
+            LOG.error(msg, th);
+            throw new GeneralException(msg, th);
 		} finally {
 			try {
 				if (pr != null)

@@ -5,7 +5,7 @@
         response.addHeader("WWW-Authenticate", "BASIC realm=\"Fedora Repository Server\"");
 %>
 <html><head>
-      <title>Fedora:  401 Authn Error</title></head>
+      <title>Fedora: 401 Authn Error</title></head>
    <body>
       <center>
          <table border="0" cellpadding="0" cellspacing="0" width="784">

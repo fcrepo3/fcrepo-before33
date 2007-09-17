@@ -292,6 +292,8 @@ public class ListDatastreamsServlet extends HttpServlet {
 						out));
 			}
 			out.flush();
+		} catch (AuthzException ae) {
+            throw ae;
 		} catch (Throwable th) {
             String message = "Error listing datastreams";
             LOG.error(message, th);

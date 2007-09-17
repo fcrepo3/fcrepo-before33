@@ -6,7 +6,7 @@
         response.addHeader("Content-Type", "text/html; charset=UTF8");        
 %>
 <html><head>
-      <title>Fedora error</title></head>
+      <title>Fedora: 500 Error</title></head>
    <body>
       <center>
       	<h2>Fedora error</h2>

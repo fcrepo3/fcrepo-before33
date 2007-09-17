@@ -4,7 +4,7 @@
         response.addHeader("Content-Type", "text/html; charset=UTF8");        
 %>
 <html><head>
-      <title>Fedora:  400 Bad Request</title></head>
+      <title>Fedora: 400 Bad Request</title></head>
    <body>
       <center>
          <table border="0" cellpadding="0" cellspacing="0" width="784">

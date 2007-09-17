@@ -31,6 +31,7 @@ import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.authorization.AuthzException;
+import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
 import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.utilities.StreamUtility;
 
@@ -154,12 +155,10 @@ public class GetNextPIDServlet extends HttpServlet {
 			throw RootException.getServletException(ae, request, ACTION_LABEL,
 					new String[0]);
 		} catch (Throwable th) {
-			String message = "[GetNextPIDServlet] An error has occured in "
-					+ "accessing the Fedora Management Subsystem. The error was \" "
-					+ th.getClass().getName() + " \". Reason: "
-					+ th.getMessage() + "  Input Request was: \""
-					+ request.getRequestURL().toString();
-            LOG.error(message);
+            final String msg = "Unexpected error getting next PID";
+            LOG.error(msg, th);
+            throw new InternalError500Exception(msg, th, request, ACTION_LABEL,
+                    "Internal Error", new String[0]);
 		}
 	}
 
@@ -240,12 +239,10 @@ public class GetNextPIDServlet extends HttpServlet {
 				String message = "[GetNextPIDServlet] No PIDs returned.";
                 LOG.error(message);
 			}
+		} catch (ServerException e) {
+            throw e;
 		} catch (Throwable th) {
-			String message = "[GetNextPIDServlet] An error has occured. "
-					+ " The error was a \" " + th.getClass().getName()
-					+ " \". Reason: " + th.getMessage();
-            LOG.error(message);
-			throw new GeneralException(message);
+            throw new GeneralException("Error while getting next PID", th);
 		} finally {
 			try {
 				if (pr != null)

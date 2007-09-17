@@ -4,7 +4,7 @@
         response.addHeader("Content-Type", "text/html; charset=UTF8");        
 %>
 <html><head>
-      <title>Fedora:  100 Authz Success</title></head>
+      <title>Fedora: 100 Authz Success</title></head>
    <body>
       <center>
          <table border="0" cellpadding="0" cellspacing="0" width="784">

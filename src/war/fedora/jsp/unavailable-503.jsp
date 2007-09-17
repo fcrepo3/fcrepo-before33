@@ -6,7 +6,7 @@
         response.addHeader("Content-Type", "text/html; charset=UTF8");        
 %>
 <html><head>
-   <title>Fedora Unavailable</title></head>
+   <title>Fedora: 503 Unavailable</title></head>
    <body>
       <center>
          <table border="0" cellpadding="0" cellspacing="0" width="784">

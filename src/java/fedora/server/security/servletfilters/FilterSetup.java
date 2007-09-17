@@ -17,6 +17,7 @@ import java.security.Principal;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.lang.reflect.Method;
@@ -123,7 +124,9 @@ public class FilterSetup extends Base implements Filter {
 	}
 		
     
-	public void doFilter(ServletRequest servletRequest, ServletResponse response, FilterChain chain) {
+	public void doFilter(ServletRequest servletRequest,
+            ServletResponse response, FilterChain chain)
+            throws ServletException {
 		String method = "doFilter() "; if (log.isDebugEnabled()) log.debug(enter(method));
 		if (log.isDebugEnabled()) log.debug(format(method, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"));
 		if (log.isDebugEnabled()) log.debug(format(method, "FILTER_NAME", FILTER_NAME));
@@ -170,10 +173,13 @@ public class FilterSetup extends Base implements Filter {
 				chain.doFilter(extendedHttpServletRequest, response);
 			}
 			if (log.isDebugEnabled()) log.debug("back from next doFilter()");
+		} catch (ServletException e) {
+            throw e;
 		} catch (Throwable th) {
 			showThrowable(th, log, "can't do next doFilter()");
-		}
-		if (log.isDebugEnabled()) log.debug(exit(method)); 
+		} finally {
+            if (log.isDebugEnabled()) log.debug(exit(method)); 
+        }
 	}
 
 }

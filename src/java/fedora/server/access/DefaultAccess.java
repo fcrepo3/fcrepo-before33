@@ -188,10 +188,14 @@ public class DefaultAccess extends Module implements Access
        
     DOReader reader = m_manager.getReader(asOfDateTime == null, context, PID);
 
+    String authzAux_objState = reader.GetObjectState();
+    
     // DYNAMIC!! If the behavior definition (bDefPID) is defined as dynamic, then
     // perform the dissemination via the DynamicAccess module.
     if (m_dynamicAccess.isDynamicBehaviorDefinition(context, PID, bDefPID))
     {
+      m_authorizationModule.enforceGetDissemination(context, PID, bDefPID, methodName, asOfDateTime,
+    		authzAux_objState, "A", "fedora-system:4", "A", "A");
       return
         m_dynamicAccess.getDissemination(context, PID, bDefPID, methodName,
           userParms, asOfDateTime);
@@ -200,8 +204,6 @@ public class DefaultAccess extends Module implements Access
     long interval = stopTime - startTime;
     LOG.debug("Roundtrip DynamicDisseminator: " + interval + " milliseconds.");
 
-    String authzAux_objState = reader.GetObjectState();
-    
     BDefReader bDefReader = m_manager.getBDefReader(asOfDateTime == null, context, bDefPID);
     String authzAux_bdefState = bDefReader.GetObjectState();
 
