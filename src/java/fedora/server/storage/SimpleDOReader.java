@@ -512,7 +512,7 @@ public class SimpleDOReader
           }
         }
         throw new MethodNotFoundException("The object, " + m_obj.getPid()
-                    + ", does not have a method named '" + methodName);
+                    + ", does not have a method named " + methodName);
     }
 
     /**
