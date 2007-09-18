@@ -30,18 +30,19 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
+import fedora.server.errors.ObjectNotFoundException;
+import fedora.server.errors.ObjectNotInLowlevelStorageException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.authorization.AuthzException;
+import fedora.server.errors.servletExceptionExtensions.BadRequest400Exception;
+import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
+import fedora.server.errors.servletExceptionExtensions.NotFound404Exception;
 import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.utilities.StreamUtility;
 
 /**
- * <p>
- * <b>Title: </b>GetObjectHistoryServlet.java
- * </p>
- * <p>
- * <b>Description: </b>Implements the "getObjectHistory" functionality of the
+ * Implements the "getObjectHistory" functionality of the
  * Fedora Access LITE (API-A-LITE) interface using a java servlet front end. The
  * syntax defined by API-A-LITE has for getting a description of the repository
  * has the following binding:
@@ -126,10 +127,7 @@ public class GetObjectHistoryServlet extends HttpServlet {
 		// Parse servlet URL.
 		String[] URIArray = request.getRequestURL().toString().split("/");
 		if (URIArray.length != 6 || !URIArray[4].equals("getObjectHistory")) {
-			// Bad syntax; redirect to syntax documentation page.
-			response
-					.sendRedirect("/userdocs/client/browser/apialite/index.html");
-			return;
+            throw new BadRequest400Exception(request, ACTION_LABEL, "", new String[0]);
 		}
 
 		PID = URIArray[5];
@@ -151,19 +149,23 @@ public class GetObjectHistoryServlet extends HttpServlet {
 				Constants.HTTP_REQUEST.REST.uri, request);
 		try {
 			getObjectHistory(context, PID, xml, response);
+        } catch (ObjectNotFoundException e) {
+            LOG.error("Object not found for request: " + request.getRequestURI()
+                    + " (actionLabel=" + ACTION_LABEL + ")", e);
+            throw new NotFound404Exception(request, ACTION_LABEL, "",
+                    new String[0]);
+        } catch (ObjectNotInLowlevelStorageException e) {
+            LOG.error("Object not found for request: " + request.getRequestURI()
+                    + " (actionLabel=" + ACTION_LABEL + ")", e);
+            throw new NotFound404Exception(request, ACTION_LABEL, "",
+                    new String[0]);
 		} catch (AuthzException ae) {
 			throw RootException.getServletException(ae, request, ACTION_LABEL,
 					new String[0]);
 		} catch (Throwable th) {
-            LOG.error("Error getting object history", th);
-			String message = "[GetObjectHistoryServlet] An error has occured in "
-					+ "accessing the Fedora Access Subsystem. The error was \" "
-					+ th.getClass().getName()
-					+ " \". Reason: "
-					+ th.getMessage()
-					+ "  Input Request was: \""
-					+ request.getRequestURL().toString();
-			displayURLParms(PID, h_userParms, response, message);
+            LOG.error("Unexpected error servicing API-A request", th);
+            throw new InternalError500Exception("", th, request, ACTION_LABEL,
+                    "", new String[0]);
 		}
 	}
 
@@ -219,14 +221,12 @@ public class GetObjectHistoryServlet extends HttpServlet {
 				out.flush();
 
 			} else {
-				// getObjectHistory request returned nothing.
-				LOG.error("No object history returned");
+                throw new GeneralException("No object history returned");
 			}
-		} catch (AuthzException ae) {
-            throw ae;
+		} catch (ServerException e) {
+            throw e;
 		} catch (Throwable th) {
             String msg = "Error getting object history";
-            LOG.error(msg, th);
             throw new GeneralException(msg, th);
 		} finally {
 			try {
@@ -370,84 +370,6 @@ public class GetObjectHistoryServlet extends HttpServlet {
 			throw new ServletException("Unable to get Fedora Server instance."
 					+ ie.getMessage());
 		}
-	}
-
-	/**
-	 * <p>
-	 * Cleans up servlet resources.
-	 * </p>
-	 */
-	public void destroy() {
-	}
-
-	/**
-	 * <p>
-	 * Displays a list of the servlet input parameters. This method is generally
-	 * called when a service request returns no data. Usually this is a result
-	 * of an incorrect spelling of either a required URL parameter or in one of
-	 * the user-supplied parameters. The output from this method can be used to
-	 * help verify the URL parameters sent to the servlet and hopefully fix the
-	 * problem.
-	 * </p>
-	 * 
-	 * @param PID
-	 *            The persistent identifier of the digital object.
-	 * @param h_userParms
-	 *            An array of user-supplied method parameters and values.
-	 * @param response
-	 *            The servlet response.
-	 * @param message
-	 *            The message text to include at the top of the output page.
-	 * @throws IOException
-	 *             If an error occurrs with an input or output operation.
-	 */
-	private void displayURLParms(String PID, Hashtable h_userParms,
-			HttpServletResponse response, String message) throws IOException {
-		response.setContentType(CONTENT_TYPE_HTML);
-		ServletOutputStream out = response.getOutputStream();
-
-		// Display servlet input parameters
-		StringBuffer html = new StringBuffer();
-		html.append("<html>");
-		html.append("<head>");
-		html.append("<title>GetObjectHistoryServlet</title>");
-		html.append("</head>");
-		html.append("<body>");
-		html.append("<br></br><font size='+2'>" + message + "</font>");
-		html.append("<br></br><font color='red'>Request Parameters</font>");
-		html.append("<br></br>");
-		html.append("<table cellpadding='5'>");
-		html.append("<tr>");
-		html.append("<td><font color='red'>PID</td>");
-		html.append("<td> = <td>" + PID + "</td>");
-		html.append("</tr>");
-		html.append("<tr>");
-		html.append("</tr>");
-		html.append("<tr>");
-		html.append("<td colspan='5'><font size='+1' color='blue'>"
-				+ "Other Parameters Found:</font></td>");
-		html.append("</tr>");
-		html.append("<tr>");
-		html.append("</tr>");
-
-		// List parameters if any
-		if (h_userParms.size() != 0) {
-			for (Enumeration e = h_userParms.keys(); e.hasMoreElements();) {
-				String parmName = (String) e.nextElement();
-				String parmValue = (String) h_userParms.get(parmName);
-				html.append("<tr>");
-				html.append("<td><font color='red'>" + parmName
-						+ "</font></td>");
-				html.append("<td> = </td>");
-				html.append("<td>" + parmValue + "</td>");
-				html.append("</tr>");
-                LOG.debug("parmName=" + parmName + ", parmValue=" + parmValue);
-			}
-		}
-		html.append("</table></center></font>");
-		html.append("</body></html>");
-		out.println(html.toString());
-		html = null;
 	}
 
 }

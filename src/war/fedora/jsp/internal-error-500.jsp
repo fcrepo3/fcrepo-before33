@@ -8,7 +8,7 @@
         response.addHeader("Content-Type", "text/html; charset=UTF8");        
 %>
 <html><head>
-      <title>Fedora: 500 Server Error</title></head>
+      <title>Fedora: 500 Internal Server Error</title></head>
    <body>
       <center>
          <table border="0" cellpadding="0" cellspacing="0" width="784">
@@ -16,15 +16,13 @@
                <td height="134" valign="top" width="141"><img src="/fedora/images/newlogo2.jpg" height="134" width="141"></td>
                <td valign="top" width="643">
                   <center>
-                     <h2>Fedora Server Error</h2>
-                     <h3>
+                     <h2>500 Internal Server Error</h2>
+                  </center>
 <%
 if (exception.getMessage() != null) {
     out.print(exception.getMessage());
 }
 %>
-                     </h3>
-                  </center>
                </td>
             </tr>
 

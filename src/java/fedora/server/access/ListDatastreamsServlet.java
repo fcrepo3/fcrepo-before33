@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 
@@ -31,20 +30,21 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
+import fedora.server.errors.ObjectNotFoundException;
+import fedora.server.errors.ObjectNotInLowlevelStorageException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.authorization.AuthzException;
+import fedora.server.errors.servletExceptionExtensions.BadRequest400Exception;
+import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
+import fedora.server.errors.servletExceptionExtensions.NotFound404Exception;
 import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.storage.types.DatastreamDef;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 
 /**
- * <p>
- * <b>Title: </b>ListDatastreamsServlet.java
- * </p>
- * <p>
- * <b>Description: </b>Implements listDatastreams method of Fedora Access LITE
+ * Implements listDatastreams method of Fedora Access LITE
  * (API-A-LITE) interface using a java servlet front end.
  * <ol>
  * <li>ListDatastreams URL syntax:
@@ -150,94 +150,56 @@ public class ListDatastreamsServlet extends HttpServlet {
 			// Request is either unversioned or versioned listDatastreams
 			// request
 			try {
-				PID = Server.getPID(URIArray[5]).toString(); // normalize the
-																// PID
+				PID = Server.getPID(URIArray[5]).toString(); // normalize PID
 			} catch (Throwable th) {
-                LOG.warn("Error listing datastreams", th);
-				String message = "[ListDatastreamsServlet] An error has occured in "
-						+ "accessing the Fedora Access Subsystem. The error was \" "
-						+ th.getClass().getName()
-						+ " \". Reason: "
-						+ th.getMessage()
-						+ "  Input Request was: \""
-						+ request.getRequestURL().toString();
-				response.setContentType(CONTENT_TYPE_HTML);
-				ServletOutputStream out = response.getOutputStream();
-				out.println("<html><body><h3>" + message
-						+ "</h3></body></html>");
-				return;
+                LOG.error("Bad pid syntax in request", th);
+                throw new BadRequest400Exception(request, ACTION_LABEL, "", new String[0]);
 			}
 			if (URIArray.length == 7) {
 				// Request is a versioned listDatastreams request
 				versDateTime = DateUtility.convertStringToDate(URIArray[6]);
 				if (versDateTime == null) {
-					String message = "ListDatastreams Request Syntax Error: DateTime value "
-							+ "of \""
-							+ URIArray[6]
-							+ "\" is not a valid DateTime format. "
-							+ " ----- The expected format for DateTime is \""
-							+ "YYYY-MM-DDTHH:MM:SS.SSSZ\".  "
-							+ " ----- The expected syntax for "
-							+ "ListDatastreams requests is: \""
-							+ URIArray[0]
-							+ "//"
-							+ URIArray[2]
-							+ "/"
-							+ URIArray[3]
-							+ "/"
-							+ URIArray[4]
-							+ "/PID[/dateTime] \"  ."
-							+ " ----- Submitted request was: \""
-							+ requestURI
-							+ "\"  .  ";
-                    LOG.error(message);
-					response
-							.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-					response.sendError(
-							HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-							message);
-					return;
+                    LOG.error("Bad date format in request");
+                    throw new BadRequest400Exception(request, ACTION_LABEL, "", new String[0]);
 				} else {
 					asOfDateTime = versDateTime;
 				}
 			}
-            LOG.debug("Started listing datastreams (PID=" + PID 
+            LOG.debug("Listing datastreams (PID=" + PID 
                     + ", asOfDate=" + versDateTime + ")");
-			isListDatastreamsRequest = true;
 		} else {
-			// Bad syntax; redirect to syntax documentation page.
-			response
-					.sendRedirect("/userdocs/client/browser/apialite/index.html");
-			return;
+            LOG.error("Bad syntax (expected 6 or 7 parts) in request");
+            throw new BadRequest400Exception(request, ACTION_LABEL, "", new String[0]);
 		}
 
-		// Separate out servlet parameters from method parameters
-		Hashtable h_parms = new Hashtable();
-		for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
-			String name = URLDecoder.decode((String) e.nextElement(), "UTF-8");
-			if (isListDatastreamsRequest && name.equalsIgnoreCase("xml")) {
-				xml = new Boolean(request.getParameter(name)).booleanValue();
-			} else {
-				String value = URLDecoder.decode(request.getParameter(name),
-						"UTF-8");
-				h_parms.put(name, value);
-			}
-		}
+        if (request.getParameter("xml") != null) {
+            xml = new Boolean(request.getParameter("xml")).booleanValue();
+        }
 
-		try {
-			if (isListDatastreamsRequest) {
-				Context context = ReadOnlyContext.getContext(
-						Constants.HTTP_REQUEST.REST.uri, request);
-				listDatastreams(context, PID, asOfDateTime, xml, request,
-						response);
-                LOG.debug("Finished listing datastreams");
-			}
+        try {
+            Context context = ReadOnlyContext.getContext(
+                    Constants.HTTP_REQUEST.REST.uri, request);
+                    listDatastreams(context, PID, asOfDateTime, xml, request,
+                    response);
+            LOG.debug("Finished listing datastreams");
+        } catch (ObjectNotFoundException e) {
+            LOG.error("Object not found for request: " + requestURI
+                    + " (actionLabel=" + ACTION_LABEL + ")", e);
+            throw new NotFound404Exception(request, ACTION_LABEL, "",
+                    new String[0]);
+        } catch (ObjectNotInLowlevelStorageException e) {
+            LOG.error("Object not found for request: " + requestURI
+                    + " (actionLabel=" + ACTION_LABEL + ")", e);
+            throw new NotFound404Exception(request, ACTION_LABEL, "",
+                    new String[0]);
 		} catch (AuthzException ae) {
             LOG.error("Authorization failed while listing datastreams", ae);
 			throw RootException.getServletException(ae, request, ACTION_LABEL,
 					new String[0]);
 		} catch (Throwable th) {
             LOG.error("Error listing datastreams", th);
+            throw new InternalError500Exception("Error listing datastreams", th,
+                    request, ACTION_LABEL, "", new String[0]);
 		}
 	}
 
@@ -292,8 +254,8 @@ public class ListDatastreamsServlet extends HttpServlet {
 						out));
 			}
 			out.flush();
-		} catch (AuthzException ae) {
-            throw ae;
+		} catch (ServerException e) {
+            throw e;
 		} catch (Throwable th) {
             String message = "Error listing datastreams";
             LOG.error(message, th);

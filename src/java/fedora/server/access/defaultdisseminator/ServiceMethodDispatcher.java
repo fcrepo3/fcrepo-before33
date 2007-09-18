@@ -2,8 +2,8 @@ package fedora.server.access.defaultdisseminator;
 
 import java.lang.Object;
 import java.lang.reflect.*;
+import fedora.server.errors.MethodNotFoundException;
 import fedora.server.errors.ServerException;
-import fedora.server.errors.GeneralException;
 import fedora.server.storage.types.Property;
 
 /**
@@ -45,17 +45,15 @@ public class ServiceMethodDispatcher {
             parmClassTypes[i] = parmValues[i].getClass();
         }
         // Invoke method: using Java Reflection
-        try
-        {
+        try {
           method = service_object.getClass().getMethod(methodName, parmClassTypes);
           return method.invoke(service_object, parmValues);
-        }
-        catch (Exception e)
-        {
-          throw new GeneralException("ServiceMethodDispatcher returned error. The "
-                                     + "underlying error was a "
-                                     + e.getClass().getName() + "The message "
-                                     + "was \"" + e.getMessage() + "\"");
+        } catch (IllegalAccessException e) {
+            throw new MethodNotFoundException("No such method: " + methodName);
+        } catch (InvocationTargetException e) {
+            throw new MethodNotFoundException("No such method: " + methodName);
+        } catch (NoSuchMethodException e) {
+            throw new MethodNotFoundException("No such method: " + methodName);
         }
     }
 }

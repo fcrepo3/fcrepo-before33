@@ -4,7 +4,7 @@
         response.addHeader("Content-Type", "text/html; charset=UTF8");        
 %>
 <html><head>
-      <title>Fedora: 100 Authz Success</title></head>
+      <title>Fedora: 100 Continue</title></head>
    <body>
       <center>
          <table border="0" cellpadding="0" cellspacing="0" width="784">
@@ -12,8 +12,8 @@
                <td height="134" valign="top" width="141"><img src="/fedora/images/newlogo2.jpg" height="134" width="141"></td>
                <td valign="top" width="643">
                   <center>
-                     <h2>Fedora Security Info</h2>
-                     <h3>authorization succeeded</h3>
+                     <h2>100 Continue</h2>
+                     <h3>Authorization successful</h3>
                   </center>
                </td>
             </tr>

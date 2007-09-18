@@ -6,7 +6,7 @@
         response.addHeader("Content-Type", "text/html; charset=UTF8");        
 %>
 <html><head>
-   <title>Fedora: 503 Unavailable</title></head>
+      <title>Fedora: 503 Unavailable</title></head>
    <body>
       <center>
          <table border="0" cellpadding="0" cellspacing="0" width="784">
@@ -14,31 +14,31 @@
                <td height="134" valign="top" width="141"><img src="/fedora/images/newlogo2.jpg" height="134" width="141"></td>
                <td valign="top" width="643">
                   <center>
-                     <h2>Fedora Unavailable</h2>
-                     <h3>detail follows</h3>
+                     <h2>503 Unavailable</h2>
                   </center>
-                  <% if (exception != null) { %>
-                    <%= exception.getMessage() %>
-                    <% if (exception.getCause() != null) { %>
-                      <hr></hr>
-                      <%= exception.getCause().getMessage() %>
-                      <% if (exception.getCause().getCause() != null) { %>
-                        <hr></hr>
-                        <%= exception.getCause().getCause().getMessage() %>
-                        <% if (exception.getCause().getCause().getCause() != null) { %>
-                          <hr></hr>
-                          <%= exception.getCause().getCause().getCause().getMessage() %>
-                          <% if (exception.getCause().getCause().getCause().getCause() != null) { %>
-                            <hr></hr>
-                            <%= exception.getCause().getCause().getCause().getCause().getMessage() %>                      
-                          <% } 
-                           } 
-                         } 
-                       } 
-                     } %>
+<%
+if (exception.getMessage() != null) {
+    out.print(exception.getMessage());
+}
+%>
                </td>
             </tr>
-         </tbody></table>
-      </center>
-   </body></html>
 
+<tr>
+<td colspan="2">
+<hr size="1"/>
+<pre>
+<%
+StringWriter sw = new StringWriter();
+PrintWriter pw = new PrintWriter(sw);
+exception.printStackTrace(pw);
+out.print(sw);
+sw.close();
+pw.close();
+%>
+</pre>
+</td></tr>
+         </tbody></table>
+
+</center>
+   </body></html>

@@ -76,10 +76,10 @@ public class TestHTTPStatusCodes
     private static final String LIST_DATASTREAMS_BOGUS_OBJ_PATH = "/listDatastreams/" + BOGUS_OBJ + "?xml=true";
 
     private static final String LIST_METHODS_PATH = "/listMethods/" + TEST_OBJ + "?xml=true";
-    private static final String LIST_METHODS_BOGUS_OBJ_PATH = "/listMethods/" + TEST_OBJ + "?xml=true";
+    private static final String LIST_METHODS_BOGUS_OBJ_PATH = "/listMethods/" + BOGUS_OBJ + "?xml=true";
 
     private static final String FIND_OBJECTS_PATH = "/search?pid=true&terms=&query=&maxResults=20&xml=true";
-    private static final String FIND_OBJECTS_BADPARMS_PATH = "/search?pid=true&terms=&query=&maxResults=unparsable&xml=true";
+    private static final String FIND_OBJECTS_BADREQ_PATH = "/search?pid=true&terms=&query=&maxResults=unparsable&xml=true";
 
     public static Test suite() {
         TestSuite suite = new TestSuite("TestHTTPStatusCodes TestSuite");
@@ -135,6 +135,14 @@ public class TestHTTPStatusCodes
         checkBadAuthZ(GET_DS_DISSEM_PATH);
     }
 
+    public void testGetDatastreamDissemination_Datastream_NotFound() throws Exception {
+        checkNotFound(GET_DS_DISSEM_BOGUS_DS_PATH);
+    }
+
+    public void testGetDatastreamDissemination_Object_NotFound() throws Exception {
+        checkNotFound(GET_DS_DISSEM_BOGUS_OBJ_PATH);
+    }
+
     //---
     // API-A Lite: getDissemination (default)
     //---
@@ -149,6 +157,14 @@ public class TestHTTPStatusCodes
 
     public void testGetDissemination_Default_BadAuthZ() throws Exception {
         checkBadAuthZ(GET_DEFAULT_DISSEM_PATH);
+    }
+
+    public void testGetDissemination_Default_Method_NotFound() throws Exception {
+        checkNotFound(GET_DEFAULT_DISSEM_BOGUS_METHOD_PATH);
+    }
+
+    public void testGetDissemination_Default_Object_NotFound() throws Exception {
+        checkNotFound(GET_DEFAULT_DISSEM_BOGUS_OBJ_PATH);
     }
 
     //---
@@ -167,6 +183,14 @@ public class TestHTTPStatusCodes
         checkBadAuthZ(GET_CUSTOM_DISSEM_PATH);
     }
 
+    public void testGetDissemination_Custom_Method_NotFound() throws Exception {
+        checkNotFound(GET_CUSTOM_DISSEM_BOGUS_METHOD_PATH);
+    }
+
+    public void testGetDissemination_Custom_Object_NotFound() throws Exception {
+        checkNotFound(GET_CUSTOM_DISSEM_BOGUS_OBJ_PATH);
+    }
+
     //---
     // API-A Lite: getObjectHistory
     //---
@@ -181,6 +205,10 @@ public class TestHTTPStatusCodes
 
     public void testGetObjectHistory_BadAuthZ() throws Exception {
         checkBadAuthZ(GET_OBJ_HISTORY_PATH);
+    }
+
+    public void testGetObjectHistory_Object_NotFound() throws Exception {
+        checkNotFound(GET_OBJ_HISTORY_BOGUS_OBJ_PATH);
     }
 
     //---
@@ -199,6 +227,10 @@ public class TestHTTPStatusCodes
         checkBadAuthZ(GET_OBJ_PROFILE_PATH);
     }
 
+    public void testGetObjectProfile_Object_NotFound() throws Exception {
+        checkNotFound(GET_OBJ_PROFILE_BOGUS_OBJ_PATH);
+    }
+
     //---
     // API-A Lite: listDatastreams
     //---
@@ -213,6 +245,10 @@ public class TestHTTPStatusCodes
 
     public void testListDatastreams_BadAuthZ() throws Exception {
         checkBadAuthZ(LIST_DATASTREAMS_PATH);
+    }
+
+    public void testListDatastreams_Object_NotFound() throws Exception {
+        checkNotFound(LIST_DATASTREAMS_BOGUS_OBJ_PATH);
     }
 
     //---
@@ -231,6 +267,10 @@ public class TestHTTPStatusCodes
         checkBadAuthZ(LIST_METHODS_PATH);
     }
 
+    public void testListMethods_Object_NotFound() throws Exception {
+        checkNotFound(LIST_METHODS_BOGUS_OBJ_PATH);
+    }
+
     //---
     // API-A Lite: findObjects
     //---
@@ -245,6 +285,10 @@ public class TestHTTPStatusCodes
 
     public void testFindObjects_BadAuthZ() throws Exception {
         checkBadAuthZ(FIND_OBJECTS_PATH);
+    }
+
+    public void testFindObjects_BadRequest() throws Exception {
+        checkBadRequest(FIND_OBJECTS_BADREQ_PATH);
     }
 
     //---
@@ -275,6 +319,18 @@ public class TestHTTPStatusCodes
         } finally {
             deactivateUnauthorizedUserAndPolicy();
         }
+    }
+
+    private static void checkNotFound(String requestPath) throws Exception {
+        checkCode(getClient(true, true, true), requestPath,
+                "Expected HTTP 404 (Not Found) response for authenticated, "
+                + "authorized request", 404);
+    }
+
+    private static void checkBadRequest(String requestPath) throws Exception {
+        checkCode(getClient(true, true, true), requestPath,
+                "Expected HTTP 400 (Bad Request) response for authenticated, "
+                + "authorized request", 400);
     }
 
     private static int getStatus(FedoraClient client, String requestPath)

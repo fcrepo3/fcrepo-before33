@@ -32,11 +32,16 @@ import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
-import fedora.server.errors.InitializationException;
+import fedora.server.errors.DatastreamNotFoundException;
 import fedora.server.errors.GeneralException;
+import fedora.server.errors.InitializationException;
+import fedora.server.errors.MethodNotFoundException;
+import fedora.server.errors.ObjectNotFoundException;
+import fedora.server.errors.ObjectNotInLowlevelStorageException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.authorization.AuthzException;
+import fedora.server.errors.servletExceptionExtensions.NotFound404Exception;
 import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
 import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.storage.DOManager;
@@ -46,11 +51,7 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 
 /**
- * <p>
- * <b>Title: </b>FedoraAccessServlet.java
- * </p>
- * <p>
- * <b>Description: </b>Implements the three methods GetObjectProfile,
+ * Implements the three methods GetObjectProfile,
  * GetDissemination, and GetDatastreamDissemination of the Fedora Access LITE
  * (API-A-LITE) interface using a java servlet front end. The syntax defined by
  * API-A-LITE defines three bindings for these methods:
@@ -456,6 +457,26 @@ public class FedoraAccessServlet extends HttpServlet {
                 LOG.debug("Finished servicing getDatastreamDissemination "
                         + "request");
 			}
+		} catch (MethodNotFoundException e) {
+            LOG.error("Method not found for request: " + requestURI
+                    + " (actionLabel=" + actionLabel + ")", e);
+			throw new NotFound404Exception(request, actionLabel, "",
+                    new String[0]);
+		} catch (DatastreamNotFoundException e) {
+            LOG.error("Datastream not found for request: " + requestURI
+                    + " (actionLabel=" + actionLabel + ")", e);
+			throw new NotFound404Exception(request, actionLabel, "",
+                    new String[0]);
+		} catch (ObjectNotFoundException e) {
+            LOG.error("Object not found for request: " + requestURI
+                    + " (actionLabel=" + actionLabel + ")", e);
+			throw new NotFound404Exception(request, actionLabel, "",
+                    new String[0]);
+		} catch (ObjectNotInLowlevelStorageException e) {
+            LOG.error("Object or datastream not found for request: " + requestURI
+                    + " (actionLabel=" + actionLabel + ")", e);
+			throw new NotFound404Exception(request, actionLabel, "",
+                    new String[0]);
 		} catch (AuthzException ae) {
             LOG.error("Authorization failed for request: " + requestURI
                     + " (actionLabel=" + actionLabel + ")", ae);
@@ -477,7 +498,6 @@ public class FedoraAccessServlet extends HttpServlet {
 		ObjectProfile objProfile = null;
 		PipedWriter pw = null;
 		PipedReader pr = null;
-
 		try {
 			pw = new PipedWriter();
 			pr = new PipedReader(pw);
@@ -522,14 +542,10 @@ public class FedoraAccessServlet extends HttpServlet {
 				out.flush();
 
 			} else {
-				// Object Profile Definition request returned nothing.
-				String message = "No object profile returned";
-                LOG.error(message);
-				showURLParms(PID, "", "", asOfDateTime, new Property[0],
-						response, message);
+                throw new GeneralException("No object profile returned");
 			}
-		} catch (AuthzException ae) {
-			throw ae;
+		} catch (ServerException e) {
+			throw e;
 		} catch (Throwable th) {
             String message = "Error getting object profile";
             LOG.error(message, th);
@@ -762,11 +778,7 @@ public class FedoraAccessServlet extends HttpServlet {
                 LOG.debug("Finished reading dissemination stream");
 			}
 		} else {
-			// Dissemination request failed; echo back request parameter.
-            String message = "No dissemination result was returned";
-            LOG.error(message);
-			showURLParms(PID, bDefPID, methodName, asOfDateTime, userParms,
-					response, message);
+            throw new GeneralException("No dissemination result returned");
 		}
 	}
 
@@ -956,114 +968,6 @@ public class FedoraAccessServlet extends HttpServlet {
 			throw new ServletException("Unable to get Fedora Server instance."
 					+ ie.getMessage());
 		}
-	}
-
-	/**
-	 * <p>
-	 * Cleans up servlet resources.
-	 * </p>
-	 */
-	public void destroy() {
-	}
-
-	/**
-	 * <p>
-	 * Displays a list of the servlet input parameters. This method is generally
-	 * called when a service request returns no data. Usually this is a result
-	 * of an incorrect spelling of either a required URL parameter or in one of
-	 * the user-supplied parameters. The output from this method can be used to
-	 * help verify the URL parameters sent to the servlet and hopefully fix the
-	 * problem.
-	 * </p>
-	 * 
-	 * @param PID
-	 *            The persistent identifier of the digital object.
-	 * @param bDefPID
-	 *            The persistent identifier of the Behavior Definition object.
-	 * @param methodName
-	 *            the name of the method.
-	 * @param asOfDateTime
-	 *            The version datetime stamp of the digital object.
-	 * @param userParms
-	 *            An array of user-supplied method parameters and values.
-	 * @param response
-	 *            The servlet response.
-	 * @param message
-	 *            The message text to include at the top of the output page.
-	 * @throws IOException
-	 *             If an error occurrs with an input or output operation.
-	 */
-	private void showURLParms(String PID, String bDefPID, String methodName,
-			Date asOfDateTime, Property[] userParms,
-			HttpServletResponse response, String message) throws IOException {
-		String versDate = DateUtility.convertDateToString(asOfDateTime);
-		response.setContentType(CONTENT_TYPE_HTML);
-		ServletOutputStream out = response.getOutputStream();
-
-		// Display servlet input parameters
-		StringBuffer html = new StringBuffer();
-		html.append("<html>");
-		html.append("<head>");
-		html.append("<title>FedoraAccessServlet</title>");
-		html.append("</head>");
-		html.append("<body>");
-		html.append("<br></br><font size='+2'>" + message + "</font>");
-		html.append("<br></br><font color='red'>Request Parameters</font>");
-		html.append("<br></br>");
-		html.append("<table cellpadding='5'>");
-		html.append("<tr>");
-		html.append("<td><font color='red'>PID</font></td>");
-		html.append("<td> = </td>");
-		html.append("<td>" + PID + "</td>");
-		html.append("</tr>");
-		html.append("<tr>");
-		html.append("<td><font color='red'>bDefPID</font></td>");
-		html.append("<td> = </td>");
-		html.append("<td>" + bDefPID + "</td>");
-		html.append("</tr>");
-		html.append("<tr>");
-		html.append("<td><font color='red'>methodName</font></td>");
-		html.append("<td> = </td>");
-		html.append("<td>" + methodName + "</td>");
-		html.append("</tr>");
-		html.append("<tr>");
-		html.append("<td><font color='red'>asOfDateTime</font></td>");
-		html.append("<td> = </td>");
-		html.append("<td>" + versDate + "</td>");
-		html.append("</tr>");
-		html.append("<tr>");
-		html.append("</tr>");
-		html.append("<tr>");
-		html.append("<td colspan='5'><font size='+1' color='blue'>"
-				+ "Other Parameters Found:</font></td>");
-		html.append("</tr>");
-		html.append("<tr>");
-		html.append("</tr>");
-
-		// List user-supplied parameters if any
-		if (userParms != null) {
-			for (int i = 0; i < userParms.length; i++) {
-				html.append("<tr>");
-				html.append("<td><font color='red'>" + userParms[i].name
-						+ "</font></td>");
-				html.append("<td> = </td>");
-				html.append("<td>" + userParms[i].value + "</td>");
-				html.append("</tr>");
-			}
-		}
-		html.append("</table>");
-		html.append("</body></html>");
-		out.println(html.toString());
-
-        LOG.debug("PID=" + PID + ", bDefPID=" + bDefPID + ", methodName="
-                + methodName);
-		if (userParms != null) {
-			for (int i = 0; i < userParms.length; i++) {
-                LOG.debug("userParm=" + userParms[i].name + ", userValue="
-                        + userParms[i].value);
-			}
-		}
-		html = null;
 	}
 
 }
