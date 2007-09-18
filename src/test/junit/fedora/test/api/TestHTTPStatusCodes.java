@@ -38,7 +38,11 @@ import fedora.test.FedoraServerTestCase;
 public class TestHTTPStatusCodes
         extends FedoraServerTestCase {
 
-    private final static String TEST_PID = "demo:SmileyBucket";
+    private final static String TEST_OBJ = "demo:SmileyBucket";
+    private final static String BOGUS_DS = "NonExistingDS";
+    private final static String BOGUS_METHOD = "nonExistingMethod";
+    private final static String BOGUS_OBJ = "demo:NonExistingObject";
+    private final static String BOGUS_BDEF = "demo:NonExistingBDef";
 
     private static FedoraClient CLIENT_VALID_USER_VALID_PASS;
     private static FedoraClient CLIENT_VALID_USER_VALID_PASS_UNAUTHORIZED;
@@ -46,16 +50,36 @@ public class TestHTTPStatusCodes
     private static FedoraClient CLIENT_BOGUS_USER;
 
     private static final String GET_NEXT_PID_PATH = "/management/getNextPID?xml=true";
+
     private static final String DESCRIBE_REPOSITORY_PATH = "/describe?xml=true";
-    private static final String GET_DS_DISSEM_PATH = "/get/" + TEST_PID + "/DC";
-    private static final String GET_DEFAULT_DISSEM_PATH = "/get/" + TEST_PID + "/fedora-system:3/viewDublinCore";
-    private static final String GET_CUSTOM_DISSEM_PATH = "/get/" + TEST_PID + "/demo:DualResImage/mediumSize";
-    private static final String GET_OBJ_HISTORY_PATH = "/getObjectHistory/" + TEST_PID + "?xml=true";
-    private static final String GET_OBJ_PROFILE_PATH = "/get/" + TEST_PID + "?xml=true";
-    private static final String LIST_DATASTREAMS_PATH = "/listDatastreams/" + TEST_PID + "?xml=true";
-    private static final String LIST_METHODS_PATH = "/listMethods/" + TEST_PID + "?xml=true";
+
+    private static final String GET_DS_DISSEM_PATH = "/get/" + TEST_OBJ + "/DC";
+    private static final String GET_DS_DISSEM_BOGUS_DS_PATH = "/get/" + TEST_OBJ + "/" + BOGUS_DS;
+    private static final String GET_DS_DISSEM_BOGUS_OBJ_PATH = "/get/" + BOGUS_OBJ + "/DC";
+
+    private static final String GET_DEFAULT_DISSEM_PATH = "/get/" + TEST_OBJ + "/fedora-system:3/viewDublinCore";
+    private static final String GET_DEFAULT_DISSEM_BOGUS_METHOD_PATH = "/get/" + TEST_OBJ + "/fedora-system:3/" + BOGUS_METHOD;
+    private static final String GET_DEFAULT_DISSEM_BOGUS_OBJ_PATH = "/get/" + BOGUS_OBJ + "/fedora-system:3/viewDublinCore";
+
+    private static final String GET_CUSTOM_DISSEM_PATH = "/get/" + TEST_OBJ + "/demo:DualResImage/mediumSize";
+    private static final String GET_CUSTOM_DISSEM_BOGUS_METHOD_PATH = "/get/" + TEST_OBJ + "/demo:DualResImage/" + BOGUS_METHOD;
+    private static final String GET_CUSTOM_DISSEM_BOGUS_BDEF_PATH = "/get/" + TEST_OBJ + "/" + BOGUS_BDEF + "/" + BOGUS_METHOD;
+    private static final String GET_CUSTOM_DISSEM_BOGUS_OBJ_PATH = "/get/" + BOGUS_OBJ + "/demo:DualResImage/mediumSize";
+
+    private static final String GET_OBJ_HISTORY_PATH = "/getObjectHistory/" + TEST_OBJ + "?xml=true";
+    private static final String GET_OBJ_HISTORY_BOGUS_OBJ_PATH = "/getObjectHistory/" + BOGUS_OBJ + "?xml=true";
+
+    private static final String GET_OBJ_PROFILE_PATH = "/get/" + TEST_OBJ + "?xml=true";
+    private static final String GET_OBJ_PROFILE_BOGUS_OBJ_PATH = "/get/" + BOGUS_OBJ + "?xml=true";
+
+    private static final String LIST_DATASTREAMS_PATH = "/listDatastreams/" + TEST_OBJ + "?xml=true";
+    private static final String LIST_DATASTREAMS_BOGUS_OBJ_PATH = "/listDatastreams/" + BOGUS_OBJ + "?xml=true";
+
+    private static final String LIST_METHODS_PATH = "/listMethods/" + TEST_OBJ + "?xml=true";
+    private static final String LIST_METHODS_BOGUS_OBJ_PATH = "/listMethods/" + TEST_OBJ + "?xml=true";
 
     private static final String FIND_OBJECTS_PATH = "/search?pid=true&terms=&query=&maxResults=20&xml=true";
+    private static final String FIND_OBJECTS_BADPARMS_PATH = "/search?pid=true&terms=&query=&maxResults=unparsable&xml=true";
 
     public static Test suite() {
         TestSuite suite = new TestSuite("TestHTTPStatusCodes TestSuite");
