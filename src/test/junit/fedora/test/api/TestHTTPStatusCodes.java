@@ -22,69 +22,109 @@ import fedora.test.DemoObjectTestSetup;
 import fedora.test.FedoraServerTestCase;
 
 /**
- * Tests correct/incorrect http status codes with api requests over API-A/API-M Lite.
- * For non-200 requests, this also tests the response body for the string "Fedora: # "
- * (where # is the status code) to ensure that the correct jsp has been delivered.
- *
- * <p>Some of these tests depend on basic authentication.  To exercise the running
- * server properly, it should be configured to require basic authentication on all
- * interfaces.
- *
- * <p>By default, the tests will run against the "default" Fedora base URL,
- * but this can be overridden by setting the "fedora.baseURL" system property.
+ * Common tests for correct/incorrect http status codes with api requests
+ * over API-A/API-M Lite.  For non-200 requests, this also tests the response
+ * body for the string "Fedora: # " (where # is the status code) to ensure 
+ * that the correct jsp has been delivered.
  *
  * @author cwilper@cs.cornell.edu
  */
 public class TestHTTPStatusCodes
         extends FedoraServerTestCase {
 
-    private final static String TEST_OBJ = "demo:SmileyBucket";
-    private final static String BOGUS_DS = "NonExistingDS";
-    private final static String BOGUS_METHOD = "nonExistingMethod";
-    private final static String BOGUS_OBJ = "demo:NonExistingObject";
-    private final static String BOGUS_BDEF = "demo:NonExistingBDef";
+    public static final String TEST_OBJ = "demo:SmileyBucket";
+    public static final String BOGUS_DS = "NonExistingDS";
+    public static final String BOGUS_METHOD = "nonExistingMethod";
+    public static final String BOGUS_OBJ = "demo:NonExistingObject";
+    public static final String BOGUS_BDEF = "demo:NonExistingBDef";
+
+    public static final String GET_NEXT_PID_PATH = "/management/getNextPID?xml=true";
+
+    public static final String DESCRIBE_REPOSITORY_PATH = "/describe?xml=true";
+
+    public static final String GET_DS_DISSEM_PATH = "/get/" + TEST_OBJ + "/DC";
+    public static final String GET_DS_DISSEM_BOGUS_DS_PATH = "/get/" + TEST_OBJ + "/" + BOGUS_DS;
+    public static final String GET_DS_DISSEM_BOGUS_OBJ_PATH = "/get/" + BOGUS_OBJ + "/DC";
+
+    public static final String GET_DEFAULT_DISSEM_PATH = "/get/" + TEST_OBJ + "/fedora-system:3/viewDublinCore";
+    public static final String GET_DEFAULT_DISSEM_BOGUS_METHOD_PATH = "/get/" + TEST_OBJ + "/fedora-system:3/" + BOGUS_METHOD;
+    public static final String GET_DEFAULT_DISSEM_BOGUS_OBJ_PATH = "/get/" + BOGUS_OBJ + "/fedora-system:3/viewDublinCore";
+
+    public static final String GET_CUSTOM_DISSEM_PATH = "/get/" + TEST_OBJ + "/demo:DualResImage/mediumSize";
+    public static final String GET_CUSTOM_DISSEM_BOGUS_METHOD_PATH = "/get/" + TEST_OBJ + "/demo:DualResImage/" + BOGUS_METHOD;
+    public static final String GET_CUSTOM_DISSEM_BOGUS_BDEF_PATH = "/get/" + TEST_OBJ + "/" + BOGUS_BDEF + "/" + BOGUS_METHOD;
+    public static final String GET_CUSTOM_DISSEM_BOGUS_OBJ_PATH = "/get/" + BOGUS_OBJ + "/demo:DualResImage/mediumSize";
+
+    public static final String GET_OBJ_HISTORY_PATH = "/getObjectHistory/" + TEST_OBJ + "?xml=true";
+    public static final String GET_OBJ_HISTORY_BOGUS_OBJ_PATH = "/getObjectHistory/" + BOGUS_OBJ + "?xml=true";
+
+    public static final String GET_OBJ_PROFILE_PATH = "/get/" + TEST_OBJ + "?xml=true";
+    public static final String GET_OBJ_PROFILE_BOGUS_OBJ_PATH = "/get/" + BOGUS_OBJ + "?xml=true";
+
+    public static final String LIST_DATASTREAMS_PATH = "/listDatastreams/" + TEST_OBJ + "?xml=true";
+    public static final String LIST_DATASTREAMS_BOGUS_OBJ_PATH = "/listDatastreams/" + BOGUS_OBJ + "?xml=true";
+
+    public static final String LIST_METHODS_PATH = "/listMethods/" + TEST_OBJ + "?xml=true";
+    public static final String LIST_METHODS_BOGUS_OBJ_PATH = "/listMethods/" + BOGUS_OBJ + "?xml=true";
+
+    public static final String FIND_OBJECTS_PATH = "/search?pid=true&terms=&query=&maxResults=20&xml=true";
+    public static final String FIND_OBJECTS_BADREQ_PATH = "/search?pid=true&terms=&query=&maxResults=unparsable&xml=true";
 
     private static FedoraClient CLIENT_VALID_USER_VALID_PASS;
     private static FedoraClient CLIENT_VALID_USER_VALID_PASS_UNAUTHORIZED;
     private static FedoraClient CLIENT_VALID_USER_BOGUS_PASS;
     private static FedoraClient CLIENT_BOGUS_USER;
 
-    private static final String GET_NEXT_PID_PATH = "/management/getNextPID?xml=true";
-
-    private static final String DESCRIBE_REPOSITORY_PATH = "/describe?xml=true";
-
-    private static final String GET_DS_DISSEM_PATH = "/get/" + TEST_OBJ + "/DC";
-    private static final String GET_DS_DISSEM_BOGUS_DS_PATH = "/get/" + TEST_OBJ + "/" + BOGUS_DS;
-    private static final String GET_DS_DISSEM_BOGUS_OBJ_PATH = "/get/" + BOGUS_OBJ + "/DC";
-
-    private static final String GET_DEFAULT_DISSEM_PATH = "/get/" + TEST_OBJ + "/fedora-system:3/viewDublinCore";
-    private static final String GET_DEFAULT_DISSEM_BOGUS_METHOD_PATH = "/get/" + TEST_OBJ + "/fedora-system:3/" + BOGUS_METHOD;
-    private static final String GET_DEFAULT_DISSEM_BOGUS_OBJ_PATH = "/get/" + BOGUS_OBJ + "/fedora-system:3/viewDublinCore";
-
-    private static final String GET_CUSTOM_DISSEM_PATH = "/get/" + TEST_OBJ + "/demo:DualResImage/mediumSize";
-    private static final String GET_CUSTOM_DISSEM_BOGUS_METHOD_PATH = "/get/" + TEST_OBJ + "/demo:DualResImage/" + BOGUS_METHOD;
-    private static final String GET_CUSTOM_DISSEM_BOGUS_BDEF_PATH = "/get/" + TEST_OBJ + "/" + BOGUS_BDEF + "/" + BOGUS_METHOD;
-    private static final String GET_CUSTOM_DISSEM_BOGUS_OBJ_PATH = "/get/" + BOGUS_OBJ + "/demo:DualResImage/mediumSize";
-
-    private static final String GET_OBJ_HISTORY_PATH = "/getObjectHistory/" + TEST_OBJ + "?xml=true";
-    private static final String GET_OBJ_HISTORY_BOGUS_OBJ_PATH = "/getObjectHistory/" + BOGUS_OBJ + "?xml=true";
-
-    private static final String GET_OBJ_PROFILE_PATH = "/get/" + TEST_OBJ + "?xml=true";
-    private static final String GET_OBJ_PROFILE_BOGUS_OBJ_PATH = "/get/" + BOGUS_OBJ + "?xml=true";
-
-    private static final String LIST_DATASTREAMS_PATH = "/listDatastreams/" + TEST_OBJ + "?xml=true";
-    private static final String LIST_DATASTREAMS_BOGUS_OBJ_PATH = "/listDatastreams/" + BOGUS_OBJ + "?xml=true";
-
-    private static final String LIST_METHODS_PATH = "/listMethods/" + TEST_OBJ + "?xml=true";
-    private static final String LIST_METHODS_BOGUS_OBJ_PATH = "/listMethods/" + BOGUS_OBJ + "?xml=true";
-
-    private static final String FIND_OBJECTS_PATH = "/search?pid=true&terms=&query=&maxResults=20&xml=true";
-    private static final String FIND_OBJECTS_BADREQ_PATH = "/search?pid=true&terms=&query=&maxResults=unparsable&xml=true";
+    //---
+    // Test suite setup
+    //---
 
     public static Test suite() {
         TestSuite suite = new TestSuite("TestHTTPStatusCodes TestSuite");
 		suite.addTestSuite(TestHTTPStatusCodes.class);
         return new DemoObjectTestSetup(suite);
+    }
+
+    //---
+    // Test utility methods
+    //---
+
+    public static void checkOK(String requestPath) throws Exception {
+        checkCode(getClient(true, true, true), requestPath,
+                "Expected HTTP 200 (OK) response for authenticated, "
+                + "authorized request", 200);
+    }
+
+    public static void checkBadAuthN(String requestPath) throws Exception {
+        checkCode(getClient(true, false, true), requestPath,
+                "Expected HTTP 401 (Unauthorized) response for bad "
+                + "authentication (valid user, bad pass) request", 401);
+        checkCode(getClient(false, false, true), requestPath,
+                "Expected HTTP 401 (Unauthorized) response for bad "
+                + "authentication (invalid user) request", 401);
+    }
+
+    public static void checkBadAuthZ(String requestPath) throws Exception {
+        try {
+            activateUnauthorizedUserAndPolicy();
+            checkCode(getClient(true, true, false), requestPath,
+                    "Expected HTTP 403 (Forbidden) response for "
+                    + "authenticated, unauthorized request", 403);
+        } finally {
+            deactivateUnauthorizedUserAndPolicy();
+        }
+    }
+
+    public static void checkNotFound(String requestPath) throws Exception {
+        checkCode(getClient(true, true, true), requestPath,
+                "Expected HTTP 404 (Not Found) response for authenticated, "
+                + "authorized request", 404);
+    }
+
+    public static void checkBadRequest(String requestPath) throws Exception {
+        checkCode(getClient(true, true, true), requestPath,
+                "Expected HTTP 400 (Bad Request) response for authenticated, "
+                + "authorized request", 400);
     }
 
     //---
@@ -111,28 +151,12 @@ public class TestHTTPStatusCodes
         checkOK(DESCRIBE_REPOSITORY_PATH);
     }
 
-    public void testDescribeRepository_BadAuthN() throws Exception {
-        checkBadAuthN(DESCRIBE_REPOSITORY_PATH);
-    }
-
-    public void testDescribeRepository_BadAuthZ() throws Exception {
-        checkBadAuthZ(DESCRIBE_REPOSITORY_PATH);
-    }
-
     //---
     // API-A Lite: getDatastreamDissemination
     //---
 
     public void testGetDatastreamDissemination_OK() throws Exception {
         checkOK(GET_DS_DISSEM_PATH);
-    }
-
-    public void testGetDatastreamDissemination_BadAuthN() throws Exception {
-        checkBadAuthN(GET_DS_DISSEM_PATH);
-    }
-
-    public void testGetDatastreamDissemination_BadAuthZ() throws Exception {
-        checkBadAuthZ(GET_DS_DISSEM_PATH);
     }
 
     public void testGetDatastreamDissemination_Datastream_NotFound() throws Exception {
@@ -151,14 +175,6 @@ public class TestHTTPStatusCodes
         checkOK(GET_DEFAULT_DISSEM_PATH);
     }
 
-    public void testGetDissemination_Default_BadAuthN() throws Exception {
-        checkBadAuthN(GET_DEFAULT_DISSEM_PATH);
-    }
-
-    public void testGetDissemination_Default_BadAuthZ() throws Exception {
-        checkBadAuthZ(GET_DEFAULT_DISSEM_PATH);
-    }
-
     public void testGetDissemination_Default_Method_NotFound() throws Exception {
         checkNotFound(GET_DEFAULT_DISSEM_BOGUS_METHOD_PATH);
     }
@@ -173,14 +189,6 @@ public class TestHTTPStatusCodes
 
     public void testGetDissemination_Custom_OK() throws Exception {
         checkOK(GET_CUSTOM_DISSEM_PATH);
-    }
-
-    public void testGetDissemination_Custom_BadAuthN() throws Exception {
-        checkBadAuthN(GET_CUSTOM_DISSEM_PATH);
-    }
-
-    public void testGetDissemination_Custom_BadAuthZ() throws Exception {
-        checkBadAuthZ(GET_CUSTOM_DISSEM_PATH);
     }
 
     public void testGetDissemination_Custom_Method_NotFound() throws Exception {
@@ -199,14 +207,6 @@ public class TestHTTPStatusCodes
         checkOK(GET_OBJ_HISTORY_PATH);
     }
 
-    public void testGetObjectHistory_BadAuthN() throws Exception {
-        checkBadAuthN(GET_OBJ_HISTORY_PATH);
-    }
-
-    public void testGetObjectHistory_BadAuthZ() throws Exception {
-        checkBadAuthZ(GET_OBJ_HISTORY_PATH);
-    }
-
     public void testGetObjectHistory_Object_NotFound() throws Exception {
         checkNotFound(GET_OBJ_HISTORY_BOGUS_OBJ_PATH);
     }
@@ -217,14 +217,6 @@ public class TestHTTPStatusCodes
 
     public void testGetObjectProfile_OK() throws Exception {
         checkOK(GET_OBJ_PROFILE_PATH);
-    }
-
-    public void testGetObjectProfile_BadAuthN() throws Exception {
-        checkBadAuthN(GET_OBJ_PROFILE_PATH);
-    }
-
-    public void testGetObjectProfile_BadAuthZ() throws Exception {
-        checkBadAuthZ(GET_OBJ_PROFILE_PATH);
     }
 
     public void testGetObjectProfile_Object_NotFound() throws Exception {
@@ -239,14 +231,6 @@ public class TestHTTPStatusCodes
         checkOK(LIST_DATASTREAMS_PATH);
     }
 
-    public void testListDatastreams_BadAuthN() throws Exception {
-        checkBadAuthN(LIST_DATASTREAMS_PATH);
-    }
-
-    public void testListDatastreams_BadAuthZ() throws Exception {
-        checkBadAuthZ(LIST_DATASTREAMS_PATH);
-    }
-
     public void testListDatastreams_Object_NotFound() throws Exception {
         checkNotFound(LIST_DATASTREAMS_BOGUS_OBJ_PATH);
     }
@@ -257,14 +241,6 @@ public class TestHTTPStatusCodes
 
     public void testListMethods_OK() throws Exception {
         checkOK(LIST_METHODS_PATH);
-    }
-
-    public void testListMethods_BadAuthN() throws Exception {
-        checkBadAuthN(LIST_METHODS_PATH);
-    }
-
-    public void testListMethods_BadAuthZ() throws Exception {
-        checkBadAuthZ(LIST_METHODS_PATH);
     }
 
     public void testListMethods_Object_NotFound() throws Exception {
@@ -279,14 +255,6 @@ public class TestHTTPStatusCodes
         checkOK(FIND_OBJECTS_PATH);
     }
 
-    public void testFindObjects_BadAuthN() throws Exception {
-        checkBadAuthN(FIND_OBJECTS_PATH);
-    }
-
-    public void testFindObjects_BadAuthZ() throws Exception {
-        checkBadAuthZ(FIND_OBJECTS_PATH);
-    }
-
     public void testFindObjects_BadRequest() throws Exception {
         checkBadRequest(FIND_OBJECTS_BADREQ_PATH);
     }
@@ -294,44 +262,6 @@ public class TestHTTPStatusCodes
     //---
     // Static helpers
     //---
-
-    private static void checkOK(String requestPath) throws Exception {
-        checkCode(getClient(true, true, true), requestPath,
-                "Expected HTTP 200 (OK) response for authenticated, "
-                + "authorized request", 200);
-    }
-
-    private static void checkBadAuthN(String requestPath) throws Exception {
-        checkCode(getClient(true, false, true), requestPath,
-                "Expected HTTP 401 (Unauthorized) response for bad "
-                + "authentication (valid user, bad pass) request", 401);
-        checkCode(getClient(false, false, true), requestPath,
-                "Expected HTTP 401 (Unauthorized) response for bad "
-                + "authentication (invalid user) request", 401);
-    }
-
-    private static void checkBadAuthZ(String requestPath) throws Exception {
-        try {
-            activateUnauthorizedUserAndPolicy();
-            checkCode(getClient(true, true, false), requestPath,
-                    "Expected HTTP 403 (Forbidden) response for "
-                    + "authenticated, unauthorized request", 403);
-        } finally {
-            deactivateUnauthorizedUserAndPolicy();
-        }
-    }
-
-    private static void checkNotFound(String requestPath) throws Exception {
-        checkCode(getClient(true, true, true), requestPath,
-                "Expected HTTP 404 (Not Found) response for authenticated, "
-                + "authorized request", 404);
-    }
-
-    private static void checkBadRequest(String requestPath) throws Exception {
-        checkCode(getClient(true, true, true), requestPath,
-                "Expected HTTP 400 (Bad Request) response for authenticated, "
-                + "authorized request", 400);
-    }
 
     private static int getStatus(FedoraClient client, String requestPath)
             throws Exception {

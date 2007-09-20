@@ -24,6 +24,7 @@ public class AllCommonSystemTests {
         suite.addTest(fedora.test.api.TestAPIALite.suite());
         suite.addTest(fedora.test.api.TestAPIM.suite());
         suite.addTest(fedora.test.api.TestAPIMLite.suite());
+        suite.addTest(fedora.test.api.TestHTTPStatusCodes.suite());
         suite.addTest(fedora.test.integration.TestCommandLineUtilities.suite());
 
         return suite;

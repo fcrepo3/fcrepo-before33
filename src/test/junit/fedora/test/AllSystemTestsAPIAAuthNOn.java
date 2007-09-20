@@ -20,6 +20,7 @@ public class AllSystemTestsAPIAAuthNOn {
    
         suite.addTest(fedora.test.AllCommonSystemTests.suite());
         suite.addTest(fedora.test.api.TestAuthentication.suite());
+        suite.addTest(fedora.test.api.TestHTTPStatusCodes_APIAAuthNOn.suite());
         suite.addTest(fedora.test.api.TestXACMLPolicies.suite());
 
         return suite;
