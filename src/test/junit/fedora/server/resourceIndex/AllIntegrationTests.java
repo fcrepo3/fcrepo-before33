@@ -6,10 +6,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
   ResourceIndexDatePrecisionIntegrationTest.class,
-  ResourceIndexAddDelDissIntegrationTest.class,
   ResourceIndexAddDelDSIntegrationTest.class,
   ResourceIndexAddDelMiscIntegrationTest.class,
-  ResourceIndexModDissIntegrationTest.class,
   ResourceIndexModDSIntegrationTest.class,
   ResourceIndexModMiscIntegrationTest.class
 })

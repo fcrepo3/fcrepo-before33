@@ -6,7 +6,7 @@
         response.addHeader("Content-Type", "text/html; charset=UTF8");        
 %>
 <html><head>
-   <title>Fedora Success</title></head>
+   <title>Fedora: 200 OK</title></head>
    <body>
       <center>
 ok

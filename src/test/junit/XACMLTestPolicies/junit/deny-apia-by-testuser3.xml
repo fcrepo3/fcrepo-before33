@@ -9,7 +9,7 @@ http://www.fedora.info/definitions/1/0/api/cs-xacml-schema-policy-01.xsd">
 		<Resources>
 			<Resource>
 				<ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">DS3</AttributeValue>
+					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">THUMBRES_IMG</AttributeValue>
 					<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:datastream:id" DataType="http://www.w3.org/2001/XMLSchema#string"/>
 				</ResourceMatch>
 			</Resource>

@@ -8,13 +8,13 @@ import org.junit.runners.Suite;
 	fedora.test.AllCommonSystemTests.class
 })
 
-public class AllSystemTestsAPIAAuthNOff {
+public class AllSystemTestsConfigA {
 
     // Supports legacy tests runners
     public static junit.framework.Test suite() throws Exception {
 
         junit.framework.TestSuite suite = 
-                new junit.framework.TestSuite(AllSystemTestsAPIAAuthNOff.class.getName());
+                new junit.framework.TestSuite(AllSystemTestsConfigA.class.getName());
    
         suite.addTest(fedora.test.AllCommonSystemTests.suite());
 

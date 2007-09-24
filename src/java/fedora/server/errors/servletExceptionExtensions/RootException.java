@@ -75,7 +75,7 @@ public abstract class RootException
 
 	public static final ServletException getServletException (AuthzException ae, HttpServletRequest request, String action, String[] details) {
 		if (ae instanceof AuthzOperationalException) {
-	        return new Forbidden403Exception(request, action, AuthzOperationalException.BRIEF_DESC, details);                					
+	        return new InternalError500Exception(request, action, "Internal Error during authorization", details);                					
 		} else if (ae instanceof AuthzDeniedException) {
 			return new Forbidden403Exception(request, action, AuthzDeniedException.BRIEF_DESC, details);
 		} else if (ae instanceof AuthzPermittedException) {
@@ -85,28 +85,5 @@ public abstract class RootException
 			return new InternalError500Exception(request, action, "bug revealed in throwServletException(ae,...)", new String[0]);		
 		}
 	}
-	/*
-	public static final ServletException getServletException (ServletException se, HttpServletRequest request, String action, String detail, String[] details) {
-
-		if (se instanceof Continue100Exception) {
-	        return new Continue100Exception(request, action, detail, details);                					
-		} else if (se instanceof Ok200Exception) {
-			return new Ok200Exception(request, action, detail, details);
-		} else if (se instanceof BadRequest400Exception) {
-			return new BadRequest400Exception(request, action, detail, details);
-		} else if (se instanceof Unauthorized401Exception) {
-			return new Unauthorized401Exception(request, action, detail, details);
-		} else if (se instanceof Forbidden403Exception) {
-			return new Forbidden403Exception(request, action, detail, details);
-		} else if (se instanceof InternalError500Exception) {
-			return new InternalError500Exception(request, action, detail, details);
-		} else if (se instanceof Unavailable503Exception) {
-			return new Unavailable503Exception(request, action, detail, details);
-		} else {
-			//AuthzException has only the above sever extensions, so code shouldn't reach here
-			return new InternalError500Exception(request, action, "bug revealed in throwServletException(se,...)", new String[0]);		
-		}
-	}
-*/
 
 }

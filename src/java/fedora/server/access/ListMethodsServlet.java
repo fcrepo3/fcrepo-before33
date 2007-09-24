@@ -36,9 +36,14 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
+import fedora.server.errors.ObjectNotFoundException;
+import fedora.server.errors.ObjectNotInLowlevelStorageException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.authorization.AuthzException;
+import fedora.server.errors.servletExceptionExtensions.BadRequest400Exception;
+import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
+import fedora.server.errors.servletExceptionExtensions.NotFound404Exception;
 import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.MethodParmDef;
@@ -154,103 +159,55 @@ public class ListMethodsServlet extends HttpServlet {
 		if (URIArray.length == 6 || URIArray.length == 7) {
 			// Request is either unversioned or versioned listMethods request
 			try {
-				PID = Server.getPID(URIArray[5]).toString(); // normalize the
-																// PID
+				PID = Server.getPID(URIArray[5]).toString(); // normalize PID
 			} catch (Throwable th) {
-                LOG.error("Error listing methods", th);
-				String message = "[FedoraAccessServlet] An error has occured in "
-						+ "accessing the Fedora Access Subsystem. The error was \" "
-						+ th.getClass().getName()
-						+ " \". Reason: "
-						+ th.getMessage()
-						+ "  Input Request was: \""
-						+ request.getRequestURL().toString();
-				response.setContentType(CONTENT_TYPE_HTML);
-				ServletOutputStream out = response.getOutputStream();
-				out.println("<html><body><h3>" + message
-						+ "</h3></body></html>");
-				return;
+                LOG.error("Bad pid syntax in request", th);
+                throw new BadRequest400Exception(request, ACTION_LABEL, "", new String[0]);
 			}
 			if (URIArray.length == 7) {
 				// Request is a versioned listMethods request
 				versDateTime = DateUtility.convertStringToDate(URIArray[6]);
-				if (versDateTime == null) {
-					String message = "ListMethods Request Syntax Error: DateTime value "
-							+ "of \""
-							+ URIArray[6]
-							+ "\" is not a valid DateTime format. "
-							+ " ----- The expected format for DateTime is \""
-							+ "YYYY-MM-DDTHH:MM:SS.SSSZ\".  "
-							+ " ----- The expected syntax for "
-							+ "ListMethods requests is: \""
-							+ URIArray[0]
-							+ "//"
-							+ URIArray[2]
-							+ "/"
-							+ URIArray[3]
-							+ "/"
-							+ URIArray[4]
-							+ "/PID[/dateTime] \"  ."
-							+ " ----- Submitted request was: \""
-							+ requestURI
-							+ "\"  .  ";
-					LOG.error(message);
-					response
-							.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-					response.sendError(
-							HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-							message);
-					return;
+                if (versDateTime == null) {
+                    LOG.error("Bad date format in request");
+                    throw new BadRequest400Exception(request, ACTION_LABEL, "", new String[0]);
 				} else {
 					asOfDateTime = versDateTime;
 				}
 			}
             LOG.debug("Listing methods (PID=" + PID + ", asOfDate="
                     + versDateTime + ")");
-			isListMethodsRequest = true;
 		} else {
-			// Bad syntax; redirect to syntax documentation page.
-			response
-					.sendRedirect("/userdocs/client/browser/apialite/index.html");
-			return;
+            LOG.error("Bad syntax (expected 6 or 7 parts) in request");
+            throw new BadRequest400Exception(request, ACTION_LABEL, "", new String[0]);
 		}
 
-		// Separate out servlet parameters from method parameters
-		Hashtable h_parms = new Hashtable();
-		for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
-			String name = URLDecoder.decode((String) e.nextElement(), "UTF-8");
-			if (isListMethodsRequest && name.equalsIgnoreCase("xml")) {
-				xml = new Boolean(request.getParameter(name)).booleanValue();
-			} else {
-				String value = URLDecoder.decode(request.getParameter(name),
-						"UTF-8");
-				h_parms.put(name, value);
-			}
-		}
+        if (request.getParameter("xml") != null) {
+            xml = new Boolean(request.getParameter("xml")).booleanValue();
+        }
 
 		try {
-			if (isListMethodsRequest) {
-				LOG.debug("before setting context");
-				Context context = ReadOnlyContext.getContext(
-						Constants.HTTP_REQUEST.REST.uri, request);
-			    LOG.debug("after setting context");
-
-				listMethods(context, PID, asOfDateTime, xml, request, response);
-				LOG.debug("after doing listMethods");
-
-                LOG.debug("Finished listing methods");
-			}
+            Context context = ReadOnlyContext.getContext(
+                    Constants.HTTP_REQUEST.REST.uri, request);
+            listMethods(context, PID, asOfDateTime, xml, request, response);
+            LOG.debug("Finished listing methods");
+        } catch (ObjectNotFoundException e) {
+            LOG.error("Object not found for request: " + requestURI
+                    + " (actionLabel=" + ACTION_LABEL + ")", e);
+            throw new NotFound404Exception(request, ACTION_LABEL, "",
+                    new String[0]);
+        } catch (ObjectNotInLowlevelStorageException e) {
+            LOG.error("Object not found for request: " + requestURI
+                    + " (actionLabel=" + ACTION_LABEL + ")", e);
+            throw new NotFound404Exception(request, ACTION_LABEL, "",
+                    new String[0]);
 		} catch (AuthzException ae) {
             LOG.error("Authorization error listing methods", ae);
 			throw RootException.getServletException(ae, request, ACTION_LABEL,
 					new String[0]);
 		} catch (Throwable th) {
             LOG.error("Error listing methods", th);
-			String message = "[ListMethodsServlet] An error has occured in "
-					+ "accessing the Fedora Access Subsystem. The error was \" "
-					+ th.getClass().getName() + " \". Reason: "
-					+ th.getMessage() + "  Input Request was: \""
-					+ request.getRequestURL().toString();
+            throw new InternalError500Exception("Error listing methods", th,
+                    request, ACTION_LABEL, "", new String[0]);
 		}
 	}
 
@@ -305,13 +262,11 @@ public class ListMethodsServlet extends HttpServlet {
 						out));
 			}
 			out.flush();
-		} catch (AuthzException ae) {
-			throw ae;
+		} catch (ServerException e) {
+			throw e;
 		} catch (Throwable th) {
-            LOG.error("Error listing methods", th);
-			String message = "[ListMethodsServlet] An error has occured. "
-					+ " The error was a \" " + th.getClass().getName()
-					+ " \". Reason: " + th.getMessage();
+            String message = "Error listing methods";
+            LOG.error(message, th);
 			throw new GeneralException(message);
 		} finally {
 			try {

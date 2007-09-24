@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
+import org.apache.log4j.Logger;
+
 import fedora.common.Constants;
 
 import fedora.server.Context;
@@ -26,6 +28,7 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.authorization.AuthzException;
+import fedora.server.errors.servletExceptionExtensions.BadRequest400Exception;
 import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
 import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.search.Condition;
@@ -44,6 +47,9 @@ public class FieldSearchServlet
         extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(FieldSearchServlet.class);
 	
     /** Instance of the Server */
     private static Server s_server=null;
@@ -112,6 +118,8 @@ public class FieldSearchServlet
                 try {
                     maxResults=Integer.parseInt(request.getParameter("maxResults"));
                 } catch (NumberFormatException nfe) {
+                    LOG.error("Bad request (maxResults not an integer)", nfe);
+                    throw new BadRequest400Exception(request, ACTION_LABEL, "", new String[0]);
                 }
             }
 
@@ -386,7 +394,9 @@ public class FieldSearchServlet
                 out.flush(); out.close();
             }
     	} catch (AuthzException ae) {            
-            throw RootException.getServletException (ae, request, ACTION_LABEL, new String[0]);		            
+            throw RootException.getServletException (ae, request, ACTION_LABEL, new String[0]);
+    	} catch (ServletException e) {            
+            throw e;
         } catch (Throwable th) {
         	throw new InternalError500Exception("", th, request, actionLabel, "", new String[0]);
         }

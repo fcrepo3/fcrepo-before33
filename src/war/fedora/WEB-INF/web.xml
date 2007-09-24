@@ -376,6 +376,16 @@
 		<location>/jsp/forbidden-403.jsp</location>
 	</error-page>
 	<error-page>
+		<error-code>404</error-code>
+		<location>/jsp/notfound-404.jsp</location>
+	</error-page>
+	<error-page>
+		<exception-type>
+			fedora.server.errors.servletExceptionExtensions.NotFound404Exception
+		</exception-type>
+		<location>/jsp/notfound-404.jsp</location>
+	</error-page>
+	<error-page>
 		<exception-type>
 			fedora.server.errors.servletExceptionExtensions.InternalError500Exception
 		</exception-type>
