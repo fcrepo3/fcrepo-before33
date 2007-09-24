@@ -13,6 +13,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.multipart.FilePart;
+import org.apache.commons.httpclient.methods.multipart.Part;
+import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
+
 import fedora.client.FedoraClient;
 import fedora.client.HttpInputStream;
 
@@ -90,16 +95,16 @@ public class TestHTTPStatusCodes
     //---
 
     public static void checkOK(String requestPath) throws Exception {
-        checkCode(getClient(true, true, true), requestPath,
+        checkGetCode(getClient(true, true, true), requestPath,
                 "Expected HTTP 200 (OK) response for authenticated, "
                 + "authorized request", 200);
     }
 
     public static void checkBadAuthN(String requestPath) throws Exception {
-        checkCode(getClient(true, false, true), requestPath,
+        checkGetCode(getClient(true, false, true), requestPath,
                 "Expected HTTP 401 (Unauthorized) response for bad "
                 + "authentication (valid user, bad pass) request", 401);
-        checkCode(getClient(false, false, true), requestPath,
+        checkGetCode(getClient(false, false, true), requestPath,
                 "Expected HTTP 401 (Unauthorized) response for bad "
                 + "authentication (invalid user) request", 401);
     }
@@ -107,7 +112,7 @@ public class TestHTTPStatusCodes
     public static void checkBadAuthZ(String requestPath) throws Exception {
         try {
             activateUnauthorizedUserAndPolicy();
-            checkCode(getClient(true, true, false), requestPath,
+            checkGetCode(getClient(true, true, false), requestPath,
                     "Expected HTTP 403 (Forbidden) response for "
                     + "authenticated, unauthorized request", 403);
         } finally {
@@ -116,13 +121,13 @@ public class TestHTTPStatusCodes
     }
 
     public static void checkNotFound(String requestPath) throws Exception {
-        checkCode(getClient(true, true, true), requestPath,
+        checkGetCode(getClient(true, true, true), requestPath,
                 "Expected HTTP 404 (Not Found) response for authenticated, "
                 + "authorized request", 404);
     }
 
     public static void checkBadRequest(String requestPath) throws Exception {
-        checkCode(getClient(true, true, true), requestPath,
+        checkGetCode(getClient(true, true, true), requestPath,
                 "Expected HTTP 400 (Bad Request) response for authenticated, "
                 + "authorized request", 400);
     }
@@ -141,6 +146,31 @@ public class TestHTTPStatusCodes
 
     public void testGetNextPID_BadAuthZ() throws Exception {
         checkBadAuthZ(GET_NEXT_PID_PATH);
+    }
+
+    //---
+    // API-M Lite: upload
+    //---
+
+    public void testUpload_Created() throws Exception {
+        checkUploadCode(getClient(true, true, true), "file",
+                "Expected HTTP 201 (Created) response for authenticated, "
+                + "authorized request", 201);
+    }
+
+    public void testUpload_BadAuthN() throws Exception {
+        checkUploadCode(getClient(true, false, true), "file",
+                "Expected HTTP 401 (Unauthorized) response for bad "
+                + "authentication (valid user, bad pass) request", 401);
+        checkUploadCode(getClient(false, false, true), "file",
+                "Expected HTTP 401 (Unauthorized) response for bad "
+                + "authentication (invalid user) request", 401);
+    }
+
+    public void testUpload_BadRequest() throws Exception {
+        checkUploadCode(getClient(true, true, true), "badparam",
+                "Expected HTTP 400 (Bad Request) response for authenticated, "
+                + "authorized request", 400);
     }
 
     //---
@@ -426,7 +456,7 @@ public class TestHTTPStatusCodes
         getClient(true, true, true).reloadPolicies();
     }
 
-    private static void checkCode(FedoraClient client,
+    private static void checkGetCode(FedoraClient client,
             String requestPath, String errorMessage, int expectedCode)
             throws Exception {
         HttpInputStream in = client.get(requestPath, false);
@@ -455,4 +485,47 @@ public class TestHTTPStatusCodes
             in.close();
         }
     }
+
+    private static void checkUploadCode(FedoraClient client,
+            String partName, String errorMessage, int expectedCode)
+            throws Exception {
+        File file = File.createTempFile("fedora-junit", ".txt");
+        try {
+            writeStringToFile("test", file);
+            int gotCode = getUploadCode(client, getBaseURL() 
+                    + "/management/upload", file, partName);
+            assertEquals(errorMessage + " (/management/upload, partName="
+                    + partName + ")", expectedCode, gotCode);
+        } finally {
+            file.delete();
+        }
+    }
+
+    private static int getUploadCode(FedoraClient client, String url,
+            File file, String partName)
+            throws Exception {
+        PostMethod post = null;
+        try {
+            post = new PostMethod(url);
+            post.setDoAuthentication(true);
+            post.getParams().setParameter("Connection","Keep-Alive");
+            post.setContentChunked(true);
+            Part[] parts = { new FilePart(partName, file) };
+            post.setRequestEntity(new MultipartRequestEntity(parts,
+                    post.getParams()));
+            int responseCode = client.getHttpClient().executeMethod(post);
+            if (responseCode > 299 && responseCode < 400) {
+                String location = post.getResponseHeader("location").getValue();
+                System.out.println("Redirected to " + location);
+                return getUploadCode(client, location, file, partName);
+            } else {
+                return responseCode;
+            }
+        } finally {
+            if (post != null) {
+                post.releaseConnection();
+            }
+        }
+    }
+
 }
