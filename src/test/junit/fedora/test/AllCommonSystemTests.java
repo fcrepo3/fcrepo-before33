@@ -9,6 +9,7 @@ import org.junit.runners.Suite;
 	fedora.test.api.TestAPIALite.class,
 	fedora.test.api.TestAPIM.class,
 	fedora.test.api.TestAPIMLite.class,
+	fedora.test.api.TestHTTPStatusCodes.class,
 	fedora.test.integration.TestCommandLineUtilities.class
 })
 

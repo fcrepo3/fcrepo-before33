@@ -17,19 +17,22 @@ import static fedora.test.api.TestHTTPStatusCodes.LIST_DATASTREAMS_PATH;
 import static fedora.test.api.TestHTTPStatusCodes.LIST_METHODS_PATH;
 import static fedora.test.api.TestHTTPStatusCodes.checkBadAuthN;
 import static fedora.test.api.TestHTTPStatusCodes.checkBadAuthZ;
+import static fedora.test.api.TestHTTPStatusCodes.checkOK;
 
 /**
  * HTTP status code tests to be run when API-A authentication is on.
  *
  * @author cwilper@cs.cornell.edu
  */
-public class TestHTTPStatusCodes_APIAAuthNOn
+public class TestHTTPStatusCodesConfigB
         extends FedoraServerTestCase {
+
+    public static final String RI_SEARCH_PATH = "/risearch?type=triples&lang=spo&format=N-Triples&limit=&dt=on&stream=on&query=%3Cinfo%3Afedora%2Fdemo%3ASmileyStuff%3E+*+*";
 
     public static Test suite() {
         TestSuite suite = new TestSuite(
-                "TestHTTPStatusCodes_APIAAuthNOn TestSuite");
-		suite.addTestSuite(TestHTTPStatusCodes_APIAAuthNOn.class);
+                "TestHTTPStatusCodesConfigB TestSuite");
+		suite.addTestSuite(TestHTTPStatusCodesConfigB.class);
         return new DemoObjectTestSetup(suite);
     }
 
@@ -139,6 +142,22 @@ public class TestHTTPStatusCodes_APIAAuthNOn
 
     public void testFindObjects_BadAuthZ() throws Exception {
         checkBadAuthZ(FIND_OBJECTS_PATH);
+    }
+
+    //---
+    // API-A Lite: riSearch
+    //---
+
+    public void testRISearch_OK() throws Exception {
+        checkOK(RI_SEARCH_PATH);
+    }
+
+    public void testRISearch_BadAuthN() throws Exception {
+        checkBadAuthN(RI_SEARCH_PATH);
+    }
+
+    public void testRISearch_BadAuthZ() throws Exception {
+        checkBadAuthZ(RI_SEARCH_PATH);
     }
 
 }
