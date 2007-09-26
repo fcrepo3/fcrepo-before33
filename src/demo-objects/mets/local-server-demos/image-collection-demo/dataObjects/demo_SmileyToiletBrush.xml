@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<METS:mets LABEL="Smiley Toilet Brush" OBJID="demo:SmileyToiletBrush" TYPE="FedoraObject"
+  fedoraxsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd"
+  xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#"
+  xmlns:fedoraxsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/TR/xlink">
+  <METS:metsHdr CREATEDATE="2007-09-26T12:20:50.984Z" LASTMODDATE="2007-09-26T12:20:50.984Z" RECORDSTATUS="A">
+    <METS:agent ROLE="IPOWNER">
+      <METS:name>fedoraAdmin</METS:name>
+    </METS:agent>
+  </METS:metsHdr>
+  <METS:amdSec ID="RELS-EXT" STATUS="A" VERSIONABLE="true">
+    <METS:techMD CREATED="2007-09-26T12:20:50.984Z" ID="RELS-EXT.0">
+      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Relationships to other objects" MDTYPE="OTHER"
+        MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+        <METS:xmlData>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+            <rdf:Description rdf:about="info:fedora/demo:SmileyToiletBrush">
+              <rel:isMemberOf rdf:resource="info:fedora/demo:SmileyStuff"/>
+            </rdf:Description>
+          </rdf:RDF>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
+  <METS:amdSec ID="DC" STATUS="A" VERSIONABLE="true">
+    <METS:techMD CREATED="2007-09-26T12:20:50.984Z" ID="DC.1">
+      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Dublin Core Metadata" MDTYPE="OTHER"
+        MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+        <METS:xmlData>
+          <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+            <dc:title>Smiley Toilet Brush</dc:title>
+            <dc:description>At least one of you will be smiling while you put this item to use.</dc:description>
+            <dc:identifier>demo:SmileyToiletBrush</dc:identifier>
+          </oai_dc:dc>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
+  <METS:fileSec>
+    <METS:fileGrp ID="DATASTREAMS">
+      <METS:fileGrp ID="MediumSize.jpg" STATUS="A" VERSIONABLE="true">
+        <METS:file CHECKSUM="none" CHECKSUMTYPE="DISABLED" CREATED="2007-09-26T12:20:50.984Z" ID="MediumSize.jpg.0"
+          MIMETYPE="image/jpeg" OWNERID="E" SIZE="0">
+          <METS:FLocat LOCTYPE="URL"
+            xlink:href="http://localhost:8080/fedora-demo/image-collection-demo/SmileyToiletBrush-MediumSize.jpg" xlink:title="Medium-size image"/>
+        </METS:file>
+      </METS:fileGrp>
+      <METS:fileGrp ID="FullSize.jpg" STATUS="A" VERSIONABLE="true">
+        <METS:file CHECKSUM="none" CHECKSUMTYPE="DISABLED" CREATED="2007-09-26T12:20:50.984Z" ID="FullSize.jpg.0"
+          MIMETYPE="image/jpeg" OWNERID="E" SIZE="0">
+          <METS:FLocat LOCTYPE="URL"
+            xlink:href="http://localhost:8080/fedora-demo/image-collection-demo/SmileyToiletBrush-FullSize.jpg" xlink:title="Full-size image"/>
+        </METS:file>
+      </METS:fileGrp>
+    </METS:fileGrp>
+  </METS:fileSec>
+  <METS:structMap ID="DualResImage1.0b" TYPE="fedora:dsBindingMap">
+    <METS:div TYPE="demo:DualResImageImpl">
+      <METS:div LABEL="Binding to Full-size image" ORDER="0" TYPE="FULL_SIZE">
+        <METS:fptr FILEID="FullSize.jpg"/>
+      </METS:div>
+      <METS:div LABEL="Binding to Medium-size image" ORDER="0" TYPE="MEDIUM_SIZE">
+        <METS:fptr FILEID="MediumSize.jpg"/>
+      </METS:div>
+    </METS:div>
+  </METS:structMap>
+  <METS:behaviorSec ID="DualResImage" STATUS="A">
+    <METS:serviceBinding BTYPE="demo:DualResImage" CREATED="2007-09-26T12:20:50.984Z" ID="DualResImage1.0"
+      LABEL="Dual Resolution Disseminator" STRUCTID="DualResImage1.0b">
+      <METS:interfaceMD LOCTYPE="URN" xlink:href="demo:DualResImage"/>
+      <METS:serviceBindMD LOCTYPE="URN" xlink:href="demo:DualResImageImpl"/>
+    </METS:serviceBinding>
+  </METS:behaviorSec>
+</METS:mets>

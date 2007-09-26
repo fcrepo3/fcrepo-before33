@@ -59,10 +59,25 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
         is.close();
         return result;
     }
+
+    public static boolean testingMETS() {
+        String format = System.getProperty("demo.format");
+        return (format != null && format.equalsIgnoreCase("mets"));
+    }
     
     public static void ingestDemoObjects() throws Exception {
-		File dir = new File(FEDORA_HOME, "client/demo/foxml/");
-		String ingestFormat = "foxml1.0";
+        File dir;
+        String ingestFormat;
+        if (testingMETS()) {
+            System.out.println("Ingesting all demo objects in METS format");
+            dir = new File(FEDORA_HOME, "client/demo/mets");
+            ingestFormat = "metslikefedora1";
+        } else {
+            System.out.println("Ingesting all demo objects in FOXML format");
+            dir = new File(FEDORA_HOME, "client/demo/foxml");
+            ingestFormat = "foxml1.0";
+        }
+
 		String fTypes = "DMO";
 		FedoraClient client = FedoraTestCase.getFedoraClient();
 		

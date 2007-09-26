@@ -820,9 +820,14 @@ public class TestAPIM extends FedoraServerTestCase {
             assertEquals(dsArray[0].getAltIDs()[0],"");
         }        
         
+        String unspecifiedFormat = null;
+        if (testingMETS()) {
+            unspecifiedFormat = "info:fedora/fedora-system:format/xml.mets.descMD.OTHER.UNSPECIFIED";
+        }
+
         // assert datastream DC matches
         assertEquals(dsArray[1].getID(),"DC");
-        assertEquals(dsArray[1].getFormatURI(),null);
+        assertEquals(unspecifiedFormat, dsArray[1].getFormatURI());
         assertEquals(dsArray[1].getLabel(),"Dublin Core for the Document object");
         assertEquals(dsArray[1].getLocation(),null);
         assertEquals(dsArray[1].getMIMEType(),"text/xml");
@@ -835,9 +840,12 @@ public class TestAPIM extends FedoraServerTestCase {
             assertEquals(dsArray[1].getAltIDs()[0],"");
         }
 
+        int expectedTEISize = 901;
+        if (testingMETS()) expectedTEISize = 931;
+
         // assert datastream TEISOURCE matches
         assertEquals(dsArray[2].getID(),"TEISOURCE");
-        assertEquals(dsArray[2].getFormatURI(),null);
+        assertEquals(unspecifiedFormat, dsArray[2].getFormatURI());
         assertEquals(dsArray[2].getLabel(),"TEI Source");
         assertEquals(dsArray[2].getLocation(),null);
         assertEquals(dsArray[2].getMIMEType(),"text/xml");
@@ -845,7 +853,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dsArray[2].getVersionID(),"TEISOURCE1.0");
         assertEquals(dsArray[2].isVersionable(),true);
         assertEquals(dsArray[2].getControlGroup().getValue(),"X");
-        assertEquals(dsArray[2].getSize(),901);
+        assertEquals(expectedTEISize, dsArray[2].getSize());
         if (dsArray[2].getAltIDs().length>0) {
             assertEquals(dsArray[2].getAltIDs()[0],"");
         }            
@@ -872,7 +880,7 @@ public class TestAPIM extends FedoraServerTestCase {
         
         // assert datastream DC  matches
         assertEquals(dsArray[1].getID(),"DC");
-        assertEquals(dsArray[1].getFormatURI(),null);
+        assertEquals(unspecifiedFormat, dsArray[1].getFormatURI());
         assertEquals(dsArray[1].getLabel(),"Dublin Core for the Document object");
         assertEquals(dsArray[1].getLocation(),null);
         assertEquals(dsArray[1].getMIMEType(),"text/xml");
@@ -887,7 +895,7 @@ public class TestAPIM extends FedoraServerTestCase {
 
         // assert datastream TEISOURCE matches
         assertEquals(dsArray[2].getID(),"TEISOURCE");
-        assertEquals(dsArray[2].getFormatURI(),null);
+        assertEquals(unspecifiedFormat, dsArray[2].getFormatURI());
         assertEquals(dsArray[2].getLabel(),"TEI Source");
         assertEquals(dsArray[2].getLocation(),null);
         assertEquals(dsArray[2].getMIMEType(),"text/xml");
@@ -895,7 +903,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dsArray[2].getVersionID(),"TEISOURCE1.0");
         assertEquals(dsArray[2].isVersionable(),true);
         assertEquals(dsArray[2].getControlGroup().getValue(),"X");
-        assertEquals(dsArray[2].getSize(),901);
+        assertEquals(expectedTEISize, dsArray[2].getSize());
         if (dsArray[2].getAltIDs().length>0) {
             assertEquals(dsArray[2].getAltIDs()[0],"");
         }            
@@ -922,7 +930,7 @@ public class TestAPIM extends FedoraServerTestCase {
         
         // assert datastream DC matches
         assertEquals(dsArray[1].getID(),"DC");
-        assertEquals(dsArray[1].getFormatURI(),null);
+        assertEquals(unspecifiedFormat, dsArray[1].getFormatURI());
         assertEquals(dsArray[1].getLabel(),"Dublin Core for the Document object");
         assertEquals(dsArray[1].getLocation(),null);
         assertEquals(dsArray[1].getMIMEType(),"text/xml");
@@ -937,7 +945,7 @@ public class TestAPIM extends FedoraServerTestCase {
 
         // assert datastream TEISOURCE matches
         assertEquals(dsArray[2].getID(),"TEISOURCE");
-        assertEquals(dsArray[2].getFormatURI(),null);
+        assertEquals(unspecifiedFormat, dsArray[2].getFormatURI());
         assertEquals(dsArray[2].getLabel(),"TEI Source");
         assertEquals(dsArray[2].getLocation(),null);
         assertEquals(dsArray[2].getMIMEType(),"text/xml");
@@ -945,7 +953,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dsArray[2].getVersionID(),"TEISOURCE1.0");
         assertEquals(dsArray[2].isVersionable(),true);
         assertEquals(dsArray[2].getControlGroup().getValue(),"X");
-        assertEquals(dsArray[2].getSize(),901);
+        assertEquals(expectedTEISize, dsArray[2].getSize());
         if (dsArray[2].getAltIDs().length>0) {
             assertEquals(dsArray[2].getAltIDs()[0],"");
         }            
@@ -1072,6 +1080,11 @@ public class TestAPIM extends FedoraServerTestCase {
         dissArray[0] = diss;
         //System.out.println("***** Testcase: TestAPIM.testGetDisseminator getDisseminator(\"demo:26\", \"DISS1\", null)");
 
+        String unspecifiedSeqNo = "";
+        if (testingMETS()) {
+            unspecifiedSeqNo = "0";
+        }
+
         // assert DISS1 matches
         assertEquals(dissArray[0].getBDefPID(),"demo:19");
         assertEquals(dissArray[0].getBMechPID(),"demo:20");
@@ -1086,7 +1099,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindKeyName(),"XML_SOURCE");
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindLabel(),"FOP Source file to be transformed");
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getDatastreamID(),"FOPDISSEM");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo(),"");
+        assertEquals(unspecifiedSeqNo, dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo());
                 
         // test getting disseminator id DISS1 for object demo:26 specifying datetime
         diss = apim.getDisseminator("demo:26", "DISS1", "9999-01-01T00:00:00.000Z");
@@ -1107,7 +1120,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindKeyName(),"XML_SOURCE");
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindLabel(),"FOP Source file to be transformed");
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getDatastreamID(),"FOPDISSEM");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo(),"");
+        assertEquals(unspecifiedSeqNo, dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo());
         
         // (5) test getDisseminators
         System.out.println("Running TestAPIM.testGetDisseminators...");
@@ -1131,7 +1144,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindKeyName(),"XML_SOURCE");
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindLabel(),"FOP Source file to be transformed");
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getDatastreamID(),"FOPDISSEM");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo(),"");
+        assertEquals(unspecifiedSeqNo, dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo());
         
         // assert DISS2 matches
         assertEquals(dissArray[1].getBDefPID(),"demo:22");
@@ -1147,7 +1160,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindKeyName(),"TEI_SOURCE");
         assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindLabel(),"TEI Source file to be transformed to FO");
         assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getDatastreamID(),"TEISOURCE");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getSeqNo(),"");
+        assertEquals(unspecifiedSeqNo, dissArray[1].getDsBindMap().getDsBindings()[0].getSeqNo());
         
         // test getting all disseminators for object demo:26 specifying null for state
         dissArray = apim.getDisseminators("demo:26", "9999-01-01T00:00:00.000Z", null);
@@ -1168,7 +1181,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindKeyName(),"XML_SOURCE");
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindLabel(),"FOP Source file to be transformed");
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getDatastreamID(),"FOPDISSEM");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo(),"");
+        assertEquals(unspecifiedSeqNo, dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo());
         
         // assert DISS2 matches
         assertEquals(dissArray[1].getBDefPID(),"demo:22");
@@ -1184,7 +1197,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindKeyName(),"TEI_SOURCE");
         assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindLabel(),"TEI Source file to be transformed to FO");
         assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getDatastreamID(),"TEISOURCE");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getSeqNo(),"");                    
+        assertEquals(unspecifiedSeqNo, dissArray[1].getDsBindMap().getDsBindings()[0].getSeqNo());                    
 
         // test getting all disseminators for object demo:26 specifying both datetime and state
         dissArray = apim.getDisseminators("demo:26", "9999-01-01T00:00:00.000Z", "A");
@@ -1205,7 +1218,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindKeyName(),"XML_SOURCE");
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindLabel(),"FOP Source file to be transformed");
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getDatastreamID(),"FOPDISSEM");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo(),"");
+        assertEquals(unspecifiedSeqNo, dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo());
         
         // assert DISS2 matches
         assertEquals(dissArray[1].getBDefPID(),"demo:22");
@@ -1221,7 +1234,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindKeyName(),"TEI_SOURCE");
         assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindLabel(),"TEI Source file to be transformed to FO");
         assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getDatastreamID(),"TEISOURCE");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getSeqNo(),"");            
+        assertEquals(unspecifiedSeqNo, dissArray[1].getDsBindMap().getDsBindings()[0].getSeqNo());            
 
         // (6) test getDisseminatorHistory
         System.out.println("Running TestAPIM.testGetDisseminatorHistory...");
