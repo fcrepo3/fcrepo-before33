@@ -36,7 +36,7 @@
 		<sch:rule context="METS:mets">
 			<sch:assert test="string-length(@OBJID) &lt;= 64">Object PID must not exceed length of 64 (mets:mets OBJID)</sch:assert>
 			<sch:assert test="not(@LABEL) or string-length(@LABEL) &lt;= 255">Object label must not exceed length of 255 (mets:mets LABEL)</sch:assert>
-			<sch:assert test="@TYPE = 'FedoraObject' or @TYPE = 'FedoraBDefObject' or @TYPE = 'FedoraBMechObject'">Object must be of type "FedoraObject|FedoraBDefObject|FedoraBMechObject" (mets:mets: TYPE)</sch:assert>
+			<sch:assert test="@TYPE = 'FedoraObject' or @TYPE = 'FedoraBDefObject' or @TYPE = 'FedoraBMechObject' or @TYPE = 'FedoraCModelObject'">Object must be of type "FedoraObject|FedoraBDefObject|FedoraBMechObject|FedoraCModelObject" (mets:mets: TYPE)</sch:assert>
 			<sch:report test="METS:dmdSec">The METS:dmdSec element is not supported by Fedora.   Use the METS:dmdSecFedora element instead (see the Fedora extension of the METS 1.0 schema)</sch:report>
 		</sch:rule>
 		<sch:rule context="METS:metsHdr">

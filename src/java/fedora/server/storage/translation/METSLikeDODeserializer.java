@@ -329,7 +329,7 @@ public class METSLikeDODeserializer
                 } 
                 if (objType.equalsIgnoreCase("FedoraCModelObject")) 
                 {
-                    m_obj.addFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
+                    m_obj.addFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT);
                 } 
                 if (objType.equalsIgnoreCase("FedoraObject")) 
                 {

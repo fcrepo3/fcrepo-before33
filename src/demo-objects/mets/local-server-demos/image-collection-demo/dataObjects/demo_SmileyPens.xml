@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<METS:mets LABEL="Smiley Pens" OBJID="demo:SmileyPens" TYPE="FedoraObject"
+  fedoraxsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd"
+  xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#"
+  xmlns:fedoraxsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/TR/xlink">
+  <METS:metsHdr CREATEDATE="2007-09-26T19:21:58.156Z" LASTMODDATE="2007-09-26T19:21:58.156Z" RECORDSTATUS="A">
+    <METS:agent ROLE="IPOWNER">
+      <METS:name>fedoraAdmin</METS:name>
+    </METS:agent>
+  </METS:metsHdr>
+  <METS:amdSec ID="RELS-EXT" STATUS="A" VERSIONABLE="true">
+    <METS:techMD CREATED="2007-09-26T19:21:58.156Z" ID="RELS-EXT.0">
+      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Relationships to other objects" MDTYPE="OTHER"
+        MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+        <METS:xmlData>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+            <rdf:Description rdf:about="info:fedora/demo:SmileyPens">
+              <rel:isMemberOf rdf:resource="info:fedora/demo:SmileyStuff"/>
+              <rel:hasFormalContentModel rdf:resource="info:fedora/demo:CmodelForBMech_DualResImageImpl"/>
+            </rdf:Description>
+          </rdf:RDF>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
+  <METS:amdSec ID="DC" STATUS="A" VERSIONABLE="true">
+    <METS:techMD CREATED="2007-09-26T19:21:58.156Z" ID="DC.1">
+      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Dublin Core Metadata" MDTYPE="OTHER"
+        MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+        <METS:xmlData>
+          <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+            <dc:title>Smiley Pens</dc:title>
+            <dc:description>Yes, these actually write.  Well, I haven't tested them but I'm pretty sure.</dc:description>
+            <dc:identifier>demo:SmileyPens</dc:identifier>
+          </oai_dc:dc>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
+  <METS:fileSec>
+    <METS:fileGrp ID="DATASTREAMS">
+      <METS:fileGrp ID="FULL_SIZE" STATUS="A" VERSIONABLE="true">
+        <METS:file CHECKSUM="none" CHECKSUMTYPE="DISABLED" CREATED="2007-09-26T19:21:58.156Z" ID="FullSize.jpg.0"
+          MIMETYPE="image/jpeg" OWNERID="E" SIZE="0">
+          <METS:FLocat LOCTYPE="URL"
+            xlink:href="http://localhost:8080/fedora-demo/image-collection-demo/SmileyPens-FullSize.jpg" xlink:title="Full-size image"/>
+        </METS:file>
+      </METS:fileGrp>
+      <METS:fileGrp ID="MEDIUM_SIZE" STATUS="A" VERSIONABLE="true">
+        <METS:file CHECKSUM="none" CHECKSUMTYPE="DISABLED" CREATED="2007-09-26T19:21:58.156Z" ID="MediumSize.jpg.0"
+          MIMETYPE="image/jpeg" OWNERID="E" SIZE="0">
+          <METS:FLocat LOCTYPE="URL"
+            xlink:href="http://localhost:8080/fedora-demo/image-collection-demo/SmileyPens-MediumSize.jpg" xlink:title="Medium-size image"/>
+        </METS:file>
+      </METS:fileGrp>
+    </METS:fileGrp>
+  </METS:fileSec>
+</METS:mets>

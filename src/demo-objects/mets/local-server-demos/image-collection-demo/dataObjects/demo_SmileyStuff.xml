@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<METS:mets LABEL="Collection of Smiley Stuff" OBJID="demo:SmileyStuff" TYPE="FedoraObject"
+  fedoraxsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd"
+  xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#"
+  xmlns:fedoraxsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/TR/xlink">
+  <METS:metsHdr CREATEDATE="2007-09-26T19:21:59.171Z" LASTMODDATE="2007-09-26T19:21:59.171Z" RECORDSTATUS="A">
+    <METS:agent ROLE="IPOWNER">
+      <METS:name>fedoraAdmin</METS:name>
+    </METS:agent>
+  </METS:metsHdr>
+  <METS:amdSec ID="RELS-EXT" STATUS="A" VERSIONABLE="false">
+    <METS:techMD CREATED="2007-09-26T19:21:59.171Z" ID="RELS-EXT.0">
+      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Relationships" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+        <METS:xmlData>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+            <rdf:Description rdf:about="info:fedora/demo:SmileyStuff">
+              <rel:hasFormalContentModel rdf:resource="info:fedora/demo:CmodelForBMech_DualResImageCollection"/>
+            </rdf:Description>
+          </rdf:RDF>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
+  <METS:amdSec ID="DC" STATUS="A" VERSIONABLE="true">
+    <METS:techMD CREATED="2007-09-26T19:21:59.171Z" ID="DC1.0">
+      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Dublin Core Metadata" MDTYPE="OTHER"
+        MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+        <METS:xmlData>
+          <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+            <dc:title>Collection of Smiley Stuff</dc:title>
+            <dc:description>This is Deb's collection of smiley stuff.</dc:description>
+            <dc:identifier>demo:SmileyStuff</dc:identifier>
+          </oai_dc:dc>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
+  <METS:fileSec>
+    <METS:fileGrp ID="DATASTREAMS">
+      <METS:fileGrp ID="QUERY" STATUS="A" VERSIONABLE="true">
+        <METS:file CHECKSUM="none" CHECKSUMTYPE="DISABLED" CREATED="2007-09-26T19:21:59.171Z" ID="QUERY.0"
+          MIMETYPE="text/plain" OWNERID="E" SIZE="0">
+          <METS:FLocat LOCTYPE="URL"
+            xlink:href="http://localhost:8080/fedora-demo/image-collection-demo/SmileyStuff-MemberQuery.txt" xlink:title="RDF Query to list members"/>
+        </METS:file>
+      </METS:fileGrp>
+      <METS:fileGrp ID="XSLT" STATUS="A" VERSIONABLE="true">
+        <METS:file CHECKSUM="none" CHECKSUMTYPE="DISABLED" CREATED="2007-09-26T19:21:59.171Z" ID="XSLT.0"
+          MIMETYPE="text/xml" OWNERID="E" SIZE="0">
+          <METS:FLocat LOCTYPE="URL"
+            xlink:href="http://localhost:8080/fedora-demo/image-collection-demo/SmileyStuff-ViewStylesheet.xsl" xlink:title="Stylesheet to view list dissemination as html"/>
+        </METS:file>
+      </METS:fileGrp>
+      <METS:fileGrp ID="LIST" STATUS="A" VERSIONABLE="true">
+        <METS:file CHECKSUM="none" CHECKSUMTYPE="DISABLED" CREATED="2007-09-26T19:21:59.171Z" ID="LIST.0"
+          MIMETYPE="text/xml" OWNERID="E" SIZE="0">
+          <METS:FLocat LOCTYPE="URL"
+            xlink:href="http://local.fedora.server/fedora/get/demo:SmileyStuff/demo:Collection/list" xlink:title="Result of list dissemination"/>
+        </METS:file>
+      </METS:fileGrp>
+    </METS:fileGrp>
+  </METS:fileSec>
+</METS:mets>
