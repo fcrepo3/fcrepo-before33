@@ -225,6 +225,7 @@
           <rdf:Description rdf:about="info:fedora/demo:4">
             <rel:hasBDef rdf:resource="info:fedora/demo:1"/>
             <rel:isContractor rdf:resource="info:fedora/demo:UVA_MRSID_IMAGE"/>
+          	<rel:isContractor rdf:resource="info:fedora/demo:CMSID"/>
           </rdf:Description>
         </rdf:RDF>
       </foxml:xmlContent>
