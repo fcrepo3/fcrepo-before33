@@ -23,12 +23,12 @@
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream ID="url" CONTROL_GROUP="M" STATE="A">
-		<foxml:datastreamVersion ID="url.0" MIMETYPE="image/jpeg" LABEL="Thorny's Coliseum high jpg image">
+		<foxml:datastreamVersion ID="url1.0" MIMETYPE="image/jpeg" LABEL="Thorny's Coliseum high jpg image">
 			<foxml:contentLocation REF="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-high.jpg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="false">
-    	<foxml:datastreamVersion ID="RELS-EXT.0" LABEL="Relationships" MIMETYPE="text/xml">
+    	<foxml:datastreamVersion ID="RELS-EXT1.0" LABEL="Relationships" MIMETYPE="text/xml">
       		<foxml:xmlContent>
         		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
           			<rdf:Description rdf:about="info:fedora/demo:29">

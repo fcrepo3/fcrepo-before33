@@ -11,7 +11,7 @@
     <foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2007-08-15T15:59:21.440Z"/>
   </foxml:objectProperties>
   <foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="false">
-    <foxml:datastreamVersion CREATED="2007-08-15T14:36:39.444Z" ID="RELS-EXT.0" LABEL="Relationships"
+    <foxml:datastreamVersion CREATED="2007-08-15T14:36:39.444Z" ID="RELS-EXT1.0" LABEL="Relationships"
       MIMETYPE="text/xml" SIZE="353">
       <foxml:contentDigest DIGEST="none" TYPE="DISABLED"/>
       <foxml:xmlContent>

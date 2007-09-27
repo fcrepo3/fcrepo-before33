@@ -28,27 +28,27 @@
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream ID="LOWRES_IMG" CONTROL_GROUP="E" STATE="A">
-		<foxml:datastreamVersion ID="LOWRES_IMG.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (low res)">
+		<foxml:datastreamVersion ID="LOWRES_IMG1.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (low res)">
 			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05small.jpg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream ID="MEDRES_IMG" CONTROL_GROUP="E" STATE="A">
-		<foxml:datastreamVersion ID="MEDRES_IMG.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (med res)">
+		<foxml:datastreamVersion ID="MEDRES_IMG1.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (med res)">
 			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05medium1.jpg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream ID="HIGHRES_IMG" CONTROL_GROUP="E" STATE="A">
-		<foxml:datastreamVersion ID="HIGHRES_IMG.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (high res)">
+		<foxml:datastreamVersion ID="HIGHRES_IMG1.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (high res)">
 			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05medium2.jpg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream ID="VERYHIGHRES_IMG" CONTROL_GROUP="E" STATE="A">
-		<foxml:datastreamVersion ID="VERYHIGHRES_IMG.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (veryhigh res)">
+		<foxml:datastreamVersion ID="VERYHIGHRES_IMG1.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (veryhigh res)">
 			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05high.jpg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
   	<foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="false">
-    	<foxml:datastreamVersion ID="RELS-EXT.0" LABEL="Relationships" MIMETYPE="text/xml">
+    	<foxml:datastreamVersion ID="RELS-EXT1.0" LABEL="Relationships" MIMETYPE="text/xml">
 	     	<foxml:xmlContent>
         		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
           			<rdf:Description rdf:about="info:fedora/demo:7">

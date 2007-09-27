@@ -23,27 +23,27 @@
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream ID="THUMBRES_IMG" CONTROL_GROUP="M" STATE="A">
-		<foxml:datastreamVersion ID="THUMBRES_IMG.0" MIMETYPE="image/jpeg" LABEL="Thorny's Coliseum thumbnail jpg image">
+		<foxml:datastreamVersion ID="THUMBRES_IMG1.0" MIMETYPE="image/jpeg" LABEL="Thorny's Coliseum thumbnail jpg image">
 			<foxml:contentLocation REF="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream ID="MEDRES_IMG" CONTROL_GROUP="M" STATE="A">
-		<foxml:datastreamVersion ID="MEDRES_IMG.0" MIMETYPE="image/jpeg" LABEL="Thorny's Coliseum medium jpg image">
+		<foxml:datastreamVersion ID="MEDRES_IMG1.0" MIMETYPE="image/jpeg" LABEL="Thorny's Coliseum medium jpg image">
 			<foxml:contentLocation REF="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-medium.jpg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream ID="HIGHRES_IMG" CONTROL_GROUP="M" STATE="A">
-		<foxml:datastreamVersion ID="HIGHRES_IMG.0" MIMETYPE="image/jpeg" LABEL="Thorny's Coliseum high jpg image">
+		<foxml:datastreamVersion ID="HIGHRES_IMG1.0" MIMETYPE="image/jpeg" LABEL="Thorny's Coliseum high jpg image">
 			<foxml:contentLocation REF="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-high.jpg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream ID="VERYHIGHRES_IMG" CONTROL_GROUP="M" STATE="A">
-		<foxml:datastreamVersion ID="VERYHIGHRES_IMG.0" MIMETYPE="image/jpeg" LABEL="Thorny's Coliseum veryhigh jpg image">
+		<foxml:datastreamVersion ID="VERYHIGHRES_IMG1.0" MIMETYPE="image/jpeg" LABEL="Thorny's Coliseum veryhigh jpg image">
 			<foxml:contentLocation REF="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="false">
-    <foxml:datastreamVersion ID="RELS-EXT.0" LABEL="Relationships" MIMETYPE="text/xml">
+    <foxml:datastreamVersion ID="RELS-EXT1.0" LABEL="Relationships" MIMETYPE="text/xml">
       <foxml:xmlContent>
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
           <rdf:Description rdf:about="info:fedora/demo:5">

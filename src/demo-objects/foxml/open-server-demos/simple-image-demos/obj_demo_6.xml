@@ -28,12 +28,12 @@
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream ID="MRSID" CONTROL_GROUP="E" STATE="A">
-		<foxml:datastreamVersion ID="MRSID.0" MIMETYPE="image/x-mrsid-image" LABEL="Pavilion III, University of Virginia">
+		<foxml:datastreamVersion ID="MRSID1.0" MIMETYPE="image/x-mrsid-image" LABEL="Pavilion III, University of Virginia">
 			<foxml:contentLocation REF="http://iris.lib.virginia.edu/mrsid/mrsid_images/iva/archerp01.sid" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="false">
-    	<foxml:datastreamVersion ID="RELS-EXT.0" LABEL="Relationships" MIMETYPE="text/xml">
+    	<foxml:datastreamVersion ID="RELS-EXT1.0" LABEL="Relationships" MIMETYPE="text/xml">
       		<foxml:xmlContent>
         		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
           			<rdf:Description rdf:about="info:fedora/demo:6">
