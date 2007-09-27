@@ -694,12 +694,18 @@ public class TestAPIM extends FedoraServerTestCase {
         checkDatastream(dsArray, "XML_SOURCE", null, "FOP Dissemination as Datastream",
                         "http://"+getHost()+":8080/fedora/get/demo:26/demo:22/getFO",
                         "text/xml", "A", "XML_SOURCE1.0", true, "E", 0, new String[] {});
+
+        int expectedTEISize = 901;
+        if (testingMETS()) expectedTEISize = 931;
         
         checkDatastream(dsArray, "TEI_SOURCE", null, "TEI Source", null,
-                        "text/xml", "A", "TEI_SOURCE1.0", true, "X", 901, new String[] {});
+                        "text/xml", "A", "TEI_SOURCE1.0", true, "X", expectedTEISize, new String[] {});
+
+        int expectedRELSSize = 393;
+        if (testingMETS()) expectedRELSSize = 361;
         
         checkDatastream(dsArray, "RELS-EXT", null, "Relationships", null,
-                        "text/xml", "A", "RELS-EXT1.0", false, "X", 393, new String[] {});
+                        "text/xml", "A", "RELS-EXT1.0", true, "X", expectedRELSSize, new String[] {});
         
         // test getting all datastreams for object demo:26 specifying null for state
         dsArray = apim.getDatastreams("demo:26", "9999-01-01T00:00:00.000Z", null);
@@ -714,10 +720,10 @@ public class TestAPIM extends FedoraServerTestCase {
                         "text/xml", "A", "XML_SOURCE1.0", true, "E", 0, new String[] {});
         
         checkDatastream(dsArray, "TEI_SOURCE", null, "TEI Source", null,
-                        "text/xml", "A", "TEI_SOURCE1.0", true, "X", 901, new String[] {});
+                        "text/xml", "A", "TEI_SOURCE1.0", true, "X", expectedTEISize, new String[] {});
         
         checkDatastream(dsArray, "RELS-EXT", null, "Relationships", null,
-                        "text/xml", "A", "RELS-EXT1.0", false, "X", 393, new String[] {});
+                        "text/xml", "A", "RELS-EXT1.0", true, "X", expectedRELSSize, new String[] {});
         
         // (8) test getDatastreamHistory
         System.out.println("Running TestAPIM.testGetDatastreamHistory...");
@@ -749,7 +755,11 @@ public class TestAPIM extends FedoraServerTestCase {
             }
         }
         if (ds != null) {
-            assertEquals(formatURI, ds.getFormatURI());
+            if (testingMETS() && formatURI == null && ds.getFormatURI() != null) {
+                assertTrue(ds.getFormatURI().endsWith("MD.OTHER.UNSPECIFIED"));
+            } else {
+                assertEquals(formatURI, ds.getFormatURI());
+            }
             assertEquals(label, ds.getLabel());
             assertEquals(location, ds.getLocation());
             assertEquals(mimeType, ds.getMIMEType());
