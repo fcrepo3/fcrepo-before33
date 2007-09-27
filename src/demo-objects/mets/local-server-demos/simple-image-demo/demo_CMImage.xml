@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<METS:mets LABEL="Image of Coliseum in Rome" OBJID="demo:CMImage" PROFILE="UVA_STD_IMAGE" TYPE="FedoraCModelObject"
+  fedoraxsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd"
+  xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#"
+  xmlns:fedoraxsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/TR/xlink">
+  <METS:metsHdr CREATEDATE="2007-09-25T19:11:55.514Z" LASTMODDATE="2007-09-25T19:11:55.514Z" RECORDSTATUS="A">
+    <METS:agent ROLE="IPOWNER">
+      <METS:name>fedoraAdmin</METS:name>
+    </METS:agent>
+  </METS:metsHdr>
+  <METS:amdSec ID="RELS-EXT" STATUS="A" VERSIONABLE="true">
+    <METS:techMD CREATED="2007-09-25T19:11:55.514Z" ID="RELS-EXT1.0">
+      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Relationships to other objects" MDTYPE="OTHER"
+        MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+        <METS:xmlData>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+            <rdf:Description rdf:about="info:fedora/demo:CMImage">
+              <rel:hasBDef rdf:resource="info:fedora/demo:1"/>
+            </rdf:Description>
+          </rdf:RDF>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
+  <METS:amdSec ID="DC" STATUS="A" VERSIONABLE="true">
+    <METS:techMD CREATED="2007-09-25T19:11:55.514Z" ID="DC1.0">
+      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="DC Record for Coliseum image object" MDTYPE="OTHER"
+        MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+        <METS:xmlData>
+          <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+            <dc:title>Content Model for UVA Simple Image model for CMDA proof of concept</dc:title>
+            <dc:identifier>demo:CMImage</dc:identifier>
+          </oai_dc:dc>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
+  <METS:amdSec ID="DS-COMPOSITE-MODEL" STATUS="A" VERSIONABLE="true">
+    <METS:techMD CREATED="2007-09-25T19:11:55.514Z" ID="DS-COMPOSITE-MODEL1.0">
+      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Definition of Image Content Model" MDTYPE="OTHER"
+        MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+        <METS:xmlData>
+          <dsCompositeModel>
+            <dsTypeModel ID="THUMB" MAX="1" MIN="1" ORDERED="false" SEMANTIC_ID="THUMBRES_IMG">
+              <form FORMAT_URIS="info:pathways/fmt/pronom/20" MIME="image/jpeg"/>
+              <form FORMAT_URIS="info:pathways/fmt/pronom/??" MIME="image/gif"/>
+            </dsTypeModel>
+            <dsTypeModel ID="MEDIUM" MAX="1" MIN="1" ORDERED="false" SEMANTIC_ID="MEDRES_IMG">
+              <form FORMAT_URIS="info:pathways/fmt/pronom/20" MIME="image/jpeg"/>
+              <form FORMAT_URIS="info:pathways/fmt/pronom/??" MIME="image/gif"/>
+            </dsTypeModel>
+            <dsTypeModel ID="HIGH" MAX="1" MIN="1" ORDERED="false" SEMANTIC_ID="HIGHRES_IMG">
+              <form FORMAT_URIS="info:pathways/fmt/pronom/20" MIME="image/jpeg"/>
+              <form FORMAT_URIS="info:pathways/fmt/pronom/??" MIME="image/gif"/>
+            </dsTypeModel>
+            <dsTypeModel ID="VERYHIGH" MAX="1" MIN="1" ORDERED="false" SEMANTIC_ID="VERYHIGHRES_IMG">
+              <form FORMAT_URIS="info:pathways/fmt/pronom/20" MIME="image/jpeg"/>
+              <form FORMAT_URIS="info:pathways/fmt/pronom/??" MIME="image/gif"/>
+            </dsTypeModel>
+          </dsCompositeModel>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
+</METS:mets>
