@@ -253,6 +253,23 @@
 			</METS:mdWrap>
 		</METS:techMD>
 	</METS:amdSec>
+	<!---********************************************************************************************-->
+	<!-- RELS-EXT: -->
+	<!--********************************************************************************************-->
+	<METS:amdSec ID="RELS-EXT">
+		<METS:techMD ID="RELS-EXT1.0" STATUS="A">
+			<METS:mdWrap LABEL="RELS-EXT - RDF formatted relationship metadata" MDTYPE="OTHER" MIMETYPE="text/xml">
+				<METS:xmlData>
+					<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+						<rdf:Description rdf:about="info:fedora/demo:3">
+							<rel:hasBDef rdf:resource="info:fedora/demo:1"/>
+							<rel:isContractor rdf:resource="info:fedora/demo:UVA_STD_IMAGE_2"/>
+						</rdf:Description>
+					</rdf:RDF>				
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>	
 	<!---*******************************************************************************************************************************************-->
 	<!--- OTHER DATASTREAMS FOR THIS BEHAVIOR MECHANISM OBJECT -->
 	<!--  This is content that is relevant to describing the external service that this Behavior Mechanism Object represents. -->
@@ -267,46 +284,4 @@
 			</METS:fileGrp>
 		</METS:fileGrp>
 	</METS:fileSec>
-	<!---*******************************************************************************************************************************************-->
-	<!--  DATASTREAM BINDING MAP FOR FOR THIS BEHAVIOR MECHANISM OBJECT-->
-	<!-- Since THIS Behavior Mechanism Object is, itself, a Fedora Digital Object, we can disseminate its contents. -->
-	<!-- The Fedora system provides a bootstrap service (built-in to the repository system) that will enable the -->
-	<!-- dissemination of content from a Behavior Mechanism Objects.  What follows is the Datastream Binding Map for that -->
-	<!-- is used by the bootstrap service.  -->
-	<!-- ******************************************************************************************************************** -->
-	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
-		<METS:div TYPE="fedora-system:2" LABEL="Datastream Binding Map for Fedora Bootstrap Mechanism">
-			<METS:div TYPE="SERVICE-PROFILE" LABEL="Service profile metadata">
-				<METS:fptr FILEID="SERVICE-PROFILE"/>
-			</METS:div>
-			<METS:div TYPE="FEDORA-TO-WSDL-DSINPUTSPEC" LABEL="XML data that serves describes the requirements for Datastreams that will be used as input to the service">
-				<METS:fptr FILEID="DSINPUTSPEC"/>
-			</METS:div>
-			<METS:div TYPE="FEDORA-TO-WSDL-METHODMAP" LABEL="XML data that enables FEDORA to understand how to use the service WSDL">
-				<METS:fptr FILEID="METHODMAP"/>
-			</METS:div>
-			<METS:div TYPE="WSDL" LABEL="Service definitions in WSDL format">
-				<METS:fptr FILEID="WSDL"/>
-			</METS:div>
-			<METS:div TYPE="PROGGUIDE" LABEL="The Programmer's user guide for using the service">
-				<METS:fptr FILEID="DS1"/>
-			</METS:div>
-		</METS:div>
-	</METS:structMap>
-	<!---*******************************************************************************************************************************************-->
-	<!--- BOOTSTRAP  DISSEMINATOR FOR THIS BEHAVIOR MECHANISM OBJECT: -->
-	<!--  This is a disseminator for THIS Behavior Definition Object that lets a client be able to treat it like any other Fedora Object.  -->
-	<!--  Thus, clients can disseminate all this great metadata about the external service that is represented by this -->
-	<!--  Behavior Mechanism Object. -->
-	<!---*******************************************************************************************************************************************-->
-	<!--- The Disseminator subscribes to the Fedora Bootstrap Behavior Definition.  It uses the Fedora Bootstrap Behavior -->
-	<!--   Mechanism to run the behaviors. -->
-	<!--  The Bootstrap behaviors enable a client to get disseminations of the contents of this Behavior Mechanism Object.   -->
-	<!---*******************************************************************************************************************************************-->
-	<METS:behaviorSec ID="DISS1" STATUS="A">
-		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="fedora-system:1" LABEL="Bootstrap Behaviors">
-			<METS:interfaceMD LABEL="Bootstrap Behavior Definition" LOCTYPE="URN" xlink:href="fedora-system:1"/>
-			<METS:serviceBindMD LABEL="Bootstrap Behavior Mechanism" LOCTYPE="URN" xlink:href="fedora-system:2"/>
-		</METS:serviceBinding>
-	</METS:behaviorSec>
 </METS:mets>

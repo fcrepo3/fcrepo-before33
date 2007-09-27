@@ -33,8 +33,8 @@
 			</METS:mdWrap>
 		</METS:descMD>
 	</METS:dmdSecFedora>
-	<METS:dmdSecFedora ID="FOPSAMPLE" STATUS="A">
-		<METS:descMD ID="FOPSAMPLE1.0">
+	<METS:dmdSecFedora ID="XML_SOURCE" STATUS="A">
+		<METS:descMD ID="XML_SOURCE1.0">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="FOP Sample">
 				<METS:xmlData>
 					<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xml.apache.org/fop/extensions">
@@ -403,35 +403,20 @@ This font contains no embedding license restrictions
 			</METS:mdWrap>
 		</METS:descMD>
 	</METS:dmdSecFedora>
-	<!---*******************************************************************************************************************************************-->
-	<!--- FEDORA DATASTREAM BINDING MAPS  -->
-	<!--  In Fedora the METS structure maps are associated with the DISSEMINATOR mechanisms (see METS:behaviorSec).-->
-	<!---*******************************************************************************************************************************************-->
-	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
-		<METS:div TYPE="demo:20" LABEL="DS Binding Map for FOP mechanism">
-			<METS:div TYPE="XML_SOURCE" LABEL="FOP Source file to be transformed" ORDER="0">
-				<METS:fptr FILEID="FOPSAMPLE"/>
-			</METS:div>
-		</METS:div>
-	</METS:structMap>
-	<!---*******************************************************************************************************************************************-->
-	<!--- DISSEMINATORS-->
-	<!-- A disseminator provides a "behavior-centric" view of the object.  It has an attribute STRUCTID -->
-	<!-- which is an IDREF to a mechanism-specific structMap.  The structMap labels datastreams in -->
-	<!-- a manner that is understood by the mechanism defined in the disseminator.  -->
-	<!-- -->
-	<!---*******************************************************************************************************************************************-->
-	<!--- THE NSDL EXHIBIT DISSEMINATOR -->
-	<!---*******************************************************************************************************************************************-->
-	<METS:behaviorSec ID="DISS1" STATUS="A">
-		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:19" LABEL="PDF Disseminator">
-			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
-			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
-			<!-- the disseminator subscribes -->
-			<METS:interfaceMD LABEL="PDF Behavior Definition" LOCTYPE="URN" xlink:href="demo:19"/>
-			<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
-			<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
-			<METS:serviceBindMD LABEL="Fedora Local FOP Service Mechanism" LOCTYPE="URN" xlink:href="demo:20"/>
-		</METS:serviceBinding>
-	</METS:behaviorSec>
+	<!---********************************************************************************************-->
+	<!-- RELS-EXT: -->
+	<!--********************************************************************************************-->
+	<METS:amdSec ID="RELS-EXT">
+		<METS:techMD ID="RELS-EXT1.0" STATUS="A">
+			<METS:mdWrap LABEL="RELS-EXT - RDF formatted relationship metadata" MDTYPE="OTHER" MIMETYPE="text/xml">
+				<METS:xmlData>
+					<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+						<rdf:Description rdf:about="info:fedora/demo:21">
+							<rel:hasFormalContentModel rdf:resource="info:fedora/demo:FO_TO_PDFDOC"/>
+						</rdf:Description>
+					</rdf:RDF>				
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>	
 </METS:mets>

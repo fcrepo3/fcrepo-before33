@@ -59,32 +59,4 @@
 			</METS:fileGrp>
 		</METS:fileGrp>
 	</METS:fileSec>
-	<!---*******************************************************************************************************************************************-->
-	<!--- FEDORA DATASTREAM BINDING MAPS  -->
-	<!--  In Fedora the METS structure maps are associated with the DISSEMINATOR (see METS:behaviorSec).-->
-	<!---*******************************************************************************************************************************************-->
-	<!-- DATASTREAM BINDING MAP FOR THE FEDORA BOOTSTRAP MECHANISM (An internal Fedora service) -->
-	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
-		<METS:div TYPE="fedora-system:2" LABEL="Datastream Binding Map for Fedora Bootstrap Mechanism">
-			<METS:div TYPE="BDEF-METHODMAP" LABEL="Abstract behavior definition for UVA Simple Image in Fedora Method Map format">
-				<METS:fptr FILEID="METHODMAP"/>
-			</METS:div>
-			<METS:div TYPE="BDEF-GUIDE" LABEL="The Official Guide to the UVA Simple Image Behavior Definition">
-				<METS:fptr FILEID="DS1"/>
-			</METS:div>
-		</METS:div>
-	</METS:structMap>
-	<!---*******************************************************************************************************************************************-->
-	<!--- DISSEMINATORS-->
-	<!---*******************************************************************************************************************************************-->
-	<!--- THE BOOTSTRAP  DISSEMINATOR -->
-	<!---*******************************************************************************************************************************************-->
-	<!--- The Disseminator subscribes to the Fedora Bootstrap Behavior Definition.  It uses the Fedora Bootstrap Behavior Mechanism to run the behaviors. -->
-	<!--  The Bootstrap behaviors enable a client to get disseminations of the contents of this Behavior Defintion Object.   -->
-	<METS:behaviorSec ID="DISS1" STATUS="A">
-		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="fedora-system:1" LABEL="Bootstrap Behaviors">
-			<METS:interfaceMD LABEL="Bootstrap Behavior Definition" LOCTYPE="URN" xlink:href="fedora-system:1"/>
-			<METS:serviceBindMD LABEL="Bootstrap Behavior Mechanism" LOCTYPE="URN" xlink:href="fedora-system:2"/>
-		</METS:serviceBinding>
-	</METS:behaviorSec>
 </METS:mets>
