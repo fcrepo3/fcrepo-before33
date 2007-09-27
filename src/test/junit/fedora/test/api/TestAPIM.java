@@ -699,7 +699,7 @@ public class TestAPIM extends FedoraServerTestCase {
                         "text/xml", "A", "TEI_SOURCE1.0", true, "X", 901, new String[] {});
         
         checkDatastream(dsArray, "RELS-EXT", null, "Relationships", null,
-                        "text/xml", "A", "RELS-EXT.2", false, "X", 393, new String[] {});
+                        "text/xml", "A", "RELS-EXT1.0", false, "X", 393, new String[] {});
         
         // test getting all datastreams for object demo:26 specifying null for state
         dsArray = apim.getDatastreams("demo:26", "9999-01-01T00:00:00.000Z", null);
@@ -717,7 +717,7 @@ public class TestAPIM extends FedoraServerTestCase {
                         "text/xml", "A", "TEI_SOURCE1.0", true, "X", 901, new String[] {});
         
         checkDatastream(dsArray, "RELS-EXT", null, "Relationships", null,
-                        "text/xml", "A", "RELS-EXT.2", false, "X", 393, new String[] {});
+                        "text/xml", "A", "RELS-EXT1.0", false, "X", 393, new String[] {});
         
         // (8) test getDatastreamHistory
         System.out.println("Running TestAPIM.testGetDatastreamHistory...");
