@@ -39,7 +39,7 @@ to run all unit tests in the fedora.server.journal package:
 Running System Tests
 ====================
 The system tests consist of functional "black box" tests to be
-executed against running Fedora server.  These tests are divided
+executed against a running Fedora server.  These tests are divided
 into several top-level suites, where each suite is intended to
 be run with the Fedora server configured in a specific way:
 
