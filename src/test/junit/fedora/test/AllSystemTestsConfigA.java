@@ -5,7 +5,9 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	fedora.test.AllCommonSystemTests.class
+	fedora.test.AllCommonSystemTests.class,
+	fedora.test.api.TestAPIAConfigA.class,
+	fedora.test.api.TestAPIALiteConfigA.class
 })
 
 public class AllSystemTestsConfigA {
@@ -17,6 +19,8 @@ public class AllSystemTestsConfigA {
                 new junit.framework.TestSuite(AllSystemTestsConfigA.class.getName());
    
         suite.addTest(fedora.test.AllCommonSystemTests.suite());
+        suite.addTest(fedora.test.api.TestAPIAConfigA.suite());
+        suite.addTest(fedora.test.api.TestAPIALiteConfigA.suite());
 
         return suite;
     }

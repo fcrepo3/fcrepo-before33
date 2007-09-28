@@ -102,36 +102,6 @@ public class TestAPIA extends FedoraServerTestCase {
 		diss = apia.getDissemination("demo:11", "fedora-system:3", "viewDublinCore", new Property[0], null);
 		assertEquals(diss.getMIMEType(),"text/html");
 		assertTrue(diss.getStream().length > 0);
-    	
-		// test dissemination with E datastream as input to a remote bmech service (MrSID)
-        diss = apia.getDissemination("demo:11", "demo:8", "getThumbnail", new Property[0], null);
-		assertEquals(diss.getMIMEType(),"image/jpeg");
-		assertTrue(diss.getStream().length > 0);
-		
-		// test dissemination using remote bmech service (MrSID) with user input parms		
-		Property[] parms = new Property[2];
-		Property p = new Property();
-		p.setName("ZOOM");
-		p.setValue("no");
-		parms[0] = p;
-		Property p2 = new Property();
-		p2.setName("SIZE");
-		p2.setValue("small");
-		parms[1] = p2;
-		diss = apia.getDissemination("demo:11", "demo:8", "getImage", parms, null);
-		assertEquals(diss.getMIMEType(),"image/jpeg");
-		assertTrue(diss.getStream().length > 0);
-		
-		// test chained dissemination using local bmech services
-		// The object contains an E datastream that is a dissemination of the local SAXON service.
-		// This datastream is input to another dissemination that uses the local FOP service.
-        // NOTE: This only works when API-A Authentication is off
-        //       and has therefore been commented out until we have
-        //       a way to run a test suite for AuthN on and off.
-		//diss = apia.getDissemination("demo:26", "demo:19", "getPDF", new Property[0], null);
-		//assertEquals(diss.getMIMEType(),"application/pdf");
-		//assertTrue(diss.getStream().length > 0);
-  
     }
 	
 	public void testObjectHistory() throws Exception {

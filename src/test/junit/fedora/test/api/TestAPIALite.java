@@ -78,24 +78,6 @@ public class TestAPIALite extends FedoraServerTestCase {
 		// test dissemination of the Default Disseminator
     	HttpInputStream his = client.get("/get/demo:11/fedora-system:3/viewDublinCore", true);
     	assertEquals(his.getContentType(),"text/html");
-    	
-		// test dissemination with E datastream as input to a remote bmech service (MrSID)
-    	his = client.get("/get/demo:11/demo:8/getThumbnail", true);
-    	assertEquals(his.getContentType(),"image/jpeg");
-    	
-		// test dissemination using remote bmech service (MrSID) with user input parms
-    	his = client.get("/get/demo:11/demo:8/getImage?ZOOM=no&SIZE=small", true);
-    	assertEquals(his.getContentType(),"image/jpeg");
-		
-		// test chained dissemination using local bmech services
-		// The object contains an E datastream that is a dissemination of the local SAXON service.
-		// This datastream is input to another dissemination that uses the local FOP service.
-        // NOTE: This only works when API-A Authentication is off
-        //       and has therefore been commented out until we have
-        //       a way to run a test suite for AuthN on and off.
-    	//his = client.get("/get/demo:26/demo:19/getPDF", false);
-    	//assertEquals(his.getContentType(),"application/pdf");
-    	
     	his.close();
     }
     
