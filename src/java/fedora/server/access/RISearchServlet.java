@@ -42,18 +42,20 @@ public class RISearchServlet extends TrippiServlet {
     }
     
     public TriplestoreWriter getWriter() throws ServletException {
-        TriplestoreWriter writer = null;
+        ResourceIndex writer = null;
         try {
             Server server = Server.getInstance(new File(Constants.FEDORA_HOME), false);
-            writer = (TriplestoreWriter) server.getModule("fedora.server.resourceIndex.ResourceIndex");
+            writer = (ResourceIndex) server.getModule("fedora.server.resourceIndex.ResourceIndex");
             if (m_authorization == null) {
                 m_authorization = (Authorization) server.getModule("fedora.server.security.Authorization");
             }
         } catch (Exception e) {
             throw new ServletException("Error initting RISearchServlet.", e);
         } 
-        if (writer == null) {
-            throw new ServletException("The Resource Index is not loaded.");
+        if (writer == null
+                || writer.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
+            throw new ServletException("The Resource Index Module is not "
+                    + "enabled.");
         } else {
             return writer;
         }

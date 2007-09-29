@@ -15,6 +15,7 @@ import static fedora.test.api.TestHTTPStatusCodes.GET_OBJ_HISTORY_PATH;
 import static fedora.test.api.TestHTTPStatusCodes.GET_OBJ_PROFILE_PATH;
 import static fedora.test.api.TestHTTPStatusCodes.LIST_DATASTREAMS_PATH;
 import static fedora.test.api.TestHTTPStatusCodes.LIST_METHODS_PATH;
+import static fedora.test.api.TestHTTPStatusCodes.RI_SEARCH_PATH;
 import static fedora.test.api.TestHTTPStatusCodes.checkBadAuthN;
 import static fedora.test.api.TestHTTPStatusCodes.checkBadAuthZ;
 import static fedora.test.api.TestHTTPStatusCodes.checkOK;
@@ -26,8 +27,6 @@ import static fedora.test.api.TestHTTPStatusCodes.checkOK;
  */
 public class TestHTTPStatusCodesConfigB
         extends FedoraServerTestCase {
-
-    public static final String RI_SEARCH_PATH = "/risearch?type=triples&lang=spo&format=N-Triples&limit=&dt=on&stream=on&query=%3Cinfo%3Afedora%2Fdemo%3ASmileyStuff%3E+*+*";
 
     public static Test suite() {
         TestSuite suite = new TestSuite(
