@@ -75,6 +75,8 @@ public class TestHTTPStatusCodes
     public static final String FIND_OBJECTS_PATH = "/search?pid=true&terms=&query=&maxResults=20&xml=true";
     public static final String FIND_OBJECTS_BADREQ_PATH = "/search?pid=true&terms=&query=&maxResults=unparsable&xml=true";
 
+    public static final String RI_SEARCH_PATH = "/risearch?type=triples&lang=spo&format=N-Triples&limit=&dt=on&stream=on&query=%3Cinfo%3Afedora%2Fdemo%3ASmileyStuff%3E+*+*";
+
     private static FedoraClient CLIENT_VALID_USER_VALID_PASS;
     private static FedoraClient CLIENT_VALID_USER_VALID_PASS_UNAUTHORIZED;
     private static FedoraClient CLIENT_VALID_USER_BOGUS_PASS;
@@ -98,6 +100,12 @@ public class TestHTTPStatusCodes
         checkGetCode(getClient(true, true, true), requestPath,
                 "Expected HTTP 200 (OK) response for authenticated, "
                 + "authorized request", 200);
+    }
+
+    public static void checkError(String requestPath) throws Exception {
+        checkGetCode(getClient(true, true, true), requestPath,
+                "Expected HTTP 500 (Internal Server Error) response for "
+                + "authenticated, authorized request", 500);
     }
 
     public static void checkBadAuthN(String requestPath) throws Exception {

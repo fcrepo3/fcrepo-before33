@@ -7,7 +7,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 	fedora.test.AllCommonSystemTests.class,
 	fedora.test.api.TestAPIAConfigA.class,
-	fedora.test.api.TestAPIALiteConfigA.class
+	fedora.test.api.TestAPIALiteConfigA.class,
+	fedora.test.api.TestHTTPStatusCodesConfigA.class
 })
 
 public class AllSystemTestsConfigA {
@@ -21,6 +22,7 @@ public class AllSystemTestsConfigA {
         suite.addTest(fedora.test.AllCommonSystemTests.suite());
         suite.addTest(fedora.test.api.TestAPIAConfigA.suite());
         suite.addTest(fedora.test.api.TestAPIALiteConfigA.suite());
+        suite.addTest(fedora.test.api.TestHTTPStatusCodesConfigA.suite());
 
         return suite;
     }
