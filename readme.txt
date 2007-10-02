@@ -62,8 +62,8 @@ be run with the Fedora server configured in a specific way:
     Be sure to provide your specific hostname (and not just 
     "localhost") at install time.
 
-To run any of these tests, make sure the server has been started
-and that $FEDORA_HOME points to the correct directory.
+To run any of these tests, make sure the server has been 
+started[*] and that $FEDORA_HOME points to the correct directory.
 Then enter:
 
   ant junit -Dtest=fedora.server.test.AllSystemTestsConfigB
@@ -73,3 +73,11 @@ FOXML format.  To run the same tests using the demo objects
 in METS format, add the following to the line above:
 
   -Ddemo.format=mets
+
+[*] Normally, no additional setup is required when testing a
+    Fedora server instance at localhost:8080.  However, if
+    your test host is on a public IP, you *may* need to manually
+    edit the deny-apim-if-not-localhost.xml policy before
+    testing.  In addition, if you're not testing on
+    localhost:8080, you should run the fedora-convert-demos 
+    script before starting the tests.
