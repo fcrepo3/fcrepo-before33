@@ -175,25 +175,4 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-		<!-- Note: The value for createdDate is assigned dynamically by the Fedora server at ingest time if the CREATED attribute is not        -->
-		<!-- present on the component in the object being ingested. Therefore, it is recommended that this attribute be omitted from the          -->
-		<!-- object template so this date will be assigned dynamically by the Fedora server. If included in the template file, this value will be    -->
-		<!-- carried through to the built objects and will result in the specified static date being used at ingest time by the Fedora server          -->
-		<!-- rather than dynamically assigning createdDate at ingest time.                                                                                                                   -->
-		<!--                                                                                                                                                                                                                             -->
-		<!-- Uncomment the the following line if you want the DISS1 disseminator for all abjects built with this template to retain the specified         -->
-		<!-- createdDate after ingest.                                                                                                                                                                                -->
-		<!-- <foxml:disseminatorVersion CREATED="2005-03-15T12:57:07.241Z" BMECH_SERVICE_PID="demo:2" ID="DISS1.0" LABEL="UVA Std Image Behaviors"> -->
-    <!--
-	<foxml:disseminator BDEF_CONTRACT_PID="demo:1" ID="DISS1" STATE="A" VERSIONABLE="true">
-		<foxml:disseminatorVersion BMECH_SERVICE_PID="demo:2" ID="DISS1.0" LABEL="UVA Std Image Behaviors">
-			<foxml:serviceInputMap>
-				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="THUMBRES_IMG" LABEL="THUMBNAIL res jpg image" ORDER="0"/>
-				<foxml:datastreamBinding DATASTREAM_ID="DS2" KEY="MEDRES_IMG" LABEL="MEDIUM res jpg image" ORDER="0"/>
-				<foxml:datastreamBinding DATASTREAM_ID="DS3" KEY="HIGHRES_IMG" LABEL="HIGH res jpg image" ORDER="0"/>
-				<foxml:datastreamBinding DATASTREAM_ID="DS4" KEY="VERYHIGHRES_IMG" LABEL="VERYHIGH jpg image" ORDER="0"/>
-			</foxml:serviceInputMap>
-		</foxml:disseminatorVersion>
-	</foxml:disseminator>
-    -->
 </foxml:digitalObject>

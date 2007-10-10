@@ -16,7 +16,12 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.PrintStream;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JInternalFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.text.JTextComponent;
 
 import fedora.common.Constants;
@@ -29,7 +34,7 @@ import fedora.server.utilities.StreamUtility;
  *
  * <p><b>Title:</b> BatchModifyValidate.java</p>
  * <p><b>Description:</b> A GUI interface for entering info required to validate
- * a file of modify directives against the batchModify.xsd XML Schema. The
+ * a file of modify directives against the batchModify-1.1.xsd XML Schema. The
  * batch modify utility has validation turned on so pre-validation is not
  * necessary. It is provided as a means to pre-validate a modify directives
  * file prior to running  it through the batch modify utility.

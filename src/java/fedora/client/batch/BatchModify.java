@@ -16,7 +16,12 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.PrintStream;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JInternalFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.text.JTextComponent;
 
 import fedora.common.Constants;

@@ -10,11 +10,8 @@ import fedora.client.batch.types.Datastream;
 import fedora.client.batch.types.DigitalObject;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.access.FedoraAPIA;
-import fedora.client.batch.types.Disseminator;
 import fedora.client.FedoraClient;
 import fedora.client.utility.ingest.AutoIngestor;
-//import fedora.server.types.gen.DatastreamBinding;
-//import fedora.server.types.gen.DatastreamBindingMap;
 import fedora.server.utilities.StreamUtility;
 
 import java.io.ByteArrayInputStream;
@@ -27,7 +24,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Iterator;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -106,17 +102,8 @@ public class BatchModifyParser extends DefaultHandler
     private boolean setDatastreamState = false;
     private boolean setDatastreamVersionable = false;
     private boolean compareDatastreamChecksum = false;
-    private boolean addDisseminator = false;
-    private boolean purgeDisseminator = false;
-    private boolean modifyDisseminator = false;
-    private boolean setDisseminatorState = false;
     private Datastream m_ds;
-    private Disseminator m_diss;
     private DigitalObject m_obj;
-//    private DatastreamBindingMap m_dsBindingMap;
-//    private DatastreamBinding m_dsBinding;
-//    private DatastreamBinding[] m_origBinding;
-//    private HashMap<String, DatastreamBinding> m_dsBindings;
 
     /**
      * <p>Constructor allows this class to initiate the parsing.</p>
@@ -480,11 +467,6 @@ public class BatchModifyParser extends DefaultHandler
                     } else {
                         m_ds.dsLabel = dsOrig.getLabel();
                     }
-//                    if ( attrs.getValue("dsState") != null) {
-//                        m_ds.dsState = attrs.getValue("dsState");
-//                    } else {
-//                        m_ds.dsState = dsOrig.getState();
-//                    }
                     if ( attrs.getValue("dsLocation") != null) {
                         m_ds.dsLocation = attrs.getValue("dsLocation");
                     } else {
@@ -499,12 +481,7 @@ public class BatchModifyParser extends DefaultHandler
                         m_ds.force = new Boolean(attrs.getValue("force")).booleanValue();
                     } else {
                         m_ds.force = false;
-                    }                    
-//                    if ( attrs.getValue("versionable") != null) {
-//                        m_ds.versionable = new Boolean(attrs.getValue("versionable")).booleanValue();
-//                    } else {
-//                        m_ds.versionable = dsOrig.isVersionable();
-//                    }     
+                    }                       
                     if ( attrs.getValue("altIDs") != null) {
                         m_ds.altIDs = attrs.getValue("altIDs").split(" ");
                     } else {
@@ -598,255 +575,6 @@ public class BatchModifyParser extends DefaultHandler
             m_dsPrefixes=new ArrayList<String>();
             m_firstInlineXMLElement=true;
         }
-//        else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastreamBinding")) {
-//
-//            try {
-//                m_dsBindingMap = new DatastreamBindingMap();
-//                m_dsBinding = new DatastreamBinding();
-//
-//                // Get require attributes
-//                m_dsBinding.setBindKeyName(attrs.getValue("dsBindKeyName"));
-//                m_dsBinding.setDatastreamID(attrs.getValue("dsID"));
-//
-//                // Get optional attributes. Missing or empty attribute for
-//                // binding label indicates that a label is to be generated
-//                // based on the label for the datastream. Missing or empty
-//                // attribute for sequence number sets sequence number to
-//                // deault value of zero.
-//                if (attrs.getValue("dsBindLabel") != null && !attrs.getValue("dsBindLabel").equals("")) {
-//                    m_dsBinding.setBindLabel(attrs.getValue("dsBindLabel"));
-//                } else {
-//                    try {
-//                        fedora.server.types.gen.Datastream ds = new fedora.server.types.gen.Datastream();
-//                        ds = APIM.getDatastream(m_diss.parentPID, m_dsBinding.getDatastreamID(), null);
-//                        m_dsBinding.setBindLabel("Binding for "+ds.getLabel());
-//                    } catch (Exception e) {
-//                        failedCount++;
-//                        if (addDisseminator) {
-//                            addDisseminator = false;
-//                        		logFailedDirective(m_diss.parentPID, "addDisseminator", null,
-//                        		        "Datastream ID: "+m_dsBinding.getDatastreamID()
-//                        		        + " does not exist in the object: "+m_diss.parentPID
-//                        		        + " .\n    Unable to add Datastream Binding for this datastream");
-//                        }
-//                        if (modifyDisseminator) {
-//                            modifyDisseminator = false;
-//                        		logFailedDirective(m_diss.parentPID, "modifyDisseminator", null,
-//                        		        "Datastream ID: "+m_dsBinding.getDatastreamID()
-//                        		        + " does not exist in the object: "+m_diss.parentPID
-//                        		        + " .\n    Unable to add Datastream Binding for this datastream");
-//                        }
-//                        return;
-//                    }
-//                }
-//                if (attrs.getValue("seqNo") != null && !attrs.getValue("seqNo").equals("")) {
-//                    m_dsBinding.setSeqNo(attrs.getValue("seqNo"));
-//                } else {
-//                    m_dsBinding.setSeqNo("0");
-//                }
-//
-//                if(addDisseminator) {
-//                    
-//                    // If adding new disseminator, just go ahead and add binding
-//                    m_dsBindings.put(m_dsBinding.getDatastreamID(), m_dsBinding);
-//                    
-//                } else {
-//
-//                    // If modifying disseminator, check that specified binding key name matches that in original disseminator
-//                    boolean bindKeyExists = false;
-//                    for (int i=0; i<m_origBinding.length; i++) {
-//                        if (m_origBinding[i].getBindKeyName().equalsIgnoreCase(m_dsBinding.getBindKeyName())) {
-//                            bindKeyExists = true;
-//                        }
-//                    }
-//                    
-//                    // Add datastream binding to hash of bindings
-//                    if (bindKeyExists) {
-//                        m_dsBindings.put(m_dsBinding.getDatastreamID(), m_dsBinding);
-//                    } else {
-//                        failedCount++;
-//                        modifyDisseminator = false;
-//                        logFailedDirective(m_diss.parentPID, "modifyDisseminator",
-//                                null, "Specified datastream Binding Key Name: "
-//                                + m_dsBinding.getBindKeyName()
-//                                +" does not exist in disseminator: "+m_diss.dissID
-//                                +"/n    Unable to add datastream binding for datastream: "
-//                                +m_dsBinding.getDatastreamID()+" .");
-//                    }                    
-//                }
-//
-//            } catch (Exception e) {
-//                failedCount++;
-//                if(addDisseminator) {
-//                    addDisseminator = false;
-//                    logFailedDirective(m_diss.parentPID, "addDisseminator", e, "");
-//                }
-//                if(modifyDisseminator) {
-//                    modifyDisseminator = false;
-//                    logFailedDirective(m_diss.parentPID, "modifyDisseminator", e, "");
-//                }
-//            }
-//        } 
-//        else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("removeDatastreamBinding")) {
-//
-//            try {
-//                m_dsBindingMap = new DatastreamBindingMap();
-//                m_dsBinding = new DatastreamBinding();
-//
-//                // Get required attributes
-//                m_dsBinding.setDatastreamID(attrs.getValue("dsID"));
-//
-//                // Remove datastream binding if it exists; error otherwise
-//                if(m_dsBindings.containsKey(m_dsBinding.getDatastreamID())) {
-//                    m_dsBindings.remove(m_dsBinding.getDatastreamID());
-//                } else {
-//                    failedCount++;
-//                    modifyDisseminator = false;
-//                    logFailedDirective(m_diss.parentPID, "modifyDisseminator", null, "No binding found "
-//                            + "for datastreamID: "+m_dsBinding.getDatastreamID()
-//                            +" .\n    Datastream "
-//                            + "binding left unchanged.");
-//                }
-//            } catch (Exception e) {
-//                failedCount++;
-//                modifyDisseminator = false;
-//                logFailedDirective(m_diss.parentPID, "modifyDisseminator", e, "");
-//            }
-//        } 
-//        else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDisseminator")) {
-//
-//            try {
-//                addDisseminator = false;
-//                m_dsBindings = new HashMap<String, DatastreamBinding>();
-//                m_diss = new Disseminator();
-//
-//                // Get required attributes
-//                m_diss.parentPID = attrs.getValue("pid");
-//                m_diss.bDefID = attrs.getValue("bDefPid");
-//                m_diss.bMechID = attrs.getValue("bMechPid");
-//                m_diss.dissLabel = attrs.getValue("dissLabel");
-//                m_diss.logMessage = attrs.getValue("logMessage");
-//                m_diss.dissState  = attrs.getValue("dissState");
-//
-//                // Get original labels for bDef and bMech object for this disseminator
-//                Map m_bDefLabels = new HashMap();
-//                Map m_bMechLabels = new HashMap();
-//                m_bDefLabels = getBDefLabelMap();
-//                m_bMechLabels = getBMechLabelMap(m_diss.bDefID);
-//
-//                addDisseminator = true;
-//
-//            } catch (Exception e) {
-//                failedCount++;
-//                logFailedDirective(m_diss.parentPID, localName, e, "");
-//            }
-//        } 
-//        else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("modifyDisseminator")) {
-//
-//            try {
-//                modifyDisseminator = false;
-//                m_dsBindings = new HashMap<String, DatastreamBinding>();
-//                m_diss = new Disseminator();
-//                fedora.server.types.gen.Disseminator origDiss = new fedora.server.types.gen.Disseminator();
-//
-//                // Get require attributes
-//                m_diss.parentPID = attrs.getValue("pid");
-//                m_diss.bMechID = attrs.getValue("bMechPid");
-//                m_diss.dissID = attrs.getValue("dissID");    
-//                m_diss.logMessage = attrs.getValue("logMessage");
-//
-//                try {
-//                    origDiss = APIM.getDisseminator(m_diss.parentPID, m_diss.dissID, null);
-//                } catch (Exception e) {
-//                    failedCount++;
-//                    logFailedDirective(m_diss.parentPID, localName, null,
-//                            "Disseminator ID: "+m_diss.dissID+" does not exist in"
-//                            + " the object: "+m_diss.parentPID+" .\n    Unable to modify"
-//                            + " this disseminator.");
-//                    return;
-//
-//                }
-//                m_origBinding = new DatastreamBinding[origDiss.getDsBindMap().getDsBindings().length];
-//                m_origBinding = origDiss.getDsBindMap().getDsBindings();
-//
-//                // Add any existing dsBindings for this disseminator to hash of bindings
-//                for (int i=0; i<m_origBinding.length; i++) {
-//                    m_dsBindings.put(m_origBinding[i].getDatastreamID(),m_origBinding[i]);
-//                }
-//
-//                // Get optional attributes. Missing or empty attributes indicate
-//                // that these values are to remain unchanged so retrieve original
-//                // values from disseminator.
-//                if (attrs.getValue("dissLabel") != null) {
-//                    m_diss.dissLabel = attrs.getValue("dissLabel");
-//                } else {
-//                    m_diss.dissLabel = origDiss.getLabel();
-//                }
-//                if ( attrs.getValue("dissState") != null) {
-//                    m_diss.dissState = attrs.getValue("dissState");
-//                } else {
-//                    m_diss.dissState = origDiss.getState();
-//                }
-//                if ( attrs.getValue("force") != null) {
-//                    m_diss.force = new Boolean(attrs.getValue("force")).booleanValue();
-//                } else {
-//                    m_diss.force = false;
-//                }                              
-//
-//                modifyDisseminator = true;
-//
-//            } catch (Exception e) {
-//                failedCount++;
-//                logFailedDirective(m_diss.parentPID, localName, e, "");
-//            }
-//        } 
-//        else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("purgeDisseminator")) {
-//
-//            try {
-//                purgeDisseminator = false;
-//                m_diss = new Disseminator();
-//                m_diss.logMessage = attrs.getValue("logMessage");
-//
-//                // Get require attributes
-//                m_diss.parentPID = attrs.getValue("pid");
-//                m_diss.dissID = attrs.getValue("dissID");
-//
-//                // Get optional attributes. If asOfDate attribute ismissing
-//                // or empty its value will be null indicates that all versions
-//                // of the disseminator are to be removed.
-//                if (attrs.getValue("asOfDate")!=null && !attrs.getValue("asOfDate").equals(""))
-//                    m_diss.asOfDate = attrs.getValue("asOfDate");
-//                if ( attrs.getValue("force") != null && !attrs.getValue("force").equals("")) {
-//                    m_diss.force = new Boolean(attrs.getValue("force")).booleanValue();
-//                } else {
-//                    m_diss.force = false;
-//                }     
-//
-//                purgeDisseminator = true;
-//
-//            } catch (Exception e) {
-//                failedCount++;
-//                logFailedDirective(m_diss.parentPID, localName, e, "");
-//            }
-//        } 
-//        else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("setDisseminatorState")) {
-//
-//            try {
-//                setDisseminatorState = false;
-//                m_diss = new Disseminator();
-//
-//                // Get required attributes
-//                m_diss.parentPID = attrs.getValue("pid");
-//                m_diss.dissID = attrs.getValue("dissID");
-//                m_diss.dissState = attrs.getValue("dissState");
-//                m_diss.logMessage = attrs.getValue("logMessage");
-//                setDisseminatorState = true;
-//
-//            } catch (Exception e) {
-//                failedCount++;
-//                logFailedDirective(m_diss.parentPID, localName, e, "");
-//            }
-//        } 
         else {
             if (m_inXMLMetadata) {
                 String prefix=(String) nsPrefixMap.get(namespaceURI);
@@ -1269,152 +997,6 @@ public class BatchModifyParser extends DefaultHandler
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("removeDatastreamBinding")) {
 
         } 
-//        else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDisseminator")) {
-//
-//            try {
-//
-//                // Process addDisseminator only if no previous errors encountered
-//                if (addDisseminator) {
-//                    String dissID = null;
-//                    Iterator iter = m_dsBindings.values().iterator();
-//                    DatastreamBinding[] bindings = new DatastreamBinding[m_dsBindings.size()];
-//                    int i = 0;
-//                    while (iter.hasNext()) {
-//                        bindings[i] = (DatastreamBinding) iter.next();
-//                        i++;
-//                    }
-//
-//                    m_dsBindingMap.setDsBindMapID("hopefully this is set by the server!"); // unnecessary
-//                    m_dsBindingMap.setDsBindMechanismPID(m_diss.bMechID);
-//                    m_dsBindingMap.setDsBindMapLabel("Binding map for bMech object: "
-//                            + m_diss.bMechID);
-//                    m_dsBindingMap.setState("A");  // unnecessary...
-//                    m_dsBindingMap.setDsBindings(bindings);
-//                    dissID = APIM.addDisseminator(m_diss.parentPID, m_diss.bDefID,
-//                            m_diss.bMechID, m_diss.dissLabel,
-//                            m_dsBindingMap, m_diss.dissState,
-//                            m_diss.logMessage);
-//                    if (dissID!=null) {
-//                        succeededCount++;
-//                        logSucceededDirective(m_diss.parentPID, localName,
-//                            "disseminatorID: " + dissID + " Created.");
-//                    } else {
-//                        failedCount++;
-//                        logFailedDirective(m_diss.parentPID, localName, null,
-//                            "Unable to create disseminator...");
-//                    }
-//                }
-//
-//            } catch (Exception e) {
-//                if(addDisseminator) {
-//                    failedCount++;
-//                    logFailedDirective(m_diss.parentPID, localName, e, "");
-//                    addDisseminator = false;
-//                }
-//            } finally {
-//                addDisseminator = false;
-//            }
-//        } 
-//        else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("modifyDisseminator")) {
-//
-//            try {
-//
-//                // Process modifyDisseminator only if no previous errors encountered
-//                if (modifyDisseminator) {
-//                    Iterator iter = m_dsBindings.values().iterator();
-//                    DatastreamBinding[] bindings = new DatastreamBinding[m_dsBindings.size()];
-//                    int i = 0;
-//                    while (iter.hasNext()) {
-//                        bindings[i] = (DatastreamBinding) iter.next();
-//                        i++;
-//                    }
-//
-//
-//                    m_dsBindingMap.setDsBindMapID("hopefully this is set by the server!"); // unnecessary
-//                    m_dsBindingMap.setDsBindMechanismPID(m_diss.bMechID);
-//                    m_dsBindingMap.setDsBindMapLabel("Binding map for bMech object: "
-//                            + m_diss.bMechID);
-//                    m_dsBindingMap.setState("A");  // unnecessary...
-//                    m_dsBindingMap.setDsBindings(bindings);
-//                    APIM.modifyDisseminator(m_diss.parentPID, m_diss.dissID,
-//                            m_diss.bMechID, m_diss.dissLabel, m_dsBindingMap,
-//                            m_diss.dissState, "ModifyDisseminator", m_diss.force);
-//                    succeededCount++;
-//                    logSucceededDirective(m_diss.parentPID, localName,
-//                        "disseminatorID: " + m_diss.dissID + " Modified.");
-//                }
-//
-//            } catch (Exception e)
-//            {
-//                if(modifyDisseminator) {
-//                    failedCount++;
-//                    logFailedDirective(m_diss.parentPID, localName, e, "");
-//                }
-//            } finally {
-//                modifyDisseminator = false;
-//            }
-//        } 
-//        else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("purgeDisseminator")) {
-//
-//            try {
-//
-//                // Process purgeDisseminator only if no previous errors encountered
-//                if (purgeDisseminator) {
-//                    String[] versionsPurged = null;
-//                    versionsPurged = APIM.purgeDisseminator(m_diss.parentPID,
-//                        m_diss.dissID, m_diss.asOfDate, m_diss.logMessage);
-//                    if (versionsPurged.length > 0) {
-//                        succeededCount++;
-//                        if (m_diss.asOfDate!= null) {
-//                            logSucceededDirective(m_diss.parentPID, localName,
-//                                "disseminatorID: " + m_diss.dissID
-//                                    + "\n    Purged all versions prior to: "
-//                                    + m_diss.asOfDate
-//                                    +"\n    Versions purged: " + versionsPurged.length);
-//                        } else {
-//                            logSucceededDirective(m_diss.parentPID, localName,
-//                                "disseminatorID: " + m_diss.dissID
-//                                    + "\n    Purged all versions. "
-//                                    +"\n    Versions purged: " + versionsPurged.length);
-//                        }
-//                    } else {
-//                        failedCount++;
-//                        logFailedDirective(m_diss.parentPID, localName, null,
-//                            "Unable to purge disseminator; verify disseminator ID and/or asOfDate");
-//                    }
-//                }
-//            } catch (Exception e) {
-//                if(purgeDisseminator) {
-//                    failedCount++;
-//                    logFailedDirective(m_diss.parentPID, localName, e, "");
-//                }
-//            } finally {
-//                purgeDisseminator = false;
-//            }
-//        } 
-//        else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("setDisseminatorState")) {
-//
-//            try {
-//
-//                // Process setDisseminatorState only if no previous errors encountered
-//                if (setDisseminatorState) {
-//                    APIM.setDisseminatorState(m_diss.parentPID, m_diss.dissID,
-//                        m_diss.dissState, "SetDisseminatorState");
-//                    succeededCount++;
-//                    logSucceededDirective(m_diss.parentPID, localName,
-//                        "disseminator: " + m_diss.dissID
-//                            + "\n    Set dissState: " + m_diss.dissState);
-//                }
-//
-//            } catch (Exception e) {
-//                if (setDisseminatorState) {
-//                    failedCount++;
-//                    logFailedDirective(m_diss.parentPID, localName, e, null);
-//                }
-//            } finally {
-//                setDisseminatorState = false;
-//            }
-//        }
     }
 
     /**

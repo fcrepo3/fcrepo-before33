@@ -14,8 +14,6 @@ import java.io.PrintStream;
 import java.net.MalformedURLException;
 import javax.xml.rpc.ServiceException;
 
-//import fedora.client.APIMStubFactory;
-//import fedora.client.APIAStubFactory;
 import fedora.client.FedoraClient;
 import fedora.client.batch.BatchModifyParser;
 import fedora.client.Uploader;

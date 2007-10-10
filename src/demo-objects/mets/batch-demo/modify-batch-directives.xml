@@ -16,7 +16,7 @@
 <!-- file. If the demo objects are not loaded, the last several directives  -->
 <!-- involving disseminators that use the demo objects will fail.           -->
 <!-- ********************************************************************** -->
-<fbm:batchModify xmlns:fbm="http://www.fedora.info/definitions/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.fedora.info/definitions/ http://www.fedora.info/definitions/1/0/api/batchModify.xsd">
+<fbm:batchModify xmlns:fbm="http://www.fedora.info/definitions/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.fedora.info/definitions/ http://www.fedora.info/definitions/1/0/api/batchModify-1.1.xsd">
 
 	<!-- ****************************************************************** -->
 	<!-- Add a new empty object to the repository that has no datastreams   -->
