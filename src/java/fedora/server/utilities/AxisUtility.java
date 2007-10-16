@@ -39,8 +39,8 @@ public abstract class AxisUtility {
      * URI for intermediaries, http://schemas.xmlsoap.org/soap/actor/next,
      * and leaves other URIs up to the application.  Soap 1.2 provides
      * (see http://www.w3.org/TR/soap12-part1/#soaproles) three special URIs --
-     * one of which is for ultimate recievers, which is the category Fedora
-     * falls into.  http://www.w3.org/2002/06/soap-envelope/role/ultimateReceiver
+     * one of which is for ultimate receivers, which is the category Fedora
+     * falls into.  http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver
      * is the URI v1.2 provides.
      */
     public static String SOAP_ULTIMATE_RECEIVER="http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver";
