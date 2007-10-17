@@ -152,11 +152,18 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
         purgeDSParms1[2] = dateOfFirstSuccess;
         purgeDSParms1[3] = dateOfFourthSuccess;
         // testuser2 does not have permission to purge a datastream, so this should fail
-      //  invokeAPIMFailure(testuser2, "testuser2", "purgeDatastream", purgeDSArgs, purgeDSParms1);
+        //  invokeAPIMFailure(testuser2, "testuser2", "purgeDatastream", purgeDSArgs, purgeDSParms1);
+
+        //APIM access by user without access- should fail
+        // testuserroleA does have permission to to purge a datastream, but only if
+        // datastream is in Deleted(D) state. Datastream here is still in Active(A) state
+        // so this should fail
+        invokeAPIMFailure(testuserroleA, "testuserroleA", "purgeDatastream", purgeDSArgs, purgeDSParms1);        
         
         //APIM access by user with access- should succeed
-        // testuser1 does not have permission to modify a datastream, so this should fail
-        String purged[] = invokeAPIMSuccessStringArray(testuserroleA, "testuserroleA", "purgeDatastream", purgeDSArgs, purgeDSParms1);
+        // fedoraAdmin does have permission to purge a datastream regardless of the
+        // datastream state. Datastream here is in Acive(A) state so purge should still suceed.
+        String purged[] = invokeAPIMSuccessStringArray(admin, "admin", "purgeDatastream", purgeDSArgs, purgeDSParms1);
         System.out.println("    Checking number of versions purged.");
         assertEquals(purged.length, 2);
         System.out.println("    Checking dates of versions purged.");            
