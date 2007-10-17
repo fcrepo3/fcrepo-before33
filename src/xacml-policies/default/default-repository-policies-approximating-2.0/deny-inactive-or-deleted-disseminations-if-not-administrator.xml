@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         PolicyId="deny-inactive-or-deleted-disseminators-if-not-administrator"
         RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
-  <Description>deny any access to disseminators, which are either inactive or deleted,
+  <Description>deny any access to disseminators, which are either inactive(I) or deleted(D),
     unless subject has administrator role</Description>
   <Target>
     <Subjects>
@@ -12,14 +12,14 @@
     <Resources>     
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Inactive</AttributeValue>        
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">I</AttributeValue>        
           <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:disseminator:state" 
             DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
         </ResourceMatch>
       </Resource>
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Deleted</AttributeValue>        
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">D</AttributeValue>        
           <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:disseminator:state" 
             DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
         </ResourceMatch>
