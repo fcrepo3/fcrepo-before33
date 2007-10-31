@@ -946,12 +946,7 @@ public class DisseminationService
                                        String pass) throws GeneralException {
         LOG.debug("DisseminationService.get(" + url + ")");
         try {
-        	HttpInputStream response = null;
-        	if (user!=null) {
-        		response = s_http.get(url, true, user, pass);
-        	} else {
-        		response = s_http.get(url, true);
-        	}
+        	HttpInputStream response = s_http.get(url, true, user, pass);
             String mimeType = response.getResponseHeaderValue("Content-Type",
                                                               "text/plain");
             Property[] headerArray = toPropertyArray(

@@ -119,11 +119,11 @@ public class WebClient {
 		HttpClient client;
         GetMethod getMethod = new GetMethod(url);
         if (USER_AGENT != null) getMethod.setRequestHeader("User-Agent", USER_AGENT);
-		if (creds == null) {
-		    client = getHttpClient();
+		if (creds != null && creds.getUserName() != null &&	creds.getUserName().length() > 0) {
+			client = getHttpClient(url, creds);
+            getMethod.setDoAuthentication(true);		    
         } else {
-            client = getHttpClient(url, creds);
-            getMethod.setDoAuthentication(true);
+        	client = getHttpClient();
         }
 
 		HttpInputStream in = new HttpInputStream(client, getMethod, url);
