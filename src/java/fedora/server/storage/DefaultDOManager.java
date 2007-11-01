@@ -727,6 +727,7 @@ public class DefaultDOManager
 						if (ds.DSState==null || ds.DSState.equals("")) {
 							ds.DSState="A";
 						}
+                        ds.DSChecksumType = Datastream.validateChecksumType(ds.DSChecksumType);
 					}
 				}
 //				// SET DISSEMINATOR PROPERTIES...

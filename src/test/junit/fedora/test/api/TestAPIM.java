@@ -1,16 +1,20 @@
 package fedora.test.api;
 
 import java.io.UnsupportedEncodingException;
+import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.apache.axis.AxisFault;
 import org.apache.axis.types.NonNegativeInteger;
 import org.custommonkey.xmlunit.SimpleXpathEngine;
 
+import fedora.server.errors.GeneralException;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.Datastream;
 //import fedora.server.types.gen.DatastreamBinding;
@@ -544,6 +548,28 @@ public class TestAPIM extends FedoraServerTestCase {
         
         // (1) test addDatastream
         System.out.println("Running TestAPIM.testAddDatastream...");
+        // test adding M type datastream with unknown checksum type and no altIDs, should fail throwing exception
+        try 
+        {
+            String datastreamId = apim.addDatastream("demo:14", "NEWDS1", null, "A New M-type Datastream", true, "text/xml", "info:myFormatURI/Mtype/stuff#junk", "http://www.fedora.info/junit/datastream1.xml", "M", "A", "MD6", null, "adding new datastream");
+            // fail if datastream was added
+            Assert.fail();
+        }
+        catch (AxisFault af)
+        {
+            assertTrue(af.getFaultString().contains("Unknown checksum algorithm specified:"));
+        }
+        // test adding M type datastream with unimplemented checksum type and no altIDs, should fail throwing exception
+        try 
+        {
+            String datastreamId = apim.addDatastream("demo:14", "NEWDS1", null, "A New M-type Datastream", true, "text/xml", "info:myFormatURI/Mtype/stuff#junk", "http://www.fedora.info/junit/datastream1.xml", "M", "A", "TIGER", null, "adding new datastream");
+            // fail if datastream was added
+            Assert.fail();
+        }
+        catch (AxisFault af)
+        {
+            assertTrue(af.getFaultString().contains("Checksum algorithm not yet implemented:"));
+        }
         // test adding M type datastream
         String[] altIds = new String[1];
         altIds[0] = "Datastream 1 Alternate ID";
@@ -622,6 +648,26 @@ public class TestAPIM extends FedoraServerTestCase {
 
         // (4) test modifyDatastreamByValue for checksumming and compareDatastreamChecksum
         System.out.println("Running TestAPIM.compareDatastreamChecksum...");
+        try {
+            datastreamId = apim.modifyDatastreamByValue("demo:14", "NEWDS2", null, null, null, null, null, "MD6", null, "turned on checksumming", false);
+            // fail if datastream was modified
+            Assert.fail();
+        }
+        catch (AxisFault af)
+        {
+            assertTrue(af.getFaultString().contains("Unknown checksum algorithm specified:"));
+        }
+        // test adding M type datastream with unimplemented checksum type and no altIDs, should fail throwing exception
+        try 
+        {
+            datastreamId = apim.modifyDatastreamByValue("demo:14", "NEWDS2", null, null, null, null, null, "TIGER", null, "turned on checksumming", false);
+            // fail if datastream was modified
+            Assert.fail();
+        }
+        catch (AxisFault af)
+        {
+            assertTrue(af.getFaultString().contains("Checksum algorithm not yet implemented:"));
+        }
         datastreamId = apim.modifyDatastreamByValue("demo:14", "NEWDS2", null, null, null, null, null, "MD5", null, "turned on checksumming", false);
 
         // test that datastream has a checksum that compares correctly

@@ -361,6 +361,9 @@ public class DefaultManagement
 
         // empty MIME types are allowed.  assume they meant "" if they provide it as null.
         if (MIMEType == null) MIMEType = "";
+        
+        // empty altIDs are allowed.  assume they meant String[0] if they provide it as null.
+        if (altIDs == null) altIDs = new String[0];
 
         // If the datastream ID is not specified directly, see
         // if we can get it from the RecoveryContext
@@ -467,11 +470,8 @@ public class DefaultManagement
             ds.DSFormatURI=formatURI;
             ds.DatastreamAltIDs = altIDs;
             ds.DSMIME=MIMEType;
-            ds.DSChecksumType = checksumType;
-            if (checksumType == null)
-            {
-                ds.DSChecksumType = Datastream.getDefaultChecksumType();
-            }
+            ds.DSChecksumType = Datastream.validateChecksumType(checksumType);
+
             if (checksum != null && checksumType != null)
             {
                 String check = ds.getChecksum();
@@ -557,7 +557,11 @@ public class DefaultManagement
             if (formatURI == null) formatURI = orig.DSFormatURI;
             if (altIDs == null) altIDs = orig.DatastreamAltIDs;
             if (checksumType == null) checksumType = orig.DSChecksumType;
-           
+            else 
+            {
+                checksumType = Datastream.validateChecksumType(checksumType);
+            }
+
             // In cases where an empty attribute value is not allowed, then
             // NULL or EMPTY PARM means no change to ds attribute...
             if (dsLocation==null || dsLocation.equals("")) {
@@ -721,7 +725,10 @@ public class DefaultManagement
             if (formatURI == null) formatURI = orig.DSFormatURI;
             if (altIDs == null) altIDs = orig.DatastreamAltIDs;
             if (checksumType == null) checksumType = orig.DSChecksumType;
-            
+            else 
+            {
+                checksumType = Datastream.validateChecksumType(checksumType);
+            }
             // If "force" is false and the mime type changed, validate the
             // original datastream with respect to any disseminators it is
             // involved in, and keep a record of that information for later

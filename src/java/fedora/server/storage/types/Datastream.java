@@ -15,6 +15,7 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
+import fedora.server.errors.GeneralException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.utilities.StringUtility;
 
@@ -212,6 +213,38 @@ public class Datastream
       }
       return(checksum);      
   }
+  
+  public static String validateChecksumType(String checksumType) throws GeneralException
+  {
+      String csType = null;
+      if (checksumType == null || checksumType.equalsIgnoreCase("DEFAULT"))   
+      {
+          return Datastream.getDefaultChecksumType();
+      }
+      if (checksumType.equalsIgnoreCase("DISABLED"))  return("DISABLED");
+      if (checksumType.equalsIgnoreCase("MD5"))       csType = "MD5";
+      if (checksumType.equalsIgnoreCase("SHA-1"))     csType = "SHA-1";
+      if (checksumType.equalsIgnoreCase("SHA-256"))   csType = "SHA-256";
+      if (checksumType.equalsIgnoreCase("SHA-384"))   csType = "SHA-384";
+      if (checksumType.equalsIgnoreCase("SHA-512"))   csType = "SHA-512";
+      if (checksumType.equalsIgnoreCase("HAVAL"))     csType = "HAVAL";
+      if (checksumType.equalsIgnoreCase("TIGER"))     csType = "TIGER";
+      if (checksumType.equalsIgnoreCase("WHIRLPOOL")) csType = "WHIRLPOOL";    
+      if (csType == null)
+      {
+          throw new GeneralException("Unknown checksum algorithm specified: "+ checksumType);
+      }
+      try
+      {
+          MessageDigest md = MessageDigest.getInstance(csType);
+      }
+      catch (NoSuchAlgorithmException e)
+      {
+          throw new GeneralException("Checksum algorithm not yet implemented: "+ csType);
+      }
+      return(csType);
+  }
+
  
   // Get a complete copy of this datastream
   public Datastream copy() {
