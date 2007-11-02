@@ -272,7 +272,7 @@
                       fedora/swing/mdi/**"/>
     </target>
 	
-	<target name="compile-junit" depends="compile-server, compile-client, compile-util">
+	<target name="compile-junit" depends="compile-server, client-jar, compile-util">
 		<md-compile srcdir="${junit.src.dir}"
 					destdir="${junit.build.dir}"
 					classpathref="junit.classpath"/>
