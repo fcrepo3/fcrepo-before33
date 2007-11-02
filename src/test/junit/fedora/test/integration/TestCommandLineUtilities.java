@@ -173,11 +173,13 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
             
             if (expectValid)
             {
-                assertTrue(out.indexOf("Validation successful") != -1);
+                assertTrue("Expected \"Validation successful\", but received \"" + out + "\"", 
+                        out.indexOf("Validation successful") != -1);
             }
             else
             {
-                assertTrue(out.indexOf("Validation failed")!= -1);
+                assertTrue("Expected \"Validation failed\", but received \"" + out + "\"",
+                        out.indexOf("Validation failed")!= -1);
             }                 
         }        
     }
