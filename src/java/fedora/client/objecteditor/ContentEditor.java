@@ -23,6 +23,10 @@ public abstract class ContentEditor
         return true;
     }
 
+    public void setPIDAndDSID(String pid, String dsid)
+    {
+    }
+    
     /**
      * Called when the caller wants what is in the view to be
      * considered "not dirty" because it's been saved that way.

@@ -18,6 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -68,25 +69,26 @@ public class DatastreamPane
             DatastreamPane.class.getName());
 
 	private static final long serialVersionUID = 1L;
-    private String m_pid;
+    protected String m_pid;
     private Datastream m_mostRecent;
 
     private Hashtable[] m_labelTables;
-    private JComboBox m_stateComboBox;
-    private JComboBox m_versionableComboBox;
+    protected JComboBox m_stateComboBox;
+    static protected String s_stateComboBoxValues[] = { "A", "I", "D" };
+    protected JComboBox m_versionableComboBox;
     private JSlider m_versionSlider;
     private JPanel m_valuePane;
     private CardLayout m_versionCardLayout;
-    private CurrentVersionPane m_currentVersionPane;
-    private DatastreamsPane m_owner;
+    protected CurrentVersionPane m_currentVersionPane;
+    protected DatastreamsPane m_owner;
     private PurgeButtonListener m_purgeButtonListener;
     private boolean m_done;
     private Dimension m_labelDims;
     private JTextArea m_dtLabel;
     private JPanel m_dateLabelAndValue;
     private Datastream[] m_versions;
-    private final static int NEW_VERSION_ON_UPDATE = 0;
-    private final static int REPLACE_ON_UPDATE = 1;
+    protected final static int NEW_VERSION_ON_UPDATE = 0;
+    protected final static int REPLACE_ON_UPDATE = 1;
     /**
      * Build the pane.
      */
@@ -99,10 +101,10 @@ public class DatastreamPane
         m_mostRecent=mostRecent;
         m_owner=owner;
         m_labelDims=new JLabel("Control Group").getPreferredSize();
-        new TextContentEditor();  // causes it to be registered if not already
+        new TextContentEditor();   // causes it to be registered if not already
         new ImageContentViewer();  // causes it to be registered if not already
-        new SVGContentViewer();  // causes it to be registered if not already
-
+        new SVGContentViewer();    // causes it to be registered if not already
+        new RDFTupleEditor();      // causes it to be registered if not already
         // mainPane(commonPane, versionPane)
 
             // NORTH: commonPane(state, controlGroup)
@@ -301,12 +303,7 @@ public class DatastreamPane
     {
         String state=null;
         int i=m_stateComboBox.getSelectedIndex();
-        if (i==0)
-           state="A";
-        if (i==1)
-           state="I";
-        if (i==2)
-           state="D";
+        state = s_stateComboBoxValues[i]; // "A" "I"  or "D"
         if (!state.equals(m_mostRecent.getState())) 
         {
             Administrator.APIM.setDatastreamState(m_pid, m_mostRecent.getID(),
@@ -395,31 +392,36 @@ public class DatastreamPane
             implements PotentiallyDirty {
 
     	private static final long serialVersionUID = 1L;
-        private Datastream m_ds;
+        protected Datastream m_ds;
         private JTextField m_locationTextField;
-        private JTextField m_labelTextField;
+        protected JTextField m_labelTextField;
 		private String m_origLabel;
-		private JTextField m_MIMETextField;
+		protected JTextField m_MIMETextField;
 		private String m_origMIME;
-        private JTextField m_formatURITextField;
+        protected JTextField m_formatURITextField;
 		private String m_origFormatURI;
-		private JTextField m_altIDsTextField;
+        protected JTextField m_altIDsTextField;
 		private String m_origAltIDs;
-        private JButton m_editButton;
+        protected JButton m_editButton;
         private JButton m_viewButton;
+        protected JButton m_editCustomButton;
+        private JButton m_viewCustomButton;
         private JButton m_importButton;
-        private JButton m_exportButton;
+        protected JButton m_exportButton;
         private JButton m_separateViewButton;
-        private JComboBox m_checksumTypeComboBox;
-        private JTextField m_checksumTextField;
+        protected JComboBox m_checksumTypeComboBox;
+        protected JTextField m_checksumTextField;
         private JPanel m_checksumPanel;
 
-        private ContentEditor m_editor;
+        protected ContentEditor m_editor;
         private ContentViewer m_viewer;
         private boolean m_canEdit;
+        private boolean m_hasCustomEditor;
         private boolean m_canView;
         private File m_importFile;
         private JLabel m_importLabel;
+        protected JPanel m_actionPane;
+        protected JButton m_purgeButton;
 
         private boolean X;
         private boolean M;
@@ -433,7 +435,7 @@ public class DatastreamPane
 			m_origLabel=m_ds.getLabel();
 			if (m_origLabel==null) m_origLabel="";
 			// set a null mime type to ""
-			m_origMIME=m_ds.getMIMEType();
+			m_origMIME = m_ds.getMIMEType();
 			if (m_origMIME==null) m_origMIME="";
             // set a null format_uri to ""
             m_origFormatURI=m_ds.getFormatURI();
@@ -441,33 +443,63 @@ public class DatastreamPane
             // create a string from alt ids array 
 			m_origAltIDs = getAltIdsString();
             
-            if (ds.getControlGroup().toString().equals("X")) {
+            if (ds.getControlGroup().toString().equals("X")) 
+            {
                 X=true;
-            } else if (ds.getControlGroup().toString().equals("M")) {
+            } 
+            else if (ds.getControlGroup().toString().equals("M")) 
+            {
                 M=true;
-            } else if (ds.getControlGroup().toString().equals("E")) {
+            } 
+            else if (ds.getControlGroup().toString().equals("E")) 
+            {
                 E=true;
-            } else if (ds.getControlGroup().toString().equals("R")) {
+            } 
+            else if (ds.getControlGroup().toString().equals("R")) 
+            {
                 R=true;
             }
             // editing is possible if it's XML or Managed content and 
             // not a special datastream and hasEditor(mimeType)
             // AND the initial state wasn't "D"
             boolean noEdits=ds.getState().equals("D");
-            if ((X || M) && (!noEdits)
-                    && ( !ds.getID().equals("METHODMAP") 
-                            && !ds.getID().equals("DSINPUTSPEC") 
-                            && !ds.getID().equals("WSDL") 
-                       )
-               ) {
-                m_canEdit=ContentHandlerFactory.hasEditor(ds.getMIMEType());
+//            boolean specialDatastream = ds.getID().equals("METHODMAP") ||
+//                                        ds.getID().equals("DSINPUTSPEC") ||
+//                                        ds.getID().equals("WSDL"); 
+            String dsMimetype = getCustomMimeType(m_ds);
+            if ((X || M) && (!noEdits))
+            {
+                m_canEdit = ContentHandlerFactory.hasEditor(dsMimetype);
             }
-            m_canView=ContentHandlerFactory.hasViewer(ds.getMIMEType());
+            if (!dsMimetype.equals(m_ds.getMIMEType()))
+            {
+                m_hasCustomEditor = true;
+            }
+            m_canView = ContentHandlerFactory.hasViewer(dsMimetype);
             // whether they're used or not, create these here
-            m_editButton=new JButton("Edit");
-            Administrator.constrainHeight(m_editButton);
-            m_viewButton=new JButton("View");
-            Administrator.constrainHeight(m_viewButton);
+            if (m_hasCustomEditor)
+            {
+                m_editCustomButton=new JButton("Edit");
+                Administrator.constrainHeight(m_editCustomButton);
+                m_viewCustomButton=new JButton("View");
+                Administrator.constrainHeight(m_viewCustomButton);
+                m_editButton=new JButton("Edit as Text");
+                Administrator.constrainHeight(m_editButton);
+                m_viewButton=new JButton("View as Text");
+                Administrator.constrainHeight(m_viewButton);
+            }
+            else
+            {
+                m_editButton=new JButton("Edit");
+                Administrator.constrainHeight(m_editButton);
+                m_viewButton=new JButton("View");
+                Administrator.constrainHeight(m_viewButton);  
+                m_editCustomButton=new JButton("Unused Edit");
+                Administrator.constrainHeight(m_editCustomButton);
+                m_viewCustomButton=new JButton("Unused View");
+                Administrator.constrainHeight(m_viewCustomButton);
+
+            }
             m_importButton=new JButton("Import...");
             Administrator.constrainHeight(m_importButton);
             m_exportButton=new JButton("Export...");
@@ -520,13 +552,23 @@ public class DatastreamPane
                     					 altIDsLabel, 
                     					 urlLabel,
                                          checksumLabel};
-                } else {
+                } 
+                else if (m_ds.getCreateDate() == null)
+                {
+                    labels=new JLabel[] {labelLabel,
+                                         MIMELabel, 
+                                         formatURILabel,
+                                         altIDsLabel, 
+                                         checksumLabel};
+                }
+                else
+                {
                     labels=new JLabel[] {new JLabel("Created"), 
-                    					 labelLabel,
-                    					 MIMELabel, 
-                    					 formatURILabel,
-                    					 altIDsLabel, 
-                    					 urlLabel,
+                                         labelLabel,
+                                         MIMELabel, 
+                                         formatURILabel,
+                                         altIDsLabel, 
+                                         urlLabel,
                                          checksumLabel};
                 }
             }
@@ -549,9 +591,8 @@ public class DatastreamPane
 			m_altIDsTextField.getDocument().addDocumentListener(
 					dataChangeListener);
 			// disable text fields for special datastreams that cannot be edited
-			if (ds.getID().equals("METHODMAP")
-					|| ds.getID().equals("DSINPUTSPEC")
-					|| ds.getID().equals("WSDL") || noEdits) {
+			if (noEdits) 
+            {
 				// disable formatURI changes for special datastreams
 				m_labelTextField.setEnabled(false);
 				m_MIMETextField.setEnabled(false);
@@ -638,14 +679,25 @@ public class DatastreamPane
                                              m_checksumPanel};
                 }
             } else {
-                if (m_versionSlider!=null) {
+                if (m_versionSlider!=null) 
+                {
                     values=new JComponent[] {m_labelTextField,
 											 m_MIMETextField,
                     						 m_formatURITextField,
 											 m_altIDsTextField, 
                                              urlTextField,
                                              m_checksumPanel};
-                } else {
+                } 
+                else if (m_ds.getCreateDate() == null)
+                {
+                    values=new JComponent[] {m_labelTextField,
+                                             m_MIMETextField,
+                                             m_formatURITextField,
+                                             m_altIDsTextField, 
+                                             m_checksumPanel};
+                }
+                else 
+                {
                     JTextArea cDateTextArea=new JTextArea(m_ds.getCreateDate());
                     cDateTextArea.setBackground(Administrator.BACKGROUND_COLOR);
                     cDateTextArea.setEditable(false);
@@ -667,24 +719,43 @@ public class DatastreamPane
             add(fieldPane, BorderLayout.NORTH);
 
             // Do the buttons!
-            JPanel actionPane=new JPanel();
-            actionPane.setLayout(new FlowLayout());
-            if (m_canEdit) {
+            m_actionPane=new JPanel();
+            m_actionPane.setLayout(new FlowLayout());
+            if (m_canEdit) 
+            {
+                if (m_hasCustomEditor)
+                {
+                    m_editCustomButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent evt) {
+                            // add the editor, and disable the button
+                            try {
+                                startCustomEditor();
+                            } 
+                            catch (Exception e) 
+                            {
+                                Administrator.showErrorDialog(Administrator.getDesktop(), "Content Edit Error", 
+                                        e.getMessage(), e);
+                            }
+                        }
+                    });
+                    m_actionPane.add(m_editCustomButton);
+                    
+                }
                 // we know it's editable... add a button
                 m_editButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
                         // add the editor, and disable the button
                         try {
-                        startEditor();
+                            startEditor();
                         } catch (Exception e) {
                         	Administrator.showErrorDialog(Administrator.getDesktop(), "Content Edit Error", 
                         			e.getMessage(), e);
                         }
                     }
                 });
-                actionPane.add(m_editButton);
+                m_actionPane.add(m_editButton);
                 // if a *separate* viewer is also available, add a view button
-                if (!ContentHandlerFactory.viewerIsEditor(ds.getMIMEType())) {
+                if (!ContentHandlerFactory.viewerIsEditor(dsMimetype)) {
                     m_separateViewButton=new JButton("View");
                     Administrator.constrainHeight(m_separateViewButton);
                     m_separateViewButton.addActionListener(new ActionListener() {
@@ -700,30 +771,47 @@ public class DatastreamPane
                             }
                         }
                     });
-                    actionPane.add(m_separateViewButton);
+                    m_actionPane.add(m_separateViewButton);
                 }
-            } else if (m_canView) {
+            } 
+            else if (m_canView) 
+            {
+                if (m_hasCustomEditor)
+                {
+                    m_viewCustomButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent evt) {
+                            // add the editor, and disable the button
+                            try {
+                                startCustomViewer();
+                            } 
+                            catch (Exception e) 
+                            {
+                                Administrator.showErrorDialog(Administrator.getDesktop(), "Content Edit Error", 
+                                        e.getMessage(), e);
+                            }
+                        }
+                    });
+                    m_actionPane.add(m_viewCustomButton);
+                    
+                }
                 // it's not editable, but it's VIEWable... add a button
                 m_viewButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
                         // add the viewer, and disable the view button
                         try {
-                        startViewer();
+                            startViewer();                            
                         } catch (Exception e) {
                         	Administrator.showErrorDialog(Administrator.getDesktop(), "Content View Error", 
                         			e.getMessage(), e);
                         }
                     }
                 });
-                actionPane.add(m_viewButton);                 
+                m_actionPane.add(m_viewButton);                 
             }
             // should we add the Import button?  If we can set content, yes.
-            if ((X || M) && (!noEdits)
-                    && ( !ds.getID().equals("METHODMAP") 
-                        && !ds.getID().equals("DSINPUTSPEC") 
-                        && !ds.getID().equals("WSDL") 
-                   ) ) {
-                actionPane.add(m_importButton);
+            if ((X || M) && (!noEdits))
+            {
+                m_actionPane.add(m_importButton);
                 m_importButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
                         // remember what we did so we can back out if needed
@@ -738,15 +826,34 @@ public class DatastreamPane
                                 String url=imp.url;
                                 Administrator.setLastDir(file.getParentFile()); // remember the dir for next time
                                 if (m_canEdit) {
-                                    if (m_editButton.isEnabled()) {
-                                        startEditor();
+                                    if (m_editor == null)
+                                    {
+                                        if (m_hasCustomEditor)
+                                        {
+                                            startCustomEditor();
+                                        }
+                                        else
+                                        {
+                                            startEditor();
+                                        }
                                         startedEditor=true;
                                     } 
                                     // set content of existing edit widget
                                     m_editor.setContent(new FileInputStream(file));
+                                    // if that went ok, then remember the file
+                                    m_importFile=file;
+                                    // and send the signal
+                                    dataChangeListener.dataChanged();
                                 } else if (m_canView) {
-                                    if (m_viewButton.isEnabled()) {
-                                        startViewer();
+                                    if (m_viewer == null) {
+                                        if (m_hasCustomEditor)
+                                        {
+                                            startCustomViewer();
+                                        }
+                                        else
+                                        {
+                                            startViewer();
+                                        }
                                         startedViewer=true;
                                     }
                                     // set the content of the existing viewer widget
@@ -790,15 +897,15 @@ public class DatastreamPane
                 });
             }
             // export is always possible!
-            actionPane.add(m_exportButton);
+            m_actionPane.add(m_exportButton);
             m_exportButton.addActionListener(new ExportActionListener(m_ds));
             // and purge is, too
-            JButton purgeButton=new JButton("Purge...");
-            Administrator.constrainHeight(purgeButton);
-            purgeButton.addActionListener(m_purgeButtonListener);
-            purgeButton.setActionCommand(m_ds.getCreateDate());
-            actionPane.add(purgeButton);
-            add(actionPane, BorderLayout.SOUTH);
+            m_purgeButton=new JButton("Purge...");
+            Administrator.constrainHeight(m_purgeButton);
+            m_purgeButton.addActionListener(m_purgeButtonListener);
+            m_purgeButton.setActionCommand(m_ds.getCreateDate());
+            m_actionPane.add(m_purgeButton);
+            add(m_actionPane, BorderLayout.SOUTH);
         }
 
         private String getAltIdsString()
@@ -836,27 +943,89 @@ public class DatastreamPane
          * Bring up the editing pane, initialized with this datastream's
          * content.
          */
-        private void startEditor() throws Exception {
-                            m_editor=ContentHandlerFactory.getEditor(
-                                    m_ds.getMIMEType(), 
-                                    Administrator.DOWNLOADER.getDatastreamContent(
-                                            m_pid, m_ds.getID(), 
-                                            m_ds.getCreateDate()));
-                            m_editor.setContentChangeListener(dataChangeListener);
-                            add(m_editor.getComponent(), BorderLayout.CENTER);
-                            m_editButton.setEnabled(false);
-                            validate();
+        private void startEditor() throws Exception 
+        {
+            InputStream curContent = null;
+            if (m_editor != null) 
+            {
+                if (m_editor.isDirty())
+                {
+                    curContent = m_editor.getContent();
+                }
+                remove(m_editor.getComponent());
+                m_editor = null;
+            }
+            InputStream origContent = getDatastreamContent(m_pid, m_ds.getID(), 
+                                                            m_ds.getCreateDate());            
+            m_editor=ContentHandlerFactory.getEditor(m_ds.getMIMEType(), origContent);            
+            m_editor.setContentChangeListener(dataChangeListener);
+            if (curContent != null)  { m_editor.setContent(curContent); }
+            m_editor.setPIDAndDSID(m_pid, m_ds.getID());
+            
+            add(m_editor.getComponent(), BorderLayout.CENTER);
+            m_editButton.setEnabled(false);
+            m_editCustomButton.setEnabled(true);
+            validate();
         }
 
-        public void startViewer() throws Exception {
-                            m_viewer=ContentHandlerFactory.getViewer(
-                                    m_ds.getMIMEType(), 
-                                    Administrator.DOWNLOADER.getDatastreamContent(
-                                            m_pid, m_ds.getID(), 
-                                            m_ds.getCreateDate()));
-                            add(m_viewer.getComponent(), BorderLayout.CENTER);
-                            m_viewButton.setEnabled(false);
-                            validate();
+        public void startViewer() throws Exception 
+        {
+            if (m_viewer != null) 
+            {
+                remove(m_viewer.getComponent());
+                m_viewer = null;
+            }
+            m_viewer=ContentHandlerFactory.getViewer(
+                    m_ds.getMIMEType(), 
+                    getDatastreamContent(m_pid, m_ds.getID(), m_ds.getCreateDate()));
+            add(m_viewer.getComponent(), BorderLayout.CENTER);
+            m_viewButton.setEnabled(false);
+            m_viewCustomButton.setEnabled(true);
+            validate();
+        }
+
+        /**
+         * Bring up the editing pane, initialized with this datastream's
+         * content.
+         */
+        private void startCustomEditor() throws Exception 
+        {
+            InputStream curContent = null;
+            if (m_editor != null) 
+            {
+                if (m_editor.isDirty())
+                {
+                    curContent = m_editor.getContent();
+                }
+                remove(m_editor.getComponent());
+                m_editor = null;
+            }
+            InputStream origContent = getDatastreamContent(m_pid, m_ds.getID(), 
+                                                           m_ds.getCreateDate());            
+            m_editor=ContentHandlerFactory.getEditor(getCustomMimeType(m_ds), origContent);            
+            m_editor.setContentChangeListener(dataChangeListener);
+            if (curContent != null)  { m_editor.setContent(curContent); }
+            m_editor.setPIDAndDSID(m_pid, m_ds.getID());
+            add(m_editor.getComponent(), BorderLayout.CENTER);
+            m_editCustomButton.setEnabled(false);
+            m_editButton.setEnabled(true);
+            validate();
+        }
+
+        public void startCustomViewer() throws Exception 
+        {
+            if (m_viewer != null) 
+            {
+                remove(m_viewer.getComponent());
+                m_viewer = null;
+            }
+            m_viewer=ContentHandlerFactory.getViewer(
+                    getCustomMimeType(m_ds), 
+                    getDatastreamContent(m_pid, m_ds.getID(), m_ds.getCreateDate()));
+            add(m_viewer.getComponent(), BorderLayout.CENTER);
+            m_viewCustomButton.setEnabled(false);
+            m_viewButton.setEnabled(true);
+            validate();
         }
 
         public void startSeparateViewer() throws Exception {
@@ -866,11 +1035,10 @@ public class DatastreamPane
                 contentStream=m_editor.getContent();
             } else {
                 // the server will provide the content
-                contentStream=Administrator.DOWNLOADER.getDatastreamContent(
-                        m_pid, m_ds.getID(), m_ds.getCreateDate());
+                contentStream=getDatastreamContent(m_pid, m_ds.getID(), m_ds.getCreateDate());
             }
             ContentViewer separateViewer=ContentHandlerFactory.getViewer(
-                    m_ds.getMIMEType(), contentStream);
+                    getCustomMimeType(m_ds), contentStream);
             // now open up a new JInternalFrame and put the v.getComponent()
             // in it.
             JInternalFrame viewFrame=new JInternalFrame(
@@ -1036,7 +1204,9 @@ public class DatastreamPane
 		private String m_priorMIME;
         private String m_priorFormatURI;
         private String m_priorAltIDs;
-
+        private JButton m_viewButton;
+        private JButton m_viewTextButton;
+        
         public PriorVersionPane(Datastream ds) {
             m_ds=ds;
 			// clean up attribute values for presentation in text boxes...
@@ -1129,30 +1299,88 @@ public class DatastreamPane
             // SOUTH: buttonPanel
             JPanel buttonPanel=new JPanel();
             buttonPanel.setLayout(new FlowLayout());
-            if (ContentHandlerFactory.hasViewer(ds.getMIMEType())) {
-                JButton viewButton=new JButton("View");
-                Administrator.constrainHeight(viewButton);
-                // CENTER: populated on view
-                viewButton.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        JButton btn=(JButton) evt.getSource();
-                        try {
-                            ContentViewer v=ContentHandlerFactory.getViewer(
-                                    m_ds.getMIMEType(), 
-                                    Administrator.DOWNLOADER.getDatastreamContent(
-                                            m_pid, m_ds.getID(), 
-                                            m_ds.getCreateDate()
-                                    ) );
-                            add(v.getComponent(), BorderLayout.CENTER);
-                            btn.setEnabled(false);
-                            validate();
-                        } catch (Exception e) {
-                        	Administrator.showErrorDialog(Administrator.getDesktop(), "Content View Failure", 
-                        			e.getMessage(), e);
+            if (ds.getMIMEType() != getCustomMimeType(ds))  // Has Custom Viuwer
+            {
+                if (ContentHandlerFactory.hasViewer(ds.getMIMEType())) 
+                {
+                    m_viewButton=new JButton("View");
+                    Administrator.constrainHeight(m_viewButton);
+                    // CENTER: populated on view
+                    m_viewButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent evt) {
+                            JButton btn=(JButton) evt.getSource();
+                            try {
+                                ContentViewer v=ContentHandlerFactory.getViewer(
+                                        getCustomMimeType(m_ds), 
+                                        Administrator.DOWNLOADER.getDatastreamContent(
+                                                m_pid, m_ds.getID(), 
+                                                m_ds.getCreateDate()
+                                        ) );
+                                add(v.getComponent(), BorderLayout.CENTER);
+                                btn.setEnabled(false);
+                                m_viewTextButton.setEnabled(true);
+                                validate();
+                            } catch (Exception e) {
+                                Administrator.showErrorDialog(Administrator.getDesktop(), "Content View Failure", 
+                                        e.getMessage(), e);
+                            }
                         }
-                    }
-                });
-                buttonPanel.add(viewButton);
+                    });
+                    buttonPanel.add(m_viewButton);
+                    m_viewTextButton=new JButton("View as Text");
+                    Administrator.constrainHeight(m_viewTextButton);
+                    // CENTER: populated on view
+                    m_viewTextButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent evt) {
+                            JButton btn=(JButton) evt.getSource();
+                            try {
+                                ContentViewer v=ContentHandlerFactory.getViewer(
+                                        m_ds.getMIMEType(), 
+                                        Administrator.DOWNLOADER.getDatastreamContent(
+                                                m_pid, m_ds.getID(), 
+                                                m_ds.getCreateDate()
+                                        ) );
+                                add(v.getComponent(), BorderLayout.CENTER);
+                                btn.setEnabled(false);
+                                m_viewButton.setEnabled(true);
+                                validate();
+                            } catch (Exception e) {
+                                Administrator.showErrorDialog(Administrator.getDesktop(), "Content View Failure", 
+                                        e.getMessage(), e);
+                            }
+                        }
+                    });
+                    buttonPanel.add(m_viewTextButton);
+                }
+            }
+            else // No Custom Viewer
+            {
+                if (ContentHandlerFactory.hasViewer(ds.getMIMEType())) 
+                {            
+                    m_viewButton=new JButton("View");
+                    Administrator.constrainHeight(m_viewButton);
+                    // CENTER: populated on view
+                    m_viewButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent evt) {
+                            JButton btn=(JButton) evt.getSource();
+                            try {
+                                ContentViewer v=ContentHandlerFactory.getViewer(
+                                        getCustomMimeType(m_ds), 
+                                        Administrator.DOWNLOADER.getDatastreamContent(
+                                                m_pid, m_ds.getID(), 
+                                                m_ds.getCreateDate()
+                                        ) );
+                                add(v.getComponent(), BorderLayout.CENTER);
+                                btn.setEnabled(false);
+                                validate();
+                            } catch (Exception e) {
+                                Administrator.showErrorDialog(Administrator.getDesktop(), "Content View Failure", 
+                                        e.getMessage(), e);
+                            }
+                        }
+                    });
+                    buttonPanel.add(m_viewButton);
+                }
             }
             JButton exportButton=new JButton("Export...");
             Administrator.constrainHeight(exportButton);
@@ -1364,4 +1592,15 @@ public class DatastreamPane
         }
     }
 
+    public String getCustomMimeType(Datastream ds)
+    {
+        String dsMimetype = ds.getMIMEType();
+        if (ds.getID().equals("RELS-EXT"))  dsMimetype = "text/rdf";
+        return(dsMimetype);
+    }
+
+    public InputStream getDatastreamContent(String pid, String id, String createDate) throws IOException
+    {
+        return Administrator.DOWNLOADER.getDatastreamContent(pid, id, createDate);
+    }
 }

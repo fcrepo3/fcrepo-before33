@@ -57,9 +57,10 @@ public class RelationshipTuple
             String PID = predicate.substring(4); 
             return(PID);
         }
-        if (predicate != null && predicate.startsWith("info:fedora/fedora-system:def/relations-external#"))
+        String prefix = "info:fedora/fedora-system:def/relations-external#";
+        if (predicate != null && predicate.startsWith(prefix))
         {
-            String PID = predicate.substring(50); 
+            String PID = predicate.substring(prefix.length()); 
             return(PID);
         }
 

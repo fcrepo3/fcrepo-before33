@@ -8,6 +8,7 @@ package fedora.client.objecteditor;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.rmi.RemoteException;
 import java.util.*;
 import javax.swing.*;
 
@@ -16,6 +17,7 @@ import org.apache.log4j.Logger;
 import fedora.client.Administrator;
 
 import fedora.server.types.gen.Datastream;
+import fedora.server.types.gen.DatastreamControlGroup;
 
 /**
  * Shows a tabbed pane, one for each datastream in the object, and one
@@ -38,7 +40,6 @@ public class DatastreamsPane
     private DatastreamPane[] m_datastreamPanes;
     private ObjectEditorFrame m_owner;
     private ArrayList m_dsListeners;
-    private Datastream[] m_currentVersions;
     private Map m_currentVersionMap;
 
     public String[] ALL_KNOWN_MIMETYPES = new String[] {
@@ -51,7 +52,7 @@ public class DatastreamsPane
             "application/smil", "application/octet-stream",
             "application/x-tar", "application/zip", "application/x-gtar", "application/x-gzip", 
             "application/xml", "application/xhtml+xml", "application/xslt+xml", "application/xml-dtd",
-            };
+            "text/rdf" };
     public String[] XML_MIMETYPE = new String[] {"text/xml"};
 
     static ImageIcon newIcon=new ImageIcon(Administrator.cl.getResource("images/standard/general/New16.gif"));
@@ -71,34 +72,42 @@ public class DatastreamsPane
             // m_tabbedPane(DatastreamPane[])
 
             m_tabbedPane=new JTabbedPane(SwingConstants.LEFT);
-            m_currentVersions=Administrator.APIM.
-                    getDatastreams(pid, null, null);
-            m_datastreamPanes=new DatastreamPane[m_currentVersions.length];
-            for (int i=0; i<m_currentVersions.length; i++) {
-                m_currentVersionMap.put(m_currentVersions[i].getID(), m_currentVersions[i]);
+            Datastream currentVersions[] = Administrator.APIM.getDatastreams(pid, null, null);
+            m_datastreamPanes=new DatastreamPane[currentVersions.length];
+            for (int i=0; i<currentVersions.length; i++) {
+                m_currentVersionMap.put(currentVersions[i].getID(), currentVersions[i]);
                 m_datastreamPanes[i]=new DatastreamPane(
                         owner,
                         pid,
                         Administrator.APIM.getDatastreamHistory(
                                 pid,
-                                m_currentVersions[i].getID()),
+                                currentVersions[i].getID()),
                         this);
                 StringBuffer tabLabel=new StringBuffer();
-                tabLabel.append(m_currentVersions[i].getID());
+                tabLabel.append(currentVersions[i].getID());
                 m_tabbedPane.add(tabLabel.toString(), m_datastreamPanes[i]);
-                m_tabbedPane.setToolTipTextAt(i, m_currentVersions[i].getMIMEType()
-                        + " - " + m_currentVersions[i].getLabel() + " ("
-                        + m_currentVersions[i].getControlGroup().toString() + ")");
-                colorTabForState(m_currentVersions[i].getID(), m_currentVersions[i].getState());
+                m_tabbedPane.setToolTipTextAt(i, currentVersions[i].getMIMEType()
+                        + " - " + currentVersions[i].getLabel() + " ("
+                        + currentVersions[i].getControlGroup().toString() + ")");
+                colorTabForState(currentVersions[i].getID(), currentVersions[i].getState());
             }
-            m_tabbedPane.add("New...", new JPanel());
+        m_tabbedPane.add("New...", new JPanel());
 
         setLayout(new BorderLayout());
         add(m_tabbedPane, BorderLayout.CENTER);
-
         doNew(XML_MIMETYPE, false);
+        updateNewRelsExt(m_pid);        
     }
 
+    private boolean hasRelsExt() 
+    {
+        if (m_currentVersionMap.get("RELS-EXT") != null)
+        {
+            return(true);
+        }
+        return(false);
+    }
+    
     public Map getCurrentVersionMap() {
         return m_currentVersionMap;
     }
@@ -121,11 +130,31 @@ public class DatastreamsPane
     public void doNew(String[] dropdownMimeTypes, boolean makeSelected) {
         int i=getTabIndex("New...");
         m_tabbedPane.setComponentAt(i, new NewDatastreamPane(dropdownMimeTypes));
+        i=getTabIndex("New...");
         m_tabbedPane.setToolTipTextAt(i, "Add a new datastream to this object");
         m_tabbedPane.setIconAt(i, newIcon);
         m_tabbedPane.setBackgroundAt(i, Administrator.DEFAULT_COLOR);
         if (makeSelected) {
             m_tabbedPane.setSelectedIndex(i);
+        }
+    }
+
+    /**
+     * Set the content of the "New Rels-Ext..." JPanel to a fresh new datastream
+     * entry panel, and switch to it, if needed.
+     * @throws Exception 
+     */
+    public void updateNewRelsExt(String pid) throws Exception
+    {
+        if (!hasRelsExt() && getTabIndex("New RELS-EXT...") == -1)
+        {
+            m_tabbedPane.insertTab("New RELS-EXT...", newIcon, new NewRelsExtDatastreamPane(this.m_owner, pid, this), "Add a RELS-EXT datastream to this object", getTabIndex("New...") );
+            int i = getTabIndex("New RELS-EXT...");
+            m_tabbedPane.setBackgroundAt(i, Administrator.DEFAULT_COLOR);
+        }
+        else if (hasRelsExt() && getTabIndex("New RELS-EXT...") != -1)
+        {
+            m_tabbedPane.remove(getTabIndex("New RELS-EXT..."));
         }
     }
 
@@ -171,8 +200,9 @@ public class DatastreamsPane
     /**
      * Add a new tab with a new datastream.
      */
-    protected void addDatastreamTab(String dsID) throws Exception {
-        DatastreamPane[] newArray=new DatastreamPane[m_datastreamPanes.length+1];
+    protected void addDatastreamTab(String dsID, boolean reInitNewPanel) throws Exception 
+    {
+        DatastreamPane[] newArray = new DatastreamPane[m_datastreamPanes.length+1];
         for (int i=0; i<m_datastreamPanes.length; i++) {
             newArray[i]=m_datastreamPanes[i];
         }
@@ -189,8 +219,10 @@ public class DatastreamsPane
                 + " - " + versions[0].getLabel() + " ("
                 + versions[0].getControlGroup().toString() + ")");
         colorTabForState(dsID, versions[0].getState());
-        m_tabbedPane.setSelectedIndex(newIndex);
-        doNew(XML_MIMETYPE, false);
+        if (reInitNewPanel) doNew(XML_MIMETYPE, false);
+        
+        updateNewRelsExt(m_pid);
+        m_tabbedPane.setSelectedIndex(getTabIndex(dsID));
     }
 
     protected void remove(String dsID) {
@@ -207,8 +239,19 @@ public class DatastreamsPane
             }
         }
         m_datastreamPanes=newArray;
+        
         // then make sure dirtiness indicators are corrent
         m_owner.indicateDirtiness();
+        // add the new rels-ext tab back if the RELS-EXT datastream was deleted.
+        try
+        {
+            updateNewRelsExt(m_pid);
+        }
+        catch (Exception e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public boolean isDirty() {
@@ -695,7 +738,7 @@ public class DatastreamsPane
                                        m_initialState,
                                        csType, checksum, // checksum type and checksum
                                        "DatastreamsPane generated this logMessage."); // DEFAULT_LOGMESSAGE
-                    addDatastreamTab(newID);
+                    addDatastreamTab(newID, true);
                 } catch (Exception e) {
                     e.printStackTrace();
                     String msg = e.getMessage();

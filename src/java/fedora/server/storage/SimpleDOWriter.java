@@ -570,8 +570,6 @@ public class SimpleDOWriter
                         serializeRDFtoStream(newIter, out); // Uses RDFFormat.RDF_XML
                     }
                     
-                    String xmlContent = new String(out.toByteArray());
-                    System.out.println(xmlContent);
                     if (newIter.wasChangeMade())
                     {
                         DatastreamXMLMetadata newds = new DatastreamXMLMetadata();

@@ -24,8 +24,8 @@ public abstract class EditingPane
         extends JPanel
         implements PotentiallyDirty {
 
-    private JButton m_saveButton;
-    private JButton m_undoButton;
+    protected JButton m_saveButton;
+    protected JButton m_undoButton;
 
     /** 
      * Implementers can register this to listen to any events that resulted
