@@ -187,7 +187,7 @@ public class NewObjectDialog
 									+ StreamUtility.enc(label) + "\"/>\n");
 					xml.append("    <foxml:property NAME=\"" + MODEL.CONTENT_MODEL.uri + "\" VALUE=\""
 									+ StreamUtility.enc(cModel) + "\"/>\n");
-                    xml.append("    <foxml:property NAME=\"" + MODEL.OWNER.uri + "\"" + Administrator.getUser() + "\"/>");
+                    xml.append("    <foxml:property NAME=\"" + MODEL.OWNER.uri + "\" VALUE=\"" + Administrator.getUser() + "\"/>");
 					xml.append("  </foxml:objectProperties>\n");
 					xml.append("</foxml:digitalObject>");
 					String objXML = xml.toString();
