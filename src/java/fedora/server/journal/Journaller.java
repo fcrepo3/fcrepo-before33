@@ -20,24 +20,16 @@ import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
 import fedora.server.management.Management;
 import fedora.server.management.ManagementDelegate;
-import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.Datastream;
-//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.Property;
 import fedora.server.storage.types.RelationshipTuple;
 
 /**
- * <p>
- * <b>Title:</b> Journaller.java
- * </p>
- * <p>
- * <b>Description:</b> A Management module that decorates a ManagementDelegate
+ * A Management module that decorates a ManagementDelegate
  * module with code that either creates a Journal or consumes a Journal,
- * depending on the startup parameters.</code>
- * </p>
+ * depending on the startup parameters.
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
  */
 
 public class Journaller extends Module implements Management, JournalConstants {
@@ -276,62 +268,6 @@ public class Journaller extends Module implements Management, JournalConstants {
         return worker.getDatastreamHistory(context, pid, datastreamID);
     }
 
-//    /**
-//     * Delegate to the JournalWorker.
-//     */
-//    public String addDisseminator(Context context, String pid, String bDefPID,
-//            String bMechPid, String dissLabel, DSBindingMap bindingMap,
-//            String dissState, String logMessage) throws ServerException {
-//        return worker.addDisseminator(context, pid, bDefPID, bMechPid,
-//                dissLabel, bindingMap, dissState, logMessage);
-//    }
-//
-//    /**
-//     * Delegate to the JournalWorker.
-//     */
-//    public Date modifyDisseminator(Context context, String pid,
-//            String disseminatorID, String bMechPid, String dissLabel,
-//            DSBindingMap bindingMap, String dissState, String logMessage,
-//            boolean force) throws ServerException {
-//        return worker.modifyDisseminator(context, pid, disseminatorID,
-//                bMechPid, dissLabel, bindingMap, dissState, logMessage, force);
-//    }
-//
-//    /**
-//     * Delegate to the JournalWorker.
-//     */
-//    public Date[] purgeDisseminator(Context context, String pid,
-//            String disseminatorID, Date endDT, String logMessage)
-//            throws ServerException {
-//        return worker.purgeDisseminator(context, pid, disseminatorID, endDT,
-//                logMessage);
-//    }
-//
-//    /**
-//     * Delegate to the JournalWorker.
-//     */
-//    public Disseminator getDisseminator(Context context, String pid,
-//            String disseminatorID, Date asOfDateTime) throws ServerException {
-//        return worker.getDisseminator(context, pid, disseminatorID,
-//                asOfDateTime);
-//    }
-//
-//    /**
-//     * Delegate to the JournalWorker.
-//     */
-//    public Disseminator[] getDisseminators(Context context, String pid,
-//            Date asOfDateTime, String dissState) throws ServerException {
-//        return worker.getDisseminators(context, pid, asOfDateTime, dissState);
-//    }
-//
-//    /**
-//     * Delegate to the JournalWorker.
-//     */
-//    public Disseminator[] getDisseminatorHistory(Context context, String pid,
-//            String disseminatorID) throws ServerException {
-//        return worker.getDisseminatorHistory(context, pid, disseminatorID);
-//    }
-
     /**
      * Delegate to the JournalWorker.
      */
@@ -375,15 +311,6 @@ public class Journaller extends Module implements Management, JournalConstants {
         return worker.compareDatastreamChecksum(context, pid, dsID,
                 versionDate);
     }
-
-//    /**
-//     * Delegate to the JournalWorker.
-//     */
-//    public Date setDisseminatorState(Context context, String pid, String dsID,
-//            String dsState, String logMessage) throws ServerException {
-//        return worker.setDisseminatorState(context, pid, dsID, dsState,
-//                logMessage);
-//    }
 
     /**
      * Delegate to the JournalWorker.

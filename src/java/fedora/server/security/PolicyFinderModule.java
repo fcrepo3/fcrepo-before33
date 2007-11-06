@@ -47,6 +47,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 
 import fedora.common.Constants;
+
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
@@ -126,7 +127,7 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 
 	public static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
 
-	public static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
+	public static final String W3C_XML_SCHEMA = Constants.XML_XSD.uri;
 
 	public static final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
 	

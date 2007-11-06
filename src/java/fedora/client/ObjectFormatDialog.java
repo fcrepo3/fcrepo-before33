@@ -11,15 +11,17 @@ import javax.swing.*;
 
 import fedora.client.Administrator;
 
+import fedora.common.Constants;
+
 /**
  * Launch a dialog for selecting which XML format to ingest.
- * Valid options as of Fedora 2.0 are "foxml1.0" and "metslikefedora1".
+ * Valid options are FOXML1_1.uri and METS_EXT1_1.uri.
  *
  * @author payette@cs.cornell.edu
  */
-
 public class ObjectFormatDialog
-        extends JDialog implements ActionListener {
+        extends JDialog 
+        implements ActionListener, Constants {
         
 	private static final long serialVersionUID = 1L;
     private String selections;
@@ -52,14 +54,14 @@ public class ObjectFormatDialog
                 
         inputPane.setLayout(new GridLayout(0, 1));
 		foxmlButton = new JRadioButton("FOXML (Fedora Object XML)", true);
-		foxmlButton.setActionCommand("foxml1.0");
+		foxmlButton.setActionCommand(FOXML1_1.uri);
 		foxmlButton.addActionListener(this);
 		metsfButton = new JRadioButton("METS (Fedora METS Extension)", false);
-		metsfButton.setActionCommand("metslikefedora1");
+		metsfButton.setActionCommand(METS_EXT1_1.uri);
 		metsfButton.addActionListener(this);
 		fmt_buttonGroup.add(foxmlButton);
 		fmt_buttonGroup.add(metsfButton);
-		fmt_chosen = "foxml1.0";
+		fmt_chosen = FOXML1_1.uri;
         inputPane.add(foxmlButton);
         inputPane.add(metsfButton);
         
@@ -100,9 +102,9 @@ public class ObjectFormatDialog
 	/** Listens to the radio buttons. */
 	public void actionPerformed(ActionEvent e) {
 		if (foxmlButton.isSelected()) {
-			fmt_chosen = "foxml1.0";
+			fmt_chosen = FOXML1_1.uri;
 		} else if (metsfButton.isSelected()) {
-			fmt_chosen = "metslikefedora1";
+			fmt_chosen = METS_EXT1_1.uri;
 		} 
 	}
 }

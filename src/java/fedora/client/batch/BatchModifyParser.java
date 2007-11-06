@@ -5,15 +5,6 @@
 
 package fedora.client.batch;
 
-import fedora.client.Uploader;
-import fedora.client.batch.types.Datastream;
-import fedora.client.batch.types.DigitalObject;
-import fedora.server.management.FedoraAPIM;
-import fedora.server.access.FedoraAPIA;
-import fedora.client.FedoraClient;
-import fedora.client.utility.ingest.AutoIngestor;
-import fedora.server.utilities.StreamUtility;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -21,11 +12,15 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
+import org.apache.axis.types.NonNegativeInteger;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -33,20 +28,26 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import fedora.common.Constants;
 
-import org.apache.axis.types.NonNegativeInteger;
+import fedora.client.Uploader;
+import fedora.client.batch.types.Datastream;
+import fedora.client.batch.types.DigitalObject;
+import fedora.client.FedoraClient;
+import fedora.client.utility.ingest.AutoIngestor;
 
+import fedora.server.access.FedoraAPIA;
+import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.ComparisonOperator;
 import fedora.server.types.gen.Condition;
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.types.gen.ObjectFields;
+import fedora.server.utilities.StreamUtility;
 
 
 /**
- *
- * <p><b>Title:</b> BatchModifyParser.java</p>
- * <p><b>Description:</b> A class for parsing the xml modify directives in the
+ * A class for parsing the xml modify directives in the
  * Batch Modify input file. The parsing is configured to parse directives in the
  * file sequentially. Logs are written for each successful and failed directive
  * that is processed. Recoverable(non-fatal) errors are written to the log file
@@ -56,10 +57,10 @@ import fedora.server.types.gen.ObjectFields;
  * processed up to the point of failure.</p>
  *
  * @author rlw@virginia.edu
- * @version $Id$
  */
-public class BatchModifyParser extends DefaultHandler
-{
+public class BatchModifyParser
+        extends DefaultHandler
+        implements Constants {
 
     /** Instance of Uploader */
     private static Uploader UPLOADER;
@@ -71,9 +72,6 @@ public class BatchModifyParser extends DefaultHandler
 
     /** Log file print stream. */
     private static PrintStream out;
-
-    /** The namespaces we know we will encounter */
-    private final static String FBM = "http://www.fedora.info/definitions/";
 
     /** Count of directives that succeeded. */
     private int succeededCount = 0;
@@ -249,7 +247,7 @@ public class BatchModifyParser extends DefaultHandler
     public void startElement(String namespaceURI, String localName, String qName, Attributes attrs)
             throws SAXException {
 
-        if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addObject")) {
+        if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("addObject")) {
             addObject = false;
             m_obj = new DigitalObject();
 
@@ -280,7 +278,7 @@ public class BatchModifyParser extends DefaultHandler
                 failedCount++;
                 logFailedDirective(m_obj.pid, localName, e, "");
             }
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("modifyObject")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("modifyObject")) {
             modifyObject = false;
             m_obj = new DigitalObject();
 
@@ -320,7 +318,7 @@ public class BatchModifyParser extends DefaultHandler
                 failedCount++;
                 logFailedDirective(m_obj.pid, localName, e, "");
             }
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("purgeObject")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("purgeObject")) {
             purgeObject = false;
             m_obj = new DigitalObject();
 
@@ -350,7 +348,7 @@ public class BatchModifyParser extends DefaultHandler
                 failedCount++;
                 logFailedDirective(m_obj.pid, localName, e, "");
             }
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("addDatastream")) {
             try {
                 addDatastream = false;
                 m_ds = new Datastream();
@@ -400,7 +398,7 @@ public class BatchModifyParser extends DefaultHandler
                 logFailedDirective(m_ds.objectPID, localName, e, "");
                 return;
             }            
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("purgeDatastream")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("purgeDatastream")) {
 
             try {
                 purgeDatastream = false;
@@ -427,7 +425,7 @@ public class BatchModifyParser extends DefaultHandler
                 failedCount++;
                 logFailedDirective(m_ds.objectPID, localName, e, "");
             }
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("modifyDatastream")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("modifyDatastream")) {
 
             try {
                 fedora.server.types.gen.Datastream dsOrig = null;
@@ -514,7 +512,7 @@ public class BatchModifyParser extends DefaultHandler
                 failedCount++;
                 logFailedDirective(m_ds.objectPID, localName, e, "");
             }
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("setDatastreamState")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("setDatastreamState")) {
 
             try {
                 m_ds = new Datastream();
@@ -531,7 +529,7 @@ public class BatchModifyParser extends DefaultHandler
                 failedCount++;
                 logFailedDirective(m_ds.objectPID, localName, e, "");
             }
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("setDatastreamVersionable")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("setDatastreamVersionable")) {
 
             try {
                 m_ds = new Datastream();
@@ -548,7 +546,7 @@ public class BatchModifyParser extends DefaultHandler
                 failedCount++;
                 logFailedDirective(m_ds.objectPID, localName, e, "");
             }
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("compareDatastreamChecksum")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("compareDatastreamChecksum")) {
 
             try {
                 m_ds = new Datastream();
@@ -568,7 +566,7 @@ public class BatchModifyParser extends DefaultHandler
                 failedCount++;
                 logFailedDirective(m_ds.objectPID, localName, e, "");
             }            
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("xmlData")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("xmlData")) {
             m_inXMLMetadata = true;
             m_dsXMLBuffer=new StringBuffer();
             m_dsFirstElementBuffer=new StringBuffer();
@@ -632,7 +630,7 @@ public class BatchModifyParser extends DefaultHandler
     public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
 
         if (m_inXMLMetadata) {
-            if (namespaceURI.equalsIgnoreCase(FBM) && localName.equals("xmlData")) {
+            if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equals("xmlData")) {
                 // finished all xml metadata for this datastream
                 // create the right kind of datastream and add it to m_obj
                 String[] prefixes=new String[m_dsPrefixes.size()];
@@ -676,36 +674,39 @@ public class BatchModifyParser extends DefaultHandler
                 m_dsXMLBuffer.append(localName);
                 m_dsXMLBuffer.append(">");
             }
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addObject")) {
-
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("addObject")) {
             try {
-
                 if(addObject) {
-				    				StringBuffer xml=new StringBuffer();
-				    				xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-				    				xml.append("<foxml:digitalObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-				    				xml.append("           xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\"\n");
-				    				xml.append("           xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd\"\n");
-				    				if (!m_obj.pid.equals("")) {
-				    				    xml.append("           PID=\"" + StreamUtility.enc(m_obj.pid) + "\">\n");
-				    				} else {
-				    				    xml.append(">\n");
-				    				}
-				    				xml.append("  <foxml:objectProperties>\n");
-				    				xml.append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"FedoraObject\"/>\n");
-				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"" + StreamUtility.enc(m_obj.label) + "\"/>\n");
-				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#contentModel\" VALUE=\"" + StreamUtility.enc(m_obj.cModel) + "\"/>\n");			
-				    				xml.append("  </foxml:objectProperties>\n");
-				    				xml.append("</foxml:digitalObject>");
-				    				String objXML=xml.toString();
-                	
+                    StringBuffer xml=new StringBuffer();
+                    xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+                    xml.append("<" + FOXML.DIGITAL_OBJECT.qName + " ");
+                    xml.append(FOXML.VERSION.localName + "=\"1.1\"");
+                    if (m_obj.pid != null && m_obj.pid.length() > 0) {
+                        xml.append(" " + FOXML.PID.localName + "=\"");
+                        xml.append(StreamUtility.enc(m_obj.pid) + "\"");
+                    }
+                    xml.append("\n");
+                    xml.append("    xmlns:" + FOXML.prefix + "=\"");
+                    xml.append(FOXML.uri + "\"\n");
+                    xml.append("    xmlns:" + XSI.prefix + "=\"");
+                    xml.append(XSI.uri + "\"\n");
+                    xml.append("    " + XSI.SCHEMA_LOCATION.qName + "=\"");
+                    xml.append(FOXML.uri + " " + FOXML1_1.xsdLocation);
+                    xml.append("\">\n");
+                    xml.append("  <" + FOXML.OBJECT_PROPERTIES.qName + ">\n");
+                    appendProperty(xml, RDF.TYPE.uri, "FedoraObject");
+                    appendProperty(xml, MODEL.LABEL.uri, m_obj.label);
+                    appendProperty(xml, MODEL.CONTENT_MODEL.uri, m_obj.label);
+                    xml.append("  </" + FOXML.OBJECT_PROPERTIES.qName + ">\n");
+                    xml.append("</" + FOXML.DIGITAL_OBJECT.qName + ">");
+                    String objXML=xml.toString();
                     ByteArrayInputStream in=new ByteArrayInputStream(
                             objXML.getBytes("UTF-8"));
                     String newPID=AutoIngestor.ingestAndCommit(
                             APIA,
                             APIM,
                             in,
-                            "foxml1.0",
+                            FOXML1_1.uri,
                             "Created with BatchModify Utility \"addObject\" directive");
                     succeededCount++;
                     logSucceededDirective(newPID, localName,
@@ -719,7 +720,7 @@ public class BatchModifyParser extends DefaultHandler
             } finally {
                 addObject = false;
             }
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("modifyObject")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("modifyObject")) {
 
             try {
 
@@ -740,7 +741,7 @@ public class BatchModifyParser extends DefaultHandler
             } finally {
                 modifyObject = false;
             }    
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("purgeObject")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("purgeObject")) {
 
             try {
 
@@ -767,7 +768,7 @@ public class BatchModifyParser extends DefaultHandler
             } finally {
                 purgeObject = false;
             }            
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("addDatastream")) {
             try {
 
                 // Process addDatastream only if no previous errors encountered
@@ -825,7 +826,7 @@ public class BatchModifyParser extends DefaultHandler
             } finally {
                 addDatastream = false;
             }
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("purgeDatastream")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("purgeDatastream")) {
 
             try {
 
@@ -878,7 +879,7 @@ public class BatchModifyParser extends DefaultHandler
             } finally {
                 purgeDatastream = false;
             }
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("modifyDatastream")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("modifyDatastream")) {
 
             try {
 
@@ -921,7 +922,7 @@ public class BatchModifyParser extends DefaultHandler
             } finally {
                 modifyDatastream = false;
             }
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("setDatastreamState")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("setDatastreamState")) {
 
             try {
 
@@ -943,7 +944,7 @@ public class BatchModifyParser extends DefaultHandler
             } finally {
                 setDatastreamState = false;
             }
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("setDatastreamVersionable")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("setDatastreamVersionable")) {
 
             try {
 
@@ -965,7 +966,7 @@ public class BatchModifyParser extends DefaultHandler
             } finally {
                 setDatastreamVersionable = false;
             }   
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("compareDatastreamChecksum")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("compareDatastreamChecksum")) {
 
             try {
 
@@ -992,11 +993,19 @@ public class BatchModifyParser extends DefaultHandler
             } finally {
                 compareDatastreamChecksum = false;
             }                        
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastreamBinding")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("addDatastreamBinding")) {
 
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("removeDatastreamBinding")) {
+        } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri) && localName.equalsIgnoreCase("removeDatastreamBinding")) {
 
         } 
+    }
+
+    private static void appendProperty(StringBuffer xml, String uri,
+            String value) {
+        xml.append("    <" + FOXML.PROPERTY.qName + " ");
+        xml.append(FOXML.NAME.localName + "=\"");
+        xml.append(uri + "\" " + FOXML.VALUE.localName + "=\"");
+        xml.append(StreamUtility.enc(value) + "\"/>\n");
     }
 
     /**

@@ -21,6 +21,9 @@ import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 
 import fedora.client.FedoraClient;
+
+import fedora.common.Constants;
+
 import fedora.server.management.FedoraAPIM;
 import fedora.server.access.FedoraAPIA;
 import fedora.server.types.gen.DatastreamDef;
@@ -32,31 +35,13 @@ import fedora.server.types.gen.RepositoryInfo;
 import fedora.server.types.gen.Property;
 
 /**
- *
- * <p><b>Title:</b> DemoSOAPClient</p>
- * <p><b>Description: A simple example on how to write a SOAP client that
- * makes calls to the Fedora SOAP interfaces (API-A and API-M).</b> </p>
- *
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Mozilla Public License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2004 by The
- * Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
+ * A simple example of a SOAP client that makes calls to the Fedora SOAP 
+ * interfaces (API-A and API-M).
  *
  * @author payette@cs.cornell.edu
  */
-public class DemoSOAPClient {
+public class DemoSOAPClient
+        implements Constants {
 
     private static FedoraAPIM APIM;
 	private static FedoraAPIA APIA;
@@ -309,7 +294,7 @@ public class DemoSOAPClient {
 						System.out.println("Error on ingest file inputstream: " + ioe.getMessage());
 						ioe.printStackTrace();
 				}
-				ingestPID = caller.ingest(inStream, "foxml1.0", "ingest of test bdef");
+				ingestPID = caller.ingest(inStream, FOXML1_1.uri, "ingest of test bdef");
 				System.out.println("Finished test ingest of bdef object: " + ingestPID);
 				
 				System.out.println("\nTest ingest......................................................");
@@ -321,7 +306,7 @@ public class DemoSOAPClient {
 						System.out.println("Error on ingest file inputstream: " + ioe.getMessage());
 						ioe.printStackTrace();
 				}
-				ingestPID = caller.ingest(inStream, "foxml1.0", "ingest of test bmech");
+				ingestPID = caller.ingest(inStream, FOXML1_1.uri, "ingest of test bmech");
 				System.out.println("Finished test ingest of bmech object: " + ingestPID);
 				
 				System.out.println("\nTest ingest......................................................");
@@ -333,7 +318,7 @@ public class DemoSOAPClient {
 						System.out.println("Error on ingest file inputstream: " + ioe.getMessage());
 						ioe.printStackTrace();
 				}
-				ingestPID = caller.ingest(inStream, "foxml1.0", "ingest of test object");
+				ingestPID = caller.ingest(inStream, FOXML1_1.uri, "ingest of test object");
 				System.out.println("Finished test ingest of bmech object: " + ingestPID);
 
 				//**************************************************************					
@@ -418,7 +403,7 @@ public class DemoSOAPClient {
 						System.out.println("Error on export output stream: " + ioe.getMessage());
 						ioe.printStackTrace();
 				}		
-				byte[] objectXML = caller.export(ingestPID, "foxml1.0", null, outStream);
+				byte[] objectXML = caller.export(ingestPID, FOXML1_1.uri, null, outStream);
 				
 				//**************************************************************
 				//******** NOW TEST API-A METHODS 

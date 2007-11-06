@@ -28,7 +28,6 @@ import fedora.server.journal.helpers.DecodingBase64OutputStream;
 import fedora.server.journal.helpers.JournalHelper;
 import fedora.server.journal.recoverylog.JournalRecoveryLog;
 import fedora.server.journal.xmlhelpers.AbstractXmlReader;
-import fedora.server.journal.xmlhelpers.BindingMapXmlReader;
 import fedora.server.journal.xmlhelpers.ContextXmlReader;
 
 /**
@@ -260,8 +259,6 @@ public abstract class JournalReader extends AbstractXmlReader implements
             readBooleanArgument(reader, journalEntry, argName);
         } else if (ARGUMENT_TYPE_STREAM.equals(argType)) {
             readStreamArgument(reader, journalEntry, argName);
-        } else if (ARGUMENT_TYPE_BINDING_MAP.equals(argType)) {
-            readBindingMapArgument(reader, journalEntry, argName);
         } else {
             throw new JournalException("Unknown argument type: name='"
                     + argName + "', type='" + argType + "'");
@@ -380,20 +377,6 @@ public abstract class JournalReader extends AbstractXmlReader implements
         if (!isEndTagEvent(endTag, QNAME_TAG_ARGUMENT)) {
             throw getUnexpectedEventInArgumentException(name,
                     ARGUMENT_TYPE_NULL, journalEntry.getMethodName(), endTag);
-        }
-    }
-
-    private void readBindingMapArgument(XMLEventReader reader,
-            ConsumerJournalEntry journalEntry, String name)
-            throws XMLStreamException, JournalException {
-        journalEntry.addArgument(name, new BindingMapXmlReader()
-                .readBindingMap(reader));
-
-        XMLEvent endTag = reader.nextTag();
-        if (!isEndTagEvent(endTag, QNAME_TAG_ARGUMENT)) {
-            throw getUnexpectedEventInArgumentException(name,
-                    ARGUMENT_TYPE_BINDING_MAP, journalEntry.getMethodName(),
-                    endTag);
         }
     }
 

@@ -10,6 +10,8 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 
+import fedora.common.Constants;
+
 import fedora.client.actions.ViewObject;
 import fedora.client.utility.ingest.AutoIngestor;
 
@@ -22,10 +24,10 @@ import fedora.server.utilities.StreamUtility;
  * and launch an editor on it.
  * 
  * @author cwilper@cs.cornell.edu
- * @version $Id$
  */
-
-public class NewObjectDialog extends JDialog implements ItemListener {
+public class NewObjectDialog
+        extends JDialog
+        implements Constants, ItemListener {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -163,43 +165,16 @@ public class NewObjectDialog extends JDialog implements ItemListener {
 
 				if (ok) {
 					dispose();
-					// now that things look ok, give it a try
-					/**
-					 * 
-					 * (NO LONGER USING METS HERE -- USING FOXML INSTEAD -- SEE
-					 * BELOW)
-					 * 
-					 * if (pid == null) pid = "";
-					 * 
-					 * StringBuffer xml=new StringBuffer(); xml.append("<?xml
-					 * version=\"1.0\" encoding=\"UTF-8\"?>\n"); xml.append("<METS:mets
-					 * xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-					 * xml.append(" xmlns:METS=\"http://www.loc.gov/METS/\"\n");
-					 * xml.append("
-					 * xmlns:fedoraAudit=\"http://www.fedora.info/definitions/audit\"\n");
-					 * xml.append("
-					 * xmlns:xlink=\"http://www.w3.org/TR/xlink\"\n");
-					 * xml.append("
-					 * xsi:schemaLocation=\"http://www.loc.gov/standards/METS/
-					 * http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd\"\n");
-					 * xml.append(" TYPE=\"FedoraObject\"\n"); if
-					 * (!pid.equals("")) { xml.append(" OBJID=\"" +
-					 * StreamUtility.enc(pid) + "\"\n"); } xml.append("
-					 * LABEL=\"" + StreamUtility.enc(label) + "\"\n");
-					 * xml.append(" PROFILE=\"" + StreamUtility.enc(cModel) +
-					 * "\">\n"); xml.append("</METS:mets>"); String
-					 * objXML=xml.toString();
-					 */
-
 					// Serialize the most basic
 					StringBuffer xml = new StringBuffer();
 					xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 					xml
-							.append("<foxml:digitalObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+							.append("<foxml:digitalObject xmlns:xsi=\"" + XSI.uri + "\"\n");
 					xml
-							.append("           xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\"\n");
+							.append("           xmlns:foxml=\"" + FOXML.uri + "\"\n");
 					xml
-							.append("           xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd\"");
+							.append("           xsi:schemaLocation=\"" + FOXML.uri + " " + FOXML1_1.xsdLocation + "\"");
+					xml.append("\n           VERSION=\"1.1\"\n");
 					if (pid != null) {
 						xml.append("\n           PID=\""
 								+ StreamUtility.enc(pid) + "\">\n");
@@ -207,12 +182,12 @@ public class NewObjectDialog extends JDialog implements ItemListener {
 						xml.append(">\n");
 					}
 					xml.append("  <foxml:objectProperties>\n");
-					xml.append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"FedoraObject\"/>\n");
-					xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\""
+					xml.append("    <foxml:property NAME=\"" + RDF.TYPE.uri + "\" VALUE=\"FedoraObject\"/>\n");
+					xml.append("    <foxml:property NAME=\"" + MODEL.LABEL.uri + "\" VALUE=\""
 									+ StreamUtility.enc(label) + "\"/>\n");
-					xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#contentModel\" VALUE=\""
+					xml.append("    <foxml:property NAME=\"" + MODEL.CONTENT_MODEL.uri + "\" VALUE=\""
 									+ StreamUtility.enc(cModel) + "\"/>\n");
-                    xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#ownerId\" VALUE=\""+Administrator.getUser()+"\"/>");
+                    xml.append("    <foxml:property NAME=\"" + MODEL.OWNER.uri + "\"" + Administrator.getUser() + "\"/>");
 					xml.append("  </foxml:objectProperties>\n");
 					xml.append("</foxml:digitalObject>");
 					String objXML = xml.toString();
@@ -221,8 +196,7 @@ public class NewObjectDialog extends JDialog implements ItemListener {
 							.getBytes("UTF-8"));
 					String newPID = AutoIngestor.ingestAndCommit(
 							Administrator.APIA, Administrator.APIM, in,
-							"foxml1.0",
-							// "metslikefedora1",
+                            FOXML1_1.uri,
 							"Created with Admin GUI \"New Object\" command");
 					new ViewObject(newPID).launch();
 				}

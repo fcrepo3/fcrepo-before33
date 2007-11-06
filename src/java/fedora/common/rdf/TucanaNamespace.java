@@ -6,11 +6,17 @@
 package fedora.common.rdf;
 
 /**
+ * The Tucana RDF namespace.
  * 
+ * <pre>
+ * Namespace URI    : http://tucana.org/tucana#
+ * Preferred Prefix : tucana
+ * </pre>
+ * 
+ * @see org.kowari.query.rdf.Tucana
+ * @see org.kowari.query.SpecialPredicates
+ * @see org.kowari.resolver.xsd.XSDResolverFactory
  * @author Edwin Shin
- * @see "org.kowari.query.rdf.Tucana, 
- *      org.kowari.query.SpecialPredicates,
- *      org.kowari.resolver.xsd.XSDResolverFactory"
  */
 public class TucanaNamespace extends RDFNamespace {
 
@@ -29,6 +35,7 @@ public class TucanaNamespace extends RDFNamespace {
     public TucanaNamespace() {
 
         this.uri = "http://tucana.org/tucana#";
+        this.prefix = "tucana";
 
         // Properties
         this.AFTER              = new RDFName(this, "after");

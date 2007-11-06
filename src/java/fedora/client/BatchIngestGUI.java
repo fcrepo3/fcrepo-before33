@@ -29,18 +29,19 @@ import java.awt.FontMetrics;
 import javax.swing.Box;
 import javax.swing.JFrame;
 import javax.swing.JComponent;
+
+import fedora.common.Constants;
+
 import fedora.swing.mdi.MDIDesktopPane;
 
 /**
- *
- * <p><b>Title:</b> BatchIngesGUI.java</p>
- * <p><b>Description:</b> </p>
+ * Batch Ingest GUI.
  *
  * @author wdn5e@virginia.edu
- * @version $Id$
  */
 public class BatchIngestGUI
-        extends JInternalFrame {
+        extends JInternalFrame
+        implements Constants {
 
 	private static final long serialVersionUID = 1L;
         //private static File s_lastDir;
@@ -216,7 +217,7 @@ public class BatchIngestGUI
 	    properties.setProperty("username",user);
 	    properties.setProperty("password",pass);
 	    properties.setProperty("server-protocol",Administrator.getProtocol());
-	    properties.setProperty("object-format",m_foxmlMap.isSelected()? "foxml1.0" : "metslikefedora1");
+	    properties.setProperty("object-format",m_foxmlMap.isSelected()? FOXML1_1.uri : METS_EXT1_1.uri);
 	    
 	    batchOutput.setDirectoryPath(properties.getProperty("ingested-pids")); //2003.12.03 niebel -- duplicate output to file
 	    

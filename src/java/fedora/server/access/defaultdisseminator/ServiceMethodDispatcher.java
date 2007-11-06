@@ -53,12 +53,8 @@ public class ServiceMethodDispatcher {
         try {
           method = service_object.getClass().getMethod(methodName, parmClassTypes);
           return method.invoke(service_object, parmValues);
-        } catch (IllegalAccessException e) {
-            throw new MethodNotFoundException("No such method: " + methodName);
-        } catch (InvocationTargetException e) {
-            throw new MethodNotFoundException("No such method: " + methodName);
-        } catch (NoSuchMethodException e) {
-            throw new MethodNotFoundException("No such method: " + methodName);
+        } catch (Exception e) {
+            throw new MethodNotFoundException("Error executing method: " + methodName, e);
         }
     }
 }

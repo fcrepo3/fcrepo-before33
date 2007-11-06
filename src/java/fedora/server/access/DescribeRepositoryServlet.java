@@ -40,11 +40,7 @@ import fedora.server.errors.servletExceptionExtensions.InternalError500Exception
 import fedora.server.errors.servletExceptionExtensions.RootException;
 
 /**
- * <p>
- * <b>Title: </b>DescribeRepositoryServlet.java
- * </p>
- * <p>
- * <b>Description: </b>Implements the "describeRepository" functionality of the
+ * Implements the "describeRepository" functionality of the
  * Fedora Access LITE (API-A-LITE) interface using a java servlet front end. The
  * syntax defined by API-A-LITE has for getting a description of the repository
  * has the following binding:
@@ -68,10 +64,10 @@ import fedora.server.errors.servletExceptionExtensions.RootException;
  * </ul>
  * 
  * @author rlw@virginia.edu
- * @version $Id: DescribeRepositoryServlet.java,v 1.27 2005/05/04 11:59:20 rlw
- *          Exp $
  */
-public class DescribeRepositoryServlet extends HttpServlet {
+public class DescribeRepositoryServlet
+        extends HttpServlet
+        implements Constants {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
@@ -277,12 +273,10 @@ public class DescribeRepositoryServlet extends HttpServlet {
 					pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 					pw
 							.write("<fedoraRepository "
-									+ " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-									+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-									+ " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-									+ fedoraServerProtocol + "://"
-									+ fedoraServerHost + ":" + fedoraServerPort
-									+ "/fedoraRepository.xsd\">");
+									+ " xmlns:xsd=\"" + XML_XSD.uri + "\""
+									+ " xmlns:xsi=\"" + XSI.uri + "\""
+									+ " xsi:schemaLocation=\"" + ACCESS.uri 
+									+ " " + REPO_DESC1_0.xsdLocation + "\">");
 
 					// REPOSITORY INFO FIELDS SERIALIZATION
 					pw.write("<repositoryName>" + repositoryInfo.repositoryName

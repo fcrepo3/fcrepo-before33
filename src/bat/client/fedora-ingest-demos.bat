@@ -10,7 +10,7 @@ set JAVA_HOME=%THIS_JAVA_HOME%
 
 echo Ingesting Demonstration Objects...
 
-set DO_FORMAT=foxml1.0
+set DO_FORMAT=info:fedora/fedora-system:FOXML-1.1
 
 "%JAVA_HOME%\bin\java" -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\fedora-client.jar -Djavax.net.ssl.trustStore="%FEDORA_HOME%\client\truststore" -Djavax.net.ssl.trustStorePassword=tomcat -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.utility.ingest.Ingest d %FEDORA_HOME%\client\demo\foxml\local-server-demos %DO_FORMAT% DMO %1:%2 %3 %4 %5
 "%JAVA_HOME%\bin\java" -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\fedora-client.jar -Djavax.net.ssl.trustStore="%FEDORA_HOME%\client\truststore" -Djavax.net.ssl.trustStorePassword=tomcat -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.utility.ingest.Ingest d %FEDORA_HOME%\client\demo\foxml\open-server-demos %DO_FORMAT% DMO %1:%2 %3 %4 %5

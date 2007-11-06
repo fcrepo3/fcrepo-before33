@@ -11,7 +11,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+
 import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,20 +23,19 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import org.apache.log4j.Logger;
-
 import fedora.common.Constants;
+
+import fedora.common.xml.format.XMLFormat;
+
 import fedora.server.errors.ObjectIntegrityException;
-import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.ValidationException;
 import fedora.server.storage.types.AuditRecord;
@@ -51,32 +52,32 @@ import fedora.server.utilities.StreamUtility;
 import fedora.server.validation.ValidationUtility;
 
 /**
- * Deserializes XML digital object encoded in accordance with 
- * the Fedora Object XML (FOXML) schema defined at: 
- * http://www.fedora.info/definitions/1/0/foxml1-0.xsd.
- *
- * The FOXML XML is parsed using SAX and is instantiated into a Fedora
- * digital object in memory (see fedora.server.types.DigitalObject). </p>
- *
+ * Deserializes objects in the constructor-provided version of FOXML.
+ * 
  * @author payette@cs.cornell.edu
- * @version $Id$
+ * @author cwilper@cs.cornell.edu
  */
+@SuppressWarnings("deprecation")
 public class FOXMLDODeserializer
         extends DefaultHandler
         implements DODeserializer,
                    Constants {
+    
+    /** 
+     * The format this deserializer will read if unspecified at construction.
+     * This defaults to the latest FOXML format.
+     */ 
+    public static final XMLFormat DEFAULT_FORMAT = FOXML1_1;
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
-            FOXMLDODeserializer.class.getName());
+            FOXMLDODeserializer.class);
 
-    /** The namespace for FOXML */
-    private final static String F="info:fedora/fedora-system:def/foxml#";
-	
-	/** The deserializer context. See definitions of contexts in 
-	 *  fedora.server.storage.translation.DOTranslationUtility.
-	 */
-	private int m_transContext; 
+    /** The format this deserializer reads. */
+    private final XMLFormat m_format;
+
+    /** The current translation context. */
+    private int m_transContext;
     
 	/** The object to deserialize to. */
 	private DigitalObject m_obj;
@@ -90,7 +91,6 @@ public class FOXMLDODeserializer
     private ArrayList m_prefixList;
 
 	// temporary variables and state variables
-	private int m_queryBehavior;
 	private String m_characterEncoding;
     private boolean m_rootElementFound;
 	private String m_objPropertyName;
@@ -136,7 +136,6 @@ public class FOXMLDODeserializer
 	// temporary variables for processing audit records
 	private AuditRecord m_auditRec;	
 	private boolean m_gotAudit=false;
-	//private String m_auditRecordID;
 	private String m_auditComponentID;
 	private String m_auditProcessType;
 	private String m_auditAction;
@@ -147,83 +146,63 @@ public class FOXMLDODeserializer
 	// buffers for reading content
 	private StringBuffer m_elementContent; // single element
     private StringBuffer m_dsXMLBuffer; // chunks of inline XML metadata
-    
+   
     /**
-     * Never query web server for content size and MIME type
+     * Creates a deserializer that reads the default FOXML format.
      */
-    public static int QUERY_NEVER=0;
-
-    /**
-     * Query web server for content size and MIME type if either are undefined.
-     */
-    public static int QUERY_IF_UNDEFINED=1;
-
-    /**
-     * Always query web server for content size and MIME type.
-     */
-    public static int QUERY_ALWAYS=2;
-
-
-    public FOXMLDODeserializer()
-            throws FactoryConfigurationError, ParserConfigurationException,
-            SAXException, UnsupportedEncodingException {
-        this("UTF-8", false, QUERY_NEVER);
+    public FOXMLDODeserializer() {
+        this(DEFAULT_FORMAT);
     }
 
     /**
-     * Initializes by setting up a parser that doesn't validate and never
-     * queries the server for values of DSSize and DSMIME.
+     * Creates a deserializer that reads the given FOXML format.
+     * 
+     * @param format the version-specific FOXML format.
+     * @throws IllegalArgumentException if format is not a known FOXML format.
      */
-    public FOXMLDODeserializer(String characterEncoding)
-            throws FactoryConfigurationError, ParserConfigurationException,
-            SAXException, UnsupportedEncodingException {
-        this(characterEncoding, false, QUERY_NEVER);
-    }
-
-    /**
-     * Initializes by setting up a parser that validates only if validate=true.
-     * <p></p>
-     * The character encoding of the XML is auto-determined by sax, but
-     * we need it for when we set the byte[] in DatastreamXMLMetadata, so
-     * we effectively, we need to also specify the encoding of the datastreams.
-     * this could be different than how the digital object xml was encoded,
-     * and this class won't care.  However, the caller should keep track
-     * of the byte[] encoding if it plans on doing any translation of
-     * that to characters (such as in xml serialization)
-     */
-    public FOXMLDODeserializer(String characterEncoding, boolean validate,
-            int queryBehavior)
-            throws FactoryConfigurationError, ParserConfigurationException,
-            SAXException, UnsupportedEncodingException {
-        m_queryBehavior=queryBehavior;
-        m_characterEncoding=characterEncoding;
-        StringBuffer buf=new StringBuffer();
-        buf.append("test");
-        byte[] temp=buf.toString().getBytes(m_characterEncoding);
-        // then init sax
-        SAXParserFactory spf = SAXParserFactory.newInstance();
-        spf.setValidating(validate);
-        spf.setNamespaceAware(true);
-        m_parser=spf.newSAXParser();
-    }
-
-    public DODeserializer getInstance()
-            throws RepositoryConfigurationException {
-        try {
-            return (DODeserializer) new FOXMLDODeserializer("UTF-8", false, QUERY_NEVER);
-        } catch (Exception e) {
-            throw new RepositoryConfigurationException("Error trying to get a "
-                    + "new FOXMLDODeserializer instance: " + e.getClass().getName()
-                    + ": " + e.getMessage());
+    public FOXMLDODeserializer(XMLFormat format) {
+        if (format.equals(FOXML1_0) || format.equals(FOXML1_1)) {
+            m_format = format;
+        } else {
+            throw new IllegalArgumentException("Not a FOXML format: "
+                    + format.uri);
         }
     }
 
-    public void deserialize(InputStream in, DigitalObject obj, String encoding, int transContext)
-            throws ObjectIntegrityException, StreamIOException, UnsupportedEncodingException {
-            	
-        LOG.debug("Deserializing FOXML for transContext: " + transContext);
-        m_obj=obj;
-        m_transContext=transContext;
+    //---
+    // DODeserializer implementation
+    //---
+
+    /**
+     * {@inheritDoc}
+     */
+    public DODeserializer getInstance() {
+        return new FOXMLDODeserializer(m_format);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void deserialize(InputStream in, DigitalObject obj, String encoding,
+            int transContext)
+            throws ObjectIntegrityException, StreamIOException,
+            UnsupportedEncodingException {
+        LOG.debug("Deserializing " + m_format.uri + " for transContext: "
+                  + transContext);        
+        
+        // initialize sax for this parse
+        try {
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            spf.setValidating(false);
+            spf.setNamespaceAware(true);
+            m_parser=spf.newSAXParser();
+        } catch (Exception e) {
+            throw new RuntimeException("Error initializing SAX parser", e);
+        }
+        
+        m_obj = obj;
+        m_characterEncoding = encoding;
+        m_transContext = transContext;
         initialize();
         try {
             m_parser.parse(in, this);
@@ -239,9 +218,16 @@ public class FOXMLDODeserializer
             throw new ObjectIntegrityException("FOXMLDODeserializer: Input stream is not valid FOXML." +
             	" The digitalObject root element was not detected.");
         }       
-        obj.setNamespaceMapping(new HashMap());
     }
+    
+    //---
+    // DefaultHandler overrides
+    //---
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void startPrefixMapping(String prefix, String uri) {
         m_prefixMap.put(prefix, uri);
         if (m_inXMLMetadata) {
@@ -250,6 +236,10 @@ public class FOXMLDODeserializer
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void endPrefixMapping(String prefix) {
         m_prefixMap.remove(prefix);
         if (m_inXMLMetadata) {
@@ -257,6 +247,10 @@ public class FOXMLDODeserializer
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void startElement(String uri, String localName, String qName,
             Attributes a) throws SAXException {
 
@@ -264,21 +258,21 @@ public class FOXMLDODeserializer
 		// This will start a fresh buffer for every element encountered.            	
 		m_elementContent=new StringBuffer();
 
-        if (uri.equals(F) && !m_inXMLMetadata) {
+        if (uri.equals(FOXML.uri) && !m_inXMLMetadata) {
             // WE ARE NOT INSIDE A BLOCK OF INLINE XML...
             if (localName.equals("digitalObject")) {
                 m_rootElementFound=true;
                 //======================
                 // OBJECT IDENTIFIERS...
                 //======================
-				m_obj.setPid(grab(a, F, "PID"));
+				m_obj.setPid(grab(a, FOXML.uri, "PID"));
 			//=====================
 			// OBJECT PROPERTIES...
 			//=====================
             } else if (localName.equals("property") || localName.equals("extproperty")) {
-				m_objPropertyName = grab(a, F, "NAME");
+				m_objPropertyName = grab(a, FOXML.uri, "NAME");
 				if (m_objPropertyName.equals(MODEL.STATE.uri)){
-                    String stateString = grab(a, F, "VALUE");
+                    String stateString = grab(a, FOXML.uri, "VALUE");
                     String stateCode = null;
                     if (MODEL.DELETED.looselyMatches(stateString, true)) {
                         stateCode = "D";
@@ -289,52 +283,52 @@ public class FOXMLDODeserializer
                     }
                     m_obj.setState(stateCode);
 				} else if (m_objPropertyName.equals(MODEL.CONTENT_MODEL.uri)){
-					m_obj.setContentModelId(grab(a, F, "VALUE"));
+					m_obj.setContentModelId(grab(a, FOXML.uri, "VALUE"));
 				} else if (m_objPropertyName.equals(MODEL.LABEL.uri)){
-					m_obj.setLabel(grab(a, F, "VALUE"));
+					m_obj.setLabel(grab(a, FOXML.uri, "VALUE"));
 				} else if (m_objPropertyName.equals(MODEL.OWNER.uri)){
-					m_obj.setOwnerId(grab(a, F, "VALUE"));
+					m_obj.setOwnerId(grab(a, FOXML.uri, "VALUE"));
 				} else if (m_objPropertyName.equals(MODEL.CREATED_DATE.uri)){
-					m_obj.setCreateDate(DateUtility.convertStringToDate(grab(a, F, "VALUE")));
+					m_obj.setCreateDate(DateUtility.convertStringToDate(grab(a, FOXML.uri, "VALUE")));
 				} else if (m_objPropertyName.equals(VIEW.LAST_MODIFIED_DATE.uri)){
-					m_obj.setLastModDate(DateUtility.convertStringToDate(grab(a, F, "VALUE")));
-				} 
-                else if (m_objPropertyName.equals(RDF.TYPE.uri)) 
-                {
-					String oType = grab(a, F, "VALUE");
-					if (oType==null || oType.equals("")) { oType=MODEL.DATA_OBJECT.localName; }
-                    if (MODEL.BDEF_OBJECT.looselyMatches(oType, false)) 
-                    {
-						m_obj.addFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
-					} 
-                    if (MODEL.BMECH_OBJECT.looselyMatches(oType, false)) 
-                    {
-						m_obj.addFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
-					} 
-                    if (MODEL.CMODEL_OBJECT.looselyMatches(oType, false)) 
-                    {
-                        m_obj.addFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT);
+					m_obj.setLastModDate(DateUtility.convertStringToDate(grab(a, FOXML.uri, "VALUE")));
+				} else if (m_objPropertyName.equals(RDF.TYPE.uri)) {
+                    String oType = grab(a, FOXML.uri, "VALUE");
+                    if (oType == null || oType.equals("")) {
+                        oType = MODEL.DATA_OBJECT.localName;
                     }
-                    if (MODEL.DATA_OBJECT.looselyMatches(oType, false)) 
-                    {
+                    if (MODEL.BDEF_OBJECT.looselyMatches(oType, false)) {
+                        m_obj.addFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
+                    }
+                    if (MODEL.BMECH_OBJECT.looselyMatches(oType, false)) {
+                        m_obj.addFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
+                    }
+                    if (MODEL.CMODEL_OBJECT.looselyMatches(oType, false)) {
+                        if (m_format.equals(FOXML1_0)) {
+                            // FOXML 1.0 doesn't support this type; down-convert
+                            m_obj.addFedoraObjectType(DigitalObject.FEDORA_OBJECT);
+                        } else {
+                            m_obj.addFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT);
+                        }
+                    }
+                    if (MODEL.DATA_OBJECT.looselyMatches(oType, false)) {
                         m_obj.addFedoraObjectType(DigitalObject.FEDORA_OBJECT);
                     }
-				} 
-                else 
-                {
-					// add an extensible property in the property map
-					m_obj.setExtProperty(m_objPropertyName, grab(a, F, "VALUE"));
-				}
+                } else {
+                    // add an extensible property in the property map
+                    m_obj.setExtProperty(m_objPropertyName, grab(a, FOXML.uri,
+                                                                 "VALUE"));
+                }
 			//===============
 			// DATASTREAMS...
 			//===============
 			} else if (localName.equals("datastream")) {
 				// get datastream container-level attributes...
 				// These are common for all versions of the datastream. 
-				m_dsId=grab(a, F, "ID");
-				m_dsState=grab(a, F, "STATE");
-				m_dsControlGrp=grab(a, F, "CONTROL_GROUP");
-				String versionable =grab(a, F, "VERSIONABLE");
+				m_dsId=grab(a, FOXML.uri, "ID");
+				m_dsState=grab(a, FOXML.uri, "STATE");
+				m_dsControlGrp=grab(a, FOXML.uri, "CONTROL_GROUP");
+				String versionable =grab(a, FOXML.uri, "VERSIONABLE");
 				// If dsVersionable is null or missing, default to true.
 				if (versionable==null || versionable.equals("")) {
 					m_dsVersionable=true;
@@ -349,22 +343,22 @@ public class FOXMLDODeserializer
 				}
 			} else if (localName.equals("datastreamVersion")) {
 				// get datastream version-level attributes...
-				m_dsVersId=grab(a, F, "ID");
-				m_dsLabel=grab(a, F, "LABEL");
-				m_dsCreateDate=DateUtility.convertStringToDate(grab(a, F, "CREATED"));
-				String altIDsString = grab(a, F, "ALT_IDS");
+				m_dsVersId=grab(a, FOXML.uri, "ID");
+				m_dsLabel=grab(a, FOXML.uri, "LABEL");
+				m_dsCreateDate=DateUtility.convertStringToDate(grab(a, FOXML.uri, "CREATED"));
+				String altIDsString = grab(a, FOXML.uri, "ALT_IDS");
 				if (altIDsString.length() == 0) {
 					m_dsAltIds = new String[0];
 				} else {
 					m_dsAltIds = altIDsString.split(" ");
 				}
-				m_dsFormatURI=grab(a, F, "FORMAT_URI");
+				m_dsFormatURI=grab(a, FOXML.uri, "FORMAT_URI");
 				if (m_dsFormatURI.length() == 0) {
 					m_dsFormatURI = null;
 				}
 				checkMETSFormat(m_dsFormatURI);
-				m_dsMimeType=grab(a, F, "MIMETYPE");
-				String sizeString=grab(a, F, "SIZE");
+				m_dsMimeType=grab(a, FOXML.uri, "MIMETYPE");
+				String sizeString=grab(a, FOXML.uri, "SIZE");
                 if (sizeString!=null && !sizeString.equals("")) {
 					try {
 						m_dsSize=Long.parseLong(sizeString);
@@ -383,8 +377,8 @@ public class FOXMLDODeserializer
             }
             else if (localName.equals("contentDigest"))
             {
-                m_dsChecksumType = grab(a, F, "TYPE");
-                m_dsChecksum = grab(a, F, "DIGEST");
+                m_dsChecksumType = grab(a, FOXML.uri, "TYPE");
+                m_dsChecksum = grab(a, FOXML.uri, "DIGEST");
             }
 			//======================
 			// DATASTREAM CONTENT...
@@ -396,7 +390,7 @@ public class FOXMLDODeserializer
 				m_xmlDataLevel=0;
 				m_inXMLMetadata=true;
             } else if (localName.equals("contentLocation")) {
-                String dsLocation=grab(a,F,"REF");
+                String dsLocation=grab(a,FOXML.uri,"REF");
                 if (dsLocation==null || dsLocation.equals("")) {
                     throw new SAXException("REF attribute must be specified in contentLocation element");
                 }
@@ -433,7 +427,6 @@ public class FOXMLDODeserializer
 				  instantiateDatastream(new DatastreamManagedContent());
                 }
             } else if (localName.equals("binaryContent")) {
-				// FIXME: implement support for this in Fedora 1.2
             	if (m_dsControlGrp.equalsIgnoreCase("M")) 
                 {
             		m_readingBinaryContent=true;
@@ -446,59 +439,12 @@ public class FOXMLDODeserializer
 						throw new SAXException(new StreamIOException("Unable to create temporary file for binary content"));
 					}
                 }
-				
-			//==================
-			// DISSEMINATORS...
-			//==================
-            } else if (localName.equals("disseminator")) {
-				m_dissID=grab(a, F,"ID");
-				m_bDefID=grab(a, F, "BDEF_CONTRACT_PID");
-				m_dissState=grab(a, F,"STATE");
-				String versionable =grab(a, F, "VERSIONABLE");
-				// disseminator versioning is defaulted to true
-				if (versionable==null || versionable.equals("")) {
-					m_dissVersionable=true;
-				} else {
-					m_dissVersionable=new Boolean(versionable).booleanValue();
-				}
-            } else if (localName.equals("disseminatorVersion")) {
-				m_diss = new Disseminator();
-				m_diss.dissID=m_dissID;
-				m_diss.bDefID=m_bDefID;
-				m_diss.dissState=m_dissState;
-				String versionable =grab(a, F, "VERSIONABLE");
-				// disseminator versioning is defaulted to true
-				if (versionable==null || versionable.equals("")) {
-					m_dissVersionable=true;
-				} else {
-					m_dissVersionable=new Boolean(versionable).booleanValue();
-				}
-				m_diss.dissVersionID=grab(a, F,"ID");
-				m_diss.dissLabel=grab(a, F, "LABEL");
-				m_diss.bMechID=grab(a, F, "BMECH_SERVICE_PID");
-				m_diss.dissCreateDT=DateUtility.convertStringToDate(grab(a, F, "CREATED"));
-			} else if (localName.equals("serviceInputMap")) {
-				m_diss.dsBindMap=new DSBindingMap();
-				m_dsBindings = new ArrayList();
-				// Note that the dsBindMapID is not really necessary from the
-				// FOXML standpoint, but it was necessary in METS since the structMap
-				// was outside the disseminator. (Look at how it's used in the sql db.)
-				// Also, the rest of the attributes on the DSBindingMap are not 
-				// really necessary since they are inherited from the disseminator.
-				// I just use the values picked up from disseminatorVersion.
-				m_diss.dsBindMapID=m_diss.dissVersionID + "b";
-				m_diss.dsBindMap.dsBindMapID=m_diss.dsBindMapID;
-				m_diss.dsBindMap.dsBindMechanismPID = m_diss.bMechID;
-				m_diss.dsBindMap.dsBindMapLabel = "";  // does not exist in FOXML
-				m_diss.dsBindMap.state = m_diss.dissState;
-			} else if (localName.equals("datastreamBinding")) {
-				DSBinding dsb = new DSBinding();
-				dsb.bindKeyName = grab(a, F,"KEY");
-				dsb.bindLabel = grab(a, F,"LABEL"); 
-				dsb.datastreamID = grab(a, F,"DATASTREAM_ID");
-				dsb.seqNo = grab(a, F,"ORDER");
-				m_dsBindings.add(dsb);
-			}
+            } else if (m_format.equals(FOXML1_0)) {
+                //==================
+                // DISSEMINATORS...
+                //==================
+                startDisseminators(localName, a);
+            }
         } else {
         	//===============
         	// INLINE XML...
@@ -510,7 +456,7 @@ public class FOXMLDODeserializer
                 
                 // FOXML INSIDE FOXML! we have an inline XML datastream 
                 // that is itself FOXML.  We do not want to parse this!
-                if (uri.equals(F) && localName.equals("xmlContent")) {
+                if (uri.equals(FOXML.uri) && localName.equals("xmlContent")) {
                     m_xmlDataLevel++;
                 }
                 
@@ -529,39 +475,10 @@ public class FOXMLDODeserializer
         }
     }
 
-    private void appendElementStart(String uri,
-                                    String localName,
-                                    String qName,
-                                    Attributes a,
-                                    StringBuffer out) {
-        out.append("<" + qName);
-        // add the current qName's namespace to m_localPrefixMap
-        // and m_prefixList if it's not already in m_localPrefixMap
-        // This ensures that all namespaces used in inline XML are declared within,
-        // since it's supposed to be a standalone chunk.
-        String[] parts = qName.split(":");
-        if (parts.length == 2) {
-            String nsuri = (String) m_localPrefixMap.get(parts[0]);
-            if (nsuri == null) {
-                m_localPrefixMap.put(parts[0], parts[1]);
-                m_prefixList.add(parts[0]);
-            }
-        }
-        // do we have any newly-mapped namespaces?
-        while (m_prefixList.size() > 0) {
-            String prefix = (String) m_prefixList.remove(0);
-            out.append(" xmlns");
-            if (prefix.length() > 0) {
-                out.append(":");
-            }
-            out.append(prefix + "=\"" + StreamUtility.enc((String) m_prefixMap.get(prefix)) + "\"");
-        }
-        for (int i = 0; i < a.getLength(); i++) {
-            out.append(" " + a.getQName(i) + "=\"" + StreamUtility.enc(a.getValue(i)) + "\"");
-        }
-        out.append(">");
-    }
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void characters(char[] ch, int start, int length) {
 		// read normal element content into a string buffer
 		if (m_elementContent !=null){
@@ -579,6 +496,10 @@ public class FOXMLDODeserializer
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
 		//==================
 		// INLINE XML...
@@ -623,7 +544,7 @@ public class FOXMLDODeserializer
 					m_gotAudit=false;
 				}
 			// process end of xmlContent ONLY if it is NOT embedded within inline XML!
-			} else if (uri.equals(F) && localName.equals("xmlContent") && m_xmlDataLevel==0) {
+			} else if (uri.equals(FOXML.uri) && localName.equals("xmlContent") && m_xmlDataLevel==0) {
 				//=====================
 				// AUDIT DATASTREAM...
 				//=====================
@@ -647,14 +568,14 @@ public class FOXMLDODeserializer
                 // finished an element within inline xml metadata
                 m_dsXMLBuffer.append("</" + qName + ">");
                 // make sure we know when to pay attention to FOXML again
-                if (uri.equals(F) && localName.equals("xmlContent")) {
+                if (uri.equals(FOXML.uri) && localName.equals("xmlContent")) {
                     m_xmlDataLevel--;
                 }					
             }
         //========================================
         // ALL OTHER ELEMENTS (NOT INLINE XML)...
         //========================================
-        } else if (uri.equals(F) && localName.equals("binaryContent")) {
+        } else if (uri.equals(FOXML.uri) && localName.equals("binaryContent")) {
 			// FIXME: Implement functionality for inline base64 datastreams
 			// in a future version (post 2.0)
         	if (m_binaryContentTempFile != null)
@@ -681,7 +602,7 @@ public class FOXMLDODeserializer
             }
         	m_binaryContentTempFile = null;
 			m_readingBinaryContent=false;
-		} else if (uri.equals(F) && localName.equals("datastreamVersion")) {
+		} else if (uri.equals(FOXML.uri) && localName.equals("datastreamVersion")) {
 			// reinitialize datastream version-level attributes...
 			m_dsVersId="";
 			m_dsLabel="";
@@ -692,7 +613,7 @@ public class FOXMLDODeserializer
 			m_dsSize=-1;
 			//m_dsAdmIds=new HashMap();
 			//m_dsDmdIds=null;
-        } else if (uri.equals(F) && localName.equals("datastream")) {
+        } else if (uri.equals(FOXML.uri) && localName.equals("datastream")) {
 			// reinitialize datastream attributes ...
 			m_dsId="";
 			m_dsVersionable=true;
@@ -700,25 +621,117 @@ public class FOXMLDODeserializer
 			m_dsInfoType="";
 			m_dsOtherInfoType="";
 			m_dsMDClass=0;
-		} 
-        else if (localName.equals("serviceInputMap")) 
-        {
-			m_diss.dsBindMap.dsBindings=(DSBinding[])m_dsBindings.toArray(new DSBinding[0]);
-			m_dsBindings=null;
-		} 
-        else if (uri.equals(F) && localName.equals("disseminatorVersion")) 
-        {
-			m_obj.disseminators(m_diss.dissID).add(m_diss);
-			m_diss=null;
-        } 
-        else if (uri.equals(F) && localName.equals("disseminator")) 
-        {
-			m_dissID="";
-			m_bDefID="";
-			m_dissState="";
-			m_dissVersionable=true;
+		} else if (m_format.equals(FOXML1_0)) {
+		    endDisseminators(uri, localName);
+		}
+    }
+    
+    //---
+    // Instance helpers
+    //---
+    
+    private void startDisseminators(String localName, Attributes a) {
+        if (localName.equals("disseminator")) {
+            m_dissID = grab(a, FOXML.uri, "ID");
+            m_bDefID = grab(a, FOXML.uri, "BDEF_CONTRACT_PID");
+            m_dissState = grab(a, FOXML.uri, "STATE");
+            String versionable = grab(a, FOXML.uri, "VERSIONABLE");
+            // disseminator versioning is defaulted to true
+            if (versionable == null || versionable.equals("")) {
+                m_dissVersionable = true;
+            } else {
+                m_dissVersionable = new Boolean(versionable).booleanValue();
+            }
+        } else if (localName.equals("disseminatorVersion")) {
+            m_diss = new Disseminator();
+            m_diss.dissID = m_dissID;
+            m_diss.bDefID = m_bDefID;
+            m_diss.dissState = m_dissState;
+            String versionable = grab(a, FOXML.uri, "VERSIONABLE");
+            // disseminator versioning is defaulted to true
+            if (versionable == null || versionable.equals("")) {
+                m_dissVersionable = true;
+            } else {
+                m_dissVersionable = new Boolean(versionable).booleanValue();
+            }
+            m_diss.dissVersionID = grab(a, FOXML.uri, "ID");
+            m_diss.dissLabel = grab(a, FOXML.uri, "LABEL");
+            m_diss.bMechID = grab(a, FOXML.uri, "BMECH_SERVICE_PID");
+            m_diss.dissCreateDT =
+                    DateUtility.convertStringToDate(grab(a, FOXML.uri,
+                                                         "CREATED"));
+        } else if (localName.equals("serviceInputMap")) {
+            m_diss.dsBindMap = new DSBindingMap();
+            m_dsBindings = new ArrayList();
+            // Note that the dsBindMapID is not really necessary from the
+            // FOXML standpoint, but it was necessary in METS since the
+            // structMap was outside the disseminator.
+            // Also, the rest of the attributes on the DSBindingMap are not 
+            // really necessary since they are inherited from the disseminator.
+            // I just use the values picked up from disseminatorVersion.
+            m_diss.dsBindMapID = m_diss.dissVersionID + "b";
+            m_diss.dsBindMap.dsBindMapID = m_diss.dsBindMapID;
+            m_diss.dsBindMap.dsBindMechanismPID = m_diss.bMechID;
+            m_diss.dsBindMap.dsBindMapLabel = ""; // does not exist in FOXML
+            m_diss.dsBindMap.state = m_diss.dissState;
+        } else if (localName.equals("datastreamBinding")) {
+            DSBinding dsb = new DSBinding();
+            dsb.bindKeyName = grab(a, FOXML.uri, "KEY");
+            dsb.bindLabel = grab(a, FOXML.uri, "LABEL");
+            dsb.datastreamID = grab(a, FOXML.uri, "DATASTREAM_ID");
+            dsb.seqNo = grab(a, FOXML.uri, "ORDER");
+            m_dsBindings.add(dsb);
         }
+    }
 
+    private void endDisseminators(String uri, String localName) {
+        if (localName.equals("serviceInputMap")) {
+            m_diss.dsBindMap.dsBindings =
+                    (DSBinding[]) m_dsBindings.toArray(new DSBinding[0]);
+            m_dsBindings = null;
+        } else if (uri.equals(FOXML.uri)
+                && localName.equals("disseminatorVersion")) {
+            m_obj.disseminators(m_diss.dissID).add(m_diss);
+            m_diss = null;
+        } else if (uri.equals(FOXML.uri) && localName.equals("disseminator")) {
+            m_dissID = "";
+            m_bDefID = "";
+            m_dissState = "";
+            m_dissVersionable = true;
+        }
+    }
+
+    private void appendElementStart(String uri,
+                                    String localName,
+                                    String qName,
+                                    Attributes a,
+                                    StringBuffer out) {
+        out.append("<" + qName);
+        // add the current qName's namespace to m_localPrefixMap
+        // and m_prefixList if it's not already in m_localPrefixMap
+        // This ensures that all namespaces used in inline XML are declared within,
+        // since it's supposed to be a standalone chunk.
+        String[] parts = qName.split(":");
+        if (parts.length == 2) {
+            String nsuri = (String) m_localPrefixMap.get(parts[0]);
+            if (nsuri == null) {
+                m_localPrefixMap.put(parts[0], parts[1]);
+                m_prefixList.add(parts[0]);
+            }
+        }
+        // do we have any newly-mapped namespaces?
+        while (m_prefixList.size() > 0) {
+            String prefix = (String) m_prefixList.remove(0);
+            out.append(" xmlns");
+            if (prefix.length() > 0) {
+                out.append(":");
+            }
+            out.append(prefix + "=\"" + StreamUtility.enc((String) m_prefixMap.get(prefix)) + "\"");
+        }
+        for (int i = 0; i < a.getLength(); i++) {
+            out.append(" " + a.getQName(i) + "=\"" + StreamUtility.enc(a.getValue(i)) + "\"");
+        }
+        out.append(">");
     }
 
     private static String grab(Attributes a, String namespace,
@@ -768,14 +781,6 @@ public class FOXMLDODeserializer
                     {
                         throw new SAXException(new ValidationException("Checksum Mismatch: " + tmpChecksum));
                     }
-//                    try
-//                    {
-//                        Datastream.LogChecksumMismatch(m_obj, ds, m_dsChecksum);
-//                    }
-//                    catch (ValidationException e)
-//                    {
-//                        throw new SAXException(e);
-//                    }                    
                 }
             }
             ds.DSChecksumType=ds.getChecksumType();
@@ -790,24 +795,6 @@ public class FOXMLDODeserializer
 			(DOTranslationUtility.normalizeDSLocationURLs(
 				m_obj.getPid(), ds, m_transContext)).DSLocation;
 				
-		// LOOK! if the query behavior this deserializer instance was activated 
-		// in the constructor,  then we will obtain the datastreams's
-		// content stream to obtain its size and set the ds size attribute
-		// (done within the ds.getContentStream method implementation).
-		if (m_queryBehavior!=QUERY_NEVER) {
-			if ((m_queryBehavior==QUERY_ALWAYS)	
-				|| (m_dsMimeType==null)
-				|| (m_dsMimeType.equals(""))
-				|| (m_dsSize==-1)) {
-				try {
-					InputStream in=ds.getContentStream();
-				} catch (StreamIOException e) {
-					throw new SAXException("Error getting datastream content"
-						+ " for setting ds size (ds.getContentStream)"
-						+ " during SAX parse.");
-				}
-		  }
-		}		
 		// SDP: this is METS specific stuff.  What to do?
 		/*
 		if (m_dsDmdIds!=null) {
@@ -982,7 +969,6 @@ public class FOXMLDODeserializer
 		// temporary variables for processing audit records
 		m_auditRec=null;	
 		m_gotAudit=false;
-		//m_auditRecordID=null;
 		m_auditComponentID="";
 		m_auditProcessType="";
 		m_auditAction="";

@@ -7,24 +7,26 @@ package fedora.client.batch;
 
 import java.io.File;
 import java.io.FileInputStream;
+
 import java.util.Properties;
 import java.util.Hashtable;
 import java.util.Vector;
 
 import fedora.client.utility.ingest.AutoIngestor;
 import fedora.client.FedoraClient;
+
+import fedora.common.Constants;
+
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
 
 /**
- *
- * <p><b>Title:</b> BatchIngest.java</p>
- * <p><b>Description:</b> </p>
+ * Batch Ingest.
  *
  * @author wdn5e@virginia.edu
- * @version $Id$
  */
-class BatchIngest {
+class BatchIngest 
+        implements Constants {
 
 	String protocol = null;
 	String host = null;
@@ -134,7 +136,8 @@ class BatchIngest {
 
 		if (! (pidsFormat.equals("xml") || pidsFormat.equals("text")) ) {
 			System.err.println("bad pidsFormat: "+pidsFormat);
-		} else if ( !objectFormat.equals("foxml1.0") && !objectFormat.equals("metslikefedora1")) {
+		} else if ( !objectFormat.equals(FOXML1_1.uri) 
+		    && !objectFormat.equals(METS_EXT1_1.uri)) {
 		  System.err.println("bad objectFormat: "+objectFormat);
 		} else {
 			int badFileCount = 0;

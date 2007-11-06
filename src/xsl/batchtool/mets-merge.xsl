@@ -7,7 +7,7 @@
 <xsl:transform xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
 xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance"
 xmlns:METS="http://www.loc.gov/METS/"
-xmlns:xlink="http://www.w3.org/TR/xlink" 
+xmlns:xlink="http://www.w3.org/1999/xlink" 
 xmlns:fbm="http://www.fedora.info/definitions/"
 >
 	<xsl:param name="date" select="NO-DATE-PARAM"/>
@@ -28,7 +28,7 @@ xmlns:fbm="http://www.fedora.info/definitions/"
 	</xsl:template>
 	
 	<!-- add per-object comment -->
-	<xsl:template match="/" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink" >
+	<xsl:template match="/" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" >
 		<xsl:copy>
 			<xsl:if test="$substitutions/fbm:input/fbm:comment">
 				<xsl:comment>

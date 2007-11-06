@@ -12,25 +12,16 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
+import fedora.common.Constants;
+
 import fedora.client.bmech.data.*;
 import fedora.client.bmech.BMechBuilderException;
 
 /**
- *
- * <p><b>Title:</b> DCGenerator.java</p>
- * <p><b>Description:</b> </p>
- *
  * @author payette@cs.cornell.edu
- * @version $Id$
  */
 public class DCGenerator
-{
-  private static final String OAIDC =
-    "http://www.openarchives.org/OAI/2.0/oai_dc/";
-
-  private static final String DC = "http://purl.org/dc/elements/1.1/";
-
-  private static final String XMLNS = "http://www.w3.org/2000/xmlns/";
+        implements Constants {
 
   private Document document;
 
@@ -61,14 +52,14 @@ public class DCGenerator
   {
     DCElement[] elements = newBObj.getDCRecord();
 
-    Element root = (Element)document.createElementNS(OAIDC, "oai_dc:dc");
-    root.setAttributeNS(XMLNS, "xmlns:oai_dc", OAIDC);
-    root.setAttributeNS(XMLNS, "xmlns:dc", DC);
+    Element root = (Element)document.createElementNS(OAI_DC.uri, "oai_dc:dc");
+    root.setAttributeNS(XMLNS.uri, "xmlns:oai_dc", OAI_DC.uri);
+    root.setAttributeNS(XMLNS.uri, "xmlns:dc", DC.uri);
     document.appendChild(root);
 
     for (int i=0; i<elements.length; i++)
     {
-      Element e = document.createElementNS(DC, ("dc:" + elements[i].elementName));
+      Element e = document.createElementNS(DC.uri, ("dc:" + elements[i].elementName));
       e.appendChild(document.createTextNode(elements[i].elementValue));
       root.appendChild(e);
     }

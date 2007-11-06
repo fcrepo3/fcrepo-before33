@@ -31,6 +31,7 @@ import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
+
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
@@ -38,6 +39,7 @@ import fedora.server.errors.StreamIOException;
 import fedora.server.errors.authorization.AuthzException;
 import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
 import fedora.server.errors.servletExceptionExtensions.RootException;
+
 import fedora.server.utilities.StreamUtility;
 
 /**
@@ -75,9 +77,10 @@ import fedora.server.utilities.StreamUtility;
  * </ul>
  * 
  * @author rlw@virginia.edu
- * @version $Id$
  */
-public class GetNextPIDServlet extends HttpServlet {
+public class GetNextPIDServlet
+        extends HttpServlet
+        implements Constants {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
@@ -136,7 +139,7 @@ public class GetNextPIDServlet extends HttpServlet {
 		String requestURL = request.getRequestURL().toString();
 
 		Context context = ReadOnlyContext.getContext(
-				Constants.HTTP_REQUEST.REST.uri, request);
+				HTTP_REQUEST.REST.uri, request);
 
 		// Get optional supplied parameters.
 		for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
@@ -293,12 +296,12 @@ public class GetNextPIDServlet extends HttpServlet {
 			this.pw = pw;
 			this.pidList = pidList;
 			fedoraServerPort = context
-					.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);
-			if (Constants.HTTP_REQUEST.SECURE.uri.equals(context
-					.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+					.getEnvironmentValue(HTTP_REQUEST.SERVER_PORT.uri);
+			if (HTTP_REQUEST.SECURE.uri.equals(context
+					.getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
 				fedoraServerProtocol = HTTPS;
-			} else if (Constants.HTTP_REQUEST.INSECURE.uri.equals(context
-					.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+			} else if (HTTP_REQUEST.INSECURE.uri.equals(context
+					.getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
 				fedoraServerProtocol = HTTP;
 			}
 		}
@@ -311,17 +314,11 @@ public class GetNextPIDServlet extends HttpServlet {
 		public void run() {
 			if (pw != null) {
 				try {
-					pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-					pw
-							.write("<pidList "
-									+ " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-									+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-									+ " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/management/ "
-									+ StreamUtility.enc(fedoraServerProtocol)
-									+ "://"
-									+ StreamUtility.enc(fedoraServerHost) + ":"
-									+ StreamUtility.enc(fedoraServerPort)
-									+ "/getNextPIDInfo.xsd\">\n");
+                    pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+                    pw.write("<pidList");
+                    pw.write(" xmlns:xsi=\"" + XSI.uri + "\"");
+                    pw.write(" xsi:schemaLocation=\"" + MANAGEMENT.uri);
+                    pw.write(" " + PID_LIST1_0.xsdLocation + "\">\n");
 
 					// PID array serialization
 					for (int i = 0; i < pidList.length; i++) {
@@ -373,7 +370,7 @@ public class GetNextPIDServlet extends HttpServlet {
 	 */
 	public void init() throws ServletException {
 		try {
-			s_server = Server.getInstance(new File(Constants.FEDORA_HOME),
+			s_server = Server.getInstance(new File(FEDORA_HOME),
                     false);
 			fedoraServerHost = s_server.getParameter("fedoraServerHost");
 			s_management = (Management) s_server

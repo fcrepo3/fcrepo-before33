@@ -24,7 +24,6 @@ public class GroupRuleInfo
     Vector parms;
     String buildParms;
     int refcount;
-//    int numParms;
     
     public static Vector permitRules = null;
     public static Vector denyRules = null;
@@ -38,17 +37,6 @@ public class GroupRuleInfo
         super();
         // TODO Auto-generated constructor stub
     }
-    
-//    public GroupRuleInfo(String _name, String _desc, String _subject, String _condition, boolean _accept, int numParms)
-//    {
-//        setName(_name);
-//        setDescription(_desc);
-//        setSubject(_subject);
-//        setCondition(_condition);
-//        parms = null;
-//        this.numParms = numParms;
-//        accept = _accept;
-//    }
     
     public GroupRuleInfo(String _name, String _desc, String _subject, String _condition, String _parmsWithSemiColons, boolean _accept)
     {
@@ -201,118 +189,6 @@ public class GroupRuleInfo
         permitRules.addElement(new GroupRuleInfo(permitTemplates.elementAt(0), null));
         denyRules.addElement(new GroupRuleInfo(denyTemplates.elementAt(0), null));
 
-//        permitTemplates.addElement(new GroupRuleInfo("only from @machine_name@", 
-//                "Allow access attempts from the machine @machine_name@",
-//                "<AnySubject/>",
-//                "   <Condition FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of\">\n" + 
-//                "        <EnvironmentAttributeDesignator AttributeId=\"urn:fedora:names:fedora:2.1:environment:http-request:client-ip-address\" DataType=\"http://www.w3.org/2001/XMLSchema#string\"/>\n" + 
-//                "        <Apply FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:string-bag\">\n" + 
-//                "          <AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">@IP_Address_of_machine@</AttributeValue>\n" + 
-//                "        </Apply>\n" + 
-//                "    </Condition>",
-//                "machine_name=Machine Name;IP_Address_of_machine=IP Address of Machine",
-//                true));
-//        permitTemplates.addElement(new GroupRuleInfo("only by @User_parameter_value@", 
-//                "Allow access attempt by any user with @User_parameter_name@ equal to @User_parameter_value@",
-//                "<AnySubject/>",
-//                "    <Condition FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:string-equal\">\n" + 
-//                "        <AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">@User_parameter_value@</AttributeValue>\n" +                           
-//                "        <Apply FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:string-one-and-only\">\n" +
-//                "           <SubjectAttributeDesignator AttributeId=\"@User_parameter_name@\" MustBePresent=\"false\" DataType=\"http://www.w3.org/2001/XMLSchema#string\"/>\n" + 
-//                "        </Apply>\n" +
-//                "    </Condition>",
-//                "User_parameter_name=Name of User parameter;User_parameter_value=Value for User parameter",
-//                true));
-//        permitTemplates.addElement(new GroupRuleInfo("only by owner", 
-//                "Allow any access attempt if user is the owner of the object",
-//                "<AnySubject/>",
-//                "    <Condition FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of\">\n" + 
-//                "          <ResourceAttributeDesignator AttributeId=\"urn:fedora:names:fedora:2.1:object:owner\" \n" + 
-//                "            DataType=\"http://www.w3.org/2001/XMLSchema#string\" MustBePresent=\"false\"/>\n" + 
-//                "          <SubjectAttributeDesignator AttributeId=\"urn:fedora:names:fedora:2.1:subject:subject-id\" \n" + 
-//                "            DataType=\"http://www.w3.org/2001/XMLSchema#string\" MustBePresent=\"false\"/>\n" + 
-//                "    </Condition>",  
-//                "",
-//                true));
-//        permitTemplates.addElement(new GroupRuleInfo("only from @organization_name@", 
-//                "Allow access only if it originates from within IP addresses at @organization_name@",
-//                "<AnySubject/>",
-//                "    <Condition FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:regexp-string-match\">\n" + 
-//                "       <AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">@IP_address_range@</AttributeValue>\n" + 
-//                "       <Apply FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:string-one-and-only\">\n" + 
-//                "         <EnvironmentAttributeDesignator AttributeId=\"urn:fedora:names:fedora:2.1:environment:http-request:client-ip-address\" DataType=\"http://www.w3.org/2001/XMLSchema#string\"/>\n" + 
-//                "       </Apply>\n" + 
-//                "    </Condition>",
-//                "organization_name=Name of Organization;IP_address_range=Regular Expression for IP adress",
-//                false));
-//        
-//        
-//
-//        denyTemplates.addElement(new GroupRuleInfo("except from @machine_name@", 
-//                "Deny any access attempt from a machine other than @machine_name@",
-//                "<AnySubject/>",
-//                "   <Condition FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:not\">\n" + 
-//                "      <Apply FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of\">\n" + 
-//                "        <EnvironmentAttributeDesignator AttributeId=\"urn:fedora:names:fedora:2.1:environment:http-request:client-ip-address\" DataType=\"http://www.w3.org/2001/XMLSchema#string\"/>\n" + 
-//                "        <Apply FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:string-bag\">\n" + 
-//                "          <AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">@IP_Address_of_machine@</AttributeValue>\n" + 
-//                "        </Apply>\n" + 
-//                "      </Apply>\n" + 
-//                "    </Condition>",
-//                "machine_name=Machine Name;IP_Address_of_machine=IP Address of Machine",
-//                false));
-//        denyTemplates.addElement(new GroupRuleInfo("except by @User_parameter_value@", 
-//                "Deny any access attempt unless @User_parameter_name@ is equal to @User_parameter_value@",
-//                "<AnySubject/>",
-//                "    <Condition FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:not\">\n" + 
-//                "      <Apply FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:string-equal\">\n" + 
-//                "        <AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">@User_parameter_value@</AttributeValue>\n" +                           
-//                "        <Apply FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:string-one-and-only\">\n" +
-//                "           <SubjectAttributeDesignator AttributeId=\"@User_parameter_name@\" MustBePresent=\"false\" DataType=\"http://www.w3.org/2001/XMLSchema#string\"/>\n" + 
-//                "        </Apply>\n" +
-//                "      </Apply>" +
-//                "    </Condition>",
-//                "User_parameter_name=Name of User parameter;User_parameter_value=Value for User parameter",
-//                false));
-//        denyTemplates.addElement(new GroupRuleInfo("except by owner", 
-//                "Deny any access attempt unless user is the owner of the object",
-//                "<AnySubject/>",
-//                "    <Condition FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:not\">\n" + 
-//                "        <Apply FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of\">\n" + 
-//                "          <ResourceAttributeDesignator AttributeId=\"urn:fedora:names:fedora:2.1:object:owner\" \n" + 
-//                "            DataType=\"http://www.w3.org/2001/XMLSchema#string\" MustBePresent=\"false\"/>\n" + 
-//                "          <SubjectAttributeDesignator AttributeId=\"urn:fedora:names:fedora:2.1:subject:subject-id\" \n" + 
-//                "            DataType=\"http://www.w3.org/2001/XMLSchema#string\" MustBePresent=\"false\"/>\n" + 
-//                "        </Apply>\n" + 
-//                "    </Condition>",
-//                "",
-//                false));
-//        denyTemplates.addElement(new GroupRuleInfo("if not @object_state@", 
-//                "Deny action unless current state is '@object_state@'",
-//                "<AnySubject/>",
-//                "    <Condition FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:not\">\n" + 
-//                "      <Apply FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:string-equal\">\n" + 
-//                "        <AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">@object_state@</AttributeValue>\n" + 
-//                "        <Apply FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:string-one-and-only\">\n" + 
-//                "          <ResourceAttributeDesignator AttributeId=\"urn:fedora:names:fedora:2.1:object:state\" \n" + 
-//                "            DataType=\"http://www.w3.org/2001/XMLSchema#string\" MustBePresent=\"false\"/>\n" + 
-//                "        </Apply>\n" + 
-//                "      </Apply>\n" + 
-//                "    </Condition>\n",
-//                "object_state=State of Object",
-//                false));
-//        denyTemplates.addElement(new GroupRuleInfo("if not from @organization_name@", 
-//                "Deny action unless it originates from within the range of IP addresses at @organization_name@",
-//                "<AnySubject/>",
-//                "    <Condition FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:regexp-string-match\">\n" + 
-//                "          <AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">@IP_address_range@</AttributeValue>\n" + 
-//                "          <Apply FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:string-one-and-only\">\n" + 
-//                "            <EnvironmentAttributeDesignator AttributeId=\"urn:fedora:names:fedora:2.1:environment:http-request:client-ip-address\" DataType=\"http://www.w3.org/2001/XMLSchema#string\"/>\n" + 
-//                "          </Apply>\n" + 
-//                "    </Condition>",
-//                "organization_name=Name of Organization;IP_address_range=Regular Expression for IP adress",
-//                false));
-//        
     }
     
     public static void defineDefaultRules()
@@ -331,25 +207,6 @@ public class GroupRuleInfo
         buildFromTemplate(false, 3, null);
         buildFromTemplate(false, 4, "object_state=Deleted");
         buildFromTemplate(false, 5, "organization_name=virginia.edu;IP_address_range=128\\.143\\.\\d{1,3}\\.\\d{1,3}");
-  /*      access.addElement(new GroupRuleInfo("Deny access except by user at UVA", 
-                "Deny any access attempt by users that are not listed in the UVA directory",
-                "<AnySubject/>",
-                "    <Condition FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:not\">\n" + 
-                "        <Apply FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of\">\n" + 
-                "          <SubjectAttributeDesignator AttributeId=\"@classId@\" \n" + 
-                "            DataType=\"http://www.w3.org/2001/XMLSchema#string\" MustBePresent=\"false\"/>\n" + 
-                "          <ResourceAttributeDesignator AttributeId=\"urn:fedora:names:fedora:2.1:object:owner\" \n" + 
-                "            DataType=\"http://www.w3.org/2001/XMLSchema#string\" MustBePresent=\"false\"/>\n" + 
-                "        </Apply>\n" + 
-                "    </Condition>",                                               
-                "          <SubjectAttributeDesignator DataType=\"http://www.w3.org/2001/XMLSchema#string\" AttributeId=\"@classId@\"/>\n" + 
-                "          <AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">@classValue@</AttributeValue>\n" + 
-                "        </SubjectMatch>\n" + 
-                "      </Subject>\n" + 
-                "    </Subjects>",
-                "",  
-                "classID=objectClass,classValue=uvaPerson",
-                false));*/
 
     }
     
@@ -408,19 +265,6 @@ public class GroupRuleInfo
             return((GroupRuleInfo)(denyRules.elementAt(num)));
         }
     }
-    
-    
-//    public static int findEntry(boolean allowOrDeny, Object entry )
-//    {
-//        if (allowOrDeny)
-//        {
-//            return(permitRules.indexOf(entry));
-//        }
-//        else
-//        {
-//            return(denyRules.indexOf(entry));
-//        }
-//    }
     
     public static GroupRuleInfo findEntryByShortName(boolean allowOrDeny, String value)
     {

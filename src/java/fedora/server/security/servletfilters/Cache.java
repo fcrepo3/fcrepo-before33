@@ -131,9 +131,9 @@ public class Cache {
     public static final void testAssert() {
         try {
             assert(false);
-            LOG.info("asserts are not turned on");
+            LOG.debug("asserts are not turned on");
         } catch (Throwable t) {
-            LOG.info("asserts are turned on");            
+            LOG.debug("asserts are turned on");            
         }
     }   
     
@@ -149,7 +149,7 @@ public class Cache {
             LOG.debug(m + "> " + this.getCacheId() + " [" + userid + "] [" 
                     + password + "]");
         } else {
-            LOG.info(m + "> " + this.getCacheId() + " [" + userid + "]");            
+            LOG.info("Authenticating user [" + userid + "]");            
         }
         
 		CacheElement cacheElement = getCacheElement(userid /*, password*/);
@@ -180,8 +180,6 @@ public class Cache {
             LOG.debug(m + "----------------------------------------------");
             LOG.debug(m + "> " + this.getCacheId() + " [" + userid + "] [" 
                     + password + "]");
-        } else {
-            LOG.info(m + "> " + this.getCacheId() + " [" + userid + "]");            
         }
 
         CacheElement cacheElement = getCacheElement(userid /*, password*/);

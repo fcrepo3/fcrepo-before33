@@ -14,9 +14,13 @@ import java.util.Iterator;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 
+import fedora.common.Constants;
+
 import fedora.utilities.XMLDocument;
 
-public class XACMLPolicy extends XMLDocument {
+public class XACMLPolicy
+        extends XMLDocument {
+
 	private InstallOptions options;
 	
 	public XACMLPolicy(File policyFile, InstallOptions installOptions) throws FileNotFoundException, DocumentException {
@@ -48,8 +52,8 @@ public class XACMLPolicy extends XMLDocument {
 			"*[local-name()='Apply'][@FunctionId='urn:oasis:names:tc:xacml:1.0:function:or']/" +
 			"*[local-name()='Apply'][@FunctionId='urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of']/" +
 			"*[local-name()='Apply'][@FunctionId='urn:oasis:names:tc:xacml:1.0:function:string-bag']";
-		String avXPath = 
-			"*[local-name()='AttributeValue'][@DataType='http://www.w3.org/2001/XMLSchema#string']";
+		String avXPath =  "*[local-name()='AttributeValue'][@DataType='"
+		    + Constants.RDF_XSD.STRING.uri + "']";
 		Element apply = (Element)getDocument().selectSingleNode(applyXPath);
 		Iterator it = apply.selectNodes(avXPath).iterator();
 		boolean hasHost = false;
@@ -62,7 +66,7 @@ public class XACMLPolicy extends XMLDocument {
 		
 		if (!hasHost) {
 			attributeValue = apply.addElement("AttributeValue");
-			attributeValue.addAttribute("DataType", "http://www.w3.org/2001/XMLSchema#string");
+			attributeValue.addAttribute("DataType", Constants.RDF_XSD.STRING.uri);
 			attributeValue.setText(host);
 		}
 	}

@@ -5,36 +5,36 @@
 
 package fedora.server.storage.service;
 
-import fedora.server.errors.*;
-import fedora.server.storage.types.MethodParmDef;
-import java.lang.Boolean;
 import java.io.InputStream;
+
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.HashMap;
+
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
+import fedora.common.Constants;
+
+import fedora.server.errors.*;
+import fedora.server.storage.types.MethodParmDef;
+
 /**
- *
- * <p><b>Title:</b> MmapParser.java</p>
- * <p><b>Description:</b> A class for parsing the special XML format in Fedora
+ * A class for parsing the special XML format in Fedora
  * for a Method Map. A DSInputSpec exists within a Behavior Mechanism
  * Object (bmech) and a Behavior Definition Object (bdef).  The Method Map
  * defines abstract methods definitions.  In a bdef these are the "behavior
  * contract."  In a bmech, these are abstract definitions that are then
- * implemented by the service represented by the bmech.</p>
+ * implemented by the service represented by the bmech.
  *
  * @author payette@cs.cornell.edu
- * @version $Id$
  */
-class MmapParser extends DefaultHandler
-{
-
-  /** The namespaces we know we will encounter */
-  private final static String FMM = "http://fedora.comm.nsdlib.org/service/methodmap";
+class MmapParser
+        extends DefaultHandler
+        implements Constants {
 
   /**
    * URI-to-namespace prefix mapping info from SAX2 startPrefixMapping events.
@@ -143,13 +143,13 @@ class MmapParser extends DefaultHandler
   public void startElement(String namespaceURI, String localName, String qName, Attributes attrs)
     throws SAXException
   {
-    if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("MethodMap"))
+    if (namespaceURI.equalsIgnoreCase(METHOD_MAP.uri) && localName.equalsIgnoreCase("MethodMap"))
     {
       methodMap = new Mmap();
       methodMap.mmapName = attrs.getValue("name");
       tmp_methods = new Vector();
     }
-    else if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("Method"))
+    else if (namespaceURI.equalsIgnoreCase(METHOD_MAP.uri) && localName.equalsIgnoreCase("Method"))
     {
         inMethod = true;
         methodMapMethod = new MmapMethodDef();
@@ -163,7 +163,7 @@ class MmapParser extends DefaultHandler
     }
     else if (inMethod)
     {
-      if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("DatastreamInputParm"))
+      if (namespaceURI.equalsIgnoreCase(METHOD_MAP.uri) && localName.equalsIgnoreCase("DatastreamInputParm"))
       {
         methodMapParm = new MmapMethodParmDef();
         methodMapParm.wsdlMessagePartName = attrs.getValue("parmName");
@@ -182,7 +182,7 @@ class MmapParser extends DefaultHandler
         methodMapParm.parmDefaultValue = null;
         methodMapParm.parmDomainValues = new String[0];
       }
-      else if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("DefaultInputParm"))
+      else if (namespaceURI.equalsIgnoreCase(METHOD_MAP.uri) && localName.equalsIgnoreCase("DefaultInputParm"))
       {
         methodMapParm = new MmapMethodParmDef();
         methodMapParm.wsdlMessagePartName = attrs.getValue("parmName");
@@ -201,7 +201,7 @@ class MmapParser extends DefaultHandler
         methodMapParm.parmDefaultValue = attrs.getValue("defaultValue");
         methodMapParm.parmDomainValues = new String[0];
       }
-      else if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("UserInputParm"))
+      else if (namespaceURI.equalsIgnoreCase(METHOD_MAP.uri) && localName.equalsIgnoreCase("UserInputParm"))
       {
         inUserInputParm = true;
         methodMapParm = new MmapMethodParmDef();
@@ -222,11 +222,11 @@ class MmapParser extends DefaultHandler
       }
       else if (inUserInputParm)
       {
-        if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("ValidParmValues"))
+        if (namespaceURI.equalsIgnoreCase(METHOD_MAP.uri) && localName.equalsIgnoreCase("ValidParmValues"))
         {
           tmp_enum = new Vector();
         }
-        else if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("ValidParm"))
+        else if (namespaceURI.equalsIgnoreCase(METHOD_MAP.uri) && localName.equalsIgnoreCase("ValidParm"))
         {
           tmp_enum.add(attrs.getValue("value"));
         }
@@ -236,13 +236,13 @@ class MmapParser extends DefaultHandler
 
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException
   {
-    if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("MethodMap"))
+    if (namespaceURI.equalsIgnoreCase(METHOD_MAP.uri) && localName.equalsIgnoreCase("MethodMap"))
     {
       methodMap.mmapMethods = (MmapMethodDef[])tmp_methods.toArray(new MmapMethodDef[0]);
       methodMap.wsdlOperationToMethodDef = wsdlOperationToMethodDefTbl;
       tmp_methods = null;
     }
-    else if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("Method"))
+    else if (namespaceURI.equalsIgnoreCase(METHOD_MAP.uri) && localName.equalsIgnoreCase("Method"))
     {
         methodMapMethod.methodParms = (MethodParmDef[])tmp_parms.toArray(new MethodParmDef[0]);
         methodMapMethod.wsdlMsgParts = (MmapMethodParmDef[])tmp_parms.toArray(new MmapMethodParmDef[0]);
@@ -256,26 +256,26 @@ class MmapParser extends DefaultHandler
     }
     else if (inMethod)
     {
-      if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("DatastreamInputParm"))
+      if (namespaceURI.equalsIgnoreCase(METHOD_MAP.uri) && localName.equalsIgnoreCase("DatastreamInputParm"))
       {
         tmp_parms.add(methodMapParm);
         wsdlMsgPartToParmDefTbl.put(methodMapParm.wsdlMessagePartName, methodMapParm);
         methodMapParm = null;
       }
-      else if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("DefaultInputParm"))
+      else if (namespaceURI.equalsIgnoreCase(METHOD_MAP.uri) && localName.equalsIgnoreCase("DefaultInputParm"))
       {
         tmp_parms.add(methodMapParm);
         wsdlMsgPartToParmDefTbl.put(methodMapParm.wsdlMessagePartName, methodMapParm);
         methodMapParm = null;
       }
-      else if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("UserInputParm"))
+      else if (namespaceURI.equalsIgnoreCase(METHOD_MAP.uri) && localName.equalsIgnoreCase("UserInputParm"))
       {
         tmp_parms.add(methodMapParm);
         wsdlMsgPartToParmDefTbl.put(methodMapParm.wsdlMessagePartName, methodMapParm);
         methodMapParm = null;
         inUserInputParm = false;
       }
-      else if (inUserInputParm && namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("ValidParmValues"))
+      else if (inUserInputParm && namespaceURI.equalsIgnoreCase(METHOD_MAP.uri) && localName.equalsIgnoreCase("ValidParmValues"))
       {
         methodMapParm.parmDomainValues = (String[])tmp_enum.toArray(new String[0]);
         tmp_enum = null;

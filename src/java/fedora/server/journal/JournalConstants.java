@@ -50,8 +50,6 @@ public interface JournalConstants {
     QName QNAME_TAG_ARGUMENT = QName.valueOf("argument");
     QName QNAME_TAG_ARRAYELEMENT = QName.valueOf("element");
     QName QNAME_TAG_CONTEXT = QName.valueOf("context");
-    QName QNAME_TAG_DS_BINDING = QName.valueOf("dsBinding");
-    QName QNAME_TAG_DS_BINDING_MAP = QName.valueOf("dsBindingMap");
     QName QNAME_TAG_JOURNAL = QName.valueOf("FedoraJournal");
     QName QNAME_TAG_JOURNAL_ENTRY = QName.valueOf("JournalEntry");
     QName QNAME_TAG_MULTI_VALUE_MAP = QName.valueOf("multimap");
@@ -106,13 +104,11 @@ public interface JournalConstants {
     String ARGUMENT_TYPE_BOOLEAN = "boolean";
     String ARGUMENT_TYPE_DATE = "date";
     String ARGUMENT_TYPE_STREAM = "stream";
-    String ARGUMENT_TYPE_BINDING_MAP = "bindingMap";
     String ARGUMENT_TYPE_NULL = "null";
 
     // Names of arguments to the management methods, as written to the Journal
     String ARGUMENT_NAME_ALT_IDS = "altIds";
     String ARGUMENT_NAME_BDEF_PID = "bDefPID";
-    String ARGUMENT_NAME_BINDING_MAP = "bindingMap";
     String ARGUMENT_NAME_BMECH_PID = "bMechPid";
     String ARGUMENT_NAME_CHECKSUM = "checksum";
     String ARGUMENT_NAME_CHECKSUM_TYPE = "checksumType";

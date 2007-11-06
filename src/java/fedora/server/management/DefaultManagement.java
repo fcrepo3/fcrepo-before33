@@ -23,6 +23,8 @@ import org.apache.commons.betwixt.XMLUtils;
 
 import org.apache.log4j.Logger;
 
+import fedora.common.Constants;
+
 import fedora.server.*;
 import fedora.server.errors.*;
 import fedora.server.errors.authorization.AuthzException;
@@ -31,16 +33,15 @@ import fedora.server.storage.types.*;
 import fedora.server.utilities.*;
 import fedora.server.validation.*;
 import fedora.server.security.Authorization;
-import fedora.common.Constants;
 
 /**
  * Implements API-M without regard to the transport/messaging protocol.
  *
  * @author cwilper@cs.cornell.edu
- * @version $Id$
  */
 public class DefaultManagement
-        extends Module implements Management, ManagementDelegate {
+        extends Module
+        implements Constants, Management, ManagementDelegate {
 
     /** Logger for this class. */
     private static Logger LOG = 
@@ -54,6 +55,7 @@ public class DefaultManagement
     private ExternalContentManager m_contentManager;
     private Authorization m_fedoraXACMLModule;
     public final static String s_RelsExt_Datastream = "RELS-EXT";
+
     /**
      * Creates and initializes the Management Module.
      * <p></p>
@@ -119,24 +121,15 @@ public class DefaultManagement
         }
         
         // initialize variables pertaining to checksumming datastreams.
-        if (Datastream.defaultChecksumType == null)
+        String auto =getParameter("autoChecksum");
+        LOG.debug("Got Parameter: autoChecksum = " + auto);
+        if (auto.equalsIgnoreCase("true"))
         {
-            Datastream.defaultChecksumType = "DISABLED";
-            String auto =getParameter("autoChecksum");
-            LOG.debug("Got Parameter: autoChecksum = " + auto);
-            if (auto.equalsIgnoreCase("true"))
-            {
-                Datastream.autoChecksum = true;
-                Datastream.defaultChecksumType = getParameter("checksumAlgorithm");
-            }
-            else
-            {
-                Datastream.autoChecksum = false;
-                Datastream.defaultChecksumType = "DISABLED";
-            }
-            LOG.debug("autoChecksum is "+ auto);
-            LOG.debug("defaultChecksumType is "+ Datastream.defaultChecksumType);
+            Datastream.autoChecksum = true;
+            Datastream.defaultChecksumType = getParameter("checksumAlgorithm");
         }
+        LOG.debug("autoChecksum is "+ auto);
+        LOG.debug("defaultChecksumType is "+ Datastream.defaultChecksumType);
 
     }
 
@@ -246,32 +239,32 @@ public class DefaultManagement
             DOReader reader=m_manager.getReader(Server.USE_CACHE, context, pid);
             
             props.add(new Property(
-                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                        RDF.TYPE.uri,
                         reader.getFedoraObjectTypes()));
             
 
             props.add(new Property(
-            			"info:fedora/fedora-system:def/model#contentModel",
+                        MODEL.CONTENT_MODEL.uri,
                         reader.getContentModelId()));
                         
             props.add(new Property(
-                        "info:fedora/fedora-system:def/model#label",
+                        MODEL.LABEL.uri,
                         reader.GetObjectLabel()));
                         
             props.add(new Property(
-                        "info:fedora/fedora-system:def/model#state",
+                        MODEL.STATE.uri,
                         reader.GetObjectState()));
                         
             props.add(new Property(
-                        "info:fedora/fedora-system:def/model#ownerId",
+                        MODEL.OWNER.uri,
                         reader.getOwnerId()));
                         
             props.add(new Property(
-                        "info:fedora/fedora-system:def/model#createdDate",
+                        MODEL.CREATED_DATE.uri,
                         DateUtility.convertDateToString(reader.getCreateDate())));
                         
             props.add(new Property(
-                        "info:fedora/fedora-system:def/view#lastModifiedDate",
+                        VIEW.LAST_MODIFIED_DATE.uri,
                         DateUtility.convertDateToString(reader.getLastModDate())));
             
             //Property[] extProps=reader.getExtProperties();
@@ -1243,7 +1236,7 @@ public class DefaultManagement
             boolean check = ds.compareChecksum();      
             LOG.debug("compared checksum = " + check);
        
-            return check ? ds.getChecksum() : "Checksum validation error";      
+            return check ? ds.getChecksum() : "Checksum validation error";
         } finally {   
             LOG.info("Exiting compareDatastreamChecksum");      
         }   

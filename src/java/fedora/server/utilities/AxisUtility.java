@@ -16,12 +16,9 @@ import fedora.server.errors.authorization.AuthzOperationalException;
 import fedora.server.errors.authorization.AuthzPermittedException;
 
 /**
- *
- * <p><b>Title:</b> AxisUtility.java</p>
- * <p><b>Description:</b> </p>
+ * Utility methods for working with Axis.
  *
  * @author cwilper@cs.cornell.edu
- * @version $Id$
  */
 public abstract class AxisUtility {
 

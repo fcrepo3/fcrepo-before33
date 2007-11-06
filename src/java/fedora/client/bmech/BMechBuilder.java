@@ -31,17 +31,10 @@ import fedora.client.bmech.data.*;
 import fedora.client.bmech.xml.*;
 import fedora.client.utility.ingest.AutoIngestor;
 
+import static fedora.common.Constants.METS_EXT1_1;
+
 /**
- * 
- * <p>
- * <b>Title:</b> BMechBuilder.java
- * </p>
- * <p>
- * <b>Description:</b>
- * </p>
- * 
  * @author payette@cs.cornell.edu
- * @version $Id$
  */
 public class BMechBuilder extends JInternalFrame {
 	
@@ -237,7 +230,7 @@ public class BMechBuilder extends JInternalFrame {
 			try {
 				AutoIngestor ingestor = new AutoIngestor(Administrator.APIA,
 						Administrator.APIM);
-				pid = ingestor.ingestAndCommit(in,
+				pid = ingestor.ingestAndCommit(in, METS_EXT1_1.uri,
 						"ingest bmech object via BMechBuilder tool");
 			} catch (Exception e) {
 				e.printStackTrace();

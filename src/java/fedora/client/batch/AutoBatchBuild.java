@@ -5,20 +5,22 @@
 
 package fedora.client.batch;
 
-import java.util.Properties;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
+import java.util.Properties;
+
+import fedora.common.Constants;
+
 /**
- *
- * <p><b>Title:</b> AutoBatchBuild.java</p>
- * <p><b>Description:</b> </p>
+ * Auto Batch Build.
  *
  * @author rlw@virginia.edu
- * @version $Id$
  */
-public class AutoBatchBuild {
+public class AutoBatchBuild
+        implements Constants {
+
     private Properties batchProperties = new Properties();
 
     public AutoBatchBuild(String objectTemplate, String objectSpecificDir,
@@ -67,11 +69,11 @@ public class AutoBatchBuild {
       	    while ((line=br.readLine()) != null) {
       	        System.out.println(line);
       	        if(line.indexOf("<foxml:")!=-1) {
-      	            objectFormat = "foxml1.0";
+      	            objectFormat = FOXML1_1.uri;
       	        		break;
       	        }
       	        if(line.indexOf("<METS:")!=-1) {
-      	            objectFormat = "metslikefedora1";
+      	            objectFormat = METS_EXT1_1.uri;
       	        		break;
       	        }      	        
       	    }

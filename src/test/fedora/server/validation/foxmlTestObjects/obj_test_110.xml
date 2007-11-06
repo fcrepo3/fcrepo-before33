@@ -3,7 +3,7 @@
 <!---*******************************************************************************************************************************************-->
 <!-- THIS FOXML TEST OBJECT:  Test for bad date format in createDate object property-->
 <!---*******************************************************************************************************************************************-->
-<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#" PID="test:110" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#" VERSION="1.1" PID="test:110" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd">
 	<!---*******************************************************************************************************************************************-->
 	<!--   FEDORA OBJECT PROPERTIES : non-versionable properties of the digital object-->
 	<!---*******************************************************************************************************************************************-->

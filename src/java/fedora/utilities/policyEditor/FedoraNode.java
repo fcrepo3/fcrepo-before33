@@ -4,11 +4,15 @@
  */
 
 package fedora.utilities.policyEditor;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+
 import java.util.Vector;
+
+import fedora.common.Constants;
 
 /*
  * @author diglib
@@ -24,7 +28,8 @@ import java.util.Vector;
  */
 
 class FedoraNode 
-{ 
+        implements Constants { 
+
     String  name;
     String shortname;
     Object parent;
@@ -220,7 +225,7 @@ class FedoraNode
             XMLPrintWriter writer = new XMLPrintWriter(fwriter);
             writer.printlnWithIndent("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             writer.printlnWithIndent("<Policy xmlns=\"urn:oasis:names:tc:xacml:1.0:policy\"");
-            writer.printlnWithIndent("        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
+            writer.printlnWithIndent("        xmlns:xsi=\"" + XSI.uri + "\"");
             writer.printlnWithIndent("        PolicyId=\""+policyFilename.substring(0, policyFilename.length()-4)+"\"");
             writer.printlnWithIndent("        RuleCombiningAlgId=\"urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable\">");
             writer.printlnWithIndent("  <Description>"+description+"</Description>");

@@ -61,17 +61,13 @@ import fedora.server.search.FieldSearch;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
-//import fedora.server.storage.replication.DOReplicator;
 import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.types.BasicDigitalObject;
-import fedora.server.storage.types.DSBinding;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
-import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.RelationshipTuple;
-//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.utilities.DCFields;
 import fedora.server.utilities.SQLUtility;
@@ -104,7 +100,6 @@ public class DefaultDOManager
     protected PIDGenerator m_pidGenerator;
     protected DOTranslator m_translator;
     protected ILowlevelStorage m_permanentStore;
-//    protected DOReplicator m_replicator;
     protected DOValidator m_validator;
     protected FieldSearch m_fieldSearch;
     protected ExternalContentManager m_contentManager;
@@ -305,9 +300,6 @@ public class DefaultDOManager
         // get ref to translator and derive storageFormat default if not given
         m_translator=(DOTranslator) getServer().
                 getModule("fedora.server.storage.translation.DOTranslator");
-        // get ref to replicator
-//        m_replicator=(DOReplicator) getServer().
-//                getModule("fedora.server.storage.replication.DOReplicator");
         // get ref to digital object validator
         m_validator=(DOValidator) getServer().
                 getModule("fedora.server.validation.DOValidator");
@@ -514,10 +506,6 @@ public class DefaultDOManager
         return m_validator;
     }
 
-//    public DOReplicator getReplicator() {
-//        return m_replicator;
-//    }
-
     public String[] getRequiredModuleRoles() {
         // FIXME add "fedora.server.resourceIndex.ResourceIndex" once
         // we force loading of the module
@@ -528,7 +516,6 @@ public class DefaultDOManager
                 "fedora.server.storage.lowlevel.ILowlevelStorage",
                 "fedora.server.storage.ExternalContentManager",
                 "fedora.server.storage.translation.DOTranslator",
-//                "fedora.server.storage.replication.DOReplicator",
                 "fedora.server.validation.DOValidator" };
     }
 
@@ -820,97 +807,6 @@ public class DefaultDOManager
 				w=new SimpleDOWriter(context, this, m_translator,
 						m_defaultExportFormat, m_storageCharacterEncoding, obj);
 
-                // Translate Disseminators to CMDA
-                // If Content Model property is defined see if object named that is in repository
-                if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT))
-                { 
-                    Iterator dissIDs = obj.disseminatorIdIterator();
-                    if (dissIDs.hasNext())
-                    {
-                        throw new GeneralException("Object containing Disseminators no longer supported under the CMDA model. ");
-//                        String dissID = (String)dissIDs.next();
-//                        List<Disseminator> dissList = obj.disseminators(dissID);
-//                        Disseminator diss = dissList.get(dissList.size()-1);
-//                        String cModelPid = obj.getContentModelId();
-//                        String pidPrefix = obj.getPid().substring(0, obj.getPid().indexOf(":"));
-//                        if (cModelPid == null || cModelPid.length() == 0)
-//                        {
-//                            String bMechPidSuffix = diss.bMechID;
-//                            bMechPidSuffix = bMechPidSuffix.substring(bMechPidSuffix.indexOf(":")+1);
-//                            cModelPid = "CmodelForBMech_"+ bMechPidSuffix;
-//                        }
-//                        if (cModelPid.indexOf(":") == -1) 
-//                        {
-//                            cModelPid = pidPrefix + ":" + cModelPid;                        
-//                        }
-//                        String cModelPidToUse = cModelPid;
-//                        boolean done = false;
-//                        int secondMethod = 0;
-//                        boolean fallbackPosition = false;
-//                        while (!done)
-//                        {
-//                            if (!objectExists(cModelPidToUse))                                                      
-//                            {
-//                                // CModel Object doesn't exist, create it.
-//                                CreateContentModelFromDisseminators(context, cModelPidToUse, diss);
-//                                done = true;
-//                            }
-//                            else
-//                            {
-////                                  check to see if it is a valid Content Model for these disseminators
-//                                if (VerifyExistingContentModel(context, cModelPidToUse, diss))
-//                                {
-//                                    done = true;
-//                                }
-//                                else if (secondMethod < 5)
-//                                {
-//                                    // make a new pid and try again
-//                                    secondMethod++;
-//                                    cModelPidToUse = cModelPidToUse + "_" + secondMethod;                        
-//                                }
-//                                else  // just add a DS-COMPOSITE-MODEL Datastream to the data object.
-//                                {
-//                                    throw new GeneralException("Object containing Disseminators no longer supported under the CMDA model. ");
-////                                    fallbackPosition = true;
-////                                    done = true;
-////                                    CreateAndAddDSCompositeModel(context, w, diss);
-////                                    obj.addFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT);
-////                                    w.addRelationship(PID.toURI(obj.getPid()), "rel:hasFormalContentModel", "info:fedora/self", null);
-////                                    w.addRelationship(PID.toURI(obj.getPid()), "rel:hasContractualBMech", PID.toURI(diss.bMechID), null);
-//                                }
-//                            }
-//                        }
-//                        if (!fallbackPosition)
-//                        {
-//                            w.addRelationship(PID.toURI(obj.getPid()), "rel:hasFormalContentModel", PID.toURI(cModelPidToUse), null);
-//                        }
-//                        RenameDatastreamsBasedOnDisseminator(context, w, diss);
-                    }
-                }                
-                // If Object is BMech, make sure it has a relationship hasBDef linking it to the corresponding BDef
-                if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
-                {
-                    DatastreamXMLMetadata ds = (DatastreamXMLMetadata) w.GetDatastream("DSINPUTSPEC", null);
-                    InputStream is = ds.getContentStream();
-                    BufferedReader  sr = new BufferedReader(new InputStreamReader(is));
-                    String line = sr.readLine();
-                    int offset;
-                    String bdefPid = null;
-                    while ((offset = line.indexOf("bDefPID")) == -1)
-                    {
-                        line = sr.readLine(); 
-                    }
-                    if (line != null)
-                    {
-                        int q1 = line.indexOf('"', offset);
-                        int q2 = line.indexOf('"', q1+1);
-                        bdefPid = line.substring(q1+1, q2);
-                    }
-                    if (bdefPid != null)
-                    {
-                        w.addRelationship(PID.toURI(obj.getPid()), Constants.RELS_EXT.HAS_BDEF.uri, PID.toURI(bdefPid), null, null);
-                    }                                       
-                }
                 // WRITE LOCK:
                 // ensure no one else can modify the object now
                 getWriteLock(obj.getPid());

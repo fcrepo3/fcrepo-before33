@@ -5,28 +5,31 @@
 
 package fedora.server.test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import java.util.HashMap;
+
 import junit.framework.TestCase;
+
+import fedora.common.Constants;
 
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.translation.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-
 /**
  * Tests the METS deserializer and FOXML serializer 
  * by opening a METS file, deserializing it, re-serializing it as FOXML, 
- * and sending it to STDOUT.</p>
+ * and sending it to STDOUT.
  *
  * @author payette@cs.cornell.edu
- * @version $Id$
  */
 public class METSToFOXMLTest
-	extends TestCase {
+	extends TestCase
+	implements Constants {
 
 	protected File inFile = null;
 	protected File outFile = null;
@@ -48,23 +51,23 @@ public class METSToFOXMLTest
 		}
 		try {	
 			// deserialize	
-			METSLikeDODeserializer deser=new METSLikeDODeserializer();
-			FOXMLDOSerializer ser=new FOXMLDOSerializer();
+			METSFedoraExt1_1DODeserializer deser=new METSFedoraExt1_1DODeserializer();
+			FOXML1_1DOSerializer ser=new FOXML1_1DOSerializer();
 			HashMap desermap=new HashMap();
 			HashMap sermap=new HashMap();
-			desermap.put("metslikefedora1", deser);
+			desermap.put(METS_EXT1_1.uri, deser);
 			DOTranslatorImpl trans=new DOTranslatorImpl(sermap, desermap);
 			obj=new BasicDigitalObject();
 			System.out.println("Deserializing METS input...");
-			trans.deserialize(in, obj, "metslikefedora1", "UTF-8", DOTranslationUtility.DESERIALIZE_INSTANCE);
+			trans.deserialize(in, obj, METS_EXT1_1.uri, "UTF-8", DOTranslationUtility.DESERIALIZE_INSTANCE);
 			System.out.println("Digital Object PID= " + obj.getPid());
 			// serialize
-			sermap.put("foxml1.0", ser);
+			sermap.put(FOXML1_1.uri, ser);
 			System.out.println("Re-serializing as FOXML...");
 			System.out.println("Writing file to... " + outFile.getPath());
 			FileOutputStream out = new FileOutputStream(outFile);
 			//ByteArrayOutputStream out=new ByteArrayOutputStream();
-			trans.serialize(obj, out, "foxml1.0", "UTF-8", DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
+			trans.serialize(obj, out, FOXML1_1.uri, "UTF-8", DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
 			System.out.println("Done.");
 			//System.out.println("Here it is:");
 			//System.out.println(out.toString("UTF-8"));
@@ -78,14 +81,7 @@ public class METSToFOXMLTest
 		assertNotNull("Failure: digital object PID is null.", obj.getPid());
 		assertNotNull("Failure: digital object audit record set is null.", obj.getAuditRecords());
 		assertNotNull("Failure: digital object cmodel is null.", obj.getContentModelId());
-		//assertNotNull("Failure: digital object createDate is null.", obj.getCreateDate());
 		assertNotNull("Failure: digital object label is null.", obj.getLabel());
-		//assertNotNull("Failure: digital object modDate is null.", obj.getLastModDate());
-		assertNotNull("Failure: digital object namespaceMap is null.", obj.getNamespaceMapping());
-		//assertNotNull("Failure: digital object state is null.", obj.getState());
-		//assertNotNull("Failure: digital object ftype is null.", obj.getFedoraObjectType());
 		assertNotNull("Failure: digital object ownerID is null.", obj.getOwnerId());
-		//assertNotNull("Failure: digital object PID is null.", obj.datastreamIdIterator());
-		//assertNotNull("Failure: digital object PID is null.", obj.disseminatorIdIterator());	
 	}
 }

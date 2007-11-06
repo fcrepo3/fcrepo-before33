@@ -5,17 +5,21 @@
 
 package fedora.common.rdf;
 
-import fedora.common.Constants;
-
 /**
- * Context attributes used for recovery.
+ * The Fedora Recovery RDF namespace.
+ * 
+ * <pre>
+ * Namespace URI    : info:fedora/fedora-system:def/recovery#
+ * Preferred Prefix : recovery
+ * </pre>
  *
- * These values represent potentially auto-generated ids.  
+ * <p>These are context attributes used for recovery.  They represent
+ * potentially auto-generated ids.</p>
  *
- * When Fedora is in journaling mode, these values are logged in the
+ * <p>When Fedora is in journaling mode, these values are logged in the
  * journal so that they can be reused in recovery mode.  This helps
  * to ensure that the recovery process populates the repository in
- * the same way it was originally populated.
+ * the same way it was originally populated.</p>
  */
 public class RecoveryNamespace extends RDFNamespace {
 
@@ -36,7 +40,8 @@ public class RecoveryNamespace extends RDFNamespace {
 
     public RecoveryNamespace() {
 
-        this.uri = Constants.FEDORA_SYSTEM_DEF_URI + "/recovery#";
+        this.uri = "info:fedora/fedora-system:def/recovery#";
+        this.prefix = "recovery";
 
         // Properties
         this.DATASTREAM_ID   = new RDFName(this, "dsID");

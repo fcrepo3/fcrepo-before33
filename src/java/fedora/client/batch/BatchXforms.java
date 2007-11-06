@@ -24,22 +24,11 @@ import javax.xml.transform.stream.StreamResult;
 import fedora.common.Constants;
 
 /**
- *
- * <p><b>Title:</b> BatchXforms.java</p>
- * <p><b>Description:</b> </p>
- *
  * @author wdn5e@virginia.edu
- * @version $Id$
  */
-class BatchXforms {
-	/** Constants used for JAXP 1.2 */
-    private static final String JAXP_SCHEMA_LANGUAGE =
-        "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
-    private static final String W3C_XML_SCHEMA =
-        "http://www.w3.org/2001/XMLSchema";
-    private static final String JAXP_SCHEMA_SOURCE =
-        "http://java.sun.com/xml/jaxp/properties/schemaSource";
-    
+class BatchXforms
+        implements Constants {
+
     private HashMap<String, String> formatMap = new HashMap<String, String>();
 
 
@@ -52,11 +41,11 @@ class BatchXforms {
       BatchXforms(Properties optValues) throws Exception {
           
     // The template format controls which xsl stylesheet is to be applied
-    // Valid values are "metslikefedora1" and "foxml1.0"
-    if(optValues.getProperty(BatchTool.OBJECTFORMAT).equalsIgnoreCase("foxml1.0")) {
+    // Valid values are METS_EXT1_1.uri and FOXML1_1.uri
+    if(optValues.getProperty(BatchTool.OBJECTFORMAT).equalsIgnoreCase(FOXML1_1.uri)) {
         xformPath = Constants.FEDORA_HOME + "/client/lib/foxml-merge.xsl";
         formatMap.put(BatchTool.OBJECTFORMAT,"FOXML");
-    } else if (optValues.getProperty(BatchTool.OBJECTFORMAT).equalsIgnoreCase("metslikefedora1")) {
+    } else if (optValues.getProperty(BatchTool.OBJECTFORMAT).equalsIgnoreCase(METS_EXT1_1.uri)) {
         xformPath = Constants.FEDORA_HOME + "/client/lib/mets-merge.xsl";
         formatMap.put(BatchTool.OBJECTFORMAT,"METS");
     } else {
@@ -66,8 +55,6 @@ class BatchXforms {
 		additionsPath = optValues.getProperty(BatchTool.ADDITIONSPATH);
 		objectsPath = optValues.getProperty(BatchTool.OBJECTSPATH);
 		modelPath = optValues.getProperty(BatchTool.CMODEL);
-    //formatMap.put("foxml1.0","FOXML");
-    //formatMap.put("metslikefedora1","METS");
 		if (! BatchTool.argOK(additionsPath)) {
 			System.err.println("additionsPath required");
 			throw new Exception();

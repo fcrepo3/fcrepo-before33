@@ -6,7 +6,9 @@
 package fedora.server.test;
 
 import java.io.File;
+
 import java.util.HashMap;
+
 import junit.framework.TestCase;
 
 import fedora.common.Constants;
@@ -17,21 +19,19 @@ import fedora.server.storage.BMechReader;
 import fedora.server.storage.DirectoryBasedRepositoryReader;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.translation.DOTranslatorImpl;
-import fedora.server.storage.translation.METSLikeDODeserializer;
-import fedora.server.storage.translation.METSLikeDOSerializer;
+import fedora.server.storage.translation.METSFedoraExt1_1DODeserializer;
+import fedora.server.storage.translation.METSFedoraExt1_1DOSerializer;
 import fedora.server.storage.types.DigitalObject;
 
 /**
- *
- * <p><b>Title:</b> RepositoryReaderTest.java</p>
- * <p><b>Description:</b> Tests the implementation of the RepositoryReader
- * interface, DirectoryBasedRepositoryReader.</p>
+ * Tests the implementation of the RepositoryReader
+ * interface, DirectoryBasedRepositoryReader.
  *
  * @author cwilper@cs.cornell.edu
- * @version $Id$
  */
 public class RepositoryReaderTest
-        extends TestCase {
+        extends TestCase
+        implements Constants {
 
     private File m_repoDir;
     private DirectoryBasedRepositoryReader m_repoReader;
@@ -43,11 +43,11 @@ public class RepositoryReaderTest
 
     public void setUp() {
         try {
-            String mets="metslikefedora1";
+            String mets=METS_EXT1_1.uri;
             HashMap sers=new HashMap();
-            sers.put(mets, new METSLikeDOSerializer());
+            sers.put(mets, new METSFedoraExt1_1DOSerializer());
             HashMap desers=new HashMap();
-            desers.put(mets, new METSLikeDODeserializer());
+            desers.put(mets, new METSFedoraExt1_1DODeserializer());
             DOTranslatorImpl translator=new DOTranslatorImpl(sers, desers);
             m_repoReader= new DirectoryBasedRepositoryReader(m_repoDir, 
                     translator, mets, mets, "UTF-8");

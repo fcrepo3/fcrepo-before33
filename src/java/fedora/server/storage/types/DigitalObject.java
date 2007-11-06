@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
- * <p><b>Title:</b> DigitalObject.java</p>
- * <p><b>Description:</b> A holder of Fedora digital object information.</p>
+ * Java representation of a Fedora digital object.
  *
  * <p>A DigitalObject instance may be used by DOReader and DOWriter instances
  * as temporary storage for an object's attributes and components.</p>
@@ -22,12 +20,11 @@ import java.util.Map;
  * storage of these items, by whatever mechanism they deem fit.  The most
  * obvious implementation would simply store everything in memory.</p>
  *
- * <p>Implementations of this interface are <b>not</b> responsible for any sort of
- * validation on these items, or serialization/deserialization to/from specific
- * formats.</p>
+ * <p>Implementations of this interface are <b>not</b> responsible for
+ * any sort of validation on these items, or serialization/deserialization
+ * to/from specific formats.</p>
  * 
  * @author cwilper@cs.cornell.edu
- * @version $Id$
  */
 public interface DigitalObject {
 
@@ -38,7 +35,6 @@ public interface DigitalObject {
 
     public String getFedoraObjectTypes();
 
-//    public void setFedoraObjectType(int t);
     public boolean isFedoraObjectType(int type);
     
     public void addFedoraObjectType(int type);
@@ -148,22 +144,6 @@ public interface DigitalObject {
     public void setLastModDate(Date lastModDate);
 
     /**
-     * Sets the preferred namespace uri-to-prefix map for XML renditions of
-     * this object.
-     *
-     * @param mapping The uri-to-prefix mapping.
-     */
-    public void setNamespaceMapping(Map mapping);
-
-    /**
-     * Gets the preferred namespace uri-to-prefix map for XML renditions of
-     * this object.
-     *
-     * @return The uri-to-prefix mapping.
-     */
-    public Map getNamespaceMapping();
-
-    /**
      * Gets this object's mutable List of AuditRecord objects.
      *
      * @return The List of AuditRecords, possibly of zero size but never null.
@@ -205,13 +185,14 @@ public interface DigitalObject {
     
     /**
      * Gets an Iterator over the disseminator ids in this object.
-     * <p></p>
-     * The Iterator is not tied to the underlying Collection and cannot
-     * be used to remove datastreams.
+     *
+     * <p>The Iterator is not tied to the underlying Collection and cannot
+     * be used to remove datastreams.</p>
      *
      * @return A new Iterator of disseminator ids, possibly of zero size but
      *         never null.
      */
+    @Deprecated
     public Iterator disseminatorIdIterator();
 
     /**
@@ -222,6 +203,7 @@ public interface DigitalObject {
      * @param id The disseminator id.
      * @return The list, possibly of zero size but never null.
      */
+    @Deprecated
     public List disseminators(String id);
 
     /**
@@ -233,21 +215,6 @@ public interface DigitalObject {
      * Generate a unique id for a datastream version.
      */
     public String newDatastreamID(String dsID);
-
-//    /**
-//     * Generate a unique id for a disseminator.
-//     */
-//    public String newDisseminatorID();
-//
-//    /**
-//     * Generate a unique id for a disseminator version.
-//     */
-//    public String newDisseminatorID(String dissID);
-//
-//    /**
-//     * Generate a unique id for a datastreamBindingMap.
-//     */
-//    public String newDatastreamBindingMapID();
 
     /**
      * Generate a unique id for an audit record.

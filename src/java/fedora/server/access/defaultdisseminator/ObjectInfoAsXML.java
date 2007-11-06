@@ -6,18 +6,25 @@
 package fedora.server.access.defaultdisseminator;
 
 import java.io.InputStream;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 import java.util.Date;
 
+import fedora.common.Constants;
+
 import fedora.server.access.ObjectProfile;
+
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;
+
 import fedora.server.storage.DOReader;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.MethodParmDef;
+
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 
@@ -32,15 +39,12 @@ import fedora.server.utilities.StreamUtility;
 import fedora.server.utilities.DCFields;
 
 /**
- *
- * <p><b>Title:</b> ObjectInfoAsXML.java</p>
- * <p><b>Description:</b> Provide an XML encoding of various object components.</p>
+ * Provide an XML encoding of various object components.
  *
  * @author payette@cs.cornell.edu
- * @version $Id$
  */
 public class ObjectInfoAsXML
-{
+        implements Constants {
 
     public ObjectInfoAsXML()
     {
@@ -50,26 +54,17 @@ public class ObjectInfoAsXML
             throws ServerException {
         StringBuffer out = new StringBuffer();
         out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        if (versDateTime == null || DateUtility.
-            convertDateToString(versDateTime).equalsIgnoreCase(""))
-        {
-            out.append("<objectProfile "
-                + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-                + StreamUtility.enc(reposBaseURL)
-                + "/objectProfile.xsd\"" + " pid=\"" + StreamUtility.enc(objProfile.PID) + "\" >");
-        } else
-        {
-            out.append("<objectProfile "
-                + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-                + StreamUtility.enc(reposBaseURL)
-                + "/objectProfile.xsd\"" + " pid=\"" + StreamUtility.enc(objProfile.PID) + "\""
-                + " dateTime=\"" + DateUtility.convertDateToString(versDateTime) + "\" >");
+        out.append("<objectProfile");
+        out.append(" pid=\"" + objProfile.PID + "\"");
+        if (versDateTime != null) {
+            out.append(" dateTime=\"");
+            out.append(DateUtility.convertDateToString(versDateTime));
+            out.append("\"");
         }
-
+        out.append(" xmlns:xsi=\"" + XSI.uri + "\"");
+        out.append(" xsi:schemaLocation=\"" + ACCESS.uri + " ");
+        out.append(OBJ_PROFILE1_0.xsdLocation + "\">");
+        
         // PROFILE FIELDS SERIALIZATION
         out.append("<objLabel>" + StreamUtility.enc(objProfile.objectLabel) + "</objLabel>");
         out.append("<objContentModel>" + StreamUtility.enc(objProfile.objectContentModel) + "</objContentModel>");
@@ -105,30 +100,16 @@ public class ObjectInfoAsXML
 		StringBuffer out = new StringBuffer();
 
 		out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		if (versDateTime == null || DateUtility.
-			convertDateToString(versDateTime).equalsIgnoreCase(""))
-		{
-			out.append("<objectItemIndex"
-				+ " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-				+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-				+ " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-				+ " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-				+ StreamUtility.enc(reposBaseURL)
-				+ "/objectItemIndex.xsd\""
-				+ " PID=\"" + StreamUtility.enc(reader.GetObjectPID()) + "\">\n");
-		} else
-		{
-			out.append("<objectItemIndex"
-				+ " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-				+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-				+ " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-				+ " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-				+ StreamUtility.enc(reposBaseURL)
-				+ "/objectItemIndex.xsd\""
-				+ " PID=\"" + StreamUtility.enc(reader.GetObjectPID()) + "\""
-				+ " dateTime=\"" + DateUtility.convertDateToString(versDateTime) + "\">\n");
-		}
-
+        out.append("<objectItemIndex");
+        out.append(" PID=\"" + reader.GetObjectPID() + "\"");
+        if (versDateTime != null) {
+            out.append(" dateTime=\"");
+            out.append(DateUtility.convertDateToString(versDateTime));
+            out.append("\"");
+        }
+        out.append(" xmlns:xsi=\"" + XSI.uri + "\"");
+        out.append(" xsi:schemaLocation=\"" + ACCESS.uri + " ");
+        out.append(OBJ_ITEMS1_0.xsdLocation + "\">");
 
 		for (int i=0; i<datastreams.length; i++)
 		{
@@ -158,22 +139,16 @@ public class ObjectInfoAsXML
         SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
         out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        if (versDateTime == null || DateUtility.
-            convertDateToString(versDateTime).equalsIgnoreCase(""))
-        {
-            out.append("<objectMethods "
-                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-                + StreamUtility.enc(reposBaseURL)
-                + "/objectMethods.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\">");
-        } else {
-            out.append("<objectMethods "
-                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-                + StreamUtility.enc(reposBaseURL)
-                + "/objectMethods.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\""
-                + " dateTime=\"" + DateUtility.convertDateToString(versDateTime) + "\">");
+        out.append("<objectMethods");
+        out.append(" pid=\"" + PID + "\"");
+        if (versDateTime != null) {
+            out.append(" dateTime=\"");
+            out.append(DateUtility.convertDateToString(versDateTime));
+            out.append("\"");
         }
+        out.append(" xmlns:xsi=\"" + XSI.uri + "\"");
+        out.append(" xsi:schemaLocation=\"" + ACCESS.uri + " ");
+        out.append(OBJ_METHODS1_0.xsdLocation + "\">");
 
         String nextBdef = "null";
         String currentBdef = "";
@@ -220,11 +195,11 @@ public class ObjectInfoAsXML
     {
       StringBuffer out = new StringBuffer();
       out.append("<oai_dc:dc xmlns:oai_dc=\""
-        + "http://www.openarchives.org/OAI/2.0/oai_dc/\""
-        + " xmlns:dc=\"http://purl.org/dc/elements/1.1/\""
-        + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-        + " xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/"
-        + " http://www.openarchives.org/OAI/2.0/oai_dc.xsd\"" + ">\n");
+        + OAI_DC.uri + "\""
+        + " xmlns:dc=\"" + DC.uri + "\""
+        + " xmlns:xsi=\"" + XSI.uri + "\""
+        + " xsi:schemaLocation=\"" + OAI_DC.uri
+        + " " + OAI_DC2_0.xsdLocation + "\">\n");
 
         if (dublinCore!=null) {
           InputStream in=dublinCore.getContentStream();

@@ -5,36 +5,37 @@
 
 package fedora.server.storage.service;
 
-import fedora.server.errors.RepositoryConfigurationException;
-import fedora.server.errors.ObjectIntegrityException;
-import fedora.server.storage.types.BMechDSBindSpec;
-import fedora.server.storage.types.BMechDSBindRule;
 import java.io.InputStream;
+
 import java.util.Vector;
 import java.util.StringTokenizer;
 import java.util.HashMap;
+
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
+import fedora.common.Constants;
+
+import fedora.server.errors.RepositoryConfigurationException;
+import fedora.server.errors.ObjectIntegrityException;
+
+import fedora.server.storage.types.BMechDSBindSpec;
+import fedora.server.storage.types.BMechDSBindRule;
+
 /**
- *
- * <p><b>Title:</b> DSInputSpecParser.java</p>
- * <p><b>Description:</b> A class for parsing the special XML format in Fedora
+ * A class for parsing the special XML format in Fedora
  * for a Datastream Input Specification (DSInputSpec).  A DSInputSpec exists
  * within a Behavior Mechanism Object (bmech), and is used to define the
  * "data contract" between the service represented by the bmech and a data
- * object.</p>
+ * object.
  *
  * @author payette@cs.cornell.edu
- * @version $Id$
  */
-public class DSInputSpecParser extends DefaultHandler
+public class DSInputSpecParser extends DefaultHandler implements Constants
 {
-
-  /** The namespaces we know we will encounter */
-  private final static String FBS = "http://fedora.comm.nsdlib.org/service/bindspec";
 
   /**
    * URI-to-namespace prefix mapping info from SAX2 startPrefixMapping events.
@@ -159,7 +160,7 @@ public class DSInputSpecParser extends DefaultHandler
   public void startElement(String namespaceURI, String localName, String qName, Attributes attrs)
     throws SAXException
   {
-    if (namespaceURI.equalsIgnoreCase(FBS) && localName.equalsIgnoreCase("DSInputSpec"))
+    if (namespaceURI.equalsIgnoreCase(BINDING_SPEC.uri) && localName.equalsIgnoreCase("DSInputSpec"))
     {
       inDSInputSpec = true;
       dsInputSpec.bDefPID = attrs.getValue("bDefPID");
@@ -168,7 +169,7 @@ public class DSInputSpecParser extends DefaultHandler
       dsInputSpec.bMechPID = BMechPID;
       dsInputSpec.bindSpecLabel = attrs.getValue("label");
     }
-    else if (namespaceURI.equalsIgnoreCase(FBS) && localName.equalsIgnoreCase("DSInput"))
+    else if (namespaceURI.equalsIgnoreCase(BINDING_SPEC.uri) && localName.equalsIgnoreCase("DSInput"))
     {
       inDSInput = true;
       dsInputRule = new BMechDSBindRule();
@@ -177,15 +178,15 @@ public class DSInputSpecParser extends DefaultHandler
       dsInputRule.minNumBindings = new Integer(attrs.getValue("DSMin")).intValue();
       dsInputRule.ordinality = Boolean.parseBoolean(attrs.getValue("DSOrdinality"));
     }
-    else if (namespaceURI.equalsIgnoreCase(FBS) && localName.equalsIgnoreCase("DSInputLabel"))
+    else if (namespaceURI.equalsIgnoreCase(BINDING_SPEC.uri) && localName.equalsIgnoreCase("DSInputLabel"))
     {
       inDSInputLabel = true;
     }
-    else if (namespaceURI.equalsIgnoreCase(FBS) && localName.equalsIgnoreCase("DSInputInstruction"))
+    else if (namespaceURI.equalsIgnoreCase(BINDING_SPEC.uri) && localName.equalsIgnoreCase("DSInputInstruction"))
     {
       inDSInputInstructions = true;
     }
-    else if (namespaceURI.equalsIgnoreCase(FBS) && localName.equalsIgnoreCase("DSMIME"))
+    else if (namespaceURI.equalsIgnoreCase(BINDING_SPEC.uri) && localName.equalsIgnoreCase("DSMIME"))
     {
       inDSInputMIME = true;
     }
@@ -193,25 +194,25 @@ public class DSInputSpecParser extends DefaultHandler
 
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException
   {
-    if (namespaceURI.equalsIgnoreCase(FBS) && localName.equalsIgnoreCase("DSInputSpec"))
+    if (namespaceURI.equalsIgnoreCase(BINDING_SPEC.uri) && localName.equalsIgnoreCase("DSInputSpec"))
     {
       inDSInputSpec = false;
     }
-    else if (namespaceURI.equalsIgnoreCase(FBS) && localName.equalsIgnoreCase("DSInput"))
+    else if (namespaceURI.equalsIgnoreCase(BINDING_SPEC.uri) && localName.equalsIgnoreCase("DSInput"))
     {
       inDSInput = false;
       tmp_InputRules.add(dsInputRule);
       dsInputRule = null;
     }
-    else if (namespaceURI.equalsIgnoreCase(FBS) && localName.equalsIgnoreCase("DSInputLabel"))
+    else if (namespaceURI.equalsIgnoreCase(BINDING_SPEC.uri) && localName.equalsIgnoreCase("DSInputLabel"))
     {
       inDSInputLabel = false;
     }
-    else if (namespaceURI.equalsIgnoreCase(FBS) && localName.equalsIgnoreCase("DSInputInstruction"))
+    else if (namespaceURI.equalsIgnoreCase(BINDING_SPEC.uri) && localName.equalsIgnoreCase("DSInputInstruction"))
     {
       inDSInputInstructions = false;
     }
-    else if (namespaceURI.equalsIgnoreCase(FBS) && localName.equalsIgnoreCase("DSMIME"))
+    else if (namespaceURI.equalsIgnoreCase(BINDING_SPEC.uri) && localName.equalsIgnoreCase("DSMIME"))
     {
       inDSInputMIME = false;
     }

@@ -13,12 +13,16 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.PrintStream;
+
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import fedora.client.FedoraClient;
 import fedora.client.utility.AutoFinder;
 import fedora.client.utility.export.AutoExporter;
+
+import fedora.common.Constants;
+
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.ComparisonOperator;
@@ -27,15 +31,16 @@ import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.types.gen.ObjectFields;
 import fedora.server.types.gen.RepositoryInfo;
+
 import fedora.utilities.FileComparator;
 
 /**
- * <p><b>Title:</b> Ingest.java</p>
- * <p><b>Description: A utility class to initiate ingest of one or more objects.
+ * Initiates ingest of one or more objects.
  * This class provides static utility methods, and it is also called by
  * command line utilities.
  */
-public class Ingest {
+public class Ingest
+        implements Constants {
 
     public static String LAST_PATH;
 
@@ -365,7 +370,7 @@ public class Ingest {
         System.err.println();
         System.err.println("Where:");
         System.err.println("  INPATH     is the local file or directory name that is ingest source.");
-        System.err.println("  FORMAT     is a string value (either 'foxml1.0' or 'metslikefedora1')");
+        System.err.println("  FORMAT     is a string value (either '" + FOXML1_1.uri + "' or '" + METS_EXT1_1.uri + "')");
         System.err.println("             which indicates the XML format of the ingest file(s)");
         System.err.println("  FTYPS      is any combination of the characters O, D, and M, specifying");
         System.err.println("             which Fedora object type(s) should be ingested. O=data objects,");
@@ -381,23 +386,23 @@ public class Ingest {
         System.err.println("             will indicate the source filename or repository of the object(s).");
         System.err.println();
         System.err.println("Examples:");
-        System.err.println("fedora-ingest f obj1.xml foxml1.0 myrepo.com:8443 jane jpw https");
+        System.err.println("fedora-ingest f obj1.xml " + FOXML1_1.uri + " myrepo.com:8443 jane jpw https");
         System.err.println();
-        System.err.println("  Ingests obj1.xml (encoded in foxml1.0 format) from the");
+        System.err.println("  Ingests obj1.xml (encoded in FOXML 1.1 format) from the");
         System.err.println("  current directory into the repository at myrepo.com:80");
         System.err.println("  as user 'jane' with password 'jpw' using the secure https protocol (SSL).");
         System.err.println("  The logmessage will be system-generated, indicating");
         System.err.println("  the source path+filename.");
         System.err.println();
-        System.err.println("fedora-ingest d c:\\archive foxml1.0 M myrepo.com:80 jane janepw http \"\"");
+        System.err.println("fedora-ingest d c:\\archive " + FOXML1_1.uri + " M myrepo.com:80 jane janepw http \"\"");
         System.err.println();
         System.err.println("  Traverses entire directory structure of c:\\archive, and ingests ");
         System.err.println("  any file that looks like a behavior mechanism object (M). ");
-        System.err.println("  It assumes all files will be in the XML format 'foxml1.0'");
+        System.err.println("  It assumes all files will be in the FOXML 1.1 format");
         System.err.println("  and will fail on ingests of files that are not of this format.");
         System.err.println("  All log messages will be the quoted string.");
         System.err.println();
-        System.err.println("fedora-ingest d c:\\archive foxml1.0 ODM myrepo.com:80 jane janepw http \"for jane\"");
+        System.err.println("fedora-ingest d c:\\archive " + FOXML1_1.uri + " ODM myrepo.com:80 jane janepw http \"for jane\"");
         System.err.println();
         System.err.println("  Same as above, but ingests all three types of objects (O,D,M).");
         System.err.println();
@@ -564,8 +569,8 @@ public class Ingest {
                 String sourceExportFormat = null;
                 StringTokenizer stoken = new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
                 if (new Integer(stoken.nextToken()).intValue() < 2){
-                    sourceExportFormat = "metslikefedora1";
-                    System.out.println("Ingest: source repos is using 'metslikefedora1' as export.");
+                    sourceExportFormat = METS_EXT1_0.uri;
+                    System.out.println("Ingest: source repos is using '" + METS_EXT1_0.uri + "' as export.");
                 } else {
                     sourceExportFormat = repoinfo.getDefaultExportFormat();
                     System.out.println("Ingest: source repos default export format is " + sourceExportFormat);

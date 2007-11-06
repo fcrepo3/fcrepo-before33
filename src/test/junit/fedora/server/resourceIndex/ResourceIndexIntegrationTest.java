@@ -38,6 +38,8 @@ import org.trippi.RDFUtil;
 import org.trippi.TripleIterator;
 import org.trippi.TriplestoreConnector;
 
+import fedora.common.Constants;
+
 import fedora.server.storage.BDefReader;
 import fedora.server.storage.BMechReader;
 import fedora.server.storage.ConnectionPool;
@@ -48,8 +50,8 @@ import fedora.server.storage.SimpleBMechReader;
 import fedora.server.storage.SimpleDOReader;
 
 import fedora.server.storage.translation.DOTranslationUtility;
-import fedora.server.storage.translation.FOXMLDOSerializer;
-import fedora.server.storage.translation.FOXMLDODeserializer;
+import fedora.server.storage.translation.FOXML1_1DOSerializer;
+import fedora.server.storage.translation.FOXML1_1DODeserializer;
 
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
@@ -57,8 +59,6 @@ import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DigitalObject;
-import fedora.server.storage.types.DSBindingMap;
-import fedora.server.storage.types.DSBinding;
 
 /**
  * Superclass for <code>ResourceIndex</code> integration tests.
@@ -383,17 +383,14 @@ public abstract class ResourceIndexIntegrationTest {
             System.setProperty("fedoraServerPort", "8080");
         }
 
-        Map<String, String> nsMap = new HashMap<String, String>();
-        nsMap.put(FOXMLDOSerializer.XSI_NS, "xsi");
-        obj.setNamespaceMapping(nsMap);
         String charEncoding = "UTF-8";
         int transContext = DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL;
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        FOXMLDOSerializer ser = new FOXMLDOSerializer();
+        FOXML1_1DOSerializer ser = new FOXML1_1DOSerializer();
         ser.serialize(obj, out, charEncoding, transContext);
 
-        FOXMLDODeserializer deser = new FOXMLDODeserializer(charEncoding);
+        FOXML1_1DODeserializer deser = new FOXML1_1DODeserializer();
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
         DigitalObject objCopy = new BasicDigitalObject();
         deser.deserialize(in, objCopy, charEncoding, transContext);

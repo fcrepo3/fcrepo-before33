@@ -1,7 +1,3 @@
-/*
- * Created on Jun 2, 2005
- *
- */
 package fedora.test.integration;
 
 import java.io.ByteArrayOutputStream;
@@ -21,9 +17,9 @@ import fedora.test.FedoraServerTestCase;
 
 /**
  * @author Edwin Shin
- *
  */
 public class TestOAIService extends FedoraServerTestCase {
+
     private DocumentBuilderFactory factory;
     private DocumentBuilder builder;
     private FedoraClient client;
@@ -58,7 +54,7 @@ public class TestOAIService extends FedoraServerTestCase {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         StreamUtility.pipeStream(in, out, 4096);
         
-        apim.ingest(out.toByteArray(), "foxml1.0", "for testing");
+        apim.ingest(out.toByteArray(), FOXML1_1.uri, "for testing");
         
         String request = "/oai?verb=ListRecords&metadataPrefix=oai_dc";
         Document result = getQueryResult(request);

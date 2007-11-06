@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<METS:mets LABEL="Generated Content Model" OBJID="demo:FO_TO_PDFDOC" TYPE="FedoraCModelObject"
-  fedoraxsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd"
+<METS:mets EXT_VERSION="1.1" LABEL="Generated Content Model" OBJID="demo:FO_TO_PDFDOC" TYPE="FedoraCModelObject"
+  xsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd"
   xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#"
-  xmlns:fedoraxsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/TR/xlink">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink">
   <METS:metsHdr CREATEDATE="2007-08-15T14:36:31.126Z" LASTMODDATE="2007-09-25T19:11:42.310Z" RECORDSTATUS="A">
     <METS:agent ROLE="IPOWNER">
       <METS:name>fedoraAdmin</METS:name>

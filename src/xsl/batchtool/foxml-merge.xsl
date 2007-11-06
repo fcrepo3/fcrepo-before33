@@ -6,7 +6,7 @@
 
 <xsl:transform xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" 
 xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
-xmlns:xlink="http://www.w3.org/TR/xlink" 
+xmlns:xlink="http://www.w3.org/1999/xlink" 
 xmlns:foxml="info:fedora/fedora-system:def/foxml#" 
 xmlns:fbm="http://www.fedora.info/definitions/"
 >

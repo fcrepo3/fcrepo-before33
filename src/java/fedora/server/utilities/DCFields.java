@@ -20,25 +20,19 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import fedora.common.Constants;
 import fedora.common.rdf.RDFName;
+
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
 
 /**
- *
- * <p><b>Title:</b> DCFields.java</p>
- * <p><b>Description:</b> </p>
+ * Dublin Core Fields.
  *
  * @author cwilper@cs.cornell.edu
- * @version $Id$
  */
 public class DCFields
-        extends DefaultHandler {
-
-	public static final String OAIDC_PREFIX="oai_dc";
-	public static final String OAIDC_NS="http://www.openarchives.org/OAI/2.0/oai_dc/";
-	public static final String DC_PREFIX="dc";
-	public static final String DC_NS="http://purl.org/dc/elements/1.1/";
+        extends DefaultHandler
+        implements Constants {
 			
     private ArrayList<String> m_titles=new ArrayList<String>();
     private ArrayList<String> m_creators=new ArrayList<String>();
@@ -129,26 +123,25 @@ public class DCFields
     /**
      * Returns a Map with RDFName keys, each value containing List
      * of String values for that field.
-     *
      */
     public Map<RDFName, List<String>> getMap() {
         Map<RDFName, List<String>> map = new HashMap<RDFName, List<String>>();
 
-        map.put(Constants.DC.TITLE, m_titles);
-        map.put(Constants.DC.CREATOR, m_creators);
-        map.put(Constants.DC.SUBJECT, m_subjects);
-        map.put(Constants.DC.DESCRIPTION, m_descriptions);
-        map.put(Constants.DC.PUBLISHER, m_publishers);
-        map.put(Constants.DC.CONTRIBUTOR, m_contributors);
-        map.put(Constants.DC.DATE, m_dates);
-        map.put(Constants.DC.TYPE, m_types);
-        map.put(Constants.DC.FORMAT, m_formats);
-        map.put(Constants.DC.IDENTIFIER, m_identifiers);
-        map.put(Constants.DC.SOURCE, m_sources);
-        map.put(Constants.DC.LANGUAGE, m_languages);
-        map.put(Constants.DC.RELATION, m_relations);
-        map.put(Constants.DC.COVERAGE, m_coverages);
-        map.put(Constants.DC.RIGHTS, m_rights);
+        map.put(DC.TITLE, m_titles);
+        map.put(DC.CREATOR, m_creators);
+        map.put(DC.SUBJECT, m_subjects);
+        map.put(DC.DESCRIPTION, m_descriptions);
+        map.put(DC.PUBLISHER, m_publishers);
+        map.put(DC.CONTRIBUTOR, m_contributors);
+        map.put(DC.DATE, m_dates);
+        map.put(DC.TYPE, m_types);
+        map.put(DC.FORMAT, m_formats);
+        map.put(DC.IDENTIFIER, m_identifiers);
+        map.put(DC.SOURCE, m_sources);
+        map.put(DC.LANGUAGE, m_languages);
+        map.put(DC.RELATION, m_relations);
+        map.put(DC.COVERAGE, m_coverages);
+        map.put(DC.RIGHTS, m_rights);
 
         return map;
     }
@@ -219,9 +212,9 @@ public class DCFields
      */
     public String getAsXML() {
         StringBuffer out=new StringBuffer();
-		out.append("<" + OAIDC_PREFIX + ":dc"
-			+ " xmlns:"	+ OAIDC_PREFIX + "=\"" + OAIDC_NS + "\""
-			+ " xmlns:"	+ DC_PREFIX + "=\"" + DC_NS + "\">\n");
+		out.append("<" + OAI_DC.prefix + ":dc"
+			+ " xmlns:"	+ OAI_DC.prefix + "=\"" + OAI_DC.uri + "\""
+			+ " xmlns:"	+ DC.prefix + "=\"" + DC.uri + "\">\n");
         appendXML(titles(), "title", out);
         appendXML(creators(), "creator", out);
         appendXML(subjects(), "subject", out);

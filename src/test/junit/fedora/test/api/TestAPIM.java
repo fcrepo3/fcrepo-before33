@@ -1,7 +1,7 @@
 package fedora.test.api;
 
 import java.io.UnsupportedEncodingException;
-import java.rmi.RemoteException;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -12,18 +12,20 @@ import junit.framework.TestSuite;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.types.NonNegativeInteger;
+
 import org.custommonkey.xmlunit.SimpleXpathEngine;
 
-import fedora.server.errors.GeneralException;
+import fedora.common.Constants;
+
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.Datastream;
-//import fedora.server.types.gen.DatastreamBinding;
-//import fedora.server.types.gen.DatastreamBindingMap;
-//import fedora.server.types.gen.Disseminator;
+
 import fedora.test.DemoObjectTestSetup;
 import fedora.test.FedoraServerTestCase;
 
-public class TestAPIM extends FedoraServerTestCase {
+public class TestAPIM
+        extends FedoraServerTestCase
+        implements Constants {
     private FedoraAPIM apim;
     
     public static byte[] dsXML;
@@ -53,7 +55,7 @@ public class TestAPIM extends FedoraServerTestCase {
         // create test FOXML object specifying pid=demo:998
         sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        sb.append("<foxml:digitalObject PID=\"demo:998\" xmlns:METS=\"http://www.loc.gov/METS/\" xmlns:audit=\"info:fedora/fedora-system:def/audit#\" xmlns:fedoraAudit=\"http://fedora.comm.nsdlib.org/audit\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" xmlns:uvalibadmin=\"http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd\" xmlns:uvalibdesc=\"http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd\" xmlns:xlink=\"http://www.w3.org/TR/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd\">");
+        sb.append("<foxml:digitalObject VERSION=\"1.1\" PID=\"demo:998\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd\">");
         sb.append("  <foxml:objectProperties>");
         sb.append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"FedoraObject\"/>");
         sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
@@ -107,7 +109,7 @@ public class TestAPIM extends FedoraServerTestCase {
         // create test FOXML object not specifying pid (allow server to assign)
         sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        sb.append("<foxml:digitalObject xmlns:METS=\"http://www.loc.gov/METS/\" xmlns:audit=\"info:fedora/fedora-system:def/audit#\" xmlns:fedoraAudit=\"http://fedora.comm.nsdlib.org/audit\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" xmlns:uvalibadmin=\"http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd\" xmlns:uvalibdesc=\"http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd\" xmlns:xlink=\"http://www.w3.org/TR/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd\">");
+        sb.append("<foxml:digitalObject VERSION=\"1.1\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd\">");
         sb.append("  <foxml:objectProperties>");
         sb.append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"FedoraObject\"/>");
         sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
@@ -161,17 +163,7 @@ public class TestAPIM extends FedoraServerTestCase {
         // create test METS object specifying pid=demo:999        
         sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        sb.append("<!---************************************************************************-->");
-        sb.append("<!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS -->");
-        sb.append("<!-- Creator: Ross Wayland -->");
-        sb.append("<!-- Custodian: University of Virginia Library -->");
-        sb.append("<!-- Note: Demonstration Digital Object.  This Fedora data object demonstrates the UVA Simple Image -->");
-        sb.append("<!-- behaviors being fulfilled via the Fedora HTTP Image Getter service.  There are 4 datastreams in the -->");
-        sb.append("<!-- object, one for each image resolution specified in the behavior definition.  The fulfillment of the behavior -->");
-        sb.append("<!-- contract entails the Fedora HTTP Image Getter resolving the URL of the appropriate datastream for -->");
-        sb.append("<!-- each of the UVA Simple Image behaviors.  There are no transformations performed on the datastreams. -->");
-        sb.append("<!---************************************************************************-->");
-        sb.append("<METS:mets xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:METS=\"http://www.loc.gov/METS/\" xmlns:fedoraAudit=\"http://fedora.comm.nsdlib.org/audit\" xmlns:uvalibdesc=\"http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd\" xmlns:uvalibadmin=\"http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd\" xmlns:xlink=\"http://www.w3.org/TR/xlink\" xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd\" OBJID=\"demo:999\" TYPE=\"FedoraObject\" LABEL=\"Image of Coliseum in Rome\" PROFILE=\"UVA_STD_IMAGE\">");
+        sb.append("<METS:mets EXT_VERSION=\"1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:METS=\"http://www.loc.gov/METS/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd\" OBJID=\"demo:999\" TYPE=\"FedoraObject\" LABEL=\"Image of Coliseum in Rome\" PROFILE=\"UVA_STD_IMAGE\">");
        	sb.append("  <!---*******************************************************************************************************************************************-->");
        	sb.append("  <!---User-Defined XML METADATA DATASTREAMS-->");
       	sb.append("  <!---*******************************************************************************************************************************************-->");
@@ -224,26 +216,6 @@ public class TestAPIM extends FedoraServerTestCase {
         sb.append("      </METS:fileGrp>");
         sb.append("    </METS:fileGrp>");
         sb.append("  </METS:fileSec>");
-        sb.append("  <!---*******************************************************************************************************************************************-->");
-        sb.append("  <!--- FEDORA DATASTREAM BINDING MAPS  -->");
-        sb.append("  <!--  In Fedora the METS structure maps are associated with the DISSEMINATOR mechanisms (see METS:behaviorSec).-->");
-        sb.append("  <!---*******************************************************************************************************************************************-->");
-        sb.append("  <METS:structMap ID=\"S1\" TYPE=\"fedora:dsBindingMap\">");
-        sb.append("    <METS:div TYPE=\"demo:2\" LABEL=\"DS Binding Map for Fedora HTTP Image Getter Mechanism\">");
-        sb.append("      <METS:div TYPE=\"THUMBRES_IMG\" LABEL=\"Binding to thumbnail photo of Coliseum \" ORDER=\"0\">");
-        sb.append("        <METS:fptr FILEID=\"DS1\"/>");
-        sb.append("      </METS:div>");
-        sb.append("      <METS:div TYPE=\"MEDRES_IMG\" LABEL=\"Binding to medium resolution photo of Coliseum \" ORDER=\"0\">");
-        sb.append("        <METS:fptr FILEID=\"DS2\"/>");
-        sb.append("      </METS:div>");
-        sb.append("      <METS:div TYPE=\"HIGHRES_IMG\" LABEL=\"Binding to high resolution photo of Coliseum \" ORDER=\"0\">");
-        sb.append("        <METS:fptr FILEID=\"DS3\"/>");
-        sb.append("      </METS:div>");
-        sb.append("      <METS:div TYPE=\"VERYHIGHRES_IMG\" LABEL=\"Binding to very high resolution photo of Coliseum \" ORDER=\"0\">");
-        sb.append("        <METS:fptr FILEID=\"DS4\"/>");
-        sb.append("      </METS:div>");
-        sb.append("    </METS:div>");
-        sb.append("  </METS:structMap>");
         sb.append("</METS:mets>");
 
         try {
@@ -254,17 +226,7 @@ public class TestAPIM extends FedoraServerTestCase {
         // create test METS object not specifying pid (allowing server to assign)        
         sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        sb.append("<!---************************************************************************-->");
-        sb.append("<!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS -->");
-        sb.append("<!-- Creator: Ross Wayland -->");
-        sb.append("<!-- Custodian: University of Virginia Library -->");
-        sb.append("<!-- Note: Demonstration Digital Object.  This Fedora data object demonstrates the UVA Simple Image -->");
-        sb.append("<!-- behaviors being fulfilled via the Fedora HTTP Image Getter service.  There are 4 datastreams in the -->");
-        sb.append("<!-- object, one for each image resolution specified in the behavior definition.  The fulfillment of the behavior -->");
-        sb.append("<!-- contract entails the Fedora HTTP Image Getter resolving the URL of the appropriate datastream for -->");
-        sb.append("<!-- each of the UVA Simple Image behaviors.  There are no transformations performed on the datastreams. -->");
-        sb.append("<!---************************************************************************-->");
-        sb.append("<METS:mets xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:METS=\"http://www.loc.gov/METS/\" xmlns:fedoraAudit=\"http://fedora.comm.nsdlib.org/audit\" xmlns:uvalibdesc=\"http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd\" xmlns:uvalibadmin=\"http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd\" xmlns:xlink=\"http://www.w3.org/TR/xlink\" xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd\" TYPE=\"FedoraObject\" LABEL=\"Image of Coliseum in Rome\" PROFILE=\"UVA_STD_IMAGE\">");
+        sb.append("<METS:mets EXT_VERSION=\"1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:METS=\"http://www.loc.gov/METS/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd\" TYPE=\"FedoraObject\" LABEL=\"Image of Coliseum in Rome\" PROFILE=\"UVA_STD_IMAGE\">");
        	sb.append("  <!---*******************************************************************************************************************************************-->");
        	sb.append("  <!---User-Defined XML METADATA DATASTREAMS-->");
       	sb.append("  <!---*******************************************************************************************************************************************-->");
@@ -370,36 +332,32 @@ public class TestAPIM extends FedoraServerTestCase {
     	
         // (1) test ingest
         System.out.println("Running TestAPIM.testIngest...");
-        String pid = apim.ingest(demo998FOXMLObjectXML, "foxml1.0", "ingesting new foxml object");
-        //System.out.println("***** Testcase: TestAPIM.testIngestObject ingest demo998FOXML: "+pid);
+        String pid = apim.ingest(demo998FOXMLObjectXML, FOXML1_1.uri, "ingesting new foxml object");
         assertNotNull(pid);
         
         byte [] objectXML = apim.getObjectXML(pid);
         assertTrue(objectXML.length > 0);
         String xmlIn = new String(objectXML, "UTF-8");
-        //System.out.println("***** Testcase: TestAPIM.testIngestObject ingest demo998FOXML XML \n"+xmlIn);
         assertXpathExists("foxml:digitalObject[@PID='"+pid+"']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         
-        pid = apim.ingest(changeme1FOXMLObjectXML, "foxml1.0", "ingesting new foxml object");
-        //System.out.println("***** Testcase: TestAPIM.testIngestObject ingest changeme1FOXML: "+pid);
+        pid = apim.ingest(changeme1FOXMLObjectXML, FOXML1_1.uri, "ingesting new foxml object");
         assertNotNull(pid);
         serverAssignedPIDs.add(pid);
         
         objectXML = apim.getObjectXML(pid);
         assertTrue(objectXML.length > 0);
         xmlIn = new String(objectXML, "UTF-8");
-        //System.out.println("***** Testcase: TestAPIM.testIngestObject ingest changeme1FOXML XML \n"+xmlIn);
         assertXpathExists("foxml:digitalObject[@PID='"+pid+"']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         
-        pid = apim.ingest(demo999METSObjectXML, "metslikefedora1", "ingesting new mets object");
+        pid = apim.ingest(demo999METSObjectXML, METS_EXT1_1.uri, "ingesting new mets object");
         assertNotNull(pid);
         
         objectXML = apim.getObjectXML(pid);
@@ -411,15 +369,13 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         
-        pid = apim.ingest(changeme2METSObjectXML, "metslikefedora1", "ingesting new mets object");
-        //System.out.println("***** Testcase: TestAPIM.testIngestObject ingest changeme2METS: "+pid);
+        pid = apim.ingest(changeme2METSObjectXML, METS_EXT1_1.uri, "ingesting new mets object");
         assertNotNull(pid);
         serverAssignedPIDs.add(pid);
         
         objectXML = apim.getObjectXML(pid);
         assertTrue(objectXML.length > 0);
         xmlIn = new String(objectXML, "UTF-8");
-        //System.out.println("***** Testcase: TestAPIM.testIngestObject ingest changeme2METS XML \n"+xmlIn);
         assertXpathExists("foxml:digitalObject[@PID='"+pid+"']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
@@ -457,10 +413,9 @@ public class TestAPIM extends FedoraServerTestCase {
         // (3) test export
         System.out.println("Running TestAPIM.testExport...");
         // test exporting object as foxml with exportContext of default
-        objectXML = apim.export("demo:998", "foxml1.0", "default");
+        objectXML = apim.export("demo:998", FOXML1_1.uri, "default");
         assertTrue(objectXML.length > 0);
         xmlIn = new String(objectXML, "UTF-8");
-        //System.out.println("***** Testcase: TestAPIM.testExport demo:998 as FOXML\n"+xmlIn);
         assertXpathExists("foxml:digitalObject[@PID='demo:998']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
@@ -468,10 +423,9 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
 
         // test exporting object as foxml with exportContext of default
-        objectXML = apim.export("demo:998", "foxml1.0", "public");
+        objectXML = apim.export("demo:998", FOXML1_1.uri, "public");
         assertTrue(objectXML.length > 0);
         xmlIn = new String(objectXML, "UTF-8");
-        //System.out.println("***** Testcase: TestAPIM.testExport demo:998 as FOXML\n"+xmlIn);
         assertXpathExists("foxml:digitalObject[@PID='demo:998']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
@@ -479,10 +433,9 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         
         // test exporting object as foxml with exportContext of migrate
-        objectXML = apim.export("demo:998", "foxml1.0", "migrate");
+        objectXML = apim.export("demo:998", FOXML1_1.uri, "migrate");
         assertTrue(objectXML.length > 0);
         xmlIn = new String(objectXML, "UTF-8");
-        //System.out.println("***** Testcase: TestAPIM.testExport demo:998 as FOXML\n"+xmlIn);
         assertXpathExists("foxml:digitalObject[@PID='demo:998']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
@@ -490,11 +443,10 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         
         // test exporting object as mets with exportContext of default
-        objectXML = apim.export("demo:999", "metslikefedora1", "default");
+        objectXML = apim.export("demo:999", METS_EXT1_1.uri, "default");
         objectXML = apim.getObjectXML("demo:999");
         assertTrue(objectXML.length > 0);
         xmlIn = new String(objectXML, "UTF-8");
-        //System.out.println("***** Testcase: TestAPIM.testExport demo:999 as METS\n"+xmlIn);
         assertXpathExists("foxml:digitalObject[@PID='demo:999']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
@@ -502,11 +454,10 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         
         // test exporting object as mets with exportContext of public
-        objectXML = apim.export("demo:999", "metslikefedora1", "public");
+        objectXML = apim.export("demo:999", METS_EXT1_1.uri, "public");
         objectXML = apim.getObjectXML("demo:999");
         assertTrue(objectXML.length > 0);
         xmlIn = new String(objectXML, "UTF-8");
-        //System.out.println("***** Testcase: TestAPIM.testExport demo:999 as METS\n"+xmlIn);
         assertXpathExists("foxml:digitalObject[@PID='demo:999']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
@@ -514,11 +465,10 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         
         // test exporting object as mets with exportContext of migrate
-        objectXML = apim.export("demo:999", "metslikefedora1", "migrate");
+        objectXML = apim.export("demo:999", METS_EXT1_1.uri, "migrate");
         objectXML = apim.getObjectXML("demo:999");
         assertTrue(objectXML.length > 0);
         xmlIn = new String(objectXML, "UTF-8");
-        //System.out.println("***** Testcase: TestAPIM.testExport demo:999 as METS\n"+xmlIn);
         assertXpathExists("foxml:digitalObject[@PID='demo:999']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
@@ -829,279 +779,6 @@ public class TestAPIM extends FedoraServerTestCase {
         }
     }
 
-    public void testDisseminatorMethods() throws Exception {
-        
-        // test disseminator methods
-        // 1) addDisseminator
-        // 2) modifyDisseminator
-        // 3) purgeDisseminator
-        // 4) getDisseminator
-        // 5) getDisseminators
-        // 6) getDisseminatorHistory
-        
-        
-//        // test (1) addDisseminator
-//        System.out.println("Running TestAPIM.testAddDisseminator...");
-//        DatastreamBindingMap dsBindMap = new DatastreamBindingMap();
-//        DatastreamBinding dsBinding = new DatastreamBinding();
-//        DatastreamBinding[] dsBindings = new DatastreamBinding[1];
-//        dsBinding.setBindKeyName("url");
-//        dsBinding.setBindLabel("Binding to big pic of coliseum");
-//        dsBinding.setDatastreamID("DS2");
-//        dsBinding.setSeqNo("0");
-//        dsBindings[0] = dsBinding;
-//        dsBindMap.setDsBindings(dsBindings);
-//        dsBindMap.setDsBindMapID("dsBindMapID");
-//        dsBindMap.setDsBindMapLabel("dsBind Map Label");
-//        dsBindMap.setDsBindMechanismPID("demo:28");
-//        dsBindMap.setState("A");
-//        String result = apim.addDisseminator("demo:5", "demo:27", "demo:28", "Image Manip Disseminator", dsBindMap, "A", "adding new disseminator");
-//        assertNotNull(result);
-//        
-//        // test that disseminator was added
-//        byte [] objectXML = apim.getObjectXML("demo:5");
-//        assertTrue(objectXML.length > 0);
-//        String xmlIn = new String(objectXML, "UTF-8");
-//        //System.out.println("***** Testcase: TestAPIM.testAddDisseminator demo:28/demo:29 to demo:5\n"+xmlIn);
-//        assertXpathExists("foxml:digitalObject[@PID='demo:5']",xmlIn);
-//        assertXpathExists("//foxml:disseminator[@ID='DISS2' and @BDEF_CONTRACT_PID='demo:27' and @STATE='A']",xmlIn);
-//        assertXpathExists("//foxml:disseminatorVersion[@ID='DISS2.0' and @BMECH_SERVICE_PID='demo:28' and @LABEL='Image Manip Disseminator']",xmlIn);
-//        assertXpathExists("//foxml:disseminatorVersion[@ID='DISS2.0' and @BMECH_SERVICE_PID='demo:28' and @LABEL='Image Manip Disseminator']/foxml:serviceInputMap/foxml:datastreamBinding[@DATASTREAM_ID='DS2' and @KEY='url' and @LABEL='Binding to big pic of coliseum']",xmlIn);
-//        assertXpathEvaluatesTo("2", "count(//foxml:disseminator)",xmlIn);
-//
-//        // (2) test modifyDisseminator
-//        System.out.println("Running TestAPIM.testModifyDisseminator...");
-//        dsBindMap = new DatastreamBindingMap();
-//        dsBinding = new DatastreamBinding();
-//        dsBindings = new DatastreamBinding[1];
-//        dsBinding.setBindKeyName("url");
-//        dsBinding.setBindLabel("New Binding Label");
-//        dsBinding.setDatastreamID("DS4");
-//        dsBinding.setSeqNo("0");
-//        dsBindings[0] = dsBinding;
-//        dsBindMap.setDsBindings(dsBindings);
-//        dsBindMap.setDsBindMapID("dsBindMapID");
-//        dsBindMap.setDsBindMapLabel("dsBind Map Label");
-//        dsBindMap.setDsBindMechanismPID("demo:28");
-//        dsBindMap.setState("A");        
-//        result = apim.modifyDisseminator("demo:5", "DISS2", "demo:28", "Modified Disseminator Label", dsBindMap, "A", "modifying disseminator", false);
-//        //System.out.println("***** Testcase: TestAPIM.testModifyDisseminator demo:5 DISS2 result: "+result);
-//        assertNotNull(result);
-        
-//        // test that disseminator was added
-//        objectXML = apim.getObjectXML("demo:5");
-//        assertTrue(objectXML.length > 0);
-//        xmlIn = new String(objectXML, "UTF-8");
-//        //System.out.println("***** Testcase: TestAPIM.testModifyDisseminator \n"+xmlIn);
-//        assertXpathExists("foxml:digitalObject[@PID='demo:5']",xmlIn);
-//        assertXpathExists("//foxml:disseminator[@ID='DISS2' and @BDEF_CONTRACT_PID='demo:27' and @STATE='A']",xmlIn);
-//        assertXpathExists("//foxml:disseminatorVersion[@ID='DISS2.1' and @BMECH_SERVICE_PID='demo:28' and @LABEL='Modified Disseminator Label']",xmlIn);
-//        assertXpathExists("//foxml:disseminatorVersion[@ID='DISS2.1' and @BMECH_SERVICE_PID='demo:28' and @LABEL='Modified Disseminator Label']/foxml:serviceInputMap/foxml:datastreamBinding[@DATASTREAM_ID='DS4' and @KEY='url' and @LABEL='New Binding Label']",xmlIn);
-//        assertXpathEvaluatesTo("2", "count(//foxml:disseminator)",xmlIn);        
-//        
-//        // (3) test purgeDisseminator
-//        System.out.println("Running TestAPIM.testPurgeDisseminator...");
-//        // test specifying null for endDate
-//        String[] results = apim.purgeDisseminator("demo:5", "DISS2", null, "purging disseminator DISS2");
-//        for (int i=0; i<results.length; i++) {
-//            //System.out.println("***** Testcase: TestAPIM.testPurgeDisseminator demo:5 DISS2 specifying endDate=null dissID: "+results[i]);
-//        }
-//        //assertTrue(results.length > 0);
-//        dsBindMap = new DatastreamBindingMap();
-//        dsBinding = new DatastreamBinding();
-//        dsBindings = new DatastreamBinding[1];
-//        dsBinding.setBindKeyName("url");
-//        dsBinding.setBindLabel("Binding to big pic of coliseum");
-//        dsBinding.setDatastreamID("DS2");
-//        dsBinding.setSeqNo("0");
-//        dsBindings[0] = dsBinding;
-//        dsBindMap.setDsBindings(dsBindings);
-//        dsBindMap.setDsBindMapID("dsBindMapID");
-//        dsBindMap.setDsBindMapLabel("dsBind Map Label");
-//        dsBindMap.setDsBindMechanismPID("demo:28");
-//        dsBindMap.setState("A");        
-//        result = apim.addDisseminator("demo:5", "demo:27", "demo:28", "Image Manip Disseminator", dsBindMap, "A", "adding new disseminator");
-//        
-//        // test specifying datetime for endDate
-//        results = apim.purgeDisseminator("demo:5", "DISS2", "9999-01-01T00:00:00.000Z", "purging disseminator DISS2");
-//        for (int i=0; i<results.length; i++) {
-//            //System.out.println("***** Testcase: TestAPIM.testPurgeDisseminator specifying endDate=\"9999-01-01T00:00:00.000Z\" dissID: "+results[i]);
-//        }          
-//        //assertTrue(results.length > 0);
-//        assertEquals("1","1");
-        
-//        // (4) test getDisseminator
-//        System.out.println("Running TestAPIM.testGetDisseminator...");
-//        // test getting disseminator id DISS1 for object demo:26 specifying null for datetime
-//        Disseminator diss = apim.getDisseminator("demo:26", "DISS1", null);
-//        assertNotNull(diss);
-//        Disseminator[] dissArray = new Disseminator[1];
-//        dissArray[0] = diss;
-//        //System.out.println("***** Testcase: TestAPIM.testGetDisseminator getDisseminator(\"demo:26\", \"DISS1\", null)");
-//
-//        // assert DISS1 matches
-//        assertEquals(dissArray[0].getBDefPID(),"demo:19");
-//        assertEquals(dissArray[0].getBMechPID(),"demo:20");
-//        assertEquals(dissArray[0].getID(),"DISS1");
-//        assertEquals(dissArray[0].getLabel(),"PDF Disseminator");
-//        assertEquals(dissArray[0].getState(),"A");
-//        assertEquals(dissArray[0].getVersionID(),"DISS1.0");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindMapID(),"DISS1.0b");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindMapLabel(),"");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindMechanismPID(),"demo:20");
-//        assertEquals(dissArray[0].getDsBindMap().getState(),"A");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindKeyName(),"XML_SOURCE");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindLabel(),"FOP Source file to be transformed");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getDatastreamID(),"FOPDISSEM");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo(),"");
-//                
-//        // test getting disseminator id DISS1 for object demo:26 specifying datetime
-//        diss = apim.getDisseminator("demo:26", "DISS1", "9999-01-01T00:00:00.000Z");
-//        dissArray[0] = diss;
-//        //System.out.println("***** Testcase: TestAPIM.testGetDisseminator getDisseminator(\"demo:26\", \"DISS1\", \"9999-01-01T00:00:00.000Z\")");
-//
-//        // assert DISS1 matches
-//        assertEquals(dissArray[0].getBDefPID(),"demo:19");
-//        assertEquals(dissArray[0].getBMechPID(),"demo:20");
-//        assertEquals(dissArray[0].getID(),"DISS1");
-//        assertEquals(dissArray[0].getLabel(),"PDF Disseminator");
-//        assertEquals(dissArray[0].getState(),"A");
-//        assertEquals(dissArray[0].getVersionID(),"DISS1.0");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindMapID(),"DISS1.0b");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindMapLabel(),"");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindMechanismPID(),"demo:20");
-//        assertEquals(dissArray[0].getDsBindMap().getState(),"A");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindKeyName(),"XML_SOURCE");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindLabel(),"FOP Source file to be transformed");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getDatastreamID(),"FOPDISSEM");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo(),"");
-//        
-//        // (5) test getDisseminators
-//        System.out.println("Running TestAPIM.testGetDisseminators...");
-//        // test getting all disseminators for object demo:26 specifying null for datetime and state
-//        dissArray = apim.getDisseminators("demo:26", null, null);
-//        assertTrue(dissArray.length > 0);
-//        //System.out.println("***** Testcase: TestAPIM.testGetDisseminators getDisseminators(\"demo:26\", null, null) number of Disseminators: "+dissArray.length);
-//        assertEquals(dissArray.length, 2);
-//
-//        // assert DISS1 matches
-//        assertEquals(dissArray[0].getBDefPID(),"demo:19");
-//        assertEquals(dissArray[0].getBMechPID(),"demo:20");
-//        assertEquals(dissArray[0].getID(),"DISS1");
-//        assertEquals(dissArray[0].getLabel(),"PDF Disseminator");
-//        assertEquals(dissArray[0].getState(),"A");
-//        assertEquals(dissArray[0].getVersionID(),"DISS1.0");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindMapID(),"DISS1.0b");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindMapLabel(),"");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindMechanismPID(),"demo:20");
-//        assertEquals(dissArray[0].getDsBindMap().getState(),"A");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindKeyName(),"XML_SOURCE");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindLabel(),"FOP Source file to be transformed");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getDatastreamID(),"FOPDISSEM");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo(),"");
-//        
-//        // assert DISS2 matches
-//        assertEquals(dissArray[1].getBDefPID(),"demo:22");
-//        assertEquals(dissArray[1].getBMechPID(),"demo:25");
-//        assertEquals(dissArray[1].getID(),"DISS2");
-//        assertEquals(dissArray[1].getLabel(),"FO Disseminator");
-//        assertEquals(dissArray[1].getState(),"A");
-//        assertEquals(dissArray[1].getVersionID(),"DISS2.0");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindMapID(),"DISS2.0b");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindMapLabel(),"");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindMechanismPID(),"demo:25");
-//        assertEquals(dissArray[1].getDsBindMap().getState(),"A");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindKeyName(),"TEI_SOURCE");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindLabel(),"TEI Source file to be transformed to FO");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getDatastreamID(),"TEISOURCE");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getSeqNo(),"");
-//        
-//        // test getting all disseminators for object demo:26 specifying null for state
-//        dissArray = apim.getDisseminators("demo:26", "9999-01-01T00:00:00.000Z", null);
-//        //System.out.println("***** Testcase: TestAPIM.testGetDissemintors getDisseminators(\"demo:26\", \"9999-01-01T00:00:00.000Z\", null) number of Disseminators: "+dissArray.length);
-//        assertEquals(dissArray.length, 2);
-//
-//        // assert DISS1 matches
-//        assertEquals(dissArray[0].getBDefPID(),"demo:19");
-//        assertEquals(dissArray[0].getBMechPID(),"demo:20");
-//        assertEquals(dissArray[0].getID(),"DISS1");
-//        assertEquals(dissArray[0].getLabel(),"PDF Disseminator");
-//        assertEquals(dissArray[0].getState(),"A");
-//        assertEquals(dissArray[0].getVersionID(),"DISS1.0");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindMapID(),"DISS1.0b");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindMapLabel(),"");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindMechanismPID(),"demo:20");
-//        assertEquals(dissArray[0].getDsBindMap().getState(),"A");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindKeyName(),"XML_SOURCE");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindLabel(),"FOP Source file to be transformed");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getDatastreamID(),"FOPDISSEM");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo(),"");
-//        
-//        // assert DISS2 matches
-//        assertEquals(dissArray[1].getBDefPID(),"demo:22");
-//        assertEquals(dissArray[1].getBMechPID(),"demo:25");
-//        assertEquals(dissArray[1].getID(),"DISS2");
-//        assertEquals(dissArray[1].getLabel(),"FO Disseminator");
-//        assertEquals(dissArray[1].getState(),"A");
-//        assertEquals(dissArray[1].getVersionID(),"DISS2.0");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindMapID(),"DISS2.0b");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindMapLabel(),"");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindMechanismPID(),"demo:25");
-//        assertEquals(dissArray[1].getDsBindMap().getState(),"A");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindKeyName(),"TEI_SOURCE");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindLabel(),"TEI Source file to be transformed to FO");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getDatastreamID(),"TEISOURCE");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getSeqNo(),"");                    
-//
-//        // test getting all disseminators for object demo:26 specifying both datetime and state
-//        dissArray = apim.getDisseminators("demo:26", "9999-01-01T00:00:00.000Z", "A");
-//        //System.out.println("***** Testcase: TestAPIM.testGetDissemintors getDisseminators(\"demo:26\", \"9999-01-01T00:00:00.000Z\", \"A\") number of Disseminators: "+dissArray.length);
-//        assertEquals(dissArray.length, 2);
-//
-//        // assert DISS1 matches
-//        assertEquals(dissArray[0].getBDefPID(),"demo:19");
-//        assertEquals(dissArray[0].getBMechPID(),"demo:20");
-//        assertEquals(dissArray[0].getID(),"DISS1");
-//        assertEquals(dissArray[0].getLabel(),"PDF Disseminator");
-//        assertEquals(dissArray[0].getState(),"A");
-//        assertEquals(dissArray[0].getVersionID(),"DISS1.0");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindMapID(),"DISS1.0b");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindMapLabel(),"");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindMechanismPID(),"demo:20");
-//        assertEquals(dissArray[0].getDsBindMap().getState(),"A");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindKeyName(),"XML_SOURCE");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindLabel(),"FOP Source file to be transformed");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getDatastreamID(),"FOPDISSEM");
-//        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo(),"");
-//        
-//        // assert DISS2 matches
-//        assertEquals(dissArray[1].getBDefPID(),"demo:22");
-//        assertEquals(dissArray[1].getBMechPID(),"demo:25");
-//        assertEquals(dissArray[1].getID(),"DISS2");
-//        assertEquals(dissArray[1].getLabel(),"FO Disseminator");
-//        assertEquals(dissArray[1].getState(),"A");
-//        assertEquals(dissArray[1].getVersionID(),"DISS2.0");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindMapID(),"DISS2.0b");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindMapLabel(),"");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindMechanismPID(),"demo:25");
-//        assertEquals(dissArray[1].getDsBindMap().getState(),"A");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindKeyName(),"TEI_SOURCE");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindLabel(),"TEI Source file to be transformed to FO");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getDatastreamID(),"TEISOURCE");
-//        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getSeqNo(),"");            
-//
-//        // (6) test getDisseminatorHistory
-//        System.out.println("Running TestAPIM.testGetDisseminatorHistory...");
-//        // test getting disseminator history for disseminator DISS1 of object demo:10
-//        dissArray = apim.getDisseminatorHistory("demo:10", "DISS1");
-//        assertTrue(dissArray.length > 0);
-//        for (int i=0; i<dissArray.length; i++) {
-//            diss = dissArray[i];
-//            //System.out.println("***** Testcase: TestAPIM.testGetDatastreamHistory createDate: "+diss.getCreateDate());
-//        }
-//        assertEquals(dissArray.length, 1);
-    }
-    
     public void testSetDatastreamState() throws Exception {
         
         // test setting datastream state to "I" for datastream id DC of object demo:5
@@ -1112,17 +789,6 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals("I", ds.getState());
         //System.out.println("***** Testcase: TestAPIM.testSetDatastreamState new state: "+ds.getState());
     }    
-    
-    public void testSetDisseminatorState() throws Exception {
-        
-//        // test setting disseminator state to "I" for disseminator id DISS1 of object demo:5
-//        System.out.println("Running TestAPIM.testSetDisseminatorState...");
-//        String result = apim.setDisseminatorState("demo:5", "DISS1", "I", "changed state to Inactive");
-//        assertNotNull(result);
-//        Disseminator diss = apim.getDisseminator("demo:5", "DISS1", null);
-//        assertEquals("I", diss.getState()); 
-//        //System.out.println("***** Testcase: TestAPIM.testSetDisseminatorState new state: "+diss.getState());
-    }
     
     public void testGetNextPID() throws Exception {
         

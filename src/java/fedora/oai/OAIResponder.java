@@ -34,9 +34,9 @@ import fedora.server.security.Authorization;
  * OAIResponder.
  *
  * @author cwilper@cs.cornell.edu
- * @version $Id$
  */
-public class OAIResponder {
+public class OAIResponder
+        implements Constants {
 
     private OAIProvider m_provider;
     private DateGranularitySupport m_granularity;
@@ -51,7 +51,7 @@ public class OAIResponder {
     	if (m_authorization == null) {
             Server server;
 			try {
-				server = Server.getInstance(new File(Constants.FEDORA_HOME));
+				server = Server.getInstance(new File(FEDORA_HOME));
 			} catch (Throwable e) {
 				throw new AuthzOperationalException("couldn't attempt authz", e);
 			}
@@ -68,9 +68,9 @@ public class OAIResponder {
         String verb=(String) args.get("verb");
         
         String baseURL = m_provider.getBaseURL(
-        		context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri).equals(Constants.HTTP_REQUEST.SECURE.uri) 
+        		context.getEnvironmentValue(HTTP_REQUEST.SECURITY.uri).equals(HTTP_REQUEST.SECURE.uri) 
 						? "https" : "http",
-        		context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri));
+        		context.getEnvironmentValue(HTTP_REQUEST.SERVER_PORT.uri));
         try {
             if (verb==null) {
                 throw new BadVerbException("Request did not specify a verb.");
@@ -447,9 +447,9 @@ public class OAIResponder {
 
     private void appendTop(PrintWriter out) {
         out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        out.println("<OAI-PMH xmlns=\"http://www.openarchives.org/OAI/2.0/\"");
-        out.println("         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-        out.println("         xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd\">");
+        out.println("<OAI-PMH xmlns=\"" + OAI_PMH.uri + "\"");
+        out.println("         xmlns:xsi=\"" + XSI.uri + "\"");
+        out.println("         xsi:schemaLocation=\"" + OAI_PMH.uri + " " + OAI_PMH2_0.xsdLocation + "\">");
         out.println("  <responseDate>" + getUTCString(getUTCDate(new Date()), true) + "</responseDate>");
     }
 

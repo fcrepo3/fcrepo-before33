@@ -11,7 +11,7 @@
 <!-- view the a list of the contents of the object, and get any particular content item. This access is achieved -->
 <!-- via the "Default Disseminator" which is dynamically associated with every Fedora object by the system. -->
 <!---************************************************************************-->
-<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:18" TYPE="FedoraObject" LABEL="The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services" PROFILE="SIMPLE_DOC">
+<METS:mets EXT_VERSION="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd" OBJID="demo:18" TYPE="FedoraObject" LABEL="The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services" PROFILE="SIMPLE_DOC">
 <METS:metsHdr>
 <METS:agent ROLE="IPOWNER">
 	<METS:name>fedoraAdmin</METS:name>

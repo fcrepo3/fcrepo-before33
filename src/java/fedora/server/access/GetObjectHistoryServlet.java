@@ -74,7 +74,9 @@ import fedora.server.utilities.StreamUtility;
  * @author rlw@virginia.edu
  * @version $Id$
  */
-public class GetObjectHistoryServlet extends HttpServlet {
+public class GetObjectHistoryServlet
+        extends HttpServlet
+        implements Constants {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
@@ -151,7 +153,7 @@ public class GetObjectHistoryServlet extends HttpServlet {
 		}
 
 		Context context = ReadOnlyContext.getContext(
-				Constants.HTTP_REQUEST.REST.uri, request);
+				HTTP_REQUEST.REST.uri, request);
 		try {
 			getObjectHistory(context, PID, xml, response);
         } catch (ObjectNotFoundException e) {
@@ -284,12 +286,12 @@ public class GetObjectHistoryServlet extends HttpServlet {
 			this.objectHistory = objectHistory;
 			this.PID = PID;
 			fedoraServerPort = context
-					.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);
-			if (Constants.HTTP_REQUEST.SECURE.uri.equals(context
-					.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+					.getEnvironmentValue(HTTP_REQUEST.SERVER_PORT.uri);
+			if (HTTP_REQUEST.SECURE.uri.equals(context
+					.getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
 				fedoraServerProtocol = HTTPS;
-			} else if (Constants.HTTP_REQUEST.INSECURE.uri.equals(context
-					.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+			} else if (HTTP_REQUEST.INSECURE.uri.equals(context
+					.getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
 				fedoraServerProtocol = HTTP;
 			}
 		}
@@ -303,18 +305,13 @@ public class GetObjectHistoryServlet extends HttpServlet {
 			if (pw != null) {
 				try {
 					pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-					pw
-							.write("<fedoraObjectHistory "
-									+ " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-									+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-									+ " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-									+ StreamUtility.enc(fedoraServerProtocol)
-									+ "://"
-									+ StreamUtility.enc(fedoraServerHost) + ":"
-									+ StreamUtility.enc(fedoraServerPort)
-									+ "/fedoraObjectHistory.xsd\" pid=\"" + PID
-									+ "\" >");
-
+					pw.write("<fedoraObjectHistory"
+                            + " pid=\"" + PID + "\""
+                            + " xmlns:xsd=\"" + XML_XSD.uri + "\""
+                            + " xmlns:xsi=\"" + XSI.uri + "\""
+                            + " xsi:schemaLocation=\"" + ACCESS.uri 
+                            + " " + OBJ_HISTORY1_0.xsdLocation
+                            + "\">");
 					// Object History Serialization
 					for (int i = 0; i < objectHistory.length; i++) {
 						pw.write("<objectChangeDate>" + objectHistory[i]
@@ -366,7 +363,7 @@ public class GetObjectHistoryServlet extends HttpServlet {
 	 */
 	public void init() throws ServletException {
 		try {
-			s_server = Server.getInstance(new File(Constants.FEDORA_HOME),
+			s_server = Server.getInstance(new File(FEDORA_HOME),
                     false);
 			fedoraServerHost = s_server.getParameter("fedoraServerHost");
 			s_access = (Access) s_server

@@ -11,6 +11,13 @@ import com.sun.xacml.attr.IntegerAttribute;
 import com.sun.xacml.attr.StringAttribute;
 import com.sun.xacml.attr.BooleanAttribute;
 
+/**
+ * The Fedora Datastream XACML namespace.
+ *
+ * <pre>
+ * Namespace URI    : urn:fedora:names:fedora:2.1:resource:datastream
+ * </pre>
+ */
 public class DatastreamNamespace extends XacmlNamespace {
 
 	// Properties

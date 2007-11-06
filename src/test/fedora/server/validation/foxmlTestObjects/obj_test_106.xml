@@ -2,7 +2,7 @@
 <!---*******************************************************************************************************************************************-->
 <!-- THIS FOXML TEST OBJECT:  Test for bad DS control group-->
 <!---*******************************************************************************************************************************************-->
-<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#" PID="test:106" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#" VERSION="1.1" PID="test:106" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd">
 	<!---*******************************************************************************************************************************************-->
 	<!--   FEDORA OBJECT PROPERTIES : non-versionable properties of the digital object-->
 	<!---*******************************************************************************************************************************************-->
@@ -17,11 +17,4 @@
 			<foxml:contentLocation REF="http://iris.lib.virginia.edu/mrsid/mrsid_images/iva/archerp01.sid" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="demo:8" STATE="A" VERSIONABLE="true">
-		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="demo:9" LABEL="Dynamic Image Sizing via MrSID Service">
-			<foxml:serviceInputMap>
-				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="MRSID" LABEL="MRSID wavelet-encoded image binding"/>
-			</foxml:serviceInputMap>
-		</foxml:disseminatorVersion>
-	</foxml:disseminator>
 </foxml:digitalObject>

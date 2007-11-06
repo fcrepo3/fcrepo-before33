@@ -6,9 +6,7 @@ import java.util.Date;
 import fedora.server.Context;
 import fedora.server.errors.ServerException;
 import fedora.server.management.ManagementDelegate;
-import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.Datastream;
-//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.Property;
 import fedora.server.storage.types.RelationshipTuple;
 
@@ -147,52 +145,6 @@ class MockManagementDelegateForJournalTesting implements ManagementDelegate {
                 "MockManagementDelegateForJournalTesting.getDatastreamHistory not implemented"); // KLUGE
 
     }
-
-    public String addDisseminator(Context context, String pid, String bDefPID,
-            String bMechPid, String dissLabel, DSBindingMap bindingMap,
-            String dissState, String logMessage) throws ServerException {
-        throw new RuntimeException(
-                "MockManagementDelegateForJournalTesting.addDisseminator not implemented"); // KLUGE
-
-    }
-
-    public Date modifyDisseminator(Context context, String pid,
-            String disseminatorID, String bMechPid, String dissLabel,
-            DSBindingMap bindingMap, String dissState, String logMessage,
-            boolean force) throws ServerException {
-        throw new RuntimeException(
-                "MockManagementDelegateForJournalTesting.modifyDisseminator not implemented"); // KLUGE
-
-    }
-
-    public Date[] purgeDisseminator(Context context, String pid,
-            String disseminatorID, Date endDT, String logMessage)
-            throws ServerException {
-        throw new RuntimeException(
-                "MockManagementDelegateForJournalTesting.purgeDisseminator not implemented"); // KLUGE
-
-    }
-
-//    public Disseminator getDisseminator(Context context, String pid,
-//            String disseminatorID, Date asOfDateTime) throws ServerException {
-//        throw new RuntimeException(
-//                "MockManagementDelegateForJournalTesting.getDisseminator not implemented"); // KLUGE
-//
-//    }
-//
-//    public Disseminator[] getDisseminators(Context context, String pid,
-//            Date asOfDateTime, String dissState) throws ServerException {
-//        throw new RuntimeException(
-//                "MockManagementDelegateForJournalTesting.getDisseminators not implemented"); // KLUGE
-//
-//    }
-//
-//    public Disseminator[] getDisseminatorHistory(Context context, String pid,
-//            String disseminatorID) throws ServerException {
-//        throw new RuntimeException(
-//                "MockManagementDelegateForJournalTesting.getDisseminatorHistory not implemented"); // KLUGE
-//
-//    }
 
     public String putTempStream(Context context, InputStream in)
             throws ServerException {

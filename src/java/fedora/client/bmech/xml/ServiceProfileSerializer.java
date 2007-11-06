@@ -5,30 +5,24 @@
 
 package fedora.client.bmech.xml;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import fedora.client.bmech.data.*;
 import fedora.client.bmech.BMechBuilderException;
 
+import fedora.common.Constants;
+
 /**
- *
- * <p><b>Title:</b> ServiceProfileSerializer.java</p>
- * <p><b>Description:</b> </p>
- *
  * @author payette@cs.cornell.edu
- * @version $Id$
  */
 public class ServiceProfileSerializer
-{
-  private static final String FSVP =
-    "http://fedora.comm.nsdlib.org/service/profile";
-
-  private static final String XMLNS = "http://www.w3.org/2000/xmlns/";
+        implements Constants {
 
   private Document document;
 
@@ -60,48 +54,48 @@ public class ServiceProfileSerializer
   {
     ServiceProfile profile = newBMech.getServiceProfile();
 
-    Element root = (Element)document.createElementNS(FSVP, "fsvp:serviceProfile");
-    root.setAttributeNS(XMLNS, "xmlns:fsvp", FSVP);
+    Element root = (Element)document.createElementNS(SERVICE_PROFILE.uri, "fsvp:serviceProfile");
+    root.setAttributeNS(XMLNS.uri, "xmlns:fsvp", SERVICE_PROFILE.uri);
     String bDefPID = (newBMech.getbDefContractPID() == null) ? "" : newBMech.getbDefContractPID();
     root.setAttribute("bDefPID", bDefPID);
 	String name = (profile.serviceName == null) ? "" : profile.serviceName;
 	root.setAttribute("name", name);
     document.appendChild(root);
 	
-	Element serviceLabel = document.createElementNS(FSVP, "fsvp:serviceDescription");
+	Element serviceLabel = document.createElementNS(SERVICE_PROFILE.uri, "fsvp:serviceDescription");
 	String label = (profile.serviceLabel == null) ? "" : profile.serviceLabel;
 	serviceLabel.appendChild(document.createTextNode(label));
 	
-	Element serviceTestURL = document.createElementNS(FSVP, "fsvp:serviceLiveTestURL");
+	Element serviceTestURL = document.createElementNS(SERVICE_PROFILE.uri, "fsvp:serviceLiveTestURL");
 	String testURL = (profile.serviceTestURL == null) ? "" : profile.serviceTestURL;
 	serviceTestURL.appendChild(document.createTextNode(testURL));
 	
-	Element serviceMsgProtocol = document.createElementNS(FSVP, "fsvp:serviceMessagingProtocol");
+	Element serviceMsgProtocol = document.createElementNS(SERVICE_PROFILE.uri, "fsvp:serviceMessagingProtocol");
 	String msgProtocol = (profile.msgProtocol == null) ? "" : profile.msgProtocol;
 	serviceMsgProtocol.appendChild(document.createTextNode(msgProtocol));
 	
-	Element serviceInputs = document.createElementNS(FSVP, "fsvp:serviceInputFormats");
+	Element serviceInputs = document.createElementNS(SERVICE_PROFILE.uri, "fsvp:serviceInputFormats");
 	for (int i=0; i<profile.inputMIMETypes.length; i++)
 	{
-		Element inMIME = document.createElementNS(FSVP, "fsvp:MIMEType");
+		Element inMIME = document.createElementNS(SERVICE_PROFILE.uri, "fsvp:MIMEType");
 		String MIMEtype = (profile.inputMIMETypes[i] == null) ? "" : profile.inputMIMETypes[i];
 		inMIME.appendChild(document.createTextNode(MIMEtype));
 		serviceInputs.appendChild(inMIME);
 	}
 	
-	Element serviceOutputs = document.createElementNS(FSVP, "fsvp:serviceOutputFormats");
+	Element serviceOutputs = document.createElementNS(SERVICE_PROFILE.uri, "fsvp:serviceOutputFormats");
 	for (int i=0; i<profile.outputMIMETypes.length; i++)
 	{
-		Element outMIME = document.createElementNS(FSVP, "fsvp:MIMEType");
+		Element outMIME = document.createElementNS(SERVICE_PROFILE.uri, "fsvp:MIMEType");
 		String MIMEtype = (profile.outputMIMETypes[i] == null) ? "" : profile.outputMIMETypes[i];
 		outMIME.appendChild(document.createTextNode(MIMEtype));
 		serviceOutputs.appendChild(outMIME);
 	}
 
-	Element dependencies = document.createElementNS(FSVP, "fsvp:serviceImplDependencies");
+	Element dependencies = document.createElementNS(SERVICE_PROFILE.uri, "fsvp:serviceImplDependencies");
 	for (int i=0; i<profile.software.length; i++)
 	{
-		Element software = document.createElementNS(FSVP, "fsvp:software");
+		Element software = document.createElementNS(SERVICE_PROFILE.uri, "fsvp:software");
 		String swName = (profile.software[i].swName == null) ? "" : profile.software[i].swName;
 		software.setAttribute("name", swName);
 		String swVersion = (profile.software[i].swVersion == null) ? "" : profile.software[i].swVersion;
@@ -115,7 +109,7 @@ public class ServiceProfileSerializer
 		dependencies.appendChild(software);
 	}	
 	
-	Element serviceImpl = document.createElementNS(FSVP, "fsvp:serviceImplementation");		
+	Element serviceImpl = document.createElementNS(SERVICE_PROFILE.uri, "fsvp:serviceImplementation");		
 	serviceImpl.appendChild(serviceTestURL);	
 	serviceImpl.appendChild(serviceMsgProtocol);
 	serviceImpl.appendChild(serviceInputs);

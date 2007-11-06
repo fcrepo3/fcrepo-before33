@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<METS:mets OBJID="demo:ri1001" TYPE="FedoraObject" xmlns:METS="http://www.loc.gov/METS/"
-  xmlns:audit="info:fedora/fedora-system:def/audit#" xmlns:foxml="info:fedora/fedora-system:def/foxml#"
-  xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd">
+<METS:mets EXT_VERSION="1.1" OBJID="demo:ri1001" TYPE="FedoraObject" xmlns:METS="http://www.loc.gov/METS/"
+  xmlns:xlink="http://www.w3.org/1999/xlink" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd">
   <METS:metsHdr CREATEDATE="2004-05-05T11:22:33Z" LASTMODDATE="2005-01-11T18:51:59Z" RECORDSTATUS="A"/>
   <METS:amdSec ID="RELS-EXT" STATUS="A">
     <METS:techMD CREATED="2004-12-07T19:32:00Z" ID="RELS-EXT1.0">

@@ -11,17 +11,13 @@ import java.util.Date;
 import fedora.server.Context;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.Property;
 import fedora.server.storage.types.RelationshipTuple;
 
 /**
- *
- * <p><b>Title:</b> Management.java</p>
- * <p><b>Description:</b> The management subsystem interface.</p>
+ * The management subsystem interface.
  *
  * @author cwilper@cs.cornell.edu
- * @version $Id$
  */
 public interface Management {
 

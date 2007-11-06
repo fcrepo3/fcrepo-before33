@@ -34,6 +34,7 @@ import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
+
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectNotFoundException;
@@ -45,17 +46,15 @@ import fedora.server.errors.servletExceptionExtensions.BadRequest400Exception;
 import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
 import fedora.server.errors.servletExceptionExtensions.NotFound404Exception;
 import fedora.server.errors.servletExceptionExtensions.RootException;
+
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.MethodParmDef;
+
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 
 /**
- * <p>
- * <b>Title: </b>ListMethodsServlet.java
- * </p>
- * <p>
- * <b>Description: </b>Implements listMethods method of Fedora Access LITE
+ * Implements listMethods method of Fedora Access LITE
  * (API-A-LITE) interface using a java servlet front end.
  * <ol>
  * <li>ListMethods URL syntax:
@@ -88,9 +87,10 @@ import fedora.server.utilities.StreamUtility;
  * </ol>
  * 
  * @author rlw@virginia.edu
- * @version $Id$
  */
-public class ListMethodsServlet extends HttpServlet {
+public class ListMethodsServlet
+        extends HttpServlet
+        implements Constants {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
@@ -187,7 +187,7 @@ public class ListMethodsServlet extends HttpServlet {
 
 		try {
             Context context = ReadOnlyContext.getContext(
-                    Constants.HTTP_REQUEST.REST.uri, request);
+                    HTTP_REQUEST.REST.uri, request);
             listMethods(context, PID, asOfDateTime, xml, request, response);
             LOG.debug("Finished listing methods");
         } catch (ObjectNotFoundException e) {
@@ -267,7 +267,7 @@ public class ListMethodsServlet extends HttpServlet {
 		} catch (Throwable th) {
             String message = "Error listing methods";
             LOG.error(message, th);
-			throw new GeneralException(message);
+			throw new GeneralException(message, th);
 		} finally {
 			try {
 				if (pr != null)
@@ -323,80 +323,41 @@ public class ListMethodsServlet extends HttpServlet {
 			this.methodDefs = methodDefs;
 			this.versDateTime = versDateTime;
 			fedoraServerPort = context
-					.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);
-			if (Constants.HTTP_REQUEST.SECURE.uri.equals(context
-					.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+					.getEnvironmentValue(HTTP_REQUEST.SERVER_PORT.uri);
+			if (HTTP_REQUEST.SECURE.uri.equals(context
+					.getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
 				fedoraServerProtocol = HTTPS;
-			} else if (Constants.HTTP_REQUEST.INSECURE.uri.equals(context
-					.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+			} else if (HTTP_REQUEST.INSECURE.uri.equals(context
+					.getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
 				fedoraServerProtocol = HTTP;
 			}
 		}
 
-		/**
-		 * <p>
-		 * This method executes the thread.
-		 * </p>
-		 */
-		public void run() {
-			if (pw != null) {
-				try {
-					pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-					if (versDateTime == null
-							|| DateUtility.convertDateToString(versDateTime)
-									.equalsIgnoreCase("")) {
-						pw
-								.write("<objectMethods "
-										+ "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
-										+ "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
-										+ "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-										+ StreamUtility
-												.enc(fedoraServerProtocol)
-										+ "://"
-										+ StreamUtility.enc(fedoraServerHost)
-										+ ":"
-										+ StreamUtility.enc(fedoraServerPort)
-										+ "/listMethods.xsd\""
-										+ " pid=\""
-										+ StreamUtility.enc(PID)
-										+ "\" "
-										+ "baseURL=\""
-										+ StreamUtility
-												.enc(fedoraServerProtocol)
-										+ "://"
-										+ StreamUtility.enc(fedoraServerHost)
-										+ ":"
-										+ StreamUtility.enc(fedoraServerPort)
-										+ "/fedora/\" >");
-					} else {
-						pw
-								.write("<objectMethods "
-										+ "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
-										+ "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
-										+ "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-										+ StreamUtility
-												.enc(fedoraServerProtocol)
-										+ "://"
-										+ StreamUtility.enc(fedoraServerHost)
-										+ ":"
-										+ StreamUtility.enc(fedoraServerPort)
-										+ "/listMethods.xsd\""
-										+ " pid=\""
-										+ StreamUtility.enc(PID)
-										+ "\" "
-										+ "asOfDateTime=\""
-										+ DateUtility
-												.convertDateToString(versDateTime)
-										+ "\" "
-										+ "baseURL=\""
-										+ StreamUtility
-												.enc(fedoraServerProtocol)
-										+ "://"
-										+ StreamUtility.enc(fedoraServerHost)
-										+ ":"
-										+ StreamUtility.enc(fedoraServerPort)
-										+ "/fedora/\"" + " >");
-					}
+       /**
+        * <p>
+        * This method executes the thread.
+        * </p>
+        */
+        public void run() {
+            if (pw != null) {
+                try {
+                    pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                    pw.write("<objectMethods");
+                    pw.write(" pid=\"" + PID + "\"");
+                    if (versDateTime != null) {
+                        pw.write(" asOfDateTime=\"");
+                        pw.write(DateUtility.convertDateToString(
+                                versDateTime));
+                        pw.write("\"");
+                    }
+                    pw.write(" baseURL=\""
+                            + StreamUtility.enc(fedoraServerProtocol) + "://"
+                            + StreamUtility.enc(fedoraServerHost) + ":"
+                            + StreamUtility.enc(fedoraServerPort)
+                            + "/fedora/\"");
+                    pw.write(" xmlns:xsi=\"" + XSI.uri + "\" ");
+                    pw.write(" xsi:schemaLocation=\"" + ACCESS.uri);
+                    pw.write(" " + OBJ_METHODS1_0.xsdLocation + "\">");
 
 					// ObjectMethodsDef SERIALIZATION
 					String nextBdef = "null";
@@ -493,7 +454,7 @@ public class ListMethodsServlet extends HttpServlet {
 	 */
 	public void init() throws ServletException {
 		try {
-			s_server = Server.getInstance(new File(Constants.FEDORA_HOME),
+			s_server = Server.getInstance(new File(FEDORA_HOME),
                     false);
 			fedoraServerHost = s_server.getParameter("fedoraServerHost");
 			s_access = (Access) s_server

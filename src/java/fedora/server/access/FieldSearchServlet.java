@@ -9,11 +9,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,10 +44,10 @@ import fedora.server.utilities.StreamUtility;
  * REST interface for API-A's FieldSearch functionality.
  *
  * @author cwilper@cs.cornell.edu
- * @version $Id$
  */
 public class FieldSearchServlet
-        extends HttpServlet {
+        extends HttpServlet
+        implements Constants {
 
 	private static final long serialVersionUID = 1L;
 
@@ -372,7 +375,7 @@ public class FieldSearchServlet
                         new OutputStreamWriter(
                         response.getOutputStream(), "UTF-8"));
                 out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-                out.println("<result xmlns=\"http://www.fedora.info/definitions/1/0/types/\">");
+                out.println("<result xmlns=\"" + TYPES.uri + "\">");
                 if ((fsr!=null) && (fsr.getToken()!=null)) {
                     out.println("  <listSession>");
                     out.println("    <token>" + fsr.getToken() + "</token>");

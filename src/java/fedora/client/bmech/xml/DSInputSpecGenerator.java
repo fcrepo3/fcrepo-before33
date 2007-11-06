@@ -12,23 +12,16 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
+import fedora.common.Constants;
+
 import fedora.client.bmech.data.*;
 import fedora.client.bmech.BMechBuilderException;
 
 /**
- *
- * <p><b>Title:</b> DSInputSpecGenerator.java</p>
- * <p><b>Description:</b> </p>
- *
  * @author payette@cs.cornell.edu
- * @version $Id$
  */
 public class DSInputSpecGenerator
-{
-  private static final String FBS =
-    "http://fedora.comm.nsdlib.org/service/bindspec";
-
-  private static final String XMLNS = "http://www.w3.org/2000/xmlns/";
+        implements Constants {
 
   private Document document;
 
@@ -60,8 +53,8 @@ public class DSInputSpecGenerator
   {
     DSInputRule[] rules = newBMech.getDSInputSpec();
 
-    Element root = (Element)document.createElementNS(FBS, "fbs:DSInputSpec");
-    root.setAttributeNS(XMLNS, "xmlns:fbs", FBS);
+    Element root = (Element)document.createElementNS(BINDING_SPEC.uri, "fbs:DSInputSpec");
+    root.setAttributeNS(XMLNS.uri, "xmlns:fbs", BINDING_SPEC.uri);
     String bmlabel = (newBMech.getbObjLabel() == null) ? "" : newBMech.getbObjLabel();
     root.setAttribute("label", ("Datastream Input Specification for " + bmlabel));
     String bDefPID = (newBMech.getbDefContractPID() == null) ? "" : newBMech.getbDefContractPID();
@@ -70,7 +63,7 @@ public class DSInputSpecGenerator
 
     for (int i=0; i<rules.length; i++)
     {
-      Element dsInput = document.createElementNS(FBS, "fbs:DSInput");
+      Element dsInput = document.createElementNS(BINDING_SPEC.uri, "fbs:DSInput");
       String bindKeyName = (rules[i].bindingKeyName == null) ? "" : rules[i].bindingKeyName;
       String mime = (rules[i].bindingMIMEType == null) ? "" : rules[i].bindingMIMEType;
       String min = (rules[i].minNumBindings == null) ? "" : rules[i].minNumBindings;
@@ -82,9 +75,9 @@ public class DSInputSpecGenerator
       dsInput.setAttribute("DSMin", min.trim());
       dsInput.setAttribute("DSMax", max.trim());
       dsInput.setAttribute("DSOrdinality", order.trim());
-      Element dsLabel = document.createElementNS(FBS, "fbs:DSInputLabel");
+      Element dsLabel = document.createElementNS(BINDING_SPEC.uri, "fbs:DSInputLabel");
       dsLabel.appendChild(document.createTextNode(label));
-      Element dsInstr = document.createElementNS(FBS, "fbs:DSInputInstruction");
+      Element dsInstr = document.createElementNS(BINDING_SPEC.uri, "fbs:DSInputInstruction");
       dsInstr.appendChild(document.createTextNode(instr));
       dsInput.appendChild(dsLabel);
       // rlw - bugfix #182
@@ -92,7 +85,7 @@ public class DSInputSpecGenerator
       // If more than one mimetype exists, split each mimetype out into a separate fbs:DSMIME element
       String[] mimetypes = mime.split(",");
       for (int j=0; j<mimetypes.length; j++) {
-    	  Element dsMIME = document.createElementNS(FBS, "fbs:DSMIME");
+    	  Element dsMIME = document.createElementNS(BINDING_SPEC.uri, "fbs:DSMIME");
     	  dsMIME.appendChild(document.createTextNode(mimetypes[j]));
     	  dsInput.appendChild(dsMIME);
       }

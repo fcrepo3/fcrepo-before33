@@ -30,13 +30,10 @@ import fedora.client.bmech.xml.*;
 import fedora.client.utility.ingest.AutoIngestor;
 import fedora.client.Administrator;
 
+import static fedora.common.Constants.METS_EXT1_1;
+
 /**
- *
- * <p><b>Title:</b> BDefBuilder.java</p>
- * <p><b>Description:</b> </p>
- *
  * @author payette@cs.cornell.edu
- * @version $Id$
  */
 
 public class BDefBuilder extends JInternalFrame
@@ -217,7 +214,8 @@ public class BDefBuilder extends JInternalFrame
         try
         {
           AutoIngestor ingestor = new AutoIngestor(Administrator.APIA, Administrator.APIM);
-          pid = ingestor.ingestAndCommit(in, "ingest bdef object via BDefBuilder tool");
+          pid = ingestor.ingestAndCommit(in, METS_EXT1_1.uri,
+              "ingest bdef object via BDefBuilder tool");
         }
         catch (Exception e)
         {

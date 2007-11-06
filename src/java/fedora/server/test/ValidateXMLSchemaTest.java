@@ -35,14 +35,14 @@ public class ValidateXMLSchemaTest
 		// METS
 		//inFile="TestValidation/bdef-simple-image.xml";
 		//inFile="TestValidation/minMETS.xml";				
-		//inXMLSchemaFile="src/xsd/mets-fedora-ext.xsd";
+		//inXMLSchemaFile="src/xsd/mets-fedora-ext1-1.xsd";
 		
 		// FOXML
 		//inFile="TestValidation/foxml-reference-example.xml";
 		inFile="TestValidation/foxml-bdef.xml";
 		//inFile="TestValidation/minFOX4.xml";
 		//inFile="TestValidation/minFOX5.xml";				
-		inXMLSchemaFile="src/xsd/foxml1-0.xsd";
+		inXMLSchemaFile="src/xsd/foxml1-1.xsd";
 
 				
 		FileInputStream in=null;

@@ -10,6 +10,13 @@ import com.sun.xacml.attr.DateTimeAttribute;
 import com.sun.xacml.attr.IntegerAttribute;
 import com.sun.xacml.attr.StringAttribute;
 
+/**
+ * The Fedora Object XACML namespace.
+ *
+ * <pre>
+ * Namespace URI    : urn:fedora:names:fedora:2.1:resource:object
+ * </pre>
+ */
 public class ObjectNamespace extends XacmlNamespace {
 	
 	public final XacmlName CONTENT_MODEL;

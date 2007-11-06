@@ -29,19 +29,24 @@ import org.trippi.RDFUtil;
 import org.trippi.TripleIterator;
 import org.trippi.TrippiException;
 
+import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.Server;
+
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ObjectIntegrityException;
+
 import fedora.server.management.DefaultManagement;
+
 import fedora.server.storage.DefaultDOManager;
 import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
-//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.RelationshipTuple;
+
 import fedora.server.utilities.FilteredTripleIterator;
 
 /**
@@ -59,11 +64,10 @@ import fedora.server.utilities.FilteredTripleIterator;
  * the context of the current transaction.</p>
  *
  * @author cwilper@cs.cornell.edu
- * @version $Id$
  */
 public class SimpleDOWriter
         extends SimpleDOReader
-        implements DOWriter {
+        implements Constants, DOWriter {
 
     private static ObjectIntegrityException ERROR_PENDING_REMOVAL =
             new ObjectIntegrityException("That can't be done because you said "
@@ -394,8 +398,8 @@ public class SimpleDOWriter
                 
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 Map<String,String> map = new HashMap<String,String>();
-                map.put("rel", "info:fedora/fedora-system:def/relations-external#");
-                map.put("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+                map.put("rel", RELS_EXT.uri);
+                map.put("rdf", RDF.uri);
 
                 util = new RDFUtil(); 
                 toAdd = util.createTriple(util.createResource(subjectURI),
@@ -638,7 +642,8 @@ public class SimpleDOWriter
     private void serializeRDFtoStream(TripleIterator iter, OutputStream out) throws TrippiException
     {
         PrintWriter pr = new PrintWriter(out);
-        pr.println("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:rel=\"info:fedora/fedora-system:def/relations-external#\">");
+        pr.println("<rdf:RDF xmlns:rdf=\"" + RDF.uri + "\" xmlns:rel=\"" 
+                + RELS_EXT.uri + "\">");
         Triple triple = null;
         String subject = null;        
         while (iter.hasNext())
@@ -651,7 +656,7 @@ public class SimpleDOWriter
             }
             ObjectNode object = triple.getObject();
             String predicate = triple.getPredicate().toString();
-            predicate = predicate.replaceFirst("info:fedora/fedora-system:def/relations-external#", "rel:");
+            predicate = predicate.replaceFirst(RELS_EXT.uri, "rel:");
             if (object instanceof Literal)
             {
                 pr.println("        <"+predicate + " rdf:literal=\"" + 
@@ -666,9 +671,6 @@ public class SimpleDOWriter
         pr.println("    </rdf:Description>");
         pr.println("</rdf:RDF>");
         pr.flush();
-
-    //<rel:hasFormalContentModel rdf:resource="info:fedora/demo:CMSID"></rel:hasFormalContentModel>
-                
 
     }
 

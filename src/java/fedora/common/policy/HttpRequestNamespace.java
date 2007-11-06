@@ -8,6 +8,13 @@ package fedora.common.policy;
 import com.sun.xacml.attr.IntegerAttribute;
 import com.sun.xacml.attr.StringAttribute;
 
+/**
+ * The Fedora HTTP Request XACML namespace.
+ *
+ * <pre>
+ * Namespace URI    : urn:fedora:names:fedora:2.1:environment:httpRequest
+ * </pre>
+ */
 public class HttpRequestNamespace extends XacmlNamespace {
 	
 	// Properties

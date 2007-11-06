@@ -29,8 +29,6 @@ public class DigitalObjectTest
 
     private DigitalObject m_obj, m_bdef, m_bmech;
     private Date m_startTime;
-    private String m_namespacePrefix;
-    private String m_namespaceURI;
     private Datastream m_ds1_0, m_ds1_1, m_ds2_0;
 //    private Disseminator m_diss1_0, m_diss1_1, m_diss2_0;
     private AuditRecord m_audit1, m_audit2, m_audit3, m_audit4,
@@ -43,10 +41,6 @@ public class DigitalObjectTest
     public void setUp() {
         // init common values
         m_startTime=new Date();
-        m_namespacePrefix="prefix";
-        m_namespaceURI="http://www.namespaceuri.com/path/";
-        HashMap nsMap=new HashMap();
-        nsMap.put(m_namespacePrefix, m_namespaceURI);
         // init data object
         m_obj=new BasicDigitalObject();
         m_obj.setContentModelId("cModel1");
@@ -55,7 +49,6 @@ public class DigitalObjectTest
         m_obj.setLabel("Test Object");
         m_obj.setLastModDate(m_startTime);
         m_obj.setOwnerId("userId1");
-        m_obj.setNamespaceMapping(nsMap);
         m_obj.setPid("test:1");
         m_obj.setState("A");
         // add some datastreams
@@ -108,7 +101,6 @@ public class DigitalObjectTest
         m_bdef.setLabel("Test Behavior Definition Object");
         m_bdef.setLastModDate(m_startTime);
         m_bdef.setOwnerId("userId2");
-        m_bdef.setNamespaceMapping(nsMap);
         m_bdef.setPid("test:2");
         m_bdef.setState("W");
         // init bmech
@@ -119,7 +111,6 @@ public class DigitalObjectTest
         m_bmech.setLabel("Test Behavior Mechanism Object");
         m_bmech.setLastModDate(m_startTime);
         m_bmech.setOwnerId("userId3");
-        m_bmech.setNamespaceMapping(nsMap);
         m_bmech.setPid("test:3");
         m_bmech.setState("D");
     }
@@ -143,9 +134,6 @@ public class DigitalObjectTest
         assertEquals(m_obj.getOwnerId(), "userId1");
         assertEquals(m_bdef.getOwnerId(), "userId2");
         assertEquals(m_bmech.getOwnerId(), "userId3");
-        assertEquals((String) m_obj.getNamespaceMapping().get(m_namespacePrefix), m_namespaceURI);
-        assertEquals((String) m_bdef.getNamespaceMapping().get(m_namespacePrefix), m_namespaceURI);
-        assertEquals((String) m_bmech.getNamespaceMapping().get(m_namespacePrefix), m_namespaceURI);
         assertEquals(m_obj.getPid(), "test:1");
         assertEquals(m_bdef.getPid(), "test:2");
         assertEquals(m_bmech.getPid(), "test:3");

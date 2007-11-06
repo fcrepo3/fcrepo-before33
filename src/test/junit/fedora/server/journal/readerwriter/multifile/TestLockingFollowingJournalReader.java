@@ -8,13 +8,17 @@ import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
+
+import fedora.common.Constants;
+
 import fedora.server.errors.ServerException;
 import fedora.server.journal.JournalConstants;
 import fedora.server.journal.JournalConsumer;
 import fedora.server.journal.ServerInterface;
 
 public class TestLockingFollowingJournalReader extends TestCase implements
-        JournalConstants, MultiFileJournalConstants {
+        Constants, JournalConstants, MultiFileJournalConstants {
+
     private static final int WAIT_INTERVAL = 5;
 
     private static final String JOURNAL_FILENAME_PREFIX = "unit";
@@ -461,7 +465,7 @@ public class TestLockingFollowingJournalReader extends TestCase implements
                 + "    </context>\n"
                 + "    <argument name=\"serialization\" type=\"stream\">PD94</argument>\n"
                 + "    <argument name=\"message\" type=\"string\">Minimal Ingest sample</argument>\n"
-                + "    <argument name=\"format\" type=\"string\">foxml1.0</argument>\n"
+                + "    <argument name=\"format\" type=\"string\">" + FOXML1_1.uri + "</argument>\n"
                 + "    <argument name=\"encoding\" type=\"string\">UTF-8</argument>\n"
                 + "    <argument name=\"newPid\" type=\"boolean\">true</argument>\n"
                 + "  </JournalEntry>\n" + "</FedoraJournal>\n";

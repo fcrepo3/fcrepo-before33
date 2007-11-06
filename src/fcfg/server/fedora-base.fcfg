@@ -145,7 +145,7 @@
 	    	<comment>If the serialization format is text-based, this is the 
 	    	character encoding that should be used. Default is UTF-8.</comment>
 	   	</param>
-	    <param name="defaultExportFormat" value="foxml1.0"/>
+	    <param name="defaultExportFormat" value="info:fedora/fedora-system:FOXML-1.1"/>
         <param name="gSearchRESTURL" value="http://localhost:8080/fedoragsearch/rest">
             <comment>The REST endpoint of the Fedora Generic Search service.
             This parameter is only required if GSearchDOManager is 
@@ -351,10 +351,10 @@
 		         format, and vice-versa. The parameters below specify
 		         serializer/deserializer classes to be used for a given format. Those
 		         classes must implement the DOSerializer/DODeserializer interfaces.</comment>
-		<param name="serializer_metslikefedora1" value="fedora.server.storage.translation.METSLikeDOSerializer"/>
-		<param name="deserializer_metslikefedora1" value="fedora.server.storage.translation.METSLikeDODeserializer"/>
-		<param name="serializer_foxml1.0" value="fedora.server.storage.translation.FOXMLDOSerializer"/>
-		<param name="deserializer_foxml1.0" value="fedora.server.storage.translation.FOXMLDODeserializer"/>
+		<param name="serializer_info:fedora/fedora-system:METSFedoraExt-1.1" value="fedora.server.storage.translation.METSFedoraExt1_1DOSerializer"/>
+		<param name="deserializer_info:fedora/fedora-system:METSFedoraExt-1.1" value="fedora.server.storage.translation.METSFedoraExt1_1DODeserializer"/>
+		<param name="serializer_info:fedora/fedora-system:FOXML-1.1" value="fedora.server.storage.translation.FOXML1_1DOSerializer"/>
+		<param name="deserializer_info:fedora/fedora-system:FOXML-1.1" value="fedora.server.storage.translation.FOXML1_1DODeserializer"/>
 	</module>
 	<module role="fedora.server.management.PIDGenerator" class="fedora.server.management.BasicPIDGenerator">
 		<comment>The pid generator.</comment>
@@ -371,11 +371,11 @@
              written in Schematron language), and other programatic validation
              including referential integrity checking of existence and
              availability of distributed data and/or services. </comment>
-		<param name="xsd_metslikefedora1" value="xsd/mets-fedora-ext.xsd">
+		<param name="xsd_info:fedora/fedora-system:METSFedoraExt-1.1" value="xsd/mets-fedora-ext1-1.xsd">
 			<comment>this is local path for the Fedora-METS XML
              schema used to do XML schema validation of digital objects.</comment>
 		</param>
-		<param name="xsd_foxml1.0" value="xsd/foxml1-0.xsd">
+		<param name="xsd_info:fedora/fedora-system:FOXML-1.1" value="xsd/foxml1-1.xsd">
 			<comment>this is local path for the Fedora FOXML XML schema
              used to do XML schema validation of digital objects</comment>
 		</param>
@@ -383,12 +383,12 @@
 			<comment>this is local path for the OASIS XACML XML
              policy schema used to do XML schema validation of XACML policies.</comment>
         </param>
-		<param name="rules_metslikefedora1" value="schematron/metsExtRules1-0.xml">
+		<param name="rules_info:fedora/fedora-system:METSFedoraExt-1.1" value="schematron/metsExtRules1-1.xml">
 			<comment>this is the local path to the Fedora
              Schematron Rules used to do Fedora-specific on Fedora-METS XML
              files.</comment>
         </param>
-		<param name="rules_foxml1.0" value="schematron/foxmlRules1-0.xml">
+		<param name="rules_info:fedora/fedora-system:FOXML-1.1" value="schematron/foxmlRules1-1.xml">
 			<comment>This is the local path to the Fedora
             Schematron Rules used to do Fedora-specific on FOXML XML files. -
             schtron_preprocessor: this is the local path to the "skeleton" style

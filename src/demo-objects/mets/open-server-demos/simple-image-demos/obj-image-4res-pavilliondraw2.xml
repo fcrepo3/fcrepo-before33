@@ -17,7 +17,7 @@
 <!-- enabling Fedora to control access rights. This example demonstrates a temporary work around if the user -->
 <!-- has password-protected content that they would like to disseminate using Fedora. -->
 <!---************************************************************************-->
-<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:30" TYPE="FedoraObject" LABEL="Image of Coliseum in Rome" PROFILE="UVA_STD_IMAGE">
+<METS:mets EXT_VERSION="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd" OBJID="demo:30" TYPE="FedoraObject" LABEL="Image of Coliseum in Rome" PROFILE="UVA_STD_IMAGE">
 <METS:metsHdr>
 <METS:agent ROLE="IPOWNER">
 	<METS:name>fedoraAdmin</METS:name>

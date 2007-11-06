@@ -19,9 +19,7 @@ import fedora.server.errors.ServerException;
 import fedora.server.journal.entry.CreatorJournalEntry;
 import fedora.server.journal.helpers.JournalHelper;
 import fedora.server.management.ManagementDelegate;
-import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.Datastream;
-//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.Property;
 import fedora.server.storage.types.RelationshipTuple;
 
@@ -323,90 +321,6 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     /**
      * Create a journal entry, add the arguments, and invoke the method.
      */
-    public String addDisseminator(Context context, String pid, String bDefPID,
-            String bMechPid, String dissLabel, DSBindingMap bindingMap,
-            String dissState, String logMessage) throws ServerException {
-        try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_ADD_DISSEMINATOR, context);
-            cje.addArgument(ARGUMENT_NAME_PID, pid);
-            cje.addArgument(ARGUMENT_NAME_BDEF_PID, bDefPID);
-            cje.addArgument(ARGUMENT_NAME_BMECH_PID, bMechPid);
-            cje.addArgument(ARGUMENT_NAME_DISSEMINATOR_LABEL, dissLabel);
-            cje.addArgument(ARGUMENT_NAME_BINDING_MAP, bindingMap);
-            cje.addArgument(ARGUMENT_NAME_DISSEMINATOR_STATE, dissState);
-            cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
-            return (String) cje.invokeAndClose(delegate, writer);
-        } catch (JournalException e) {
-            throw new GeneralException("Problem creating the Journal", e);
-        }
-    }
-
-    /**
-     * Create a journal entry, add the arguments, and invoke the method.
-     */
-    public Date modifyDisseminator(Context context, String pid,
-            String disseminatorID, String bMechPid, String dissLabel,
-            DSBindingMap bindingMap, String dissState, String logMessage,
-            boolean force) throws ServerException {
-        try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_MODIFY_DISSEMINATOR, context);
-            cje.addArgument(ARGUMENT_NAME_PID, pid);
-            cje.addArgument(ARGUMENT_NAME_DISSEMINATOR_ID, disseminatorID);
-            cje.addArgument(ARGUMENT_NAME_BMECH_PID, bMechPid);
-            cje.addArgument(ARGUMENT_NAME_DISSEMINATOR_LABEL, dissLabel);
-            cje.addArgument(ARGUMENT_NAME_BINDING_MAP, bindingMap);
-            cje.addArgument(ARGUMENT_NAME_DISSEMINATOR_STATE, dissState);
-            cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
-            cje.addArgument(ARGUMENT_NAME_FORCE, force);
-            return (Date) cje.invokeAndClose(delegate, writer);
-        } catch (JournalException e) {
-            throw new GeneralException("Problem creating the Journal", e);
-        }
-    }
-
-    /**
-     * Create a journal entry, add the arguments, and invoke the method.
-     */
-    public Date setDisseminatorState(Context context, String pid,
-            String disseminatorID, String dissState, String logMessage)
-            throws ServerException {
-        try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_SET_DISSEMINATOR_STATE, context);
-            cje.addArgument(ARGUMENT_NAME_PID, pid);
-            cje.addArgument(ARGUMENT_NAME_DISSEMINATOR_ID, disseminatorID);
-            cje.addArgument(ARGUMENT_NAME_DISSEMINATOR_STATE, dissState);
-            cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
-            return (Date) cje.invokeAndClose(delegate, writer);
-        } catch (JournalException e) {
-            throw new GeneralException("Problem creating the Journal", e);
-        }
-    }
-
-    /**
-     * Create a journal entry, add the arguments, and invoke the method.
-     */
-    public Date[] purgeDisseminator(Context context, String pid,
-            String disseminatorID, Date endDT, String logMessage)
-            throws ServerException {
-        try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_PURGE_DISSEMINATOR, context);
-            cje.addArgument(ARGUMENT_NAME_PID, pid);
-            cje.addArgument(ARGUMENT_NAME_DISSEMINATOR_ID, disseminatorID);
-            cje.addArgument(ARGUMENT_NAME_END_DATE, endDT);
-            cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
-            return (Date[]) cje.invokeAndClose(delegate, writer);
-        } catch (JournalException e) {
-            throw new GeneralException("Problem creating the Journal", e);
-        }
-    }
-
-    /**
-     * Create a journal entry, add the arguments, and invoke the method.
-     */
     public String putTempStream(Context context, InputStream in)
             throws ServerException {
         try {
@@ -538,31 +452,6 @@ public class JournalCreator implements JournalWorker, JournalConstants {
         return delegate.getDatastreamHistory(context, pid, datastreamID);
     }
 
-//    /**
-//     * Let the delegate do it.
-//     */
-//    public Disseminator getDisseminator(Context context, String pid,
-//            String disseminatorID, Date asOfDateTime) throws ServerException {
-//        return delegate.getDisseminator(context, pid, disseminatorID,
-//                asOfDateTime);
-//    }
-//
-//    /**
-//     * Let the delegate do it.
-//     */
-//    public Disseminator[] getDisseminators(Context context, String pid,
-//            Date asOfDateTime, String dissState) throws ServerException {
-//        return delegate.getDisseminators(context, pid, asOfDateTime, dissState);
-//    }
-//
-//    /**
-//     * Let the delegate do it.
-//     */
-//    public Disseminator[] getDisseminatorHistory(Context context, String pid,
-//            String disseminatorID) throws ServerException {
-//        return delegate.getDisseminatorHistory(context, pid, disseminatorID);
-//    }
-//
     /**
      * Let the delegate do it.
      */

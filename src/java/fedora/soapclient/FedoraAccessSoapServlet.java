@@ -14,18 +14,21 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
+
 import java.net.URL;
 import java.net.URLDecoder;
+
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Properties;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.xml.namespace.QName;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Properties;
 
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -35,30 +38,28 @@ import javax.xml.transform.TransformerFactory;
 
 import com.icl.saxon.expr.StringValue;
 
+import org.apache.axis.client.Service;
+import org.apache.axis.client.Call;
+import org.apache.axis.encoding.ser.BeanSerializerFactory;
+import org.apache.axis.encoding.ser.BeanDeserializerFactory;
+
+import fedora.common.Constants;
+
 import fedora.server.types.gen.DatastreamDef;
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
-//import fedora.server.types.gen.MethodDef;
 import fedora.server.types.gen.MethodParmDef;
 import fedora.server.types.gen.MIMETypedStream;
 import fedora.server.types.gen.ObjectMethodsDef;
 import fedora.server.types.gen.ObjectProfile;
 import fedora.server.types.gen.RepositoryInfo;
 import fedora.server.types.gen.Property;
+
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 
-import org.apache.axis.client.Service;
-import org.apache.axis.client.Call;
-import org.apache.axis.encoding.ser.BeanSerializerFactory;
-import org.apache.axis.encoding.ser.BeanDeserializerFactory;
-
 /**
- * <p>
- * <b>Title: </b>FedoraAccessSoapServlet.java
- * </p>
- * <p>
- * <b>Description: </b>An example of a web-based client that provides a front
+ * An example of a web-based client that provides a front
  * end to the Fedora Access SOAP service. This servlet is designed to provide a
  * "browser centric" view of the Fedora Access interface. Return types from the
  * Fedora Access SOAP service are translated into a form suitable for viewing
@@ -267,9 +268,10 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
  * </ol>
  * 
  * @author rlw@virginia.edu
- * @version $Id$
  */
-public class FedoraAccessSoapServlet extends HttpServlet {
+public class FedoraAccessSoapServlet
+        extends HttpServlet
+        implements Constants {
 
 	private static final long serialVersionUID = 1L;
 
@@ -278,12 +280,6 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 
 	/** Content type for xml. */
 	private static final String CONTENT_TYPE_XML = "text/xml; charset=UTF-8";
-
-	/** URI of Fedora API definitions. */
-	private static final String FEDORA_API_URI = "http://www.fedora.info/definitions/1/0/api/";
-
-	/** URI of Fedora Type definitions. */
-	private static final String FEDORA_TYPE_URI = "http://www.fedora.info/definitions/1/0/types/";
 
 	/** GetDissemination service name. */
 	private static final String GET_DISSEMINATION = "GetDissemination";
@@ -1233,48 +1229,20 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 		public void run() {
 			if (pw != null) {
 				try {
-					pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-					if (versDateTime == null
-							|| DateUtility.convertDateToString(versDateTime)
-									.equalsIgnoreCase("")) {
-						pw
-								.write("<objectDatastreams "
-										+ "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
-										+ "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
-										+ "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-										+ fedoraServerProtocol + "://"
-										+ fedoraServerHost + ":"
-										+ fedoraServerPort
-										+ "/listDatastreams.xsd\"" + " pid=\""
-										+ PID + "\" " + "baseURL=\""
-										+ fedoraServerProtocol + "://"
-										+ fedoraServerHost + ":"
-										+ fedoraServerPort + "/fedora/\" "
-										+ ">");
-					} else {
-						pw
-								.write("<objectDatastreams "
-										+ "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
-										+ "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
-										+ "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-										+ fedoraServerProtocol
-										+ "://"
-										+ fedoraServerHost
-										+ ":"
-										+ fedoraServerPort
-										+ "/listDatastreams.xsd\""
-										+ " pid=\""
-										+ StreamUtility.enc(PID)
-										+ "\" "
-										+ "asOfDateTime=\""
-										+ DateUtility
-												.convertDateToString(versDateTime)
-										+ "\" " + "baseURL=\""
-										+ fedoraServerProtocol + "://"
-										+ fedoraServerHost + ":"
-										+ fedoraServerPort + "/fedora/\" "
-										+ ">");
-					}
+                    pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+                    pw.write("<objectDatastreams pid=\"" + PID + "\"");
+                    if (versDateTime != null) {
+                        pw.write(" asOfDateTime=\"");
+                        pw.write(DateUtility.convertDateToString(versDateTime));
+                        pw.write("\"");
+                    }
+                    final String baseURL = fedoraServerProtocol + "://"
+                            + fedoraServerHost + ":" + fedoraServerPort
+                            + "/fedora/";
+                    pw.write(" baseURL=\"" + baseURL + "\"");
+                    pw.write(" xmlns:xsi=\"" + XSI.uri + "\"");
+                    pw.write(" xsi:schemaLocation=\"" + ACCESS.uri);
+                    pw.write(" " + OBJ_DATASTREAMS1_0.xsdLocation + "\">");
 
 					// DatastreamDef SERIALIZATION
 					for (int i = 0; i < dsDefs.length; i++) {
@@ -1350,47 +1318,23 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 		public void run() {
 			if (pw != null) {
 				try {
-					pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-					if (versDateTime == null
-							|| DateUtility.convertDateToString(versDateTime)
-									.equalsIgnoreCase("")) {
-						pw
-								.write("<objectMethods "
-										+ "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
-										+ "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
-										+ "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-										+ fedoraServerProtocol + "://"
-										+ fedoraServerHost + ":"
-										+ fedoraServerPort
-										+ "/listMethods.xsd\"" + " pid=\""
-										+ StreamUtility.enc(PID) + "\" "
-										+ "baseURL=\"" + fedoraServerProtocol
-										+ "://" + fedoraServerHost + ":"
-										+ fedoraServerPort + "/fedora/\" >");
-					} else {
-						pw
-								.write("<objectMethods "
-										+ "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
-										+ "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
-										+ "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-										+ fedoraServerProtocol
-										+ "://"
-										+ fedoraServerHost
-										+ ":"
-										+ fedoraServerPort
-										+ "/listMethods.xsd\""
-										+ " pid=\""
-										+ StreamUtility.enc(PID)
-										+ "\" "
-										+ "asOfDateTime=\""
-										+ DateUtility
-												.convertDateToString(versDateTime)
-										+ "\" " + "baseURL=\""
-										+ fedoraServerProtocol + "://"
-										+ fedoraServerHost + ":"
-										+ fedoraServerPort + "/fedora/\""
-										+ " >");
-					}
+                    pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                    pw.write("<objectMethods");
+                    pw.write(" pid=\"" + PID + "\"");
+                    if (versDateTime != null) {
+                        pw.write(" asOfDateTime=\"");
+                        pw.write(DateUtility.convertDateToString(
+                                versDateTime));
+                        pw.write("\"");
+                    }
+                    pw.write(" baseURL=\""
+                            + StreamUtility.enc(fedoraServerProtocol) + "://"
+                            + StreamUtility.enc(fedoraServerHost) + ":"
+                            + StreamUtility.enc(fedoraServerPort)
+                            + "/fedora/\"");
+                    pw.write(" xmlns:xsi=\"" + XSI.uri + "\" ");
+                    pw.write(" xsi:schemaLocation=\"" + ACCESS.uri);
+                    pw.write(" " + OBJ_METHODS1_0.xsdLocation + "\">");
 
 					// ObjectMethodsDef SERIALIZATION
 					String nextBdef = "null";
@@ -1504,40 +1448,18 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 		public void run() {
 			if (pw != null) {
 				try {
-					pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-					if (versDateTime == null
-							|| DateUtility.convertDateToString(versDateTime)
-									.equalsIgnoreCase("")) {
-						pw
-								.write("<objectProfile "
-										+ " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-										+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-										+ " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-										+ fedoraServerProtocol + "://"
-										+ fedoraServerHost + ":"
-										+ fedoraServerPort
-										+ "/objectProfile.xsd\"" + " pid=\""
-										+ PID + "\" >");
-					} else {
-						pw
-								.write("<objectProfile "
-										+ " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-										+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-										+ " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-										+ fedoraServerProtocol
-										+ "://"
-										+ fedoraServerHost
-										+ ":"
-										+ fedoraServerPort
-										+ "/objectProfile.xsd\""
-										+ " pid=\""
-										+ PID
-										+ "\""
-										+ " dateTime=\""
-										+ DateUtility
-												.convertDateToString(versDateTime)
-										+ "\" >");
-					}
+					pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+					pw.write("<objectProfile");
+					pw.write(" pid=\"" + StreamUtility.enc(PID) + "\"");
+					if (versDateTime != null) {
+                        DateUtility.convertDateToString(versDateTime);
+				        pw.write(" dateTime=\"" + DateUtility
+                                .convertDateToString(versDateTime) + "\"");
+                    }
+					pw.write(" xmlns:xsi=\"" + XSI.uri + "\""
+							+ " xsi:schemaLocation=\"" 
+							+ OBJ_PROFILE1_0.namespace.uri + " "
+                            + OBJ_PROFILE1_0.xsdLocation + "\">");
 
 					// PROFILE FIELDS SERIALIZATION
 					pw.write("<objLabel>" + objProfile.getObjLabel()
@@ -1622,12 +1544,10 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 					pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 					pw
 							.write("<fedoraRepository "
-									+ " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-									+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-									+ " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-									+ fedoraServerProtocol + "://"
-									+ fedoraServerHost + ":" + fedoraServerPort
-									+ "/fedoraRepository.xsd\">");
+									+ " xmlns:xsd=\"" + XML_XSD.uri + "\""
+									+ " xmlns:xsi=\"" + XSI.uri + "\""
+									+ " xsi:schemaLocation=\"" + ACCESS.uri 
+									+ " " + REPO_DESC1_0.xsdLocation + "\">");
 
 					// REPOSITORY INFO FIELDS SERIALIZATION
 					pw.write("<repositoryName>"
@@ -1734,17 +1654,13 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 			if (pw != null) {
 				try {
 					pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-					pw
-							.write("<fedoraObjectHistory "
-									+ " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-									+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-									+ " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-									+ fedoraServerProtocol + "://"
-									+ fedoraServerHost + ":" + fedoraServerPort
-									+ "/fedoraObjectHistory.xsd\" " + "pid=\""
-									+ PID + "\" >");
-					String nextBdef = "null";
-					String currentBdef = "";
+					pw.write("<fedoraObjectHistory"
+                            + " pid=\"" + PID + "\""
+                            + " xmlns:xsd=\"" + XML_XSD.uri + "\""
+                            + " xmlns:xsi=\"" + XSI.uri + "\""
+                            + " xsi:schemaLocation=\"" + ACCESS.uri 
+                            + " " + OBJ_HISTORY1_0.xsdLocation
+                            + "\">");
 					for (int i = 0; i < objectHistoryArray.length; i++) {
 						pw.write("<objectChangeDate>" + objectHistoryArray[i]
 								+ "</objectChangeDate>");
@@ -1810,7 +1726,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 		call.setUsername(fedoraServerUsername);
 		call.setPassword(fedoraServerPassword);
 		call.setTargetEndpointAddress(new URL(FEDORA_ACCESS_ENDPOINT));
-		call.setOperationName(new QName(FEDORA_API_URI, GET_OBJECT_HISTORY));
+		call.setOperationName(new QName(API.uri, GET_OBJECT_HISTORY));
 		String[] objectHistory = (String[]) call.invoke(new Object[] { PID });
 		return objectHistory;
 	}
@@ -1846,9 +1762,9 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 		call.setUsername(fedoraServerUsername);
 		call.setPassword(fedoraServerPassword);
 		call.setTargetEndpointAddress(new URL(FEDORA_ACCESS_ENDPOINT));
-		call.setOperationName(new QName(FEDORA_API_URI, GET_DISSEMINATION));
-		QName qn = new QName(FEDORA_TYPE_URI, "MIMETypedStream");
-		QName qn2 = new QName(FEDORA_TYPE_URI, "Property");
+		call.setOperationName(new QName(API.uri, GET_DISSEMINATION));
+		QName qn = new QName(TYPES.uri, "MIMETypedStream");
+		QName qn2 = new QName(TYPES.uri, "Property");
 
 		// Any Fedora-defined types required by the SOAP service must be
 		// registered
@@ -1875,9 +1791,9 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 		call.setUsername(fedoraServerUsername);
 		call.setPassword(fedoraServerPassword);
 		call.setTargetEndpointAddress(new URL(FEDORA_ACCESS_ENDPOINT));
-		call.setOperationName(new QName(FEDORA_API_URI,
+		call.setOperationName(new QName(API.uri,
 				GET_DATASTREAM_DISSEMINATION));
-		QName qn = new QName(FEDORA_TYPE_URI, "MIMETypedStream");
+		QName qn = new QName(TYPES.uri, "MIMETypedStream");
 
 		// Any Fedora-defined types required by the SOAP service must be
 		// registered
@@ -1913,9 +1829,9 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 		Call call = (Call) service.createCall();
 		call.setUsername(fedoraServerUsername);
 		call.setPassword(fedoraServerPassword);
-		call.setOperationName(new QName(FEDORA_API_URI, LIST_METHODS));
-		QName qn = new QName(FEDORA_TYPE_URI, "ObjectMethodsDef");
-		QName qn2 = new QName(FEDORA_TYPE_URI, "MethodParmDef");
+		call.setOperationName(new QName(API.uri, LIST_METHODS));
+		QName qn = new QName(TYPES.uri, "ObjectMethodsDef");
+		QName qn2 = new QName(TYPES.uri, "MethodParmDef");
 		call.setTargetEndpointAddress(new URL(FEDORA_ACCESS_ENDPOINT));
 
 		// Any Fedora-defined types required by the SOAP service must be
@@ -1955,8 +1871,8 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 		Call call = (Call) service.createCall();
 		call.setUsername(fedoraServerUsername);
 		call.setPassword(fedoraServerPassword);
-		call.setOperationName(new QName(FEDORA_API_URI, LIST_DATASTREAMS));
-		QName qn = new QName(FEDORA_TYPE_URI, "DatastreamDef");
+		call.setOperationName(new QName(API.uri, LIST_DATASTREAMS));
+		QName qn = new QName(TYPES.uri, "DatastreamDef");
 		call.setTargetEndpointAddress(new URL(FEDORA_ACCESS_ENDPOINT));
 
 		// Any Fedora-defined types required by the SOAP service must be
@@ -1993,8 +1909,8 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 		Call call = (Call) service.createCall();
 		call.setUsername(fedoraServerUsername);
 		call.setPassword(fedoraServerPassword);
-		call.setOperationName(new QName(FEDORA_API_URI, GET_OBJECT_PROFILE));
-		QName qn = new QName(FEDORA_TYPE_URI, "ObjectProfile");
+		call.setOperationName(new QName(API.uri, GET_OBJECT_PROFILE));
+		QName qn = new QName(TYPES.uri, "ObjectProfile");
 		call.setTargetEndpointAddress(new URL(FEDORA_ACCESS_ENDPOINT));
 
 		// Any Fedora-defined types required by the SOAP service must be
@@ -2026,8 +1942,8 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 		Call call = (Call) service.createCall();
 		call.setUsername(fedoraServerUsername);
 		call.setPassword(fedoraServerPassword);
-		call.setOperationName(new QName(FEDORA_API_URI, DESCRIBE_REPOSITORY));
-		QName qn = new QName(FEDORA_TYPE_URI, "RepositoryInfo");
+		call.setOperationName(new QName(API.uri, DESCRIBE_REPOSITORY));
+		QName qn = new QName(TYPES.uri, "RepositoryInfo");
 		call.setTargetEndpointAddress(new URL(FEDORA_ACCESS_ENDPOINT));
 
 		// Any Fedora-defined types required by the SOAP service must be
@@ -2064,9 +1980,9 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 		Call call = (Call) service.createCall();
 		call.setUsername(fedoraServerUsername);
 		call.setPassword(fedoraServerPassword);
-		call.setOperationName(new QName(FEDORA_API_URI, DESCRIBE_REPOSITORY));
-		QName qn = new QName(FEDORA_TYPE_URI, "FieldSearchResult");
-		QName qn2 = new QName(FEDORA_TYPE_URI, "FieldSearchQuery");
+		call.setOperationName(new QName(API.uri, DESCRIBE_REPOSITORY));
+		QName qn = new QName(TYPES.uri, "FieldSearchResult");
+		QName qn2 = new QName(TYPES.uri, "FieldSearchQuery");
 		call.setTargetEndpointAddress(new URL(FEDORA_ACCESS_ENDPOINT));
 
 		// Any Fedora-defined types required by the SOAP service must be
@@ -2105,8 +2021,8 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 		Call call = (Call) service.createCall();
 		call.setUsername(fedoraServerUsername);
 		call.setPassword(fedoraServerPassword);
-		call.setOperationName(new QName(FEDORA_API_URI, DESCRIBE_REPOSITORY));
-		QName qn = new QName(FEDORA_TYPE_URI, "FieldSearchResult");
+		call.setOperationName(new QName(API.uri, DESCRIBE_REPOSITORY));
+		QName qn = new QName(TYPES.uri, "FieldSearchResult");
 		call.setTargetEndpointAddress(new URL(FEDORA_ACCESS_ENDPOINT));
 
 		// Any Fedora-defined types required by the SOAP service must be

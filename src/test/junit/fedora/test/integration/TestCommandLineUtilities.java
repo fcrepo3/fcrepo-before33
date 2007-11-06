@@ -10,6 +10,7 @@ import junit.framework.TestSuite;
 import org.custommonkey.xmlunit.SimpleXpathEngine;
 
 import fedora.client.FedoraClient;
+import fedora.common.Constants;
 import fedora.server.management.FedoraAPIM;
 import fedora.test.DemoObjectTestSetup;
 import fedora.test.FedoraServerTestCase;
@@ -17,10 +18,11 @@ import fedora.utilities.ExecUtility;
 
 /**
  * @author Edwin Shin
- *
  */
-public class TestCommandLineUtilities extends FedoraServerTestCase 
-{
+public class TestCommandLineUtilities
+        extends FedoraServerTestCase
+        implements Constants {
+
     static ByteArrayOutputStream sbOut = null;
     static ByteArrayOutputStream sbErr = null;
     static TestCommandLineUtilities curTest = null;
@@ -186,19 +188,15 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
     
     private void ingestFoxmlDirectory(File dir) 
     {
-        //fedora-ingest f obj1.xml foxml1.0 myrepo.com:8443 jane jpw https
         execute(FEDORA_HOME + "/client/bin/fedora-ingest", "d " + dir.getAbsolutePath() + 
-                " foxml1.0 DMO " + getHost() + ":" + getPort() + " " + getUsername() + 
+                " " + FOXML1_1.uri + " DMO " + getHost() + ":" + getPort() + " " + getUsername() + 
                 " " + getPassword() + " " + getProtocol() + " \"junit ingest\"");
     }
     
     private void ingestFoxmlFile(File f) 
     {
-        //fedora-ingest f obj1.xml foxml1.0 myrepo.com:8443 jane jpw https
-        
-    //    File exe = new File("client/bin/fedora-ingest");
         execute(FEDORA_HOME + "/client/bin/fedora-ingest", "f " + f.getAbsolutePath() + 
-                " foxml1.0 " + getHost() + ":" + getPort() + " " + getUsername() + 
+                " " + FOXML1_1.uri + " " + getHost() + ":" + getPort() + " " + getUsername() + 
                 " " + getPassword() + " " + getProtocol() + " junit-ingest");
     }
     
@@ -241,7 +239,7 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
     private void batchIngest(File objectDir, File logFile)
     {
         execute(FEDORA_HOME + "/client/bin/fedora-batch-ingest", objectDir.getAbsolutePath() + " " + 
-                logFile.getAbsolutePath() + " text foxml1.0 " + getHost() + ":" + getPort() +
+                logFile.getAbsolutePath() + " text " + FOXML1_1.uri + " " + getHost() + ":" + getPort() +
                 " " + getUsername() + " " + getPassword() + " " + getProtocol() );
     }
     
@@ -263,7 +261,7 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
     private void exportObj(String pid, File dir)
     {
         execute(FEDORA_HOME + "/client/bin/fedora-export", getHost() + ":" + getPort() + " " + 
-                getUsername() + " " + getPassword() + " " + pid + " foxml1.0 public " + 
+                getUsername() + " " + getPassword() + " " + pid + " " + FOXML1_1.uri + " public " + 
                 dir.getAbsolutePath() + " " + getProtocol() );
     }
     
@@ -289,9 +287,6 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
    }
 
     public void setUp() throws Exception {
-        
-        SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
-        SimpleXpathEngine.registerNamespace("uvalibadmin", "http://dl.lib.virginia.edu/bin/admin/admin.dtd/");
         sbOut = new ByteArrayOutputStream();
         sbErr = new ByteArrayOutputStream();
     }

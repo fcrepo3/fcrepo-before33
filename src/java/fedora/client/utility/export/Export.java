@@ -12,6 +12,8 @@ import fedora.client.FedoraClient;
 import fedora.client.utility.export.AutoExporter;
 import fedora.client.utility.AutoFinder;
 
+import fedora.common.Constants;
+
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
 
@@ -23,16 +25,15 @@ import fedora.server.types.gen.ObjectFields;
 import fedora.server.types.gen.RepositoryInfo;
 
 /**
- * <p><b>Title:</b> Export.java</p>
- * <p><b>Description: A utility class to initiate an export of one or more objects.
+ * Utility to initiate an export of one or more objects.
  * This class provides static utility methods, and it is also called by
  * command line utilities.
  * 
  * This class calls AutoExporter.class which is reponsible for making
  * the API-M SOAP calls for the export.
  */
-
-public class Export {
+public class Export
+        implements Constants {
 
     // fixme: this isn't export-specific... it doesn't belong here
     public static String getDuration(long millis) {
@@ -174,7 +175,7 @@ public class Export {
         System.err.println("         which Fedora object type(s) should be exported. O=data objects,");
         System.err.println("         D=behavior definitions, and M=behavior mechanisms.");
 		System.err.println("  FORMAT is the XML format to export ");
-		System.err.println("         ('foxml1.0', 'metslikefedora1', or 'default')");
+		System.err.println("         ('" + FOXML1_1.uri + "', '" + METS_EXT1_1.uri + "', or 'default')");
 		System.err.println("  ECONTEXT is the export context (which indicates what use case");
 		System.err.println("         the output should be prepared for.");
 		System.err.println("         ('public', 'migrate', 'archive' or 'default')");
@@ -182,7 +183,7 @@ public class Export {
 		System.err.println("  PROTOCOL is the how to connect to repository, either http or https.");
         System.err.println();
         System.err.println("Examples:");
-        System.err.println("fedora-export myrepo.com:8443 user pw demo:1 foxml1.0 migrate . https");
+        System.err.println("fedora-export myrepo.com:8443 user pw demo:1 " + FOXML1_1.uri + " migrate . https");
         System.err.println();
         System.err.println("  Exports demo:1 for migration in FOXML format ");
 		System.err.println("  using the secure https protocol (SSL).");
@@ -228,10 +229,10 @@ public class Export {
 							
 			String exportFormat = args[4];
 			String exportContext = args[5];
-			if ((!exportFormat.equals("metslikefedora1")) &&
-			    (!exportFormat.equals("foxml1.0")) &&
+			if ((!exportFormat.equals(METS_EXT1_1.uri)) &&
+			    (!exportFormat.equals(FOXML1_1.uri)) &&
 				(!exportFormat.equals("default"))) {
-					Export.badArgs("FORMAT arg must be 'metslikefedora1', 'foxml1.0', or 'default'");			   
+					Export.badArgs("FORMAT arg must be '" + METS_EXT1_1.uri + "', '" + FOXML1_1.uri + "', or 'default'");
 			}
 			if ((!exportContext.equals("public"))  &&
 				(!exportContext.equals("migrate")) &&
@@ -243,9 +244,9 @@ public class Export {
 			RepositoryInfo repoinfo = sourceRepoAPIA.describeRepository();
 			StringTokenizer stoken = new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
 			if (new Integer(stoken.nextToken()).intValue() < 2 // pre-2.0 repo
-				&& ((!exportFormat.equals("metslikefedora1") && 
+				&& ((!exportFormat.equals(METS_EXT1_1.uri) && 
 					 !exportFormat.equals("default"))))
-					Export.badArgs("FORMAT arg must be 'metslikefedora1' or 'default' for pre-2.0 repository.");				
+					Export.badArgs("FORMAT arg must be '" + METS_EXT1_0.uri + "' or 'default' for pre-2.0 repository.");
 			
 			if (exportFormat.equals("default")){
 				exportFormat=null;		

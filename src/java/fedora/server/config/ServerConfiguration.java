@@ -12,16 +12,22 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import fedora.common.Constants;
+
 /**
+ * Fedora server configuration.
  *
+ * @author cwilper@cs.cornell.edu
  */
 public class ServerConfiguration 
-        extends Configuration {
+        extends Configuration
+        implements Constants {
 
     private String m_className;
     private List<ModuleConfiguration> m_moduleConfigurations;
@@ -94,7 +100,8 @@ public class ServerConfiguration
     public void serialize(OutputStream xmlStream) throws IOException {
         PrintStream out = new PrintStream(xmlStream);
         out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        out.println("<server xmlns=\"http://www.fedora.info/definitions/1/0/config/\" class=\"" + m_className + "\">");
+        out.println("<server xmlns=\"" + FCFG.uri + "\" class=\"" + m_className + "\">");
+
         // do server parameters first
         serializeParameters(getParameters(), 2, out);
         // next, modules

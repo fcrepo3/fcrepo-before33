@@ -6,19 +6,25 @@
 package fedora.server.config.webxml;
 
 import java.beans.IntrospectionException;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.betwixt.io.BeanReader;
 import org.apache.commons.betwixt.io.BeanWriter;
 import org.apache.commons.betwixt.strategy.NamespacePrefixMapper;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class WebXML implements Serializable {
+import fedora.common.Constants;
+
+public class WebXML implements Constants, Serializable {
+
 	private static final long serialVersionUID = 1L;
 	private static final String BETWIXT_MAPPING = "/fedora/server/config/webxml/webxml-mapping.xml";
 	private String id;
@@ -177,7 +183,7 @@ public class WebXML implements Serializable {
 	public void write(Writer outputWriter) throws IOException {
 		//
 		NamespacePrefixMapper nspm = new NamespacePrefixMapper();
-		nspm.setPrefix("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+		nspm.setPrefix(XSI.uri, "xsi");
 		nspm.setPrefix("http://java.sun.com/xml/ns/j2ee", "xmlns");
 		//
 		

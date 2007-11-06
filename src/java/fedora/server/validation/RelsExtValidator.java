@@ -26,6 +26,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
+
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.StreamIOException;
@@ -76,25 +77,17 @@ import fedora.server.errors.StreamIOException;
  *       from the Fedora object properties namespaces (model and view).  This is
  *       because these assertions exist elsewhere in a Fedora digital object and
  *       we do not want duplication.  The RELS-EXT datasream is reserved for
- *       relationship metadata.</b> </p>
+ *       relationship metadata.
  *
  * @author payette@cs.cornell.edu
- * @version $Id$
  */
 public class RelsExtValidator
-        extends DefaultHandler {
+        extends DefaultHandler
+        implements Constants {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
             RelsExtValidator.class.getName());
-
-	// Namespace URIs
-    private final static String F="info:fedora/fedora-system:def/foxml#";
-	private final static String OAIDC="http://www.openarchives.org/OAI/2.0/oai_dc/";
-	private final static String FMODEL=fedora.common.Constants.MODEL.uri;
-	private final static String FVIEW=fedora.common.Constants.VIEW.uri;
-	private final static String RDF=fedora.common.Constants.RDF.uri;
-	private final static String DC=fedora.common.Constants.DC.uri;
 
 	// state variables
 	private String m_characterEncoding;
@@ -107,7 +100,6 @@ public class RelsExtValidator
     
 	// SAX parser
 	private SAXParser m_parser;
-
 
     public RelsExtValidator(String characterEncoding, boolean validate)
             throws FactoryConfigurationError, ParserConfigurationException,
@@ -158,15 +150,15 @@ public class RelsExtValidator
     public void startElement(String nsURI, String localName, String qName,
             Attributes a) throws SAXException {
 
-        if (nsURI.equals(RDF) && localName.equalsIgnoreCase("RDF")) {
+        if (nsURI.equals(RDF.uri) && localName.equalsIgnoreCase("RDF")) {
             m_rootRDFFound=true;
         } else if (m_rootRDFFound) {
-        	if (nsURI.equals(RDF) && localName.equalsIgnoreCase("Description")) {
+        	if (nsURI.equals(RDF.uri) && localName.equalsIgnoreCase("Description")) {
         		if (!m_descriptionFound) {
 					m_descriptionFound=true;
 					m_depth++;
 					checkDepth(m_depth, qName);
-					checkAboutURI(grab(a, RDF, "about"));
+					checkAboutURI(grab(a, RDF.uri, "about"));
         		} else {
 					throw new SAXException("RelsExtValidator:"
 						+ " Only ONE RDF <Description> element is allowed"
@@ -176,13 +168,13 @@ public class RelsExtValidator
 					m_depth++;
 					checkDepth(m_depth, qName);
 					checkBadAssertion(nsURI, localName, qName);
-                    String resourceURI = grab(a, RDF, "resource");
+                    String resourceURI = grab(a, RDF.uri, "resource");
                     if (resourceURI.length() > 0) {
 					    checkResourceURI(resourceURI, qName);
                         m_literalType = null;
                         m_literalValue = null;
                     } else {
-                        String datatypeURI = grab(a, RDF, "datatype");
+                        String datatypeURI = grab(a, RDF.uri, "datatype");
                         if (datatypeURI.length() == 0) {
                             m_literalType = null;
                         } else {
@@ -277,13 +269,13 @@ public class RelsExtValidator
 	private void checkBadAssertion(String nsURI, String localName, String qName) 
 		throws SAXException {
 
-		if (nsURI.equals(DC) || nsURI.equals(OAIDC)) {
+		if (nsURI.equals(DC.uri) || nsURI.equals(OAI_DC.uri)) {
 			throw new SAXException("RelsExtValidator:"
 				+ " The RELS-EXT datastream has improper"
 				+ " relationship assertion: " + qName + ".\n"
 				+ " No Dublin Core assertions allowed"
 				+ " in Fedora relationship metadata.");
-		} else if (nsURI.equals(FMODEL) || nsURI.equals(FVIEW)) {
+		} else if (nsURI.equals(MODEL.uri) || nsURI.equals(VIEW.uri)) {
 			throw new SAXException("RelsExtValidator:"
 				+ " The RELS-EXT datastream has improper"
 				+ " relationship assertion: " + qName + ".\n"
@@ -363,7 +355,7 @@ public class RelsExtValidator
 	private void checkTypedValue(String datatypeURI, 
 	                             String value,
 	                             String relName) throws SAXException {
-        if (datatypeURI.equals(Constants.XSD.INT.uri)) {
+        if (datatypeURI.equals(RDF_XSD.INT.uri)) {
             try {
                 Integer.parseInt(value);
             } catch (Exception e) {
@@ -371,7 +363,7 @@ public class RelsExtValidator
     				+ " The value specified for " + relName 
     				+ " is not a valid 'int' value");
             }
-        } else if (datatypeURI.equals(Constants.XSD.LONG.uri)) {
+        } else if (datatypeURI.equals(RDF_XSD.LONG.uri)) {
             try {
                 Long.parseLong(value);
             } catch (Exception e) {
@@ -379,7 +371,7 @@ public class RelsExtValidator
     				+ " The value specified for " + relName 
     				+ " is not a valid 'long' value");
             }
-        } else if (datatypeURI.equals(Constants.XSD.FLOAT.uri)) {
+        } else if (datatypeURI.equals(RDF_XSD.FLOAT.uri)) {
             try {
                 Float.parseFloat(value);
             } catch (Exception e) {
@@ -387,7 +379,7 @@ public class RelsExtValidator
     				+ " The value specified for " + relName 
     				+ " is not a valid 'float' value");
             }
-        } else if (datatypeURI.equals(Constants.XSD.DOUBLE.uri)) {
+        } else if (datatypeURI.equals(RDF_XSD.DOUBLE.uri)) {
             try {
                 Double.parseDouble(value);
             } catch (Exception e) {
@@ -395,7 +387,7 @@ public class RelsExtValidator
     				+ " The value specified for " + relName 
     				+ " is not a valid 'double' value");
             }
-        } else if (datatypeURI.equals(Constants.XSD.DATE_TIME.uri)) {
+        } else if (datatypeURI.equals(RDF_XSD.DATE_TIME.uri)) {
             if (!isValidDateTime(value)) {
     			throw new SAXException("RelsExtValidator:"
     				+ " The value specified for " + relName 

@@ -18,7 +18,6 @@ import java.util.Map;
 import fedora.server.journal.JournalException;
 import fedora.server.journal.helpers.JournalHelper;
 import fedora.server.journal.managementmethods.ManagementMethod;
-import fedora.server.storage.types.DSBindingMap;
 
 /**
  * 
@@ -165,11 +164,6 @@ public abstract class JournalEntry {
                 throw new JournalException(e);
             }
         }
-    }
-
-    public DSBindingMap getDSBindingMapArgument(String name) {
-        checkOpen();
-        return (DSBindingMap) arguments.get(name);
     }
 
     /**

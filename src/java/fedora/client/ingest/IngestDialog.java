@@ -17,13 +17,11 @@ import fedora.client.ObjectFormatDialog;
 import fedora.client.utility.ingest.Ingest;
 import fedora.client.utility.ingest.IngestLogger;
 import fedora.client.utility.ingest.IngestCounter;
+
 import fedora.server.types.gen.RepositoryInfo;
 
 /**
- * <p><b>Title:</b> IngestDialog.java</p>
- * <p><b>Description: Class to contruct an interactive ingest dialog for
- * use by Fedora Administrator.
- * 
+ * Constructs an interactive ingest dialog for Ingesting.
  */
 public class IngestDialog {
 

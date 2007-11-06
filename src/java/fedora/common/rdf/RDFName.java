@@ -11,14 +11,15 @@ import org.jrdf.graph.*;
 
 /**
  * A URIReference from a known namespace.
- *
  */
 public class RDFName implements URIReference {
 
 	private static final long serialVersionUID = 1L;
-    public RDFNamespace namespace;
-    public String localName;
-    public String uri;
+
+    public final RDFNamespace namespace;
+    public final String localName;
+    public final String uri;
+    public final String qName;
 
     private URI m_uri;
 
@@ -28,6 +29,7 @@ public class RDFName implements URIReference {
             this.namespace = namespace;
             this.localName = localName;
             this.uri = namespace.uri + localName;
+            this.qName = namespace.prefix + ":" + this.localName;
             m_uri = new URI(this.uri);
         } catch (URISyntaxException e) {
             throw new RuntimeException("Bad URI Syntax", e);

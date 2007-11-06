@@ -4,9 +4,13 @@ import junit.extensions.TestSetup;
 
 import junit.framework.Test;
 
+import fedora.common.Constants;
+
 import fedora.server.management.FedoraAPIM;
 
-public class OneEmptyObjectTestSetup extends TestSetup {
+public class OneEmptyObjectTestSetup
+        extends TestSetup
+        implements Constants {
 
     private final String m_pid;
 
@@ -20,15 +24,15 @@ public class OneEmptyObjectTestSetup extends TestSetup {
     private static byte[] getTestObjectBytes(String pid) throws Exception {
         StringBuffer xml = new StringBuffer();
         xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        xml.append("<foxml:digitalObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+        xml.append("<foxml:digitalObject VERSION=\"1.1\" xmlns:xsi=\"" + XSI.uri + "\"\n");
 
-        xml.append("           xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\"\n");
-        xml.append("           xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd\"\n");
+        xml.append("           xmlns:foxml=\"" + FOXML.uri + "\"\n");
+        xml.append("           xsi:schemaLocation=\"" + FOXML.uri + " " + FOXML1_1.xsdLocation + "\"\n");
         xml.append("\n           PID=\"" + pid + "\">\n");
         xml.append("  <foxml:objectProperties>\n");
-        xml.append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"FedoraObject\"/>\n");
-        xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"label\"/>\n");
-        xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#contentModel\" VALUE=\"\"/>\n");
+        xml.append("    <foxml:property NAME=\"" + RDF.TYPE.uri + "\" VALUE=\"FedoraObject\"/>\n");
+        xml.append("    <foxml:property NAME=\"" + MODEL.LABEL.uri + "\" VALUE=\"label\"/>\n");
+        xml.append("    <foxml:property NAME=\"" + MODEL.CONTENT_MODEL.uri + "\" VALUE=\"\"/>\n");
         xml.append("  </foxml:objectProperties>\n");
         xml.append("</foxml:digitalObject>");
         return xml.toString().getBytes("UTF-8");
@@ -37,7 +41,7 @@ public class OneEmptyObjectTestSetup extends TestSetup {
     public void setUp() throws Exception {
         System.out.println("Ingesting test object: " + m_pid);
         m_apim = FedoraServerTestCase.getFedoraClient().getAPIM();
-        m_apim.ingest(getTestObjectBytes(m_pid), "foxml1.0", "");
+        m_apim.ingest(getTestObjectBytes(m_pid), FOXML1_1.uri, "");
     }
 
     public void tearDown() throws Exception {

@@ -9,18 +9,17 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import fedora.common.Constants;
+
 /**
- *
- * <p><b>Title:</b> RandomDCmetadataFactory.java</p>
- * <p><b>Description:</b> </p>
- *
  * @author cwilper@cs.cornell.edu
- * @version $Id$
  */
-public class RandomDCMetadataFactory {
+public class RandomDCMetadataFactory
+        implements Constants {
 
     private static String[] s_dcElements=new String[] {"title", "creator",
             "subject", "description", "publisher", "contributor", "date",
@@ -56,11 +55,9 @@ public class RandomDCMetadataFactory {
             List wordList) {
         StringBuffer out=new StringBuffer();
         out.append("<oai_dc:dc\n"
-                + "    xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\"\n"
-                + "    xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n"
-                + "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
-//                + "    xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/\n"
-//                + "    http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">\n");
+                + "    xmlns:oai_dc=\"" + OAI_DC.uri + "\"\n"
+                + "    xmlns:dc=\"" + DC.uri + "\"\n"
+                + "    xmlns:xsi=\"" + XSI.uri + "\">\n");
         for (int x=0; x<s_dcElements.length; x++) {
             String dcElement=s_dcElements[x];
             int num=1+getRandom(repeatMax);

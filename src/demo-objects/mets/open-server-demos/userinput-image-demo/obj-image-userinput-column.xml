@@ -12,7 +12,7 @@
 <!-- that this object demonstrates how various kinds of XML metadata datastreams can be put in the object.  -->
 <!-- These are located in the METS dmdSecFedora and amdSec sections. -->
 <!---************************************************************************-->
-<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd/" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:10" TYPE="FedoraObject" LABEL="Column Detail, Pavillion III, IVA Image Collection - University of Virginia" PROFILE="UVA_MRSID_IMAGE">
+<METS:mets EXT_VERSION="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd" OBJID="demo:10" TYPE="FedoraObject" LABEL="Column Detail, Pavillion III, IVA Image Collection - University of Virginia" PROFILE="UVA_MRSID_IMAGE">
 <METS:metsHdr>
 <METS:agent ROLE="IPOWNER">
 	<METS:name>fedoraAdmin</METS:name>
@@ -48,7 +48,7 @@
 		<METS:descMD ID="DESC1.0">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata for MRSID image">
 				<METS:xmlData>
-					<uvalibdesc:desc>
+					<uvalibdesc:desc xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd">
 						<uvalibdesc:identifier scheme="URN">demo:10</uvalibdesc:identifier>
 						<uvalibdesc:rights type="use">unrestricted</uvalibdesc:rights>
 						<uvalibdesc:subject scheme="other" othertype="keyword">Pavilion III</uvalibdesc:subject>
@@ -77,7 +77,7 @@
 		<METS:techMD ID="TECH1.0" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA technical metadata for MRSID image">
 				<METS:xmlData>
-					<uvalibadmin:admin>
+					<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd/">
 						<uvalibadmin:technical>
 							<uvalibadmin:format>image/x-mrsid-image</uvalibadmin:format>
 							<uvalibadmin:compression>wavelet</uvalibadmin:compression>
@@ -95,7 +95,7 @@
 		<METS:techMD ID="SOURCE1.0" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for MRSID image">
 				<METS:xmlData>
-					<uvalibadmin:admin>
+					<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd/">
 						<uvalibadmin:source>
 							<uvalibadmin:identifier>IVA-4</uvalibadmin:identifier>
 							<uvalibadmin:mediatype type="image">
@@ -111,7 +111,7 @@
 		<METS:techMD ID="DIGIPROV1.0" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for MRSID image">
 				<METS:xmlData>
-					<uvalibadmin:admin>
+					<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd/">
 						<uvalibadmin:digiprov>
 							<uvalibadmin:date>2001-09-01:06:32:00</uvalibadmin:date>
 							<uvalibadmin:agent type="corpname">IVA</uvalibadmin:agent>
@@ -126,7 +126,7 @@
 		<METS:rightsMD ID="RIGHTS1.0" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA access rights/policy metadata for MRSID  image">
 				<METS:xmlData>
-					<uvalibadmin:admin>
+					<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd/">
 						<uvalibadmin:adminrights>
 							<uvalibadmin:policy>
 								<uvalibadmin:access>unrestricted</uvalibadmin:access>

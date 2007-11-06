@@ -6,13 +6,9 @@
 package fedora.server.storage.types;
 
 /**
- *
- * <p><b>Title:</b> DSBindingMap.java</p>
- * <p><b>Description:</b> </p>
- *
  * @author payette@cs.cornell.edu
- * @version $Id$
  */
+@Deprecated
 public class DSBinding
 {
   public String bindKeyName = null;

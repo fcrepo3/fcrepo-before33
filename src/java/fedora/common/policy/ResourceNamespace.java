@@ -7,6 +7,13 @@ package fedora.common.policy;
 
 import com.sun.xacml.attr.DateTimeAttribute;
 
+/**
+ * The Fedora Resource XACML namespace.
+ *
+ * <pre>
+ * Namespace URI    : urn:fedora:names:fedora:2.1:resource
+ * </pre>
+ */
 public class ResourceNamespace extends XacmlNamespace {
 	
 	// Properties
@@ -21,14 +28,18 @@ public class ResourceNamespace extends XacmlNamespace {
     }
 
 	public static ResourceNamespace onlyInstance = new ResourceNamespace(Release2_1Namespace.getInstance(), "resource");
+    
 	static {
+	    init();
+	}
+
+	@SuppressWarnings("deprecation")
+	private static void init() {
 		onlyInstance.addNamespace(ObjectNamespace.getInstance()); 
 		onlyInstance.addNamespace(DatastreamNamespace.getInstance()); 
 		onlyInstance.addNamespace(DisseminatorNamespace.getInstance()); 
 		onlyInstance.addNamespace(BDefNamespace.getInstance()); 
 		onlyInstance.addNamespace(BMechNamespace.getInstance()); 
-		
-		
 	}
 	
 	public static final ResourceNamespace getInstance() {

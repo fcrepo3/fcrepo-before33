@@ -8,6 +8,14 @@ package fedora.common.policy;
 import com.sun.xacml.attr.DateTimeAttribute;
 import com.sun.xacml.attr.StringAttribute;
 
+/**
+ * The Fedora Disseminator XACML namespace.
+ *
+ * <pre>
+ * Namespace URI    : urn:fedora:names:fedora:2.1:resource:disseminator
+ * </pre>
+ */
+@Deprecated
 public class DisseminatorNamespace extends XacmlNamespace {
 
 	// Properties

@@ -28,7 +28,7 @@ echo "Starting Fedora DemoIngester..."
 
 echo "Ingesting Demonstration Objects..."
 
-DO_FORMAT=foxml1.0
+DO_FORMAT=info:fedora/fedora-system:FOXML-1.1
 
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/fedora-client.jar \
               -Djavax.net.ssl.trustStore=$FEDORA_HOME/client/truststore \

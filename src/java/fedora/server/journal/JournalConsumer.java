@@ -16,29 +16,18 @@ import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
 import fedora.server.journal.recoverylog.JournalRecoveryLog;
 import fedora.server.management.ManagementDelegate;
-import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.Datastream;
-//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.Property;
 import fedora.server.storage.types.RelationshipTuple;
 
 /**
- * 
- * 
- * <p>
- * <b>Title:</b> JournalConsumer.java
- * </p>
- * <p>
- * <b>Description:</b> The JournalWorker class to use in recovery mode or in
- * following mode.
- * </p>
+ * The JournalWorker class to use in recovery mode or in* following mode.
  * <p>
  * Create a <code>JournalConsumerThread</code> to process the journal. If any
  * calls to Management methods come in from outside, reject them.
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
  */
 public class JournalConsumer implements JournalWorker {
     private final ServerInterface server;
@@ -214,58 +203,6 @@ public class JournalConsumer implements JournalWorker {
             String datastreamID) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
-
-    /**
-     * Reject API calls from outside while we are in recovery mode.
-     */
-    public String addDisseminator(Context context, String pid, String bDefPID,
-            String bMechPid, String dissLabel, DSBindingMap bindingMap,
-            String dissState, String logMessage) throws ServerException {
-        throw rejectCallsFromOutsideWhileInRecoveryMode();
-    }
-
-    /**
-     * Reject API calls from outside while we are in recovery mode.
-     */
-    public Date modifyDisseminator(Context context, String pid,
-            String disseminatorID, String bMechPid, String dissLabel,
-            DSBindingMap bindingMap, String dissState, String logMessage,
-            boolean force) throws ServerException {
-        throw rejectCallsFromOutsideWhileInRecoveryMode();
-    }
-
-    /**
-     * Reject API calls from outside while we are in recovery mode.
-     */
-    public Date[] purgeDisseminator(Context context, String pid,
-            String disseminatorID, Date endDT, String logMessage)
-            throws ServerException {
-        throw rejectCallsFromOutsideWhileInRecoveryMode();
-    }
-
-//    /**
-//     * Reject API calls from outside while we are in recovery mode.
-//     */
-//    public Disseminator getDisseminator(Context context, String pid,
-//            String disseminatorID, Date asOfDateTime) throws ServerException {
-//        throw rejectCallsFromOutsideWhileInRecoveryMode();
-//    }
-//
-//    /**
-//     * Reject API calls from outside while we are in recovery mode.
-//     */
-//    public Disseminator[] getDisseminators(Context context, String pid,
-//            Date asOfDateTime, String dissState) throws ServerException {
-//        throw rejectCallsFromOutsideWhileInRecoveryMode();
-//    }
-//
-//    /**
-//     * Reject API calls from outside while we are in recovery mode.
-//     */
-//    public Disseminator[] getDisseminatorHistory(Context context, String pid,
-//            String disseminatorID) throws ServerException {
-//        throw rejectCallsFromOutsideWhileInRecoveryMode();
-//    }
 
     /**
      * Reject API calls from outside while we are in recovery mode.

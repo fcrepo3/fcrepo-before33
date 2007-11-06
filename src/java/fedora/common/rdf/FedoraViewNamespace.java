@@ -5,8 +5,16 @@
 
 package fedora.common.rdf;
 
-import fedora.common.Constants;
-
+/**
+ * The Fedora View RDF namespace.
+ * 
+ * <pre>
+ * Namespace URI    : info:fedora/fedora-system:def/view#
+ * Preferred Prefix : fedora-view
+ * </pre>
+ *
+ * @author cwilper@fedora-commons.org
+ */
 public class FedoraViewNamespace extends RDFNamespace {
 
     // Properties
@@ -19,7 +27,8 @@ public class FedoraViewNamespace extends RDFNamespace {
 
     public FedoraViewNamespace() {
 
-        this.uri = Constants.FEDORA_SYSTEM_DEF_URI + "/view#";
+        this.uri = "info:fedora/fedora-system:def/view#";
+        this.prefix = "fedora-view";
 
         // Properties
         this.HAS_DATASTREAM		 = new RDFName(this, "hasDatastream");

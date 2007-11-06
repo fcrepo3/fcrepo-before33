@@ -33,4 +33,8 @@ public class MethodNotFoundException extends StorageException {
 	public MethodNotFoundException(String message) {
 		super(message);
 	}
+	
+	public MethodNotFoundException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

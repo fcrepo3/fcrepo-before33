@@ -175,7 +175,7 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
         map.put("fedora-view", Constants.VIEW.uri);
         map.put("rdf", Constants.RDF.uri);
         map.put("tucana", Constants.TUCANA.uri);
-        map.put("xml-schema", Constants.XSD.uri);
+        map.put("xml-schema", Constants.RDF_XSD.uri);
         return map;
     }
 

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
@@ -24,6 +25,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import org.apache.log4j.Logger;
 
+import fedora.common.Constants;
+
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.StreamIOException;
 
@@ -32,16 +35,14 @@ import fedora.server.errors.StreamIOException;
  * that contains configuration properties for backend services.
  *
  * @author payette@cs.cornell.edu
- * @version $Id$
  */
-public class BackendSecurityDeserializer extends DefaultHandler {
+public class BackendSecurityDeserializer
+        extends DefaultHandler
+        implements Constants {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
             BackendSecurityDeserializer.class.getName());
-	
-	/** The namespace and attributes in the beSecurity spec file */
-	public static final String BE="info:fedora/fedora-system:def/beSecurity#";
 	
 	/** Attribute names in the beSecurity spec file */	
 	public static final String CALL_BASIC_AUTH = "callBasicAuth";
@@ -113,22 +114,20 @@ public class BackendSecurityDeserializer extends DefaultHandler {
 	public void startElement(String uri, String localName, String qName, Attributes a) 
 		throws SAXException {
 
-		if (uri.equals(BE) && localName.equals("serviceSecurityDescription")) {
+		if (uri.equals(BE_SECURITY.uri) && localName.equals("serviceSecurityDescription")) {
 			
 			LOG.debug("start element uri=" + uri 
 					+ " localName=" + localName + " tmp_level=" + tmp_level);
 			
-			tmp_role = grab(a, BE, ROLE);
+			tmp_role = grab(a, BE_SECURITY.uri, ROLE);
 			beProperties = new Hashtable<String, String>();				
-			setProperty(CALL_BASIC_AUTH, grab(a, BE, CALL_BASIC_AUTH));
-			setProperty(CALL_SSL, grab(a, BE, CALL_SSL));
-			setProperty(CALL_USERNAME, grab(a, BE, CALL_USERNAME));
-			setProperty(CALL_PASSWORD, grab(a, BE, CALL_PASSWORD));
-			setProperty(CALLBACK_BASIC_AUTH, grab(a, BE, CALLBACK_BASIC_AUTH));
-			setProperty(CALLBACK_SSL, grab(a, BE, CALLBACK_SSL));
-			//setProperty(CALLBACK_USERNAME, grab(a, BE, CALLBACK_USERNAME));
-			//setProperty(CALLBACK_PASSWORD, grab(a, BE, CALLBACK_PASSWORD));
-			setProperty(IPLIST, grab(a, BE, IPLIST));
+			setProperty(CALL_BASIC_AUTH, grab(a, BE_SECURITY.uri, CALL_BASIC_AUTH));
+			setProperty(CALL_SSL, grab(a, BE_SECURITY.uri, CALL_SSL));
+			setProperty(CALL_USERNAME, grab(a, BE_SECURITY.uri, CALL_USERNAME));
+			setProperty(CALL_PASSWORD, grab(a, BE_SECURITY.uri, CALL_PASSWORD));
+			setProperty(CALLBACK_BASIC_AUTH, grab(a, BE_SECURITY.uri, CALLBACK_BASIC_AUTH));
+			setProperty(CALLBACK_SSL, grab(a, BE_SECURITY.uri, CALLBACK_SSL));
+			setProperty(IPLIST, grab(a, BE_SECURITY.uri, IPLIST));
 			
 			try {
 				if (tmp_level == 0) {
@@ -167,7 +166,7 @@ public class BackendSecurityDeserializer extends DefaultHandler {
 		
 		LOG.debug("end element uri=" + uri 
 			+ " localName="	+ localName + " tmp_level=" + tmp_level);
-		if (uri.equals(BE) && localName.equals("serviceSecurityDescription")) {
+		if (uri.equals(BE_SECURITY.uri) && localName.equals("serviceSecurityDescription")) {
 			tmp_level--;
 		}
 	}

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<METS:mets LABEL="Dual Resolution Image Implementation" OBJID="demo:DualResImageImpl" PROFILE="fedora:BMECH"
+<METS:mets EXT_VERSION="1.1" LABEL="Dual Resolution Image Implementation" OBJID="demo:DualResImageImpl" PROFILE="fedora:BMECH"
   TYPE="FedoraBMechObject"
-  fedoraxsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd"
+  xsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd"
   xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#"
-  xmlns:fedoraxsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/TR/xlink">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink">
   <METS:metsHdr CREATEDATE="2007-09-26T19:21:53.875Z" LASTMODDATE="2007-09-26T19:21:53.875Z" RECORDSTATUS="A">
     <METS:agent ROLE="IPOWNER">
       <METS:name>fedoraAdmin</METS:name>

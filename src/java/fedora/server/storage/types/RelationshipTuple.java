@@ -1,16 +1,16 @@
 package fedora.server.storage.types;
 
+import fedora.common.Constants;
+
 /**
- *
- * <p><b>Title:</b> RelationshipTuple.java</p>
- * <p><b>Description:</b> A data structure for holding relationships 
- * consisting of predicate and subject. </p>
+ * A data structure for holding relationships 
+ * consisting of predicate and subject.
  *
  * @author rh9ec@virginia.edu
- * @version $Id: RelationshipTuple.java 3966 2005-04-21 13:33:01Z rlw $
  */
 public class RelationshipTuple
-{
+        implements Constants {
+
     public String subjectURI;
     public String predicate;
     public String objectURI;
@@ -57,7 +57,7 @@ public class RelationshipTuple
             String PID = predicate.substring(4); 
             return(PID);
         }
-        String prefix = "info:fedora/fedora-system:def/relations-external#";
+        String prefix = RELS_EXT.uri;
         if (predicate != null && predicate.startsWith(prefix))
         {
             String PID = predicate.substring(prefix.length()); 

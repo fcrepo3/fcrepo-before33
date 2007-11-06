@@ -5,8 +5,16 @@
 
 package fedora.common.rdf;
 
-import fedora.common.Constants;
-
+/**
+ * The Fedora Model RDF namespace.
+ * 
+ * <pre>
+ * Namespace URI    : info:fedora/fedora-system:def/model#
+ * Preferred Prefix : fedora-model
+ * </pre>
+ *
+ * @author cwilper@fedora-commons.org
+ */
 public class FedoraModelNamespace extends RDFNamespace {
 
     // Properties
@@ -35,10 +43,10 @@ public class FedoraModelNamespace extends RDFNamespace {
 
     public FedoraModelNamespace() {
 
-        this.uri = Constants.FEDORA_SYSTEM_DEF_URI + "/model#";
+        this.uri = "info:fedora/fedora-system:def/model#";
+        this.prefix = "fedora-model";
 
         // Properties
-//        this.ALTERNATE_IDENTIFIER = new RDFName(this, "alternateIdentifier");
         this.CONTENT_MODEL        = new RDFName(this, "contentModel");
         this.CREATED_DATE         = new RDFName(this, "createdDate");
         this.DEFINES_METHOD       = new RDFName(this, "definesMethod");
@@ -51,7 +59,6 @@ public class FedoraModelNamespace extends RDFNamespace {
         this.USES_BMECH           = new RDFName(this, "usesBMech");
         this.OBJECT_STATE         = new RDFName(this, "objectState");
         this.DATASTREAM_STATE     = new RDFName(this, "datastreamState");
-
 
         // Values
         this.ACTIVE               = new RDFName(this, "Active");

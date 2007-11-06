@@ -22,7 +22,6 @@ public class FilteredTripleIterator extends TripleIterator
         m_filter = filter;
         m_add = add;
         Map map = m_baseIter.getAliasMap();
-//        map.put("rel", "info:fedora/fedora-system:def/relations-external#");
         setAliasMap(map);  
         m_next = getNext();
     }
@@ -32,7 +31,6 @@ public class FilteredTripleIterator extends TripleIterator
         m_baseIter = null;
         m_filter = filter;
         m_add = add;
-//        map.put("rel", "info:fedora/fedora-system:def/relations-external#");
         setAliasMap(aliasMap);  
         m_next = getNext();
     }

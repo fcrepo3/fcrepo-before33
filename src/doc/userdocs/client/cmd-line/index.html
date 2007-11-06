@@ -126,7 +126,7 @@
       exported. O=regular data objects, D=behavior definitions,  M=behavior mechanisms.</li>
       
       <li><b>[FORMAT]</b> - The XML format to export.  Valid options are:
-         <em>foxml1.0 </em>(for FOXML), <em>metslikefedora1</em> (for METS), or 
+         <em>info:fedora/fedora-system:FOXML-1.1 </em>(for FOXML), <em>info:fedora/fedora-system:METSFedoraExt-1.1</em> (for METS), or 
          <em>default</em>.</li>
          
       <li> <b>[ECONTEXT] </b> - The export context (which indicates what use case
@@ -141,7 +141,7 @@
     <div>
       <p>Examples:</p>
       <blockquote>
-	<p><b>fedora-export example.com:80 fedoraAdmin fedoraAdmin demo:1 foxml1.0 migrate http</b></p>
+	<p><b>fedora-export example.com:80 fedoraAdmin fedoraAdmin demo:1 info:fedora/fedora-system:FOXML-1.1 migrate http</b></p>
   	<p>Exports demo:1 for migration in FOXML format  (from example.com:80 to the current directory).<br/></p>
 	
 	<p><b>fedora-export example.com:80 fedoraAdmin fedoraAdmin DMO default default /tmp/fedoradump http</b></p>
@@ -216,7 +216,7 @@
       <li><b>PATH</b> - the local file or directory name.</li>
       
       <li><b>[FORMAT]</b>  - the XML format of the ingest file(s). Valid options are:
-         <em>foxml1.0 </em>(for FOXML), <em>metslikefedora1</em> (for METS)</li>
+         <em>info:fedora/fedora-system:FOXML-1.1 </em>(for FOXML), <em>info:fedora/fedora-system:METSFedoraExt-1.1</em> (for METS)</li>
 
       <li><b>[SHST/THST]</b> - the source or target repository's
       hostname.</li>
@@ -246,23 +246,23 @@
 
     <p>Examples:</p>
     <blockquote>
-	<p><b>fedora-ingest f obj1.xml foxml1.0 myrepo.com:80 jane jpw http</b></p>
+	<p><b>fedora-ingest f obj1.xml info:fedora/fedora-system:FOXML-1.1 myrepo.com:80 jane jpw http</b></p>
 
-  <p>Ingests obj1.xml (encoded in foxml1.0 format) from the
+  <p>Ingests obj1.xml (encoded in info:fedora/fedora-system:FOXML-1.1 format) from the
   current directory into the repository at myrepo.com:80
   as user 'jane' with password 'jpw'.
   The logmessage will be system-generated, indicating
   the source path+filename.</p>
 
-	<p><b>fedora-ingest d c:\archive foxml1.0 M myrepo.com:80 jane janepw http ""</b></p>
+	<p><b>fedora-ingest d c:\archive info:fedora/fedora-system:FOXML-1.1 M myrepo.com:80 jane janepw http ""</b></p>
 
   <p>Traverses entire directory structure of c:\archive, and ingests
   any file that looks like a behavior mechanism object (M).
-  It assumes all files will be in the XML format 'foxml1.0'
+  It assumes all files will be in the XML format 'info:fedora/fedora-system:FOXML-1.1'
   and will fail on ingests of files that are not of this format.
   All log messages will be the quoted string.</p>
 
-	<p><b>fedora-ingest d c:\archive foxml1.0 ODM myrepo.com:80 jane janepw http "for jane"</b></p>
+	<p><b>fedora-ingest d c:\archive info:fedora/fedora-system:FOXML-1.1 ODM myrepo.com:80 jane janepw http "for jane"</b></p>
 
   <p>Same as above, but ingests all three types of objects (O,D,M).</p>
 

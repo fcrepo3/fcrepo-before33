@@ -7,6 +7,13 @@ package fedora.common.policy;
 
 import com.sun.xacml.attr.StringAttribute;
 
+/**
+ * The Fedora Subject XACML namespace.
+ *
+ * <pre>
+ * Namespace URI    : urn:fedora:names:fedora:2.1:subject
+ * </pre>
+ */
 public class SubjectNamespace extends XacmlNamespace {
 	
 	public final XacmlName LOGIN_ID;

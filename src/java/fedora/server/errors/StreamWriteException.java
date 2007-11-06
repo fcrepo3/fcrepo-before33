@@ -6,13 +6,9 @@
 package fedora.server.errors;
 
 /**
- *
- * <p><b>Title:</b> StreamWriteException.java</p>
- * <p><b>Description:</b> Signals that a low-level error occurred writing to a
- * stream.</p>
+ * Signals a low-level error while writing to a stream.
  *
  * @author cwilper@cs.cornell.edu
- * @version $Id$
  */
 public class StreamWriteException
         extends StreamIOException {
@@ -20,13 +16,24 @@ public class StreamWriteException
 	private static final long serialVersionUID = 1L;
 	
     /**
-     * Creates a StreamWriteException.
+     * Creates an instance.
      *
-     * @param message An informative message explaining what happened and
+     * @param message an informative message explaining what happened and
      *                (possibly) how to fix it.
      */
     public StreamWriteException(String message) {
         super(message);
+    }
+    
+    /**
+     * Creates an instance with a cause.
+     *
+     * @param message an informative message explaining what happened and
+     *                (possibly) how to fix it.
+     * @param cause the cause.
+     */
+    public StreamWriteException(String message, Throwable cause) {
+        super(message, cause);
     }
 
 }

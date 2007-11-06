@@ -5,18 +5,20 @@
 
 package fedora.client.batch;
 
-import java.util.Properties;
 import java.io.File;
 
+import java.util.Properties;
+
+import fedora.common.Constants;
+
 /**
- *
- * <p><b>Title:</b> AutoBatchIngest.java</p>
- * <p><b>Description:</b> </p>
+ * Auto Batch Ingest.
  *
  * @author rlw@virginia.edu
- * @version $Id$
  */
-public class AutoBatchIngest {
+public class AutoBatchIngest
+        implements Constants {
+
     private Properties batchProperties = new Properties();
 
     public AutoBatchIngest(String objectDir, String logFile, String logFormat, String objectFormat,
@@ -51,9 +53,11 @@ public class AutoBatchIngest {
                                    + "\"xml\"  or  \"txt\"");
                 errors = true;
             }
-            if (!args[3].equals("foxml1.0") && !args[3].equals("metslikefedora1")) {
+            if (!args[3].equals(FOXML1_1.uri) 
+                    && !args[3].equals(METS_EXT1_1.uri)) {
                 System.out.println("Object format must must be either: \""
-                                   + "\"foxml1.0\"  or  \"metslikefedora1\"");
+                                   + "\"" + FOXML1_1.uri + "\" or \""
+                                   + METS_EXT1_1.uri + "\"");
                 errors = true;
             }            
             String[] server = args[4].split(":");
@@ -76,7 +80,8 @@ public class AutoBatchIngest {
             System.out.println("(1) - full path to object directory");
             System.out.println("(2) - full path to log file");
             System.out.println("(3) - format of log file (xml or text)");
-            System.out.println("(4) - object format (foxml1.0 or metslikefedora1)\n");
+            System.out.println("(4) - object format (" + FOXML1_1.uri 
+                    + " or " + METS_EXT1_1.uri + ")\n");
             System.out.println("(5) - host name and port of Fedora server (host:port)");
             System.out.println("(6) - admin username of Fedora server");
             System.out.println("(7) - password for admin user of Fedora server\n");

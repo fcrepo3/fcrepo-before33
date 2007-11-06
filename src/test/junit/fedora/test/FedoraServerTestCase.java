@@ -17,15 +17,20 @@ import fedora.client.search.SearchResultParser;
 import fedora.client.utility.AutoPurger;
 import fedora.client.utility.ingest.Ingest;
 import fedora.client.utility.ingest.IngestCounter;
+
+import fedora.common.Constants;
+
 import fedora.server.management.FedoraAPIM;
 
 /**
  * Base class for JUnit tests that assume a running Fedora instance.
  * 
- * 
  * @author Edwin Shin
  */
-public abstract class FedoraServerTestCase extends FedoraTestCase {
+public abstract class FedoraServerTestCase
+        extends FedoraTestCase
+        implements Constants {
+
 	private static DocumentBuilderFactory factory;
     private static DocumentBuilder builder;
     
@@ -71,11 +76,11 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
         if (testingMETS()) {
             System.out.println("Ingesting all demo objects in METS format");
             dir = new File(FEDORA_HOME, "client/demo/mets");
-            ingestFormat = "metslikefedora1";
+            ingestFormat = METS_EXT1_1.uri;
         } else {
             System.out.println("Ingesting all demo objects in FOXML format");
             dir = new File(FEDORA_HOME, "client/demo/foxml");
-            ingestFormat = "foxml1.0";
+            ingestFormat = FOXML1_1.uri;
         }
 
 		String fTypes = "DMOC";

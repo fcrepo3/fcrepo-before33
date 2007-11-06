@@ -27,6 +27,8 @@ import com.sun.xacml.PolicySet;
 import com.sun.xacml.finder.PolicyFinder;
 import com.sun.xacml.finder.PolicyFinderModule;
 
+import fedora.common.Constants;
+
 /**
  * @author wdn5e@virginia.edu
  * to understand why this class is needed 
@@ -39,7 +41,7 @@ public class ValidatePolicy extends PolicyFinderModule {
 
 	public static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
 
-	public static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
+	public static final String W3C_XML_SCHEMA = Constants.XML_XSD.uri;
 
 	public static final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
 	

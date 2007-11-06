@@ -8,17 +8,11 @@ package fedora.server.storage.types;
 import java.util.Date;
 
 /**
- *
- * <p><b>Title:</b> Disseminator.java</p>
- * <p><b>Description:</b> </p>
- *
  * @author payette@cs.cornell.edu
- * @version $Id$
  */
+@Deprecated
 public class Disseminator
 {
-
-  //private ArrayList m_auditRecordIdList;
 
   public String parentPID;
 

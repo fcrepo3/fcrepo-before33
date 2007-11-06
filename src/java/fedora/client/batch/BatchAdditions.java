@@ -5,23 +5,21 @@
 
 package fedora.client.batch;
 
-import java.util.Hashtable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Properties;
 
+import fedora.common.Constants;
+
 /**
- *
- * <p><b>Title:</b> BatchAdditions.java</p>
- * <p><b>Description:</b> </p>
- *
  * @author wdn5e@virginia.edu
- * @version $Id$
  */
-class BatchAdditions {
+class BatchAdditions implements Constants {
 	static final String FS = File.separator;
 	private Properties dataProperties;
 	private Properties metadataProperties;
@@ -277,7 +275,7 @@ class BatchAdditions {
 				PrintStream out = new PrintStream(new FileOutputStream(additionsPath + FS + objectname));
 				out.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
 				out.print("<input OBJID=\"" + objid + "\"");
-				out.println(" xmlns:METS=\"http://www.loc.gov/METS/\" " + namespaceDeclarations + " >");
+				out.println(" xmlns:METS=\"" + METS.uri + "\" " + namespaceDeclarations + " >");
 				packageMetadata(out, metadataProperties, metadataPath + FS, objectname, 1);
 				out.println("\t<datastreams>");
 				Enumeration ddatastreams = dataProperties.propertyNames();

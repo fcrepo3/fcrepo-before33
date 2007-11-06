@@ -134,9 +134,10 @@ import fedora.server.utilities.StreamUtility;
  * </ol>
  * 
  * @author rlw@virginia.edu
- * @version $Id$
  */
-public class FedoraAccessServlet extends HttpServlet {
+public class FedoraAccessServlet
+        extends HttpServlet
+        implements Constants {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
@@ -432,7 +433,7 @@ public class FedoraAccessServlet extends HttpServlet {
                         + "(PID=" + PID + ", asOfDate=" + versDateTime + ")");
 
 				Context context = ReadOnlyContext.getContext(
-						Constants.HTTP_REQUEST.REST.uri, request);
+						HTTP_REQUEST.REST.uri, request);
 				getObjectProfile(context, PID, asOfDateTime, xml, request,
 						response);
 
@@ -444,7 +445,7 @@ public class FedoraAccessServlet extends HttpServlet {
                         + methodName + ", asOfDate=" + versDateTime + ")");
 
 				Context context = ReadOnlyContext.getContext(
-						Constants.HTTP_REQUEST.REST.uri, request);
+						HTTP_REQUEST.REST.uri, request);
 				getDissemination(context, PID, bDefPID, methodName, userParms,
 						asOfDateTime, response, request);
 
@@ -455,7 +456,7 @@ public class FedoraAccessServlet extends HttpServlet {
                         + versDateTime + ")");
 
 				Context context = ReadOnlyContext.getContext(
-						Constants.HTTP_REQUEST.REST.uri, request);
+						HTTP_REQUEST.REST.uri, request);
 				getDatastreamDissemination(context, PID, dsID, asOfDateTime,
 						response, request);
 
@@ -827,12 +828,12 @@ public class FedoraAccessServlet extends HttpServlet {
 			this.objProfile = objProfile;
 			this.versDateTime = versDateTime;
 			fedoraServerPort = context
-					.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);
-			if (Constants.HTTP_REQUEST.SECURE.uri.equals(context
-					.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+					.getEnvironmentValue(HTTP_REQUEST.SERVER_PORT.uri);
+			if (HTTP_REQUEST.SECURE.uri.equals(context
+					.getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
 				fedoraServerProtocol = HTTPS;
-			} else if (Constants.HTTP_REQUEST.INSECURE.uri.equals(context
-					.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+			} else if (HTTP_REQUEST.INSECURE.uri.equals(context
+					.getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
 				fedoraServerProtocol = HTTP;
 			}
 		}
@@ -845,44 +846,18 @@ public class FedoraAccessServlet extends HttpServlet {
 		public void run() {
 			if (pw != null) {
 				try {
-					pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-					if (versDateTime == null
-							|| DateUtility.convertDateToString(versDateTime)
-									.equalsIgnoreCase("")) {
-						pw
-								.write("<objectProfile "
-										+ " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-										+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-										+ " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-										+ StreamUtility
-												.enc(fedoraServerProtocol)
-										+ "://"
-										+ StreamUtility.enc(fedoraServerHost)
-										+ ":"
-										+ StreamUtility.enc(fedoraServerPort)
-										+ "/objectProfile.xsd\"" + " pid=\""
-										+ StreamUtility.enc(PID) + "\" >");
-					} else {
-						pw
-								.write("<objectProfile "
-										+ " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-										+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-										+ " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-										+ StreamUtility
-												.enc(fedoraServerProtocol)
-										+ "://"
-										+ StreamUtility.enc(fedoraServerHost)
-										+ ":"
-										+ StreamUtility.enc(fedoraServerPort)
-										+ "/objectProfile.xsd\""
-										+ " pid=\""
-										+ StreamUtility.enc(PID)
-										+ "\""
-										+ " dateTime=\""
-										+ DateUtility
-												.convertDateToString(versDateTime)
-										+ "\" >");
-					}
+					pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+					pw.write("<objectProfile");
+					pw.write(" pid=\"" + StreamUtility.enc(PID) + "\"");
+					if (versDateTime != null) {
+                        DateUtility.convertDateToString(versDateTime);
+				        pw.write(" dateTime=\"" + DateUtility
+                                .convertDateToString(versDateTime) + "\"");
+                    }
+					pw.write(" xmlns:xsi=\"" + XSI.uri + "\""
+							+ " xsi:schemaLocation=\"" 
+							+ OBJ_PROFILE1_0.namespace.uri + " "
+                            + OBJ_PROFILE1_0.xsdLocation + "\">");
 
 					// PROFILE FIELDS SERIALIZATION
 					pw.write("<objLabel>"
@@ -971,7 +946,7 @@ public class FedoraAccessServlet extends HttpServlet {
 	 */
 	public void init() throws ServletException {
 		try {
-			s_server = Server.getInstance(new File(Constants.FEDORA_HOME),
+			s_server = Server.getInstance(new File(FEDORA_HOME),
                     false);
 			fedoraServerHost = s_server.getParameter("fedoraServerHost");
 			m_manager = (DOManager) s_server

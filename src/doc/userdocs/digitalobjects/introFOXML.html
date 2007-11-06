@@ -29,7 +29,7 @@
 	            		</ol></li>
                 	<li><a href="#SCHEMA"> Where is the FOXML XML schema? </a>
                 		<ol  type="square">
-	                 		<li><a href="http://www.fedora.info/definitions/1/0/foxml1-0.xsd">FOXML XML Schema</a></li>
+	                 		<li><a href="http://www.fedora.info/definitions/1/0/foxml1-1.xsd">FOXML XML Schema</a></li>
 	            		</ol></li>
                	<li><a href="#OTHERXML"> Are other XML Formats supported by Fedora?</a></li>
            </ol>
@@ -42,7 +42,7 @@
       FOXML is a simple XML format that directly expresses the <strong>Fedora digital object model</strong>.  As of Fedora 2.0, digital objects will be <em>stored</em> internally in a Fedora repository in the FOXML format.  In addition, FOXML can be used for ingesting and exporting objects to/from Fedora repositories.  The Fedora extension of METS will continue to be supported as an ingest and export format.  In upcoming releases, Fedora will also support other formats for ingest and export such as METS 1.4 and MPEG21/DIDL.</p>
     <p>At the highest level, the FOXML XML schema defines elements that correspond directly to the fundamental Fedora digital object components (see recent <a href="http://www.arxiv.org/abs/cs.DL/0501012">paper</a> on Fedora).  Below is a brief sketch of these elements.
     </p>
-      <div class="code">&lt;digitalObject PID=&quot;uniqueID&quot;&gt;<br/>
+      <div class="code">&lt;digitalObject VERSION&quot;1.1&quot; PID=&quot;uniqueID&quot;&gt;<br/>
    &nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- there are a set of core object properties --&gt;<br/>
    &nbsp;&nbsp;&nbsp;&nbsp;&lt;objectProperties&gt;<br/>
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property/&gt;<br/>
@@ -55,12 +55,6 @@
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;datastreamVersion/&gt;<br/>
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br/>
    &nbsp;&nbsp;&nbsp;&nbsp;&lt;/datastream&gt;<br/>
-   &nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- there can be zero or more disseminators --&gt;<br/>
-   &nbsp;&nbsp;&nbsp;&nbsp;&lt;disseminator&gt;<br/>
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;disseminatorVersion/&gt;<br/>
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;disseminatorVersion/&gt;<br/>
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br/>
-   &nbsp;&nbsp;&nbsp;&nbsp;&lt;/disseminator&gt;<br/>
   &lt;/digitalObject&gt;<br/>
       </div>
  </div>
@@ -80,7 +74,7 @@
  <div class="sec1">
     <h2><a name="SCHEMA">4.  Where is the FOXML XML schema?</a> </h2>
     <p>
-An offical published version of the <a href="http://www.fedora.info/definitions/1/0/foxml1-0.xsd">FOXML XML schema</a> is also published on the Fedora web site.  Also, a copy of the schema is provided with the Fedora open-source distribution.   The Fedora repository service validates all Fedora objects against this schema before objects are permanently stored in the repository.</p>
+An offical published version of the <a href="http://www.fedora.info/definitions/1/0/foxml1-1.xsd">FOXML XML schema</a> is also published on the Fedora web site.  Also, a copy of the schema is provided with the Fedora open-source distribution.   The Fedora repository service validates all Fedora objects against this schema before objects are permanently stored in the repository.</p>
  </div>
  
  <div class="sec1">

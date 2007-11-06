@@ -9,6 +9,13 @@ import com.sun.xacml.attr.DateAttribute;
 import com.sun.xacml.attr.DateTimeAttribute;
 import com.sun.xacml.attr.TimeAttribute;
 
+/**
+ * The Fedora Environment XACML namespace.
+ *
+ * <pre>
+ * Namespace URI    : urn:fedora:names:fedora:2.1:environment
+ * </pre>
+ */
 public class EnvironmentNamespace extends XacmlNamespace {
 	public final XacmlName CURRENT_DATE_TIME;
 	public final XacmlName CURRENT_DATE;

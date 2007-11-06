@@ -19,8 +19,7 @@ import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectValidityException;
 
 /**
- * <p><b>Title: DOValidatorImpl.java </b></p>
- * <p><b>Description: </b>The implementation of the digital object validation
+ * The implementation of the digital object validation
  * module (see DOValidator.class and DOValidatorModule.class).  The validator
  * operates on digital object XML files encoded in one of the Fedora-supported 
  * encoding formats (i.e., FOXML, Fedora METS, and possibly others in the future).
@@ -87,7 +86,7 @@ public class DOValidatorImpl
 
 	/**
 	 *  Map of XML Schemas configured with the Fedora Repository.
-	 *  key   = format identifier (metslikefedora1 or foxml1.0)
+	 *  key   = format uri
 	 *  value = schema file path
 	 */    
 	private Map m_xmlSchemaMap;
@@ -95,7 +94,7 @@ public class DOValidatorImpl
 	/**
 	 *  Map of Schematron rule schemas configured with the Fedora
 	 *  Repository.
-	 * 	key   = format identifier (metslikefedora1 or foxml1.0)
+	 * 	key   = format uri
 	 *  value = schema file path
 	 */
 	private Map m_ruleSchemaMap;
@@ -111,8 +110,8 @@ public class DOValidatorImpl
    * @param tempDir Working area for validation, default is <i>temp/</i>
    * @param xmlSchemaMap Location of XML Schemas (W3 Schema)
    *        configured with Fedora (see Fedora.fcfg). Current 
-   *        options are <i>xsd/foxml1-0.xsd</i> for FOXML or
-   *        <i>xsd/mets-fedora-ext.xsd</i> for METS (Fedora extension)
+   *        options are <i>xsd/foxml1-1.xsd</i> for FOXML or
+   *        <i>xsd/mets-fedora-ext1-1.xsd</i> for METS (Fedora extension)
    * @param schematronPreprocessorPath Location of the Schematron
    *        pre-processing stylesheet configured with Fedora.</i>
    * @param ruleSchemaMap Location of rule schemas (Schematron),
@@ -163,7 +162,7 @@ public class DOValidatorImpl
     public void validate(InputStream objectAsStream, String format, 
     	int validationType, String phase)
       	throws ObjectValidityException {
-      		
+      checkFormat(format);
       // LOOK!: We need to use the object Inputstream twice, once for XML
       // Schema validation and once for Schematron validation.
       // We may want to consider implementing some form of a rewindable
@@ -201,11 +200,10 @@ public class DOValidatorImpl
     public void validate(File objectAsFile, String format, 
     	int validationType, String phase)
       	throws ObjectValidityException, GeneralException {
-		
 	  LOG.debug("Validation phase=" + phase + " format=" + format);		
       LOG.debug("VALIDATE: Initiating validation: " 
       		+ " phase=" + phase	+ " format=" + format);
-      
+      checkFormat(format);
       if (validationType==VALIDATE_ALL) {
 			validateByRules(objectAsFile, (String)m_ruleSchemaMap.get(format),
 				schematronPreprocessorPath, phase);
@@ -222,6 +220,13 @@ public class DOValidatorImpl
 			throw new GeneralException("[DOValidatorImpl] " + msg + ":" + validationType);
       }
       cleanUp(objectAsFile);
+    }
+    
+    private void checkFormat(String format)
+            throws ObjectValidityException {
+        if (!m_xmlSchemaMap.containsKey(format)) {
+            throw new ObjectValidityException("Unsupported format: " + format);
+        }
     }
 
     /**

@@ -5,21 +5,21 @@
 
 package fedora.server.access;
 
+import fedora.common.Constants;
+
 /**
- *
- * <p><b>Title:</b> FedoraAPIAServiceLocator.java</p>
- * <p><b>Description:</b> This file was originally auto-generated from the API-A WSDL
+ * This file was originally auto-generated from the API-A WSDL
  * by the Apache Axis WSDL2Java emitter.  The generated file was then modified
  * so that it has a constructor that takes username and password, so that 
  * the service stub class can have username and passord.  
  * The following methods were modified:
- * 	getFedoraAPIAPortSOAPHTTP - custom stub (fedora.server.access.FedoraAPIA)</p>
- *
+ * 	getFedoraAPIAPortSOAPHTTP - custom stub (fedora.server.access.FedoraAPIA)
  *
  * @author cwilper@cs.cornell.edu
- * @version $Id$
  */
-public class FedoraAPIAServiceLocator extends org.apache.axis.client.Service implements fedora.server.access.FedoraAPIAService {
+public class FedoraAPIAServiceLocator
+        extends org.apache.axis.client.Service
+        implements Constants, fedora.server.access.FedoraAPIAService {
 
 	private static final long serialVersionUID = 1L;
     // Use to get a proxy class for FedoraAPIAPortSOAPHTTP and FedoraAPIAPortSOAPHTTPS (secure)
@@ -165,12 +165,6 @@ public class FedoraAPIAServiceLocator extends org.apache.axis.client.Service imp
      */
     public java.rmi.Remote getPort(javax.xml.namespace.QName portName, Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
         
-        //SDP - HTTPS
-        //commented out old code in lieu of newly generated code for two ports.
-        //java.rmi.Remote _stub = getPort(serviceEndpointInterface);
-        //((org.apache.axis.client.Stub) _stub).setPortName(portName);
-        //return _stub;
-
 		if (portName == null) {
 			return getPort(serviceEndpointInterface);
 		}
@@ -190,7 +184,7 @@ public class FedoraAPIAServiceLocator extends org.apache.axis.client.Service imp
     }
 
     public javax.xml.namespace.QName getServiceName() {
-		return new javax.xml.namespace.QName("http://www.fedora.info/definitions/1/0/api/", "Fedora-API-A-Service");
+		return new javax.xml.namespace.QName(API.uri, "Fedora-API-A-Service");
     }
 
     private java.util.HashSet ports = null;

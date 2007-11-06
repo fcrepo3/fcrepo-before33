@@ -8,8 +8,11 @@ package fedora.client.utility.export;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
 import java.net.MalformedURLException;
+
 import java.rmi.RemoteException;
+
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
@@ -19,33 +22,27 @@ import javax.xml.rpc.ServiceException;
 
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
+
 import org.w3c.dom.Document;
+
+import fedora.common.Constants;
 
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.RepositoryInfo;
 
 /**
- *
- * <p><b>Title:</b> AutoExporter.java</p>
- * <p><b>Description: Utility class to make API-M SOAP calls to a repository.</b> </p>
- *
+ * Utility class for exporting objects from a Fedora repository.
  *
  * @author cwilper@cs.cornell.edu
- * @version $Id$
  */
-public class AutoExporter {
+public class AutoExporter
+        implements Constants {
 
     private FedoraAPIM m_apim;
 	private FedoraAPIA m_apia;
     private static HashMap<FedoraAPIA, RepositoryInfo> s_repoInfo=new HashMap<FedoraAPIA, RepositoryInfo>();
 
-    //public AutoExporter(String protocol, String host, int port, String user, String pass)
-    //        throws MalformedURLException, ServiceException {
-	//	m_apia=APIAStubFactory.getStub(protocol, host, port, user, pass);
-    //    m_apim=APIMStubFactory.getStub(protocol, host, port, user, pass);
-    //}
-    
 	public AutoExporter(FedoraAPIA apia, FedoraAPIM apim)
 			throws MalformedURLException, ServiceException {
 		m_apia=apia;
@@ -77,17 +74,46 @@ public class AutoExporter {
     	// Also pre-2.0 repositories will only export "metslikefedora1".
     	// For 2.0+ repositories use the "export" method which takes a format arg.
 		StringTokenizer stoken = new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
-		if (new Integer(stoken.nextToken()).intValue() < 2){
+        int majorVersion = new Integer(stoken.nextToken()).intValue();
+		if (majorVersion < 2){
 			if (format==null ||
+				format.equals(METS_EXT1_1.uri) ||
+				format.equals(METS_EXT1_0.uri) ||
 				format.equals("metslikefedora1") ||
 				format.equals("default")) {
+                if (format.equals(METS_EXT1_1.uri)) {
+                    System.out.println("WARNING: Repository does not support METS Fedora Extension 1.1; exporting older format (v1.0) instead");
+                }
 				bytes=apim.exportObject(pid);					
 			} else {
 				throw new IOException("You are connected to a pre-2.0 Fedora repository " +
 					"which will only export the XML format \"metslikefedora1\".");
 			}
 		} else {
-			validateFormat(format);				
+            if (majorVersion < 3) {
+                if (format != null) {
+                    if (format.equals(FOXML1_1.uri)) {
+                        System.out.println("WARNING: Repository does not support FOXML 1.1; exporting older format (v1.0) instead");
+                        format = "foxml1.0";
+                    } else if (format.equals(METS_EXT1_1.uri)) {
+                        System.out.println("WARNING: Repository does not support METS Fedora Extension 1.1; exporting older format (v1.0) instead");
+                        format = "metslikefedora1";
+                    }
+                }
+            } else {
+                if (format != null) {
+                    if (format.equals(FOXML1_0.uri)
+                            || format.equals("foxml1.0")) {
+                        System.out.println("WARNING: Repository does not support FOXML 1.0; exporting newer format (v1.1) instead");
+                        format = FOXML1_1.uri;
+                    } else if (format.equals(METS_EXT1_0.uri)
+                            || format.equals("metslikefedora1")) {
+                        System.out.println("WARNING: Repository does not support METS Fedora Extension 1.0; exporting newer format (v1.1) instead");
+                        format = METS_EXT1_1.uri;
+                    }
+                }
+			    validateFormat(format);				
+            }
 			bytes=apim.export(pid, format, exportContext);
 		}
         try {
@@ -151,11 +177,11 @@ public class AutoExporter {
 	public static void validateFormat(String format)
 		throws IOException {
 	    if (format==null) return;
-			if (!format.equals("foxml1.0") && 
-				!format.equals("metslikefedora1") && 
+			if (!format.equals(FOXML1_1.uri) && 
+				!format.equals(METS_EXT1_1.uri) && 
 				!format.equals("default")) {
 				throw new IOException("Invalid export format. Valid FORMAT values are: " +
-					"'foxml1.0' 'metslikefedora1' and 'default'");
+					"'" + FOXML1_1.uri + "' '" + METS_EXT1_1.uri + "' and 'default'");
 			}
 		}
 }

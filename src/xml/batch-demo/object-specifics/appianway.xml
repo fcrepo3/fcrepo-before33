@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <input 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.fedora.info/definitions/ http://www.fedora.info/definitions/1/0/api/batchMerge.xsd" xmlns="http://www.fedora.info/definitions/" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.fedora.info/definitions/ http://www.fedora.info/definitions/1/0/api/batchMerge.xsd" xmlns="http://www.fedora.info/definitions/" 
 OBJID="demo:3011" OWNERID="payette">
 	<datastreams>
 		<datastream ID="DC">

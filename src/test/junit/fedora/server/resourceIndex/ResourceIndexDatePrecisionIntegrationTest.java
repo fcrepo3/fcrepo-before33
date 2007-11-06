@@ -59,7 +59,7 @@ public class ResourceIndexDatePrecisionIntegrationTest
             ObjectNode dateNode = results.next().getObject();
             assertTrue(dateNode instanceof Literal);
             Literal dateLiteral = (Literal) dateNode;
-            assertEquals(dateLiteral.getDatatypeURI().toString(), Constants.XSD.DATE_TIME.uri);
+            assertEquals(dateLiteral.getDatatypeURI().toString(), Constants.RDF_XSD.DATE_TIME.uri);
             assertEquals(lex, dateLiteral.getLexicalForm());
         } finally {
             results.close();

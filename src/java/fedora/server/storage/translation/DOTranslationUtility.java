@@ -6,6 +6,10 @@
 package fedora.server.storage.translation;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
@@ -15,9 +19,11 @@ import fedora.common.Constants;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectIntegrityException;
+import fedora.server.errors.StreamIOException;
+import fedora.server.errors.StreamWriteException;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
-//import fedora.server.storage.types.Disseminator;
+import fedora.server.storage.types.Disseminator;
 import fedora.server.utilities.DateUtility;
 
 /**
@@ -46,6 +52,7 @@ import fedora.server.utilities.DateUtility;
  * @author payette@cs.cornell.edu
  * @version $Id$
  */
+@SuppressWarnings("deprecation")
 public abstract class DOTranslationUtility {
 
     /** Logger for this class. */
@@ -587,7 +594,6 @@ public abstract class DOTranslationUtility {
 					otherType=ds.DSInfoType;
 				}
 				ds.DSFormatURI =
-					//"info:fedora/format:xml:mets:"
 					"info:fedora/fedora-system:format/xml.mets."
 					+ mdClassName + "." + mdType + "." + otherType;
 			}
@@ -595,16 +601,47 @@ public abstract class DOTranslationUtility {
 		return ds;
 	}
 
-//	public static Disseminator setDisseminatorDefaults(Disseminator diss) throws ObjectIntegrityException 
-//	{
-//
-//		// Until future when we implement selective versioning,
-//		// set default to true.
-//		diss.dissVersionable=true;
-//		
-//		if (diss.dissState==null || diss.dissState.equals("")) {
-//				diss.dissState="A";
-//		}
-//		return diss;
-//	}
+	@Deprecated
+	public static Disseminator setDisseminatorDefaults(Disseminator diss) throws ObjectIntegrityException 
+	{
+
+		// Until future when we implement selective versioning,
+		// set default to true.
+		diss.dissVersionable=true;
+		
+		if (diss.dissState==null || diss.dissState.equals("")) {
+				diss.dissState="A";
+		}
+		return diss;
+	}
+	
+    protected static String oneString(String[] idList){
+        StringBuffer out=new StringBuffer();
+        for (int i=0; i<idList.length; i++) {
+            if (i>0) {
+                out.append(' ');
+            }
+            out.append((String) idList[i]);
+        }
+        return out.toString();
+    }
+    
+    protected static void writeToStream(StringBuffer buf, OutputStream out,
+            String encoding, boolean closeWhenFinished)
+            throws StreamIOException, UnsupportedEncodingException {
+        try {
+            out.write(buf.toString().getBytes(encoding));
+            out.flush();
+        } catch (IOException e) {
+            throw new StreamWriteException("Error serializing object", e);
+        } finally {
+            if (closeWhenFinished) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    LOG.warn("Unable to close serializer stream", e);
+                }
+            }
+        }
+    }
 }

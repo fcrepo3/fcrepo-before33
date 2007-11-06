@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import fedora.common.Constants;
+
 import fedora.oai.BadResumptionTokenException;
 import fedora.oai.DateGranularitySupport;
 import fedora.oai.DeletedRecordSupport;
@@ -23,25 +25,22 @@ import fedora.oai.SimpleRecord;
 import fedora.oai.SimpleSetInfo;
 
 /**
- *
- * <p><b>Title:</b> SampleOAIProvider.java</p>
- * <p><b>Description:</b> A sample implementation of OAIProvider for testing and demonstration
- * purposes.</p>
+ * A sample implementation of OAIProvider for testing and demonstration
+ * purposes.
  *
  * @author cwilper@cs.cornell.edu
- * @version $Id$
  */
 public class SampleOAIProvider
-        implements OAIProvider {
+        implements Constants, OAIProvider {
 
     private static String s_rec1_identifier="sample:1";
 
     private static String s_rec1_metadata="        <oai_dc:dc\n"
-        + "           xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\"\n"
-        + "           xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n"
-        + "           xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
-        + "           xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/\n"
-        + "           http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">\n"
+        + "           xmlns:oai_dc=\"" + OAI_DC.uri + "\"\n"
+        + "           xmlns:dc=\"" + DC.uri + "\"\n"
+        + "           xmlns:xsi=\"" + XSI.uri + "\"\n"
+        + "           xsi:schemaLocation=\"" + OAI_DC.uri + "\n"
+        + "           " + OAI_DC2_0.xsdLocation + "\">\n"
         + "          <dc:title>Using Structural Metadata to Localize Experience of \n"
         + "                    Digital Content</dc:title>\n"
         + "          <dc:creator>Dushay, Naomi</dc:creator>\n"
@@ -60,15 +59,15 @@ public class SampleOAIProvider
         + "        </oai_dc:dc>";
 
     private static String s_rec1_about="        <provenance\n"
-        + "         xmlns=\"http://www.openarchives.org/OAI/2.0/provenance\"\n"
-        + "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
-        + "         xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/provenance\n"
-        + "         http://www.openarchives.org/OAI/2.0/provenance.xsd\">\n"
+        + "         xmlns=\"" + OAI_PROV.uri + "\"\n"
+        + "         xmlns:xsi=\"" + XSI.uri + "\"\n"
+        + "         xsi:schemaLocation=\"" + OAI_PROV.uri + "\n"
+        + "         " + OAI_PROV2_0.xsdLocation + "\">\n"
         + "         <originDescription harvestDate=\"2002-01-01T11:10:01Z\" altered=\"true\">\n"
         + "          <baseURL>http://some.oa.org</baseURL>\n"
         + "          <identifier>oai:r2.org:klik001</identifier>\n"
         + "          <datestamp>2001-01-01</datestamp>\n"
-        + "          <metadataNamespace>http://www.openarchives.org/OAI/2.0/oai_dc/</metadataNamespace>\n"
+        + "          <metadataNamespace>" + OAI_DC.uri + "</metadataNamespace>\n"
         + "          </originDescription>\n"
         + "        </provenance>";
 
@@ -173,9 +172,8 @@ public class SampleOAIProvider
 
     public Set getMetadataFormats(String id) {
         HashSet<SimpleMetadataFormat> s=new HashSet<SimpleMetadataFormat>();
-        s.add(new SimpleMetadataFormat("oai_dc",
-                "http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
-                "http://www.openarchives.org/OAI/2.0/oai_dc/"));
+        s.add(new SimpleMetadataFormat(OAI_DC.prefix, OAI_DC2_0.xsdLocation,
+                OAI_DC.uri));
         return s;
     }
 

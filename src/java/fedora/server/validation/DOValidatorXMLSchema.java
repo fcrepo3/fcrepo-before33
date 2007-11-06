@@ -5,17 +5,19 @@
 
 package fedora.server.validation;
 
-// JAXP imports
-import javax.xml.parsers.*;
-import org.xml.sax.*;
-
 import java.io.File;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 
+import javax.xml.parsers.*;
+
 import org.apache.log4j.Logger;
+
+import org.xml.sax.*;
+
+import fedora.common.Constants;
 
 import fedora.server.errors.ObjectValidityException;
 import fedora.server.errors.GeneralException;
@@ -24,10 +26,9 @@ import fedora.server.errors.GeneralException;
  * XML Schema validation for Digital Objects.
  *
  * @author payette@cs.cornell.edu
- * @version $Id$
  */
-public class DOValidatorXMLSchema implements EntityResolver
-{
+public class DOValidatorXMLSchema
+        implements Constants, EntityResolver {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
@@ -36,8 +37,6 @@ public class DOValidatorXMLSchema implements EntityResolver
     /** Constants used for JAXP 1.2 */
     private static final String JAXP_SCHEMA_LANGUAGE =
         "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
-    private static final String W3C_XML_SCHEMA =
-        "http://www.w3.org/2001/XMLSchema";
     private static final String JAXP_SCHEMA_SOURCE =
         "http://java.sun.com/xml/jaxp/properties/schemaSource";
 
@@ -91,7 +90,7 @@ public class DOValidatorXMLSchema implements EntityResolver
       spf.setNamespaceAware(true);
       spf.setValidating(true);
       SAXParser sp = spf.newSAXParser();
-      sp.setProperty(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
+      sp.setProperty(JAXP_SCHEMA_LANGUAGE, XML_XSD.uri);
 
       // JAXP property for schema location
       sp.setProperty(

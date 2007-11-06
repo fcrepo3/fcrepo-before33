@@ -13,7 +13,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import fedora.common.Constants;
+
 import fedora.oai.*;
+
 import fedora.server.errors.ServerException;
 import fedora.server.errors.UnknownSessionTokenException;
 import fedora.server.utilities.DCFields;
@@ -28,10 +31,9 @@ import fedora.server.utilities.StreamUtility;
  * Simple FieldSearch-based OAI provider.
  *
  * @author cwilper@cs.cornell.edu
- * @version $Id$
  */
 public class FedoraOAIProvider
-        implements OAIProvider {
+        implements Constants, OAIProvider {
 
     private String m_repositoryName;
     private String m_repositoryDomainName;
@@ -68,10 +70,10 @@ public class FedoraOAIProvider
         m_fieldSearch=fieldSearch;
         m_descriptions=new HashSet<String>();
         StringBuffer buf=new StringBuffer();
-        buf.append("      <oai-identifier xmlns=\"http://www.openarchives.org/OAI/2.0/oai-identifier\"\n");
-        buf.append("          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-        buf.append("          xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai-identifier");
-        buf.append("          http://www.openarchives.org/OAI/2.0/oai-identifier.xsd\">\n");
+        buf.append("      <oai-identifier xmlns=\"" + OAI_IDENTIFIER.uri + "\"\n");
+        buf.append("          xmlns:xsi=\"" + XSI.uri + "\"\n");
+        buf.append("          xsi:schemaLocation=\"" + OAI_IDENTIFIER.uri + "\n");
+        buf.append("          " + OAI_IDENTIFIER2_0.xsdLocation + "\">\n");
         buf.append("        <scheme>oai</scheme>\n");
         buf.append("        <repositoryIdentifier>" + m_repositoryDomainName + "</repositoryIdentifier>\n");
         buf.append("        <delimiter>:</delimiter>\n");
@@ -80,10 +82,10 @@ public class FedoraOAIProvider
         m_descriptions.add(buf.toString());
         if (friendBaseURLs!=null && friendBaseURLs.size()>0) {
             buf=new StringBuffer();
-            buf.append("      <friends xmlns=\"http://www.openarchives.org/OAI/2.0/friends/\"\n");
-            buf.append("          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-            buf.append("          xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/friends/\n");
-            buf.append("          http://www.openarchives.org/OAI/2.0/friends.xsd\">\n");
+            buf.append("      <friends xmlns=\"" + OAI_FRIENDS.uri + "\"\n");
+            buf.append("          xmlns:xsi=\"" + XSI.uri + "\"\n");
+            buf.append("          xsi:schemaLocation=\"" + OAI_FRIENDS.uri + "\n");
+            buf.append("          " + OAI_FRIENDS2_0.xsdLocation + "\">\n");
             Iterator iter=friendBaseURLs.iterator();
             while (iter.hasNext()) {
                 buf.append("        <baseURL>" + (String) iter.next() + "</baseURL>\n");
@@ -93,8 +95,7 @@ public class FedoraOAIProvider
         }
         m_formats=new HashSet<SimpleMetadataFormat>();
         m_formats.add(new SimpleMetadataFormat("oai_dc",
-                "http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
-                "http://www.openarchives.org/OAI/2.0/oai_dc/"));
+                OAI_DC2_0.xsdLocation, OAI_DC.uri));
         m_setInfos=new ArrayList<SimpleSetInfo>();
         m_setInfos.add(new SimpleSetInfo("Data Objects", "objects", s_emptySet));
         m_setInfos.add(new SimpleSetInfo("Behavior Mechanism Objects", "bmechs", s_emptySet));
@@ -227,11 +228,11 @@ public class FedoraOAIProvider
     private String getDCXML(DCFields dc) {
         StringBuffer out=new StringBuffer();
         out.append("        <oai_dc:dc\n");
-        out.append("            xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\"\n");
-        out.append("            xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n");
-        out.append("            xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-        out.append("            xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/\n");
-        out.append("            http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">\n");
+        out.append("            xmlns:oai_dc=\"" + OAI_DC.uri + "\"\n");
+        out.append("            xmlns:dc=\"" + DC.uri + "\"\n");
+        out.append("            xmlns:xsi=\"" + XSI.uri + "\"\n");
+        out.append("            xsi:schemaLocation=\"" + OAI_DC.uri + "\n");
+        out.append("            " + OAI_DC2_0.xsdLocation + "\">\n");
         for (int i=0; i<dc.titles().size(); i++) {
             out.append("          <dc:title>");
             out.append(StreamUtility.enc((String) dc.titles().get(i)));

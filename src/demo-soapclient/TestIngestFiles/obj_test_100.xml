@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!---*******************************************************************************************************************************************-->
-<!-- THIS FOXML TEST OBJECT:  Use this to test all variants of datastreams and disseminators. -->
+<!-- THIS FOXML TEST OBJECT:  Use this to test all variants of datastreams. -->
 <!---*******************************************************************************************************************************************-->
-<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#" PID="test:100" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#" VERSION="1.1" PID="test:100" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd">
 	<!---*******************************************************************************************************************************************-->
 	<!--   FEDORA OBJECT PROPERTIES : non-versionable properties of the digital object-->
 	<!---*******************************************************************************************************************************************-->
@@ -27,7 +27,7 @@
 					<dc:title>Sandy's Reference Object</dc:title>
 					<dc:creator>Sandy Payette</dc:creator>
 					<dc:subject>FOXML Testing</dc:subject>
-					<dc:description>Object depicts all types of datastreams and disseminators</dc:description>
+					<dc:description>Object depicts all types of datastreams</dc:description>
 					<dc:publisher>Cornell CIS</dc:publisher>
 					<dc:identifier>test:100</dc:identifier>
 				</oai_dc:dc>
@@ -117,34 +117,4 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<!---*******************************************************************************************************************************************-->
-	<!--- CUSTOM DISSEMINATORS -->
-	<!---*******************************************************************************************************************************************-->
-	<!--- DISSEMINATOR 1:  INTERNAL HTTP SERVICE SCENARIO (just resolves URLs and sends out datastream content)-->
-	<foxml:disseminator BDEF_CONTRACT_PID="demo:1" ID="DISS1" STATE="A" VERSIONABLE="true">
-		<foxml:disseminatorVersion BMECH_SERVICE_PID="demo:2" ID="DISS1.0" LABEL="UVA Simple Image Behaviors">
-			<foxml:serviceInputMap>
-				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="THUMBRES_IMG" LABEL="Low resolution binding"/>
-				<foxml:datastreamBinding DATASTREAM_ID="DS2" KEY="MEDRES_IMG" LABEL="Medium resolution binding"/>
-				<foxml:datastreamBinding DATASTREAM_ID="DS3" KEY="HIGHRES_IMG" LABEL="High resolution binding"/>
-				<foxml:datastreamBinding DATASTREAM_ID="DS4" KEY="VERYHIGHRES_IMG" LABEL="Master resolution binding"/>
-			</foxml:serviceInputMap>
-		</foxml:disseminatorVersion>
-	</foxml:disseminator>
-	<!--- DISSEMINATOR 2:  EXTERNAL SERVICE SCENARIO  (External MrSID Service processes input datastream and sends back result)-->
-	<foxml:disseminator ID="DISS2" BDEF_CONTRACT_PID="demo:8" STATE="A" VERSIONABLE="true">
-		<foxml:disseminatorVersion ID="DISS2.0" BMECH_SERVICE_PID="demo:9" LABEL="Dynamic Image Sizing via MrSID Service">
-			<foxml:serviceInputMap>
-				<foxml:datastreamBinding DATASTREAM_ID="DS5" KEY="MRSID" LABEL="MRSID wavelet-encoded image binding"/>
-			</foxml:serviceInputMap>
-		</foxml:disseminatorVersion>
-	</foxml:disseminator>
-	<!--- DISSEMINATOR 3:  LOCAL SERVICE SCENARIO (Local Image Manip Service allows user to do various things with image-->
-	<foxml:disseminator ID="DISS3" BDEF_CONTRACT_PID="demo:27" STATE="A" VERSIONABLE="true">
-		<foxml:disseminatorVersion ID="DISS3.0" BMECH_SERVICE_PID="demo:28" LABEL="Image behaviors via Local Image Manip Service">
-			<foxml:serviceInputMap>
-				<foxml:datastreamBinding DATASTREAM_ID="DS4" KEY="url" LABEL="Image binding"/>
-			</foxml:serviceInputMap>
-		</foxml:disseminatorVersion>
-	</foxml:disseminator>
 </foxml:digitalObject>

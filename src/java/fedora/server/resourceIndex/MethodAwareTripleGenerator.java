@@ -17,9 +17,7 @@ import fedora.server.errors.ResourceIndexException;
 import fedora.server.storage.BDefReader;
 import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOReader;
-import fedora.server.storage.types.DSBinding;
 import fedora.server.storage.types.Datastream;
-//import fedora.server.storage.types.Disseminator;
 
 /**
  * Generates RDF triples for Fedora objects with the help of a 

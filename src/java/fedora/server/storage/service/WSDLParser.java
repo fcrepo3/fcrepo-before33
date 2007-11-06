@@ -5,41 +5,38 @@
 
 package fedora.server.storage.service;
 
-import fedora.server.errors.*;
 import java.io.InputStream;
+
 import java.util.Vector;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
+import fedora.common.Constants;
+
+import fedora.server.errors.*;
+
 /**
- *
- * <p><b>Title:</b> WSDLParser.java</p>
- * <p><b>Description:</b> Parses WSDL document into a Service object.  The
+ * Parses WSDL document into a Service object.  The
  * Service object encapsulates all information about the service:  the service
  * name, the PortType (with abstract operation definitions), and one or more
  * Ports (with operation binding information).  This parser will not yet handle
  * every pattern we may encounter in WSDL, therefore, it throws
  * exceptions for WSDL elements that it does not yet support.  The
  * goal is to evolve the WSDLParser to be able to handle any kind of WSDL,
- * and to have Fedora be able to play nicely with any kind of WSDL.</p>
+ * and to have Fedora be able to play nicely with any kind of WSDL.
  *
  * @author payette@cs.cornell.edu
- * @version $Id$
  */
-class WSDLParser extends DefaultHandler
-{
-
-  /** The namespaces we know we will encounter */
-  private final static String WSDL = "http://schemas.xmlsoap.org/wsdl/";
-  private final static String XSD = "http://www.w3.org/2001/XMLSchema";
-  private final static String SOAP = "http://schemas.xmlsoap.org/wsdl/soap";
-  private final static String HTTP = "http://schemas.xmlsoap.org/wsdl/http/";
-  private final static String MIME = "http://schemas.xmlsoap.org/wsdl/mime/";
+class WSDLParser
+        extends DefaultHandler
+        implements Constants {
 
   /**
    * URI-to-namespace prefix mapping info from SAX2 startPrefixMapping events.
@@ -188,13 +185,13 @@ class WSDLParser extends DefaultHandler
     checkForUnsupportedPattern(namespaceURI, localName, qName, attrs);
 
     // Gather up all XML schema type definitions for the service.
-    if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("types"))
+    if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("types"))
     {
       inWSDLTypes = true;
     }
     else if (inWSDLTypes)
     {
-      if (namespaceURI.equalsIgnoreCase(XSD) && localName.equalsIgnoreCase("simpleType"))
+      if (namespaceURI.equalsIgnoreCase(XML_XSD.uri) && localName.equalsIgnoreCase("simpleType"))
       {
           inSimpleType = true;
           wsdlSimpleType = new SimpleType();
@@ -202,7 +199,7 @@ class WSDLParser extends DefaultHandler
       }
       else if (inSimpleType)
       {
-        if (namespaceURI.equalsIgnoreCase(XSD) && localName.equalsIgnoreCase("restriction"))
+        if (namespaceURI.equalsIgnoreCase(XML_XSD.uri) && localName.equalsIgnoreCase("restriction"))
         {
           inRestriction = true;
           tmp_enum = new Vector<String>();
@@ -219,9 +216,9 @@ class WSDLParser extends DefaultHandler
             wsdlSimpleType.baseTypeLocalName = wsdlSimpleType.baseTypeName;
           }
           // FIXIT!! Test whether null nsprefix makes this bag.
-          if (nsprefix.equalsIgnoreCase((String)nsPrefixMap.get(XSD)))
+          if (nsprefix.equalsIgnoreCase((String)nsPrefixMap.get(XML_XSD.uri)))
           {
-            wsdlSimpleType.baseTypeNamespaceURI = XSD;
+            wsdlSimpleType.baseTypeNamespaceURI = XML_XSD.uri;
           }
           else
           {
@@ -230,7 +227,7 @@ class WSDLParser extends DefaultHandler
               wsdlSimpleType.baseTypeName);
           }
         }
-        else if (inRestriction && namespaceURI.equalsIgnoreCase(XSD) && localName.equalsIgnoreCase("enumeration"))
+        else if (inRestriction && namespaceURI.equalsIgnoreCase(XML_XSD.uri) && localName.equalsIgnoreCase("enumeration"))
         {
             tmp_enum.add(attrs.getValue("value"));
         }
@@ -239,14 +236,14 @@ class WSDLParser extends DefaultHandler
 
     // Second, parse WSDL message definitions that will be used in defining abstract operations.
 
-    else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("message"))
+    else if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("message"))
     {
       inMessage = true;
       wsdlMessage = new Message();
       wsdlMessage.messageName = attrs.getValue("name");
       tmp_parts = new Vector<Part>();
     }
-    else if (inMessage && namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("part"))
+    else if (inMessage && namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("part"))
     {
       wsdlMessagePart = new Part();
       wsdlMessagePart.partName = attrs.getValue("name");
@@ -255,7 +252,7 @@ class WSDLParser extends DefaultHandler
 
     // Third, process the WSDL portType for the abstract operations
 
-    else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("portType"))
+    else if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("portType"))
     {
       inPortType = true;
       wsdlPortType = new PortType();
@@ -264,7 +261,7 @@ class WSDLParser extends DefaultHandler
     }
     else if (inPortType)
     {
-      if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("operation"))
+      if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("operation"))
       {
         inAbstractOperation = true;
         wsdlOperation = new AbstractOperation();
@@ -276,7 +273,7 @@ class WSDLParser extends DefaultHandler
         // elements can have an optional "name" attribute in addition to the
         // "message" attribute. I am ignoring the "name" attribute and just picking
         // up the message.  Consider if there are reasons to parse the "name" attribute.
-        if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("input"))
+        if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("input"))
         {
           wsdlOperation.inputMessage = new Message();
           wsdlOperation.inputMessage.messageName = attrs.getValue("message");
@@ -287,7 +284,7 @@ class WSDLParser extends DefaultHandler
             wsdlOperation.inputMessage.messageName = st.nextToken();
           }
         }
-        else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("output"))
+        else if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("output"))
         {
           wsdlOperation.outputMessage = new Message();
           wsdlOperation.outputMessage.messageName = attrs.getValue("message");
@@ -305,7 +302,7 @@ class WSDLParser extends DefaultHandler
     }
 
     // Get the Service and Port information
-    else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("service"))
+    else if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("service"))
     {
       inService = true;
       wsdlService = new Service();
@@ -314,7 +311,7 @@ class WSDLParser extends DefaultHandler
     }
     else if (inService)
     {
-      if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("port"))
+      if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("port"))
       {
         wsdlPort = new Port();
         wsdlPort.portName = attrs.getValue("name");
@@ -332,11 +329,11 @@ class WSDLParser extends DefaultHandler
           tmp_portBindingLocalName = tmp_portBindingName;
         }
       }
-      else if (namespaceURI.equalsIgnoreCase(HTTP) && localName.equalsIgnoreCase("address"))
+      else if (namespaceURI.equalsIgnoreCase(WSDL_HTTP.uri) && localName.equalsIgnoreCase("address"))
       {
         wsdlPort.portBaseURL = attrs.getValue("location");
       }
-      else if (namespaceURI.equalsIgnoreCase(SOAP) && localName.equalsIgnoreCase("address"))
+      else if (namespaceURI.equalsIgnoreCase(SOAP.uri) && localName.equalsIgnoreCase("address"))
       {
         wsdlPort.portBaseURL = attrs.getValue("location");
       }
@@ -344,7 +341,7 @@ class WSDLParser extends DefaultHandler
 
     // Get the Operation Bindings
 
-    else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("binding"))
+    else if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("binding"))
     {
       inBinding = true;
       tmp_bindingName = attrs.getValue("name");
@@ -363,7 +360,7 @@ class WSDLParser extends DefaultHandler
     }
     else if (inBinding)
     {
-      if (namespaceURI.equalsIgnoreCase(HTTP) && localName.equalsIgnoreCase("binding"))
+      if (namespaceURI.equalsIgnoreCase(WSDL_HTTP.uri) && localName.equalsIgnoreCase("binding"))
       {
         wsdlBinding = new HTTPBinding();
         wsdlBinding.bindingName = tmp_bindingName;
@@ -371,7 +368,7 @@ class WSDLParser extends DefaultHandler
         ((HTTPBinding)wsdlBinding).bindingVerb = attrs.getValue("verb");
         tmp_bindOperations = new Vector<AbstractOperation>();
       }
-      else if (namespaceURI.equalsIgnoreCase(SOAP) && localName.equalsIgnoreCase("binding"))
+      else if (namespaceURI.equalsIgnoreCase(SOAP.uri) && localName.equalsIgnoreCase("binding"))
       {
         wsdlBinding = new SOAPBinding();
         wsdlBinding.bindingName = tmp_bindingName;
@@ -380,18 +377,18 @@ class WSDLParser extends DefaultHandler
         ((SOAPBinding)wsdlBinding).bindingTransport = attrs.getValue("transport");
         tmp_bindOperations = new Vector<AbstractOperation>();
       }
-      else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("operation"))
+      else if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("operation"))
       {
         tmp_operationName = attrs.getValue("name");
       }
-      else if (namespaceURI.equalsIgnoreCase(HTTP) && localName.equalsIgnoreCase("operation"))
+      else if (namespaceURI.equalsIgnoreCase(WSDL_HTTP.uri) && localName.equalsIgnoreCase("operation"))
       {
         wsdlOperation = new HTTPOperation();
         wsdlOperation.operationName = tmp_operationName;
         ((HTTPOperation)wsdlOperation).operationLocation = attrs.getValue("location");
         isHTTPOperation = true;
       }
-      else if (namespaceURI.equalsIgnoreCase(SOAP) && localName.equalsIgnoreCase("operation"))
+      else if (namespaceURI.equalsIgnoreCase(SOAP.uri) && localName.equalsIgnoreCase("operation"))
       {
         wsdlOperation = new SOAPOperation();
         wsdlOperation.operationName = tmp_operationName;
@@ -401,30 +398,30 @@ class WSDLParser extends DefaultHandler
       }
       else if (isHTTPOperation)
       {
-        if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("input"))
+        if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("input"))
         {
           inInput = true;
           wsdlHTTPOpInOut = new HTTPOperationInOut();
           tmp_MIMEContent = new Vector<MIMEContent>();
         }
-        else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("output"))
+        else if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("output"))
         {
           inOutput = true;
           wsdlHTTPOpInOut = new HTTPOperationInOut();
           tmp_MIMEContent = new Vector<MIMEContent>();
         }
-        else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("fault"))
+        else if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("fault"))
         {
           // FIXIT!! do something!!
         }
         else if (inInput)
         {
-          if (namespaceURI.equalsIgnoreCase(HTTP) && localName.equalsIgnoreCase("urlReplacement"))
+          if (namespaceURI.equalsIgnoreCase(WSDL_HTTP.uri) && localName.equalsIgnoreCase("urlReplacement"))
           {
             wsdlHTTPOpInOut.ioBindingType = HTTPOperationInOut.URL_REPLACE_BINDING_TYPE;
             wsdlHTTPOpInOut.ioMIMEContent = null;
           }
-          else if (namespaceURI.equalsIgnoreCase(MIME))
+          else if (namespaceURI.equalsIgnoreCase(WSDL_MIME.uri))
           {
               wsdlHTTPOpInOut.ioBindingType = HTTPOperationInOut.MIME_BINDING_TYPE;
               tmp_MIMEContent.add(parseMIMEBinding(namespaceURI, localName, qName, attrs));
@@ -439,7 +436,7 @@ class WSDLParser extends DefaultHandler
         }
         else if (inOutput)
         {
-          if (namespaceURI.equalsIgnoreCase(MIME))
+          if (namespaceURI.equalsIgnoreCase(WSDL_MIME.uri))
           {
               wsdlHTTPOpInOut.ioBindingType = HTTPOperationInOut.MIME_BINDING_TYPE;
               tmp_MIMEContent.add(parseMIMEBinding(namespaceURI, localName, qName, attrs));
@@ -469,21 +466,21 @@ class WSDLParser extends DefaultHandler
       {
         if (inRestriction)
         {
-          if (namespaceURI.equalsIgnoreCase(XSD) && localName.equalsIgnoreCase("restriction"))
+          if (namespaceURI.equalsIgnoreCase(XML_XSD.uri) && localName.equalsIgnoreCase("restriction"))
           {
               wsdlSimpleType.enumerationOfValues = tmp_enum;
               tmp_enum = null;
               inRestriction = false;
           }
         }
-        else if (namespaceURI.equalsIgnoreCase(XSD) && localName.equalsIgnoreCase("simpleType"))
+        else if (namespaceURI.equalsIgnoreCase(XML_XSD.uri) && localName.equalsIgnoreCase("simpleType"))
         {
           wsdlTypeTbl.put(wsdlSimpleType.typeName, wsdlSimpleType);
           wsdlSimpleType = null;
           inSimpleType = false;
         }
       }
-      else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("types"))
+      else if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("types"))
       {
         inWSDLTypes = false;
       }
@@ -491,13 +488,13 @@ class WSDLParser extends DefaultHandler
     // Message post-processing
     else if (inMessage)
     {
-      if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("part"))
+      if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("part"))
       {
         tmp_parts.add(wsdlMessagePart);
         wsdlMessagePart = null;
       }
 
-      else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("message"))
+      else if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("message"))
       {
         wsdlMessage.messageParts = (Part[])tmp_parts.toArray(new Part[0]);
         wsdlMessageTbl.put(wsdlMessage.messageName, wsdlMessage);
@@ -511,14 +508,14 @@ class WSDLParser extends DefaultHandler
     {
       if (inAbstractOperation)
       {
-        if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("operation"))
+        if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("operation"))
         {
           tmp_operations.add(wsdlOperation);
           wsdlOperation = null;
           inAbstractOperation = false;
         }
       }
-      else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("portType"))
+      else if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("portType"))
       {
         wsdlPortType.operations = (AbstractOperation[])tmp_operations.toArray(new AbstractOperation[0]);
         tmp_operations = null;
@@ -528,7 +525,7 @@ class WSDLParser extends DefaultHandler
     // Service post-processing
     else if (inService)
     {
-      if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("port"))
+      if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("port"))
       {
         tmp_ports.add(wsdlPort);
         wsdlPortBindingTbl.put(wsdlPort.portName, tmp_portBindingLocalName);
@@ -536,7 +533,7 @@ class WSDLParser extends DefaultHandler
         tmp_portBindingLocalName = null;
         tmp_portBindingName = null;
       }
-      else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("service"))
+      else if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("service"))
       {
         wsdlService.ports = (Port[])tmp_ports.toArray(new Port[0]);
         tmp_ports = null;
@@ -548,7 +545,7 @@ class WSDLParser extends DefaultHandler
     {
       if (isHTTPOperation)
       {
-        if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("input"))
+        if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("input"))
         {
           wsdlHTTPOpInOut.ioMIMEContent = (MIMEContent[])tmp_MIMEContent.toArray(new MIMEContent[0]);
           ((HTTPOperation)wsdlOperation).inputBinding = wsdlHTTPOpInOut;
@@ -556,7 +553,7 @@ class WSDLParser extends DefaultHandler
           wsdlHTTPOpInOut = null;
           inInput = false;
         }
-        else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("output"))
+        else if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("output"))
         {
           wsdlHTTPOpInOut.ioMIMEContent = (MIMEContent[])tmp_MIMEContent.toArray(new MIMEContent[0]);
           ((HTTPOperation)wsdlOperation).outputBinding = wsdlHTTPOpInOut;
@@ -564,7 +561,7 @@ class WSDLParser extends DefaultHandler
           wsdlHTTPOpInOut = null;
           inOutput = false;
         }
-        else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("operation"))
+        else if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("operation"))
         {
           tmp_bindOperations.add(wsdlOperation);
           tmp_operationName = null;
@@ -576,7 +573,7 @@ class WSDLParser extends DefaultHandler
       {
         // FIXIT!! implement something!!!
       }
-      else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("binding"))
+      else if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("binding"))
       {
         if (wsdlBinding.getClass().getName().equalsIgnoreCase("fedora.server.storage.service.HTTPBinding"))
         {
@@ -606,11 +603,11 @@ class WSDLParser extends DefaultHandler
     content.elementType = localName;
     content.messagePartName = attrs.getValue("part");
 
-    if (namespaceURI.equalsIgnoreCase(MIME) && localName.equalsIgnoreCase("content"))
+    if (namespaceURI.equalsIgnoreCase(WSDL_MIME.uri) && localName.equalsIgnoreCase("content"))
     {
       content.mimeType = attrs.getValue("type");
     }
-    else if (namespaceURI.equalsIgnoreCase(MIME) && localName.equalsIgnoreCase("mimeXml"))
+    else if (namespaceURI.equalsIgnoreCase(WSDL_MIME.uri) && localName.equalsIgnoreCase("mimeXml"))
     {
       content.mimeType = "text/xml";
     }
@@ -702,9 +699,9 @@ class WSDLParser extends DefaultHandler
         partTypeLocalName = msg.messageParts[i].partTypeName;
       }
         // FIXIT!! Test whether null nsprefix makes this bag.
-      if (nsprefix.equalsIgnoreCase((String)nsPrefixMap.get(XSD)))
+      if (nsprefix.equalsIgnoreCase((String)nsPrefixMap.get(XML_XSD.uri)))
       {
-          msg.messageParts[i].partBaseTypeNamespaceURI = XSD;
+          msg.messageParts[i].partBaseTypeNamespaceURI = XML_XSD.uri;
           msg.messageParts[i].partBaseTypeLocalName = partTypeLocalName;
       }
       // If the part is not an XSD base type, then we assume it is a type defined
@@ -745,45 +742,45 @@ class WSDLParser extends DefaultHandler
     throws SAXException
   {
     // Elements in XML schema definitions (within WSDL types)
-    if (namespaceURI.equalsIgnoreCase(XSD) && localName.equalsIgnoreCase("complexType"))
+    if (namespaceURI.equalsIgnoreCase(XML_XSD.uri) && localName.equalsIgnoreCase("complexType"))
     {
       throw new SAXException("WSDLParser: Detected a WSDL pattern that Fedora does not yet support: " + qName);
     }
-    else if (namespaceURI.equalsIgnoreCase(XSD) && localName.equalsIgnoreCase("element"))
+    else if (namespaceURI.equalsIgnoreCase(XML_XSD.uri) && localName.equalsIgnoreCase("element"))
     {
       throw new SAXException("WSDLParser: Detected a WSDL pattern that Fedora does not yet support: " + qName);
     }
-    else if (namespaceURI.equalsIgnoreCase(XSD) && localName.equalsIgnoreCase("list"))
+    else if (namespaceURI.equalsIgnoreCase(XML_XSD.uri) && localName.equalsIgnoreCase("list"))
     {
       throw new SAXException("WSDLParser: Detected a WSDL pattern that Fedora does not yet support: " + qName);
     }
-    else if (namespaceURI.equalsIgnoreCase(XSD) && localName.equalsIgnoreCase("union"))
+    else if (namespaceURI.equalsIgnoreCase(XML_XSD.uri) && localName.equalsIgnoreCase("union"))
     {
       throw new SAXException("WSDLParser: Detected a WSDL pattern that Fedora does not yet support: " + qName);
     }
     // WSDL Elements
-    else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("import"))
+    else if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("import"))
     {
       throw new SAXException("WSDLParser: Detected a WSDL pattern that Fedora does not yet support: " + qName);
     }
-    else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("fault"))
+    else if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("fault"))
     {
       throw new SAXException("WSDLParser: Detected a WSDL pattern that Fedora does not yet support: " + qName);
     }
-    else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("part") && attrs.getValue("element") != null)
+    else if (namespaceURI.equalsIgnoreCase(WSDL.uri) && localName.equalsIgnoreCase("part") && attrs.getValue("element") != null)
     {
       throw new SAXException("WSDLParser: Detected a WSDL pattern that Fedora does not yet support: " + qName + " element attr");
     }
     // Extension Elements
-    else if (namespaceURI.equalsIgnoreCase(SOAP) && localName.equalsIgnoreCase("binding"))
+    else if (namespaceURI.equalsIgnoreCase(SOAP.uri) && localName.equalsIgnoreCase("binding"))
     {
       throw new SAXException("WSDLParser: Detected a WSDL pattern that Fedora does not yet support: " + qName);
     }
-    else if (namespaceURI.equalsIgnoreCase(MIME) && localName.equalsIgnoreCase("multipartRelated"))
+    else if (namespaceURI.equalsIgnoreCase(WSDL_MIME.uri) && localName.equalsIgnoreCase("multipartRelated"))
     {
       throw new SAXException("WSDLParser: Detected a WSDL pattern that Fedora does not yet support: " + qName);
     }
-    else if (namespaceURI.equalsIgnoreCase(HTTP) && localName.equalsIgnoreCase("urlEncoded"))
+    else if (namespaceURI.equalsIgnoreCase(WSDL_HTTP.uri) && localName.equalsIgnoreCase("urlEncoded"))
     {
       throw new SAXException("WSDLParser: Detected a WSDL pattern that Fedora does not yet support: " + qName);
     }

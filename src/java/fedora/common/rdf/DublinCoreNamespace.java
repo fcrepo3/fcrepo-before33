@@ -5,6 +5,16 @@
 
 package fedora.common.rdf;
 
+/**
+ * The Dublin Core RDF namespace.
+ *
+ * <pre>
+ * Namespace URI    : http://purl.org/dc/elements/1.1/
+ * Preferred Prefix : dc
+ * </pre>
+ *
+ * @author cwilper@cs.cornell.edu
+ */
 public class DublinCoreNamespace extends RDFNamespace {
 
     public final RDFName TITLE;
@@ -26,6 +36,7 @@ public class DublinCoreNamespace extends RDFNamespace {
     public DublinCoreNamespace() {
 
         this.uri = "http://purl.org/dc/elements/1.1/";
+        this.prefix = "dc";
 
         this.TITLE        = new RDFName(this, "title");
         this.CREATOR      = new RDFName(this, "creator");

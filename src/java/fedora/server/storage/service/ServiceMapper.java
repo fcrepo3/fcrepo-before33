@@ -84,7 +84,8 @@ public class ServiceMapper
     throws ObjectIntegrityException,
     RepositoryConfigurationException, GeneralException
   {
-    return getMethodMap(methodMapSource).mmapMethods;
+	Mmap methodMap = getMethodMap(methodMapSource);
+    return methodMap.mmapMethods;
   }
 
   /**

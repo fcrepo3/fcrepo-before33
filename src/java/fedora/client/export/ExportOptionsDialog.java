@@ -7,20 +7,23 @@ package fedora.client.export;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
-import java.awt.BorderLayout;
 import javax.swing.border.TitledBorder;
+
 import fedora.client.Administrator;
+
+import fedora.common.Constants;
 
 /**
  * Launch a dialog for selecting which XML format to ingest.
- * Valid options as of Fedora 2.0 are "foxml1.0" and "metslikefedora1".
+ * Valid options are FOXML1_1.uri and METS_EXT1_1.uri.
  *
  * @author payette@cs.cornell.edu
  */
-
 public class ExportOptionsDialog
-        extends JDialog {
+        extends JDialog
+        implements Constants {
         
 	private static final long serialVersionUID = 1L;
     private String selections;
@@ -107,12 +110,12 @@ public class ExportOptionsDialog
 		gbc.gridy = 0;
 		gbc.gridx = 0;
 		foxmlButton = new JRadioButton("FOXML (Fedora Object XML)", true);
-		foxmlButton.setActionCommand("foxml1.0");
+		foxmlButton.setActionCommand(FOXML1_1.uri);
 		foxmlButton.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (foxmlButton.isSelected()) {
-						fmt_chosen = "foxml1.0";
+						fmt_chosen = FOXML1_1.uri;
 					}
 				}
 			}
@@ -121,12 +124,12 @@ public class ExportOptionsDialog
 		// metsf radio button
 		gbc.gridx = 1;
 		metsfButton = new JRadioButton("METS (Fedora METS Extension)", false);
-		metsfButton.setActionCommand("metslikefedora1");
+		metsfButton.setActionCommand(METS_EXT1_1.uri);
 		metsfButton.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (metsfButton.isSelected()) {
-						fmt_chosen = "metslikefedora1";
+						fmt_chosen = METS_EXT1_1.uri;
 					}
 				}
 			}
@@ -135,7 +138,7 @@ public class ExportOptionsDialog
 		// button grouping and default value
 		fmt_buttonGroup.add(foxmlButton);
 		fmt_buttonGroup.add(metsfButton);
-		fmt_chosen = "foxml1.0";
+		fmt_chosen = FOXML1_1.uri;
 		return formatPanel;
 	}
 	

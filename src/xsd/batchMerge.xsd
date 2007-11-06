@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema targetNamespace="http://www.fedora.info/definitions/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.fedora.info/definitions/" xmlns:xlink="http://www.w3.org/TR/xlink" elementFormDefault="qualified">
-	<xsd:import namespace="http://www.w3.org/TR/xlink" schemaLocation="xlink.xsd"/>
+<!-- This schema was changed for Fedora 3.0 to use the official            -->
+<!-- xlink namespace URI.                                                  -->
+<xsd:schema targetNamespace="http://www.fedora.info/definitions/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.fedora.info/definitions/" xmlns:xlink="http://www.w3.org/1999/xlink" elementFormDefault="qualified">
+	<xsd:import namespace="http://www.w3.org/1999/xlink" schemaLocation="xlink-1999.xsd"/>
 	<xsd:annotation>
 		<xsd:documentation>Prior to Fedora 2.1, there was no formal batchMerge schema and the schema was implied based
 			on the example object-specific files. This schema provides a more formal definition that conforms to the pre-Fedora 2.1

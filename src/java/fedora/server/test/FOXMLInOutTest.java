@@ -5,29 +5,33 @@
 
 package fedora.server.test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import java.util.HashMap;
+
 import junit.framework.TestCase;
+
+import org.xml.sax.SAXException;
+
+import fedora.common.Constants;
 
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.translation.*;
 import fedora.server.errors.*;
-import org.xml.sax.SAXException;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
 
 /**
  * Tests the FOXML deserializer and serializer by parsing
  * a FOXML input file and re-serializing it in the storage context.
  *
  * @author payette@cs.cornell.edu
- * @version $Id$
  */
 public class FOXMLInOutTest
-	extends TestCase {
+	extends TestCase
+	implements Constants {
 
 	protected File inFile = null;
 	protected File outFile = null;
@@ -49,30 +53,27 @@ public class FOXMLInOutTest
 		}
 		try {	
 			// setup	
-			FOXMLDODeserializer deser=new FOXMLDODeserializer();
-			FOXMLDOSerializer ser=new FOXMLDOSerializer();
+			FOXML1_1DODeserializer deser=new FOXML1_1DODeserializer();
+			FOXML1_1DOSerializer ser=new FOXML1_1DOSerializer();
 			HashMap desermap=new HashMap();
 			HashMap sermap=new HashMap();
-			desermap.put("foxml1.0", deser);
+			desermap.put(FOXML1_1.uri, deser);
 			DOTranslatorImpl trans=new DOTranslatorImpl(sermap, desermap);
 			obj=new BasicDigitalObject();
 			
 			// deserialize input XML
 			System.out.println("Deserializing...");
-			trans.deserialize(in, obj, "foxml1.0", "UTF-8", DOTranslationUtility.DESERIALIZE_INSTANCE);
+			trans.deserialize(in, obj, FOXML1_1.uri, "UTF-8", DOTranslationUtility.DESERIALIZE_INSTANCE);
 			System.out.println("Digital Object PID= " + obj.getPid());
 			// serialize
-			sermap.put("foxml1.0", ser);
+			sermap.put(FOXML1_1.uri, ser);
 			System.out.println("Re-serializing...");
 			System.out.println("Writing file to... " + outFile.getPath());
 			FileOutputStream out = new FileOutputStream(outFile);
 			// re-serialize (either for the EXPORT or STORAGE context)
 			int m_transContext = DOTranslationUtility.SERIALIZE_EXPORT_MIGRATE;
-			trans.serialize(obj, out, "foxml1.0", "UTF-8", m_transContext);
+			trans.serialize(obj, out, FOXML1_1.uri, "UTF-8", m_transContext);
 			System.out.println("Done. Serialized for context: " + m_transContext);
-		} catch (SAXException e) {
-			e.printStackTrace();
-			System.out.println("SAXException: (" + e.getClass().getName() + "):" + e.getMessage());
 		} catch (ServerException e) {
 			System.out.println("ServerException: suppressing info not available without running server.");
 		} catch (Exception e) {

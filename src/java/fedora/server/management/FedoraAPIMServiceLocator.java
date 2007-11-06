@@ -5,21 +5,23 @@
 
 package fedora.server.management;
 
+import fedora.common.Constants;
+
 /**
- *
- * <p><b>Title:</b> FedoraAPIMServiceLocator.java</p>
- * <p><b>Description:</b> This file was originally auto-generated from the API-M WSDL
+ * This file was originally auto-generated from the API-M WSDL
  * by the Apache Axis WSDL2Java emitter.  The generated file was then modified
  * so that it has a constructor that takes username and password, so that 
  * the service stub class can have username and passord.  
  * The following methods were modified:
- * 	getFedoraAPIMPortSOAPHTTP - custom stub (fedora.server.management.FedoraAPIM)</p>
+ * 	getFedoraAPIMPortSOAPHTTP - custom stub (fedora.server.management.FedoraAPIM)
  *
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
  */
-public class FedoraAPIMServiceLocator extends org.apache.axis.client.Service implements fedora.server.management.FedoraAPIMService {
+public class FedoraAPIMServiceLocator
+        extends org.apache.axis.client.Service 
+        implements Constants, fedora.server.management.FedoraAPIMService {
 
 	private static final long serialVersionUID = 1L;
 	// Use to get a proxy class for FedoraAPIMPortSOAPHTTP and FedoraAPIMPortSOAPHTTPS (secure)
@@ -179,7 +181,7 @@ public class FedoraAPIMServiceLocator extends org.apache.axis.client.Service imp
     }
 
     public javax.xml.namespace.QName getServiceName() {
-        return new javax.xml.namespace.QName("http://www.fedora.info/definitions/1/0/api/", "Fedora-API-M-Service");
+        return new javax.xml.namespace.QName(API.uri, "Fedora-API-M-Service");
     }
 
     private java.util.HashSet ports = null;

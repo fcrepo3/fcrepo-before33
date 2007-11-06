@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<foxml:digitalObject PID="demo:ri9" xmlns:METS="http://www.loc.gov/METS/"
-    xmlns:audit="info:fedora/fedora-system:def/audit#" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit"
+<foxml:digitalObject VERSION="1.1" PID="demo:ri9"
     xmlns:foxml="info:fedora/fedora-system:def/foxml#"
-    xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd"
-    xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:xlink="http://www.w3.org/TR/xlink"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd">
     <foxml:objectProperties>
         <foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraBMechObject"/>
         <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
@@ -179,15 +177,4 @@
             <foxml:contentLocation REF=" http://uva.lib.edu/mech/mrsid/doc/mrsid.html" TYPE="URL"/>
         </foxml:datastreamVersion>
     </foxml:datastream>
-    <foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="fedora-system:1" STATE="A">
-        <foxml:disseminatorVersion ID="DISS1.0" CREATED="2000-08-22T06:32:00Z" BMECH_SERVICE_PID="fedora-system:2" LABEL="Bootstrap Behaviors">
-            <foxml:serviceInputMap>
-                <foxml:datastreamBinding DATASTREAM_ID="SERVICE-PROFILE" KEY="SERVICE-PROFILE" LABEL="Service profile metadata"/>
-                <foxml:datastreamBinding DATASTREAM_ID="DSINPUTSPEC" KEY="FEDORA-TO-WSDL-DSINPUTSPEC" LABEL="XML data that serves describes the requirements for Datastreams that will be used as input to the service"/>
-                <foxml:datastreamBinding DATASTREAM_ID="METHODMAP" KEY="FEDORA-TO-WSDL-METHODMAP" LABEL="XML data that enables FEDORA to understand how to use the service WSDL"/>
-                <foxml:datastreamBinding DATASTREAM_ID="WSDL" KEY="WSDL" LABEL="Service definitions in WSDL format"/>
-                <foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="PROGGUIDE" LABEL="The Programmer's user guide for using the service"/>
-            </foxml:serviceInputMap>
-        </foxml:disseminatorVersion>
-    </foxml:disseminator>
 </foxml:digitalObject>

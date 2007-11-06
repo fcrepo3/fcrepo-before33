@@ -377,7 +377,7 @@ public class BaseTripleGenerator implements Constants, TripleGenerator {
                        Set<Triple> set) throws Exception {
         if (dateValue != null) {
             String lexicalValue = DateUtility.convertDateToString(dateValue);
-            URI dataType = XSD.DATE_TIME.getURI();
+            URI dataType = RDF_XSD.DATE_TIME.getURI();
             ObjectNode object = _rdfUtil.createLiteral(lexicalValue,
                                                        dataType);
             set.add(_rdfUtil.createTriple(subject, predicate, object));

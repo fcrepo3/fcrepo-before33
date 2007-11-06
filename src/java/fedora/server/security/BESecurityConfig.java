@@ -12,12 +12,15 @@ import javax.xml.parsers.*;
 
 import org.w3c.dom.*;
 
+import fedora.common.Constants;
+
 /**
  * Security configuration for backend services.
  *
  * @author cwilper@cs.cornell.edu
  */
-public class BESecurityConfig {
+public class BESecurityConfig
+        implements Constants {
 
     private static final String _CONFIG            = "serviceSecurityDescription";
     private static final String _INTERNAL_PREFIX   = "fedoraInternalCall-";
@@ -431,19 +434,16 @@ public class BESecurityConfig {
                       boolean withXMLDeclaration,
                       PrintWriter writer) {
 
-        // useful constants while serializing
-        final String ns = "info:fedora/fedora-system:def/beSecurity#";
-        final String xsi_ns = "http://www.w3.org/2001/XMLSchema-instance";
         final String indent = "                           ";
-        final String schemaURL = "http://www.fedora.info/definitions/1/0/api/beSecurity.xsd";
 
         // header
         if (withXMLDeclaration) {
           writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         }
-        writer.println("<" + _CONFIG + " xmlns=\"" + ns + "\"");
-        writer.println(indent + " xmlns:xsi=\"" + xsi_ns + "\"");
-        writer.println(indent + " xsi:schemaLocation=\"" + ns + " " + schemaURL + "\"");
+        writer.println("<" + _CONFIG + " xmlns=\"" + BE_SECURITY.uri + "\"");
+        writer.println(indent + " xmlns:xsi=\"" + XSI.uri + "\"");
+        writer.println(indent + " xsi:schemaLocation=\"" + BE_SECURITY.uri
+                + " " + BE_SECURITY1_0.xsdLocation + "\"");
 
         // default values
         writer.print(indent);

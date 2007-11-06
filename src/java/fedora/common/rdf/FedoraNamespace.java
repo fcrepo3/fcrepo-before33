@@ -6,28 +6,22 @@
 package fedora.common.rdf;
 
 /**
+ * The Fedora RDF namespace.
+ * 
+ * <pre>
+ * Namespace URI    : info:fedora/
+ * Preferred Prefix : fedora
+ * </pre>
  *
+ * @see <a href="http://info-uri.info/registry/OAIHandler?verb=GetRecord&metadataPrefix=reg&identifier=info:fedora/">
+ *      "info" URI Scheme Registry page</a>
+ * @author cwilper@fedora-commons.org
  */
 public class FedoraNamespace extends RDFNamespace {
 
-    // Properties
-
-    // Values
-
-    // Types
-
     public FedoraNamespace() {
-
         this.uri = "info:fedora/";
-
-        // Properties
-
-
-        // Values
-
-
-        // Types
-
+        this.prefix = "fedora";
     }
 
 }

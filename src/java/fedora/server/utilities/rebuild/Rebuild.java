@@ -29,7 +29,7 @@ import fedora.server.storage.lowlevel.DefaultLowlevelStorage;
 import fedora.server.storage.lowlevel.FileSystem;
 import fedora.server.storage.translation.DODeserializer;
 import fedora.server.storage.translation.DOTranslationUtility;
-import fedora.server.storage.translation.FOXMLDODeserializer;
+import fedora.server.storage.translation.FOXML1_1DODeserializer;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.utilities.ServerUtility;
@@ -182,7 +182,7 @@ public class Rebuild implements Constants {
 						try {
 							System.out.println(f.getAbsoluteFile());
 							DigitalObject obj = new BasicDigitalObject();
-							DODeserializer deser = new FOXMLDODeserializer();
+							DODeserializer deser = new FOXML1_1DODeserializer();
 							deser
 									.deserialize(
 											in,

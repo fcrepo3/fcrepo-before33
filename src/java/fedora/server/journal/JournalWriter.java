@@ -24,9 +24,7 @@ import fedora.server.journal.entry.CreatorJournalEntry;
 import fedora.server.journal.helpers.EncodingBase64InputStream;
 import fedora.server.journal.helpers.JournalHelper;
 import fedora.server.journal.xmlhelpers.AbstractXmlWriter;
-import fedora.server.journal.xmlhelpers.BindingMapXmlWriter;
 import fedora.server.journal.xmlhelpers.ContextXmlWriter;
-import fedora.server.storage.types.DSBindingMap;
 
 /**
  * 
@@ -195,8 +193,6 @@ public abstract class JournalWriter extends AbstractXmlWriter {
                 writeIntegerArgument(key, (Integer) value, writer);
             } else if (value instanceof Boolean) {
                 writeBooleanArgument(key, (Boolean) value, writer);
-            } else if (value instanceof DSBindingMap) {
-                writeDSBindingMapArgument(key, (DSBindingMap) value, writer);
             } else if (value instanceof File) {
                 writeFileArgument(key, (File) value, writer);
             } else {
@@ -289,11 +285,6 @@ public abstract class JournalWriter extends AbstractXmlWriter {
         } catch (IOException e) {
             throw new JournalException("IO Exception on temp file", e);
         }
-    }
-
-    private void writeDSBindingMapArgument(String key, DSBindingMap bindingMap,
-            XMLEventWriter writer) throws XMLStreamException {
-        new BindingMapXmlWriter().writeBindingMap(key, bindingMap, writer);
     }
 
     /**

@@ -5,11 +5,15 @@
 
 package fedora.common.rdf;
 
-import fedora.common.Constants;
-
 /**
- * Namespace of Fedora external relationships.
+ * The Fedora RELS-EXT RDF namespace.
+ * 
+ * <pre>
+ * Namespace URI    : info:fedora/fedora-system:def/relations-external#
+ * Preferred Prefix : rel
+ * </pre>
  *
+ * @author cwilper@fedora-commons.org
  */
 public class FedoraRelsExtNamespace extends RDFNamespace {
 
@@ -25,7 +29,8 @@ public class FedoraRelsExtNamespace extends RDFNamespace {
 
     public FedoraRelsExtNamespace() {
 
-        this.uri = Constants.FEDORA_SYSTEM_DEF_URI + "/relations-external#";
+        this.uri = "info:fedora/fedora-system:def/relations-external#";
+        this.prefix = "rel";
 
         // Properties
         this.IS_MEMBER_OF               = new RDFName(this, "isMemberOf");

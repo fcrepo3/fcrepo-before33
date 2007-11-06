@@ -12,4 +12,6 @@ public abstract class RDFNamespace {
 
     public String uri;
 
+    public String prefix;
+
 }

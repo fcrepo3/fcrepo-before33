@@ -23,13 +23,16 @@ import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
+
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.errors.authorization.AuthzException;
+
 import fedora.server.types.gen.RelationshipTuple;
+
 import fedora.server.utilities.AxisUtility;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.TypeUtility;
@@ -38,10 +41,9 @@ import fedora.server.utilities.TypeUtility;
  * Implements the Fedora management SOAP service.
  *
  * @author cwilper@cs.cornell.edu
- * @version $Id$
  */
 public class FedoraAPIMBindingSOAPHTTPImpl
-        implements FedoraAPIM {
+        implements Constants, FedoraAPIM {
 
     /** Logger for this class. */
 	private static final Logger LOG = Logger.getLogger(
@@ -84,9 +86,10 @@ public class FedoraAPIMBindingSOAPHTTPImpl
      *    It will be removed in a future version.
      *    Replaced by {@link #ingest(byte[], String, String)}
      */
+    @Deprecated
     public String ingestObject(byte[] METSXML, String logMessage) throws java.rmi.RemoteException {
         assertInitialized();
-		return ingest(METSXML, "metslikefedora1", logMessage);
+		return ingest(METSXML, METS_EXT1_1.uri, logMessage);
     }
     
 	public String ingest(byte[] XML, String format, String logMessage) throws java.rmi.RemoteException {

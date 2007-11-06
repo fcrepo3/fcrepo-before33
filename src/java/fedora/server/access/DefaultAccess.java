@@ -59,14 +59,12 @@ import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.ExternalContentManager;
 import fedora.server.storage.SimpleDOReader;
-import fedora.server.storage.types.DSBinding;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamDef;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DisseminationBindingInfo;
-//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodDefOperationBind;
 import fedora.server.storage.types.MethodParmDef;
@@ -78,14 +76,10 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.ParserUtilityHandler;
 
 /**
- *
- * <p><b>Title: </b>DefaultAccess.java</p>
- *
- * <p><b>Description: </b>The Access Module, providing support for the Fedora
- * Access subsystem.</p>
+ * The Access Module, providing support for the Fedora
+ * Access subsystem.
  *
  * @author rlw@virginia.edu
- * @version $Id$
  */
 public class DefaultAccess extends Module implements Access
 {

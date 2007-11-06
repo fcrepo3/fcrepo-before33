@@ -12,23 +12,16 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
+import fedora.common.Constants;
+
 import fedora.client.bmech.data.*;
 import fedora.client.bmech.BMechBuilderException;
 
 /**
- *
- * <p><b>Title:</b> MethodMapGenerator.java</p>
- * <p><b>Description:</b> </p>
- *
  * @author payette@cs.cornell.edu
- * @version $Id$
  */
 public class MethodMapGenerator
-{
-  private static final String FMM =
-    "http://fedora.comm.nsdlib.org/service/methodmap";
-
-  private static final String XMLNS = "http://www.w3.org/2000/xmlns/";
+    implements Constants {
 
   private Document document;
 
@@ -67,15 +60,15 @@ public class MethodMapGenerator
   private void genMethodMap(BObjTemplate newBDef)
   {
     Method[] methods = newBDef.getMethods();
-    Element root = (Element)document.createElementNS(FMM, "fmm:MethodMap");
-    root.setAttributeNS(XMLNS, "xmlns:fmm", FMM);
+    Element root = (Element)document.createElementNS(METHOD_MAP.uri, "fmm:MethodMap");
+    root.setAttributeNS(XMLNS.uri, "xmlns:fmm", METHOD_MAP.uri);
     String bdeflabel = (newBDef.getbObjLabel() == null) ? "fix me" : newBDef.getbObjLabel();
     root.setAttribute("name", ("MethodMap - " + bdeflabel));
     document.appendChild(root);
 
     for (int i=0; i<methods.length; i++)
     {
-      Element method = document.createElementNS(FMM, "fmm:Method");
+      Element method = document.createElementNS(METHOD_MAP.uri, "fmm:Method");
       String mname = methods[i].methodName;
       String mlabel = (methods[i].methodLabel == null) ? "fix me" : methods[i].methodLabel;
       method.setAttribute("operationName", mname.trim());
@@ -89,7 +82,7 @@ public class MethodMapGenerator
         Element parm = null;
         if (parms[j].parmType.equalsIgnoreCase(MethodParm.USER_INPUT))
         {
-          parm = document.createElementNS(FMM, "fmm:UserInputParm");
+          parm = document.createElementNS(METHOD_MAP.uri, "fmm:UserInputParm");
         }
         else
         {
@@ -108,10 +101,10 @@ public class MethodMapGenerator
 
         if (parms[j].parmDomainValues.length > 0)
         {
-          Element parmDomain = document.createElementNS(FMM, "fmm:ValidParmValues");
+          Element parmDomain = document.createElementNS(METHOD_MAP.uri, "fmm:ValidParmValues");
           for (int k=0; k<parms[j].parmDomainValues.length; k++)
           {
-            Element parmDomainVal = document.createElementNS(FMM, "fmm:ValidParm");
+            Element parmDomainVal = document.createElementNS(METHOD_MAP.uri, "fmm:ValidParm");
             String value = (parms[j].parmDomainValues[k] == null)
               ? "" : parms[j].parmDomainValues[k];
             parmDomainVal.setAttribute("value", value);
@@ -127,7 +120,7 @@ public class MethodMapGenerator
   private void genMethodMap(BMechTemplate newBMech)
   {
     Method[] methods = newBMech.getMethods();
-    Element root = (Element)document.createElementNS(FMM, "fmm:MethodMap");
+    Element root = (Element)document.createElementNS(METHOD_MAP.uri, "fmm:MethodMap");
     String bmlabel = (newBMech.getbObjLabel() == null) ? "fix me" : newBMech.getbObjLabel();
     root.setAttribute("name", ("MethodMap - " + bmlabel));
     root.setAttribute("bDefPID", newBMech.getbDefContractPID());
@@ -135,7 +128,7 @@ public class MethodMapGenerator
 
     for (int i=0; i<methods.length; i++)
     {
-      Element method = document.createElementNS(FMM, "fmm:Method");
+      Element method = document.createElementNS(METHOD_MAP.uri, "fmm:Method");
       String mname = methods[i].methodName;
       String mlabel = (methods[i].methodLabel == null) ? "fix me" : methods[i].methodLabel;
       method.setAttribute("operationName", mname.trim());
@@ -151,15 +144,15 @@ public class MethodMapGenerator
         Element parm = null;
         if (parms[j].parmType.equalsIgnoreCase(MethodParm.DATASTREAM_INPUT))
         {
-          parm = document.createElementNS(FMM, "fmm:DatastreamInputParm");
+          parm = document.createElementNS(METHOD_MAP.uri, "fmm:DatastreamInputParm");
         }
         else if (parms[j].parmType.equalsIgnoreCase(MethodParm.USER_INPUT))
         {
-          parm = document.createElementNS(FMM, "fmm:UserInputParm");
+          parm = document.createElementNS(METHOD_MAP.uri, "fmm:UserInputParm");
         }
         else if (parms[j].parmType.equalsIgnoreCase(MethodParm.DEFAULT_INPUT))
         {
-          parm = document.createElementNS(FMM, "fmm:DefaultInputParm");
+          parm = document.createElementNS(METHOD_MAP.uri, "fmm:DefaultInputParm");
         }
         else
         {
@@ -179,10 +172,10 @@ public class MethodMapGenerator
 
         if (parms[j].parmDomainValues.length > 0)
         {
-          Element parmDomain = document.createElementNS(FMM, "fmm:ValidParmValues");
+          Element parmDomain = document.createElementNS(METHOD_MAP.uri, "fmm:ValidParmValues");
           for (int k=0; k<parms[j].parmDomainValues.length; k++)
           {
-            Element parmDomainVal = document.createElementNS(FMM, "fmm:ValidParm");
+            Element parmDomainVal = document.createElementNS(METHOD_MAP.uri, "fmm:ValidParm");
             String value = (parms[j].parmDomainValues[k] == null)
               ? "" : parms[j].parmDomainValues[k];
             parmDomainVal.setAttribute("value", value);
@@ -199,7 +192,7 @@ public class MethodMapGenerator
       {
         sb.append(mimeTypes[k].toString() + " ");
       }
-      Element methodReturn = document.createElementNS(FMM, "fmm:MethodReturnType");
+      Element methodReturn = document.createElementNS(METHOD_MAP.uri, "fmm:MethodReturnType");
       methodReturn.setAttribute("wsdlMsgName", "dissemResponse");
       methodReturn.setAttribute("wsdlMsgTOMIME", sb.toString().trim());
       method.appendChild(methodReturn);

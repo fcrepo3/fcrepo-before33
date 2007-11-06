@@ -95,7 +95,7 @@ public class Datastream
   public String DSChecksumType;
   public String DSChecksum;
   public static boolean autoChecksum = false;
-  public static String defaultChecksumType = null;
+  public static String defaultChecksumType = "DISABLED";
 
   public Datastream() {
   } 
@@ -110,9 +110,6 @@ public class Datastream
       return getContentStream();
   }
 
-  // Note the static variable defaultChecksumType is initialized in the module initialization
-  // code for the DefaultManagement module.
-  
   public static String getDefaultChecksumType()
   {
       return(defaultChecksumType);

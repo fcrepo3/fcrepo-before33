@@ -5,53 +5,54 @@
 
 package fedora.client;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FileDialog;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+
+import java.util.HashMap;
+import java.util.Properties;
+
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
-import java.awt.BorderLayout;
-import java.awt.FileDialog;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 import fedora.client.Administrator;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.HashMap;
-import javax.swing.JFileChooser;
-import java.util.Properties;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.FontMetrics;
-import javax.swing.Box;
-import javax.swing.JFrame;
-import javax.swing.JComponent;
+
+import fedora.common.Constants;
+
 import fedora.swing.mdi.MDIDesktopPane;
 
 /**
- * 
- * <p>
- * <b>Title:</b> BatchBuildGUI.java
- * </p>
- * <p>
- * <b>Description:</b>
- * </p>
+ * Batch Build GUI.
  * 
  * @author wdn5e@virginia.edu
- * @version $Id$
  */
-public class BatchBuildGUI extends JInternalFrame {
+public class BatchBuildGUI
+        extends JInternalFrame
+        implements Constants {
 
 	private static final long serialVersionUID = 1L;
 
-	// private static File s_lastDir;
 	private JTextField m_templateField = new JTextField("", 10);
 
 	private JTextField m_specsField = new JTextField("", 10);
@@ -118,8 +119,8 @@ public class BatchBuildGUI extends JInternalFrame {
 		entryPanel.add(new JLabel("Build Criteria"), BorderLayout.NORTH);
 		JPanel labelPanel = new JPanel();
 		labelPanel.setLayout(new GridLayout(0, 3));
-		formatMap.put("foxml1.0", "FOXML");
-		formatMap.put("metslikefedora1", "METS");
+		formatMap.put(FOXML1_1.uri, "FOXML");
+		formatMap.put(METS_EXT1_1.uri, "METS");
 
 		Graphics graphicsTemp = parent.getGraphics();
 		FontMetrics fmTemp = graphicsTemp.getFontMetrics();
@@ -159,25 +160,6 @@ public class BatchBuildGUI extends JInternalFrame {
 		});
 		labelPanel.add(sized(templateBtn, browseMin, browsePref, browseMax));
 
-		/*
-		 * templateButtonGroup.add(m_foxmlMap); m_foxmlMap.setSelected(true);
-		 * templateButtonGroup.add(m_metsMap); JPanel templatePanel = new
-		 * JPanel();
-		 * 
-		 * templatePanel.setLayout(new BorderLayout());
-		 * templatePanel.add(m_foxmlMap, BorderLayout.WEST);
-		 * templatePanel.add(new JLabel("Template file(input file)"),
-		 * BorderLayout.NORTH); templatePanel.add(m_metsMap,
-		 * BorderLayout.CENTER); labelPanel.add(sized (templatePanel, browseMin,
-		 * browsePref, browseMax));
-		 * 
-		 * labelPanel.add(sized (m_templateField, textMin, textPref, textMax));
-		 * JButton templateBtn=new JButton("browse...");
-		 * templateBtn.addActionListener(new ActionListener() { public void
-		 * actionPerformed(ActionEvent e) { templateAction(); } });
-		 * labelPanel.add(sized (templateBtn, browseMin, browsePref,
-		 * browseMax));
-		 */
 		labelPanel.add(new JLabel("XML specs (input directory)"));
 		labelPanel.add(sized(m_specsField, textMin, textPref, textMax));
 
@@ -220,8 +202,6 @@ public class BatchBuildGUI extends JInternalFrame {
 			}
 		});
 		labelPanel.add(sized(pidsBtn, browseMin, browsePref, browseMax));
-
-		// labelPanel.add(sized (m_textMap, browseMin, browsePref, browseMax));
 
 		entryPanel.add(labelPanel, BorderLayout.WEST);
 		getContentPane().setLayout(new BorderLayout());
@@ -287,11 +267,11 @@ public class BatchBuildGUI extends JInternalFrame {
 				String objectFormat = null;
 				while ((line = br.readLine()) != null) {
 					if (line.indexOf("<foxml:") != -1) {
-						objectFormat = "foxml1.0";
+						objectFormat = FOXML1_1.uri;
 						break;
 					}
 					if (line.indexOf("<METS:") != -1) {
-						objectFormat = "metslikefedora1";
+						objectFormat = METS_EXT1_1.uri;
 						break;
 					}
 				}
@@ -307,7 +287,9 @@ public class BatchBuildGUI extends JInternalFrame {
 							.showMessageDialog(
 									Administrator.getDesktop(),
 									"Template "
-											+ "object file format not recognized as either \"foxml1.0\" or \"metslikefedora1\".\n"
+											+ "object file format not recognized as either \"" 
+											+ FOXML1_1.uri + "\" or \"" 
+											+ METS_EXT1_1.uri + "\".\n"
 											+ "Please verify contents of template file.",
 									"Unknown Object Format",
 									JOptionPane.OK_OPTION);
@@ -379,12 +361,8 @@ public class BatchBuildGUI extends JInternalFrame {
 		int returnVal = browse.showOpenDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			selection = browse.getSelectedFile();
-			Administrator.batchtoolLastDir = selection.getParentFile(); // remember
-																		// the
-																		// dir
-																		// for
-																		// next
-																		// time
+            // remember the dir for next time
+			Administrator.batchtoolLastDir = selection.getParentFile();
 		}
 		return selection;
 	}

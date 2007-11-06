@@ -724,8 +724,6 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
         System.out.println("setting Up XACML test");
         admin = getFedoraClient();
 
-        SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
-        SimpleXpathEngine.registerNamespace("uvalibadmin", "http://dl.lib.virginia.edu/bin/admin/admin.dtd/");
         backupFedoraUsersFile();
         //addNewTestUsersToFedoraUsers();
         createNewFedoraUsersFileWithTestUsers();
