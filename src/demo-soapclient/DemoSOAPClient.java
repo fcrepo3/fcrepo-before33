@@ -319,7 +319,19 @@ public class DemoSOAPClient
 						ioe.printStackTrace();
 				}
 				ingestPID = caller.ingest(inStream, FOXML1_1.uri, "ingest of test object");
-				System.out.println("Finished test ingest of bmech object: " + ingestPID);
+				System.out.println("Finished test ingest of data object: " + ingestPID);
+				
+				System.out.println("\nTest ingest......................................................");
+				ingestFile=new File("TestIngestFiles/test_UVA_STD_IMAGE.xml");		
+				inStream=null;
+				try {
+					inStream=new FileInputStream(ingestFile);
+				} catch (IOException ioe) {
+						System.out.println("Error on ingest file inputstream: " + ioe.getMessage());
+						ioe.printStackTrace();
+				}
+				ingestPID = caller.ingest(inStream, FOXML1_1.uri, "ingest of test object");
+				System.out.println("Finished test ingest of cmodel object: " + ingestPID);				
 
 				//**************************************************************					
 				//******** STEP 4: add a datastream to the object
@@ -490,22 +502,22 @@ public class DemoSOAPClient
 		System.out.println("SOAP Response: TECH1 datastream contents: \n"+dsXML);		
 
 		// test for type E datastream 			
-		ds = APIA.getDatastreamDissemination("demo:11", "DS1", null);	
-		System.out.println("\nSOAP Request: getDatastreamDissemination for DS1 datastream of demo object demo:11...");			
-		System.out.println("SOAP Response: GetDatastreamDissemination Object:demo:11 Datastream:DS1 succeeded.");
-		System.out.println("SOAP Response: DS1 datastream contents: BINARY DATA "+ds);
+		ds = APIA.getDatastreamDissemination("demo:11", "MRSID", null);	
+		System.out.println("\nSOAP Request: getDatastreamDissemination for MRSID datastream of demo object demo:11...");			
+		System.out.println("SOAP Response: GetDatastreamDissemination Object:demo:11 Datastream:MRSID succeeded.");
+		System.out.println("SOAP Response: MRSID datastream contents: BINARY DATA "+ds);
 		
 		// test for type R datastream 			
-		ds = APIA.getDatastreamDissemination("demo:30", "DS1", null);
-		System.out.println("\nSOAP Request: getDatastreamDissemination for DS1 datastream of demo object demo:30...");			
-		System.out.println("SOAP Response: GetDatastreamDissemination Object:demo:30 Datastream:DS1 succeeded.");
-		System.out.println("SOAP Response: DS1 datastream contents: BINARY DATA "+ds);
+		ds = APIA.getDatastreamDissemination("demo:30", "THUMBRES_IMG", null);
+		System.out.println("\nSOAP Request: getDatastreamDissemination for THUMBRES_IMG datastream of demo object demo:30...");			
+		System.out.println("SOAP Response: GetDatastreamDissemination Object:demo:30 Datastream:THUMBRES_IMG succeeded.");
+		System.out.println("SOAP Response: THUMBRES_IMG datastream contents: BINARY DATA "+ds);
 		
 		// test for type M datastream 			
-		ds = APIA.getDatastreamDissemination("demo:5", "DS1", null);
-		System.out.println("\nSOAP Request: getDatastreamDissemination for DS1 datastream of demo object demo:5...");			
-		System.out.println("SOAP Response: GetDatastreamDissemination Object:demo:5 Datastream:DS1 succeeded.");
-		System.out.println("SOAP Response: DS1 datastream contents: BINARY DATA "+ds);
+		ds = APIA.getDatastreamDissemination("demo:5", "THUMBRES_IMG", null);
+		System.out.println("\nSOAP Request: getDatastreamDissemination for THUMBRES_IMG datastream of demo object demo:5...");			
+		System.out.println("SOAP Response: GetDatastreamDissemination Object:demo:5 Datastream:THUMBRES_IMG succeeded.");
+		System.out.println("SOAP Response: THUMBRES_IMG datastream contents: BINARY DATA "+ds);
 		
 	}	
 	

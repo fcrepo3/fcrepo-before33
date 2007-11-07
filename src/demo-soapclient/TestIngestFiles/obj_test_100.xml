@@ -41,11 +41,14 @@
 	<foxml:datastream ID="RELS-EXT" CONTROL_GROUP="X">
 		<foxml:datastreamVersion ID="RELS-EXT.0"  MIMETYPE="text/xml" LABEL="Fedora Relationship Metadata">
 			<foxml:xmlContent>
-				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:fedora="info:fedora/fedora-system:def/relations-external#" xmlns:myns="http://www.nsdl.org/ontologies/relationships#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:fedora="info:fedora/fedora-system:def/relations-external#" xmlns:myns="http://www.nsdl.org/ontologies/relationships#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
 					<rdf:Description rdf:about="info:fedora/test:100">
 						<fedora:isMemberOfCollection rdf:resource="info:fedora/something:49"/>
 						<fedora:isMemberOfCollection rdf:resource="info:fedora/something:48"/>
 						<myns:isPartOf rdf:resource="info:fedora/mystuff:100"/>
+						<rel:hasFormalContentModel rdf:resource="info:fedora/test:UVA_STD_IMAGE"/>
+						<rel:hasFormalContentModel rdf:resource="info:fedora/demo:UVA_MRSID_IMAGE_1"/>
+						<rel:hasFormalContentModel rdf:resource="info:fedora/demo:UVA_STD_IMAGE_1"/>
 					</rdf:Description>
 				</rdf:RDF>
 			</foxml:xmlContent>
@@ -75,31 +78,36 @@
 	<!--- USER-DEFINED DATASTREAMS  -->
 	<!---*******************************************************************************************************************************************-->
 	<!-- This datastream demonstrates "Externally Referenced Content" (E) using an absolute URL to the local Fedora repository -->
-	<foxml:datastream CONTROL_GROUP="M" ID="DS1" STATE="A" VERSIONABLE="true">
-		<foxml:datastreamVersion ID="DS1.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (low res)" SIZE="0">
+	<foxml:datastream CONTROL_GROUP="M" ID="THUMBRES_IMG" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="THUMBRES_IMG1.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (low res)" SIZE="0">
 			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05small.jpg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream CONTROL_GROUP="M" ID="DS2" STATE="A" VERSIONABLE="true">
-		<foxml:datastreamVersion ID="DS2.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (med res)" SIZE="0">
+	<foxml:datastream CONTROL_GROUP="M" ID="MEDRES_IMG" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="MEDRES_IMG1.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (med res)" SIZE="0">
 			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05medium1.jpg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream CONTROL_GROUP="E" ID="DS3" STATE="A">
-		<foxml:datastreamVersion ID="DS3.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (high res)" SIZE="0">
+	<foxml:datastream CONTROL_GROUP="E" ID="HIGHRES_IMG" STATE="A">
+		<foxml:datastreamVersion ID="HIGHRES_IMG1.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (high res)" SIZE="0">
 			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05medium2.jpg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream CONTROL_GROUP="R" ID="DS4" STATE="A" VERSIONABLE="false">
-		<foxml:datastreamVersion ID="DS4.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (veryhigh res)" SIZE="0">
+	<foxml:datastream CONTROL_GROUP="R" ID="VERYHIGHRES_IMG" STATE="A" VERSIONABLE="false">
+		<foxml:datastreamVersion ID="VERYHIGHRES_IMG1.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (veryhigh res)" SIZE="0">
 			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05high.jpg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream CONTROL_GROUP="E" ID="DS5" STATE="A" VERSIONABLE="true">
+	<foxml:datastream CONTROL_GROUP="E" ID="MRSID" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="DS5.0" MIMETYPE="image/x-mrsid-image" LABEL="Pavilion III, University of Virginia">
 			<foxml:contentLocation REF="http://iris.lib.virginia.edu/mrsid/mrsid_images/iva/archerp01.sid" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
+	<foxml:datastream CONTROL_GROUP="E" ID="url" STATE="A">
+		<foxml:datastreamVersion ID="ur1.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (high res)" SIZE="0">
+			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05medium2.jpg" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>	
 	<!-- This datastream demonstrates "Inlined XML Content" (X) and user-provided datastream ID -->
 	<foxml:datastream ID="UVATECH" STATE="A"  CONTROL_GROUP="X" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="UVATECH.0" MIMETYPE="text/xml" FORMAT_URI="info:fedora/format:xml:mets:techMD:OTHER:uvalibadmin" LABEL="UVA Technical Metadata Record">
