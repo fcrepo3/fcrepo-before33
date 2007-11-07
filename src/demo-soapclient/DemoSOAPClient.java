@@ -334,7 +334,7 @@ public class DemoSOAPClient {
 						ioe.printStackTrace();
 				}
 				ingestPID = caller.ingest(inStream, "foxml1.0", "ingest of test object");
-				System.out.println("Finished test ingest of bmech object: " + ingestPID);
+				System.out.println("Finished test ingest of data object: " + ingestPID);
 
 				//**************************************************************					
 				//******** STEP 4: add a datastream to the object
