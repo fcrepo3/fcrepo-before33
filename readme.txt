@@ -66,7 +66,7 @@ To run any of these tests, make sure the server has been
 started[*] and that $FEDORA_HOME points to the correct directory.
 Then enter:
 
-  ant junit -Dtest=fedora.server.test.AllSystemTestsConfigB
+  ant junit -Dtest=fedora.test.AllSystemTestsConfigB
 
 By default, each test will run using the demo objects in
 FOXML format.  To run the same tests using the demo objects
