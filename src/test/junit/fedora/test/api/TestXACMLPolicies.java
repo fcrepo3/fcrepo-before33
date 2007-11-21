@@ -41,21 +41,13 @@ import fedora.test.FedoraServerTestCase;
 import fedora.utilities.install.InstallationFailedException;
 
 /**
- * Test of the Fedora Access Service (API-A).
- * 		describeRepository
- * 		findObjects
- * 		getDatastreamDissemination
- * 		getDissemination
- * 		getObjectHistory
- * 		getObjectProfile
- * 		listDatastreams
- * 		listMethods
- * 		resumeFindObjects
- * 
- * See: http://www.fedora.info/definitions/1/0/api/Fedora-API-A.html
- * 
- * @author Edwin Shin
+ * Tests involving XACML policies, for API-A and API-M.
  *
+ * Note: Although these tests can run when API-A AuthN is off, for the best
+ *       coverage, make sure the server is configured to authenticate for
+ *       API-A access.
+ *
+ * @author Edwin Shin
  */
 public class TestXACMLPolicies extends FedoraServerTestCase {
     private FedoraClient admin;
@@ -65,6 +57,7 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
     private FedoraClient testuser3;
     private FedoraClient testuserroleB;
     private FedoraClient testuserroleC;
+    private FedoraClient testuserroleC2;
     private FedoraClient testuser4;
 	private static int EXPECT_FAILURE = 0;
     private static int EXPECT_SUCCESS = 1;
@@ -180,6 +173,7 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
             Object getDDParms[] = { "demo:5", "DS3", null };
             Object getDDParms2[] = { "demo:29", "DS1", null };
             Object getDDParms3[] = { "demo:31", "DS1", null };
+            Object getDDParms4[] = { "demo:ObjSpecificTest", "DC", null };
 
             Class getDissArgs[] = { String.class, String.class, String.class, Property[].class, String.class };
             Object getDissParms[] = {"demo:5", "demo:1", "getHigh", null, null };
@@ -217,12 +211,21 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
             invokeAPIASuccess(testuserroleC, "testuserroleC", "getDatastreamDissemination", getDDArgs, getDDParms2);
 
             // APIA access by user with access- should succeed
+            // testuserroleC does have permission to access demo:ObjSpecificTest datastreams, so this should succeed
+            invokeAPIASuccess(testuserroleC, "testuserroleC", "getDatastreamDissemination", getDDArgs, getDDParms4);
+
+            // APIA access by user without access- should fail
+            // demo:ObjSpecificTest's object-specific policy explicitly denies access
+            // to user with id testuserroleC2
+            invokeAPIAFailure(testuserroleC2, "testuserroleC2", "getDatastreamDissemination", getDDArgs, getDDParms4);
+
+            // APIA access by user with access- should succeed
             // testuser1 does have permission to access demo:5 datastreams, so this should succeed
             invokeAPIASuccess(testuser1, "testuser1", "getDatastreamDissemination", getDDArgs, getDDParms);       
             
             // APIA access by user who is not owner should fail
             // testuser1 is not currently owner of demo:31, so this should fail
-            invokeAPIAFailure(testuser1, "testuser1", "getDatastreamDissemination", getDDArgs, getDDParms3);       
+            invokeAPIAFailure(testuser1, "testuser1", "getDatastreamDissemination", getDDArgs, getDDParms3);
             
             modObjParms[3] = "testuser1";
             String dateOfSuccess = invokeAPIMSuccessString(admin, "fedoraAdmin", "modifyObject", modObjArgs, modObjParms);
@@ -630,6 +633,11 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
                 "        <value>roleC</value>" + sep +
                 "      </attribute>" + sep +
                 "    </user>" + sep +
+                "    <user name=\"testuserroleC2\" password=\"testuserroleC2\">" + sep +
+                "      <attribute name=\"fedoraRole\">" + sep +
+                "        <value>roleC</value>" + sep +
+                "      </attribute>" + sep +
+                "    </user>" + sep +
                 "  </fedora-users>";
         try
         {
@@ -723,13 +731,13 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
         
         System.out.println("setting Up XACML test");
         admin = getFedoraClient();
+        addObjectSpecificPolicies();
 
         SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
         SimpleXpathEngine.registerNamespace("uvalibadmin", "http://dl.lib.virginia.edu/bin/admin/admin.dtd/");
         backupFedoraUsersFile();
         //addNewTestUsersToFedoraUsers();
         createNewFedoraUsersFileWithTestUsers();
-        
         installJunitPolicies();
         reloadPolicies();
         System.out.println("creating alternate users");
@@ -739,8 +747,74 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
         testuser3 = new FedoraClient(getBaseURL(), "testuser3", "testuser3");
         testuserroleB = new FedoraClient(getBaseURL(), "testuserroleB", "testuserroleB");
         testuserroleC = new FedoraClient(getBaseURL(), "testuserroleC", "testuserroleC");
+        testuserroleC2 = new FedoraClient(getBaseURL(), "testuserroleC2", "testuserroleC2");
         testuser4 = new FedoraClient(getBaseURL(), "testuser4", "testuser4");
         System.out.println("done setting up");
+    }
+
+    private void addObjectSpecificPolicies() {
+    System.out.println("--- adding object-specific policies ---");
+        try {
+            StringBuffer xml = new StringBuffer();
+            xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            xml.append("<foxml:digitalObject PID=\"demo:ObjSpecificTest\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\">");
+            xml.append("  <foxml:objectProperties>");
+            xml.append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"FedoraObject\"/>");
+            xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
+            xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"ObjSpecificTest\"/>");
+            xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#createdDate\" VALUE=\"2004-12-10T00:21:57Z\"/>");
+            xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/view#lastModifiedDate\" VALUE=\"2004-12-10T00:21:57Z\"/>");
+            xml.append("  </foxml:objectProperties>");
+            /*
+            xml.append("  <foxml:datastream ID=\"POLICY\" CONTROL_GROUP=\"X\" STATE=\"A\">");
+            xml.append("    <foxml:datastreamVersion ID=\"POLICY1.0\" MIMETYPE=\"text/xml\" LABEL=\"Policy\">");
+            xml.append("	     <foxml:xmlContent>");
+            xml.append("<Policy PolicyId=\"POLICY\" RuleCombiningAlgId=\"urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable\"");
+            xml.append("  xmlns=\"urn:oasis:names:tc:xacml:1.0:policy\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
+            xml.append("  <Description>");
+            xml.append("    Denies all to user with id testuserroleC2");
+            xml.append("  </Description>");
+            xml.append("  <Target>");
+            xml.append("    <Subjects>");
+            xml.append("      <AnySubject/>");
+            xml.append("    </Subjects>");
+            xml.append("    <Resources>");
+            xml.append("      <AnyResource/>");
+            xml.append("    </Resources>");
+            xml.append("    <Actions>");
+            xml.append("      <AnyAction/>");
+            xml.append("    </Actions>");
+            xml.append("  </Target>");
+            xml.append("  <Rule Effect=\"Deny\" RuleId=\"1\">");
+            xml.append("    <Condition FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:string-equal\">");
+            xml.append("      <AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">testuserroleC2</AttributeValue>");
+            xml.append("      <SubjectAttributeDesignator AttributeId=\"urn:fedora:names:fedora:2.1:subject:loginId\"");
+            xml.append("        DataType=\"http://www.w3.org/2001/XMLSchema#string\" MustBePresent=\"false\"/>");
+            xml.append("    </Condition>");
+            xml.append("  </Rule>");
+            xml.append("</Policy>");
+            xml.append("      </foxml:xmlContent>");
+            xml.append("    </foxml:datastreamVersion>");
+            xml.append("  </foxml:datastream>");
+            */
+            xml.append("</foxml:digitalObject>");
+            admin.getAPIM().ingest(xml.toString().getBytes("UTF-8"),
+                    "foxml1.0", "");
+        } catch (Exception e) {
+            throw new RuntimeException("Failure adding object-specific "
+                    + "policies", e);
+        }
+    }
+    
+    private void removeObjectSpecificPolicies() {
+        try {
+    System.out.println("--- removing object-specific policies ---");
+            admin.getAPIM().purgeObject("demo:ObjSpecificTest", "",
+                    false);
+        } catch (Exception e) {
+            throw new RuntimeException("Failure adding object-specific "
+                    + "policies", e);
+        }
     }
     
     public void tearDown() 
@@ -749,6 +823,7 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
         restoreFedoraUsersFile();
         deleteJunitPolicies();
         reloadPolicies();
+        removeObjectSpecificPolicies();
     }
 	    
     public static void main(String[] args) {
