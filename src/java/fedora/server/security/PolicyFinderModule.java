@@ -245,7 +245,7 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 		AbstractPolicy objectPolicyFromObject = null;
 		DOReader reader = null;
 		try {
-			reader = doManager.getReader(false, ReadOnlyContext.EMPTY, pid);
+			reader = doManager.getReader(Server.USE_DEFINITIVE_STORE, ReadOnlyContext.EMPTY, pid);
 		} catch (ObjectNotInLowlevelStorageException ee) {
 			// nonexistent object is not an error (action is to create the object)			
 		} catch (Throwable e) {
