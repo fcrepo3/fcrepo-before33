@@ -596,6 +596,19 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject/foxml:datastream[@ID='NEWDS2'][//dc:identifier='Identifier 5']",xmlIn);
         assertXpathEvaluatesTo("8", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);          
 
+        // (3.5) test modifyDatastreamByValue of METHODMAP datastream of BMech object
+        System.out.println("Running TestAPIM.testModifyDatastreamByValue for METHODMAP...");
+        datastreamId = apim.modifyDatastreamByValue("demo:2", "METHODMAP", null, "Mapping of WSDL to Fedora Notion of Method Definitions", "text/xml", null, null, null, null, "modified datastream", false);
+
+        // test that datastream was modified
+        objectXML = apim.getObjectXML("demo:2");
+        assertTrue(objectXML.length > 0);
+        xmlIn = new String(objectXML, "UTF-8");
+        //System.out.println("***** Testcase: TestAPIM.testModifyDatastreamByValue NEWDS2\n"+xmlIn);
+        assertXpathExists("foxml:digitalObject[@PID='demo:2']",xmlIn);
+        assertXpathExists("//foxml:datastream[@ID='METHODMAP' and @CONTROL_GROUP='X' and @STATE='A']",xmlIn);
+        assertXpathExists("//foxml:datastreamVersion[@ID='METHODMAP.1' and @MIMETYPE='text/xml' and @LABEL='Mapping of WSDL to Fedora Notion of Method Definitions']",xmlIn);
+
         // (4) test modifyDatastreamByValue for checksumming and compareDatastreamChecksum
         System.out.println("Running TestAPIM.compareDatastreamChecksum...");
         try {
