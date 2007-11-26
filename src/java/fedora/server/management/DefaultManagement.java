@@ -236,7 +236,7 @@ public class DefaultManagement
             m_fedoraXACMLModule.enforceGetObjectProperties(context, pid);
             
             ArrayList<Property> props = new ArrayList<Property>();
-            DOReader reader=m_manager.getReader(Server.USE_CACHE, context, pid);
+            DOReader reader=m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);
             
             props.add(new Property(
                         RDF.TYPE.uri,
@@ -284,7 +284,7 @@ public class DefaultManagement
             
             m_fedoraXACMLModule.enforceGetObjectXML(context, pid, encoding);
 
-            DOReader reader=m_manager.getReader(Server.USE_CACHE, context, pid);
+            DOReader reader=m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);
             InputStream instream=reader.GetObjectXML();
             return instream;
         } finally {

@@ -194,7 +194,7 @@ class ResourceAttributeFinderModule extends AttributeFinderModule {
 		DOReader reader = null;
 		try {
 			LOG.debug("pid="+pid);			
-			reader = doManager.getReader(Server.USE_CACHE, ReadOnlyContext.EMPTY, pid);
+			reader = doManager.getReader(Server.USE_DEFINITIVE_STORE, ReadOnlyContext.EMPTY, pid);
 		} catch (ServerException e) {
 			LOG.debug("couldn't get object reader");
 			return null;
