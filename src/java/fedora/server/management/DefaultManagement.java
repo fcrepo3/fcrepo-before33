@@ -704,11 +704,6 @@ public class DefaultManagement
                     + " be modified by value.\n"
                     + "Use modifyDatastreamByReference instead.");
             }
-            if (orig.DatastreamID.equals("METHODMAP")
-                    || orig.DatastreamID.equals("DSINPUTSPEC")
-                    || orig.DatastreamID.equals("WSDL")) {
-                throw new GeneralException("METHODMAP, DSINPUTSPEC, and WSDL datastreams cannot be modified.");
-            }
 
             // A NULL INPUT PARM MEANS NO CHANGE TO DS ATTRIBUTE...
             // if input parms are null, the ds attribute should not be changed,
