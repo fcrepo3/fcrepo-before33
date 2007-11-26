@@ -238,7 +238,7 @@ public class DefaultManagement
             m_fedoraXACMLModule.enforceGetObjectProperties(context, pid);
             
             ArrayList<Property> props = new ArrayList<Property>();
-            DOReader reader=m_manager.getReader(Server.USE_CACHE, context, pid);
+            DOReader reader=m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);
             
             props.add(new Property(
                         "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
@@ -286,7 +286,7 @@ public class DefaultManagement
             
             m_fedoraXACMLModule.enforceGetObjectXML(context, pid, encoding);
 
-            DOReader reader=m_manager.getReader(Server.USE_CACHE, context, pid);
+            DOReader reader=m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);
             InputStream instream=reader.GetObjectXML();
             return instream;
         } finally {
@@ -1658,7 +1658,7 @@ public class DefaultManagement
         }
 
         // load the bmech, then validate the bindings
-        BMechReader mReader = m_manager.getBMechReader(Server.USE_CACHE, context, bMechPID);
+        BMechReader mReader = m_manager.getBMechReader(Server.USE_DEFINITIVE_STORE, context, bMechPID);
         BMechDSBindSpec spec = mReader.getServiceDSInputSpec(null);
         return spec.validate(augMap.dsBindingsAugmented);
     }
