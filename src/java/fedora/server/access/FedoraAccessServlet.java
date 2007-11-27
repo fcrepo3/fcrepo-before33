@@ -38,6 +38,7 @@ import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.DatastreamNotFoundException;
+import fedora.server.errors.DisseminationException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.MethodNotFoundException;
@@ -466,22 +467,27 @@ public class FedoraAccessServlet
 		} catch (MethodNotFoundException e) {
             LOG.error("Method not found for request: " + requestURI
                     + " (actionLabel=" + actionLabel + ")", e);
-			throw new NotFound404Exception(request, actionLabel, "",
+			throw new NotFound404Exception("", e, request, actionLabel, e.getMessage(),
                     new String[0]);
 		} catch (DatastreamNotFoundException e) {
             LOG.error("Datastream not found for request: " + requestURI
                     + " (actionLabel=" + actionLabel + ")", e);
-			throw new NotFound404Exception(request, actionLabel, "",
+			throw new NotFound404Exception("", e, request, actionLabel, e.getMessage(),
                     new String[0]);
-		} catch (ObjectNotFoundException e) {
+        } catch (ObjectNotFoundException e) {
             LOG.error("Object not found for request: " + requestURI
                     + " (actionLabel=" + actionLabel + ")", e);
-			throw new NotFound404Exception(request, actionLabel, "",
+            throw new NotFound404Exception("", e, request, actionLabel, e.getMessage(),
                     new String[0]);
-		} catch (ObjectNotInLowlevelStorageException e) {
+        } catch (DisseminationException e) {
+            LOG.error("Dissemination failed: " + requestURI
+                    + " (actionLabel=" + actionLabel + ")", e);
+            throw new NotFound404Exception("", e, request, actionLabel, e.getMessage(),
+                    new String[0]);
+        } catch (ObjectNotInLowlevelStorageException e) {
             LOG.error("Object or datastream not found for request: " + requestURI
                     + " (actionLabel=" + actionLabel + ")", e);
-			throw new NotFound404Exception(request, actionLabel, "",
+			throw new NotFound404Exception("", e, request, actionLabel, e.getMessage(),
                     new String[0]);
 		} catch (AuthzException ae) {
             LOG.error("Authorization failed for request: " + requestURI

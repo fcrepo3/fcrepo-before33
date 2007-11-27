@@ -31,11 +31,15 @@ import fedora.common.Constants;
 import fedora.server.Context;
 
 import fedora.server.errors.DatastreamNotFoundException;
+import fedora.server.errors.DisseminationException;
 import fedora.server.errors.DisseminatorNotFoundException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.MethodNotFoundException;
 import fedora.server.errors.ObjectIntegrityException;
+import fedora.server.errors.ObjectNotFoundException;
+import fedora.server.errors.ObjectNotInLowlevelStorageException;
 import fedora.server.errors.ServerException;
+import fedora.server.errors.StorageException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnsupportedTranslationException;
 
@@ -420,34 +424,46 @@ public class SimpleDOReader
                 }
                 else
                 {
-                    cmReader = m_repoReader.getReader(false, m_context, cModelPid);
+                    try {
+                        cmReader = m_repoReader.getReader(false, m_context, cModelPid);
+                    } catch (StorageException e) {
+                        throw new DisseminationException(null, "Content Model Object " +cModelPid+ " does not exist.", null, null, e);
+                    }
                 }
                 RelationshipTuple bDefPIDs[] = cmReader.getRelationships(null, Constants.RELS_EXT.HAS_BDEF.uri);
-                boolean initialized = false;
-                for (int j = 0; j < bDefPIDs.length; j++)
-                {
-                    String bDefPid = bDefPIDs[j].getObjectPID();
-                    DOManager manager = null;
-                    MethodDef[] methods = null;
-                    if (m_repoReader instanceof DOManager)
+                if (bDefPIDs != null && bDefPIDs.length > 0) {
+                    boolean initialized = false;
+                    for (int j = 0; j < bDefPIDs.length; j++)
                     {
-                        manager = (DOManager)m_repoReader;
-                        if (!initialized)
+                        String bDefPid = bDefPIDs[j].getObjectPID();
+                        DOManager manager = null;
+                        MethodDef[] methods = null;
+                        if (m_repoReader instanceof DOManager)
                         {
-                            manager.initializeCModelBmechHashMap(m_context);
-                            initialized = true;
+                            manager = (DOManager)m_repoReader;
+                            if (!initialized)
+                            {
+                                manager.initializeCModelBmechHashMap(m_context);
+                                initialized = true;
+                            }
+                            String bMechPid = manager.lookupBmechForCModel(cModelPid, bDefPid);
+                            if (bMechPid == null) {
+                                throw new DisseminationException("No BMech defined as Contractor for Content Model " +cModelPid);
+                            }
+                            try {
+                                bmechreader = m_repoReader.getBMechReader(false, m_context, bMechPid);
+                            } catch (StorageException se) {
+                                throw new DisseminationException("BMech " +bMechPid+" defined as Contractor for Content Model " +cModelPid+ " not found.");
+                            }
+                            methods = listMethods(bDefPIDs[j].getObjectPID(), bmechreader, versDateTime);
                         }
-                        String bMechPid = manager.lookupBmechForCModel(cModelPid, bDefPid);
-                        bmechreader = m_repoReader.getBMechReader(false, m_context, bMechPid);
-
-                        methods = listMethods(bDefPIDs[j].getObjectPID(), bmechreader, versDateTime);
-                    }
-                    if (methods != null) 
-                    {
-                        for (int k=0; k<methods.length; k++) 
+                        if (methods != null) 
                         {
-                            methodList.add(methods[k]);
-                            bDefIDList.add(bDefPIDs[j].getObjectPID());
+                            for (int k=0; k<methods.length; k++) 
+                            {
+                                methodList.add(methods[k]);
+                                bDefIDList.add(bDefPIDs[j].getObjectPID());
+                            }
                         }
                     }
                 }

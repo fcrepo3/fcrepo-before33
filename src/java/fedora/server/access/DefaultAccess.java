@@ -40,6 +40,7 @@ import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.access.dissemination.DisseminationService;
 import fedora.server.errors.DatastreamNotFoundException;
+import fedora.server.errors.DisseminationException;
 import fedora.server.errors.DisseminatorNotFoundException;
 import fedora.server.errors.InvalidUserParmException;
 import fedora.server.errors.MethodNotFoundException;
@@ -48,6 +49,7 @@ import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.ServerException;
+import fedora.server.errors.StorageException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.management.DefaultManagement;
 import fedora.server.search.FieldSearchQuery;
@@ -232,6 +234,10 @@ public class DefaultAccess extends Module implements Access
     
     DOReader cmReader = null;
     RelationshipTuple cmPIDs[] = reader.getRelationships(null, Constants.RELS_EXT.HAS_FORMAL_CONTENT_MODEL.uri);
+    if (cmPIDs.length == 0) 
+    {
+        throw new DisseminationException("No Content Model defined for object: " +PID );                    
+    }
     boolean done = false;
     m_manager.initializeCModelBmechHashMap(context);
     if (cmPIDs != null && cmPIDs.length > 0)
@@ -246,9 +252,19 @@ public class DefaultAccess extends Module implements Access
             }
             else
             {
-                cmReader = m_manager.getReader(asOfDateTime == null, context, cModelPid);
+                try {
+                    cmReader = m_manager.getReader(asOfDateTime == null, context, cModelPid);
+                }
+                catch (StorageException e)
+                {
+                    throw new DisseminationException(null, "Content Model Object " +cModelPid+ " does not exist.", null, null, e);
+                }
             }
             RelationshipTuple bDefPIDs[] = cmReader.getRelationships(null, Constants.RELS_EXT.HAS_BDEF.uri);
+            if (bDefPIDs == null || bDefPIDs.length == 0) 
+            {
+                throw new DisseminationException("No BDef defined for Content Model " +cModelPid );                    
+            }
             for (int j = 0; j < bDefPIDs.length && !done; j++)
             {
                 if (bDefPIDs[j].getObjectPID().endsWith(bDefPID))
@@ -277,17 +293,6 @@ public class DefaultAccess extends Module implements Access
     {
         String message = "[DefaultAccess] Disseminators are no longer supported ";
         throw new DisseminatorNotFoundException(message);
-//        Disseminator[] dissSet = reader.GetDisseminators(versDateTime, null);
-//        startTime = new Date().getTime();
-//        for (int i=0; i<dissSet.length; i++)
-//        {
-//          if (dissSet[i].bDefID.equalsIgnoreCase(bDefPID))
-//          {
-//            authzAux_dissState = dissSet[i].dissState;
-//            bmechreader = m_manager.getBMechReader(asOfDateTime == null, context, dissSet[i].bMechID);
-//            break;
-//          }
-//        }
     }
 
     // if bmechreader is null, it means that no disseminators matched the specified bDef PID
@@ -406,7 +411,7 @@ public class DefaultAccess extends Module implements Access
         );
     DisseminationService dissService = new DisseminationService();
     dissemination =
-        dissService.assembleDissemination(context, PID, h_userParms, dissBindInfo, authzAux_bmechPID, methodName);
+        dissService.assembleDissemination(context, PID, h_userParms, dissBindInfo, authzAux_bmechPID, bmechreader, methodName);
 
     stopTime = new Date().getTime();
     interval = stopTime - startTime;
@@ -418,95 +423,22 @@ public class DefaultAccess extends Module implements Access
     return dissemination;
   }
   
-/*  No longer needed if the datastream name MUST match the parameter name in the BMech */
-//  private DSBinding[] getBindingInfoFromContentModel(DOReader cmReader, Date versDateTime) throws ServerException
-//  {
-//      Datastream compositeModel = cmReader.GetDatastream("DS-COMPOSITE-MODEL", versDateTime);
-//      return(getBindingInfoFromDatastream( compositeModel ));
-//  }
-//  
-//  public static DSBinding[] getBindingInfoFromDatastream(Datastream ds) throws ServerException
-//  {
-//      ArrayList list = new ArrayList();
-//      DSBinding result[] = null;
-//      ParserUtilityHandler handler = new ParserUtilityHandler(list)
-//      {          
-//          ArrayList list = null;
-//          public void startDocument()
-//          {
-//              list = (ArrayList)(parm1);
-//          }
-//          
-//          public void startElement(String uri, String localName, String qName, Attributes attrs) 
-//          {
-//              if (localName.equals("dsTypeModel"))
-//              {
-//                  DSBinding ds = new DSBinding();
-//                  for (int i = 0; i < attrs.getLength(); i++)
-//                  {
-//                      if (attrs.getLocalName(i).equals("SEMANTIC_ID"))
-//                      {
-//                          ds.bindKeyName = attrs.getValue(i).toString();
-//                      }
-//                      if (attrs.getLocalName(i).equals("ID"))
-//                      {
-//                          ds.datastreamID = attrs.getValue(i).toString();
-//                      }
-//                  }
-//                  ds.bindLabel = "";
-//                  ds.seqNo = "";
-//                  list.add(ds);
-//              }
-//           }              
-//      };
-//      
-//      if (ds != null)
-//      {
-//          SAXParser parser = null;
-//          try 
-//          {
-//              SAXParserFactory spf = SAXParserFactory.newInstance();
-//              spf.setNamespaceAware(true);
-//              parser = spf.newSAXParser();
-//          } 
-//          catch (Exception e) 
-//          {
-//              throw new RepositoryConfigurationException("Error getting SAX "
-//                      + "parser for Content Model info: " + e.getClass().getName()
-//                      + ": " + e.getMessage());
-//          }
-//          try  
-//          {
-//              parser.parse(ds.getContentStream(), handler);
-//          } 
-//          catch (SAXException saxe) 
-//          {
-//              throw new ObjectIntegrityException("Parse error parsing Composite Model Metadata: " + saxe.getMessage());
-//          } 
-//          catch (IOException ioe) 
-//          {
-//              throw new StreamIOException("Stream error parsing Composite Model Metadata: " + ioe.getMessage());
-//          }
-//          finally
-//          {
-//              int size = list.size();
-//              if (size > 0)
-//              {
-//                  result = new DSBinding[size];
-//              }
-//              for (int i = 0; i < size; i++)
-//              {
-//                  result[i] = (DSBinding)list.get(i);
-//              }
-//          }
-//      }  
-//      return(result);
-//  }
     
 private BMechReader FindBMechForBDefAndCModel(Context context, String bDefPID, String cModelPID) throws ServerException
 {
     String bMechPID = m_manager.lookupBmechForCModel(cModelPID, bDefPID);
-    BMechReader bmReader = m_manager.getBMechReader(false, context, bMechPID);
+    if (bMechPID == null)
+    {
+        throw new DisseminationException("No BMech defined as Contractor for Content Model " +cModelPID);
+    }
+    BMechReader bmReader;
+    try {
+        bmReader = m_manager.getBMechReader(false, context, bMechPID);
+    }
+    catch (StorageException se)
+    {
+        throw new DisseminationException("BMech " +bMechPID+" defined as Contractor for Content Model " +cModelPID+ " not found.");
+    }
     return(bmReader);
 }
 
@@ -860,7 +792,7 @@ private DisseminationBindingInfo[] GetCMDADisseminationBindingInfo(
     }
     else
     {
-        String message = "[DefaultAccess] Disseminators are no longer supported ";
+        String message = "[DefaultAccess] Old-style disseminators are no longer supported ";
         throw new DisseminatorNotFoundException(message);
 //        reader = m_manager.getReader(Server.GLOBAL_CHOICE, context, PID);
 //        methodParms = reader.getObjectMethodParms(bDefPID, methodName, versDateTime);

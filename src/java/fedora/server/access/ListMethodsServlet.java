@@ -35,6 +35,7 @@ import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 
+import fedora.server.errors.DisseminationException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectNotFoundException;
@@ -195,6 +196,11 @@ public class ListMethodsServlet
                     + " (actionLabel=" + ACTION_LABEL + ")", e);
             throw new NotFound404Exception(request, ACTION_LABEL, "",
                     new String[0]);
+        } catch (DisseminationException e) {
+            LOG.error("Error Listing Methods: " + requestURI
+                    + " (actionLabel=" + ACTION_LABEL + ")", e);
+            throw new NotFound404Exception("Error Listing Methods", e,
+                    request, ACTION_LABEL, "", new String[0]);
         } catch (ObjectNotInLowlevelStorageException e) {
             LOG.error("Object not found for request: " + requestURI
                     + " (actionLabel=" + ACTION_LABEL + ")", e);

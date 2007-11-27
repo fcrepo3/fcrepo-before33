@@ -1,4 +1,8 @@
 <%@ page info="404==not found" %>
+<%@ page isErrorPage="true" %>
+<%@ page import="java.io.PrintWriter" %>
+<%@ page import="java.io.StringWriter" %>
+<%@ page import="javax.servlet.http.HttpServletRequest" %>
 <%
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         response.addHeader("Content-Type", "text/html; charset=UTF8");
@@ -15,6 +19,11 @@
                      <h2>404 Not Found</h2>
                      <h3>No such object, datastream, or dissemination.</h3>
                   </center>
+<%
+if (exception.getMessage() != null) {
+    out.print(exception.getMessage());
+}
+%>
                </td>
             </tr>
          </tbody></table>

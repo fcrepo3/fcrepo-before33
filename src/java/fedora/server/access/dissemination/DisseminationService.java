@@ -38,8 +38,11 @@ import fedora.server.security.Authorization;
 import fedora.server.security.BackendPolicies;
 import fedora.server.security.BackendSecurity;
 import fedora.server.security.BackendSecuritySpec;
+import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
+import fedora.server.storage.types.BMechDSBindRule;
+import fedora.server.storage.types.BMechDSBindSpec;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamMediation;
 import fedora.server.storage.types.DisseminationBindingInfo;
@@ -211,7 +214,7 @@ public class DisseminationService
    */
   public MIMETypedStream assembleDissemination(Context context, String PID,
       Hashtable h_userParms, DisseminationBindingInfo[] dissBindInfoArray, 
-      String bMechPid, String methodName)
+      String bMechPid, BMechReader bmReader, String methodName)
       throws ServerException
   {
 
@@ -485,6 +488,17 @@ public class DisseminationService
                 + " DissBindingInfo index: " + i);
       }
 
+      BMechDSBindSpec dsBindSpec = bmReader.getServiceDSInputSpec(null);
+      BMechDSBindRule rules[] = dsBindSpec.dsBindRules;
+      for (int rule = 0; rule < rules.length; rule++)
+      {
+          String rulePattern = "(" + rules[rule].bindingKeyName +")";
+          if (dissURL.indexOf(rulePattern) != -1)
+          {
+              throw new DisseminationException(null, "Data Object "+PID+" missing required datastream: " +rules[rule].bindingKeyName, null, null, null);
+          }          
+      }
+
       // Substitute method parameter values in dissemination URL
       Enumeration e = h_userParms.keys();
       while (e.hasMoreElements())
@@ -525,6 +539,12 @@ public class DisseminationService
           dissURL = stripParms(dissURL);
           LOG.debug("Non-supplied optional userInputParm values removed "
                   + "from URL: " + dissURL);
+      }
+      
+      if (dissURL.indexOf("(") != -1)
+      {
+          String datastreamName = dissURL.substring(dissURL.indexOf("(")+1, dissURL.indexOf(")"));
+          throw new DisseminationException(null, "Data Object "+PID+" missing required datastream: " +datastreamName, null, null, null);
       }
 
       // Resolve content referenced by dissemination result.
@@ -849,6 +869,8 @@ public class DisseminationService
    */
   private String stripParms(String dissURL)
   {
+    // if no parameters, simply return passed in string.
+    if (dissURL.indexOf("?")== -1) return(dissURL);
     String requestURI = dissURL.substring(0,dissURL.indexOf("?")+1);
     String parmString = dissURL.substring(dissURL.indexOf("?")+1,dissURL.length());
     String[] parms = parmString.split("&");
