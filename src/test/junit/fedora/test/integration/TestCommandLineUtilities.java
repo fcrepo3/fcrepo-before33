@@ -99,12 +99,12 @@ public class TestCommandLineUtilities
                     new File(FEDORA_HOME + "/server/logs/junit_modify.log"));
         String out = sbOut.toString();
         String err = sbErr.toString();
-        if (out.indexOf("23 modify directives successfully processed.")== -1)
+        if (out.indexOf("25 modify directives successfully processed.")== -1)
         {
             System.out.println(" out = " + out);
             System.out.println(" err = " + err);
         }
-        assertEquals(false, out.indexOf("23 modify directives successfully processed.")== -1);
+        assertEquals(false, out.indexOf("25 modify directives successfully processed.")== -1);
         assertEquals(false, out.indexOf("0 modify directives failed.")== -1);
         System.out.println("Purging batch modify object");
         purgeFast("demo:32");

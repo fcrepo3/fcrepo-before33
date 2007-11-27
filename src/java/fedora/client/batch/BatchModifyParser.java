@@ -581,24 +581,46 @@ public class BatchModifyParser
                     m_dsFirstElementBuffer.append('<');
                     if (prefix!=null) {
                         if (!m_dsPrefixes.contains(prefix)) {
-                            if (!"".equals(prefix)) {
                                 m_dsPrefixes.add(prefix);
-                            }
                         }
-                        m_dsFirstElementBuffer.append(prefix);
-                        m_dsFirstElementBuffer.append(':');
+                        if(!prefix.equals("")) {
+                        	m_dsFirstElementBuffer.append(prefix);
+                        	m_dsFirstElementBuffer.append(':');
+                        }
                     }
                     m_dsFirstElementBuffer.append(localName);
+                    
+                    for (int i=0; i<attrs.getLength(); i++) {
+                    	m_dsFirstElementBuffer.append(' ');
+                    	
+                        String aPrefix=(String) nsPrefixMap.get(attrs.getURI(i));
+                        if (aPrefix!=null) {
+                            if (!m_dsPrefixes.contains(aPrefix)) {
+                                    m_dsPrefixes.add(aPrefix);
+                            }
+                            if(!prefix.equals("")) {
+                            	m_dsFirstElementBuffer.append(aPrefix);
+                            	m_dsFirstElementBuffer.append(':');
+                            }
+                        }
+                    	if(!attrs.getLocalName(i).equals("")) {
+	                        m_dsFirstElementBuffer.append(attrs.getLocalName(i));
+	                        m_dsFirstElementBuffer.append("=\"");
+	                        // re-encode decoded standard entities (&, <, >, ", ')
+	                        m_dsFirstElementBuffer.append(StreamUtility.enc(attrs.getValue(i)));
+	                        m_dsFirstElementBuffer.append("\"");
+                    	}
+                    }                    
                 } else {
                     m_dsXMLBuffer.append('<');
                     if (prefix!=null) {
                         if (!m_dsPrefixes.contains(prefix)) {
-                            if (!"".equals(prefix)) {
                                 m_dsPrefixes.add(prefix);
-                            }
                         }
-                        m_dsXMLBuffer.append(prefix);
-                        m_dsXMLBuffer.append(':');
+                        if(!prefix.equals("")) {
+	                        m_dsXMLBuffer.append(prefix);
+	                        m_dsXMLBuffer.append(':');
+                        }
                     }
                     m_dsXMLBuffer.append(localName);
 
@@ -607,12 +629,12 @@ public class BatchModifyParser
                         String aPrefix=(String) nsPrefixMap.get(attrs.getURI(i));
                         if (aPrefix!=null) {
                             if (!m_dsPrefixes.contains(aPrefix)) {
-                                if (!"".equals(aPrefix)) {
                                     m_dsPrefixes.add(aPrefix);
-                                }
                             }
-                            m_dsXMLBuffer.append(aPrefix);
-                            m_dsXMLBuffer.append(':');
+                            if(!prefix.equals("")) {
+	                            m_dsXMLBuffer.append(aPrefix);
+	                            m_dsXMLBuffer.append(':');
+                            }
                         }
                         m_dsXMLBuffer.append(attrs.getLocalName(i));
                         m_dsXMLBuffer.append("=\"");
@@ -640,8 +662,12 @@ public class BatchModifyParser
                     // now finish writing to m_dsFirstElementBuffer, a series of strings like
                     // ' xmlns:PREFIX="URI"'
                     String pfxUri=(String) m_prefixUris.get(pfx);
-                    m_dsFirstElementBuffer.append(" xmlns:");
-                    m_dsFirstElementBuffer.append(pfx);
+                    if(pfx.equals("")) {
+                        m_dsFirstElementBuffer.append(" xmlns");                    	
+                    } else {
+                        m_dsFirstElementBuffer.append(" xmlns:");
+                        m_dsFirstElementBuffer.append(pfx);
+                    }
                     m_dsFirstElementBuffer.append("=\"");
                     m_dsFirstElementBuffer.append(pfxUri);
                     m_dsFirstElementBuffer.append("\"");
@@ -667,7 +693,7 @@ public class BatchModifyParser
                 // if needed
                 m_dsXMLBuffer.append("</");
                 String prefix=(String) nsPrefixMap.get(namespaceURI);
-                if (prefix!=null) {
+                if (prefix!=null && !prefix.equals("")) {
                     m_dsXMLBuffer.append(prefix);
                     m_dsXMLBuffer.append(':');
                 }
