@@ -45,7 +45,7 @@ public abstract class Module
      * @throws ModuleInitializationException If initilization values are
      *         invalid or initialization fails for some other reason.
      */
-    public Module(Map moduleParameters, Server server, String role)
+    public Module(Map<String, String> moduleParameters, Server server, String role)
             throws ModuleInitializationException {
         super(moduleParameters);
         m_role=role;

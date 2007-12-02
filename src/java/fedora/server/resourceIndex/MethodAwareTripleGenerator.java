@@ -5,19 +5,16 @@
 
 package fedora.server.resourceIndex;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.jrdf.graph.GraphElementFactory;
 import org.jrdf.graph.Triple;
-import org.jrdf.graph.URIReference;
 
-import fedora.common.PID;
 import fedora.server.errors.ResourceIndexException;
 import fedora.server.storage.BDefReader;
 import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOReader;
-import fedora.server.storage.types.Datastream;
 
 /**
  * Generates RDF triples for Fedora objects with the help of a 
@@ -55,7 +52,8 @@ public class MethodAwareTripleGenerator extends BaseTripleGenerator {
      *
      * @param provider the provider to use for behavior mechanism info.
      */
-    public MethodAwareTripleGenerator(MethodInfoProvider provider) {
+    public MethodAwareTripleGenerator(GraphElementFactory geFactory, MethodInfoProvider provider) {
+        super(geFactory);
         _provider = provider;
     }
 

@@ -24,7 +24,7 @@ import fedora.common.rdf.FedoraViewNamespace;
 import fedora.common.rdf.RDFSyntaxNamespace;
 import fedora.common.rdf.RDFXSDNamespace;
 import fedora.common.rdf.RecoveryNamespace;
-import fedora.common.rdf.TucanaNamespace;
+import fedora.common.rdf.MulgaraNamespace;
 
 import fedora.common.xml.format.FOXML1_0Format;
 import fedora.common.xml.format.FOXML1_1Format;
@@ -139,10 +139,10 @@ public interface Constants {
     public static final RDFSyntaxNamespace RDF = new RDFSyntaxNamespace();
 
     /**
-     * The Tucana RDF namespace;
-     * <code>http://tucana.org/tucana#</code>
+     * The Mulgara RDF namespace;
+     * <code>http://mulgara.org/mulgara#</code>
      */
-    public static final TucanaNamespace TUCANA = new TucanaNamespace();
+    public static final MulgaraNamespace MULGARA = new MulgaraNamespace();
 
     /**
      * The XSD RDF namespace;

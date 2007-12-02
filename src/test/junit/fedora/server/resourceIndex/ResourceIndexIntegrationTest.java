@@ -1,44 +1,37 @@
 package fedora.server.resourceIndex;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.apache.log4j.Logger;
-
+import org.jrdf.graph.GraphElementFactory;
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.Triple;
-
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.trippi.RDFFormat;
 import org.trippi.RDFUtil;
 import org.trippi.TripleIterator;
 import org.trippi.TriplestoreConnector;
-
-import fedora.common.Constants;
 
 import fedora.server.storage.BDefReader;
 import fedora.server.storage.BMechReader;
@@ -48,16 +41,14 @@ import fedora.server.storage.MockRepositoryReader;
 import fedora.server.storage.SimpleBDefReader;
 import fedora.server.storage.SimpleBMechReader;
 import fedora.server.storage.SimpleDOReader;
-
 import fedora.server.storage.translation.DOTranslationUtility;
-import fedora.server.storage.translation.FOXML1_1DOSerializer;
 import fedora.server.storage.translation.FOXML1_1DODeserializer;
-
+import fedora.server.storage.translation.FOXML1_1DOSerializer;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
+import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 
 /**
@@ -99,6 +90,8 @@ public abstract class ResourceIndexIntegrationTest {
      * Where to get DB connections from.
      */
     private static ConnectionPool _dbPool;
+    
+    private GraphElementFactory _geFactory;
 
     // Test setUp
 
@@ -206,12 +199,14 @@ public abstract class ResourceIndexIntegrationTest {
         if (_ri != null) {
             try { _ri.close(); } catch (Exception e) { }
         }
+        TriplestoreConnector connector = getConnector();
+        _geFactory = connector.getElementFactory();
         MethodInfoStore methodInfoStore = 
                 new DatabaseMethodInfoStore(_dbPool, indexLevel == 2);
         TripleGenerator generator =
-                new MethodAwareTripleGenerator(methodInfoStore);
+                new MethodAwareTripleGenerator(_geFactory, methodInfoStore);
         
-        _ri = new ResourceIndexImpl(getConnector(),
+        _ri = new ResourceIndexImpl(connector,
                                        methodInfoStore,
                                        generator,
                                        indexLevel,
@@ -226,8 +221,9 @@ public abstract class ResourceIndexIntegrationTest {
      */
     private static TriplestoreConnector getConnector() throws Exception {
 
-        HashMap config = new HashMap();
-
+        HashMap<String, String> config = new HashMap<String, String>();
+        
+        ///*
         config.put("backslashIsEscape",       "false");
         config.put("ddlGenerator",            "org.nsdl.mptstore.impl.derby.DerbyDDLGenerator");
         config.put("autoFlushBufferSize",     "1000");
@@ -244,6 +240,33 @@ public abstract class ResourceIndexIntegrationTest {
 
         return TriplestoreConnector.init("org.trippi.impl.mpt.MPTConnector",
                                          config);
+        //*/
+        
+        /*
+        config.put("jdbcDriver",              DB_DRIVER);
+        config.put("jdbcURL",                 DB_URL);
+        config.put("username",                DB_USERNAME);
+        config.put("password",                DB_PASSWORD);
+        
+        config.put("serverName",                "server1");
+        config.put("modelName",                 "ri");
+        config.put("readOnly",                  "false");
+        config.put("autoCreate",                "true");
+        config.put("autoTextIndex",             "false");
+        config.put("autoFlushBufferSize",       "1000");
+        config.put("autoFlushDormantSeconds",   "5");
+        config.put("bufferFlushBatchSize",      "1000");
+        config.put("bufferSafeCapacity",        "2000");
+        config.put("poolInitialSize",           "2");
+        config.put("poolMaxSize",               "5");
+        config.put("poolMaxGrowth",             "-1");
+        config.put("remote",                "true");
+        config.put("host",                "localhost");
+        config.put("path",                  "/tmp/riTest");
+
+        return TriplestoreConnector.init("org.trippi.impl.mulgara.MulgaraConnector",
+                                         config);
+        */
     }
 
     // Test tearDown
@@ -533,7 +556,8 @@ public abstract class ResourceIndexIntegrationTest {
 
         // prepare appropriate MethodInfoStore and TripleGenerator
         MethodInfoStore methodInfo = new MockMethodInfoStore(riLevel == 2);
-        TripleGenerator generator = new MethodAwareTripleGenerator(methodInfo);
+        TripleGenerator generator = new MethodAwareTripleGenerator(_geFactory,
+                methodInfo);
 
         Set<Triple> expected = new HashSet<Triple>();
 
@@ -937,7 +961,7 @@ public abstract class ResourceIndexIntegrationTest {
     }
 
     private static void addDatastream(DigitalObject obj, String id, Datastream ds) {
-        List versions = obj.datastreams(id);
+        List<Datastream> versions = obj.datastreams(id);
         ds.DatastreamID = id;
         ds.DSState = "A";
         ds.DSVersionable = true;

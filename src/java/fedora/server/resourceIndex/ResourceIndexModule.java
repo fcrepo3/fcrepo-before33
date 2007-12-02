@@ -7,7 +7,6 @@ package fedora.server.resourceIndex;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -17,23 +16,21 @@ import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.Triple;
-
 import org.trippi.FlushErrorHandler;
 import org.trippi.RDFFormat;
-import org.trippi.TriplestoreConnector;
 import org.trippi.TripleIterator;
+import org.trippi.TripleUpdate;
+import org.trippi.TriplestoreConnector;
 import org.trippi.TrippiException;
 import org.trippi.TupleIterator;
 
 import fedora.common.Constants;
-
-import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.ModuleShutdownException;
-import fedora.server.errors.ResourceIndexException;
-
 import fedora.server.Module;
 import fedora.server.Parameterized;
 import fedora.server.Server;
+import fedora.server.errors.ModuleInitializationException;
+import fedora.server.errors.ModuleShutdownException;
+import fedora.server.errors.ResourceIndexException;
 import fedora.server.storage.BDefReader;
 import fedora.server.storage.BMechReader;
 import fedora.server.storage.ConnectionPool;
@@ -60,7 +57,7 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
     /**
      * Instantiate the module.
      */
-    public ResourceIndexModule(Map parameters, Server server, String role)
+    public ResourceIndexModule(Map<String, String> parameters, Server server, String role)
             throws ModuleInitializationException {
         super(parameters, server, role);
     }
@@ -111,7 +108,8 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
             MethodInfoStore methodInfoStore = new DatabaseMethodInfoStore(
                     getConnectionPool(), level == 2);
             _ri = new ResourceIndexImpl(connector, methodInfoStore, 
-                    new MethodAwareTripleGenerator(methodInfoStore),
+                    new MethodAwareTripleGenerator(connector.getElementFactory(), 
+                            methodInfoStore),
                     level, syncUpdates);
             setAliasMap(getAliases());
         } catch (Exception e) {
@@ -174,7 +172,7 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
         map.put("fedora-rels-ext", Constants.RELS_EXT.uri);
         map.put("fedora-view", Constants.VIEW.uri);
         map.put("rdf", Constants.RDF.uri);
-        map.put("tucana", Constants.TUCANA.uri);
+        map.put("mulgara", Constants.MULGARA.uri);
         map.put("xml-schema", Constants.RDF_XSD.uri);
         return map;
     }
@@ -365,14 +363,14 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
     /**
      * {@inheritDoc}
      */
-    public void setAliasMap(Map aliasToPrefix) throws TrippiException {
+    public void setAliasMap(Map<String, String> aliasToPrefix) throws TrippiException {
         _ri.setAliasMap(aliasToPrefix);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Map getAliasMap() throws TrippiException {
+    public Map<String, String> getAliasMap() throws TrippiException {
         return _ri.getAliasMap();
     }
 
@@ -479,7 +477,7 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
     /**
      * {@inheritDoc}
      */
-	public void add(List triples, boolean flush)
+	public void add(List<Triple> triples, boolean flush)
 	        throws IOException, TrippiException {
         _ri.add(triples, flush);
 	}
@@ -503,7 +501,7 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
     /**
      * {@inheritDoc}
      */
-	public void delete(List triples, boolean flush)
+	public void delete(List<Triple> triples, boolean flush)
 	        throws IOException, TrippiException {
         _ri.delete(triples, flush);
 	}
@@ -549,7 +547,7 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
     /**
      * {@inheritDoc}
      */
-	public List findBufferedUpdates(SubjectNode subject, 
+	public List<TripleUpdate> findBufferedUpdates(SubjectNode subject, 
 	        PredicateNode predicate, ObjectNode object, int updateType) {
 		return _ri.findBufferedUpdates(subject, predicate, object, 
 		        updateType);

@@ -22,6 +22,7 @@ package fedora.common.rdf;
  * @author cwilper@cs.cornell.edu
  */
 public class RDFXSDNamespace extends RDFNamespace {
+    private static final long serialVersionUID = 1L;
 
     public final RDFName DATE_TIME;
     public final RDFName INT;

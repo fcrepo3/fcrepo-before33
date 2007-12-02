@@ -7,7 +7,6 @@ package fedora.server.resourceIndex;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -18,17 +17,16 @@ import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.Triple;
-
 import org.trippi.FlushErrorHandler;
 import org.trippi.RDFFormat;
+import org.trippi.TripleIterator;
+import org.trippi.TripleUpdate;
 import org.trippi.TriplestoreConnector;
 import org.trippi.TriplestoreWriter;
-import org.trippi.TripleIterator;
 import org.trippi.TrippiException;
 import org.trippi.TupleIterator;
 
 import fedora.server.errors.ResourceIndexException;
-
 import fedora.server.storage.BDefReader;
 import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOReader;
@@ -309,14 +307,14 @@ public class ResourceIndexImpl implements ResourceIndex {
     /**
      * {@inheritDoc}
      */
-    public void setAliasMap(Map aliasToPrefix) throws TrippiException {
+    public void setAliasMap(Map<String, String> aliasToPrefix) throws TrippiException {
         _writer.setAliasMap(aliasToPrefix);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Map getAliasMap() throws TrippiException {
+    public Map<String, String> getAliasMap() throws TrippiException {
         return _writer.getAliasMap();
     }
 
@@ -423,7 +421,7 @@ public class ResourceIndexImpl implements ResourceIndex {
     /**
      * {@inheritDoc}
      */
-	public void add(List triples, boolean flush)
+	public void add(List<Triple> triples, boolean flush)
 	        throws IOException, TrippiException {
         _writer.add(triples, flush);
 	}
@@ -447,7 +445,7 @@ public class ResourceIndexImpl implements ResourceIndex {
     /**
      * {@inheritDoc}
      */
-	public void delete(List triples, boolean flush)
+	public void delete(List<Triple> triples, boolean flush)
 	        throws IOException, TrippiException {
         _writer.delete(triples, flush);
 	}
@@ -493,7 +491,7 @@ public class ResourceIndexImpl implements ResourceIndex {
     /**
      * {@inheritDoc}
      */
-	public List findBufferedUpdates(SubjectNode subject, 
+	public List<TripleUpdate> findBufferedUpdates(SubjectNode subject, 
 	        PredicateNode predicate, ObjectNode object, int updateType) {
 		return _writer.findBufferedUpdates(subject, predicate, object, 
 		        updateType);

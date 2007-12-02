@@ -312,7 +312,7 @@
             WARNING: changing the level (except to 0) requires 
             running the Resource Index Rebuilder.</comment>
 		</param>
-		<param name="datastore" value="localKowariTriplestore">
+		<param name="datastore" value="localMulgaraTriplestore">
 			<comment>(required) 
             Name of the triplestore to use. WARNING: changing the 
             triplestore running the Resource Index Rebuilder.</comment>
@@ -721,14 +721,14 @@
 				2 (grow i.e., increase the size of the pool).</comment>
 		</param>
 	</datastore>
-	<datastore id="localKowariTriplestore">
-		<comment>local Kowari Triplestore used by the Resource Index</comment>
-		<param name="connectorClassName" value="org.trippi.impl.kowari.KowariConnector">
+	<datastore id="localMulgaraTriplestore">
+		<comment>local Mulgara Triplestore used by the Resource Index</comment>
+		<param name="connectorClassName" value="org.trippi.impl.mulgara.MulgaraConnector">
 			<comment>The name of the Trippi Connector class used to communicate 
 			with the triplestore.</comment>
 		</param>
 		<param name="remote" value="false">
-			<comment>Tells the connector to communicate with Kowari in remote or 
+			<comment>Tells the connector to communicate with Mulgara in remote or 
 			local mode. If true, the host parameter must be defined. If false,
 			the path parameter must be defined.</comment>
 		</param>
@@ -769,14 +769,6 @@
 			times. If true, the text model will be named modelName-fullText. 
 			Note that if this is true and autoCreate is true, the text model 
 			will also be created if it doesn't already exist.</comment>
-		</param>
-		<param name="memoryBuffer" value="true">
-			<comment>Whether to use a memory buffer or a database buffer for 
-			write operations. The buffer is where triples are stored before 
-			they're actually written. Normally, a memory buffer will be 
-			sufficient. However, in certain server environments, a database 
-			buffer is the better option, offering higher capacity and 
-			persistence.</comment>
 		</param>
 		<param name="autoFlushDormantSeconds" value="5">
 			<comment>Seconds of buffer inactivity that will trigger an 

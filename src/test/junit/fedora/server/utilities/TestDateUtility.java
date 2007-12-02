@@ -10,9 +10,21 @@ import junit.framework.TestCase;
 public class TestDateUtility extends TestCase {
     protected final Date EPOCH = new Date(0L);
     protected final String EPOCH_DT = "1970-01-01T00:00:00.000Z";
+    protected final String EPOCH_DT2 = "1970-01-01T00:00:00Z"; // no millis
+    protected final String EPOCH_XSD_DT = "1970-01-01T00:00:00Z";
     protected final String EPOCH_D = "1970-01-01Z";
     protected final String EPOCH_T = "00:00:00.000Z";
     protected final String HTTP_DATE = "Thu, 04 Aug 2005 01:35:07 GMT";
+    
+    protected final Date ONE_CE = new Date(-62135769600000L);
+    protected final String ONE_CE_DT = "0001-01-01T00:00:00Z";
+    protected final String ONE_CE_XSD_DT = "0001-01-01T00:00:00Z";
+    protected final Date ONE_BCE = new Date(-62167392000000L);
+    protected final String ONE_BCE_DT = "-0001-01-01T00:00:00Z";
+    protected final String ONE_BCE_XSD_DT = "0000-01-01T00:00:00Z";
+    protected final Date TWO_BCE = new Date(-62198928000000L);
+    protected final String TWO_BCE_DT = "-0002-01-01T00:00:00Z";
+    protected final String TWO_BCE_XSD_DT = "-0001-01-01T00:00:00Z";
     
     public static void main(String[] args) {
         junit.textui.TestRunner.run(TestDateUtility.class);
@@ -20,6 +32,11 @@ public class TestDateUtility extends TestCase {
     
     public void testConvertDateToString() {
         assertEquals(DateUtility.convertDateToString(EPOCH), EPOCH_DT);
+        assertEquals(DateUtility.convertDateToString(EPOCH, true), EPOCH_DT);
+        assertEquals(DateUtility.convertDateToString(EPOCH, false), EPOCH_DT2);
+        assertEquals(DateUtility.convertDateToString(ONE_CE), ONE_CE_DT);
+        assertEquals(DateUtility.convertDateToString(ONE_BCE), ONE_BCE_DT);
+        assertEquals(DateUtility.convertDateToString(TWO_BCE), TWO_BCE_DT);
     }
 
     public void testConvertDateToDateString() {
@@ -28,6 +45,13 @@ public class TestDateUtility extends TestCase {
 
     public void testConvertDateToTimeString() {
         assertEquals(DateUtility.convertDateToTimeString(EPOCH), EPOCH_T);
+    }
+    
+    public void testConvertDateToXSDString() {
+        assertEquals(DateUtility.convertDateToXSDString(EPOCH), EPOCH_XSD_DT);
+        assertEquals(DateUtility.convertDateToXSDString(ONE_CE), ONE_CE_XSD_DT);
+        assertEquals(DateUtility.convertDateToXSDString(ONE_BCE), ONE_BCE_XSD_DT);
+        assertEquals(DateUtility.convertDateToXSDString(TWO_BCE), TWO_BCE_XSD_DT);
     }
 
     public void testParseDate() {

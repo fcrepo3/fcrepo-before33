@@ -5,6 +5,7 @@
 
 package fedora.common.rdf;
 
+
 /**
  * The Fedora Model RDF namespace.
  * 
@@ -16,7 +17,7 @@ package fedora.common.rdf;
  * @author cwilper@fedora-commons.org
  */
 public class FedoraModelNamespace extends RDFNamespace {
-
+    private static final long serialVersionUID = 1L;
     // Properties
     public final RDFName CONTENT_MODEL;
     public final RDFName CREATED_DATE;

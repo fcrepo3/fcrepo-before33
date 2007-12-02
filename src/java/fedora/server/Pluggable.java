@@ -33,7 +33,7 @@ public abstract class Pluggable
      *
      * @param parameters The map from which to derive the name-value pairs.
      */
-    public Pluggable(Map parameters) {
+    public Pluggable(Map<String, String> parameters) {
         setParameters(parameters);
     }
 

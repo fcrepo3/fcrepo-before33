@@ -31,7 +31,7 @@ import fedora.common.Constants;
 public abstract class Parameterized implements Constants {
 
     /** a reference to the provided params for this component */
-    private Map m_parameters;
+    private Map<String, String> m_parameters;
 
     /** an empty array of strings */
     private final static String[] EMPTY_STRING_ARRAY=new String[] {};
@@ -48,7 +48,7 @@ public abstract class Parameterized implements Constants {
      *
      * @param parameters The map from which to derive the name-value pairs.
      */
-    public Parameterized(Map parameters) {
+    public Parameterized(Map<String, String> parameters) {
         setParameters(parameters);
     }
 
@@ -61,10 +61,10 @@ public abstract class Parameterized implements Constants {
      *
      * @param parameters The map from which to derive the name-value pairs.
      */
-    protected final void setParameters(Map parameters) {
+    protected final void setParameters(Map<String, String> parameters) {
         m_parameters=parameters;
         if (m_parameters==null) {
-            m_parameters=new HashMap();
+            m_parameters=new HashMap<String, String>();
         }
     }
     
@@ -104,7 +104,7 @@ public abstract class Parameterized implements Constants {
         m_parameters.put(name, value);
     }
 
-    public Map getParameters() {
+    public Map<String, String> getParameters() {
         return m_parameters;
     }
 
@@ -113,7 +113,7 @@ public abstract class Parameterized implements Constants {
      *
      * @return Iterator The names.
      */
-    public final Iterator parameterNames() {
+    public final Iterator<String> parameterNames() {
         return m_parameters.keySet().iterator();
     }
 

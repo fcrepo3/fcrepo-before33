@@ -12,8 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.jrdf.graph.GraphElementFactory;
+import org.jrdf.graph.GraphElementFactoryException;
 import org.jrdf.graph.ObjectNode;
-import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.Triple;
 import org.jrdf.graph.URIReference;
@@ -45,17 +46,16 @@ public class BaseTripleGenerator implements Constants, TripleGenerator {
     /**
      * The factory this instance will use for creating JRDF objects.
      */
-    private RDFUtil _rdfUtil;
+    private GraphElementFactory _geFactory;
 
     /**
      * Constructor.
      */
-    public BaseTripleGenerator() {
-        try {
-            _rdfUtil = new RDFUtil();
-        } catch (Exception e) { 
-            // never happens
-            throw new RuntimeException("Unexpected error", e);
+    public BaseTripleGenerator(GraphElementFactory geFactory) {
+        if (geFactory != null) {
+            _geFactory = geFactory;
+        } else {
+            _geFactory = new RDFUtil();
         }
     }
 
@@ -323,10 +323,10 @@ public class BaseTripleGenerator implements Constants, TripleGenerator {
     // Helper methods for creating RDF components
 
     protected URIReference createResource(String uri) throws Exception {
-        return _rdfUtil.createResource(new URI(uri));
+        return _geFactory.createResource(new URI(uri));
     }
 
-    protected URIReference getStateResource(String state)
+    protected RDFName getStateResource(String state)
             throws ResourceIndexException {
         if (state == null) {
             throw new ResourceIndexException("State cannot be null");
@@ -344,44 +344,61 @@ public class BaseTripleGenerator implements Constants, TripleGenerator {
     // Helper methods for adding triples
 
     protected void add(SubjectNode subject,
-                       PredicateNode predicate,
-                       ObjectNode object,
+                       RDFName predicate,
+                       RDFName object,
                        Set<Triple> set) throws ResourceIndexException {
         try {
-            set.add(_rdfUtil.createTriple(subject, predicate, object));
-        } catch (Exception e) {
-            throw new ResourceIndexException("Error creating triple", e);
+            add(subject, 
+                    predicate, 
+                    _geFactory.createResource(object.getURI()),
+                    set);
+        } catch (GraphElementFactoryException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
         }
     }
 
     protected void add(SubjectNode subject,
-                       PredicateNode predicate,
-                       boolean booleanValue,
-                       Set<Triple> set) throws Exception {
-        add(subject, predicate, new Boolean(booleanValue).toString(), set);
+            RDFName predicate,
+            ObjectNode object,
+            Set<Triple> set) throws ResourceIndexException {
+        try {
+            set.add(_geFactory.createTriple(subject, 
+                    _geFactory.createResource(predicate.getURI()), 
+                    object));
+        } catch (GraphElementFactoryException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
     }
 
     protected void add(SubjectNode subject,
-                       PredicateNode predicate,
+                       RDFName predicate,
                        String lexicalValue,
                        Set<Triple> set) throws Exception {
         if (lexicalValue != null) {
-            ObjectNode object = _rdfUtil.createLiteral(lexicalValue);
-            set.add(_rdfUtil.createTriple(subject, predicate, object));
+            set.add(_geFactory.createTriple(subject, 
+                    _geFactory.createResource(predicate.getURI()), 
+                    _geFactory.createLiteral(lexicalValue)));
         }
     }
 
     protected void add(SubjectNode subject,
-                       PredicateNode predicate,
+                       RDFName predicate,
                        Date dateValue,
                        Set<Triple> set) throws Exception {
         if (dateValue != null) {
-            String lexicalValue = DateUtility.convertDateToString(dateValue);
-            URI dataType = RDF_XSD.DATE_TIME.getURI();
-            ObjectNode object = _rdfUtil.createLiteral(lexicalValue,
-                                                       dataType);
-            set.add(_rdfUtil.createTriple(subject, predicate, object));
+            String lexicalValue = DateUtility.convertDateToXSDString(dateValue);
+            ObjectNode object = _geFactory.createLiteral(lexicalValue, 
+                    RDF_XSD.DATE_TIME.getURI());
+            set.add(_geFactory.createTriple(subject, 
+                    _geFactory.createResource(predicate.getURI()), 
+                    object));
         }
     }
-
+    
+    protected void add(SubjectNode subject, 
+            RDFName predicate,
+            boolean booleanValue, 
+            Set<Triple> set) throws Exception {
+        add(subject, predicate, Boolean.toString(booleanValue), set);
+    }
 }

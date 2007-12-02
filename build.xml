@@ -84,36 +84,44 @@
     
     <pathconvert pathsep="," property="server-libs.list">
         <path id="server-libs.path">
-            <pathelement location="${lib.activation}"/>
-            <pathelement location="${lib.avalon-framework}"/>
+        	<pathelement location="${lib.avalon-framework}"/>
             <pathelement location="${lib.batik}"/>
-            <pathelement location="${lib.castor}"/>
             <pathelement location="${lib.cos}"/>
-            <pathelement location="${lib.dateutils}"/>
         	<pathelement location="${lib.dom4j}"/>
             <pathelement location="${lib.fop}"/>
             <pathelement location="${lib.ij}"/>
             <pathelement location="${lib.jai_codec}"/>
             <pathelement location="${lib.jai_core}"/>
         	<pathelement location="${lib.jaxen}"/>
-            <pathelement location="${lib.jena}"/>
             <pathelement location="${lib.jtidy}"/>
-            <pathelement location="${lib.kowari-driver}"/>
             <pathelement location="${lib.log4j}"/>
-            <pathelement location="${lib.lucene}"/>
-            <pathelement location="${lib.mptstore}"/>
             <pathelement location="${lib.md5}"/>
-            <pathelement location="${lib.openrdf-util}"/>
-            <pathelement location="${lib.openrdf-model}"/>
             <pathelement location="${lib.oro}"/>
             <pathelement location="${lib.rio}"/>
             <pathelement location="${lib.sunxacml}"/>
-            <pathelement location="${lib.trippi-core}"/>
-            <pathelement location="${lib.trippi-kowari}"/>
-            <pathelement location="${lib.trippi-mptstore}"/>
-            <pathelement location="${lib.trove}"/>
             <pathelement location="${lib.xmlpull}"/>
             <pathelement location="${lib.xpp3}"/>
+        	
+        	<pathelement location="${lib.activation}"/>
+        	<pathelement location="${lib.beep}"/>
+        	<pathelement location="${lib.castor}"/>
+        	<pathelement location="${lib.dateutils}"/>
+        	<pathelement location="${lib.emory-util}"/>
+        	<pathelement location="${lib.jca}"/>
+        	<pathelement location="${lib.jotm}"/>
+    		<pathelement location="${lib.jotm-carol}"/>
+        	<pathelement location="${lib.jotm-iiop}"/>
+        	<pathelement location="${lib.jrdf}"/>
+        	<pathelement location="${lib.jta}"/>
+        	<pathelement location="${lib.lucene}"/>
+            <pathelement location="${lib.mptstore}"/>
+        	<pathelement location="${lib.mulgara}"/>
+        	<pathelement location="${lib.openrdf-util}"/>
+            <pathelement location="${lib.openrdf-model}"/>
+        	<pathelement location="${lib.trippi-core}"/>
+            <pathelement location="${lib.trippi-mulgara}"/>
+            <pathelement location="${lib.trippi-mptstore}"/>
+        	<pathelement location="${lib.trove}"/>
             
         	<pathelement location="${lib.commons-beanutils}"/>
         	<pathelement location="${lib.commons-betwixt}"/>
@@ -125,19 +133,12 @@
             <pathelement location="${lib.staxapi}"/>
             <pathelement location="${lib.sjsxp}"/>
             <pathelement location="${lib.staxutil}"/>
-        	
-        	<pathelement location="${lib.jsf-api}"/>
-        	<pathelement location="${lib.jsf-impl}"/>
-        	<pathelement location="${lib.jstl}"/>
-        	<pathelement location="${lib.jstl-standard}"/>
             
-            <!-- prev in common/lib -->
             <pathelement location="${lib.axis}"/>
             <pathelement location="${lib.commons-discovery}"/>
             <pathelement location="${lib.commons-logging}"/>
             <pathelement location="${lib.javamail}"/>
             <pathelement location="${lib.jaxrpc}"/>
-            <pathelement location="${lib.jrdf}"/>
             <pathelement location="${lib.saaj}"/>
             <pathelement location="${lib.tt-bytecode}"/>
             <pathelement location="${lib.wsdl4j}"/>

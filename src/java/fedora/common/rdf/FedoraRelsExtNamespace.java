@@ -16,7 +16,8 @@ package fedora.common.rdf;
  * @author cwilper@fedora-commons.org
  */
 public class FedoraRelsExtNamespace extends RDFNamespace {
-
+    private static final long serialVersionUID = 1L;
+    
     // Properties
     public final RDFName IS_MEMBER_OF;
     public final RDFName HAS_BDEF;

@@ -99,27 +99,27 @@ public class ResourceIndexRebuilder implements Rebuilder {
         String tsConnector = tsDC.getParameter("connectorClassName").getValue();
 
         String tsPath = null;
-        if (tsConnector.equals("org.trippi.impl.kowari.KowariConnector")) {
+        if (tsConnector.equals("org.trippi.impl.mulgara.MulgaraConnector")) {
             Parameter remoteParm = tsDC.getParameter("remote");
             if (remoteParm != null && remoteParm.getValue().equalsIgnoreCase("false")) {
                 tsPath = tsDC.getParameter("path").getValue(true);
             }
         }
         
-        Iterator it;
+        Iterator<Parameter> it;
         Parameter p;
         
-        Map tsTC = new HashMap();
+        Map<String, String> tsTC = new HashMap<String, String>();
         it = tsDC.getParameters().iterator();
         while (it.hasNext()) {
-            p = (Parameter)it.next();
+            p = it.next();
             tsTC.put(p.getName(), p.getValue(p.getIsFilePath()));
         }
         
-        Map aliasMap = new HashMap();
+        Map<String, String> aliasMap = new HashMap<String, String>();
         it = riMC.getParameters().iterator();
         while (it.hasNext()) {
-            p = (Parameter)it.next();
+            p = it.next();
             String pName = p.getName();
             String[] parts = pName.split(":");
             if ((parts.length == 2) && (parts[0].equals("alias"))) {
@@ -161,7 +161,8 @@ public class ResourceIndexRebuilder implements Rebuilder {
             MethodInfoStore methodInfoStore = new DatabaseMethodInfoStore(
                     m_cPool, riLevel == 2);
             m_ri = new ResourceIndexImpl(m_conn, methodInfoStore,
-                    new MethodAwareTripleGenerator(methodInfoStore), 
+                    new MethodAwareTripleGenerator(m_conn.getElementFactory(), 
+                            methodInfoStore), 
                     riLevel, false); 
             m_ri.setAliasMap(aliasMap);
         } catch (Exception e) {

@@ -22,6 +22,7 @@ package fedora.common.rdf;
  * the same way it was originally populated.</p>
  */
 public class RecoveryNamespace extends RDFNamespace {
+    private static final long serialVersionUID = 1L;
 
     /** The ID of the datastream, whether given or generated at add time. */
     public final RDFName DATASTREAM_ID;

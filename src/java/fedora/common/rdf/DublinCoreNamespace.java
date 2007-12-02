@@ -16,7 +16,8 @@ package fedora.common.rdf;
  * @author cwilper@cs.cornell.edu
  */
 public class DublinCoreNamespace extends RDFNamespace {
-
+    private static final long serialVersionUID = 1L;
+    
     public final RDFName TITLE;
     public final RDFName CREATOR;
     public final RDFName SUBJECT;
