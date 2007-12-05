@@ -168,7 +168,7 @@ public class DefaultExternalContentManager extends Module
 		    Hashtable beHash = m_beSS.getSecuritySpec(BackendPolicies.FEDORA_INTERNAL_CALL);
 		    backendUsername = (String) beHash.get("callUsername");
 		    backendPassword = (String) beHash.get("callPassword");	            
-		    backendSSL = new Boolean((String) beHash.get("callBasicAuth")).booleanValue();
+		    backendSSL = new Boolean((String) beHash.get("callSSL")).booleanValue();
 		    if (backendSSL) {
 		    	if (modURL.startsWith("http:")) {
 		    		modURL = modURL.replaceFirst("http:", "https:");
