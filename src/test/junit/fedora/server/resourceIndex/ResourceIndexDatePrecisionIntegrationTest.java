@@ -42,7 +42,8 @@ public class ResourceIndexDatePrecisionIntegrationTest
     @Test
     public void testMillisecondDatePrecision()
             throws Exception {
-        String lex = "2006-11-18T12:22:10.001Z";
+        String lex = "2006-11-18T12:22:10.010Z";
+        String XSDdateTime = "2006-11-18T12:22:10.01Z";
         Date date = _millisFormat.parse(lex);
 
         DigitalObject obj = getTestObject("test:1", "test 1");
@@ -60,7 +61,7 @@ public class ResourceIndexDatePrecisionIntegrationTest
             assertTrue(dateNode instanceof Literal);
             Literal dateLiteral = (Literal) dateNode;
             assertEquals(dateLiteral.getDatatypeURI().toString(), Constants.XSD.DATE_TIME.uri);
-            assertEquals(lex, dateLiteral.getLexicalForm());
+            assertEquals(XSDdateTime, dateLiteral.getLexicalForm());
         } finally {
             results.close();
         }
