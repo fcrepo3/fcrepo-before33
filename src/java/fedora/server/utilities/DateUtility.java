@@ -1,8 +1,14 @@
+/*
+ * The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://www.fedora.info/license/).
+ */
+
 package fedora.server.utilities;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -15,13 +21,16 @@ import java.util.TimeZone;
  * <b>Description: </b> A collection of utility methods for performing
  * </p>
  * <p>
- * frequently require tasks.
+ * frequently required tasks.
  * </p>
  * 
  * @author rlw@virginia.edu
  * @version $Id$
  */
 public abstract class DateUtility {
+
+    public static final Date ONE_BCE = new Date(-62167392000000L);
+    public static final Date ONE_CE = new Date(-62135769600000L);   
 
     /**
      * <p>
@@ -49,43 +58,97 @@ public abstract class DateUtility {
      * format: yyyy-MM-ddTHH:mm:ss.SSSZ.
      * </p>
      * 
-     * @param  date Instance of java.util.Date.
-     * @return      ISO 8601 String representation (yyyy-MM-ddTHH:mm:ss.SSSZ) 
-     *              of the Date argument or null if the Date argument is null.
+     * @param date
+     *            Instance of java.util.Date.
+     * @return ISO 8601 String representation (yyyy-MM-ddTHH:mm:ss.SSSZ) of the
+     *         Date argument or null if the Date argument is null.
      */
     public static String convertDateToString(Date date) {
         return convertDateToString(date, true);
     }
-    
+
     /**
-     * Converts an instance of java.util.Date into an ISO 8601 String 
-     * representation. 
-     * Uses the date format yyyy-MM-ddTHH:mm:ss.SSSZ or 
-     * yyyy-MM-ddTHH:mm:ssZ, depending on whether millisecond precision is 
+     * Converts an instance of java.util.Date into an ISO 8601 String
+     * representation. Uses the date format yyyy-MM-ddTHH:mm:ss.SSSZ or
+     * yyyy-MM-ddTHH:mm:ssZ, depending on whether millisecond precision is
      * desired.
      * 
-     * @param date		Instance of java.util.Date.
-     * @param millis	Whether or not the return value should include 
-     * 					milliseconds.
-     * @return			ISO 8601 String representation of the Date argument or 
-     * 					null if the Date argument is null.
+     * @param date
+     *            Instance of java.util.Date.
+     * @param millis
+     *            Whether or not the return value should include milliseconds.
+     * @return ISO 8601 String representation of the Date argument or null if
+     *         the Date argument is null.
      */
     public static String convertDateToString(Date date, boolean millis) {
         if (date == null) {
             return null;
         } else {
-        	DateFormat df;
-        	if (millis) {
-        		df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        	} else {
-        		df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        	}
+            DateFormat df;
+            if (millis) {
+                df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            } else {
+                df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            }
             df.setTimeZone(TimeZone.getTimeZone("UTC"));
-            return df.format(date);
+            
+            if (date.before(ONE_CE)) {
+                StringBuilder sb = new StringBuilder(df.format(date));
+                sb.insert(0, "-");
+                return sb.toString();
+            } else {
+                return df.format(date);
+            }
         }
     }
     
-    
+    /**
+     * Converts an instance of <code>Date</code> into the canonical lexical 
+     * representation of an XSD dateTime with the following exceptions:
+     * - Dates before 1 CE (i.e. 1 AD) are handled according to ISO 8601:2000
+     *   Second Edition:
+     *     "0000" is the lexical representation of 1 BCE
+     *     "-0001" is the lexical representation of 2 BCE
+     * 
+     * @param date Instance of java.util.Date.
+     * @return the lexical form of the XSD dateTime value, e.g. "2006-11-13T09:40:55.001Z".
+     * @see <a href="http://www.w3.org/TR/xmlschema-2/#date-canonical-representation">3.2.7.2 Canonical representation</a>
+     * 
+     */
+    public static String convertDateToXSDString(Date date) {
+        if (date == null) return null;
+        StringBuilder lexicalForm;
+        String dateTime = convertDateToString(date, true);
+        int len = dateTime.length() - 1;
+        if (dateTime.indexOf('.', len - 4) != -1) {
+            while (dateTime.charAt(len - 1) == '0') {
+                len--; // fractional seconds may not with '0'.
+            }
+            if (dateTime.charAt(len - 1) == '.') {
+                len--;
+            }
+            lexicalForm = new StringBuilder(dateTime.substring(0, len));
+            lexicalForm.append('Z');
+        } else {
+            lexicalForm = new StringBuilder(dateTime);
+        }
+
+        if (date.before(ONE_CE)) {
+            DateFormat df = new SimpleDateFormat("yyyy");
+            StringBuilder year = new StringBuilder(String.valueOf(Integer
+                    .parseInt(df.format(date)) - 1));
+            while (year.length() < 4) {
+                year.insert(0, '0');
+            }
+            lexicalForm
+                    .replace(0, lexicalForm.indexOf("-", 4), year.toString());
+            if (date.before(ONE_BCE)) {
+                lexicalForm.insert(0, "-");
+            }
+        }
+        return lexicalForm.toString();
+    }
+
     /**
      * <p>
      * Converts an instance of java.util.Date into a String using the date
@@ -101,14 +164,12 @@ public abstract class DateUtility {
         if (date == null) {
             return null;
         } else {
-            DateFormat df = new SimpleDateFormat(
-                    "yyyy-MM-dd'Z'");
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'Z'");
             df.setTimeZone(TimeZone.getTimeZone("UTC"));
             return df.format(date);
         }
     }
-    
-    
+
     /**
      * <p>
      * Converts an instance of java.util.Date into a String using the date
@@ -128,20 +189,21 @@ public abstract class DateUtility {
             df.setTimeZone(TimeZone.getTimeZone("UTC"));
             return df.format(date);
         }
-    }    
+    }
 
     /**
      * Attempt to parse the given string of form: yyyy-MM-dd[THH:mm:ss[.SSS][Z]]
      * as a Date. If the string is not of that form, return null.
      * 
-     * @param dateString the date string to parse
+     * @param dateString
+     *            the date string to parse
      * @return Date the date, if parse was successful; null otherwise
      */
     public static Date parseDateAsUTC(String dateString) {
         if (dateString == null || dateString.length() == 0) {
             return null;
         }
-        
+
         SimpleDateFormat formatter = new SimpleDateFormat();
         formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         if (dateString.endsWith("Z")) {
@@ -168,7 +230,7 @@ public abstract class DateUtility {
             } else if (dateString.length() == 23) {
                 formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
             } else if (dateString.endsWith("GMT") || dateString.endsWith("UTC")) {
-            	formatter.applyPattern("EEE, dd MMMM yyyyy HH:mm:ss z");
+                formatter.applyPattern("EEE, dd MMMM yyyyy HH:mm:ss z");
             }
         }
         try {
