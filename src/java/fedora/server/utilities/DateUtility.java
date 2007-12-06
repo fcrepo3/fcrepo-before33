@@ -91,7 +91,14 @@ public abstract class DateUtility {
                 df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
             }
             df.setTimeZone(TimeZone.getTimeZone("UTC"));
-            return df.format(date);
+            
+            if (date.before(ONE_CE)) {
+                StringBuilder sb = new StringBuilder(df.format(date));
+                sb.insert(0, "-");
+                return sb.toString();
+            } else {
+                return df.format(date);
+            }
         }
     }
     
@@ -110,7 +117,7 @@ public abstract class DateUtility {
      */
     public static String convertDateToXSDString(Date date) {
         if (date == null) return null;
-        StringBuffer lexicalForm;
+        StringBuilder lexicalForm;
         String dateTime = convertDateToString(date, true);
         int len = dateTime.length() - 1;
         if (dateTime.indexOf('.', len - 4) != -1) {
@@ -120,15 +127,15 @@ public abstract class DateUtility {
             if (dateTime.charAt(len - 1) == '.') {
                 len--;
             }
-            lexicalForm = new StringBuffer(dateTime.substring(0, len));
+            lexicalForm = new StringBuilder(dateTime.substring(0, len));
             lexicalForm.append('Z');
         } else {
-            lexicalForm = new StringBuffer(dateTime);
+            lexicalForm = new StringBuilder(dateTime);
         }
 
         if (date.before(ONE_CE)) {
             DateFormat df = new SimpleDateFormat("yyyy");
-            StringBuffer year = new StringBuffer(String.valueOf(Integer
+            StringBuilder year = new StringBuilder(String.valueOf(Integer
                     .parseInt(df.format(date)) - 1));
             while (year.length() < 4) {
                 year.insert(0, '0');
