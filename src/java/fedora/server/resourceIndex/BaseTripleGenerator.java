@@ -27,9 +27,7 @@ import fedora.common.PID;
 import fedora.common.rdf.RDFName;
 import fedora.server.errors.ResourceIndexException;
 import fedora.server.storage.BDefReader;
-import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOReader;
-import fedora.server.storage.types.BMechDSBindSpec;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.MethodDef;
@@ -77,21 +75,6 @@ public class BaseTripleGenerator implements Constants, TripleGenerator {
     /**
      * {@inheritDoc}
      */
-    public Set<Triple> getTriplesForBMech(BMechReader reader)
-            throws ResourceIndexException {
-
-        Set<Triple> set = new HashSet<Triple>();
-
-        URIReference objURI = addCommonTriples(reader, set);
-        add(objURI, RDF.TYPE, MODEL.BMECH_OBJECT, set);
-        addImplementsBDefTriples(objURI, reader, set);
-
-        return set;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public Set<Triple> getTriplesForDataObject(DOReader reader)
             throws ResourceIndexException {
 
@@ -112,7 +95,7 @@ public class BaseTripleGenerator implements Constants, TripleGenerator {
         Set<Triple> set = new HashSet<Triple>();
 
         URIReference objURI = addCommonTriples(reader, set);
-        add(objURI, RDF.TYPE, MODEL.DATA_OBJECT, set);
+        add(objURI, RDF.TYPE, MODEL.CMODEL_OBJECT, set);
         addContentModelTriples(objURI, reader, set);
 
         return set;
@@ -139,26 +122,6 @@ public class BaseTripleGenerator implements Constants, TripleGenerator {
         }
     }
 
-    /**
-     * Add an "implements" statement for the given bMech indicating which bDef it
-     * implements.
-     */
-    private void addImplementsBDefTriples(URIReference objURI,
-                                          BMechReader reader,
-                                          Set<Triple> set)
-            throws ResourceIndexException {
-        try {
-            BMechDSBindSpec bindSpec = reader.getServiceDSInputSpec(null);
-            add(objURI, MODEL.IMPLEMENTS_BDEF, 
-                    createResource(PID.toURI(bindSpec.bDefPID)), set);
-        } catch (ResourceIndexException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ResourceIndexException("Error adding implements bdef "
-                    + "triples", e);
-        }
-    }
-    
     /**
      * Add an "implements" statement for the given content model.
      */

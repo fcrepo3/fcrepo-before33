@@ -372,9 +372,9 @@ public class Ingest
         System.err.println("  INPATH     is the local file or directory name that is ingest source.");
         System.err.println("  FORMAT     is a string value (either '" + FOXML1_1.uri + "' or '" + METS_EXT1_1.uri + "')");
         System.err.println("             which indicates the XML format of the ingest file(s)");
-        System.err.println("  FTYPS      is any combination of the characters O, D, and M, specifying");
+        System.err.println("  FTYPS      is any combination of the characters O, D, M, and C specifying");
         System.err.println("             which Fedora object type(s) should be ingested. O=data objects,");
-        System.err.println("             D=behavior definitions, and M=behavior mechanisms.");
+        System.err.println("             D=behavior definitions, M=behavior mechanisms, and C=content models.");
         System.err.println("  PID        is the id of the object to ingest from the source repository.");
         System.err.println("  SHST/THST  is the source or target repository's hostname.");
         System.err.println("  SPRT/TPRT  is the source or target repository's port number.");
@@ -402,9 +402,9 @@ public class Ingest
         System.err.println("  and will fail on ingests of files that are not of this format.");
         System.err.println("  All log messages will be the quoted string.");
         System.err.println();
-        System.err.println("fedora-ingest d c:\\archive " + FOXML1_1.uri + " ODM myrepo.com:80 jane janepw http \"for jane\"");
+        System.err.println("fedora-ingest d c:\\archive " + FOXML1_1.uri + " DMOC myrepo.com:80 jane janepw http \"for jane\"");
         System.err.println();
-        System.err.println("  Same as above, but ingests all three types of objects (O,D,M).");
+        System.err.println("  Same as above, but ingests all four types of objects (O,D,M,C).");
         System.err.println();
         System.err.println("fedora-ingest r jrepo.com:8081 mike mpw demo:1 myrepo.com:8443 jane jpw http https \"\"");
         System.err.println();

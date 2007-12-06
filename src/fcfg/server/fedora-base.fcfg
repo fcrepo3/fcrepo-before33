@@ -306,9 +306,8 @@
 		<comment>Supports the ResourceIndex.</comment>
 		<param name="level" value="0">
 			<comment>(required) 
-            Index level. Currently, only 0, 1 and 2 are supported
-            levels. 0 = off: do not load the ResourceIndex 1 = basic: system
-            metadata, RELS-EXT, disseminations 2 = basic + method permutations
+            Index level. Currently, only 0, and 1 are supported levels. 
+            0 = off and 1 = on.
             WARNING: changing the level (except to 0) requires 
             running the Resource Index Rebuilder.</comment>
 		</param>

@@ -1209,12 +1209,6 @@ public class DefaultDOManager
                         m_resourceIndex.deleteBDefObject(
                                 new SimpleBDefReader(null, null, null, null, 
                                 null, origObj));
-                    } 
-                    if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)) 
-                    {
-                        m_resourceIndex.deleteBMechObject(
-                                new SimpleBMechReader(null, null, null, null, 
-                                null, origObj));
                     }
                     if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) 
                     {
@@ -1365,13 +1359,7 @@ public class DefaultDOManager
                             m_resourceIndex.addBDefObject(
                                     new SimpleBDefReader(null, null, null, null,
                                     null, obj));
-                        } 
-                        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
-                        {
-                            m_resourceIndex.addBMechObject(
-                                    new SimpleBMechReader(null, null, null, null,
-                                    null, obj));
-                        } 
+                        }
                         if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT))
                         {
                            m_resourceIndex.addCModelObject(
@@ -1393,14 +1381,7 @@ public class DefaultDOManager
                                     getBDefReader(false, null, obj.getPid()),
                                     new SimpleBDefReader(null, null, null, null,
                                     null, obj));
-                        } 
-                        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
-                        {
-                            m_resourceIndex.modifyBMechObject(
-                                    getBMechReader(false, null, obj.getPid()),
-                                    new SimpleBMechReader(null, null, null, null,
-                                    null, obj));
-                        } 
+                        }
                         if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT))
                         {
                             m_resourceIndex.modifyCModelObject(

@@ -28,7 +28,6 @@ import org.trippi.TupleIterator;
 
 import fedora.server.errors.ResourceIndexException;
 import fedora.server.storage.BDefReader;
-import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOReader;
 
 /**
@@ -43,9 +42,6 @@ public class ResourceIndexImpl implements ResourceIndex {
 
     /** Writer for the underlying triplestore. */
     private TriplestoreWriter _writer;
-
-    /** The MethodInfoStore this instance will use. */
-    private MethodInfoStore _methodInfoStore;
 
     /** The TripleGenerator this instance will use. */
     private TripleGenerator _generator;
@@ -64,13 +60,11 @@ public class ResourceIndexImpl implements ResourceIndex {
     ////////////////////
 
     public ResourceIndexImpl(TriplestoreConnector connector,
-                             MethodInfoStore methodInfoStore,
                              TripleGenerator generator,
                              int indexLevel,
                              boolean syncUpdates) {
         _connector = connector;
         _writer = _connector.getWriter();
-        _methodInfoStore = methodInfoStore;
         _generator = generator;
         _indexLevel = indexLevel;
         _syncUpdates = syncUpdates;
@@ -95,18 +89,6 @@ public class ResourceIndexImpl implements ResourceIndex {
             throws ResourceIndexException {
         if (_indexLevel > INDEX_LEVEL_OFF) {
             updateTriples(_generator.getTriplesForBDef(reader), false);
-            _methodInfoStore.putBDefInfo(reader);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void addBMechObject(BMechReader reader)
-            throws ResourceIndexException {
-        if (_indexLevel > INDEX_LEVEL_OFF) {
-            updateTriples(_generator.getTriplesForBMech(reader), false);
-            _methodInfoStore.putBMechInfo(reader);
         }
     }
 
@@ -138,19 +120,6 @@ public class ResourceIndexImpl implements ResourceIndex {
         if (_indexLevel > INDEX_LEVEL_OFF) {
             updateTripleDiffs(_generator.getTriplesForBDef(oldReader),
                         _generator.getTriplesForBDef(newReader));
-            _methodInfoStore.putBDefInfo(newReader);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void modifyBMechObject(BMechReader oldReader, BMechReader newReader)
-            throws ResourceIndexException {
-        if (_indexLevel > INDEX_LEVEL_OFF) {
-            updateTripleDiffs(_generator.getTriplesForBMech(oldReader),
-                        _generator.getTriplesForBMech(newReader));
-            _methodInfoStore.putBMechInfo(newReader);
         }
     }
 
@@ -183,18 +152,6 @@ public class ResourceIndexImpl implements ResourceIndex {
             throws ResourceIndexException {
         if (_indexLevel > INDEX_LEVEL_OFF) {
             updateTriples(_generator.getTriplesForBDef(oldReader), true);
-            _methodInfoStore.deleteBDefInfo(getPID(oldReader));
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void deleteBMechObject(BMechReader oldReader)
-            throws ResourceIndexException {
-        if (_indexLevel > INDEX_LEVEL_OFF) {
-            updateTriples(_generator.getTriplesForBMech(oldReader), true);
-            _methodInfoStore.deleteBMechInfo(getPID(oldReader));
         }
     }
 
@@ -286,19 +243,6 @@ public class ResourceIndexImpl implements ResourceIndex {
             public void close() { }
         };
     }
-
-    /**
-     * Gets the PID for a given object.  If there's an error, the
-     * original exception is wrapped in a ResourceIndeException.
-     */
-    private static String getPID(DOReader reader) throws ResourceIndexException {
-        try {
-            return reader.GetObjectPID();
-        } catch (Exception e) {
-            throw new ResourceIndexException("Unable to get PID", e);
-        }
-    }
-
 
     ///////////////////////////////
     // TriplestoreReader methods //

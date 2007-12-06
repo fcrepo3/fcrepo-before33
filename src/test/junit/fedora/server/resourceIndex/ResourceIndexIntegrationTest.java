@@ -201,13 +201,10 @@ public abstract class ResourceIndexIntegrationTest {
         }
         TriplestoreConnector connector = getConnector();
         _geFactory = connector.getElementFactory();
-        MethodInfoStore methodInfoStore = 
-                new DatabaseMethodInfoStore(_dbPool, indexLevel == 2);
         TripleGenerator generator =
-                new MethodAwareTripleGenerator(_geFactory, methodInfoStore);
+                new BaseTripleGenerator(_geFactory);
         
         _ri = new ResourceIndexImpl(connector,
-                                       methodInfoStore,
                                        generator,
                                        indexLevel,
                                        false);
@@ -431,16 +428,11 @@ public abstract class ResourceIndexIntegrationTest {
         {
             _ri.modifyBDefObject(getBDefReader(origObject),
                                  getBDefReader(modifiedObject));
-        } 
-        if (origObject.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
-        {
-            _ri.modifyBMechObject(getBMechReader(origObject),
-                                  getBMechReader(modifiedObject));
-        } 
+        }
         if (origObject.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT))
         {
-//            _ri.modifyCModelObject(getDOReader(origObject),
-//                                 getDOReader(modifiedObject));
+            _ri.modifyCModelObject(getDOReader(origObject),
+                                 getDOReader(modifiedObject));
         }
         if (origObject.isFedoraObjectType(DigitalObject.FEDORA_OBJECT))
         {
@@ -504,16 +496,16 @@ public abstract class ResourceIndexIntegrationTest {
         }
         for (DigitalObject obj : objects) 
         {
-            if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
+            if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT))
             {
                 if (add) 
                 {
-                    _ri.addBMechObject(getBMechReader(obj));
+                    _ri.addCModelObject(getDOReader(obj));
                     _ri.flushBuffer();
                 } 
                 else 
                 {
-                    _ri.deleteBMechObject(getBMechReader(obj));
+                    _ri.deleteCModelObject(getDOReader(obj));
                     _ri.flushBuffer();
                 }
             }
@@ -555,9 +547,7 @@ public abstract class ResourceIndexIntegrationTest {
         }
 
         // prepare appropriate MethodInfoStore and TripleGenerator
-        MethodInfoStore methodInfo = new MockMethodInfoStore(riLevel == 2);
-        TripleGenerator generator = new MethodAwareTripleGenerator(_geFactory,
-                methodInfo);
+        TripleGenerator generator = new BaseTripleGenerator(_geFactory);
 
         Set<Triple> expected = new HashSet<Triple>();
 
@@ -568,20 +558,18 @@ public abstract class ResourceIndexIntegrationTest {
             {
                 BDefReader reader = repo.getBDefReader(false, null, 
                         obj.getPid());
-                methodInfo.putBDefInfo(reader);
                 expected.addAll(generator.getTriplesForBDef(reader));
             }
         }
 
-        // get triples for all bmechs
+        // get triples for all cmodels
         for (DigitalObject obj : objects) 
         {
-            if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
+            if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT))
             {
                 BMechReader reader = repo.getBMechReader(false, null, 
                         obj.getPid());
-                methodInfo.putBMechInfo(reader);
-                expected.addAll(generator.getTriplesForBMech(reader));
+                expected.addAll(generator.getTriplesForCModelObject(reader));
             }
         }
 

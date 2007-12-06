@@ -7,13 +7,8 @@ package fedora.server.resourceIndex;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,15 +19,10 @@ import fedora.server.config.DatastoreConfiguration;
 import fedora.server.config.ModuleConfiguration;
 import fedora.server.config.Parameter;
 import fedora.server.config.ServerConfiguration;
-import fedora.server.errors.InconsistentTableSpecException;
 import fedora.server.errors.ResourceIndexException;
-import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.SimpleBDefReader;
-import fedora.server.storage.SimpleBMechReader;
 import fedora.server.storage.SimpleDOReader;
 import fedora.server.storage.types.DigitalObject;
-import fedora.server.utilities.DDLConverter;
-import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.rebuild.Rebuilder;
 
 /**
@@ -41,13 +31,9 @@ import fedora.server.utilities.rebuild.Rebuilder;
  * @version $Id$
  */
 public class ResourceIndexRebuilder implements Rebuilder {
-    private static final String DB_SPEC = "fedora/server/storage/resources/DefaultDOManager.dbspec";
-
-    private File m_serverDir;
     private ServerConfiguration m_serverConfig;
     
     private ResourceIndex m_ri;
-    private ConnectionPool m_cPool;
     private TriplestoreConnector m_conn;
     
     /**
@@ -71,11 +57,10 @@ public class ResourceIndexRebuilder implements Rebuilder {
      *
      * @returns a map of option names to plaintext descriptions.
      */
-    public Map init(File serverDir,
+    public Map<String, String> init(File serverDir,
                     ServerConfiguration serverConfig) {
-        m_serverDir = serverDir;
         m_serverConfig = serverConfig;
-        Map m = new HashMap();
+        Map<String, String> m = new HashMap<String, String>();
 
         return m;
     }
@@ -83,18 +68,13 @@ public class ResourceIndexRebuilder implements Rebuilder {
     /**
      * Validate the provided options and perform any necessary startup tasks.
      */
-    public void start(Map options) throws ResourceIndexException {
+    public void start(Map<String, String> options) throws ResourceIndexException {
         // validate options
 
         // do startup tasks
         ModuleConfiguration riMC = m_serverConfig.getModuleConfiguration("fedora.server.resourceIndex.ResourceIndex");      
         int riLevel = Integer.parseInt(riMC.getParameter("level").getValue());
         String riDatastore = riMC.getParameter("datastore").getValue();
-        
-        ModuleConfiguration cpMC = m_serverConfig.getModuleConfiguration("fedora.server.storage.ConnectionPoolManager");
-        String cpName = cpMC.getParameter("defaultPoolName").getValue();
-        DatastoreConfiguration cpDC = m_serverConfig.getDatastoreConfiguration(cpName);
-        
         DatastoreConfiguration tsDC = m_serverConfig.getDatastoreConfiguration(riDatastore);
         String tsConnector = tsDC.getParameter("connectorClassName").getValue();
 
@@ -127,14 +107,6 @@ public class ResourceIndexRebuilder implements Rebuilder {
             }
         }
 
-        try {
-            m_cPool = getConnectionPool(cpDC);
-            deleteRITables();
-        } catch (SQLException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-
         if (tsPath == null) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             System.out.println();
@@ -151,19 +123,14 @@ public class ResourceIndexRebuilder implements Rebuilder {
             File cleanDir = new File(tsPath);
             cleanDir.mkdir();
         }
-
-        createDBTables();
-        
         
         System.out.println("Initializing triplestore interface..."); 
         try {
             m_conn = TriplestoreConnector.init(tsConnector, tsTC);
-            MethodInfoStore methodInfoStore = new DatabaseMethodInfoStore(
-                    m_cPool, riLevel == 2);
-            m_ri = new ResourceIndexImpl(m_conn, methodInfoStore,
-                    new MethodAwareTripleGenerator(m_conn.getElementFactory(), 
-                            methodInfoStore), 
-                    riLevel, false); 
+            m_ri = new ResourceIndexImpl(m_conn,
+                    new BaseTripleGenerator(m_conn.getElementFactory()), 
+                    riLevel, 
+                    false); 
             m_ri.setAliasMap(aliasMap);
         } catch (Exception e) {
             throw new ResourceIndexException("Failed to initialize new Resource Index", e);
@@ -181,17 +148,11 @@ public class ResourceIndexRebuilder implements Rebuilder {
                     new SimpleBDefReader(null, null, null, null,
                     null, obj));
         } 
-        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)) 
-        {
-            m_ri.addBMechObject(
-                    new SimpleBMechReader(null, null, null, null,
-                    null, obj));
-        } 
         if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) 
         {
-//            m_ri.addCModelObject(
-//                    new SimpleDOReader(null, null, null, null,
-//                    null, obj));
+            m_ri.addCModelObject(
+                    new SimpleDOReader(null, null, null, null,
+                    null, obj));
         }
         if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT)) 
         {
@@ -234,96 +195,4 @@ public class ResourceIndexRebuilder implements Rebuilder {
 
         return result;
     }//deleteDirectory()
-    
-    private void deleteRITables() throws SQLException {
-        System.out.println("Dropping old database tables...");
-        Connection conn = m_cPool.getConnection();
-        Statement stmt = conn.createStatement();
-        String[] drop = {"DROP TABLE riMethodMimeType", 
-                         "DROP TABLE riMethodImpl",
-                         "DROP TABLE riMethodImplBinding", 
-                         "DROP TABLE riMethodPermutation", 
-                         "DROP TABLE riMethod",
-                         "DROP SEQUENCE RIMETHODIMPLBINDING_S1",
-                         "DROP SEQUENCE RIMETHODMIMETYPE_S1",
-                         "DROP SEQUENCE RIMETHODPERMUTATION_S1"};
-        for (int i = 0; i < drop.length; i++) {
-            try { 
-                stmt.execute(drop[i]); 
-            } catch (Throwable th) {
-                if (drop[i].startsWith("DROP TABLE")) {
-                    System.out.println("WARNING: Failed running '" 
-                            + drop[i] + "'.  Stack trace follows.");
-                    th.printStackTrace();
-                } else {
-                    // skip warning, DROP SEQUENCE is Oracle-only so it's OK
-                }
-            }
-        }
-    }
-    
-    private ConnectionPool getConnectionPool(DatastoreConfiguration cpDC) throws SQLException {
-        String cpUsername = cpDC.getParameter("dbUsername").getValue();
-        String cpPassword = cpDC.getParameter("dbPassword").getValue();
-        String cpURL = cpDC.getParameter("jdbcURL").getValue();
-        String cpDriver = cpDC.getParameter("jdbcDriverClass").getValue();
-        String cpDDLConverter = cpDC.getParameter("ddlConverter").getValue();
-        //int cpMin = Integer.parseInt(cpDC.getParameter("minPoolSize").getValue());
-        //int cpMax = Integer.parseInt(cpDC.getParameter("maxPoolSize").getValue());
-        int cpMaxActive = Integer.parseInt(cpDC.getParameter("maxActive").getValue());
-        int cpMaxIdle = Integer.parseInt(cpDC.getParameter("maxIdle").getValue());
-        long cpMaxWait = Long.parseLong(cpDC.getParameter("maxWait").getValue()); 
-        int cpMinIdle = Integer.parseInt(cpDC.getParameter("minIdle").getValue());
-        long cpMinEvictableIdleTimeMillis = Long.parseLong(cpDC.getParameter("minEvictableIdleTimeMillis").getValue());
-        int cpNumTestsPerEvictionRun = Integer.parseInt(cpDC.getParameter("numTestsPerEvictionRun").getValue());
-        long cpTimeBetweenEvictionRunsMillis = Long.parseLong(cpDC.getParameter("timeBetweenEvictionRunsMillis").getValue());
-        boolean cpTestOnBorrow = Boolean.parseBoolean(cpDC.getParameter("testOnBorrow").getValue());
-        boolean cpTestOnReturn = Boolean.parseBoolean(cpDC.getParameter("testOnReturn").getValue());
-        boolean cpTestWhileIdle = Boolean.parseBoolean(cpDC.getParameter("testWhileIdle").getValue());
-        byte cpWhenExhaustedAction = Byte.parseByte(cpDC.getParameter("whenExhaustedAction").getValue());
-        
-        DDLConverter ddlConverter = null;
-        if (cpDDLConverter != null) {
-            try {
-                ddlConverter=(DDLConverter) Class.forName(cpDDLConverter).newInstance();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-        return new ConnectionPool(cpDriver, cpURL, cpUsername, 
-                cpPassword, ddlConverter, cpMaxActive, cpMaxIdle, 
-                cpMaxWait, cpMinIdle, cpMinEvictableIdleTimeMillis, 
-                cpNumTestsPerEvictionRun, cpTimeBetweenEvictionRunsMillis, 
-                cpTestOnBorrow, cpTestOnReturn, cpTestWhileIdle, cpWhenExhaustedAction);
-    }
-    
-    private void createDBTables() {
-        System.out.println("Creating clean database tables...");
-        InputStream specIn;
-        
-        try {
-            specIn = getClass().getClassLoader().getResourceAsStream(DB_SPEC);
-            if (specIn == null) {
-                throw new IOException("Cannot find required resource in classpath: " + DB_SPEC);
-            }
-    
-            SQLUtility.createNonExistingTables(m_cPool, specIn);
-        } catch (SQLException s) {
-            s.printStackTrace();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InconsistentTableSpecException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
 }

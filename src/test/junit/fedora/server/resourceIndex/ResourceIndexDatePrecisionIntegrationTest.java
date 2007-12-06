@@ -23,6 +23,8 @@ import fedora.server.storage.types.DigitalObject;
  * Date precision tests.
  *
  * @author cwilper@cs.cornell.edu
+ * @author Edwin Shin
+ * @version $Id$
  */
 public class ResourceIndexDatePrecisionIntegrationTest
         extends ResourceIndexIntegrationTest {
@@ -42,18 +44,74 @@ public class ResourceIndexDatePrecisionIntegrationTest
     @Test
     public void testMillisecondDatePrecision()
             throws Exception {
-        String lex = "2006-11-18T12:22:10.010Z";
-        String XSDdateTime = "2006-11-18T12:22:10.01Z";
-        Date date = _millisFormat.parse(lex);
-
-        DigitalObject obj = getTestObject("test:1", "test 1");
-        obj.setCreateDate(date);
-
+        
+        String[] DT = {
+                "1970-01-01T00:00:00.001Z",
+                "1970-01-01T00:00:00.010Z",
+                "1970-01-01T00:00:00.100Z"};
+        String[] DT_XSD = {
+                "1970-01-01T00:00:00.001Z",
+                "1970-01-01T00:00:00.01Z",
+                "1970-01-01T00:00:00.1Z"};
+        Date[] date = {
+                new Date(1L),
+                new Date(10L),
+                new Date(100L)};
+        
         initRI(1);
+        for (int i = 0; i < DT.length; i++) {
+            testDates(DT[i], date[i], "test:" + i, DT_XSD[i]);
+        }
+    }
+    
+    /**
+     * Test boundary dates.
+     */
+    @Test
+    public void testBoundaryDates()
+            throws Exception {
+        Date EPOCH = new Date(0L);
+        Date ONE_CE = new Date(-62135769600000L);
+        Date ONE_BCE = new Date(-62167392000000L);
+        Date TWO_BCE = new Date(-62198928000000L);
+        
+        String EPOCH_DT = "1970-01-01T00:00:00.000Z";
+        String ONE_CE_DT = "0001-01-01T00:00:00.000Z";
+        String ONE_BCE_DT = "0000-01-01T00:00:00.000Z";
+        String TWO_BCE_DT = "-0001-01-01T00:00:00.000Z";
+        
+        String EPOCH_XSD = "1970-01-01T00:00:00Z";
+        String ONE_CE_XSD = "0001-01-01T00:00:00Z";
+        String ONE_BCE_XSD = "0000-01-01T00:00:00Z";
+        String TWO_BCE_XSD = "-0001-01-01T00:00:00Z";
+        
+        initRI(1);
+        testDates(EPOCH_DT, EPOCH, "test:epoch", EPOCH_XSD);
+        testDates(ONE_CE_DT, ONE_CE, "test:one_ce", ONE_CE_XSD);
+        testDates(ONE_BCE_DT, ONE_BCE, "test:one_bce", ONE_BCE_XSD);
+        testDates(TWO_BCE_DT, TWO_BCE, "test:two_bce", TWO_BCE_XSD);
+    }
+    
+    /**
+     * Test that dateTime, date and xsdDateTime all represent the same date.
+     * 
+     * @param dateTime dateTime for parsing by DateFormat using the pattern 
+     *          "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'".
+     * @param date 
+     * @param pid PID of the test object
+     * @param xsdDateTime canonical lexical representation of the dateTime
+     * @throws Exception
+     */
+    private void testDates(String dateTime, Date date, String pid, String xsdDateTime) throws Exception {
+        Date createDate = _millisFormat.parse(dateTime);
+        assertEquals(date, createDate);
+        DigitalObject obj = getTestObject(pid, pid);
+        obj.setCreateDate(createDate);
         addObj(obj, true);
-
-        TripleIterator results = spo("<info:fedora/test:1> <" 
-                + Constants.MODEL.CREATED_DATE.uri + "> *");
+        
+        String query = String.format("<info:fedora/%s> <%s> *", 
+                pid, Constants.MODEL.CREATED_DATE.uri);
+        TripleIterator results = spo(query);
 
         try {
             assertTrue(results.hasNext());
@@ -61,11 +119,10 @@ public class ResourceIndexDatePrecisionIntegrationTest
             assertTrue(dateNode instanceof Literal);
             Literal dateLiteral = (Literal) dateNode;
             assertEquals(dateLiteral.getDatatypeURI().toString(), Constants.RDF_XSD.DATE_TIME.uri);
-            assertEquals(XSDdateTime, dateLiteral.getLexicalForm());
+            assertEquals(xsdDateTime, dateLiteral.getLexicalForm());
         } finally {
             results.close();
         }
-
     }
 
     // Supports legacy test runners
@@ -73,5 +130,14 @@ public class ResourceIndexDatePrecisionIntegrationTest
         return new junit.framework.JUnit4TestAdapter(
                 ResourceIndexDatePrecisionIntegrationTest.class);
     }
-
+    
+    @Test
+    public void testFoo() throws Exception {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        
+        //assertEquals("0000", df.format(df.parse("0000")));
+        assertEquals("0001", df.format(df.parse("-0001")));
+        
+    }
 }

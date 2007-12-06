@@ -29,8 +29,8 @@ import java.util.TimeZone;
  */
 public abstract class DateUtility {
 
-    public static final Date ONE_BCE = new Date(-62167392000000L);
-    public static final Date ONE_CE = new Date(-62135769600000L);   
+    private static final Date ONE_BCE = new Date(-62167392000000L);
+    private static final Date ONE_CE = new Date(-62135769600000L);   
 
     /**
      * <p>

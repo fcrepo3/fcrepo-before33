@@ -32,9 +32,6 @@ import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ResourceIndexException;
 import fedora.server.storage.BDefReader;
-import fedora.server.storage.BMechReader;
-import fedora.server.storage.ConnectionPool;
-import fedora.server.storage.ConnectionPoolManager;
 import fedora.server.storage.DOReader;
 import fedora.server.utilities.status.ServerState;
 
@@ -42,6 +39,7 @@ import fedora.server.utilities.status.ServerState;
  * Fedora's <code>ResourceIndex</code> as a configurable module.
  *
  * @author cwilper@cs.cornell.edu
+ * @version $Id$
  */
 public class ResourceIndexModule extends Module implements ResourceIndex {
 
@@ -67,11 +65,10 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
      *
      * ResourceIndexModule takes the following parameters:
      * <ul>
-     *   <li> level (required, integer between 0 and 2)<br/>
+     *   <li> level (required, integer between 0 and 1)<br/>
      *        The level of indexing that should be performed.
      *        Values correspond to <code>INDEX_LEVEL_OFF</code>,
-     *        <code>INDEX_LEVEL_ON</code>, and 
-     *        <code>INDEX_LEVEL_PERMUTATIONS</code>.
+     *        and <code>INDEX_LEVEL_ON</code>.
      *   </li>
      *   <li> datastore (required)<br/>
      *        The name of the datastore element that contains
@@ -99,39 +96,22 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
      */
     public void postInitModule()
             throws ModuleInitializationException {
-        int level = getRequiredInt("level", 0, 2);
+        int level = getRequiredInt("level", 0, 1);
         if (level == 0) return;
         boolean syncUpdates = getBoolean("syncUpdates", false);
         try {
             TriplestoreConnector connector = getConnector(
                     getServer().getDatastoreConfig(getRequired("datastore")));
-            MethodInfoStore methodInfoStore = new DatabaseMethodInfoStore(
-                    getConnectionPool(), level == 2);
-            _ri = new ResourceIndexImpl(connector, methodInfoStore, 
-                    new MethodAwareTripleGenerator(connector.getElementFactory(), 
-                            methodInfoStore),
-                    level, syncUpdates);
+            _ri = new ResourceIndexImpl(connector,
+                    new BaseTripleGenerator(connector.getElementFactory()),
+                    level, 
+                    syncUpdates);
             setAliasMap(getAliases());
         } catch (Exception e) {
             throw new ModuleInitializationException("Error initializing RI",
                     getRole(), e);
         }
     } 
-
-    private ConnectionPool getConnectionPool() throws Exception {
-        ConnectionPoolManager cpm = (ConnectionPoolManager) getServer().
-                getModule("fedora.server.storage.ConnectionPoolManager");
-        if (cpm == null) {
-            throw new ResourceIndexException("ResourceIndexModule "
-                    + "requires ConnectionPoolManager module to be loaded");
-        }
-        String poolName = getParameter("connectionPool");
-        if (poolName == null) {
-            return cpm.getPool();
-        } else {
-            return cpm.getPool(poolName);
-        }
-    }
 
     private TriplestoreConnector getConnector(Parameterized datastore)
             throws Exception {
@@ -262,14 +242,6 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
     /**
      * {@inheritDoc}
      */
-    public void addBMechObject(BMechReader reader)
-            throws ResourceIndexException {
-        _ri.addBMechObject(reader);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void addDataObject(DOReader reader)
             throws ResourceIndexException {
         _ri.addDataObject(reader);
@@ -294,14 +266,6 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
     /**
      * {@inheritDoc}
      */
-    public void modifyBMechObject(BMechReader oldReader, BMechReader newReader)
-            throws ResourceIndexException {
-        _ri.modifyBMechObject(oldReader, newReader);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void modifyDataObject(DOReader oldReader, DOReader newReader)
             throws ResourceIndexException {
         _ri.modifyDataObject(oldReader, newReader);
@@ -321,14 +285,6 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
     public void deleteBDefObject(BDefReader oldReader)
             throws ResourceIndexException {
         _ri.deleteBDefObject(oldReader);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void deleteBMechObject(BMechReader oldReader)
-            throws ResourceIndexException {
-        _ri.deleteBMechObject(oldReader);
     }
 
     /**

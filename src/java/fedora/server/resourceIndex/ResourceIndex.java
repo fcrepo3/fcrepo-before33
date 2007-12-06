@@ -11,9 +11,7 @@ import org.trippi.RDFFormat;
 import org.trippi.TriplestoreWriter;
 
 import fedora.server.errors.ResourceIndexException;
-
 import fedora.server.storage.BDefReader;
-import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOReader;
 
 /**
@@ -42,30 +40,10 @@ public interface ResourceIndex extends TriplestoreWriter {
     public static final int INDEX_LEVEL_ON              = 1;
     
     /**
-     * Equivalent to INDEX_LEVEL_ON plus the indexing of the various 
-     * permutations of a representation (i.e. dissemination) given by a fixed
-     * parameter list.
-     * 
-     * For example, consider the method, getImage, which requires two 
-     * parameters, border and format. The range of border's values is on or 
-     * off; and the range of format's values is jpg or png.
-     * 
-     * There are four possible permutations:
-     *  1) getImage?border=on&format=jpg
-     *  2) getImage?border=on&format=png
-     *  3) getImage?border=off&format=jpg
-     *  4) getImage?border=off&format=png
-     * 
-     * At INDEX_LEVEL_ON, only the method name, getImage, would be indexed,
-     * and none of the permutations.
-     */
-    public static final int INDEX_LEVEL_PERMUTATIONS    = 2;
-    
-    /**
      * Gets the index level of the ResourceIndex.
      *
      * @return the current index level of the RI, which is either 
-     *         INDEX_LEVEL_OFF, INDEX_LEVEL_ON, or INDEX_LEVEL_PERMUTATIONS.
+     *         INDEX_LEVEL_OFF or INDEX_LEVEL_ON.
      */
 	int getIndexLevel();
 
@@ -76,15 +54,6 @@ public interface ResourceIndex extends TriplestoreWriter {
      * @throws ResourceIndexException if the operation fails for any reason.
      */
     void addBDefObject(BDefReader reader)
-            throws ResourceIndexException;
-
-    /**
-     * Adds a behavior mechanism object.
-     *
-     * @param reader the behavior definition to add.
-     * @throws ResourceIndexException if the operation fails for any reason.
-     */
-    void addBMechObject(BMechReader reader)
             throws ResourceIndexException;
 
     /**
@@ -116,16 +85,6 @@ public interface ResourceIndex extends TriplestoreWriter {
             throws ResourceIndexException;
 
     /**
-     * Modifies a behavior mechanism object.
-     *
-     * @param oldReader the original behavior mechanism.
-     * @param newReader the modified behavior mechanism.
-     * @throws ResourceIndexException if the operation fails for any reason.
-     */
-    void modifyBMechObject(BMechReader oldReader, BMechReader newReader)
-            throws ResourceIndexException;
-
-    /**
      * Modifies a data object.
      *
      * @param oldReader the original data object.
@@ -151,14 +110,6 @@ public interface ResourceIndex extends TriplestoreWriter {
      * @param oldReader the original behavior definition.
      */
     void deleteBDefObject(BDefReader oldReader)
-            throws ResourceIndexException;
-
-    /**
-     * Deletes a behavior mechanism object.
-     *
-     * @param oldReader the original behavior mechanism.
-     */
-    void deleteBMechObject(BMechReader oldReader)
             throws ResourceIndexException;
 
     /**

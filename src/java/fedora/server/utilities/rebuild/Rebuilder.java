@@ -31,7 +31,7 @@ public interface Rebuilder {
      *
      * @@returns a map of option names to plaintext descriptions.
      */
-    public Map init(File serverBaseDir,
+    public Map<String, String> init(File serverBaseDir,
                     ServerConfiguration serverConfig) throws Exception;
 
     /**
@@ -43,7 +43,7 @@ public interface Rebuilder {
     /**
      * Validate the provided options and perform any necessary startup tasks.
      */
-    public void start(Map options) throws Exception;
+    public void start(Map<String, String> options) throws Exception;
 
     /**
      * Add the data of interest for the given object.
