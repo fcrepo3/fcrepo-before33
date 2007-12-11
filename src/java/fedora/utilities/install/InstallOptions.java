@@ -20,6 +20,7 @@ public class InstallOptions {
     public static final String APIA_SSL_REQUIRED     = "apia.ssl.required";
     public static final String APIM_SSL_REQUIRED     = "apim.ssl.required";
     public static final String SERVLET_ENGINE        = "servlet.engine";
+    public static final String USING_JBOSS           = "jboss";
     public static final String TOMCAT_HOME           = "tomcat.home";
     public static final String FEDORA_ADMIN_PASS     = "fedora.admin.pass";
     public static final String TOMCAT_SHUTDOWN_PORT  = "tomcat.shutdown.port";
@@ -130,7 +131,9 @@ public class InstallOptions {
             inputOption(APIM_SSL_REQUIRED);
         }
         inputOption(SERVLET_ENGINE);
-        if (!getValue(SERVLET_ENGINE).equals(OTHER)) {
+        if (getValue(SERVLET_ENGINE).equals(OTHER)) {
+            inputOption(USING_JBOSS);
+        } else {
             inputOption(TOMCAT_HOME);
             inputOption(TOMCAT_HTTP_PORT);
             inputOption(TOMCAT_SHUTDOWN_PORT);
@@ -182,7 +185,13 @@ public class InstallOptions {
         	}
         }
         
-        inputOption(DEPLOY_LOCAL_SERVICES);
+        // If using an "other" servlet container, we can't automatically deploy
+        // the local services, so don't even bother to ask.
+        if (getValue(SERVLET_ENGINE).equals(OTHER)) {
+            _map.put(DEPLOY_LOCAL_SERVICES, "false");
+        } else {
+            inputOption(DEPLOY_LOCAL_SERVICES);
+        }
     }
 
     private String dashes(int len) {
