@@ -208,7 +208,7 @@ public class RelsExtValidatorTest extends TestCase {
             throws GraphElementFactoryException, URISyntaxException {
         ObjectNode oNode = null;
         if (isLiteral) {
-            if (datatype == null || datatype.isEmpty()) {
+            if (datatype == null || datatype.length() == 0) {
                 oNode = geFactory.createLiteral(object);
             } else {
                 oNode = geFactory.createLiteral(object, new URI(datatype));
