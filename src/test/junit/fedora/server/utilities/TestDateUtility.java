@@ -83,6 +83,10 @@ public class TestDateUtility extends TestCase {
         for (int i = 0; i < badDates.length; i++) {
             TestCase.assertNull(DateUtility.parseDateAsUTC(badDates[i]));
         }
+        
+        assertEquals(ONE_CE, DateUtility.parseDateAsUTC(ONE_CE_XSD_DT));
+        assertEquals(ONE_BCE, DateUtility.parseDateAsUTC(ONE_BCE_XSD_DT));
+        assertEquals(TWO_BCE, DateUtility.parseDateAsUTC(TWO_BCE_XSD_DT));
     }
 
 }
