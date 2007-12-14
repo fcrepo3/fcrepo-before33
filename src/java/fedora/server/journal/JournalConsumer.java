@@ -1,5 +1,6 @@
-/* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+/*
+ * The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -28,6 +29,7 @@ import fedora.server.storage.types.RelationshipTuple;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
+ * @version $Id$
  */
 public class JournalConsumer implements JournalWorker {
     private final ServerInterface server;
@@ -98,7 +100,8 @@ public class JournalConsumer implements JournalWorker {
      * Reject API calls from outside while we are in recovery mode.
      */
     public Date modifyObject(Context context, String pid, String state,
-            String label, String ownerId, String logMessage) throws ServerException {
+            String label, String ownerId, String logMessage)
+            throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
@@ -140,9 +143,8 @@ public class JournalConsumer implements JournalWorker {
     public String addDatastream(Context context, String pid, String dsID,
             String[] altIDs, String dsLabel, boolean versionable,
             String MIMEType, String formatURI, String location,
-            String controlGroup, String dsState, String checksumType, 
-            String checksum, String logMessage)
-            throws ServerException {
+            String controlGroup, String dsState, String checksumType,
+            String checksum, String logMessage) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
@@ -151,10 +153,9 @@ public class JournalConsumer implements JournalWorker {
      */
     public Date modifyDatastreamByReference(Context context, String pid,
             String datastreamID, String[] altIDs, String dsLabel,
-            String mimeType, String formatURI, String dsLocation, 
-            String checksumType, String checksum, String logMessage, 
-            boolean force)
-            throws ServerException {
+            String mimeType, String formatURI, String dsLocation,
+            String checksumType, String checksum, String logMessage,
+            boolean force) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
@@ -163,10 +164,9 @@ public class JournalConsumer implements JournalWorker {
      */
     public Date modifyDatastreamByValue(Context context, String pid,
             String datastreamID, String[] altIDs, String dsLabel,
-            String mimeType, String formatURI, InputStream dsContent, 
-            String checksumType, String checksum, String logMessage, 
-            boolean force)
-            throws ServerException {
+            String mimeType, String formatURI, InputStream dsContent,
+            String checksumType, String checksum, String logMessage,
+            boolean force) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
@@ -174,9 +174,8 @@ public class JournalConsumer implements JournalWorker {
      * Reject API calls from outside while we are in recovery mode.
      */
     public Date[] purgeDatastream(Context context, String pid,
-            String datastreamID, Date startDT, Date endDT, String logMessage, 
-            boolean force)
-            throws ServerException {
+            String datastreamID, Date startDT, Date endDT, String logMessage,
+            boolean force) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
@@ -214,12 +213,12 @@ public class JournalConsumer implements JournalWorker {
 
     /**
      * Delegate to the ManagementDelegate.
-     *
-     * Note: Unlike other methods of the Management interface, this method
-     * is not exposed at the service level.  Therefore, it is safe to forward
-     * the call to the delegate.  It is also necessary because, in the
-     * course of fulfilling API-M requests that involve uploaded content,
-     * this method is invoked by internal server code.
+     * 
+     * Note: Unlike other methods of the Management interface, this method is
+     * not exposed at the service level. Therefore, it is safe to forward the
+     * call to the delegate. It is also necessary because, in the course of
+     * fulfilling API-M requests that involve uploaded content, this method is
+     * invoked by internal server code.
      */
     public InputStream getTempStream(String id) throws ServerException {
         return delegate.getTempStream(id);
@@ -236,18 +235,17 @@ public class JournalConsumer implements JournalWorker {
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public Date setDatastreamVersionable(Context context, String pid, 
-            String dsID, boolean versionable, String logMessage) 
-        throws ServerException {
+    public Date setDatastreamVersionable(Context context, String pid,
+            String dsID, boolean versionable, String logMessage)
+            throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public String compareDatastreamChecksum(Context context, String pid, 
-            String dsID, Date versionDate) 
-        throws ServerException {
+    public String compareDatastreamChecksum(Context context, String pid,
+            String dsID, Date versionDate) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
@@ -274,31 +272,32 @@ public class JournalConsumer implements JournalWorker {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
-
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public RelationshipTuple[] getRelationships(Context context, String pid, String dsID, String relationship) throws ServerException
-    {
+    public RelationshipTuple[] getRelationships(Context context, String pid,
+            String relationship) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public RelationshipTuple addRelationship(Context context, String pid, String dsID, String relationship, String objURI, String objLiteral, String literalType) throws ServerException
-    {
+    public boolean addRelationship(Context context, String pid,
+            String relationship, String objURI, boolean isLiteral,
+            String datatype) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public RelationshipTuple purgeRelationship(Context context, String pid, String dsID, String relationship, String objURI, String objLiteral, String literalType) throws ServerException
-    {
+    public boolean purgeRelationship(Context context, String pid,
+            String relationship, String objURI, boolean isLiteral,
+            String datatype) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
-    
+
     /**
      * While the server is reading a Journal to recover its state, block any
      * attempt to use the Management API.

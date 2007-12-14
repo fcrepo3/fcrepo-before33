@@ -130,14 +130,4 @@ public class ResourceIndexDatePrecisionIntegrationTest
         return new junit.framework.JUnit4TestAdapter(
                 ResourceIndexDatePrecisionIntegrationTest.class);
     }
-    
-    @Test
-    public void testFoo() throws Exception {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy");
-        df.setTimeZone(TimeZone.getTimeZone("UTC"));
-        
-        //assertEquals("0000", df.format(df.parse("0000")));
-        assertEquals("0001", df.format(df.parse("-0001")));
-        
-    }
 }

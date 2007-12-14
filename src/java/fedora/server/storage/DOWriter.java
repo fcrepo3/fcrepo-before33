@@ -9,8 +9,6 @@ import java.util.Date;
 
 import fedora.server.errors.ServerException;
 import fedora.server.storage.types.Datastream;
-//import fedora.server.storage.types.Disseminator;
-import fedora.server.storage.types.RelationshipTuple;
 
 /**
  *
@@ -212,11 +210,11 @@ public interface DOWriter
     /**
      * Adds a RDF triple to the RELS-EXT datastream
      */
-    public RelationshipTuple addRelationship(String subjectURI, String relationship, String objURI, String objLiteral, String literalType) throws ServerException;
+    public boolean addRelationship(String relationship, String object, boolean isLiteral, String datatype) throws ServerException;
 
     /**
      * Purges a RDF triple from the RELS-EXT datastream 
      */
-    public RelationshipTuple purgeRelationship(String subjectURI, String relationship, String objURI, String objLiteral, String literalType) throws ServerException;
+    public boolean purgeRelationship(String relationship, String object, boolean isLiteral, String datatype) throws ServerException;
 
 }

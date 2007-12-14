@@ -444,9 +444,7 @@
 		<param name="jdbcDriverClass" value="com.mysql.jdbc.Driver">
 			<comment>The JDBC driver class name.</comment>
 		</param>
-		<param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter">
-			<comment></comment>
-		</param>
+		<param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
 		<param name="maxActive" value="100">
 			<comment>The maximum number of active instances in pool.</comment>
 		</param>
@@ -666,9 +664,7 @@
 		<param name="jdbcDriverClass" value="org.postgresql.Driver">
 			<comment>The JDBC driver class name.</comment>
 		</param>
-		<param name="ddlConverter" value="fedora.server.utilities.PostgresDDLConverter">
-			<comment></comment>
-		</param>
+		<param name="ddlConverter" value="fedora.server.utilities.PostgresDDLConverter"/>
 		<param name="maxActive" value="100">
 			<comment>The maximum number of active instances in pool.</comment>
 		</param>

@@ -17,7 +17,6 @@ import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
 import fedora.server.journal.entry.CreatorJournalEntry;
-import fedora.server.journal.helpers.JournalHelper;
 import fedora.server.management.ManagementDelegate;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.Property;
@@ -349,39 +348,37 @@ public class JournalCreator implements JournalWorker, JournalConstants {
         }
     }
 
-    public RelationshipTuple addRelationship(Context context, String pid, String subjectURI, 
+    public boolean addRelationship(Context context, String pid, 
                                                String relationship, String objURI, 
-                                               String objLiteral, String literalType) throws ServerException
+                                               boolean isLiteral, String datatype) throws ServerException
     {
         try {
             CreatorJournalEntry cje = new CreatorJournalEntry(
                     METHOD_ADD_RELATIONSHIP, context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
-            cje.addArgument(ARGUMENT_NAME_SUBJECT_URI, subjectURI);
             cje.addArgument(ARGUMENT_NAME_RELATIONSHIP, relationship);
-            cje.addArgument(ARGUMENT_NAME_OBJECT_URI, objURI);
-            cje.addArgument(ARGUMENT_NAME_OBJECT_LITERAL, objLiteral);            
-            cje.addArgument(ARGUMENT_NAME_LITERAL_TYPE, literalType);            
-            return (RelationshipTuple) cje.invokeAndClose(delegate, writer);
+            cje.addArgument(ARGUMENT_NAME_OBJECT, objURI);
+            cje.addArgument(ARGUMENT_NAME_IS_LITERAL, isLiteral);            
+            cje.addArgument(ARGUMENT_NAME_DATATYPE, datatype);            
+            return (Boolean) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
     }
 
-    public RelationshipTuple purgeRelationship(Context context, String pid, String subjectURI, 
-                                                String relationship, String objURI, 
-                                                String objLiteral, String literalType) throws ServerException
+    public boolean purgeRelationship(Context context, String pid, 
+                                                String relationship, String object, 
+                                                boolean isLiteral, String datatype) throws ServerException
     {
         try {
             CreatorJournalEntry cje = new CreatorJournalEntry(
                     METHOD_PURGE_RELATIONSHIP, context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
-            cje.addArgument(ARGUMENT_NAME_SUBJECT_URI, subjectURI);
             cje.addArgument(ARGUMENT_NAME_RELATIONSHIP, relationship);
-            cje.addArgument(ARGUMENT_NAME_OBJECT_URI, objURI);
-            cje.addArgument(ARGUMENT_NAME_OBJECT_LITERAL, objLiteral);            
-            cje.addArgument(ARGUMENT_NAME_LITERAL_TYPE, literalType);            
-            return (RelationshipTuple) cje.invokeAndClose(delegate, writer);
+            cje.addArgument(ARGUMENT_NAME_OBJECT, object);
+            cje.addArgument(ARGUMENT_NAME_IS_LITERAL, isLiteral);            
+            cje.addArgument(ARGUMENT_NAME_DATATYPE, datatype);            
+            return (Boolean) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
@@ -406,9 +403,9 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     /**
      * Let the delegate do it.
      */
-    public RelationshipTuple[] getRelationships(Context context, String pid, String dsID, String relationship) throws ServerException
+    public RelationshipTuple[] getRelationships(Context context, String pid, String relationship) throws ServerException
     {
-        return delegate.getRelationships(context, pid, dsID, relationship);
+        return delegate.getRelationships(context, pid, relationship);
     }
 
     /**

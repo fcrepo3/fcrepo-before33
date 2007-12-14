@@ -11,55 +11,44 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
-import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
-
+import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.log4j.Logger;
-
 import org.jrdf.graph.Literal;
-
+import org.jrdf.graph.Node;
 import org.trippi.RDFFormat;
 import org.trippi.TrippiException;
 import org.trippi.TupleIterator;
 
 import fedora.common.Constants;
-
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.utilities.DateUtility;
-import fedora.server.types.gen.RepositoryInfo;
 
 /**
  * General-purpose utility class for Fedora clients.  
@@ -481,10 +470,10 @@ public class FedoraClient implements Constants {
        return bundle.getString("version");
     }
 
-    public static List getCompatibleServerVersions() {
+    public static List<String> getCompatibleServerVersions() {
 
         ResourceBundle bundle = ResourceBundle.getBundle("fedora.client.resources.Client");
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
 
         String versions = bundle.getString("compatibleServerVersions");
         if (versions != null && versions.trim().length() > 0) {
@@ -561,13 +550,13 @@ public class FedoraClient implements Constants {
     		String query = "select $date " +
     					   "from <#ri> " +
     					   "where <" + locator + "> <" + VIEW.LAST_MODIFIED_DATE.uri + "> $date";
-    		Map map = new HashMap();
+    		Map<String, String> map = new HashMap<String, String>();
     		map.put("lang", "itql");
     		map.put("query", query);
     		TupleIterator tuples = getTuples(map);
     		try {
 				if (tuples.hasNext()) {
-					Map row = tuples.next();
+					Map<String, Node> row = tuples.next();
 					Literal dateLiteral = (Literal) row.get("date");
 				    if (dateLiteral == null) {
 				        throw new IOException("A row was returned, but it did not contain a 'date' binding");
@@ -637,7 +626,7 @@ public class FedoraClient implements Constants {
      *
      * See http://www.fedora.info/download/2.0/userdocs/server/webservices/risearch/#app.tuples
      */
-    public TupleIterator getTuples(Map params) throws IOException {
+    public TupleIterator getTuples(Map<String, String> params) throws IOException {
         params.put("type", "tuples");
         params.put("format", RDFFormat.SPARQL.getName());
         try {
@@ -648,7 +637,7 @@ public class FedoraClient implements Constants {
         }
     }
 
-    private String getRIQueryURL(Map params) throws IOException {
+    private String getRIQueryURL(Map<String, String> params) throws IOException {
         if (params.get("type") == null) throw new IOException("'type' parameter is required");
         if (params.get("lang") == null) throw new IOException("'lang' parameter is required");
         if (params.get("query") == null) throw new IOException("'query' parameter is required");
@@ -656,12 +645,12 @@ public class FedoraClient implements Constants {
         return m_baseURL + "risearch?" + encodeParameters(params);
     }
 
-    private String encodeParameters(Map params) {
+    private String encodeParameters(Map<String, String> params) {
         StringBuffer encoded = new StringBuffer();
-        Iterator iter = params.keySet().iterator();
+        Iterator<String> iter = params.keySet().iterator();
         int n = 0;
         while (iter.hasNext()) {
-            String name = (String) iter.next();
+            String name = iter.next();
             if (n > 0) {
                 encoded.append("&");
             }
@@ -669,7 +658,7 @@ public class FedoraClient implements Constants {
             encoded.append(name);
             encoded.append('=');
             try {
-                encoded.append(URLEncoder.encode((String) params.get(name), "UTF-8"));
+                encoded.append(URLEncoder.encode(params.get(name), "UTF-8"));
             } catch (UnsupportedEncodingException e) { // UTF-8 won't fail
             }
         }

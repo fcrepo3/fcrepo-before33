@@ -56,9 +56,9 @@ public class TupleArrayTripleIterator extends TripleIterator
         RelationshipTuple tuple = m_TupleArray.get(index++);
         try
         {
-            Triple triple = util.createTriple(util.createResource(new URI(tuple.subjectURI)),
+            Triple triple = util.createTriple(util.createResource(new URI(tuple.subject)),
                                          makePredicateResourceFromRel(tuple.predicate, m_map),
-                                         makeObjectFromURIandLiteral(tuple.objectURI, tuple.objectLiteral, tuple.literalType));
+                                         makeObjectFromURIandLiteral(tuple.object, tuple.isLiteral, tuple.datatype));
             return(triple);
         }
         catch (GraphElementFactoryException e)
@@ -73,25 +73,19 @@ public class TupleArrayTripleIterator extends TripleIterator
         return(null);
     }
     
-    public static ObjectNode makeObjectFromURIandLiteral(String objURI, String objLiteral, String literalType) throws GraphElementFactoryException, URISyntaxException
+    public static ObjectNode makeObjectFromURIandLiteral(String objURI, boolean isLiteral, String literalType) throws GraphElementFactoryException, URISyntaxException
     {
         ObjectNode obj = null;
         if (util == null) util = new RDFUtil();
-        if (objLiteral == null)
-        {
-            obj = util.createResource(new URI(objURI));                
+        if (isLiteral) {
+            if (literalType == null || literalType.length() == 0) {
+                obj = util.createLiteral(objURI);
+            } else {
+                obj = util.createLiteral(objURI, new URI(literalType));
+            }
+        } else {
+            obj = util.createResource(new URI(objURI)); 
         }
-        else 
-        {
-            if (objURI == null)
-            {
-                obj = util.createLiteral(objLiteral);
-            }
-            else
-            {
-                obj = util.createLiteral(objLiteral, literalType);
-            }
-         }
         return obj;
     }
     

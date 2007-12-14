@@ -211,19 +211,19 @@ class MockManagementDelegateForJournalTesting implements ManagementDelegate {
         "MockManagementDelegateForJournalTesting.compareDatastreamChecksum not implemented"); // KLUGE
     }
 
-    public RelationshipTuple[] getRelationships(Context context, String pid, String dsID, String relationship) throws ServerException
+    public RelationshipTuple[] getRelationships(Context context, String pid, String relationship) throws ServerException
     {
         throw new RuntimeException(
         "MockManagementDelegateForJournalTesting.getRelationships not implemented"); // KLUGE
     }
 
-    public RelationshipTuple addRelationship(Context context, String pid, String dsID, String relationship, String objURI, String objLiteral, String literalType) throws ServerException
+    public boolean addRelationship(Context context, String pid, String relationship, String object, boolean isLiteral, String datatype) throws ServerException
     {
         throw new RuntimeException(
         "MockManagementDelegateForJournalTesting.addRelationship not implemented"); // KLUGE
     }
 
-    public RelationshipTuple purgeRelationship(Context context, String pid, String dsID, String relationship, String objURI, String objLiteral, String literalType) throws ServerException
+    public boolean purgeRelationship(Context context, String pid, String relationship, String object, boolean isLiteral, String datatype) throws ServerException
     {
         throw new RuntimeException(
         "MockManagementDelegateForJournalTesting.purgeRelationship not implemented"); // KLUGE

@@ -135,6 +135,7 @@ public abstract class DateUtility {
 
         if (date.before(ONE_CE)) {
             DateFormat df = new SimpleDateFormat("yyyy");
+            df.setTimeZone(TimeZone.getTimeZone("UTC"));
             StringBuilder year = new StringBuilder(String.valueOf(Integer
                     .parseInt(df.format(date)) - 1));
             while (year.length() < 4) {
@@ -206,28 +207,32 @@ public abstract class DateUtility {
 
         SimpleDateFormat formatter = new SimpleDateFormat();
         formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        int length = dateString.length();
+        if (dateString.startsWith("-")) {
+            length--;
+        }
         if (dateString.endsWith("Z")) {
-            if (dateString.length() == 11) {
+            if (length == 11) {
                 formatter.applyPattern("yyyy-MM-dd'Z'");
-            } else if (dateString.length() == 20) {
+            } else if (length == 20) {
                 formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-            } else if (dateString.length() == 22) {
+            } else if (length == 22) {
                 formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
-            } else if (dateString.length() == 23) {
+            } else if (length == 23) {
                 formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss.SS'Z'");
-            } else if (dateString.length() == 24) {
+            } else if (length == 24) {
                 formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
             }
         } else {
-            if (dateString.length() == 10) {
+            if (length == 10) {
                 formatter.applyPattern("yyyy-MM-dd");
-            } else if (dateString.length() == 19) {
+            } else if (length == 19) {
                 formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss");
-            } else if (dateString.length() == 21) {
+            } else if (length == 21) {
                 formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss.S");
-            } else if (dateString.length() == 22) {
+            } else if (length == 22) {
                 formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss.SS");
-            } else if (dateString.length() == 23) {
+            } else if (length == 23) {
                 formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
             } else if (dateString.endsWith("GMT") || dateString.endsWith("UTC")) {
                 formatter.applyPattern("EEE, dd MMMM yyyyy HH:mm:ss z");

@@ -1,12 +1,11 @@
-package fedora.test;
+package fedora.server.config;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	fedora.server.AllUnitTests.class,
-	fedora.utilities.AllUnitTests.class
+	TestServerConfiguration.class
 })
 
 public class AllUnitTests {
@@ -17,8 +16,7 @@ public class AllUnitTests {
         junit.framework.TestSuite suite = 
                 new junit.framework.TestSuite(AllUnitTests.class.getName());
    
-        suite.addTest(fedora.server.AllUnitTests.suite());   
-        suite.addTest(fedora.utilities.AllUnitTests.suite());   
+        suite.addTestSuite(TestServerConfiguration.class); 
 
         return suite;
     }

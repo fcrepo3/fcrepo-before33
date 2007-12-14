@@ -114,13 +114,13 @@ public interface Authorization {
     public void enforceCompareDatastreamChecksum(Context context, String pid, String datastreamId, Date versionDate) 
     throws AuthzException;    
     
-    public void enforceGetRelationships(Context context, String pid, String subjectURI, String predicate)
+    public void enforceGetRelationships(Context context, String pid, String predicate)
     throws AuthzException;    
 
-    public void enforceAddRelationship(Context context, String pid, String subjectURI, String predicate, String objectURI, String objectLit, String literalType)
+    public void enforceAddRelationship(Context context, String pid, String predicate, String object, boolean isLiteral, String datatype)
     throws AuthzException;    
 
-    public void enforcePurgeRelationship(Context context, String pid, String subjectURI, String predicate, String objectURI, String objectLit, String literalType)
+    public void enforcePurgeRelationship(Context context, String pid, String predicate, String object, boolean isLiteral, String datatype)
     throws AuthzException;    
 
 //	public void enforceSetDisseminatorState(Context context, String pid, String disseminatorId, String disseminatorNewState) 

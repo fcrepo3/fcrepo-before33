@@ -148,7 +148,7 @@ public interface DigitalObject {
      *
      * @return The List of AuditRecords, possibly of zero size but never null.
      */
-    public List getAuditRecords();
+    public List<AuditRecord> getAuditRecords();
 
     /**
      * Gets an Iterator over the datastream ids in this object.
@@ -159,7 +159,7 @@ public interface DigitalObject {
      * @return A new Iterator of datastream ids, possibly of zero size but
      *         never null.
      */
-    public Iterator datastreamIdIterator();
+    public Iterator<String> datastreamIdIterator();
 
     /**
      * Gets a mutable List of that consists of versions of the same 
@@ -169,7 +169,7 @@ public interface DigitalObject {
      * @param id The datastream id.
      * @return The list, possibly of zero size but never null.
      */
-    public List datastreams(String id);
+    public List<Datastream> datastreams(String id);
 
     /**
      * Adds a datastream to a digital object, respecting the versionable  
@@ -193,7 +193,7 @@ public interface DigitalObject {
      *         never null.
      */
     @Deprecated
-    public Iterator disseminatorIdIterator();
+    public Iterator<String> disseminatorIdIterator();
 
     /**
      * Gets a mutable List that consists of versions of the same
@@ -204,7 +204,7 @@ public interface DigitalObject {
      * @return The list, possibly of zero size but never null.
      */
     @Deprecated
-    public List disseminators(String id);
+    public List<Disseminator> disseminators(String id);
 
     /**
      * Generate a unique id for a datastream.
@@ -242,5 +242,5 @@ public interface DigitalObject {
 	 *
 	 * @return The property Map.
 	 */	
-	public Map getExtProperties();
+	public Map<String, String> getExtProperties();
 }

@@ -902,11 +902,11 @@ public abstract class TypeUtility
         if (in == null) return(null);
         fedora.server.types.gen.RelationshipTuple out=
               new fedora.server.types.gen.RelationshipTuple();
-        out.setSubURI(in.subjectURI);
+        out.setSubject(in.subject);
         out.setPredicate(in.predicate);
-        out.setObjURI(in.objectURI);
-        out.setObjLiteral(in.objectLiteral);
-        out.setLiteralType(in.literalType);
+        out.setObject(in.object);
+        out.setIsLiteral(in.isLiteral);
+        out.setDatatype(in.datatype);
         return out;
     }
   

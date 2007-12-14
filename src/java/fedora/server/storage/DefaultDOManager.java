@@ -418,8 +418,8 @@ public class DefaultDOManager
 
     public void addCModelBmechHashMap(DOReader reader) throws ServerException
     {
-        RelationshipTuple bdef[] = reader.getRelationships(null, Constants.RELS_EXT.HAS_BDEF.uri);        
-        RelationshipTuple cmodels[] = reader.getRelationships(null, Constants.RELS_EXT.IS_CONTRACTOR.uri);
+        RelationshipTuple bdef[] = reader.getRelationships(Constants.RELS_EXT.HAS_BDEF.uri);        
+        RelationshipTuple cmodels[] = reader.getRelationships(Constants.RELS_EXT.IS_CONTRACTOR.uri);
         if (cmodels == null) return;
         for (int i = 0; i < cmodels.length; i++)
         {

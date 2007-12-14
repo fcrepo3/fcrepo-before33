@@ -102,8 +102,6 @@ public abstract class FedoraTestCase extends XMLTestCase implements FedoraTestCo
     
     public static FedoraClient getFedoraClient(String baseURL, String username,
             String password) throws Exception {
-        System.out.println("Creating FedoraClient(" + baseURL + ", "
-                + username + ", " + password + ")");
     	return new FedoraClient(baseURL, username, password);
     }
 }

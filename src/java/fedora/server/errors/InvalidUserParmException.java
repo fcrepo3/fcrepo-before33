@@ -10,8 +10,8 @@ package fedora.server.errors;
  * <b>Title: </b>InvalidUserParmException.java
  * </p>
  * <p>
- * <b>Description: </b>Signals that one or more user-supplied method paramters
- * do not validate against the method paramter definitions in the associated
+ * <b>Description: </b>Signals that one or more user-supplied method parameters
+ * do not validate against the method parameter definitions in the associated
  * Behavior Mechanism object.
  * </p>
  * 

@@ -517,7 +517,6 @@
     <complexType>
       <sequence>
         <element name="pid" type="xsd:string"/>
-        <element name="subjectURI" nillable="true" type="xsd:string"/>
         <element name="relationship" nillable="true" type="xsd:string"/>
       </sequence>
     </complexType>
@@ -534,18 +533,17 @@
     <complexType>
       <sequence>
         <element name="pid" type="xsd:string"/>
-        <element name="subjectURI" nillable="true" type="xsd:string"/>
         <element name="relationship" type="xsd:string"/>
-        <element name="objURI" type="xsd:string"/>
-        <element name="objLit" type="xsd:string"/>
-        <element name="litType" type="xsd:string"/>
+        <element name="object" type="xsd:string"/>
+        <element name="isLiteral" type="xsd:boolean"/>
+        <element name="datatype" nillable="true" type="xsd:string"/>
       </sequence>
     </complexType>
   </element>
   <element name="addRelationshipResponse">
     <complexType>
       <sequence>
-        <element name="relationship" type="fedora-types:RelationshipTuple"/>
+        <element name="added" type="xsd:boolean"/>
       </sequence>
     </complexType>
   </element>
@@ -554,18 +552,17 @@
     <complexType>
       <sequence>
         <element name="pid" type="xsd:string"/>
-        <element name="subjectURI" nillable="true" type="xsd:string"/>
         <element name="relationship" type="xsd:string"/>
-        <element name="objURI" type="xsd:string"/>
-        <element name="objLit" type="xsd:string"/>
-        <element name="litType" type="xsd:string"/>
+        <element name="object" type="xsd:string"/>
+        <element name="isLiteral" type="xsd:boolean"/>
+        <element name="datatype" nillable="true" type="xsd:string"/>
       </sequence>
     </complexType>
   </element>
   <element name="purgeRelationshipResponse">
     <complexType>
       <sequence>
-        <element name="relationship" type="fedora-types:RelationshipTuple"/>
+        <element name="purged" type="xsd:boolean"/>
       </sequence>
     </complexType>
   </element>
@@ -809,11 +806,11 @@
 
   <complexType name="RelationshipTuple">
     <sequence>
-      <element name="subURI" type="xsd:string"/>
+      <element name="subject" type="xsd:string"/>
       <element name="predicate" type="xsd:string"/>
-      <element name="objURI" nillable="true" type="xsd:string"/>
-      <element name="objLiteral" nillable="true" type="xsd:string"/>
-      <element name="literalType" nillable="true" type="xsd:string"/>
+      <element name="object" type="xsd:string"/>
+      <element name="isLiteral" type="xsd:boolean"/>
+      <element name="datatype" nillable="true" type="xsd:string"/>
     </sequence>
   </complexType>
 

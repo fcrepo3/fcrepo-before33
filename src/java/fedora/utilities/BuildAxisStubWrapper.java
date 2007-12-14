@@ -110,7 +110,13 @@ public class BuildAxisStubWrapper {
                     println("        HashMap PARMS=new HashMap();");
                     String thisMethodStart;
                     String thisMethodFinish;
-                    if (line.indexOf(" void ")==-1) {
+                    
+                    if (line.indexOf("public boolean ") != -1) {
+                        thisMethodStart=methodStart.replaceAll("##RETURN_TYPE##", "Object");
+                        thisMethodFinish=methodFinish.replaceAll("##RETURN_TYPE##", "Object");
+                        thisMethodStart=thisMethodStart.replaceAll("##RETURN##", "return (Boolean)worker.get();// ");
+                        thisMethodFinish=thisMethodFinish.replaceAll("##RETURN##", "return (Boolean)worker.get();// ");
+                    } else if (line.indexOf(" void ")==-1) {
                         String afterPublic=line.substring(line.indexOf("public")+7);
                         String returnType=afterPublic.substring(0, afterPublic.indexOf(" "));
                         thisMethodStart=methodStart.replaceAll("##RETURN_TYPE##", returnType);
@@ -123,6 +129,7 @@ public class BuildAxisStubWrapper {
                         thisMethodStart=thisMethodStart.replaceAll("##RETURN##", "// ");
                         thisMethodFinish=thisMethodFinish.replaceAll("##RETURN##", "// ");
                     }
+                    
                     StringBuffer callBuf=new StringBuffer();
                     if (line.indexOf(" void ")==-1) {
                         callBuf.append("return ");

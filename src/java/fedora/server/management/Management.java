@@ -18,6 +18,7 @@ import fedora.server.storage.types.RelationshipTuple;
  * The management subsystem interface.
  *
  * @author cwilper@cs.cornell.edu
+ * @version $Id$
  */
 public interface Management {
 
@@ -144,25 +145,22 @@ public interface Management {
                                String namespace) throws ServerException;
 
     public RelationshipTuple[] getRelationships(Context context,
-                                                String pid, 
-                                                String dsID, 
+                                                String pid,  
                                                 String relationship)  throws ServerException;
     
-    public RelationshipTuple addRelationship(Context context,
+    public boolean addRelationship(Context context,
                                               String pid, 
-                                              String dsID, 
                                               String relationship, 
-                                              String objURI,
-                                              String objLiteral,
-                                              String literalType)  throws ServerException;
+                                              String object,
+                                              boolean isLiteral,
+                                              String datatype)  throws ServerException;
     
-    public RelationshipTuple purgeRelationship(Context context,
+    public boolean purgeRelationship(Context context,
                                                String pid, 
-                                               String dsID, 
                                                String relationship, 
-                                               String objURI,
-                                               String objLiteral,
-                                               String literalType)  throws ServerException;
+                                               String object,
+                                               boolean isLiteral,
+                                               String datatype)  throws ServerException;
     
     public boolean adminPing(Context context) throws ServerException;
     

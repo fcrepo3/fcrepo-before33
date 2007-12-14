@@ -368,5 +368,5 @@ public interface DOReader
      */
     public String[] getObjectHistory(String PID) throws ServerException;
 
-    public RelationshipTuple[] getRelationships(String subjectURI, String relationship) throws ServerException;
+    public RelationshipTuple[] getRelationships(String relationship) throws ServerException;
 }
