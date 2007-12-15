@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -19,15 +20,20 @@ import fedora.server.config.webxml.FilterMapping;
 import fedora.server.config.webxml.InitParam;
 import fedora.server.config.webxml.SecurityConstraint;
 import fedora.server.config.webxml.Servlet;
+import fedora.server.config.webxml.ServletMapping;
 import fedora.server.config.webxml.UserDataConstraint;
 import fedora.server.config.webxml.WebResourceCollection;
 import fedora.server.config.webxml.WebXML;
 import fedora.utilities.install.InstallOptions;
 
 /**
- * Configures the web.xml for Fedora.
+ * Configures the web.xml for Fedora. This class does not create a complete 
+ * web.xml document from scratch. It assumes that the constructor-provided 
+ * webXML file has already defined the base set of servlets, servlet-mapping, 
+ * etc (specifically, the web.xml located in src/war/fedora/WEB-INF/web.xml).
  * 
  * @author Edwin Shin
+ * @version $Id$
  *
  */
 public class FedoraWebXML {	
@@ -87,9 +93,18 @@ public class FedoraWebXML {
 		fedoraWebXML = fedora.server.config.webxml.WebXML.getInstance(webXML);
 
 		setFedoraHome();
+		setServletMappings();
 		setFilterMappings();
 		Collections.sort(fedoraWebXML.getFilterMappings(), new FilterMappingComparator());
 		setSecurityConstraints();
+	}
+	
+	private void setServletMappings() {
+	    if (options.enableRestAPI()) {
+	        addServletMapping("RestServlet", "/objects/*");
+	    } else {
+	        removeServletMapping("RestServlet", "/objects/*");
+	    }
 	}
 	
 	/**
@@ -100,7 +115,7 @@ public class FedoraWebXML {
 	private void setFilterMappings() {
 		addFilterMappings(FILTER_APIM_SERVLET_NAMES, FILTER_APIM_URL_PATTERNS);
 		
-		if (options.apiaAuth) {
+		if (options.requireApiaAuth()) {
 			addFilterMappings(FILTER_APIA_SERVLET_NAMES, FILTER_APIA_URL_PATTERNS);
 		} else {
 			removeFilterMappings(FILTER_APIA_SERVLET_NAMES, FILTER_APIA_URL_PATTERNS);
@@ -108,17 +123,55 @@ public class FedoraWebXML {
 	}
 	
 	private void setSecurityConstraints() {
-		if (options.apimSSL) {
+		if (options.requireApimSSL()) {
 			addUserDataConstraint(SC_APIM_URL_PATTERNS);
 		} else {
 			removeUserDataConstraint(SC_APIM_URL_PATTERNS);
 		}
 		
-		if (options.apiaSSL) {
+		if (options.requireApiaSSL()) {
 			addUserDataConstraint(SC_APIA_URL_PATTERNS);
 		} else {
 			removeUserDataConstraint(SC_APIA_URL_PATTERNS);
 		}
+	}
+	
+	private void addServletMapping(String servletName, String urlPattern) {
+	    List<ServletMapping> servletMappings = fedoraWebXML.getServletMappings();
+	    for (ServletMapping servletMapping : servletMappings) {
+	        if (servletMapping.getServletName().equals(servletName)) {
+	            if (servletMapping.getUrlPatterns().contains(urlPattern)) {
+	                return; // servlet-mapping already exists, no need to add
+	            }
+	        }
+	    }
+	    ServletMapping servletMapping = new ServletMapping();
+	    servletMapping.setServletName(servletName);
+	    servletMapping.addUrlPattern(urlPattern);
+	    fedoraWebXML.addServletMapping(servletMapping);
+	}
+	
+	/**
+	 * Removes the servlet-mapping with the given servlet-name and url-pattern.
+	 * 
+	 * @param servletName the servlet-name to match
+	 * @param urlPattern the url-pattern to match (or null to match any)
+	 */
+	private void removeServletMapping(String servletName, String urlPattern) {
+	    ServletMapping servletMapping;
+	    Iterator<ServletMapping> servletMappings = fedoraWebXML.getServletMappings().iterator();
+	    while (servletMappings.hasNext()) {
+	        servletMapping = servletMappings.next();
+	        if (servletName == null || 
+                    servletName.length() == 0 || 
+                    servletMapping.getServletName().equals(servletName)) {
+                if (urlPattern == null || 
+                        urlPattern.length() == 0 || 
+                        servletMapping.getUrlPatterns().contains(urlPattern)) {
+                    servletMappings.remove();
+                }
+            }
+	    }
 	}
 	
 	/**
@@ -199,7 +252,6 @@ public class FedoraWebXML {
 		}
 	}
 	
-	
 	private void addFilterMappings(String[] servletNames, String[] urlPatterns) {
 		Set<String> servlets = new HashSet<String>(Arrays.asList(servletNames));
 		Set<String> urls = new HashSet<String>(Arrays.asList(urlPatterns));
@@ -258,11 +310,11 @@ public class FedoraWebXML {
 	 * init-param/param-name=fedora.home
 	 *
 	 */
-	public void setFedoraHome() {
+	private void setFedoraHome() {
 		for (Servlet servlet : fedoraWebXML.getServlets()) {
 			for (InitParam param : servlet.getInitParams()) {
 				if (param.getParamName().equals("fedora.home")) {
-					param.setParamValue(options.fedoraHome.getAbsolutePath());
+					param.setParamValue(options.getFedoraHome().getAbsolutePath());
 				}
 			}
 		}
@@ -273,7 +325,7 @@ public class FedoraWebXML {
 	}
 	
 	/**
-	 * Ensures that SETUP_FILTER is first, followed by XmlUserfileFilter, 
+	 * Ensures that SETUP_FILTER is first, followed by XMLUSERFILE_FILTER, 
 	 * and FINALIZE_FILTER is last.
 	 * @author Edwin Shin
 	 *

@@ -113,11 +113,15 @@
         <servlet-name>WSDLServlet</servlet-name>
         <servlet-class>fedora.server.access.WSDLServlet</servlet-class>
     </servlet>
-    <servlet>
-		<servlet-name>FacesServlet</servlet-name>
-		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
+	<servlet>
+		<display-name>Fedora REST API Servlet</display-name>
+	    <servlet-name>RestServlet</servlet-name>
+	    <servlet-class>com.sun.ws.rest.impl.container.servlet.ServletAdaptor</servlet-class>
+	    <init-param>
+	      <param-name>webresourceclass</param-name>
+	      <param-value>fedora.server.rest.WebResources</param-value>
+	    </init-param>
+    </servlet>
 
 	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
@@ -184,6 +188,10 @@
 		<url-pattern>/report</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
+	    <servlet-name>RestServlet</servlet-name>
+	    <url-pattern>/objects/*</url-pattern>
+  	</servlet-mapping>
+	<servlet-mapping>
 		<servlet-name>RISearchServlet</servlet-name>
 		<url-pattern>/risearch</url-pattern>
 	</servlet-mapping>
@@ -207,30 +215,25 @@
 		<servlet-name>WSDLServlet</servlet-name>
 		<url-pattern>/wsdl</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-		<servlet-name>FacesServlet</servlet-name>
-		<url-pattern>*.faces</url-pattern>
-	</servlet-mapping>
-	
-	
+
 	<!-- security filters -->
-	
-	<!-- refactoring after fedora 2.2 might eliminate the need for this "setup" filter.  map it first. -->	
-	<filter> 
+
+	<!-- refactoring after fedora 2.2 might eliminate the need for this "setup" filter.  map it first. -->
+	<filter>
 		<filter-name>SetupFilter</filter-name>
-		<filter-class>fedora.server.security.servletfilters.FilterSetup</filter-class> 
+		<filter-class>fedora.server.security.servletfilters.FilterSetup</filter-class>
 	</filter>
-	<filter> 
+	<filter>
 		<filter-name>XmlUserfileFilter</filter-name>
-		<filter-class>fedora.server.security.servletfilters.xmluserfile.FilterXmlUserfile</filter-class>  
+		<filter-class>fedora.server.security.servletfilters.xmluserfile.FilterXmlUserfile</filter-class>
 	</filter>
-	<filter> 
+	<filter>
 		<filter-name>EnforceAuthnFilter</filter-name>
-		<filter-class>fedora.server.security.servletfilters.FilterEnforceAuthn</filter-class> 
+		<filter-class>fedora.server.security.servletfilters.FilterEnforceAuthn</filter-class>
 	</filter>
-	<filter> 
+	<filter>
 		<filter-name>FinalizeFilter</filter-name>
-		<filter-class>fedora.server.security.servletfilters.FilterFinalize</filter-class> 
+		<filter-class>fedora.server.security.servletfilters.FilterFinalize</filter-class>
 	</filter>
 
   <!-- among security filters, map this one first. -->
@@ -238,13 +241,13 @@
 		<filter-name>SetupFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
+
 	<filter-mapping>
 		<filter-name>XmlUserfileFilter</filter-name>
-		<url-pattern>/*</url-pattern> 
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
   <!-- authn always required -->
-	<filter-mapping> 
+	<filter-mapping>
 		<filter-name>EnforceAuthnFilter</filter-name>
 		<servlet-name>AxisServlet</servlet-name>
 	</filter-mapping>
@@ -267,22 +270,22 @@
 	<filter-mapping>
 		<filter-name>EnforceAuthnFilter</filter-name>
 		<servlet-name>UploadServlet</servlet-name>
-	</filter-mapping>  
-	<filter-mapping> 
+	</filter-mapping>
+	<filter-mapping>
 		<filter-name>EnforceAuthnFilter</filter-name>
 		<url-pattern>/index.html</url-pattern>
-	</filter-mapping>  
-	<filter-mapping> 
+	</filter-mapping>
+	<filter-mapping>
 		<filter-name>EnforceAuthnFilter</filter-name>
 		<url-pattern>/services/management</url-pattern>
-	</filter-mapping>  
+	</filter-mapping>
   <!-- authn always required ^^^^^ -->
 
   <!-- among security filters, map this one last. -->
-	<filter-mapping> 
+	<filter-mapping>
 		<filter-name>FinalizeFilter</filter-name>
-		<url-pattern>/*</url-pattern> 
-	</filter-mapping>  
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 
 	<security-constraint>
 		<web-resource-collection>

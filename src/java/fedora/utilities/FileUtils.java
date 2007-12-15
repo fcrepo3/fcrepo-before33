@@ -13,7 +13,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.Map.Entry;
 
 public class FileUtils {
 	public static final int BUFFER = 2048;
@@ -149,6 +153,32 @@ public class FileUtils {
         try {
             props.load(in);
             return props;
+        } finally {
+            try { in.close(); } catch (IOException e) { }
+        }
+    }
+    
+    /**
+     * Loads a Map from the given Properties file.
+     * 
+     * @param f the Properties file to parse.
+     * @return a Map<String, String> representing the given Properties file.
+     * @throws IOException
+     * @see java.util.Properties
+     * @see java.util.Map
+     */
+    public static Map<String, String> loadMap(File f) throws IOException {
+        Properties props = new Properties();
+        FileInputStream in = new FileInputStream(f);
+        try {
+            props.load(in);
+            Map<String, String> map = new HashMap<String, String>();
+            Set<Entry<Object, Object>> entrySet = props.entrySet();
+            for (Entry<Object, Object> entry : entrySet) {
+                // The casts to String should always succeed
+                map.put((String)entry.getKey(), (String)entry.getValue());
+            }
+            return map;
         } finally {
             try { in.close(); } catch (IOException e) { }
         }

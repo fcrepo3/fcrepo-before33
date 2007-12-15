@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.PropertyConfigurator;
@@ -90,6 +91,15 @@ public class Installer {
 			throw new InstallationFailedException(e.getMessage(), e);
 		}
 		System.out.println("Installation complete.");
+		if (_opts.getValue(InstallOptions.SERVLET_ENGINE).equals(InstallOptions.OTHER)) {
+		    System.out.println("\n" +
+"----------------------------------------------------------------------\n" +
+"The Fedora Installer cannot automatically deploy the Web ARchives to  \n" +
+"the selected servlet container. You must deploy the WAR files         \n" +
+"manually. You can find fedora.war plus several sample back-end        \n" +
+"services and a demonstration object package in:                       \n" + 
+"\t" + fedoraHome.getAbsolutePath() + File.separator + "install");
+		}
 		System.out.println("\n" +
 "----------------------------------------------------------------------\n" +
 "Before starting Fedora, please ensure that any required environment\n" +
@@ -142,7 +152,13 @@ public class Installer {
 	        } else {
 	        	installJDBCDriver(_dist, _opts, webinfLib);
 	        }
-
+	        
+	        // Remove log4j if using JBoss Application Server
+	        if (container.equals(InstallOptions.OTHER) && 
+	                _opts.getValue(InstallOptions.USING_JBOSS).equals("true")) {
+	            new File(webinfLib, Distribution.LOG4J).delete();
+	        }
+	        
 	        File fedoraWar = new File(installDir, Distribution.FEDORA_WAR);
 	        Zip.zip(fedoraWar, warStage.listFiles());
 	        return fedoraWar;
@@ -219,7 +235,7 @@ public class Installer {
             if (args.length == 0) {
                 opts = new InstallOptions(dist);
             } else if (args.length == 1) {
-                Properties props = FileUtils.loadProperties(new File(args[0]));
+                Map<String, String> props = FileUtils.loadMap(new File(args[0]));
                 opts = new InstallOptions(dist, props);
             } else {
                 System.err.println("ERROR: Too many arguments.");

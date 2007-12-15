@@ -21,6 +21,7 @@ import java.util.Properties;
 
 import fedora.server.config.ServerConfiguration;
 import fedora.server.config.ServerConfigurationParser;
+import fedora.server.resourceIndex.ResourceIndex;
 import fedora.server.security.BESecurityConfig;
 import fedora.server.security.DefaultRoleConfig;
 import fedora.server.security.servletfilters.xmluserfile.FedoraUsers;
@@ -136,6 +137,12 @@ public class FedoraHome {
         	props.put("module.fedora.server.security.Authorization.ENFORCE-MODE", "permit-all-requests");
         }
         
+        if (_opts.getBooleanValue(InstallOptions.RI_ENABLED, true)) {
+            props.put("module.fedora.server.resourceIndex.ResourceIndex.level", String.valueOf(ResourceIndex.INDEX_LEVEL_ON));
+        } else {
+            props.put("module.fedora.server.resourceIndex.ResourceIndex.level", String.valueOf(ResourceIndex.INDEX_LEVEL_OFF));
+        }
+
         props.put("module.fedora.server.access.Access.doMediateDatastreams", _opts.getValue(InstallOptions.APIA_AUTH_REQUIRED));
         
         try {

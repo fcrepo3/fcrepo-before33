@@ -21,7 +21,7 @@ import fedora.utilities.XMLDocument;
 public class XACMLPolicy
         extends XMLDocument {
 
-	private InstallOptions options;
+	//private InstallOptions options;
 	
 	public XACMLPolicy(File policyFile, InstallOptions installOptions) throws FileNotFoundException, DocumentException {
 		this(new FileInputStream(policyFile), installOptions);
@@ -29,7 +29,7 @@ public class XACMLPolicy
 	
 	public XACMLPolicy(InputStream policyFile, InstallOptions installOptions) throws FileNotFoundException, DocumentException {
 		super(policyFile);
-		options = installOptions;
+		//options = installOptions;
 	}
 	
 	/** 

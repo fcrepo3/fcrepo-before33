@@ -30,7 +30,12 @@ public class ServletMapping {
 	public List<String> getUrlPatterns() {
 		return urlPatterns;
 	}
-
+	
+	/**
+	 * Only one url-pattern per servlet-mapping is supported pre-Servlet 2.5.
+	 * 
+	 * @param urlPattern the url-pattern to add to this ServletMapping.
+	 */
 	public void addUrlPattern(String urlPattern) {
 		urlPatterns.add(urlPattern);
 	}

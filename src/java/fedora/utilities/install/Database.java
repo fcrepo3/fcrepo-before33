@@ -216,7 +216,7 @@ public class Database {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		Map<Object, Object> map = new HashMap<Object, Object>();
+		Map<String, String> map = new HashMap<String, String>();
 		map.put(InstallOptions.DATABASE, InstallOptions.MCKOI);
 		map.put(InstallOptions.DATABASE_DRIVER, InstallOptions.INCLUDED);
 		map.put(InstallOptions.DATABASE_JDBCURL, "jdbc:mckoi://localhost:9157/");

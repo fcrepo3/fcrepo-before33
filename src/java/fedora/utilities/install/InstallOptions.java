@@ -25,6 +25,7 @@ public class InstallOptions {
     public static final String APIA_SSL_REQUIRED     = "apia.ssl.required";
     public static final String APIM_SSL_REQUIRED     = "apim.ssl.required";
     public static final String SERVLET_ENGINE        = "servlet.engine";
+    public static final String USING_JBOSS           = "jboss";
     public static final String TOMCAT_HOME           = "tomcat.home";
     public static final String FEDORA_ADMIN_PASS     = "fedora.admin.pass";
     public static final String TOMCAT_SHUTDOWN_PORT  = "tomcat.shutdown.port";
@@ -40,6 +41,8 @@ public class InstallOptions {
     public static final String DATABASE_USERNAME     = "database.username";
     public static final String DATABASE_PASSWORD	 = "database.password";
     public static final String XACML_ENABLED         = "xacml.enabled";
+    public static final String RI_ENABLED            = "ri.enabled";
+    public static final String REST_ENABLED          = "rest.enabled";
     public static final String DEPLOY_LOCAL_SERVICES = "deploy.local.services";
     public static final String UNATTENDED 			 = "unattended";
     public static final String DATABASE_UPDATE		 = "database.update";
@@ -55,14 +58,14 @@ public class InstallOptions {
     public static final String OTHER                 = "other";
     public static final String EXISTING_TOMCAT       = "existingTomcat";
 
-    private Map<Object, Object> _map;
+    private Map<String, String> _map;
     private Distribution _dist;
 
     /**
      * Initialize options from the given map of String values, keyed by 
      * option id.
      */
-    public InstallOptions(Distribution dist, Map<Object, Object> map) 
+    public InstallOptions(Distribution dist, Map<String, String> map) 
             throws OptionValidationException {
     	_dist = dist;
         _map = map;
@@ -77,7 +80,7 @@ public class InstallOptions {
     public InstallOptions(Distribution dist) 
             throws InstallationCancelledException {
     	_dist = dist;
-        _map = new HashMap<Object, Object>();
+        _map = new HashMap<String, String>();
 
         System.out.println();
         System.out.println("***********************");
@@ -110,10 +113,13 @@ public class InstallOptions {
         	_map.put(SSL_AVAILABLE, Boolean.toString(false));
         	_map.put(APIM_SSL_REQUIRED, Boolean.toString(false));
         	_map.put(SERVLET_ENGINE, null); // included
+        	_map.put(USING_JBOSS, null); // included
         	_map.put(TOMCAT_HOME, fedoraHome + File.separator + "tomcat");
         	_map.put(TOMCAT_HTTP_PORT, null); // 8080
         	_map.put(TOMCAT_SHUTDOWN_PORT, null); // 8005
         	_map.put(XACML_ENABLED, Boolean.toString(false));
+        	_map.put(RI_ENABLED, null); // false
+        	_map.put(REST_ENABLED, null); // false
         	_map.put(DATABASE, INCLUDED); // included
         	_map.put(DATABASE_DRIVER, INCLUDED);
         	_map.put(DATABASE_USERNAME, "fedoraAdmin");
@@ -135,7 +141,9 @@ public class InstallOptions {
             inputOption(APIM_SSL_REQUIRED);
         }
         inputOption(SERVLET_ENGINE);
-        if (!getValue(SERVLET_ENGINE).equals(OTHER)) {
+        if (getValue(SERVLET_ENGINE).equals(OTHER)) {
+            inputOption(USING_JBOSS);
+        } else {
             inputOption(TOMCAT_HOME);
             inputOption(TOMCAT_HTTP_PORT);
             inputOption(TOMCAT_SHUTDOWN_PORT);
@@ -151,6 +159,8 @@ public class InstallOptions {
             }
         }
         inputOption(XACML_ENABLED);
+        inputOption(RI_ENABLED);
+        inputOption(REST_ENABLED);
         
         // Database selection
         // Ultimately we want to provide the following properties:
@@ -187,7 +197,13 @@ public class InstallOptions {
         	}
         }
         
-        inputOption(DEPLOY_LOCAL_SERVICES);
+        // If using an "other" servlet container, we can't automatically deploy
+        // the local services, so don't even bother to ask.
+        if (getValue(SERVLET_ENGINE).equals(OTHER)) {
+            _map.put(DEPLOY_LOCAL_SERVICES, "false");
+        } else {
+            inputOption(DEPLOY_LOCAL_SERVICES);
+        }
     }
 
     private String dashes(int len) {
@@ -284,9 +300,9 @@ public class InstallOptions {
             throws IOException {
 
         Properties props = new Properties();
-        Iterator iter = _map.keySet().iterator();
+        Iterator<String> iter = _map.keySet().iterator();
         while (iter.hasNext()) {
-            String key = (String) iter.next();
+            String key = iter.next();
             props.setProperty(key, getValue(key));
         }
 
@@ -339,7 +355,7 @@ public class InstallOptions {
     /**
      * Get an iterator of the names of all specified options.
      */
-    public Iterator getOptionNames() {
+    public Iterator<String> getOptionNames() {
         return _map.keySet().iterator();
     }
 
@@ -347,10 +363,10 @@ public class InstallOptions {
      * Apply defaults to the options, where possible.
      */
     private void applyDefaults() {
-        Iterator names = getOptionNames();
+        Iterator<String> names = getOptionNames();
         while (names.hasNext()) {
-            String name = (String) names.next();
-            String val = (String) _map.get(name);
+            String name = names.next();
+            String val = _map.get(name);
             if (val == null || val.length() == 0) {
                 OptionDefinition opt = OptionDefinition.get(name, this);
                 _map.put(name, opt.getDefaultValue());
@@ -366,9 +382,9 @@ public class InstallOptions {
      */
     private void validateAll() throws OptionValidationException {
     	boolean unattended = getBooleanValue(UNATTENDED, false);
-        Iterator keys = getOptionNames();
+        Iterator<String> keys = getOptionNames();
         while (keys.hasNext()) {
-            String optionId = (String) keys.next();
+            String optionId = keys.next();
             OptionDefinition opt = OptionDefinition.get(optionId, this);
             opt.validateValue(getValue(optionId), unattended);
         }

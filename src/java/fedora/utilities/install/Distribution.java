@@ -35,6 +35,8 @@ public abstract class Distribution {
 	public static final String COMMONS_DBCP;
 	public static final String COMMONS_POOL;
 	
+	public static final String LOG4J;
+	
 	private static Properties PROPS;
 	static {
 		// an up to date install.properties should be provided by the buildfile
@@ -59,6 +61,7 @@ public abstract class Distribution {
         COMMONS_DBCP = PROPS.getProperty("install.commons.dbcp");
         COMMONS_POOL = PROPS.getProperty("install.commons.pool");
         
+        LOG4J = PROPS.getProperty("install.log4j");
     }
 
     public abstract boolean contains(String path);

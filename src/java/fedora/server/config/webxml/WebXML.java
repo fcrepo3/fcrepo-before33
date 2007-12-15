@@ -54,6 +54,12 @@ public class WebXML implements Constants, Serializable {
 		return new WebXML();
 	}
 	
+	/**
+	 * Create an instance of WebXML from the specified file.
+	 * 
+	 * @param webxml Path to web.xml file.
+	 * @return instance of WebXML
+	 */
 	public static WebXML getInstance(String webxml) {
 		WebXML wx = null;
 		BeanReader reader = new BeanReader();
@@ -105,8 +111,12 @@ public class WebXML implements Constants, Serializable {
 	}
 	
 	public void addServlet(Servlet servlet) {
-		servlets.add(servlet);
-	}
+        servlets.add(servlet);
+    }
+	
+	public void removeServlet(Servlet servlet) {
+        servlets.remove(servlet);
+    }
 	
 	public List<ServletMapping> getServletMappings() {
 		return servletMappings;
@@ -114,6 +124,10 @@ public class WebXML implements Constants, Serializable {
 	
 	public void addServletMapping(ServletMapping servletMapping) {
 		servletMappings.add(servletMapping);
+	}
+	
+	public void removeServletMapping(ServletMapping servletMapping) {
+	    servletMappings.remove(servletMapping);
 	}
 	
 	public List<Filter> getFilters() {
