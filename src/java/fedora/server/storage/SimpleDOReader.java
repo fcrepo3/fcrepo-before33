@@ -110,8 +110,39 @@ public class SimpleDOReader implements DOReader {
         return (m_obj.isFedoraObjectType(type));
     }
 
+    /**
+     * Gets the content model of the object.
+     *
+     * As of Fedora 3.0, this comes from the fedora-view:hasContentModel
+     * relationship.  An appropriate system-defined content model is assumed
+     * if unasserted in RELS-EXT.
+     *
+     * @return the content model.
+     */
     public String getContentModelId() {
-        return m_obj.getContentModelId();
+        try {
+            RelationshipTuple rels[] = getRelationships(
+                    Constants.MODEL.HAS_CONTENT_MODEL.uri);
+            if (rels != null && rels.length > 0) {
+                return rels[0].object;
+            } else {
+                if (isFedoraObjectType(
+                        DigitalObject.FEDORA_BDEF_OBJECT)) {
+                    return Constants.FEDORA.BDEF_CMODEL.uri;
+                } else if (isFedoraObjectType(
+                        DigitalObject.FEDORA_BMECH_OBJECT)) {
+                    return Constants.FEDORA.BMECH_CMODEL.uri;
+                } else if (isFedoraObjectType(
+                        DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) {
+                    return Constants.FEDORA.CMODEL_CMODEL.uri;
+                } else {
+                    return Constants.FEDORA.DEFAULT_CMODEL.uri;
+                }
+            }
+        } catch (ServerException e) {
+            throw new RuntimeException("Unexpected error reading "
+                    + "relationships", e);
+        }
     }
 
     public Date getCreateDate() {
@@ -395,7 +426,7 @@ public class SimpleDOReader implements DOReader {
         ArrayList bDefIDList = new ArrayList();
 
         BMechReader bmechreader = null;
-        RelationshipTuple cmPIDs[] = getRelationships(Constants.RELS_EXT.HAS_FORMAL_CONTENT_MODEL.uri);
+        RelationshipTuple cmPIDs[] = getRelationships(Constants.MODEL.HAS_CONTENT_MODEL.uri);
         if (cmPIDs != null && cmPIDs.length > 0) {
             for (int i = 0; i < cmPIDs.length; i++) {
                 DOReader cmReader;
@@ -414,7 +445,7 @@ public class SimpleDOReader implements DOReader {
                     }
                 }
                 RelationshipTuple bDefPIDs[] = cmReader
-                        .getRelationships(Constants.RELS_EXT.HAS_BDEF.uri);
+                        .getRelationships(Constants.MODEL.HAS_BDEF.uri);
                 if (bDefPIDs != null && bDefPIDs.length > 0) {
                     boolean initialized = false;
                     for (int j = 0; j < bDefPIDs.length; j++) {

@@ -112,7 +112,7 @@ public class TestAPIA extends FedoraServerTestCase {
 	public void testGetObjectProfile() throws Exception {
 		ObjectProfile profile = apia.getObjectProfile("demo:11", null);
 		assertEquals("demo:11", profile.getPid());
-		assertEquals("UVA_MRSID_IMAGE", profile.getObjContentModel());
+		assertEquals("info:fedora/demo:UVA_MRSID_IMAGE_1", profile.getObjContentModel());
 		assertEquals("O", profile.getObjType());
 		assertTrue(!profile.getObjDissIndexViewURL().equals(""));
 		assertTrue(!profile.getObjItemIndexViewURL().equals(""));

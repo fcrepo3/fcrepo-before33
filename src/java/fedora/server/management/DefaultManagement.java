@@ -272,28 +272,33 @@ public class DefaultManagement extends Module implements Constants, Management,
             DOReader reader = m_manager.getReader(Server.USE_DEFINITIVE_STORE,
                     context, pid);
 
-            props
-                    .add(new Property(RDF.TYPE.uri, reader
-                            .getFedoraObjectTypes()));
-
-            props.add(new Property(MODEL.CONTENT_MODEL.uri, reader
-                    .getContentModelId()));
-
-            props.add(new Property(MODEL.LABEL.uri, reader.GetObjectLabel()));
-
-            props.add(new Property(MODEL.STATE.uri, reader.GetObjectState()));
-
-            props.add(new Property(MODEL.OWNER.uri, reader.getOwnerId()));
-
-            props.add(new Property(MODEL.CREATED_DATE.uri, DateUtility
-                    .convertDateToString(reader.getCreateDate())));
-
-            props.add(new Property(VIEW.LAST_MODIFIED_DATE.uri, DateUtility
-                    .convertDateToString(reader.getLastModDate())));
-
-            // Property[] extProps=reader.getExtProperties();
-
-            return (Property[]) props.toArray(new Property[0]);
+            props.add(new Property(
+                        MODEL.HAS_CONTENT_MODEL.uri,
+                        reader.getContentModelId()));
+                        
+            props.add(new Property(
+                        MODEL.LABEL.uri,
+                        reader.GetObjectLabel()));
+                        
+            props.add(new Property(
+                        MODEL.STATE.uri,
+                        reader.GetObjectState()));
+                        
+            props.add(new Property(
+                        MODEL.OWNER.uri,
+                        reader.getOwnerId()));
+                        
+            props.add(new Property(
+                        MODEL.CREATED_DATE.uri,
+                        DateUtility.convertDateToString(reader.getCreateDate())));
+                        
+            props.add(new Property(
+                        VIEW.LAST_MODIFIED_DATE.uri,
+                        DateUtility.convertDateToString(reader.getLastModDate())));
+            
+            //Property[] extProps=reader.getExtProperties();
+            
+            return (Property[])props.toArray(new Property[0]);
         } finally {
             LOG.info("Exiting getObjectProperties");
         }

@@ -4,7 +4,6 @@
 		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services"/>
-		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="SIMPLE_DOC"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
 	</foxml:objectProperties>
 	<foxml:datastream CONTROL_GROUP="X" ID="DC" STATE="A">

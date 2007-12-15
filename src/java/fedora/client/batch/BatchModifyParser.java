@@ -722,7 +722,6 @@ public class BatchModifyParser
                     xml.append("  <" + FOXML.OBJECT_PROPERTIES.qName + ">\n");
                     appendProperty(xml, RDF.TYPE.uri, "FedoraObject");
                     appendProperty(xml, MODEL.LABEL.uri, m_obj.label);
-                    appendProperty(xml, MODEL.CONTENT_MODEL.uri, m_obj.label);
                     xml.append("  </" + FOXML.OBJECT_PROPERTIES.qName + ">\n");
                     xml.append("</" + FOXML.DIGITAL_OBJECT.qName + ">");
                     String objXML=xml.toString();

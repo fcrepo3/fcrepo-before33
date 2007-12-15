@@ -5,7 +5,6 @@
     <foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraBMechObject"/>
     <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
     <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Dual Resolution Image Collection"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BMECH"/>
     <foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
   </foxml:objectProperties>
   <foxml:datastream CONTROL_GROUP="X" ID="WSDL"> 
@@ -180,10 +179,10 @@
   <foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="false">
     <foxml:datastreamVersion ID="RELS-EXT.1" LABEL="Relationships" MIMETYPE="text/xml">
       <foxml:xmlContent>
-        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
           <rdf:Description rdf:about="info:fedora/demo:DualResImageCollection">
-            <rel:hasBDef rdf:resource="info:fedora/demo:Collection"/>
-            <rel:isContractor rdf:resource="info:fedora/demo:CmodelForBMech_DualResImageCollection"/>
+            <fedora-model:hasBDef rdf:resource="info:fedora/demo:Collection"/>
+            <fedora-model:isContractor rdf:resource="info:fedora/demo:CmodelForBMech_DualResImageCollection"/>
           </rdf:Description>
         </rdf:RDF>
       </foxml:xmlContent>

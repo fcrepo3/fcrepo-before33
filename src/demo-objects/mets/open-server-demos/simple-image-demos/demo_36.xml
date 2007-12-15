@@ -14,9 +14,9 @@
       <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Relationships to other objects" MDTYPE="OTHER"
         MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
         <METS:xmlData>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
             <rdf:Description rdf:about="info:fedora/demo:36">
-              <rel:hasFormalContentModel rdf:resource="info:fedora/demo:CMSID"/>
+              <fedora-model:hasContentModel rdf:resource="info:fedora/demo:CMSID"/>
             </rdf:Description>
           </rdf:RDF>
         </METS:xmlData>

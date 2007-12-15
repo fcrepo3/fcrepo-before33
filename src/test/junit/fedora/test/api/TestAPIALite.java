@@ -91,7 +91,7 @@ public class TestAPIALite extends FedoraServerTestCase {
     	Document result;
         result = getXMLQueryResult("/get/demo:11?xml=true");
         assertXpathEvaluatesTo("demo:11", "/objectProfile/attribute::pid", result);
-        assertXpathEvaluatesTo("UVA_MRSID_IMAGE", "/objectProfile/objContentModel", result);
+        assertXpathEvaluatesTo("info:fedora/demo:UVA_MRSID_IMAGE_1", "/objectProfile/objContentModel", result);
         assertXpathEvaluatesTo("Fedora Data Object", "/objectProfile/objType", result);
 	}
     

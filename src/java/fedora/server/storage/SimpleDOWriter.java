@@ -331,8 +331,9 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
         if (relsExt == null) {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             Map<String, String> map = new HashMap<String, String>();
-            map.put("rel", RELS_EXT.uri);
-            map.put("rdf", RDF.uri);
+            map.put(RELS_EXT.prefix, RELS_EXT.uri);
+            map.put(MODEL.prefix, MODEL.uri);
+            map.put(RDF.prefix, RDF.uri);
 
             try {
                 TripleIterator triples = new FilteredTripleIterator(map, toAdd,

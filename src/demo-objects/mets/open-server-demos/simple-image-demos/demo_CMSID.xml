@@ -8,14 +8,33 @@
       <METS:name>fedoraAdmin</METS:name>
     </METS:agent>
   </METS:metsHdr>
+  <METS:amdSec ID="DS-COMPOSITE-MODEL" STATUS="A" VERSIONABLE="true">
+    <METS:techMD CREATED="2007-08-15T14:36:30.369Z" ID="DS-COMPOSITE-MODEL1.0">
+      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="DS Composite Model" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+        <METS:xmlData>
+          <dsCompositeModel xmlns="info:fedora/fedora-system:def/dsCompositeModel#">
+            <dsTypeModel ID="DC">
+              <form MIME="text/xml"/>
+            </dsTypeModel>
+            <dsTypeModel ID="RELS-EXT">
+              <form MIME="text/xml"/>
+            </dsTypeModel>
+            <dsTypeModel ID="MRSID">
+              <form MIME="image/x-mrsid-image"/>
+            </dsTypeModel>
+          </dsCompositeModel>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
   <METS:amdSec ID="RELS-EXT" STATUS="A" VERSIONABLE="true">
     <METS:techMD CREATED="2007-09-25T19:11:57.345Z" ID="RELS-EXT1.0">
       <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Relationships to other objects" MDTYPE="OTHER"
         MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
         <METS:xmlData>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
             <rdf:Description rdf:about="info:fedora/demo:CMSID">
-              <rel:hasBDef rdf:resource="info:fedora/demo:1"/>
+              <fedora-model:hasBDef rdf:resource="info:fedora/demo:1"/>
             </rdf:Description>
           </rdf:RDF>
         </METS:xmlData>
@@ -31,20 +50,6 @@
             <dc:title>Content Model for MrSID model for CMDA proof of concept</dc:title>
             <dc:identifier>demo:CMSID</dc:identifier>
           </oai_dc:dc>
-        </METS:xmlData>
-      </METS:mdWrap>
-    </METS:techMD>
-  </METS:amdSec>
-  <METS:amdSec ID="DS-COMPOSITE-MODEL" STATUS="A" VERSIONABLE="true">
-    <METS:techMD CREATED="2007-09-25T19:11:57.345Z" ID="DS-COMPOSITE-MODEL1.0">
-      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Definition of Image Content Model" MDTYPE="OTHER"
-        MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
-        <METS:xmlData>
-          <dsCompositeModel>
-            <dsTypeModel ID="MRSID" MAX="1" MIN="1" ORDERED="false" SEMANTIC_ID="MRSID">
-              <form FORMAT_URIS="info:pathways/fmt/pronom/20" MIME="image/x-mrsid-image"/>
-            </dsTypeModel>
-          </dsCompositeModel>
         </METS:xmlData>
       </METS:mdWrap>
     </METS:techMD>

@@ -43,7 +43,6 @@ public class DigitalObjectTest
         m_startTime=new Date();
         // init data object
         m_obj=new BasicDigitalObject();
-        m_obj.setContentModelId("cModel1");
         m_obj.setCreateDate(m_startTime);
         m_obj.addFedoraObjectType(DigitalObject.FEDORA_OBJECT);
         m_obj.setLabel("Test Object");
@@ -95,7 +94,6 @@ public class DigitalObjectTest
         m_audit7.action="Disseminator 2 Added";
         // init bdef
         m_bdef=new BasicDigitalObject();
-        m_bdef.setContentModelId("cModel2");
         m_bdef.setCreateDate(m_startTime);
         m_bdef.addFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
         m_bdef.setLabel("Test Behavior Definition Object");
@@ -105,7 +103,6 @@ public class DigitalObjectTest
         m_bdef.setState("W");
         // init bmech
         m_bmech=new BasicDigitalObject();
-        m_bmech.setContentModelId("cModel3");
         m_bmech.setCreateDate(m_startTime);
         m_bmech.addFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
         m_bmech.setLabel("Test Behavior Mechanism Object");
@@ -116,9 +113,6 @@ public class DigitalObjectTest
     }
 
     public void testSimpleParts() {
-        assertEquals(m_obj.getContentModelId(), "cModel1");
-        assertEquals(m_bdef.getContentModelId(), "cModel2");
-        assertEquals(m_bmech.getContentModelId(), "cModel3");
         assertEquals(m_obj.getCreateDate(), m_startTime);
         assertEquals(m_bdef.getCreateDate(), m_startTime);
         assertEquals(m_bmech.getCreateDate(), m_startTime);

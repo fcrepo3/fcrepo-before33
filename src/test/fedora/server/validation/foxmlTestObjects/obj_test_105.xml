@@ -10,7 +10,6 @@
 		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Sandy's Test Object"/>
-		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="TEST"/>
 	</foxml:objectProperties>
 	<foxml:datastream CONTROL_GROUP="E" ID="DS1-bad--bad--bad--bad--bad--bad--bad--bad--bad--bad--bad--bad--bad--bad--bad--bad--bad-bad" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="DS1.0" LABEL="Pavilion III, University of Virginia" MIMETYPE="image/x-mrsid-image">

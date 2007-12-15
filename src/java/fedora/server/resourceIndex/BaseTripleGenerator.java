@@ -162,7 +162,7 @@ public class BaseTripleGenerator implements Constants, TripleGenerator {
      *
      * This will include:
      * <ul>
-     *   <li> object <i>model:contentModel</i></li>
+     *   <li> object <i>model:hasContentModel</i></li>
      *   <li> object <i>model:createdDate</i></li>
      *   <li> object <i>model:label</i></li>
      *   <li> object <i>model:owner</i></li>
@@ -173,7 +173,9 @@ public class BaseTripleGenerator implements Constants, TripleGenerator {
     private void addCoreObjectTriples(DOReader r,
                                       URIReference objURI,
                                       Set<Triple> set) throws Exception {
-        add(objURI, MODEL.CONTENT_MODEL,      r.getContentModelId(), set);
+        add(objURI, MODEL.HAS_CONTENT_MODEL,
+                _geFactory.createResource(new URI(r.getContentModelId())),
+                set);
         add(objURI, MODEL.CREATED_DATE,       r.getCreateDate(), set);
         add(objURI, MODEL.LABEL,              r.GetObjectLabel(), set);
         add(objURI, MODEL.OWNER,              r.getOwnerId(), set);
@@ -188,7 +190,6 @@ public class BaseTripleGenerator implements Constants, TripleGenerator {
      *
      * This will include:
      * <ul>
-     *   <li> object     <i>view:hasDatastream</i> datastream</li>
      *   <li> object     <i>view:disseminates</i> datastream</li>
      *   <li> datastream <i>view:disseminationType</i></li>
      *   <li> datastream <i>view:isVolatile</i></li>
@@ -205,7 +206,6 @@ public class BaseTripleGenerator implements Constants, TripleGenerator {
         URIReference dsURI = createResource(objURI.getURI().toString() 
                 + "/" + ds.DatastreamID);
 
-        add(objURI, VIEW.HAS_DATASTREAM, dsURI, set);
         add(objURI, VIEW.DISSEMINATES, dsURI, set);
 
         URIReference dsDissType = createResource(FEDORA.uri + "*/" 
@@ -241,7 +241,9 @@ public class BaseTripleGenerator implements Constants, TripleGenerator {
 
 
     /**
-     * Add all triples found in the RELS-EXT datastream.
+     * Add all triples found in the RELS-EXT datastream, skipping any with
+     * predicate fedora-model:hasContentModel (this is indexed as a "core"
+     * triple).
      */
     private void addRELSEXTTriples(DatastreamXMLMetadata ds,
                                    Set<Triple> set) throws Exception {
@@ -249,7 +251,11 @@ public class BaseTripleGenerator implements Constants, TripleGenerator {
                                                         RDFFormat.RDF_XML);
         try {
             while (iter.hasNext()) {
-                set.add(iter.next());
+                Triple triple = iter.next();
+                URIReference u = (URIReference) triple.getPredicate();
+                if (!u.getURI().toString().equals(MODEL.HAS_CONTENT_MODEL)) {
+                    set.add(triple);
+                }
             }
         } finally {
             iter.close();

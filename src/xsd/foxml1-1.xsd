@@ -12,6 +12,9 @@
 <!--               o Removed disseminator-related elements (disseminator   -->
 <!--                 elements have been removed from the FOXML format      -->
 <!--                 due to the CMDA).                                     -->
+<!--               o Removed #contentModel property (As of Fedora 3.0,     -->
+<!--                 content model is asserted via RELS-EXT predicate,     -->
+<!--                 fedora-model:hasContentModel                          -->
 <!--***********************************************************************-->
 <xsd:schema targetNamespace="info:fedora/fedora-system:def/foxml#" xmlns="info:fedora/fedora-system:def/foxml#" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<!-- the root element for FOXML: digitalObject -->
@@ -134,7 +137,6 @@
 					<xsd:enumeration value="info:fedora/fedora-system:def/model#label"/>
 					<xsd:enumeration value="info:fedora/fedora-system:def/model#createdDate"/>
 					<xsd:enumeration value="info:fedora/fedora-system:def/view#lastModifiedDate"/>
-					<xsd:enumeration value="info:fedora/fedora-system:def/model#contentModel"/>
 					<xsd:enumeration value="info:fedora/fedora-system:def/model#ownerId"/>
 				</xsd:restriction>
 			</xsd:simpleType>

@@ -8,13 +8,35 @@
       <METS:name>fedoraAdmin</METS:name>
     </METS:agent>
   </METS:metsHdr>
+  <METS:amdSec ID="DS-COMPOSITE-MODEL" STATUS="A" VERSIONABLE="true">
+    <METS:techMD CREATED="2007-08-15T14:36:30.369Z" ID="DS-COMPOSITE-MODEL1.0">
+      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="DS Composite Model" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+        <METS:xmlData>
+          <dsCompositeModel xmlns="info:fedora/fedora-system:def/dsCompositeModel#">
+            <dsTypeModel ID="DC">
+              <form MIME="text/xml"/>
+            </dsTypeModel>
+            <dsTypeModel ID="RELS-EXT">
+              <form MIME="text/xml"/>
+            </dsTypeModel>
+            <dsTypeModel ID="FULL_SIZE">
+              <form MIME="image/jpeg"/>
+            </dsTypeModel>
+            <dsTypeModel ID="MEDIUM_SIZE">
+              <form MIME="image/jpeg"/>
+            </dsTypeModel>
+          </dsCompositeModel>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
   <METS:amdSec ID="RELS-EXT" STATUS="A" VERSIONABLE="false">
     <METS:techMD CREATED="2007-09-26T19:21:54.890Z" ID="RELS-EXT.0">
       <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Relationships" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
         <METS:xmlData>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
             <rdf:Description rdf:about="info:fedora/demo:CmodelForBMech_DualResImageImpl">
-              <rel:hasBDef rdf:resource="info:fedora/demo:DualResImage"/>
+              <fedora-model:hasBDef rdf:resource="info:fedora/demo:DualResImage"/>
             </rdf:Description>
           </rdf:RDF>
         </METS:xmlData>

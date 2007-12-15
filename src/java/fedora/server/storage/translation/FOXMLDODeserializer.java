@@ -91,6 +91,7 @@ public class FOXMLDODeserializer
     private ArrayList m_prefixList;
 
 	// temporary variables and state variables
+    private String m_fType;
 	private String m_characterEncoding;
     private boolean m_rootElementFound;
 	private String m_objPropertyName;
@@ -217,7 +218,10 @@ public class FOXMLDODeserializer
         if (!m_rootElementFound) {
             throw new ObjectIntegrityException("FOXMLDODeserializer: Input stream is not valid FOXML." +
             	" The digitalObject root element was not detected.");
-        }       
+        }
+        if (m_fType == null || m_fType.equals("")) {
+            m_obj.addFedoraObjectType(DigitalObject.FEDORA_OBJECT);
+        }
     }
     
     //---
@@ -282,7 +286,7 @@ public class FOXMLDODeserializer
                         stateCode = "A";
                     }
                     m_obj.setState(stateCode);
-				} else if (m_objPropertyName.equals(MODEL.CONTENT_MODEL.uri)){
+				} else if (m_objPropertyName.equals(MODEL.CONTENT_MODEL.uri) && m_format.equals(FOXML1_0)){
 					m_obj.setContentModelId(grab(a, FOXML.uri, "VALUE"));
 				} else if (m_objPropertyName.equals(MODEL.LABEL.uri)){
 					m_obj.setLabel(grab(a, FOXML.uri, "VALUE"));
@@ -293,17 +297,17 @@ public class FOXMLDODeserializer
 				} else if (m_objPropertyName.equals(VIEW.LAST_MODIFIED_DATE.uri)){
 					m_obj.setLastModDate(DateUtility.convertStringToDate(grab(a, FOXML.uri, "VALUE")));
 				} else if (m_objPropertyName.equals(RDF.TYPE.uri)) {
-                    String oType = grab(a, FOXML.uri, "VALUE");
-                    if (oType == null || oType.equals("")) {
-                        oType = MODEL.DATA_OBJECT.localName;
+                    String m_fType = grab(a, FOXML.uri, "VALUE");
+                    if (m_fType == null || m_fType.equals("")) {
+                        m_fType = MODEL.DATA_OBJECT.localName;
                     }
-                    if (MODEL.BDEF_OBJECT.looselyMatches(oType, false)) {
+                    if (MODEL.BDEF_OBJECT.looselyMatches(m_fType, false)) {
                         m_obj.addFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
                     }
-                    if (MODEL.BMECH_OBJECT.looselyMatches(oType, false)) {
+                    if (MODEL.BMECH_OBJECT.looselyMatches(m_fType, false)) {
                         m_obj.addFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
                     }
-                    if (MODEL.CMODEL_OBJECT.looselyMatches(oType, false)) {
+                    if (MODEL.CMODEL_OBJECT.looselyMatches(m_fType, false)) {
                         if (m_format.equals(FOXML1_0)) {
                             // FOXML 1.0 doesn't support this type; down-convert
                             m_obj.addFedoraObjectType(DigitalObject.FEDORA_OBJECT);
@@ -311,7 +315,7 @@ public class FOXMLDODeserializer
                             m_obj.addFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT);
                         }
                     }
-                    if (MODEL.DATA_OBJECT.looselyMatches(oType, false)) {
+                    if (MODEL.DATA_OBJECT.looselyMatches(m_fType, false)) {
                         m_obj.addFedoraObjectType(DigitalObject.FEDORA_OBJECT);
                     }
                 } else {

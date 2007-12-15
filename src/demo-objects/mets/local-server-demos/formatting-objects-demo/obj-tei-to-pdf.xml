@@ -77,9 +77,9 @@
 		<METS:techMD ID="RELS-EXT1.0" STATUS="A">
 			<METS:mdWrap LABEL="Relationships" MDTYPE="OTHER" MIMETYPE="text/xml">
 				<METS:xmlData>
-					<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+					<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
 						<rdf:Description rdf:about="info:fedora/demo:26">
-							<rel:hasFormalContentModel rdf:resource="info:fedora/demo:TEI_TO_PDFDOC"/>
+							<fedora-model:hasContentModel rdf:resource="info:fedora/demo:TEI_TO_PDFDOC"/>
 						</rdf:Description>
 					</rdf:RDF>				
 				</METS:xmlData>

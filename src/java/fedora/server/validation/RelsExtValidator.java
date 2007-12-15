@@ -67,13 +67,19 @@ import fedora.server.errors.ValidationException;
  * words, NO SELF-REFERENTIAL relationships.
  * 
  * 7. There must NOT be any assertion of properties from the DC namespace or
- * from the Fedora object properties namespaces (model and view). This is
- * because these assertions exist elsewhere in a Fedora digital object and we do
- * not want duplication. The RELS-EXT datasream is reserved for relationship
- * metadata.
+ * from the Fedora object properties namespaces (model and view), with
+ * the following exceptions:
+ *   fedora-model:hasBDef         (0 or more, target=rdf:resource)
+ *   fedora-model:hasContentModel (0 or 1, target=rdf:resource)
+ *   fedora-model:isContractor    (0 or more, target=rdf:resource)
+ * These assertions are allowed in the RELS-EXT datastream, but
+ * all others from fedora-model/fedora-view are inferred from values
+ * expressed elsewhere in the digital object, and we do not want
+ * duplication.
  * 
  * @author payette@cs.cornell.edu
- * @version $Id: RelsExtValidator.java 6361 2007-12-10 15:52:54Z pangloss $
+ * @author Eddie Shin
+ * @author Chris Wilper
  */
 public class RelsExtValidator extends DefaultHandler implements Constants {
 
@@ -89,6 +95,7 @@ public class RelsExtValidator extends DefaultHandler implements Constants {
     private int m_depth;
     private String m_literalType;
     private StringBuffer m_literalValue;
+    private boolean m_hasContentModel;
 
     // SAX parser
     private SAXParser m_parser;
@@ -163,6 +170,20 @@ public class RelsExtValidator extends DefaultHandler implements Constants {
                     m_literalType = null;
                     m_literalValue = null;
                 } else {
+                    if (nsURI.equals(MODEL.uri)) {
+                        // if it's not a resource, the predicate cannot
+                        // be fedora-model:hasBDef, hasContentModel, or
+                        // isContractor
+                        if (localName.equals(MODEL.HAS_BDEF.localName)
+                                || localName.equals(
+                                MODEL.HAS_CONTENT_MODEL.localName)
+                                || localName.equals(
+                                MODEL.IS_CONTRACTOR.localName)) {
+                            throw new SAXException("RelsExtValidator: "
+                                    + "Target of " + qName + " statement "
+                                    + "MUST be an rdf:resource");
+                        }
+                    }
                     String datatypeURI = grab(a, RDF.uri, "datatype");
                     if (datatypeURI.length() == 0) {
                         m_literalType = null;
@@ -257,18 +278,13 @@ public class RelsExtValidator extends DefaultHandler implements Constants {
     }
 
     /**
-     * checkBadAssertion: checks that there are NOT be any assertions of
-     * properties from the DC or Fedora properties namespaces. This is because
-     * these assertions exist elsewhere in a Fedora digital object and we do not
-     * want duplication.
-     * 
-     * @param nsURI -
-     *            the namespace URI of the property being evaluated
-     * @param localName -
-     *            the local name of the property being evaluated
-     * @param qName -
-     *            the qualified name of the property being evaluated
-     * @throws SAXException
+	 * checkBadAssertion: checks that the DC and fedora-view namespace
+     * are not being used in RELS-EXT, and that if fedora-model is used,
+     * the localName is hasBDef, hasContentModel, or isContractor.
+     * Also ensures that fedora-model:hasContentModel is only used once.
+	 * @param nsURI - the namespace URI of the predicate being evaluated
+	 * @param localName - the local name of the predicate being evaluated
+	 * @param qName - the qualified name of the predicate being evaluated
      */
     private void checkBadAssertion(String nsURI, String localName, String qName)
             throws SAXException {
@@ -279,14 +295,27 @@ public class RelsExtValidator extends DefaultHandler implements Constants {
                     + " relationship assertion: " + qName + ".\n"
                     + " No Dublin Core assertions allowed"
                     + " in Fedora relationship metadata.");
-        } else if (nsURI.equals(MODEL.uri) || nsURI.equals(VIEW.uri)) {
+		} else if (nsURI.equals(MODEL.uri)) {
+            if (localName.equals(MODEL.HAS_CONTENT_MODEL.localName)) {
+                if (!m_hasContentModel) {
+                    m_hasContentModel = true;
+                } else {
+                    throw new SAXException("RelsExtValidator: "
+                            + " Object may only assert ONE content model.");
+                }
+            } else if (!localName.equals(MODEL.HAS_BDEF.localName)
+                    && !localName.equals(MODEL.IS_CONTRACTOR.localName)) {
+                throw new SAXException("RelsExtValidator:"
+                    + " Disallowed predicate in RELS-EXT: " + qName + "\n"
+                    + " The only predicates from the fedora-model namespace"
+                    + " allowed in RELS-EXT are hasBDef, hasContentModel, and"
+                    + " isContractor.");
+            }
+        } else if (nsURI.equals(VIEW.uri)) {
             throw new SAXException("RelsExtValidator:"
-                    + " The RELS-EXT datastream has improper"
-                    + " relationship assertion: " + qName + ".\n"
-                    + " Relationship metadata cannot contain"
-                    + " assertions from the Fedora object properties"
-                    + " namespaces.");
-        }
+                + " Disallowed predicate in RELS-EXT: " + qName + "\n"
+                + " The fedora-view namespace is reserved by Fedora.");
+		}
     }
 
     /**

@@ -6,7 +6,6 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Column Detail, Pavillion III, IVA Image Collection - University of Virginia"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2004-12-16T14:32:32Z"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2004-12-16T14:32:32Z"/>
-		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UVA_MRSID_IMAGE"/>
 	</foxml:objectProperties>
 	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
 		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" CREATED="2000-08-22T06:32:00Z" LABEL="DC Record for Column Detail, Pavillion III Architectural image object">

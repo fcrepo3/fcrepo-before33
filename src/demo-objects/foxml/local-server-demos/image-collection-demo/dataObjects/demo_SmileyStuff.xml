@@ -36,9 +36,9 @@
   <foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="false">
     <foxml:datastreamVersion ID="RELS-EXT.0" LABEL="Relationships" MIMETYPE="text/xml">
       <foxml:xmlContent>
-        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
           <rdf:Description rdf:about="info:fedora/demo:SmileyStuff">
-            <rel:hasFormalContentModel rdf:resource="info:fedora/demo:CmodelForBMech_DualResImageCollection"/>
+            <fedora-model:hasContentModel rdf:resource="info:fedora/demo:CmodelForBMech_DualResImageCollection"/>
           </rdf:Description>
         </rdf:RDF>
       </foxml:xmlContent>

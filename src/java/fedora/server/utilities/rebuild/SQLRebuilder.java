@@ -349,7 +349,7 @@ public class SQLRebuilder implements Rebuilder {
         // of it in the digital object registry
         try {
             registerObject(obj.getPid(), obj.getFedoraObjectTypes(), obj
-                    .getOwnerId(), obj.getLabel(), obj.getContentModelId(), obj
+                    .getOwnerId(), obj.getLabel(), obj
                     .getCreateDate(), obj.getLastModDate());
         } catch (StorageDeviceException e) {
         }
@@ -403,26 +403,21 @@ public class SQLRebuilder implements Rebuilder {
      * Adds a new object.
      */
     private void registerObject(String pid, String fedoraObjectType,
-            String userId, String label, String contentModelId,
+            String userId, String label,
             Date createDate, Date lastModDate) throws StorageDeviceException {
         // label or contentModelId may be null...set to blank if so
         String theLabel = label;
         if (theLabel == null) {
             theLabel = "";
         }
-        String theContentModelId = contentModelId;
-        if (theContentModelId == null) {
-            theContentModelId = "";
-        }
         Connection conn = null;
         Statement s1 = null;
         String foType = fedoraObjectType;
         try {
             String query = "INSERT INTO doRegistry (doPID, foType, "
-                    + "ownerId, label, " + "contentModelID) " + "VALUES ('"
+                    + "ownerId, label) " + "VALUES ('"
                     + pid + "', '" + foType + "', '" + userId + "', '"
-                    + SQLUtility.aposEscape(theLabel) + "', '"
-                    + theContentModelId + "')";
+                    + SQLUtility.aposEscape(theLabel) + "')";
             conn = m_connectionPool.getConnection();
             s1 = conn.createStatement();
             s1.executeUpdate(query);

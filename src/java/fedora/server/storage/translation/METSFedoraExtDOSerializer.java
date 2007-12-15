@@ -142,11 +142,15 @@ public class METSFedoraExtDOSerializer
                 + obj.getPid() + "\"");
         buf.append(" " + METS.TYPE.localName + "=\""
                 + getTypeAttribute(obj) + "\"");
-        String cid = obj.getContentModelId();
-        if (cid != null && cid.length() > 0) {
-            buf.append(" " + METS.PROFILE.localName + "=\""
-                    + StreamUtility.enc(cid) + "\"");
+        
+        if (m_format.equals(METS_EXT1_0)) {
+            String cid = obj.getContentModelId();
+            if (cid != null && cid.length() > 0) {
+                buf.append(" " + METS.PROFILE.localName + "=\""
+                        + StreamUtility.enc(cid) + "\"");
+            }
         }
+        
         buf.append("\n");
         String label = obj.getLabel();
         if (label != null && label.length() > 0) {

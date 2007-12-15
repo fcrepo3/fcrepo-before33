@@ -4,7 +4,6 @@
 		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraCModelObject"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Image of Coliseum in Rome"/>
-		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UVA_STD_IMAGE"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
 	</foxml:objectProperties>
 	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
@@ -17,40 +16,39 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream ID="DS-COMPOSITE-MODEL" CONTROL_GROUP="X" STATE="A">
-		<foxml:datastreamVersion ID="DS-COMPOSITE-MODEL1.0" MIMETYPE="text/xml" LABEL="Definition of Image Content Model">
-			<foxml:xmlContent>
-				<dsCompositeModel>  
-					<dsTypeModel ID="THUMB" ORDERED="false" SEMANTIC_ID="THUMBRES_IMG" MIN="1" MAX="1">
-              				<!-- The images can be in the form of GIF or JPEG images-->
-              				<form MIME="image/jpeg" FORMAT_URIS="info:pathways/fmt/pronom/20"/>
-              				<form MIME="image/gif" FORMAT_URIS="info:pathways/fmt/pronom/??"/>
-    					</dsTypeModel>
-					<dsTypeModel ID="MEDIUM" ORDERED="false" SEMANTIC_ID="MEDRES_IMG" MIN="1" MAX="1">
-              				<!-- The images can be in the form of GIF or JPEG images-->
-              				<form MIME="image/jpeg" FORMAT_URIS="info:pathways/fmt/pronom/20"/>
-              				<form MIME="image/gif" FORMAT_URIS="info:pathways/fmt/pronom/??"/>
-    					</dsTypeModel>
-					<dsTypeModel ID="HIGH" ORDERED="false" SEMANTIC_ID="HIGHRES_IMG" MIN="1" MAX="1">
-              				<!-- The images can be in the form of GIF or JPEG images-->
-              				<form MIME="image/jpeg" FORMAT_URIS="info:pathways/fmt/pronom/20"/>
-              				<form MIME="image/gif" FORMAT_URIS="info:pathways/fmt/pronom/??"/>
-    					</dsTypeModel>
-					<dsTypeModel ID="VERYHIGH" ORDERED="false" SEMANTIC_ID="VERYHIGHRES_IMG" MIN="1" MAX="1">
-              				<!-- The images can be in the form of GIF or JPEG images-->
-              				<form MIME="image/jpeg" FORMAT_URIS="info:pathways/fmt/pronom/20"/>
-              				<form MIME="image/gif" FORMAT_URIS="info:pathways/fmt/pronom/??"/>
-    					</dsTypeModel>
-				</dsCompositeModel>
-			</foxml:xmlContent>
-		</foxml:datastreamVersion>
-	</foxml:datastream>
+  <foxml:datastream ID="DS-COMPOSITE-MODEL" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
+    <foxml:datastreamVersion ID="DS-COMPOSITE-MODEL1.0" LABEL="DS Composite Model" CREATED="2007-08-15T14:36:30.369Z" MIMETYPE="text/xml">
+      <foxml:contentDigest TYPE="DISABLED" DIGEST="none"/>
+      <foxml:xmlContent>
+        <dsCompositeModel xmlns="info:fedora/fedora-system:def/dsCompositeModel#">
+          <dsTypeModel ID="DC">
+            <form MIME="text/xml"/>
+          </dsTypeModel>
+          <dsTypeModel ID="RELS-EXT">
+            <form MIME="text/xml"/>
+          </dsTypeModel>
+          <dsTypeModel ID="THUMB">
+            <form MIME="image/jpeg"/>
+          </dsTypeModel>
+          <dsTypeModel ID="MEDIUM">
+            <form MIME="image/jpeg"/>
+          </dsTypeModel>
+          <dsTypeModel ID="HIGH">
+            <form MIME="image/jpeg"/>
+          </dsTypeModel>
+          <dsTypeModel ID="VERYHIGH">
+            <form MIME="image/jpeg"/>
+          </dsTypeModel>
+        </dsCompositeModel>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
   	<foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT"> 
     		<foxml:datastreamVersion ID="RELS-EXT1.0" MIMETYPE="text/xml" LABEL="Relationships to other objects">
       		<foxml:xmlContent>
-        			<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+        			<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
           				<rdf:Description rdf:about="info:fedora/demo:CMImage">
-            				<rel:hasBDef rdf:resource="info:fedora/demo:1"/>
+            				<fedora-model:hasBDef rdf:resource="info:fedora/demo:1"/>
           				</rdf:Description>
         			</rdf:RDF>
       		</foxml:xmlContent>

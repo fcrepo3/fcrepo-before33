@@ -19,12 +19,6 @@
         <column name="namespace" type="varchar(255)" notNull="true" binary="true"/>
         <column name="highestID" type="int(11)" notNull="true"/>
     </table>
-	<table name="policy" primaryKey="policyID">
-		<column name="policyID" type="int(11)" notNull="true" autoIncrement="true"/>
-		<column name="policyName" type="varchar(64)" notNull="false" default="" index="policyName"/>
-		<column name="policyRule" type="text" notNull="false"/>
-		<column name="policyLabel" type="varchar(255)" notNull="false" default="0"/>
-	</table>
 	<table name="doRegistry" primaryKey="doPID">
 		<comment>This is used internally to keep track of objects in the definitive
              store.  When an object is ingested or newly created, a PID
@@ -53,9 +47,6 @@
 		</column>
 		<column name="label" type="varchar(255)" notNull="false" default="">
 			<comment>The label of the object.</comment>
-		</column>
-		<column name="contentModelID" type="varchar(255)" notNull="false" default="">
-			<comment>The content model of the object.</comment>
 		</column>
 	</table>
     <table name="doFields">

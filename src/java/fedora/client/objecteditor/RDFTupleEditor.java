@@ -46,6 +46,7 @@ import org.trippi.TripleIterator;
 import org.trippi.TrippiException;
 
 import fedora.client.Administrator;
+import fedora.common.Constants;
 import fedora.common.PID;
 import fedora.server.storage.types.RelationshipTuple;
 
@@ -110,8 +111,9 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
         m_editor.addPropertyChangeListener("selection", this);
 
         m_map = new HashMap<String, String>();
-        m_map.put("rel", "info:fedora/fedora-system:def/relations-external#");
-        m_map.put("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+        m_map.put(Constants.RELS_EXT.prefix, Constants.RELS_EXT.uri);
+        m_map.put(Constants.MODEL.prefix, Constants.MODEL.uri);
+        m_map.put(Constants.RDF.prefix, Constants.RDF.uri);
 
         // Lay out the buttons from left to right.
         if (!viewOnly) {
@@ -290,32 +292,32 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
             return results;
         }
 
-        public Object getValueAt(int iRowIndex, int iColumnIndex) {
-            RelationshipTuple tuple = entries.get(iRowIndex);
-            switch (iColumnIndex) {
-            case 0:
-                return tuple.subject;
-            case 1:
-                if (tuple.predicate
-                        .startsWith("info:fedora/fedora-system:def/relations-external#")) {
-                    String pred = "rel:" + tuple.getRelationship();
-                    return (pred);
-                }
-                return (tuple.predicate);
-            case 2:
-                if (tuple.isLiteral) {
-                    if (tuple.datatype == null) {
-                        return String.format("\"%s\"", tuple.object);
-                    } else {
-                        return String.format("\"%s\"^^<%s>", tuple.object,
-                                tuple.datatype);
-                    }
-                } else {
-                    return tuple.object;
-                }
-            }
-            return ("");
-        }
+       public Object getValueAt(int iRowIndex, int iColumnIndex) {
+           RelationshipTuple tuple = entries.get(iRowIndex);
+           switch (iColumnIndex) {
+           case 0:
+               return tuple.subject;
+           case 1:
+               return (tuple.getRelationship());
+           case 2:
+               if (tuple.isLiteral) {
+                   if (tuple.datatype == null) {
+                       return String.format("\"%s\"", tuple.object);
+                   }
+                   else {
+                       String trimmedDataType = tuple.datatype;
+                       if (tuple.datatype.startsWith(Constants.XML_XSD.uri+"#")) {
+                           trimmedDataType = tuple.datatype.substring(Constants.XML_XSD.uri.length()+1);
+                       }
+                       return String.format("\"%s\"^^<%s>", tuple.object, trimmedDataType);
+                   }
+               }
+               else {
+                   return tuple.object;
+               }
+           }
+           return ("");
+       }
 
         public void setValueAt(Object aValue, int iRowIndex, int iColumnIndex) {
         }
@@ -402,10 +404,9 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
             m_subject.setBackground(Administrator.BACKGROUND_COLOR);
             m_subject.setEditable(false);
 
-            mainPanel
-                    .add(lab2 = new JLabel("Predicate:", SwingConstants.RIGHT));
-            String rels[] = { "", "rel:hasBDef", "rel:isContractor",
-                    "rel:hasFormalContentModel", "rel:isMemberOf" };
+            mainPanel.add(lab2 = new JLabel("Predicate:", SwingConstants.RIGHT));
+            String rels[] = {"", "fedora-model:hasBDef", "fedora-model:isContractor", "fedora-model:hasContentModel", 
+                            "rel:isMemberOf"};
             m_predicate = new JComboBox(rels);
             m_predicate.setEditable(true);
             Administrator.constrainHeight(m_predicate);
@@ -428,12 +429,9 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
 
             mainPanel
                     .add(lab5 = new JLabel("      Type:", SwingConstants.RIGHT));
-            String types[] = { "<untyped>", "string", "normalizedString",
-                    "boolean", "decimal", "long", "int", "short", "byte",
-                    "float", "double", "duration", "dateTime", "time", "date",
-                    "hexBinary", "base64Binary", "anyURI", "QName" };
+            String types[] = { "<untyped>", "long", "int", "float", "double", "dateTime" };
             mainPanel.add(m_literalType = new JComboBox(types));
-            m_literalType.setEditable(true);
+            m_literalType.setEditable(false);
             Administrator.constrainHeight(m_literalType);
 
             lab3.setLabelFor(m_objectURI);
@@ -456,20 +454,27 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
             buttonPanel.add(MakeButton("Cancel", this));
             getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
-            if (tuple != null) {
-                m_subject.setText(tuple.subject);
-                m_predicate.setSelectedItem("rel:" + tuple.getRelationship());
-                m_objectURI.setText(tuple.object == null ? "" : tuple.object);
-                m_isLiteral.setSelected(tuple.isLiteral);
-                m_literalType
-                        .setSelectedItem(tuple.datatype == null ? "<untyped>"
-                                : tuple.datatype);
-                if (m_isLiteral.isSelected()) {
-                    m_literalType.setEnabled(true);
-                } else {
-                    m_literalType.setEnabled(false);
-                }
-
+           if (tuple != null) {
+               m_subject.setText(tuple.subject);
+               m_predicate.setSelectedItem(tuple.getRelationship());
+               m_objectURI.setText(tuple.object == null ? "" : tuple.object);
+               m_isLiteral.setSelected(tuple.isLiteral);
+               String trimmedDataType = null;
+               if (tuple.datatype == null) {
+                   trimmedDataType = "<untyped>";
+               }
+               else if (tuple.datatype.startsWith(Constants.XML_XSD.uri +"#")) {
+                   trimmedDataType = tuple.datatype.substring(Constants.XML_XSD.uri.length()+1);
+               }
+               else {
+                   trimmedDataType = tuple.datatype;
+               }
+               m_literalType.setSelectedItem(trimmedDataType);
+               if (m_isLiteral.isSelected()) {
+                   m_literalType.setEnabled(true);
+               } else {
+                   m_literalType.setEnabled(false);
+               }
             }
             validate();
             pack();
@@ -533,15 +538,19 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
             return cancelled;
         }
 
-        public String getLiteralType() {
-            if (m_objectURI.getText().length() > 0) {
-                return null;
-            }
-            if (m_literalType.getSelectedItem().toString().equals("<untyped>")) {
-                return null;
-            }
-            return (m_literalType.getSelectedItem().toString());
-        }
+       public String getLiteralType() {
+           if (!getIsLiteral()) {
+               return null;
+           }
+           if (m_literalType.getSelectedItem().toString().equals("<untyped>")) {
+               return null;
+           }
+           String litType = m_literalType.getSelectedItem().toString();
+           if (litType.startsWith(Constants.XML_XSD.uri)) {
+               return(litType);
+           }
+           return (Constants.XML_XSD.uri + "#" + litType);
+       }
 
         public boolean getIsLiteral() {
             return m_isLiteral.isSelected();
@@ -554,10 +563,20 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
             return m_objectURI.getText();
         }
 
-        public String getPredicate() {
-            return (m_predicate.getSelectedItem().toString());
-
-        }
+       public String getPredicate() {
+           String predicate = (m_predicate.getSelectedItem().toString());
+           if (predicate.startsWith(Constants.RELS_EXT.prefix))
+           {
+               predicate = Constants.RELS_EXT.uri +
+                      predicate.substring(Constants.RELS_EXT.prefix.length() + 1);
+           }
+           else if (predicate.startsWith(Constants.MODEL.prefix))
+           {
+               predicate = Constants.MODEL.uri +
+                      predicate.substring(Constants.MODEL.prefix.length() + 1);
+           }
+           return(predicate);
+       }
 
         public String getSubject() {
             return m_subject.getText();

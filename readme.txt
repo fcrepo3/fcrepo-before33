@@ -1,5 +1,5 @@
 -------------------------------------------------------------------
-              Fedora Release 3.0 - Unreleased
+             Fedora Release 3.0b1 - December, 2007
 -------------------------------------------------------------------
 This is a full source code release of Fedora.  Before using this
 software, you must read and agree to the license, found under

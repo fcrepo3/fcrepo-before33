@@ -18,11 +18,43 @@ package fedora.common.rdf;
  * @author cwilper@fedora-commons.org
  */
 public class FedoraNamespace extends RDFNamespace {
+
+    /**
+     * The content model for Behavior Definition objects;
+     * <code>info:fedora/fedora-system:BehaviorDefinition</code>
+     */
+    public final RDFName BDEF_CMODEL;
+
+    /**
+     * The content model for Behavior Mechanism objects;
+     * <code>info:fedora/fedora-system:BehaviorMechanism</code>
+     */
+    public final RDFName BMECH_CMODEL;
+
+    /**
+     * The content model for Content Model objects;
+     * <code>info:fedora/fedora-system:ContentModel</code>
+     */
+    public final RDFName CMODEL_CMODEL;
+
+    /**
+     * The default content model for Fedora data objects;
+     * <code>info:fedora/fedora-system:DefaultContentModel-1</code>
+     */
+    public final RDFName DEFAULT_CMODEL;
+
     private static final long serialVersionUID = 1L;
     
     public FedoraNamespace() {
+
         this.uri = "info:fedora/";
         this.prefix = "fedora";
+
+        final String sys = "fedora-system";
+        this.BDEF_CMODEL    = new RDFName(this, sys + ":BehaviorDefinition");
+        this.BMECH_CMODEL   = new RDFName(this, sys + ":BehaviorMechanism");
+        this.CMODEL_CMODEL  = new RDFName(this, sys + ":ContentModel");
+        this.DEFAULT_CMODEL = new RDFName(this, sys + ":DefaultContentModel-1");
     }
 
 }

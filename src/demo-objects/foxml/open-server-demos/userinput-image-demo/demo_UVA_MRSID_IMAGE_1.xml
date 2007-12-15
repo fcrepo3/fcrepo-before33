@@ -10,14 +10,50 @@
     <foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2007-08-15T14:36:39.444Z"/>
     <foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2007-08-15T15:59:21.440Z"/>
   </foxml:objectProperties>
+  <foxml:datastream ID="DS-COMPOSITE-MODEL" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
+    <foxml:datastreamVersion ID="DS-COMPOSITE-MODEL1.0" LABEL="DS Composite Model" CREATED="2007-08-15T14:36:30.369Z" MIMETYPE="text/xml">
+      <foxml:contentDigest TYPE="DISABLED" DIGEST="none"/>
+      <foxml:xmlContent>
+        <dsCompositeModel xmlns="info:fedora/fedora-system:def/dsCompositeModel#">
+          <dsTypeModel ID="DC">
+            <form MIME="text/xml"/>
+          </dsTypeModel>
+          <dsTypeModel ID="RELS-EXT">
+            <form MIME="text/xml"/>
+          </dsTypeModel>
+          <dsTypeModel ID="DESC1">
+            <form MIME="text/xml"/>
+          </dsTypeModel>
+          <dsTypeModel ID="DIGIPROV1">
+            <form MIME="text/xml"/>
+          </dsTypeModel>
+          <dsTypeModel ID="MRSID">
+            <form MIME="image/x-mrsid-image"/>
+          </dsTypeModel>
+          <dsTypeModel ID="RELS-INT">
+            <form MIME="text/xml"/>
+          </dsTypeModel>
+          <dsTypeModel ID="RIGHTS1">
+            <form MIME="text/xml"/>
+          </dsTypeModel>
+          <dsTypeModel ID="SOURCE1">
+            <form MIME="text/xml"/>
+          </dsTypeModel>
+          <dsTypeModel ID="TECH1">
+            <form MIME="text/xml"/>
+          </dsTypeModel>
+        </dsCompositeModel>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="false">
     <foxml:datastreamVersion CREATED="2007-08-15T14:36:39.444Z" ID="RELS-EXT1.0" LABEL="Relationships"
       MIMETYPE="text/xml" SIZE="353">
       <foxml:contentDigest DIGEST="none" TYPE="DISABLED"/>
       <foxml:xmlContent>
-        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
           <rdf:Description rdf:about="info:fedora/demo:UVA_MRSID_IMAGE_1">
-            <rel:hasBDef rdf:resource="info:fedora/demo:8"/>
+            <fedora-model:hasBDef rdf:resource="info:fedora/demo:8"/>
           </rdf:Description>
         </rdf:RDF>
       </foxml:xmlContent>

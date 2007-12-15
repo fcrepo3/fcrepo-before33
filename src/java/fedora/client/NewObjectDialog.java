@@ -33,8 +33,6 @@ public class NewObjectDialog
 	
 	private JTextField m_labelField;
 
-	private JTextField m_cModelField;
-
 	private JCheckBox m_customPIDCheckBox;
 
 	private JTextField m_customPIDField;
@@ -68,19 +66,17 @@ public class NewObjectDialog
 		inputPane.setLayout(gridBag);
 
 		JLabel labelLabel = new JLabel("Label");
-		JLabel cModelLabel = new JLabel("Content Model");
 		m_customPIDCheckBox = new JCheckBox("Use Custom PID");
 		m_customPIDCheckBox.addItemListener(this);
 
 		m_labelField = new JTextField(
 				"Enter a one-line description of the object.");
-		m_cModelField = new JTextField("");
 		m_customPIDField = new JTextField();
 		m_customPIDField.setEditable(false);
 
-		addLabelValueRows(new JComponent[] { labelLabel, cModelLabel,
-				m_customPIDCheckBox }, new JComponent[] { m_labelField,
-				m_cModelField, m_customPIDField }, gridBag, inputPane);
+		addLabelValueRows(new JComponent[] { labelLabel,  m_customPIDCheckBox },
+		        new JComponent[] { m_labelField, m_customPIDField },
+		        gridBag, inputPane);
 
 		CreateAction createAction = new CreateAction();
 		CreateListener createListener = new CreateListener(createAction);
@@ -143,7 +139,6 @@ public class NewObjectDialog
 			try {
 				String pid = null;
 				String label = m_labelField.getText();
-				String cModel = m_cModelField.getText();
 				boolean ok = true;
 				if (m_labelField.getText().equals("")) {
 					JOptionPane.showMessageDialog(Administrator.getDesktop(),
@@ -185,8 +180,6 @@ public class NewObjectDialog
 					xml.append("    <foxml:property NAME=\"" + RDF.TYPE.uri + "\" VALUE=\"FedoraObject\"/>\n");
 					xml.append("    <foxml:property NAME=\"" + MODEL.LABEL.uri + "\" VALUE=\""
 									+ StreamUtility.enc(label) + "\"/>\n");
-					xml.append("    <foxml:property NAME=\"" + MODEL.CONTENT_MODEL.uri + "\" VALUE=\""
-									+ StreamUtility.enc(cModel) + "\"/>\n");
                     xml.append("    <foxml:property NAME=\"" + MODEL.OWNER.uri + "\" VALUE=\"" + Administrator.getUser() + "\"/>");
 					xml.append("  </foxml:objectProperties>\n");
 					xml.append("</foxml:digitalObject>");

@@ -308,7 +308,9 @@ public class METSFedoraExtDODeserializer
                 m_rootElementFound=true;
                 m_obj.setPid(grab(a, METS.uri, "OBJID"));
                 m_obj.setLabel(grab(a, METS.uri, "LABEL"));
-                m_obj.setContentModelId(grab(a, METS.uri, "PROFILE"));
+                if (m_format.equals(METS_EXT1_0)) {
+                    m_obj.setContentModelId(grab(a, METS.uri, "PROFILE"));
+                }
                 String objType=grab(a, METS.uri, "TYPE");
                 if (objType==null || objType.equals("")) { objType="FedoraObject"; }
                 if (objType.indexOf("FedoraBDefObject")!= -1) 

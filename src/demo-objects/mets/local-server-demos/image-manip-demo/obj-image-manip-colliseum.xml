@@ -43,9 +43,9 @@
 		<METS:techMD ID="RELS-EXT1.0" STATUS="A">
 			<METS:mdWrap LABEL="RELS-EXT - RDF formatted relationship metadata" MDTYPE="OTHER" MIMETYPE="text/xml">
 				<METS:xmlData>
-					<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+					<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
 						<rdf:Description rdf:about="info:fedora/demo:29">
-							<rel:hasFormalContentModel rdf:resource="info:fedora/demo:UVA_STD_IMAGE"/>
+							<fedora-model:hasContentModel rdf:resource="info:fedora/demo:UVA_STD_IMAGE"/>
 						</rdf:Description>
 					</rdf:RDF>					
 				</METS:xmlData>

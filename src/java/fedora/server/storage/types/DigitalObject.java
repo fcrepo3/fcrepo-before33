@@ -105,14 +105,22 @@ public interface DigitalObject {
      * Gets the content model id.
      *
      * @return The content model id.
+     * @deprecated As of Fedora 3.0, content model is no longer an object-level
+     *             property and should be asserted in RELS-EXT instead.
+     * @see fedora.common.Constants.MODEL.HAS_CONTENT_MODEL
      */
+    @Deprecated
     public String getContentModelId();
 
     /**
      * Sets the content model id.
      *
      * @param id The content model id.
+     * @deprecated As of Fedora 3.0, content model is no longer an object-level
+     *             property and should be asserted in RELS-EXT instead.
+     * @see fedora.common.Constants.MODEL.HAS_CONTENT_MODEL
      */
+    @Deprecated
     public void setContentModelId(String id);
 
     /**

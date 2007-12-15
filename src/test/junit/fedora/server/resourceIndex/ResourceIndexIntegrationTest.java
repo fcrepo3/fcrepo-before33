@@ -963,8 +963,7 @@ public abstract class ResourceIndexIntegrationTest {
                                                  String label) {
         Date now = new Date();
         return getTestObject(pid, DigitalObject.FEDORA_OBJECT, "A",
-                "someOwnerId", label, "someContentModelId",
-                now, now);
+                "someOwnerId", label, now, now);
     }
 
     protected static DigitalObject getTestBDef(String pid,
@@ -973,7 +972,7 @@ public abstract class ResourceIndexIntegrationTest {
         Date now = new Date();
         DigitalObject obj = getTestObject(pid, 
                 DigitalObject.FEDORA_BDEF_OBJECT, "A",
-                "someOwnerId", label, "someContentModelId", now, now);
+                "someOwnerId", label, now, now);
         addXDatastream(obj, "METHODMAP", getMethodMap(methodDefs));
         return obj;
     }
@@ -989,7 +988,7 @@ public abstract class ResourceIndexIntegrationTest {
         Date now = new Date();
         DigitalObject obj = getTestObject(pid, 
                 DigitalObject.FEDORA_BMECH_OBJECT, "A",
-                "someOwnerId", label, "someContentModelId", now, now);
+                "someOwnerId", label, now, now);
 
         String methodMapXML = getMethodMap(methodDefs, inputKeys, true);
         addXDatastream(obj, "METHODMAP", methodMapXML);
@@ -1008,7 +1007,6 @@ public abstract class ResourceIndexIntegrationTest {
                                                  String state,
                                                  String ownerId,
                                                  String label,
-                                                 String contentModelId,
                                                  Date createDate,
                                                  Date lastModDate) {
         DigitalObject obj = new BasicDigitalObject();
@@ -1017,7 +1015,6 @@ public abstract class ResourceIndexIntegrationTest {
         obj.setState(state);
         obj.setOwnerId(ownerId);
         obj.setLabel(label);
-        obj.setContentModelId(contentModelId);
         obj.setCreateDate(createDate);
         obj.setLastModDate(lastModDate);
         return obj;

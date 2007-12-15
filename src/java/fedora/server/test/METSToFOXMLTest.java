@@ -80,7 +80,6 @@ public class METSToFOXMLTest
 	public void testDigitalObject() {	
 		assertNotNull("Failure: digital object PID is null.", obj.getPid());
 		assertNotNull("Failure: digital object audit record set is null.", obj.getAuditRecords());
-		assertNotNull("Failure: digital object cmodel is null.", obj.getContentModelId());
 		assertNotNull("Failure: digital object label is null.", obj.getLabel());
 		assertNotNull("Failure: digital object ownerID is null.", obj.getOwnerId());
 	}

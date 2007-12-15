@@ -32,7 +32,6 @@ public class OneEmptyObjectTestSetup
         xml.append("  <foxml:objectProperties>\n");
         xml.append("    <foxml:property NAME=\"" + RDF.TYPE.uri + "\" VALUE=\"FedoraObject\"/>\n");
         xml.append("    <foxml:property NAME=\"" + MODEL.LABEL.uri + "\" VALUE=\"label\"/>\n");
-        xml.append("    <foxml:property NAME=\"" + MODEL.CONTENT_MODEL.uri + "\" VALUE=\"\"/>\n");
         xml.append("  </foxml:objectProperties>\n");
         xml.append("</foxml:digitalObject>");
         return xml.toString().getBytes("UTF-8");

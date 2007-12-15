@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema targetNamespace="info:fedora/fedora-system:def/cmodel#" xmlns="info:fedora/fedora-system:def/cmodel#" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xsd:schema
+    targetNamespace="info:fedora/fedora-system:def/dsCompositeModel#"
+    xmlns="info:fedora/fedora-system:def/dsCompositeModel#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
   <xsd:element name="dsCompositeModel">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element maxOccurs="unbounded" ref="dsTypeModel"/>
+        <xsd:element minOccurs="0" maxOccurs="unbounded" ref="dsTypeModel"/>
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
   <xsd:element name="dsTypeModel">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element maxOccurs="unbounded" ref="form"/>
+        <xsd:element minOccurs="0" maxOccurs="unbounded" ref="form"/>
       </xsd:sequence>
       <xsd:attribute name="ID" use="required" type="xsd:NCName"/>
-      <xsd:attribute name="MAX" use="required" type="xsd:integer"/>
-      <xsd:attribute name="MIN" use="required" type="xsd:integer"/>
-      <xsd:attribute name="ORDERED" use="required" type="xsd:boolean"/>
     </xsd:complexType>
   </xsd:element>
   <xsd:element name="form">

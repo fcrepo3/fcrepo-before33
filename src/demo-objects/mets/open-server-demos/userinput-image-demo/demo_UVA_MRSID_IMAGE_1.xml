@@ -8,13 +8,50 @@
       <METS:name>fedoraAdmin</METS:name>
     </METS:agent>
   </METS:metsHdr>
+  <METS:amdSec ID="DS-COMPOSITE-MODEL" STATUS="A" VERSIONABLE="true">
+    <METS:techMD CREATED="2007-08-15T14:36:30.369Z" ID="DS-COMPOSITE-MODEL1.0">
+      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="DS Composite Model" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+        <METS:xmlData>
+          <dsCompositeModel xmlns="info:fedora/fedora-system:def/dsCompositeModel#">
+            <dsTypeModel ID="DC">
+              <form MIME="text/xml"/>
+            </dsTypeModel>
+            <dsTypeModel ID="RELS-EXT">
+              <form MIME="text/xml"/>
+            </dsTypeModel>
+            <dsTypeModel ID="DESC1">
+              <form MIME="text/xml"/>
+            </dsTypeModel>
+            <dsTypeModel ID="DIGIPROV1">
+              <form MIME="text/xml"/>
+            </dsTypeModel>
+            <dsTypeModel ID="MRSID">
+              <form MIME="image/x-mrsid-image"/>
+            </dsTypeModel>
+            <dsTypeModel ID="RELS-INT">
+              <form MIME="text/xml"/>
+            </dsTypeModel>
+            <dsTypeModel ID="RIGHTS1">
+              <form MIME="text/xml"/>
+            </dsTypeModel>
+            <dsTypeModel ID="SOURCE1">
+              <form MIME="text/xml"/>
+            </dsTypeModel>
+            <dsTypeModel ID="TECH1">
+              <form MIME="text/xml"/>
+            </dsTypeModel>
+          </dsCompositeModel>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
   <METS:amdSec ID="RELS-EXT" STATUS="A" VERSIONABLE="false">
     <METS:techMD CREATED="2007-08-15T14:36:39.444Z" ID="RELS-EXT1.0">
       <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Relationships" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
         <METS:xmlData>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
             <rdf:Description rdf:about="info:fedora/demo:UVA_MRSID_IMAGE_1">
-              <rel:hasBDef rdf:resource="info:fedora/demo:8"/>
+              <fedora-model:hasBDef rdf:resource="info:fedora/demo:8"/>
             </rdf:Description>
           </rdf:RDF>
         </METS:xmlData>

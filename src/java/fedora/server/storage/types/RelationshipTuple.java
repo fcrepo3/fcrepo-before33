@@ -46,17 +46,19 @@ public class RelationshipTuple implements Constants {
     }
 
     public String getRelationship() {
-        if (predicate != null && predicate.startsWith("rel:")) {
-            String PID = predicate.substring(4);
-            return (PID);
+        String prefixRel = RELS_EXT.uri;
+        if (predicate != null && predicate.startsWith(prefixRel))
+        {
+            String rel = "rel:" + predicate.substring(prefixRel.length());
+            return(rel);
         }
-        String prefix = RELS_EXT.uri;
-        if (predicate != null && predicate.startsWith(prefix)) {
-            String PID = predicate.substring(prefix.length());
-            return PID;
+        String prefixModel = MODEL.uri;
+        if (predicate != null && predicate.startsWith(prefixModel))
+        {
+            String rel = "fedora-model:" + predicate.substring(prefixModel.length ());
+            return(rel);
         }
-
-        return predicate;
+        return(predicate);
     }
 
     public String toString() {

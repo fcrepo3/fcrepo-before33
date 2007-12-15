@@ -31,6 +31,7 @@ import fedora.common.xml.format.FOXML1_1Format;
 import fedora.common.xml.format.FedoraAudit1_0Format;
 import fedora.common.xml.format.FedoraBESecurity1_0Format;
 import fedora.common.xml.format.FedoraBatchModify1_1Format;
+import fedora.common.xml.format.FedoraDSCompositeModel1_0Format;
 import fedora.common.xml.format.FedoraObjectDatastreams1_0Format;
 import fedora.common.xml.format.FedoraObjectHistory1_0Format;
 import fedora.common.xml.format.FedoraObjectItems1_0Format;
@@ -53,6 +54,7 @@ import fedora.common.xml.namespace.FedoraAuditNamespace;
 import fedora.common.xml.namespace.FedoraBESecurityNamespace;
 import fedora.common.xml.namespace.FedoraBatchModifyNamespace;
 import fedora.common.xml.namespace.FedoraBindingSpecNamespace;
+import fedora.common.xml.namespace.FedoraDSCompositeModelNamespace;
 import fedora.common.xml.namespace.FedoraFCFGNamespace;
 import fedora.common.xml.namespace.FedoraManagementNamespace;
 import fedora.common.xml.namespace.FedoraMethodMapNamespace;
@@ -269,6 +271,13 @@ public interface Constants {
             FedoraBindingSpecNamespace.getInstance();
 
     /**
+     * The Fedora DS Composite Model XML namespace;
+     * <code>info:fedora/fedora-system:def/dsCompositeModel#</code>
+     */
+    public static final FedoraDSCompositeModelNamespace DS_COMPOSITE_MODEL =
+            FedoraDSCompositeModelNamespace.getInstance();
+
+    /**
      * The Fedora Configuration XML namespace;
      * <code>http://www.fedora.info/definitions/1/0/config/</code>
      */
@@ -443,6 +452,13 @@ public interface Constants {
      */
     public static final FedoraBESecurity1_0Format BE_SECURITY1_0 =
             FedoraBESecurity1_0Format.getInstance();
+
+    /**
+     * The Fedora DS Composite Model 1.0 XML format;
+     * <code>info:fedora/fedora-system:FedoraDSCompositeModel-1.0</code>
+     */
+    public static final FedoraDSCompositeModel1_0Format DS_COMPOSITE_MODEL1_0 =
+            FedoraDSCompositeModel1_0Format.getInstance();
 
     /**
      * The Fedora Object Datastreams 1.0 XML format;

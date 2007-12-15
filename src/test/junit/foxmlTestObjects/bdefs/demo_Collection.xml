@@ -7,7 +7,6 @@
     <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Collection of Objects"/>
     <foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2005-01-13T17:14:53.876Z"/>
     <foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2005-01-13T17:14:57.253Z"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BDEF"/>
   </foxml:objectProperties>
   <foxml:datastream CONTROL_GROUP="X" ID="DC" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2005-01-13T17:14:53.876Z" ID="DC1.0" LABEL="Dublin Core Metadata for Service"

@@ -19,6 +19,12 @@ public class FedoraViewNamespace extends RDFNamespace {
     private static final long serialVersionUID = 1L;
     
     // Properties
+   
+    /**
+     * Deprecated as of Fedora 3.0.
+     * No replacement.
+     */
+    @Deprecated
 	public final RDFName HAS_DATASTREAM;
 	public final RDFName DISSEMINATES;
     public final RDFName DISSEMINATION_TYPE;

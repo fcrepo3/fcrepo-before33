@@ -82,8 +82,6 @@ import fedora.server.validation.RelsExtValidator;
  * process and the object replication process.
  *
  * @author cwilper@cs.cornell.edu
- * @version $Id$
- * @version $Id$
  */
 public class DefaultDOManager
         extends Module implements DOManager {
@@ -116,10 +114,7 @@ public class DefaultDOManager
 
     protected HashMap<String,String> m_cModelBMechMap;
     protected HashSet<String> m_allBMechPIDS;
- //   protected long m_lastBMechModDate;
     
-    public static String DEFAULT_STATE="L";
-
     private static long THIRD_HEAPSIZE;
 
     /** Whether to request a full gc on each commit. */
@@ -152,7 +147,6 @@ public class DefaultDOManager
         // pidNamespace (required, 1-17 chars, a-z, A-Z, 0-9 '-' '.')
         m_cModelBMechMap = null;
         m_allBMechPIDS = null;
-   //     m_lastBMechModDate = 0;
         m_pidNamespace=getParameter("pidNamespace");
         if (m_pidNamespace==null) {
             throw new ModuleInitializationException(
@@ -213,7 +207,6 @@ public class DefaultDOManager
             m_storageCharacterEncoding="UTF-8";
         }
         initRetainPID();
-
 
         // readerCacheSize and readerCacheSeconds (optional, defaults = 20, 5)
         String rcSize = getParameter("readerCacheSize");
@@ -369,8 +362,6 @@ public class DefaultDOManager
     public void initializeCModelBmechHashMap(Context context) throws ServerException
     {
         // Initialize Map containing links from Content Models to the Bmechs.
-    //    long curBMechModDate = getLatestModificationDate("WHERE fType LIKE '%m%'");
-   //     if (m_lastBMechModDate < curBMechModDate)
         // if hashMap already initialized, do nothing.
         if (m_cModelBMechMap == null && m_allBMechPIDS == null)
         {
@@ -382,8 +373,8 @@ public class DefaultDOManager
             Connection conn = null;
             Statement s = null;
             ResultSet results = null;
-            String[] newBMechPIDS = getPIDs("WHERE foType LIKE '%M%' ");
-//            HashSet curBMechPIDSToBeDeleted = (HashSet)m_allBMechPIDS.clone();
+            String[] newBMechPIDS = getPIDs("WHERE foType LIKE '%M%' "
+                    + "AND systemVersion > 0");
             for (int i = 0; i < newBMechPIDS.length; i++) 
             {
                 // if the list doesnt contain the BMech pid, add it.
@@ -392,34 +383,14 @@ public class DefaultDOManager
                     updateCModelBmechHashMap(context, newBMechPIDS[i], true);
                     m_allBMechPIDS.add(newBMechPIDS[i]);
                 }
-                // if the list does contain the BMech pid, check if it was modified.
-//                else
-//                {
-////                    long bmechDate = getLatestModificationDate("WHERE PID = '" + newBMechPIDS[i] + "'");
-//                    // if it has been modified since the late update of the map, remove and re-add it.
-////                    if (bmechDate > m_lastBMechModDate)
-//                    {
-//                        updateCModelBmechHashMap(context, newBMechPIDS[i], false);           
-//                        updateCModelBmechHashMap(context, newBMechPIDS[i], true);                               
-//                    }
-//                    // other wise simply remove it from the list of BMechs to be remove from the map
-////                    curBMechPIDSToBeDeleted.remove(newBMechPIDS[i]);
-//                }
             }
-//            Iterator iter = curBMechPIDSToBeDeleted.iterator();
-//            while (iter.hasNext())
-//            {
-//                String deletedPID = (String)iter.next();
-//                updateCModelBmechHashMap(context, deletedPID, false);           
-//            } 
-//            m_lastBMechModDate = curBMechModDate;
         }
     }
 
     public void addCModelBmechHashMap(DOReader reader) throws ServerException
     {
-        RelationshipTuple bdef[] = reader.getRelationships(Constants.RELS_EXT.HAS_BDEF.uri);        
-        RelationshipTuple cmodels[] = reader.getRelationships(Constants.RELS_EXT.IS_CONTRACTOR.uri);
+        RelationshipTuple bdef[] = reader.getRelationships(Constants.MODEL.HAS_BDEF.uri);        
+        RelationshipTuple cmodels[] = reader.getRelationships(Constants.MODEL.IS_CONTRACTOR.uri);
         if (cmodels == null) return;
         for (int i = 0; i < cmodels.length; i++)
         {
@@ -507,8 +478,6 @@ public class DefaultDOManager
     }
 
     public String[] getRequiredModuleRoles() {
-        // FIXME add "fedora.server.resourceIndex.ResourceIndex" once
-        // we force loading of the module
         return new String[] {
                 "fedora.server.management.PIDGenerator",
                 "fedora.server.search.FieldSearch",
@@ -543,12 +512,6 @@ public class DefaultDOManager
         long getReaderStartTime = System.currentTimeMillis();
         String source = null;
         try {
-//            if (cachedObjectRequired) 
-//            {
-//                source = "database";
-//                return new FastDOReader(context, pid);
-//            } 
-//            else 
             {
                 DOReader reader = null;
                 if (m_readerCache != null) {
@@ -581,11 +544,6 @@ public class DefaultDOManager
     public BMechReader getBMechReader(boolean cachedObjectRequired, Context context, String pid)
             throws ServerException 
     {
-//        if (cachedObjectRequired) 
-//        {
-//            return new FastBmechReader(context, pid);
-//        } 
-//        else 
         {
             return new SimpleBMechReader(context, this, m_translator,
                     m_defaultExportFormat, m_defaultStorageFormat,
@@ -599,11 +557,6 @@ public class DefaultDOManager
 	 */
     public BDefReader getBDefReader(boolean cachedObjectRequired, Context context, String pid)
             throws ServerException {
-//        if (cachedObjectRequired) 
-//        {
-//            return new FastBdefReader(context, pid);
-//        } 
-//        else 
         {
             return new SimpleBDefReader(context, this, m_translator,
                     m_defaultExportFormat, m_defaultStorageFormat,
@@ -717,22 +670,6 @@ public class DefaultDOManager
                         ds.DSChecksumType = Datastream.validateChecksumType(ds.DSChecksumType);
 					}
 				}
-//				// SET DISSEMINATOR PROPERTIES...
-//				Iterator dissIter=obj.disseminatorIdIterator();
-//				while (dissIter.hasNext()) {
-//					List dissList=(List) obj.disseminators((String) dissIter.next());
-//					for (int i=0; i<dissList.size(); i++) {
-//						Disseminator diss=(Disseminator) dissList.get(i);
-//						// Set create date to UTC if not already set
-//						if (diss.dissCreateDT==null || diss.dissCreateDT.equals("")) {
-//							diss.dissCreateDT=nowUTC;
-//						}
-//						// Set state to "A" (Active) if not already set
-//						if (diss.dissState==null || diss.dissState.equals("")) {
-//							diss.dissState="A";
-//						}
-//					}
-//				}
 
 				// PID VALIDATION:
 				// validate and normalized the provided pid, if any
@@ -881,7 +818,7 @@ public class DefaultDOManager
 				// at this point the object is valid, so make a record 
 				// of it in the digital object registry
 				registerObject(obj.getPid(), obj.getFedoraObjectTypes(), 
-					getUserId(context), obj.getLabel(), obj.getContentModelId(), 
+					getUserId(context), obj.getLabel(),
 					obj.getCreateDate(), obj.getLastModDate());
 				return w;
 			} catch (IOException e) {
@@ -916,137 +853,6 @@ public class DefaultDOManager
 			}
 		}
 	}
-//
-//    private void RenameDatastreamsBasedOnDisseminator(Context context, DOWriter w, Disseminator diss) throws ServerException
-//    {
-//      for (int i = 0; i < diss.dsBindMap.dsBindings.length; i++)
-//      {
-//          DSBinding binding = diss.dsBindMap.dsBindings[i];
-//          Datastream ds = w.GetDatastream(binding.datastreamID, null);
-//          ds.DatastreamID = binding.bindKeyName;
-//      }
-//    }
-//
-//    private boolean VerifyExistingContentModel(Context context, String modelPid, Disseminator diss)
-//    {
-//        try
-//        {
-//            RelationshipTuple bdefs[] = m_management.getRelationships(context, modelPid, null, "hasBDef");
-//            for (int i = 0; i < bdefs.length; i++)
-//            {
-//                if (bdefs[i].getObjectPID().equals(diss.bDefID))
-//                {
-//                    return(true);
-//                }
-//            }
-//        }
-//        catch (ServerException e)
-//        {
-//        }
-//        return(false);
-//    }
-//
-//    private void CreateContentModelFromDisseminators(Context context, String modelPid, Disseminator diss) throws ServerException
-//    {
-//        Date nowUTC = null;
-//        try {
-//            // CURRENT TIME:
-//            // Get the current time to use for created dates on object
-//            // and object components (if they are not already there).
-//            nowUTC = Server.getCurrentDate(context);
-//        }
-//        catch (GeneralException ge)
-//        {}
-//        DigitalObject obj = new BasicDigitalObject();
-//        obj.setNamespaceMapping(new HashMap());
-//        obj.setPid(modelPid);
-//        obj.setNew(true);
-//        obj.setState("A");
-//        obj.setCreateDate(nowUTC);
-//        obj.setLastModDate(nowUTC);
-//        obj.setOwnerId("fedoraAdmin");
-//        obj.setLabel("Generated Content Model");
-//        obj.addFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT);
-//        DatastreamXMLMetadata dc = null;
-//        DCFields dcf;
-//        dc = new DatastreamXMLMetadata("UTF-8");
-//        dc.DSMDClass=0;
-//        //dc.DSMDClass=DatastreamXMLMetadata.DESCRIPTIVE;
-//        dc.DatastreamID="DC";
-//        dc.DSVersionID="DC1.0";
-//        dc.DSControlGrp="X";
-//        dc.DSCreateDT=nowUTC;
-//        dc.DSLabel="Dublin Core Metadata";
-//        dc.DSMIME="text/xml";
-//        dc.DSSize=0;
-//        dc.DSState="A";
-//        dc.DSVersionable=true;
-//        dcf = new DCFields();
-//        if (obj.getLabel() != null && !(obj.getLabel().equals(""))) 
-//        {
-//            dcf.titles().add(obj.getLabel());                
-//        }
-//        dcf.identifiers().add(obj.getPid());            
-//        // set the value of the dc datastream according to what's in the DCFields object
-//        try {
-//            dc.xmlContent = dcf.getAsXML().getBytes("UTF-8");
-//        } catch (UnsupportedEncodingException uee) {
-//            // safely ignore... we know UTF-8 works
-//        }
-//        obj.addDatastreamVersion(dc, dc.DSVersionable);
-//        
-//        DOWriter w = new SimpleDOWriter(context, this, m_translator,
-//                            m_defaultExportFormat, m_storageCharacterEncoding, obj);
-//        
-//   //     CreateAndAddDSCompositeModel(context, w, diss);
-//
-//        w.addRelationship(PID.toURI(obj.getPid()), "rel:hasBDef", PID.toURI(diss.bDefID), null);
-//        // add realtionship from bmech to this content model
-//        m_management.addRelationship(context, diss.bMechID, null, "rel:isContractor", PID.toURI(obj.getPid()), null, null);
-//
-//        // REGISTRY:
-//        // at this point the object is valid, so make a record 
-//        // of it in the digital object registry
-//        registerObject(obj.getPid(), obj.getFedoraObjectTypes(), 
-//            getUserId(context), obj.getLabel(), obj.getContentModelId(), 
-//            obj.getCreateDate(), obj.getLastModDate());
-//        w.commit("Automagic Content Model");
-//    }
-
-//    private void CreateAndAddDSCompositeModel( Context context, DOWriter w, Disseminator diss) throws ServerException
-//    {
-//        DatastreamXMLMetadata ds = new DatastreamXMLMetadata("UTF-8");
-//        ds.DatastreamID = "DS-COMPOSITE-MODEL";
-//        ds.DSVersionID="DS-COMPOSITE-MODEL1.0";
-//        ds.DSControlGrp = "X";
-//        ds.DSMIME = "text/xml";
-//        try {
-//            ds.DSCreateDT = Server.getCurrentDate(context);
-//        }
-//        catch (GeneralException ge)
-//        {            
-//        }
-//        ds.DSLabel="Generated Content Model";
-//        ds.DSSize=0;
-//        ds.DSState="A";
-//        ds.DSVersionable=true;
-//        ds.xmlContent = CreateDSCompositeModelFromDisseminators(diss).getBytes();
-//        w.addDatastream(ds, ds.DSVersionable);
-//    }
-//    
-//    private String CreateDSCompositeModelFromDisseminators( Disseminator diss) throws ServerException
-//    {
-//        StringBuffer dsContents = new StringBuffer();
-//       
-//        dsContents.append("            <dsCompositeModel>\n"); 
-//        for (int i = 0; i < diss.dsBindMap.dsBindings.length; i++)
-//        {
-//            DSBinding binding = diss.dsBindMap.dsBindings[i];
-//            dsContents.append("                    <dsTypeModel ID=\""+ binding.datastreamID +"\" ORDERED=\"false\" SEMANTIC_ID=\"" + binding.bindKeyName + "\" MIN=\"1\" MAX=\"1\"/>\n");
-//        }
-//        dsContents.append("            </dsCompositeModel>\n"); 
-//        return (dsContents.toString());
-//     }
 
     /**
      * The doCommit method finalizes an ingest/update/remove of a digital object. 
@@ -1075,36 +881,6 @@ public class DefaultDOManager
         if (remove) {
 
             LOG.info("Committing removal of " + obj.getPid());
-
-//            // REFERENTIAL INTEGRITY:
-//            // Before removing an object, verify that there are no other objects
-//            // in the repository that depend on the object being deleted.
-//            int fType = obj.getFedoraObjectType();
-//            if (fType == DigitalObject.FEDORA_BDEF_OBJECT) {
-//                FieldSearchResult result = findObjects(context,
-//                    new String[] {"pid"}, 10,
-//                    new FieldSearchQuery(Condition.getConditions("bDef~"+obj.getPid())));
-//                if (result.objectFieldsList().size() > 0) {
-//                    throw new ObjectDependencyException("The digital object \""
-//                        + obj.getPid() + "\" is used by one or more other objects "
-//                        + "in the repository. All related objects must be removed "
-//                        + "before this object may be deleted. Use the search "
-//                        + "interface with the query \"bDef~" + obj.getPid()
-//                        + "\" to obtain a list of dependent objects.");
-//                }
-//            } else if (fType == DigitalObject.FEDORA_BMECH_OBJECT) {
-//                FieldSearchResult result = findObjects(context,
-//                    new String[] {"pid"}, 10,
-//                    new FieldSearchQuery(Condition.getConditions("bMech~"+obj.getPid())));
-//                if (result.objectFieldsList().size() > 0) {
-//                    throw new ObjectDependencyException("The digital object \""
-//                        + obj.getPid() + "\" is used by one or more other objects "
-//                        + "in the repository. All related objects must be removed "
-//                        + "before this object may be deleted. Use the search "
-//                        + "interface with the query \"bMech~" + obj.getPid()
-//                        + "\" to obtain a list of dependent objects.");
-//                }
-//            }
             // IF OBJECT IS A BMECH  REMOVE IT FROM HASHMAP
             if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT))
             {
@@ -1178,18 +954,6 @@ public class DefaultDOManager
             } catch (ServerException se) {
                 LOG.warn("Object couldn't be removed from registry, but that might be ok; continuing with purge");
             }
-//            if (wasInRegistry) {
-//                LOG.info("Deleting from dissemination index");
-//                try {
-//                    // Set entry for this object to "D" in the replication jobs table
-//                    addReplicationJob(obj.getPid(), true);
-//                    // tell replicator to do deletion
-////                    m_replicator.delete(obj.getPid());
-//                    removeReplicationJob(obj.getPid());
-//                } catch (ServerException se) {
-//                    LOG.warn("Object couldn't be deleted from the cached copy (" + se.getMessage() + "); leaving replication job unfinished");
-//                }
-//            }
 			// FIELD SEARCH INDEX:
 			// remove digital object from the default search index
             try {
@@ -1209,7 +973,7 @@ public class DefaultDOManager
                         m_resourceIndex.deleteBDefObject(
                                 new SimpleBDefReader(null, null, null, null, 
                                 null, origObj));
-                    }
+                    } 
                     if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) 
                     {
                         m_resourceIndex.deleteCModelObject(
@@ -1359,7 +1123,7 @@ public class DefaultDOManager
                             m_resourceIndex.addBDefObject(
                                     new SimpleBDefReader(null, null, null, null,
                                     null, obj));
-                        }
+                        } 
                         if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT))
                         {
                            m_resourceIndex.addCModelObject(
@@ -1381,7 +1145,7 @@ public class DefaultDOManager
                                     getBDefReader(false, null, obj.getPid()),
                                     new SimpleBDefReader(null, null, null, null,
                                     null, obj));
-                        }
+                        } 
                         if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT))
                         {
                             m_resourceIndex.modifyCModelObject(
@@ -1457,7 +1221,6 @@ public class DefaultDOManager
                 // REPLICATE:
                 // add to replication jobs table and do replication to db
                 LOG.info("Updating dissemination index");
-//                addReplicationJob(obj.getPid(), false);
                 String whichIndex = "FieldSearch";
 
                 try {
@@ -1568,56 +1331,6 @@ public class DefaultDOManager
         }
     }
 
-//    /**
-//     * Add an entry to the replication jobs table.
-//     */
-//    private void addReplicationJob(String pid, boolean deleted)
-//            throws StorageDeviceException {
-//        Connection conn=null;
-//        String[] columns=new String[] {"doPID", "action"};
-//        String action="M";
-//        if (deleted) {
-//            action="D";
-//        }
-//        String[] values=new String[] {pid, action};
-//        try {
-//            conn=m_connectionPool.getConnection();
-//            SQLUtility.replaceInto(conn, "doRepJob", columns,
-//                    values, "doPID");
-//        } catch (SQLException sqle) {
-//            throw new StorageDeviceException("Error creating replication job: " + sqle.getMessage());
-//        } finally {
-//            if (conn!=null) {
-//                m_connectionPool.free(conn);
-//            }
-//        }
-//    }
-//
-//    private void removeReplicationJob(String pid)
-//            throws StorageDeviceException {
-//        Connection conn=null;
-//        Statement s=null;
-//        try {
-//            conn=m_connectionPool.getConnection();
-//            s=conn.createStatement();
-//            s.executeUpdate("DELETE FROM doRepJob "
-//                    + "WHERE doPID = '" + pid + "'");
-//        } catch (SQLException sqle) {
-//            throw new StorageDeviceException("Error removing entry from replication jobs table: " + sqle.getMessage());
-//        } finally {
-//
-//            try {
-//                if (s!=null) s.close();
-//                if (conn!=null) m_connectionPool.free(conn);
-//            } catch (SQLException sqle) {
-//                throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
-//            } finally {
-//                s=null;
-//            }
-//        }
-//    }
-
-
     /**
      * Gets the userId property from the context... if it's not
      * populated, throws an InvalidContextException.
@@ -1707,34 +1420,21 @@ public class DefaultDOManager
      * registry before calling this method.
      */
     private void registerObject(String pid, String fedoraObjectType, String userId,
-            String label, String contentModelId, Date createDate, Date lastModDate)
+            String label, Date createDate, Date lastModDate)
             throws StorageDeviceException {
-        // label or contentModelId may be null...set to blank if so
         String theLabel=label;
         if (theLabel==null) {
             theLabel="";
         }
-        String theContentModelId=contentModelId;
-        if (theContentModelId==null) {
-            theContentModelId="";
-        }
         Connection conn=null;
         Statement st=null;
         String foType=fedoraObjectType;
-//        "O";
-//        if (fedoraObjectType==DigitalObject.FEDORA_BDEF_OBJECT) {
-//            foType="D";
-//        }
-//        if (fedoraObjectType==DigitalObject.FEDORA_BMECH_OBJECT) {
-//            foType="M";
-//        }
         try {
             String query="INSERT INTO doRegistry (doPID, foType, "
-                                                   + "ownerId, label, "
-                                                   + "contentModelID) "
+                                                   + "ownerId, label) "
                        + "VALUES ('" + pid + "', '" + foType +"', '"
-                                     + userId +"', '" + SQLUtility.aposEscape(theLabel) + "', '"
-                                     + theContentModelId + "')";
+                                     + userId +"', '" 
+                                     + SQLUtility.aposEscape(theLabel) + "')";
             conn=m_connectionPool.getConnection();
             st=conn.createStatement();
             st.executeUpdate(query);
@@ -2050,23 +1750,6 @@ public class DefaultDOManager
         }
     }
 
-//    private long getLatestModificationDate(Connection conn)
-//            throws SQLException {
-//        Statement st = null;
-//        try {
-//            st = conn.createStatement();
-//            ResultSet results = st.executeQuery("SELECT MAX(mDate) "
-//                    + "FROM doFields");
-//            if (results.next()) {
-//                return results.getLong(1);
-//            } else {
-//                return 0L;
-//            }
-//        } finally {
-//            if (st != null) st.close();
-//        }
-//    }
-    
     private long getLatestModificationDate(Connection conn, String whereClause) 
             throws SQLException 
     {
@@ -2111,7 +1794,5 @@ public class DefaultDOManager
             if (conn != null) m_connectionPool.free(conn);
         }
     }
-
-
 
 }

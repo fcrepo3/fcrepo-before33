@@ -9,6 +9,9 @@
 <!--               o Removed disseminator-related rules (disseminator      -->
 <!--                 elements have been removed from the FOXML format      -->
 <!--                 due to the CMDA).                                     -->
+<!--               o Removed #contentModel property (As of Fedora 3.0,     -->
+<!--                 content model is asserted via RELS-EXT predicate,     -->
+<!--                 fedora-model:hasContentModel                          -->
 <!--***********************************************************************-->
 <sch:schema xmlns:sch="http://www.ascc.net/xml/schematron">
 	<sch:ns prefix="foxml" uri="info:fedora/fedora-system:def/foxml#"/>
@@ -52,7 +55,6 @@
 			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/model#state']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/model#state']) = 0">DUPLICATE object property: state (foxml:property NAME='info:fedora/fedora-system:def/model#state')</sch:assert>
 			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/model#createdDate']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/model#createdDate']) = 0">DUPLICATE object property: creation date (foxml:property NAME='info:fedora/fedora-system:def/model#createdDate' )</sch:assert>
 			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/view#lastModifiedDate']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/view#lastModifiedDate']) = 0">DUPLICATE object property: modification date (foxml:property NAME='info:fedora/fedora-system:def/model#lastModifiedDate' )</sch:assert>
-			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel']) = 0">DUPLICATE object property: content model (foxml:property NAME='info:fedora/fedora-system:def/model#contentModel')</sch:assert>
 			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/model#ownerId']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/model#ownerId']) = 0">DUPLICATE object property: ownerId (foxml:property NAME='info:fedora/fedora-system:def/model#ownerId')</sch:assert>
 		</sch:rule>
 		<!-- RULE: check that attributes do not exceed length limits and are not missing if required. -->

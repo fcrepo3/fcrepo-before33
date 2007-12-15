@@ -10,6 +10,5 @@
 		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Sandy's Test Object"/>
-		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="TEST"/>
 	</foxml:objectProperties>
 </foxml:digitalObject>

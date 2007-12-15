@@ -4,7 +4,6 @@
 		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraBMechObject"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Behavior Mechanism Object implementing the Document Transform BDEF contract using the Fedora Local Saxon Transformation Service"/>
-		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BMECH"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
 	</foxml:objectProperties>
 	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
@@ -165,10 +164,10 @@
 	<foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="false">
     	<foxml:datastreamVersion ID="RELS-EXT1.0" LABEL="Relationships" MIMETYPE="text/xml">
       		<foxml:xmlContent>
-        		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+        		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
           			<rdf:Description rdf:about="info:fedora/demo:13">
-            			<rel:hasBDef rdf:resource="info:fedora/demo:12"/>
-            			<rel:isContractor rdf:resource="info:fedora/demo:XML_TO_HTMLDOC"/>
+            			<fedora-model:hasBDef rdf:resource="info:fedora/demo:12"/>
+            			<fedora-model:isContractor rdf:resource="info:fedora/demo:XML_TO_HTMLDOC"/>
           			</rdf:Description>
         		</rdf:RDF>
       		</foxml:xmlContent>

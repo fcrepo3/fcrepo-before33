@@ -233,7 +233,7 @@ public class DefaultAccess extends Module implements Access
     boolean doCMDA = false;
     
     DOReader cmReader = null;
-    RelationshipTuple cmPIDs[] = reader.getRelationships(Constants.RELS_EXT.HAS_FORMAL_CONTENT_MODEL.uri);
+    RelationshipTuple cmPIDs[] = reader.getRelationships(Constants.MODEL.HAS_CONTENT_MODEL.uri);
     if (cmPIDs.length == 0) 
     {
         throw new DisseminationException("No Content Model defined for object: " +PID );                    
@@ -260,7 +260,7 @@ public class DefaultAccess extends Module implements Access
                     throw new DisseminationException(null, "Content Model Object " +cModelPid+ " does not exist.", null, null, e);
                 }
             }
-            RelationshipTuple bDefPIDs[] = cmReader.getRelationships(Constants.RELS_EXT.HAS_BDEF.uri);
+            RelationshipTuple bDefPIDs[] = cmReader.getRelationships(Constants.MODEL.HAS_BDEF.uri);
             if (bDefPIDs == null || bDefPIDs.length == 0) 
             {
                 throw new DisseminationException("No BDef defined for Content Model " +cModelPid );                    

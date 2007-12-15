@@ -11,7 +11,6 @@
 		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Sandy's Test Object"/>
-		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="TEST"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
 		<!-- ALLOW EXTENSIBLE PROPERTIES (Fedora will retain these, but not operate on them.) -->
 		<foxml:extproperty NAME="http://www.openarchives.org/OAI/1.1/oai-identifier.xsd" VALUE="oai:cornell.edu:test:100"/>
@@ -41,14 +40,14 @@
 	<foxml:datastream ID="RELS-EXT" CONTROL_GROUP="X">
 		<foxml:datastreamVersion ID="RELS-EXT.0"  MIMETYPE="text/xml" LABEL="Fedora Relationship Metadata">
 			<foxml:xmlContent>
-				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:fedora="info:fedora/fedora-system:def/relations-external#" xmlns:myns="http://www.nsdl.org/ontologies/relationships#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:fedora="info:fedora/fedora-system:def/relations-external#" xmlns:myns="http://www.nsdl.org/ontologies/relationships#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
 					<rdf:Description rdf:about="info:fedora/test:100">
 						<fedora:isMemberOfCollection rdf:resource="info:fedora/something:49"/>
 						<fedora:isMemberOfCollection rdf:resource="info:fedora/something:48"/>
 						<myns:isPartOf rdf:resource="info:fedora/mystuff:100"/>
-						<rel:hasFormalContentModel rdf:resource="info:fedora/test:UVA_STD_IMAGE"/>
-						<rel:hasFormalContentModel rdf:resource="info:fedora/demo:UVA_MRSID_IMAGE_1"/>
-						<rel:hasFormalContentModel rdf:resource="info:fedora/demo:UVA_STD_IMAGE_1"/>
+						<fedora-model:hasContentModel rdf:resource="info:fedora/test:UVA_STD_IMAGE"/>
+						<fedora-model:hasContentModel rdf:resource="info:fedora/demo:UVA_MRSID_IMAGE_1"/>
+						<fedora-model:hasContentModel rdf:resource="info:fedora/demo:UVA_STD_IMAGE_1"/>
 					</rdf:Description>
 				</rdf:RDF>
 			</foxml:xmlContent>

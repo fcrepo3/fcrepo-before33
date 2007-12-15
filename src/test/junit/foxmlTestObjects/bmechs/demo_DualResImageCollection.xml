@@ -7,7 +7,6 @@
     <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Dual Resolution Image Collection"/>
     <foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2005-01-13T17:16:51.020Z"/>
     <foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2005-01-13T17:16:51.447Z"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BMECH"/>
   </foxml:objectProperties>
   <foxml:datastream CONTROL_GROUP="X" ID="WSDL" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2005-01-13T17:16:51.020Z" ID="WSDL1.0" LABEL="WSDL definition of service"

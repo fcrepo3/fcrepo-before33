@@ -62,7 +62,6 @@ public class TestAPIM
         sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"Image of Coliseum in Rome\"/>");
         sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#createdDate\" VALUE=\"2004-12-10T00:21:57Z\"/>");
         sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/view#lastModifiedDate\" VALUE=\"2004-12-10T00:21:57Z\"/>");
-        sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#contentModel\" VALUE=\"UVA_STD_IMAGE\"/>");
         sb.append("  </foxml:objectProperties>");
         sb.append("  <foxml:datastream ID=\"DC\" CONTROL_GROUP=\"X\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion ID=\"DC1.0\" MIMETYPE=\"text/xml\" LABEL=\"DC Record for Coliseum image object\">");
@@ -116,7 +115,6 @@ public class TestAPIM
         sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"Image of Coliseum in Rome\"/>");
         sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#createdDate\" VALUE=\"2004-12-10T00:21:57Z\"/>");
         sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/view#lastModifiedDate\" VALUE=\"2004-12-10T00:21:57Z\"/>");
-        sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#contentModel\" VALUE=\"UVA_STD_IMAGE\"/>");
         sb.append("  </foxml:objectProperties>");
         sb.append("  <foxml:datastream ID=\"DC\" CONTROL_GROUP=\"X\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion ID=\"DC1.0\" MIMETYPE=\"text/xml\" LABEL=\"DC Record for Coliseum image object\">");
@@ -316,7 +314,6 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='demo:5']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
         assertXpathEvaluatesTo("6", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
     }    
     
@@ -341,7 +338,6 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='"+pid+"']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         
         pid = apim.ingest(changeme1FOXMLObjectXML, FOXML1_1.uri, "ingesting new foxml object");
@@ -354,7 +350,6 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='"+pid+"']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         
         pid = apim.ingest(demo999METSObjectXML, METS_EXT1_1.uri, "ingesting new mets object");
@@ -366,7 +361,6 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='"+pid+"']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         
         pid = apim.ingest(changeme2METSObjectXML, METS_EXT1_1.uri, "ingesting new mets object");
@@ -379,7 +373,6 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='"+pid+"']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         
         // (2) test modifyObject
@@ -419,7 +412,6 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='demo:998']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
 
         // test exporting object as foxml with exportContext of default
@@ -429,7 +421,6 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='demo:998']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         
         // test exporting object as foxml with exportContext of migrate
@@ -439,7 +430,6 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='demo:998']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         
         // test exporting object as mets with exportContext of default
@@ -450,7 +440,6 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='demo:999']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         
         // test exporting object as mets with exportContext of public
@@ -461,7 +450,6 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='demo:999']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         
         // test exporting object as mets with exportContext of migrate
@@ -472,7 +460,6 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='demo:999']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         
         // (4) test purgeObject
@@ -710,8 +697,8 @@ public class TestAPIM
         checkDatastream(dsArray, "TEI_SOURCE", null, "TEI Source", null,
                         "text/xml", "A", "TEI_SOURCE1.0", true, "X", expectedTEISize, new String[] {});
 
-        int expectedRELSSize = 393;
-        if (testingMETS()) expectedRELSSize = 361;
+        int expectedRELSSize = 395;
+        if (testingMETS()) expectedRELSSize = 363;
         
         checkDatastream(dsArray, "RELS-EXT", null, "Relationships", null,
                         "text/xml", "A", "RELS-EXT1.0", true, "X", expectedRELSSize, new String[] {});

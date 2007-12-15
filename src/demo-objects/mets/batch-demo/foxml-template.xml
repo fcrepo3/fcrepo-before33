@@ -18,7 +18,6 @@
 		<!-- Uncomment the next line only if you want all objects built with this template to retain the specified creation date after ingest.            -->
 		<!-- <foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2005-03-15T12:57:07.241Z"/>                   -->
 		<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2005-03-15T12:57:07.702Z"/>
-		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UVA_STD_IMAGE"/>
 	</foxml:objectProperties>
 	<foxml:datastream CONTROL_GROUP="X" ID="DC" STATE="A" VERSIONABLE="true">
 		<!-- Note: The value for createdDate is assigned dynamically by the Fedora server at ingest time if the CREATED attribute is not        -->

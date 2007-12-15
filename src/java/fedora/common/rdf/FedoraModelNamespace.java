@@ -5,7 +5,6 @@
 
 package fedora.common.rdf;
 
-
 /**
  * The Fedora Model RDF namespace.
  * 
@@ -18,18 +17,43 @@ package fedora.common.rdf;
  */
 public class FedoraModelNamespace extends RDFNamespace {
     private static final long serialVersionUID = 1L;
+
     // Properties
+
+    /**
+     * Deprecated as of Fedora 3.0.
+     * Replaced by HAS_CONTENT_MODEL.
+     */
+    @Deprecated
     public final RDFName CONTENT_MODEL;
     public final RDFName CREATED_DATE;
-    public final RDFName DATASTREAM_STATE;
     public final RDFName DEFINES_METHOD;
+    
+    /**
+     * Deprecated as of Fedora 3.0.
+     * No replacement.  This information is no longer recorded.
+     */
+    @Deprecated
     public final RDFName DEPENDS_ON;
+    
+    /**
+     * Deprecated as of Fedora 3.0.
+     * Replaced by HAS_BDEF.
+     */
+    @Deprecated
     public final RDFName IMPLEMENTS_BDEF;
     public final RDFName LABEL;
     public final RDFName OWNER;
     public final RDFName STATE;
+    
+    /**
+     * Deprecated as of Fedora 3.0.
+     * No direct replacement.  Objects now point to content models
+     * via HAS_CMODEL.  Behavior Mechanisms used by an object are those
+     * that point to the content model of the object via IS_CONTRACTOR.
+     */
+    @Deprecated
     public final RDFName USES_BMECH;
-    public final RDFName OBJECT_STATE;
 
     // Values
     public final RDFName ACTIVE;
@@ -41,6 +65,11 @@ public class FedoraModelNamespace extends RDFNamespace {
     public final RDFName BMECH_OBJECT;
     public final RDFName CMODEL_OBJECT;
     public final RDFName DATA_OBJECT;
+    
+    // CMDA RDF Relationships
+    public final RDFName HAS_BDEF;
+    public final RDFName IS_CONTRACTOR;
+    public final RDFName HAS_CONTENT_MODEL;
 
     public FedoraModelNamespace() {
 
@@ -58,8 +87,6 @@ public class FedoraModelNamespace extends RDFNamespace {
         this.OWNER                = new RDFName(this, "ownerId");
         this.STATE                = new RDFName(this, "state");
         this.USES_BMECH           = new RDFName(this, "usesBMech");
-        this.OBJECT_STATE         = new RDFName(this, "objectState");
-        this.DATASTREAM_STATE     = new RDFName(this, "datastreamState");
 
         // Values
         this.ACTIVE               = new RDFName(this, "Active");
@@ -71,6 +98,11 @@ public class FedoraModelNamespace extends RDFNamespace {
         this.BMECH_OBJECT         = new RDFName(this, "FedoraBMechObject");
         this.CMODEL_OBJECT        = new RDFName(this, "FedoraCModelObject");
         this.DATA_OBJECT          = new RDFName(this, "FedoraObject");
+        
+        // CMDA RDF Relationships
+        this.HAS_BDEF             = new RDFName(this, "hasBDef");
+        this.IS_CONTRACTOR        = new RDFName(this, "isContractor");
+        this.HAS_CONTENT_MODEL    = new RDFName(this, "hasContentModel");
     }
 
 }

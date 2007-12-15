@@ -110,6 +110,7 @@ public class BasicDigitalObject implements DigitalObject {
         m_label = label;
     }
 
+    @Deprecated
     public String getContentModelId() {
         return m_contentModelId;
     }

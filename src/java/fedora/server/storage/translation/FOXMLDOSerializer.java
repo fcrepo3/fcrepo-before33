@@ -155,7 +155,6 @@ public class FOXMLDOSerializer
 		String label = obj.getLabel();
 		Date cdate = obj.getCreateDate();
 		Date mdate = obj.getLastModDate();
-		String cmodel = obj.getContentModelId();
 		
 		buf.append("    <" + FOXML.prefix + ":objectProperties>\n");
 			
@@ -183,10 +182,16 @@ public class FOXMLDOSerializer
 			buf.append("        <" + FOXML.prefix  + ":property NAME=\"" + VIEW.LAST_MODIFIED_DATE.uri + "\""
 			+ " VALUE=\"" + DateUtility.convertDateToString(mdate) + "\"/>\n"); 
 		}
-		if (cmodel!=null && !cmodel.equals("")) {
-			buf.append("        <" + FOXML.prefix + ":property NAME=\"" + MODEL.CONTENT_MODEL.uri + "\"" 
-			+ " VALUE=\"" + StreamUtility.enc(cmodel) + "\"/>\n");	
-		}
+		
+        if (m_format.equals(FOXML1_0)) {
+            String cmodel = obj.getContentModelId();
+            if (cmodel!=null && !cmodel.equals("")) {
+                buf.append("        <" + FOXML.prefix + ":property NAME=\"" 
+                        + MODEL.CONTENT_MODEL.uri + "\"" 
+                        + " VALUE=\"" + StreamUtility.enc(cmodel) + "\"/>\n");	
+            }
+        }
+		
 		Iterator iter = obj.getExtProperties().keySet().iterator();
 		while (iter.hasNext()) {
 			String name = (String)iter.next();
