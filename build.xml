@@ -154,6 +154,7 @@
             <pathelement location="${lib.rome}"/>
             <pathelement location="${lib.jettison}"/>
             <pathelement location="${lib.localizer}"/>
+            <pathelement location="${lib.jaxb-api}"/>
             
         	<!-- DBCP libs (removed by installer if installed to Tomcat 5.0.x-->
         	<pathelement location="${lib.commons-collections}"/>

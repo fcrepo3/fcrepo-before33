@@ -81,6 +81,15 @@ public class TestRESTAPI extends FedoraServerTestCase {
         sb.append("      </foxml:xmlContent>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
+        sb.append("  <foxml:datastream ID=\"DS1\" CONTROL_GROUP=\"X\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion ID=\"DS1.0\" MIMETYPE=\"text/xml\" LABEL=\"DC Record for Coliseum image object\">");
+        sb.append("      <foxml:xmlContent>");
+        sb.append("        <foo>");
+        sb.append("          <bar>baz</bar>");
+        sb.append("        </foo>");
+        sb.append("      </foxml:xmlContent>");
+        sb.append("    </foxml:datastreamVersion>");
+        sb.append("  </foxml:datastream>");
         sb.append("</foxml:digitalObject>");
 
         try {
@@ -160,7 +169,7 @@ public class TestRESTAPI extends FedoraServerTestCase {
     }
     
     public void testGetDissemination() throws Exception {
-
+        //TODO
     }
     
     public void testFindObjects() throws Exception {
@@ -201,11 +210,15 @@ public class TestRESTAPI extends FedoraServerTestCase {
     }
     
     public void testGetObjectXML() throws Exception {
-        
+        //TODO
     }
     
     public void testExportObject() throws Exception {
+        url = String.format("/objects/%s/export", pid.toString());
+        assertEquals(SC_OK, get(true));
         
+        url = String.format("/objects/%s/export?context=public", pid.toString());
+        assertEquals(SC_OK, get(true));
     }
     
     public void testPurgeObject() throws Exception {
@@ -216,63 +229,76 @@ public class TestRESTAPI extends FedoraServerTestCase {
     }
     
     public void testAddDatastream() throws Exception {
-        
+        String xmlData = "<foo>bar</foo>";
+        url = String.format("/objects/%s/datastreams/FOO?controLGroup=X&dsLabel=bar", pid.toString());
+        assertEquals(SC_CREATED, post(xmlData, true));
     }
     
     public void testDescribeUser() throws Exception {
-        
+        //TODO
     }
     
     public void testModifyDatastreamByReference() throws Exception {
-        
+        //TODO
     }
 
     public void testModifyDatastreamByValue() throws Exception {
+        String xmlData = "<baz>quux</baz>";
+        url = String.format("/objects/%s/datastreams/DS1?controlGroup=X", pid.toString());
         
+        HttpMethod method = put(xmlData, true);
+        assertFalse("For testing, we expect to have to follow redirects manually", 
+                method.getFollowRedirects());
+        assertEquals(SC_CREATED, method.getStatusCode());
     }
     
     public void testSetDatastreamSet() throws Exception {
-        
+        //TODO
     }
     
     public void testSetDatastreamVersionable() throws Exception {
-        
+        //TODO
     }
     
     public void testCompareDatastreamChecksumRequest() throws Exception {
-        
+        //TODO
     }
     
     public void testGetDatastream() throws Exception {
-        
+        //TODO
     }
     
     public void testGetDatastreams() throws Exception {
-        
+        //TODO
     }
     
     public void testGetDatastreamHistory() throws Exception {
-        
+        //TODO
     }
     
     public void testPurgeDatastream() throws Exception {
-        
+        url = String.format("/objects/%s/datastreams/RELS-EXT", pid.toString());
+        assertEquals(SC_OK, delete(true));
     }
     
     public void testGetNextPID() throws Exception {
+        url = "/objects/nextPID";
+        assertEquals(SC_OK, get(true));
         
+        url = "/objects/nextPID.xml";
+        assertEquals(SC_OK, get(true));
     }
     
     public void testGetRelationship() throws Exception {
-        // TODO
+        // TODO not yet implemented in the REST-API
     }
     
     public void testAddRelationship() throws Exception {
-        // TODO
+        // TODO not yet implemented in the REST-API
     }
     
     public void testPurgeRelationship() throws Exception {
-        // TODO
+        // TODO not yet implemented in the REST-API
     }
     
     // helper methods
