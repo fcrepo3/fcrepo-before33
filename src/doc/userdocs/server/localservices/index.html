@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+  <head>
+    <title>Fedora Local Services</title>
+    <link rel="stylesheet" type="text/css" href="../../docstyle.css" />
+  </head>
+
+  <body>
+
+    <div id="header">
+      <a href="../../../index.html">
+      </a>
+      <h1>Fedora Local Services</h1>
+      <h2>Fedora Release 2.2.1</h2>
+    </div>
+
+    <div id="toc">
+      <h2>Table of Contents</h2>
+      <ol>
+        <li><a href="#intro">Introduction</a></li>
+      </ol>
+    </div>
+    
+    <div id="content">
+    
+      <h2 id="intro">Introduction</h2>
+      
+      <p>
+        The Fedora repository provides access to data objects by leveraging tools and services
+        that are described by the behavior objects. These services can exist as services on a
+        remote host or they can also be included as part of the Fedora repository. Services
+        that are under the custodianship of the Fedora repository are referred to as
+        <em>Local Services.</em> The Fedora repository comes bundled with three local services.
+      </p>
+      
+      <h3>Saxon XSLT Processor Local Service</h3>
+      
+      <p>
+        The <a href="saxon/index.html" target="_top">Saxon XSLT Processor Local Service</a> uses
+        the Saxon XSLT Processor written by Michael Kay to provide an XSLT transformation
+        service. The service is implemented as a java servlet that accepts as input a XML source
+        document and XSLT stylesheet enabling the transformation of XML documents into a variety
+        of different formats.
+      </p>
+      
+      <h3>The FOP Local Service</h3>
+      
+      <p>
+        The <a href="fop/index.html">FOP Local Service</a> uses the FOP formatter from Apache
+        Software to provide a PDF transformation service. The service is implemented as a java
+        servlet and accepts as input an XML-FO source file which is transformed into PDF.
+      </p>
+      
+      <h3>The Image Manipulation Local Service</h3>
+      
+      <p>
+        The <a href="imagemanip/index.html">Image Manipulation Local Service</a> uses the
+        ImageJ API from Wayne Rasband to provide an image manipulation service. The
+        service is implemented as a java servlet and accepts as input the source image and
+        a series of parameters used to manipulate the image.
+      </p>
+      
+    </div>
+    
+    <div id="footer">
+      <p id="copyright">
+        Copyright &copy; 2002-2007 Fedora Project
+      </p>
+      <script type="text/javascript">
+        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
+        var parts = cvsDate.split(" ");
+        var modifiedDate = parts[1];
+        var p = document.createElement("p");
+        p.setAttribute("id", "lastModified");
+        var footer = document.getElementById("footer");
+        footer.appendChild(p);
+        p.innerHTML = "Last Modified "+modifiedDate;
+      </script>
+    </div>
+    
+  </body>
+</html>

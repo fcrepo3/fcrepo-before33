@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+  <head>
+    <title>Fedora Repository Features</title>
+    <link rel="stylesheet" type="text/css" href="../../docstyle.css" />
+  </head>
+
+  <body>
+
+    <div id="header">
+      <a href="../../../index.html">
+      </a>
+      <h1>Fedora Repository Features</h1>
+      <h2>Fedora Release 2.2.1</h2>
+    </div>
+
+    <div id="toc">
+      <h2>Table of Contents</h2>
+      <ol>
+        <li><a href="#interfaces">Web Service Interfaces</a></li>
+        <li><a href="#features">Major Features of the Fedora Repository</a></li>
+        <li><a href="#newservices">New Services in the Fedora Service Framework</a></li>
+      </ol>
+    </div>
+    
+    <ol id="content">
+    
+      <li>
+        <h2 id="interfaces">Web Service Interfaces</h2>
+        <span class="plaintext">
+          The interface to the system consists of three open APIs that are exposed as web services:
+        </span>
+          <ul>
+            <li><strong>Management API (API-M)</strong> &#150; defines an interface for administering the repository. It includes operations necessary for clients to create and maintain digital objects and their components. API-M is implemented as a SOAP-enabled web service.</li>
+            <br />
+            <li><strong>Access API (API-A)</strong> &#150; defines an interface for accessing digital objects stored in the repository. It includes operations necessary for clients to perform disseminations on objects in the repository and to discover information about an object using object reflection. API-A is implemented as a SOAP-enabled web service.</li>
+            <br />
+            <li><strong>Access-Lite API (API-A-Lite)</strong> &#150; defines a light-weight version of the Fedora Access Service that is implemented as a REST-based web service that can be invoked with a simple URL syntax.</li>
+            <br />
+            <li><strong>Management-Lite API (API-M-Lite)</strong> &#150; this interface is under development. The intent is to provide a light-weight version of the Fedora Management Service implemented as a REST-based web service that can be invoked with a simple URL syntax. Currently, there is only one operation implemented, which is the getNextPID.  A full versioin of this interface may be provided in a future release, depending on user demand.</li>
+         	<br />
+         	<li><strong>Search API (part of API-A-Lite)</strong> &#150; this interface provides a simple search of the repository. The search operates upon the default index for the repository which contains object properties and the default Dublin Core record for the repository.  This search interface is intended as a basic field search of the object registry.  It is expected that other services will be used to created to index Fedora objects at a finer-grained level than provided by the default search.</li>
+        	<br />
+        	<li><strong>Resource Index Search API</strong> &#150; this is a new interface as of Fedora 2.0 that provides searching of the new Resource Index.  The Resource Index is an RDF-based index of the Fedora repository that includes the following for each digital object:
+        	<br />
+        	<br />
+        	  <ol>
+        	    <li>object-to-object relationships (from the RELS-EXT datastream of a digital object)</li>
+        	    <li>custom user-defined properties (from the RELS-EXT datastream of a digital object)</li>
+        	    <li>object properties&nbsp; (derived from the FOXML digital object)</li>
+        	    <li>metadata about datastreams and disseminations (derived from the FOXML digital object)</li>
+        	    <li>Dublin Core metadata (obtained from the default DC datastream of a digital object)</li>
+        	  </ol>
+        	</li>
+          </ul>
+      </li>
+      
+      <li>
+        <h2 id="features">Major Features of the Fedora Repository</h2>
+          <ul>
+            <li><strong>Open Source</strong> &#150; The Fedora repository system is open source software licensed under the <a href="http://www.mozilla.org/MPL/MPL-1.1.html">Mozilla Public License</a>.</li>
+            <br/>
+            <li><strong>Flexible Digital Object Model</strong> &#150; The Fedora digital object model provides the flexibility to create kinds of objects including documents, images, electronic books, multi-media learning objects, datasets, metadata, and more.  Please refer to the <a href="../../digitalobjects/objectModel.html">Fedora Digital Object</a> documentation for more details.  The model a supports the aggregation of one or more content items as &quot;Datastreams&quot;.  The bytestream content of a Datastream can be any media type and can be either stored locally in the repository, or referenced by a digital object (i.e., content stored outside the repository.  The Fedora object model also provides a mechanism (known as a Disseminator) for associating services with an object to produce dynamic or computed content from digital objects.</li>
+            <br/>
+            <li><a href="identifiers.html">Fedora Identifiers: PIDS and Fedora URIs</a></li>
+            <br />
+			<li><strong>Content Versioning</strong> &#150; The Fedora content versioning system keeps an audit trail of how an object changed, and maintains a copy of each version of each datastream and disseminator in a digital object. Any modifications made to a Datastream or Disseminator through the Fedora management interface (API-M) will automatically result in the creation of a new version of that Datastream or Disseminator. The Fedora object contains a record of alll versions, thereby creating a history of how objects changed over time. Additionally, Fedora maintains an audit trail record of the nature of the object change events.  Access to prior versions is available by adding a date-time stamp to requests on the Fedora Access service (API-A and API-A-LITE).</li>
+			<br />
+			<li><strong><a href="../../digitalobjects/ingestExport.html">XML Ingest and Export</a></strong> &#150; Digital objects can be submitted to a Fedora repository as XML-encoded files that conform to either the <a href="http://www.fedora.info/definitions/1/0/foxml1-0.xsd">Fedora Object XML (FOXML)</a> schema or an extension of the <a href="http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd">Metadata Encoding and Transmission Standard (METS)</a> schema. In future releases of Fedora other formats will be supported including MPEG2/DIDL and METS 1.4</li>
+			<br />
+			<li><strong>XML Storage</strong> &#150; By default, Fedora digital objects are stored in a Fedora repository as XML-encoded files that conform to <a href="http://www.fedora.info/definitions/1/0/foxml1-0.xsd">Fedora Object XML (FOXML)</a> format.  As previously mentioned, objects can be both ingested and exported in other XML formats. Content bytestreams that are aggregated as Datastreams in a digital object are stored in their native formats in the repository persistent storage area.</li>
+			<br />
+			<li><strong>Object-to-Object Relationships</strong> &#150; Fedora provides the ability to assert object-to-object relationships.  Object-to-Object relationship metadata is a way of asserting various kinds of relationships among Fedora objects including the notion that an object is a member of a collection, is considered a part of another object, is a derivation of another object, is a description of another object, or is equivalent to another object. A default set of common relationships is defined in the <a href="http://www.fedora.info/definitions/1/0/fedora-relsext-ontology.rdfs">Fedora relationship ontology</a>, although other community or user-defined relationships may also be asserted.  These relationships are automatically indexed by Fedora as part of the Fedora Resource Index.</li>
+			<br />
+			<li><strong>Access Control and Authentication</strong> &#150; Release 2.1 includes configurable authentication (Tomcat realms and login modules) with out-of-box support for multiplexing multiple authentication sources, including Tomcat-users and LDAP. Access Control is supported by a new XACML-based Policy Enforcement module that enables fine-grained authorization at the level of the Fedora web service APIs and down to the object/datastream/dissemination level.</li>
+			<br />
+			<li><strong>Simple Search</strong> &#150; Fedora automatically creates two indexes of the repository.  The default search index is a simple index of the repository searchable by object properties and object Dublin Core elements.  As of Fedora 2.0 there is the new RDF-based Resource Index which includes more information about objects plus object-to-object relationships.  Both of these indexes are searchable via REST-based web service interfaces.</li>
+			<br />
+			<li><strong>RDF-based Resource Index</strong> &#150; As of Fedora 2.0 there is the new RDF-based Resource Index which includes object properties, object datastream properties, object dissemination properties, Dublin Core properties, and object-to-object relationships. Fedora automatically, and incrementally, indexes information in the Resource Index. The Resource Index data model is naturally extensible, enabling Fedora users to index customized object properties (by asserting them in the RDF-based &quot;RELS-EXT&quot; datastream within a digital object). The Resource Index is searchable via REST-based a web service interface.  See the Resource Index Guide for more information.</li>
+			<br />
+			<li><strong>Simple OAI Provider</strong> &#150; The OAI Protocol for Metadata Harvesting is a standard for sharing metadata across repositories. The Fedora repository service itself has a simple OAI provider interface. Every Fedora digital object has a primary Dublin Core record that conforms to the schema at: <a href="http://www.openarchives.org/OAI/2.0/oai_dc.xsd">http://www.openarchives.org/OAI/2.0/oai_dc.xsd</a>. This metadata is accessible using the OAI Protocol for Metadata Harvesting, v2.0. For more advanced OAI functionality, see the documentation for the new PROAI service, available since Fedora 2.1 as part of the new Fedora Service Framework.</li>
+			<br />
+			<li><strong>Migration Utility</strong> &#150; A new migration utility is provided to perform mass export and mass ingest of objects. At the core, the migration utility is built upon two newly enhanced command-line functions: fedora-export and fedora-ingest. Used together, these two command line functions can support a variety of scenarios involving moving or copying objects between repositories. The utility is general-purpose in that it can be used to copy or move objects among repositories for many reasons including upgrading from previous releases of Fedora. Client access to the migration comes in two forms: (1) run fedora-export and fedora-ingest at the command line, or (2) use the Fedora Administrator client to invoke these functions (see menu items File/Ingest and File/Export).</li>
+			<br />
+			<li><strong>Batch Utility</strong> &#150; The Fedora repository system includes a Batch Utility as part of the Fedora Administrator client that enables the mass creation and modification of Fedora digital objects.</li>
+			<br />
+			<li><strong>Reporting Utility</strong> &#150; A reporting utility is provided providing different management views of the contents of the Fedora repository.</li>
+          </ul>
+      </li>
+      
+      <li>
+        <h2 id="newservices">New Services in the Fedora Service Framework</h2>
+          <ul>
+            <li><strong>Directory Ingest Service (DirIngest)</strong> &#150; A stand-alone web 
+			service application that interacts with a Fedora repository to 
+			provide for ingesting directories or archives or files into a Fedora 
+			repository. The service receives a zip/jar file of files in 
+			directory hierarchy (i.e., a file archive), including a METS-based 
+			manifest file. The Directory Ingest Service will receive the 
+			archive, open it up, create a digital object in the repository for 
+			every file and directory, and populate the RELS-EXT datastream 
+			preserve the relationships between files and directories as 
+			represented in the input archive.</li>
+			<br />
+			<li><strong>&quot;Pro&quot; OAI Provider Service (PROAI)</strong> &#150; A stand-alone web 
+			service application that is a highly configurable OAI provider. 
+			The PROAI service can be set up to harvest any type of datastream or 
+			dissemination of digital objects in a Fedora repository. It also 
+			supports OAI sets. (Note: PROAI can be used outside the 
+			context of Fedora too, by writing a custom adapter.)</li>
+          </ul>
+      </li>
+
+    </ol>
+    
+    <div id="footer">
+      <p id="copyright">
+        Copyright &copy; 2002-2007 Fedora Project
+      </p>
+      <script type="text/javascript">
+        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
+        var parts = cvsDate.split(" ");
+        var modifiedDate = parts[1];
+        var p = document.createElement("p");
+        p.setAttribute("id", "lastModified");
+        var footer = document.getElementById("footer");
+        footer.appendChild(p);
+        p.innerHTML = "Last Modified "+modifiedDate;
+      </script>
+    </div>
+    
+  </body>
+</html>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+
+<head>
+  <title>YOUR DOC TITLE</title>
+  <meta name="robots" content="all"/>
+  <link href="docstyle.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+  <div class="title">
+    <h1>YOUR DOC TITLE</h1>
+  </div>
+
+  <!-- A sec1 is a top-level section -->
+  <div class="sec1">
+    <h2>SECTION TITLE</h2>
+    <p>
+      Here is a paragraph.  Use the <strong>strong tag for bold</strong>
+      and the <em>em tag for italics</em>.
+    </p>
+    <div class="sec2">
+      <h3>SUBSECTION TITLE</h3>
+      <p>
+        Here's another paragraph.  Below is an example of doing preformatted code.
+      </p>
+      <div class="code">
+object-pid    = namespace-id ":" object-id
+namespace-id  = ( [A-Z] / [a-z] / [0-9] / "-" / "." ) 1+
+object-id     = ( [A-Z] / [a-z] / [0-9] / "-" / "." / "~" / "_" / escaped-octet ) 1+
+escaped-octet = "%" hex-digit hex-digit
+hex-digit     = [0-9] / [A-F]
+      </div>
+      <div class="sec3">
+        <h4>SUB-SUBSECTION TITLE</h4>
+        <p>Here is an unordered list:</p>
+        <ul>
+          <li> An item.</li>
+          <li> Another item.</li>
+        </ul>
+        <p>Here's an ordered one:</p>
+        <ol>
+          <li> Item one.</li>
+          <li> Item two.</li>
+        </ol>
+      </div>
+    </div>
+    <div class="sec2">
+      <h3>ANOTHER SUBSECTION</h3>
+      <p>
+        This is XHTML, so remember to close all your tags!
+      </p>
+    </div>
+  </div>
+
+</body>
+</html>

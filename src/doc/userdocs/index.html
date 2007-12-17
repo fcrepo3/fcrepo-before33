@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+  <head>
+    <title>Fedora System Documentation</title>
+    <link rel="stylesheet" type="text/css" href="docstyle.css" />
+  </head>
+
+  <body>
+
+    <div id="header">
+      <h1>Fedora System Documentation</h1>
+      <h2>Fedora Release 2.2.1</h2>
+    </div>
+
+    <div id="toc">
+      <h2>Table of Contents</h2>
+      <ol>
+        <li><a href="#distribution">Fedora Software Distribution</a></li>
+        <li><a href="#digitalobjects">Fedora Digital Objects</a></li>
+        <li>
+          <a href="#repository">Fedora Repository</a>
+          <ul>
+            <li><a href="#new">New Features in Release 2.2</a></li>
+            <li><a href="#standard">Standard Repository Features</a></li>
+            <li><a href="#webservices">Fedora Repository - Web Service Interfaces</a></li>
+          </ul>
+        </li>
+        <li><a href="#services">Fedora Framework Services</a></li>
+        <li><a href="#clients">Fedora Clients</a></li>
+        <li><a href="#tutorials">Tutorials</a></li>
+      </ol>
+    </div>
+
+    <ol id="content">
+
+      <li>
+        <h2 id="distribution">Fedora Software Distribution</h2>
+        <ul>
+          <li><a href="distribution/release-notes.html">Release Notes</a></li>
+          <li><a href="distribution/installation.html">Installation and Configuration Guide</a></li>
+          <li><a href="distribution/migration.html">Upgrade and Migration Guide</a></li>
+          <li><a href="distribution/diststruct.html">Distribution Structure</a></li>
+          <li><a href="../license/license.html">Fedora License &amp; Copyright</a></li>
+          <li><a href="../javadocs/index.html">Java Doc</a></li>
+          <li><a href="reports/fedora22-performance/index.html">Report on Fedora 2.2 Performance Testing</a></li>
+          <li><a href="server/features/features.html">Summary of Major Features</a></li>
+        </ul>
+      </li>
+
+      <li>
+        <h2 id="digitalobjects">Fedora Digital Objects</h2>
+        <ul>
+          <li><a href="digitalobjects/objectModel.html">Fedora Digital Object Model</a>
+            <ul>
+              <li><a href="server/features/identifiers.html">Digital Object Identifiers and URIs</a></li>
+              <li><a href="digitalobjects/objectModel.html#DATASTREAMS">Datastreams</a></li>
+              <li><a href="digitalobjects/objectModel.html#DISS">Disseminators</a> using <a href="server/localservices/index.html">local services</a> or web services</li>
+              <li><a href="digitalobjects/introRelsExt.html">Digital Object Relationships</a></li>
+            </ul>
+          </li>
+          <li><a href="digitalobjects/introFOXML.html">Fedora Object XML (FOXML)</a></li>
+        </ul>
+      </li>
+
+      <li>
+        <h2 id="repository">Fedora Repository</h2>
+        <ul>
+          <li class="square">
+            <h3 id="new" class="newstar">New Features in Release 2.2</h3>
+            <ul>
+              <li>
+                <a href="distribution/installation.html">Web Application</a> 
+                - Fedora repackaged and re-factored as a standard Web Application 
+                aRchive (.war)
+              </li>
+              <li>
+                <a href="distribution/installation.html">Fedora Installer</a> 
+                - an easy way to get a &ldquo;quick&rdquo; or &ldquo;custom&rdquo; installation/setup of 
+                Fedora
+              </li>
+              <li>
+                <a href="server/security/securingrepo.html">Security 
+                Architecture - Servlet Filters for Authentication</a> - easy to 
+                use and portable among application containers
+              </li>
+              <li>
+                <a href="http://www.fedora.info/download/2.2/services/genericsearch/doc/index.html">Search
+                Service Integration</a> - configure with repository to 
+                provide index/search for any type of datastream or dissemination 
+                of objects
+              </li>
+              <li>
+                <a href="server/features/checksumming.html">Datastream 
+                Integrity Features</a> - checksum creation and comparisons
+              </li>
+              <li>
+                <a href="server/journal/index.html">Journaling</a> - 
+                create a backup or mirror repository
+              </li>
+              <li>
+                <a href="server/resourceIndex/index.html">Resource Index</a> 
+                - performance upgrade and new triplestore plug-in option
+                (<a href="http://mptstore.sourceforge.net/">MPTStore</a>)
+              </li>
+              <li>
+                Many new enhancements! (see:
+                <a href="distribution/release-notes.html">Release Notes</a>)
+              </li>
+            </ul>
+          </li>
+          <li class="square">
+            <h3 id="standard">Standard Repository Features</h3>
+            <ul>
+              <li><a href="server/features/serviceframework.htm">Service-oriented architecture</a></li>
+              <li><a href="#webservices">Repository access and management via web services</a></li>
+              <li><a href="server/features/versioning.html">Versioning</a></li>
+              <li><a href="digitalobjects/ingestExport.html">XML-based Ingest and Export</a>
+                <ul>
+                  <li><a href="digitalobjects/foxml-ingest-example.xml">FOXML Ingest Example</a></li>
+                  <li><a href="digitalobjects/mets-ingest-example.xml">METS Ingest Example</a></li>
+                </ul>
+              </li>
+              <li><a href="digitalobjects/introFOXML.html">XML-based Digital Object Storage</a></li>
+              <li><a href="server/webservices/search/index.html">Basic Search</a></li>
+              <li><a href="server/webservices/oai/index.html">Basic OAI Provider Interface</a></li>
+              <li><a href="server/resourceIndex/index.html">RDF-based Resource Index with Search</a></li>
+              <li><a href="server/security/AuthorizationXACML.htm">Security Architecture - XACML-based Policy Enforcement</a>
+                <ul>
+                  <li><a href="server/security/XACMLPolicyGuide.htm">Writing XACML Policies for Fedora</a></li>
+                  <li><a href="server/cmd-line/index.html#validate">Policy Validation Utility</a></li>
+                  <li><a href="server/cmd-line/index.html#reload">Reload Policies Utility</a></li>
+                </ul>
+              </li>
+              <li><a href="server/cmd-line/index.html">Server Command Line Utilities</a></li>
+              <li><a href="server/cmd-line/index.html#rebuild">Repository Rebuilder Utility</a></li>
+              <li><a href="server/security/beSecurityConfig.html">Backend Security for Remote Service Callbacks</a></li>
+              <li>Reporting Utility</li>
+              <li>and more!</li>
+            </ul>
+          </li>
+          <li class="square">
+            <h3 id="webservices">Fedora Repository - Web Service Interfaces</h3>
+            <ul>
+              <li>
+                <strong>API-A</strong>: Fedora Access Service (SOAP) 
+                [<a href="http://www.fedora.info/definitions/1/0/api/#apia">WSDL</a>]
+              </li>
+              <li>
+                <strong>API-A-LITE</strong>: Fedora Access Service (REST) 
+                [<a href="http://www.fedora.info/definitions/1/0/api/#apialite">WSDL</a>] 
+                [<a href="server/webservices/apialite/index.html">User Guide</a>]
+              </li>
+              <li>
+                <strong>API-A-M</strong>: Fedora Management Service (SOAP) 
+                [<a href="http://www.fedora.info/definitions/1/0/api/#apim">WSDL</a>]
+              </li>
+              <li>
+                <strong>API-A-M-LITE</strong>: Fedora Management Service (REST) 
+                [<a href="http://www.fedora.info/definitions/1/0/api/#apim">WSDL</a>] 
+                [<a href="server/webservices/apimlite/index.html">User Guide</a>]
+                <em>(a work in progress)</em>
+              </li>
+              <li>
+                <strong>Basic Search</strong>: Repository Search via API-A-Lite (REST):
+                [<a href="server/webservices/search/index.html">User Guide</a>]
+              </li>
+              <li>
+                <strong>Basic OAI</strong>: Simple OAI-PMH Provider (REST):
+                [<a href="server/webservices/oai/index.html">User Guide</a>]
+              </li>
+              <li>
+                <strong>RISearch</strong>: Resource Index Search (REST): 
+                [<a href="server/webservices/risearch/index.html">User Guide</a>]
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+
+      <li>
+        <h2 id="services">Fedora Framework Services</h2>
+        <ul>
+          <li>
+            <a href="http://www.fedora.info/download/2.2/services/genericsearch/doc/index.html">Generic Search Service (GSearch)</a>
+            <img src="images/new.png" width="72" height="36" alt="new star" />
+            <br />A service to index datastreams and disseminations with a Lucene or Zebra backend
+          </li>
+          <li>
+            <a href="http://www.fedora.info/download/2.2/services/diringest/doc/index.html">Directory Ingest Service (DirIngest)</a>
+            <br />A service to ingest directories of files into Fedora
+            <ul>
+              <li>
+                <a href="http://www.fedora.info/download/2.2/services/sipcreator/doc/index.html">SIP Creator</a>
+                <br />A GUI for preparing SIPs for use with DirIngest
+              </li> 
+            </ul>
+          </li>
+          <li>
+            <a href="http://www.fedora.info/download/2.2/services/oaiprovider/doc/index.html">OAI Provider Service (PROAI)</a>
+            <br />A service for a configurable, flexible OAI Provider
+          </li>
+        </ul>
+      </li>
+
+      <li>
+        <h2 id="clients">Fedora Clients</h2>
+        <ul>
+          <li><a href="client/admin-gui/index.html">Fedora Administrator (Java client application)</a></li>
+          <li><a href="client/cmd-line/index.html">Command-Line Utilities</a></li>
+          <li><a href="client/browser/webexp.html">Access via Browser</a></li>
+          <li>Community-developed clients (see: <a href="http://www.fedora.info/tools">Fedora Tools</a>)</li>
+        </ul>
+      </li>
+      
+      <li>
+        <h2 id="tutorials">Fedora Tutorials</h2>
+        <ul>
+          <li><a href="tutorials/tutorial1.pdf">Tutorial 1: Introduction--Basic Concepts in Fedora</a></li>
+          <li><a href="tutorials/tutorial2.pdf">Tutorial 2: Getting Started--Creating Fedora Objects and Using Disseminators</a></li>
+        </ul>
+      </li>
+      
+    </ol>
+    
+    <div id="footer">
+      <p id="copyright">
+        Copyright &copy; 2002-2007 Fedora Project
+      </p>
+      <script type="text/javascript">
+        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
+        var parts = cvsDate.split(" ");
+        var modifiedDate = parts[1];
+        var p = document.createElement("p");
+        p.setAttribute("id", "lastModified");
+        var footer = document.getElementById("footer");
+        footer.appendChild(p);
+        p.innerHTML = "Last Modified "+modifiedDate;
+      </script>
+    </div>
+    
+  </body>
+</html>

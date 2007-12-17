@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+  <head>
+    <title>Fedora 2.2 Performance Report</title>
+    <link rel="stylesheet" type="text/css" href="../../docstyle.css" />
+  </head>
+
+  <body>
+
+    <div id="header">
+      <a href="../../../index.html">
+      </a>
+      <h1>Fedora 2.2 Performance Report</h1>
+      <h2>Fedora Release 2.2</h2>
+    </div>
+
+    <div id="toc">
+      <h2>Table of Contents</h2>
+      <ol>
+        <li><a href="#intro">Introduction</a></li>
+        <li><a href="#environ">Test Environment</a></li>
+        <li><a href="#configs">Configurations Tested</a></li>
+        <li><a href="#results">Test Results</a></li>
+        <li><a href="#prev">Previous Reports</a></li>
+      </ol>
+    </div>
+    
+    <ol id="content">
+    
+      <li>
+        <h2 id="intro">Introduction</h2>
+        <span class="plaintext">
+          With release 2.2, Fedora now runs as a proper webapp.  Other
+          significant changes include a refactoring of the Resource Index
+          (bug fixes and efficiency improvements), and Servlet Filter-based
+          authentication. This set of tests was executed in order
+          to understand the impact of these changes on API-M (modify) operations,
+          and to compare the performance impact of various
+          configuration options.
+        </span>
+      </li>
+      
+      <li>
+        <h2 id="environ">Test Environment</h2>
+        <span class="plaintext">
+          Hardware (Desktop PC):
+        </span>
+          <ul>
+            <li>CPU: (1) Athlon 64 3400+</li>
+            <li> Physical Memory: 3.2GB</li>
+            <li> Disk: (1) 7200rpm IDE</li>
+          </ul>
+        <span class="plaintext">
+          Software:
+        </span>
+          <ul>
+            <li>OS: Linux 2.6.9-11 (64-bit)</li>
+            <li>Database 1: MySQL v4.1.20 (local instance, MyISAM)</li>
+            <li>Database 2: PostgreSQL 8.1 (local instance, fsync=off)</li>
+            <li>Java: 1.5.0_06-b05 (64-bit)</li>
+          </ul>
+        <span class="plaintext">
+          All tests were performed on a single Fedora server with:
+        </span>
+          <ul>
+            <li>10,000 digital objects, each with:
+              <ul>
+                <li>4 "X" (inline XML) datastreams</li>
+                <li>2 "M" (managed) datastreams</li>
+                <li>0 disseminators</li>
+                <li>An average FOXML size of 4kb</li>
+              </ul>
+            </li>
+          </ul>
+        <span class="plaintext">
+          Each object started with four inline XML datastreams, two managed content datastreams, and no disseminators.  For the purpose of consistency, the size each datastream was kept to a minimum (under 200 bytes).
+          <br />
+          <br />
+          Measurements were taken from the client, running on the same machine. After running each API-M request back-to-back for 10,000 objects*, an average roundtrip time was recorded for each operation.
+          <br />
+          <em>* For tests that had an average roundtrip time of 250ms or more per operation, only 500 operations in a row were performed due to time constraints.</em>
+        </span>
+      </li>
+      
+      <li>
+        <h2 id="configs">Configurations Tested</h2>
+        <span class="plaintext">
+          Tests were run for each of the following Fedora configurations. These configurations are shown in the same order, left to right, in the result graphs.
+          <br />
+          <br />
+          Fedora 2.1.1 Configurations:
+        </span>
+          <ul>
+            <li>Using MySQL, with the Resource Index OFF and XACML policy enforcement disabled</li>
+            <li>Using MySQL, with the Resource Index OFF and <strong>XACML policy enforcement enabled</strong></li>
+            <li>Using MySQL, with the <strong>Resource Index ON (using Kowari, with asynchronous flushing)</strong>, and XACML policy enforcement disabled</li>
+          </ul>
+        <span class="plaintext">
+          Fedora 2.2 Configurations:
+        </span>
+          <ul>
+            <li>Using MySQL, with the Resource Index OFF and XACML policy enforcement disabled</li>
+            <li><strong>Using PostgreSQL</strong>, with the Resource Index OFF and XACML policy enforcement disabled</li>
+            <li>Using MySQL, with the Resource Index OFF and <strong>XACML policy enforcement enabled</strong></li>
+            <li>Using MySQL, with the <strong>Resource Index ON (using Kowari, with asynchronous flushing)</strong>, and XACML policy enforcement disabled</li>
+            <li>Using MySQL, with the Resource Index ON (using Kowari, with <strong>synchronous</strong> flushing), and XACML policy enforcement disabled</li>
+            <li>Using MySQL, with the Resource Index ON (<strong>using MPTStore</strong>, with <strong>asynchronous flushing</strong>), and XACML policy enforcement disabled</li>
+            <li>Using MySQL, with the Resource Index ON (using MPTStore, with <strong>synchronous</strong> flushing), and XACML policy enforcement disabled</li>
+          </ul>
+        <span class="plaintext">
+          All tests were executed:
+        </span>
+          <ul>
+            <li>...using the bundled Tomcat software as the servlet container.</li>
+            <li>...over regular HTTP (not SSL), with basic authentication.</li>
+          </ul>
+      </li>
+      
+      <li>
+        <h2 id="results">Test Results</h2>
+        <span class="plaintext">
+          This graph shows the average roundtrip time for each operation, in each configuration (lower is better):
+          <br />
+          <img src="apim-time.png" width="800" height="600" alt="roundtrip time per operation" />
+          <br />
+          <br />
+          The next graph shows the same results, but in terms of operations per second (higher is better):
+          <br />
+          <img src="apim-rate.png" width="800" height="600" alt="operations per second" />
+          <br />
+          <br />
+          For raw results, please see <a href="raw-results.zip">raw-results.zip</a>. This zip file also includes the program used to run the tests.
+        </span>
+      </li>
+      
+      <li>
+        <h2 id="prev">Previous Reports</h2>
+        <span class="plaintext">
+          For reference, here are the performance test results from prior Fedora releases:
+        </span>
+          <ul>
+            <li><a href="../performancetest.html">Fedora 2.0</a> - Concurrent dissemination tests</li>
+            <li><a href="../apim-performance/index.html">Fedora 2.1.1</a> - API-M tests</li>
+          </ul>
+      </li>
+
+    </ol>
+    
+    <div id="footer">
+      <p id="copyright">
+        Copyright &copy; 2002-2007 Fedora Project
+      </p>
+      <script type="text/javascript">
+        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
+        var parts = cvsDate.split(" ");
+        var modifiedDate = parts[1];
+        var p = document.createElement("p");
+        p.setAttribute("id", "lastModified");
+        var footer = document.getElementById("footer");
+        footer.appendChild(p);
+        p.innerHTML = "Last Modified "+modifiedDate;
+      </script>
+    </div>
+    
+  </body>
+</html>

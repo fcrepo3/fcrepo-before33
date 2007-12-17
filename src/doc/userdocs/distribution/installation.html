@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+  <head>
+    <title>Fedora Installation and Configuration Guide</title>
+    <link rel="stylesheet" type="text/css" href="../docstyle.css" />
+  </head>
+
+  <body>
+
+    <div id="header">
+      <a href="../../../index.html">
+      </a>
+      <h1>Fedora Installation and Configuration Guide</h1>
+      <h2>Fedora Release 2.2.1</h2>
+    </div>
+
+    <div id="toc">
+      <h2>Table of Contents</h2>
+      <ol>
+        <li><a href="#intro">Introduction</a>
+          <ol class="alpha">
+            <li><a href="#intro.prereq">Install Prerequisites</a></li>
+            <li><a href="#intro.download">Download Fedora</a></li>
+            <li><a href="#intro.env">Prepare Environment Variables</a></li>
+          </ol>
+        </li>
+        <li><a href="#installer">Installation</a>
+          <ol class="alpha">
+            <li><a href="#installer.quick">Quick Install</a></li>
+      		<li><a href="#installer.custom">Custom Install</a></li>
+      		<li><a href="#installer.client">Client Install</a></li>
+      	  </ol>
+      	</li>
+      	<li><a href="#running">Running the Fedora Server</a>
+      	  <ol class="alpha">
+      	    <li><a href="#running.demo">Demo Objects</a></li>
+          </ol>
+        </li>
+        <li><a href="#database">Database</a>
+          <ol class="alpha">
+            <li><a href="#database.mysql">MySQL</a></li>
+            <li><a href="#database.oracle">Oracle</a></li>
+            <li><a href="#database.postgresql">PostgreSQL</a></li>
+            <li><a href="#database.other">Other</a></li>
+          </ol>
+        </li>
+        <li><a href="#config">Configuring the Fedora Server</a>
+          <ol class="alpha">
+            <li><a href="#config.fcfg">fedora.fcfg</a></li>
+            <li><a href="#config.log">Logging</a></li>
+          </ol>
+        </li>
+        <li><a href="#source">Installation from Source</a></li>
+      </ol>
+    </div>
+    
+    <ol id="content">
+    
+      <li>
+        <h2 id="intro">Introduction</h2>
+        <span class="plaintext">
+          This is the installation guide for Fedora. It includes instructions for installing the server and client distributions, as well as instructions for installing and compiling the complete source code distribution.
+        </span>
+          <ol class="alpha">
+            <li>
+              <h3 id="intro.prereq">Install Prerequisites</h3>
+              <span class="plaintext">
+              <strong>Required:</strong>
+              <br />
+              <em>Java SE Development Kit (JDK) 5.0.</em>
+              <br />
+              Whether installing a binary or source distribution, JDK 5.0 is required. The JDK should be installed on the machine you intend to use as the Fedora server. The JDK is available from <a href="http://java.sun.com/">http://java.sun.com/</a>.
+              <br />
+              <br />
+              <strong>Optional:</strong>
+              <br />
+              <em>Database</em>
+              <br />
+              The Fedora server is backed in part by a relational database. 
+              To simplify installation, the Fedora installer includes and can 
+              configure an embedded instance of the 
+			  <a href="http://mckoi.com/database/">McKoi SQL Database 1.0.3</a>. 
+			  Fedora also supports <a href="http://www.mysql.com/">MySQL</a>, 
+			  <a href="http://www.oracle.com/">Oracle 9</a> and 
+			  <a href="http://www.postgresql.org/">PostgreSQL</a>. 
+			  If the included McKoi database will not be used, another database 
+			  server must be installed, configured and running before proceeding 
+			  with the installation.
+			  To configure Fedora to use another database, please see the 
+			  <a href="#database">Database</a> section below for further 
+			  instructions.
+			  <br />
+			  <br />
+			  <em>Servlet Container</em>
+			  <br />
+              The Fedora installer includes Tomcat 5.0.28. Optionally, Fedora may 
+              be installed into any existing servlet container that implements 
+              Servlet 2.4/JSP 2.0 or higher. At this time, Fedora has chiefly 
+              been tested with Tomcat 5.0.28 but users have reported running 
+              Fedora successfully with Tomcat 5.5.x and Jetty.
+              <br />
+              <br />
+              <strong>Additional requirements for building Fedora from source:</strong>
+              <br />
+              <em>Ant 1.6.5 or later</em>
+              <br />
+              Fedora uses Ant for its build environment. Ant is available from 
+        	  <a href="http://ant.apache.org/">http://ant.apache.org/</a>.
+              </span>
+            </li>
+            <li>
+              <h3 id="intro.download">Download Fedora</h3>
+              <span class="plaintext">
+                The latest version of the software can always be found at <a href="http://www.fedora-commons.org/">http://www.fedora-commons.org</a>.
+                <br />
+                <br />
+                There are two download options: the Fedora Installer and the source code distribution. Unless you wish to build Fedora from source, you should select the Fedora Installer.
+              </span>
+            </li>
+            <li>
+              <h3 id="intro.env">Prepare Environment Variables</h3>
+              <span class="plaintext">
+                The following environment variables must be correctly defined:
+                <br />
+                <br />
+                <strong>JAVA_HOME</strong>
+                <br />
+                This should point to the base directory of your Java 
+				installation. On Windows systems, this might be C:\java.
+				For UNIX derivatives, this might be something like 
+				/usr/local/java-1.5.0-sun
+				<br />
+				<br />
+				<strong>FEDORA_HOME</strong>
+				<br />
+				This is the directory where Fedora will be installed,
+				for example, C:\fedora or /usr/local/fedora.
+				<strong>PATH</strong>
+				<br />
+				This must include the Java and Fedora bin directories. 
+				For UNIX derivatives, this will be $FEDORA_HOME/server/bin, 
+				$FEDORA_HOME/client/bin and usually $JAVA_HOME/bin.
+				For Windows, this will be %FEDORA_HOME%\server\bin, 
+				%FEDORA_HOME%\client\bin and usually %JAVA_HOME%\bin.
+				<br />
+				<br />
+				If you will be building from source, Ant should also also be
+				on your path.
+				<br />
+				<br />
+				<strong>JAVA_OPTS</strong>
+				<br/>
+				If Fedora is configured to use SSL, JAVA_OPTS must 
+				include the javax.net.ssl.trustStore and 
+				javax.net.ssl.trustStorePassword properties.
+				See the SSL section below for more information.
+				<br />
+				<br />
+				<strong>CATALINA_HOME</strong>
+				<br />
+				If Fedora is configured to use Tomcat, CATALINA_HOME 
+				must be set before starting Fedora. If using the quick install 
+				option, CATALINA_HOME should be set to 
+				$FEDORA_HOME/tomcat (or %FEDORA_HOME%\tomcat in Windows).
+              </span>
+            </li>
+          </ol>
+      </li>
+      
+      <li>
+        <h2 id="installer">Installation</h2>
+        <span class="plaintext">
+          The Fedora Installer provides three installation options: quick, custom, and client.
+          <br />
+          <br />
+          To start the installer, change to the directory where you downloaded the installer and at a command prompt, enter:
+          <br />
+          java -jar fedora-2.2.1-installer.jar
+          <br />
+          <br />
+          Please ensure that the user account that is running the installer has sufficient permissions to write to the directories where Fedora will be installed (if deploying to an existing Tomcat installation, this includes permissions to the Tomcat directory). Installer created files will usually be owned by the user running the installer. Consequently, for example, after installation users of the Fedora Admin client will need write permissions to the the installer created FEDORA_HOME/client log directories.
+        </span>
+          <ol class="alpha">
+            <li>
+              <h3 id="installer.quick">Quick Install</h3>
+              <span class="plaintext">
+                The quick option is designed to get Fedora up and running as quickly as possible, with a minimum of advanced options. The quick install will automatically install a servlet container and database. Neither SSL support nor XACML policy enforcement is enabled by the quick install.
+              </span>
+            </li>
+            <li>
+              <h3 id="installer.custom">Custom Install</h3>
+              <span class="plaintext">
+                The custom option provides the most flexibility in configuring an installation. Options include the choice of servlet container, database, the host and ports Fedora will be running on, as well as security options including SSL and XACML policy enforcement.
+                <br />
+                <br />
+                <strong>Servlet Container</strong>
+                <br />
+                The installer will automatically configure and deploy to 
+     			Tomcat 5.0.x and 5.5.x servlet containers. 
+	    		However, if an existing Tomcat installation (as opposed to the 
+		    	Tomcat bundled with the installer) was selected, the installer will 
+		    	not overwrite your existing server.xml, but rather, 
+		    	place a modified copy at FEDORA_HOME/install so that 
+	    		you may review it before before installing it yourself.
+	    		<br />
+	    		<br />
+	    		Other servlet containers will require manual deployment of the 
+     			.war files located at FEDORA_HOME/install.
+     			<br />
+     			<br />
+     			<strong>SSL</strong>
+     			<br />
+     			Configuring SSL support for Fedora's API-M interface is 
+     			strongly recommended for production environments.
+     			<br />
+     			<br />
+     			If the Tomcat servlet container is selected, the installer will 
+     			configure server.xml for you. However, as noted above, 
+     			if an existing Tomcat installation was selected, the installer will 
+	    		not overwrite your existing server.xml.
+	    		<br />
+	    		<br />
+	    		Please consult your servlet container's documentation 
+    			for certificate generation and installation. (In particular, the 
+	    		example certificate provided by the installer for Tomcat should not 
+		    	be used in a production environment).
+		    	<br />
+		    	<br />
+		    	If Fedora is configured to use SSL, the JAVA_OPTS 
+    			environment variable must include the 
+	    		javax.net.ssl.trustStore and 
+	     		javax.net.ssl.trustStorePassword properties.
+    			The value of javax.net.ssl.trustStore should be the 
+	    		location of the truststore file and the value of 
+		    	javax.net.ssl.trustStorePassword is the password for 
+    			the keystore. The following values may be used with the sample 
+    			keystore included with the installer:
+    			<code class="block">
+<pre>
+-Djavax.net.ssl.trustStore=$FEDORA_HOME/server/truststore-Djavax.net.ssl.trustStorePassword=tomcat
+</pre>
+    			</code>
+              </span>
+            </li>
+            <li>
+              <h3 id="installer.client">Client Install</h3>
+              <span class="plaintext">
+                Both the quick and custom options will install the Fedora client software in addition to the Fedora server. The client option, however, will install only the Fedora client software.
+              </span>
+            </li>
+          </ol>
+      </li>
+        
+      <li>
+        <h2 id="running">Running the Fedora Server</h2>
+        <span class="plaintext">
+          If you selected the quick install option, you will find Tomcat installed in FEDORA_HOME/tomcat. To run Fedora, start Tomcat by entering:
+          <code class="block">
+<pre>
+$FEDORA_HOME/tomcat/bin/startup.sh
+</pre>
+          </code>
+          <br />
+          (or for Windows)
+          <code class="block">
+<pre>
+%FEDORA_HOME%\tomcat\bin\startup.bat
+</pre>
+          </code>
+          <br />
+          If you selected the custom install option, ensure that your database server is running (unless you selected the embedded McKoi option) and start your servlet container if necessary.
+        </span>
+          <ol class="alpha">
+            <li>
+              <h3 id="running.demo">Demo Objects</h3>
+              <span class="plaintext">
+                If you just started Fedora for the first time, it's a good idea to check out the demonstration objects to get an idea of how Fedora works. See <a href="demos.html">the Demo Manual</a> for complete descriptions of the demos.
+                <br />
+                <br />
+                NOTE: If, during a custom install, you entered values other than the defaults for <em>fedoraServerHost</em> (localhost) or <em>fedoraServerPort</em> (8080), you must run the <em><strong>demo object converter utility</strong></em> script to change the host and/or port in the demo object ingest files. The demo object conversion is only required if you are ingesting demo objects. If the demo objects are already ingested into the repository (e.g. from a previous installation), there is no need for conversion. The demo objects are shipped with references to &quot;localhost:8080&quot; and these references must reflect the new values of <em>fedoraServerHost</em> <em>fedoraServerPort</em>. Refer to the <a href="../client/cmd-line/index.html">Command-line Utilities documentation</a> for additional details on running the demo object converter.
+                <br />
+                To ingest the demos, at a command prompt, enter:
+                <code class="block">
+<pre>
+fedora-ingest-demos [hostname] [port] [username] [password] [protocol]
+</pre>
+                </code>
+                <br />
+                For additional information on the fedora-ingest-demos command, see the documentation for the <a href="../client/cmd-line/index.html#indemo"> client command-line utilities</a>. Please note that the demo objects must be ingested before they can be discovered using the default search interface.
+              </span>
+            </li>
+          </ol>
+      </li>
+        
+      <li>
+        <h2 id="database">Database</h2>
+        <span class="plaintext">
+          Fedora is designed to be RDBMS-independent. Fedora has been tested with 
+	      McKoi, MySQL, Oracle and PostgreSQL. The embedded version of McKoi included 
+	      with the installer is provided as a convenience. Large repositories or 
+	      repositories concerned with scalability and performance should consider 
+          using an alternative database. If you choose to use any database other 
+          than the embedded McKoi provided by the Fedora Installer, we assume here 
+          that the database is already installed.
+          <br />
+          <br />
+          Follow the instructions below for the RDBMS of your choice in order to 
+          create the user and tables required by Fedora.
+        </span>
+          <ol class="alpha">
+            <li>
+              <h3 id="database.mysql">MySQL</h3>
+              <span class="plaintext">
+                Please note that the MySQL JDBC driver provided by the installer requires MySQL v3.23.x or higher.
+                <br />
+                <br />
+                The MySQL commands listed below can be run within the mysql program, which may be invoked as follows:
+                <code class="block">
+<pre>
+mysql -u root -p
+</pre>
+                </code>
+                <br />
+                Create the database. For example, to create a database named fedora22, enter:
+                <code class="block">
+<pre>
+CREATE DATABASE fedora22;
+</pre>
+                </code>
+                <br />
+                Set username, password and permissions for the database. For example, to set the permissions for user fedoraAdmin with password fedoraAdmin on database fedora22, enter:
+                <code class="block">
+<pre>
+GRANT ALL ON fedora22.* TO fedoraAdmin@localhost IDENTIFIED BY 'fedoraAdmin';
+GRANT ALL ON fedora22.* to fedoraAdmin@'%' IDENTIFIED BY 'fedoraAdmin';
+</pre>
+                </code>
+                <br />
+                MySQL 4.1.x users must also specify the default character set for the Fedora database as "utf8" and the default collation as "utf8_bin". For example, to set the default character set and collation on a database named "fedora22", enter:
+                <code class="block">
+<pre>
+ALTER DATABASE fedora22 DEFAULT CHARACTER SET utf8;
+ALTER DATABASE fedora22 DEFAULT COLLATE utf8_bin;
+</pre>
+                </code>
+              </span>
+            </li>
+            <li>
+              <h3 id="database.oracle">Oracle</h3>
+              <span class="plaintext">
+                To prepare Oracle for use with Fedora, the following steps should be taken by an administrative user.
+                <br />
+                <br />
+                First, using the Database Configuration Assistant, ensure that the database you'll be using is created with the UTF8 charset.
+                <br />
+                <br />
+                Next, you'll need to create a Fedora tablespace and user in the database. Assuming the administrative user is sys and the SID is fedora22, log in using SQL*Plus using the following command:
+                <code class="block">
+<pre>
+sqlplus sys/PASSWORD@fedora22 as sysdba
+</pre>
+                </code>
+                <br />
+                To create a tablespace named fedora_tblspace with data in /var/lib/oracle, enter the following:
+                <code class="block">
+<pre>
+CREATE TABLESPACE fedora_tblspace
+DATAFILE '/var/lib/oracle/fedora_tblspace.dat' SIZE 1024M REUSE
+AUTOEXTEND ON NEXT 256M MAXSIZE UNLIMITED
+SEGMENT SPACE MANAGEMENT AUTO;
+</pre>
+                </code>
+                <br />
+                To create a user fedoraAdmin with password fedoraAdmin, using the fedora_tblspace, enter the following:
+                <code class="block">
+<pre>
+CREATE USER fedoraAdmin IDENTIFIED BY fedoraAdmin
+DEFAULT TABLESPACE fedora_tblspace;
+</pre>
+                </code>
+                <br />
+                Using the GRANT command, make sure the user has permission to connect, create, alter, and drop tables sequences, triggers, and indexes in this tablespaces.  For example,
+                <code class="block">
+<pre>
+GRANT ALL PRIVILEGES TO fedoraAdmin;
+</pre>
+                </code>
+                <br />
+                NOTE: Due to distribution license restrictions, the Fedora Installer does not include the Oracle JDBC driver. Oracle JDBC drivers are available from <a href="http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html">http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</a>. The installer will prompt you for the location of the driver on your filesystem.
+              </span>
+            </li>
+            <li>
+              <h3 id="database.postgresql">PostgreSQL</h3>
+              <span class="plaintext">
+                Please consult the documentation at <a href="http://www.postgresql.org/docs/">http://www.postgresql.org/docs/</a> for more detailed information about configuring PostgreSQL.
+                <br />
+                <br />
+                Launch the PostgreSQL interactive terminal, psql, (optionally appending the -U argument to connect as a	different user).
+                <code class="block">
+<pre>
+psql -d postgres
+</pre>
+                </code>
+                <br />
+                To create a user fedoraAdmin with password fedoraAdmin and database named fedora22, enter the following:
+                <code class="block">
+<pre>
+CREATE ROLE "fedoraAdmin" LOGIN PASSWORD 'fedoraAdmin';
+CREATE DATABASE "fedora22" WITH ENCODING='UTF8' OWNER="fedoraAdmin";
+</pre>
+                </code>
+              </span>
+            </li>
+            <li>
+              <h3 id="database.other">Other Databases</h3>
+              <span class="plaintext">
+                To use a database other than McKoi, MySQL, Oracle or PostgreSQL, the database must support common SQL-92 syntax and you must have a JDBC version 3 driver available.
+                <br />
+                <br />
+                The JDBC driver will need to be installed manually. For most 
+        containers, the driver may be placed in the Fedora webapp's WEB-INF/lib 
+        directory. For Tomcat 5.0.x, however, the driver should be installed to 
+        TOMCAT_HOME/common/lib. The JDBC url will need to be configured 
+        appropriately in the Fedora Server Configuration File.
+                <br />
+                <br />
+                Upon startup, Fedora checks the database for all required tables. If 
+        the tables do not exist, Fedora will them. Because table creation is 
+        much less standardized task across RDBMSs than SQL queries you must do
+        one of the following:
+                </span>
+                <span class="plaintext">
+                <ol>
+			      <li>Create the tables and indexes and auto-increments yourself in 
+			your own database (see the file:
+			src/dbspec/server/fedora/server/storage/resources/DefaultDOManager.dbspec
+			in the source distribution for the RDBMS-neutral table 
+			specifications).</li>
+            <br />
+            <li>Write a subclass of fedora.utilities.DDLConverter for your 
+            database software, include it in the Fedora WEB-INF/classes 
+            directory or in a jar file in the Fedora WEB-INF/lib directory, and 
+            associate it with the JDBC driver inside the 
+            FEDORA_HOME/server/config/fedora.fcfg file
+			(see how it's done by looking at the MySQLDDLConverter and 
+			McKoiDDLConverter associations with their respective drivers in the 
+			fedora.fcfg file, and the classes' implementations in the source
+ 			distribution).</li>
+		       </ol>
+		       </span>
+		       <span class="plaintext">
+		       If you choose option #2, please tell us about it, as it will be 
+        useful for other users of Fedora! Option 2 is harder, but it will make 
+        future installations of new versions of Fedora (where the db schema will 
+        likely change) much easier for you if you plan on using that database
+        later.
+        </span>
+        </li>
+        </ol>
+        </li>
+      <li>
+        <h2 id="config">Configuring the Fedora Server</h2>
+          <ol class="alpha">
+            <li>
+              <h3 id="config.fcfg">fedora.fcfg</h3>
+              <span class="plaintext">
+                The Fedora Server's configuration is chiefly governed by the Fedora 
+		Server Configuration File (fedora.fcfg) located at 
+		FEDORA_HOME/server/config/fedora.fcfg.
+		<br />
+		<br />	
+		The Fedora server configuration file contains:<br /> 
+		(1) global parameters for the Fedora server, 
+		(2) configuration parameters for each server module, and 
+		(3) configuration parameters for each persistent data store.
+		<br />
+		<br />
+		The configuration file has a simple schema. It starts with a server 
+		element, under which a series of parameter elements occur, followed by a 
+		series of module elements, followed by a series of datastore elements. 
+		The parameter elements directly following the root server element are used 
+		to control what are considered generic server functionality; for example: 
+		the port on which the server is exposed.
+		<br />
+		<br />
+        The module elements are used to configure specific parts
+        of Fedora. For instance, the module with the role
+        attribute, "fedora.server.search.FieldSearch" is used to
+        configure the field-searching component of the server.
+        Inside the module element, several param elements are
+        included. These are specific to that module's
+        implementation. Descriptions of each parameter can
+        currently be found in the configuration file itself.
+        <br />
+        <br />
+		The datastore elements are used to configure various
+        databases that might be used by the system. Although the
+        sample configuration file holds several, you will typically
+        only need one. The datastore elements are associated with
+        the modules by means of a parameter inside the associated
+        module. In the sample configuration file, for example, the
+        poolNames param of the
+        fedora.server.storage.ConnectionPoolManager module refers
+        to one of the datastore elements in its value.
+        <br />
+        <br />
+		There are many other parameters you can configure with Fedora. 
+		Refer to the Fedora Server Configuration File itself (fedora.fcfg) for 
+		internal documentation on all the parameters.
+		</span>
+		</li>
+		<li>
+		     <h3 id="config.log">Logging</h3>
+              <span class="plaintext">
+                Fedora uses Log4J for logging. For detailed information about using 
+		Log4J, consult the Log4J Manual: 
+		<a href="http://logging.apache.org/log4j/docs/manual.html">http://logging.apache.org/log4j/docs/manual.html</a>.
+		<br />
+		<br />
+		The log configuration file is located at 
+		FEDORA_HOME/server/config/log4j.properties. 
+		Changes to the logging configuration will not be reflected until Fedora 
+		is restarted.
+		<br />
+		<br />
+		Normally, coarse-grained logs for Fedora are written to 
+		FEDORA_HOME/server/logs/fedora.log. The following examples 
+		show the kinds of configuration changes you can make to aid in 
+		debugging.
+		<br />
+		<br />
+		To change the level to DEBUG for all Fedora classes, change the 
+		log4j.logger.fedora line to the following:
+		<code class="block">
+<pre>
+log4j.logger.fedora = DEBUG, FEDORA
+</pre>
+        </code>
+        <br />
+        To change the level to DEBUG for just one class, add the following 
+		lines:
+		<code class="block">
+<pre>
+log4j.logger.fedora.server.utilities.SQLUtility = DEBUG, FEDORA
+log4j.additivity.fedora.server.utilities.SQLUtility = false
+</pre>
+        </code>
+        <br />
+        To change the level to DEBUG for a whole package, add the following 
+		lines:
+		<code class="block">
+<pre>
+log4j.logger.fedora.server.resourceIndex = DEBUG, FEDORA
+log4j.additivity.fedora.server.resourceIndex = false
+</pre>
+        </code>
+        <br />
+        To send all DEBUG messages for a package to STDERR, with methods and 
+		line numbers add the following lines:
+		<code class="block">
+<pre>
+log4j.logger.fedora.server.security = DEBUG, SECURITY
+log4j.additivity.fedora.server.security = false
+log4j.appender.SECURITY = org.apache.log4j.ConsoleAppender
+log4j.appender.SECURITY.target = System.err
+log4j.appender.SECURITY.layout = org.apache.log4j.PatternLayout
+log4j.appender.SECURITY.layout.ConversionPattern = %p %d{HH:mm:ss.SSS} [%t] (%c{1}.%M:%L) %m%n
+</pre>
+		</code>
+		<br />
+		To send all DEBUG messages for a package to a dedicated file, with 
+		methods and line numbers, add the following lines:
+		<code class="block">
+<pre>
+log4j.logger.fedora.server.security = DEBUG, SECURITY
+log4j.additivity.fedora.server.security = false
+log4j.appender.SECURITY = org.apache.log4j.RollingFileAppender
+log4j.appender.SECURITY.File =
+log4j.appender.SECURITY.MaxFileSize = 20MB
+log4j.appender.SECURITY.MaxBackupIndex = 5
+log4j.appender.SECURITY.layout = org.apache.log4j.PatternLayout
+log4j.appender.SECURITY.layout.ConversionPattern = %p %d{HH:mm:ss.SSS} [%t] (%c{1}.%M:%L) %m%n
+</pre>
+		</code>
+		<br />
+		Note: if log4j.appender.SECURITY.File is left empty, 
+		the file will be automatically created at 
+		FEDORA_HOME/server/logs/security.log
+		</span>
+		</li>
+		</ol>
+		</li>
+		<li>
+		 <h2 id="source">Installation from Source</h2>
+		 <span class="plaintext">
+		 After unpacking the source distribution, change into the newly 
+	extracted directory. To build the installer, at a command prompt, 
+	enter:
+	<code class="block">
+<pre>
+ant installer
+</pre>
+    </code>
+    <br />
+    Once the installer target has been run, you will be able to run the 
+	Fedora installer application. To start the installer, change to the FEDORA_HOME/dist directory and at a command prompt, enter:
+	<code class="block">
+<pre>
+java -jar fedora-2.2.1-installer.jar
+</pre>
+</code>
+<br />
+Please ensure that the user account that is running the installer has 
+	sufficient permissions to write to the directories where Fedora will be 
+	installed (if deploying to an existing Tomcat installation, this includes 
+	permissions to the Tomcat directory). For more information of 
+	the Installer, see the <a href="#installer">Installer</a> instructions in 
+	Section 2 of this document.
+<br />
+<br />
+To see a list of other build targets in the source distribution, at a command prompt, enter:
+<code class="block">
+<pre>
+ant -projecthelp
+</pre>
+</code>
+</span>
+</li>
+</ol>
+
+
+    <div id="footer">
+      <p id="copyright">
+        Copyright &copy; 2002-2007 Fedora Project
+      </p>
+      <script type="text/javascript">
+        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
+        var parts = cvsDate.split(" ");
+        var modifiedDate = parts[1];
+        var p = document.createElement("p");
+        p.setAttribute("id", "lastModified");
+        var footer = document.getElementById("footer");
+        footer.appendChild(p);
+        p.innerHTML = "Last Modified "+modifiedDate;
+      </script>
+    </div>
+    
+  </body>
+</html>

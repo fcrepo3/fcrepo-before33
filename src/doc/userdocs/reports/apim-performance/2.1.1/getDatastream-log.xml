@@ -1,0 +1,18 @@
+<log>
+<client>
+Object PID: nsdl:4000
+Datastream ID: DC
+asOfDateTime (YYYY-MM-DDTHH:mm:ss.SSSZ-formatted date, or 'null'): null
+
+Invoke how many times? 1
+
+Run 1/1 of getDatastream...returned in 95ms.
+</client>
+  <finest time="1143047723076" thread="13">Entered DefaultManagement.getDatastream</finest>
+  <finest time="1143047723076" thread="13">Entered enforceGetDatastream</finest>
+  <finest time="1143047723077" thread="13">Policy enforcement took 0ms.</finest>
+  <finest time="1143047723077" thread="13">Exiting enforceGetDatastream</finest>
+  <finest time="1143047723086" thread="13">fedora.server.storage.DefaultDOManager: Got DOReader (source=filesystem) for nsdl:4000 in 9ms.</finest>
+  <finest time="1143047723086" thread="13">Exiting DefaultManagement.getDatastream</finest>
+
+</log>

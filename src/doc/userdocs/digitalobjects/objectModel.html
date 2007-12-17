@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+  <head>
+    <title>The Fedora Digital Object Model</title>
+    <link rel="stylesheet" type="text/css" href="../docstyle.css" />
+  </head>
+
+  <body>
+
+    <div id="header">
+      <a href="../../../index.html">
+      </a>
+      <h1>The Fedora Digital Object Model</h1>
+      <h2>Fedora Release 2.2.1</h2>
+    </div>
+
+    <div id="toc">
+      <h2>Table of Contents</h2>
+      <ol>
+        <li><a href="#model">The Fedora Digital Object Model</a></li>
+        <li><a href="#data">Datastreams</a></li>
+        <li><a href="#diss">Disseminators</a></li>
+        <li><a href="#access">Digital Object Model - Access Perspective</a></li>
+        <li><a href="introRelsExt.html">Digital Object Relationships and Graphs</a></li>
+        <li><a href="#types">Three Types of Fedora Objects</a>
+          <ol class="alpha">
+            <li><a href="#DATA">Regular Data Objects</a></li>
+            <li><a href="#BDEF">Behavior Definition Objects</a></li>
+            <li><a href="#BMECH">Behavior Mechanism Objects</a></li>
+          </ol>
+        </li>
+      </ol>
+    </div>
+    
+    <ol id="content">
+    
+      <li>
+        <h2 id="model">The Fedora Digital Object Model</h2>
+        <span class="plaintext">
+          Fedora defines a generic digital object model that can be used to express many kinds of objects including documents, images, electronic books, multi-media learning objects, datasets, metadata, and many other entitites.  Fedora supports aggregation of one or more content items in a digital object.  Content can be of any media type and it can be either stored locally in the repository, or it can be stored externally and referenced by the digital object.  Fedora provides a mechanism for associating services with an object to produce dynamic or computed content from digital objects.  The model is simple and flexible so that many different kinds of digital objects can be created, yet the generic nature of the Fedora model allows all objects to be managed in a consistent manner in a Fedora repository.
+          <br />
+          <br />
+          A good discussion of the Fedora object model exists in a recent paper <a href="http://www.arxiv.org/abs/cs.DL/0501012">(draft)</a> that will be published in the <a href="http://springerlink.metapress.com/app/home/journal.asp?wasp=pegkpkwqvg72m6ypfmel&referrer=parent&backto=linkingpublicationresults,1:100475,1">International Journal of Digital Libraries</a>.  Also, the Fedora object model is defined in XML schema language.  The <a href="http://www.fedora.info/definitions/1/0/foxml1-0.xsd">Fedora Object XML</a> (FOXML) schema provides a complete expression of the Fedora object model.  For more information, also see the <a href="introFOXML.html">Introduction to FOXML</a> in the Fedora System Documentation.   The Fedora object model also supports versioning for datastreams and disseminators. Refer to the <a href="../server/features/versioning.html">Fedora Versioning Guide</a> for more information.
+          <br />
+          <br />
+          The basic components of a Fedora digital object are:
+        </span>
+            <ul>
+              <li><strong>PID:</strong> a persistent, unique identifier for the object.</li>
+              <li><strong>Object Properties:</strong> a set of system-defined descriptive properties that are necessary to manage and track the object in the repository.</li>
+              <li><strong>Datastream(s):</strong> the component in a Fedora object that represents MIME-typed content item. An object can have one or more Datastreams. The content of a Datastream can be either data or metadata, and this content can either be stored internally in the Fedora repository, or stored remotely (in which case Fedora holds a pointer to the content in the form of a URL).  Every object has one Dublin Core metadata datastream by default.</li>
+              <li><strong>Disseminator(s):</strong> the component in a Fedora object that associates an external service with the object for the purpose of providing extensible views of the object or of its datastream content.  An object can have zero or more Disseminators.</li>
+            </ul>
+        <span class="plaintext">
+          Below is a diagram of the Fedora digital object container model.
+          <br />
+          <br />
+          <img src="images/dobj-container.jpg" width="650" height="507" alt="digital object containter" />
+        </span>
+        </li>
+        
+        <li>
+          <h2 id="data">Datastreams</h2>
+          <span class="plaintext">
+          A datastream is a component of a digital 
+		object that represents a data source. Every object will have a reserved 
+		Dublin Core datastream (that will be created by the Fedora repository 
+		service automatically if one is not provided). The Fedora 
+		repository service will also maintain a special datastream that records 
+		an audit trail of all changes made to the object. This 
+		datastream can not be edited, since only the system controls it. 
+		In addition to these special datastreams, a digital object may have any 
+		number of additional custom datastreams. Each datastream can be any 
+		mime-typed data or metadata, and can either be content managed locally 
+		in the Fedora repository or by some external data source (and referenced 
+		by a URL).
+		<br />
+		<br />
+		The basic properties that the Fedora object model 
+		defines for a datastream are as follows:
+
+		</span>
+		<ul>
+		<li><strong>Datastream Identifier:</strong> an identifier for 
+		the datastream that is unique within the digital object (but not 
+		necessarily globally unique)</li>
+		<li><strong>State:</strong> the datastream state of Active, 
+		Inactive, or Deleted
+		</li>
+		<li><strong>Created Date:</strong> the date/time that the 
+		datastream was created (assigned by the repository service)
+		</li>
+		<li><strong>Modified Date:</strong> the date/time that the 
+		datastream was modified (assigned by the repository service)
+		</li>
+		<li><strong>Versionable:</strong> an indicator (true/false) as 
+		to whether the repository service should version the datastream. 
+		By default the repository versions all datastreams.
+		</li>
+		<li><strong>Label:</strong> a descriptive label for the 
+		datastream
+		</li>
+		<li><strong>MIME Type:</strong> the MIME type of the datastream 
+		(required)
+		</li>
+		<li><strong>Format Identifier:</strong> an optional format 
+		identifier for the datastream. Examples of emerging schemes 
+		are
+	<a href="http://www.nationalarchives.gov.uk/PRONOM/default.htm">PRONOM</a> 
+	and the <a href="http://hul.harvard.edu/gdfr/">Global Digital Format 
+	Registry</a> (GDRF).
+	</li>
+	<li><strong>Alternate Identifiers:</strong> one or more 
+		alternate identifiers for the datastream. Such identifiers could 
+	be local identifiers or global identifiers such as
+	<a href="http://www.handle.net/">Handles</a> or <a href="http://doi.org/">
+	DOI</a>.
+	</li>
+	<li><strong>Checksum:</strong> an integrity stamp for the 
+		datastream which can be calculate using one of many standard algorithms 
+		(MD5, SHA-1, etc.)
+		</li>
+		<li><strong>Bytestream Content:</strong> the &quot;stuff&quot; of the 
+		datastream is about (such as a document, digital image, video, metadata 
+		record)
+</li>
+		<li><strong>Control Group:</strong> pertaining the the 
+		bytestream content, a new datastream can be defined as one of four 
+		types, or <em>control groups</em>, as follows:
+		<ul>
+		  <li><strong><em>Internal XML Metadata</em></strong> - In this case, the 
+		datastream will be stored as XML that is actually stored inline within 
+		the digital object XML file. The user may
+    enter text directly into the editing window or data may
+    imported from a file by clicking <em>Import</em> and selecting or browsing 
+		to the location of the XML metadata file.</li>
+		<li><strong><em>Managed Content</em></strong> - In this case, the datastream 
+		content will be stored in the Fedora repository and the digital object 
+		XML file will store an internal identifier to that datastream. 
+		To get content, click <em>Import</em> and select or browse to the file location of
+    the import file. Once import is complete, you will see the imported file in 
+		a preview box on the screen.</li>
+		<li><strong><em>External Referenced Content</em></strong> - In this case, the 
+		datastream content will be stored outside of the Fedora repository, and 
+		the digital object will store a URL to that datastream. The 
+		datastream is &quot;by reference&quot; since it is not actually stored inside the 
+		Fedora repository. While the datastream content is stored 
+		outside of the Fedora repository, at runtime, when an access request for 
+		this type of datastream is made, the Fedora repository will use this URL 
+		to get the content from its remote location, and the Fedora repository 
+		will mediate access to the content. This means that behind the 
+		scenes, Fedora will grab the content and stream in out the the client 
+		requesting the content as if it were served up directly by Fedora. 
+		This is a good way to create digital objects that point to distributed 
+		content, but still have the repository in charge of serving it up.  
+		To create this type of datastream, specify the URL for the datastream 
+		content in the Location URL text box.</li>
+		<li><strong><em>Redirect Referenced Content</em></strong> - In this case, the datastream content is 
+		also stored outside the repository and the digital object points to its 
+		URL (&quot;by-reference&quot;). However, unlike the External 
+		Referenced Content scenario, the Redirect scenario signals the 
+		repository to redirect to the URL when access requests are made for this 
+		datastream. This means that the datastream will not be streamed 
+		through the Fedora repository when it is served up. This is 
+		beneficial when you want a digital object to have a datastream that is 
+		stored and served up by some external service, and you want the 
+		repository to get out of the way when it comes time to serve the content 
+		up. A good example is when you want a datastream to be content 
+		that is stored and served by a streaming media server. In such a 
+		case, you would want to pass control to the media server to actually 
+		stream the content to a client (e.g., video streaming), rather than have 
+		Fedora in the middle re-streaming the content out. To create 
+		a Redirect datastream, specify the URL for the content in the Location 
+		text box.</li>
+	</ul>
+</li>
+</ul>
+	<span class="plaintext">
+		Decisions about what to include in a digital object 
+		and how to configure its datastreams are basic modeling choices as you 
+		develop your repository. The examples in this tutorial demonstrate some 
+		common models that you may find useful as you develop your application.  
+		Different patterns of datastream designed around particular &quot;genre&quot; of 
+		digital object (e.g., article, book, dataset, museum image, learning 
+		object) are general known as &quot;content models&quot; in Fedora.
+		</span>
+		<li>
+		<h2 id="diss">Disseminators</h2>
+		<span class="plaintext">
+		A disseminator essentially associates a service definition with the 
+	object, with information about which datastreams in the object should be used as input to the service to 
+	produce dynamic views. The basic idea of a disseminator is 
+	discussed elsewhere, particularly in <a href="../tutorials/tutorial2.pdf">
+	Tutorial 2</a> found in the system documentation.
+	</span>
+	</li>
+	
+	<li>
+	<h2 id="access">Digital Object Model - Access Perspective</h2>
+	<span class="plaintext">
+		Below is an alternative view of a Fedora digital object that shows 
+		the object from an access perspective.  The object contains both datastream and disseminator components.  Only a few of the object  properties are depicted for simplicity. The diagram shows how these components map to various access points on the digital object, known as "representations" of the object.  Each representation is identified by a URI that conforms to the <a href="http://info-uri.info/registry/OAIHandler?verb=GetRecord&metadataPrefix=reg&identifier=info:fedora/">Fedora &quot;info&quot; URI scheme </a>.   These URIs can be easily converted to the URL 
+		syntax for the Fedora REST-based access service (API-A-LITE).
+		<br />
+		<br />
+		<img src="digitalObject.jpg" width="696" height="373" alt="digital object" />
+		<br />
+		<br />
+		In the diagram, the object aggregates three datastreams:  a Dublin Core metadata record, a thumbnail image, and a high resolution image.  From a management perspective each datastream component stores key information including MIME type, creation dates, alternate identifiers, state, and more.  From an access perspective, each datastream constitutes a direct representation of the object's content, meaning whatever bytestream is associated with the datastream component is what is accessible (it is a direct transcription of datastream content).
+		<br />
+		<br />
+		In the diagram there is one disseminator.  A disseminator is an optional component used to extend the access points on the digital object.  Behind the scenes the disseminator points to a set of service methods that are called upon by the repository to produce "virtual 
+representations" of the object.  A "virtual representation" is content that is not explicitly stored in a digital object, instead it is produced at runtime.  A disseminator defines a service-mediated view of the object.   In this example, there are two service methods associated with the disseminator, one for producing zoomable images and one for producing grayscale images.  These service methods both require a jpeg image as input, therefore datastream 
+labeled "HIGH" is associated with this disseminator as a runtime parameter.  The net effect is that the disseminator produces two extra views of the object's content.  The disseminator contains enough information so that a Fedora repository can automatically mediate all interactions with the associated service.  To enable this, each disseminator is linked to a special object that contains a service description encoded in the Web Service Description Language (WSDL).   The Fedora repository uses this information to make appropriate service calls at run time to produce virtual representations.  From a client perspective this is transparent, and the client just requests the virtual 
+representation with the appropriate Fedora identifier.
+</span>
+</li>
+<li>
+<h2 id="types">Three Types of Fedora Digital Objects</h2>
+<span class="plaintext">
+Although every Fedora digital object conforms to the Fedora object model, as described above, there are three distinct types of Fedora digital objects that can be stored in a Fedora repository. The distinction between these three types is fundamental to how the Fedora repository system works. Basically, in Fedora, there are objects that store digital content entities, objects that store service descriptions, and objects that store service binding information.
+</span>
+<ol class="alpha">
+<li><h3 id="DATA">Regular Data Objects</h3>
+<br />
+<span class="plaintext">
+In Fedora, a Data Object is the type of object used to represent a digital content entity. Data Objects are what we normally think of when we imagine a repository storing digital collections. Data Objects can represent such varied entities such as images, books, electronic texts, learning objects, publications, datasets, and many other entities. One or more datastreams represent the parts of the digital content entity. One or more disseminators represent services that can present different views or transformations of the content entity.  The next two type of Fedora objects, described below, are special objects used as building blocks for disseminators.</span></li>
+<li><h3 id="BDEF">Behavior Definition Objects</h3>
+<br />
+<span class="plaintext">
+In Fedora, a Behavior Definition Object is the special type of <em>control object 
+</em>used to store an abstract service definition in the form of an abstract set of methods.   A Behavior Definition Object is a building block for a disseminator in the Fedora object model.  A disseminator points to a Behavior Definition Object as its way of saying &quot;this disseminator will support these methods.&quot; This is similar to the notion of an interface in Java.  Essentially,  a Behavior Definition Object defines a &quot;behavior contract&quot; that one or more Data Object may &quot;subscribe&quot; to.
+<br />
+<br />
+It is worth noting that Behavior Definition Objects conform to the basic Fedora object model.  Also, they are stored in a Fedora repository just like other Fedora objects.  As such, a collection of Behavior Definition Objects in a repository constitutes a &quot;registry&quot; of service definitions.</span>
+</li>
+<li><h3 id="BMECH">Behavior Mechanism Objects</h3>
+<br />
+<span class="plaintext">
+In Fedora, a Behavior Mechanism Object is the special type of <em>control object 
+</em>used to store concrete service binding metadata.  It is worth noting that these objects also conform to the basic Fedora object model. A Behavior Mechanism Object is a building block for a disseminator in the Fedora object model.  A disseminator points to a Behavior Mechanism Object as its way of saying &quot;this disseminator uses this concrete service implementation to run its service methods.&quot;  A Behavior Mechanism Object is related to a Behavior Definition Object in the sense that it defines a particular <em>concrete implementation</em> of the abstract methods defined in a Behavior Definition Object.
+<br />
+<br />
+Behavior Mechanism Object stores several forms of metadata that describe the runtime bindings for invoking service methods. The most significant of these metadata formats is service binding information encoded in the Web Services Description Language (WSDL). The Fedora repository system uses the WSDL at runtime to dispatch service requests in fulfilling client requests for &quot;virtual representations&quot; of a data object (i.e., via its disseminator). This enables Fedora to talk to a variety of different services in a predictable and standard manner.  A Behavior Mechanism Object also contains metadata that defines a &quot;data contract&quot; between the service and a Fedora data object.  The data contract (also known as the &quot;Datastream Input Specification&quot;) specifies the kind of datastreams that must be available in a data object for this service to be associated with it.   This is kind of like type integrity in the sense that there must be compatibility between a data object and a service that is associated with that object.  This compatibility pertains to the kinds of datastreams found in the data object.  For example, you would not want to associate a text conversion service with an object that contained only image datastreams.
+<br />
+<br />
+It is worth noting that Behavior Mechanism Objects conform to the basic Fedora object model.  Also, they are stored in a Fedora repository just like other Fedora objects.  As such, a collection of Behavior Mechanism Objects in a repository constitutes a &quot;registry&quot; of concrete services that can be used with Fedora objects.</span>
+</li>
+</ol>
+</li>
+</li>
+</ol>
+
+
+<div id="footer">
+    <div id="copyright">
+        Copyright &#xA9; 2002-2007 Fedora Project
+    </div>
+    <div id="lastModified">
+        Last Modified
+        <script type="text/javascript">
+            var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
+            var parts = cvsDate.split(" ");
+            var modifiedDate = parts[1];
+            document.write(modifiedDate);
+        </script>
+    </div>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<log>
+<client>
+Number of PIDs: 10
+PID Namespace: demo
+
+Invoke how many times? 1
+
+Run 1/1 of getNextPID...returned ['demo:41', 'demo:42', 'demo:43', 'demo:44', 'demo:45', 'demo:46', 'demo:47', 'demo:48', 'demo:49', 'demo:50'] in 95ms.
+</client>
+  <finest time="1143048252927" thread="13">Entered DefaultManagement.getNextPID</finest>
+  <finest time="1143048252927" thread="13">Entered enforceGetNextPid</finest>
+  <finest time="1143048252927" thread="13">Policy enforcement took 0ms.</finest>
+  <finest time="1143048252928" thread="13">Exiting enforceGetNextPid</finest>
+  <finest time="1143048252947" thread="13">Exiting DefaultManagement.getNextPID</finest>
+</log>

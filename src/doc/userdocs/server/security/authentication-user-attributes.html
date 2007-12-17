@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+  <head>
+    <title>Fedora Security Architecture - Authentication and User Attributes</title>
+    <link rel="stylesheet" type="text/css" href="../../docstyle.css" />
+  </head>
+
+  <body>
+
+    <div id="header">
+      <a href="../../../index.html">
+      </a>
+      <h1>Fedora Security Architecture - Authentication and User Attributes</h1>
+      <h2>Fedora Release 2.2.1</h2>
+    </div>
+
+    <div id="toc">
+      <h2>Table of Contents</h2>
+      <ol>
+        <li><a href="#intro">Introduction</a></li>
+        <li><a href="#userattributes">Injecting Arbitrary User Attributes</a></li>
+      </ol>
+    </div>
+    
+    <div id="content">
+    
+      <h2 id="intro">Introduction</h2>
+      
+      <p>
+        This document collects technical notes on how to supply user attributes for
+        evaluation of Fedora's XACML authorization policies.
+      </p>
+      
+      <p>
+        For a practical introduction to using Fedora's servlet filters for authentication
+        and user attributes, see the <a href="securingrepo.html#authn">Section 4</a> of 
+        the document <a href="securingrepo.html">Securing Your Fedora Repository</a>.
+        The current document is a technical appendix to that section.
+      </p>
+      
+      <h2 id="userattributes">Injecting Arbitrary User Attributes</h2>
+      
+      <p>
+        Fedora 2.1.1 provided a mechanism to include user attributes from arbitrary source(s),
+        and merge them with attributes provided by Tomcat realms or login modules.  Fedora 2.2
+        continues this with its servlet filter approach, independent of specific servlet container.
+        The Fedora code looks for a request attribute whose name equals the string constant
+        fedora.server.Context.FEDORA_AUX_SUBJECT_ATTRIBUTES. A request attribute found under that
+        name is taken as a Map, mapping names to values, and so giving additional user subject
+        attributes. Currently, name must be a String and this is unlikely to change. Value must
+        also be a String, and later this might be relaxed to include String[], to allow attributes
+        with multiple values. Other types of value are not serviced. The effect within Fedora of
+        having a key &#61;&gt; value pair "a" &#61;&gt; "b" in the Map is the same as the current
+        user having an attribute named "a" with value "b", e.g., as defined in fedora-users.xml.
+      </p>
+      
+      <p>
+        An arbitrary site-supplied servlet filter must create the map and populate it, and put
+        it into the http servlet request as attribute named
+        fedora.server.Context.FEDORA_AUX_SUBJECT_ATTRIBUTES. Fedora will then look for it, and use
+        the attributes in xacml authorization. This services any subject attribute source,
+        and remains source-neutral, i.e., you could use it to implement Shibboleth, but it doesn't
+        favor Shibboleth.
+      </p>
+
+      <p>
+        If doing this, it would be best to isolate your interface code to be independent both of
+        being in a servlet filter and also of interacting with the Map. This is so you could later
+        refactor the code more in line with Fedora 2.2 servlet filters.
+      </p>
+
+      <p>
+        This means of introducing arbitrary attributes has been tested by another developer
+        successfully before Fedora 2.2, but not yet with Fedora 2.2.  Eventually, the Fedora
+        servlet filter approach will be documented as a best practice to providing user attributes.
+      </p>
+      
+    </div>
+    
+    <div id="footer">
+      <p id="copyright">
+        Copyright &copy; 2002-2007 Fedora Project
+      </p>
+      <script type="text/javascript">
+        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
+        var parts = cvsDate.split(" ");
+        var modifiedDate = parts[1];
+        var p = document.createElement("p");
+        p.setAttribute("id", "lastModified");
+        var footer = document.getElementById("footer");
+        footer.appendChild(p);
+        p.innerHTML = "Last Modified "+modifiedDate;
+      </script>
+    </div>
+    
+  </body>
+</html>
