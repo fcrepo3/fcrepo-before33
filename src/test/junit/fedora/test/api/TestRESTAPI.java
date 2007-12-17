@@ -5,6 +5,7 @@ import static org.apache.commons.httpclient.HttpStatus.SC_NOT_FOUND;
 import static org.apache.commons.httpclient.HttpStatus.SC_OK;
 import static org.apache.commons.httpclient.HttpStatus.SC_TEMPORARY_REDIRECT;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.commons.httpclient.Header;
@@ -111,86 +112,86 @@ public class TestRESTAPI extends FedoraServerTestCase {
     public void testGetWADL() throws Exception {
         url = "/objects/application.wadl";
         
-        assertEquals(SC_OK, get(false));
-        assertEquals(SC_OK, get(true));
+        assertEquals(SC_OK, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
     }
     
-    
-    public void testDescribeRepository() throws Exception {
-        // TODO
-	}
+    //public void testDescribeRepository() throws Exception {}
     
     // API-A
     @Test
     public void testGetObjectProfile() throws Exception {
         url = String.format("/objects/%s", pid.toString());
-        assertEquals(SC_OK, get(false));
-        assertEquals(SC_OK, get(true));
+        assertEquals(SC_OK, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
         
         url = String.format("/objects/%s?format=xml", pid.toString());
-        assertEquals(SC_OK, get(false));
-        assertEquals(SC_OK, get(true));
+        assertEquals(SC_OK, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
         
         // sanity check
         url = String.format("/objects/%s", "demo:BOGUS_PID");
-        assertEquals(SC_NOT_FOUND, get(false));
-        assertEquals(SC_NOT_FOUND, get(true));
+        assertEquals(SC_NOT_FOUND, get(false).getStatusCode());
+        assertEquals(SC_NOT_FOUND, get(true).getStatusCode());
 	}
     
     public void testListMethods() throws Exception {
         url = String.format("/objects/%s/methods", pid.toString());
-        assertEquals(SC_OK, get(false));
-        assertEquals(SC_OK, get(true));
+        assertEquals(SC_OK, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
         
         url = String.format("/objects/%s/methods?format=xml", pid.toString());
-        assertEquals(SC_OK, get(false));
-        assertEquals(SC_OK, get(true));
+        assertEquals(SC_OK, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
     }
     
     public void testListDatastreams() throws Exception {
         url = String.format("/objects/%s/datastreams", pid.toString());
-        assertEquals(SC_OK, get(false));
-        assertEquals(SC_OK, get(true));
+        assertEquals(SC_OK, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
         
         url = String.format("/objects/%s/datastreams?format=xml", pid.toString());
-        assertEquals(SC_OK, get(false));
-        assertEquals(SC_OK, get(true));
+        assertEquals(SC_OK, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
     }
     
     public void testGetDatastreamDissemination() throws Exception {
         url = String.format("/objects/%s/datastreams/RELS-EXT", pid.toString());
-        assertEquals(SC_OK, get(false));
-        assertEquals(SC_OK, get(true));
+        assertEquals(SC_OK, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
         
         // sanity check
         url = String.format("/objects/%s/datastreams/BOGUS_DSID", pid.toString());
-        assertEquals(SC_NOT_FOUND, get(false));
-        assertEquals(SC_NOT_FOUND, get(true));
+        assertEquals(SC_NOT_FOUND, get(false).getStatusCode());
+        assertEquals(SC_NOT_FOUND, get(true).getStatusCode());
     }
     
-    public void testGetDissemination() throws Exception {
-        //TODO
-    }
+    //public void testGetDissemination() throws Exception {}
     
     public void testFindObjects() throws Exception {
         url = String.format("/objects?pid=true&terms=%s&query=&format=xml", pid.toString());
-        assertEquals(SC_OK, get(false));
+        assertEquals(SC_OK, get(false).getStatusCode());
     }
     
     public void testResumeFindObjects() throws Exception {
-        //TODO
+        // TODO parse responseBody for token
+        url = "/objects?pid=true&query=&format=xml";
+        assertEquals(SC_OK, get(false).getStatusCode());
+
+        //url = String.format("/objects?sessionToken=%s", "");
+        //assertEquals(SC_OK, get(false));
     }
     
     public void testGetObjectHistory() throws Exception {
         url = String.format("/objects/%s/versions", pid.toString());
-        assertEquals(SC_OK, get(false));
-        assertEquals(SC_OK, get(true));
+        assertEquals(SC_OK, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
     }
     
     // API-M
     public void testIngest() throws Exception {
         url = String.format("/objects/new");
-        assertEquals(SC_CREATED, post("", true));
+        assertEquals(SC_CREATED, post("", true).getStatusCode());
     }
     
     public void testIngestObject() throws Exception {
@@ -199,44 +200,40 @@ public class TestRESTAPI extends FedoraServerTestCase {
     
     public void testModifyObject() throws Exception {
         url = String.format("/objects/%s?label=%s", pid.toString(), "foo");
-        HttpMethod method = put("", true);
-        assertFalse("For testing, we expect to have to follow redirects manually", 
-                method.getFollowRedirects());
-        assertEquals(SC_TEMPORARY_REDIRECT, method.getStatusCode());
-        Header locationHeader = method.getResponseHeader("location");
+        HttpResponse response = put("", true);
+        assertEquals(SC_TEMPORARY_REDIRECT, response.getStatusCode());
+        Header locationHeader = response.getResponseHeader("location");
         assertNotNull(locationHeader);
         assertEquals(pid.toString(), locationHeader.getValue());
-        method.releaseConnection();
     }
     
     public void testGetObjectXML() throws Exception {
-        //TODO
+        url = String.format("/objects/%s/objectXML", pid.toString());
+        assertEquals(SC_OK, get(true).getStatusCode());
     }
     
     public void testExportObject() throws Exception {
         url = String.format("/objects/%s/export", pid.toString());
-        assertEquals(SC_OK, get(true));
+        assertEquals(SC_OK, get(true).getStatusCode());
         
         url = String.format("/objects/%s/export?context=public", pid.toString());
-        assertEquals(SC_OK, get(true));
+        assertEquals(SC_OK, get(true).getStatusCode());
     }
     
     public void testPurgeObject() throws Exception {
         url = String.format("/objects/%s", "demo:TEST_PURGE");
-        assertEquals(SC_CREATED, post("", true));
+        assertEquals(SC_CREATED, post("", true).getStatusCode());
         url = String.format("/objects/demo:TEST_PURGE");
-        assertEquals(SC_OK, delete(true));
+        assertEquals(SC_OK, delete(true).getStatusCode());
     }
     
     public void testAddDatastream() throws Exception {
         String xmlData = "<foo>bar</foo>";
-        url = String.format("/objects/%s/datastreams/FOO?controLGroup=X&dsLabel=bar", pid.toString());
-        assertEquals(SC_CREATED, post(xmlData, true));
+        url = String.format("/objects/%s/datastreams/FOO?controlGroup=X&dsLabel=bar", pid.toString());
+        assertEquals(SC_CREATED, post(xmlData, true).getStatusCode());
     }
     
-    public void testDescribeUser() throws Exception {
-        //TODO
-    }
+    //public void testDescribeUser() throws Exception {}
     
     public void testModifyDatastreamByReference() throws Exception {
         //TODO
@@ -246,70 +243,41 @@ public class TestRESTAPI extends FedoraServerTestCase {
         String xmlData = "<baz>quux</baz>";
         url = String.format("/objects/%s/datastreams/DS1?controlGroup=X", pid.toString());
         
-        HttpMethod method = put(xmlData, true);
-        assertFalse("For testing, we expect to have to follow redirects manually", 
-                method.getFollowRedirects());
-        assertEquals(SC_CREATED, method.getStatusCode());
+        assertEquals(SC_CREATED, put(xmlData, true).getStatusCode());
     }
     
-    public void testSetDatastreamSet() throws Exception {
-        //TODO
-    }
+    //public void testSetDatastreamState() throws Exception {}
     
-    public void testSetDatastreamVersionable() throws Exception {
-        //TODO
-    }
+    //public void testSetDatastreamVersionable() throws Exception {}
     
-    public void testCompareDatastreamChecksumRequest() throws Exception {
-        //TODO
-    }
+    //public void testCompareDatastreamChecksumRequest() throws Exception {}
     
-    public void testGetDatastream() throws Exception {
-        //TODO
-    }
+    //public void testGetDatastream() throws Exception {}
     
-    public void testGetDatastreams() throws Exception {
-        //TODO
-    }
+    //public void testGetDatastreams() throws Exception {}
     
-    public void testGetDatastreamHistory() throws Exception {
-        //TODO
-    }
+    //public void testGetDatastreamHistory() throws Exception {}
     
     public void testPurgeDatastream() throws Exception {
         url = String.format("/objects/%s/datastreams/RELS-EXT", pid.toString());
-        assertEquals(SC_OK, delete(true));
+        assertEquals(SC_OK, delete(true).getStatusCode());
     }
     
     public void testGetNextPID() throws Exception {
         url = "/objects/nextPID";
-        assertEquals(SC_OK, get(true));
+        assertEquals(SC_OK, get(true).getStatusCode());
         
         url = "/objects/nextPID.xml";
-        assertEquals(SC_OK, get(true));
+        assertEquals(SC_OK, get(true).getStatusCode());
     }
     
-    public void testGetRelationship() throws Exception {
-        // TODO not yet implemented in the REST-API
-    }
+    //public void testGetRelationships() throws Exception {}
     
-    public void testAddRelationship() throws Exception {
-        // TODO not yet implemented in the REST-API
-    }
+    //public void testAddRelationship() throws Exception {}
     
-    public void testPurgeRelationship() throws Exception {
-        // TODO not yet implemented in the REST-API
-    }
+    //public void testPurgeRelationship() throws Exception {}
     
     // helper methods
-    // TODO 
-    // I haven't yet sorted out the return values I want for the various
-    // HTTP GET/PUT/POST/DELETE helper methods.
-    // For future testing, we need more than just the status code, but it's
-    // also nice not to require callers to issue HttpMethod.releaseConnection().
-    // Something in between is returning some data structure that has all the 
-    // response codes/headers/body that we want so that we don't need to return
-    // an HttpMethod.
     private HttpClient getClient(boolean auth) {
         HttpClient client = new HttpClient();
         client.getParams().setAuthenticationPreemptive(
@@ -328,30 +296,15 @@ public class TestRESTAPI extends FedoraServerTestCase {
      * @param url The URL to GET: either an absolute URL or URL relative to 
      * the Fedora webapp (e.g. "/objects/demo:10"). 
      * @param authenticate
-     * @return HTTP Response Code
+     * @return HttpResponse
      * @throws Exception
      */
-    private int get(boolean authenticate) throws Exception {
-        if (url == null || url.length() == 0) {
-            throw new IllegalArgumentException("url must be a non-empty value");
-        } else if (!(url.startsWith("http://") || url.startsWith("https://"))) {
-            url = getBaseURL() + url;
-        }
-        
-        HttpMethod httpMethod = null;
-        try {
-            httpMethod = new GetMethod(url);
-
-            httpMethod.setDoAuthentication(authenticate);
-            httpMethod.getParams().setParameter(
-                "Connection", "Keep-Alive");
-            return getClient(authenticate).executeMethod(
-                httpMethod);
-        } finally {
-            if (httpMethod != null) {
-                httpMethod.releaseConnection();
-            }
-        }
+    private HttpResponse get(boolean authenticate) throws Exception {
+        return getOrDelete("GET", authenticate);
+    }
+    
+    private HttpResponse delete(boolean authenticate) throws Exception {
+        return getOrDelete("DELETE", authenticate);
     }
     
     /**
@@ -364,42 +317,35 @@ public class TestRESTAPI extends FedoraServerTestCase {
      * @return
      * @throws Exception
      */
-    private HttpMethod put(String requestContent, boolean authenticate) throws Exception {
-        if (url == null || url.length() == 0) {
-            throw new IllegalArgumentException("url must be a non-empty value");
-        } else if (!(url.startsWith("http://") || url.startsWith("https://"))) {
-            url = getBaseURL() + url;
-        }
-        EntityEnclosingMethod httpMethod = null;
-        httpMethod = new PutMethod(url);
-        httpMethod.setDoAuthentication(authenticate);
-        httpMethod.getParams().setParameter("Connection", "Keep-Alive");
-        httpMethod.setContentChunked(true);
-        httpMethod.setRequestEntity(new StringRequestEntity(requestContent,
-                "text/xml", "utf-8"));
-        getClient(authenticate).executeMethod(httpMethod);
-        return httpMethod;
+    private HttpResponse put(String requestContent, boolean authenticate) throws Exception {
+        return putOrPost("PUT", requestContent, authenticate);
     }
     
-    private int post(String requestContent, boolean authenticate) throws Exception {
+    private HttpResponse post(String requestContent, boolean authenticate) throws Exception {
+        return putOrPost("POST", requestContent, authenticate);
+    }
+    
+    private HttpResponse getOrDelete(String method, boolean authenticate) throws Exception {
         if (url == null || url.length() == 0) {
             throw new IllegalArgumentException("url must be a non-empty value");
         } else if (!(url.startsWith("http://") || url.startsWith("https://"))) {
             url = getBaseURL() + url;
         }
-        
-        EntityEnclosingMethod httpMethod = null;
+        HttpMethod httpMethod = null;
         try {
-            httpMethod = new PostMethod(url);
+            if (method.equals("GET")) {
+                httpMethod = new GetMethod(url);
+            } else if (method.equals("DELETE")) {
+                httpMethod = new DeleteMethod(url);
+            } else {
+                throw new IllegalArgumentException("method must be one of GET or DELETE.");
+            }
 
             httpMethod.setDoAuthentication(authenticate);
             httpMethod.getParams().setParameter(
                 "Connection", "Keep-Alive");
-            httpMethod.setContentChunked(true);
-            httpMethod.setRequestEntity(new StringRequestEntity(requestContent,
-                    "text/xml", "utf-8"));
-            return getClient(authenticate).executeMethod(
-                httpMethod);
+            getClient(authenticate).executeMethod(httpMethod);
+            return new HttpResponse(httpMethod);
         } finally {
             if (httpMethod != null) {
                 httpMethod.releaseConnection();
@@ -407,22 +353,31 @@ public class TestRESTAPI extends FedoraServerTestCase {
         }
     }
     
-    private int delete(boolean authenticate) throws Exception {
+    private HttpResponse putOrPost(String method, String requestContent, boolean authenticate) throws Exception {
         if (url == null || url.length() == 0) {
             throw new IllegalArgumentException("url must be a non-empty value");
         } else if (!(url.startsWith("http://") || url.startsWith("https://"))) {
             url = getBaseURL() + url;
         }
         
-        HttpMethod httpMethod = null;
+        EntityEnclosingMethod httpMethod = null;
         try {
-            httpMethod = new DeleteMethod(url);
+            if (method.equals("PUT")) {
+                httpMethod = new PutMethod(url);
+            } else if (method.equals("POST")) {
+                httpMethod = new PostMethod(url);
+            } else {
+                throw new IllegalArgumentException("method must be one of PUT or POST.");
+            }
 
             httpMethod.setDoAuthentication(authenticate);
             httpMethod.getParams().setParameter(
                 "Connection", "Keep-Alive");
-            return getClient(authenticate).executeMethod(
-                httpMethod);
+            httpMethod.setContentChunked(true);
+            httpMethod.setRequestEntity(new StringRequestEntity(requestContent,
+                    "text/xml", "utf-8"));
+            getClient(authenticate).executeMethod(httpMethod);
+            return new HttpResponse(httpMethod);
         } finally {
             if (httpMethod != null) {
                 httpMethod.releaseConnection();
@@ -435,6 +390,49 @@ public class TestRESTAPI extends FedoraServerTestCase {
         return new junit.framework.JUnit4TestAdapter(TestRESTAPI.class);
     }
     
-    
-
+    class HttpResponse {
+        private final int statusCode;
+        private final byte[] responseBody;
+        private final Header[] responseHeaders;
+        private final Header[] responseFooters;
+        
+        HttpResponse(int status, byte[] body, Header[] headers, Header[] footers) {
+            statusCode = status;
+            responseBody = body;
+            responseHeaders = headers;
+            responseFooters = footers;
+        }
+        
+        HttpResponse(HttpMethod method) throws IOException {
+            statusCode = method.getStatusCode();
+            responseBody = method.getResponseBody();
+            responseHeaders = method.getResponseHeaders();
+            responseFooters = method.getResponseFooters();
+        }
+        
+        public int getStatusCode() {
+            return statusCode;
+        }
+        
+        public byte[] getResponseBody() {
+            return responseBody;
+        }
+        
+        public Header[] getResponseHeaders() {
+            return responseHeaders;
+        }
+        
+        public Header[] getResponseFooters() {
+            return responseFooters;
+        }
+        
+        public Header getResponseHeader(String headerName) {
+            for (Header header : responseHeaders) {
+                if (header.getName().equalsIgnoreCase(headerName)) {
+                    return header;
+                }
+            }
+            return null;
+        }  
+    }
 }
