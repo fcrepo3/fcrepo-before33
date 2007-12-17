@@ -26,7 +26,8 @@ import fedora.server.management.FedoraAPIM;
 import fedora.test.FedoraServerTestCase;
 
 /**
- * Tests of the REST API.
+ * Tests of the REST API. Tests assume a running instance of Fedora with the 
+ * REST API enabled.
  * 
  * //TODO: actually validate the ResponseBody instead of just HTTP status codes
  * 
@@ -236,7 +237,12 @@ public class TestRESTAPI extends FedoraServerTestCase {
     //public void testDescribeUser() throws Exception {}
     
     public void testModifyDatastreamByReference() throws Exception {
-        //TODO
+        String dsLocation = getBaseURL() + "/objects/" + pid.toString() + ".xml";
+        url = String.format("/objects/%s/datastreams/DS1?controlGroup=E&dsLocation=%s", pid.toString(), dsLocation);
+        
+        assertEquals(SC_CREATED, put("", true).getStatusCode());
+        
+        // TODO: test managed datastream
     }
 
     public void testModifyDatastreamByValue() throws Exception {
