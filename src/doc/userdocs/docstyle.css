@@ -20,8 +20,9 @@ body #content li.square{
   margin-bottom: 1.286em;
   margin-top: 1.286em;
 }
-body #content ol li,
+
 body #content ul li,
+body #content ol li,
 body #content span.plaintext{
   font-size: .583em;
   font-weight: normal;
@@ -172,6 +173,12 @@ span.plaintext{
 }
 strong{
   font-weight: bold;
+}
+div.notice{
+  background: #f1f1f1;
+  border: solid .143em #999;
+  margin: 1.286em;
+  padding: 0.5em;
 }
 #toc{
   background: #f1f1f1;

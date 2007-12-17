@@ -4,7 +4,7 @@
                       
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
   <head>
-    <title>Fedora Upgrade and Migration Guide</title>
+    <title>Fedora Migration Guide</title>
     <link rel="stylesheet" type="text/css" href="../docstyle.css" />
   </head>
 
@@ -13,101 +13,367 @@
     <div id="header">
       <a href="../../../index.html">
       </a>
-      <h1>Fedora Upgrade and Migration Guide</h1>
-      <h2>Fedora Release 2.2.1</h2>
+      <h1>Fedora Migration Guide</h1>
+      <h2>Fedora Release 3.0 Beta 1</h2>
     </div>
 
     <div id="toc">
       <h2>Table of Contents</h2>
       <ol>
-        <li><a href="#migrate22">Upgrading from Fedora 2.2 to Fedora 2.2.1</a></li>
-      	<li><a href="#migrate211">Upgrading from Fedora 2.1.1 to Fedora 2.2.1</a></li>
-      	<li><a href="#migrate21">Upgrading from Fedora 2.1 to Fedora 2.2.1</a></li>
-      	<li><a href="#migrate20">Upgrading from Fedora 2.0 to Fedora 2.2.1</a></li>
-      	<li><a href="#migratepre20">Upgrading from versions prior to 2.0</a></li>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#install-fedora">Install, Start, and Stop Fedora 3.0</a></li>
+        <li><a href="#point">Point Fedora 3.0 to Existing Objects</a></li>
+        <li><a href="#install-migration">Install the Migration Utilities</a></li>
+        <li><a href="#analyzer">Run the Analyzer</a></li>
+        <li><a href="#generator">Run the Generator</a></li>
+        <li><a href="#transformer">Run the Transformer</a></li>
+        <li><a href="#rebuilder">Run the Rebuilder</a></li>
+        <li><a href="#ingest">Ingest Generated Objects</a></li>
+        <li><a href="#verify">Verify Success and Clean Up</a></li>
       </ol>
     </div>
     
     <ol id="content">
     
       <li>
-        <h2 id="migrate22">Upgrading from Fedora 2.2 to Fedora 2.2.1</h2>
+        <h2 id="overview">Overview</h2>
         <span class="plaintext">
-          This is a minor upgrade that fixes the <a href="release-notes.html">bugs addressed by the Fedora 2.2.1 release</a>.  We have developed a utility to make this process as quick as possible.
+          This document explains how to migrate your Fedora repository from 
+          version 2.x to 3.0.  Before continuing, you should familiarize 
+          yourself with the new  <a href="javascript:alert('TODO:add link here')">
+          Content Model Architecture.</a>  A basic understanding of how the 
+          CMA works will be helpful in understanding the migration process. 
           <br />
           <br />
-          <ol class="alpha">
-            <li><a href="http://sourceforge.net/project/showfiles.php?group_id=177054&package_id=219723">Download fedora-2.2.1-upgrade.jar</a> from Sourceforge.</li>
-            <li>Stop the webapp container in which Fedora is running.</li>
-            <li>Run the upgrade utility: java -jar fedora-2.2.1-upgrade.jar and follow the prompts.</li>
-            <li>Restart the webapp container.</li>
-          </ol>
-          <br />
-          NOTE: Although the <em>Fedora Administrator</em> Java application will be upgraded as part of this process, existing tools and services that use fedora-client.jar version 2.2 <em>do not need the updated version of this library</em> in order to continue working properly with your upgraded server.
+          Throughout this guide, OLD_FEDORA_HOME refers to the home directory
+          of your Fedora 2.2.x installation, and NEW_FEDORA_HOME refers to the
+          home directory of your new Fedora 3.0 installation.
         </span>
       </li>
       
       <li>
-        <h2 id="migrate211">Upgrading from Fedora 2.1.1 to Fedora 2.2.1</h2>
+        <h2 id="install-fedora">Install, Start, and Stop Fedora 3.0</h2>
         <span class="plaintext">
-          Upgrading from Fedora 2.1.1 to Fedora 2.2.1 does not require migration of objects or rebuilding of the Resource Index. However, there are important changes to the packaging and configuration between 2.1.1 and 2.2.1. Notably, neither the Fedora Configuration File (fedora.fcfg) nor Fedora Web Deployment Descriptor (web.xml) of previous versions is compatible with Fedora 2.2.1.
-          <br />
-          <br />
-          <ol class="alpha">
-            <li>Backup<br />It is highly recommended you backup your existing Fedora repository.</li>
-            <br />
-            <li>Use your database's administrative tool or SQL command line utility to rename the "do" table to "dobj".  This is normally done via the SQL command:
-            <code class="block">
-<pre>
-ALTER TABLE do RENAME TO dobj
-</pre>
-            </code>
-            </li>
-            <br />
-            <li>Install Fedora 2.2.1<br />Review the <a href="installation.html">Installation and Configuration Guide</a>. Note the following critical steps of the installation process:
-              <ul>
-                <li>When prompted for the installation type, select "custom".</li>
-                <li>When prompted for the Fedora home directory, <strong>DO NOT</strong> select the Fedora home directory of your previous installation: select a new directory.</li>
-                <li>When prompted for the Servlet engine, if you select an existing Tomcat installation, <strong>DO NOT</strong> select the servlet container of your previous Fedora installation. If you select an existing servlet container, please make sure it is not running (or, ensure that it is not configured to automatically deploy web applications).</li>
-                <li>When prompted for the Database, select the database (i.e., mysql, oracle, etc.) you used with your previous installation of Fedora. Use the same database username, password, JDBC url, and Driver Class used in the previous Fedora installation (refer to your old fedora.fcfg if needed).</li>
-              </ul>
-            </li>
-            <br />
-            <li>Post install, edit your new Fedora Configuration File ($FEDORA_HOME/server/config/fedora.fcfg). Copy the following parameter values from your old fedora.fcfg to your new fedora.fcfg:
-              <ul>
-                <li>module.fedora.server.storage.lowlevel.ILowlevelStorage.object_store_base</li>
-				<li>module.fedora.server.storage.lowlevel.ILowlevelStorage.datastream_store_base</li>
-				<li>module.fedora.server.resourceIndex.ResourceIndex.level</li>
-				<li>datastore.localKowariTriplestore.path</li>
-			  </ul>
-			  <br />
-			  If you made any customizations to your previous fedora.fcfg, you may apply them now.
-			</li>
-          </ol>
+          Follow the instructions in the <a href="installation.html">
+          Fedora Installation Guide.</a>.  When finished, start the server
+          and verify your installation was successful by visiting the
+          <em>describeRepository</em> page (e.g. 
+          <a href="http://localhost:8080/fedora/describe">
+          http://localhost:8080/fedora/describe</a>).  Finally, shut down
+          Fedora.  It should not be restarted again until later in the
+          migration process.
         </span>
       </li>
+      
       <li>
-        <h2 id="migrate21">Upgrading from Fedora 2.1 to Fedora 2.2.1</h2>
+        <h2 id="point">Point Fedora 3.0 to Existing Objects</h2>
+        <span class="plaintext"></span>
+        <ol class="alpha">
+          <li> Object XML (FOXML)
+            <span class="plaintext">
+              Determine where your old object XML is stored.  If you're unsure,
+              consult <code>OLD_FEDORA_HOME/server/config/fedora.fcfg</code>
+              and find the value of <code>object_store_base</code>.
+              <br/>
+              <br/>
+              Edit <code>NEW_FEDORA_HOME/server/fedora.fcfg</code> and change
+              the value of <code>object_store_base</code> the <em>full path</em>
+              of your old objects directory.
+              <br/>
+              <div class="notice">
+                <strong>Important:</strong> <em>If you haven't already done so, 
+                make a backup of all original object XML files.  These will be
+                changed during the transformation part of the migration process,
+                and if something goes wrong, this backup will be your only
+                way of recovering.</em>
+              </div>
+            </span>
+          </li>
+          <li> Managed Datastreams
+            <span class="plaintext">
+              Determine where your old Fedora instance stored managed
+              datastreams.  Again, you can check your old <code>fedora.fcfg
+              </code> file.  Look for the value of 
+              <code>datastream_store_base</code>.
+              <br/>
+              <br/>
+              Edit <code>NEW_FEDORA_HOME/server/fedora.fcfg</code> and change
+              the value of <code>datastream_store_base</code> the 
+              <em>full path</em> of your old datastreams directory.
+              <br/>
+              <br/>
+              NOTE: The migration process will not make any changes to these
+              files.
+            </span>
+          </li>
+        </ol>
+      </li>
+      
+      <li>
+        <h2 id="install-migration">Install the Migration Utilities</h2>
         <span class="plaintext">
-          Follow the steps in section 1 for upgrading from 2.1.1.
         </span>
       </li>
+      
       <li>
-        <h2 id="migrate20">Upgrading From Fedora 2.0 to Fedora 2.2.1</h2>
+        <h2 id="analyzer">Run the Analyzer</h2>
         <span class="plaintext">
-          When moving from Fedora 2.0 to Fedora 2.2.1, you will be able to do a simple software <em><strong>upgrade</strong></em> without having to migrate digital objects via a mass export and ingest. After installing Fedora 2.2.1, you can configure it to point to your existing repository datastores (both the existing repository directory storage locations and the existing relational database). This involves changing parameters in the Fedora 2.2.1 server configuration file (fedora.fcfg) that define the storage directory paths and database location. See the instructions in section 1 above for details.
-          <br />
-          <br />
-          Note that the Resource Index model changed between 2.0 and 2.1, hence a rebuild of the Resource Index is necessary if upgrading from 2.0 to 2.2.1. See the instructions for <a href="../server/cmd-line/index.html#rebuild">rebuilding the Resource Index</a>.
+          The analyzer examines all of your existing digital objects and 
+          looks for similarities.  It outputs the following information in 
+          a directory you specify.
+          <br/>
+          <br/>
+          <ul>
+            <li> A set of generated content models.</li>
+            <li> A list of PIDs for each content model.</li> 
+            <li> Behavior Mechanism information for each content model.</li>
+          </ul>
+          <br/>
+          The analyzer does not make changes to any source objects.
+        </span>
+        <ol class="alpha">
+          <li> Configuring the Analyzer
+            <span class="plaintext">
+              The analyzer accepts a Java properties file for configuration.
+              <br/>
+ 
+NOTE: In properties files, the "\" character must be escaped.  When using Windows, this means paths like "c:\work\abc" must be written as "c:\\work\\abc".
+ 
+Create a file (e.g. migration.properties) with the following content, filling in values appropriate to your environment:
+ 
+# This is the directory where the analyzer's output files should be sent.
+ # If it doesn't already exist, it will be automatically created.
+ # If it already exists, it must be empty (to avoid accidental overwrites)
+ # To disable the above restriction, uncomment clearOutputDir=true below.
+ outputDir=c:\\fedora-migration
+ #clearOutputDir=true
+ 
+# The Fedora 3.0 home directory.
+ fedoraHome=c:\\fedora-3.0
+ 
+# The full path to the JDBC driver Fedora is configured to use.
+# NOTE: The analyzer only uses the database to aid in looking up
+# the location of FOXML.  It will populate the initial paths in
+# the database the first time it runs, if the necessary.
+jdbcJar=c:\\fedora-3.0\\tomcat\\webapps\\fedora\\WEB-INF\\lib\\postgresql-8.2-506.jdbc3.jar
+ 
+# Aspects of the original objects to ignore for the purpose of
+ # classification.  This is optional.  If unspecified, the generated
+ # content models will be the MOST SPECIFIC POSSIBLE.  If 
+# specified, this property must consist of a space-delimited 
+# list of any of the following:
+ # OrigContentModel
+ #   If specified, objects that have differing values in the original
+ #   contentModel property may be assigned to the same content
+ #   model if they are otherwise similar.
+ # DatastreamIDs
+ #   If specified, only datastreams bound to disseminators will
+ #   be considered important for classification.  Objects that have
+ #   differing sets of UNUSED datastream IDs may be assigned to
+ #   the same content model if they are otherwise similar.
+ # MIMETypes
+ #   If specified, the MIMETYPE of each candidate datastream
+ #   will be ignored for the purpose of classification.  Objects that
+ #   have differing MIME types for the same datastream may be
+ #   assigned to the same content model if they are otherwise
+ #   similar.
+ # FormatURIs
+ #   This works exactly the same as MIMETypes, but applies to
+ #   the FORMAT_URI of candidate datastreams.
+ #ignoreAspects=OrigContentModel DatastreamIDs MIMETypes FormatURIs
+ 
+  </span>
+ 
+</li>
+ 
+<li> Analyzer Usage
+The analyzer utility is an executable jar and takes the configuration file as a parameter.  For example, if your configuration is in the current directory and is named migration.properties, enter the following:
+
+java -jar analyzer.jar migration.properties
+
+Analysis of small repositories will finish very quickly.  For repositories with millions of objects, analysis will take several hours.  With modern hardware, expect a rate of about 10,000 objects per minute.
+
+Reviewing Analyzer Output
+
+The analyzer will produce several files in the output directory.
+
+
+Generated content models will be in FOXML 1.1 format and will be named cmodel-n.xml (where n is a number used for association).  For each of these, there will be an associated cmodel-n.members.txt file containing a list of PIDs that conform to the content model.
+
+
+Each content model object will contain the following inline XML datastreams:
+
+
+      * CLASS-DESCRIPTION
+This is a simple human-readable log of the matching aspects of all member objects found during the analysis process.  This datastream is not used or recognized by Fedora; it is only included for documentation purposes and may be removed at any time.
+
+      * DS-COMPOSITE-MODEL
+This is a special Fedora-defined description of the datastreams (and aspects thereof) that member objects are expected to have.  You'll notice that it contains a subset of the information expressed in CLASS-DESCRIPTION.  This datastream is important, and should not be removed from the content model object.
+
+If the member objects had disseminators:
+
+
+         * You will notice that the generated content model also has a RELS-EXT datastream.  This RDF datastream points to the original Behavior Definition objects via a Fedora-defined hasBDef relationship.  This relationship means that members of this content model should have the behaviors defined within the target BDef(s).
+         * There will also be an associated cmodel-n-bmechs.txt file in the output directory.  For each Behavior Mechanism formerly used by the objects' disseminators, this file identifies the original BMech, specifies a PID for a new, similar BMech, and specifies a set of datastream input name changes that the copy should have.  This information is used by the generator to create new content-model-specific Behavior Mechanism objects.
+
+Three additional files will be created in the output directory:
+
+
+         * bdefs.txt - this lists all original Behavior Definition objects.
+The generator will create a stylesheet to upgrade these objects to FOXML 1.1.
+
+         * bmechs.txt - this lists all original Behavior Mechanism objects.
+Although these objects will be made obsolete by the new, generated Behavior Mechanisms, the generator will create a stylesheet to upgrade them to FOXML 1.1 so that you can view them in the Fedora 3.0 repository before deciding to purge them.
+
+         * nocmodel.txt - this lists objects that should NOT be assigned a content model.
+Initially, the file is empty but it can be customized, if desired (see Upgrading Objects Without Content Models below).
+
+Customizing Content Model PIDs
+
+By default, the PIDs assigned to the generated content models are of the form, changeme:CModelN.  You should at least change these to use your own repository's namespace.  You may also want to change the identifier part of the PID (e.g. myns:Journal).
+
+To do this, open each cmodel-n.xml file in an editor and change the following as desired:
+
+            * The value of the PID attribute at the root of the document.
+
+            * If there is a RELS-EXT datastream, change the part after info:fedora/ in the rdf:about attribute.  For example, change rdf:about="info:fedora/changeme:CModel1" to rdf:about="info:fedora/myorg:Journal".
+
+Customizing Behavior Mechanism PIDs
+If any cmodel-n-bmechs.txt files were created by the analyzer, you should also change each NEW_BMECH pid specified within before continuing.  These PIDs will default to values like "changeme:CModel1-BMech1", but again, you should specify your own (e.g. myns:Journal-BMech1).  Note: DO NOT SPECIFY the same PID for NEW_BMECH as you had for OLD_BMECH, as this will cause ingest problems later.
+
+Upgrading Objects Without Content Models
+
+By default, the analyzer ensures that every data object is assigned to a content model.  If you'd rather avoid assigning a content model to an object, you may do so by a) removing its PID from the cmodel-n-members.txt file in which it resides and b) adding it to the nocmodel.txt file.  This may be done for any number of objects.
+
+IMPORTANT: In order for migration to work properly, the PID of every object in the source repository must occur exactly once in the set of PID list files.
+
+ 
         </span>
       </li>
+      
       <li>
-        <h2 id="migratepre20">Upgrading from versions prior to 2.0</h2>
+        <h2 id="generator">Run the Generator</h2>
         <span class="plaintext">
-          To upgrade from a Fedora version prior to 2.0, you must first <a href="http://fedora.info/download/2.0/userdocs/distribution/migration.html">migrate to version 2.0</a>, then follow the appropriate upgrade steps above.
+The generator reads the output of the analyzer and adds the following to the same directory:
+
+
+               * New Behavior Mechanism objects (as specified in cmodel-n-members.txt)
+
+               * Stylesheets for transforming existing objects as necessary
+
+
+NOTE: the generator does not make changes to the source objects.
+
+Configuring the Generator
+Like the analyzer, the generator accepts a Java properties file for configuration.
+
+The configuration file should have the following content, with values filled in appropriate to your environment.  NOTE: Since you already entered fedoraHome and jdbcJar in migration.properties, you can minimize typing by just using that file, and adding the necessary sourceDir parameter  as shown below.
+
+# This is the directory containing the analyzer's output, and where the generator's
+# results should be written.
+sourceDir=c:\\fedora-migration
+
+# The Fedora 3.0 home directory
+fedoraHome=c:\\fedora-3.0
+
+# The full path to the JDBC driver Fedora is configured to use
+ jdbcJar=c:\\fedora-3.0\\tomcat\\webapps\\fedora\\WEB-INF\\lib\\postgresql-8.2-506.jdbc3.jar
+
+Generator Usage
+
+The generator utility also the configuration file as a parameter.  For example:
+
+java -jar generator.jar migration.properties
+
+The generator should finish within a few seconds, regardless of the size of the repository.
+
+Reviewing Generator Output
+
+The generator will produce several files in the output directory.  Again, these files will be used as input to later steps in the process.
+
+
+One stylesheet will be written for each PID list: bmechs.xslt, bdefs.xslt, nocmodel.xslt, and cmodel-n.members.xslt.  Each of these stylesheets includes transformation rules for upgrading the objects to FOXML1.1 and adding the necessary hasContentModel relationship via RELS-EXT, if necessary.  NOTE: The generated stylesheet will cause a new RELS-EXT datastream to be created, or will amend the content of the latest revision of the RELS-EXT datastream, if it already exists.
+
+The output will also include a new, generated Behavior Mechanism object (cmodel-n.bmechx.txt) for each one listed in the input's cmodel-n.bmechs.txt file.  This BMech will match the content of the source BMech in the repository, but it will have a different PID, will be in FOXML 1.1 format, and will use input part names consistent with the datastream IDs specified in the associated content model's DS-COMPOSITE-MODEL datastream.
+
+        </span>
+      </li>
+      
+      <li>
+        <h2 id="transformer">Run the Transformer</h2>
+        <span class="plaintext">
+The transformer applies stylesheets to FOXML stored in a Fedora repository.  Although it directly accepts the output of the generator utility, it can also be used outside of the migration process for making low-level changes to batches of objects.  When running the transformer in this way, the repository should be shut down, and the rebuilder should be run immediately afterward (see section below).
+
+Here's how the transformer works:  It scans a directory for PID list files, ending with .txt.  For each, if a .xslt file exists with the same name, that stylesheet is applied to the repository's FOXML for each object in the PID list.
+
+WARNING: the transformer makes changes to objects in the repository.  It it possible to damage some, or all of the objects in the repository by using the transformer, so be sure to make a backup first!
+
+Configuring the Transformer
+Like the analyzer and generator, the transformer accepts a Java properties file for configuration.  The transformer is configured with the same properties that the generator is configured with (see above), and also takes the following:
+
+# Whether to run the transformer in "dry run" mode or not.
+# In dry run mode, transformation will be tested but no changes will be written
+dryRun=true
+
+Although not required, it is strongly recommended that you run the transformer with dryRun=true the first time, to ensure all transformations will fully succeed.
+
+Transformer Usage
+The transformer utility also takes the configuration file as a parameter.  For example:
+
+java -jar transformer.jar migration.properties
+
+Transformation will take roughly double the time that analysis took, since it must read and write each file in the repository.
+ 
+        </span>
+      </li>
+      
+      <li>
+        <h2 id="rebuilder">Run the Rebuilder</h2>
+        <span class="plaintext">
+Now that all of your existing objects have been upgraded, you need to run the rebuilder so Fedora's database is up-to-date with the files on disk.  See the Rebuilder Documentation for further details.  NOTE: You should at least rebuild the SQL database.  If you plan to use the Resource Index, make sure your fedora.fcfg file has the "level" set to "1", and rebuild it also.
+
+Running the rebuilder will be the most time-consuming step of the process.
+
+        </span>
+      </li>
+      
+      <li>
+        <h2 id="ingest">Ingest Generated Objects</h2>
+        <span class="plaintext">
+After the rebuilder has run successfully, you should restart your Fedora 3.0 instance and visit the describe page (e.g. http://localhost:8080/fedora/describe) to make sure it started successfully.
+
+Now you'll need to ingest all the newly-created content model and Behavior Mechanism objects created by the analyzer+generator steps.  To do this:
+
+
+                  1. Run fedora-admin.bat or fedora-admin.sh and login to your new repository from the local machine.
+
+                  2. Go to File -» Ingest -» Objects from Directory, and navigate to the directory where these files were written (e.g. C:\fedora-migration)
+                  3. Choose FOXML as the format, and OK.
+        </span>
+      </li>
+      
+      <li>
+        <h2 id="verify">Verify Success and Clean Up</h2>
+        <span class="plaintext">
+You should now verify that the upgraded objects are behaving as expected.  Pick a few from each content model and do the following for each:
+
+
+                     1. Visit their "Object Profile" page (e.g. http://localhost:8080/fedora/get/demo:MyPID)
+                     2. From that page, navigate to "View Item Index", and click each datastream, ensuring it downloads properly.
+                     3. If you had dissseminators in your original repository, you should also navigate to the "View Dissemination Index" page and make sure your old disseminations appear, and that they execute properly.
+
+
+If you had disseminators in your original repository, you are now making use of a NEW set of Behavior Mechanism objects.  You may also wish to purge the original ones.  The simplest way to do this is with the fedora-admin GUI:
+
+
+                        1. Run fedora-admin.bat or fedora-admin.sh and login to your new repository from the local machine.
+                        2. Go to Tools -» Search, go into the advanced tab and add a condition that "fType" "equals" "M".
+                        3. Click OK and find your old Behavior Mechanism objects in the list.
+                        4. Select all the old ones (ctrl-click to select multiple), right-click and select "Purge Objects".
         </span>
       </li>
     </ol>
+    
     <div id="footer">
       <p id="copyright">
         Copyright &copy; 2002-2007 Fedora Project
