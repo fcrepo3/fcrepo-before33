@@ -195,9 +195,9 @@ public class RelsExtValidatorTest extends TestCase {
             TripleIterator iter = new MockTripleIterator(triples);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             iter.toStream(out, RDFFormat.RDF_XML);
-            RelsExtValidator rev = new RelsExtValidator("UTF-8", false);
-            rev.deserialize(new ByteArrayInputStream(out.toByteArray()), pid.toURI());
-            //RelsExtValidator.validate(pid, new ByteArrayInputStream(out.toByteArray()));
+            //RelsExtValidator rev = new RelsExtValidator("UTF-8", false);
+            //rev.deserialize(new ByteArrayInputStream(out.toByteArray()), pid.toURI());
+            RelsExtValidator.validate(pid, new ByteArrayInputStream(out.toByteArray()));
         } finally {
             triples.clear();
         }

@@ -6,6 +6,7 @@ import junit.framework.TestCase;
 
 /**
  * @author Edwin Shin
+ * @version $Id$
  */
 public class TestDateUtility extends TestCase {
     protected final Date EPOCH = new Date(0L);
@@ -65,7 +66,7 @@ public class TestDateUtility extends TestCase {
                           "1970-01-01T00:00:00.0",
                           "1970-01-01T00:00:00",
                           "1970-01-01",
-                          "Thu, 01 Jan 1970 00:00:00 GMT"
+						  "Thu, 01 Jan 1970 00:00:00 GMT"
         };
         for (int i = 0; i < dates.length; i++) {
             assertEquals(EPOCH, DateUtility.parseDateAsUTC(dates[i]));
@@ -81,7 +82,7 @@ public class TestDateUtility extends TestCase {
                              "12345-01-01T00:00:00."
         };
         for (int i = 0; i < badDates.length; i++) {
-            TestCase.assertNull(DateUtility.parseDateAsUTC(badDates[i]));
+            assertNull(DateUtility.parseDateAsUTC(badDates[i]));
         }
         
         assertEquals(ONE_CE, DateUtility.parseDateAsUTC(ONE_CE_XSD_DT));
