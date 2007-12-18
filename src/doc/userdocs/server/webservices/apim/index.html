@@ -27,8 +27,8 @@
             <li><a href="#methods.export">export</a></li>
             <li><a href="#methods.exportObject">exportObject</a></li>
             <li><a href="#methods.getDatastream">getDatastream</a></li>
-            <li><a href="#methods.getDatastreams">getDatastreams</a></li>
             <li><a href="#methods.getDatastreamHistory">getDatastreamHistory</a></li>
+            <li><a href="#methods.getDatastreams">getDatastreams</a></li>
             <li><a href="#methods.getNextPID">getNextPID</a></li>
             <li><a href="#methods.getObjectXML">getObjectXML</a></li>
             <li><a href="#methods.getRelationships">getRelationships</a></li>
@@ -82,12 +82,11 @@ connectivity for datastreams that reference external content.</p>
                 <li><code>dsState</code>: One of "A", "D", or "I" (<b>A</b>ctive, <b>D</b>eleted, or <b>I</b>nactive).</li>
                 <li><code>checksumType</code>: The algorithm used to compute the checksum. 
                 One of "DEFAULT", "DISABLED", "MD5", "SHA-1", "SHA-256", "SHA-385", "SHA-512", "HAVAL", "TIGER", "WHIRLPOOL".</li>
-                <li><code>checksum</code>: The value of the checksum represented as a hexadecimal string..</li>
+                <li><code>checksum</code>: The value of the checksum represented as a hexadecimal string.</li>
                 <li><code>logMessage</code>: A log message.</li>
             </ul>
             <p>Returns: the datastreamID of the newly added datastream.</p>
             </li>
-            
             
             <li><h3 id="methods.addRelationship">addRelationship</h3>
             <p>Creates a new relationship in the object.</p>
@@ -100,6 +99,186 @@ connectivity for datastreams that reference external content.</p>
                 <li><code>datatype</code>: The datatype of the literal. Optional.</li>
             </ul>
             <p>Returns: true if and only if the relationship was added.</p>
+            </li>
+            
+            <li><h3 id="methods.compareDatastreamChecksum">compareDatastreamChecksum</h3>
+            <p>Verifies that the datastream content has not changed since the checksum was initially computed.</p>
+            <p>Parameters:</p>
+            <ul>
+                <li><code>pid</code>: The PID of the object.</li>
+                <li><code>dsID</code>: The datastream ID.</li>
+                <li><code>versionDate</code>: A dateTime indicating the version 
+                of the datastream to verify. If null, Fedora will use the most 
+                recent version.</li>
+            </ul>
+            <p>Returns: the checksum if there is no difference, a message indicating checksum failure otherwise.</p>
+            </li>
+            
+            <li><h3 id="methods.describeUser">describeUser</h3>
+            <p>Gets key information about the named user.</p>
+            <p>Parameters:</p>
+            <ul>
+                <li><code>id</code>: The id of the user.</li>
+            </ul>
+            <p>Returns: information about the user.</p>
+            </li>
+            
+            <li><h3 id="methods.export">export</h3>
+            <p>Exports the entire digital object in the specified XML format, and encoded appropriately for the specified export context.</p>
+            <p>Parameters:</p>
+            <ul>
+                <li><code>pid</code>: The pid of the object.</li>
+                <li><code>format</code>: The XML format to export, e.g. "info:fedora/fedora-system:FOXML-1.1" or "info:fedora/fedora-system:METSFedoraExt-1.1".</li>
+                <li><code>context</code>: The export context, which determines how datastream URLs and content are represented. One of "public", "migrate", or "archive".</li>
+            </ul>
+            <p>Returns: the digital object in the requested XML format.</p>
+            </li>
+            
+            <li><h3 id="methods.exportObject">exportObject</h3>
+            <p>Deprecated. Use <a href="#methods.export">export</a></p>
+            </li>
+            
+            <li><h3 id="methods.getDatastream">getDatastream</h3>
+            <p>Gets the specified datastream.</p>
+            <p>Parameters:</p>
+            <ul>
+                <li><code>pid</code>: The pid of the object.</li>
+                <li><code>dsID</code>: The datastream ID.</li>
+                <li><code>asOfDateTime</code>: the date/time stamp specifying the desired view of the object. If null, the current view of the object (the most recent time) is assumed.</li>
+            </ul>
+            <p>Returns: the specified datastream.</p>
+            </li>
+            
+            <li><h3 id="methods.getDatastreamHistory">getDatastreamHistory</h3>
+            <p>Gets all versions of a datastream, sorted from most to least recent.</p>
+            <p>Parameters:</p>
+            <ul>
+                <li><code>pid</code>: The pid of the object.</li>
+                <li><code>dsID</code>: The datastream ID.</li>
+            </ul>
+            <p>Returns: all versions of a datastream, sorted from most to least recent.</p>
+            </li>
+            
+            <li><h3 id="methods.getDatastreams">getDatastreams</h3>
+            <p>Gets all versions of a datastream, sorted from most to least recent.</p>
+            <p>Parameters:</p>
+            <ul>
+                <li><code>pid</code>: The pid of the object.</li>
+                <li><code>dsID</code>: The datastream ID.</li>
+            </ul>
+            <p>Returns: all versions of a datastream, sorted from most to least recent.</p>
+            </li>
+            
+            <li><h3 id="methods.getNextPID">getNextPID</h3>
+            <p></p>
+            <p>Parameters:</p>
+            <ul>
+                <li><code></code>: </li>
+            </ul>
+            <p>Returns: .</p>
+            </li>
+            
+            <li><h3 id="methods.getObjectXML">getObjectXML</h3>
+            <p></p>
+            <p>Parameters:</p>
+            <ul>
+                <li><code></code>: </li>
+            </ul>
+            <p>Returns: .</p>
+            </li>
+            
+            <li><h3 id="methods.getRelationships">getRelationships</h3>
+            <p></p>
+            <p>Parameters:</p>
+            <ul>
+                <li><code></code>: </li>
+            </ul>
+            <p>Returns: .</p>
+            </li>
+            
+            <li><h3 id="methods.ingest">ingest</h3>
+            <p></p>
+            <p>Parameters:</p>
+            <ul>
+                <li><code></code>: </li>
+            </ul>
+            <p>Returns: .</p>
+            </li>
+            
+            <li><h3 id="methods.ingestObject">ingestObject</h3>
+            <p>Deprecated. Use <a href="#methods.ingest">ingest</a></p>
+            </li>
+            
+            <li><h3 id="methods.modifyDatastreamByReference">modifyDatastreamByReference</h3>
+            <p></p>
+            <p>Parameters:</p>
+            <ul>
+                <li><code></code>: </li>
+            </ul>
+            <p>Returns: .</p>
+            </li>
+            
+            <li><h3 id="methods.modifyDatastreamByValue">modifyDatastreamByValue</h3>
+            <p></p>
+            <p>Parameters:</p>
+            <ul>
+                <li><code></code>: </li>
+            </ul>
+            <p>Returns: .</p>
+            </li>
+            
+            <li><h3 id="methods.modifyObject">modifyObject</h3>
+            <p></p>
+            <p>Parameters:</p>
+            <ul>
+                <li><code></code>: </li>
+            </ul>
+            <p>Returns: .</p>
+            </li>
+            
+            <li><h3 id="methods.purgeDatastream">purgeDatastream</h3>
+            <p></p>
+            <p>Parameters:</p>
+            <ul>
+                <li><code></code>: </li>
+            </ul>
+            <p>Returns: .</p>
+            </li>
+            
+            <li><h3 id="methods.purgeObject">purgeObject</h3>
+            <p></p>
+            <p>Parameters:</p>
+            <ul>
+                <li><code></code>: </li>
+            </ul>
+            <p>Returns: .</p>
+            </li>
+            
+            <li><h3 id="methods.purgeRelationship">purgeRelationship</h3>
+            <p></p>
+            <p>Parameters:</p>
+            <ul>
+                <li><code></code>: </li>
+            </ul>
+            <p>Returns: .</p>
+            </li>
+            
+            <li><h3 id="methods.setDatastreamState">setDatastreamState</h3>
+            <p></p>
+            <p>Parameters:</p>
+            <ul>
+                <li><code></code>: </li>
+            </ul>
+            <p>Returns: .</p>
+            </li>
+            
+            <li><h3 id="methods.setDatastreamVersionable">setDatastreamVersionable</h3>
+            <p></p>
+            <p>Parameters:</p>
+            <ul>
+                <li><code></code>: </li>
+            </ul>
+            <p>Returns: .</p>
             </li>
         </ol>
     </li>
