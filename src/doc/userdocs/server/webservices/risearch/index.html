@@ -126,12 +126,9 @@ info:fedora/demo:15,2005-01-27T23:07:41.58</pre>
               <li>
                 <h4 id="language">Language</h4>
                 <span class="plaintext">
-                  Indicates the query language to use.  Valid options are
+                  Indicates the query language to use. Currently, the only valid option is
                   <strong>iTQL</strong> (a full-featured RDF query language supported
-                  by the <a href="http://kowari.org/">Kowari Metastore</a>), and
-                  <a href="http://jena.sourceforge.net/tutorial/RDQL/"><strong>RDQL</strong></a>, 
-                  (a less powerful, but more widely supported query language popularized
-                  by the <a href="http://jena.sourceforge.net/">Jena Framework</a>).
+                  by the <a href="http://www.mulgara.org/">Mulgara</a>). SPARQL support is expected in a future release.
                 </span>
               </li>
               
@@ -167,8 +164,7 @@ info:fedora/demo:15,2005-01-27T23:07:41.58</pre>
                 <ul>
                   <li>
                     <strong>Force Distinct</strong> - Whether to force duplicate results
-                    to be dropped. This is only useful for certain RDQL queries
-                    (iTQL never returns duplicates).
+                    to be dropped. Note: iTQL never returns duplicates.
                   </li>
                   <li>
                     <strong>Fake Media-Types</strong> - Whether to send incorrect
@@ -260,8 +256,8 @@ Get all triples where the subject is demo:1 and the object is demo:2
                 <h4 id="usingTemplates">Using Templates</h4>
                 <span class="plaintext">
                   Templates are used to convert tuple query results to triples.
-                  A template consists of one ore more <em>triple binding patterns</em>
-                  that reference the binding variables in an iTQL or RDQL query.
+                  A template consists of one or more <em>triple binding patterns</em>
+                  that reference the binding variables in an iTQL query.
                   <br />
                   The easiest way to understand how this works is by example.
                   <br />
@@ -353,7 +349,7 @@ $b &lt;urn:example:isRelatedTo&gt; $a</pre>
             in certain scenarios, but for performance reasons, should be 
             used sparingly when a process is making many API-M calls to Fedora
             in a short period of time:
-            We have found that Kowari generally achieves a much better 
+            We have found that Mulgara generally achieves a much better 
             overall update rate with large batches of triples.
           </li>
         </ul>
@@ -366,7 +362,7 @@ $b &lt;urn:example:isRelatedTo&gt; $a</pre>
 <pre>
 http://localhost:8080/fedora/risearch?type=tuples
                                      &amp;flush=[<strong>true</strong> (default is false)]
-                                     &amp;lang=<strong>iTQL|RDQL</strong>
+                                     &amp;lang=<strong>iTQL</strong>
                                      &amp;format=<strong>CSV|Simple|Sparql|TSV</strong>
                                      &amp;limit=[<strong>1</strong> (default is no limit)]
                                      &amp;distinct=[<strong>on</strong> (default is off)]
@@ -383,7 +379,7 @@ http://localhost:8080/fedora/risearch?type=tuples
 <pre>
 http://localhost:8080/fedora/risearch?type=triples
                                      &amp;flush=[<strong>true</strong> (default is false)]
-                                     &amp;lang=<strong>SPO|iTQL|RDQL</strong>
+                                     &amp;lang=<strong>SPO|iTQL</strong>
                                      &amp;format=<strong>N-Triples|Notation 3|RDF/XML|Turtle</strong>
                                      &amp;limit=[<strong>1</strong> or more (default is no limit)]
                                      &amp;distinct=[<strong>on</strong> (default is off)]
