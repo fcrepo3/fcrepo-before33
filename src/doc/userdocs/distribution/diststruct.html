@@ -1,113 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-                      
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
-  <head>
-    <title>Fedora Distribution Structure Documentation</title>
-    <link rel="stylesheet" type="text/css" href="../docstyle.css" />
-  </head>
+<head>
+<title>Fedora Distribution Structure Documentation</title>
+<link rel="stylesheet" type="text/css" href="../docstyle.css" />
+</head>
 
-  <body>
+<body>
 
-    <div id="header">
-      <a href="../../../index.html">
-      </a>
-      <h1>Fedora Distribution Structure Documentation</h1>
-      <h2>Fedora Release 3.0 Beta 1</h2>
-    </div>
+<div id="header"><a href="../../../index.html"> </a>
+<h1>Fedora Distribution Structure Documentation</h1>
+<h2>Fedora Release 3.0 Beta 1</h2>
+</div>
 
-    <div id="toc">
-      <h2>Table of Contents</h2>
-      <ol>
-        <li><a href="#intro">Introduction</a></li>
-        <li><a href="#server">Server</a></li>
-        <li><a href="#client">Client</a></li>
-        <li><a href="#data">Data</a></li>
-        <li><a href="#docs">Docs</a></li>
-      </ol>
-    </div>
-    
-    <ol id="content">
-    
-      <li>
-        <h2 id="intro">Introduction</h2>
-        <span class="plaintext">
-          All of the directories named below are relative to FEDORA_HOME.
-          <br />
-          <br />
-          <strong>server</strong> - Contains the server configuration, command-line utilities, and policy files.
-          <br />
-          <strong>client</strong> - Contains the client classes, libraries, and utilities.
-          <br />
-          <strong>data</strong> - The default parent directory for object_store_base, datastream_store_base, and XACML policies.
-          <br />
-          <strong>docs</strong> - Contains the licenses, javadocs, and Fedora documentation.
-          <br />
-          <strong>mckoi1.0.3</strong> - If the included McKoi database was chosen during the installation (i.e. either a "quick" install or the "included" database was selected as part of a custom install, this will contain the configuration and data for the embedded McKoi instance.
-          <br />
-          <strong>tomcat</strong> - If the "quick" option was selected during the installation, this will contain an installation of Tomcat 5.0.28.
-        </span>
-      </li>
-      
-      <li>
-        <h2 id="server">Server</h2>
-        <span class="plaintext">
-          <strong>server/access</strong> - Stylesheets for the default disseminator. All objects in the repository automatically subscribe to this disseminator, which provides methods for listing and retrieving the components of the object.
-          <br />
-          <strong>server/bin</strong> - Contains server command-line utilities, including fedora-rebuild, fedora-reload-policies, and validate-policy.
-          <br />
-          <strong>server/config</strong> - Contains the server configuration files, including fedora.fcfg, fedora-users.xml, and log4j.properties
-          <br />
-          <strong>server/logs</strong> - Contains the server log files.
-          <br />
-          <strong>server/schematron</strong> - Files supporting the validation of serialized digital objects.
-          <br />
-          <strong>server/xsd</strong> - W3 XML schemas, for reference and validation support.
-        </span>
-      </li>
-      
-      <li>
-        <h2 id="client">Client</h2>
-        <span class="plaintext">
-          <strong>client/bin</strong> - Contains client command-line utilities, including fedora-admin, fedora-convert-demos, fedora-ingest-demos and various batch utilities.
-          <br />
-          <strong>client/demo</strong> - Contains sample digital objects that can be used as examples.
-          <br />
-          <strong>client/fedora-client.jar</strong> - Contains the classes necessary to run the client applications.
-          <br />
-          <strong>client/log4j.xml</strong> - Log4J configuration file for client applications.
-        </span>
-      </li>
-      
-      <li>
-        <h2 id="data">Data</h2>
-        <span class="plaintext">
-          <strong>data/objects</strong> - The default root directory (defined in fedora.fcfg) for the internal storage of Fedora objects.
-          <br />
-          <strong>data/datastreams</strong> - The default root directory (defined in fedora.fcfg) for the internal storage of Managed Content datastreams.
-          <br />
-          <strong>data/fedora-xacml-policies/repository-policies</strong> - The default directory (defined in fedora.fcfg) for repository-wide XACML policies.
-        </span>
-      </li>
-      
-      <li>
-        <h2 id="docs">Docs</h2>
-        <span class="plaintext">
-          <strong>docs/license</strong> - Contains license documentation for Fedora and third-party licenses and attributions.
-          <br />
-          <strong>docs/javadocs</strong> - Javadoc API documentation for Fedora.
-          <br />
-          <strong>docs/userdocs</strong> - End-user documentation and tutorials.
-        </span>
-      </li>
+<div id="toc">
+<h2>Table of Contents</h2>
+<ol>
+    <li><a href="#intro">Introduction</a></li>
+    <li><a href="#server">Server</a></li>
+    <li><a href="#client">Client</a></li>
+    <li><a href="#data">Data</a></li>
+    <li><a href="#docs">Docs</a></li>
+</ol>
+</div>
+
+<ol id="content">
+
+    <li>
+    <h2 id="intro">Introduction</h2>
+    <span class="plaintext"> All of the directories named below are
+    relative to FEDORA_HOME. <br />
+    <br />
+    <strong>server</strong> - Contains the server configuration, command-line
+    utilities, and policy files. <br />
+    <strong>client</strong> - Contains the client classes, libraries, and
+    utilities. <br />
+    <strong>data</strong> - The default parent directory for object_store_base,
+    datastream_store_base, and XACML policies. <br />
+    <strong>docs</strong> - Contains the licenses, javadocs, and Fedora
+    documentation. <br />
+    <strong>mckoi1.0.3</strong> - If the included McKoi database was chosen
+    during the installation (i.e. either a "quick" install or the "included"
+    database was selected as part of a custom install, this will contain the
+    configuration and data for the embedded McKoi instance. <br />
+    <strong>tomcat</strong> - If the "quick" option was selected during the
+    installation, this will contain an installation of Tomcat 5.5.23. </span></li>
+
+    <li>
+    <h2 id="server">Server</h2>
+    <span class="plaintext"> <strong>server/access</strong> - Stylesheets
+    for the default disseminator. All objects in the repository automatically
+    subscribe to this disseminator, which provides methods for listing and
+    retrieving the components of the object. <br />
+    <strong>server/bin</strong> - Contains server command-line utilities,
+    including fedora-rebuild, fedora-reload-policies, and validate-policy. <br />
+    <strong>server/config</strong> - Contains the server configuration files,
+    including fedora.fcfg, fedora-users.xml, and log4j.properties <br />
+    <strong>server/logs</strong> - Contains the server log files. <br />
+    <strong>server/schematron</strong> - Files supporting the validation of
+    serialized digital objects. <br />
+    <strong>server/xsd</strong> - W3 XML schemas, for reference and validation
+    support. </span></li>
+
+    <li>
+    <h2 id="client">Client</h2>
+    <span class="plaintext"> <strong>client/bin</strong> - Contains
+    client command-line utilities, including fedora-admin, fedora-convert-demos,
+    fedora-ingest-demos and various batch utilities. <br />
+    <strong>client/demo</strong> - Contains sample digital objects that can be
+    used as examples. <br />
+    <strong>client/fedora-client.jar</strong> - Contains the classes necessary
+    to run the client applications. <br />
+    <strong>client/log4j.xml</strong> - Log4J configuration file for client
+    applications. </span></li>
+
+    <li>
+    <h2 id="data">Data</h2>
+    <span class="plaintext"> <strong>data/objects</strong> - The default
+    root directory (defined in fedora.fcfg) for the internal storage of Fedora
+    objects. <br />
+    <strong>data/datastreams</strong> - The default root directory (defined in
+    fedora.fcfg) for the internal storage of Managed Content datastreams. <br />
+    <strong>data/fedora-xacml-policies/repository-policies</strong> - The
+    default directory (defined in fedora.fcfg) for repository-wide XACML
+    policies. </span></li>
+
+    <li>
+    <h2 id="docs">Docs</h2>
+    <span class="plaintext"> <strong>docs/license</strong> - Contains
+    license documentation for Fedora and third-party licenses and attributions.
+    <br />
+    <strong>docs/javadocs</strong> - Javadoc API documentation for Fedora. <br />
+    <strong>docs/userdocs</strong> - End-user documentation and tutorials. </span></li>
     <ol>
-    
-    <div id="footer">
-      <p id="copyright">
-        Copyright &copy; 2002-2007 Fedora Project
-      </p>
-      <script type="text/javascript">
+
+        <div id="footer">
+        <p id="copyright">Copyright &copy; 2002-2007 Fedora Project</p>
+        <script type="text/javascript">
         var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
         var parts = cvsDate.split(" ");
         var modifiedDate = parts[1];
@@ -116,8 +107,6 @@
         var footer = document.getElementById("footer");
         footer.appendChild(p);
         p.innerHTML = "Last Modified "+modifiedDate;
-      </script>
-    </div>
-    
-  </body>
+      </script></div>
+</body>
 </html>
