@@ -32,7 +32,7 @@
             <a href="#config">Configuration</a>
             <ol class="alpha">
               <li><a href="#config.module">Module Configuration</a></li>
-              <li><a href="#config.datastore.kowari">Kowari Datastore Configuration</a></li>
+              <li><a href="#config.datastore.mulgara">Mulgara Datastore Configuration</a></li>
               <li><a href="#config.datastore.mptstore">MPTStore Datastore Configuration</a></li>
             </ol>
           </li>
@@ -72,12 +72,12 @@
         </span>
         <ul>
           <li>
-            In addition to Kowari, the RI can now be backed by
+            In addition to Mulgara, the RI can now be backed by
             <a href="http://mptstore.sourceforge.net/">MPTStore</a>. MPTStore is a fast, highly
             scalable RDBMS-based triplestore, useful for applications that need fast, synchronous
             writes and the ability to work with the triplestore using familiar RDBMS utilities.
             Note, however, that MPTStore does not yet support a rich, native RDF query language
-            like SPARQL or Kowari's iTQL. See the <a href="#config.datastore.mptstore"> MPTStore
+            like SPARQL or Mulgara's iTQL. See the <a href="#config.datastore.mptstore"> MPTStore
             Datastore Configuration</a> section for more information on configuring MPTStore for
             use with the Resource Index.
           </li>
@@ -104,7 +104,7 @@
         </span>
       </li>
       <li>
-        <h2 id="impl"></h2>Implementation</h2>
+        <h2 id="impl">Implementation</h2>
         <span class="plaintext">
         The Fedora object model can be abstractly viewed as a directed graph, consisting of
         <em>internal</em> arcs that relate digital object nodes to their dissemination nodes and
@@ -173,17 +173,19 @@
         <ol class="alpha">
           <li>
             <h3 id="config.module">Module Configuration</h3>
+            <span class="plaintext">
             The Resource Index module is configured with <code>fedora.fcfg</code>
             <br />
             Here's an example of a Resource Index module configuration that uses
-            Kowari with delayed updates:
+            Mulgara with delayed updates:
+            </span>
             <code class="block">
             
 <pre>
 &lt;module role="fedora.server.resourceIndex.ResourceIndex" 
         class="fedora.server.resourceIndex.ResourceIndexModule"&gt;
   &lt;param name="level" value="2"/&gt;
-  &lt;param name="datastore" value="localKowariTriplestore"/&gt;
+  &lt;param name="datastore" value="localMulgaraTriplestore"/&gt;
   &lt;param name="syncUpdates" value="false"/&gt;
 &lt;/module&gt;</pre>            
             
@@ -212,15 +214,6 @@
                     1 - On: the Resource Index will index system properties, inter &amp;
                     intra-object relationships, and user-defined relationships.
                   </li>
-                  <li>
-                    2 - Same as 1, but adds indexing of parameterized methods, where
-                    the parameters have a finite domain (e.g., the method 
-                    <code>getImage</code> with parameter <code>size</code>, 
-                    whose domain is {small, large}). Because calculating method parameters
-                    may result in a combinatorial explosion of statements in the Resource Index 
-                    (depending on the design of a particular repository's Behavior Definition
-                    Objects), this level of indexing must be explicitly set.
-                  </li>
                 </ul>
               </li>
               <li>
@@ -233,17 +226,17 @@
                 returning from object modification operations. This defaults to false.
                 Specifying this as true will ensure that RI queries immediately reflect the
                 latest triples. Specifying false will not provide this guarantee, but can
-                reduce roundtrip time for API-M operations (especially when using Kowari).
+                reduce roundtrip time for API-M operations (especially when using Mulgara).
               </li>
             </ul>
           </li>
           <li>
-            <h3 id="config.datastore.kowari">Kowari Datastore Configuration</h3>
+            <h3 id="config.datastore.mulgara">Mulgara Datastore Configuration</h3>
             The example datastore configuration below (with the path parameter modified 
-            for the installation environment) would provide a local Kowari triplestore that 
+            for the installation environment) would provide a local Mulgara triplestore that 
             buffers up to 20,000 triples in memory at a time or waits for 5 seconds of 
             buffer inactivity before flushing them to disk. Because writing triples to disk 
-            is a relatively expensive operation, the buffer takes advantage of Kowari's 
+            is a relatively expensive operation, the buffer takes advantage of Mulgara's 
             bulk update handler to ingest a mass of triples at a time. The performance gain 
             is significant during a bulk ingest of objects. The size or inactivity interval 
             of the buffer may be adjusted according to performance needs and physical 
@@ -252,8 +245,8 @@
             <code class="block">
             
 <pre>
-&lt;datastore id="localKowariTriplestore"&gt;
-  &lt;param name="connectorClassName" value="org.trippi.impl.kowari.KowariConnector"/&gt;
+&lt;datastore id="localMulgaraTriplestore"&gt;
+  &lt;param name="connectorClassName" value="org.trippi.impl.mulgara.MulgaraConnector"/&gt;
   &lt;param name="remote" value="false"/&gt;
   &lt;param name="path" value="/opt/fedora/store/resourceIndex"/&gt;
   &lt;param name="serverName" value="fedora"/&gt;
@@ -279,24 +272,24 @@
             <ul>
               <li>
                 <strong>connectorClassName</strong> - The name of the Trippi Connector class used
-                to communicate with the triplestore. When using Kowari, the value should be
+                to communicate with the triplestore. When using Mulgara, the value should be
                 as follows:
                 <ul>
-                  <li>org.trippi.impl.kowari.KowariConnector</li>
+                  <li>org.trippi.impl.mulgara.MulgaraConnector</li>
                 </ul>
               </li>
               <li>
-                <strong>remote</strong> - Tells the connector to communicate with Kowari in
+                <strong>remote</strong> - Tells the connector to communicate with Mulgara in
                 remote or local mode.
                 <ul>
                   <li>
                     true - If remote is true, the host parameter must be specified.
                     <ul>
                       <li>
-                        host - The hostname where Kowari is running.
+                        host - The hostname where Mulgara is running.
                       </li>
                       <li>
-                        port - The rmi port Kowari is running on (default is 1099).
+                        port - The rmi port Mulgara is running on (default is 1099).
                       </li>
                     </ul>
                   </li>
@@ -493,10 +486,9 @@
         providing a stateless query interface that accepts queries by value or by 
         reference [<a href="#ref.rels" class="reference">Fedora Relationships</a>].
         <br />
-        The query interface to the Resource Index currently supports three RDF query 
-        languages, RDQL (Kowari-only), iTQL (Kowari-only), and SPO (Kowari and MPTStore).
-        NOTE: As of Fedora 2.1, RDQL support is now deprecated and may be entirely absent
-        in future releases. Support for SPARQL is planned for a future release.
+        The query interface to the Resource Index currently supports two RDF query 
+        languages, iTQL (Mulgara-only), and SPO (Mulgara and MPTStore).
+        Support for SPARQL is planned for a future release.
         <br />
         Please consult the <a href="../webservices/risearch/index.html">Resource 
         Index Search documentation</a> for more information.
@@ -519,7 +511,7 @@
           </dd>
           <dt id="ref.fullText">[Full-Text]</dt>
           <dd>
-            <a href="http://www.kowari.org/257.htm">Kowari Full-Text Models</a>
+            <a href="http://www.mulgara.org/257.htm">Mulgara Full-Text Models</a>
           </dd>
           <dt id="ref.rels-ext">[RELS-EXT]</dt>
           <dd>
@@ -537,7 +529,7 @@
           Fedora Guide To Triples (and estimator for size of Resource Index)
         </h2>
         To understand what triples are indexed in the Fedora Resource Index, and 
-        to estimate the size of your Kowari triplestore consult document named
+        to estimate the size of your Mulgara triplestore consult document named
         <a href="triples.html">Triples in the Resource Index</a>.
       </li>
       
