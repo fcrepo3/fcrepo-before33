@@ -136,20 +136,28 @@
             <span class="plaintext">
               The analyzer accepts a Java properties file for configuration.
               <br/>
- 
-NOTE: In properties files, the "\" character must be escaped.  When using Windows, this means paths like "c:\work\abc" must be written as "c:\\work\\abc".
- 
-Create a file (e.g. migration.properties) with the following content, filling in values appropriate to your environment:
+              <div class="notice"> 
+                <strong>NOTE:</strong> <em>In properties files, the "\" 
+                character must be escaped.  When using Windows, this means
+                paths like <code>c:\work\abc</code> must be written as 
+                <code>c:\\work\\abc</code>.
+              </div>
+              Create a file (e.g. <code>migration.properties</code>) with the
+              following content, filling in values appropriate to your
+              environment:
+              <br/>
+              <code class="block">
+<pre>
  
 # This is the directory where the analyzer's output files should be sent.
- # If it doesn't already exist, it will be automatically created.
- # If it already exists, it must be empty (to avoid accidental overwrites)
- # To disable the above restriction, uncomment clearOutputDir=true below.
- outputDir=c:\\fedora-migration
- #clearOutputDir=true
+# If it doesn't already exist, it will be automatically created.
+# If it already exists, it must be empty (to avoid accidental overwrites)
+# To disable the above restriction, uncomment clearOutputDir=true below.
+outputDir=c:\\fedora-migration
+#clearOutputDir=true
  
 # The Fedora 3.0 home directory.
- fedoraHome=c:\\fedora-3.0
+fedoraHome=c:\\fedora-3.0
  
 # The full path to the JDBC driver Fedora is configured to use.
 # NOTE: The analyzer only uses the database to aid in looking up
@@ -158,30 +166,31 @@ Create a file (e.g. migration.properties) with the following content, filling in
 jdbcJar=c:\\fedora-3.0\\tomcat\\webapps\\fedora\\WEB-INF\\lib\\postgresql-8.2-506.jdbc3.jar
  
 # Aspects of the original objects to ignore for the purpose of
- # classification.  This is optional.  If unspecified, the generated
- # content models will be the MOST SPECIFIC POSSIBLE.  If 
+# classification.  This is optional.  If unspecified, the generated
+# content models will be the MOST SPECIFIC POSSIBLE.  If 
 # specified, this property must consist of a space-delimited 
 # list of any of the following:
- # OrigContentModel
- #   If specified, objects that have differing values in the original
- #   contentModel property may be assigned to the same content
- #   model if they are otherwise similar.
- # DatastreamIDs
- #   If specified, only datastreams bound to disseminators will
- #   be considered important for classification.  Objects that have
- #   differing sets of UNUSED datastream IDs may be assigned to
- #   the same content model if they are otherwise similar.
- # MIMETypes
- #   If specified, the MIMETYPE of each candidate datastream
- #   will be ignored for the purpose of classification.  Objects that
- #   have differing MIME types for the same datastream may be
- #   assigned to the same content model if they are otherwise
- #   similar.
- # FormatURIs
- #   This works exactly the same as MIMETypes, but applies to
- #   the FORMAT_URI of candidate datastreams.
- #ignoreAspects=OrigContentModel DatastreamIDs MIMETypes FormatURIs
- 
+# OrigContentModel
+#  If specified, objects that have differing values in the original
+#  contentModel property may be assigned to the same content
+#  model if they are otherwise similar.
+# DatastreamIDs
+#  If specified, only datastreams bound to disseminators will
+#  be considered important for classification.  Objects that have
+#  differing sets of UNUSED datastream IDs may be assigned to
+#  the same content model if they are otherwise similar.
+# MIMETypes
+#  If specified, the MIMETYPE of each candidate datastream
+#  will be ignored for the purpose of classification.  Objects that
+#  have differing MIME types for the same datastream may be
+#  assigned to the same content model if they are otherwise
+#  similar.
+# FormatURIs
+#  This works exactly the same as MIMETypes, but applies to
+#  the FORMAT_URI of candidate datastreams.
+#ignoreAspects=OrigContentModel DatastreamIDs MIMETypes FormatURIs
+</pre>
+              </code> 
   </span>
  
 </li>
