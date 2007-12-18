@@ -132,4 +132,17 @@
 			<foxml:contentLocation REF="http://localhost:8080/saxon/" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
+	<foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT"> 
+		<foxml:datastreamVersion ID="RELS-EXT1.0" MIMETYPE="text/xml" LABEL="Relationships to other objects">
+  			<foxml:xmlContent>
+    			<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
+      				<rdf:Description rdf:about="info:fedora/demo:ex3bMech">
+ 	       				<fedora-model:hasBDef rdf:resource="info:fedora/demo:ex3bDef"/>
+   	         			<fedora-model:isContractor rdf:resource="info:fedora/demo:ex3cModel"/>
+      				</rdf:Description>
+    			</rdf:RDF>
+  			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+  	</foxml:datastream>	
+	
 </foxml:digitalObject>
