@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject VERSION="1.1" PID="demo:ex3cModel" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd">
+	<foxml:objectProperties>
+		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraCModelObject"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="CModel Definition for Document Transform"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
+	</foxml:objectProperties>
+	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="DC Record for CModel">
+			<foxml:xmlContent>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+					<dc:title>CModel Definition for Document Transform</dc:title>
+					<dc:identifier>demo:ex3cModel</dc:identifier>
+				</oai_dc:dc>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream ID="DS-COMPOSITE-MODEL" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="DS-COMPOSITE-MODEL1.0" MIMETYPE="text/xml" LABEL="Definition of Image Content Model">
+			<foxml:xmlContent>
+				<dsCompositeModel>  
+					<dsTypeModel ID="SOURCE" ORDERED="false" >
+              				<form MIME="text/xml" />
+    				</dsTypeModel>
+					<dsTypeModel ID="XSL" ORDERED="false" >
+              				<form MIME="text/xml" />
+    				</dsTypeModel>
+				</dsCompositeModel>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+  	<foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT"> 
+    		<foxml:datastreamVersion ID="RELS-EXT1.0" MIMETYPE="text/xml" LABEL="Relationships to other objects">
+      		<foxml:xmlContent>
+        			<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
+          				<rdf:Description rdf:about="info:fedora/demo:ex3cModel">
+            				<fedora-model:hasBDef rdf:resource="info:fedora/demo:ex3bDef"/>
+          				</rdf:Description>
+        			</rdf:RDF>
+      		</foxml:xmlContent>
+    		</foxml:datastreamVersion>
+  	</foxml:datastream>
+</foxml:digitalObject>

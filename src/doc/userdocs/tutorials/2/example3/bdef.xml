@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<foxml:digitalObject PID="demo:ex3bDef" xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#" xmlns:fbs="http://fedora.comm.nsdlib.org/bindspec" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+<foxml:digitalObject VERSION="1.1" PID="demo:ex3bDef" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd">
 	<foxml:objectProperties>
 		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraBDefObject"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="The getContent Behavior Definition"/>
-		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BDEF"/>
 	</foxml:objectProperties>
 	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
 		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="Dublin Core Metadata">
@@ -30,12 +29,4 @@
 			<foxml:contentLocation REF=" http://myserver.edu/mydir/somefile.html" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="fedora-system:1" STATE="A">
-		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="fedora-system:2" LABEL="Bootstrap Behaviors">
-			<foxml:serviceInputMap>
-				<foxml:datastreamBinding DATASTREAM_ID="METHODMAP" KEY="BDEF-METHODMAP" LABEL="Abstract behavior definition in Fedora Method Map format"/>
-				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="BDEF-GUIDE" LABEL="The Official Guide to the getContent Behavior Definition"/>
-			</foxml:serviceInputMap>
-		</foxml:disseminatorVersion>
-	</foxml:disseminator>
 </foxml:digitalObject>
