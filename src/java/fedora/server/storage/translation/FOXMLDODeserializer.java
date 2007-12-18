@@ -297,7 +297,7 @@ public class FOXMLDODeserializer
 				} else if (m_objPropertyName.equals(VIEW.LAST_MODIFIED_DATE.uri)){
 					m_obj.setLastModDate(DateUtility.convertStringToDate(grab(a, FOXML.uri, "VALUE")));
 				} else if (m_objPropertyName.equals(RDF.TYPE.uri)) {
-                    String m_fType = grab(a, FOXML.uri, "VALUE");
+                    m_fType = grab(a, FOXML.uri, "VALUE");
                     if (m_fType == null || m_fType.equals("")) {
                         m_fType = MODEL.DATA_OBJECT.localName;
                     }
