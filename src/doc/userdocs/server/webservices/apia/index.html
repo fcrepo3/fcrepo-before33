@@ -35,11 +35,12 @@
 </ol>
 </div>
 
-<div id="content">
-<ol>
+
+<ol id="content">
     <li>
     <h2 id="intro">Introduction</h2>
-    <p>The Fedora Access service defines an open interface for accessing
+    <span class="plaintext">
+    The Fedora Access service defines an open interface for accessing
     digital objects. The access operations include methods to do reflection on a
     digital object (i.e., to discover the kinds of disseminations that are
     available on the object), and to request disseminations. The major function
@@ -51,7 +52,8 @@
     to the repository system, or it may be an external web service that the
     repository must call upon. The underlying repostitory system facilitates all
     external service bindings on behalf of the client, simply returning a
-    dissemination result via the Access service layer.</p>
+    dissemination result via the Access service layer.
+    </span>
     </li>
 
     <li>
@@ -59,17 +61,25 @@
     <ol class="alpha">
         <li>
         <h3 id="methods.describeRepository">describeRepository</h3>
-        <p>Gets information that describes the repository.</p>
-        <p>Returns: A data structure that contains key metadata describing
+        <span class="plaintext">
+        Gets information that describes the repository.
+        <br />
+        <br />
+        Returns: A data structure that contains key metadata describing
         the Fedora repository server including repository name, version, base
-        URL, pid namespace, and sample request URLs.</p>
+        URL, pid namespace, and sample request URLs.
+        </span>
         </li>
 
         <li>
         <h3 id="methods.findObjects">findObjects</h3>
-        <p>Lists the specified fields of each object matching the given
-        criteria.</p>
-        <p>Parameters:</p>
+        <span class="plaintext">
+        Lists the specified fields of each object matching the given
+        criteria.
+        <br />
+        <br />
+        Parameters:
+        </span>
         <ul>
             <li><code>resultFields</code>: The names of the fields to
             return.</li>
@@ -77,14 +87,19 @@
             return at a time.</li>
             <li><code>query</code>: The terms or conditions for the search.</li>
         </ul>
-        <p>Returns: the specified fields of each object matching the given
-        criteria.</p>
+        <span class="plaintext">
+        Returns: the specified fields of each object matching the given
+        criteria.
         </li>
 
         <li>
         <h3 id="methods.getDatastreamDissemination">getDatastreamDissemination</h3>
-        <p>Gets the content of a datastream.</p>
-        <p>Parameters:</p>
+        <span class="plaintext">
+        Gets the content of a datastream.
+        <br />
+        <br />
+        Parameters:
+        </span>
         <ul>
             <li><code>pid</code>: The PID of the object.</li>
             <li><code>dsID</code>: The datastream ID.</li>
@@ -92,15 +107,21 @@
             version of the datastream to retrieve. If null, Fedora will use the
             most recent version.</li>
         </ul>
-        <p>Returns: the datastream as a mime-typed stream.</p>
+        <span class="plaintext">
+        Returns: the datastream as a mime-typed stream.
+        </span>
         </li>
 
         <li>
         <h3 id="methods.getDissemination">getDissemination</h3>
-        <p>Disseminates the content produced by executing the specified
+        <span class="plaintext">
+        Disseminates the content produced by executing the specified
         method of the associated Behavior Mechanism object of the specified
-        digital object.</p>
-        <p>Parameters:</p>
+        digital object.
+        <br />
+        <br />
+        Parameters:
+        </span>
         <ul>
             <li><code>pid</code>: The pid of the object.</li>
             <li><code>bDefPid</code>: The PID of the Behavior Definition
@@ -111,84 +132,115 @@
             <li><code>asOfDateTime</code>: The versioning dateTime. If
             null, Fedora will use the most recent version.</li>
         </ul>
-        <p>Returns: A MIME-typed stream containing the result of the
-        dissemination.</p>
+        <span class="plaintext">
+        Returns: A MIME-typed stream containing the result of the
+        dissemination.
+        </span>
         </li>
 
         <li>
         <h3 id="methods.getObjectHistory">getObjectHistory</h3>
-        <p>Gets a list of timestamps that correspond to modification dates
+        <span class="plaintext">
+        Gets a list of timestamps that correspond to modification dates
         of components. This currently includes changes to datastreams and
-        disseminators.</p>
-        <p>Parameters:</p>
+        disseminators.
+        <br />
+        <br />
+        Parameters:
+        </span>
         <ul>
             <li><code>pid</code>: The pid of the object.</li>
         </ul>
-        <p>Returns: An array containing the list of timestamps indicating
-        when changes were made to the object.</p>
+        <span class="plaintext">
+        Returns: An array containing the list of timestamps indicating
+        when changes were made to the object.
+        </span>
         </li>
 
         <li>
         <h3 id="methods.getObjectProfile">getObjectProfile</h3>
-        <p>Gets the ObjectProfile of an object, which includes key metadata
+        <span class="plaintext">
+        Gets the ObjectProfile of an object, which includes key metadata
         fields and URLs for the object Dissemination Index and the object Item
-        Index. Can be thought of as a default view of the object.</p>
+        Index. Can be thought of as a default view of the object.
+        </span>
         <ul>
             <li><code>pid</code>: The pid of the object.</li>
             <li><code>asOfDateTime</code>: the date/time stamp specifying
             the desired view of the object. If null, the current view of the
             object (the most recent time) is assumed.</li>
         </ul>
-        <p>Returns: the ObjectProfile of the object.</p>
+        <span class="plaintext">
+        Returns: the ObjectProfile of the object.
+        </span>
         </li>
 
         <li>
         <h3 id="methods.listDatastreams">listDatastreams</h3>
-        <p>Lists the datastreams of an object.</p>
-        <p>Parameters:</p>
+        <span class="plaintext">
+        Lists the datastreams of an object.
+        <br />
+        <br />
+        Parameters:
+        </span>
         <ul>
             <li><code>pid</code>: The pid of the object.</li>
             <li><code>asOfDateTime</code>: the date/time stamp specifying
             the desired view of the object. If null, the current view of the
             object (the most recent time) is assumed.</li>
         </ul>
-        <p>Returns: A sequence of <code>DatastreamDef</code>s.</p>
+        <span class="plaintext">
+        Returns: A sequence of <code>DatastreamDef</code>s.
+        </span>
         </li>
 
         <li>
         <h3 id="methods.listMethods">listMethods</h3>
-        <p>Lists all the methods that the object supports.</p>
-        <p>Parameters:</p>
+        <span class="plaintext">
+        Lists all the methods that the object supports.
+        <br />
+        <br />
+        Parameters:
+        </span>
         <ul>
             <li><code>pid</code>: The pid of the object.</li>
             <li><code>asOfDateTime</code>: the date/time stamp specifying
             the desired view of the object. If null, the current view of the
             object (the most recent time) is assumed.</li>
         </ul>
-        <p>Returns: A sequence of <code>ObjectMethodsDef</code>s.</p>
+        <span class="plaintext">
+        Returns: A sequence of <code>ObjectMethodsDef</code>s.
+        </span>
         </li>
 
         <li>
         <h3 id="methods.resumeFindObjects">resumeFindObjects</h3>
-        <p>Gets the next list of results from a truncated <code><a
-            href="#methods.findObjects">findObjects</a></code> response.</p>
-        <p>Parameters:</p>
+        <span class="plaintext">
+        Gets the next list of results from a truncated <code><a
+            href="#methods.findObjects">findObjects</a></code> response.
+        <br />
+        <br />
+        Parameters:
+        </span>
         <ul>
             <li><code>sessionToken</code>: The token of the session in
             which the remaining results can be obtained.</li>
         </ul>
-        <p>Returns: the remaining specified fields of each object matching
-        the given criteria.</p>
+        <span class="plaintext">
+        Returns: the remaining specified fields of each object matching
+        the given criteria.
+        </span>
         </li>
     </ol>
     </li>
     
     <li><h2 id="wsdl">WSDL</h2>
-        
+    <span class="plaintext">
+    The WSDL file can be found <a href="Fedora-API-A.xml">here</a>.
+      </span>  
     </li>
 </ol>
 
-</div>
 
 <div id="footer">
 <p id="copyright">Copyright &copy; 2002-2007 Fedora Project</p>
