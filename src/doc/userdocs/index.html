@@ -72,38 +72,31 @@
             <h3 id="new" class="newstar">New Features in Release 3.0</h3>
             <ul>
               <li>
-                <a href="distribution/installation.html">Web Application</a> 
-                - Fedora repackaged and re-factored as a standard Web Application 
-                aRchive (.war)
+                Content Model Architecture - Provides a model-driven approach for persisting and delivering the essential characteristics of digital content in Fedora
               </li>
               <li>
-                <a href="distribution/installation.html">Fedora Installer</a> 
-                - an easy way to get a &ldquo;quick&rdquo; or &ldquo;custom&rdquo; installation/setup of 
-                Fedora
+                API-M LITE - An experimental interface for the creating, modifying, and managing digital objects using a Web interface in a REST style
               </li>
               <li>
-                <a href="server/security/securingrepo.html">Security 
-                Architecture - Servlet Filters for Authentication</a> - easy to 
-                use and portable among application containers
+                Mulgara Support - Fedora now supports the Mulgara Semantic Triplestore replacing Kowari
               </li>
               <li>
-                <a href="http://www.fedora.info/download/2.2/services/genericsearch/doc/index.html">Search
-                Service Integration</a> - configure with repository to 
-                provide index/search for any type of datastream or dissemination 
-                of objects
+                Migration Utility - Provides an update utility to convert existing collections for Content Model Architecture compatibility
               </li>
               <li>
-                <a href="server/features/checksumming.html">Datastream 
-                Integrity Features</a> - checksum creation and comparisons
+                Relational Index Simplification - The Fedora schema was simplified making changes easier with having to reload the database
               </li>
               <li>
-                <a href="server/journal/index.html">Journaling</a> - 
-                create a backup or mirror repository
+                Dynamic Behaviors - Object may added or removed dynamically from the system moving system checks into runtime errors
               </li>
               <li>
-                <a href="server/resourceIndex/index.html">Resource Index</a> 
-                - performance upgrade and new triplestore plug-in option
-                (<a href="http://mptstore.sourceforge.net/">MPTStore</a>)
+                Error Reporting - Provides improved runtime error details
+              </li>
+              <li>
+                Owner as a CSV String - Enables using a CSV string as ownerID and in XACML policies
+              </li>
+              <li>
+                Java 6 Compatibility - Fedora may be optionally compiled using Java 6
               </li>
               <li>
                 Many new enhancements! (see:
@@ -111,6 +104,32 @@
               </li>
             </ul>
           </li>
+          <li class="square">
+            <h3 id="new" class="newstar">New Features Planned for Release 3.0</h3>
+            <ul>
+              <li>
+                Simple JMS Messaging - Integrates JMS messaging for sending notification of important events
+              </li>
+              <li>
+                Administrative Client - Revised to support Content Model Architecture enhancements
+              </li>
+              <li>
+                Message Update for GSearch - Provides a reference implementation for using JMS notifications to update search engines
+              </li>
+              <li>
+                On-line Validation Testing - Hooks into the runtime error system to provide more meaningful error reports include conformance to content models and referential integrity checks
+              </li>
+              <li>
+                Off-line Validation Testing - Provides system operators a way to validate the integrity of part or all of their repository
+              </li>
+              <li>
+                Updated OAI Provider - Revises the OAI Provider to take advantage of the Content Model Architecture
+              </li>
+              <li>
+                Updated Utilities - Revises all the Fedora-provided utilities for integrate properly with the Content Model Architecture
+              </li>
+            </ul>
+          </li>        
           <li class="square">
             <h3 id="standard">Standard Repository Features</h3>
             <ul>
@@ -155,12 +174,12 @@
                 [<a href="server/webservices/apialite/index.html">User Guide</a>]
               </li>
               <li>
-                <strong>API-A-M</strong>: Fedora Management Service (SOAP) 
+                <strong>APIA-M</strong>: Fedora Management Service (SOAP) 
                 [<a href="http://www.fedora.info/definitions/1/0/api/#apim">WSDL</a>]
                 [<a href="server/webservices/apim/index.html">User Guide</a>]
               </li>
               <li>
-                <strong>API-A-M-LITE</strong>: Fedora Management Service (REST) 
+                <strong>APIA-M-LITE</strong>: Fedora Management Service (REST) 
                 [<a href="http://www.fedora.info/definitions/1/0/api/#apim">WSDL</a>] 
                 [<a href="server/webservices/apimlite/index.html">User Guide</a>]
                 <em>(a work in progress)</em>
