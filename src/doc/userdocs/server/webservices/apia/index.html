@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+<title>Fedora API-A Documentation</title>
+<link rel="stylesheet" type="text/css" href="../../../docstyle.css" />
+</head>
+
+<body>
+<div id="header">
+<h1>Fedora API-A Documentation</h1>
+<h2>Fedora Release 3.0b1</h2>
+</div>
+
+<div id="toc">
+<h2>Table of Contents</h2>
+<ol>
+    <li><a href="#intro">Introduction</a></li>
+    <li><a href="#methods">Methods</a>
+    <ol class="alpha">
+        <li><a href="#methods.describeRepository">describeRepository</a></li>
+        <li><a href="#methods.findObjects">findObjects</a></li>
+        <li><a href="#methods.getDatastreamDissemination">getDatastreamDissemination</a></li>
+        <li><a href="#methods.getDissemination">getDissemination</a></li>
+        <li><a href="#methods.getObjectHistory">getObjectHistory</a></li>
+        <li><a href="#methods.getObjectProfile">getObjectProfile</a></li>
+        <li><a href="#methods.listDatastreams">listDatastreams</a></li>
+        <li><a href="#methods.listMethods">listMethods</a></li>
+        <li><a href="#methods.resumeFindObjects">resumeFindObjects</a></li>
+    </ol>
+    </li>
+    <li><a href="#wsdl">WSDL</a></li>
+</ol>
+</div>
+
+<div id="content">
+<ol>
+    <li>
+    <h2 id="intro">Introduction</h2>
+    <p>The Fedora Access service defines an open interface for accessing
+    digital objects. The access operations include methods to do reflection on a
+    digital object (i.e., to discover the kinds of disseminations that are
+    available on the object), and to request disseminations. The major function
+    of the Fedora Access service is to fulfill a client's request for
+    dissemination. To support disseminations, the underlying repository system
+    must evaluate the behavior associations specified in a digital object, and
+    figure out how to dispatch a service request to a supporting service with
+    which the digital object associates. The supporting service may be internal
+    to the repository system, or it may be an external web service that the
+    repository must call upon. The underlying repostitory system facilitates all
+    external service bindings on behalf of the client, simply returning a
+    dissemination result via the Access service layer.</p>
+    </li>
+
+    <li>
+    <h2 id="methods">Methods</h2>
+    <ol class="alpha">
+        <li>
+        <h3 id="methods.describeRepository">describeRepository</h3>
+        <p>Gets information that describes the repository.</p>
+        <p>Returns: A data structure that contains key metadata describing
+        the Fedora repository server including repository name, version, base
+        URL, pid namespace, and sample request URLs.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.findObjects">findObjects</h3>
+        <p>Lists the specified fields of each object matching the given
+        criteria.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>resultFields</code>: The names of the fields to
+            return.</li>
+            <li><code>maxResults</code>: The maximum number of results to
+            return at a time.</li>
+            <li><code>query</code>: The terms or conditions for the search.</li>
+        </ul>
+        <p>Returns: the specified fields of each object matching the given
+        criteria.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.getDatastreamDissemination">getDatastreamDissemination</h3>
+        <p>Gets the content of a datastream.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The PID of the object.</li>
+            <li><code>dsID</code>: The datastream ID.</li>
+            <li><code>asOfDateTime</code>: A dateTime indicating the
+            version of the datastream to retrieve. If null, Fedora will use the
+            most recent version.</li>
+        </ul>
+        <p>Returns: the datastream as a mime-typed stream.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.getDissemination">getDissemination</h3>
+        <p>Disseminates the content produced by executing the specified
+        method of the associated Behavior Mechanism object of the specified
+        digital object.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The pid of the object.</li>
+            <li><code>bDefPid</code>: The PID of the Behavior Definition
+            object.</li>
+            <li><code>methodName</code>: The name of the method to be
+            executed.</li>
+            <li><code>parameters</code>: An array of name-value pairs.</li>
+            <li><code>asOfDateTime</code>: The versioning dateTime. If
+            null, Fedora will use the most recent version.</li>
+        </ul>
+        <p>Returns: A MIME-typed stream containing the result of the
+        dissemination.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.getObjectHistory">getObjectHistory</h3>
+        <p>Gets a list of timestamps that correspond to modification dates
+        of components. This currently includes changes to datastreams and
+        disseminators.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The pid of the object.</li>
+        </ul>
+        <p>Returns: An array containing the list of timestamps indicating
+        when changes were made to the object.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.getObjectProfile">getObjectProfile</h3>
+        <p>Gets the ObjectProfile of an object, which includes key metadata
+        fields and URLs for the object Dissemination Index and the object Item
+        Index. Can be thought of as a default view of the object.</p>
+        <ul>
+            <li><code>pid</code>: The pid of the object.</li>
+            <li><code>asOfDateTime</code>: the date/time stamp specifying
+            the desired view of the object. If null, the current view of the
+            object (the most recent time) is assumed.</li>
+        </ul>
+        <p>Returns: the ObjectProfile of the object.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.listDatastreams">listDatastreams</h3>
+        <p>Lists the datastreams of an object.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The pid of the object.</li>
+            <li><code>asOfDateTime</code>: the date/time stamp specifying
+            the desired view of the object. If null, the current view of the
+            object (the most recent time) is assumed.</li>
+        </ul>
+        <p>Returns: A sequence of <code>DatastreamDef</code>s.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.listMethods">listMethods</h3>
+        <p>Lists all the methods that the object supports.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The pid of the object.</li>
+            <li><code>asOfDateTime</code>: the date/time stamp specifying
+            the desired view of the object. If null, the current view of the
+            object (the most recent time) is assumed.</li>
+        </ul>
+        <p>Returns: A sequence of <code>ObjectMethodsDef</code>s.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.resumeFindObjects">resumeFindObjects</h3>
+        <p>Gets the next list of results from a truncated <code><a
+            href="#methods.findObjects">findObjects</a></code> response.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>sessionToken</code>: The token of the session in
+            which the remaining results can be obtained.</li>
+        </ul>
+        <p>Returns: the remaining specified fields of each object matching
+        the given criteria.</p>
+        </li>
+    </ol>
+    </li>
+    
+    <li><h2 id="wsdl">WSDL</h2>
+        
+    </li>
+</ol>
+
+</div>
+
+<div id="footer">
+<p id="copyright">Copyright &copy; 2002-2007 Fedora Project</p>
+<script type="text/javascript">
+        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
+        var parts = cvsDate.split(" ");
+        var modifiedDate = parts[1];
+        var p = document.createElement("p");
+        p.setAttribute("id", "lastModified");
+        var footer = document.getElementById("footer");
+        footer.appendChild(p);
+        p.innerHTML = "Last Modified "+modifiedDate;
+      </script></div>
+
+</body>
+</html>
