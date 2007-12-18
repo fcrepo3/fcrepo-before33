@@ -19,268 +19,435 @@
 <ol>
     <li><a href="#intro">Introduction</a></li>
     <li><a href="#methods">Methods</a>
-        <ol class="alpha">
-            <li><a href="#methods.addDatastream">addDatastream</a></li>
-            <li><a href="#methods.addRelationship">addRelationship</a></li>
-            <li><a href="#methods.compareDatastreamChecksum">compareDatastreamChecksum</a></li>
-            <li><a href="#methods.describeUser">describeUser</a></li>
-            <li><a href="#methods.export">export</a></li>
-            <li><a href="#methods.exportObject">exportObject</a></li>
-            <li><a href="#methods.getDatastream">getDatastream</a></li>
-            <li><a href="#methods.getDatastreamHistory">getDatastreamHistory</a></li>
-            <li><a href="#methods.getDatastreams">getDatastreams</a></li>
-            <li><a href="#methods.getNextPID">getNextPID</a></li>
-            <li><a href="#methods.getObjectXML">getObjectXML</a></li>
-            <li><a href="#methods.getRelationships">getRelationships</a></li>
-            <li><a href="#methods.ingest">ingest</a></li>
-            <li><a href="#methods.ingestObject">ingestObject</a></li>
-            <li><a href="#methods.modifyDatastreamByReference">modifyDatastreamByReference</a></li>
-            <li><a href="#methods.modifyDatastreamByValue">modifyDatastreamByValue</a></li>
-            <li><a href="#methods.modifyObject">modifyObject</a></li>
-            <li><a href="#methods.purgeDatastream">purgeDatastream</a></li>
-            <li><a href="#methods.purgeObject">purgeObject</a></li>
-            <li><a href="#methods.purgeRelationship">purgeRelationship</a></li>
-            <li><a href="#methods.setDatastreamState">setDatastreamState</a></li>
-            <li><a href="#methods.setDatastreamVersionable">setDatastreamVersionable</a></li>
-        </ol>
+    <ol class="alpha">
+        <li><a href="#methods.addDatastream">addDatastream</a></li>
+        <li><a href="#methods.addRelationship">addRelationship</a></li>
+        <li><a href="#methods.compareDatastreamChecksum">compareDatastreamChecksum</a></li>
+        <li><a href="#methods.describeUser">describeUser</a></li>
+        <li><a href="#methods.export">export</a></li>
+        <li><a href="#methods.exportObject">exportObject</a></li>
+        <li><a href="#methods.getDatastream">getDatastream</a></li>
+        <li><a href="#methods.getDatastreamHistory">getDatastreamHistory</a></li>
+        <li><a href="#methods.getDatastreams">getDatastreams</a></li>
+        <li><a href="#methods.getNextPID">getNextPID</a></li>
+        <li><a href="#methods.getObjectXML">getObjectXML</a></li>
+        <li><a href="#methods.getRelationships">getRelationships</a></li>
+        <li><a href="#methods.ingest">ingest</a></li>
+        <li><a href="#methods.ingestObject">ingestObject</a></li>
+        <li><a href="#methods.modifyDatastreamByReference">modifyDatastreamByReference</a></li>
+        <li><a href="#methods.modifyDatastreamByValue">modifyDatastreamByValue</a></li>
+        <li><a href="#methods.modifyObject">modifyObject</a></li>
+        <li><a href="#methods.purgeDatastream">purgeDatastream</a></li>
+        <li><a href="#methods.purgeObject">purgeObject</a></li>
+        <li><a href="#methods.purgeRelationship">purgeRelationship</a></li>
+        <li><a href="#methods.setDatastreamState">setDatastreamState</a></li>
+        <li><a href="#methods.setDatastreamVersionable">setDatastreamVersionable</a></li>
+    </ol>
     </li>
+    <li><a href="#wsdl">WSDL</a></li>
 </ol>
 </div>
 
 <div id="content">
 <ol>
-    <li><h2 id="intro">Introduction</h2>
-<p>The Fedora Management service defines an open interface for administering
-the repository, including creating, modifying, and deleting digital objects, or
-components within digital objects. The Management service interacts with the
-underlying repository system to read content from and write content to the
-digital object and datastream storage areas. The Management service exposes a
-set of operations that enable a client to view and manipulate digital objects
-from an abstract perspective, meaning that a client does not need to know
-anything about underlying storage formats, storage media, or storage management
-schemes for objects. Also, the underlying repository system handles the details
-of storing datastream content within the repository, as well as mediating
-connectivity for datastreams that reference external content.</p>
+    <li>
+    <h2 id="intro">Introduction</h2>
+    <p>The Fedora Management service defines an open interface for
+    administering the repository, including creating, modifying, and deleting
+    digital objects, or components within digital objects. The Management
+    service interacts with the underlying repository system to read content from
+    and write content to the digital object and datastream storage areas. The
+    Management service exposes a set of operations that enable a client to view
+    and manipulate digital objects from an abstract perspective, meaning that a
+    client does not need to know anything about underlying storage formats,
+    storage media, or storage management schemes for objects. Also, the
+    underlying repository system handles the details of storing datastream
+    content within the repository, as well as mediating connectivity for
+    datastreams that reference external content.</p>
     </li>
 
-    <li><h2 id="methods">Methods</h2>
-        <ol class="alpha">
-            <li><h3 id="methods.addDatastream">addDatastream</h3>
-            <p>Creates a new datastream in the object.</p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code>pid</code>: The PID of the object.</li>
-                <li><code>dsID</code>: The datastream ID (64 characters max). If null, Fedora will generate the value.</li>
-                <li><code>altIDs</code>: Alternate identifiers for the datastream.</li>
-                <li><code>dsLabel</code>: The label for the datastream.</li>
-                <li><code>versionable</code>: Enable versioning of the datastream.</li>
-                <li><code>MIMEType</code>: The mime-type of the datastream.</li>
-                <li><code>formatURI</code>: The format URI of the datastream.</li>
-                <li><code>dsLocation</code>: Location of managed or external datastream content.</li>
-                <li><code>controlGroup</code>: One of "X", "M", "R", or "E" 
-                (Inline <b>X</b>ML, <b>M</b>anaged Content, <b>R</b>edirect, or <b>E</b>xternal Referenced).</li>
-                <li><code>dsState</code>: One of "A", "D", or "I" (<b>A</b>ctive, <b>D</b>eleted, or <b>I</b>nactive).</li>
-                <li><code>checksumType</code>: The algorithm used to compute the checksum. 
-                One of "DEFAULT", "DISABLED", "MD5", "SHA-1", "SHA-256", "SHA-385", "SHA-512", "HAVAL", "TIGER", "WHIRLPOOL".</li>
-                <li><code>checksum</code>: The value of the checksum represented as a hexadecimal string.</li>
-                <li><code>logMessage</code>: A log message.</li>
-            </ul>
-            <p>Returns: the datastreamID of the newly added datastream.</p>
-            </li>
-            
-            <li><h3 id="methods.addRelationship">addRelationship</h3>
-            <p>Creates a new relationship in the object.</p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code>pid</code>: The PID of the object.</li>
-                <li><code>relationship</code>: The predicate.</li>
-                <li><code>object</code>: The object.</li>
-                <li><code>isLiteral</code>: A boolean value indicating whether the object is a literal.</li>
-                <li><code>datatype</code>: The datatype of the literal. Optional.</li>
-            </ul>
-            <p>Returns: true if and only if the relationship was added.</p>
-            </li>
-            
-            <li><h3 id="methods.compareDatastreamChecksum">compareDatastreamChecksum</h3>
-            <p>Verifies that the datastream content has not changed since the checksum was initially computed.</p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code>pid</code>: The PID of the object.</li>
-                <li><code>dsID</code>: The datastream ID.</li>
-                <li><code>versionDate</code>: A dateTime indicating the version 
-                of the datastream to verify. If null, Fedora will use the most 
-                recent version.</li>
-            </ul>
-            <p>Returns: the checksum if there is no difference, a message indicating checksum failure otherwise.</p>
-            </li>
-            
-            <li><h3 id="methods.describeUser">describeUser</h3>
-            <p>Gets key information about the named user.</p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code>id</code>: The id of the user.</li>
-            </ul>
-            <p>Returns: information about the user.</p>
-            </li>
-            
-            <li><h3 id="methods.export">export</h3>
-            <p>Exports the entire digital object in the specified XML format, and encoded appropriately for the specified export context.</p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code>pid</code>: The pid of the object.</li>
-                <li><code>format</code>: The XML format to export, e.g. "info:fedora/fedora-system:FOXML-1.1" or "info:fedora/fedora-system:METSFedoraExt-1.1".</li>
-                <li><code>context</code>: The export context, which determines how datastream URLs and content are represented. One of "public", "migrate", or "archive".</li>
-            </ul>
-            <p>Returns: the digital object in the requested XML format.</p>
-            </li>
-            
-            <li><h3 id="methods.exportObject">exportObject</h3>
-            <p>Deprecated. Use <a href="#methods.export">export</a></p>
-            </li>
-            
-            <li><h3 id="methods.getDatastream">getDatastream</h3>
-            <p>Gets the specified datastream.</p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code>pid</code>: The pid of the object.</li>
-                <li><code>dsID</code>: The datastream ID.</li>
-                <li><code>asOfDateTime</code>: the date/time stamp specifying the desired view of the object. If null, the current view of the object (the most recent time) is assumed.</li>
-            </ul>
-            <p>Returns: the specified datastream.</p>
-            </li>
-            
-            <li><h3 id="methods.getDatastreamHistory">getDatastreamHistory</h3>
-            <p>Gets all versions of a datastream, sorted from most to least recent.</p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code>pid</code>: The pid of the object.</li>
-                <li><code>dsID</code>: The datastream ID.</li>
-            </ul>
-            <p>Returns: all versions of a datastream, sorted from most to least recent.</p>
-            </li>
-            
-            <li><h3 id="methods.getDatastreams">getDatastreams</h3>
-            <p>Gets all versions of a datastream, sorted from most to least recent.</p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code>pid</code>: The pid of the object.</li>
-                <li><code>dsID</code>: The datastream ID.</li>
-            </ul>
-            <p>Returns: all versions of a datastream, sorted from most to least recent.</p>
-            </li>
-            
-            <li><h3 id="methods.getNextPID">getNextPID</h3>
-            <p></p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code></code>: </li>
-            </ul>
-            <p>Returns: .</p>
-            </li>
-            
-            <li><h3 id="methods.getObjectXML">getObjectXML</h3>
-            <p></p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code></code>: </li>
-            </ul>
-            <p>Returns: .</p>
-            </li>
-            
-            <li><h3 id="methods.getRelationships">getRelationships</h3>
-            <p></p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code></code>: </li>
-            </ul>
-            <p>Returns: .</p>
-            </li>
-            
-            <li><h3 id="methods.ingest">ingest</h3>
-            <p></p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code></code>: </li>
-            </ul>
-            <p>Returns: .</p>
-            </li>
-            
-            <li><h3 id="methods.ingestObject">ingestObject</h3>
-            <p>Deprecated. Use <a href="#methods.ingest">ingest</a></p>
-            </li>
-            
-            <li><h3 id="methods.modifyDatastreamByReference">modifyDatastreamByReference</h3>
-            <p></p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code></code>: </li>
-            </ul>
-            <p>Returns: .</p>
-            </li>
-            
-            <li><h3 id="methods.modifyDatastreamByValue">modifyDatastreamByValue</h3>
-            <p></p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code></code>: </li>
-            </ul>
-            <p>Returns: .</p>
-            </li>
-            
-            <li><h3 id="methods.modifyObject">modifyObject</h3>
-            <p></p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code></code>: </li>
-            </ul>
-            <p>Returns: .</p>
-            </li>
-            
-            <li><h3 id="methods.purgeDatastream">purgeDatastream</h3>
-            <p></p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code></code>: </li>
-            </ul>
-            <p>Returns: .</p>
-            </li>
-            
-            <li><h3 id="methods.purgeObject">purgeObject</h3>
-            <p></p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code></code>: </li>
-            </ul>
-            <p>Returns: .</p>
-            </li>
-            
-            <li><h3 id="methods.purgeRelationship">purgeRelationship</h3>
-            <p></p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code></code>: </li>
-            </ul>
-            <p>Returns: .</p>
-            </li>
-            
-            <li><h3 id="methods.setDatastreamState">setDatastreamState</h3>
-            <p></p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code></code>: </li>
-            </ul>
-            <p>Returns: .</p>
-            </li>
-            
-            <li><h3 id="methods.setDatastreamVersionable">setDatastreamVersionable</h3>
-            <p></p>
-            <p>Parameters:</p>
-            <ul>
-                <li><code></code>: </li>
-            </ul>
-            <p>Returns: .</p>
-            </li>
-        </ol>
+    <li>
+    <h2 id="methods">Methods</h2>
+    <ol class="alpha">
+        <li>
+        <h3 id="methods.addDatastream">addDatastream</h3>
+        <p>Creates a new datastream in the object.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The PID of the object.</li>
+            <li><code>dsID</code>: The datastream ID (64 characters max).
+            If null, Fedora will generate the value.</li>
+            <li><code>altIDs</code>: Alternate identifiers for the
+            datastream.</li>
+            <li><code>dsLabel</code>: The label for the datastream.</li>
+            <li><code>versionable</code>: Enable versioning of the
+            datastream.</li>
+            <li><code>MIMEType</code>: The mime-type of the datastream.</li>
+            <li><code>formatURI</code>: The format URI of the datastream.</li>
+            <li><code>dsLocation</code>: Location of managed or external
+            datastream content.</li>
+            <li><code>controlGroup</code>: One of "X", "M", "R", or "E"
+            (Inline <b>X</b>ML, <b>M</b>anaged Content, <b>R</b>edirect, or <b>E</b>xternal
+            Referenced).</li>
+            <li><code>dsState</code>: One of "A", "D", or "I" (<b>A</b>ctive,
+            <b>D</b>eleted, or <b>I</b>nactive).</li>
+            <li><code>checksumType</code>: The algorithm used to compute
+            the checksum. One of "DEFAULT", "DISABLED", "MD5", "SHA-1",
+            "SHA-256", "SHA-385", "SHA-512", "HAVAL", "TIGER", "WHIRLPOOL".</li>
+            <li><code>checksum</code>: The value of the checksum
+            represented as a hexadecimal string.</li>
+            <li><code>logMessage</code>: A log message.</li>
+        </ul>
+        <p>Returns: the datastreamID of the newly added datastream.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.addRelationship">addRelationship</h3>
+        <p>Creates a new relationship in the object. Adds the specified
+        relationship to the object's RELS-EXT datastream. If the Resource Index
+        is enabled, the relationship will be added to the Resource Index.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The PID of the object.</li>
+            <li><code>relationship</code>: The predicate.</li>
+            <li><code>object</code>: The object.</li>
+            <li><code>isLiteral</code>: A boolean value indicating whether
+            the object is a literal.</li>
+            <li><code>datatype</code>: The datatype of the literal.
+            Optional.</li>
+        </ul>
+        <p>Returns: true if and only if the relationship was added.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.compareDatastreamChecksum">compareDatastreamChecksum</h3>
+        <p>Verifies that the datastream content has not changed since the
+        checksum was initially computed.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The PID of the object.</li>
+            <li><code>dsID</code>: The datastream ID.</li>
+            <li><code>versionDate</code>: A dateTime indicating the version
+            of the datastream to verify. If null, Fedora will use the most
+            recent version.</li>
+        </ul>
+        <p>Returns: the checksum if there is no difference, a message
+        indicating checksum failure otherwise.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.describeUser">describeUser</h3>
+        <p>Gets key information about the named user.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>id</code>: The id of the user.</li>
+        </ul>
+        <p>Returns: information about the user.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.export">export</h3>
+        <p>Exports the entire digital object in the specified XML format,
+        and encoded appropriately for the specified export context.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The pid of the object.</li>
+            <li><code>format</code>: The XML format to export, e.g.
+            "info:fedora/fedora-system:FOXML-1.1" or
+            "info:fedora/fedora-system:METSFedoraExt-1.1".</li>
+            <li><code>context</code>: The export context, which determines
+            how datastream URLs and content are represented. One of "public",
+            "migrate", or "archive".</li>
+        </ul>
+        <p>Returns: the digital object in the requested XML format.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.exportObject">exportObject</h3>
+        <p>Deprecated. Use <a href="#methods.export">export</a></p>
+        </li>
+
+        <li>
+        <h3 id="methods.getDatastream">getDatastream</h3>
+        <p>Gets the specified datastream.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The pid of the object.</li>
+            <li><code>dsID</code>: The datastream ID.</li>
+            <li><code>asOfDateTime</code>: the date/time stamp specifying
+            the desired view of the object. If null, the current view of the
+            object (the most recent time) is assumed.</li>
+        </ul>
+        <p>Returns: the specified datastream.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.getDatastreamHistory">getDatastreamHistory</h3>
+        <p>Gets all versions of a datastream, sorted from most to least
+        recent.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The pid of the object.</li>
+            <li><code>dsID</code>: The datastream ID.</li>
+        </ul>
+        <p>Returns: all versions of a datastream, sorted from most to least
+        recent.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.getDatastreams">getDatastreams</h3>
+        <p>Gets all versions of a datastream, sorted from most to least
+        recent.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The pid of the object.</li>
+            <li><code>dsID</code>: The datastream ID.</li>
+        </ul>
+        <p>Returns: all versions of a datastream, sorted from most to least
+        recent.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.getNextPID">getNextPID</h3>
+        <p>Retrieves the specified number of next available pid(s) for a
+        given pid namespace.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>numPIDs</code>: The number of pids to retrieve.</li>
+            <li><code>pidNamespace</code>: The namespace of the requested
+            pid(s).</li>
+        </ul>
+        <p>Returns: An array of the requested next available pid(s).</p>
+        </li>
+
+        <li>
+        <h3 id="methods.getObjectXML">getObjectXML</h3>
+        <p>Gets the serialization of the digital object to XML appropriate
+        for persistent storage in the repository, ensuring that any URLs that
+        are relative to the local repository are stored with the Fedora local
+        URL syntax. The Fedora local URL syntax consists of the string
+        "local.fedora.server" standing in place of the actual "hostname:port" on
+        the URL). Managed Content (M) datastreams are stored with internal
+        identifiers in dsLocation. Also, within selected inline XML datastreams
+        (i.e., WSDL and SERVICE_PROFILE) any URLs that are relative to the local
+        repository will also be stored with the Fedora local URL syntax.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The PID of the object.</li>
+        </ul>
+        <p>Returns: The digital object in Fedora's internal storage format.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.getRelationships">getRelationships</h3>
+        <p>Get the relationships asserted in the object's RELS-EXT
+        datastream that match the given criteria.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The PID of the object.</li>
+            <li><code>relationship</code>: The predicate to match. A null
+            value matches all predicates.</li>
+        </ul>
+        <p>Returns: An array of <code>RelationshipTuple</code>s, each
+        containing the subject, predicate and object matching the search
+        criteria.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.ingest">ingest</h3>
+        <p>Creates a new digital object in the repository. The object's
+        initial state will be A (active). If the XML document does not specify
+        the OBJID attribute of the root element, the repository will generate
+        and return a new pid for the object resulting from this request. That
+        pid will have the namespace of the repository. If the XML document
+        specifies a pid, it will be assigned to the digital object provided that
+        1. it conforms to the Fedora pid Syntax, 2. it uses a namespace that
+        matches the "retainPIDs" value configured for the repository, and 3. it
+        does not collide with an existing pid of an object in the repository.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>objectXML</code>: The digital object in an XML
+            submission format.</li>
+            <li><code>format</code>: The XML format of objectXML, e.g.
+            "info:fedora/fedora-system:FOXML-1.1" or
+            "info:fedora/fedora-system:METSFedoraExt-1.1".</li>
+            <li><code>logMessage</code>: A log message.</li>
+        </ul>
+        <p>Returns: The pid of the newly created object.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.ingestObject">ingestObject</h3>
+        <p>Deprecated. Use <a href="#methods.ingest">ingest</a></p>
+        </li>
+
+        <li>
+        <h3 id="methods.modifyDatastreamByReference">modifyDatastreamByReference</h3>
+        <p></p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The PID of the object.</li>
+            <li><code>dsID</code>: The datastream ID.</li>
+            <li><code>altIDs</code>: Alternate identifiers for the
+            datastream, if any.</li>
+            <li><code>dsLabel</code>: The label for the datastream.</li>
+            <li><code>MIMEType</code>: The mime type</li>
+            <li><code>formatURI</code>: Optional format URI of the
+            datastream.</li>
+            <li><code>dsLocation</code>: Location of managed or external
+            datastream content.</li>
+            <li><code>checksumType</code>: The algorithm used to compute
+            the checksum. One of "DEFAULT", "DISABLED", "MD5", "SHA-1",
+            "SHA-256", "SHA-385", "SHA-512", "HAVAL", "TIGER", "WHIRLPOOL".</li>
+            <li><code>checksum</code>: The value of the checksum
+            represented as a hexadecimal string.</li>
+            <li><code>logMessage</code>: A log message.</li>
+            <li><code>force</code>: Force the update even if it would break
+            a data contract.</li>
+        </ul>
+        <p>Returns: The timestamp of the operation according to the server,
+        in ISO8601 format.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.modifyDatastreamByValue">modifyDatastreamByValue</h3>
+        <p>Modifies an existing datastream in an object, by value. This
+        operation is only valid for Inline XML datastreams (i.e. controlGroup
+        "X").</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The PID of the object.</li>
+            <li><code>dsID</code>: The datastream ID.</li>
+            <li><code>altIDs</code>: Alternate identifiers for the
+            datastream, if any.</li>
+            <li><code>dsLabel</code>: The label for the datastream.</li>
+            <li><code>MIMEType</code>: The mime type</li>
+            <li><code>formatURI</code>: Optional format URI of the
+            datastream.</li>
+            <li><code>dsContent</code>: The content of the datastream..</li>
+            <li><code>checksumType</code>: The algorithm used to compute
+            the checksum. One of "DEFAULT", "DISABLED", "MD5", "SHA-1",
+            "SHA-256", "SHA-385", "SHA-512", "HAVAL", "TIGER", "WHIRLPOOL".</li>
+            <li><code>checksum</code>: The value of the checksum
+            represented as a hexadecimal string.</li>
+            <li><code>logMessage</code>: A log message.</li>
+            <li><code>force</code>: Force the update even if it would break
+            a data contract.</li>
+        </ul>
+        <p>Returns: The timestamp of the operation according to the server,
+        in ISO8601 format.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.modifyObject">modifyObject</h3>
+        <p>Modify an object.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The PID of the object.</li>
+            <li><code>state</code>: The new state, "A", "I" or "D". Null
+            means leave unchanged.</li>
+            <li><code>label</code>: the new label. Null means leave
+            unchanged.</li>
+            <li><code>ownerId</code>: The ownerId for the object.</li>
+            <li><code>logMessage</code>: A log message.</li>
+        </ul>
+        <p>Returns: The timestamp of the operation according to the server,
+        in ISO8601 format.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.purgeDatastream">purgeDatastream</h3>
+        <p>Permanently removes one or more versions of a datastream from an
+        object.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The PID of the object.</li>
+            <li><code>dsID</code>: The datastream ID.</li>
+            <li><code>startDT</code>: The (inclusive) start date-time stamp
+            of the range. If null, this is taken to be the lowest possible
+            value, and thus, the entire version history up to the endDT be
+            purged.</li>
+            <li><code>endDT</code>: The (inclusive) ending date-time stamp
+            of the range. If null, this is taken to be the greatest possible
+            value, and thus, the entire version history back to the startDT will
+            be purged.</li>
+            <li><code>logMessage</code>: A log message.</li>
+            <li><code>force</code>: Force the update even if it would break
+            a data contract.</li>
+        </ul>
+        <p>Returns: The creation date/time of each deleted datastream.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.purgeObject">purgeObject</h3>
+        <p>Permanently removes an object from the repository.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The PID of the object.</li>
+            <li><code>logMessage</code>: A log message.</li>
+            <li><code>force</code>: Force the update even if it would break
+            a dependency.</li>
+        </ul>
+        <p>Returns: The timestamp of the operation according to the server,
+        in ISO8601 format.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.purgeRelationship">purgeRelationship</h3>
+        <p>Delete the specified relationship. This method will remove the
+        specified relationship(s) from the RELS-EXT datastream. If the Resource
+        Index is enabled, this will also delete the corresponding triples from
+        the Resource Index.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The PID of the object.</li>
+            <li><code>relationship</code>: The predicate, null matches any
+            predicate.</li>
+            <li><code>object</code>: The object, null matches any object.</li>
+            <li><code>isLiteral</code>: A boolean value indicating whether
+            the object is a literal.</li>
+            <li><code>datatype</code>: The datatype of the literal.
+            Optional.</li>
+        </ul>
+        <p>Returns: .</p>
+        </li>
+
+        <li>
+        <h3 id="methods.setDatastreamState">setDatastreamState</h3>
+        <p>Sets the state of a datastream to the specified state value.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The PID of the object.</li>
+            <li><code>dsID</code>: The datastream ID.</li>
+            <li><code>dsState</code>: One of "A", "D", or "I" (<b>A</b>ctive,
+            <b>D</b>eleted, or <b>I</b>nactive).</li>
+            <li><code>logMessage</code>: A log message.</li>
+        </ul>
+        <p>Returns: The timestamp of the operation according to the server,
+        in ISO8601 format.</p>
+        </li>
+
+        <li>
+        <h3 id="methods.setDatastreamVersionable">setDatastreamVersionable</h3>
+        <p>Selectively turn versioning on or off for selected datastream.
+        When versioning is disabled, subsequent modifications to the datastream
+        replace the current datastream contents and no versioning history is
+        preserved.</p>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>pid</code>: The PID of the object.</li>
+            <li><code>dsID</code>: The datastream ID.</li>
+            <li><code>versionable</code>: Enable versioning of the
+            datastream.</li>
+            <li><code>logMessage</code>: A log message.</li>
+        </ul>
+        <p>Returns: The timestamp of the operation according to the server,
+        in ISO8601 format.</p>
+        </li>
+    </ol>
+    </li>
+    <li>
+    <h2 id="wsdl">WSDL</h2>
     </li>
 </ol>
 
