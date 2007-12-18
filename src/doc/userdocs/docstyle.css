@@ -46,6 +46,18 @@ body #content ol.alpha li ul{
 body #content ol.alpha ul li span.plaintext{
   font-size: .75em;
 }
+ol#content ol.alpha ul li{
+   font-size: .75em;
+}
+ol#content ol.alpha ul li ul li{
+   font-size: 1.4em;
+}
+ol#content ol.alpha ul li ul li ul li{
+   font-size: 1.2em;
+}
+ol#content ol.alpha ul li ul li ul li ul li{
+   font-size: 1.3em;
+}
 code.block{
   display: block;
   margin: 1.286em;

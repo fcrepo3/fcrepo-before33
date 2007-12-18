@@ -174,13 +174,13 @@
           <li>
             <h3 id="config.module">Module Configuration</h3>
             <span class="plaintext">
-            The Resource Index module is configured with <code>fedora.fcfg</code>
+            The Resource Index module is configured with fedora.fcfg
+            <br />
             <br />
             Here's an example of a Resource Index module configuration that uses
             Mulgara with delayed updates:
-            </span>
-            <code class="block">
-            
+            <br />
+            <code class="block">            
 <pre>
 &lt;module role="fedora.server.resourceIndex.ResourceIndex" 
         class="fedora.server.resourceIndex.ResourceIndexModule"&gt;
@@ -190,9 +190,9 @@
 &lt;/module&gt;</pre>            
             
             </code>
+            <br />
             Here's another example, this time using MPTStore with immediate updates:
-            <code class="block">
-            
+            <code class="block">            
 <pre>
 &lt;module role="fedora.server.resourceIndex.ResourceIndex" 
         class="fedora.server.resourceIndex.ResourceIndexModule"&gt;
@@ -202,7 +202,9 @@
 &lt;/module&gt;</pre>           
             
             </code>
+            <br />
             An explanation of the parameters and their possible values:
+            </span>
             <ul>
               <li>
                 <strong>level</strong> - Sets the operating level of the Resource Index.
@@ -230,8 +232,10 @@
               </li>
             </ul>
           </li>
+          <br />
           <li>
             <h3 id="config.datastore.mulgara">Mulgara Datastore Configuration</h3>
+            <span class="plaintext">
             The example datastore configuration below (with the path parameter modified 
             for the installation environment) would provide a local Mulgara triplestore that 
             buffers up to 20,000 triples in memory at a time or waits for 5 seconds of 
@@ -242,8 +246,7 @@
             of the buffer may be adjusted according to performance needs and physical 
             memory capacity.
             <br />
-            <code class="block">
-            
+            <code class="block">            
 <pre>
 &lt;datastore id="localMulgaraTriplestore"&gt;
   &lt;param name="connectorClassName" value="org.trippi.impl.mulgara.MulgaraConnector"/&gt;
@@ -262,13 +265,14 @@
   &lt;param name="bufferSafeCapacity" value="40000"/&gt;
   &lt;param name="bufferFlushBatchSize" value="20000"/&gt;
 &lt;/datastore&gt;</pre>
-
             </code>
+            <br />
             An explanation of the parameters and their possible values follows. Certain 
             parameters require other parameters, as indicated in the hierarchy below. 
             Optional parameters are also indicated below. As noted previously, many of these 
             parameters, with the exception of the pool, buffer, and flush parameters, cannot 
             be changed on a running repository without a full rebuild of the Resource Index.
+            </span>
             <ul>
               <li>
                 <strong>connectorClassName</strong> - The name of the Trippi Connector class used
@@ -430,16 +434,15 @@
               </li>
             </ul>
           </li>
+          <br />
           <li>
             <h3 id="config.datastore.mptstore">MPTStore Datastore Configuration</h3>
+            <span class="plaintext">
             The example datastore configuration below would provide a local MPTStore triplestore
             backed by Postgres.
             <br />
-            <code class="block">
-            
+            <code class="block">            
 <pre>
-
-
 &lt;datastore id="localPostgresMPTTriplestore"&gt;
   &lt;comment&gt;
     Example local MPTStore backed by Postgres.
@@ -477,11 +480,13 @@
 &lt;/datastore&gt;</pre>            
             
             </code>
+            </span>
           </li>
         </ol>
       </li>
       <li>
         <h2 id="search">Search Interface</h2>
+        <span class="plaintext">
         The Resource Index Search interface is exposed in a REST architectural style,
         providing a stateless query interface that accepts queries by value or by 
         reference [<a href="#ref.rels" class="reference">Fedora Relationships</a>].
@@ -492,16 +497,20 @@
         <br />
         Please consult the <a href="../webservices/risearch/index.html">Resource 
         Index Search documentation</a> for more information.
+        </span>
       </li>
       <li>
         <h2 id="demo">Resource Index Demo</h2>
+        <span class="plaintext">
         Demonstration objects that utilize the Resource Index are included in the 
         Fedora distribution. Please see the 
         <a href="../../distribution/demos.html#imageCollection">Demo documentation</a> 
         for more information.
+        </span>
       </li>
       <li>
         <h2 id="references">References</h2>
+        <span class="plaintext">
         <dl>
           <dt id="ref.rels">[Fedora Relationships]</dt>
           <dd>
@@ -523,14 +532,17 @@
             <a href="../webservices/risearch/index.html">Fedora Resource Index Search Service</a>
           </dd>
         </dl>
+        </span>
       </li>
       <li>
         <h2 id="tripleguide">
           Fedora Guide To Triples (and estimator for size of Resource Index)
         </h2>
+        <span class="plaintext">
         To understand what triples are indexed in the Fedora Resource Index, and 
         to estimate the size of your Mulgara triplestore consult document named
         <a href="triples.html">Triples in the Resource Index</a>.
+        </span>
       </li>
       
     </ol>
