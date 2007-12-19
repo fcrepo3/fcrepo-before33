@@ -78,13 +78,7 @@ td {
       The resource index stores system and user-controlled metadata about
       each object in the repository in the form of RDF triples.  
       The number and type of triples stored depends on the content of 
-      the object and the indexing level of the resource index:
-      At level 0, no triples are indexed.  At level 1, all triples <em>except
-      method permutations</em> are indexed.  At level 2, all triples, including
-      those indicating permutations, are indexed.
-    </p>
-    <p style="margin-top: 8px;">
-      This document describes the triples that may exist in the resource index
+      the object. This document describes the triples that may exist in the resource index
       for a given object.  The color of each row indicates how many of each kind of
       RDF triple can be expected.  See the key on the right.
     </p>
@@ -96,15 +90,17 @@ td {
       The following triples will exist for any object, irrespective of its datastream
       and disseminator content.
     </p>
+    <p>
+      Note: The predicate <em>rdf:type</em> is deprecated and will be removed in a future version.
+    </p>    
     <table cellpadding="1" cellspacing="1">
       <tr><td class="heading">Subject</td><td class="heading">Predicate</td><td class="heading">Object</td></tr>
-      <tr class="always"><td>info:fedora/$PID</td><td>rdf:type</td><td>fedora-model:FedoraObject|BMechObject|BDefObject</td></tr>
+      <tr class="always"><td>info:fedora/$PID</td><td>rdf:type</td><td>fedora-model:FedoraObject|FedoraBMechObject|FedoraBDefObject|FedoraCModelObject</td></tr>
       <tr class="always"><td>info:fedora/$PID</td><td>fedora-model:createdDate</td><td>(date created in UTC)</td></tr>
       <tr class="always"><td>info:fedora/$PID</td><td>fedora-view:lastModifiedDate</td><td>(date modified in UTC)</td></tr>
       <tr class="always"><td>info:fedora/$PID</td><td>fedora-model:state</td><td>fedora-model:Active|Inactive|Deleted</td></tr>
-      <tr class="always"><td>info:fedora/$PID</td><td>fedora-model:owner</td><td>(not used)</td></tr>
+      <tr class="always"><td>info:fedora/$PID</td><td>fedora-model:owner</td><td>(any string)</td></tr>
       <tr class="always"><td>info:fedora/$PID</td><td>fedora-model:label</td><td>(any string)</td></tr>
-      <tr class="option"><td>info:fedora/$PID</td><td>fedora-model:cModel</td><td>(any string)</td></tr>
     </table>
 
     <h3>Dublin Core Triples</h3>
@@ -123,21 +119,25 @@ td {
     </table>
 
     <h3>RELS-EXT Triples</h3>
+    <p>
+      Note: The Subject for statements in RELS-EXT must be a Fedora digital object.
+    </p>    
     <table cellpadding="1" cellspacing="1">
       <tr><td class="heading">Subject</td><td class="heading">Predicate</td><td class="heading">Object</td></tr>
       <tr class="zeroplus"><td>info:fedora/$PID</td><td>(any non-reserved predicate)</td><td>(any uri or literal)</td></tr>
     </table>
 
-    <h3>Behavior Mechanism Triples</h3>
+    <h3>Content Model Dissemination Architecture Triples</h3>
     <table cellpadding="1" cellspacing="1">
       <tr><td class="heading">Subject</td><td class="heading">Predicate</td><td class="heading">Object</td></tr>
-      <tr class="always"><td>info:fedora/$PID</td><td>fedora-model:usesBMech</td><td>info:fedora/$BMECH_PID</td></tr>
-    </table>
+      <tr class="always"><td>info:fedora/$PID</td><td>fedora-model:hasContentModel</td><td>info:fedora/$CMODEL_PID</td></tr>
+      <tr class="always"><td>info:fedora/$PID</td><td>fedora-model:hasBDef</td><td>info:fedora/$BDEF_PID</td></tr>
+      <tr class="always"><td>info:fedora/$PID</td><td>fedora-model:isContractor</td><td>info:fedora/$CMODEL_PID</td></tr>
+     </table>
 
     <h3>Datastream Triples</h3>
     <table cellpadding="1" cellspacing="1">
       <tr><td class="heading">Subject</td><td class="heading">Predicate</td><td class="heading">Object</td></tr>
-      <tr class="always"><td>info:fedora/$PID</td><td>fedora-model:hasDatastream</td><td>info:fedora/$PID/$DSID</td></tr>
       <tr class="always"><td>info:fedora/$PID</td><td>fedora-view:disseminates</td><td>info:fedora/$PID/$DSID</td></tr>
       <tr class="always"><td>info:fedora/$PID/$DSID</td><td>fedora-view:disseminationType</td><td>info:fedora/*/$DSID</td></tr>
       <tr class="always"><td>info:fedora/$PID/$DSID</td><td>fedora-view:mimeType</td><td>(any mime type string)</td></tr>
@@ -145,26 +145,6 @@ td {
       <tr class="always"><td>info:fedora/$PID/$DSID</td><td>fedora-model:state</td><td>fedora-model:Active|Inactive|Deleted</td></tr>
       <tr class="always"><td>info:fedora/$PID/$DSID</td><td>fedora-view:isVolatile</td><td>(true if R or E, false if M or X)</td></tr>
     </table>
-
-    <h3>Per-Method Triples</h3>
-    <table cellpadding="1" cellspacing="1">
-      <tr><td class="heading">Subject</td><td class="heading">Predicate</td><td class="heading">Object</td></tr>
-      <tr class="always"><td>info:fedora/$PID</td><td>fedora-view:disseminates</td><td>info:fedora/$PID/$BDEF_PID/$METHOD</td></tr>
-      <tr class="always"><td>info:fedora/$PID/$BDEF_PID/$METHOD</td><td>fedora-view:disseminationType</td><td>info:fedora/*/$BDEF_PID/$METHOD</td></tr>
-      <tr class="always"><td>info:fedora/$PID/$BDEF_PID/$METHOD</td><td>fedora-view:mimeType</td><td>(any mime type string)</td></tr>
-      <tr class="always"><td>info:fedora/$PID/$BDEF_PID/$METHOD</td><td>fedora-view:lastModifiedDate</td><td>(date considered modified in UTC)</td></tr>
-      <tr class="always"><td>info:fedora/$PID/$BDEF_PID/$METHOD</td><td>fedora-model:state</td><td>fedora-model:Active|Inactive|Deleted</td></tr>
-      <tr class="always"><td>info:fedora/$PID/$BDEF_PID/$METHOD</td><td>fedora-view:isVolatile</td><td>(true if any dependencies are volatile, false otherwise)</td></tr>
-      <tr class="oneplus"><td>info:fedora/$PID/$BDEF_PID/$METHOD</td><td>fedora-model:dependsOn</td><td>info:fedora/$PID/$DSID</td></tr>
-    </table>
-
-    <h3>Per-Permutation Triples</h3>
-    <table cellpadding="1" cellspacing="1">
-      <tr><td class="heading">Subject</td><td class="heading">Predicate</td><td class="heading">Object</td></tr>
-      <tr class="always"><td>info:fedora/$PID/$BDEF_PID/$METHOD</td><td>fedora-view:disseminationType</td><td>info:fedora/*/$BDEF_PID/$METHOD?PARAM=VALUE1</td></tr>
-    </table>
-
-    
 
     <h3 style="font-weight: bold; text-decoration: underline;">Calculating Triples/Object</h3>
     <p>You can use the following table to estimate the number of triples
@@ -181,7 +161,7 @@ td {
        </td><td align="center">
        <b>14</b></td></tr>
        <tr><td>
-       If the object has a content model (cModel) defined, <b>add 1</b>.
+       If the object has a content model defined, <b>add 1</b>.
        </td>
        <td>&nbsp;</td>
        </tr>
@@ -205,29 +185,6 @@ td {
          </td>
          <td>&nbsp;</td>
       </tr>
-       <tr>
-         <td>
-           For each disseminator:
-           <ul>
-             <li> <b>add 1</b></li>
-             <li> For each method:
-               <ul>
-                 <li> <b>add 6</b></li>
-                 <li> If permutations are enabled (RI indexing level 2):
-                 <ul>
-                 <li> For each input datastream, <b>add 1</b></li>
-                 <li> If the method takes parameters and all of them are mandatory
-                      and have a defined set of possible values,
-                      <b>add 1</b> for each permutatation</li>
-                 </ul>
-                 </li>
-               </ul>
-             </li>
-             </ul>
-         </td>
-         <td>&nbsp;</td>
-      </tr>
-      <tr><td></td><td>&nbsp;</td></tr>
        </table>
     
   </body>
