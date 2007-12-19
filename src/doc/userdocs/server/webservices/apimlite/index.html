@@ -60,7 +60,7 @@
       <h3>getNextPID syntax:</h3>
       
       <p>
-        http://hostname:port/fedora/mgmt/getNextPID? <strong>[numPIDs=NUMPIDS&amp;]
+        http://hostname:port/fedora/management/getNextPID? <strong>[numPIDs=NUMPIDS&amp;]
         [namespace=NAMESPACE&amp;] [xml=BOOLEAN&amp;]</strong>
         <br />
         This syntax requests a list of the next available PIDs. The result is returned
@@ -79,7 +79,7 @@
           fedora - a required parameter specifying the Fedora servlet path.
         </li>
         <li>
-          mgmt - a required parameter specifying the Fedora servlet path.
+          management - a required parameter specifying the Fedora servlet path.
         </li>
         <li>
           numPIDs - a optional parameter specifying the number of PIDs to generate.
@@ -103,35 +103,50 @@
         Generate a single PID using the default namespace configured in the fedora.fcfg
         file and return the results as HTML:
         <br />
-        http://localhost:8080/fedora/mgmt/getNextPID?
+        http://localhost:8080/fedora/management/getNextPID?
       </p>
       
       <p>
         Generate five PIDs using the default namespace configured in the fedora.fcfg
         file and return the results as HTML:
         <br />
-        http://localhost:8080/fedora/mgmt/getNextPID?numPIDs=5
+        http://localhost:8080/fedora/management/getNextPID?numPIDs=5
       </p>
       
       <p>
         Generate 5 PIDs using a namespace value of "my-namespace" and return the results
         as HTML:
         <br />
-        http://localhost:8080/fedora/mgmt/getNextPID?numPIDs=5&amp;namespace=my-namespace
+        http://localhost:8080/fedora/management/getNextPID?numPIDs=5&amp;namespace=my-namespace
       </p>
       
       <p>
         Generate 5 PIDs using the namespace value of "my-namespace" and return the results
         as XML:
         <br />
-        http://localhost:8080/fedora/mgmt/getNextPID?numPIDs=5&amp;namespace=my-namespace&amp;xml=true
+        http://localhost:8080/fedora/management/getNextPID?numPIDs=5&amp;namespace=my-namespace&amp;xml=true
       </p>
       
-      <h2 id="wsdl">WSDL</h2>
+    <h2 id="wsdl">WSDL</h2>
       <span class="plaintext">
-       The WSDL file can be found <a href="Fedora-API-M-LITE.xml">here</a>.
-      
-      
+      </span> 
+      <ol class="alpha">
+        <li>Offline
+          <span class="plaintext">
+            For reference, an offline copy of the API-M-LITE WSDL is
+            <a href="Fedora-API-M-LITE.xml">available here</a>.
+          </span>
+        </li>
+        <li> Online
+          <span class="plaintext">
+            When running your own Fedora server, an online copy of
+            the API-M-LITE WSDL will be made publicly available at
+            <code><strong>/wsdl?api=API-M-LITE</strong></code>.  For example:
+            <a href="http://localhost:8080/fedora/wsdl?api=API-M-LITE">
+            http://localhost:8080/fedora/wsdl?api=API-M-LITE</a>
+          </span>
+        </li>
+      </ol>      
       
     </div>
     
