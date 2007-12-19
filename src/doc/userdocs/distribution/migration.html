@@ -46,7 +46,7 @@
           <br />
           <br />
           Throughout this guide, OLD_FEDORA_HOME refers to the home directory
-          of your Fedora 2.2.x installation, and NEW_FEDORA_HOME refers to the
+          of your Fedora 2.x installation, and NEW_FEDORA_HOME refers to the
           home directory of your new Fedora 3.0 installation.
         </span>
       </li>
@@ -112,6 +112,11 @@
       <li>
         <h2 id="install-migration">Install the Migration Utilities</h2>
         <span class="plaintext">
+          The migration utilities come as a separate download from the 
+          Fedora installation.  They are all included, with source, in a 
+          single download <a href="http://sourceforge.net/project/showfiles.php?group_id=177054&package_id=219723">
+          in the download area on sourceforge</a>.  Once unzipped, you will
+          find the executable jars in the dist/ directory.
         </span>
       </li>
       
@@ -287,7 +292,7 @@ java -jar analyzer.jar migration.properties
           <li> Customizing Content Model PIDs
             <span class="plaintext">
               By default, the PIDs assigned to the generated content models 
-              are of the form, <code>changeme:CModelN</code>.  You should
+              are of the form, <code>changeme:CModelN</code>.  You should
               change these to use your own repository's namespace.  You may
               also want to change the identifier part of the PID 
               (e.g. myns:Journal).
@@ -301,7 +306,7 @@ java -jar analyzer.jar migration.properties
                    document.</li>
               <li> If there is a RELS-EXT datastream, change the part after
                    <code>info:fedora/</code> in the <code>rdf:about</code>
-                   attribute.  For example, change 
+                   attribute.  For example, change 
                    <code>rdf:about="info:fedora/changeme:CModel1"</code> to 
                    <code>rdf:about="info:fedora/myorg:Journal"</code>.</li>
             </ul>
@@ -312,8 +317,8 @@ java -jar analyzer.jar migration.properties
           <li> Customizing Behavior Mechanism PIDs
             <span class="plaintext">
               If any cmodel-n-bmechs.txt files were created by the 
-              analyzer, you should also change each NEW_BMECH pid 
-              specified within before continuing. These PIDs will default
+              analyzer, you should also change any NEW_BMECH pid values
+              specified within each before continuing. These PIDs will default
               to values like <code>changeme:CModel1-BMech1</code>, but 
               again, you should specify your own (e.g. 
               <code>myns:Journal-BMech1</code>).
@@ -346,12 +351,13 @@ java -jar analyzer.jar migration.properties
       <li>
         <h2 id="generator">Run the Generator</h2>
         <span class="plaintext">
-          The generator reads the output of the analyzer and adds the
+          The generator reads the output of the analyzer (along with any 
+          customizations you have made) and adds the
           following to the same directory:
         </span>
         <ul>
-          <li> New Behavior Mechanism objects (as specified in 
-               cmodel-n-members.txt)</li>
+          <li> New Behavior Mechanism objects (as specified in each
+               cmodel-n-bmechs.txt file)</li>
           <li> Stylesheets for transforming existing objects as necessary</li>
         </ul>
         <span class="plaintext">
@@ -398,20 +404,22 @@ java -jar generator.jar migration.properties
 </pre>
               </code>
               <br/>
-              The generator should finish within a few seconds, regardless 
+              The generator should finish very quickly, regardless 
               of the size of the repository.
             </span>
           </li>
           <li> Reviewing Generator Output
             <span class="plaintext">
               The generator will produce several files in the output 
-              directory.  Again, these files will be used as input to later
-              steps in the process.
+              directory.  These files, along with those already produced by the
+              analyzer, will be used in the next steps of the migration
+              process.
               <br/>
               <br/>
               One stylesheet will be written for each PID list: bmechs.xslt,
-              bdefs.xslt, nocmodel.xslt, and cmodel-n.members.xslt.  Each of
-              these stylesheets includes transformation rules for upgrading
+              bdefs.xslt, nocmodel.xslt, and each cmodel-n.members.xslt
+              file.  Each of these stylesheets will include transformation 
+              rules for upgrading
               the objects to FOXML1.1 and adding the necessary 
               hasContentModel relationship via RELS-EXT, if necessary.
               NOTE: The generated stylesheet will cause a new RELS-EXT
@@ -421,7 +429,7 @@ java -jar generator.jar migration.properties
               <br/>
               The output will also include a new, generated Behavior 
               Mechanism object (cmodel-n.bmechx.txt) for each one listed 
-              in the input's cmodel-n.bmechs.txt file.  This BMech will
+              in the input's cmodel-n.bmechs.txt files.  This BMech will
               match the content of the source BMech in the repository, 
               but it will have a different PID, will be in FOXML 1.1 format,
               and will use input part names consistent with the datastream 
@@ -437,7 +445,7 @@ java -jar generator.jar migration.properties
         <span class="plaintext">
           The transformer applies stylesheets to FOXML stored in a 
           Fedora repository.  Although it directly accepts the output of
-          the generator utility, it can also be used outside of the
+          the analyzer and generator, it can also be used outside of the
           migration process for making low-level changes to batches of
           objects.  When running the transformer in this way, the 
           repository should be shut down, and the rebuilder should be
@@ -450,7 +458,7 @@ java -jar generator.jar migration.properties
           FOXML for each object in the PID list.
           <div class="notice">
             <strong>WARNING</strong>: the transformer makes changes to 
-            object XML in the repository.  It it possible to damage some, or
+            object XML in the repository.  It is possible to damage some, or
             all of the objects in the repository by using the transformer,
             so be sure to make a backup first!
           </div>
@@ -501,15 +509,15 @@ java -jar transformer.jar migration.properties
           need to run the rebuilder so Fedora's database is up-to-date 
           with the files on disk.  See the 
           <a href="../server/cmd-line/index.html#rebuild">Rebuilder 
-          Documentation</a> for further details.  NOTE: You should at 
-          least rebuild the SQL database.  If you plan to use the 
-          Resource Index, make sure your fedora.fcfg file has the 
-          "level" set to "1", and rebuild it as well.
+          Documentation</a> for further details.  NOTE: You MUST
+          rebuild the SQL database.  Rebuilding the Resource Index is
+          optional, and should be done only if your Fedora 3.0 instance
+          has been configured to enable the Resource Index.
           <br/>
           <br/>
           Rebuilding the SQL database will take around double the time that
           the transformer took.  Rebuilding the Resource Index may take
-          longer.
+          significantly longer.
         </span>
       </li>
       
@@ -519,19 +527,19 @@ java -jar transformer.jar migration.properties
           After the rebuilder has run successfully, you should restart 
           your Fedora 3.0 instance and visit the describe page 
           (e.g. <a href="http://localhost:8080/fedora/describe">
-          http://localhost:8080/fedora/describe</a>) to make sure it 
+          http://localhost:8080/fedora/describe</a>) again to make sure it 
           started successfully.
           <br/>
           <br/>
-          Now you'll need to ingest all the newly-created Content Model 
-          and Behavior Mechanism objects created by the 
+          Now you'll need to ingest all the new Content Model 
+          and Behavior Mechanism objects created during the 
           analyzer and generator steps.  To do this:
         </span>
         <ul>
           <li> Run fedora-admin.bat or fedora-admin.sh and login to your
                new repository from the local machine.</li>
           <li> Go to File -&gt; Ingest &gt; Objects from Directory, 
-               and navigate to the directory where these files were 
+               and choose directory where these files were 
                written (e.g. <code>C:\fedora-migration</code>)</li>
           <li> Choose FOXML as the format, and OK.</li>
         </ul>
@@ -558,8 +566,9 @@ java -jar transformer.jar migration.properties
         <span class="plaintext">
           If you had disseminators in your original repository, you are
           now making use of a NEW set of Behavior Mechanism objects.
-          You may also wish to purge the original ones.  The simplest way
-          to do this is with the fedora-admin GUI:
+          You may now want to purge the original BMechs, since they are
+          no longer in use.  The simplest way to do this is with the 
+          fedora-admin GUI:
         </span>
         <ul>
           <li> Run fedora-admin.bat or fedora-admin.sh and login to your
