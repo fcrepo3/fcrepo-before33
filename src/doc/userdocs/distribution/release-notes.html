@@ -41,10 +41,174 @@
       <li>
         <h2 id="features">New Features and Enhancements</h2>
         <span class="plaintext">
-          The following features have been introduced for this release.
+          The following features and enhancements have been 
+          included in this release.
         </span>
-          <ul>
-          </ul>
+        <ol class="alpha">
+
+          <li> Introduction of the Content Model Architecture
+            <span class="plaintext">
+              The Content Model Architecture, or CMA, has added
+              a new system-recognized Fedora Object type, the
+              Content Model Object.  Among the improvements this
+              architectural change provides is that operations
+              or behaviors are now attached to objects at the 
+              content model level.  The traditional "disseminator"
+              has been replaced by the CMA functionality.
+              See the <a href="../cma/index.html">Content Model
+              Architecture</a> document for more information.
+            </span>
+          </li>
+
+          <li> Fedora REST API
+            <span class="plaintext">
+              The new <a href="../server/webservices/rest/index.html">REST
+              API</a> exposes a subset of the Access and Management 
+              interfaces as a RESTful (Representational State Transfer) 
+              Web Service. Fedora Commons would like to thank
+              <a href="http://www.yourmediashelf.com/">MediaShelf</a>
+              for contributing this feature.
+            </span>
+          </li>
+
+          <li> Mulgara Support
+            <span class="plaintext">
+              The <a href="../server/resourceindex/index.html">Resource 
+              Index</a> has been updated to support 
+              <a href="http://www.mulgara.org/">Mulgara</a> 1.1.1 as its 
+              default triplestore. Additionally, the Resource Index now
+              supports the use of Mulgara as a remote server.
+            </span>
+          </li>
+
+          <li> Migration Utilities
+            <span class="plaintext">
+              The 3.0 migration utilities provide an upgrade path
+              from prior versions of Fedora.  The utilities support
+              converting old disseminators to use the CMA and upgrading
+              objects to FOXML 1.1.  For more information on these
+              utilities, see the <a href="migration.html">Fedora 
+              Migration Guide</a>.
+            </span>
+          </li>
+
+          <li> Relational Index Simplification
+            <span class="plaintext">
+              With the CMA, the most complex of Fedora's Database tables
+              are no longer necessary.  This reduces the complexity
+              of the code while also reducing the amount of time Fedora
+              needs to add, change, and remove information in the database.
+              It also significantly reduces the storage space requirements
+              for the database.
+            </span>
+          </li>
+
+          <li> Dynamic Behaviors
+            <span class="plaintext">
+              Objects may added or removed dynamically from the system, moving 
+              system checks into runtime errors.
+              With previous releases of Fedora, Behavior Definitions
+              had to be ingested first, followed by Behavior Mechanisms,
+              followed by Data Objects.  Now, Fedora allows the ingest
+              (and purge) of objects in any order, regardless of type.
+              In addition, system-recognized datastreams for Behavior
+              Mechanisms and Behavior Defintions can now be edited in-place,
+              whereas previously this functionality was disabled.
+            </span>
+          </li>
+
+          <li> Error Reporting Improvements
+            <span class="plaintext">
+              Fedora now sends correct HTTP status codes and more
+              user-friendly messages when API-A-LITE, API-M-LITE, and
+              search-related errors occur.  With the introduction of
+              CMA, these error messages also provide better detail
+              on the reason a request failed 
+              (missing object, datastream, etc.).
+            </span>
+          </li>
+
+          <li> Multiple Owners Per Digital Object
+            <span class="plaintext">
+              By specifying a comma-separated list, you can now specify
+              multiple owners as the "ownerId" of Fedora Objects.
+              The list of owners can be provided as input to your
+              XACML policies to support more flexible policy enforcement.
+              See the example policies for more information.
+            </span>
+          </li>
+
+          <li> Java 6 Compatibility
+            <span class="plaintext">
+              Prior versions of Fedora would run with Java 1.5 or 1.6,
+              but compiling was restricted to JDK 1.5.  Now Fedora
+              can be compiled with JDK 1.6 as well.
+            </span>
+          </li>
+
+          <li> Relationships API
+            <span class="plaintext">
+              The <a href="../server/webservices/apim/index.html">Fedora
+              Management interface</a> has been extended to support 
+              per-object Create, Read, Update, and Delete (CRUD) operations
+              on user-defined relationships in the RELS-EXT datastream.
+              The new relationships API methods are <a href="../server/webservices/apim/index.html#method.addRelationship">addRelationship</a>,
+              <a href="../server/webservices/apim/index.html#method.getRelationships">getRelationships</a>, 
+              and <a href="../server/webservices/apim/index.html#method.purgeRelationship">purgeRelationship</a>.
+              The Resource Index does not need to be enabled in order
+              to use these methods.
+            </span>
+          </li>
+
+          <li> Fedora Object XML Schemas Revised
+            <span class="plaintext">
+              With the introduction of the CMA, the FOXML and Fedora METS
+              Extension schemas have been versioned to 1.1.  This was
+              primarily a simplification to remove disseminator-related
+              elements.  For a complete list of changes, see the changelog
+              in the associated schema documents:
+            </span>
+            <ul>
+              <li> <a href="http://www.fedora.info/definitions/1/0/foxml1-1.xsd">FOXML 1.1 XSD Schema</a></li>
+              <li> <a href="http://www.fedora.info/definitions/1/0/foxmlRules1-1.xml">FOXML 1.1 Schematron Rules</a></li>
+              <li> <a href="http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd">Fedora METS Extension 1.1 XSD Schema</a></li>
+              <li> <a href="http://www.fedora.info/definitions/1/0/metsExtRules1-1.xml">Fedora METS Extension 1.1 Schematron Rules</a></li>
+            </ul>
+            <span class="plaintext">
+            </span>
+          </li>
+
+          <li> Upcoming Enhancements
+            <span class="plaintext">
+               The following enhancements are planned for completion
+               in the final release of Fedora 3.0:
+            </span>
+            <ul>
+              <li>
+                Simple JMS Messaging - Integrates JMS messaging for sending notification of important events
+              </li>
+              <li>
+                Administrative Client - Revised to support Content Model Architecture enhancements
+              </li>
+              <li>
+                Message Update for GSearch - Provides a reference implementation for using JMS notifications to update search engines
+              </li>
+              <li>
+                On-line Validation Testing - Hooks into the runtime error system to provide more meaningful error reports include conformance to content models and referential integrity checks
+              </li>
+              <li>
+                Off-line Validation Testing - Provides system operators a way to validate the integrity of part or all of their repository
+              </li>
+              <li>
+                Updated OAI Provider - Revises the OAI Provider to take advantage of the Content Model Architecture
+              </li>
+              <li>
+                Updated Utilities - Revises all the Fedora-provided utilities for integrate properly with the Content Model Architecture
+              </li>
+            </ul>
+          </li>
+
+        </ol>
       </li>
       
       <li>
@@ -52,31 +216,36 @@
         <span class="plaintext">
           The following bugs have been addressed for this release.
         </span>
-          <ul>
-            <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1697137">Bug #1697137</a>: fedora.war deployment fails in JBoss AS with OnlyOnceError</li>
-            <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1701766">Bug #1701766</a>: Clean up prompts/messages for "other" servlet container</li>
-            <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1710801">Bug #1710801</a>: HTTP Requests include bad HTTP basic Auth</li>
-            <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1714089">Bug #1714089</a>: HTTP Error Codes are not being returned correctly.</li>
-            <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1716106">Bug #1716106</a>: demo soapclient fails to compile/run</li>
-            <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1716636">Bug #1716636</a>: addDatastream allows invalid values for checksumType</li>
-            <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1773195">Bug #1773195</a>: Incorrect XACML demo policies involving state</li>
-            <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1775374">Bug #1775374</a>: object editor dirty flag being set when no changes have been</li>
-            <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1785608">Bug #1785608</a>: SQL rebuild sometimes fails to populate pidGen correctly</li>
-            <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1791683">Bug #1791683</a>: Installer creates one-jar doc directory</li>
-            <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1832548">Bug #1832548</a>: XSD dateTime inconsistency</li>
-            <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1832564">Bug #1832564</a>: XSD dateTimes can have incorrect fractional seconds</li>
-            <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1835449">Bug #1835449</a>: Object-specific POLICY datastream ignored when using Oracle</li>
-            <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1838750">Bug #1838750</a>: improper handling of default namespace in batchModify</li>
-            <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1844803">Bug #1844803</a>: bug in DefaultExternalContentManager</li>
-            <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1848092">Bug #1848092</a>: Incorrect handling of dates before 1CE</li>
-            <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1848095">Bug #1848095</a>: RelsExtValidator rejects valid UTC dateTimes</li>
-          </ul>
+        <ul>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1697137">Bug #1697137</a>: fedora.war deployment fails in JBoss AS with OnlyOnceError</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1701766">Bug #1701766</a>: Clean up prompts/messages for "other" servlet container</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1710801">Bug #1710801</a>: HTTP Requests include bad HTTP basic Auth</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1714089">Bug #1714089</a>: HTTP Error Codes are not being returned correctly.</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1716106">Bug #1716106</a>: demo soapclient fails to compile/run</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1716636">Bug #1716636</a>: addDatastream allows invalid values for checksumType</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1773195">Bug #1773195</a>: Incorrect XACML demo policies involving state</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1775374">Bug #1775374</a>: object editor dirty flag being set when no changes have been</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1785608">Bug #1785608</a>: SQL rebuild sometimes fails to populate pidGen correctly</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1791683">Bug #1791683</a>: Installer creates one-jar doc directory</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1832548">Bug #1832548</a>: XSD dateTime inconsistency</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1832564">Bug #1832564</a>: XSD dateTimes can have incorrect fractional seconds</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1835449">Bug #1835449</a>: Object-specific POLICY datastream ignored when using Oracle</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1838750">Bug #1838750</a>: improper handling of default namespace in batchModify</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1844803">Bug #1844803</a>: bug in DefaultExternalContentManager</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1848092">Bug #1848092</a>: Incorrect handling of dates before 1CE</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1848095">Bug #1848095</a>: RelsExtValidator rejects valid UTC dateTimes</li>
+        </ul>
       </li>
       
       <li>
         <h2 id="issues">Known Issues</h2>
         <span class="plaintext">
-          Please see the 
+          The following outstanding issues are present with this Beta release:
+        </span>
+        <ul>
+          <li></li>
+        </ul>
+        <span class="plaintext">
           <a href="http://sourceforge.net/tracker/?group_id=177054&atid=879703">
           Fedora Commons Bug Tracker</a> for an up-to-date list of 
           outstanding bugs.
