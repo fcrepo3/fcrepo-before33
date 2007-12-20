@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+<title>Fedora REST API Documentation</title>
+<link rel="stylesheet" type="text/css" href="../../../docstyle.css" />
+</head>
+
+<body>
+<div id="header">
+<h1>Fedora REST API Documentation</h1>
+<h2>Fedora Release 3.0 Beta 1</h2>
+</div>
+
+<div id="toc">
+<h2>Table of Contents</h2>
+<ol>
+    <li><a href="#intro">Introduction</a></li>
+    <li><a href="#apia">API-A Methods</a></li>
+    <li><a href="#apim">API-M Methods</a></li>
+    <li><a href="#wadl">WADL</a></li>
+</ol>
+</div>
+
+<ol id="content">
+    <li>
+    <h2 id="intro">Introduction</h2>
+    <span class="plaintext">
+    <p>The Fedora REST API is a new, experimental feature that exposes a
+    subset of the Fedora Access and Management APIs as a RESTful
+    (Representational State Transfer) Web Service. The REST API may replace the
+    API-A-Lite and API-M-Lite interfaces in future versions of Fedora.</p>
+
+    <br />
+
+    <p>As the Fedora REST API is an experimental interface, it should not be
+    considered stable. In particular, future releases may implement a different
+    subset of the Fedora Access and Management APIs and may employ different URL
+    endpoints or HTTP methods. Finally, the REST API has not undergone security
+    testing, so production repositories are cautioned against enabling the REST
+    API without thorough evaluation.</p>
+
+    <br />
+    <p>For examples of how to use the REST API programmatically, please refer
+    to the <a
+        href="http://fedora-commons.svn.sourceforge.net/viewvc/*checkout*/fedora-commons/fedora/tags/release-3.0b1/src/test/junit/fedora/test/api/TestRESTAPI.java">TestRESTAPI
+    test class</a>.</p>
+
+    </span></li>
+
+    <li>
+    <h2 id="apia">API-A Methods</h2>
+    <span class="plaintext">
+    <table width="800">
+        <tr>
+            <td><strong>API Method</strong></td>
+            <td><strong>HTTP Method</strong></td>
+            <td><strong>Example URL Endpoint</strong></td>
+        </tr>
+        <tr>
+            <td>describeRepository</td>
+            <td colspan="2"><em>not implemented</em></td>
+        </tr>
+        <tr>
+            <td>getObjectProfile</td>
+            <td>GET</td>
+            <td>/objects/demo:29</td>
+        </tr>
+        <tr>
+            <td>listMethods</td>
+            <td>GET</td>
+            <td>/objects/demo:29/methods</td>
+        </tr>
+        <tr>
+            <td>listDatastreams</td>
+            <td>GET</td>
+            <td>/objects/demo:29/datastreams</td>
+        </tr>
+        <tr>
+            <td>getDatastreamDissemination</td>
+            <td>GET</td>
+            <td>/objects/demo:29/datastreams/DC</td>
+        </tr>
+        <tr>
+            <td>getDissemination</td>
+            <td colspan="2"><em>not implemented</em></td>
+        </tr>
+        <tr>
+            <td>findObjects</td>
+            <td>GET</td>
+            <td>/objects?pid=true&terms=demo:29</td>
+        </tr>
+        <tr>
+            <td>resumeFindObjects</td>
+            <td>GET</td>
+            <td>/objects?sessionToken=xyz</td>
+        </tr>
+        <tr>
+            <td>getObjectHistory</td>
+            <td>GET</td>
+            <td>/objects/demo:29/versions</td>
+        </tr>
+    </table>
+    </span></li>
+
+    <li>
+    <h2 id="apim">API-M Methods</h2>
+    <span class="plaintext">
+    <table width="800">
+        <tr>
+            <td><strong>API Method</strong></td>
+            <td><strong>HTTP Method</strong></td>
+            <td><strong>Example URL Endpoint</strong></td>
+        </tr>
+        <tr>
+            <td>ingest</td>
+            <td>POST</td>
+            <td>/objects/new</td>
+        </tr>
+        <tr>
+            <td>ingestObject</td>
+            <td colspan="2"><em>not implemented</em></td>
+        </tr>
+        <tr>
+            <td>modifyObject</td>
+            <td>PUT</td>
+            <td>/objects/demo:29?label=foo</td>
+        </tr>
+        <tr>
+            <td>getObjectXML</td>
+            <td>GET</td>
+            <td>/objects/demo:29/objectXML</td>
+        </tr>
+        <tr>
+            <td>exportObject</td>
+            <td>GET</td>
+            <td>/objects/demo:29/export</td>
+        </tr>
+        <tr>
+            <td>purgeObject</td>
+            <td>DELETE</td>
+            <td>/objects/demo:29</td>
+        </tr>
+        <tr>
+            <td>addDatastream</td>
+            <td>POST</td>
+            <td>/objects/demo:29/datastreams/DS99?controlGroup=X&dsLabel=foo</td>
+        </tr>
+        <tr>
+            <td>describeUser</td>
+            <td colspan="2"><em>not implemented</em></td>
+        </tr>
+        <tr>
+            <td>modifyDatastreamByReference</td>
+            <td>PUT</td>
+            <td>/objects/demo:29/datastreams/DS99</td>
+        </tr>
+        <tr>
+            <td>modifyDatastreamByValue</td>
+            <td>PUT</td>
+            <td>/objects/demo:29/datastreams/DS99</td>
+        </tr>
+        <tr>
+            <td>setDatastreamState</td>
+            <td colspan="2"><em>not implemented</em></td>
+        </tr>
+        <tr>
+            <td>setDatastreamVersionable</td>
+            <td colspan="2"><em>not implemented</em></td>
+        </tr>
+        <tr>
+            <td>compareDatastreamChecksumRequest</td>
+            <td colspan="2"><em>not implemented</em></td>
+        </tr>
+        <tr>
+            <td>getDatastream</td>
+            <td colspan="2"><em>not implemented</em></td>
+        </tr>
+        <tr>
+            <td>getDatastreams</td>
+            <td colspan="2"><em>not implemented</em></td>
+        </tr>
+        <tr>
+            <td>getDatastreamHistory</td>
+            <td colspan="2"><em>not implemented</em></td>
+        </tr>
+        <tr>
+            <td>purgeDatastream</td>
+            <td>DELETE</td>
+            <td>/objects/demo:29/datastreams/RELS-EXT</td>
+        </tr>
+        <tr>
+            <td>getNextPID</td>
+            <td>GET</td>
+            <td>/objects/nextPID</td>
+        </tr>
+        <tr>
+            <td>getRelationships</td>
+            <td colspan="2"><em>not implemented</em></td>
+        </tr>
+        <tr>
+            <td>addRelationship</td>
+            <td colspan="2"><em>not implemented</em></td>
+        </tr>
+        <tr>
+            <td>purgeRelationship</td>
+            <td colspan="2"><em>not implemented</em></td>
+        </tr>
+    </table>
+    </span></li>
+
+    <li>
+    <h2 id="wsdl">WADL</h2>
+    <span class="plaintext"> </span>
+    <ol class="alpha">
+        <li>Offline <span class="plaintext"> For reference, an
+        offline copy of the REST WADL is <a href="application.wadl">available
+        here</a>. </span></li>
+        <li>Online <span class="plaintext"> When running your own
+        Fedora server, an online copy of the REST WADL will be made publicly
+        available at <code><strong>/objects/application.wadl</strong></code>.
+        For example: <a
+            href="http://localhost:8080/fedora/objects/application.wadl">
+        http://localhost:8080/fedora/objects/application.wadl</a> </span></li>
+    </ol>
+    </li>
+</ol>
+
+<div id="footer">
+<p id="copyright">Copyright &copy; 2002-2007 Fedora Project</p>
+<script type="text/javascript">
+        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
+        var parts = cvsDate.split(" ");
+        var modifiedDate = parts[1];
+        var p = document.createElement("p");
+        p.setAttribute("id", "lastModified");
+        var footer = document.getElementById("footer");
+        footer.appendChild(p);
+        p.innerHTML = "Last Modified "+modifiedDate;
+      </script></div>
+
+</body>
+</html>

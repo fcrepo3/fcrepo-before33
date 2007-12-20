@@ -51,11 +51,11 @@
 				or as an HTML presentation.</p>
 				<p>URL Syntax:</p>
 				<p>
-					<b>http://<font color="#22cc22">host:port</font>/fedora/mgmt/getNextPID?{<font color="#cc2222">numPids=numPids&amp;pidNamespace=pidNamespace&amp;xml=boolean</font>}</b>
+					<b>http://<font color="#22cc22">host:port</font>/fedora/management/getNextPID?{<font color="#cc2222">numPids=numPids&amp;pidNamespace=pidNamespace&amp;xml=boolean</font>}</b>
 				</p>
 				<p> A complete example URL conforming to this syntax is:</p>
 				<p>
-					<i>http://localhost:8080/fedora/mgmt/getNextPID?numPids=5&amp;pidNamespace=my-pidNamespace&amp;xml=true</i>
+					<i>http://localhost:8080/fedora/management/getNextPID?numPids=5&amp;pidNamespace=my-pidNamespace&amp;xml=true</i>
 				</p>
 			</documentation>
 			<input message="fedora-api:getNextPIDRequest"/>

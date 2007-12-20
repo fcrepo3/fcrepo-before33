@@ -154,6 +154,7 @@
             <pathelement location="${lib.rome}"/>
             <pathelement location="${lib.jettison}"/>
             <pathelement location="${lib.localizer}"/>
+            <pathelement location="${lib.jaxb-api}"/>
             
         	<!-- DBCP libs (removed by installer if installed to Tomcat 5.0.x-->
         	<pathelement location="${lib.commons-collections}"/>
@@ -767,10 +768,16 @@
     		version="true" 
     		use="true" />
     	
-    	<mkdir dir="${docs.build.dir}/userdocs"/>
+        <mkdir dir="${docs.build.dir}/userdocs/server/webservices/wsdl"/>
 		<copy todir="${docs.build.dir}/userdocs">
 			<fileset dir="${docs.src.dir}/userdocs"/>
 		</copy>
+        
+        <copy todir="${docs.build.dir}/userdocs/server/webservices/wsdl">
+            <fileset dir="${src.dir}/wsdl" includes="**/*.wsdl"/>
+            <fileset dir="${src.dir}/xsd" includes="fedora-types.xsd"/>
+        </copy>
+        
     	<!-- generate the Fedora xacml vocabulary listing -->
 		<mkdir dir="${docs.build.dir}/userdocs/server/security/xacml-policies"/>
 		<java classname="fedora.common.policy.Release2_1Namespace" 

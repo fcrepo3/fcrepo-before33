@@ -1,31 +1,28 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US"><head><title>Fedora Administrative GUI Client</title>
-  
-  <link rel="stylesheet" type="text/css" href="../../docstyle.css"/></head>
-                   
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+  <head>
+    <title>Fedora Administrative GUI Client</title>
+    <link rel="stylesheet" type="text/css" href="../../docstyle.css" />
+  </head>
 
-<body>
-  <div id="header">
-    <a href="../../index.html" id="logo"></a>
+  <body>
 
-    <div id="title">
+    <div id="header">
+      <a href="../../../index.html">
+      </a>
       <h1>Fedora Administrative GUI Client</h1>
-
-      <h2>Fedora Release 2.2.1</h2>
+      <h2>Fedora Release 3.0 Beta 1</h2>
     </div>
-  </div>
 
-  <div class="toc">
-    <h2>Table of Contents</h2>
-
-    <div class="tocbox">
+    <div id="toc">
+      <h2>Table of Contents</h2>
       <ol>
         <li><a href="#intro">Introduction</a></li>
-
         <li><a href="#starting">Starting Fedora Administrator</a></li>
-
         <li><a href="#menus">Menus</a></li>
-
         <li><a href="#filemenu">File Menu</a> </li>
 		<li><a href="#createobject">Create New Object</a></li>
 		<li><a href="#openobject">Open Object for Editing</a></li>
@@ -38,90 +35,78 @@
 		<li><a href="#d0e1318">Builders</a></li>
 		<li><a href="#d0e1328">Window Menu</a></li>
 		<li><a href="#d0e1349">Help Menu</a></li>
-		<li><a href="#d0e1364">Appendix A: Digital Object
-        Construction</a></li>
+		<li><a href="#d0e1364">Appendix A: Digital Object Construction</a></li>
       </ol>
     </div>
-  </div>
-
-  <div>
-    <h2><a name="intro" id="d0e49"></a>Introduction</h2>
-  </div>
-
-  <p>Fedora Administrator is the direct link to API-M functionality
-  for repository administrators. Using this tool it is possible to
-  ingest, search for and retrieve, modify and purge data objects
-  and build, search for and retrieve, modify, and purge behavior
-  objects (Behavior Definitions and Behavior Mechanisms).</p>
-
-  <div>
-    <h2><a name="starting" id="d0e54"></a>Starting Fedora
-    Administrator</h2>
-  </div>
-
-  <p>navigate to the $FEDORA_HOME/client/bin directory</p>
-
-  <p>fedora-admin [hostname] [port] [user] [pass]</p>
-
-  <p>For example, <em>fedora-admin localhost 8080 fedoraAdmin
-  fedoraAdmin</em> will start the GUI for a server running on the
-  local machine, port 8080, where "fedoraAdmin"has been used both
-  as the name and password of the server administrator.</p>
-
-  <p><img border="0" src="images/login.jpg" width="289" height="222"></p>
-
-  <p>Added in the 2.1 release of Fedora is the authentication
-  dialog. When you start Fedora Administrator, you will be asked to
-  choose the server to which you wish to connect, the protocol you wish to use to connect to your Fedora repository (http or https), your username and password. The server and username fields are pre-populated and
-  the password is validated using values from <span class="SpellE">fedora.fcfg</span></p>
-
-  <div>
-    <h2><a name="menus" id="d0e71"></a>Menus</h2>
-  </div>
-
-  <p>Fedora Administrator has been designed with standard GUI based
-  menus. The following menus are available in the Fedora
-  Administrator window:</p>
-
-  <p>Builders</p>
-
-  <p>Window</p>
-
-  <p>Help</p>
-
-  <div>
-    <h2><a name="filemenu" id="d0e92"></a>File Menu</h2>
-  </div>
-
-  <p><img border="0" src="images/menu-1.jpg" width="850" height="655"></p>
-
-  <p>Commands on the file menu allow a repository administrator to
-  perform operations on objects in the repository or to log in to a
-  different repository.</p>
-
-  <div>
-    <h3><a name="newobject" id="d0e100"></a>New Object</h3>
-  </div>
-
-  <p><img border="0" src="images/menu-3.jpg" width="850" height="655"></p>
-
-  <p>&nbsp;</p>
-	<p>The <em>New</em> menu option allows users to build new Fedora
-  objects from pre-existing component parts. When the
-  <em>New...Data Object</em> option is selected a skeletal Fedora
-  data object is ingested into the repository and the repository
-  administrator/object owner then completes the object by defining
-  a Behavior Definition and Behavior Mechanism for the object,
-  adding datastreams, and finally binding disseminators and
-  datastreams together.</p>
-
-  <p>Users may also create behavior definition and behavior
-  mechanism objects by selecting these submenu options. The complex
-  task of building WSDL objects dictated the necessity of onscreen,
-  context sensitive help screens for these builders. Clicking the
-  <em>Help</em> button on any pane in the Behavior Definition
-  Builder or Behavior Mechanism Builder will open a popup help
-  screen defining each field in view.</p>
+    
+    <ol id="content">
+    
+      <li>
+        <h2 id="intro">Introduction</h2>
+        <span class="plaintext">
+          Fedora Administrator is the direct link to API-M functionality for repository administrators. Using this tool it is possible to ingest, search for and retrieve, modify and purge data objects and build, search for and retrieve, modify, and purge behavior objects (Behavior Definitions and Behavior Mechanisms).
+        </span>
+      </li>
+      
+      <li>
+        <h2 id="starting">Starting Fedora Administrator</h2>
+        <span class="plaintext">
+          navigate to the $FEDORA_HOME/client/bin directory
+          <br />
+          <br />
+          fedora-admin [hostname] [port] [user] [pass]
+          <br />
+          <br />
+          For example, <em>fedora-admin localhost 8080 fedoraAdmin fedoraAdmin</em> will start the GUI for a server running on the local machine, port 8080, where "fedoraAdmin"has been used both as the name and password of the server administrator.
+          <br />
+          <br />
+          <img src="images/login.jpg" width="289" height="222" alt="login" />
+          <br />
+          <br />
+          Added in the 2.1 release of Fedora is the authentication dialog. When you start Fedora Administrator, you will be asked to choose the server to which you wish to connect, the protocol you wish to use to connect to your Fedora repository (http or https), your username and password. The server and username fields are pre-populated and the password is validated using values from fedora.fcfg
+        </span>
+      </li>
+      
+      <li>
+        <h2 id="menus">Menus</h2>
+        <span class="plaintext">
+          Fedora Administrator has been designed with standard GUI based menus. The following menus are available in the Fedora Administrator window:
+        </span>
+          <ul>
+            <li>File</li>
+            <li>Tools</li>
+            <li>Builders</li>
+            <li>Window</li>
+            <li>Help</li>
+          </ul>
+      </li>
+      
+      <li>
+        <h2 id="filemenu">File Menu</h2>
+        <span class="plaintext">
+          <img src="images/menu-1.jpg" width="850" height="655" alt="file menu" />
+          <br />
+          <br />
+          Commands on the file menu allow a repository administrator to perform operations on objects in the repository or to log in to a different repository.
+        </span>
+      </li>
+      
+      <li>
+        <h2 id="newobject">New Object</h2>
+        <span class="plaintext">
+          <img src="images/menu-3.jpg" width="850" height="655" alt="new object" />
+          <br />
+          <br />
+          The <em>New</em> menu option allows users to build new Fedora objects from pre-existing component parts. When the <em>New...Data Object</em> option is selected a skeletal Fedora data object is ingested into the repository and the repository administrator/object owner then completes the object by defining a Behavior Definition and Behavior Mechanism for the object, adding datastreams, and finally binding disseminators and datastreams together.
+          <br />
+          <br />
+          Users may also create behavior definition and behavior mechanism objects by selecting these submenu options. The complex task of building WSDL objects dictated the necessity of onscreen, context sensitive help screens for these builders. Clicking the <em>Help</em> button on any pane in the Behavior Definition Builder or Behavior Mechanism Builder will open a popup help screen defining each field in view.
+        </span>
+      </li>
+      
+      <li>
+        <h2 id="createobject">Creating a New Data Object</h2>
+      <span class="plaintext">
 
   <div>
     <h4><a name="createobject" id="d0e119"></a>Creating a New Data
@@ -138,7 +123,7 @@
 
     <p>The New Object Dialog appears.</p>
 
-    <p><img border="0" src="images/newobj_dialog.jpg" width="403" height="180"></p>
+    <p><img border="0" src="images/newobj_dialog.jpg" width="403" height="154"></p>
 
     <p>Fill in the label data for the object and the identifier for a content model
     to which the data object subscribes. If a custom PID is
@@ -366,97 +351,13 @@
 	object.&nbsp;&nbsp; A completed Datastream pane is depicted below.</p>
 	<p>&nbsp;</p>
 
-    <p><img border="0" src="images/create-ds-1.jpg" width="850" height="655"></p>
+    <p><img border="0" src="images/create-ds-1.jpg" width="850" height="723"></p>
 
     <p>&nbsp;</p>
-	<p><b>Adding a Disseminator to an object</b></p>
-
-    <p>Optionally, you can add a disseminator to the digital object to provide 
-	dynamic view of datastream content.&nbsp;&nbsp; A disseminator essentially 
-	associates a service definition with the object, with information about 
-	which datastreams in the object should be used as input to the service to 
-	produce dynamic views.&nbsp;&nbsp; The basic idea of a disseminator is 
-	discussed elsewhere, particularly in <a href="../../tutorials/tutorial2.pdf">
-	Tutorial 2</a> found in the system documentation.</p>
-	<p>To create a disseminator, click the Disseminator tab to bring that pane to the front.&nbsp; 
-	On this tab, you can provide a descriptive label for the disseminator.&nbsp; 
-	Your main tasks will be to select a pre-existing service definition (a 
-	Behavior Definition Object) and a pre-existing service implementation (a 
-	Behavior Mechanism Object).&nbsp;&nbsp; As described in Tutorial 2, these 
-	are special control objects that your repository administrator will have 
-	already ingested into your Fedora repository (or you can ingest them too.)&nbsp;&nbsp; 
-	The task of creating a disseminator is to know what kinds of services you 
-	have on hand, and what kinds of objects (they are compatible with).&nbsp;&nbsp; 
-	By creating a disseminator, you don't actually store the behavior 
-	definitions or mechanisms with the digital object.&nbsp; You just point to 
-	the control objects in the repository that contain metadata that describes 
-	the service and how to bind to the service.&nbsp; Once these relationships 
-	between your digital object and the control objects are established (via the 
-	disseminator), then the repository can use the information found in the 
-	control objects at run time to provide dynamic views of the digital object.</p>
-
-    <p>First, select the type of Behavior Definition (service) you want to 
-	associate with the object using the drop down list box:</p>
-
-    <p><img border="0" src="images/create-diss-1.jpg" width="850" height="655"></p>
-
-    <p>&nbsp;</p>
-	<p>Once the Behavior Definition has been selected, the pane
-    will display a list of specific behavior methods that are defined by the Behavior Definition, and the Behavior Mechanism
-    drop down menu will appear.&nbsp;&nbsp;&nbsp; The Behavior Mechanism drop 
-	down prompts you to select a particular implementation of the service that 
-	is defined by the Behavior Definition object you selected.&nbsp;&nbsp;&nbsp; 
-	The idea here is that the same set of abstract behaviors (abstract service 
-	definition) may have been implemented by one or more service providers.&nbsp;&nbsp; 
-	If there are multiple implementations, you choose which one you want to have 
-	associated with this digital object.&nbsp; </p>
-
-    <p>Select a Behavior Mechanism from the drop down menu as follows:&nbsp;&nbsp; The values in the menu are pre-populated based on the
-    Behavior Definition chosen in the previous step. Once the
-    Behavior Mechanism is selected, the Bindings tabs are shown for
-    each method required by that Behavior Definition/Behavior
-    Mechanism pairing.</p>
-
-    <p><img border="0" src="images/create-diss-2.jpg" width="850" height="655"></p>
-
-    <p>&nbsp;</p>
-
-    <p>The final step is to specify which datastreams in your object can be used 
-	as input to the Behavior Mechanism (service implementation).&nbsp; To do 
-	this look at the tabs that appear next the the words &quot;Bindings&quot; on the 
-	bottom area of the pane.&nbsp;&nbsp; Each tab represents an input 
-	requirement for the selected Behavior Mechanism.&nbsp;&nbsp; In the example 
-	above, we have selected a Behavior Mechanism that allows simple image 
-	behaviors and the mechanism wants you to tell it which datastream in your 
-	object fulfill the roles of different image resolutions.&nbsp;&nbsp; The 
-	assumption in this example is that you created an object that has a 
-	datastream for each of four image resolutions (low, medium, high, very 
-	high).&nbsp;&nbsp; One by one, click the binding tabs.&nbsp; There will be a 
-	message that tells you the kinds of datastreams that can be used (in terms 
-	of their MIME types).&nbsp;&nbsp; Select the &quot;Add...&quot;&nbsp; button to the 
-	right to select a particular datastream from your digital object to fulfull 
-	the role of the mechanism binding.&nbsp; A pop up dialog box will appear 
-	listing all datastreams that meet the MIME Type requirement for that tab as 
-	seen below.</p>
-	<p><img border="0" src="images/create-diss-3.jpg" width="394" height="152"></p>
-	<p>Click the drop down list to see all possible datastreams that can be 
-	bound.&nbsp;&nbsp; Click OK when you find an appropriate datastream.&nbsp;&nbsp; 
-	At this point you will be returned to the Disseminator creation pane and you 
-	will see that the selected datastream has been associated with a particular 
-	binding for the Behavior Mechanism that will perform image services.&nbsp;&nbsp; 
-	In this example, the datastream that we created earlier (the Flying Fox in 
-	Sydney JPEG) is now associated with a binding known as &quot;HIGHRES_IMG)&nbsp; 
-	Continue to click through the other binding tabs to associate a datastream 
-	with each binding that the Behavior Mechanism specifies.</p>
-	<p>&nbsp;</p>
-
-    <p><img border="0" src="images/create-diss-4.jpg" width="850" height="655"></p>
-
   </blockquote>
-
   <div>
-    <h3><a name="openobject" id="d0e271"></a>Open Object for Viewing, Editing, 
-	Export, and Purge</h3>
+    <h2><a name="openobject" id="d0e271"></a>Open Object for Viewing, Editing, 
+	Export, and Purge</h2>
   </div>
 
   <p>
@@ -604,7 +505,7 @@
   ingested behavior definition, behavior mechanism, and/or data
   object.</p>
 
-  <p><img border="0" src="images/selectbytype.jpg" width="187" height="170"></p>
+  <p><img border="0" src="images/selectbytype.jpg" width="187" height="194"></p>
 
   <p>&nbsp;</p>
 	<p>It should be noted that if you have created control objects (Behavior 
@@ -725,7 +626,7 @@
     <h3><a name="purge" id="d0e555"></a>Purge Object</h3>
   </div>
 
-  <p><img alt="" id="_x0000_i1049" src="images/input.jpg" border="0" height="121" width="293"/></p>
+  <p><img alt="" id="_x0000_i1049" src="images/input.jpg" border="0" height="128" width="297"/></p>
 
   <p>Purging an object completely and permanently removes it from
   the repository. Upon selecting the Purge option, the user will be
@@ -738,7 +639,7 @@
     <h3><a name="view" id="d0e566"></a>View Object XML</h3>
   </div>
 
-  <p><img alt="" id="_x0000_i1050" src="images/input.jpg" border="0" height="121" width="293"/></p>
+  <p><img alt="" id="_x0000_i1050" src="images/input.jpg" border="0" height="128" width="297"/></p>
 
   <p>This menu option allows a user to view the xml, but not edit.
   XML may be cut and pasted into another application using standard
@@ -749,7 +650,7 @@
     <h3><a name="changerepo" id="d0e574"></a>Change Repository</h3>
   </div>
 
-  <p><img alt="" id="_x0000_i1051" src="images/login.jpg" border="0" height="184" width="279"/></p>
+  <p><img alt="" id="_x0000_i1051" src="images/login.jpg" border="0" height="222" width="289"/></p>
 
   <p>The Change Repository option allows a repository administrator
   to login to a different Fedora repository. When selected, this
@@ -769,7 +670,7 @@
     <h2><a name="toolsmenu" id="d0e587"></a>Tools Menu</h2>
   </div>
 
-  <p><img alt="" id="_x0000_i1052" src="images/tools_menu.jpg" border="0" height="308" width="400"/></p>
+  <p><img alt="" id="_x0000_i1052" src="images/menu-2.jpg" border="0" height="653" width="848"/></p>
 
   <p>Commands on the Tools menu provide the user with the ability
   to search and retrieve objects from the repository, build and
@@ -812,7 +713,7 @@
     <h4><a name="d0e608" id="d0e608"></a>Simple Search Tab</h4>
   </div>
 
-  <p><img alt="" id="_x0000_i1053" src="images/simplesearch.jpg" border="0" height="314" width="400"/></p>
+  <p><img alt="" id="_x0000_i1053" src="images/simplesearch.jpg" border="0" height="673" width="848"/></p>
 
   <p>The Simple Search tab is the default selection in the Search
   Repository window. The Simple Search query searches both the
@@ -822,7 +723,7 @@
   be displayed by clicking the <em>Change</em> button and
   selecting/deselecting field names from the dialog.</p>
 
-  <p><img alt="" id="_x0000_i1054" src="images/searchfieldsdialog.jpg" border="0" height="239" width="298"/></p>
+  <p><img alt="" id="_x0000_i1054" src="images/searchfieldsdialog.jpg" border="0" height="326" width="397"/></p>
 
   <p>The Simple Search searches all indexed metadata fields for the
   text entered into the text box. All searches are case
@@ -836,13 +737,13 @@
     <h4><a name="d0e629" id="d0e629"></a>Advanced Search Tab</h4>
   </div>
 
-  <p><img alt="" id="_x0000_i1055" src="images/searchadvanced.jpg" border="0" height="314" width="400"/></p>
+  <p><img alt="" id="_x0000_i1055" src="images/searchadvanced.jpg" border="0" height="650" width="848"/></p>
 
   <p>The Advanced Search query enables users to refine their
   repository search by searching specific fields for specific
   values provided in the query.</p>
 
-  <p><img alt="" id="_x0000_i1056" src="images/srch_adv_cond_dialog.jpg" border="0" height="110" width="416"/></p>
+  <p><img alt="" id="_x0000_i1056" src="images/srch_adv_cond_dialog.jpg" border="0" height="117" width="420"/></p>
 
   <p>The search conditions can be modified by clicking the
   <em>Add</em> button, which opens the Enter Condition dialog. The
@@ -869,7 +770,7 @@
   selected, a submenu will provide the user with valid states from
   which to select.</p>
 
-  <p><img alt="" id="_x0000_i1057" src="images/searchpopupmenu.jpg" border="0" height="308" width="400"/></p>
+  <p><img alt="" id="_x0000_i1057" src="images/searchpopupmenu.jpg" border="0" height="650" width="848"/></p>
 
   <p>The <em>Purge</em> and <em>Set Object State To</em> submenu
   options can be used on multiple objects by using mouse clicks or
@@ -882,7 +783,7 @@
     <h3><a name="d0e685" id="d0e685"></a>Batch Processing</h3>
   </div>
 
-  <p><img alt="" id="_x0000_i1058" src="images/tools_batch.jpg" border="0" height="314" width="400"/></p>
+  <p><img alt="" id="_x0000_i1058" src="images/tools_batch.jpg" border="0" height="650" width="848"/></p>
 
   <p>The Batch menu item includes tools to create and ingest
   multiple Fedora objects, which are FOXML documents or
@@ -948,7 +849,7 @@
   <p>Then click the <em>Build this batch</em> button to build the batch of Fedora 
     <i>METS</i> or Fedora <i>FOXML</i> XML documents.</p>
 
-    <p><img alt="" id="_x0000_i1060" src="images/build.jpg" border="0" height="320" width="400"/></p>
+    <p><img alt="" id="_x0000_i1060" src="images/build.jpg" border="0" height="317" width="700"/></p>
 
   <p>A confirmation dialog will open requesting confirmation of the object template selected. Clicking <em>Yes</em> will continue the batch build. Clicking <em>No</em> or <em>Cancel</em> will return the user to the <em>Batch Build</em> window.</p>
 
@@ -957,7 +858,7 @@
   <p>A second (output-only) window will open to show progress. You can build multiple 
     different batches before closing the <em>Batch Build</em> window.</p>
 
-    <p><img alt="" id="_x0000_i1061" src="images/build-output.jpg" border="0" height="299" width="400"/></p>
+    <p><img alt="" id="_x0000_i1061" src="images/build-output.jpg" border="0" height="396" width="396"/></p>
 
     <p>You can then ingest the created batch as described elsewhere
     in this document.</p>
@@ -1032,7 +933,7 @@
     the two required settings. Clicking on a <em>browse</em> button opens a standard 
     directory/file selection dialog.</p>
 
-    <p><img alt="" id="_x0000_i1062" src="images/ingest.jpg" border="0" height="319" width="400"/></p>
+    <p><img alt="" id="_x0000_i1062" src="images/ingest.jpg" border="0" height="253" width="701"/></p>
 
     
   <p>You must also indicate the format of the objects to be ingested by selecting 
@@ -1120,7 +1021,7 @@
     to enter the four required settings. Clicking on a <em>browse</em> button 
     opens a standard directory/file selection dialog.</p>
 
-    <p><img alt="" id="_x0000_i1064" src="images/build-ingest.jpg" border="0" height="319" width="400"/></p>
+    <p><img alt="" id="_x0000_i1064" src="images/build-ingest.jpg" border="0" height="317" width="701"/></p>
 
     
   <p>Then click the <em>Build and Ingest this batch</em> button to build the batch 
@@ -1136,7 +1037,7 @@
     build and ingest multiple different batches before closing the <em>Batch Build 
     and Ingest</em> window.</p>
 
-    <p><img alt="" id="_x0000_i1065" src="images/build-ingest-output.jpg" border="0" height="399" width="400"/></p>
+    <p><img alt="" id="_x0000_i1065" src="images/build-ingest-output.jpg" border="0" height="507" width="398"/></p>
 
     <p>There is then no need to separately ingest the created
     batch.</p>
@@ -1308,6 +1209,7 @@
     element (the nested, not the nesting, one). The associated <b>xlink:href</b> 
     and <b>xlink:title</b> attributes are substituted into the Fedora <b>METS:Flocat</b> 
     element, which is nested within that Fedora <b>METS:fileGrp</b> element.</p>
+  <p>Datastream labels substitute instead into <b>METS:structMap.</b></p>
 </blockquote>
 <p>When working with a <i>FOXML</i> template object:.</p>
 <blockquote>
@@ -1346,7 +1248,7 @@
 
   
 &lt;input <br/>    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xmlns:xlink="http://www.w3.org/1999/xlink" 
+    xmlns:xlink="http://www.w3.org/TR/xlink" 
     xsi:schemaLocation="http://www.fedora.info/definitions/ http://www.fedora.info/definitions/1/0/api/batchMerge.xsd" 
 	xmlns="http://www.fedora.info/definitions/" 
 	OBJID="demo:3010" LABEL="American Academy"&gt;
@@ -1448,9 +1350,9 @@
   file containing modify directives and then process each directive
   in sequence using the methods of API-M. The format of the
   directives file is specified by an xml schema name
-  batchModify-1.1.xsd. The schema is available in the local
+  batchModify.xsd. The schema is available in the local
   distribution in the tomcat ROOT webapp and is also available from
-  the Fedora website at <a href="http://www.fedora.info/definitions/1/0/api/batchModify-1.1.xsd">http://www.fedora.info/definitions/1/0/api/batchModify-1.1.xsd</a>.
+  the Fedora website at <a href="http://www.fedora.info/definitions/1/0/api/batchModify.xsd">http://www.fedora.info/definitions/1/0/api/batchModify.xsd</a>.
   Each modify directive mirrors the capability of the corresponding
   API-M directives.</p>
 
@@ -1460,7 +1362,7 @@
   the Administrator GUI client under the submenu heading of
   Batch/Modify Batch.</p>
 
-  <p><img alt="" src="images/image002.jpg" border="0" height="382" width="532"/></p>
+  <p><img alt="" src="images/tools_batch.jpg" border="0" height="650" width="848"/></p>
 
   <p>The Modify Batch menu contains two sub-items named Process
   Directives and Validate Directives File. The Process Directives
@@ -1473,29 +1375,29 @@
   <p>Selecting the Process Directives item will prompt for the
   location of the directives file.</p>
 
-  <p><img alt="" src="images/image003.jpg" border="0" height="506" width="707"/></p>
+  <p><img alt="" src="images/image003.jpg" border="0" height="360" width="508"/></p>
 
   <p>After selecting a directives file, you will be asked to
   confirm the choice.</p>
 
-  <p><img alt="" src="images/image004.jpg" border="0" height="114" width="568"/></p>
+  <p><img alt="" src="images/image004.jpg" border="0" height="124" width="545"/></p>
 
   <p>Upon clicking the yes button, the directives file will be
   processed and a log file generated that details the number of
   directives processed and any errors that may have occurred.</p>
 
-  <p><img alt="" src="images/image005.jpg" border="0" height="154" width="315"/></p>
+  <p><img alt="" src="images/image005.jpg" border="0" height="162" width="317"/></p>
 
   <p>If there were any errors, you can peruse the log file to
   ascertain more information about what caused the directive to
   fail.</p>
 
-  <p><img alt="" src="images/image006.jpg" border="0" height="151" width="513"/></p>
+  <p><img alt="" src="images/image006.jpg" border="0" height="160" width="491"/></p>
 
   <p>The log file consists of an xml file containing entries for
   each directive that was processed.</p>
 
-  <p><img alt="" src="images/image008.jpg" border="0" height="487" width="624"/></p>
+  <p><img alt="" src="images/image008.jpg" border="0" height="650" width="848"/></p>
 
   <h4>Validate Directives</h4>
 
@@ -1507,14 +1409,14 @@
   are similar to that for processing. First you are prompted for
   the location of the directives file to be processed.</p>
 
-  <p><img alt="" src="images/image009.jpg" border="0" height="446" width="624"/></p>
+  <p><img alt="" src="images/image009.jpg" border="0" height="360" width="508"/></p>
 
   <p>Confirming the file location initiates the parsing process and
   the results are displayed when parsing is completed.</p>
 
-  <p><img alt="" src="images/image010.jpg" border="0" height="115" width="568"/></p>
+  <p><img alt="" src="images/image010.jpg" border="0" height="124" width="545"/></p>
 
-  <p><img alt="" src="images/image011.jpg" border="0" height="153" width="558"/></p>
+  <p><img alt="" src="images/image011.jpg" border="0" height="162" width="535"/></p>
 
   <h4>To Demo</h4>
 
@@ -1663,7 +1565,7 @@
   xsi:schemaLocation</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
   ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
   http://www.fedora.info/definitions/
-  http://www.fedora.info/definitions/1/0/api/batchModify-1.1.xsd</span>
+  http://www.fedora.info/definitions/1/0/api/batchModify.xsd</span>
   <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
   "&gt;</span></p>
 
@@ -4759,7 +4661,7 @@
       <h3><a name="d0e1308" id="d0e1308"></a>Console</h3>
     </div>
 
-    <p><img alt="" id="_x0000_i1066" src="images/tools_console.jpg" border="0" height="308" width="400"/></p>
+    <p><img alt="" id="_x0000_i1066" src="images/tools_console.jpg" border="0" height="650" width="848"/></p>
 
     <p>The options under the Console submenu give developers direct
     access to the methods in the Fedora APIs and to the
@@ -4776,7 +4678,7 @@
       <h2><a name="d0e1318" id="d0e1318"></a>Builders</h2>
     </div>
 
-    <p><img alt="" id="_x0000_i1067" src="images/builders_menu.jpg" border="0" height="298" width="400"/></p>
+    <p><img alt="" id="_x0000_i1067" src="images/builders_menu.jpg" border="0" height="650" width="848"/></p>
 
     <p>The Builders submenu gives users access to the Behavior
     Definition Builder and the Behavior Definition Builder. These
@@ -4795,7 +4697,7 @@
       <h2><a name="d0e1328" id="d0e1328"></a>Window Menu</h2>
     </div>
 
-    <p><img alt="" id="_x0000_i1068" src="images/window_menu.jpg" border="0" height="298" width="400"/></p>
+    <p><img alt="" id="_x0000_i1068" src="images/window_menu.jpg" border="0" height="650" width="848"/></p>
 
     <p>The Window menu contains standard commands for managing
     multiple panes open in the Fedora Administrator window. These
@@ -4815,7 +4717,7 @@
       <h2><a name="d0e1349" id="d0e1349"></a>Help Menu</h2>
     </div>
 
-    <p><img alt="" id="_x0000_i1069" src="images/help_menu.jpg" border="0" height="308" width="400"/></p>
+    <p><img alt="" id="_x0000_i1069" src="images/help_menu.jpg" border="0" height="650" width="848"/></p>
 
     <p>The help menu has two options:</p>
 
@@ -4835,6 +4737,7 @@
     digital object construction, please see the <a href="../../digitalobjects/do-const.html" target="_top">Digital Object
     Construction manual</a>.</p>
   </div>
+  </span>
 
   <div id="footer">
     <div id="copyright">
@@ -4844,7 +4747,7 @@
     <div id="lastModified">
       Last Modified <script type="text/javascript">
       //<![CDATA[
-            var cvsDate = "$Date$";
+            var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
             var parts = cvsDate.split(" ");
             var modifiedDate = parts[1];
             document.write(modifiedDate);

@@ -1,205 +1,170 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
-<head>
-  <title>Fedora API-M-Lite Documentation</title>
-  <link rel="stylesheet" type="text/css" href="../../../docstyle.css" />
-</head>
+  <head>
+    <title>Fedora API-M-Lite Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../docstyle.css" />
+  </head>
 
-<body>
-  <div id="header">
-    <a href="../../../index.html" id="logo"></a>
+  <body>
 
-    <div id="title">
+    <div id="header">
+      <a href="../../../index.html">
+      </a>
       <h1>Fedora API-M-Lite Documentation</h1>
-
-      <h2>Fedora Release 2.2.1</h2>
+      <h2>Fedora Release 3.0 Beta 1</h2>
     </div>
-  </div>
 
-  <div class="toc">
-    <h2>Table of Contents</h2>
-
-    <div class="tocbox">
+    <div id="toc">
+      <h2>Table of Contents</h2>
       <ol>
         <li><a href="#intro">Introduction</a></li>
-
         <li><a href="#syntax">Client Syntax</a></li>
+        <li><a href="#wsdl">WSDL</a></li>
       </ol>
     </div>
-  </div>
-
-  <div class="article">
-    <div class="sec1">
-      <div class="titlepage">
-        <div>
-          <h2 class="title" style="clear: both"><a name="intro" id=
-          "intro"></a>Introduction</h2>
-        </div>
-      </div>
-
-      <p>The Fedora API-M-Lite interface is implemented as an HTTP
-      service that provides a simple URI-oriented definition for
-      the Management service of a Fedora repository. It is intended
-      to support a REST-like style of access to the Fedora
-      Management web service (in contrast to a traditional SOAP web
-      service definition). This means that we define a simple URL
-      syntax that can be used to issue management service requests.
-      API-M-LITE does not provide service bindings for all of the
-      operations defined in Fedora's full Management service
-      (API-M). Currently, API-M-LITE only provides bindings for the
-      method listed below. Additional methods will be implemented
-      for API-M-Lite in future releases of Fedora.</p>
-
-      <div class="itemizedlist">
-        <ul type="disc">
-          <li>
-            <p>getNextPID - gets a list of the requested next
-            available PIDs.</p>
-          </li>
-        </ul>
-      </div>
-
-      <p>For more information on the method definitions, refer to
-      the API descriptions located at <a href=
-      "http://www.fedora.info/definitions/1/0/api/" target=
-      "_top">http://www.fedora.info/definitions/1/0/api/</a></p>
+    
+    <div id="content">
+    
+      <h2 id="intro">Introduction</h2>
+      
+      <p>
+        The Fedora API-M-Lite interface is implemented as an HTTP
+        service that provides a simple URI-oriented definition for
+        the Management service of a Fedora repository. It is intended
+        to support a REST-like style of access to the Fedora
+        Management web service (in contrast to a traditional SOAP web
+        service definition). This means that we define a simple URL
+        syntax that can be used to issue management service requests.
+        API-M-LITE does not provide service bindings for all of the
+        operations defined in Fedora's full Management service
+        (API-M). Currently, API-M-LITE only provides bindings for the
+        method listed below. Additional methods will be implemented
+        for API-M-Lite in future releases of Fedora.
+      </p>
+      
+      <ul>
+        <li>getNextPID - gets a list of the requested next available PIDs.</li>
+      </ul>
+      
+      <p>
+        For more information on the method definitions, refer to
+        the API descriptions located at
+        <a href="http://www.fedora.info/definitions/1/0/api/">http://www.fedora.info/definitions/1/0/api/</a>
+      </p>
+      
+      <h2 id="syntax">Client Syntax</h2>
+      
+      <h3>getNextPID syntax:</h3>
+      
+      <p>
+        http://hostname:port/fedora/management/getNextPID? <strong>[numPIDs=NUMPIDS&amp;]
+        [namespace=NAMESPACE&amp;] [xml=BOOLEAN&amp;]</strong>
+        <br />
+        This syntax requests a list of the next available PIDs. The result is returned
+        as a MIME-typed stream. Items enclosed in square brackets are optional.
+      </p>
+      
+      <ul>
+        <li>
+          hostname - required hostname of the Fedora server.
+        </li>
+        <li>
+          port - required port number on which the Fedora server is running. fedora
+          - required name of the Fedora access service.
+        </li>
+        <li>
+          fedora - a required parameter specifying the Fedora servlet path.
+        </li>
+        <li>
+          management - a required parameter specifying the Fedora servlet path.
+        </li>
+        <li>
+          numPIDs - a optional parameter specifying the number of PIDs to generate.
+          If omitted, the value defaults to one.
+        </li>
+        <li>
+          namespace - an optional parameter specifying the namespace to be used in
+          generating the PIDs. If omitted, the value defaults to the value of the
+          pidNamespace parameter in the fedora.fcfg configuration file.
+        </li>
+        <li>
+          xml - an optional parameter indicating the format of the response. A value
+          of "false" indicates the response format is HTML. A value of "true" indicates
+          the response format is XML. If omitted, the value defaults to a value of "false".
+        </li>
+      </ul>
+      
+      <h3>Examples</h3>
+      
+      <p>
+        Generate a single PID using the default namespace configured in the fedora.fcfg
+        file and return the results as HTML:
+        <br />
+        http://localhost:8080/fedora/management/getNextPID?
+      </p>
+      
+      <p>
+        Generate five PIDs using the default namespace configured in the fedora.fcfg
+        file and return the results as HTML:
+        <br />
+        http://localhost:8080/fedora/management/getNextPID?numPIDs=5
+      </p>
+      
+      <p>
+        Generate 5 PIDs using a namespace value of "my-namespace" and return the results
+        as HTML:
+        <br />
+        http://localhost:8080/fedora/management/getNextPID?numPIDs=5&amp;namespace=my-namespace
+      </p>
+      
+      <p>
+        Generate 5 PIDs using the namespace value of "my-namespace" and return the results
+        as XML:
+        <br />
+        http://localhost:8080/fedora/management/getNextPID?numPIDs=5&amp;namespace=my-namespace&amp;xml=true
+      </p>
+      
+    <h2 id="wsdl">WSDL</h2>
+      <span class="plaintext">
+      </span> 
+      <ol class="alpha">
+        <li>Offline
+          <span class="plaintext">
+            For reference, an offline copy of the API-M-LITE WSDL is
+            <a href="../wsdl/Fedora-API-M-LITE.wsdl">available here</a>.
+          </span>
+        </li>
+        <li> Online
+          <span class="plaintext">
+            When running your own Fedora server, an online copy of
+            the API-M-LITE WSDL will be made publicly available at
+            <code><strong>/wsdl?api=API-M-LITE</strong></code>.  For example:
+            <a href="http://localhost:8080/fedora/wsdl?api=API-M-LITE">
+            http://localhost:8080/fedora/wsdl?api=API-M-LITE</a>
+          </span>
+        </li>
+      </ol>      
+      
     </div>
-
-    <div class="sec1">
-      <div class="titlepage">
-        <div>
-          <h2 class="title" style="clear: both"><a name="syntax"
-          id="syntax"></a>Client Syntax</h2>
-        </div>
-      </div>
-
-      <div class="variablelist">
-        <p class="title"><b>getNextPID syntax:</b></p>
-
-        <dl>
-          <dt><span class=
-          "term">http://hostname:port/fedora/mgmt/getNextPID?
-          <span class=
-          "bold"><b>[numPIDs=NUMPIDS&amp;][namespace=NAMESPACE&amp;][xml=BOOLEAN&amp;]</b></span></span></dt>
-
-          <dd>
-            <p>This syntax requests a list of the next available
-            PIDs. The result is returned as a MIME-typed stream.
-            Items enclosed in square brackets are optional.</p>
-          </dd>
-        </dl>
-      </div>
-
-      <blockquote class="blockquote">
-        <div class="itemizedlist">
-          <ul type="disc">
-            <li>
-              <p>hostname - required hostname of the Fedora
-              server.</p>
-            </li>
-
-            <li>
-              <p>port - required port number on which the Fedora
-              server is running. fedora - required name of the
-              Fedora access service.</p>
-            </li>
-
-            <li>
-              <p>fedora - a required parameter specifying the
-              Fedora servlet path.</p>
-            </li>
-
-            <li>
-              <p>mgmt - a required parameter specifying the Fedora
-              servlet path.</p>
-            </li>
-
-            <li>
-              <p>numPIDs - a optional parameter specifying the
-              number of PIDs to generate. If omitted, the value
-              defaults to one.</p>
-            </li>
-
-            <li>
-              <p>namespace - an optional parameter specifying the
-              namespace to be used in generating the PIDs. If
-              omitted, the value defaults to the value of the
-              pidNamespace parameter in the fedora.fcfg
-              configuration file.</p>
-            </li>
-
-            <li>
-              <p>xml - an optional parameter indicating the format
-              of the response. A value of "false" indicates the
-              response format is HTML. A value of "true" indicates
-              the response format is XML. If omitted, the value
-              defaults to a value of "false".</p>
-            </li>
-          </ul>
-        </div>
-      </blockquote>
-
-      <div class="variablelist">
-        <p class="title"><b>Examples</b></p>
-
-        <dl>
-          <dt><span class="term">Generate a single PID using the
-          default namespace configured in the fedora.fcfg file and
-          return the results as HTML:</span></dt>
-
-          <dd>
-            <p>http://localhost:8080/fedora/mgmt/getNextPID?</p>
-          </dd>
-
-          <dt><span class="term">Generate five PIDs using the
-          default namespace configured in the fedora.fcfg file and
-          return the results as HTML:</span></dt>
-
-          <dd>
-            <p>
-            http://localhost:8080/fedora/mgmt/getNextPID?numPIDs=5</p>
-          </dd>
-
-          <dt><span class="term">Generate 5 PIDs using a namespace
-          value of "my-namespace" and return the results as
-          HTML:</span></dt>
-
-          <dd>
-            <p>
-            http://localhost:8080/fedora/mgmt/getNextPID?numPIDs=5&amp;namespace=my-namespace</p>
-          </dd>
-
-          <dt><span class="term">Generate 5 PIDs using the
-          namespace value of "my-namespace" and return the results
-          as XML:</span></dt>
-
-          <dd>
-            <p>
-            http://localhost:8080/fedora/mgmt/getNextPID?numPIDs=5&amp;namespace=my-namespace&amp;xml=true</p>
-          </dd>
-        </dl>
-      </div>
-    </div>
-  </div>
-
-  <div id="footer">
-    <div id="copyright">
-      Copyright &#xA9; 2002-2007 Fedora Project
-    </div>
-
-    <div id="lastModified">
-      Last Modified <script type="text/javascript">
-      //<![CDATA[
-            var cvsDate = "$Date$";
-            var parts = cvsDate.split(" ");
-            var modifiedDate = parts[1];
-            document.write(modifiedDate);
-      //]]>
+    
+    <div id="footer">
+      <p id="copyright">
+        Copyright &copy; 2002-2007 Fedora Project
+      </p>
+      <script type="text/javascript">
+        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
+        var parts = cvsDate.split(" ");
+        var modifiedDate = parts[1];
+        var p = document.createElement("p");
+        p.setAttribute("id", "lastModified");
+        var footer = document.getElementById("footer");
+        footer.appendChild(p);
+        p.innerHTML = "Last Modified "+modifiedDate;
       </script>
     </div>
-  </div>
-</body>
+    
+  </body>
 </html>

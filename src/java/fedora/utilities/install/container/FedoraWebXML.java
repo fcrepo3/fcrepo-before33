@@ -102,8 +102,12 @@ public class FedoraWebXML {
 	private void setServletMappings() {
 	    if (options.enableRestAPI()) {
 	        addServletMapping("RestServlet", "/objects/*");
+	        addServletMapping("RestServlet", "/objects/nextPID");
+	        addServletMapping("RestServlet", "/objects/nextPID.xml");
 	    } else {
 	        removeServletMapping("RestServlet", "/objects/*");
+	        removeServletMapping("RestServlet", "/objects/nextPID");
+	        removeServletMapping("RestServlet", "/objects/nextPID.xml");
 	    }
 	}
 	

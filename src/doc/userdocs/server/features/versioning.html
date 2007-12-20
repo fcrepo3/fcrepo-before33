@@ -1,336 +1,199 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
-                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
-<head>
-<title>Fedora Content Versioning</title>
-<link rel="stylesheet" type="text/css" href="../../docstyle.css" />
-</head>
+  <head>
+    <title>Fedora Content Versioning</title>
+    <link rel="stylesheet" type="text/css" href="../../docstyle.css" />
+  </head>
 
-<body>
-<div id="header"><a href="../../index.html" id="logo"></a>
-<div id="title">
-<h1>Fedora Content Versioning</h1>
-<h2>Fedora Release 2.2.1</h2>
-</div>
-</div>
+  <body>
 
-<div id="toc">
-    <h2>Table of Contents</h2>
-    <div id="tocbox">
-        <ol>
-			<li><a href="#d0e49">Introduction</a></li>
-			<li><a href="#d0e54">Preservation</a></li>
-			<li><a href="#d0e59">How It Works by Default</a></li>
-			<li><a href="#d0e5a">Disabling Versioning</a></li>
-			<li><a href="#d0e5b">Purging Old Versions</a></li>
-			<li><a href="#d0e71">Fedora Administrator</a></li>
-			<li><a href="#d0e87">Search and Retrieval in Fedora
-	Administrator</a></li>
-			<li><a href="#d0e106">API-A-Lite Web Interface</a></li>
-		</ol>
-	</div>
-</div>
+    <div id="header">
+      <a href="../../../index.html">
+      </a>
+      <h1>Fedora Content Versioning</h1>
+      <h2>Fedora Release 3.0 Beta 1</h2>
+    </div>
 
-<div class="sect1">
-<div class="titlepage">
-<div>
-<h2 class="title" style="clear: both"><a name="d0e49"></a>Introduction</h2>
-</div>
-</div>
-<p>As of v1.2, Fedora for the first time included content versioning
-functionality. Content versioning is one of the preservation-oriented
-features of Fedora. Using this new capability, Fedora repositories can
-maintain a record of how digital objects have changed over time. This is
-achieved by the Fedora repository storing former versions of content,
-and by creating audit trail records about changes. Also, with the advent
-of content versioning, the Fedora Access interfaces now support
-date-time stamped requests, so that a client can "go back in time" and
-see a digital object as it looked in the past.</p>
-<p>As of v2.2, the versioning capabilities of Fedora have been
-enhanced. Although the default operation for digital object in a Fedora
-Repository is still that any modification of a datastream will create
-and store a new version of that datastream, it is now possible to have a
-greater degree of control over the versioning capability. Now whenever a
-datastream is created (either through the createDatastream API function,
-or as a part of ingesting an entire digital object) the user can specify
-whether that specific datastream is to be versioned or not.</p>
-<p>Additionally, there are now API functions that allow the user
-greater control of which modifications of datastreams stored for a
-digital object are important enough to merit maintaining the version in
-perpetuity, and which are less important administrative changes which
-need not be preserved.</p>
-</div>
-<div class="sect1">
-<div class="titlepage">
-<div>
-<h2 class="title" style="clear: both"><a name="d0e54"></a>Preservation</h2>
-</div>
-</div>
-<p>The ability to version content of Fedora data objects provides
-repositories with the ability to preserve not only the data for any
-given data object over time, but also to preserve the look and feel of
-the dissemination of that data object, since the original content is
-linked to the original delivery mechanisms used to disseminate that
-content.</p>
-</div>
-<div class="sect1">
-<div class="titlepage">
-<div>
-<h2 class="title" style="clear: both"><a name="d0e59"></a>How It
-Works by Default</h2>
-</div>
-</div>
-<p>In the more versatile versioning system now provided by Fedora,
-the default operation is that any modifications made to a Datastream or
-Disseminator through the Fedora management interface (API-M) will
-automatically result in a new version of that Datastream or Disseminator
-being created by Fedora. Fedora will not create a new version of the
-whole digital object, instead it will version these specific components
-<span class="emphasis"><em>within</em></span> the digital object
-container. This has the benefit of the digital object PID remaining
-constant, and not having to keep track of multiple distinct versions of
-a digital object.</p>
-<p>The Fedora repository typically will maintain all versions of all
-Datastreams and Disseminators, thereby creating a history of how objects
-change over time. Additionally, Fedora maintains an audit trail record
-of the nature of the object change events (e.g., who, what, when, why).
-</p>
-<p>While the components of data objects are versioned in Fedora v2.0
-through 2.2, versioning of behavior objects (Behavior Definitions and
-Behavior Mechanisms) is in scope for future releases of the software.</p>
-</div>
-<div class="sect1">
-<div class="titlepage">
-<div>
-<h2 class="title" style="clear: both"><a name="d0e5a"></a>Disabling
-Versioning</h2>
-</div>
-</div>
-As of v2.2, the Fedora versioning system allows a user to selectively <span
-	class="emphasis"><em>disable</em></span> versioning for a given
-Datastream of a digital object (via the new API function
-setDatastreamVersionable). Subsequently, any modifications made to that
-specific Datastream will <span class="emphasis"><em>replace</em></span>
-the most recent stored version with the result of the modification. This
-replacement only applies to the most recent version of that Datastream,
-any versions that were in existance before versioning was disabled will
-remain unchanged. Thereafter if the user decides that new modifications
-ought to cause new versions to be stored, versioning can be turned back
-on (again through the API function set DatastreamVersionable).
-</p>
-</div>
-<div class="sect1">
-<div class="titlepage">
-<div>
-<h2 class="title" style="clear: both"><a name="d0e59"></a>Purging
-Old Versions</h2>
-</div>
-</div>
-<p>To provide more control over what versions of a particular
-Datastream are to be kept, the API function purgeDatastream has been
-made more versatile. Previously purgeDatastream could only be used to
-delete the oldest version (or versions) of a Datastream. If, for
-instance a Datastream had six different versions that had been created
-over its lifetime (numbered 1 through 6 from oldest to most recent) and
-a user wanted to get rid of the fourth stored version, the only action
-the user could take previously would be to delete versions 1 through 4.</p>
-<p>Now rather that specifying single date, and deleting all versions
-older than that date, the purgeDatastream function allows a start date
-and end date to be specified which will allow any single previous
-version (or any contiguous range of versions) to be deleted.</p>
-</div>
-<div class="sect1">
-<div class="titlepage">
-<div>
-<h2 class="title" style="clear: both"><a name="d0e71"></a>Fedora
-Administrator</h2>
-</div>
-</div>
-<p>Any component of an object that may be modified is shown in
-Fedora Administrator as either an editable text box or by means of an
-Edit button on the active pane. Any modification to a data object
-component results in a new version of that component being created and
-stored in the xml of the data object.</p>
-<p>Previous versions of an edited datastream or disseminator may be
-viewed, but cannot be edited. A slider bar is provided to indicate that
-previous versions of a datastream or disseminator exist. Versions are
-represented on this timeline by small vertical lines. Clicking on the
-bar will move the slider to the points on the timeline. Additionally the
-slider may be dragged along the timeline to show all versions.</p>
-<p>The following screen shots show a versioned image datastream.
-Note that a dropdown box is present on the Datastream pane indicating
-whether versioning is enabled for that particular Datastream (ie.
-whether Updates will create new version or Updates will replace the most
-recent version):</p>
-<div class="mediaobject"><img src="../images/version1.jpg" /></div>
-<p></p>
-<div class="mediaobject"><img src="../images/version2.jpg" /></div>
-</div>
-<div class="sect1">
-<div class="titlepage">
-<div>
-<h2 class="title" style="clear: both"><a name="d0e87"></a>Search
-and Retrieval in Fedora Administrator</h2>
-</div>
-</div>
-<p>Retrieval of a modified data object requires using the Advanced
-Search tab on the Search Repository dialog and entering a specific
-date/time stamp as a search criteria.</p>
-<p>All components are given a created date (cDate) value at ingest.
-Whenever the component is modified, the modified date (mDate) value is
-updated. By searching on the modified date, it is possible to retrieve a
-result set of modified data objects. Wild card values are allowed in the
-date/time search criteria. For example</p>
-<blockquote class="blockquote">
-<p>mDate&lt;=2003-08-28T*</p>
-</blockquote>
-<p>and</p>
-<blockquote class="blockquote">
-<p>mDate&lt;=2003-08-28T23:59:59</p>
-</blockquote>
-<p>are both valid search criteria.</p>
-<p>In the case of Dublin Core Metadata datastreams, the modified
-date is stored in the dcmDate parameter. To retrieve data objects with
-modified Dublin Core metadata datastreams, the user must search using
-this parameter name.</p>
-</div>
-<div class="sect1">
-<div class="titlepage">
-<div>
-<h2 class="title" style="clear: both"><a name="d0e106"></a>API-A-Lite
-Web Interface</h2>
-</div>
-</div>
-<p>Retrieval of specific versions of objects via API-A-Lite also
-depends on entering date/time parameter values. This section gives the
-syntax for the getDissemination and getObjectSyntax methods.</p>
-<p>If no date/time value is used in the URL, the most current
-version of a data object is always returned as the result of a search.</p>
-<div class="variablelist">
-<p class="title"><b>getDissemination syntax:</b></p>
-<dl>
-	<dt><span class="term">http://hostname:port/fedora/get/PID/bDefPID/methodName<span
-		class="bold"><b>[/dateTime][?parmArray]</b></span> </span></dt>
-	<dd>
-	<p>This syntax requests a dissemination of the specified object
-	using the specified method of the associated behavior definition
-	object. The result is returned as a MIME-typed stream.</p>
-	</dd>
-</dl>
-</div>
-<blockquote class="blockquote">
-<div class="itemizedlist">
-<ul type="disc">
-	<li>
-	<p>hostname - required hostname of the Fedora server.</p>
-	</li>
-	<li>
-	<p>port - required port number on which the Fedora server is
-	running. fedora - required name of the Fedora access service.</p>
-	</li>
-	<li>
-	<p>fedora - a required parameter specifying the Fedora servlet
-	path.</p>
-	</li>
-	<li>
-	<p>get - a required parameter specifying the Fedora servlet path.</p>
-	</li>
-	<li>
-	<p>PID - required persistent identifier of the digital object.</p>
-	</li>
-	<li>
-	<p>bDefPID - required persistent identifier of the behavior
-	definition object to which the digital object subscribes.</p>
-	</li>
-	<li>
-	<p>methodName - required name of the method to be executed.</p>
-	</li>
-	<li>
-	<p><span class="bold"><b>dateTime</b></span> - value indicating
-	dissemination of a version of the digital object at the specified point
-	in time. Proper syntax is YYYY-MM-DDTHH:MM:SS where HH is 24-hour
-	clock.</p>
-	</li>
-	<li>
-	<p><span class="bold"><b>parmArray</b></span> - optional array of
-	method parameters consisting of name/value pairs in the form
-	parm1=value1&amp;parm2=value2...</p>
-	</li>
-</ul>
-</div>
-</blockquote>
-<p>For example</p>
-<blockquote class="blockquote">
-<p>http://localhost:8080/fedora/get/ronda:2/demo:1/getItem/2003-08-28T00:01:01</p>
-</blockquote>
-<div class="variablelist">
-<p class="title"><b>getObjectProfile syntax:</b></p>
-<dl>
-	<dt><span class="term">http://hostname:port/fedora/get/PID<span
-		class="bold"><b>[/dateTime][?xml=BOOLEAN]</b></span> </span></dt>
-	<dd>
-	<p>This syntax requests an object profile for the specified digital
-	object. The xml parameter determines the type of output returned. If
-	the parameter is omitted or has a value of "false", a MIME-typed stream
-	consisting of an html table is returned providing a browser-savvy means
-	of viewing the object profile. If the value specified is "true", then a
-	MIME-typed stream consisting of XML is returned.</p>
-	</dd>
-</dl>
-</div>
-<blockquote class="blockquote">
-<div class="itemizedlist">
-<ul type="disc">
-	<li>
-	<p>hostname - required hostname of the Fedora server.</p>
-	</li>
-	<li>
-	<p>port - required port number on which the Fedora server is
-	running. fedora - required name of the Fedora access service.</p>
-	</li>
-	<li>
-	<p>fedora - a required parameter specifying the Fedora servlet
-	path.</p>
-	</li>
-	<li>
-	<p>get - a required parameter specifying the Fedora servlet path.</p>
-	</li>
-	<li>
-	<p>PID - required persistent identifier of the digital object.</p>
-	</li>
-	<li>
-	<p><span class="bold"><b>dateTime</b></span> - value indicating
-	dissemination of a version of the digital object at the specified point
-	in time. Proper syntax is YYYY-MM-DDTHH:MM:SS where HH is 24-hour
-	clock.</p>
-	</li>
-	<li>
-	<p><span class="bold"><b>xml</b></span> - an optional parameter
-	indicating the requested output format. A value of "true" indicates a
-	return type of text/xml; the absence of the xml parameter or a value of
-	"false" indicates format is to be text/html.</p>
-	</li>
-</ul>
-</div>
-</blockquote>
-<p>For example</p>
-<blockquote class="blockquote">
-<p>http://localhost:8080/fedora/get/ronda:2/2003-08-28T00:01:01</p>
-</blockquote>
+    <div id="toc">
+      <h2>Table of Contents</h2>
+      <ol>
+        <li><a href="#intro">Introduction</a></li>
+        <li><a href="#preservation">Preservation</a></li>
+        <li><a href="#how">How It Works by Default</a></li>
+        <li><a href="#disabling">Disabling Versioning</a></li>
+        <li><a href="#purging">Purging Old Versions</a></li>
+        <li><a href="#admin">Fedora Administrator</a></li>
+        <li><a href="#search">Search and Retrieval in Fedora Administrator</a></li>
+        <li><a href="#apialite">API-A-Lite Web Interface</a></li>
+      </ol>
+    </div>
+    
+    <ol id="content">
+    
+      <li>
+        <h2 id="intro">Introduction</h2>
+        <span class="plaintext">
+          As of v1.2, Fedora for the first time included content versioning functionality. Content versioning is one of the preservation-oriented features of Fedora. Using this new capability, Fedora repositories can maintain a record of how digital objects have changed over time. This is achieved by the Fedora repository storing former versions of content, and by creating audit trail records about changes. Also, with the advent of content versioning, the Fedora Access interfaces now support date-time stamped requests, so that a client can "go back in time" and see a digital object as it looked in the past.
+          <br />
+          <br />
+          As of v2.2, the versioning capabilities of Fedora have been enhanced. Although the default operation for digital object in a Fedora Repository is still that any modification of a datastream will create and store a new version of that datastream, it is now possible to have a greater degree of control over the versioning capability. Now whenever a datastream is created (either through the createDatastream API function, or as a part of ingesting an entire digital object) the user can specify whether that specific datastream is to be versioned or not.
+          <br />
+          <br />
+          Additionally, there are now API functions that allow the user greater control of which modifications of datastreams stored for a digital object are important enough to merit maintaining the version in perpetuity, and which are less important administrative changes which need not be preserved.
+        </span>
+      </li>
+      
+      <li>
+        <h2 id="preservation">Preservation</h2>
+        <span class="plaintext">
+          The ability to version content of Fedora data objects provides repositories with the ability to preserve not only the data for any given data object over time, but also to preserve the look and feel of the dissemination of that data object, since the original content is linked to the original delivery mechanisms used to disseminate that content.
+        </span>
+      </li>
+      
+      <li>
+        <h2 id="how">How It Works by Default</h2>
+        <span class="plaintext">
+          In the more versatile versioning system now provided by Fedora, the default operation is that any modifications made to a Datastream or Disseminator through the Fedora management interface (API-M) will automatically result in a new version of that Datastream or Disseminator being created by Fedora. Fedora will not create a new version of the whole digital object, instead it will version these specific components within the digital object container. This has the benefit of the digital object PID remaining constant, and not having to keep track of multiple distinct versions of a digital object.
+          <br />
+          <br />
+          The Fedora repository typically will maintain all versions of all Datastreams and Disseminators, thereby creating a history of how objects change over time. Additionally, Fedora maintains an audit trail record of the nature of the object change events (e.g., who, what, when, why).
+          <br />
+          <br />
+          While the components of data objects are versioned in Fedora v2.0 through 2.2, versioning of behavior objects (Behavior Definitions and Behavior Mechanisms) is in scope for future releases of the software.
+        </span>
+      </li>
+      
+      <li>
+        <h2 id="disabling">Disabling Versioning</h2>
+        <span class="plaintext">
+          As of v2.2, the Fedora versioning system allows a user to selectively <em>disable</em> versioning for a given Datastream of a digital object (via the new API function setDatastreamVersionable). Subsequently, any modifications made to that specific Datastream will <em>replace</em> the most recent stored version with the result of the modification. This replacement only applies to the most recent version of that Datastream, any versions that were in existance before versioning was disabled will remain unchanged. Thereafter if the user decides that new modifications ought to cause new versions to be stored, versioning can be turned back on (again through the API function set DatastreamVersionable).
+        </span>
+      </li>
+      
+      <li>
+        <h2 id="purging">Purging Old Versions</h2>
+        <span class="plaintext">
+          To provide more control over what versions of a particular Datastream are to be kept, the API function purgeDatastream has been made more versatile. Previously purgeDatastream could only be used to delete the oldest version (or versions) of a Datastream. If, for instance a Datastream had six different versions that had been created over its lifetime (numbered 1 through 6 from oldest to most recent) and a user wanted to get rid of the fourth stored version, the only action the user could take previously would be to delete versions 1 through 4.
+          <br />
+          <br />
+          Now rather that specifying single date, and deleting all versions older than that date, the purgeDatastream function allows a start date and end date to be specified which will allow any single previous version (or any contiguous range of versions) to be deleted.
+        </span>
+      </li>
+      
+      <li>
+        <h2 id="admin">Fedora Administrator</h2>
+        <span class="plaintext">
+          Any component of an object that may be modified is shown in Fedora Administrator as either an editable text box or by means of an Edit button on the active pane. Any modification to a data object component results in a new version of that component being created and stored in the xml of the data object.
+          <br />
+          <br />
+          Previous versions of an edited datastream or disseminator may be viewed, but cannot be edited. A slider bar is provided to indicate that previous versions of a datastream or disseminator exist. Versions are represented on this timeline by small vertical lines. Clicking on the bar will move the slider to the points on the timeline. Additionally the slider may be dragged along the timeline to show all versions.
+          <br />
+          <br />
+          The following screen shots show a versioned image datastream. Note that a dropdown box is present on the Datastream pane indicating whether versioning is enabled for that particular Datastream (ie. whether Updates will create new version or Updates will replace the most recent version):
+          <br />
+          <br />
+          <img src="../images/version1.jpg" width="852" height="806" alt="version 1" />
+          <br />
+          <br />
+          <img src="../images/version2.jpg" width="852" height="805" alt="version 2" />
+        </span>
+      </li>
+      
+      <li>
+        <h2 id="search">Search and Retrieval in Fedora Administrator</h2>
+        <span class="plaintext">
+          Retrieval of a modified data object requires using the Advanced Search tab on the Search Repository dialog and entering a specific date/time stamp as a search criteria.
+          <br />
+          <br />
+          All components are given a created date (cDate) value at ingest. Whenever the component is modified, the modified date (mDate) value is updated. By searching on the modified date, it is possible to retrieve a result set of modified data objects. Wild card values are allowed in the date/time search criteria. For example:
+          <code class="block">
+<pre>
+mDate<=2003-08-28T*
+and
+mDate<=2003-08-28T23:59:59
+</pre>
+          </code>
+          <br />
+          are both valid search criteria.
+          <br />
+          In the case of Dublin Core Metadata datastreams, the modified date is stored in the dcmDate parameter. To retrieve data objects with modified Dublin Core metadata datastreams, the user must search using this parameter name.
+        </span>
+      </li>
+      
+      <li>
+        <h2 id="apialite">API-A-Lite Web Interface</h2>
+        <span class="plaintext">
+          Retrieval of specific versions of objects via API-A-Lite also depends on entering date/time parameter values. This section gives the syntax for the getDissemination and getObjectSyntax methods.
+          <br />
+          <br />
+          If no date/time value is used in the URL, the most current version of a data object is always returned as the result of a search.
+          <br />
+          <br />
+          <strong>getDissemination syntax:</strong>
+          <br />
+          http://hostname:port/fedora/get/PID/bDefPID/methodName<strong>[/dateTime][?parmArray]</strong>
+          <br />
+          <br />
+          This syntax requests a dissemination of the specified object using the specified method of the associated behavior definition object. The result is returned as a MIME-typed stream.
+        </span>
+          <ul>
+            <li>hostname - required hostname of the Fedora server.</li>
+            <li>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service.</li>
+            <li>fedora - a required parameter specifying the Fedora servlet path.</li>
+            <li>get - a required parameter specifying the Fedora servlet path.</li>
+            <li>PID - required persistent identifier of the digital object.</li>
+            <li>bDefPID - required persistent identifier of the behavior definition object to which the digital object subscribes.</li>
+            <li>methodName - required name of the method to be executed.</li>
+            <li><strong>dateTime</strong> - value indicating dissemination of a version of the digital object at the specified point in time. Proper syntax is YYYY-MM-DDTHH:MM:SS where HH is 24-hour clock.</li>
+            <li><strong>parmArray</strong> - optional array of method parameters consisting of name/value pairs in the form parm1=value1&parm2=value2...</li>
+          </ul>
+        <span class="plaintext">
+          For example:
+          <br />
+          http://localhost:8080/fedora/get/ronda:2/demo:1/getItem/2003-08-28T00:01:01
+          <br />
+          <br />
+          <strong>getObjectProfile syntax:</strong>
+          <br />
+          http://hostname:port/fedora/get/PID<strong>[/dateTime][?xml=BOOLEAN]</strong>
+          <br />
+          <br />
+          This syntax requests an object profile for the specified digital object. The xml parameter determines the type of output returned. If the parameter is omitted or has a value of "false," a MIME-typed stream consisting of an html table is returned providing a browser-savvy means of viewing the object profile. If the value specified is "true," then a MIME-typed stream consisting of XML is returned.
+        </span>
+          <ul>
+            <li>hostname - required hostname of the Fedora server.</li>
+            <li>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service.</li>
+            <li>fedora - a required parameter specifying the Fedora servlet path.</li>
+            <li>get - a required parameter specifying the Fedora servlet path.</li>
+            <li>PID - required persistent identifier of the digital object.</li>
+            <li><strong>dateTime</strong> - value indicating dissemination of a version of the digital object at the specified point in time. Proper syntax is YYYY-MM-DDTHH:MM:SS where HH is 24-hour clock.</li>
+            <li><strong>xml</strong> - an optional parameter indicating the requested output format. A value of "true" indicates a return type of text/xml; the absence of the xml parameter or a value of "false" indicates format is to be text/html.</li>
+          </ul>
+        <span class="plaintext">
+          For example:
+          <br />
+          http://localhost:8080/fedora/get/ronda:2/2003-08-28T00:01:01                
+      </li>
+    </ol>
 
-</div>
-
-<div id="footer">
-<div id="copyright">Copyright &copy; 2002-2007 Fedora Project</div>
-<div id="lastModified">Last Modified <script
-	type="text/javascript">
-            var cvsDate = "$Date$";
-            var parts = cvsDate.split(" ");
-            var modifiedDate = parts[1];
-            document.write(modifiedDate);
-        </script></div>
-</div>
-</body>
+    <div id="footer">
+      <p id="copyright">
+        Copyright &copy; 2002-2007 Fedora Project
+      </p>
+      <script type="text/javascript">
+        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
+        var parts = cvsDate.split(" ");
+        var modifiedDate = parts[1];
+        var p = document.createElement("p");
+        p.setAttribute("id", "lastModified");
+        var footer = document.getElementById("footer");
+        footer.appendChild(p);
+        p.innerHTML = "Last Modified "+modifiedDate;
+      </script>
+    </div>
+    
+  </body>
 </html>

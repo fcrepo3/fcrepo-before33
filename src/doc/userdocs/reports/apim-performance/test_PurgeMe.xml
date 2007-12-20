@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:fedoraxsi="http://www.w3.org/2001/XMLSchema-instance"
            xmlns:audit="info:fedora/fedora-system:def/audit#"
-           xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd"
-           VERSION="1.1" PID="test:PurgeMe">
+           fedoraxsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd"
+           PID="test:PurgeMe">
     <foxml:objectProperties>
         <foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
         <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
@@ -76,4 +76,32 @@
                               </foxml:xmlContent>
         </foxml:datastreamVersion>
     </foxml:datastream>
+    <foxml:disseminator ID="GetMetadataAPI" BDEF_CONTRACT_PID="nsdl:121" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="GetMetadataAPI1.0" BMECH_SERVICE_PID="nsdl:122" CREATED="2005-08-04T13:49:31.219Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="dc" DATASTREAM_ID="DC" LABEL="Binding to Dublin Core Metadata" ORDER="0"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="ListMetadataFormatsAPI" BDEF_CONTRACT_PID="nsdl:115" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="ListMetadataFormatsAPI1.0" LABEL="ListMetadataFormatsAPI" BMECH_SERVICE_PID="nsdl:116" CREATED="2005-09-20T12:47:10.511Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="DC" DATASTREAM_ID="DC" LABEL="Binding to Dublin Core Metadata" ORDER="0"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="GetRecordAPI" BDEF_CONTRACT_PID="nsdl:109" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="GetRecordAPI1.0" LABEL="Enter a label here." BMECH_SERVICE_PID="nsdl:110" CREATED="2005-09-20T12:47:10.511Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="metadata" DATASTREAM_ID="format_nsdl_dc" LABEL="Binding to NSDL_DC Metadata" ORDER="0"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DescribeAPI" BDEF_CONTRACT_PID="nsdl:101" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DescribeAPI1.0" LABEL="Produces NSDL descriptiveXML" BMECH_SERVICE_PID="nsdl:102" CREATED="2005-09-20T12:47:10.511Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="DC" DATASTREAM_ID="DC" LABEL="DC" ORDER="0"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
 </foxml:digitalObject>

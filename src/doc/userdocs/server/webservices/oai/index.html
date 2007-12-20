@@ -1,150 +1,98 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
-<head>
-  <title>Fedora OAI Provider Interface Documentation</title>
-  <link rel="stylesheet" type="text/css" href="../../../docstyle.css" />
-</head>
+  <head>
+    <title>Fedora OAI Provider Interface Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../docstyle.css" />
+  </head>
 
-<body>
-  <div id="header">
-    <a href="../../../index.html" id="logo"></a>
+  <body>
 
-    <div id="title">
+    <div id="header">
+      <a href="../../../index.html">
+      </a>
       <h1>Fedora OAI Provider Interface Documentation</h1>
-
-      <h2>Fedora Release 2.2.1</h2>
+      <h2>Fedora Release 3.0 Beta 1</h2>
     </div>
-  </div>
 
-  <div class="toc">
-    <h2>Table of Contents</h2>
-
-    <div class="tocbox">
+    <div id="toc">
+      <h2>Table of Contents</h2>
       <ol>
         <li><a href="#intro">Introduction</a></li>
-
         <li><a href="#syntax">Interface Syntax</a></li>
       </ol>
     </div>
-  </div>
-
-  <div class="article">
-    <div class="sec1">
-      <div class="titlepage">
-        <div>
-          <h2 class="title" style="clear: both"><a name="intro" id=
-          "intro"></a>Introduction</h2>
-        </div>
-      </div>
-
-      <p>The <a href="http://www.openarchives.org" target=
-      "_top">OAI Protocol for Metadata Harvesting (OAI-PMH)</a> is
-      a standard for sharing metadata across repositories. Every
-      Fedora digital object has a primary Dublin Core record that
-      conforms to the schema at: <a href=
-      "http://www.openarchives.org/OAI/2.0/oai_dc.xsd" target=
-      "_top">http://www.openarchives.org/OAI/2.0/oai_dc.xsd</a>.
-      This metadata is accessible using Fedora's OAI-PMH2.0
-      Provider Interface. Currently, only the Dublin Core metatdata
-      for each object may be disseminated via this interface.</p>
-
-      <p>The Fedora OAI Provider Interface uses the standard OAI
-      PMH syntax which can be found on the OAI web site (<a href=
-      "http://www.openarchives.org" target=
-      "_top">http://www.openarchives.org</a>). Fedora will accept
-      any valid OAI-PMH2.0 request.</p>
+    
+    <div id="content">
+    
+      <h2 id="intro">Introduction</h2>
+      
+      <p>
+        The <a href="http://www.openarchives.org">OAI Protocol for
+        Metadata Harvesting (OAI-PMH)</a> is a standard for sharing
+        metadata across repositories. Every Fedora digital object has
+        a primary Dublin Core record that conforms to the schema at:
+        <a href="http://www.openarchives.org/OAI/2.0/oai_dc.xsd">http://www.openarchives.org/OAI/2.0/oai_dc.xsd</a>.
+        This metadata is accessible using Fedora's OAI-PMH2.0
+        Provider Interface. Currently, only the Dublin Core metatdata
+        for each object may be disseminated via this interface.
+      </p>
+      <p>
+        The Fedora OAI Provider Interface uses the standard OAI
+        PMH syntax which can be found on the OAI web site
+        (<a href= "http://www.openarchives.org">http://www.openarchives.org</a>).
+        Fedora will accept any valid OAI-PMH2.0 request.
+      </p>
+      
+      <h2 id="syntax">Interface Syntax</h2>
+      
+      <p>
+        The Fedora OAI-PMH Provider Interface is implemented as a java servlet
+        and can be accessed using the following syntax:
+        <br />
+        <strong>http://hostname:port/fedora/oai?verb=oai-pmh2.0-verb</strong>
+      </p>
+      
+      <ul>
+        <li>hostname - required hostname of the Fedora server.</li>
+        <li>port - required port number on which the Fedora server is running.</li>
+        <li>fedora - a required part of the Fedora servlet path.</li>
+        <li>oai - a required part of the Fedora servlet path.</li>
+        <li>verb - required keyword of the OAI-PMH2.0 syntax.</li>
+        <li>oai-pmh2.0-verb - required valid OAI-PMH2.0 verb.</li>
+      </ul>
+      
+      <p>
+        For example, to request an OAI <em>Identify</em>verb request, use a URL
+        similar to the following:
+        <br />
+        <strong>http://localhost:8080/fedora/oai?verb=Identify</strong>
+      </p>
+      
+      <p>
+        and the Fedora repository will respond with an XML-encoded mime-typed stream
+        providing identification information about the Fedora OAI provider.
+      </p>
+      
     </div>
-
-    <div class="sec1">
-      <div class="titlepage">
-        <div>
-          <h2 class="title" style="clear: both"><a name="syntax"
-          id="syntax"></a>Interface Syntax</h2>
-        </div>
-      </div>
-
-      <p>The Fedora OAI-PMH Provider Interface is implemented as a
-      java servlet and can be accessed using the following
-      syntax:</p>
-
-      <blockquote class="blockquote">
-        <p><span class=
-        "bold"><b>http://hostname:port/fedora/oai?verb=oai-pmh2.0-verb</b></span></p>
-      </blockquote>
-
-      <blockquote class="blockquote">
-        <div class="itemizedlist">
-          <ul type="disc">
-            <li>
-              <p>hostname - required hostname of the Fedora
-              server.</p>
-            </li>
-
-            <li>
-              <p>port - required port number on which the Fedora
-              server is running.</p>
-            </li>
-
-            <li>
-              <p>fedora - a required part of the Fedora servlet
-              path.</p>
-            </li>
-
-            <li>
-              <p>oai - a required part of the Fedora servlet
-              path.</p>
-            </li>
-
-            <li>
-              <p>verb - required keyword of the OAI-PMH2.0
-              syntax.</p>
-            </li>
-
-            <li>
-              <p>oai-pmh2.0-verb - required valid OAI-PMH2.0
-              verb.</p>
-            </li>
-          </ul>
-        </div>
-      </blockquote>
-
-      <p>For example, to request an OAI <span class=
-      "emphasis"><em>Identify</em></span> verb request, use a URL
-      similar to the following:</p>
-
-      <blockquote class="blockquote">
-        <table class="simplelist" border="0" summary="Simple list">
-          <tr>
-            <td><span class=
-            "bold"><b>http://localhost:8080/fedora/oai?verb=Identify</b></span></td>
-          </tr>
-        </table>
-      </blockquote>
-
-      <p>and the Fedora repository will respond with an XML-encoded
-      mime-typed stream providing identification information about
-      the Fedora OAI provider.</p>
-    </div>
-  </div>
-
-  <div id="footer">
-    <div id="copyright">
-      Copyright &#xA9; 2002-2007 Fedora Project
-    </div>
-
-    <div id="lastModified">
-      Last Modified <script type="text/javascript">
-      //<![CDATA[
-            var cvsDate = "$Date$";
-            var parts = cvsDate.split(" ");
-            var modifiedDate = parts[1];
-            document.write(modifiedDate);
-      //]]>
+    
+    <div id="footer">
+      <p id="copyright">
+        Copyright &copy; 2002-2007 Fedora Project
+      </p>
+      <script type="text/javascript">
+        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
+        var parts = cvsDate.split(" ");
+        var modifiedDate = parts[1];
+        var p = document.createElement("p");
+        p.setAttribute("id", "lastModified");
+        var footer = document.getElementById("footer");
+        footer.appendChild(p);
+        p.innerHTML = "Last Modified "+modifiedDate;
       </script>
     </div>
-  </div>
-</body>
+    
+  </body>
 </html>

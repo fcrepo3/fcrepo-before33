@@ -1,55 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
-                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
-<head>
-  <title>Fedora Server Command-Line Utilities</title>
-  <link rel="stylesheet" type="text/css" href="../../docstyle.css" />
-</head>
+  <head>
+    <title>Fedora Server Command-Line Utilities</title>
+    <link rel="stylesheet" type="text/css" href="../../docstyle.css" />
+  </head>
 
-<body>
-  <div id="header">
-    <a href="../index.html" id="logo"></a>
+  <body>
 
-    <div id="title">
+    <div id="header">
+      <a href="../../../index.html">
+      </a>
       <h1>Fedora Server Command-Line Utilities</h1>
-
-      <h2>Fedora Release 2.2.1</h2>
+      <h2>Fedora Release 3.0 Beta 1</h2>
     </div>
-  </div>
 
-  <div class="toc">
-    <h2>Table of Contents</h2>
-
-    <div class="tocbox">
+    <div id="toc">
+      <h2>Table of Contents</h2>
       <ol>
         <li><a href="#intro">Introduction</a></li>
-
         <li><a href="#rebuild">fedora-rebuild</a></li>
-
         <li><a href="#reload">fedora-reload-policies</a></li>
-
         <li><a href="#validate">validate-policy</a></li>
-
       </ol>
     </div>
-  </div>
 
-  <div class="sec1">
-    <div>
-      <h2><a name="intro" id="intro"></a>Introduction</h2>
-    </div>
+    <div id="content">
+    
+      <h2 id="intro">Introduction</h2>
 
-    <p>The Fedora server distribution comes with several
+      <p>The Fedora server distribution comes with several
     useful command-line utilities.
     A description and usage instructions for each follows.</p>
 
     <p>
     The scripts are located in FEDORA_HOME/server/bin/. In
     Windows, these commands resolve to batch files (.bat); in
-    <span class="GramE">Unix</span>, they resolve to shell scripts
-    (.sh).
+    Unix, they resolve to shell scripts (.sh).
     </p>
 
     <p>This guide assumes you have correctly installed the Fedora
@@ -59,136 +48,131 @@
 
     <hr size="1"/>
     <p>
-    <b>NOTE: Currently, if you are running Fedora with a servlet container 
-    other than Tomcat</b>, these scripts will need to be manually modified
+    <strong>NOTE: Currently, if you are running Fedora with a servlet container 
+    other than Tomcat</strong>, these scripts will need to be manually modified
     for your environment to pick up the paths to the Fedora classes and 
-    required libraries from a location other than <code>CATALINA_HOME</code>.
+    required libraries from a location other than CATALINA_HOME.
     </p>
     <hr size="1"/>
-  </div>
 
-  <div class="sec1">
-    <h2><a name="rebuild" id="rebuild"></a>fedora-rebuild</h2>
+    <h2 id="rebuild">fedora-rebuild</h2>
 
-    <blockquote>
-      <p><b>fedora-rebuild</b> </p>
-
-    </blockquote>
 
     <p>Reconstitutes Fedora's indexes (the Resource Index and/or
     the SQL database) from the FOXML and datastream files on disk.</p>
 
   <p>In case of corruption or failure of the repository, the Fedora Rebuild 
-	utility can <b><i>completely rebuild the repository by crawling the digital 
-	object XML source files</i></b> that are stored on disk.</p>
+	utility can <strong><em>completely rebuild the repository by crawling the digital 
+	object XML source files</em></strong> that are stored on disk.</p>
+	
 	<p>The fedora-rebuild command launches the interactive Fedora Rebuild 
-	utility that restores the repository if it somehow became corrupted.&nbsp;&nbsp; 
+	utility that restores the repository if it somehow became corrupted. 
 	Symptoms of repository corruption include underlying indexes or registries 
-	becoming unusable, or the server refusing to start.&nbsp;&nbsp; The 
+	becoming unusable, or the server refusing to start. The 
 	components of the repository that can become corrupted are the SQL 
 	relational database and the RDF triplestore that underlie the Fedora 
-	repository service.&nbsp;&nbsp; The SQL database (e.g., MySQL, McKoi, or 
+	repository service. The SQL database (e.g., MySQL, McKoi, or 
 	Oracle) contains a set of registries, as well as metadata to enable simple 
-	searching of the repository,&nbsp; and a cache of digital object profiles to speed 
-	up API-A access to the repository.&nbsp; The triplestore contains RDF 
+	searching of the repository, and a cache of digital object profiles to speed 
+	up API-A access to the repository. The triplestore contains RDF 
 	triples for key properties of digital objects, datastreams, disseminations, 
 	and relationships to create an RDF-based index of the repository (used for more advanced 
 	RDF-based searching).</p>
+	
   <p>In prior versions of Fedora, under some circumstances the SQL relational database 
 	component could become corrupt, which would then 
 	require the entire repository to be deleted and all of the digital objects 
 	in the repository to be manually re-ingested. The Fedora Rebuild utility allows the 
 	repository administrator to merely purge the 
 	database used by the Fedora server, and re-configure the database (using either mysql-config or mckoi-init)
-	and then run the Fedora Rebuild utility to restore the repository to a rational, usable state.&nbsp;&nbsp; Additionally, if the administrator wants to change 
+	and then run the Fedora Rebuild utility to restore the repository to a rational, usable state.
+ Additionally, if the administrator wants to change 
 	the underlying database system (e.g., change from McKoi to MySQL database, 
-	or MySQL to Oracle),&nbsp; the existing database can be purged, the Fedora Configuration 
+	or MySQL to Oracle), the existing database can be purged, the Fedora Configuration 
 	File (fedora.fcfg) 
 	can be edited, and the Fedora Rebuild utility can then be run to correctly populate the tables in the new
 	database system.</p>
+	
   <p>Similarly, if the Resource Index becomes corrupted 
     or the Resource Index triplestore files are deleted from disk, then the 
 	Fedora Rebuild utility can be used to completely rebuild the Resource Index 
-	and bring
-	it back to its desired state.  The Fedora Rebuild utility can also be used 
-	to rebuild the Resource Index whenever the <b><i>indexing level is changed</i></b> in 
-	the Fedora Server Configuration file (see: fedora.fcfg).&nbsp; A rebuild of 
+	and bring it back to its desired state.  The Fedora Rebuild utility can also be used 
+	to rebuild the Resource Index whenever the <strong><em>indexing level is changed</em></strong> in 
+	the Fedora Server Configuration file (see: fedora.fcfg). A rebuild of 
 	the Resource Index will recreate the triplestore itself, and also populate 
 	utility tables in the SQL database component of Fedora.</p>
-  <p><i><b>Note! </b></i>&nbsp;There are some circumstances in which <i><b>both 
-	an SQL rebuild and a Resource Index rebuild must be run</b></i>.&nbsp;&nbsp; 
-	Although the Resource Index is primarily stored in the triplestore that 
+	
+    <hr size="1"/>
+    <p>
+    <strong>NOTE: There are some circumstances in which <em>both 
+	an SQL rebuild and a Resource Index rebuild must be run.</em></strong>
+    </p>
+    <hr size="1"/>
+
+	<p>Although the Resource Index is primarily stored in the triplestore that 
 	configured with Fedora, it also stores some information in relational database tables 
-	(in the 
-    same SQL database used by the rest of the Fedora server),&nbsp;&nbsp; For 
+	(in the same SQL database used by the rest of the Fedora server). For 
 	example, if the SQL database becomes severely corrupted 
     such that the entire database needs to be deleted, or if the Fedora administrator plans to switch from using 
-    one database system to another,&nbsp; the Fedora Rebuild utility will have to be run twice.&nbsp; 
+    one database system to another, the Fedora Rebuild utility will have to be run twice.
 	Once for an SQL Rebuild to recreate and repopulate the tables in the SQL database
-    used by the main portion of the Fedora server.&nbsp; Then a second time as a 
+    used by the main portion of the Fedora server. Then a second time as a 
 	Resource Index rebuild to recreate the triplestore and repopulate the SQL tables used by the 
 	Resource Index.</p>
-  <br/>
+  <p>
   	When you run the Fedora Rebuild utility, a text menu appears, allowing you to specify whether you need to rebuild 
 	the SQL database or rebuild the resource index files.  See below for step-by-step descriptions of 
 	how to use the rebuild tool in the various instances when it might be needed:
-  	<p>&nbsp;</p>
-	<p><b>SQL Rebuild: </b>&nbsp;If the tables in the SQL database used by the Fedora server are corrupted:</p>
+ </p>
+	<p><strong>SQL Rebuild:</strong> If the tables in the SQL database used by the Fedora server are corrupted:</p>
 	<ol>
 	<li>Stop the Fedora server (if using Tomcat, this can be done with the 
-	    <i>shutdown.bat or shutdown.sh</i> command)</li>
+	    <em>shutdown.bat or shutdown.sh</em> command)</li>
 	<li>Run <a href="#rebuild">fedora-rebuild</a> to re-populate SQL database 
-	tables used by the Fedora server with the correct information (<b>select 
-	menu option '2'</b>)</li>
+	tables used by the Fedora server with the correct information (<strong>select 
+	menu option '2'</strong>)</li>
 	<li>Restart the Fedora server (if using Tomcat, this can be done with the
-        <i>startup.bat or startup.sh</i> command)</li>
-	</ol><br/>
-	<p><b>Resource Index Rebuild</b>: If the Resource Index level is changed, or if the 
+        <em>startup.bat or startup.sh</em> command)</li>
+	</ol>
+	<p><strong>Resource Index Rebuild</strong>: If the Resource Index level is changed, or if the 
 	Resource Index is corrupted:</p>
 	<ol>
 	<li>Stop the Fedora server (if using Tomcat, this can be done with the 
-	    <i>shutdown.bat or shutdown.sh</i> command)</li>
+	    <em>shutdown.bat or shutdown.sh</em> command)</li>
 	<li>Run <a href="#rebuild">fedora-rebuild</a> to re-construct the Resource Index files and the 
-	Resource Index tables in the SQL database (<b>select menu option '1'</b>)</li>
+	Resource Index tables in the SQL database (<strong>select menu option '1'</strong>)</li>
 	<li>Restart the Fedora server (if using Tomcat, this can be done with the
-        <i>startup.bat or startup.sh</i> command)</li>
+        <em>startup.bat or startup.sh</em> command)</li>
 	</ol>
-	<p><b>Both</b>: If SQL database becomes severely corrupted such that 
+	<p><strong>Both</strong>: If SQL database becomes severely corrupted such that 
 	   database is completely unusable, or if a different SQL database 
 	   program or version is to be used.</p>
 	<ol>
 	<li>Stop the Fedora server (if using Tomcat, this can be done with the 
-	    <i>shutdown.bat or shutdown.sh</i> command)</li>
+	    <em>shutdown.bat or shutdown.sh</em> command)</li>
 	<li>Re-install or initialize the database as per the instructions
-	    in the <i><a href="../../distribution/installation.html">Installation and
-	    Configuration Guide</a></i>.</li>
+	    in the <em><a href="../../distribution/installation.html">Installation and
+	    Configuration Guide</a></em>.</li>
 	<li>Run <a href="#rebuild">fedora-rebuild</a> to re-populate SQL database 
-	tables used by the Fedora server with the correct information (<b>select 
-	menu option '2'</b>)</li>
-	<li>Run <a href="#rebuild">fedora-rebuild</a> <b>again</b> to re-construct the 
-	Resource Index files and the Resource Index tables in the SQL database (<b>select 
-	menu option '1'</b>)</li>
+	tables used by the Fedora server with the correct information (<strong>select 
+	menu option '2'</strong>)</li>
+	<li>Run <a href="#rebuild">fedora-rebuild</a> <strong>again</strong> to re-construct the 
+	Resource Index files and the Resource Index tables in the SQL database (<strong>select 
+	menu option '1'</strong>)</li>
 	<li>Restart the Fedora server (if using Tomcat, this can be done with the
-        <i>startup.bat or startup.sh</i> command)</li>
+        <em>startup.bat or startup.sh</em> command)</li>
 	</ol>
-	<br/><br/><br/>
-  </div>
 
-  <div class="sec1">
-    <h2><a name="reload" id="reload"></a>fedora-reload-policies</h2>
-
-    <blockquote>
-      <p><b>fedora-reload-policies</b> [http|https] [username] [password]</p>
-    </blockquote>
+    <h2 id="reload">fedora-reload-policies</h2>
 
     <p>Where:</p>
 
     <ul>
-      <li><b>[http|https]</b> - Indicates which protocol to use to send the
+      <li><strong>[http|https]</strong> - Indicates which protocol to use to send the
        "reload policies" signal to the running Fedora server.</li>
-      <li><b>[username]</b> - An administrative Fedora user with permission
+      <li><strong>[username]</strong> - An administrative Fedora user with permission
       to reload polcies.</li>
-      <li><b>[password]</b> - Password for the administrative user.</li>
+      <li><strong>[password]</strong> - Password for the administrative user.</li>
     </ul>
 
     <p>
@@ -196,8 +180,8 @@
       immediately on the running Fedora server.
     </p>
     <p>As described in the document, 
-    <i><a href="../security/AuthorizationXACML.htm">Fedora Authorization with 
-    XACML Policy Enforcement</a></i>,
+    <em><a href="../security/AuthorizationXACML.htm">Fedora Authorization with 
+    XACML Policy Enforcement</a></em>,
 	Fedora can be configured to enforce a variety of access policies.
 	Many of these XACML policies are applied for all actions and access 
 	attempts peformed on the repository as a whole.  These "repository-wide" 
@@ -207,20 +191,15 @@
 	the running Fedora server to reload the policies.
 	The alternative to using this command is to stop the Fedora server
 	and restart it.</p>
-	<br/><br/><br/>
-  </div>
 
-  <div class="sec1">
-    <h2><a name="validate" id="validate"></a>validate-policy</h2>
 
-    <blockquote>
-      <p><b>validate-policy</b> [policyFilename]</p>
-    </blockquote>
+    <h2 id="validate">validate-policy</h2>
+
 
     <p>Where:</p>
 
     <ul>
-	<li><b>[policyFilename]</b> - Name of XACML file containing the new or
+	<li><strong>[policyFilename]</strong> - Name of XACML file containing the new or
 	modified policy</li>
     </ul>
 
@@ -228,28 +207,28 @@
       Schema-validates a XACML policy file.
     </p>
     <p>If the Fedora server administrator creates or modifies an existing
-    repository-wide XACML policy, the new policy <b>should</b> be run through
+    repository-wide XACML policy, the new policy <strong>should</strong> be run through
     this program to ensure that it is well-formed before attempting to
     install it in the Fedora server.  Validating a policy in this way will
     ensure that it is well-formed XML and can follows the XACML XML schema.</p>
-<br/><br/><hr/><br/>
-  </div>
-
-  <div id="footer">
-    <div id="copyright">
-      Copyright &#xA9; 2006-2007 Fedora Project
+    
     </div>
 
-    <div id="lastModified">
-      Last Modified <script type="text/javascript">
-      //<![CDATA[
-            var cvsDate = "$Date$";
-            var parts = cvsDate.split(" ");
-            var modifiedDate = parts[1];
-            document.write(modifiedDate);
-      //]]>
+    <div id="footer">
+      <p id="copyright">
+        Copyright &copy; 2002-2007 Fedora Project
+      </p>
+      <script type="text/javascript">
+        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
+        var parts = cvsDate.split(" ");
+        var modifiedDate = parts[1];
+        var p = document.createElement("p");
+        p.setAttribute("id", "lastModified");
+        var footer = document.getElementById("footer");
+        footer.appendChild(p);
+        p.innerHTML = "Last Modified "+modifiedDate;
       </script>
     </div>
-  </div>
-</body>
+    
+  </body>
 </html>

@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
-
-<head>
+  <head>
     <title>Backend Services Security Configuration</title>
     <link rel="stylesheet" type="text/css" href="../../docstyle.css" />
-</head>
+  </head>
 
-<body>
-<div id="header">
-    <a href="" id="logo"></a>
-    <div id="title">
-        <h1>Backend Services Security Configuration</h1>
-        <h2>Fedora Release 2.2.1</h2>
+  <body>
+
+    <div id="header">
+      <a href="../../../index.html">
+      </a>
+      <h1>Backend Services Security Configuration</h1>
+      <h2>Fedora Release 3.0 Beta 1</h2>
     </div>
-</div>
-
+    
 <!-- 
 <div class="toc">
     <h2>Table of Contents</h2>
@@ -46,10 +47,9 @@
 </div>
 -->
 
-<div class="sect">
-<br/>
-<br/>
-	<h2><a name="INTRO"></a>Backend Security Feature Disabled In Fedora 2.2</h2>
+  <div id="content">
+    
+	<h2 id="intro">Backend Security Feature Disabled In Fedora 2.2</h2>
 
   <p>Disseminators represent a pair of specialized digital objects known as Behavior 
     Definition(bdef) objects and Behavior Mechanism(bmech) objects. The bdef object 
@@ -550,20 +550,24 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
 	  
 	</div>
 -->
-</div>
-<div id="footer">
-    <div id="copyright">
-        Copyright &#xA9; 2002-2007 Fedora Project
+      
     </div>
-    <div id="lastModified">
-        Last Modified
-        <script type="text/javascript">
-            var cvsDate = "$Date$";
-            var parts = cvsDate.split(" ");
-            var modifiedDate = parts[1];
-            document.write(modifiedDate);
-        </script>
+    
+    <div id="footer">
+      <p id="copyright">
+        Copyright &copy; 2002-2007 Fedora Project
+      </p>
+      <script type="text/javascript">
+        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
+        var parts = cvsDate.split(" ");
+        var modifiedDate = parts[1];
+        var p = document.createElement("p");
+        p.setAttribute("id", "lastModified");
+        var footer = document.getElementById("footer");
+        footer.appendChild(p);
+        p.innerHTML = "Last Modified "+modifiedDate;
+      </script>
     </div>
-</div>
-</body>
+    
+  </body>
 </html>

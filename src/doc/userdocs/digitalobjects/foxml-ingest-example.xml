@@ -9,7 +9,7 @@
 <!-- NOTE!!  Please see the FOXML Reference Example object in the section named "Fedora Digital Objects" in the  -->
 <!-- Fedora System Documentation.  This will give an element-by-element explanation of a FOXML instance document.  -->
 <!--*******************************************************************************************************************************************-->
-<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#" VERSION="1.1" PID="demo:999" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd">
+<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#" PID="demo:999" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
 	<foxml:objectProperties>
 		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
@@ -86,4 +86,11 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
+	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="demo:8" STATE="A">
+		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="demo:9" LABEL="Disseminator to provide dynamic views of a MRSID image">
+			<foxml:serviceInputMap>
+				<foxml:datastreamBinding DATASTREAM_ID="IMAGE" KEY="MRSID" LABEL="The IMAGE datastream serves as input to the MRSID service" ORDER="0"/>
+			</foxml:serviceInputMap>
+		</foxml:disseminatorVersion>
+	</foxml:disseminator>
 </foxml:digitalObject>

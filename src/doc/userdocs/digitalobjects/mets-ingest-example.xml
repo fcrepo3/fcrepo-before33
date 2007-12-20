@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<METS:mets EXT_VERSION="1.1" LABEL="METS Reference Example" OBJID="demo:999" PROFILE="TEST_IMAGE" TYPE="FedoraObject" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd">
+<METS:mets LABEL="FOXML Reference Example" OBJID="demo:999" PROFILE="TEST_IMAGE" TYPE="FedoraObject" xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd">
 	<METS:metsHdr RECORDSTATUS="A"/>
 	<METS:amdSec ID="DC" STATUS="A">
 		<METS:techMD ID="DC.0">
 			<METS:mdWrap LABEL="Default Dublin Core Record" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
 				<METS:xmlData>
 					<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
-						<dc:title>METS Reference Object</dc:title>
+						<dc:title>FOXML Reference Object</dc:title>
 						<dc:creator>Sandy Payette</dc:creator>
 						<dc:subject>Fedora documentation</dc:subject>
-						<dc:description>METS showing how a digital object is encoded for persistent storage in a Fedora repository</dc:description>
+						<dc:description>FOXML showing how a digital object is encoded for persistent storage in a Fedora repository</dc:description>
 						<dc:publisher>Cornell CIS</dc:publisher>
 						<dc:identifier>demo:999</dc:identifier>
 					</oai_dc:dc>
@@ -74,4 +74,17 @@
 			</METS:fileGrp>
 		</METS:fileGrp>
 	</METS:fileSec>
+	<METS:structMap ID="DISS1.0b" TYPE="fedora:dsBindingMap">
+		<METS:div TYPE="demo:9">
+			<METS:div LABEL="The IMAGE datastream serves as input to the MRSID service" ORDER="0" TYPE="MRSID">
+				<METS:fptr FILEID="IMAGE"/>
+			</METS:div>
+		</METS:div>
+	</METS:structMap>
+	<METS:behaviorSec ID="DISS1" STATUS="A">
+		<METS:serviceBinding BTYPE="demo:8" ID="DISS1.0" LABEL="Disseminator to provide dynamic views of a MRSID image" STRUCTID="DISS1.0b">
+			<METS:interfaceMD LOCTYPE="URN" xlink:href="demo:8"/>
+			<METS:serviceBindMD LOCTYPE="URN" xlink:href="demo:9"/>
+		</METS:serviceBinding>
+	</METS:behaviorSec>
 </METS:mets>
