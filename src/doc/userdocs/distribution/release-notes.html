@@ -134,8 +134,7 @@
               followed by Data Objects.  Now, Fedora allows the ingest
               (and purge) of objects in any order, regardless of type.
               In addition, system-recognized datastreams for Behavior
-              Mechanisms and Behavior Defintions can now be edited in-place,
-              whereas previously this functionality was disabled.
+              Mechanisms and Behavior Defintions can now be edited in-place.
             </span>
           </li>
 
@@ -143,7 +142,7 @@
             <span class="plaintext">
               Fedora now sends correct HTTP status codes and more
               user-friendly messages when API-A-LITE, API-M-LITE, and
-              search-related errors occur.  With the introduction of
+              search-related errors occur.  With the introduction of the
               CMA, these error messages also provide better detail
               on the reason a request failed 
               (missing object, datastream, etc.).
@@ -172,8 +171,8 @@
             <span class="plaintext">
               The <a href="../server/webservices/apim/index.html">Fedora
               Management interface</a> has been extended to support 
-              per-object Create, Read, Update, and Delete (CRUD) operations
-              on user-defined relationships in the RELS-EXT datastream.
+              the per-object assertion and retrieval of
+              user-defined relationships in the RELS-EXT datastream.
               The new relationships API methods are <a href="../server/webservices/apim/index.html#method.addRelationship">addRelationship</a>,
               <a href="../server/webservices/apim/index.html#method.getRelationships">getRelationships</a>, 
               and <a href="../server/webservices/apim/index.html#method.purgeRelationship">purgeRelationship</a>.
@@ -207,10 +206,7 @@
             </span>
             <ul>
               <li>
-                Simple JMS Messaging - Integrates JMS messaging for sending notification of important events
-              </li>
-              <li>
-                Administrative Client - Revised to support Content Model Architecture enhancements
+                JMS Messaging - Integrates JMS messaging for sending notification of important events
               </li>
               <li>
                 Message Update for GSearch - Provides a reference implementation for using JMS notifications to update search engines
@@ -220,6 +216,9 @@
               </li>
               <li>
                 Off-line Validation Testing - Provides system operators a way to validate the integrity of part or all of their repository
+              </li>
+              <li>
+                Updated Administrative Client - Revises to support Content Model Architecture enhancements
               </li>
               <li>
                 Updated OAI Provider - Revises the OAI Provider to take advantage of the Content Model Architecture
