@@ -59,6 +59,15 @@ public class Installer {
      */
     public void install() throws InstallationFailedException {
     	installDir.mkdirs();
+    	
+    	// Write out the install options used to a properties file in the install directory
+        try {
+            OutputStream out = new FileOutputStream(new File(installDir, "install.properties"));
+            _opts.dump(out);
+            out.close();
+        } catch (Exception e) {
+            throw new InstallationFailedException(e.getMessage(), e);
+        }
     	new FedoraHome(_dist, _opts).install();
     	
     	if (!_opts.getValue(InstallOptions.INSTALL_TYPE).equals(InstallOptions.INSTALL_CLIENT)) {
@@ -76,16 +85,9 @@ public class Installer {
 			database.install();
     	}
 		
-		// Write out the install options used to a properties file in the install directory
-		try {
-			OutputStream out = new FileOutputStream(new File(installDir, "install.properties"));
-			_opts.dump(out);
-			out.close();
-		} catch (Exception e) {
-			throw new InstallationFailedException(e.getMessage(), e);
-		}
 		System.out.println("Installation complete.");
-		if (_opts.getValue(InstallOptions.SERVLET_ENGINE).equals(InstallOptions.OTHER)) {
+		if (!_opts.getValue(InstallOptions.INSTALL_TYPE).equals(InstallOptions.INSTALL_CLIENT) &&
+		        _opts.getValue(InstallOptions.SERVLET_ENGINE).equals(InstallOptions.OTHER)) {
 		    System.out.println("\n" +
 "----------------------------------------------------------------------\n" +
 "The Fedora Installer cannot automatically deploy the Web ARchives to  \n" +
