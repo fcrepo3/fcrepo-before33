@@ -11,15 +11,16 @@ import fedora.server.management.ManagementDelegate;
 import fedora.server.storage.DOManager;
 
 /**
- * Wrap a Server in an object that implements an interface,
- * so it can be passed to the JournalWorker classes and their dependents. It's
- * also easy to mock, for unit tests.
+ * Wrap a Server in an object that implements an interface, so it can be passed
+ * to the JournalWorker classes and their dependents.
  * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * <p>It's also easy to mock, for unit tests.
+ * 
+ * @author Jim Blake
  */
+public class ServerWrapper
+        implements ServerInterface {
 
-public class ServerWrapper implements ServerInterface {
     private final Server server;
 
     public ServerWrapper(Server server) {
@@ -36,8 +37,8 @@ public class ServerWrapper implements ServerInterface {
     }
 
     public String getRepositoryHash() throws ServerException {
-        DOManager doManager = (DOManager) server
-                .getModule("fedora.server.storage.DOManager");
+        DOManager doManager =
+                (DOManager) server.getModule("fedora.server.storage.DOManager");
         return doManager.getRepositoryHash();
     }
 

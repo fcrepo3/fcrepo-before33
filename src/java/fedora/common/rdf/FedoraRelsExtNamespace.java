@@ -12,28 +12,33 @@ package fedora.common.rdf;
  * Namespace URI    : info:fedora/fedora-system:def/relations-external#
  * Preferred Prefix : rel
  * </pre>
- *
- * @author cwilper@fedora-commons.org
+ * 
+ * @author Chris Wilper
  */
-public class FedoraRelsExtNamespace extends RDFNamespace {
+public class FedoraRelsExtNamespace
+        extends RDFNamespace {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     // Properties
     public final RDFName IS_MEMBER_OF;
- 
+
     // Values
 
     // Types
 
     public FedoraRelsExtNamespace() {
 
-        this.uri = "info:fedora/fedora-system:def/relations-external#";
-        this.prefix = "rel";
+        uri = "info:fedora/fedora-system:def/relations-external#";
+        prefix = "rel";
 
         // Properties
-        this.IS_MEMBER_OF               = new RDFName(this, "isMemberOf");
+        IS_MEMBER_OF = new RDFName(this, "isMemberOf");
 
         // Values
-
 
         // Types
 

@@ -8,96 +8,80 @@ package fedora.client.bmech.data;
 import java.util.HashMap;
 
 /**
- *
- * <p><b>Title:</b> BObjTemplate.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author payette@cs.cornell.edu
- * @version $Id$
+ * @author Sandy Payette
  */
-
 public class BObjTemplate {
 
     private String bObjPID = null;
+
     private String bObjLabel = null;
+
     private String bObjName = null;
+
     private DCElement[] dcRecord = new DCElement[0];
+
     private Datastream[] docDatastreams = new Datastream[0];
+
     private Method[] methods;
+
     private HashMap hmap_methods = new HashMap();
 
-
-    public BObjTemplate()
-    {
+    public BObjTemplate() {
     }
 
-    public String getbObjPID()
-    {
+    public String getbObjPID() {
         return bObjPID;
     }
 
-    public void setbObjPID(String bObjPID)
-    {
+    public void setbObjPID(String bObjPID) {
         this.bObjPID = bObjPID;
     }
 
-    public String getbObjLabel()
-    {
+    public String getbObjLabel() {
         return bObjLabel;
     }
 
-    public void setbObjLabel(String bObjLabel)
-    {
+    public void setbObjLabel(String bObjLabel) {
         this.bObjLabel = bObjLabel;
     }
 
-    public String getbObjName()
-    {
+    public String getbObjName() {
         return bObjName;
     }
 
-    public void setbObjName(String bObjName)
-    {
+    public void setbObjName(String bObjName) {
         this.bObjName = bObjName;
     }
 
-    public DCElement[] getDCRecord()
-    {
+    public DCElement[] getDCRecord() {
         return dcRecord;
     }
 
-    public void setDCRecord(DCElement[] dcRecord)
-    {
+    public void setDCRecord(DCElement[] dcRecord) {
         this.dcRecord = dcRecord;
     }
 
-    public Datastream[] getDocDatastreams()
-    {
+    public Datastream[] getDocDatastreams() {
         return docDatastreams;
     }
 
-    public void setDocDatastreams(Datastream[] docDatastreams)
-    {
+    public void setDocDatastreams(Datastream[] docDatastreams) {
         this.docDatastreams = docDatastreams;
     }
 
-    public HashMap getMethodsHashMap()
-    {
+    public HashMap getMethodsHashMap() {
         return hmap_methods;
     }
 
-    public void setMethodsHashMap(HashMap hmap_methods)
-    {
+    public void setMethodsHashMap(HashMap hmap_methods) {
         this.hmap_methods = hmap_methods;
     }
 
-    public Method[] getMethods()
-    {
+    public Method[] getMethods() {
         return methods;
     }
 
-    public void setMethods(Method[] methods)
-    {
+    public void setMethods(Method[] methods) {
         this.methods = methods;
     }
-  }
+}

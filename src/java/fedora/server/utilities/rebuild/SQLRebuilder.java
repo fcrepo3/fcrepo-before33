@@ -9,12 +9,14 @@ package fedora.server.utilities.rebuild;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,6 +27,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -55,22 +58,23 @@ import fedora.server.utilities.TableSpec;
 /**
  * A Rebuilder for the SQL database.
  * 
- * @version $Id$
  */
-public class SQLRebuilder implements Rebuilder {
+public class SQLRebuilder
+        implements Rebuilder {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(Rebuilder.class
-            .getName());
+    private static final Logger LOG =
+            Logger.getLogger(Rebuilder.class.getName());
 
-    private File m_serverDir;
     private ServerConfiguration m_serverConfig;
+
     private static Server s_server;
+
     private ConnectionPool m_connectionPool;
-    private Connection m_connection;
+
     private Context m_context;
 
-    private String m_echoString = "Added PID";
+    private final String m_echoString = "Added PID";
 
     /**
      * Get a short phrase describing what the user can do with this rebuilder.
@@ -84,7 +88,7 @@ public class SQLRebuilder implements Rebuilder {
      * safely operate.
      */
     public boolean shouldStopServer() {
-        return (true);
+        return true;
     }
 
     /**
@@ -93,8 +97,7 @@ public class SQLRebuilder implements Rebuilder {
      * @@returns a map of option names to plaintext descriptions.
      */
     public Map<String, String> init(File serverDir,
-            ServerConfiguration serverConfig) {
-        m_serverDir = serverDir;
+                                    ServerConfiguration serverConfig) {
         m_serverConfig = serverConfig;
         Map<String, String> m = new HashMap<String, String>();
         return m;
@@ -111,24 +114,25 @@ public class SQLRebuilder implements Rebuilder {
         blankExistingTables();
 
         try {
-            s_server = RebuildServer.getRebuildInstance(new File(
-                    Constants.FEDORA_HOME));
+            s_server =
+                    RebuildServer
+                            .getRebuildInstance(new File(Constants.FEDORA_HOME));
             // now get the connectionpool
-            ConnectionPoolManager cpm = (ConnectionPoolManager) s_server
-                    .getModule("fedora.server.storage.ConnectionPoolManager");
+            ConnectionPoolManager cpm =
+                    (ConnectionPoolManager) s_server
+                            .getModule("fedora.server.storage.ConnectionPoolManager");
             if (cpm == null) {
-                throw new ModuleInitializationException(
-                        "ConnectionPoolManager not loaded.",
-                        "ConnectionPoolManager");
+                throw new ModuleInitializationException("ConnectionPoolManager not loaded.",
+                                                        "ConnectionPoolManager");
             }
             m_connectionPool = cpm.getPool();
-            m_context = ReadOnlyContext.getContext("utility", "fedoraAdmin",
-                    "", /* null, */ReadOnlyContext.DO_OP);
+            m_context =
+                    ReadOnlyContext.getContext("utility", "fedoraAdmin", "", /* null, */
+                    ReadOnlyContext.DO_OP);
             String registryClassTemp = s_server.getParameter("registry");
-            String reason = "registry";
-
-            ILowlevelStorage llstore = (ILowlevelStorage) s_server
-                    .getModule("fedora.server.storage.lowlevel.ILowlevelStorage");
+            ILowlevelStorage llstore =
+                    (ILowlevelStorage) s_server
+                            .getModule("fedora.server.storage.lowlevel.ILowlevelStorage");
             try {
                 llstore.rebuildObject();
                 llstore.rebuildDatastream();
@@ -161,8 +165,9 @@ public class SQLRebuilder implements Rebuilder {
             throw new SQLException(sqle.getMessage());
         } finally {
             try {
-                if (r != null)
+                if (r != null) {
                     r.close();
+                }
             } catch (SQLException sqle2) {
                 throw sqle2;
             } finally {
@@ -197,8 +202,8 @@ public class SQLRebuilder implements Rebuilder {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(
-                    "DB error while blanking existing tables", e);
+            throw new RuntimeException("DB error while blanking existing tables",
+                                       e);
         } finally {
             try {
                 connection.close();
@@ -209,26 +214,27 @@ public class SQLRebuilder implements Rebuilder {
 
     /**
      * Get the names of all Fedora tables listed in the server's dbSpec file.
-     * 
      * Names will be returned in ALL CAPS so that case-insensitive comparisons
      * can be done.
      */
     private List<String> getFedoraTables() {
         try {
-            String dbSpecLocation = "fedora/server/storage/resources/DefaultDOManager.dbspec";
-            InputStream in = getClass().getClassLoader().getResourceAsStream(
-                    dbSpecLocation);
+            String dbSpecLocation =
+                    "fedora/server/storage/resources/DefaultDOManager.dbspec";
+            InputStream in =
+                    getClass().getClassLoader()
+                            .getResourceAsStream(dbSpecLocation);
             List<TableSpec> specs = TableSpec.getTableSpecs(in);
             ArrayList<String> names = new ArrayList<String>();
             for (int i = 0; i < specs.size(); i++) {
-                TableSpec spec = (TableSpec) specs.get(i);
+                TableSpec spec = specs.get(i);
                 names.add(spec.getName().toUpperCase());
             }
             return names;
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Unexpected error reading dbspec file",
-                    e);
+                                       e);
         }
     }
 
@@ -239,21 +245,21 @@ public class SQLRebuilder implements Rebuilder {
             statement = connection.createStatement();
             if (statement.execute(sql)) {
                 throw new LowlevelStorageException(true,
-                        "sql returned query results for a nonquery");
+                                                   "sql returned query results for a nonquery");
             }
             int updateCount = statement.getUpdateCount();
         } catch (SQLException e1) {
             throw new LowlevelStorageException(true, "sql failurex (exec)", e1);
         } finally {
             try {
-                if (statement != null)
+                if (statement != null) {
                     statement.close();
+                }
             } catch (Exception e2) { // purposely general to include
-                                        // uninstantiated statement, connection
-                throw new LowlevelStorageException(
-                        true,
-                        "sql failure closing statement, connection, pool (exec)",
-                        e2);
+                // uninstantiated statement, connection
+                throw new LowlevelStorageException(true,
+                                                   "sql failure closing statement, connection, pool (exec)",
+                                                   e2);
             } finally {
                 statement = null;
             }
@@ -271,12 +277,15 @@ public class SQLRebuilder implements Rebuilder {
 
         // DOReplicator replicator=(DOReplicator)
         // s_server.getModule("fedora.server.storage.replication.DOReplicator");
-        DOManager manager = (DOManager) s_server
-                .getModule("fedora.server.storage.DOManager");
-        FieldSearch fieldSearch = (FieldSearch) s_server
-                .getModule("fedora.server.search.FieldSearch");
-        PIDGenerator pidGenerator = (PIDGenerator) s_server
-                .getModule("fedora.server.management.PIDGenerator");
+        DOManager manager =
+                (DOManager) s_server
+                        .getModule("fedora.server.storage.DOManager");
+        FieldSearch fieldSearch =
+                (FieldSearch) s_server
+                        .getModule("fedora.server.search.FieldSearch");
+        PIDGenerator pidGenerator =
+                (PIDGenerator) s_server
+                        .getModule("fedora.server.management.PIDGenerator");
 
         // SET OBJECT PROPERTIES:
         LOG
@@ -309,7 +318,7 @@ public class SQLRebuilder implements Rebuilder {
         // SET DATASTREAM PROPERTIES...
         Iterator dsIter = obj.datastreamIdIterator();
         while (dsIter.hasNext()) {
-            List dsList = (List) obj.datastreams((String) dsIter.next());
+            List dsList = obj.datastreams((String) dsIter.next());
             for (int i = 0; i < dsList.size(); i++) {
                 Datastream ds = (Datastream) dsList.get(i);
                 // Set create date to UTC if not already set
@@ -327,8 +336,10 @@ public class SQLRebuilder implements Rebuilder {
         // get an object writer configured with the DEFAULT export format
         LOG.debug("INGEST: Instantiating a SimpleDOWriter...");
         try {
-            DOWriter w = manager.getWriter(Server.USE_DEFINITIVE_STORE,
-                    m_context, obj.getPid());
+            DOWriter w =
+                    manager.getWriter(Server.USE_DEFINITIVE_STORE,
+                                      m_context,
+                                      obj.getPid());
         } catch (ServerException se) {
         }
 
@@ -339,9 +350,9 @@ public class SQLRebuilder implements Rebuilder {
         try {
             pidGenerator.neverGeneratePID(obj.getPid());
         } catch (IOException e) {
-            throw new RuntimeException(
-                    "Error calling pidGenerator.neverGeneratePID(): "
-                            + e.getMessage(), e);
+            throw new RuntimeException("Error calling pidGenerator.neverGeneratePID(): "
+                                               + e.getMessage(),
+                                       e);
         }
 
         // REGISTRY:
@@ -349,8 +360,8 @@ public class SQLRebuilder implements Rebuilder {
         // of it in the digital object registry
         try {
             registerObject(obj.getPid(), obj.getFedoraObjectTypes(), obj
-                    .getOwnerId(), obj.getLabel(), obj
-                    .getCreateDate(), obj.getLastModDate());
+                    .getOwnerId(), obj.getLabel(), obj.getCreateDate(), obj
+                    .getLastModDate());
         } catch (StorageDeviceException e) {
         }
 
@@ -358,32 +369,41 @@ public class SQLRebuilder implements Rebuilder {
             if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) {
                 LOG.info("COMMIT: Attempting replication as bdef object: "
                         + obj.getPid());
-                BDefReader reader = manager.getBDefReader(
-                        Server.USE_DEFINITIVE_STORE, m_context, obj.getPid());
+                BDefReader reader =
+                        manager.getBDefReader(Server.USE_DEFINITIVE_STORE,
+                                              m_context,
+                                              obj.getPid());
                 LOG.info("COMMIT: Updating FieldSearch indexes...");
                 fieldSearch.update(reader);
             }
             if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)) {
                 LOG.info("COMMIT: Attempting replication as bmech object: "
                         + obj.getPid());
-                BMechReader reader = manager.getBMechReader(
-                        Server.USE_DEFINITIVE_STORE, m_context, obj.getPid());
+                BMechReader reader =
+                        manager.getBMechReader(Server.USE_DEFINITIVE_STORE,
+                                               m_context,
+                                               obj.getPid());
                 LOG.info("COMMIT: Updating FieldSearch indexes...");
                 fieldSearch.update(reader);
             }
-            if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) {
+            if (obj
+                    .isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) {
                 LOG.info("COMMIT: Attempting replication as bmech object: "
                         + obj.getPid());
-                DOReader reader = manager.getReader(
-                        Server.USE_DEFINITIVE_STORE, m_context, obj.getPid());
+                DOReader reader =
+                        manager.getReader(Server.USE_DEFINITIVE_STORE,
+                                          m_context,
+                                          obj.getPid());
                 LOG.info("COMMIT: Updating FieldSearch indexes...");
                 fieldSearch.update(reader);
             }
             if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT)) {
                 LOG.info("COMMIT: Attempting replication as normal object: "
                         + obj.getPid());
-                DOReader reader = manager.getReader(
-                        Server.USE_DEFINITIVE_STORE, m_context, obj.getPid());
+                DOReader reader =
+                        manager.getReader(Server.USE_DEFINITIVE_STORE,
+                                          m_context,
+                                          obj.getPid());
                 LOG.info("COMMIT: Updating FieldSearch indexes...");
                 fieldSearch.update(reader);
             }
@@ -402,9 +422,12 @@ public class SQLRebuilder implements Rebuilder {
     /**
      * Adds a new object.
      */
-    private void registerObject(String pid, String fedoraObjectType,
-            String userId, String label,
-            Date createDate, Date lastModDate) throws StorageDeviceException {
+    private void registerObject(String pid,
+                                String fedoraObjectType,
+                                String userId,
+                                String label,
+                                Date createDate,
+                                Date lastModDate) throws StorageDeviceException {
         // label or contentModelId may be null...set to blank if so
         String theLabel = label;
         if (theLabel == null) {
@@ -414,25 +437,25 @@ public class SQLRebuilder implements Rebuilder {
         Statement s1 = null;
         String foType = fedoraObjectType;
         try {
-            String query = "INSERT INTO doRegistry (doPID, foType, "
-                    + "ownerId, label) " + "VALUES ('"
-                    + pid + "', '" + foType + "', '" + userId + "', '"
-                    + SQLUtility.aposEscape(theLabel) + "')";
+            String query =
+                    "INSERT INTO doRegistry (doPID, foType, "
+                            + "ownerId, label) " + "VALUES ('" + pid + "', '"
+                            + foType + "', '" + userId + "', '"
+                            + SQLUtility.aposEscape(theLabel) + "')";
             conn = m_connectionPool.getConnection();
             s1 = conn.createStatement();
             s1.executeUpdate(query);
         } catch (SQLException sqle) {
-            throw new StorageDeviceException(
-                    "Unexpected error from SQL database while registering object: "
-                            + sqle.getMessage());
+            throw new StorageDeviceException("Unexpected error from SQL database while registering object: "
+                    + sqle.getMessage());
         } finally {
             try {
-                if (s1 != null)
+                if (s1 != null) {
                     s1.close();
+                }
             } catch (Exception sqle) {
-                throw new StorageDeviceException(
-                        "Unexpected error from SQL database while registering object: "
-                                + sqle.getMessage());
+                throw new StorageDeviceException("Unexpected error from SQL database while registering object: "
+                        + sqle.getMessage());
             } finally {
                 s1 = null;
             }
@@ -444,13 +467,13 @@ public class SQLRebuilder implements Rebuilder {
             // REGISTRY:
             // update systemVersion in doRegistry (add one)
             LOG.debug("COMMIT: Updating registry...");
-            String query = "SELECT systemVersion " + "FROM doRegistry "
-                    + "WHERE doPID='" + pid + "'";
+            String query =
+                    "SELECT systemVersion " + "FROM doRegistry "
+                            + "WHERE doPID='" + pid + "'";
             s2 = conn.createStatement();
             results = s2.executeQuery(query);
             if (!results.next()) {
-                throw new ObjectNotFoundException(
-                        "Error creating replication job: The requested object doesn't exist in the registry.");
+                throw new ObjectNotFoundException("Error creating replication job: The requested object doesn't exist in the registry.");
             }
             int systemVersion = results.getInt("systemVersion");
             systemVersion++;
@@ -465,16 +488,18 @@ public class SQLRebuilder implements Rebuilder {
             e.printStackTrace();
         } finally {
             try {
-                if (results != null)
+                if (results != null) {
                     results.close();
-                if (s2 != null)
+                }
+                if (s2 != null) {
                     s2.close();
-                if (conn != null)
+                }
+                if (conn != null) {
                     m_connectionPool.free(conn);
+                }
             } catch (SQLException sqle) {
-                throw new StorageDeviceException(
-                        "Unexpected error from SQL database: "
-                                + sqle.getMessage());
+                throw new StorageDeviceException("Unexpected error from SQL database: "
+                        + sqle.getMessage());
             } finally {
                 results = null;
                 s2 = null;
@@ -496,25 +521,28 @@ public class SQLRebuilder implements Rebuilder {
 
     /**
      * Gets a connection to the database specified in connection pool module's
-     * "defaultPoolName" config value.
-     * 
-     * This allows us to the connect to the database without the server running.
+     * "defaultPoolName" config value. This allows us to the connect to the
+     * database without the server running.
      */
     private Connection getDefaultConnection() {
-        ModuleConfiguration poolConfig = m_serverConfig
-                .getModuleConfiguration("fedora.server.storage.ConnectionPoolManager");
-        String datastoreID = poolConfig.getParameter("defaultPoolName")
-                .getValue();
-        DatastoreConfiguration dbConfig = m_serverConfig
-                .getDatastoreConfiguration(datastoreID);
+        ModuleConfiguration poolConfig =
+                m_serverConfig
+                        .getModuleConfiguration("fedora.server.storage.ConnectionPoolManager");
+        String datastoreID =
+                poolConfig.getParameter("defaultPoolName").getValue();
+        DatastoreConfiguration dbConfig =
+                m_serverConfig.getDatastoreConfiguration(datastoreID);
         return getConnection(dbConfig.getParameter("jdbcDriverClass")
-                .getValue(), dbConfig.getParameter("jdbcURL").getValue(),
-                dbConfig.getParameter("dbUsername").getValue(), dbConfig
-                        .getParameter("dbPassword").getValue());
+                                     .getValue(),
+                             dbConfig.getParameter("jdbcURL").getValue(),
+                             dbConfig.getParameter("dbUsername").getValue(),
+                             dbConfig.getParameter("dbPassword").getValue());
     }
 
-    private static Connection getConnection(String driverClass, String url,
-            String username, String password) {
+    private static Connection getConnection(String driverClass,
+                                            String url,
+                                            String username,
+                                            String password) {
         try {
             Class.forName(driverClass);
             return DriverManager.getConnection(url, username, password);

@@ -12,37 +12,34 @@ import fedora.server.journal.ServerInterface;
 import fedora.server.journal.recoverylog.JournalRecoveryLog;
 
 /**
+ * A JournalReader implementation for "following" a leading server, when the
+ * leading server is using a {@link MultiFileJournalWriter}, or the equivalent.
  * 
- * <p>
- * <b>Title:</b> MultiFileFollowingJournalReader.java
- * </p>
- * <p>
- * <b>Description:</b> A JournalReader implementation for "following" a leading
- * server, when the leading server is using a {@link MultiFileJournalWriter},
- * or the equivalent. The recovery is never complete, as the reader continues to
- * poll for recently-created files, until the server shuts down.
- * </p>
- * <p>
- * This class should likely be superceded by
+ * <p>The recovery is never complete, as the reader continues to poll for 
+ * recently-created files, until the server shuts down.
+ * 
+ * <p>This class should likely be superceded by
  * {@link LockingFollowingJournalReader}.
- * </p>
  * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
+public class MultiFileFollowingJournalReader
+        extends MultiFileJournalReader {
 
-public class MultiFileFollowingJournalReader extends MultiFileJournalReader {
     private final long pollingIntervalMillis;
 
     /**
      * Do the super-class constructor, and then find the polling interval.
      */
-    public MultiFileFollowingJournalReader(Map parameters, String role,
-            JournalRecoveryLog recoveryLog, ServerInterface server)
+    public MultiFileFollowingJournalReader(Map parameters,
+                                           String role,
+                                           JournalRecoveryLog recoveryLog,
+                                           ServerInterface server)
             throws JournalException {
         super(parameters, role, recoveryLog, server);
-        pollingIntervalMillis = MultiFileJournalHelper
-                .parseParametersForPollingInterval(parameters);
+        pollingIntervalMillis =
+                MultiFileJournalHelper
+                        .parseParametersForPollingInterval(parameters);
     }
 
     /**
@@ -50,6 +47,7 @@ public class MultiFileFollowingJournalReader extends MultiFileJournalReader {
      * wait for a while and ask again. This will continue until we get a server
      * shutdown signal.
      */
+    @Override
     protected synchronized JournalInputFile openNextFile()
             throws JournalException {
         while (open) {
@@ -69,6 +67,7 @@ public class MultiFileFollowingJournalReader extends MultiFileJournalReader {
     /**
      * If the server requests a shutdown, stop waiting the next file to come in.
      */
+    @Override
     public synchronized void shutdown() throws JournalException {
         super.shutdown();
         notifyAll();

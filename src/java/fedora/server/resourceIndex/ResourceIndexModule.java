@@ -7,6 +7,7 @@ package fedora.server.resourceIndex;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.Triple;
+
 import org.trippi.FlushErrorHandler;
 import org.trippi.RDFFormat;
 import org.trippi.TripleIterator;
@@ -25,6 +27,7 @@ import org.trippi.TrippiException;
 import org.trippi.TupleIterator;
 
 import fedora.common.Constants;
+
 import fedora.server.Module;
 import fedora.server.Parameterized;
 import fedora.server.Server;
@@ -37,11 +40,12 @@ import fedora.server.utilities.status.ServerState;
 
 /**
  * Fedora's <code>ResourceIndex</code> as a configurable module.
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * 
+ * @author Chris Wilper
  */
-public class ResourceIndexModule extends Module implements ResourceIndex {
+public class ResourceIndexModule
+        extends Module
+        implements ResourceIndex {
 
     /**
      * The instance this module wraps.
@@ -55,63 +59,61 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
     /**
      * Instantiate the module.
      */
-    public ResourceIndexModule(Map<String, String> parameters, Server server, String role)
+    public ResourceIndexModule(Map<String, String> parameters,
+                               Server server,
+                               String role)
             throws ModuleInitializationException {
         super(parameters, server, role);
     }
 
     /**
-     * Perform post-initialization of this module.
-     *
-     * ResourceIndexModule takes the following parameters:
+     * Perform post-initialization of this module. ResourceIndexModule takes the
+     * following parameters:
      * <ul>
-     *   <li> level (required, integer between 0 and 1)<br/>
-     *        The level of indexing that should be performed.
-     *        Values correspond to <code>INDEX_LEVEL_OFF</code>,
-     *        and <code>INDEX_LEVEL_ON</code>.
-     *   </li>
-     *   <li> datastore (required)<br/>
-     *        The name of the datastore element that contains
-     *        the Trippi Connector configuration.
-     *   <li> connectionPool (optional, default is 
-     *        ConnectionPoolManager's default)<br/>
-     *        Which connection pool to use for updating
-     *        the database of method information.
-     *   </li>
-     *   <li> syncUpdates (optional, default is false)<br/>
-     *        Whether to flush the triple buffer before
-     *        returning from object modification operations.
-     *        Specifying this as true will ensure that
-     *        RI queries always reflect the latest triples.
-     *   </li>
-     *   <li> alias:xyz (optional, uri)<br/>
-     *        Any parameter starting with "alias:" will be
-     *        put into Trippi's alias map, and can be used
-     *        for queries.  For example, alias:xyz with a
-     *        value of urn:example:long:uri:x:y:z: will make
-     *        it possible to use "xyz:a" to mean 
-     *        "urn:example:long:uri:x:y:z:a" in queries.
-     *   </li>
+     * <li> level (required, integer between 0 and 1)<br/> The level of
+     * indexing that should be performed. Values correspond to
+     * <code>INDEX_LEVEL_OFF</code>, and <code>INDEX_LEVEL_ON</code>.
+     * </li>
+     * <li> datastore (required)<br/> The name of the datastore element that
+     * contains the Trippi Connector configuration.
+     * <li> connectionPool (optional, default is ConnectionPoolManager's
+     * default)<br/> Which connection pool to use for updating the database of
+     * method information. </li>
+     * <li> syncUpdates (optional, default is false)<br/> Whether to flush the
+     * triple buffer before returning from object modification operations.
+     * Specifying this as true will ensure that RI queries always reflect the
+     * latest triples. </li>
+     * <li> alias:xyz (optional, uri)<br/> Any parameter starting with "alias:"
+     * will be put into Trippi's alias map, and can be used for queries. For
+     * example, alias:xyz with a value of urn:example:long:uri:x:y:z: will make
+     * it possible to use "xyz:a" to mean "urn:example:long:uri:x:y:z:a" in
+     * queries. </li>
      * </ul>
      */
-    public void postInitModule()
-            throws ModuleInitializationException {
+    @Override
+    public void postInitModule() throws ModuleInitializationException {
         int level = getRequiredInt("level", 0, 1);
-        if (level == 0) return;
+        if (level == 0) {
+            return;
+        }
         boolean syncUpdates = getBoolean("syncUpdates", false);
         try {
-            TriplestoreConnector connector = getConnector(
-                    getServer().getDatastoreConfig(getRequired("datastore")));
-            _ri = new ResourceIndexImpl(connector,
-                    new BaseTripleGenerator(connector.getElementFactory()),
-                    level, 
-                    syncUpdates);
+            TriplestoreConnector connector =
+                    getConnector(getServer()
+                            .getDatastoreConfig(getRequired("datastore")));
+            _ri =
+                    new ResourceIndexImpl(connector,
+                                          new BaseTripleGenerator(connector
+                                                  .getElementFactory()),
+                                          level,
+                                          syncUpdates);
             setAliasMap(getAliases());
         } catch (Exception e) {
             throw new ModuleInitializationException("Error initializing RI",
-                    getRole(), e);
+                                                    getRole(),
+                                                    e);
         }
-    } 
+    }
 
     private TriplestoreConnector getConnector(Parameterized datastore)
             throws Exception {
@@ -142,7 +144,7 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
         while (iter.hasNext()) {
             String pName = iter.next();
             String[] parts = pName.split(":");
-            if ((parts.length == 2) && (parts[0].equals("alias"))) {
+            if (parts.length == 2 && parts[0].equals("alias")) {
                 map.put(parts[1], getParameter(pName));
             }
         }
@@ -162,30 +164,32 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
         try {
             int value = Integer.parseInt(getRequired(name));
             if (value < min || value > max) {
-                throw new ModuleInitializationException(name 
-                        + " parameter is out of range, expected [" 
-                        + min + "-" + max + "]", getRole());
+                throw new ModuleInitializationException(name
+                        + " parameter is out of range, expected [" + min + "-"
+                        + max + "]", getRole());
             }
             return value;
         } catch (NumberFormatException e) {
-            throw new ModuleInitializationException(name + " parameter must be "
-                    + "an integer", getRole());
+            throw new ModuleInitializationException(name
+                    + " parameter must be " + "an integer", getRole());
         }
     }
 
     private boolean getBoolean(String name, boolean defaultValue)
             throws ModuleInitializationException {
         String value = getParameter(name);
-        if (value == null) return defaultValue;
+        if (value == null) {
+            return defaultValue;
+        }
         value = value.toLowerCase();
         if (value.equals("true") || value.equals("yes") || value.equals("on")) {
             return true;
-        } else if (value.equals("false") || value.equals("no") || value.equals("off")) {
+        } else if (value.equals("false") || value.equals("no")
+                || value.equals("off")) {
             return false;
         } else {
             throw new ModuleInitializationException(name + " parameter, if "
-                    + "specified, must be a boolean (true or false)", 
-                    getRole());
+                    + "specified, must be a boolean (true or false)", getRole());
         }
     }
 
@@ -202,16 +206,19 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
 
     /**
      * Shutdown the RI module by closing the wrapped ResourceIndex.
-     *
-     * @throws ModuleShutdownException if any error occurs while closing.
+     * 
+     * @throws ModuleShutdownException
+     *         if any error occurs while closing.
      */
+    @Override
     public void shutdownModule() throws ModuleShutdownException {
         if (_ri != null) {
             try {
                 _ri.close();
             } catch (TrippiException e) {
                 throw new ModuleShutdownException("Error closing RI",
-                        getRole(), e);
+                                                  getRole(),
+                                                  e);
             }
         }
     }
@@ -223,7 +230,7 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
     /**
      * {@inheritDoc}
      */
-	public int getIndexLevel() {
+    public int getIndexLevel() {
         if (_ri == null) {
             return 0;
         } else {
@@ -234,24 +241,21 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
     /**
      * {@inheritDoc}
      */
-    public void addBDefObject(BDefReader reader)
-            throws ResourceIndexException {
+    public void addBDefObject(BDefReader reader) throws ResourceIndexException {
         _ri.addBDefObject(reader);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void addDataObject(DOReader reader)
-            throws ResourceIndexException {
+    public void addDataObject(DOReader reader) throws ResourceIndexException {
         _ri.addDataObject(reader);
     }
-   
+
     /**
      * {@inheritDoc}
      */
-    public void addCModelObject(DOReader reader)
-            throws ResourceIndexException {
+    public void addCModelObject(DOReader reader) throws ResourceIndexException {
         _ri.addCModelObject(reader);
     }
 
@@ -270,7 +274,7 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
             throws ResourceIndexException {
         _ri.modifyDataObject(oldReader, newReader);
     }
- 
+
     /**
      * {@inheritDoc}
      */
@@ -294,7 +298,7 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
             throws ResourceIndexException {
         _ri.deleteDataObject(oldReader);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -302,15 +306,14 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
             throws ResourceIndexException {
         _ri.deleteCModelObject(oldReader);
     }
-	
+
     /**
      * {@inheritDoc}
      */
-	public void export(OutputStream out, RDFFormat format)
-	        throws ResourceIndexException {
+    public void export(OutputStream out, RDFFormat format)
+            throws ResourceIndexException {
         _ri.export(out, format);
     }
-
 
     ///////////////////////////////
     // TriplestoreReader methods //
@@ -319,7 +322,8 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
     /**
      * {@inheritDoc}
      */
-    public void setAliasMap(Map<String, String> aliasToPrefix) throws TrippiException {
+    public void setAliasMap(Map<String, String> aliasToPrefix)
+            throws TrippiException {
         _ri.setAliasMap(aliasToPrefix);
     }
 
@@ -333,75 +337,91 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
     /**
      * {@inheritDoc}
      */
-    public TupleIterator findTuples(String queryLang, String tupleQuery,
-            int limit, boolean distinct)
-            throws TrippiException {
+    public TupleIterator findTuples(String queryLang,
+                                    String tupleQuery,
+                                    int limit,
+                                    boolean distinct) throws TrippiException {
         return _ri.findTuples(queryLang, tupleQuery, limit, distinct);
     }
 
     /**
      * {@inheritDoc}
      */
-    public int countTuples(String queryLang, String tupleQuery, int limit,
-            boolean distinct)
-            throws TrippiException {
+    public int countTuples(String queryLang,
+                           String tupleQuery,
+                           int limit,
+                           boolean distinct) throws TrippiException {
         return _ri.countTuples(queryLang, tupleQuery, limit, distinct);
     }
 
     /**
      * {@inheritDoc}
      */
-    public TripleIterator findTriples(String queryLang, String tripleQuery,
-            int limit, boolean distinct)
-            throws TrippiException {
+    public TripleIterator findTriples(String queryLang,
+                                      String tripleQuery,
+                                      int limit,
+                                      boolean distinct) throws TrippiException {
         return _ri.findTriples(queryLang, tripleQuery, limit, distinct);
     }
 
     /**
      * {@inheritDoc}
      */
-    public int countTriples(String queryLang, String tripleQuery, int limit,
-            boolean distinct)
-            throws TrippiException {
+    public int countTriples(String queryLang,
+                            String tripleQuery,
+                            int limit,
+                            boolean distinct) throws TrippiException {
         return _ri.countTriples(queryLang, tripleQuery, limit, distinct);
     }
 
     /**
      * {@inheritDoc}
      */
-    public TripleIterator findTriples(SubjectNode subject, 
-            PredicateNode predicate, ObjectNode object, int limit)
-            throws TrippiException {
+    public TripleIterator findTriples(SubjectNode subject,
+                                      PredicateNode predicate,
+                                      ObjectNode object,
+                                      int limit) throws TrippiException {
         return _ri.findTriples(subject, predicate, object, limit);
     }
 
     /**
      * {@inheritDoc}
      */
-    public int countTriples(SubjectNode subject, PredicateNode predicate,
-            ObjectNode object, int limit)
-            throws TrippiException {
+    public int countTriples(SubjectNode subject,
+                            PredicateNode predicate,
+                            ObjectNode object,
+                            int limit) throws TrippiException {
         return _ri.countTriples(subject, predicate, object, limit);
     }
 
     /**
      * {@inheritDoc}
      */
-    public TripleIterator findTriples(String queryLang, String tupleQuery, 
-            String tripleTemplate, int limit, boolean distinct)
-            throws TrippiException {
-        return _ri.findTriples(queryLang, tupleQuery, tripleTemplate,
-                limit, distinct);
+    public TripleIterator findTriples(String queryLang,
+                                      String tupleQuery,
+                                      String tripleTemplate,
+                                      int limit,
+                                      boolean distinct) throws TrippiException {
+        return _ri.findTriples(queryLang,
+                               tupleQuery,
+                               tripleTemplate,
+                               limit,
+                               distinct);
     }
 
     /**
      * {@inheritDoc}
      */
-    public int countTriples(String queryLang, String tupleQuery, 
-            String tripleTemplate, int limit, boolean distinct)
-            throws TrippiException {
-        return _ri.countTriples(queryLang, tupleQuery, tripleTemplate,
-                limit, distinct);
+    public int countTriples(String queryLang,
+                            String tupleQuery,
+                            String tripleTemplate,
+                            int limit,
+                            boolean distinct) throws TrippiException {
+        return _ri.countTriples(queryLang,
+                                tupleQuery,
+                                tripleTemplate,
+                                limit,
+                                distinct);
     }
 
     /**
@@ -425,88 +445,87 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
         // no-op; closing must be done via Module.shutdownModule
     }
 
-
     ///////////////////////////////
     // TriplestoreWriter methods //
     ///////////////////////////////
-   
-    /**
-     * {@inheritDoc}
-     */
-	public void add(List<Triple> triples, boolean flush)
-	        throws IOException, TrippiException {
-        _ri.add(triples, flush);
-	}
 
     /**
      * {@inheritDoc}
      */
-	public void add(TripleIterator triples, boolean flush)
-	        throws IOException, TrippiException {
+    public void add(List<Triple> triples, boolean flush) throws IOException,
+            TrippiException {
         _ri.add(triples, flush);
-	}
+    }
 
     /**
      * {@inheritDoc}
      */
-	public void add(Triple triple, boolean flush)
-	        throws IOException, TrippiException {
+    public void add(TripleIterator triples, boolean flush) throws IOException,
+            TrippiException {
+        _ri.add(triples, flush);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void add(Triple triple, boolean flush) throws IOException,
+            TrippiException {
         _ri.add(triple, flush);
-	}
+    }
 
     /**
      * {@inheritDoc}
      */
-	public void delete(List<Triple> triples, boolean flush)
-	        throws IOException, TrippiException {
+    public void delete(List<Triple> triples, boolean flush) throws IOException,
+            TrippiException {
         _ri.delete(triples, flush);
-	}
+    }
 
     /**
      * {@inheritDoc}
      */
-	public void delete(TripleIterator triples, boolean flush)
-	        throws IOException, TrippiException {
+    public void delete(TripleIterator triples, boolean flush)
+            throws IOException, TrippiException {
         _ri.delete(triples, flush);
-	}
+    }
 
     /**
      * {@inheritDoc}
      */
-	public void delete(Triple triple, boolean flush)
-	        throws IOException, TrippiException {
+    public void delete(Triple triple, boolean flush) throws IOException,
+            TrippiException {
         _ri.delete(triple, flush);
-	}
+    }
 
     /**
      * {@inheritDoc}
      */
-	public void flushBuffer()
-	        throws IOException, TrippiException {
+    public void flushBuffer() throws IOException, TrippiException {
         _ri.flushBuffer();
-	}
+    }
 
     /**
      * {@inheritDoc}
      */
-	public void setFlushErrorHandler(FlushErrorHandler h) {
-		_ri.setFlushErrorHandler(h);
-	}
+    public void setFlushErrorHandler(FlushErrorHandler h) {
+        _ri.setFlushErrorHandler(h);
+    }
 
     /**
      * {@inheritDoc}
      */
-	public int getBufferSize() {
-		return _ri.getBufferSize();
-	}
+    public int getBufferSize() {
+        return _ri.getBufferSize();
+    }
 
     /**
      * {@inheritDoc}
      */
-	public List<TripleUpdate> findBufferedUpdates(SubjectNode subject, 
-	        PredicateNode predicate, ObjectNode object, int updateType) {
-		return _ri.findBufferedUpdates(subject, predicate, object, 
-		        updateType);
-	}
-	
+    public List<TripleUpdate> findBufferedUpdates(SubjectNode subject,
+                                                  PredicateNode predicate,
+                                                  ObjectNode object,
+                                                  int updateType) {
+        return _ri.findBufferedUpdates(subject, predicate, object, updateType);
+    }
+
 }

@@ -9,12 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
- * <p><b>Title:</b> FieldSearchResult.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
  */
 public interface FieldSearchResult {
 
@@ -29,4 +24,3 @@ public interface FieldSearchResult {
     public Date getExpirationDate();
 
 }
-

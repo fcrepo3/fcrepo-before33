@@ -1,9 +1,5 @@
+
 package fedora.test.api;
-
-import junit.extensions.TestSetup;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,10 +9,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
-import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
+import org.apache.commons.httpclient.methods.multipart.Part;
 
 import fedora.client.FedoraClient;
 import fedora.client.HttpInputStream;
@@ -27,59 +26,99 @@ import fedora.test.DemoObjectTestSetup;
 import fedora.test.FedoraServerTestCase;
 
 /**
- * Common tests for correct/incorrect http status codes with api requests
- * over API-A/API-M Lite.  For non-200 requests, this also tests the response
- * body for the string "Fedora: # " (where # is the status code) to ensure 
- * that the correct jsp has been delivered.
- *
- * @author cwilper@cs.cornell.edu
+ * Common tests for correct/incorrect http status codes with api requests over
+ * API-A/API-M Lite. For non-200 requests, this also tests the response body for
+ * the string "Fedora: # " (where # is the status code) to ensure that the
+ * correct jsp has been delivered.
+ * 
+ * @author Chris Wilper
  */
 public class TestHTTPStatusCodes
         extends FedoraServerTestCase {
 
     public static final String TEST_OBJ = "demo:SmileyBucket";
+
     public static final String BOGUS_DS = "NonExistingDS";
+
     public static final String BOGUS_METHOD = "nonExistingMethod";
+
     public static final String BOGUS_OBJ = "demo:NonExistingObject";
+
     public static final String BOGUS_BDEF = "demo:NonExistingBDef";
 
-    public static final String GET_NEXT_PID_PATH = "/management/getNextPID?xml=true";
+    public static final String GET_NEXT_PID_PATH =
+            "/management/getNextPID?xml=true";
 
     public static final String DESCRIBE_REPOSITORY_PATH = "/describe?xml=true";
 
     public static final String GET_DS_DISSEM_PATH = "/get/" + TEST_OBJ + "/DC";
-    public static final String GET_DS_DISSEM_BOGUS_DS_PATH = "/get/" + TEST_OBJ + "/" + BOGUS_DS;
-    public static final String GET_DS_DISSEM_BOGUS_OBJ_PATH = "/get/" + BOGUS_OBJ + "/DC";
 
-    public static final String GET_DEFAULT_DISSEM_PATH = "/get/" + TEST_OBJ + "/fedora-system:3/viewDublinCore";
-    public static final String GET_DEFAULT_DISSEM_BOGUS_METHOD_PATH = "/get/" + TEST_OBJ + "/fedora-system:3/" + BOGUS_METHOD;
-    public static final String GET_DEFAULT_DISSEM_BOGUS_OBJ_PATH = "/get/" + BOGUS_OBJ + "/fedora-system:3/viewDublinCore";
+    public static final String GET_DS_DISSEM_BOGUS_DS_PATH =
+            "/get/" + TEST_OBJ + "/" + BOGUS_DS;
 
-    public static final String GET_CUSTOM_DISSEM_PATH = "/get/" + TEST_OBJ + "/demo:DualResImage/mediumSize";
-    public static final String GET_CUSTOM_DISSEM_BOGUS_METHOD_PATH = "/get/" + TEST_OBJ + "/demo:DualResImage/" + BOGUS_METHOD;
-    public static final String GET_CUSTOM_DISSEM_BOGUS_BDEF_PATH = "/get/" + TEST_OBJ + "/" + BOGUS_BDEF + "/" + BOGUS_METHOD;
-    public static final String GET_CUSTOM_DISSEM_BOGUS_OBJ_PATH = "/get/" + BOGUS_OBJ + "/demo:DualResImage/mediumSize";
+    public static final String GET_DS_DISSEM_BOGUS_OBJ_PATH =
+            "/get/" + BOGUS_OBJ + "/DC";
 
-    public static final String GET_OBJ_HISTORY_PATH = "/getObjectHistory/" + TEST_OBJ + "?xml=true";
-    public static final String GET_OBJ_HISTORY_BOGUS_OBJ_PATH = "/getObjectHistory/" + BOGUS_OBJ + "?xml=true";
+    public static final String GET_DEFAULT_DISSEM_PATH =
+            "/get/" + TEST_OBJ + "/fedora-system:3/viewDublinCore";
 
-    public static final String GET_OBJ_PROFILE_PATH = "/get/" + TEST_OBJ + "?xml=true";
-    public static final String GET_OBJ_PROFILE_BOGUS_OBJ_PATH = "/get/" + BOGUS_OBJ + "?xml=true";
+    public static final String GET_DEFAULT_DISSEM_BOGUS_METHOD_PATH =
+            "/get/" + TEST_OBJ + "/fedora-system:3/" + BOGUS_METHOD;
 
-    public static final String LIST_DATASTREAMS_PATH = "/listDatastreams/" + TEST_OBJ + "?xml=true";
-    public static final String LIST_DATASTREAMS_BOGUS_OBJ_PATH = "/listDatastreams/" + BOGUS_OBJ + "?xml=true";
+    public static final String GET_DEFAULT_DISSEM_BOGUS_OBJ_PATH =
+            "/get/" + BOGUS_OBJ + "/fedora-system:3/viewDublinCore";
 
-    public static final String LIST_METHODS_PATH = "/listMethods/" + TEST_OBJ + "?xml=true";
-    public static final String LIST_METHODS_BOGUS_OBJ_PATH = "/listMethods/" + BOGUS_OBJ + "?xml=true";
+    public static final String GET_CUSTOM_DISSEM_PATH =
+            "/get/" + TEST_OBJ + "/demo:DualResImage/mediumSize";
 
-    public static final String FIND_OBJECTS_PATH = "/search?pid=true&terms=&query=&maxResults=20&xml=true";
-    public static final String FIND_OBJECTS_BADREQ_PATH = "/search?pid=true&terms=&query=&maxResults=unparsable&xml=true";
+    public static final String GET_CUSTOM_DISSEM_BOGUS_METHOD_PATH =
+            "/get/" + TEST_OBJ + "/demo:DualResImage/" + BOGUS_METHOD;
 
-    public static final String RI_SEARCH_PATH = "/risearch?type=triples&lang=spo&format=N-Triples&limit=&dt=on&stream=on&query=%3Cinfo%3Afedora%2Fdemo%3ASmileyStuff%3E+*+*";
+    public static final String GET_CUSTOM_DISSEM_BOGUS_BDEF_PATH =
+            "/get/" + TEST_OBJ + "/" + BOGUS_BDEF + "/" + BOGUS_METHOD;
+
+    public static final String GET_CUSTOM_DISSEM_BOGUS_OBJ_PATH =
+            "/get/" + BOGUS_OBJ + "/demo:DualResImage/mediumSize";
+
+    public static final String GET_OBJ_HISTORY_PATH =
+            "/getObjectHistory/" + TEST_OBJ + "?xml=true";
+
+    public static final String GET_OBJ_HISTORY_BOGUS_OBJ_PATH =
+            "/getObjectHistory/" + BOGUS_OBJ + "?xml=true";
+
+    public static final String GET_OBJ_PROFILE_PATH =
+            "/get/" + TEST_OBJ + "?xml=true";
+
+    public static final String GET_OBJ_PROFILE_BOGUS_OBJ_PATH =
+            "/get/" + BOGUS_OBJ + "?xml=true";
+
+    public static final String LIST_DATASTREAMS_PATH =
+            "/listDatastreams/" + TEST_OBJ + "?xml=true";
+
+    public static final String LIST_DATASTREAMS_BOGUS_OBJ_PATH =
+            "/listDatastreams/" + BOGUS_OBJ + "?xml=true";
+
+    public static final String LIST_METHODS_PATH =
+            "/listMethods/" + TEST_OBJ + "?xml=true";
+
+    public static final String LIST_METHODS_BOGUS_OBJ_PATH =
+            "/listMethods/" + BOGUS_OBJ + "?xml=true";
+
+    public static final String FIND_OBJECTS_PATH =
+            "/search?pid=true&terms=&query=&maxResults=20&xml=true";
+
+    public static final String FIND_OBJECTS_BADREQ_PATH =
+            "/search?pid=true&terms=&query=&maxResults=unparsable&xml=true";
+
+    public static final String RI_SEARCH_PATH =
+            "/risearch?type=triples&lang=spo&format=N-Triples&limit=&dt=on&stream=on&query=%3Cinfo%3Afedora%2Fdemo%3ASmileyStuff%3E+*+*";
 
     private static FedoraClient CLIENT_VALID_USER_VALID_PASS;
+
     private static FedoraClient CLIENT_VALID_USER_VALID_PASS_UNAUTHORIZED;
+
     private static FedoraClient CLIENT_VALID_USER_BOGUS_PASS;
+
     private static FedoraClient CLIENT_BOGUS_USER;
 
     //---
@@ -88,7 +127,7 @@ public class TestHTTPStatusCodes
 
     public static Test suite() {
         TestSuite suite = new TestSuite("TestHTTPStatusCodes TestSuite");
-		suite.addTestSuite(TestHTTPStatusCodes.class);
+        suite.addTestSuite(TestHTTPStatusCodes.class);
         return new DemoObjectTestSetup(suite);
     }
 
@@ -97,47 +136,61 @@ public class TestHTTPStatusCodes
     //---
 
     public static void checkOK(String requestPath) throws Exception {
-        checkGetCode(getClient(true, true, true), requestPath,
-                "Expected HTTP 200 (OK) response for authenticated, "
-                + "authorized request", 200);
+        checkGetCode(getClient(true, true, true),
+                     requestPath,
+                     "Expected HTTP 200 (OK) response for authenticated, "
+                             + "authorized request",
+                     200);
     }
 
     public static void checkError(String requestPath) throws Exception {
-        checkGetCode(getClient(true, true, true), requestPath,
-                "Expected HTTP 500 (Internal Server Error) response for "
-                + "authenticated, authorized request", 500);
+        checkGetCode(getClient(true, true, true),
+                     requestPath,
+                     "Expected HTTP 500 (Internal Server Error) response for "
+                             + "authenticated, authorized request",
+                     500);
     }
 
     public static void checkBadAuthN(String requestPath) throws Exception {
-        checkGetCode(getClient(true, false, true), requestPath,
-                "Expected HTTP 401 (Unauthorized) response for bad "
-                + "authentication (valid user, bad pass) request", 401);
-        checkGetCode(getClient(false, false, true), requestPath,
-                "Expected HTTP 401 (Unauthorized) response for bad "
-                + "authentication (invalid user) request", 401);
+        checkGetCode(getClient(true, false, true),
+                     requestPath,
+                     "Expected HTTP 401 (Unauthorized) response for bad "
+                             + "authentication (valid user, bad pass) request",
+                     401);
+        checkGetCode(getClient(false, false, true),
+                     requestPath,
+                     "Expected HTTP 401 (Unauthorized) response for bad "
+                             + "authentication (invalid user) request",
+                     401);
     }
 
     public static void checkBadAuthZ(String requestPath) throws Exception {
         try {
             activateUnauthorizedUserAndPolicy();
-            checkGetCode(getClient(true, true, false), requestPath,
-                    "Expected HTTP 403 (Forbidden) response for "
-                    + "authenticated, unauthorized request", 403);
+            checkGetCode(getClient(true, true, false),
+                         requestPath,
+                         "Expected HTTP 403 (Forbidden) response for "
+                                 + "authenticated, unauthorized request",
+                         403);
         } finally {
             deactivateUnauthorizedUserAndPolicy();
         }
     }
 
     public static void checkNotFound(String requestPath) throws Exception {
-        checkGetCode(getClient(true, true, true), requestPath,
-                "Expected HTTP 404 (Not Found) response for authenticated, "
-                + "authorized request", 404);
+        checkGetCode(getClient(true, true, true),
+                     requestPath,
+                     "Expected HTTP 404 (Not Found) response for authenticated, "
+                             + "authorized request",
+                     404);
     }
 
     public static void checkBadRequest(String requestPath) throws Exception {
-        checkGetCode(getClient(true, true, true), requestPath,
-                "Expected HTTP 400 (Bad Request) response for authenticated, "
-                + "authorized request", 400);
+        checkGetCode(getClient(true, true, true),
+                     requestPath,
+                     "Expected HTTP 400 (Bad Request) response for authenticated, "
+                             + "authorized request",
+                     400);
     }
 
     //---
@@ -161,24 +214,32 @@ public class TestHTTPStatusCodes
     //---
 
     public void testUpload_Created() throws Exception {
-        checkUploadCode(getClient(true, true, true), "file",
-                "Expected HTTP 201 (Created) response for authenticated, "
-                + "authorized request", 201);
+        checkUploadCode(getClient(true, true, true),
+                        "file",
+                        "Expected HTTP 201 (Created) response for authenticated, "
+                                + "authorized request",
+                        201);
     }
 
     public void testUpload_BadAuthN() throws Exception {
-        checkUploadCode(getClient(true, false, true), "file",
-                "Expected HTTP 401 (Unauthorized) response for bad "
-                + "authentication (valid user, bad pass) request", 401);
-        checkUploadCode(getClient(false, false, true), "file",
-                "Expected HTTP 401 (Unauthorized) response for bad "
-                + "authentication (invalid user) request", 401);
+        checkUploadCode(getClient(true, false, true),
+                        "file",
+                        "Expected HTTP 401 (Unauthorized) response for bad "
+                                + "authentication (valid user, bad pass) request",
+                        401);
+        checkUploadCode(getClient(false, false, true),
+                        "file",
+                        "Expected HTTP 401 (Unauthorized) response for bad "
+                                + "authentication (invalid user) request",
+                        401);
     }
 
     public void testUpload_BadRequest() throws Exception {
-        checkUploadCode(getClient(true, true, true), "badparam",
-                "Expected HTTP 400 (Bad Request) response for authenticated, "
-                + "authorized request", 400);
+        checkUploadCode(getClient(true, true, true),
+                        "badparam",
+                        "Expected HTTP 400 (Bad Request) response for authenticated, "
+                                + "authorized request",
+                        400);
     }
 
     //---
@@ -197,11 +258,13 @@ public class TestHTTPStatusCodes
         checkOK(GET_DS_DISSEM_PATH);
     }
 
-    public void testGetDatastreamDissemination_Datastream_NotFound() throws Exception {
+    public void testGetDatastreamDissemination_Datastream_NotFound()
+            throws Exception {
         checkNotFound(GET_DS_DISSEM_BOGUS_DS_PATH);
     }
 
-    public void testGetDatastreamDissemination_Object_NotFound() throws Exception {
+    public void testGetDatastreamDissemination_Object_NotFound()
+            throws Exception {
         checkNotFound(GET_DS_DISSEM_BOGUS_OBJ_PATH);
     }
 
@@ -313,11 +376,11 @@ public class TestHTTPStatusCodes
 
     private static FedoraClient getClient(boolean validUser,
                                           boolean validPass,
-                                          boolean authorized)
-            throws Exception {
+                                          boolean authorized) throws Exception {
         if (validUser) {
             if (validPass) {
-                System.out.println("Using Fedora Client with valid user, valid pass");
+                System.out
+                        .println("Using Fedora Client with valid user, valid pass");
                 if (authorized) {
                     if (CLIENT_VALID_USER_VALID_PASS == null) {
                         CLIENT_VALID_USER_VALID_PASS = getFedoraClient();
@@ -325,25 +388,29 @@ public class TestHTTPStatusCodes
                     return CLIENT_VALID_USER_VALID_PASS;
                 } else {
                     if (CLIENT_VALID_USER_VALID_PASS_UNAUTHORIZED == null) {
-                        CLIENT_VALID_USER_VALID_PASS_UNAUTHORIZED = 
-                                getFedoraClient(getBaseURL(), "untrustedUser",
-                                "password");
+                        CLIENT_VALID_USER_VALID_PASS_UNAUTHORIZED =
+                                getFedoraClient(getBaseURL(),
+                                                "untrustedUser",
+                                                "password");
                     }
                     return CLIENT_VALID_USER_VALID_PASS_UNAUTHORIZED;
                 }
             } else {
-                System.out.println("Using Fedora Client with valid user, bogus pass");
+                System.out
+                        .println("Using Fedora Client with valid user, bogus pass");
                 if (CLIENT_VALID_USER_BOGUS_PASS == null) {
-                    CLIENT_VALID_USER_BOGUS_PASS = getFedoraClient(
-                            getBaseURL(), getUsername(), "bogus");
+                    CLIENT_VALID_USER_BOGUS_PASS =
+                            getFedoraClient(getBaseURL(),
+                                            getUsername(),
+                                            "bogus");
                 }
                 return CLIENT_VALID_USER_BOGUS_PASS;
             }
         } else {
             System.out.println("Using Fedora Client with bogus user");
             if (CLIENT_BOGUS_USER == null) {
-                CLIENT_BOGUS_USER = getFedoraClient(getBaseURL(), "bogus",
-                        "bogus");
+                CLIENT_BOGUS_USER =
+                        getFedoraClient(getBaseURL(), "bogus", "bogus");
             }
             return CLIENT_BOGUS_USER;
         }
@@ -352,48 +419,44 @@ public class TestHTTPStatusCodes
     private static void activateUnauthorizedUserAndPolicy() throws Exception {
         backupFedoraUsersFile();
         writeFedoraUsersFile("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                + "<fedora-users>\n"
-                + "  <user name=\"" + getUsername() + "\" password=\"" + getPassword() + "\">\n"
+                + "<fedora-users>\n" + "  <user name=\"" + getUsername()
+                + "\" password=\"" + getPassword() + "\">\n"
                 + "    <attribute name=\"fedoraRole\">\n"
-                + "      <value>administrator</value>\n"
-                + "    </attribute>\n"
+                + "      <value>administrator</value>\n" + "    </attribute>\n"
                 + "  </user>\n"
                 + "  <user name=\"fedoraIntCallUser\" password=\"changeme\">\n"
                 + "    <attribute name=\"fedoraRole\">\n"
-                + "      <value>fedoraInternalCall-1</value>\n" 
+                + "      <value>fedoraInternalCall-1</value>\n"
                 + "      <value>fedoraInternalCall-2</value>\n"
-                + "    </attribute>\n"
-                + "  </user>\n"
+                + "    </attribute>\n" + "  </user>\n"
                 + "  <user name=\"untrustedUser\" password=\"password\">\n"
                 + "    <attribute name=\"fedoraRole\">\n"
-                + "      <value>unauthorized</value>\n"
-                + "    </attribute>\n"
-                + "  </user>\n"
-                + "</fedora-users>");
-        addSystemWidePolicyFile("deny-all-if-unauthorized.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                + "<Policy xmlns=\"urn:oasis:names:tc:xacml:1.0:policy\"\n"
-                + "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
-                + "    PolicyId=\"deny-all-if-unauthorized\""
-                + "    RuleCombiningAlgId=\"urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable\">\n"
-                + "  <Description>deny all api-a and api-m access if subject has fedoraRole unauthorized</Description>\n"
-                + "  <Target>\n"
-                + "    <Subjects>\n"
-                + "      <AnySubject/>\n"
-                + "    </Subjects>\n"
-                + "    <Resources>\n"
-                + "      <AnyResource/>\n"
-                + "    </Resources>\n"
-                + "    <Actions>\n"
-                + "      <AnyAction/>\n"
-                + "    </Actions>\n"
-                + "  </Target>\n"
-                + "  <Rule RuleId=\"1\" Effect=\"Deny\">\n"
-                + "    <Condition FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:string-is-in\">\n"
-                + "      <AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">unauthorized</AttributeValue>\n"
-                + "      <SubjectAttributeDesignator AttributeId=\"fedoraRole\" DataType=\"http://www.w3.org/2001/XMLSchema#string\"/>\n"
-                + "    </Condition>\n"
-                + "  </Rule>\n"
-                + "</Policy>");
+                + "      <value>unauthorized</value>\n" + "    </attribute>\n"
+                + "  </user>\n" + "</fedora-users>");
+        addSystemWidePolicyFile("deny-all-if-unauthorized.xml",
+                                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                                        + "<Policy xmlns=\"urn:oasis:names:tc:xacml:1.0:policy\"\n"
+                                        + "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+                                        + "    PolicyId=\"deny-all-if-unauthorized\""
+                                        + "    RuleCombiningAlgId=\"urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable\">\n"
+                                        + "  <Description>deny all api-a and api-m access if subject has fedoraRole unauthorized</Description>\n"
+                                        + "  <Target>\n"
+                                        + "    <Subjects>\n"
+                                        + "      <AnySubject/>\n"
+                                        + "    </Subjects>\n"
+                                        + "    <Resources>\n"
+                                        + "      <AnyResource/>\n"
+                                        + "    </Resources>\n"
+                                        + "    <Actions>\n"
+                                        + "      <AnyAction/>\n"
+                                        + "    </Actions>\n"
+                                        + "  </Target>\n"
+                                        + "  <Rule RuleId=\"1\" Effect=\"Deny\">\n"
+                                        + "    <Condition FunctionId=\"urn:oasis:names:tc:xacml:1.0:function:string-is-in\">\n"
+                                        + "      <AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">unauthorized</AttributeValue>\n"
+                                        + "      <SubjectAttributeDesignator AttributeId=\"fedoraRole\" DataType=\"http://www.w3.org/2001/XMLSchema#string\"/>\n"
+                                        + "    </Condition>\n" + "  </Rule>\n"
+                                        + "</Policy>");
         reloadPolicies();
     }
 
@@ -405,11 +468,13 @@ public class TestHTTPStatusCodes
 
     private static void backupFedoraUsersFile() throws Exception {
         File sourceFile = FedoraUsers.fedoraUsersXML;
-        File destFile = new File(FedoraUsers.fedoraUsersXML.getPath() + ".backup");
+        File destFile =
+                new File(FedoraUsers.fedoraUsersXML.getPath() + ".backup");
         copyFile(sourceFile, destFile);
     }
 
-    private static void copyFile(File sourceFile, File destFile) throws Exception {
+    private static void copyFile(File sourceFile, File destFile)
+            throws Exception {
         FileInputStream in = new FileInputStream(sourceFile);
         FileOutputStream out = new FileOutputStream(destFile);
         byte[] buf = new byte[4096];
@@ -428,7 +493,8 @@ public class TestHTTPStatusCodes
         writeStringToFile(xml, FedoraUsers.fedoraUsersXML);
     }
 
-    private static void writeStringToFile(String string, File file) throws Exception {
+    private static void writeStringToFile(String string, File file)
+            throws Exception {
         FileOutputStream out = new FileOutputStream(file);
         PrintWriter writer = new PrintWriter(new OutputStreamWriter(out));
         try {
@@ -439,21 +505,26 @@ public class TestHTTPStatusCodes
     }
 
     private static void restoreFedoraUsersFile() throws Exception {
-        File sourceFile = new File(FedoraUsers.fedoraUsersXML.getPath() + ".backup");
+        File sourceFile =
+                new File(FedoraUsers.fedoraUsersXML.getPath() + ".backup");
         File destFile = FedoraUsers.fedoraUsersXML;
         copyFile(sourceFile, destFile);
     }
 
-    private static void addSystemWidePolicyFile(String filename, String xml) throws Exception {
-        final String policyDir = "data/fedora-xacml-policies/repository-policies/junit";
+    private static void addSystemWidePolicyFile(String filename, String xml)
+            throws Exception {
+        final String policyDir =
+                "data/fedora-xacml-policies/repository-policies/junit";
         File dir = new File(FEDORA_HOME, policyDir);
         dir.mkdir();
         File policyFile = new File(dir, filename);
         writeStringToFile(xml, policyFile);
     }
 
-    private static void removeSystemWidePolicyFile(String filename) throws Exception {
-        final String policyDir = "data/fedora-xacml-policies/repository-policies/junit";
+    private static void removeSystemWidePolicyFile(String filename)
+            throws Exception {
+        final String policyDir =
+                "data/fedora-xacml-policies/repository-policies/junit";
         File dir = new File(FEDORA_HOME, policyDir);
         File policyFile = new File(dir, filename);
         policyFile.delete();
@@ -465,17 +536,19 @@ public class TestHTTPStatusCodes
     }
 
     private static void checkGetCode(FedoraClient client,
-            String requestPath, String errorMessage, int expectedCode)
-            throws Exception {
+                                     String requestPath,
+                                     String errorMessage,
+                                     int expectedCode) throws Exception {
         HttpInputStream in = client.get(requestPath, false);
         try {
             int gotCode = in.getStatusCode();
             assertEquals(errorMessage + " (" + requestPath + ")",
-                expectedCode, gotCode);
+                         expectedCode,
+                         gotCode);
             if (expectedCode != 200) {
                 String expectedString = "Fedora: " + expectedCode + " ";
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(in));
+                BufferedReader reader =
+                        new BufferedReader(new InputStreamReader(in));
                 boolean foundExpectedString = false;
                 String line = reader.readLine();
                 while (line != null) {
@@ -484,10 +557,9 @@ public class TestHTTPStatusCodes
                     }
                     line = reader.readLine();
                 }
-                assertTrue("HTTP status code was correct ("
-                        + expectedCode + "), but body did not contain "
-                        + "the string \"" + expectedString + "\"",
-                        foundExpectedString);
+                assertTrue("HTTP status code was correct (" + expectedCode
+                        + "), but body did not contain " + "the string \""
+                        + expectedString + "\"", foundExpectedString);
             }
         } finally {
             in.close();
@@ -495,13 +567,17 @@ public class TestHTTPStatusCodes
     }
 
     private static void checkUploadCode(FedoraClient client,
-            String partName, String errorMessage, int expectedCode)
-            throws Exception {
+                                        String partName,
+                                        String errorMessage,
+                                        int expectedCode) throws Exception {
         File file = File.createTempFile("fedora-junit", ".txt");
         try {
             writeStringToFile("test", file);
-            int gotCode = getUploadCode(client, getBaseURL() 
-                    + "/management/upload", file, partName);
+            int gotCode =
+                    getUploadCode(client,
+                                  getBaseURL() + "/management/upload",
+                                  file,
+                                  partName);
             assertEquals(errorMessage + " (/management/upload, partName="
                     + partName + ")", expectedCode, gotCode);
         } finally {
@@ -509,18 +585,19 @@ public class TestHTTPStatusCodes
         }
     }
 
-    private static int getUploadCode(FedoraClient client, String url,
-            File file, String partName)
-            throws Exception {
+    private static int getUploadCode(FedoraClient client,
+                                     String url,
+                                     File file,
+                                     String partName) throws Exception {
         PostMethod post = null;
         try {
             post = new PostMethod(url);
             post.setDoAuthentication(true);
-            post.getParams().setParameter("Connection","Keep-Alive");
+            post.getParams().setParameter("Connection", "Keep-Alive");
             post.setContentChunked(true);
-            Part[] parts = { new FilePart(partName, file) };
-            post.setRequestEntity(new MultipartRequestEntity(parts,
-                    post.getParams()));
+            Part[] parts = {new FilePart(partName, file)};
+            post.setRequestEntity(new MultipartRequestEntity(parts, post
+                    .getParams()));
             int responseCode = client.getHttpClient().executeMethod(post);
             if (responseCode > 299 && responseCode < 400) {
                 String location = post.getResponseHeader("location").getValue();

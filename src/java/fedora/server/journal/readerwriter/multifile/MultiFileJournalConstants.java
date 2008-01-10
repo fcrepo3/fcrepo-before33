@@ -6,21 +6,14 @@
 package fedora.server.journal.readerwriter.multifile;
 
 /**
- * 
- * <p>
- * <b>Title:</b> MultiFileJournalConstants.java
- * </p>
- * <p>
- * <b>Description:</b> Parameters, formats and default values for use by the
+ * Parameters, formats and default values for use by the
  * {@link MultiFileJournalReader}, {@link MultiFileJournalWriter}, and
  * {@link MultiFileFollowingJournalReader} classes.
- * </p>
  * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
-
 public interface MultiFileJournalConstants {
+
     String PARAMETER_JOURNAL_DIRECTORY = "journalDirectory";
 
     String PARAMETER_JOURNAL_FILENAME_PREFIX = "journalFilenamePrefix";

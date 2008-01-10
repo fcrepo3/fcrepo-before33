@@ -10,24 +10,18 @@ import fedora.server.journal.entry.JournalEntry;
 import fedora.server.management.ManagementDelegate;
 
 /**
+ * Adapter class for Management.purgeDatastream().
  * 
- * <p>
- * <b>Title:</b> PurgeDatastreamMethod.java
- * </p>
- * <p>
- * <b>Description:</b> Adapter class for Management.purgeDatastream()
- * </p>
- * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
-
-public class PurgeDatastreamMethod extends ManagementMethod {
+public class PurgeDatastreamMethod
+        extends ManagementMethod {
 
     public PurgeDatastreamMethod(JournalEntry parent) {
         super(parent);
     }
 
+    @Override
     public Object invoke(ManagementDelegate delegate) throws ServerException {
         return delegate.purgeDatastream(parent.getContext(), parent
                 .getStringArgument(ARGUMENT_NAME_PID), parent

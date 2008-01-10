@@ -8,30 +8,28 @@ package fedora.server.search;
 import java.util.List;
 
 /**
- *
- * <p><b>Title:</b> FieldSearchQuery.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
  */
 public class FieldSearchQuery {
 
-    public final static int CONDITIONS_TYPE=1;
-    public final static int TERMS_TYPE=2;
+    public final static int CONDITIONS_TYPE = 1;
+
+    public final static int TERMS_TYPE = 2;
 
     private List m_conditions;
+
     private String m_terms;
-    private int m_type;
+
+    private final int m_type;
 
     public FieldSearchQuery(List conditions) {
-        m_conditions=conditions;
-        m_type=CONDITIONS_TYPE;
+        m_conditions = conditions;
+        m_type = CONDITIONS_TYPE;
     }
 
     public FieldSearchQuery(String terms) {
-        m_terms=terms;
-        m_type=TERMS_TYPE;
+        m_terms = terms;
+        m_type = TERMS_TYPE;
     }
 
     public int getType() {
@@ -47,4 +45,3 @@ public class FieldSearchQuery {
     }
 
 }
-

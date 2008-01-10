@@ -6,22 +6,21 @@
 package fedora.server.errors;
 
 /**
- *
- * <p><b>Title:</b> ObjectLockedException.java</p>
- * <p><b>Description:</b> Signals that an object was locked.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * Signals that an object was locked.
+ * 
+ * @author Chris Wilper
  */
 public class ObjectLockedException
         extends StorageException {
-	private static final long serialVersionUID = 1L;
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Creates an ObjectLockedException.
-     *
-     * @param message An informative message explaining what happened and
-     *                (possibly) how to fix it.
+     * 
+     * @param message
+     *        An informative message explaining what happened and (possibly) how
+     *        to fix it.
      */
     public ObjectLockedException(String message) {
         super(message);

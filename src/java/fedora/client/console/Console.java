@@ -8,12 +8,7 @@ package fedora.client.console;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- *
- * <p><b>Title:</b> Console.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
  */
 public interface Console {
 

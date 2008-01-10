@@ -22,16 +22,18 @@ import fedora.common.Constants;
 
 /**
  * Fedora server configuration.
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
-public class ServerConfiguration 
+public class ServerConfiguration
         extends Configuration
         implements Constants {
 
     private String m_className;
-    private List<ModuleConfiguration> m_moduleConfigurations;
-    private List<DatastoreConfiguration> m_datastoreConfigurations;
+
+    private final List<ModuleConfiguration> m_moduleConfigurations;
+
+    private final List<DatastoreConfiguration> m_datastoreConfigurations;
 
     public ServerConfiguration(String className,
                                List<Parameter> parameters,
@@ -49,22 +51,21 @@ public class ServerConfiguration
     public ServerConfiguration copy() throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         serialize(out);
-        return new ServerConfigurationParser(
-                   new ByteArrayInputStream(out.toByteArray())).parse();
+        return new ServerConfigurationParser(new ByteArrayInputStream(out
+                .toByteArray())).parse();
     }
 
     /**
-     * Apply the given properties to this ServerConfiguration.
-     *
-     * Trims leading and trailing spaces from the property values
-     * before applying them.
+     * Apply the given properties to this ServerConfiguration. Trims leading and
+     * trailing spaces from the property values before applying them.
      */
     public void applyProperties(Properties props) {
         Iterator iter = props.keySet().iterator();
         while (iter.hasNext()) {
             String fullName = (String) iter.next();
             String value = props.getProperty(fullName).trim();
-            if (fullName.indexOf(".") != -1 && value != null && value.length() > 0) {
+            if (fullName.indexOf(".") != -1 && value != null
+                    && value.length() > 0) {
                 String name = fullName.substring(fullName.lastIndexOf(".") + 1);
                 if (fullName.startsWith("server.")) {
                     if (name.equals("class")) {
@@ -73,10 +74,15 @@ public class ServerConfiguration
                         setParameterValue(name, value, true);
                     }
                 } else if (fullName.startsWith("module.")) {
-                    String role = fullName.substring(7, fullName.lastIndexOf("."));
+                    String role =
+                            fullName.substring(7, fullName.lastIndexOf("."));
                     ModuleConfiguration module = getModuleConfiguration(role);
                     if (module == null) {
-                        module = new ModuleConfiguration(new ArrayList<Parameter>(), role, null, null);
+                        module =
+                                new ModuleConfiguration(new ArrayList<Parameter>(),
+                                                        role,
+                                                        null,
+                                                        null);
                         m_moduleConfigurations.add(module);
                     }
                     if (name.equals("class")) {
@@ -85,10 +91,15 @@ public class ServerConfiguration
                         module.setParameterValue(name, value, true);
                     }
                 } else if (fullName.startsWith("datastore.")) {
-                    String id = fullName.substring(10, fullName.lastIndexOf("."));
-                    DatastoreConfiguration datastore = getDatastoreConfiguration(id);
+                    String id =
+                            fullName.substring(10, fullName.lastIndexOf("."));
+                    DatastoreConfiguration datastore =
+                            getDatastoreConfiguration(id);
                     if (datastore == null) {
-                        datastore = new DatastoreConfiguration(new ArrayList<Parameter>(), id, null);
+                        datastore =
+                                new DatastoreConfiguration(new ArrayList<Parameter>(),
+                                                           id,
+                                                           null);
                         m_datastoreConfigurations.add(datastore);
                     }
                     datastore.setParameterValue(name, value, true);
@@ -100,7 +111,8 @@ public class ServerConfiguration
     public void serialize(OutputStream xmlStream) throws IOException {
         PrintStream out = new PrintStream(xmlStream);
         out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        out.println("<server xmlns=\"" + FCFG.uri + "\" class=\"" + m_className + "\">");
+        out.println("<server xmlns=\"" + FCFG.uri + "\" class=\"" + m_className
+                + "\">");
 
         // do server parameters first
         serializeParameters(getParameters(), 2, out);
@@ -108,7 +120,8 @@ public class ServerConfiguration
         Iterator mIter = getModuleConfigurations().iterator();
         while (mIter.hasNext()) {
             ModuleConfiguration mc = (ModuleConfiguration) mIter.next();
-            out.println("  <module role=\"" + mc.getRole() + "\" class=\"" + mc.getClassName() + "\">");
+            out.println("  <module role=\"" + mc.getRole() + "\" class=\""
+                    + mc.getClassName() + "\">");
             String comment = strip(mc.getComment());
             if (comment != null) {
                 out.println("    <comment>" + comment + "</comment>");
@@ -136,34 +149,41 @@ public class ServerConfiguration
     private void serializeParameters(List params, int indentBy, PrintStream out) {
         Iterator paramIter = params.iterator();
         while (paramIter.hasNext()) {
-            out.println(getParamXMLString((Parameter) paramIter.next(), indentBy));
+            out.println(getParamXMLString((Parameter) paramIter.next(),
+                                          indentBy));
         }
     }
 
     private String spaces(int num) {
         StringBuffer out = new StringBuffer();
-        for (int i = 0; i < num; i++) out.append(' ');
+        for (int i = 0; i < num; i++) {
+            out.append(' ');
+        }
         return out.toString();
     }
 
     private String getParamXMLString(Parameter p, int indentBy) {
         StringBuffer out = new StringBuffer();
-        out.append(spaces(indentBy) + "<param name=\"" + p.getName() + "\" value=\"" + enc(p.getValue()) + "\"");
+        out.append(spaces(indentBy) + "<param name=\"" + p.getName()
+                + "\" value=\"" + enc(p.getValue()) + "\"");
         if (p.getIsFilePath() != false) {
-        	out.append(" isFilePath=\"true\"");
+            out.append(" isFilePath=\"true\"");
         }
         if (p.getProfileValues() != null) {
             Iterator iter = p.getProfileValues().keySet().iterator();
             while (iter.hasNext()) {
                 String profileName = (String) iter.next();
-                String profileVal = (String) p.getProfileValues().get(profileName);
-                out.append(" " + profileName + "value=\"" + enc(profileVal) + "\"");
+                String profileVal =
+                        (String) p.getProfileValues().get(profileName);
+                out.append(" " + profileName + "value=\"" + enc(profileVal)
+                        + "\"");
             }
         }
         String comment = strip(p.getComment());
         if (comment != null) {
-            out.append(">\n" + spaces(indentBy + 2) + "<comment>" + enc(comment)
-                       + "</comment>\n" + spaces(indentBy) + "</param>");
+            out.append(">\n" + spaces(indentBy + 2) + "<comment>"
+                    + enc(comment) + "</comment>\n" + spaces(indentBy)
+                    + "</param>");
         } else {
             out.append("/>");
         }
@@ -194,7 +214,9 @@ public class ServerConfiguration
     // strip leading and trailing whitespace and \n, return null if
     // resulting string is empty in incoming string is null.
     private String strip(String in) {
-        if (in == null) return null;
+        if (in == null) {
+            return null;
+        }
         String out = stripTrailing(stripLeading(in));
         if (out.length() == 0) {
             return null;
@@ -206,7 +228,7 @@ public class ServerConfiguration
     private static String stripLeading(String in) {
         StringBuffer out = new StringBuffer();
         boolean foundNonWhitespace = false;
-        for (int i = 0; i< in.length(); i++) {
+        for (int i = 0; i < in.length(); i++) {
             char c = in.charAt(i);
             if (foundNonWhitespace) {
                 out.append(c);
@@ -247,8 +269,10 @@ public class ServerConfiguration
 
     public ModuleConfiguration getModuleConfiguration(String role) {
         for (int i = 0; i < m_moduleConfigurations.size(); i++) {
-            ModuleConfiguration config = (ModuleConfiguration) m_moduleConfigurations.get(i);
-            if (config.getRole().equals(role)) return config;
+            ModuleConfiguration config = m_moduleConfigurations.get(i);
+            if (config.getRole().equals(role)) {
+                return config;
+            }
         }
         return null;
     }
@@ -259,23 +283,26 @@ public class ServerConfiguration
 
     public DatastoreConfiguration getDatastoreConfiguration(String id) {
         for (int i = 0; i < m_datastoreConfigurations.size(); i++) {
-            DatastoreConfiguration config = (DatastoreConfiguration) m_datastoreConfigurations.get(i);
-            if (config.getId().equals(id)) return config;
+            DatastoreConfiguration config = m_datastoreConfigurations.get(i);
+            if (config.getId().equals(id)) {
+                return config;
+            }
         }
         return null;
     }
 
     /**
-     * Deserialize, then output the given configuration.
-     *
-     * If two parameters are given, the first one is the filename and the
-     * second is the properties file to apply before re-serializing.
+     * Deserialize, then output the given configuration. If two parameters are
+     * given, the first one is the filename and the second is the properties
+     * file to apply before re-serializing.
      */
     public static void main(String[] args) throws Exception {
-        if (args.length < 1 || args.length > 2) throw new IOException("One or two arguments expected.");
-        ServerConfiguration config = new ServerConfigurationParser(
-                                         new FileInputStream(
-                                             new File(args[0]))).parse();
+        if (args.length < 1 || args.length > 2) {
+            throw new IOException("One or two arguments expected.");
+        }
+        ServerConfiguration config =
+                new ServerConfigurationParser(new FileInputStream(new File(args[0])))
+                        .parse();
         if (args.length == 2) {
             Properties props = new Properties();
             props.load(new FileInputStream(new File(args[1])));

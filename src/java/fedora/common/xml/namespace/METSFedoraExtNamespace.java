@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The METS Fedora Extension XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://www.loc.gov/METS/
  * Preferred Prefix : METS
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class METSFedoraExtNamespace
         extends METSNamespace {
@@ -30,8 +30,8 @@ public class METSFedoraExtNamespace
     //---
 
     /** The only instance of this class. */
-    private static final METSFedoraExtNamespace ONLY_INSTANCE
-            = new METSFedoraExtNamespace();
+    private static final METSFedoraExtNamespace ONLY_INSTANCE =
+            new METSFedoraExtNamespace();
 
     /**
      * Constructs the instance.
@@ -44,7 +44,7 @@ public class METSFedoraExtNamespace
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static METSFedoraExtNamespace getInstance() {

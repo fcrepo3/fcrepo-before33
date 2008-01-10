@@ -12,66 +12,80 @@ import fedora.utilities.install.Distribution;
 import fedora.utilities.install.InstallOptions;
 import fedora.utilities.install.InstallationFailedException;
 
-public abstract class Tomcat extends Container {
-	public static final String CONF = "conf";
-	public static final String KEYSTORE = "keystore";
-	private File tomcatHome;
-	private File webapps;
-	private File conf;
-	private File common_lib;
-	
-	/**
-	 * Target location of the included keystore file.
-	 */
-	private File includedKeystore;
-	
-	Tomcat(Distribution dist, InstallOptions options) {
-		super(dist, options);
-		tomcatHome = new File(getOptions().getValue(InstallOptions.TOMCAT_HOME));
-		webapps = new File(tomcatHome, "webapps" + File.separator);
-		conf = new File(tomcatHome, CONF + File.separator);
-		common_lib = new File(tomcatHome, "common" + File.separator + "lib" + File.separator);
-		includedKeystore = new File(conf, KEYSTORE);
-	}
+public abstract class Tomcat
+        extends Container {
 
-	public void deploy(File war) throws InstallationFailedException {
-		System.out.println("Deploying " + war.getName() + "...");
+    public static final String CONF = "conf";
+
+    public static final String KEYSTORE = "keystore";
+
+    private final File tomcatHome;
+
+    private final File webapps;
+
+    private final File conf;
+
+    private final File common_lib;
+
+    /**
+     * Target location of the included keystore file.
+     */
+    private final File includedKeystore;
+
+    Tomcat(Distribution dist, InstallOptions options) {
+        super(dist, options);
+        tomcatHome =
+                new File(getOptions().getValue(InstallOptions.TOMCAT_HOME));
+        webapps = new File(tomcatHome, "webapps" + File.separator);
+        conf = new File(tomcatHome, CONF + File.separator);
+        common_lib =
+                new File(tomcatHome, "common" + File.separator + "lib"
+                        + File.separator);
+        includedKeystore = new File(conf, KEYSTORE);
+    }
+
+    @Override
+    public void deploy(File war) throws InstallationFailedException {
+        System.out.println("Deploying " + war.getName() + "...");
         File dest = new File(webapps, war.getName());
         if (!FileUtils.copy(war, dest)) {
-			throw new InstallationFailedException("Deploy failed: unable to copy " + 
-					war.getAbsolutePath() + " to " + dest.getAbsolutePath());
-		}
-	}
+            throw new InstallationFailedException("Deploy failed: unable to copy "
+                    + war.getAbsolutePath() + " to " + dest.getAbsolutePath());
+        }
+    }
 
-	public void install() throws InstallationFailedException {
-		installTomcat();
-		installServerXML();
-		installIncludedKeystore();
-	}
-	
-	protected abstract void installTomcat() throws InstallationFailedException;
-	
-	protected abstract void installServerXML() throws InstallationFailedException;
-	
-	protected abstract void installIncludedKeystore() throws InstallationFailedException;
-	
-	protected final File getTomcatHome() {
-		return tomcatHome;
-	}
-	
-	protected final File getWebapps() {
-		return webapps;
-	}
-	
-	protected final File getConf() {
-		return conf;
-	}
-	
-	protected final File getCommonLib() {
-		return common_lib;
-	}
-	
-	protected final File getIncludedKeystore() {
-		return includedKeystore;
-	}
+    @Override
+    public void install() throws InstallationFailedException {
+        installTomcat();
+        installServerXML();
+        installIncludedKeystore();
+    }
+
+    protected abstract void installTomcat() throws InstallationFailedException;
+
+    protected abstract void installServerXML()
+            throws InstallationFailedException;
+
+    protected abstract void installIncludedKeystore()
+            throws InstallationFailedException;
+
+    protected final File getTomcatHome() {
+        return tomcatHome;
+    }
+
+    protected final File getWebapps() {
+        return webapps;
+    }
+
+    protected final File getConf() {
+        return conf;
+    }
+
+    protected final File getCommonLib() {
+        return common_lib;
+    }
+
+    protected final File getIncludedKeystore() {
+        return includedKeystore;
+    }
 }

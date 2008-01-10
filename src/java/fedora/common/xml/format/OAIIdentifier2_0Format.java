@@ -9,21 +9,21 @@ import fedora.common.xml.namespace.OAIIdentifierNamespace;
 
 /**
  * The OAI Identifier 2.0 XML format.
- *
+ * 
  * <pre>
  * Format URI        : http://www.openarchives.org/OAI/2.0/oai-identifier
  * Primary Namespace : http://www.openarchives.org/OAI/2.0/oai-identifier
  * XSD Schema URL    : http://www.openarchives.org/OAI/2.0/oai-identifier.xsd
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class OAIIdentifier2_0Format
         extends XMLFormat {
 
     /** The only instance of this class. */
-    private static final OAIIdentifier2_0Format ONLY_INSTANCE
-            = new OAIIdentifier2_0Format();
+    private static final OAIIdentifier2_0Format ONLY_INSTANCE =
+            new OAIIdentifier2_0Format();
 
     /**
      * Constructs the instance.
@@ -36,7 +36,7 @@ public class OAIIdentifier2_0Format
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static OAIIdentifier2_0Format getInstance() {

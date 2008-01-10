@@ -12,121 +12,119 @@ import fedora.server.errors.InvalidOperatorException;
 import fedora.server.errors.QueryParseException;
 
 /**
- *
- * <p><b>Title:</b> Condition.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
  */
 public class Condition {
 
-    private String m_property;
+    private final String m_property;
+
     private Operator m_operator;
-    private String m_value;
+
+    private final String m_value;
 
     public Condition(String property, Operator operator, String value)
             throws QueryParseException {
-        m_property=property;
-        m_operator=operator;
-        if (value.indexOf("'")!=-1) {
+        m_property = property;
+        m_operator = operator;
+        if (value.indexOf("'") != -1) {
             throw new QueryParseException("Query cannot contain the ' character.");
         }
-        m_value=value;
+        m_value = value;
     }
 
     public Condition(String property, String operator, String value)
             throws InvalidOperatorException, QueryParseException {
-        m_property=property;
+        m_property = property;
         if (operator.equals("eq")) {
-            m_operator=new Operator("=", "eq");
+            m_operator = new Operator("=", "eq");
         } else if (operator.equals("has")) {
-            m_operator=new Operator("~", "has");
+            m_operator = new Operator("~", "has");
         } else if (operator.equals("gt")) {
-            m_operator=new Operator(">", "gt");
+            m_operator = new Operator(">", "gt");
         } else if (operator.equals("ge")) {
-            m_operator=new Operator(">=", "ge");
+            m_operator = new Operator(">=", "ge");
         } else if (operator.equals("lt")) {
-            m_operator=new Operator("<", "lt");
+            m_operator = new Operator("<", "lt");
         } else if (operator.equals("le")) {
-            m_operator=new Operator("<=", "le");
+            m_operator = new Operator("<=", "le");
         } else {
-            throw new InvalidOperatorException("Operator, '" + operator + "' does "
+            throw new InvalidOperatorException("Operator, '" + operator
+                    + "' does "
                     + "not match one of eq, has, gt, ge, lt, or le.");
         }
-        if (value.indexOf("'")!=-1) {
+        if (value.indexOf("'") != -1) {
             throw new QueryParseException("Query cannot contain the ' character.");
         }
-        m_value=value;
+        m_value = value;
     }
 
     /**
      * Gets a List of Conditions from a string like: a=x b~'that\'s' c>='z'
-     *
-     * @param query The query string.
+     * 
+     * @param query
+     *        The query string.
      * @return The Conditions.
      */
-    public static List getConditions(String query)
-            throws QueryParseException {
-        Operator EQUALS=new Operator("=", "eq");
-        Operator CONTAINS=new Operator("~", "has");
-        Operator GREATER_THAN=new Operator(">", "gt");
-        Operator GREATER_OR_EQUAL=new Operator(">=", "ge");
-        Operator LESS_THAN=new Operator("<", "lt");
-        Operator LESS_OR_EQUAL=new Operator("<=", "le");
-        StringBuffer prop=new StringBuffer();
-        Operator oper=null;
-        StringBuffer val=new StringBuffer();
-        ArrayList<Condition> ret=new ArrayList<Condition>();
-        boolean inProp=true;
-        boolean inValue=false;
-        boolean firstValueChar=false;
-        boolean valueStartsWithQuote=false;
-        for (int i=0; i<query.length(); i++) {
-            char c=query.charAt(i);
+    public static List getConditions(String query) throws QueryParseException {
+        Operator EQUALS = new Operator("=", "eq");
+        Operator CONTAINS = new Operator("~", "has");
+        Operator GREATER_THAN = new Operator(">", "gt");
+        Operator GREATER_OR_EQUAL = new Operator(">=", "ge");
+        Operator LESS_THAN = new Operator("<", "lt");
+        Operator LESS_OR_EQUAL = new Operator("<=", "le");
+        StringBuffer prop = new StringBuffer();
+        Operator oper = null;
+        StringBuffer val = new StringBuffer();
+        ArrayList<Condition> ret = new ArrayList<Condition>();
+        boolean inProp = true;
+        boolean inValue = false;
+        boolean firstValueChar = false;
+        boolean valueStartsWithQuote = false;
+        for (int i = 0; i < query.length(); i++) {
+            char c = query.charAt(i);
             if (inProp) {
-                if (c==' ') {
-                    throw new QueryParseException("Found <space> at character " + i
-                            + " but expected <operator> or <alphanum>");
-                } else if (c=='=') {
-                    oper=EQUALS;
-                    inProp=false;
-                    inValue=true;
-                    firstValueChar=true;
-                } else if (c=='~') {
-                    oper=CONTAINS;
-                    inProp=false;
-                    inValue=true;
-                    firstValueChar=true;
-                } else if (c=='>') {
-                    if (i+1<query.length()) {
-                        char d=query.charAt(i+1);
-                        if (d=='=') {
+                if (c == ' ') {
+                    throw new QueryParseException("Found <space> at character "
+                            + i + " but expected <operator> or <alphanum>");
+                } else if (c == '=') {
+                    oper = EQUALS;
+                    inProp = false;
+                    inValue = true;
+                    firstValueChar = true;
+                } else if (c == '~') {
+                    oper = CONTAINS;
+                    inProp = false;
+                    inValue = true;
+                    firstValueChar = true;
+                } else if (c == '>') {
+                    if (i + 1 < query.length()) {
+                        char d = query.charAt(i + 1);
+                        if (d == '=') {
                             i++;
-                            oper=GREATER_OR_EQUAL;
+                            oper = GREATER_OR_EQUAL;
                         } else {
-                            oper=GREATER_THAN;
+                            oper = GREATER_THAN;
                         }
-                        inProp=false;
-                        inValue=true;
-                        firstValueChar=true;
+                        inProp = false;
+                        inValue = true;
+                        firstValueChar = true;
                     } else {
                         throw new QueryParseException("Found <end-of-string> "
                                 + "immediately following '>' operator, but "
                                 + "expected a value.");
                     }
-                } else if (c=='<') {
-                    if (i+1<query.length()) {
-                        char d=query.charAt(i+1);
-                        if (d=='=') {
+                } else if (c == '<') {
+                    if (i + 1 < query.length()) {
+                        char d = query.charAt(i + 1);
+                        if (d == '=') {
                             i++;
-                            oper=LESS_OR_EQUAL;
+                            oper = LESS_OR_EQUAL;
                         } else {
-                            oper=LESS_THAN;
+                            oper = LESS_THAN;
                         }
-                        inProp=false;
-                        inValue=true;
-                        firstValueChar=true;
+                        inProp = false;
+                        inValue = true;
+                        firstValueChar = true;
                     } else {
                         throw new QueryParseException("Found <end-of-string> "
                                 + "immediately following '<' operator, but "
@@ -136,26 +134,26 @@ public class Condition {
                     prop.append(c);
                 }
             } else if (inValue) {
-                if (prop.toString().length()==0) {
+                if (prop.toString().length() == 0) {
                     throw new QueryParseException("Found "
                             + "operator but expected a non-zero length "
                             + "property.");
                 }
                 if (firstValueChar) {
                     // allow ', and mark it if it's there, add one to i
-                    if (c=='\'') {
+                    if (c == '\'') {
                         i++;
-                        if (i>=query.length()) {
+                        if (i >= query.length()) {
                             throw new QueryParseException("Found <end-of-string> "
                                     + "immediately following start quote, but "
                                     + "expected a value.");
                         }
-                        c=query.charAt(i);
-                        valueStartsWithQuote=true;
+                        c = query.charAt(i);
+                        valueStartsWithQuote = true;
                     }
-                    firstValueChar=false;
+                    firstValueChar = false;
                 }
-                if (c=='\'') {
+                if (c == '\'') {
                     if (!valueStartsWithQuote) {
                         throw new QueryParseException("Found ' character in "
                                 + "value at position " + i + ", but the value "
@@ -165,51 +163,54 @@ public class Condition {
                     // end of value part
                     // next must be space or empty... check
                     i++;
-                    if (i<query.length()) {
-                        if (query.charAt(i)!=' ') {
+                    if (i < query.length()) {
+                        if (query.charAt(i) != ' ') {
                             throw new QueryParseException("Found value-terminator "
                                     + "' but it was not followed by <end-of-string> "
                                     + "or <space>.");
                         }
                     }
-                    ret.add(new Condition(prop.toString(), oper, val.toString()));
-                    prop=new StringBuffer();
-                    oper=null;
-                    val=new StringBuffer();
-                    inValue=false;
-                    inProp=true;
-                    valueStartsWithQuote=false;
-                } else if (c=='\\') {
+                    ret
+                            .add(new Condition(prop.toString(), oper, val
+                                    .toString()));
+                    prop = new StringBuffer();
+                    oper = null;
+                    val = new StringBuffer();
+                    inValue = false;
+                    inProp = true;
+                    valueStartsWithQuote = false;
+                } else if (c == '\\') {
                     i++;
-                    if (i>=query.length()) {
+                    if (i >= query.length()) {
                         throw new QueryParseException("Found character-escaping "
                                 + "character as last item in string.");
                     }
                     val.append(query.charAt(i));
-                } else if (c==' ') {
+                } else if (c == ' ') {
                     // end of value part... or inside string?
                     if (valueStartsWithQuote) {
                         // was inside string..ok
                         val.append(c);
                     } else {
                         // end of value part...cuz not quotes
-                        ret.add(new Condition(prop.toString(), oper, val.toString()));
-                        prop=new StringBuffer();
-                        oper=null;
-                        val=new StringBuffer();
-                        inValue=false;
-                        inProp=true;
+                        ret.add(new Condition(prop.toString(), oper, val
+                                .toString()));
+                        prop = new StringBuffer();
+                        oper = null;
+                        val = new StringBuffer();
+                        inValue = false;
+                        inProp = true;
                     }
-                } else if (c=='=') {
+                } else if (c == '=') {
                     throw new QueryParseException("Found <operator> at position "
                             + i + ", but expected <value>");
-                } else if (c=='~') {
+                } else if (c == '~') {
                     throw new QueryParseException("Found <operator> at position "
                             + i + ", but expected <value>");
-                } else if (c=='>') {
+                } else if (c == '>') {
                     throw new QueryParseException("Found <operator> at position "
                             + i + ", but expected <value>");
-                } else if (c=='<') {
+                } else if (c == '<') {
                     throw new QueryParseException("Found <operator> at position "
                             + i + ", but expected <value>");
                 } else {
@@ -218,7 +219,7 @@ public class Condition {
             }
         }
         if (inProp) {
-            if (prop.toString().length()>0) {
+            if (prop.toString().length() > 0) {
                 throw new QueryParseException("String ended before operator "
                         + "was found");
             }

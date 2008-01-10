@@ -6,23 +6,22 @@
 package fedora.server.errors;
 
 /**
- *
- * <p><b>Title:</b> ObjectIntegrityException.java</p>
- * <p><b>Description:</b> Signals that an object (serialized or deserialized)
- * is inappropriately formed in the context that it is being examined.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * Signals that an object (serialized or deserialized) is inappropriately
+ * formed in the context that it is being examined.
+ * 
+ * @author Chris Wilper
  */
 public class ObjectIntegrityException
         extends StorageException {
-	private static final long serialVersionUID = 1L;
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Creates an ObjectIntegrityException.
-     *
-     * @param message An informative message explaining what happened and
-     *                (possibly) how to fix it.
+     * 
+     * @param message
+     *        An informative message explaining what happened and (possibly) how
+     *        to fix it.
      */
     public ObjectIntegrityException(String message) {
         super(null, message, null, null, null);
@@ -32,7 +31,11 @@ public class ObjectIntegrityException
         super(null, message, null, null, th);
     }
 
-    public ObjectIntegrityException(String a, String message, String[] b, String[] c, Throwable th) {
+    public ObjectIntegrityException(String a,
+                                    String message,
+                                    String[] b,
+                                    String[] c,
+                                    Throwable th) {
         super(a, message, b, c, th);
     }
 

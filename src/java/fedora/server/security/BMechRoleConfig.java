@@ -5,12 +5,15 @@
 
 package fedora.server.security;
 
-import java.util.*;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-public class BMechRoleConfig extends AbstractRoleConfig {
+public class BMechRoleConfig
+        extends AbstractRoleConfig {
 
-    private String m_role;
-    private SortedMap<String, MethodRoleConfig> m_methodConfigs;
+    private final String m_role;
+
+    private final SortedMap<String, MethodRoleConfig> m_methodConfigs;
 
     public BMechRoleConfig(DefaultRoleConfig defaultConfig, String pid) {
         super(defaultConfig);
@@ -18,6 +21,7 @@ public class BMechRoleConfig extends AbstractRoleConfig {
         m_methodConfigs = new TreeMap<String, MethodRoleConfig>();
     }
 
+    @Override
     public String getRole() {
         return m_role;
     }

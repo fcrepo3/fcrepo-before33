@@ -11,9 +11,8 @@ import java.util.List;
 
 /**
  * A DDLConverter that works with McKoi.
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * 
+ * @author Chris Wilper
  */
 public class McKoiDDLConverter
         implements DDLConverter {
@@ -30,19 +29,19 @@ public class McKoiDDLConverter
         String tableName = parts[2];
         return "DROP TABLE " + tableName;
     }
-    
+
     public List getDDL(TableSpec spec) {
-        StringBuffer out=new StringBuffer();
-        StringBuffer end=new StringBuffer();
+        StringBuffer out = new StringBuffer();
+        StringBuffer end = new StringBuffer();
         out.append("CREATE TABLE " + spec.getName() + " (\n");
-        Iterator csi=spec.columnSpecIterator();
-        int csNum=0;
+        Iterator csi = spec.columnSpecIterator();
+        int csNum = 0;
         while (csi.hasNext()) {
-            if (csNum>0) {
+            if (csNum > 0) {
                 out.append(",\n");
             }
             csNum++;
-            ColumnSpec cs=(ColumnSpec) csi.next();
+            ColumnSpec cs = (ColumnSpec) csi.next();
             out.append("  ");
             out.append(cs.getName());
             out.append(' ');
@@ -52,7 +51,7 @@ public class McKoiDDLConverter
                 out.append(spec.getName());
                 out.append("')");
             }
-            if (cs.getDefaultValue()!=null) {
+            if (cs.getDefaultValue() != null) {
                 out.append(" default '");
                 out.append(cs.getDefaultValue());
                 out.append("'");
@@ -68,10 +67,10 @@ public class McKoiDDLConverter
                 end.append(cs.getName());
                 end.append(")");
             }
-            if (cs.getIndexName()!=null) {
+            if (cs.getIndexName() != null) {
                 out.append(" INDEX_BLIST");
             }
-            if (cs.getForeignTableName()!=null) {
+            if (cs.getForeignTableName() != null) {
                 if (!end.toString().equals("")) {
                     end.append(",\n");
                 }
@@ -84,13 +83,13 @@ public class McKoiDDLConverter
                 end.append(" (");
                 end.append(cs.getForeignColumnName());
                 end.append(")");
-                if (cs.getOnDeleteAction()!=null) {
+                if (cs.getOnDeleteAction() != null) {
                     end.append(" ON DELETE ");
                     end.append(cs.getOnDeleteAction());
                 }
             }
         }
-        if (spec.getPrimaryColumnName()!=null) {
+        if (spec.getPrimaryColumnName() != null) {
             out.append(",\n  PRIMARY KEY (");
             out.append(spec.getPrimaryColumnName());
             out.append(")");
@@ -101,10 +100,9 @@ public class McKoiDDLConverter
         }
         out.append("\n");
         out.append(")");
-        ArrayList l=new ArrayList();
+        ArrayList l = new ArrayList();
         l.add(out.toString());
         return l;
     }
 
 }
-

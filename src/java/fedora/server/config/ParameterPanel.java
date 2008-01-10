@@ -5,21 +5,42 @@
 
 package fedora.server.config;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.event.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-/**
- *
- */
-public class ParameterPanel extends JPanel implements ListSelectionListener, ActionListener {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
-	private static final long serialVersionUID = 1L;
-    private JList m_paramList;
-    private ItemListModel m_model;
-    private JPanel m_paramValuePanel;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+public class ParameterPanel
+        extends JPanel
+        implements ListSelectionListener, ActionListener {
+
+    private static final long serialVersionUID = 1L;
+
+    private final JList m_paramList;
+
+    private final ItemListModel m_model;
+
+    private final JPanel m_paramValuePanel;
+
     private boolean m_ignoreValueChanged;
 
     public ParameterPanel(java.util.List parameterList) {
@@ -37,7 +58,7 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
         m_paramList.addListSelectionListener(this);
         paramChoice.add(new JScrollPane(m_paramList), BorderLayout.CENTER);
         JPanel paramButtonPanel = new JPanel(new BorderLayout());
-        paramButtonPanel.setBorder(BorderFactory.createEmptyBorder(6,0,0,0));
+        paramButtonPanel.setBorder(BorderFactory.createEmptyBorder(6, 0, 0, 0));
         JButton addButton = new JButton("Add Parameter...");
         addButton.addActionListener(this);
         JButton deleteButton = new JButton("Delete Parameter...");
@@ -45,10 +66,11 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
         paramButtonPanel.add(addButton, BorderLayout.NORTH);
         JPanel deleteButtonPanel = new JPanel(new BorderLayout());
         deleteButtonPanel.add(deleteButton, BorderLayout.CENTER);
-        deleteButtonPanel.setBorder(BorderFactory.createEmptyBorder(6,0,0,0));
+        deleteButtonPanel
+                .setBorder(BorderFactory.createEmptyBorder(6, 0, 0, 0));
         paramButtonPanel.add(deleteButtonPanel, BorderLayout.SOUTH);
         paramChoice.add(paramButtonPanel, BorderLayout.SOUTH);
-        paramChoice.setBorder(BorderFactory.createEmptyBorder(6,12,12,6));
+        paramChoice.setBorder(BorderFactory.createEmptyBorder(6, 12, 12, 6));
 
         //
         // CENTER: CardLayout, one panel per parameter
@@ -58,7 +80,10 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
         while (iter.hasNext()) {
             addParamValueCard((Parameter) iter.next());
         }
-        m_paramValuePanel.setBorder(BorderFactory.createEmptyBorder(6,6,12,12));
+        m_paramValuePanel.setBorder(BorderFactory.createEmptyBorder(6,
+                                                                    6,
+                                                                    12,
+                                                                    12));
 
         add(paramChoice, BorderLayout.WEST);
         add(m_paramValuePanel, BorderLayout.CENTER);
@@ -71,9 +96,9 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
 
     private void deleteParamValueCard(Parameter param) {
         Component[] components = m_paramValuePanel.getComponents();
-        for (int i = 0; i < components.length; i++) {
-            if (components[i] instanceof ParamValueCard) {
-                ParamValueCard card = (ParamValueCard) components[i];
+        for (Component element : components) {
+            if (element instanceof ParamValueCard) {
+                ParamValueCard card = (ParamValueCard) element;
                 if (card.getName().equals(param.getName())) {
                     m_paramValuePanel.remove(card);
                 }
@@ -83,8 +108,10 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
 
     public void valueChanged(ListSelectionEvent e) {
         if (!m_ignoreValueChanged) {
-            CardLayout cl = (CardLayout) (m_paramValuePanel.getLayout());
-            Parameter param = (Parameter) m_model.getElementAt(m_paramList.getSelectedIndex());
+            CardLayout cl = (CardLayout) m_paramValuePanel.getLayout();
+            Parameter param =
+                    (Parameter) m_model.getElementAt(m_paramList
+                            .getSelectedIndex());
             cl.show(m_paramValuePanel, param.getName());
             validate();
         }
@@ -96,9 +123,9 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
     public java.util.List getParameters() {
         ArrayList out = new ArrayList();
         Component[] components = m_paramValuePanel.getComponents();
-        for (int i = 0; i < components.length; i++) {
-            if (components[i] instanceof ParamValueCard) {
-                ParamValueCard card = (ParamValueCard) components[i];
+        for (Component element : components) {
+            if (element instanceof ParamValueCard) {
+                ParamValueCard card = (ParamValueCard) element;
                 out.add(card.getParameter());
             }
         }
@@ -107,17 +134,26 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
 
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().startsWith("Add")) {
-            String paramName = JOptionPane.showInputDialog("What is the new parameter name?");
+            String paramName =
+                    JOptionPane
+                            .showInputDialog("What is the new parameter name?");
             if (paramName != null) {
                 // first, check if one of that name is in m_model (if so we'll just switch to it)
                 Iterator iter = m_model.toList().iterator();
                 Parameter param = null;
                 while (iter.hasNext()) {
                     Parameter p = (Parameter) iter.next();
-                    if (p.getName().equals(paramName)) param = p;
+                    if (p.getName().equals(paramName)) {
+                        param = p;
+                    }
                 }
                 if (param == null) {
-                    param = new Parameter(paramName, "Enter value here.", false, "Enter description here.", new HashMap());
+                    param =
+                            new Parameter(paramName,
+                                          "Enter value here.",
+                                          false,
+                                          "Enter description here.",
+                                          new HashMap());
                     m_model.addElement(param);
                     addParamValueCard(param);
                 }
@@ -128,11 +164,13 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
         } else if (e.getActionCommand().startsWith("Delete")) {
             // delete the currently selected item from m_model
             javax.swing.SwingUtilities.invokeLater(new Runnable() {
+
                 public void run() {
                     int i = m_paramList.getSelectedIndex();
-                    if ( i >= 0 ) {
+                    if (i >= 0) {
                         m_ignoreValueChanged = true;
-                        Parameter param = (Parameter) m_paramList.getSelectedValue();
+                        Parameter param =
+                                (Parameter) m_paramList.getSelectedValue();
                         m_model.remove(i);
                         m_ignoreValueChanged = false;
                         // ...and set the selection to something sane
@@ -141,7 +179,8 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
                                 m_paramList.setSelectedIndex(i);
                             } else {
                                 i = m_model.size() - 1;
-                                m_paramList.setSelectedIndex(m_model.size() - 1);
+                                m_paramList
+                                        .setSelectedIndex(m_model.size() - 1);
                             }
                         }
                         // finally, remove the panel from the cardlayout
@@ -152,23 +191,27 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
         }
     }
 
-    /** 
-     * A JPanel for modifying the description, value, and server profile-specific values
-     * of a particular parameter.
-     * The layout is accomplished through nested Panels using BorderLayouts.
+    /**
+     * A JPanel for modifying the description, value, and server
+     * profile-specific values of a particular parameter. The layout is
+     * accomplished through nested Panels using BorderLayouts.
      */
-    public class ParamValueCard extends JPanel {
+    public class ParamValueCard
+            extends JPanel {
 
-    	private static final long serialVersionUID = 1L;
-        private Parameter m_param;
+        private static final long serialVersionUID = 1L;
 
         private JTextArea m_descArea;
-        private JComboBox m_profileList;
-        private JTextField m_valueText;
-        private String m_name;
 
-        private JPanel m_valuePanel;
+        private final JComboBox m_profileList;
 
+        private final JTextField m_valueText;
+
+        private final String m_name;
+
+        private final JPanel m_valuePanel;
+
+        @Override
         public String getName() {
             return m_name;
         }
@@ -176,8 +219,6 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
         public ParamValueCard(Parameter param) {
             super(new BorderLayout());
             m_name = param.getName();
-            m_param = param;
-
             //
             // First, create all the interesting (non-layout) components
             //
@@ -190,7 +231,10 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
             // l1
             JLabel descriptionLabel = new JLabel("Description:");
             // d1
-            m_profileList = new JComboBox(new String[] { "Primary value", "'mckoi' value", "'oracle' value", "Add Profile...", "Delete Profile..." });
+            m_profileList =
+                    new JComboBox(new String[] {"Primary value",
+                            "'mckoi' value", "'oracle' value",
+                            "Add Profile...", "Delete Profile..."});
             //
             // TODO: each value gets it's own card
             //
@@ -209,12 +253,12 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
             add(s1, BorderLayout.SOUTH);
             JPanel c2 = new JPanel(new BorderLayout());
             JPanel w3 = new JPanel(new BorderLayout());
-            w3.setBorder(BorderFactory.createEmptyBorder(6,0,0,6));
+            w3.setBorder(BorderFactory.createEmptyBorder(6, 0, 0, 6));
             w3.add(m_profileList, BorderLayout.NORTH);
 
             JPanel c3 = new JPanel(new BorderLayout());
             c3.add(m_valueText, BorderLayout.NORTH);
-            c3.setBorder(BorderFactory.createEmptyBorder(6,0,0,0));
+            c3.setBorder(BorderFactory.createEmptyBorder(6, 0, 0, 0));
 
             c2.add(c3, BorderLayout.CENTER);
             c2.add(w3, BorderLayout.WEST);
@@ -224,10 +268,10 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
 
         public Parameter getParameter() {
             String comment = m_descArea.getText();
-            return null;           
-//            return new Parameter(m_name, comment, value, profileValues);
+            return null;
+            //            return new Parameter(m_name, comment, value, profileValues);
         }
-    
+
     }
 
 }

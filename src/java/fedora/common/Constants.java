@@ -15,17 +15,15 @@ import fedora.common.policy.HttpRequestNamespace;
 import fedora.common.policy.ObjectNamespace;
 import fedora.common.policy.ResourceNamespace;
 import fedora.common.policy.SubjectNamespace;
-
 import fedora.common.rdf.DublinCoreNamespace;
 import fedora.common.rdf.FedoraModelNamespace;
 import fedora.common.rdf.FedoraNamespace;
 import fedora.common.rdf.FedoraRelsExtNamespace;
 import fedora.common.rdf.FedoraViewNamespace;
+import fedora.common.rdf.MulgaraNamespace;
 import fedora.common.rdf.RDFSyntaxNamespace;
 import fedora.common.rdf.RDFXSDNamespace;
 import fedora.common.rdf.RecoveryNamespace;
-import fedora.common.rdf.MulgaraNamespace;
-
 import fedora.common.xml.format.FOXML1_0Format;
 import fedora.common.xml.format.FOXML1_1Format;
 import fedora.common.xml.format.FedoraAudit1_0Format;
@@ -46,7 +44,6 @@ import fedora.common.xml.format.OAIFriends2_0Format;
 import fedora.common.xml.format.OAIIdentifier2_0Format;
 import fedora.common.xml.format.OAIPMH2_0Format;
 import fedora.common.xml.format.OAIProvenance2_0Format;
-
 import fedora.common.xml.namespace.FOXMLNamespace;
 import fedora.common.xml.namespace.FedoraAPINamespace;
 import fedora.common.xml.namespace.FedoraAccessNamespace;
@@ -83,13 +80,14 @@ import fedora.common.xml.namespace.XSINamespace;
  */
 @SuppressWarnings("deprecation")
 public interface Constants {
-    
+
     /**
      * The "Fedora Home" directory.
-     *
-     * <p>This is normally derived from the <code>FEDORA_HOME</code> environment
+     * <p>
+     * This is normally derived from the <code>FEDORA_HOME</code> environment
      * variable, but if defined, the <code>fedora.home</code> system property
-     * will be used instead.</p>
+     * will be used instead.
+     * </p>
      */
     public static final String FEDORA_HOME = FedoraHome.getValue();
 
@@ -102,10 +100,9 @@ public interface Constants {
      * <code>http://purl.org/dc/elements/1.1/</code>
      */
     public static final DublinCoreNamespace DC = new DublinCoreNamespace();
-    
+
     /**
-     * The Fedora RDF namespace;
-     * <code>info:fedora/</code>
+     * The Fedora RDF namespace; <code>info:fedora/</code>
      */
     public static final FedoraNamespace FEDORA = new FedoraNamespace();
 
@@ -141,14 +138,12 @@ public interface Constants {
     public static final RDFSyntaxNamespace RDF = new RDFSyntaxNamespace();
 
     /**
-     * The Mulgara RDF namespace;
-     * <code>http://mulgara.org/mulgara#</code>
+     * The Mulgara RDF namespace; <code>http://mulgara.org/mulgara#</code>
      */
     public static final MulgaraNamespace MULGARA = new MulgaraNamespace();
 
     /**
-     * The XSD RDF namespace;
-     * <code>http://www.w3.org/2001/XMLSchema#</code>
+     * The XSD RDF namespace; <code>http://www.w3.org/2001/XMLSchema#</code>
      */
     public static final RDFXSDNamespace RDF_XSD = new RDFXSDNamespace();
 
@@ -305,8 +300,7 @@ public interface Constants {
             FedoraMethodMapNamespace.getInstance();
 
     /**
-     * The METS XML namespace;
-     * <code>http://www.loc.gov/METS/</code>
+     * The METS XML namespace; <code>http://www.loc.gov/METS/</code>
      */
     public static final METSNamespace METS = METSNamespace.getInstance();
 
@@ -365,8 +359,7 @@ public interface Constants {
             FedoraServiceProfileNamespace.getInstance();
 
     /**
-     * The SOAP XML namespace;
-     * <code>http://schemas.xmlsoap.org/wsdl/soap</code>
+     * The SOAP XML namespace; <code>http://schemas.xmlsoap.org/wsdl/soap</code>
      */
     public static final SOAPNamespace SOAP = SOAPNamespace.getInstance();
 
@@ -385,8 +378,7 @@ public interface Constants {
             FedoraTypesNamespace.getInstance();
 
     /**
-     * The WSDL XML namespace;
-     * <code>http://schemas.xmlsoap.org/wsdl/</code>
+     * The WSDL XML namespace; <code>http://schemas.xmlsoap.org/wsdl/</code>
      */
     public static final WSDLNamespace WSDL = WSDLNamespace.getInstance();
 
@@ -405,20 +397,17 @@ public interface Constants {
             WSDLMIMENamespace.getInstance();
 
     /**
-     * The XLink XML namespace;
-     * <code>http://www.w3.org/1999/xlink</code>
+     * The XLink XML namespace; <code>http://www.w3.org/1999/xlink</code>
      */
     public static final XLinkNamespace XLINK = XLinkNamespace.getInstance();
 
     /**
-     * The XMLNS XML namespace;
-     * <code>http://www.w3.org/2000/xmlns/</code>
+     * The XMLNS XML namespace; <code>http://www.w3.org/2000/xmlns/</code>
      */
     public static final XMLNSNamespace XMLNS = XMLNSNamespace.getInstance();
 
     /**
-     * The XSD XML namespace;
-     * <code>http://www.w3.org/2001/XMLSchema</code>
+     * The XSD XML namespace; <code>http://www.w3.org/2001/XMLSchema</code>
      */
     public static final XMLXSDNamespace XML_XSD = XMLXSDNamespace.getInstance();
 
@@ -427,7 +416,7 @@ public interface Constants {
      * <code>http://www.w3.org/2001/XMLSchema-instance</code>
      */
     public static final XSINamespace XSI = XSINamespace.getInstance();
-    
+
     //---
     // XML Formats
     //---
@@ -572,7 +561,7 @@ public interface Constants {
     //---
     // Static helpers
     //---
-  
+
     /**
      * Utility to determine the value of "Fedora Home" based on the current
      * environment.

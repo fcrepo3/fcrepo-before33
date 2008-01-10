@@ -8,19 +8,16 @@ package fedora.client.console;
 import javax.swing.JLabel;
 
 /**
- *
- * <p><b>Title:</b> NullInputPanel.java</p>
- * <p><b>Description:</b> For use when unrecognized type.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * For use when unrecognized type.
+ * 
+ * @author Chris Wilper
  */
 public class NullInputPanel
         extends InputPanel {
 
-	private static final long serialVersionUID = 1L;
-	
-    private static NullInputPanel s_instance=new NullInputPanel();
+    private static final long serialVersionUID = 1L;
+
+    private static NullInputPanel s_instance = new NullInputPanel();
 
     protected NullInputPanel() {
         add(new JLabel("Unrecognized type, using null"));
@@ -30,6 +27,7 @@ public class NullInputPanel
         return s_instance;
     }
 
+    @Override
     public Object getValue() {
         return null;
     }

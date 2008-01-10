@@ -16,20 +16,14 @@ import fedora.server.journal.JournalConstants;
 import fedora.server.journal.JournalException;
 
 /**
+ * An abstract base class that provides some useful methods for the XML reader
+ * classes.
  * 
- * <p>
- * <b>Title:</b> AbstractXmlReader
- * </p>
- * <p>
- * <b>Description:</b> An abstract base class that provides some useful methods
- * for the XML reader classes.
- * </p>
- * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
+public abstract class AbstractXmlReader
+        implements JournalConstants {
 
-public abstract class AbstractXmlReader implements JournalConstants {
     /**
      * Advance past any white space. Leave the reader positioned before the next
      * tag (or non-white-space event).
@@ -77,7 +71,8 @@ public abstract class AbstractXmlReader implements JournalConstants {
      * it's not there.
      */
     protected String getRequiredAttributeValue(StartElement start,
-            QName attributeName) throws JournalException {
+                                               QName attributeName)
+            throws JournalException {
         Attribute mapNameAttribute = start.getAttributeByName(attributeName);
         if (mapNameAttribute == null) {
             throw new JournalException("Start tag '" + start
@@ -91,7 +86,7 @@ public abstract class AbstractXmlReader implements JournalConstants {
      * attribute is not there.
      */
     protected String getOptionalAttributeValue(StartElement start,
-            QName attributeName) {
+                                               QName attributeName) {
         Attribute mapNameAttribute = start.getAttributeByName(attributeName);
         if (mapNameAttribute == null) {
             return null;
@@ -106,7 +101,8 @@ public abstract class AbstractXmlReader implements JournalConstants {
      * the expected tag name.
      */
     protected String readCharactersUntilEndTag(XMLEventReader reader,
-            QName tagName) throws XMLStreamException, JournalException {
+                                               QName tagName)
+            throws XMLStreamException, JournalException {
         StringBuffer stringValue = new StringBuffer();
         while (true) {
             XMLEvent event = reader.nextEvent();
@@ -125,7 +121,7 @@ public abstract class AbstractXmlReader implements JournalConstants {
      * Complain when we were expecting a start tag, and didn't find it.
      */
     protected JournalException getNotStartTagException(QName tagName,
-            XMLEvent event) {
+                                                       XMLEvent event) {
         return new JournalException("Expecting '" + tagName
                 + "' start tag, but event was '" + event + "'");
 
@@ -135,7 +131,7 @@ public abstract class AbstractXmlReader implements JournalConstants {
      * Complain when we were expecting a end tag, and didn't find it.
      */
     protected JournalException getNotEndTagException(QName tagName,
-            XMLEvent event) {
+                                                     XMLEvent event) {
         return new JournalException("Expecting '" + tagName
                 + "' end tag, but event was '" + event + "'");
 
@@ -146,7 +142,7 @@ public abstract class AbstractXmlReader implements JournalConstants {
      * an exception with all of the pertinent information.
      */
     protected JournalException getNotCharactersException(QName tagName,
-            XMLEvent event) {
+                                                         XMLEvent event) {
         return new JournalException("Expecting characters or '" + tagName
                 + "' end tag, but event was '" + event + "'");
     }
@@ -155,8 +151,9 @@ public abstract class AbstractXmlReader implements JournalConstants {
      * While traversing a group of member tags, we expected either the start of
      * another member tag, or the end of the group.
      */
-    protected JournalException getNotNextMemberOrEndOfGroupException(
-            QName groupTagName, QName memberTagName, XMLEvent event) {
+    protected JournalException getNotNextMemberOrEndOfGroupException(QName groupTagName,
+                                                                     QName memberTagName,
+                                                                     XMLEvent event) {
         return new JournalException("Expecting either '" + memberTagName
                 + "' start tag, or '" + groupTagName
                 + "' end tag, but event was '" + event + "'");

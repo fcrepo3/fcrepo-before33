@@ -7,30 +7,23 @@ package fedora.server.journal.helpers;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
 import java.util.regex.Pattern;
 
 import com.oreilly.servlet.Base64Decoder;
 
 /**
+ * Wraps an OutputStream with a Base64 decoder, so when you "write" to the 
+ * stream, you write Strings of Base64-encoded characters, but the 
+ * OutputStream receives decoded bytes.
  * 
- * <p>
- * <b>Title:</b> DecodingBase64OutputStream.java
- * </p>
- * <p>
- * <b>Description:</b> Wraps an OutputStream with a Base64 decoder, so when you
- * "write" to the stream, you write Strings of Base64-encoded characters, but
- * the OutputStream receives decoded bytes.
- * </p>
- * <p>
- * Base64 encoding is defined in Internet RFC 3548, found at
+ * <p>Base64 encoding is defined in Internet RFC 3548, found at
  * http://tools.ietf.org/html/rfc3548 (among other places).
- * </p>
  * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
-
 public class DecodingBase64OutputStream {
+
     private final Pattern pattern = Pattern.compile("[^A-Za-z0-9+/=]*");
 
     private final OutputStream stream;
@@ -41,8 +34,7 @@ public class DecodingBase64OutputStream {
 
     /**
      * @param stream
-     *            the destination for the decoded bytes.
-     * 
+     *        the destination for the decoded bytes.
      */
     public DecodingBase64OutputStream(OutputStream stream) {
         this.stream = stream;
@@ -52,18 +44,16 @@ public class DecodingBase64OutputStream {
      * Add Base64-encoded characters to be decoded. This is not a trivial
      * operation for two reasons: any characters that are not valid for
      * Base64-encoding must be ignored, and we can only decode groups of 4
-     * characters.
-     * 
-     * So, when data is received, we remove any invalid characters and then
-     * strip off any trailing characters that don't fit in the 4-character
-     * groups. Those trailing characters will be prefixed to the next set of
-     * data, and hopefully we will have none left over when the writer is
-     * closed.
+     * characters. So, when data is received, we remove any invalid characters
+     * and then strip off any trailing characters that don't fit in the
+     * 4-character groups. Those trailing characters will be prefixed to the
+     * next set of data, and hopefully we will have none left over when the
+     * writer is closed.
      * 
      * @throws IllegalStateException
-     *             if called after close().
+     *         if called after close().
      * @throws IOException
-     *             from the inner OutputStream.
+     *         from the inner OutputStream.
      */
     public void write(String data) throws IOException {
         if (!open) {
@@ -71,9 +61,9 @@ public class DecodingBase64OutputStream {
         }
 
         String buffer = pattern.matcher(residual + data).replaceAll("");
-        int usableLength = buffer.length() - (buffer.length() % 4);
-        stream.write(Base64Decoder.decodeToBytes(buffer.substring(0,
-                usableLength)));
+        int usableLength = buffer.length() - buffer.length() % 4;
+        stream.write(Base64Decoder
+                .decodeToBytes(buffer.substring(0, usableLength)));
         residual = buffer.substring(usableLength);
     }
 
@@ -82,7 +72,7 @@ public class DecodingBase64OutputStream {
      * data stream was not a valid Base64 encoding.
      * 
      * @throws IOException
-     *             from the inner OutputStream.
+     *         from the inner OutputStream.
      */
     public void close() throws IOException {
         if (open) {

@@ -16,29 +16,29 @@ import java.util.List;
 import fedora.common.Constants;
 
 /**
- * @author cwilper@cs.cornell.edu
+ * @author Chris Wilper
  */
 public class RandomDCMetadataFactory
         implements Constants {
 
-    private static String[] s_dcElements=new String[] {"title", "creator",
-            "subject", "description", "publisher", "contributor", "date",
-            "type", "format", "identifier", "source", "language", "relation",
-            "coverage", "rights"};
+    private static String[] s_dcElements =
+            new String[] {"title", "creator", "subject", "description",
+                    "publisher", "contributor", "date", "type", "format",
+                    "identifier", "source", "language", "relation", "coverage",
+                    "rights"};
 
-    private ArrayList m_wordList=new ArrayList();
+    private final ArrayList m_wordList = new ArrayList();
 
     public RandomDCMetadataFactory(File dictionaryFile)
             throws IOException {
-        BufferedReader in=new BufferedReader(new FileReader(dictionaryFile));
-        String nextLine="";
-        while (nextLine!=null) {
-            nextLine=in.readLine();
-            if (nextLine!=null) {
-                String[] words=nextLine.split(" ");
-                for (int i=0; i<words.length; i++) {
-                    String w=words[i];
-                    if ( allLetters(w) ) {
+        BufferedReader in = new BufferedReader(new FileReader(dictionaryFile));
+        String nextLine = "";
+        while (nextLine != null) {
+            nextLine = in.readLine();
+            if (nextLine != null) {
+                String[] words = nextLine.split(" ");
+                for (String w : words) {
+                    if (allLetters(w)) {
                         m_wordList.add(w);
                     }
                 }
@@ -51,20 +51,17 @@ public class RandomDCMetadataFactory
         return get(repeatMax, wordMax, m_wordList);
     }
 
-    public static String get(int repeatMax, int wordMax,
-            List wordList) {
-        StringBuffer out=new StringBuffer();
-        out.append("<oai_dc:dc\n"
-                + "    xmlns:oai_dc=\"" + OAI_DC.uri + "\"\n"
-                + "    xmlns:dc=\"" + DC.uri + "\"\n"
-                + "    xmlns:xsi=\"" + XSI.uri + "\">\n");
-        for (int x=0; x<s_dcElements.length; x++) {
-            String dcElement=s_dcElements[x];
-            int num=1+getRandom(repeatMax);
-            for (int i=0; i<num; i++) {
+    public static String get(int repeatMax, int wordMax, List wordList) {
+        StringBuffer out = new StringBuffer();
+        out.append("<oai_dc:dc\n" + "    xmlns:oai_dc=\"" + OAI_DC.uri + "\"\n"
+                + "    xmlns:dc=\"" + DC.uri + "\"\n" + "    xmlns:xsi=\""
+                + XSI.uri + "\">\n");
+        for (String dcElement : s_dcElements) {
+            int num = 1 + getRandom(repeatMax);
+            for (int i = 0; i < num; i++) {
                 out.append("<dc:" + dcElement + ">"
-                        + getRandomWords(wordMax, wordList)
-                        + "</dc:" + dcElement + ">\n");
+                        + getRandomWords(wordMax, wordList) + "</dc:"
+                        + dcElement + ">\n");
             }
         }
         out.append("</oai_dc:dc>");
@@ -72,10 +69,10 @@ public class RandomDCMetadataFactory
     }
 
     private static String getRandomWords(int wordMax, List wordList) {
-        int count=1+getRandom(wordMax);
-        StringBuffer out=new StringBuffer();
-        for (int i=0; i<count; i++) {
-            if (i>0) {
+        int count = 1 + getRandom(wordMax);
+        StringBuffer out = new StringBuffer();
+        for (int i = 0; i < count; i++) {
+            if (i > 0) {
                 out.append(" ");
             }
             out.append((String) wordList.get(getRandom(wordList.size())));
@@ -88,11 +85,13 @@ public class RandomDCMetadataFactory
     }
 
     private static boolean allLetters(String w) {
-        if (w.length()==0) return false;
-        String l=w.toLowerCase();
-        for (int i=0; i<l.length(); i++) {
-            char c=l.charAt(i);
-            if (c<'a' || c>'z') {
+        if (w.length() == 0) {
+            return false;
+        }
+        String l = w.toLowerCase();
+        for (int i = 0; i < l.length(); i++) {
+            char c = l.charAt(i);
+            if (c < 'a' || c > 'z') {
                 return false;
             }
         }

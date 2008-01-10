@@ -7,6 +7,7 @@
 package fedora.server.journal;
 
 import java.io.InputStream;
+
 import java.util.Date;
 import java.util.Map;
 
@@ -28,15 +29,19 @@ import fedora.server.storage.types.RelationshipTuple;
  * calls to Management methods come in from outside, reject them.
  * </p>
  * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
-public class JournalConsumer implements JournalWorker {
-    private final ServerInterface server;
+public class JournalConsumer
+        implements JournalWorker {
+
     private final String role;
+
     private final JournalConsumerThread consumerThread;
+
     private final JournalReader reader;
+
     private final JournalRecoveryLog recoveryLog;
+
     private ManagementDelegate delegate;
 
     /**
@@ -46,14 +51,17 @@ public class JournalConsumer implements JournalWorker {
      */
     public JournalConsumer(Map parameters, String role, ServerInterface server)
             throws ModuleInitializationException {
-        this.server = server;
         this.role = role;
-        this.recoveryLog = JournalRecoveryLog.getInstance(parameters, role,
-                server);
-        this.reader = JournalReader.getInstance(parameters, role, recoveryLog,
-                server);
-        this.consumerThread = new JournalConsumerThread(parameters, role,
-                server, reader, recoveryLog);
+        recoveryLog = JournalRecoveryLog.getInstance(parameters, role, server);
+        reader =
+                JournalReader
+                        .getInstance(parameters, role, recoveryLog, server);
+        consumerThread =
+                new JournalConsumerThread(parameters,
+                                          role,
+                                          server,
+                                          reader,
+                                          recoveryLog);
     }
 
     /**
@@ -62,7 +70,7 @@ public class JournalConsumer implements JournalWorker {
      */
     public void setManagementDelegate(ManagementDelegate delegate) {
         this.delegate = delegate;
-        this.consumerThread.setManagementDelegate(delegate);
+        consumerThread.setManagementDelegate(delegate);
     }
 
     /**
@@ -75,7 +83,8 @@ public class JournalConsumer implements JournalWorker {
             recoveryLog.shutdown("Server is shutting down.");
         } catch (JournalException e) {
             throw new ModuleShutdownException("Error closing journal reader.",
-                    role, e);
+                                              role,
+                                              e);
         }
     }
 
@@ -90,18 +99,24 @@ public class JournalConsumer implements JournalWorker {
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public String ingestObject(Context context, InputStream serialization,
-            String logMessage, String format, String encoding, boolean newPid)
-            throws ServerException {
+    public String ingestObject(Context context,
+                               InputStream serialization,
+                               String logMessage,
+                               String format,
+                               String encoding,
+                               boolean newPid) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public Date modifyObject(Context context, String pid, String state,
-            String label, String ownerId, String logMessage)
-            throws ServerException {
+    public Date modifyObject(Context context,
+                             String pid,
+                             String state,
+                             String label,
+                             String ownerId,
+                             String logMessage) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
@@ -124,82 +139,121 @@ public class JournalConsumer implements JournalWorker {
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public InputStream exportObject(Context context, String pid, String format,
-            String exportContext, String encoding) throws ServerException {
+    public InputStream exportObject(Context context,
+                                    String pid,
+                                    String format,
+                                    String exportContext,
+                                    String encoding) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public Date purgeObject(Context context, String pid, String logMessage,
-            boolean force) throws ServerException {
+    public Date purgeObject(Context context,
+                            String pid,
+                            String logMessage,
+                            boolean force) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public String addDatastream(Context context, String pid, String dsID,
-            String[] altIDs, String dsLabel, boolean versionable,
-            String MIMEType, String formatURI, String location,
-            String controlGroup, String dsState, String checksumType,
-            String checksum, String logMessage) throws ServerException {
+    public String addDatastream(Context context,
+                                String pid,
+                                String dsID,
+                                String[] altIDs,
+                                String dsLabel,
+                                boolean versionable,
+                                String MIMEType,
+                                String formatURI,
+                                String location,
+                                String controlGroup,
+                                String dsState,
+                                String checksumType,
+                                String checksum,
+                                String logMessage) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public Date modifyDatastreamByReference(Context context, String pid,
-            String datastreamID, String[] altIDs, String dsLabel,
-            String mimeType, String formatURI, String dsLocation,
-            String checksumType, String checksum, String logMessage,
-            boolean force) throws ServerException {
+    public Date modifyDatastreamByReference(Context context,
+                                            String pid,
+                                            String datastreamID,
+                                            String[] altIDs,
+                                            String dsLabel,
+                                            String mimeType,
+                                            String formatURI,
+                                            String dsLocation,
+                                            String checksumType,
+                                            String checksum,
+                                            String logMessage,
+                                            boolean force)
+            throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public Date modifyDatastreamByValue(Context context, String pid,
-            String datastreamID, String[] altIDs, String dsLabel,
-            String mimeType, String formatURI, InputStream dsContent,
-            String checksumType, String checksum, String logMessage,
-            boolean force) throws ServerException {
+    public Date modifyDatastreamByValue(Context context,
+                                        String pid,
+                                        String datastreamID,
+                                        String[] altIDs,
+                                        String dsLabel,
+                                        String mimeType,
+                                        String formatURI,
+                                        InputStream dsContent,
+                                        String checksumType,
+                                        String checksum,
+                                        String logMessage,
+                                        boolean force) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public Date[] purgeDatastream(Context context, String pid,
-            String datastreamID, Date startDT, Date endDT, String logMessage,
-            boolean force) throws ServerException {
+    public Date[] purgeDatastream(Context context,
+                                  String pid,
+                                  String datastreamID,
+                                  Date startDT,
+                                  Date endDT,
+                                  String logMessage,
+                                  boolean force) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public Datastream getDatastream(Context context, String pid,
-            String datastreamID, Date asOfDateTime) throws ServerException {
+    public Datastream getDatastream(Context context,
+                                    String pid,
+                                    String datastreamID,
+                                    Date asOfDateTime) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public Datastream[] getDatastreams(Context context, String pid,
-            Date asOfDateTime, String dsState) throws ServerException {
+    public Datastream[] getDatastreams(Context context,
+                                       String pid,
+                                       Date asOfDateTime,
+                                       String dsState) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public Datastream[] getDatastreamHistory(Context context, String pid,
-            String datastreamID) throws ServerException {
+    public Datastream[] getDatastreamHistory(Context context,
+                                             String pid,
+                                             String datastreamID)
+            throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
@@ -212,13 +266,11 @@ public class JournalConsumer implements JournalWorker {
     }
 
     /**
-     * Delegate to the ManagementDelegate.
-     * 
-     * Note: Unlike other methods of the Management interface, this method is
-     * not exposed at the service level. Therefore, it is safe to forward the
-     * call to the delegate. It is also necessary because, in the course of
-     * fulfilling API-M requests that involve uploaded content, this method is
-     * invoked by internal server code.
+     * Delegate to the ManagementDelegate. Note: Unlike other methods of the
+     * Management interface, this method is not exposed at the service level.
+     * Therefore, it is safe to forward the call to the delegate. It is also
+     * necessary because, in the course of fulfilling API-M requests that
+     * involve uploaded content, this method is invoked by internal server code.
      */
     public InputStream getTempStream(String id) throws ServerException {
         return delegate.getTempStream(id);
@@ -227,16 +279,22 @@ public class JournalConsumer implements JournalWorker {
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public Date setDatastreamState(Context context, String pid, String dsID,
-            String dsState, String logMessage) throws ServerException {
+    public Date setDatastreamState(Context context,
+                                   String pid,
+                                   String dsID,
+                                   String dsState,
+                                   String logMessage) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public Date setDatastreamVersionable(Context context, String pid,
-            String dsID, boolean versionable, String logMessage)
+    public Date setDatastreamVersionable(Context context,
+                                         String pid,
+                                         String dsID,
+                                         boolean versionable,
+                                         String logMessage)
             throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
@@ -244,16 +302,22 @@ public class JournalConsumer implements JournalWorker {
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public String compareDatastreamChecksum(Context context, String pid,
-            String dsID, Date versionDate) throws ServerException {
+    public String compareDatastreamChecksum(Context context,
+                                            String pid,
+                                            String dsID,
+                                            Date versionDate)
+            throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public Date setDisseminatorState(Context context, String pid, String dsID,
-            String dsState, String logMessage) throws ServerException {
+    public Date setDisseminatorState(Context context,
+                                     String pid,
+                                     String dsID,
+                                     String dsState,
+                                     String logMessage) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
@@ -275,26 +339,34 @@ public class JournalConsumer implements JournalWorker {
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public RelationshipTuple[] getRelationships(Context context, String pid,
-            String relationship) throws ServerException {
+    public RelationshipTuple[] getRelationships(Context context,
+                                                String pid,
+                                                String relationship)
+            throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public boolean addRelationship(Context context, String pid,
-            String relationship, String objURI, boolean isLiteral,
-            String datatype) throws ServerException {
+    public boolean addRelationship(Context context,
+                                   String pid,
+                                   String relationship,
+                                   String objURI,
+                                   boolean isLiteral,
+                                   String datatype) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public boolean purgeRelationship(Context context, String pid,
-            String relationship, String objURI, boolean isLiteral,
-            String datatype) throws ServerException {
+    public boolean purgeRelationship(Context context,
+                                     String pid,
+                                     String relationship,
+                                     String objURI,
+                                     boolean isLiteral,
+                                     String datatype) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 

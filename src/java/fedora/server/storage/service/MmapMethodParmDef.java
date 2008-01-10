@@ -8,15 +8,11 @@ package fedora.server.storage.service;
 import fedora.server.storage.types.MethodParmDef;
 
 /**
- *
- * <p><b>Title:</b> MmapMethodParmDef.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author payette@cs.cornell.edu
- * @version $Id$
+ * @author Sandy Payette
  */
-public class MmapMethodParmDef extends MethodParmDef
-{
+public class MmapMethodParmDef
+        extends MethodParmDef {
+
     // For linkage to WSDL.
     // A parm definition in the Fedora Method Map references its related
     // WSDL message part by name.  The Fedora Method Map endows each
@@ -26,8 +22,7 @@ public class MmapMethodParmDef extends MethodParmDef
     // then the
     public String wsdlMessagePartName = null;
 
-    public MmapMethodParmDef()
-    {
+    public MmapMethodParmDef() {
 
     }
 }

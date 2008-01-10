@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The XMLNS XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://www.w3.org/2000/xmlns/ 
  * Preferred Prefix : xmlns
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class XMLNSNamespace
         extends XMLNamespace {
@@ -30,8 +30,7 @@ public class XMLNSNamespace
     //---
 
     /** The only instance of this class. */
-    private static final XMLNSNamespace ONLY_INSTANCE
-            = new XMLNSNamespace();
+    private static final XMLNSNamespace ONLY_INSTANCE = new XMLNSNamespace();
 
     /**
      * Constructs the instance.
@@ -45,7 +44,7 @@ public class XMLNSNamespace
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static XMLNSNamespace getInstance() {

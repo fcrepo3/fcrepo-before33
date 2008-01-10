@@ -7,6 +7,7 @@
 package fedora.server.journal;
 
 import java.io.InputStream;
+
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
@@ -30,14 +31,15 @@ import fedora.server.storage.types.RelationshipTuple;
  * either creates a Journal or consumes a Journal, depending on the startup
  * parameters.
  * 
- * @author jblake@cs.cornell.edu
+ * @author Jim Blake
  */
-
-public class Journaller extends Module implements Management, JournalConstants {
+public class Journaller
+        extends Module
+        implements Management, JournalConstants {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(Journaller.class
-            .getName());
+    private static final Logger LOG =
+            Logger.getLogger(Journaller.class.getName());
 
     private JournalWorker worker;
 
@@ -55,19 +57,19 @@ public class Journaller extends Module implements Management, JournalConstants {
      * create the proper worker (JournalCreator or JournalConsumer) for the
      * current mode.
      */
+    @Override
     public void initModule() throws ModuleInitializationException {
         Map parameters = getParameters();
         copyPropertiesOverParameters(parameters);
-        this.serverInterface = new ServerWrapper(getServer());
+        serverInterface = new ServerWrapper(getServer());
         LOG.info("Journalling parameters: " + parameters);
         parseParameters(parameters);
 
-        if (this.inRecoveryMode) {
-            worker = new JournalConsumer(parameters, getRole(),
-                    this.serverInterface);
+        if (inRecoveryMode) {
+            worker =
+                    new JournalConsumer(parameters, getRole(), serverInterface);
         } else {
-            worker = new JournalCreator(parameters, getRole(),
-                    this.serverInterface);
+            worker = new JournalCreator(parameters, getRole(), serverInterface);
         }
         LOG.info("Journal worker module is: " + worker.toString());
     }
@@ -75,13 +77,12 @@ public class Journaller extends Module implements Management, JournalConstants {
     /**
      * Get the ManagementDelegate module and pass it to the worker.
      */
+    @Override
     public void postInitModule() throws ModuleInitializationException {
-        ManagementDelegate delegate = this.serverInterface
-                .getManagementDelegate();
+        ManagementDelegate delegate = serverInterface.getManagementDelegate();
         if (delegate == null) {
-            throw new ModuleInitializationException(
-                    "Can't get a ManagementDelegate from Server.getModule()",
-                    getRole());
+            throw new ModuleInitializationException("Can't get a ManagementDelegate from Server.getModule()",
+                                                    getRole());
         }
         worker.setManagementDelegate(delegate);
     }
@@ -89,6 +90,7 @@ public class Journaller extends Module implements Management, JournalConstants {
     /**
      * Tell the worker to shut down.
      */
+    @Override
     public void shutdownModule() throws ModuleShutdownException {
         worker.shutdown();
     }
@@ -105,15 +107,14 @@ public class Journaller extends Module implements Management, JournalConstants {
             String key = (String) keys.next();
             if (key.startsWith(SYSTEM_PROPERTY_PREFIX)) {
                 parameters.put(key.substring(SYSTEM_PROPERTY_PREFIX.length()),
-                        properties.get(key));
+                               properties.get(key));
             }
         }
     }
 
     /**
-     * Check the parameters for required values and for acceptable values.
-     * 
-     * At this point, the only parameter we care about is "mode".
+     * Check the parameters for required values and for acceptable values. At
+     * this point, the only parameter we care about is "mode".
      */
     private void parseParameters(Map parameters)
             throws ModuleInitializationException {
@@ -121,11 +122,11 @@ public class Journaller extends Module implements Management, JournalConstants {
 
         String mode = (String) parameters.get(PARAMETER_JOURNAL_MODE);
         if (mode == null) {
-            this.inRecoveryMode = false;
+            inRecoveryMode = false;
         } else if (mode.equals(VALUE_JOURNAL_MODE_NORMAL)) {
-            this.inRecoveryMode = false;
+            inRecoveryMode = false;
         } else if (mode.equals(VALUE_JOURNAL_MODE_RECOVER)) {
-            this.inRecoveryMode = true;
+            inRecoveryMode = true;
         } else {
             throw new ModuleInitializationException("'"
                     + PARAMETER_JOURNAL_MODE + "' parameter must be '"
@@ -145,21 +146,35 @@ public class Journaller extends Module implements Management, JournalConstants {
     /**
      * Delegate to the JournalWorker.
      */
-    public String ingestObject(Context context, InputStream serialization,
-            String logMessage, String format, String encoding, boolean newPid)
-            throws ServerException {
-        return worker.ingestObject(context, serialization, logMessage, format,
-                encoding, newPid);
+    public String ingestObject(Context context,
+                               InputStream serialization,
+                               String logMessage,
+                               String format,
+                               String encoding,
+                               boolean newPid) throws ServerException {
+        return worker.ingestObject(context,
+                                   serialization,
+                                   logMessage,
+                                   format,
+                                   encoding,
+                                   newPid);
     }
 
     /**
      * Delegate to the JournalWorker.
      */
-    public Date modifyObject(Context context, String pid, String state,
-            String label, String ownerId, String logMessage)
-            throws ServerException {
-        return worker.modifyObject(context, pid, state, label, ownerId,
-                logMessage);
+    public Date modifyObject(Context context,
+                             String pid,
+                             String state,
+                             String label,
+                             String ownerId,
+                             String logMessage) throws ServerException {
+        return worker.modifyObject(context,
+                                   pid,
+                                   state,
+                                   label,
+                                   ownerId,
+                                   logMessage);
     }
 
     /**
@@ -181,90 +196,166 @@ public class Journaller extends Module implements Management, JournalConstants {
     /**
      * Delegate to the JournalWorker.
      */
-    public InputStream exportObject(Context context, String pid, String format,
-            String exportContext, String encoding) throws ServerException {
-        return worker.exportObject(context, pid, format, exportContext,
-                encoding);
+    public InputStream exportObject(Context context,
+                                    String pid,
+                                    String format,
+                                    String exportContext,
+                                    String encoding) throws ServerException {
+        return worker.exportObject(context,
+                                   pid,
+                                   format,
+                                   exportContext,
+                                   encoding);
     }
 
     /**
      * Delegate to the JournalWorker.
      */
-    public Date purgeObject(Context context, String pid, String logMessage,
-            boolean force) throws ServerException {
+    public Date purgeObject(Context context,
+                            String pid,
+                            String logMessage,
+                            boolean force) throws ServerException {
         return worker.purgeObject(context, pid, logMessage, force);
     }
 
     /**
      * Delegate to the JournalWorker.
      */
-    public String addDatastream(Context context, String pid, String dsID,
-            String[] altIDs, String dsLabel, boolean versionable,
-            String MIMEType, String formatURI, String location,
-            String controlGroup, String dsState, String checksumType,
-            String checksum, String logMessage) throws ServerException {
-        return worker.addDatastream(context, pid, dsID, altIDs, dsLabel,
-                versionable, MIMEType, formatURI, location, controlGroup,
-                dsState, checksumType, checksum, logMessage);
+    public String addDatastream(Context context,
+                                String pid,
+                                String dsID,
+                                String[] altIDs,
+                                String dsLabel,
+                                boolean versionable,
+                                String MIMEType,
+                                String formatURI,
+                                String location,
+                                String controlGroup,
+                                String dsState,
+                                String checksumType,
+                                String checksum,
+                                String logMessage) throws ServerException {
+        return worker.addDatastream(context,
+                                    pid,
+                                    dsID,
+                                    altIDs,
+                                    dsLabel,
+                                    versionable,
+                                    MIMEType,
+                                    formatURI,
+                                    location,
+                                    controlGroup,
+                                    dsState,
+                                    checksumType,
+                                    checksum,
+                                    logMessage);
     }
 
     /**
      * Delegate to the JournalWorker.
      */
-    public Date modifyDatastreamByReference(Context context, String pid,
-            String datastreamID, String[] altIDs, String dsLabel,
-            String mimeType, String formatURI, String dsLocation,
-            String checksumType, String checksum, String logMessage,
-            boolean force) throws ServerException {
-        return worker.modifyDatastreamByReference(context, pid, datastreamID,
-                altIDs, dsLabel, mimeType, formatURI, dsLocation, checksumType,
-                checksum, logMessage, force);
+    public Date modifyDatastreamByReference(Context context,
+                                            String pid,
+                                            String datastreamID,
+                                            String[] altIDs,
+                                            String dsLabel,
+                                            String mimeType,
+                                            String formatURI,
+                                            String dsLocation,
+                                            String checksumType,
+                                            String checksum,
+                                            String logMessage,
+                                            boolean force)
+            throws ServerException {
+        return worker.modifyDatastreamByReference(context,
+                                                  pid,
+                                                  datastreamID,
+                                                  altIDs,
+                                                  dsLabel,
+                                                  mimeType,
+                                                  formatURI,
+                                                  dsLocation,
+                                                  checksumType,
+                                                  checksum,
+                                                  logMessage,
+                                                  force);
     }
 
     /**
      * Delegate to the JournalWorker.
      */
-    public Date modifyDatastreamByValue(Context context, String pid,
-            String datastreamID, String[] altIDs, String dsLabel,
-            String mimeType, String formatURI, InputStream dsContent,
-            String checksumType, String checksum, String logMessage,
-            boolean force) throws ServerException {
-        return worker.modifyDatastreamByValue(context, pid, datastreamID,
-                altIDs, dsLabel, mimeType, formatURI, dsContent, checksumType,
-                checksum, logMessage, force);
+    public Date modifyDatastreamByValue(Context context,
+                                        String pid,
+                                        String datastreamID,
+                                        String[] altIDs,
+                                        String dsLabel,
+                                        String mimeType,
+                                        String formatURI,
+                                        InputStream dsContent,
+                                        String checksumType,
+                                        String checksum,
+                                        String logMessage,
+                                        boolean force) throws ServerException {
+        return worker.modifyDatastreamByValue(context,
+                                              pid,
+                                              datastreamID,
+                                              altIDs,
+                                              dsLabel,
+                                              mimeType,
+                                              formatURI,
+                                              dsContent,
+                                              checksumType,
+                                              checksum,
+                                              logMessage,
+                                              force);
     }
 
     /**
      * Delegate to the JournalWorker.
      */
-    public Date[] purgeDatastream(Context context, String pid,
-            String datastreamID, Date startDT, Date endDT, String logMessage,
-            boolean force) throws ServerException {
-        return worker.purgeDatastream(context, pid, datastreamID, startDT,
-                endDT, logMessage, force);
+    public Date[] purgeDatastream(Context context,
+                                  String pid,
+                                  String datastreamID,
+                                  Date startDT,
+                                  Date endDT,
+                                  String logMessage,
+                                  boolean force) throws ServerException {
+        return worker.purgeDatastream(context,
+                                      pid,
+                                      datastreamID,
+                                      startDT,
+                                      endDT,
+                                      logMessage,
+                                      force);
     }
 
     /**
      * Delegate to the JournalWorker.
      */
-    public Datastream getDatastream(Context context, String pid,
-            String datastreamID, Date asOfDateTime) throws ServerException {
+    public Datastream getDatastream(Context context,
+                                    String pid,
+                                    String datastreamID,
+                                    Date asOfDateTime) throws ServerException {
         return worker.getDatastream(context, pid, datastreamID, asOfDateTime);
     }
 
     /**
      * Delegate to the JournalWorker.
      */
-    public Datastream[] getDatastreams(Context context, String pid,
-            Date asOfDateTime, String dsState) throws ServerException {
+    public Datastream[] getDatastreams(Context context,
+                                       String pid,
+                                       Date asOfDateTime,
+                                       String dsState) throws ServerException {
         return worker.getDatastreams(context, pid, asOfDateTime, dsState);
     }
 
     /**
      * Delegate to the JournalWorker.
      */
-    public Datastream[] getDatastreamHistory(Context context, String pid,
-            String datastreamID) throws ServerException {
+    public Datastream[] getDatastreamHistory(Context context,
+                                             String pid,
+                                             String datastreamID)
+            throws ServerException {
         return worker.getDatastreamHistory(context, pid, datastreamID);
     }
 
@@ -286,27 +377,42 @@ public class Journaller extends Module implements Management, JournalConstants {
     /**
      * Delegate to the JournalWorker.
      */
-    public Date setDatastreamState(Context context, String pid, String dsID,
-            String dsState, String logMessage) throws ServerException {
-        return worker.setDatastreamState(context, pid, dsID, dsState,
-                logMessage);
+    public Date setDatastreamState(Context context,
+                                   String pid,
+                                   String dsID,
+                                   String dsState,
+                                   String logMessage) throws ServerException {
+        return worker.setDatastreamState(context,
+                                         pid,
+                                         dsID,
+                                         dsState,
+                                         logMessage);
     }
 
     /**
      * Delegate to the JournalWorker.
      */
-    public Date setDatastreamVersionable(Context context, String pid,
-            String dsID, boolean versionable, String logMessage)
+    public Date setDatastreamVersionable(Context context,
+                                         String pid,
+                                         String dsID,
+                                         boolean versionable,
+                                         String logMessage)
             throws ServerException {
-        return worker.setDatastreamVersionable(context, pid, dsID, versionable,
-                logMessage);
+        return worker.setDatastreamVersionable(context,
+                                               pid,
+                                               dsID,
+                                               versionable,
+                                               logMessage);
     }
 
     /**
      * Delegate to the JournalWorker.
      */
-    public String compareDatastreamChecksum(Context context, String pid,
-            String dsID, Date versionDate) throws ServerException {
+    public String compareDatastreamChecksum(Context context,
+                                            String pid,
+                                            String dsID,
+                                            Date versionDate)
+            throws ServerException {
         return worker
                 .compareDatastreamChecksum(context, pid, dsID, versionDate);
     }
@@ -329,29 +435,45 @@ public class Journaller extends Module implements Management, JournalConstants {
     /**
      * Delegate to the JournalWorker.
      */
-    public RelationshipTuple[] getRelationships(Context context, String pid,
-            String relationship) throws ServerException {
+    public RelationshipTuple[] getRelationships(Context context,
+                                                String pid,
+                                                String relationship)
+            throws ServerException {
         return worker.getRelationships(context, pid, relationship);
     }
 
     /**
      * Delegate to the JournalWorker.
      */
-    public boolean addRelationship(Context context, String pid,
-            String relationship, String object, boolean isLiteral,
-            String datatype) throws ServerException {
-        return worker.addRelationship(context, pid, relationship, object,
-                isLiteral, datatype);
+    public boolean addRelationship(Context context,
+                                   String pid,
+                                   String relationship,
+                                   String object,
+                                   boolean isLiteral,
+                                   String datatype) throws ServerException {
+        return worker.addRelationship(context,
+                                      pid,
+                                      relationship,
+                                      object,
+                                      isLiteral,
+                                      datatype);
     }
 
     /**
      * Delegate to the JournalWorker.
      */
-    public boolean purgeRelationship(Context context, String pid,
-            String relationship, String object, boolean isLiteral,
-            String datatype) throws ServerException {
-        return worker.purgeRelationship(context, pid, relationship, object,
-                isLiteral, datatype);
+    public boolean purgeRelationship(Context context,
+                                     String pid,
+                                     String relationship,
+                                     String object,
+                                     boolean isLiteral,
+                                     String datatype) throws ServerException {
+        return worker.purgeRelationship(context,
+                                        pid,
+                                        relationship,
+                                        object,
+                                        isLiteral,
+                                        datatype);
     }
 
 }

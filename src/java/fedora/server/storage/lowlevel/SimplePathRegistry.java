@@ -15,75 +15,90 @@ import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.ObjectNotInLowlevelStorageException;
 
 /**
- * @author wdn5e@virginia.edu
- * @version $Id$
+ * @author Bill Niebel
  */
-class SimplePathRegistry extends PathRegistry {
+class SimplePathRegistry
+        extends PathRegistry {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(
-            PathRegistry.class.getName());
+    private static final Logger LOG =
+            Logger.getLogger(PathRegistry.class.getName());
 
-	private Hashtable hashtable = null;
+    private Hashtable hashtable = null;
 
-	public SimplePathRegistry(Map configuration) throws LowlevelStorageException {
-		super(configuration);
-		rebuild();
-	}
+    public SimplePathRegistry(Map configuration)
+            throws LowlevelStorageException {
+        super(configuration);
+        rebuild();
+    }
 
-	public String get(String pid) throws LowlevelStorageException {
-		String result;
-		try {
-			result = (String) hashtable.get(pid);
-		} catch (Exception e) {
-			throw new LowlevelStorageException(true,"SimplePathRegistry.get(" + pid + ")", e); //<<========
-		}
-		if ((null == result) || (0 == result.length())) {
-			throw new ObjectNotInLowlevelStorageException("SimplePathRegistry.get(" + pid + "): object not found");
-		}
-		return result;
-	}
+    @Override
+    public String get(String pid) throws LowlevelStorageException {
+        String result;
+        try {
+            result = (String) hashtable.get(pid);
+        } catch (Exception e) {
+            throw new LowlevelStorageException(true, "SimplePathRegistry.get("
+                    + pid + ")", e); //<<========
+        }
+        if (null == result || 0 == result.length()) {
+            throw new ObjectNotInLowlevelStorageException("SimplePathRegistry.get("
+                    + pid + "): object not found");
+        }
+        return result;
+    }
 
-	public void put(String pid, String path) throws LowlevelStorageException {
-		try {
-			hashtable.put(pid,path);
-		} catch (Exception e) {
-			throw new LowlevelStorageException(true,"SimplePathRegistry.put(" + pid + ")", e);
-		}
-	}
+    @Override
+    public void put(String pid, String path) throws LowlevelStorageException {
+        try {
+            hashtable.put(pid, path);
+        } catch (Exception e) {
+            throw new LowlevelStorageException(true, "SimplePathRegistry.put("
+                    + pid + ")", e);
+        }
+    }
 
-	public void remove(String pid) throws LowlevelStorageException {
-		try {
-			hashtable.remove(pid);
-		} catch (Exception e) {
-			throw new LowlevelStorageException(true,"SimplePathRegistry.remove(" + pid + ")", e); // <<===
-		}
-	}
+    @Override
+    public void remove(String pid) throws LowlevelStorageException {
+        try {
+            hashtable.remove(pid);
+        } catch (Exception e) {
+            throw new LowlevelStorageException(true,
+                                               "SimplePathRegistry.remove("
+                                                       + pid + ")",
+                                               e); // <<===
+        }
+    }
 
-	public void auditFiles() throws LowlevelStorageException {
-		LOG.info("begin audit:  files-against-registry");
-		traverseFiles(storeBases, AUDIT_FILES, false, FULL_REPORT);
-		LOG.info("end audit:  files-against-registry (ending normally)");
-	}
+    @Override
+    public void auditFiles() throws LowlevelStorageException {
+        LOG.info("begin audit:  files-against-registry");
+        traverseFiles(storeBases, AUDIT_FILES, false, FULL_REPORT);
+        LOG.info("end audit:  files-against-registry (ending normally)");
+    }
 
-	public void rebuild() throws LowlevelStorageException {
-		int report = FULL_REPORT;
-		Hashtable temp = this.hashtable;
-		this.hashtable = new Hashtable();
-		try {
-			LOG.info("begin rebuilding registry from files");
-			traverseFiles(storeBases, REBUILD, false, report); // allows bad files
-			LOG.info("end rebuilding registry from files (ending normally)");
-		} catch (Exception e) {
-			this.hashtable = temp;
-			if (report != NO_REPORT) {
-				LOG.error("ending rebuild unsuccessfully", e);
-			}
-			throw new LowlevelStorageException(true, "ending rebuild unsuccessfully", e); //<<====
-		}
-	}
-	
-	protected Enumeration keys() throws LowlevelStorageException {
-		return hashtable.keys();
-	}
+    @Override
+    public void rebuild() throws LowlevelStorageException {
+        int report = FULL_REPORT;
+        Hashtable temp = hashtable;
+        hashtable = new Hashtable();
+        try {
+            LOG.info("begin rebuilding registry from files");
+            traverseFiles(storeBases, REBUILD, false, report); // allows bad files
+            LOG.info("end rebuilding registry from files (ending normally)");
+        } catch (Exception e) {
+            hashtable = temp;
+            if (report != NO_REPORT) {
+                LOG.error("ending rebuild unsuccessfully", e);
+            }
+            throw new LowlevelStorageException(true,
+                                               "ending rebuild unsuccessfully",
+                                               e); //<<====
+        }
+    }
+
+    @Override
+    protected Enumeration keys() throws LowlevelStorageException {
+        return hashtable.keys();
+    }
 }

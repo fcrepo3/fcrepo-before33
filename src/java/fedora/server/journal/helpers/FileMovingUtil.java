@@ -13,25 +13,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * 
- * <p>
- * <b>Title:</b> FileMovingUtil.java
- * </p>
- * <p>
- * <b>Description:</b> Provides a workaround to the fact that
+ * Provides a workaround to the fact that
  * {@link java.io.File.renameTo(java.io.File)} doesn't work across NFS file
  * systems.
- * </p>
- * <p>
- * This code is taken from a workaround provided on the Sun Developer Network
- * Bug Database (http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4073756), 
- * by mailto:morgan.sziraki@cartesian.co.uk
- * </p>
+ *
+ * <p>This code is taken from a workaround provided on the Sun Developer Network
+ * Bug Database (http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4073756), by
+ * mailto:morgan.sziraki@cartesian.co.uk
  * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
-
 public class FileMovingUtil {
 
     private FileMovingUtil() {
@@ -39,15 +30,13 @@ public class FileMovingUtil {
     }
 
     /**
-     * Move a File
-     * 
-     * The renameTo method does not allow action across NFS mounted filesystems.
-     * This method is the workaround.
+     * Move a File The renameTo method does not allow action across NFS mounted
+     * filesystems. This method is the workaround.
      * 
      * @param fromFile
-     *            The existing File
+     *        The existing File
      * @param toFile
-     *            The new File
+     *        The new File
      * @return <code>true</code> if and only if the renaming succeeded;
      *         <code>false</code> otherwise
      */
@@ -68,9 +57,9 @@ public class FileMovingUtil {
      * Copy a File
      * 
      * @param fromFile
-     *            The existing File
+     *        The existing File
      * @param toFile
-     *            The new File
+     *        The new File
      * @return <code>true</code> if and only if the renaming succeeded;
      *         <code>false</code> otherwise
      */

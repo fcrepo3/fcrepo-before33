@@ -6,23 +6,21 @@
 package fedora.server.errors;
 
 /**
- *
- * <p><b>Title:</b> StreamReadException.java</p>
- * <p><b>Description:</b> Signals that a low-level error occurred reading from
- * a stream.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * Signals that a low-level error occurred reading from a stream.
+ * 
+ * @author Chris Wilper
  */
 public class StreamReadException
         extends StreamIOException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+
     /**
      * Creates a StreamReadException.
-     *
-     * @param message An informative message explaining what happened and
-     *                (possibly) how to fix it.
+     * 
+     * @param message
+     *        An informative message explaining what happened and (possibly) how
+     *        to fix it.
      */
     public StreamReadException(String message) {
         super(message);

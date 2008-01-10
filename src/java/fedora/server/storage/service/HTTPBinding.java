@@ -6,16 +6,15 @@
 package fedora.server.storage.service;
 
 /**
- *
- * <p><b>Title:</b> HTTPBinding.java</p>
- * <p><b>Description:</b> A data structure for holding a WSDL HTTP Binding for
- * a set of abstract operations.</p>
- *
- * @author payette@cs.cornell.edu
- * @version $Id$
+ * A data structure for holding a WSDL HTTP Binding for a set of abstract
+ * operations.
+ * 
+ * @author Sandy Payette
  */
-public class HTTPBinding extends Binding
-{
-  public String bindingVerb;
-  public HTTPOperation[] operations;
+public class HTTPBinding
+        extends Binding {
+
+    public String bindingVerb;
+
+    public HTTPOperation[] operations;
 }

@@ -15,15 +15,16 @@ import fedora.server.storage.DOReader;
 
 /**
  * Generates RDF triples for Fedora objects.
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public interface TripleGenerator {
 
     /**
      * Get the triples for the given Fedora behavior definition object.
-     *
-     * @param reader the behavior definition object.
+     * 
+     * @param reader
+     *        the behavior definition object.
      * @return the set of triples.
      */
     Set<Triple> getTriplesForBDef(BDefReader reader)
@@ -31,8 +32,9 @@ public interface TripleGenerator {
 
     /**
      * Get the triples for the given Fedora data object.
-     *
-     * @param reader the data object.
+     * 
+     * @param reader
+     *        the data object.
      * @return the set of triples.
      */
     Set<Triple> getTriplesForDataObject(DOReader reader)
@@ -40,8 +42,9 @@ public interface TripleGenerator {
 
     /**
      * Get the triples for the given Fedora content model object.
-     *
-     * @param reader the data object.
+     * 
+     * @param reader
+     *        the data object.
      * @return the set of triples.
      */
     Set<Triple> getTriplesForCModelObject(DOReader reader)

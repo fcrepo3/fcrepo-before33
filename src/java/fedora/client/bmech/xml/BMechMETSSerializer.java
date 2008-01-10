@@ -5,145 +5,157 @@
 
 package fedora.client.bmech.xml;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Node;
 import java.util.Vector;
-import fedora.client.bmech.data.*;
+
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 import fedora.client.bmech.BMechBuilderException;
+import fedora.client.bmech.data.BMechTemplate;
 
 /**
- * @author payette@cs.cornell.edu
+ * @author Sandy Payette
  */
-public class BMechMETSSerializer extends BObjMETSSerializer
-{
-  private Element in_dc;
-  private Element in_profile;
-  private Element in_dsInputSpec;
-  private Element in_methodMap;
-  private Element in_wsdl;
+public class BMechMETSSerializer
+        extends BObjMETSSerializer {
 
+    private final Element in_dc;
 
-  public BMechMETSSerializer(BMechTemplate bMechData, Element dc,
-    Element serviceProfile, Element dsInputSpec, Element methodMap, Element wsdl)
-    throws BMechBuilderException
-  {
-    super((BObjTemplate)bMechData);
-    in_dc = dc;
-	in_profile = serviceProfile;
-    in_dsInputSpec = dsInputSpec;
-    in_methodMap = methodMap;
-    in_wsdl = wsdl;
-    serialize();
-  }
+    private final Element in_profile;
 
-  protected Attr[] getVariableRootAttrs()
-  {
-    Vector<Attr> v_attrs = new Vector<Attr>();
-    Attr extVersion = document.createAttribute("EXT_VERSION");
-    extVersion.setValue("1.1");
-    v_attrs.add(extVersion);
-    Attr type = document.createAttribute("TYPE");
-    type.setValue("FedoraBMechObject");
-    v_attrs.add(type);
-    Attr profile = document.createAttribute("PROFILE");
-    profile.setValue("fedora:BMECH");
-    v_attrs.add(profile);
-    return (Attr[])v_attrs.toArray(new Attr[0]);
-  }
+    private final Element in_dsInputSpec;
 
-  protected Element[] getInlineMD() throws BMechBuilderException
-  {
-    Vector<Element> v_elements = new Vector<Element>();
-    v_elements.add(setDC(in_dc));
-	v_elements.add(setServiceProfile(in_profile));
-    v_elements.add(setDSInputSpec(in_dsInputSpec));
-    v_elements.add(setMethodMap(in_methodMap));
-    v_elements.add(setWSDL(in_wsdl));
-    return (Element[])v_elements.toArray(new Element[0]);
-  }
-  
-  private Element setDSInputSpec(Element dsInputSpec) throws BMechBuilderException
-  {
-    Element dsInputNode = document.createElementNS(METS.uri, "METS:amdSec");
-    dsInputNode.setAttribute("ID", "DSINPUTSPEC");
-    Element techMD = document.createElementNS(METS.uri, "METS:techMD");
-    techMD.setAttribute("ID", "DSINPUTSPEC1.0");
-    techMD.setAttribute("CREATED", now);
-    techMD.setAttribute("STATUS", "A");
-    Element mdWrap = document.createElementNS(METS.uri, "METS:mdWrap");
-    mdWrap.setAttribute("MIMETYPE", "text/xml");
-    mdWrap.setAttribute("MDTYPE", "OTHER");
-    mdWrap.setAttribute("LABEL", "Datastream Input Specification for Service");
-    Element xmlData = document.createElementNS(METS.uri, "METS:xmlData");
-    Node importDSInput = document.importNode(dsInputSpec, true);
-    xmlData.appendChild(importDSInput);
-    mdWrap.appendChild(xmlData);
-    techMD.appendChild(mdWrap);
-    dsInputNode.appendChild(techMD);
-    return dsInputNode;
-  }
+    private final Element in_methodMap;
 
-  private Element setMethodMap(Element methodMap) throws BMechBuilderException
-  {
-    Element mmapNode = document.createElementNS(METS.uri, "METS:amdSec");
-    mmapNode.setAttribute("ID", "METHODMAP");
-    Element techMD = document.createElementNS(METS.uri, "METS:techMD");
-    techMD.setAttribute("ID", "METHODMAP1.0");
-    techMD.setAttribute("CREATED", now);
-    techMD.setAttribute("STATUS", "A");
-    Element mdWrap = document.createElementNS(METS.uri, "METS:mdWrap");
-    mdWrap.setAttribute("MIMETYPE", "text/xml");
-    mdWrap.setAttribute("MDTYPE", "OTHER");
-    mdWrap.setAttribute("LABEL", "Mapping of WSDL to Fedora notion of Method Definitions");
-    Element xmlData = document.createElementNS(METS.uri, "METS:xmlData");
-    Node importMethodMap = document.importNode(methodMap, true);
-    xmlData.appendChild(importMethodMap);
-    mdWrap.appendChild(xmlData);
-    techMD.appendChild(mdWrap);
-    mmapNode.appendChild(techMD);
-    return mmapNode;
-  }
+    private final Element in_wsdl;
 
-  private Element setWSDL(Element wsdl) throws BMechBuilderException
-  {
-    Element wsdlNode = document.createElementNS(METS.uri, "METS:amdSec");
-    wsdlNode.setAttribute("ID", "WSDL");
-    Element techMD = document.createElementNS(METS.uri, "METS:techMD");
-    techMD.setAttribute("ID", "WSDL1.0");
-    techMD.setAttribute("CREATED", now);
-    techMD.setAttribute("STATUS", "A");
-    Element mdWrap = document.createElementNS(METS.uri, "METS:mdWrap");
-    mdWrap.setAttribute("MIMETYPE", "text/xml");
-    mdWrap.setAttribute("MDTYPE", "OTHER");
-    mdWrap.setAttribute("LABEL", "WSDL definition of service");
-    Element xmlData = document.createElementNS(METS.uri, "METS:xmlData");
-    Node importWSDL = document.importNode(wsdl, true);
-    xmlData.appendChild(importWSDL);
-    mdWrap.appendChild(xmlData);
-    techMD.appendChild(mdWrap);
-    wsdlNode.appendChild(techMD);
-    return wsdlNode;
-  }
+    public BMechMETSSerializer(BMechTemplate bMechData,
+                               Element dc,
+                               Element serviceProfile,
+                               Element dsInputSpec,
+                               Element methodMap,
+                               Element wsdl)
+            throws BMechBuilderException {
+        super(bMechData);
+        in_dc = dc;
+        in_profile = serviceProfile;
+        in_dsInputSpec = dsInputSpec;
+        in_methodMap = methodMap;
+        in_wsdl = wsdl;
+        serialize();
+    }
 
-  private Element setServiceProfile(Element serviceProfile)
-  {
-    Element profileNode = document.createElementNS(METS.uri, "METS:amdSec");
-    profileNode.setAttribute("ID", "SERVICE-PROFILE");
-    Element techMD = document.createElementNS(METS.uri, "METS:techMD");
-    techMD.setAttribute("ID", "SERVICE-PROFILE1.0");
-	techMD.setAttribute("CREATED", now);
-    techMD.setAttribute("STATUS", "A");
-    Element mdWrap = document.createElementNS(METS.uri, "METS:mdWrap");
-    mdWrap.setAttribute("MIMETYPE", "text/xml");
-    mdWrap.setAttribute("MDTYPE", "OTHER");
-    mdWrap.setAttribute("LABEL", "Service Profile - Technical description of the service");
-    Element xmlData = document.createElementNS(METS.uri, "METS:xmlData");
-    Node importProfile = document.importNode(serviceProfile, true);
-    xmlData.appendChild(importProfile);
-    mdWrap.appendChild(xmlData);
-    techMD.appendChild(mdWrap);
-    profileNode.appendChild(techMD);
-    return profileNode;
-  }
+    @Override
+    protected Attr[] getVariableRootAttrs() {
+        Vector<Attr> v_attrs = new Vector<Attr>();
+        Attr extVersion = document.createAttribute("EXT_VERSION");
+        extVersion.setValue("1.1");
+        v_attrs.add(extVersion);
+        Attr type = document.createAttribute("TYPE");
+        type.setValue("FedoraBMechObject");
+        v_attrs.add(type);
+        Attr profile = document.createAttribute("PROFILE");
+        profile.setValue("fedora:BMECH");
+        v_attrs.add(profile);
+        return v_attrs.toArray(new Attr[0]);
+    }
+
+    @Override
+    protected Element[] getInlineMD() throws BMechBuilderException {
+        Vector<Element> v_elements = new Vector<Element>();
+        v_elements.add(setDC(in_dc));
+        v_elements.add(setServiceProfile(in_profile));
+        v_elements.add(setDSInputSpec(in_dsInputSpec));
+        v_elements.add(setMethodMap(in_methodMap));
+        v_elements.add(setWSDL(in_wsdl));
+        return v_elements.toArray(new Element[0]);
+    }
+
+    private Element setDSInputSpec(Element dsInputSpec)
+            throws BMechBuilderException {
+        Element dsInputNode = document.createElementNS(METS.uri, "METS:amdSec");
+        dsInputNode.setAttribute("ID", "DSINPUTSPEC");
+        Element techMD = document.createElementNS(METS.uri, "METS:techMD");
+        techMD.setAttribute("ID", "DSINPUTSPEC1.0");
+        techMD.setAttribute("CREATED", now);
+        techMD.setAttribute("STATUS", "A");
+        Element mdWrap = document.createElementNS(METS.uri, "METS:mdWrap");
+        mdWrap.setAttribute("MIMETYPE", "text/xml");
+        mdWrap.setAttribute("MDTYPE", "OTHER");
+        mdWrap.setAttribute("LABEL",
+                            "Datastream Input Specification for Service");
+        Element xmlData = document.createElementNS(METS.uri, "METS:xmlData");
+        Node importDSInput = document.importNode(dsInputSpec, true);
+        xmlData.appendChild(importDSInput);
+        mdWrap.appendChild(xmlData);
+        techMD.appendChild(mdWrap);
+        dsInputNode.appendChild(techMD);
+        return dsInputNode;
+    }
+
+    private Element setMethodMap(Element methodMap)
+            throws BMechBuilderException {
+        Element mmapNode = document.createElementNS(METS.uri, "METS:amdSec");
+        mmapNode.setAttribute("ID", "METHODMAP");
+        Element techMD = document.createElementNS(METS.uri, "METS:techMD");
+        techMD.setAttribute("ID", "METHODMAP1.0");
+        techMD.setAttribute("CREATED", now);
+        techMD.setAttribute("STATUS", "A");
+        Element mdWrap = document.createElementNS(METS.uri, "METS:mdWrap");
+        mdWrap.setAttribute("MIMETYPE", "text/xml");
+        mdWrap.setAttribute("MDTYPE", "OTHER");
+        mdWrap
+                .setAttribute("LABEL",
+                              "Mapping of WSDL to Fedora notion of Method Definitions");
+        Element xmlData = document.createElementNS(METS.uri, "METS:xmlData");
+        Node importMethodMap = document.importNode(methodMap, true);
+        xmlData.appendChild(importMethodMap);
+        mdWrap.appendChild(xmlData);
+        techMD.appendChild(mdWrap);
+        mmapNode.appendChild(techMD);
+        return mmapNode;
+    }
+
+    private Element setWSDL(Element wsdl) throws BMechBuilderException {
+        Element wsdlNode = document.createElementNS(METS.uri, "METS:amdSec");
+        wsdlNode.setAttribute("ID", "WSDL");
+        Element techMD = document.createElementNS(METS.uri, "METS:techMD");
+        techMD.setAttribute("ID", "WSDL1.0");
+        techMD.setAttribute("CREATED", now);
+        techMD.setAttribute("STATUS", "A");
+        Element mdWrap = document.createElementNS(METS.uri, "METS:mdWrap");
+        mdWrap.setAttribute("MIMETYPE", "text/xml");
+        mdWrap.setAttribute("MDTYPE", "OTHER");
+        mdWrap.setAttribute("LABEL", "WSDL definition of service");
+        Element xmlData = document.createElementNS(METS.uri, "METS:xmlData");
+        Node importWSDL = document.importNode(wsdl, true);
+        xmlData.appendChild(importWSDL);
+        mdWrap.appendChild(xmlData);
+        techMD.appendChild(mdWrap);
+        wsdlNode.appendChild(techMD);
+        return wsdlNode;
+    }
+
+    private Element setServiceProfile(Element serviceProfile) {
+        Element profileNode = document.createElementNS(METS.uri, "METS:amdSec");
+        profileNode.setAttribute("ID", "SERVICE-PROFILE");
+        Element techMD = document.createElementNS(METS.uri, "METS:techMD");
+        techMD.setAttribute("ID", "SERVICE-PROFILE1.0");
+        techMD.setAttribute("CREATED", now);
+        techMD.setAttribute("STATUS", "A");
+        Element mdWrap = document.createElementNS(METS.uri, "METS:mdWrap");
+        mdWrap.setAttribute("MIMETYPE", "text/xml");
+        mdWrap.setAttribute("MDTYPE", "OTHER");
+        mdWrap
+                .setAttribute("LABEL",
+                              "Service Profile - Technical description of the service");
+        Element xmlData = document.createElementNS(METS.uri, "METS:xmlData");
+        Node importProfile = document.importNode(serviceProfile, true);
+        xmlData.appendChild(importProfile);
+        mdWrap.appendChild(xmlData);
+        techMD.appendChild(mdWrap);
+        profileNode.appendChild(techMD);
+        return profileNode;
+    }
 }

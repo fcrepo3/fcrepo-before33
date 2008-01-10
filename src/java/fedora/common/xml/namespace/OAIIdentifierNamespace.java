@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The OAI Identifier XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://www.openarchives.org/OAI/2.0/oai-identifier
  * Preferred Prefix : oai-identifier
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class OAIIdentifierNamespace
         extends XMLNamespace {
@@ -23,20 +23,20 @@ public class OAIIdentifierNamespace
     //---
 
     /** The only instance of this class. */
-    private static final OAIIdentifierNamespace ONLY_INSTANCE
-            = new OAIIdentifierNamespace();
+    private static final OAIIdentifierNamespace ONLY_INSTANCE =
+            new OAIIdentifierNamespace();
 
     /**
      * Constructs the instance.
      */
     private OAIIdentifierNamespace() {
         super("http://www.openarchives.org/OAI/2.0/oai-identifier",
-                "oai-identifier");
+              "oai-identifier");
     }
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static OAIIdentifierNamespace getInstance() {

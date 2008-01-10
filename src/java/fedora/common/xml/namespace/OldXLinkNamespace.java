@@ -7,18 +7,19 @@ package fedora.common.xml.namespace;
 
 /**
  * The XLink XML namespace used in old versions of the METS format.
- *
- * <p><em>NOTE: This is not the published xlink namespace, and is provided
+ * <p>
+ * <em>NOTE: This is not the published xlink namespace, and is provided
  * here only for use with the "METS Fedora Extension 1.0" format, which
  * was originally derived from from METS 1.3 and was used in Fedora releases
- * prior to 3.0.</em></p>
- *
+ * prior to 3.0.</em>
+ * </p>
+ * 
  * <pre>
  * Namespace URI    : http://www.w3.org/TR/xlink
  * Preferred Prefix : xlink
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class OldXLinkNamespace
         extends XMLNamespace {
@@ -38,8 +39,8 @@ public class OldXLinkNamespace
     //---
 
     /** The only instance of this class. */
-    private static final OldXLinkNamespace ONLY_INSTANCE
-            = new OldXLinkNamespace();
+    private static final OldXLinkNamespace ONLY_INSTANCE =
+            new OldXLinkNamespace();
 
     /**
      * Constructs the instance.
@@ -49,12 +50,12 @@ public class OldXLinkNamespace
 
         // attributes
         TITLE = new QName(this, "title");
-        HREF  = new QName(this, "href");
+        HREF = new QName(this, "href");
     }
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static OldXLinkNamespace getInstance() {

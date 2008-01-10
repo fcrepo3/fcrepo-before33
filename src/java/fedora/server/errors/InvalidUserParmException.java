@@ -6,30 +6,26 @@
 package fedora.server.errors;
 
 /**
- * <p>
- * <b>Title: </b>InvalidUserParmException.java
- * </p>
- * <p>
- * <b>Description: </b>Signals that one or more user-supplied method parameters
- * do not validate against the method parameter definitions in the associated
- * Behavior Mechanism object.
- * </p>
+ * Signals that one or more user-supplied method parameters do not validate
+ * against the method parameter definitions in the associated Behavior 
+ * Mechanism object.
  * 
- * @author rlw@virginia.edu
- * @version $Id$
+ * @author Ross Wayland
  */
-public class InvalidUserParmException extends DisseminationException {
-	private static final long serialVersionUID = 1L;
+public class InvalidUserParmException
+        extends DisseminationException {
 
-	/**
-	 * Creates an InvalidUserParmException.
-	 * 
-	 * @param message
-	 *            An informative message explaining what happened and (possibly)
-	 *            how to fix it.
-	 */
-	public InvalidUserParmException(String message) {
-		super(message);
-	}
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Creates an InvalidUserParmException.
+     * 
+     * @param message
+     *        An informative message explaining what happened and (possibly) how
+     *        to fix it.
+     */
+    public InvalidUserParmException(String message) {
+        super(message);
+    }
 
 }

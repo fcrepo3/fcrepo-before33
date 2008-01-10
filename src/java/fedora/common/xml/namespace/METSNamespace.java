@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The METS XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://www.loc.gov/METS/
  * Preferred Prefix : METS
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class METSNamespace
         extends XMLNamespace {
@@ -61,14 +61,13 @@ public class METSNamespace
 
     /** The <code>TYPE</code> attribute. */
     public final QName TYPE;
-    
+
     //---
     // Singleton instantiation
     //---
 
     /** The only instance of this class. */
-    private static final METSNamespace ONLY_INSTANCE
-            = new METSNamespace();
+    private static final METSNamespace ONLY_INSTANCE = new METSNamespace();
 
     /**
      * Constructs the instance.
@@ -77,25 +76,25 @@ public class METSNamespace
         super("http://www.loc.gov/METS/", "METS");
 
         // elements
-        AMD_SEC      = new QName(this, "amdSec");
+        AMD_SEC = new QName(this, "amdSec");
         BEHAVIOR_SEC = new QName(this, "behaviorSec");
-        FILE         = new QName(this, "file");
-        FILE_GRP     = new QName(this, "fileGrp");
-        FILE_SEC     = new QName(this, "fileSec");
-        FLOCAT       = new QName(this, "FLocat");
-        METS         = new QName(this, "mets");
-        STRUCT_MAP   = new QName(this, "structMap");
+        FILE = new QName(this, "file");
+        FILE_GRP = new QName(this, "fileGrp");
+        FILE_SEC = new QName(this, "fileSec");
+        FLOCAT = new QName(this, "FLocat");
+        METS = new QName(this, "mets");
+        STRUCT_MAP = new QName(this, "structMap");
 
         // attributes
-        LABEL   = new QName(this, "LABEL");
-        OBJID   = new QName(this, "OBJID");
+        LABEL = new QName(this, "LABEL");
+        OBJID = new QName(this, "OBJID");
         PROFILE = new QName(this, "PROFILE");
-        TYPE    = new QName(this, "TYPE");
+        TYPE = new QName(this, "TYPE");
     }
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static METSNamespace getInstance() {

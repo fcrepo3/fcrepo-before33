@@ -19,52 +19,58 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-public class StatusDialog extends JDialog implements ActionListener {
-	private static final long serialVersionUID = 1L;
+public class StatusDialog
+        extends JDialog
+        implements ActionListener {
 
-	private JButton button = null;
+    private static final long serialVersionUID = 1L;
 
-	private JPanel panel = null;
+    private JButton button = null;
 
-	/**
-	 * @param owner
-	 * @param title
-	 * @throws java.awt.HeadlessException
-	 */
-	public StatusDialog(Frame owner, String title) throws HeadlessException {
-		super(owner, title, true);
-		getContentPane().setLayout(new BorderLayout());
-		panel = new JPanel();
-		panel.setLayout(new GridLayout(0, 1, 50, 5));
-		panel.add(new JLabel("Writing Policy File:"));
-		getContentPane().add(panel, BorderLayout.CENTER);
-		button = new JButton("Close");
-		getContentPane().add(button, BorderLayout.SOUTH);
-		button.setEnabled(false);
-		button.addActionListener(this);
-		((JComponent) (getContentPane())).setBorder(new EmptyBorder(20, 20, 20,
-				20));
-	}
+    private JPanel panel = null;
 
-	public void addText(String text) {
-		panel.add(new JLabel(text));
-		this.pack();
-		this.validate();
-	}
+    /**
+     * @param owner
+     * @param title
+     * @throws java.awt.HeadlessException
+     */
+    public StatusDialog(Frame owner, String title)
+            throws HeadlessException {
+        super(owner, title, true);
+        getContentPane().setLayout(new BorderLayout());
+        panel = new JPanel();
+        panel.setLayout(new GridLayout(0, 1, 50, 5));
+        panel.add(new JLabel("Writing Policy File:"));
+        getContentPane().add(panel, BorderLayout.CENTER);
+        button = new JButton("Close");
+        getContentPane().add(button, BorderLayout.SOUTH);
+        button.setEnabled(false);
+        button.addActionListener(this);
+        ((JComponent) getContentPane()).setBorder(new EmptyBorder(20,
+                                                                  20,
+                                                                  20,
+                                                                  20));
+    }
 
-	public void finish() {
-		button.setEnabled(true);
-	}
+    public void addText(String text) {
+        panel.add(new JLabel(text));
+        pack();
+        validate();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("Close")) {
-			this.setVisible(false);
-			this.dispose();
-		}
-	}
+    public void finish() {
+        button.setEnabled(true);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+        if (e.getActionCommand().equals("Close")) {
+            setVisible(false);
+            dispose();
+        }
+    }
 }

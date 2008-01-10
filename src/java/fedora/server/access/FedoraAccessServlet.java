@@ -7,28 +7,31 @@ package fedora.server.access;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
+
 import java.net.URLDecoder;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
+
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
 
@@ -47,8 +50,8 @@ import fedora.server.errors.ObjectNotInLowlevelStorageException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.authorization.AuthzException;
-import fedora.server.errors.servletExceptionExtensions.NotFound404Exception;
 import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
+import fedora.server.errors.servletExceptionExtensions.NotFound404Exception;
 import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.types.MIMETypedStream;
@@ -57,10 +60,10 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 
 /**
- * Implements the three methods GetObjectProfile,
- * GetDissemination, and GetDatastreamDissemination of the Fedora Access LITE
- * (API-A-LITE) interface using a java servlet front end. The syntax defined by
- * API-A-LITE defines three bindings for these methods:
+ * Implements the three methods GetObjectProfile, GetDissemination, and
+ * GetDatastreamDissemination of the Fedora Access LITE (API-A-LITE) interface
+ * using a java servlet front end. The syntax defined by API-A-LITE defines
+ * three bindings for these methods:
  * <ol>
  * <li>GetDissemination URL syntax:
  * <p>
@@ -134,835 +137,896 @@ import fedora.server.utilities.StreamUtility;
  * </ul>
  * </ol>
  * 
- * @author rlw@virginia.edu
+ * @author Ross Wayland
  */
 public class FedoraAccessServlet
         extends HttpServlet
         implements Constants {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(
-            FedoraAccessServlet.class.getName());
+    private static final Logger LOG =
+            Logger.getLogger(FedoraAccessServlet.class.getName());
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/** Content type for html. */
-	private static final String CONTENT_TYPE_HTML = "text/html; charset=UTF-8";
+    /** Content type for html. */
+    private static final String CONTENT_TYPE_HTML = "text/html; charset=UTF-8";
 
-	/** Content type for xml. */
-	private static final String CONTENT_TYPE_XML = "text/xml; charset=UTF-8";
+    /** Content type for xml. */
+    private static final String CONTENT_TYPE_XML = "text/xml; charset=UTF-8";
 
-	/** Instance of the Fedora server. */
-	private static Server s_server = null;
+    /** Instance of the Fedora server. */
+    private static Server s_server = null;
 
-	/** Instance of the access subsystem. */
-	private static Access s_access = null;
+    /** Instance of the access subsystem. */
+    private static Access s_access = null;
 
-	/** Instance of DOManager. */
-	private static DOManager m_manager = null;
+    /** Instance of DOManager. */
+    private static DOManager m_manager = null;
 
-	/** userInputParm hashtable */
-	private Hashtable h_userParms = new Hashtable();
+    /** userInputParm hashtable */
+    private final Hashtable h_userParms = new Hashtable();
 
-	/** Initial URL request by client */
-	private String requestURL = null;
+    /** Portion of initial request URL from protocol up to query string */
+    private String requestURI = null;
 
-	/** Portion of initial request URL from protocol up to query string */
-	private String requestURI = null;
+    /** Instance of URLDecoder */
+    private final URLDecoder decoder = new URLDecoder();
 
-	/** Instance of URLDecoder */
-	private URLDecoder decoder = new URLDecoder();
+    /** Fedora server protocl * */
+    private String fedoraServerProtocol = null;
 
-	/** Fedora server protocl * */
-	private String fedoraServerProtocol = null;
+    /** HTTP protocol * */
+    private static String HTTP = "http";
 
-	/** HTTP protocol * */
-	private static String HTTP = "http";
+    /** HTTPS protocol * */
+    private static String HTTPS = "https";
 
-	/** HTTPS protocol * */
-	private static String HTTPS = "https";
+    /** Configured Fedora server hostname */
+    private static String fedoraServerHost = null;
 
-	/** Configured Fedora server hostname */
-	private static String fedoraServerHost = null;
+    /**
+     * <p>
+     * Process Fedora Access Request. Parse and validate the servlet input
+     * parameters and then execute the specified request.
+     * </p>
+     * 
+     * @param request
+     *        The servlet request.
+     * @param response
+     *        servlet The servlet response.
+     * @throws ServletException
+     *         If an error occurs that effects the servlet's basic operation.
+     * @throws IOException
+     *         If an error occurrs with an input or output operation.
+     */
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String PID = null;
+        String bDefPID = null;
+        String methodName = null;
+        String dsID = null;
+        Date asOfDateTime = null;
+        Date versDateTime = null;
+        String action = null;
+        Property[] userParms = null;
+        boolean isGetObjectProfileRequest = false;
+        boolean isGetDisseminationRequest = false;
+        boolean isGetDatastreamDisseminationRequest = false;
+        boolean xml = false;
 
-	/**
-	 * <p>
-	 * Process Fedora Access Request. Parse and validate the servlet input
-	 * parameters and then execute the specified request.
-	 * </p>
-	 * 
-	 * @param request
-	 *            The servlet request.
-	 * @param response
-	 *            servlet The servlet response.
-	 * @throws ServletException
-	 *             If an error occurs that effects the servlet's basic
-	 *             operation.
-	 * @throws IOException
-	 *             If an error occurrs with an input or output operation.
-	 */
-	public void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		String PID = null;
-		String bDefPID = null;
-		String methodName = null;
-		String dsID = null;
-		Date asOfDateTime = null;
-		Date versDateTime = null;
-		String action = null;
-		Property[] userParms = null;
-		boolean isGetObjectProfileRequest = false;
-		boolean isGetDisseminationRequest = false;
-		boolean isGetDatastreamDisseminationRequest = false;
-		boolean xml = false;
-
-		requestURI = request.getRequestURL().toString()
-				+ (request.getQueryString()!=null ? "?"+request.getQueryString() : "");
+        requestURI =
+                request.getRequestURL().toString()
+                        + (request.getQueryString() != null ? "?"
+                                + request.getQueryString() : "");
         LOG.info("Got request: " + requestURI);
-		fedoraServerProtocol = requestURI.substring(0, requestURI.indexOf(":"));
+        fedoraServerProtocol = requestURI.substring(0, requestURI.indexOf(":"));
 
-		// Parse servlet URL.
-		// For the Fedora API-A-LITE "get" syntax, valid entries include:
-		//
-		// For dissemination requests:
-		// http://host:port/fedora/get/pid/bDefPid/methodName
-		// http://host:port/fedora/get/pid/bDefPid/methodName/timestamp
-		// http://host:port/fedora/get/pid/bDefPid/methodName?parm=value[&parm=value]
-		// http://host:port/fedora/get/pid/bDefPid/methodName/timestamp?parm=value[&parm=value]
-		//
-		// For object profile requests:
-		// http://host:port/fedora/get/pid
-		// http://host:port/fedora/get/pid/timestamp
-		//
-		// For datastream dissemination requests:
-		// http://host:port/fedora/get/pid/dsID
-		// http://host:port/fedora/get/pid/dsID/timestamp
-		//
-		String[] URIArray = request.getRequestURL().toString().split("/");
-		if (URIArray.length == 6 || URIArray.length == 7) {
-			// Request is either an ObjectProfile request or a datastream
-			// request
-			if (URIArray.length == 7) {
-				// They either specified a date/time or a datastream id.
-				if (URIArray[6].indexOf(":") == -1) {
-					// If it doesn't contain a colon, they were after a
-					// datastream,
-					// so this is a DatastreamDissemination request
-					dsID = URLDecoder.decode(URIArray[6], "UTF-8");
-					isGetDatastreamDisseminationRequest = true;
-				} else {
-					// If it DOES contain a colon, they were after a
-					// date/time-stamped object profile
-					versDateTime = DateUtility.convertStringToDate(URIArray[6]);
-					if (versDateTime == null) {
-						String message = "ObjectProfile Request Syntax Error: DateTime value "
-								+ "of \""
-								+ URIArray[6]
-								+ "\" is not a valid DateTime format. "
-								+ " <br></br> The expected format for DateTime is \""
-								+ "YYYY-MM-DDTHH:MM:SS.SSSZ\".  "
-								+ " <br></br> The expected syntax for "
-								+ "ObjectProfile requests is: \""
-								+ URIArray[0]
-								+ "//"
-								+ URIArray[2]
-								+ "/"
-								+ URIArray[3]
-								+ "/"
-								+ URIArray[4]
-								+ "/PID[/dateTime] \"  ."
-								+ " <br></br> Submitted request was: \""
-								+ requestURI + "\"  .  ";
-						LOG.warn(message);
-						throw new ServletException("from FedoraAccessServlet"
-								+ message);
-						/*
-						 * commented out for exception.jsp test
-						 * response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-						 * response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-						 * message); return; commented out for exception.jsp
-						 * test
-						 */
-					}
-					asOfDateTime = versDateTime;
-					isGetObjectProfileRequest = true;
-				}
-			} else {
-				// URIArray.length==6 so this is a GetObjectProfile request
-				isGetObjectProfileRequest = true;
-			}
-		} else if (URIArray.length > 7) {
-			// Request is either dissemination request or timestamped get
-			// datastream request
-			methodName = URLDecoder.decode(URIArray[7], "UTF-8");
-			if (URIArray.length == 8) {
-				if (URIArray[6].indexOf(":") == -1) {
-					// If it doesn't contain a colon, they were after a
-					// timestamped
-					// datastream, so this is a GetDatastreamDissemination
-					// request.
-					dsID = URLDecoder.decode(URIArray[6], "UTF-8");
-					versDateTime = DateUtility.convertStringToDate(URIArray[7]);
-					if (versDateTime == null) {
-						String message = "GetDatastreamDissemination Request Syntax Error: DateTime value "
-								+ "of \""
-								+ URIArray[7]
-								+ "\" is not a valid DateTime format. "
-								+ " <br></br> The expected format for DateTime is \""
-								+ "YYYY-MM-DDTHH:MM:SS.SSSZ\".  "
-								+ " <br></br> The expected syntax for GetDatastreamDissemination requests is: \""
-								+ URIArray[0]
-								+ "//"
-								+ URIArray[2]
-								+ "/"
-								+ URIArray[3]
-								+ "/"
-								+ URIArray[4]
-								+ "/PID/dsID[/dateTime] \"  "
-								+ " <br></br> Submitted request was: \""
-								+ requestURI + "\"  .  ";
-						LOG.warn(message);
-						throw new ServletException("from FedoraAccessServlet"
-								+ message);
-						/*
-						 * commented out for exception.jsp test
-						 * response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-						 * response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-						 * message); return; commented out for exception.jsp
-						 * test
-						 */
-					}
-					asOfDateTime = versDateTime;
-					isGetDatastreamDisseminationRequest = true;
-				} else {
-					isGetDisseminationRequest = true;
-				}
-			} else if (URIArray.length == 9) {
-				versDateTime = DateUtility.convertStringToDate(URIArray[8]);
-				if (versDateTime == null) {
-					String message = "Dissemination Request Syntax Error: DateTime value "
-							+ "of \""
-							+ URIArray[8]
-							+ "\" is not a valid DateTime format. "
-							+ " <br></br> The expected format for DateTime is \""
-							+ "YYYY-MM-DDTHH:MM:SS.SSS\".  "
-							+ " <br></br> The expected syntax for Dissemination requests is: \""
-							+ URIArray[0]
-							+ "//"
-							+ URIArray[2]
-							+ "/"
-							+ URIArray[3]
-							+ "/"
-							+ URIArray[4]
-							+ "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
-							+ " <br></br> Submitted request was: \""
-							+ requestURI + "\"  .  ";
-					LOG.warn(message);
-					throw new ServletException("from FedoraAccessServlet"
-							+ message);
-					/*
-					 * commented out for exception.jsp test
-					 * response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-					 * response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-					 * message); return; commented out for exception.jsp test
-					 */
-				}
-				asOfDateTime = versDateTime;
-				isGetDisseminationRequest = true;
-			}
-			if (URIArray.length > 9) {
-				String message = "Dissemination Request Syntax Error: The expected "
-						+ "syntax for Dissemination requests is: \""
-						+ URIArray[0]
-						+ "//"
-						+ URIArray[2]
-						+ "/"
-						+ URIArray[3]
-						+ "/"
-						+ URIArray[4]
-						+ "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
-						+ " <br></br> Submitted request was: \""
-						+ requestURI
-						+ "\"  .  ";
-				LOG.warn(message);
-				throw new ServletException("from FedoraAccessServlet" + message);
-				/*
-				 * commented out for exception.jsp test
-				 * response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-				 * response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				 * message); return; commented out for exception.jsp test
-				 */
-			}
-		} else {
-			// Bad syntax; redirect to syntax documentation page.
-			response
-					.sendRedirect("/userdocs/client/browser/apialite/index.html");
-			return;
-		}
+        // Parse servlet URL.
+        // For the Fedora API-A-LITE "get" syntax, valid entries include:
+        //
+        // For dissemination requests:
+        // http://host:port/fedora/get/pid/bDefPid/methodName
+        // http://host:port/fedora/get/pid/bDefPid/methodName/timestamp
+        // http://host:port/fedora/get/pid/bDefPid/methodName?parm=value[&parm=value]
+        // http://host:port/fedora/get/pid/bDefPid/methodName/timestamp?parm=value[&parm=value]
+        //
+        // For object profile requests:
+        // http://host:port/fedora/get/pid
+        // http://host:port/fedora/get/pid/timestamp
+        //
+        // For datastream dissemination requests:
+        // http://host:port/fedora/get/pid/dsID
+        // http://host:port/fedora/get/pid/dsID/timestamp
+        //
+        String[] URIArray = request.getRequestURL().toString().split("/");
+        if (URIArray.length == 6 || URIArray.length == 7) {
+            // Request is either an ObjectProfile request or a datastream
+            // request
+            if (URIArray.length == 7) {
+                // They either specified a date/time or a datastream id.
+                if (URIArray[6].indexOf(":") == -1) {
+                    // If it doesn't contain a colon, they were after a
+                    // datastream,
+                    // so this is a DatastreamDissemination request
+                    dsID = URLDecoder.decode(URIArray[6], "UTF-8");
+                    isGetDatastreamDisseminationRequest = true;
+                } else {
+                    // If it DOES contain a colon, they were after a
+                    // date/time-stamped object profile
+                    versDateTime = DateUtility.convertStringToDate(URIArray[6]);
+                    if (versDateTime == null) {
+                        String message =
+                                "ObjectProfile Request Syntax Error: DateTime value "
+                                        + "of \""
+                                        + URIArray[6]
+                                        + "\" is not a valid DateTime format. "
+                                        + " <br></br> The expected format for DateTime is \""
+                                        + "YYYY-MM-DDTHH:MM:SS.SSSZ\".  "
+                                        + " <br></br> The expected syntax for "
+                                        + "ObjectProfile requests is: \""
+                                        + URIArray[0]
+                                        + "//"
+                                        + URIArray[2]
+                                        + "/"
+                                        + URIArray[3]
+                                        + "/"
+                                        + URIArray[4]
+                                        + "/PID[/dateTime] \"  ."
+                                        + " <br></br> Submitted request was: \""
+                                        + requestURI + "\"  .  ";
+                        LOG.warn(message);
+                        throw new ServletException("from FedoraAccessServlet"
+                                + message);
+                        /*
+                         * commented out for exception.jsp test
+                         * response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                         * response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                         * message); return; commented out for exception.jsp
+                         * test
+                         */
+                    }
+                    asOfDateTime = versDateTime;
+                    isGetObjectProfileRequest = true;
+                }
+            } else {
+                // URIArray.length==6 so this is a GetObjectProfile request
+                isGetObjectProfileRequest = true;
+            }
+        } else if (URIArray.length > 7) {
+            // Request is either dissemination request or timestamped get
+            // datastream request
+            methodName = URLDecoder.decode(URIArray[7], "UTF-8");
+            if (URIArray.length == 8) {
+                if (URIArray[6].indexOf(":") == -1) {
+                    // If it doesn't contain a colon, they were after a
+                    // timestamped
+                    // datastream, so this is a GetDatastreamDissemination
+                    // request.
+                    dsID = URLDecoder.decode(URIArray[6], "UTF-8");
+                    versDateTime = DateUtility.convertStringToDate(URIArray[7]);
+                    if (versDateTime == null) {
+                        String message =
+                                "GetDatastreamDissemination Request Syntax Error: DateTime value "
+                                        + "of \""
+                                        + URIArray[7]
+                                        + "\" is not a valid DateTime format. "
+                                        + " <br></br> The expected format for DateTime is \""
+                                        + "YYYY-MM-DDTHH:MM:SS.SSSZ\".  "
+                                        + " <br></br> The expected syntax for GetDatastreamDissemination requests is: \""
+                                        + URIArray[0]
+                                        + "//"
+                                        + URIArray[2]
+                                        + "/"
+                                        + URIArray[3]
+                                        + "/"
+                                        + URIArray[4]
+                                        + "/PID/dsID[/dateTime] \"  "
+                                        + " <br></br> Submitted request was: \""
+                                        + requestURI + "\"  .  ";
+                        LOG.warn(message);
+                        throw new ServletException("from FedoraAccessServlet"
+                                + message);
+                        /*
+                         * commented out for exception.jsp test
+                         * response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                         * response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                         * message); return; commented out for exception.jsp
+                         * test
+                         */
+                    }
+                    asOfDateTime = versDateTime;
+                    isGetDatastreamDisseminationRequest = true;
+                } else {
+                    isGetDisseminationRequest = true;
+                }
+            } else if (URIArray.length == 9) {
+                versDateTime = DateUtility.convertStringToDate(URIArray[8]);
+                if (versDateTime == null) {
+                    String message =
+                            "Dissemination Request Syntax Error: DateTime value "
+                                    + "of \""
+                                    + URIArray[8]
+                                    + "\" is not a valid DateTime format. "
+                                    + " <br></br> The expected format for DateTime is \""
+                                    + "YYYY-MM-DDTHH:MM:SS.SSS\".  "
+                                    + " <br></br> The expected syntax for Dissemination requests is: \""
+                                    + URIArray[0]
+                                    + "//"
+                                    + URIArray[2]
+                                    + "/"
+                                    + URIArray[3]
+                                    + "/"
+                                    + URIArray[4]
+                                    + "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
+                                    + " <br></br> Submitted request was: \""
+                                    + requestURI + "\"  .  ";
+                    LOG.warn(message);
+                    throw new ServletException("from FedoraAccessServlet"
+                            + message);
+                    /*
+                     * commented out for exception.jsp test
+                     * response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                     * response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                     * message); return; commented out for exception.jsp test
+                     */
+                }
+                asOfDateTime = versDateTime;
+                isGetDisseminationRequest = true;
+            }
+            if (URIArray.length > 9) {
+                String message =
+                        "Dissemination Request Syntax Error: The expected "
+                                + "syntax for Dissemination requests is: \""
+                                + URIArray[0]
+                                + "//"
+                                + URIArray[2]
+                                + "/"
+                                + URIArray[3]
+                                + "/"
+                                + URIArray[4]
+                                + "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
+                                + " <br></br> Submitted request was: \""
+                                + requestURI + "\"  .  ";
+                LOG.warn(message);
+                throw new ServletException("from FedoraAccessServlet" + message);
+                /*
+                 * commented out for exception.jsp test
+                 * response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                 * response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 * message); return; commented out for exception.jsp test
+                 */
+            }
+        } else {
+            // Bad syntax; redirect to syntax documentation page.
+            response
+                    .sendRedirect("/userdocs/client/browser/apialite/index.html");
+            return;
+        }
 
-		// Separate out servlet parameters from method parameters
-		Hashtable h_userParms = new Hashtable();
-		for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
-			String name = URLDecoder.decode((String) e.nextElement(), "UTF-8");
-			if (isGetObjectProfileRequest && name.equalsIgnoreCase("xml")) {
-				xml = new Boolean(request.getParameter(name)).booleanValue();
-			} else {
-				String value = URLDecoder.decode(request.getParameter(name),
-						"UTF-8");
-				h_userParms.put(name, value);
-			}
-		}
+        // Separate out servlet parameters from method parameters
+        Hashtable h_userParms = new Hashtable();
+        for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
+            String name = URLDecoder.decode((String) e.nextElement(), "UTF-8");
+            if (isGetObjectProfileRequest && name.equalsIgnoreCase("xml")) {
+                xml = new Boolean(request.getParameter(name)).booleanValue();
+            } else {
+                String value =
+                        URLDecoder.decode(request.getParameter(name), "UTF-8");
+                h_userParms.put(name, value);
+            }
+        }
 
-		// API-A interface requires user-supplied parameters to be of type
-		// Property[] so create Property[] from hashtable of user parameters.
-		int userParmCounter = 0;
-		userParms = new Property[h_userParms.size()];
-		for (Enumeration e = h_userParms.keys(); e.hasMoreElements();) {
-			Property userParm = new Property();
-			userParm.name = (String) e.nextElement();
-			userParm.value = (String) h_userParms.get(userParm.name);
-			userParms[userParmCounter] = userParm;
-			userParmCounter++;
-		}
+        // API-A interface requires user-supplied parameters to be of type
+        // Property[] so create Property[] from hashtable of user parameters.
+        int userParmCounter = 0;
+        userParms = new Property[h_userParms.size()];
+        for (Enumeration e = h_userParms.keys(); e.hasMoreElements();) {
+            Property userParm = new Property();
+            userParm.name = (String) e.nextElement();
+            userParm.value = (String) h_userParms.get(userParm.name);
+            userParms[userParmCounter] = userParm;
+            userParmCounter++;
+        }
 
-		PID = URIArray[5];
-		String actionLabel = "Access";
+        PID = URIArray[5];
+        String actionLabel = "Access";
 
-		try {
-			if (isGetObjectProfileRequest) {
-                LOG.debug("Servicing getObjectProfile request "
-                        + "(PID=" + PID + ", asOfDate=" + versDateTime + ")");
+        try {
+            if (isGetObjectProfileRequest) {
+                LOG.debug("Servicing getObjectProfile request " + "(PID=" + PID
+                        + ", asOfDate=" + versDateTime + ")");
 
-				Context context = ReadOnlyContext.getContext(
-						HTTP_REQUEST.REST.uri, request);
-				getObjectProfile(context, PID, asOfDateTime, xml, request,
-						response);
+                Context context =
+                        ReadOnlyContext.getContext(HTTP_REQUEST.REST.uri,
+                                                   request);
+                getObjectProfile(context,
+                                 PID,
+                                 asOfDateTime,
+                                 xml,
+                                 request,
+                                 response);
 
                 LOG.debug("Finished servicing getObjectProfile request");
-			} else if (isGetDisseminationRequest) {
-				bDefPID = URIArray[6];
+            } else if (isGetDisseminationRequest) {
+                bDefPID = URIArray[6];
                 LOG.debug("Servicing getDissemination request (PID=" + PID
-                        + ", bDefPID=" + bDefPID + ", methodName=" 
-                        + methodName + ", asOfDate=" + versDateTime + ")");
+                        + ", bDefPID=" + bDefPID + ", methodName=" + methodName
+                        + ", asOfDate=" + versDateTime + ")");
 
-				Context context = ReadOnlyContext.getContext(
-						HTTP_REQUEST.REST.uri, request);
-				getDissemination(context, PID, bDefPID, methodName, userParms,
-						asOfDateTime, response, request);
+                Context context =
+                        ReadOnlyContext.getContext(HTTP_REQUEST.REST.uri,
+                                                   request);
+                getDissemination(context,
+                                 PID,
+                                 bDefPID,
+                                 methodName,
+                                 userParms,
+                                 asOfDateTime,
+                                 response,
+                                 request);
 
                 LOG.debug("Finished servicing getDissemination request");
-			} else if (isGetDatastreamDisseminationRequest) {
+            } else if (isGetDatastreamDisseminationRequest) {
                 LOG.debug("Servicing getDatastreamDissemination request "
                         + "(PID=" + PID + ", dsID=" + dsID + ", asOfDate="
                         + versDateTime + ")");
 
-				Context context = ReadOnlyContext.getContext(
-						HTTP_REQUEST.REST.uri, request);
-				getDatastreamDissemination(context, PID, dsID, asOfDateTime,
-						response, request);
+                Context context =
+                        ReadOnlyContext.getContext(HTTP_REQUEST.REST.uri,
+                                                   request);
+                getDatastreamDissemination(context,
+                                           PID,
+                                           dsID,
+                                           asOfDateTime,
+                                           response,
+                                           request);
 
                 LOG.debug("Finished servicing getDatastreamDissemination "
                         + "request");
-			}
-		} catch (MethodNotFoundException e) {
+            }
+        } catch (MethodNotFoundException e) {
             LOG.error("Method not found for request: " + requestURI
                     + " (actionLabel=" + actionLabel + ")", e);
-			throw new NotFound404Exception("", e, request, actionLabel, e.getMessage(),
-                    new String[0]);
-		} catch (DatastreamNotFoundException e) {
+            throw new NotFound404Exception("", e, request, actionLabel, e
+                    .getMessage(), new String[0]);
+        } catch (DatastreamNotFoundException e) {
             LOG.error("Datastream not found for request: " + requestURI
                     + " (actionLabel=" + actionLabel + ")", e);
-			throw new NotFound404Exception("", e, request, actionLabel, e.getMessage(),
-                    new String[0]);
+            throw new NotFound404Exception("", e, request, actionLabel, e
+                    .getMessage(), new String[0]);
         } catch (ObjectNotFoundException e) {
             LOG.error("Object not found for request: " + requestURI
                     + " (actionLabel=" + actionLabel + ")", e);
-            throw new NotFound404Exception("", e, request, actionLabel, e.getMessage(),
-                    new String[0]);
+            throw new NotFound404Exception("", e, request, actionLabel, e
+                    .getMessage(), new String[0]);
         } catch (DisseminationException e) {
-            LOG.error("Dissemination failed: " + requestURI
-                    + " (actionLabel=" + actionLabel + ")", e);
-            throw new NotFound404Exception("", e, request, actionLabel, e.getMessage(),
-                    new String[0]);
+            LOG.error("Dissemination failed: " + requestURI + " (actionLabel="
+                    + actionLabel + ")", e);
+            throw new NotFound404Exception("", e, request, actionLabel, e
+                    .getMessage(), new String[0]);
         } catch (ObjectNotInLowlevelStorageException e) {
-            LOG.error("Object or datastream not found for request: " + requestURI
-                    + " (actionLabel=" + actionLabel + ")", e);
-			throw new NotFound404Exception("", e, request, actionLabel, e.getMessage(),
-                    new String[0]);
-		} catch (AuthzException ae) {
+            LOG.error("Object or datastream not found for request: "
+                    + requestURI + " (actionLabel=" + actionLabel + ")", e);
+            throw new NotFound404Exception("", e, request, actionLabel, e
+                    .getMessage(), new String[0]);
+        } catch (AuthzException ae) {
             LOG.error("Authorization failed for request: " + requestURI
                     + " (actionLabel=" + actionLabel + ")", ae);
-			throw RootException.getServletException(ae, request, actionLabel,
-					new String[0]);
-		} catch (Throwable th) {
+            throw RootException.getServletException(ae,
+                                                    request,
+                                                    actionLabel,
+                                                    new String[0]);
+        } catch (Throwable th) {
             LOG.error("Unexpected error servicing API-A request", th);
-			throw new InternalError500Exception("", th, request, actionLabel,
-					"", new String[0]);
-		}
-	}
+            throw new InternalError500Exception("",
+                                                th,
+                                                request,
+                                                actionLabel,
+                                                "",
+                                                new String[0]);
+        }
+    }
 
-	public void getObjectProfile(Context context, String PID,
-			Date asOfDateTime, boolean xml, HttpServletRequest request,
-			HttpServletResponse response) throws ServerException {
+    public void getObjectProfile(Context context,
+                                 String PID,
+                                 Date asOfDateTime,
+                                 boolean xml,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)
+            throws ServerException {
 
-		OutputStreamWriter out = null;
-		Date versDateTime = asOfDateTime;
-		ObjectProfile objProfile = null;
-		PipedWriter pw = null;
-		PipedReader pr = null;
-		try {
-			pw = new PipedWriter();
-			pr = new PipedReader(pw);
-			objProfile = s_access.getObjectProfile(context, PID, asOfDateTime);
-			if (objProfile != null) {
-				// Object Profile found.
-				// Serialize the ObjectProfile object into XML
-				new ProfileSerializerThread(context, PID, objProfile,
-						versDateTime, pw).start();
-				if (xml) {
-					// Return results as raw XML
-					response.setContentType(CONTENT_TYPE_XML);
+        OutputStreamWriter out = null;
+        Date versDateTime = asOfDateTime;
+        ObjectProfile objProfile = null;
+        PipedWriter pw = null;
+        PipedReader pr = null;
+        try {
+            pw = new PipedWriter();
+            pr = new PipedReader(pw);
+            objProfile = s_access.getObjectProfile(context, PID, asOfDateTime);
+            if (objProfile != null) {
+                // Object Profile found.
+                // Serialize the ObjectProfile object into XML
+                new ProfileSerializerThread(context,
+                                            PID,
+                                            objProfile,
+                                            versDateTime,
+                                            pw).start();
+                if (xml) {
+                    // Return results as raw XML
+                    response.setContentType(CONTENT_TYPE_XML);
 
-					// Insures stream read from PipedReader correctly translates
-					// utf-8
-					// encoded characters to OutputStreamWriter.
-					out = new OutputStreamWriter(response.getOutputStream(),
-							"UTF-8");
-					int bufSize = 4096;
-					char[] buf = new char[bufSize];
-					int len = 0;
-					while ((len = pr.read(buf, 0, bufSize)) != -1) {
-						out.write(buf, 0, len);
-					}
-					out.flush();
-				} else {
-					// Transform results into an html table
-					response.setContentType(CONTENT_TYPE_HTML);
-					out = new OutputStreamWriter(response.getOutputStream(),
-							"UTF-8");
-					File xslFile = new File(s_server.getHomeDir(),
-							"access/viewObjectProfile.xslt");
-					TransformerFactory factory = TransformerFactory
-							.newInstance();
-					Templates template = factory.newTemplates(new StreamSource(
-							xslFile));
-					Transformer transformer = template.newTransformer();
-					Properties details = template.getOutputProperties();
-					transformer.transform(new StreamSource(pr),
-							new StreamResult(out));
-				}
-				out.flush();
+                    // Insures stream read from PipedReader correctly translates
+                    // utf-8
+                    // encoded characters to OutputStreamWriter.
+                    out =
+                            new OutputStreamWriter(response.getOutputStream(),
+                                                   "UTF-8");
+                    int bufSize = 4096;
+                    char[] buf = new char[bufSize];
+                    int len = 0;
+                    while ((len = pr.read(buf, 0, bufSize)) != -1) {
+                        out.write(buf, 0, len);
+                    }
+                    out.flush();
+                } else {
+                    // Transform results into an html table
+                    response.setContentType(CONTENT_TYPE_HTML);
+                    out =
+                            new OutputStreamWriter(response.getOutputStream(),
+                                                   "UTF-8");
+                    File xslFile =
+                            new File(s_server.getHomeDir(),
+                                     "access/viewObjectProfile.xslt");
+                    TransformerFactory factory =
+                            TransformerFactory.newInstance();
+                    Templates template =
+                            factory.newTemplates(new StreamSource(xslFile));
+                    Transformer transformer = template.newTransformer();
+                    Properties details = template.getOutputProperties();
+                    transformer.transform(new StreamSource(pr),
+                                          new StreamResult(out));
+                }
+                out.flush();
 
-			} else {
+            } else {
                 throw new GeneralException("No object profile returned");
-			}
-		} catch (ServerException e) {
-			throw e;
-		} catch (Throwable th) {
+            }
+        } catch (ServerException e) {
+            throw e;
+        } catch (Throwable th) {
             String message = "Error getting object profile";
             LOG.error(message, th);
-			throw new GeneralException(message, th);
-		} finally {
-			try {
-				if (pr != null)
-					pr.close();
-				if (out != null)
-					out.close();
-			} catch (Throwable th) {
+            throw new GeneralException(message, th);
+        } finally {
+            try {
+                if (pr != null) {
+                    pr.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
+            } catch (Throwable th) {
                 String message = "Error closing output";
                 LOG.error(message, th);
-				throw new StreamIOException(message);
-			}
-		}
-	}
+                throw new StreamIOException(message);
+            }
+        }
+    }
 
-	public void getDatastreamDissemination(Context context, String PID,
-			String dsID, Date asOfDateTime, HttpServletResponse response,
-			HttpServletRequest request) throws IOException, ServerException {
-		ServletOutputStream out = null;
-		MIMETypedStream dissemination = null;
-		dissemination = s_access.getDatastreamDissemination(context, PID, dsID,
-				asOfDateTime);
-		if (dissemination != null) {
+    public void getDatastreamDissemination(Context context,
+                                           String PID,
+                                           String dsID,
+                                           Date asOfDateTime,
+                                           HttpServletResponse response,
+                                           HttpServletRequest request)
+            throws IOException, ServerException {
+        ServletOutputStream out = null;
+        MIMETypedStream dissemination = null;
+        dissemination =
+                s_access.getDatastreamDissemination(context,
+                                                    PID,
+                                                    dsID,
+                                                    asOfDateTime);
+        if (dissemination != null) {
 
-			// testing to see what's in request header that might be of interest
-			if (LOG.isDebugEnabled()) {
-				for (Enumeration e = request.getHeaderNames(); e
-						.hasMoreElements();) {
-					String name = (String) e.nextElement();
-					Enumeration headerValues = request.getHeaders(name);
-					StringBuffer sb = new StringBuffer();
-					while (headerValues.hasMoreElements()) {
-						sb.append((String) headerValues.nextElement());
-					}
-					String value = sb.toString();
-					LOG.debug("FEDORASERVLET REQUEST HEADER CONTAINED: "
-									+ name + " : " + value);
-				}
-			}
-
-			// Dissemination was successful;
-			// Return MIMETypedStream back to browser client
-			if (dissemination.MIMEType
-					.equalsIgnoreCase("application/fedora-redirect")) {
-				// A MIME type of application/fedora-redirect signals that the
-				// MIMETypedStream returned from the dissemination is a special
-				// Fedora-specific MIME type. In this case, the Fedora server
-				// will
-				// not proxy the datastream, but instead perform a simple
-				// redirect to
-				// the URL contained within the body of the MIMETypedStream.
-				// This
-				// special MIME type is used primarily for streaming media where
-				// it
-				// is more efficient to stream the data directly between the
-				// streaming
-				// server and the browser client rather than proxy it through
-				// the
-				// Fedora server.
-
-				BufferedReader br = new BufferedReader(new InputStreamReader(
-						dissemination.getStream()));
-				StringBuffer sb = new StringBuffer();
-				String line = null;
-				while ((line = br.readLine()) != null) {
-					sb.append(line);
-				}
-
-				response.sendRedirect(sb.toString());
-			} else {
-
-				response.setContentType(dissemination.MIMEType);
-				Property[] headerArray = dissemination.header;
-				if (headerArray != null) {
-					for (int i = 0; i < headerArray.length; i++) {
-						if (headerArray[i].name != null
-								&& !(headerArray[i].name
-										.equalsIgnoreCase("transfer-encoding"))
-								&& !(headerArray[i].name
-										.equalsIgnoreCase("content-type"))) {
-							response.addHeader(headerArray[i].name,
-									headerArray[i].value);
-							LOG.debug("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "
-										+ headerArray[i].name
-										+ " : "
-										+ headerArray[i].value);
-						}
-					}
-				}
-				out = response.getOutputStream();
-				int byteStream = 0;
-                LOG.debug("Started reading dissemination stream");
-				InputStream dissemResult = dissemination.getStream();
-				byte[] buffer = new byte[255];
-				while ((byteStream = dissemResult.read(buffer)) != -1) {
-					out.write(buffer, 0, byteStream);
-				}
-				buffer = null;
-				dissemResult.close();
-				dissemResult = null;
-				out.flush();
-				out.close();
-                LOG.debug("Finished reading dissemination stream");
-			}
-
-		} else {
-			// Dissemination request failed; echo back request parameter.
-            LOG.error("No datastream dissemination result was returned");
-		}
-	}
-
-	/**
-	 * <p>
-	 * This method calls the Fedora Access Subsystem to retrieve a MIME-typed
-	 * stream corresponding to the dissemination request.
-	 * </p>
-	 * 
-	 * @param context
-	 *            The read only context of the request.
-	 * @param PID
-	 *            The persistent identifier of the Digital Object.
-	 * @param bDefPID
-	 *            The persistent identifier of the Behavior Definition object.
-	 * @param methodName
-	 *            The method name.
-	 * @param userParms
-	 *            An array of user-supplied method parameters.
-	 * @param asOfDateTime
-	 *            The version datetime stamp of the digital object.
-	 * @param response
-	 *            The servlet response.
-	 * @param request
-	 *            The servlet request.
-	 * @throws IOException
-	 *             If an error occurrs with an input or output operation.
-	 * @throws ServerException
-	 *             If an error occurs in the Access Subsystem.
-	 */
-	public void getDissemination(Context context, String PID, String bDefPID,
-			String methodName, Property[] userParms, Date asOfDateTime,
-			HttpServletResponse response, HttpServletRequest request)
-			throws IOException, ServerException {
-		ServletOutputStream out = null;
-		MIMETypedStream dissemination = null;
-		dissemination = s_access.getDissemination(context, PID, bDefPID,
-				methodName, userParms, asOfDateTime);
-		out = response.getOutputStream();
-		if (dissemination != null) {
-
-			// testing to see what's in request header that might be of interest
-			if (LOG.isDebugEnabled()) {
-				for (Enumeration e = request.getHeaderNames(); e
-						.hasMoreElements();) {
-					String name = (String) e.nextElement();
-					Enumeration headerValues = request.getHeaders(name);
-					StringBuffer sb = new StringBuffer();
-					while (headerValues.hasMoreElements()) {
-						sb.append((String) headerValues.nextElement());
-					}
-					String value = sb.toString();
-					LOG.debug("FEDORASERVLET REQUEST HEADER CONTAINED: "
-									+ name + " : " + value);
-				}
-			}
-
-			// Dissemination was successful;
-			// Return MIMETypedStream back to browser client
-			if (dissemination.MIMEType
-					.equalsIgnoreCase("application/fedora-redirect")) {
-				// A MIME type of application/fedora-redirect signals that the
-				// MIMETypedStream returned from the dissemination is a special
-				// Fedora-specific MIME type. In this case, the Fedora server
-				// will
-				// not proxy the datastream, but instead perform a simple
-				// redirect to
-				// the URL contained within the body of the MIMETypedStream.
-				// This
-				// special MIME type is used primarily for streaming media where
-				// it
-				// is more efficient to stream the data directly between the
-				// streaming
-				// server and the browser client rather than proxy it through
-				// the
-				// Fedora server.
-
-				BufferedReader br = new BufferedReader(new InputStreamReader(
-						dissemination.getStream()));
-				StringBuffer sb = new StringBuffer();
-				String line = null;
-				while ((line = br.readLine()) != null) {
-					sb.append(line);
-				}
-
-				response.sendRedirect(sb.toString());
-			} else {
-
-				response.setContentType(dissemination.MIMEType);
-				Property[] headerArray = dissemination.header;
-				if (headerArray != null) {
-					for (int i = 0; i < headerArray.length; i++) {
-						if (headerArray[i].name != null
-								&& !(headerArray[i].name
-										.equalsIgnoreCase("transfer-encoding"))
-								&& !(headerArray[i].name
-										.equalsIgnoreCase("content-type"))) {
-							response.addHeader(headerArray[i].name,
-									headerArray[i].value);
-    						LOG.debug("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "
-										+ headerArray[i].name
-										+ " : "
-										+ headerArray[i].value);
-						}
-					}
-				}
-				int byteStream = 0;
-                LOG.debug("Started reading dissemination stream");
-				InputStream dissemResult = dissemination.getStream();
-				byte[] buffer = new byte[255];
-				while ((byteStream = dissemResult.read(buffer)) != -1) {
-					out.write(buffer, 0, byteStream);
-				}
-				buffer = null;
-				dissemResult.close();
-				dissemResult = null;
-				out.flush();
-				out.close();
-                LOG.debug("Finished reading dissemination stream");
-			}
-		} else {
-            throw new GeneralException("No dissemination result returned");
-		}
-	}
-
-	/**
-	 * <p>
-	 * A Thread to serialize an ObjectProfile object into XML.
-	 * </p>
-	 * 
-	 */
-	public class ProfileSerializerThread extends Thread {
-		private PipedWriter pw = null;
-
-		private String PID = null;
-
-		private ObjectProfile objProfile = null;
-
-		private Date versDateTime = null;
-
-		private String fedoraServerProtocol = null;
-
-		private String fedoraServerPort = null;
-
-		/**
-		 * <p>
-		 * Constructor for ProfileSerializeThread.
-		 * </p>
-		 * 
-		 * @param PID
-		 *            The persistent identifier of the specified digital object.
-		 * @param objProfile
-		 *            An object profile data structure.
-		 * @param versDateTime
-		 *            The version datetime stamp of the request.
-		 * @param pw
-		 *            A PipedWriter to which the serialization info is written.
-		 */
-		public ProfileSerializerThread(Context context, String PID,
-				ObjectProfile objProfile, Date versDateTime, PipedWriter pw) {
-			this.pw = pw;
-			this.PID = PID;
-			this.objProfile = objProfile;
-			this.versDateTime = versDateTime;
-			fedoraServerPort = context
-					.getEnvironmentValue(HTTP_REQUEST.SERVER_PORT.uri);
-			if (HTTP_REQUEST.SECURE.uri.equals(context
-					.getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
-				fedoraServerProtocol = HTTPS;
-			} else if (HTTP_REQUEST.INSECURE.uri.equals(context
-					.getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
-				fedoraServerProtocol = HTTP;
-			}
-		}
-
-		/**
-		 * <p>
-		 * This method executes the thread.
-		 * </p>
-		 */
-		public void run() {
-			if (pw != null) {
-				try {
-					pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-					pw.write("<objectProfile");
-					pw.write(" pid=\"" + StreamUtility.enc(PID) + "\"");
-					if (versDateTime != null) {
-                        DateUtility.convertDateToString(versDateTime);
-				        pw.write(" dateTime=\"" + DateUtility
-                                .convertDateToString(versDateTime) + "\"");
+            // testing to see what's in request header that might be of interest
+            if (LOG.isDebugEnabled()) {
+                for (Enumeration e = request.getHeaderNames(); e
+                        .hasMoreElements();) {
+                    String name = (String) e.nextElement();
+                    Enumeration headerValues = request.getHeaders(name);
+                    StringBuffer sb = new StringBuffer();
+                    while (headerValues.hasMoreElements()) {
+                        sb.append((String) headerValues.nextElement());
                     }
-					pw.write(" xmlns:xsi=\"" + XSI.uri + "\""
-							+ " xsi:schemaLocation=\"" 
-							+ OBJ_PROFILE1_0.namespace.uri + " "
+                    String value = sb.toString();
+                    LOG.debug("FEDORASERVLET REQUEST HEADER CONTAINED: " + name
+                            + " : " + value);
+                }
+            }
+
+            // Dissemination was successful;
+            // Return MIMETypedStream back to browser client
+            if (dissemination.MIMEType
+                    .equalsIgnoreCase("application/fedora-redirect")) {
+                // A MIME type of application/fedora-redirect signals that the
+                // MIMETypedStream returned from the dissemination is a special
+                // Fedora-specific MIME type. In this case, the Fedora server
+                // will
+                // not proxy the datastream, but instead perform a simple
+                // redirect to
+                // the URL contained within the body of the MIMETypedStream.
+                // This
+                // special MIME type is used primarily for streaming media where
+                // it
+                // is more efficient to stream the data directly between the
+                // streaming
+                // server and the browser client rather than proxy it through
+                // the
+                // Fedora server.
+
+                BufferedReader br =
+                        new BufferedReader(new InputStreamReader(dissemination
+                                .getStream()));
+                StringBuffer sb = new StringBuffer();
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                response.sendRedirect(sb.toString());
+            } else {
+
+                response.setContentType(dissemination.MIMEType);
+                Property[] headerArray = dissemination.header;
+                if (headerArray != null) {
+                    for (int i = 0; i < headerArray.length; i++) {
+                        if (headerArray[i].name != null
+                                && !headerArray[i].name
+                                        .equalsIgnoreCase("transfer-encoding")
+                                && !headerArray[i].name
+                                        .equalsIgnoreCase("content-type")) {
+                            response.addHeader(headerArray[i].name,
+                                               headerArray[i].value);
+                            LOG
+                                    .debug("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "
+                                            + headerArray[i].name
+                                            + " : "
+                                            + headerArray[i].value);
+                        }
+                    }
+                }
+                out = response.getOutputStream();
+                int byteStream = 0;
+                LOG.debug("Started reading dissemination stream");
+                InputStream dissemResult = dissemination.getStream();
+                byte[] buffer = new byte[255];
+                while ((byteStream = dissemResult.read(buffer)) != -1) {
+                    out.write(buffer, 0, byteStream);
+                }
+                buffer = null;
+                dissemResult.close();
+                dissemResult = null;
+                out.flush();
+                out.close();
+                LOG.debug("Finished reading dissemination stream");
+            }
+
+        } else {
+            // Dissemination request failed; echo back request parameter.
+            LOG.error("No datastream dissemination result was returned");
+        }
+    }
+
+    /**
+     * <p>
+     * This method calls the Fedora Access Subsystem to retrieve a MIME-typed
+     * stream corresponding to the dissemination request.
+     * </p>
+     * 
+     * @param context
+     *        The read only context of the request.
+     * @param PID
+     *        The persistent identifier of the Digital Object.
+     * @param bDefPID
+     *        The persistent identifier of the Behavior Definition object.
+     * @param methodName
+     *        The method name.
+     * @param userParms
+     *        An array of user-supplied method parameters.
+     * @param asOfDateTime
+     *        The version datetime stamp of the digital object.
+     * @param response
+     *        The servlet response.
+     * @param request
+     *        The servlet request.
+     * @throws IOException
+     *         If an error occurrs with an input or output operation.
+     * @throws ServerException
+     *         If an error occurs in the Access Subsystem.
+     */
+    public void getDissemination(Context context,
+                                 String PID,
+                                 String bDefPID,
+                                 String methodName,
+                                 Property[] userParms,
+                                 Date asOfDateTime,
+                                 HttpServletResponse response,
+                                 HttpServletRequest request)
+            throws IOException, ServerException {
+        ServletOutputStream out = null;
+        MIMETypedStream dissemination = null;
+        dissemination =
+                s_access.getDissemination(context,
+                                          PID,
+                                          bDefPID,
+                                          methodName,
+                                          userParms,
+                                          asOfDateTime);
+        out = response.getOutputStream();
+        if (dissemination != null) {
+
+            // testing to see what's in request header that might be of interest
+            if (LOG.isDebugEnabled()) {
+                for (Enumeration e = request.getHeaderNames(); e
+                        .hasMoreElements();) {
+                    String name = (String) e.nextElement();
+                    Enumeration headerValues = request.getHeaders(name);
+                    StringBuffer sb = new StringBuffer();
+                    while (headerValues.hasMoreElements()) {
+                        sb.append((String) headerValues.nextElement());
+                    }
+                    String value = sb.toString();
+                    LOG.debug("FEDORASERVLET REQUEST HEADER CONTAINED: " + name
+                            + " : " + value);
+                }
+            }
+
+            // Dissemination was successful;
+            // Return MIMETypedStream back to browser client
+            if (dissemination.MIMEType
+                    .equalsIgnoreCase("application/fedora-redirect")) {
+                // A MIME type of application/fedora-redirect signals that the
+                // MIMETypedStream returned from the dissemination is a special
+                // Fedora-specific MIME type. In this case, the Fedora server
+                // will
+                // not proxy the datastream, but instead perform a simple
+                // redirect to
+                // the URL contained within the body of the MIMETypedStream.
+                // This
+                // special MIME type is used primarily for streaming media where
+                // it
+                // is more efficient to stream the data directly between the
+                // streaming
+                // server and the browser client rather than proxy it through
+                // the
+                // Fedora server.
+
+                BufferedReader br =
+                        new BufferedReader(new InputStreamReader(dissemination
+                                .getStream()));
+                StringBuffer sb = new StringBuffer();
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                response.sendRedirect(sb.toString());
+            } else {
+
+                response.setContentType(dissemination.MIMEType);
+                Property[] headerArray = dissemination.header;
+                if (headerArray != null) {
+                    for (int i = 0; i < headerArray.length; i++) {
+                        if (headerArray[i].name != null
+                                && !headerArray[i].name
+                                        .equalsIgnoreCase("transfer-encoding")
+                                && !headerArray[i].name
+                                        .equalsIgnoreCase("content-type")) {
+                            response.addHeader(headerArray[i].name,
+                                               headerArray[i].value);
+                            LOG
+                                    .debug("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "
+                                            + headerArray[i].name
+                                            + " : "
+                                            + headerArray[i].value);
+                        }
+                    }
+                }
+                int byteStream = 0;
+                LOG.debug("Started reading dissemination stream");
+                InputStream dissemResult = dissemination.getStream();
+                byte[] buffer = new byte[255];
+                while ((byteStream = dissemResult.read(buffer)) != -1) {
+                    out.write(buffer, 0, byteStream);
+                }
+                buffer = null;
+                dissemResult.close();
+                dissemResult = null;
+                out.flush();
+                out.close();
+                LOG.debug("Finished reading dissemination stream");
+            }
+        } else {
+            throw new GeneralException("No dissemination result returned");
+        }
+    }
+
+    /**
+     * <p>
+     * A Thread to serialize an ObjectProfile object into XML.
+     * </p>
+     */
+    public class ProfileSerializerThread
+            extends Thread {
+
+        private PipedWriter pw = null;
+
+        private String PID = null;
+
+        private ObjectProfile objProfile = null;
+
+        private Date versDateTime = null;
+
+        private String fedoraServerProtocol = null;
+
+        private String fedoraServerPort = null;
+
+        /**
+         * <p>
+         * Constructor for ProfileSerializeThread.
+         * </p>
+         * 
+         * @param PID
+         *        The persistent identifier of the specified digital object.
+         * @param objProfile
+         *        An object profile data structure.
+         * @param versDateTime
+         *        The version datetime stamp of the request.
+         * @param pw
+         *        A PipedWriter to which the serialization info is written.
+         */
+        public ProfileSerializerThread(Context context,
+                                       String PID,
+                                       ObjectProfile objProfile,
+                                       Date versDateTime,
+                                       PipedWriter pw) {
+            this.pw = pw;
+            this.PID = PID;
+            this.objProfile = objProfile;
+            this.versDateTime = versDateTime;
+            fedoraServerPort =
+                    context.getEnvironmentValue(HTTP_REQUEST.SERVER_PORT.uri);
+            if (HTTP_REQUEST.SECURE.uri.equals(context
+                    .getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
+                fedoraServerProtocol = HTTPS;
+            } else if (HTTP_REQUEST.INSECURE.uri.equals(context
+                    .getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
+                fedoraServerProtocol = HTTP;
+            }
+        }
+
+        /**
+         * <p>
+         * This method executes the thread.
+         * </p>
+         */
+        public void run() {
+            if (pw != null) {
+                try {
+                    pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+                    pw.write("<objectProfile");
+                    pw.write(" pid=\"" + StreamUtility.enc(PID) + "\"");
+                    if (versDateTime != null) {
+                        DateUtility.convertDateToString(versDateTime);
+                        pw.write(" dateTime=\""
+                                + DateUtility.convertDateToString(versDateTime)
+                                + "\"");
+                    }
+                    pw.write(" xmlns:xsi=\"" + XSI.uri + "\""
+                            + " xsi:schemaLocation=\""
+                            + OBJ_PROFILE1_0.namespace.uri + " "
                             + OBJ_PROFILE1_0.xsdLocation + "\">");
 
-					// PROFILE FIELDS SERIALIZATION
-					pw.write("<objLabel>"
-							+ StreamUtility.enc(objProfile.objectLabel)
-							+ "</objLabel>");
-					pw.write("<objOwnerId>"
-							+ StreamUtility.enc(objProfile.objectOwnerId)
-							+ "</objOwnerId>");
-					pw.write("<objContentModel>"
-							+ StreamUtility.enc(objProfile.objectContentModel)
-							+ "</objContentModel>");
-					String cDate = DateUtility
-							.convertDateToString(objProfile.objectCreateDate);
-					pw.write("<objCreateDate>" + cDate + "</objCreateDate>");
-					String mDate = DateUtility
-							.convertDateToString(objProfile.objectLastModDate);
-					pw.write("<objLastModDate>" + mDate + "</objLastModDate>");
-					String objType = objProfile.objectType;
-					pw.write("<objType>");
-					if (objType.indexOf("O") != -1) 
-                    {
-						pw.write("Fedora Data Object");
-					} 
-                    if (objType.indexOf("D") != -1) 
-                    {
-						pw.write("Fedora Behavior Definition Object");
-					} 
-                    if (objType.indexOf("M") != -1) 
-                    {
+                    // PROFILE FIELDS SERIALIZATION
+                    pw.write("<objLabel>"
+                            + StreamUtility.enc(objProfile.objectLabel)
+                            + "</objLabel>");
+                    pw.write("<objOwnerId>"
+                            + StreamUtility.enc(objProfile.objectOwnerId)
+                            + "</objOwnerId>");
+                    pw.write("<objContentModel>"
+                            + StreamUtility.enc(objProfile.objectContentModel)
+                            + "</objContentModel>");
+                    String cDate =
+                            DateUtility
+                                    .convertDateToString(objProfile.objectCreateDate);
+                    pw.write("<objCreateDate>" + cDate + "</objCreateDate>");
+                    String mDate =
+                            DateUtility
+                                    .convertDateToString(objProfile.objectLastModDate);
+                    pw.write("<objLastModDate>" + mDate + "</objLastModDate>");
+                    String objType = objProfile.objectType;
+                    pw.write("<objType>");
+                    if (objType.indexOf("O") != -1) {
+                        pw.write("Fedora Data Object");
+                    }
+                    if (objType.indexOf("D") != -1) {
+                        pw.write("Fedora Behavior Definition Object");
+                    }
+                    if (objType.indexOf("M") != -1) {
                         pw.write("Fedora Behavior Mechanism Object");
                     }
-                    if (objType.indexOf("C") != -1) 
-                    {
+                    if (objType.indexOf("C") != -1) {
                         pw.write("Fedora Content Model Object");
                     }
-					pw.write("</objType>");
-					pw.write("<objDissIndexViewURL>"
-							+ StreamUtility.enc(objProfile.dissIndexViewURL)
-							+ "</objDissIndexViewURL>");
-					pw.write("<objItemIndexViewURL>"
-							+ StreamUtility.enc(objProfile.itemIndexViewURL)
-							+ "</objItemIndexViewURL>");
-					pw.write("</objectProfile>");
-					pw.flush();
-					pw.close();
-				} catch (IOException ioe) {
+                    pw.write("</objType>");
+                    pw.write("<objDissIndexViewURL>"
+                            + StreamUtility.enc(objProfile.dissIndexViewURL)
+                            + "</objDissIndexViewURL>");
+                    pw.write("<objItemIndexViewURL>"
+                            + StreamUtility.enc(objProfile.itemIndexViewURL)
+                            + "</objItemIndexViewURL>");
+                    pw.write("</objectProfile>");
+                    pw.flush();
+                    pw.close();
+                } catch (IOException ioe) {
                     LOG.error("WriteThread IOException", ioe);
-				} finally {
-					try {
-						if (pw != null)
-							pw.close();
-					} catch (IOException ioe) {
+                } finally {
+                    try {
+                        if (pw != null) {
+                            pw.close();
+                        }
+                    } catch (IOException ioe) {
                         LOG.error("WriteThread IOException", ioe);
-					}
-				}
-			}
-		}
-	}
+                    }
+                }
+            }
+        }
+    }
 
-	/**
-	 * <p>
-	 * For now, treat a HTTP POST request just like a GET request.
-	 * </p>
-	 * 
-	 * @param request
-	 *            The servet request.
-	 * @param response
-	 *            The servlet response.
-	 * @throws ServletException
-	 *             If thrown by <code>doGet</code>.
-	 * @throws IOException
-	 *             If thrown by <code>doGet</code>.
-	 */
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		doGet(request, response);
-	}
+    /**
+     * <p>
+     * For now, treat a HTTP POST request just like a GET request.
+     * </p>
+     * 
+     * @param request
+     *        The servet request.
+     * @param response
+     *        The servlet response.
+     * @throws ServletException
+     *         If thrown by <code>doGet</code>.
+     * @throws IOException
+     *         If thrown by <code>doGet</code>.
+     */
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
+    }
 
-	/**
-	 * <p>
-	 * Initialize servlet.
-	 * </p>
-	 * 
-	 * @throws ServletException
-	 *             If the servet cannot be initialized.
-	 */
-	public void init() throws ServletException {
-		try {
-			s_server = Server.getInstance(new File(FEDORA_HOME),
-                    false);
-			fedoraServerHost = s_server.getParameter("fedoraServerHost");
-			m_manager = (DOManager) s_server
-					.getModule("fedora.server.storage.DOManager");
-			s_access = (Access) s_server
-					.getModule("fedora.server.access.Access");
-		} catch (InitializationException ie) {
-			throw new ServletException("Unable to get Fedora Server instance."
-					+ ie.getMessage());
-		}
-	}
+    /**
+     * <p>
+     * Initialize servlet.
+     * </p>
+     * 
+     * @throws ServletException
+     *         If the servet cannot be initialized.
+     */
+    public void init() throws ServletException {
+        try {
+            s_server = Server.getInstance(new File(FEDORA_HOME), false);
+            fedoraServerHost = s_server.getParameter("fedoraServerHost");
+            m_manager =
+                    (DOManager) s_server
+                            .getModule("fedora.server.storage.DOManager");
+            s_access =
+                    (Access) s_server.getModule("fedora.server.access.Access");
+        } catch (InitializationException ie) {
+            throw new ServletException("Unable to get Fedora Server instance."
+                    + ie.getMessage());
+        }
+    }
 
 }

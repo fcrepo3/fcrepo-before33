@@ -6,19 +6,15 @@
 package fedora.oai;
 
 /**
- *
- * <p><b>Title:</b> BadVerbException.java</p>
- * <p><b>Description:</b> Signals that the value of the verb argument is not a
- * legal OAI-PMH verb, the verb argument is missing, or the verb argument is
- * repeated. </p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * Signals that the value of the verb argument is not a legal OAI-PMH verb,
+ * the verb argument is missing, or the verb argument is repeated.
+ * 
+ * @author Chris Wilper
  */
 public class BadVerbException
         extends OAIException {
-	
-	private static final long serialVersionUID = 1L;
+
+    private static final long serialVersionUID = 1L;
 
     public BadVerbException() {
         super("badVerb", null);

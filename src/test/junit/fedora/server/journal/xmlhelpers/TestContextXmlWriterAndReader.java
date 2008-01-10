@@ -1,13 +1,13 @@
+
 package fedora.server.journal.xmlhelpers;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
-import javanet.staxutils.IndentingXMLEventWriter;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLEventReader;
@@ -17,12 +17,17 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
+import javanet.staxutils.IndentingXMLEventWriter;
+
 import junit.framework.TestCase;
+
 import fedora.server.MultiValueMap;
 import fedora.server.journal.entry.JournalEntryContext;
 import fedora.server.journal.helpers.JournalHelper;
 
-public class TestContextXmlWriterAndReader extends TestCase {
+public class TestContextXmlWriterAndReader
+        extends TestCase {
+
     private StringWriter xmlStringWriter;
 
     private XMLEventWriter xmlWriter;
@@ -31,6 +36,7 @@ public class TestContextXmlWriterAndReader extends TestCase {
         super(name);
     }
 
+    @Override
     protected void setUp() throws Exception {
         xmlStringWriter = new StringWriter();
 
@@ -41,15 +47,15 @@ public class TestContextXmlWriterAndReader extends TestCase {
         JournalEntryContext context1 = new JournalEntryContext();
         context1.setPassword("SuperSecret");
         context1.setNoOp(true);
-        context1.setEnvironmentAttributes(createMap(new Object[][] { {
-                "envAttr", "envValue" } }));
+        context1.setEnvironmentAttributes(createMap(new Object[][] {{"envAttr",
+                "envValue"}}));
         context1.setSubjectAttributes(createMap(new Object[][] {
-                { "subAttr1", "subValue1" }, { "subAttr2", "subValue2" } }));
-        context1.setActionAttributes(createMap(new Object[][] { {
-                "ActionAttribute", "ActionValue" } }));
-        context1.setRecoveryAttributes(createMap(new Object[][] { {
+                {"subAttr1", "subValue1"}, {"subAttr2", "subValue2"}}));
+        context1.setActionAttributes(createMap(new Object[][] {{
+                "ActionAttribute", "ActionValue"}}));
+        context1.setRecoveryAttributes(createMap(new Object[][] {{
                 "recoveryAttribute",
-                new String[] { "recoveryValue", "recoveryValue2" } } }));
+                new String[] {"recoveryValue", "recoveryValue2"}}}));
 
         ContextXmlWriter contextWriter = new ContextXmlWriter();
         contextWriter.writeContext(context1, xmlWriter);
@@ -70,16 +76,16 @@ public class TestContextXmlWriterAndReader extends TestCase {
         context1.setPassword("ShoopShoop");
         context1.setNoOp(true);
 
-        String xmlString = "<context>\n"
-                + "  <password>ShoopShoop</password>\n"
-                + "  <noOp>true</noOp>\n" + "  <now>"
-                + JournalHelper.formatDate(context1.now()) + "</now>\n"
-                + "  <multimap name=\"environment\"></multimap>\n"
-                + "  <multimap name=\"subject\"></multimap>\n"
-                + "  <multimap name=\"action\"></multimap>\n"
-                + "  <multimap name=\"resource\"></multimap>\n"
-                + "  <multimap name=\"recovery\"></multimap>\n"
-                + "</context>\n";
+        String xmlString =
+                "<context>\n" + "  <password>ShoopShoop</password>\n"
+                        + "  <noOp>true</noOp>\n" + "  <now>"
+                        + JournalHelper.formatDate(context1.now()) + "</now>\n"
+                        + "  <multimap name=\"environment\"></multimap>\n"
+                        + "  <multimap name=\"subject\"></multimap>\n"
+                        + "  <multimap name=\"action\"></multimap>\n"
+                        + "  <multimap name=\"resource\"></multimap>\n"
+                        + "  <multimap name=\"recovery\"></multimap>\n"
+                        + "</context>\n";
 
         System.out.println(xmlString);
         XMLEventReader xmlReader = createXmlReaderAndPosition(xmlString);
@@ -93,8 +99,8 @@ public class TestContextXmlWriterAndReader extends TestCase {
     private XMLEventReader createXmlReaderAndPosition(String xmlString)
             throws FactoryConfigurationError, XMLStreamException {
         XMLInputFactory factory = XMLInputFactory.newInstance();
-        XMLEventReader xmlReader = factory
-                .createXMLEventReader(new StringReader(xmlString));
+        XMLEventReader xmlReader =
+                factory.createXMLEventReader(new StringReader(xmlString));
         advanceToContext(xmlReader);
         return xmlReader;
     }
@@ -108,9 +114,9 @@ public class TestContextXmlWriterAndReader extends TestCase {
 
     private MultiValueMap createMap(Object[][] pairs) {
         MultiValueMap map = new MultiValueMap();
-        for (int i = 0; i < pairs.length; i++) {
+        for (Object[] element : pairs) {
             try {
-                map.set((String) pairs[i][0], pairs[i][1]);
+                map.set((String) element[0], element[1]);
             } catch (Exception e) {
                 // ignore this totally bogus exception
             }
@@ -129,7 +135,7 @@ public class TestContextXmlWriterAndReader extends TestCase {
     }
 
     private void assertContextsAreEqual(JournalEntryContext context1,
-            JournalEntryContext context2) {
+                                        JournalEntryContext context2) {
         assertEquals(context1.getPassword(), context2.getPassword());
         assertEquals(context1.getNoOp(), context2.getNoOp());
         assertEquals(context1.now(), context2.now());
@@ -154,8 +160,8 @@ public class TestContextXmlWriterAndReader extends TestCase {
             assertEquals(name1, name2);
             String[] values1 = map1.getStringArray(name1);
             String[] values2 = map1.getStringArray(name2);
-            assertEqualSets(new HashSet(Arrays.asList(values1)), new HashSet(
-                    Arrays.asList(values2)));
+            assertEqualSets(new HashSet(Arrays.asList(values1)),
+                            new HashSet(Arrays.asList(values2)));
         }
     }
 

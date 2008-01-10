@@ -9,68 +9,74 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Servlet {
-	private List<String> descriptions;
-	private String displayName;
-	private String servletName;
-	private String servletClass;
-	private List<InitParam> initParams;
-	private String loadOnStartup;
-	
-	public Servlet() {
-		descriptions = new ArrayList<String>();
-		initParams = new ArrayList<InitParam>();
-	}
-	
-	public List<String> getDescriptions() {
-		return descriptions;
-	}
-	
-	public void addDescription(String description) {
-		descriptions.add(description);
-	}
-	
-	public void removeDescription(String description) {
-		descriptions.remove(description);
-	}
-	
-	public String getDisplayName() {
-		return displayName;
-	}
 
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
+    private final List<String> descriptions;
 
-	public String getLoadOnStartup() {
-		return loadOnStartup;
-	}
+    private String displayName;
 
-	public void setLoadOnStartup(String loadOnStartup) {
-		this.loadOnStartup = loadOnStartup;
-	}
+    private String servletName;
 
-	public String getServletClass() {
-		return servletClass;
-	}
+    private String servletClass;
 
-	public void setServletClass(String servletClass) {
-		this.servletClass = servletClass;
-	}
+    private final List<InitParam> initParams;
 
-	public String getServletName() {
-		return servletName;
-	}
+    private String loadOnStartup;
 
-	public void setServletName(String servletName) {
-		this.servletName = servletName;
-	}
-	
-	public List<InitParam> getInitParams() {
-		return initParams;
-	}
-	
-	public void addInitParam(InitParam initParam) {
-		initParams.add(initParam);
-	}
-	
+    public Servlet() {
+        descriptions = new ArrayList<String>();
+        initParams = new ArrayList<InitParam>();
+    }
+
+    public List<String> getDescriptions() {
+        return descriptions;
+    }
+
+    public void addDescription(String description) {
+        descriptions.add(description);
+    }
+
+    public void removeDescription(String description) {
+        descriptions.remove(description);
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getLoadOnStartup() {
+        return loadOnStartup;
+    }
+
+    public void setLoadOnStartup(String loadOnStartup) {
+        this.loadOnStartup = loadOnStartup;
+    }
+
+    public String getServletClass() {
+        return servletClass;
+    }
+
+    public void setServletClass(String servletClass) {
+        this.servletClass = servletClass;
+    }
+
+    public String getServletName() {
+        return servletName;
+    }
+
+    public void setServletName(String servletName) {
+        this.servletName = servletName;
+    }
+
+    public List<InitParam> getInitParams() {
+        return initParams;
+    }
+
+    public void addInitParam(InitParam initParam) {
+        initParams.add(initParam);
+    }
+
 }

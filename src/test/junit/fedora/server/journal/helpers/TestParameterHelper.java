@@ -1,26 +1,22 @@
+
 package fedora.server.journal.helpers;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import fedora.server.journal.JournalConstants;
-import fedora.server.journal.JournalException;
 import junit.framework.TestCase;
 
-/**
- * 
- * <p>
- * <b>Title:</b> TestParameterHelper.java
- * </p>
- * <p>
- * <b>Description:</b> Test cases for the ParameterHelper class.
- * </p>
- * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
- */
+import fedora.server.journal.JournalConstants;
+import fedora.server.journal.JournalException;
 
-public class TestParameterHelper extends TestCase {
+/**
+ * Test cases for the ParameterHelper class.
+ * 
+ * @author Jim Blake
+ */
+public class TestParameterHelper
+        extends TestCase {
+
     private static final String PARAMETER_NAME = "name";
 
     private Map parameters;
@@ -29,6 +25,7 @@ public class TestParameterHelper extends TestCase {
         super(name);
     }
 
+    @Override
     public void setUp() {
         parameters = new HashMap();
     }
@@ -36,8 +33,9 @@ public class TestParameterHelper extends TestCase {
     public void testGetOptionalBooleanParameter_NullParameters()
             throws JournalException {
         try {
-            ParameterHelper.getOptionalBooleanParameter(null, PARAMETER_NAME,
-                    false);
+            ParameterHelper.getOptionalBooleanParameter(null,
+                                                        PARAMETER_NAME,
+                                                        false);
             fail("Expected a NullPointerException");
         } catch (NullPointerException e) {
             // expected the exception
@@ -58,27 +56,35 @@ public class TestParameterHelper extends TestCase {
     public void testGetOptionalBooleanParameter_ValueTrue()
             throws JournalException {
         parameters.put(PARAMETER_NAME, JournalConstants.VALUE_TRUE);
-        boolean result = ParameterHelper.getOptionalBooleanParameter(
-                parameters, PARAMETER_NAME, false);
+        boolean result =
+                ParameterHelper.getOptionalBooleanParameter(parameters,
+                                                            PARAMETER_NAME,
+                                                            false);
         assertEquals(true, result);
     }
 
     public void testGetOptionalBooleanParameter_ValueFalse()
             throws JournalException {
         parameters.put(PARAMETER_NAME, JournalConstants.VALUE_FALSE);
-        boolean result = ParameterHelper.getOptionalBooleanParameter(
-                parameters, PARAMETER_NAME, true);
+        boolean result =
+                ParameterHelper.getOptionalBooleanParameter(parameters,
+                                                            PARAMETER_NAME,
+                                                            true);
         assertEquals(false, result);
     }
 
     public void testGetOptionalBooleanParameter_NoValue()
             throws JournalException {
-        boolean result1 = ParameterHelper.getOptionalBooleanParameter(
-                parameters, PARAMETER_NAME, true);
+        boolean result1 =
+                ParameterHelper.getOptionalBooleanParameter(parameters,
+                                                            PARAMETER_NAME,
+                                                            true);
         assertEquals(true, result1);
 
-        boolean result2 = ParameterHelper.getOptionalBooleanParameter(
-                parameters, PARAMETER_NAME, false);
+        boolean result2 =
+                ParameterHelper.getOptionalBooleanParameter(parameters,
+                                                            PARAMETER_NAME,
+                                                            false);
         assertEquals(false, result2);
     }
 
@@ -86,7 +92,8 @@ public class TestParameterHelper extends TestCase {
         parameters.put(PARAMETER_NAME, "BOGUS");
         try {
             ParameterHelper.getOptionalBooleanParameter(parameters,
-                    PARAMETER_NAME, false);
+                                                        PARAMETER_NAME,
+                                                        false);
             fail("Expected a JournalException");
         } catch (JournalException e) {
             // expected the exception

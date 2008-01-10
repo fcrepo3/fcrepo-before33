@@ -5,17 +5,19 @@
 
 package fedora.server.config;
 
-import java.util.*;
+import java.util.List;
 
 /**
  *
  */
-public class ModuleConfiguration 
+public class ModuleConfiguration
         extends Configuration {
 
-    private String m_roleName;
+    private final String m_roleName;
+
     private String m_className;
-    private String m_comment;
+
+    private final String m_comment;
 
     public ModuleConfiguration(List<Parameter> parameters,
                                String roleName,

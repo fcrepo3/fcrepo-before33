@@ -9,6 +9,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
@@ -19,6 +20,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
+
 import fedora.server.errors.ServerException;
 import fedora.server.journal.entry.CreatorJournalEntry;
 import fedora.server.journal.helpers.EncodingBase64InputStream;
@@ -27,26 +29,20 @@ import fedora.server.journal.xmlhelpers.AbstractXmlWriter;
 import fedora.server.journal.xmlhelpers.ContextXmlWriter;
 
 /**
+ * The abstract base for all JournalWriter classes.
  * 
- * <p>
- * <b>Title:</b> JournalWriter.java
- * </p>
- * <p>
- * <b>Description:</b> The abstract base for all JournalWriter classes. Each
- * child class is responsible for providing an XMLEventWriter that will receive
- * the JournalEntry tag. This class will format a JournalEntry obbject into XML
- * and add it to the XMLEventWriter.
- * </p>
+ * <p>Each child class is responsible for providing an XMLEventWriter that 
+ * will receive the JournalEntry tag. This class will format a JournalEntry 
+ * object into XML and add it to the XMLEventWriter.
  * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
-
-public abstract class JournalWriter extends AbstractXmlWriter {
+public abstract class JournalWriter
+        extends AbstractXmlWriter {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(
-            JournalWriter.class.getName());
+    private static final Logger LOG =
+            Logger.getLogger(JournalWriter.class.getName());
 
     /**
      * A single object on which to synchronize all writing operations. The most
@@ -61,14 +57,22 @@ public abstract class JournalWriter extends AbstractXmlWriter {
      * Create an instance of the proper JournalWriter child class, as determined
      * by the server parameters.
      */
-    public static JournalWriter getInstance(Map parameters, String role,
-            ServerInterface server) throws JournalException {
-        Object journalWriter = JournalHelper
-                .createInstanceAccordingToParameter(
-                        PARAMETER_JOURNAL_WRITER_CLASSNAME,
-                        new Class[] { Map.class, String.class,
-                                ServerInterface.class }, new Object[] {
-                                parameters, role, server }, parameters);
+    public static JournalWriter getInstance(Map parameters,
+                                            String role,
+                                            ServerInterface server)
+            throws JournalException {
+        Object journalWriter =
+                JournalHelper
+                        .createInstanceAccordingToParameter(PARAMETER_JOURNAL_WRITER_CLASSNAME,
+                                                            new Class[] {
+                                                                    Map.class,
+                                                                    String.class,
+                                                                    ServerInterface.class},
+                                                            new Object[] {
+                                                                    parameters,
+                                                                    role,
+                                                                    server},
+                                                            parameters);
         LOG.info("JournalWriter is " + journalWriter.toString());
         return (JournalWriter) journalWriter;
     }
@@ -115,8 +119,9 @@ public abstract class JournalWriter extends AbstractXmlWriter {
         try {
             putStartDocument(writer);
             putStartTag(writer, QNAME_TAG_JOURNAL);
-            putAttribute(writer, QNAME_ATTR_REPOSITORY_HASH,
-                    getRepositoryHash());
+            putAttribute(writer,
+                         QNAME_ATTR_REPOSITORY_HASH,
+                         getRepositoryHash());
             putAttribute(writer, QNAME_ATTR_TIMESTAMP, JournalHelper
                     .formatDate(new Date()));
         } catch (XMLStreamException e) {
@@ -140,12 +145,13 @@ public abstract class JournalWriter extends AbstractXmlWriter {
      * Format a JournalEntry object and write a JournalEntry tag to the journal.
      */
     protected void writeJournalEntry(CreatorJournalEntry journalEntry,
-            XMLEventWriter writer) throws JournalException {
+                                     XMLEventWriter writer)
+            throws JournalException {
         try {
             writeJournaEntryStartTag(journalEntry, writer);
 
             new ContextXmlWriter().writeContext(journalEntry.getContext(),
-                    writer);
+                                                writer);
 
             writeArguments(journalEntry.getArgumentsMap(), writer);
 
@@ -156,22 +162,25 @@ public abstract class JournalWriter extends AbstractXmlWriter {
     }
 
     private void writeJournaEntryStartTag(CreatorJournalEntry journalEntry,
-            XMLEventWriter writer) throws XMLStreamException {
+                                          XMLEventWriter writer)
+            throws XMLStreamException {
         putStartTag(writer, QNAME_TAG_JOURNAL_ENTRY);
         putAttribute(writer, QNAME_ATTR_METHOD, journalEntry.getMethodName());
         putAttribute(writer, QNAME_ATTR_TIMESTAMP, JournalHelper
                 .formatDate(journalEntry.getContext().now()));
 
-        String[] clientIpArray = journalEntry.getContext()
-                .getEnvironmentValues(
-                        Constants.HTTP_REQUEST.CLIENT_IP_ADDRESS.uri);
-        if ((clientIpArray != null) && (clientIpArray.length > 0)) {
+        String[] clientIpArray =
+                journalEntry
+                        .getContext()
+                        .getEnvironmentValues(Constants.HTTP_REQUEST.CLIENT_IP_ADDRESS.uri);
+        if (clientIpArray != null && clientIpArray.length > 0) {
             putAttribute(writer, QNAME_ATTR_CLIENT_IP, clientIpArray[0]);
         }
 
-        String[] loginIdArray = journalEntry.getContext().getSubjectValues(
-                Constants.SUBJECT.LOGIN_ID.uri);
-        if ((loginIdArray != null) && (loginIdArray.length > 0)) {
+        String[] loginIdArray =
+                journalEntry.getContext()
+                        .getSubjectValues(Constants.SUBJECT.LOGIN_ID.uri);
+        if (loginIdArray != null && loginIdArray.length > 0) {
             putAttribute(writer, QNAME_ATTR_LOGIN_ID, loginIdArray[0]);
         }
     }
@@ -210,8 +219,10 @@ public abstract class JournalWriter extends AbstractXmlWriter {
         putEndTag(writer, QNAME_TAG_ARGUMENT);
     }
 
-    private void writeStringArgument(String key, String value,
-            XMLEventWriter writer) throws XMLStreamException {
+    private void writeStringArgument(String key,
+                                     String value,
+                                     XMLEventWriter writer)
+            throws XMLStreamException {
         putStartTag(writer, QNAME_TAG_ARGUMENT);
         putAttribute(writer, QNAME_ATTR_NAME, key);
         putAttribute(writer, QNAME_ATTR_TYPE, ARGUMENT_TYPE_STRING);
@@ -228,8 +239,10 @@ public abstract class JournalWriter extends AbstractXmlWriter {
         putEndTag(writer, QNAME_TAG_ARGUMENT);
     }
 
-    private void writeIntegerArgument(String key, Integer value,
-            XMLEventWriter writer) throws XMLStreamException {
+    private void writeIntegerArgument(String key,
+                                      Integer value,
+                                      XMLEventWriter writer)
+            throws XMLStreamException {
         putStartTag(writer, QNAME_TAG_ARGUMENT);
         putAttribute(writer, QNAME_ATTR_NAME, key);
         putAttribute(writer, QNAME_ATTR_TYPE, ARGUMENT_TYPE_INTEGER);
@@ -237,8 +250,10 @@ public abstract class JournalWriter extends AbstractXmlWriter {
         putEndTag(writer, QNAME_TAG_ARGUMENT);
     }
 
-    private void writeBooleanArgument(String key, Boolean value,
-            XMLEventWriter writer) throws XMLStreamException {
+    private void writeBooleanArgument(String key,
+                                      Boolean value,
+                                      XMLEventWriter writer)
+            throws XMLStreamException {
         putStartTag(writer, QNAME_TAG_ARGUMENT);
         putAttribute(writer, QNAME_ATTR_NAME, key);
         putAttribute(writer, QNAME_ATTR_TYPE, ARGUMENT_TYPE_BOOLEAN);
@@ -246,15 +261,17 @@ public abstract class JournalWriter extends AbstractXmlWriter {
         putEndTag(writer, QNAME_TAG_ARGUMENT);
     }
 
-    private void writeStringArrayArgument(String key, String[] value,
-            XMLEventWriter writer) throws XMLStreamException {
+    private void writeStringArrayArgument(String key,
+                                          String[] value,
+                                          XMLEventWriter writer)
+            throws XMLStreamException {
         putStartTag(writer, QNAME_TAG_ARGUMENT);
         putAttribute(writer, QNAME_ATTR_NAME, key);
         putAttribute(writer, QNAME_ATTR_TYPE, ARGUMENT_TYPE_STRINGARRAY);
 
-        for (int i = 0; i < value.length; i++) {
+        for (String element : value) {
             putStartTag(writer, QNAME_TAG_ARRAYELEMENT);
-            putCharacters(writer, value[i]);
+            putCharacters(writer, element);
             putEndTag(writer, QNAME_TAG_ARRAYELEMENT);
         }
 
@@ -274,8 +291,8 @@ public abstract class JournalWriter extends AbstractXmlWriter {
             putAttribute(writer, QNAME_ATTR_NAME, key);
             putAttribute(writer, QNAME_ATTR_TYPE, ARGUMENT_TYPE_STREAM);
 
-            EncodingBase64InputStream encoder = new EncodingBase64InputStream(
-                    new BufferedInputStream(new FileInputStream(file)));
+            EncodingBase64InputStream encoder =
+                    new EncodingBase64InputStream(new BufferedInputStream(new FileInputStream(file)));
             String encodedChunk;
             while (null != (encodedChunk = encoder.read(1000))) {
                 putCharacters(writer, encodedChunk);
@@ -295,9 +312,8 @@ public abstract class JournalWriter extends AbstractXmlWriter {
      */
     private String getRepositoryHash() throws JournalException {
         if (!server.hasInitialized()) {
-            throw new IllegalStateException(
-                    "The repository hash is not available until "
-                            + "the server is fully initialized.");
+            throw new IllegalStateException("The repository hash is not available until "
+                    + "the server is fully initialized.");
         }
 
         try {

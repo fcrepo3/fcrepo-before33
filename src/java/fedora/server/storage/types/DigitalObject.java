@@ -12,98 +12,108 @@ import java.util.Map;
 
 /**
  * Java representation of a Fedora digital object.
- *
- * <p>A DigitalObject instance may be used by DOReader and DOWriter instances
- * as temporary storage for an object's attributes and components.</p>
- *
- * <p>Implementations of this interface are responsible for temporary
- * storage of these items, by whatever mechanism they deem fit.  The most
- * obvious implementation would simply store everything in memory.</p>
- *
- * <p>Implementations of this interface are <b>not</b> responsible for
- * any sort of validation on these items, or serialization/deserialization
- * to/from specific formats.</p>
+ * <p>
+ * A DigitalObject instance may be used by DOReader and DOWriter instances as
+ * temporary storage for an object's attributes and components.
+ * </p>
+ * <p>
+ * Implementations of this interface are responsible for temporary storage of
+ * these items, by whatever mechanism they deem fit. The most obvious
+ * implementation would simply store everything in memory.
+ * </p>
+ * <p>
+ * Implementations of this interface are <b>not</b> responsible for any sort of
+ * validation on these items, or serialization/deserialization to/from specific
+ * formats.
+ * </p>
  * 
- * @author cwilper@cs.cornell.edu
+ * @author Chris Wilper
  */
 public interface DigitalObject {
 
     public static int FEDORA_OBJECT = 'O';
+
     public static int FEDORA_BDEF_OBJECT = 'D';
+
     public static int FEDORA_BMECH_OBJECT = 'M';
+
     public static int FEDORA_CONTENT_MODEL_OBJECT = 'C';
 
     public String getFedoraObjectTypes();
 
     public boolean isFedoraObjectType(int type);
-    
+
     public void addFedoraObjectType(int type);
-    
+
     public void removeFedoraObjectType(int type);
-    
+
     public boolean isNew();
 
     public void setNew(boolean isNew);
 
     /**
      * Gets the pid.
-     *
+     * 
      * @return The pid, or null if it hasn't been set.
      */
     public String getPid();
 
     /**
      * Sets the pid.
-     *
-     * @param pid The pid.
+     * 
+     * @param pid
+     *        The pid.
      */
     public void setPid(String pid);
 
     /**
      * Gets the state.
-     *
+     * 
      * @return The state, or null if it hasn't been set.
      */
     public String getState();
 
     /**
      * Sets the state.
-     *
-     * @param state The state.
+     * 
+     * @param state
+     *        The state.
      */
     public void setState(String state);
 
     /**
      * Gets the userid of the user who owns the object.
-     *
+     * 
      * @return The userid
      */
     public String getOwnerId();
 
     /**
      * Sets the owner of the object.
-     *
-     * @param user The userid.
+     * 
+     * @param user
+     *        The userid.
      */
     public void setOwnerId(String owner);
 
     /**
      * Gets the label.
-     *
+     * 
      * @return The label, or null if it hasn't been set.
      */
     public String getLabel();
 
     /**
      * Sets the label.
-     *
-     * @param label The label.
+     * 
+     * @param label
+     *        The label.
      */
     public void setLabel(String label);
 
     /**
      * Gets the content model id.
-     *
+     * 
      * @return The content model id.
      * @deprecated As of Fedora 3.0, content model is no longer an object-level
      *             property and should be asserted in RELS-EXT instead.
@@ -114,8 +124,9 @@ public interface DigitalObject {
 
     /**
      * Sets the content model id.
-     *
-     * @param id The content model id.
+     * 
+     * @param id
+     *        The content model id.
      * @deprecated As of Fedora 3.0, content model is no longer an object-level
      *             property and should be asserted in RELS-EXT instead.
      * @see fedora.common.Constants.MODEL.HAS_CONTENT_MODEL
@@ -125,78 +136,84 @@ public interface DigitalObject {
 
     /**
      * Gets the date the object was created.
-     *
+     * 
      * @return The date, or null if it hasn't been set.
      */
     public Date getCreateDate();
 
     /**
      * Sets the date the object was created.
-     *
-     * @param createDate The date.
+     * 
+     * @param createDate
+     *        The date.
      */
     public void setCreateDate(Date createDate);
 
     /**
      * Gets the date the object was last modified.
-     *
+     * 
      * @return The date, or null if it hasn't been set.
      */
     public Date getLastModDate();
 
     /**
      * Sets the date the object was last modified.
-     *
-     * @param lastModDate The date.
+     * 
+     * @param lastModDate
+     *        The date.
      */
     public void setLastModDate(Date lastModDate);
 
     /**
      * Gets this object's mutable List of AuditRecord objects.
-     *
+     * 
      * @return The List of AuditRecords, possibly of zero size but never null.
      */
     public List<AuditRecord> getAuditRecords();
 
     /**
      * Gets an Iterator over the datastream ids in this object.
-     * <p></p>
-     * The Iterator is not tied to the underlying Collection and cannot
-     * be used to remove datastreams.
-     *
-     * @return A new Iterator of datastream ids, possibly of zero size but
-     *         never null.
+     * <p>
+     * </p>
+     * The Iterator is not tied to the underlying Collection and cannot be used
+     * to remove datastreams.
+     * 
+     * @return A new Iterator of datastream ids, possibly of zero size but never
+     *         null.
      */
     public Iterator<String> datastreamIdIterator();
 
     /**
-     * Gets a mutable List of that consists of versions of the same 
-     * datastream that is identified by the requested datastream
-     * identifier.  
-     *
-     * @param id The datastream id.
+     * Gets a mutable List of that consists of versions of the same datastream
+     * that is identified by the requested datastream identifier.
+     * 
+     * @param id
+     *        The datastream id.
      * @return The list, possibly of zero size but never null.
      */
     public List<Datastream> datastreams(String id);
 
     /**
-     * Adds a datastream to a digital object, respecting the versionable  
-     * flag of that datastream.  Appending a new version of the datastream 
-     * if the datastream is marked as versionable or replacing the existing
-     * version(s) of the datastream is it is marked as non-versionable
-     * identifier.  
-     *
-     * @param ds The datastream to add.
-     * @param addNewVersion Controls whether to add a new version, or replace existing version.
+     * Adds a datastream to a digital object, respecting the versionable flag of
+     * that datastream. Appending a new version of the datastream if the
+     * datastream is marked as versionable or replacing the existing version(s)
+     * of the datastream is it is marked as non-versionable identifier.
+     * 
+     * @param ds
+     *        The datastream to add.
+     * @param addNewVersion
+     *        Controls whether to add a new version, or replace existing
+     *        version.
      */
     public void addDatastreamVersion(Datastream ds, boolean addNewVersion);
-    
+
     /**
      * Gets an Iterator over the disseminator ids in this object.
-     *
-     * <p>The Iterator is not tied to the underlying Collection and cannot
-     * be used to remove datastreams.</p>
-     *
+     * <p>
+     * The Iterator is not tied to the underlying Collection and cannot be used
+     * to remove datastreams.
+     * </p>
+     * 
      * @return A new Iterator of disseminator ids, possibly of zero size but
      *         never null.
      */
@@ -204,11 +221,11 @@ public interface DigitalObject {
     public Iterator<String> disseminatorIdIterator();
 
     /**
-     * Gets a mutable List that consists of versions of the same
-     * disseminator which is identified by the requested disseminator
-     * identifier. 
-     *
-     * @param id The disseminator id.
+     * Gets a mutable List that consists of versions of the same disseminator
+     * which is identified by the requested disseminator identifier.
+     * 
+     * @param id
+     *        The disseminator id.
      * @return The list, possibly of zero size but never null.
      */
     @Deprecated
@@ -228,27 +245,27 @@ public interface DigitalObject {
      * Generate a unique id for an audit record.
      */
     public String newAuditRecordID();
-    
-	/**
-	 * Sets an extended property on the object.
-	 *
-	 * @param propName The property name, either a string, or URI as string.
-	 */
-	public void setExtProperty(String propName, String propValue);
 
-	/**
-	 * Gets an extended property value, given the property name.
-	 *
-	 * @return The property value.
-	 */
-	public String getExtProperty(String propName);
-	
+    /**
+     * Sets an extended property on the object.
+     * 
+     * @param propName
+     *        The property name, either a string, or URI as string.
+     */
+    public void setExtProperty(String propName, String propValue);
 
-	/**
-	 * Gets a Map containing all of the extended properties
-	 * on the object.  Map key is property name.
-	 *
-	 * @return The property Map.
-	 */	
-	public Map<String, String> getExtProperties();
+    /**
+     * Gets an extended property value, given the property name.
+     * 
+     * @return The property value.
+     */
+    public String getExtProperty(String propName);
+
+    /**
+     * Gets a Map containing all of the extended properties on the object. Map
+     * key is property name.
+     * 
+     * @return The property Map.
+     */
+    public Map<String, String> getExtProperties();
 }

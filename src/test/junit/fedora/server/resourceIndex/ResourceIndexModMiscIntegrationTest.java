@@ -1,3 +1,4 @@
+
 package fedora.server.resourceIndex;
 
 import java.util.HashSet;
@@ -6,16 +7,16 @@ import java.util.Set;
 import org.jrdf.graph.Triple;
 
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
 
 import fedora.server.storage.types.DigitalObject;
 
+import static org.junit.Assert.assertTrue;
+
 /**
- * Miscellaneous tests of modifying existing objects in the RI.
- *
- * Note: All tests run at RI level 1 unless otherwise noted.
- *
- * @author cwilper@cs.cornell.edu
+ * Miscellaneous tests of modifying existing objects in the RI. Note: All tests
+ * run at RI level 1 unless otherwise noted.
+ * 
+ * @author Chris Wilper
  */
 public class ResourceIndexModMiscIntegrationTest
         extends ResourceIndexIntegrationTest {
@@ -24,8 +25,7 @@ public class ResourceIndexModMiscIntegrationTest
      * Modify an object's label with the RI at level 0.
      */
     @Test
-    public void testModObjOnceLabelLv0()
-            throws Exception {
+    public void testModObjOnceLabelLv0() throws Exception {
         Set<DigitalObject> objects = getTestObjects(1, 0);
 
         // add at level 1
@@ -48,8 +48,7 @@ public class ResourceIndexModMiscIntegrationTest
      * Modify an object's label once.
      */
     @Test
-    public void testModObjOnceLabel()
-            throws Exception {
+    public void testModObjOnceLabel() throws Exception {
         DigitalObject original = getTestObject("test:1", "test1");
 
         DigitalObject modified = deepCopy(original);
@@ -62,8 +61,7 @@ public class ResourceIndexModMiscIntegrationTest
      * Modify an object's label multiple times.
      */
     @Test
-    public void testModObjMultiLabel()
-            throws Exception {
+    public void testModObjMultiLabel() throws Exception {
 
         // prep by initting at lv 1 and adding original object
         initRI(1);
@@ -83,12 +81,11 @@ public class ResourceIndexModMiscIntegrationTest
     }
 
     /**
-     * Modify an object's label multiple times while flushing the buffer
-     * many times from a separate thread.
+     * Modify an object's label multiple times while flushing the buffer many
+     * times from a separate thread.
      */
     @Test
-    public void testModObjMultiLabelAsyncFlush()
-            throws Exception {
+    public void testModObjMultiLabelAsyncFlush() throws Exception {
 
         // prep by initting at lv 1 and adding original object
         initRI(1);
@@ -118,14 +115,13 @@ public class ResourceIndexModMiscIntegrationTest
         }
 
         assertTrue("Did not get expected orig triples after multi mod of "
-                + "one object with async buffer flushing",
-                sameTriples(origTriples, getActualTriples(), true));
+                           + "one object with async buffer flushing",
+                   sameTriples(origTriples, getActualTriples(), true));
     }
 
     // Supports legacy test runners
     public static junit.framework.Test suite() {
-        return new junit.framework.JUnit4TestAdapter(
-                ResourceIndexModMiscIntegrationTest.class);
+        return new junit.framework.JUnit4TestAdapter(ResourceIndexModMiscIntegrationTest.class);
     }
 
 }

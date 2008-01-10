@@ -6,23 +6,21 @@
 package fedora.server.errors;
 
 /**
- *
- * <p><b>Title:</b> MalformedPidException.java</p>
- * <p><b>Description:</b> Tells if a PID is malformed.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * Signals that a PID is malformed.
+ * 
+ * @author Chris Wilper
  */
 public class MalformedPidException
         extends ServerException {
-	
-	private static final long serialVersionUID = 1L;
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Creates a MalformedPIDException.
-     *
-     * @param message An informative message explaining what happened and
-     *                (possibly) how to fix it.
+     * 
+     * @param message
+     *        An informative message explaining what happened and (possibly) how
+     *        to fix it.
      */
     public MalformedPidException(String message) {
         super(null, message, null, null, null);
@@ -32,8 +30,11 @@ public class MalformedPidException
         super(null, message, null, null, cause);
     }
 
-    public MalformedPidException(String bundleName, String code, String[] values,
-            String[] details, Throwable cause) {
+    public MalformedPidException(String bundleName,
+                                 String code,
+                                 String[] values,
+                                 String[] details,
+                                 Throwable cause) {
         super(bundleName, code, values, details, cause);
     }
 

@@ -7,12 +7,12 @@ package fedora.common.xml.namespace;
 
 /**
  * The Fedora DS Composite Model XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : info:fedora/fedora-system:def/dsCompositeModel#
  * Preferred Prefix : dscm
  * </pre>
- *
+ * 
  * @author Chris Wilper
  */
 public class FedoraDSCompositeModelNamespace
@@ -23,8 +23,8 @@ public class FedoraDSCompositeModelNamespace
     //---
 
     /** The only instance of this class. */
-    private static final FedoraDSCompositeModelNamespace ONLY_INSTANCE
-            = new FedoraDSCompositeModelNamespace();
+    private static final FedoraDSCompositeModelNamespace ONLY_INSTANCE =
+            new FedoraDSCompositeModelNamespace();
 
     /**
      * Constructs the instance.
@@ -35,7 +35,7 @@ public class FedoraDSCompositeModelNamespace
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static FedoraDSCompositeModelNamespace getInstance() {

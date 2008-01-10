@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The OAI-PMH XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://www.openarchives.org/OAI/2.0/
  * Preferred Prefix : pmh
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class OAIPMHNamespace
         extends XMLNamespace {
@@ -23,8 +23,7 @@ public class OAIPMHNamespace
     //---
 
     /** The only instance of this class. */
-    private static final OAIPMHNamespace ONLY_INSTANCE
-            = new OAIPMHNamespace();
+    private static final OAIPMHNamespace ONLY_INSTANCE = new OAIPMHNamespace();
 
     /**
      * Constructs the instance.
@@ -35,7 +34,7 @@ public class OAIPMHNamespace
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static OAIPMHNamespace getInstance() {

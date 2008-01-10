@@ -21,10 +21,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Utility for combining WSDL and XSD into a single file, with a
- * specific service endpoint.
- *
- * @author cwilper@cs.cornell.edu
+ * Utility for combining WSDL and XSD into a single file, with a specific
+ * service endpoint.
+ * 
+ * @author Chris Wilper
  */
 public class RuntimeWSDL {
 
@@ -34,29 +34,25 @@ public class RuntimeWSDL {
     /**
      * Instantiate from the given files and service endpoint URL.
      */
-    public RuntimeWSDL(File schemaFile,
-                       File sourceWSDL,
-                       String endpoint) 
+    public RuntimeWSDL(File schemaFile, File sourceWSDL, String endpoint)
             throws IOException {
 
         try {
 
             // init dom parser and parse input
-            DocumentBuilderFactory factory = 
+            DocumentBuilderFactory factory =
                     DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document xsdDoc = builder.parse(schemaFile);
             _wsdlDoc = builder.parse(sourceWSDL);
 
-
             // put schema into the wsdl types section
             Element typesElement = getTopElement("types");
             removeChildren(typesElement);
-            Node xsdNode = _wsdlDoc.importNode(xsdDoc.getDocumentElement(),
-                                               true); // deep copy
+            Node xsdNode =
+                    _wsdlDoc.importNode(xsdDoc.getDocumentElement(), true); // deep copy
             typesElement.appendChild(xsdNode);
-
 
             // set the endpoint
             // - requires an existing service element with a name attribute
@@ -72,11 +68,10 @@ public class RuntimeWSDL {
                         + "service element: name");
             }
 
-            NodeList ports = serviceElement
-                             .getElementsByTagNameNS("*", "port");
+            NodeList ports = serviceElement.getElementsByTagNameNS("*", "port");
 
             while (ports.getLength() > 1) {
-               serviceElement.removeChild(ports.item(0));
+                serviceElement.removeChild(ports.item(0));
             }
             if (ports.getLength() == 0) {
                 throw new IOException("WSDL missing required element: port");
@@ -90,8 +85,9 @@ public class RuntimeWSDL {
             }
             port.setAttribute("name", serviceName + schemePart + "-Port");
 
-            Element address = (Element) port
-                              .getElementsByTagNameNS("*", "address").item(0);
+            Element address =
+                    (Element) port.getElementsByTagNameNS("*", "address")
+                            .item(0);
             if (address != null) {
                 address.setAttribute("location", endpoint);
             } else {
@@ -110,10 +106,9 @@ public class RuntimeWSDL {
     }
 
     private Element getTopElement(String name) throws IOException {
-        Element element = (Element) _wsdlDoc 
-                                    .getDocumentElement()
-                                    .getElementsByTagNameNS("*", name)
-                                    .item(0);
+        Element element =
+                (Element) _wsdlDoc.getDocumentElement()
+                        .getElementsByTagNameNS("*", name).item(0);
         if (element != null) {
             return element;
         } else {
@@ -147,15 +142,12 @@ public class RuntimeWSDL {
     }
 
     /**
-     * Command-line test.
-     *
-     * Usage: java RuntimeWSDL schemaFile sourceWSDL endpoint
+     * Command-line test. Usage: java RuntimeWSDL schemaFile sourceWSDL endpoint
      */
     public static void main(String[] args) throws Exception {
         java.io.PrintWriter out = new java.io.PrintWriter(System.out);
-        new RuntimeWSDL(new File(args[0]), 
-                        new File(args[1]), 
-                        args[2]).serialize(out);
+        new RuntimeWSDL(new File(args[0]), new File(args[1]), args[2])
+                .serialize(out);
         out.flush();
     }
 

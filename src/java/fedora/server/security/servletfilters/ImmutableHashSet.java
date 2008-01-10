@@ -4,41 +4,50 @@
  */
 
 package fedora.server.security.servletfilters;
-import java.util.HashSet;
-import java.util.Collection;
 
-/** 
- *  @author Bill Niebel (niebel@virginia.edu)
+import java.util.Collection;
+import java.util.HashSet;
+
+/**
+ * @author Bill Niebel
  */
-public class ImmutableHashSet extends HashSet {
-	private static final long serialVersionUID = 1L;
-	
+public class ImmutableHashSet
+        extends HashSet {
+
+    private static final long serialVersionUID = 1L;
+
+    @Override
     public boolean add(Object o) {
-    	return false;
+        return false;
     }
-    
+
+    @Override
     public void clear() {
     }
 
+    @Override
     public Object clone() {
-    	return null; 
+        return null;
     }
 
+    @Override
     public boolean remove(Object o) {
-    	return false;
-    }
-    
-    public boolean removeAll(Collection c) {
-    	return false;
-    }
-    
-    public boolean addAll(Collection c) {
-    	return false;
-    }
-    
-    public boolean retainAll(Collection c) {
-    	return false;
+        return false;
     }
 
-    
+    @Override
+    public boolean removeAll(Collection c) {
+        return false;
+    }
+
+    @Override
+    public boolean addAll(Collection c) {
+        return false;
+    }
+
+    @Override
+    public boolean retainAll(Collection c) {
+        return false;
+    }
+
 }

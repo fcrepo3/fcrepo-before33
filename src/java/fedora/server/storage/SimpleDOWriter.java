@@ -9,8 +9,10 @@ package fedora.server.storage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,6 +24,7 @@ import org.jrdf.graph.GraphElementFactory;
 import org.jrdf.graph.GraphElementFactoryException;
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.Triple;
+
 import org.trippi.RDFFormat;
 import org.trippi.RDFUtil;
 import org.trippi.TripleIterator;
@@ -29,6 +32,7 @@ import org.trippi.TrippiException;
 
 import fedora.common.Constants;
 import fedora.common.PID;
+
 import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
@@ -39,13 +43,11 @@ import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
-import fedora.server.storage.types.RelationshipTuple;
 import fedora.server.utilities.FilteredTripleIterator;
 import fedora.server.validation.RelsExtValidator;
 
 /**
  * A DigitalObject-backed DOWriter.
- * 
  * <p>
  * This interface supports transaction behavior with the commit(String) and
  * rollBack() methods. When a DOWriter is instantiated, there is an implicit
@@ -55,39 +57,45 @@ import fedora.server.validation.RelsExtValidator;
  * longer wanted, rollBack() may be called to return the object to it's original
  * form. rollBack() is only valid for the current transaction.
  * </p>
- * 
  * <p>
  * The read methods of DOWriter reflect on the composition of the object in the
  * context of the current transaction.
  * </p>
  * 
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
  */
-public class SimpleDOWriter extends SimpleDOReader implements Constants,
-        DOWriter {
+public class SimpleDOWriter
+        extends SimpleDOReader
+        implements Constants, DOWriter {
 
-    private static ObjectIntegrityException ERROR_PENDING_REMOVAL = new ObjectIntegrityException(
-            "That can't be done because you said "
+    private static ObjectIntegrityException ERROR_PENDING_REMOVAL =
+            new ObjectIntegrityException("That can't be done because you said "
                     + "I should remove the object and i assume that's what you "
                     + "want unless you call rollback()");
 
-    private static ObjectIntegrityException ERROR_INVALIDATED = new ObjectIntegrityException(
-            "The handle is no longer valid "
+    private static ObjectIntegrityException ERROR_INVALIDATED =
+            new ObjectIntegrityException("The handle is no longer valid "
                     + "... this object has already been committed or explicitly"
                     + " invalidated.");
 
-    private DigitalObject m_obj;
-    private Context m_context;
-    private DefaultDOManager m_mgr;
+    private final DigitalObject m_obj;
+
+    private final Context m_context;
+
+    private final DefaultDOManager m_mgr;
 
     private boolean m_pendingRemoval = false;
+
     private boolean m_invalidated = false;
+
     private boolean m_committed = false;
 
-    public SimpleDOWriter(Context context, DefaultDOManager mgr,
-            DOTranslator translator, String exportFormat, String encoding,
-            DigitalObject obj) {
+    public SimpleDOWriter(Context context,
+                          DefaultDOManager mgr,
+                          DOTranslator translator,
+                          String exportFormat,
+                          String encoding,
+                          DigitalObject obj) {
         super(context, mgr, translator, exportFormat, encoding, obj);
         m_context = context;
         m_obj = obj;
@@ -121,7 +129,8 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
     }
 
     public void setDatastreamVersionable(String datastreamID,
-            boolean versionable) throws ServerException {
+                                         boolean versionable)
+            throws ServerException {
         assertNotInvalidated();
         assertNotPendingRemoval();
         List<Datastream> allVersions = m_obj.datastreams(datastreamID);
@@ -160,7 +169,7 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
      * Removes the entire digital object.
      * 
      * @throws ServerException
-     *             If any type of error occurred fulfilling the request.
+     *         If any type of error occurred fulfilling the request.
      */
     public void remove() throws ObjectIntegrityException {
         assertNotInvalidated();
@@ -172,9 +181,9 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
      * Adds a datastream to the object.
      * 
      * @param datastream
-     *            The datastream.
+     *        The datastream.
      * @throws ServerException
-     *             If any type of error occurred fulfilling the request.
+     *         If any type of error occurred fulfilling the request.
      */
     public void addDatastream(Datastream datastream, boolean addNewVersion)
             throws ServerException {
@@ -188,9 +197,9 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
      * Adds a disseminator to the object.
      * 
      * @param disseminator
-     *            The disseminator.
+     *        The disseminator.
      * @throws ServerException
-     *             If any type of error occurred fulfilling the request.
+     *         If any type of error occurred fulfilling the request.
      */
     // public void addDisseminator(Disseminator disseminator)
     // throws ServerException {
@@ -202,17 +211,17 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
      * Removes a datastream from the object.
      * 
      * @param id
-     *            The id of the datastream.
+     *        The id of the datastream.
      * @param start
-     *            The start date (inclusive) of versions to remove. If
-     *            <code>null</code>, this is taken to be the smallest
-     *            possible value.
+     *        The start date (inclusive) of versions to remove. If
+     *        <code>null</code>, this is taken to be the smallest possible
+     *        value.
      * @param end
-     *            The end date (inclusive) of versions to remove. If
-     *            <code>null</code>, this is taken to be the greatest
-     *            possible value.
+     *        The end date (inclusive) of versions to remove. If
+     *        <code>null</code>, this is taken to be the greatest possible
+     *        value.
      * @throws ServerException
-     *             If any type of error occurred fulfilling the request.
+     *         If any type of error occurred fulfilling the request.
      */
     public Date[] removeDatastream(String id, Date start, Date end)
             throws ServerException {
@@ -221,12 +230,12 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
         List<Datastream> versions = m_obj.datastreams(id);
         ArrayList<Datastream> removeList = new ArrayList<Datastream>();
         for (int i = 0; i < versions.size(); i++) {
-            Datastream ds = (Datastream) versions.get(i);
+            Datastream ds = versions.get(i);
             boolean doRemove = false;
             if (start != null) {
                 if (end != null) {
-                    if ((ds.DSCreateDT.compareTo(start) >= 0)
-                            && (ds.DSCreateDT.compareTo(end) <= 0)) {
+                    if (ds.DSCreateDT.compareTo(start) >= 0
+                            && ds.DSCreateDT.compareTo(end) <= 0) {
                         doRemove = true;
                     }
                 } else {
@@ -254,7 +263,7 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
         // finally, return the dates of each deleted item
         Date[] deletedDates = new Date[removeList.size()];
         for (int i = 0; i < removeList.size(); i++) {
-            deletedDates[i] = ((Datastream) removeList.get(i)).DSCreateDT;
+            deletedDates[i] = (removeList.get(i)).DSCreateDT;
         }
         return deletedDates;
     }
@@ -263,17 +272,17 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
      * Removes a disseminator from the object.
      * 
      * @param id
-     *            The id of the datastream.
+     *        The id of the datastream.
      * @param start
-     *            The start date (inclusive) of versions to remove. If
-     *            <code>null</code>, this is taken to be the smallest
-     *            possible value.
+     *        The start date (inclusive) of versions to remove. If
+     *        <code>null</code>, this is taken to be the smallest possible
+     *        value.
      * @param end
-     *            The end date (inclusive) of versions to remove. If
-     *            <code>null</code>, this is taken to be the greatest
-     *            possible value.
+     *        The end date (inclusive) of versions to remove. If
+     *        <code>null</code>, this is taken to be the greatest possible
+     *        value.
      * @throws ServerException
-     *             If any type of error occurred fulfilling the request.
+     *         If any type of error occurred fulfilling the request.
      */
     // public Date[] removeDisseminator(String id, Date start, Date end)
     // throws ServerException {
@@ -319,14 +328,14 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
     // }
     // return deletedDates;
     // }
-
     public boolean addRelationship(String relationship,
-            String object, boolean isLiteral, String datatype)
-            throws ServerException {
+                                   String object,
+                                   boolean isLiteral,
+                                   String datatype) throws ServerException {
         String datastreamID = DefaultManagement.s_RelsExt_Datastream;
         String subject = PID.toURI(m_obj.getPid());
-        Triple toAdd = createTriple(subject, relationship, object, isLiteral,
-                datatype);
+        Triple toAdd =
+                createTriple(subject, relationship, object, isLiteral, datatype);
         Datastream relsExt = GetDatastream(datastreamID, null);
         if (relsExt == null) {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -336,8 +345,8 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
             map.put(RDF.prefix, RDF.uri);
 
             try {
-                TripleIterator triples = new FilteredTripleIterator(map, toAdd,
-                        true);
+                TripleIterator triples =
+                        new FilteredTripleIterator(map, toAdd, true);
                 triples.toStream(out, RDFFormat.RDF_XML, false);
             } catch (TrippiException e) {
                 throw new GeneralException(e.getMessage(), e);
@@ -367,15 +376,17 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
             FilteredTripleIterator newIter = null;
             try {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
-                TripleIterator iter = TripleIterator.fromStream(relsExt
-                        .getContentStream(), RDFFormat.RDF_XML);
+                TripleIterator iter =
+                        TripleIterator.fromStream(relsExt.getContentStream(),
+                                                  RDFFormat.RDF_XML);
                 newIter = new FilteredTripleIterator(iter, toAdd, true);
                 newIter.toStream(out, RDFFormat.RDF_XML, false);
                 String xmlContent = new String(out.toByteArray());
-                
+
                 if (newIter.wasChangeMade()) {
                     DatastreamXMLMetadata newds = new DatastreamXMLMetadata();
-                    newds.DSMDClass = ((DatastreamXMLMetadata) relsExt).DSMDClass;
+                    newds.DSMDClass =
+                            ((DatastreamXMLMetadata) relsExt).DSMDClass;
                     newds.DatastreamID = relsExt.DatastreamID;
                     newds.DatastreamAltIDs = relsExt.DatastreamAltIDs;
                     newds.DSFormatURI = relsExt.DSFormatURI;
@@ -415,12 +426,13 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
     }
 
     public boolean purgeRelationship(String relationship,
-            String object, boolean isLiteral, String datatype)
-            throws ServerException {
+                                     String object,
+                                     boolean isLiteral,
+                                     String datatype) throws ServerException {
         String datastreamID = DefaultManagement.s_RelsExt_Datastream;
         String subject = PID.toURI(m_obj.getPid());
-        Triple toPurge = createTriple(subject, relationship, object, isLiteral,
-                datatype);
+        Triple toPurge =
+                createTriple(subject, relationship, object, isLiteral, datatype);
 
         Datastream relsExt = GetDatastream(datastreamID, null);
         if (relsExt == null) {
@@ -441,7 +453,8 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
 
                 if (newIter.wasChangeMade()) {
                     DatastreamXMLMetadata newds = new DatastreamXMLMetadata();
-                    newds.DSMDClass = ((DatastreamXMLMetadata) relsExt).DSMDClass;
+                    newds.DSMDClass =
+                            ((DatastreamXMLMetadata) relsExt).DSMDClass;
                     newds.DatastreamID = datastreamID;
                     newds.DatastreamAltIDs = relsExt.DatastreamAltIDs;
                     newds.DSFormatURI = relsExt.DSFormatURI;
@@ -460,8 +473,9 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
                     newds.DSChecksumType = relsExt.DSChecksumType;
                     newds.xmlContent = out.toByteArray();
                     newds.DSSize = newds.xmlContent.length;
-                    RelsExtValidator.validate(PID.getInstance(m_obj.getPid()),
-                            new ByteArrayInputStream(newds.xmlContent));
+                    RelsExtValidator
+                            .validate(PID.getInstance(m_obj.getPid()),
+                                      new ByteArrayInputStream(newds.xmlContent));
                     addDatastream(newds, newds.DSVersionable);
                 } else {
                     // relationship does not exist
@@ -482,9 +496,11 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
         return true;
     }
 
-    private Triple createTriple(String subject, String predicate,
-            String object, boolean isLiteral, String datatype)
-            throws ServerException {
+    private Triple createTriple(String subject,
+                                String predicate,
+                                String object,
+                                boolean isLiteral,
+                                String datatype) throws ServerException {
         GraphElementFactory geFactory = new RDFUtil();
         ObjectNode o = null;
         try {
@@ -497,8 +513,9 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
             } else {
                 o = geFactory.createResource(new URI(object));
             }
-            return geFactory.createTriple(geFactory.createResource(new URI(
-                    subject)), geFactory.createResource(new URI(predicate)), o);
+            return geFactory.createTriple(geFactory
+                    .createResource(new URI(subject)), geFactory
+                    .createResource(new URI(predicate)), o);
         } catch (GraphElementFactoryException e) {
             throw new GeneralException(e.getMessage(), e);
         } catch (URISyntaxException e) {
@@ -512,8 +529,9 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
             relsExt.close();
         } catch (Exception e) {
             String message = e.getMessage();
-            if (message == null)
+            if (message == null) {
                 message = e.getClass().getName();
+            }
             throw new GeneralException("Validate RELS-EXT failed: " + message);
         }
     }
@@ -522,14 +540,17 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
      * Saves the changes thus far to the permanent copy of the digital object.
      * 
      * @param logMessage
-     *            An explanation of the change(s).
+     *        An explanation of the change(s).
      * @throws ServerException
-     *             If any type of error occurred fulfilling the request.
+     *         If any type of error occurred fulfilling the request.
      */
     public void commit(String logMessage) throws ServerException {
         assertNotInvalidated();
-        m_mgr.doCommit(Server.USE_DEFINITIVE_STORE, m_context, m_obj,
-                logMessage, m_pendingRemoval);
+        m_mgr.doCommit(Server.USE_DEFINITIVE_STORE,
+                       m_context,
+                       m_obj,
+                       logMessage,
+                       m_pendingRemoval);
         m_committed = true;
         invalidate();
     }
@@ -581,13 +602,15 @@ public class SimpleDOWriter extends SimpleDOReader implements Constants,
     }
 
     private void assertNotPendingRemoval() throws ObjectIntegrityException {
-        if (m_pendingRemoval)
+        if (m_pendingRemoval) {
             throw ERROR_PENDING_REMOVAL;
+        }
     }
 
     private void assertNotInvalidated() throws ObjectIntegrityException {
-        if (m_invalidated)
+        if (m_invalidated) {
             throw ERROR_INVALIDATED;
+        }
     }
 
     public boolean isCommitted() {

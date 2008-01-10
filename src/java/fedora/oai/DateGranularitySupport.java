@@ -6,32 +6,31 @@
 package fedora.oai;
 
 /**
- *
- * <p><b>Title:</b> DateGranularitySupport.java</p>
- * <p><b>Description:</b> An indicator of the level of granularity in dates a
- * repository supports.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * An indicator of the level of granularity in dates a repository supports.
+ * 
+ * @author Chris Wilper
  */
 public class DateGranularitySupport {
 
     /**
      * Indicates that the repository supports timestamp granularity in days.
      */
-    public static final DateGranularitySupport DAYS=new DateGranularitySupport("YYYY-MM-DD");
+    public static final DateGranularitySupport DAYS =
+            new DateGranularitySupport("YYYY-MM-DD");
 
     /**
      * Indicates that the repository supports timestamp granularity in seconds.
      */
-    public static final DateGranularitySupport SECONDS=new DateGranularitySupport("YYYY-MM-DDThh:mm:ssZ");
+    public static final DateGranularitySupport SECONDS =
+            new DateGranularitySupport("YYYY-MM-DDThh:mm:ssZ");
 
-    private String m_stringValue;
+    private final String m_stringValue;
 
     private DateGranularitySupport(String stringValue) {
-        m_stringValue=stringValue;
+        m_stringValue = stringValue;
     }
 
+    @Override
     public String toString() {
         return m_stringValue;
     }

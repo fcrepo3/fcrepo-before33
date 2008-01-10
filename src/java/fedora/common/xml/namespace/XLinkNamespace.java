@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The XLink XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://www.w3.org/1999/xlink
  * Preferred Prefix : xlink
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class XLinkNamespace
         extends XMLNamespace {
@@ -33,8 +33,7 @@ public class XLinkNamespace
     //---
 
     /** The only instance of this class. */
-    private static final XLinkNamespace ONLY_INSTANCE
-            = new XLinkNamespace();
+    private static final XLinkNamespace ONLY_INSTANCE = new XLinkNamespace();
 
     /**
      * Constructs the instance.
@@ -44,12 +43,12 @@ public class XLinkNamespace
 
         // attributes
         TITLE = new QName(this, "title");
-        HREF  = new QName(this, "href");
+        HREF = new QName(this, "href");
     }
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static XLinkNamespace getInstance() {

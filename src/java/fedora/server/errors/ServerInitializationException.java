@@ -6,24 +6,22 @@
 package fedora.server.errors;
 
 /**
- *
- * <p><b>Title:</b> ServerInitializationException.java</p>
- * <p><b>Description:</b> Signifies that an error occurred during the server's
- * initialization.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * Signifies that an error occurred during the server's initialization.
+ * </p>
+ * 
+ * @author Chris Wilper
  */
 public class ServerInitializationException
         extends InitializationException {
 
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     /**
      * Creates a ServerInitializationException.
-     *
-     * @param message An informative message explaining what happened and
-     *                (possibly) how to fix it.
+     * 
+     * @param message
+     *        An informative message explaining what happened and (possibly) how
+     *        to fix it.
      */
     public ServerInitializationException(String message) {
         super(message);

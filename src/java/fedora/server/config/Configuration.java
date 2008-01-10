@@ -5,14 +5,15 @@
 
 package fedora.server.config;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  *
  */
 public abstract class Configuration {
 
-    private List<Parameter> m_parameters;
+    private final List<Parameter> m_parameters;
 
     protected Configuration(List<Parameter> parameters) {
         m_parameters = parameters;
@@ -25,7 +26,9 @@ public abstract class Configuration {
     public Parameter getParameter(String name) {
         for (int i = 0; i < m_parameters.size(); i++) {
             Parameter param = m_parameters.get(i);
-            if (param.getName().equals(name)) return param;
+            if (param.getName().equals(name)) {
+                return param;
+            }
         }
         return null;
     }
@@ -33,7 +36,11 @@ public abstract class Configuration {
     public void setParameterValue(String name, String value, boolean autoCreate) {
         Parameter param = getParameter(name);
         if (param == null) {
-            m_parameters.add(new Parameter(name, value, false, null, new HashMap()));
+            m_parameters.add(new Parameter(name,
+                                           value,
+                                           false,
+                                           null,
+                                           new HashMap()));
         } else {
             param.setValue(value);
         }

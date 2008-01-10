@@ -9,41 +9,28 @@ import com.oreilly.servlet.Base64Decoder;
 import com.oreilly.servlet.Base64Encoder;
 
 /**
+ * Encipher the password so we aren't writing it to the file in clear.
  * 
- * <p>
- * <b>Title:</b> PasswordCipher.java
- * </p>
- * <p>
- * <b>Description:</b> Encipher the password so we aren't writing it to the
- * file in clear.
- * </p>
- * <p>
- * The encipher method does not allow options for cipher type. It should always
- * use the latest and greatest. The decipher method accepts different cipher
- * types so it can be used to read older Journal Files. Known types include:
+ * <p>The encipher method does not allow options for cipher type. It should 
+ * always use the latest and greatest. The decipher method accepts different 
+ * cipher types so it can be used to read older Journal Files. Known types 
+ * include:
  * <ul>
  * <li>"" or null - empty cipher, clear text is the same as cipher text</li>
  * <li>"1" - rotating key XOR cipher</li>
  * </ul>
- * </p>
  * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
-
 public class PasswordCipher {
 
     /**
      * Two methods: String encode(String key, String clearText); String
-     * decode(String key, String decodedText);
-     * 
-     * encoding: for each character in the clearText, get the byte from the
-     * char, get a byte from the key, XOR, and write to the byte array. Base64
-     * encode and return.
-     * 
-     * decoding: base64 decode. for each byte in the result, XOR with a byte
-     * from the key to yield a char. combine into a string. return.
-     * 
+     * decode(String key, String decodedText); encoding: for each character in
+     * the clearText, get the byte from the char, get a byte from the key, XOR,
+     * and write to the byte array. Base64 encode and return. decoding: base64
+     * decode. for each byte in the result, XOR with a byte from the key to
+     * yield a char. combine into a string. return.
      */
 
     /**
@@ -72,9 +59,10 @@ public class PasswordCipher {
      * Use the key to produce a clear text String from the cipherText. If no key
      * is provided, or if no type is specified, just return the text as is.
      */
-    public static String decipher(String key, String cipherText,
-            String cipherType) {
-        if ((key == null) || (key == "")) {
+    public static String decipher(String key,
+                                  String cipherText,
+                                  String cipherType) {
+        if (key == null || key == "") {
             return cipherText;
         }
 
@@ -82,7 +70,7 @@ public class PasswordCipher {
             return null;
         }
 
-        if ((cipherType == null) || (cipherType == "")) {
+        if (cipherType == null || cipherType == "") {
             return cipherText;
         } else if ("1".equalsIgnoreCase(cipherType)) {
             byte[] keyBytes = convertKeyToByteArray(key);
@@ -106,7 +94,7 @@ public class PasswordCipher {
         byte[] result = new byte[key.length()];
         for (int i = 0; i < result.length; i++) {
             char thisChar = key.charAt(i);
-            result[i] = (byte) (((thisChar >>> 8) & 0xFF) ^ (thisChar & 0xFF));
+            result[i] = (byte) (thisChar >>> 8 & 0xFF ^ thisChar & 0xFF);
         }
         return result;
     }
@@ -120,8 +108,8 @@ public class PasswordCipher {
         for (int i = 0; i < clearText.length(); i++) {
             char thisChar = clearText.charAt(i);
             int pos = i * 2;
-            result[pos] = (byte) ((thisChar >>> 8) & 0xFF);
-            result[pos + 1] = (byte) ((thisChar & 0xFF));
+            result[pos] = (byte) (thisChar >>> 8 & 0xFF);
+            result[pos + 1] = (byte) (thisChar & 0xFF);
         }
         return result;
     }
@@ -130,12 +118,13 @@ public class PasswordCipher {
      * If the cipher text decodes to an odd number of bytes, we can't go on!
      */
     private static void sanityCheckOnCipherBytes(String cipherText,
-            byte[] cipherBytes) {
-        if ((cipherBytes.length % 2) != 0) {
-            throw new IllegalStateException(
-                    "Ciphered text decodes to an odd number of bytes! Text='"
-                            + cipherText + "', decodes to "
-                            + cipherBytes.length + " bytes.");
+                                                 byte[] cipherBytes) {
+        if (cipherBytes.length % 2 != 0) {
+            throw new IllegalStateException("Ciphered text decodes to an odd number of bytes! Text='"
+                    + cipherText
+                    + "', decodes to "
+                    + cipherBytes.length
+                    + " bytes.");
         }
     }
 
@@ -146,7 +135,7 @@ public class PasswordCipher {
     private static String convertByteArrayToClearText(byte[] bytes) {
         StringBuffer result = new StringBuffer();
         for (int i = 0; i < bytes.length; i += 2) {
-            char thisChar = (char) ((bytes[i] << 8) | bytes[i + 1]);
+            char thisChar = (char) (bytes[i] << 8 | bytes[i + 1]);
             result.append(thisChar);
         }
         return result.toString();

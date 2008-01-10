@@ -5,20 +5,22 @@
 
 package fedora.utilities;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
- * Comparator for sorting files and directories in a deterministic manner.
- *
- * The sort order can be case-sensitive (default) or case-insensitive, 
- * ascending (default) or descending, with directories occurring before 
- * (if ascending) or after files within the same directory.
- *
- * The default behavior has the convenient property that it sorts in the same 
- * order as would be done when performing a pre-order traversal of the 
- * filesystem.
- *
+ * Comparator for sorting files and directories in a deterministic manner. The
+ * sort order can be case-sensitive (default) or case-insensitive, ascending
+ * (default) or descending, with directories occurring before (if ascending) or
+ * after files within the same directory. The default behavior has the
+ * convenient property that it sorts in the same order as would be done when
+ * performing a pre-order traversal of the filesystem.
+ * 
  * <pre>
  * Example input:
  *   afile
@@ -44,10 +46,11 @@ import java.util.*;
  *   file2
  *   file6
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
-public class FileComparator implements Comparator {
+public class FileComparator
+        implements Comparator {
 
     private int m_multiplier = 1;
 
@@ -69,16 +72,15 @@ public class FileComparator implements Comparator {
     }
 
     /**
-     * Construct a comparator that sorts in the specified order using
-     * the specified case sensitivity.
+     * Construct a comparator that sorts in the specified order using the
+     * specified case sensitivity.
      */
     public FileComparator(boolean useDescendingOrder, boolean ignoreCase) {
         this(useDescendingOrder);
         m_ignoreCase = ignoreCase;
     }
 
-    public int compare(Object o1,
-                       Object o2) {
+    public int compare(Object o1, Object o2) {
 
         String s1 = getComparable(o1);
         String s2 = getComparable(o2);
@@ -112,13 +114,16 @@ public class FileComparator implements Comparator {
         StringBuffer out = new StringBuffer();
 
         // prepend a space to the name of all directories in the path
-        StringTokenizer names = new StringTokenizer(f.getPath(), File.separator);
+        StringTokenizer names =
+                new StringTokenizer(f.getPath(), File.separator);
         int last = names.countTokens();
         int count = 0;
         while (names.hasMoreTokens()) {
             String name = names.nextToken();
             count++;
-            if (count != 1) out.append(File.separator);
+            if (count != 1) {
+                out.append(File.separator);
+            }
             if (count == last && !f.isDirectory()) {
                 out.append(name);
             } else {
@@ -129,22 +134,22 @@ public class FileComparator implements Comparator {
         return out.toString();
     }
 
+    @Override
     public boolean equals(Object o) {
         if (o instanceof FileComparator) {
             FileComparator c = (FileComparator) o;
-            return ((descends() == c.descends()) && (ignoresCase() == c.ignoresCase()));
+            return descends() == c.descends()
+                    && ignoresCase() == c.ignoresCase();
         } else {
             return false;
         }
     }
 
     /**
-     * Command-line entry point for simple testing of this class.
-     * 
-     * Given a directory, get all files and dirs (recursively) in no
-     * particular order.  Print all filenames (using spaces to denote
-     * directory names) in unsorted, default sorted, and FileComparator
-     * sorted order.
+     * Command-line entry point for simple testing of this class. Given a
+     * directory, get all files and dirs (recursively) in no particular order.
+     * Print all filenames (using spaces to denote directory names) in unsorted,
+     * default sorted, and FileComparator sorted order.
      */
     public static void main(String[] args) {
 
@@ -163,7 +168,7 @@ public class FileComparator implements Comparator {
 
         Arrays.sort(files, new FileComparator());
         print("Sorted with FileComparator", files);
-        
+
         Arrays.sort(files, new FileComparator(true));
         print("Sorted with FileComparator in reverse", files);
     }
@@ -171,8 +176,8 @@ public class FileComparator implements Comparator {
     // for testing via main
     private static void print(String kind, File[] f) {
         System.out.println(kind);
-        for (int i = 0; i < f.length; i++) {
-            System.out.println(getComparable(f[i]));
+        for (File element : f) {
+            System.out.println(getComparable(element));
         }
         System.out.println();
     }
@@ -180,10 +185,10 @@ public class FileComparator implements Comparator {
     // for testing via main
     private static void getFilesAndDirs(File dir, List list) {
         File[] files = dir.listFiles();
-        for (int i = 0; i < files.length; i++) {
-            list.add(files[i]);
-            if (files[i].isDirectory()) {
-                getFilesAndDirs(files[i], list);
+        for (File element : files) {
+            list.add(element);
+            if (element.isDirectory()) {
+                getFilesAndDirs(element, list);
             }
         }
     }

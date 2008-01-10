@@ -5,29 +5,37 @@
 
 package fedora.server.storage;
 
-import fedora.server.storage.types.*;
-import fedora.server.errors.ServerException;
 import java.io.InputStream;
+
 import java.util.Date;
 
+import fedora.server.errors.ServerException;
+import fedora.server.storage.types.BMechDSBindSpec;
+import fedora.server.storage.types.MethodDef;
+import fedora.server.storage.types.MethodDefOperationBind;
+import fedora.server.storage.types.MethodParmDef;
+
 /**
- *
- * <p><b>Title:</b> BMechReader.java</p>
- * <p><b>Description:</b> Interface for reading Behavior Mechanism Objects.</p>
- *
- * @author payette@cs.cornell.edu
- * @version $Id$
+ * Interface for reading Behavior Mechanism Objects.
+ * 
+ * @author Sandy Payette
  */
-public interface BMechReader extends DOReader
-{
-  public MethodDef[] getServiceMethods(Date versDateTime) throws ServerException;
+public interface BMechReader
+        extends DOReader {
 
-  public MethodDefOperationBind[] getServiceMethodBindings(Date versDateTime)
-      throws ServerException;
+    public MethodDef[] getServiceMethods(Date versDateTime)
+            throws ServerException;
 
-  public InputStream getServiceMethodsXML(Date versDateTime) throws ServerException;
+    public MethodDefOperationBind[] getServiceMethodBindings(Date versDateTime)
+            throws ServerException;
 
-  public BMechDSBindSpec getServiceDSInputSpec(Date versDateTime) throws ServerException;
+    public InputStream getServiceMethodsXML(Date versDateTime)
+            throws ServerException;
 
-  public MethodParmDef[] getServiceMethodParms(String methodName, Date versDateTime) throws ServerException;
+    public BMechDSBindSpec getServiceDSInputSpec(Date versDateTime)
+            throws ServerException;
+
+    public MethodParmDef[] getServiceMethodParms(String methodName,
+                                                 Date versDateTime)
+            throws ServerException;
 }

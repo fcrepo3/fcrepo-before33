@@ -1,34 +1,33 @@
+
 package fedora.server.resourceIndex;
 
 import java.util.Collections;
 import java.util.Set;
 
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.jrdf.graph.Triple;
+
+import org.junit.Test;
 
 import fedora.server.storage.types.DigitalObject;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 /**
- * Miscellaneous tests of adding and deleting objects from the RI.
- *
- * Note: All tests run at RI level 1 unless otherwise noted.
- *
- * @author cwilper@cs.cornell.edu
+ * Miscellaneous tests of adding and deleting objects from the RI. Note: All
+ * tests run at RI level 1 unless otherwise noted.
+ * 
+ * @author Chris Wilper
  */
 public class ResourceIndexAddDelMiscIntegrationTest
         extends ResourceIndexIntegrationTest {
 
     /**
-     * Add, then delete an object with the RI at level 0.
-     *
-     * This test ensures that adds and deletes at level 0 don't do anything.
+     * Add, then delete an object with the RI at level 0. This test ensures that
+     * adds and deletes at level 0 don't do anything.
      */
     @Test
-    public void testAddDelObjLv0()
-            throws Exception {
+    public void testAddDelObjLv0() throws Exception {
         Set<DigitalObject> objects = getTestObjects(1, 0);
 
         // add at level 0
@@ -56,8 +55,7 @@ public class ResourceIndexAddDelMiscIntegrationTest
      * Add, then delete several objects, each with one datastream.
      */
     @Test
-    public void testAddDelMultiObjOneDS()
-            throws Exception {
+    public void testAddDelMultiObjOneDS() throws Exception {
         Set<DigitalObject> objects = getTestObjects(5, 1);
         doAddDelTest(1, objects);
     }
@@ -66,16 +64,14 @@ public class ResourceIndexAddDelMiscIntegrationTest
      * Add, then delete several objects, each with several datastreams.
      */
     @Test
-    public void testAddDelMultiObjMultiDS()
-            throws Exception {
+    public void testAddDelMultiObjMultiDS() throws Exception {
         Set<DigitalObject> objects = getTestObjects(5, 5);
         doAddDelTest(1, objects);
     }
 
     // Supports legacy test runners
     public static junit.framework.Test suite() {
-        return new junit.framework.JUnit4TestAdapter(
-                ResourceIndexAddDelMiscIntegrationTest.class);
+        return new junit.framework.JUnit4TestAdapter(ResourceIndexAddDelMiscIntegrationTest.class);
     }
 
 }

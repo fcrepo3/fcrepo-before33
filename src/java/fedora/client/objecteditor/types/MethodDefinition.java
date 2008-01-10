@@ -5,39 +5,38 @@
 
 package fedora.client.objecteditor.types;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+
+import java.util.List;
 
 /**
- * Defines a method that an object exposes via Fedora.
- *
- * A behavior definition object specifies this.
- * 
+ * Defines a method that an object exposes via Fedora. A behavior definition
+ * object specifies this.
  */
 public class MethodDefinition {
 
-    private String m_name;
-    private String m_label;
-    private List m_parameterDefinitions;
+    private final String m_name;
+
+    private final String m_label;
+
+    private final List m_parameterDefinitions;
 
     /**
      * Initialize a MethodDefinition object with all values.
      */
-    public MethodDefinition(String name, 
-                            String label, 
-                            List parameterDefinitions) {
-        m_name=name;
-        m_label=label;
-        m_parameterDefinitions=parameterDefinitions;
+    public MethodDefinition(String name, String label, List parameterDefinitions) {
+        m_name = name;
+        m_label = label;
+        m_parameterDefinitions = parameterDefinitions;
     }
 
     /**
-     * Parse a stream of XML and return the list of method definitions
-     * defined therein.
-     *
-     * The parsing is very relaxed.  The xml may, but needn't be 
-     * namespace-qualified, and will only be validated according to the
-     * rules implied below in parentheses.
+     * Parse a stream of XML and return the list of method definitions defined
+     * therein. The parsing is very relaxed. The xml may, but needn't be
+     * namespace-qualified, and will only be validated according to the rules
+     * implied below in parentheses.
+     * 
      * <pre>
      * &lt;Method operationName="METHOD_NAME" 
      *                 label="METHOD_LABEL"(0-1)&gt;
@@ -52,8 +51,7 @@ public class MethodDefinition {
      * &lt;/Method&gt;
      * </pre>
      */
-    public static List parse(InputStream xml) 
-            throws IOException {
+    public static List parse(InputStream xml) throws IOException {
         return new MethodDefinitionsDeserializer(xml).getResult();
     }
 
@@ -65,16 +63,15 @@ public class MethodDefinition {
     }
 
     /**
-     * Get a short description of the method.  This may be null.
+     * Get a short description of the method. This may be null.
      */
     public String getLabel() {
         return m_label;
     }
 
     /**
-     * Get the method's list of <code>ParameterDefinition</code>s.
-     *
-     * If the method takes no parameters, this will be an empty list.
+     * Get the method's list of <code>ParameterDefinition</code>s. If the
+     * method takes no parameters, this will be an empty list.
      */
     public List parameterDefinitions() {
         return m_parameterDefinitions;

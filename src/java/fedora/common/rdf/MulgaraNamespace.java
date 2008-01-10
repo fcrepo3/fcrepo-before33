@@ -20,37 +20,46 @@ import org.mulgara.query.rdf.Mulgara;
  * @see org.mulgara.resolver.xsd.XSDResolverFactory
  * @author Edwin Shin
  */
-public class MulgaraNamespace extends RDFNamespace {
+public class MulgaraNamespace
+        extends RDFNamespace {
+
     private static final long serialVersionUID = 1L;
 
     // Properties
     public final RDFName AFTER;
+
     public final RDFName BEFORE;
-    public final RDFName GT;    
+
+    public final RDFName GT;
+
     public final RDFName LT;
-    
+
     public final RDFName IS;
+
     public final RDFName NOT_OCCURS;
+
     public final RDFName OCCURS;
+
     public final RDFName OCCURS_LESS_THAN;
+
     public final RDFName OCCURS_MORE_THAN;
 
     public MulgaraNamespace() {
 
-        this.uri = Mulgara.NAMESPACE; // http://mulgara.org/mulgara#
-        this.prefix = "mulgara";
+        uri = Mulgara.NAMESPACE; // http://mulgara.org/mulgara#
+        prefix = "mulgara";
 
         // Properties
-        this.AFTER              = new RDFName(this, "after");
-        this.BEFORE             = new RDFName(this, "before");
-        this.GT                 = new RDFName(this, "gt");
-        this.LT                 = new RDFName(this, "lt");
-        
-        this.IS                 = new RDFName(this, "is");
-        this.NOT_OCCURS         = new RDFName(this, "notOccurs");
-        this.OCCURS             = new RDFName(this, "occurs");
-        this.OCCURS_LESS_THAN   = new RDFName(this, "occursLessThan");
-        this.OCCURS_MORE_THAN   = new RDFName(this, "occursMoreThan");
+        AFTER = new RDFName(this, "after");
+        BEFORE = new RDFName(this, "before");
+        GT = new RDFName(this, "gt");
+        LT = new RDFName(this, "lt");
+
+        IS = new RDFName(this, "is");
+        NOT_OCCURS = new RDFName(this, "notOccurs");
+        OCCURS = new RDFName(this, "occurs");
+        OCCURS_LESS_THAN = new RDFName(this, "occursLessThan");
+        OCCURS_MORE_THAN = new RDFName(this, "occursMoreThan");
     }
 
 }

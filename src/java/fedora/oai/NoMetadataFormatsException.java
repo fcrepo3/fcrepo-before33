@@ -6,21 +6,17 @@
 package fedora.oai;
 
 /**
- *
- * <p><b>Title:</b> NoMetadataFormatsException.java</p>
- * <p><b>Description:</b> Signals that there are no metadata formats available
- * for the specified item.</p>
- *
- * <p>This may occur while fulfilling a ListMetadataFormats request.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * Signals that there are no metadata formats available for the specified item.
+ * 
+ * This may occur while fulfilling a ListMetadataFormats request.
+ * 
+ * @author Chris Wilper
  */
 public class NoMetadataFormatsException
         extends OAIException {
 
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     public NoMetadataFormatsException() {
         super("noMetadataFormats", null);
     }

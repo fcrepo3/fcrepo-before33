@@ -6,23 +6,29 @@
 package fedora.server.security;
 
 /**
- * Abstract implementation of <code>BERoleConfig</code>.
- *
- * Concrete implementations must override getRole().
- *
- * @author cwilper@cs.cornell.edu
+ * Abstract implementation of <code>BERoleConfig</code>. Concrete
+ * implementations must override getRole().
+ * 
+ * @author Chris Wilper
  */
-public abstract class AbstractRoleConfig implements BERoleConfig {
+public abstract class AbstractRoleConfig
+        implements BERoleConfig {
 
-    private BERoleConfig m_parent;
+    private final BERoleConfig m_parent;
 
     private String[] m_ipList;
-    private Boolean  m_callbackBasicAuth;
-    private Boolean  m_callbackSSL;
-    private Boolean  m_callBasicAuth;
-    private Boolean  m_callSSL;
-    private String   m_callUsername;
-    private String   m_callPassword;
+
+    private Boolean m_callbackBasicAuth;
+
+    private Boolean m_callbackSSL;
+
+    private Boolean m_callBasicAuth;
+
+    private Boolean m_callSSL;
+
+    private String m_callUsername;
+
+    private String m_callPassword;
 
     protected AbstractRoleConfig(BERoleConfig parent) {
         m_parent = parent;

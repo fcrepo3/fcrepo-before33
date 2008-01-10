@@ -7,8 +7,8 @@ package fedora.common.xml.namespace;
 
 /**
  * An XML namespace.
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class XMLNamespace {
 
@@ -22,10 +22,13 @@ public class XMLNamespace {
 
     /**
      * Constructs an instance.
-     *
-     * @param uri the URI of the namespace.
-     * @param prefix the preferred prefix.
-     * @throws IllegalArgumentException if either parameter is null.
+     * 
+     * @param uri
+     *        the URI of the namespace.
+     * @param prefix
+     *        the preferred prefix.
+     * @throws IllegalArgumentException
+     *         if either parameter is null.
      */
     public XMLNamespace(String uri, String prefix) {
         if (uri == null) {
@@ -43,9 +46,7 @@ public class XMLNamespace {
     //---
 
     /**
-     * Returns the URI of the namespace.
-     *
-     * {@inheritDoc}
+     * Returns the URI of the namespace. {@inheritDoc}
      */
     @Override
     public String toString() {
@@ -53,15 +54,13 @@ public class XMLNamespace {
     }
 
     /**
-     * Returns true iff the given object is an instance of this class
-     * and has the same URI.
-     *
-     * {@inheritDoc}
+     * Returns true iff the given object is an instance of this class and has
+     * the same URI. {@inheritDoc}
      */
     @Override
     public boolean equals(Object o) {
-        if (o instanceof XMLNamespace && o.getClass().getName().equals(
-                this.getClass().getName())) {
+        if (o instanceof XMLNamespace
+                && o.getClass().getName().equals(this.getClass().getName())) {
             XMLNamespace n = (XMLNamespace) o;
             return uri.equals(n.uri);
         } else {

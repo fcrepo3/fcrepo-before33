@@ -6,13 +6,11 @@
 package fedora.oai;
 
 /**
- *
- * <p><b>Title:</b> MetadataFormat.java</p>
- * <p><b>Description:</b> Describes a metadata format.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
- * @see <a href="http://www.openarchives.org/OAI/openarchivesprotocol.html#ListMetadataFormats">
+ * Describes a metadata format.
+ * 
+ * @author Chris Wilper
+ * @see <a
+ *      href="http://www.openarchives.org/OAI/openarchivesprotocol.html#ListMetadataFormats">
  *      http://www.openarchives.org/OAI/openarchivesprotocol.html#ListMetadataFormats</a>
  */
 public interface MetadataFormat {

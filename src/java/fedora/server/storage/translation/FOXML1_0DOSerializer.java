@@ -5,12 +5,10 @@
 
 package fedora.server.storage.translation;
 
-import static fedora.common.Constants.FOXML1_0;
-
 /**
  * Serializes objects in FOXML 1.0 format.
  * 
- * @author cwilper@cs.cornell.edu
+ * @author Chris Wilper
  */
 public class FOXML1_0DOSerializer
         extends FOXMLDOSerializer {

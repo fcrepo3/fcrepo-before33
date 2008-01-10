@@ -8,35 +8,36 @@ package fedora.client.console;
 import java.lang.reflect.Method;
 
 /**
- *
- * <p><b>Title:</b> ConsoleCommand.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
  */
 public class ConsoleCommand {
 
     Method m_method;
+
     String m_methodDescription;
+
     String[] m_paramNames;
+
     String[] m_paramDescriptions;
+
     String m_returnDescription;
 
-    public ConsoleCommand(Method method, String methodDescription,
-            String[] paramNames, String[] paramDescriptions,
-            String returnDescription) {
-        m_method=method;
-        m_methodDescription=methodDescription;
-        m_paramNames=paramNames;
-        if (paramNames==null) {
-            m_paramNames=new String[method.getParameterTypes().length];
-            for (int i=0; i<m_paramNames.length; i++) {
-                m_paramNames[i]="param" + (i+1);
+    public ConsoleCommand(Method method,
+                          String methodDescription,
+                          String[] paramNames,
+                          String[] paramDescriptions,
+                          String returnDescription) {
+        m_method = method;
+        m_methodDescription = methodDescription;
+        m_paramNames = paramNames;
+        if (paramNames == null) {
+            m_paramNames = new String[method.getParameterTypes().length];
+            for (int i = 0; i < m_paramNames.length; i++) {
+                m_paramNames[i] = "param" + (i + 1);
             }
         }
-        m_paramDescriptions=paramDescriptions;
-        m_returnDescription=returnDescription;
+        m_paramDescriptions = paramDescriptions;
+        m_returnDescription = returnDescription;
     }
 
     public String getName() {
@@ -68,15 +69,16 @@ public class ConsoleCommand {
         return m_method.invoke(instance, paramValues);
     }
 
+    @Override
     public String toString() {
-        StringBuffer ret=new StringBuffer();
+        StringBuffer ret = new StringBuffer();
         ret.append(getUnqualifiedName(m_method.getReturnType()));
         ret.append(" ");
         ret.append(m_method.getName());
         ret.append("(");
-        Class[] types=m_method.getParameterTypes();
-        for (int i=0; i<types.length; i++) {
-            if (i>0) {
+        Class[] types = m_method.getParameterTypes();
+        for (int i = 0; i < types.length; i++) {
+            if (i > 0) {
                 ret.append(", ");
             }
             ret.append(getUnqualifiedName(types[i]));
@@ -88,15 +90,15 @@ public class ConsoleCommand {
     }
 
     public String getUnqualifiedName(Class cl) {
-        if (cl==null) {
+        if (cl == null) {
             return "void";
         }
-        if (cl.getPackage()==null) {
+        if (cl.getPackage() == null) {
             return bracketsForArrays(cl.getName());
         }
-        String pName=cl.getPackage().getName();
-        if ( (pName!=null) && (pName.length()>0) ) {
-            return cl.getName().substring(pName.length()+1);
+        String pName = cl.getPackage().getName();
+        if (pName != null && pName.length() > 0) {
+            return cl.getName().substring(pName.length() + 1);
         }
         return bracketsForArrays(cl.getName());
     }
@@ -107,9 +109,12 @@ public class ConsoleCommand {
         }
         if (in.startsWith("[L")) {
             try {
-                return getUnqualifiedName(Class.forName(in.substring(2, in.length()-1))) + "[]";
+                return getUnqualifiedName(Class.forName(in.substring(2, in
+                        .length() - 1)))
+                        + "[]";
             } catch (ClassNotFoundException cnfe) {
-                System.out.println("class not found: " + in.substring(2, in.length()-1));
+                System.out.println("class not found: "
+                        + in.substring(2, in.length() - 1));
             }
         }
         return in;

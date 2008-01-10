@@ -6,19 +6,16 @@
 package fedora.oai;
 
 /**
- *
- * <p><b>Title:</b> RepositoryException.java</p>
- * <p><b>Description:</b> An exception occuring as a result of a problem in
- * the underlying repository system.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * An exception occuring as a result of a problem in the underlying 
+ * repository system.
+ * 
+ * @author Chris Wilper
  */
 public class RepositoryException
         extends Exception {
 
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     public RepositoryException(String message) {
         super(message);
     }

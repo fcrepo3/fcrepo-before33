@@ -4,52 +4,54 @@
  */
 
 package fedora.server.security.servletfilters;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /*
-import java.security.Principal;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Hashtable;
-*/
-
-
-/** 
- *  @author Bill Niebel (niebel@virginia.edu)
+ * import java.security.Principal; import java.util.Map; import java.util.Set;
+ * import java.util.HashSet; import java.util.Hashtable;
  */
-public class Principal implements java.security.Principal {
-    private Log log = LogFactory.getLog(Principal.class);
-    
+
+/**
+ * @author Bill Niebel
+ */
+public class Principal
+        implements java.security.Principal {
+
+    private final Log log = LogFactory.getLog(Principal.class);
+
     private final String name;
-    
+
     public Principal(String name) {
-    	//this.authority = null;
-    	this.name = name;
+        //this.authority = null;
+        this.name = name;
     }
 
     public String getName() {
-    	return name;
+        return name;
     }
 
+    @Override
     public String toString() {
-    	//need to re-implement this    	
-    	return "Principal[" + getName() + "]";
+        //need to re-implement this    	
+        return "Principal[" + getName() + "]";
     }
 
+    @Override
     public int hashCode() {
-    	//need to implement this    	
-    	return 1;
+        //need to implement this    	
+        return 1;
     }
 
+    @Override
     public boolean equals(Object another) {
-    	//need to implement this    	
-    	return false;
+        //need to implement this    	
+        return false;
     }
-    
+
     public String[] getRoles() {
-    	return new String[0];
+        return new String[0];
     }
-    
+
 }

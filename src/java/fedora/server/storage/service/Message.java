@@ -5,17 +5,14 @@
 
 package fedora.server.storage.service;
 
-
 /**
- *
- * <p><b>Title:</b> Message.java</p>
- * <p><b>Description:</b> A data structure for holding WSDL Message.</p>
- *
- * @author payette@cs.cornell.edu
- * @version $Id$
+ * A data structure for holding WSDL Message.
+ * 
+ * @author Sandy Payette
  */
-public class Message
-{
-  public String messageName;
-  public Part[] messageParts;
+public class Message {
+
+    public String messageName;
+
+    public Part[] messageParts;
 }

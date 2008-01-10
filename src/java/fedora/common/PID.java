@@ -5,16 +5,17 @@
 
 package fedora.common;
 
-import java.io.*;  // BufferedReader, InputStreamReader
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 /**
  * A persistent identifier for Fedora digital objects.
- *
+ * 
  * <p>The following describes the syntactic constraints for PIDs in normalized
- * form.  The only differences with non-normalized PIDs are that the 
- * colon delimiter may be encoded as "%3a" or "%3A", and hex-digits may
- * use lowercase [a-f].</p>
- *
+ * form. The only differences with non-normalized PIDs are that the colon
+ * delimiter may be encoded as "%3a" or "%3A", and hex-digits may use lowercase
+ * [a-f].
+ * 
  * <pre>
  * PID:
  *   Length : maximum 64
@@ -32,32 +33,34 @@ import java.io.*;  // BufferedReader, InputStreamReader
  * hex-digit:
  *   Syntax : [0-9] / [A-F]
  * </pre>
- *
- * @version $Id$
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class PID {
 
     /** The maximum length of a PID is 64. */
     public static final int MAX_LENGTH = 64;
-    
-    /** The reserved handle namespace id **/
+
+    /** The reserved handle namespace id * */
     public static final String NS_HANDLE = "hdl";
 
-    private String m_normalized;
-    private String m_namespaceId;
-    private String m_objectId;
+    private final String m_normalized;
+
+    private final String m_namespaceId;
+
+    private final String m_objectId;
+
     private String m_filename;
 
     /**
-     * Construct a PID from a string, throwing a MalformedPIDException
-     * if it's not well-formed.
+     * Construct a PID from a string, throwing a MalformedPIDException if it's
+     * not well-formed.
      */
-    public PID(String pidString) 
+    public PID(String pidString)
             throws MalformedPIDException {
-    	if (pidString.startsWith(Constants.FEDORA.uri)) {
-    		pidString = pidString.substring(Constants.FEDORA.uri.length());
-    	}
+        if (pidString.startsWith(Constants.FEDORA.uri)) {
+            pidString = pidString.substring(Constants.FEDORA.uri.length());
+        }
         m_normalized = normalize(pidString);
         String[] split = m_normalized.split(":");
         m_namespaceId = split[0];
@@ -65,8 +68,8 @@ public class PID {
     }
 
     /**
-     * Alternate constructor that throws an unchecked exception
-     * if it's not well-formed.
+     * Alternate constructor that throws an unchecked exception if it's not
+     * well-formed.
      */
     public static PID getInstance(String pidString) {
         try {
@@ -77,10 +80,10 @@ public class PID {
     }
 
     /**
-     * Construct a PID given a filename of the form produced by toFilename(), 
+     * Construct a PID given a filename of the form produced by toFilename(),
      * throwing a MalformedPIDException if it's not well-formed.
      */
-    public static PID fromFilename(String filenameString) 
+    public static PID fromFilename(String filenameString)
             throws MalformedPIDException {
         String decoded = filenameString.replaceFirst("_", ":");
         if (decoded.endsWith("%")) {
@@ -90,10 +93,10 @@ public class PID {
     }
 
     /**
-     * Return the normalized form of the given pid string,
-     * or throw a MalformedPIDException.
+     * Return the normalized form of the given pid string, or throw a
+     * MalformedPIDException.
      */
-    public static String normalize(String pidString) 
+    public static String normalize(String pidString)
             throws MalformedPIDException {
         if (pidString == null) {
             throw new MalformedPIDException("PID is null.");
@@ -115,25 +118,30 @@ public class PID {
                         if (pidString.charAt(i) == '3') {
                             i++;
                             c = pidString.charAt(i);
-                            if ( c == 'a' || c == 'A' ) {
+                            if (c == 'a' || c == 'A') {
                                 out.append(":");
                                 inObjectID = true;
                             } else {
-                                throw new MalformedPIDException("Error in PID after first '%': expected '3a' or '3A', but saw '3" + c + "'.");
+                                throw new MalformedPIDException("Error in PID after first '%': expected '3a' or '3A', but saw '3"
+                                        + c + "'.");
                             }
                         } else {
-                            throw new MalformedPIDException("Error in PID after first '%': expected '3a' or '3A', but saw '" + pidString.substring(i, i+2) + "'.");
+                            throw new MalformedPIDException("Error in PID after first '%': expected '3a' or '3A', but saw '"
+                                    + pidString.substring(i, i + 2) + "'.");
                         }
                     } else {
-                        throw new MalformedPIDException("Error in PID after first '%': expected '3a' or '3A', but saw '" + pidString.substring(i+1) + "'.");
+                        throw new MalformedPIDException("Error in PID after first '%': expected '3a' or '3A', but saw '"
+                                + pidString.substring(i + 1) + "'.");
                     }
                 } else if (isAlphaNum(c) || c == '-' || c == '.') {
                     out.append(c);
                 } else {
                     // invalid char for namespace-id
-                    throw new MalformedPIDException("PID namespace-id cannot contain '" + c + "' character.");
+                    throw new MalformedPIDException("PID namespace-id cannot contain '"
+                            + c + "' character.");
                 }
-            } else if (isAlphaNum(c) || c == '-' || c == '.' || c == '~' || c == '_' ) {
+            } else if (isAlphaNum(c) || c == '-' || c == '.' || c == '~'
+                    || c == '_') {
                 out.append(c);
             } else if (c == '%') {
                 // next 2 chars MUST be [0-9][a-f][A-F]
@@ -145,46 +153,58 @@ public class PID {
                     throw new MalformedPIDException("PID object-id ended early: need at least 2 chars after '%'.");
                 }
             } else {
-                throw new MalformedPIDException("PID object-id cannot contain '" + c + "' character.");
+                throw new MalformedPIDException("PID object-id cannot contain '"
+                        + c + "' character.");
             }
         }
 
-
-        if (!inObjectID) throw new MalformedPIDException("PID delimiter (:) is missing.");
+        if (!inObjectID) {
+            throw new MalformedPIDException("PID delimiter (:) is missing.");
+        }
         String outString = out.toString();
-        if (outString.startsWith(":")) throw new MalformedPIDException("PID namespace-id cannot be empty.");
-        if (outString.length() < 3) throw new MalformedPIDException("PID object-id cannot be empty.");
-        if (outString.length() > MAX_LENGTH) throw new MalformedPIDException("PID length exceeds " + MAX_LENGTH + ".");
+        if (outString.startsWith(":")) {
+            throw new MalformedPIDException("PID namespace-id cannot be empty.");
+        }
+        if (outString.length() < 3) {
+            throw new MalformedPIDException("PID object-id cannot be empty.");
+        }
+        if (outString.length() > MAX_LENGTH) {
+            throw new MalformedPIDException("PID length exceeds " + MAX_LENGTH
+                    + ".");
+        }
 
         // If we got here, it's well-formed, so return it.
         return outString;
     }
 
     private static boolean isAlphaNum(char c) {
-        return (    ( ( c >= '0' ) && ( c <= '9' ) )
-                 || ( ( c >= 'a' ) && ( c <= 'z' ) )
-                 || ( ( c >= 'A' ) && ( c <= 'Z' ) ) );
+        return c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A'
+                && c <= 'Z';
     }
 
-    private static char getNormalizedHexChar(char c) 
+    private static char getNormalizedHexChar(char c)
             throws MalformedPIDException {
-        if ( c >= '0' && c <= '9' ) return c;
+        if (c >= '0' && c <= '9') {
+            return c;
+        }
         c = ("" + c).toUpperCase().charAt(0);
-        if ( c >= 'A' && c <= 'F' ) return c;
+        if (c >= 'A' && c <= 'F') {
+            return c;
+        }
         throw new MalformedPIDException("Bad hex-digit in PID object-id: " + c);
     }
 
     /**
      * Return the normalized form of this PID.
      */
+    @Override
     public String toString() {
         return m_normalized;
     }
 
     /**
-     * Return the URI form of this PID.
-     * 
-     * This is just the PID, prepended with "info:fedora/".
+     * Return the URI form of this PID. This is just the PID, prepended with
+     * "info:fedora/".
      */
     public String toURI() {
         return Constants.FEDORA.uri + m_normalized;
@@ -198,50 +218,50 @@ public class PID {
     }
 
     /**
-     * Return a string representing this PID that can be safely used
-     * as a filename on any OS.
-     *
+     * Return a string representing this PID that can be safely used as a
+     * filename on any OS.
      * <ul>
-     *   <li> The colon (:) is replaced with an underscore (_).</li>
-     *   <li> Trailing dots are encoded as percents (%).</li>
+     * <li> The colon (:) is replaced with an underscore (_).</li>
+     * <li> Trailing dots are encoded as percents (%).</li>
      * </ul>
      */
     public String toFilename() {
         if (m_filename == null) { // lazily convert, since not always needed
             m_filename = m_normalized.replaceAll(":", "_");
             if (m_filename.endsWith(".")) {
-                m_filename = m_filename.substring(0, m_filename.length() - 1) + "%";
+                m_filename =
+                        m_filename.substring(0, m_filename.length() - 1) + "%";
             }
         }
         return m_filename;
     }
-    
+
     public String getNamespaceId() {
         return m_namespaceId;
     }
-    
+
     public String getObjectId() {
         return m_objectId;
     }
 
     /**
-     * Command-line interactive tester.
-     *
-     * If one arg given, prints normalized form of that PID and exits.
-     * If no args, enters interactive mode.
+     * Command-line interactive tester. If one arg given, prints normalized form
+     * of that PID and exits. If no args, enters interactive mode.
      */
     public static void main(String[] args) throws Exception {
         if (args.length > 0) {
             PID p = new PID(args[0]);
             System.out.println("Normalized    : " + p.toString());
             System.out.println("To filename   : " + p.toFilename());
-            System.out.println("From filename : " + PID.fromFilename(p.toFilename()).toString());
+            System.out.println("From filename : "
+                    + PID.fromFilename(p.toFilename()).toString());
         } else {
             System.out.println("--------------------------------------");
             System.out.println("PID Syntax Checker - Interactive mode");
             System.out.println("--------------------------------------");
             boolean done = false;
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(System.in));
             while (!done) {
                 try {
                     System.out.print("Enter a PID (ENTER to exit): ");
@@ -252,7 +272,8 @@ public class PID {
                         PID p = new PID(line);
                         System.out.println("Normalized    : " + p.toString());
                         System.out.println("To filename   : " + p.toFilename());
-                        System.out.println("From filename : " + PID.fromFilename(p.toFilename()).toString());
+                        System.out.println("From filename : "
+                                + PID.fromFilename(p.toFilename()).toString());
                     }
                 } catch (MalformedPIDException e) {
                     System.out.println("ERROR: " + e.getMessage());

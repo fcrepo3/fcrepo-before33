@@ -8,9 +8,10 @@ package fedora.common.rdf;
 import java.io.Serializable;
 
 /**
- *
+ * @author Chris Wilper
  */
-public abstract class RDFNamespace implements Serializable {
+public abstract class RDFNamespace
+        implements Serializable {
 
     public String uri;
 

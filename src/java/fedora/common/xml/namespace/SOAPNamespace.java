@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The SOAP XML Namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://schemas.xmlsoap.org/wsdl/soap
  * Preferred Prefix : soap
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class SOAPNamespace
         extends XMLNamespace {
@@ -23,8 +23,7 @@ public class SOAPNamespace
     //---
 
     /** The only instance of this class. */
-    private static final SOAPNamespace ONLY_INSTANCE
-            = new SOAPNamespace();
+    private static final SOAPNamespace ONLY_INSTANCE = new SOAPNamespace();
 
     /**
      * Constructs the instance.
@@ -35,7 +34,7 @@ public class SOAPNamespace
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static SOAPNamespace getInstance() {

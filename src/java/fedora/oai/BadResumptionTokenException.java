@@ -6,22 +6,18 @@
 package fedora.oai;
 
 /**
- *
- * <p><b>Title:</b> BadResumptionTokenException.java</p>
- * <p><b>Description:</b> Signals that the value of the resumptionToken argument
- * is invalid or expired.</p>
- *
- * <p>This may occur while fulfilling a ListIdentifiers, ListRecords, or ListSets
- * request.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * Signals that the value of the resumptionToken argument is invalid or expired.
+ * 
+ * This may occur while fulfilling a ListIdentifiers, ListRecords, or ListSets
+ * request.
+ * 
+ * @author Chris Wilper
  */
 public class BadResumptionTokenException
         extends OAIException {
 
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     public BadResumptionTokenException() {
         super("badResumptionToken", null);
     }

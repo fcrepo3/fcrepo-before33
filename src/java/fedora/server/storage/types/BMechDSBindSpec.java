@@ -5,25 +5,22 @@
 
 package fedora.server.storage.types;
 
-import java.util.*;
-
 /**
- * @author payette@cs.cornell.edu
+ * @author Sandy Payette
  */
-public class BMechDSBindSpec
-{
-  public String bMechPID;
+public class BMechDSBindSpec {
 
-  public String bDefPID;
+    public String bMechPID;
 
-  public String bindSpecLabel;
+    public String bDefPID;
 
-  public String state;
+    public String bindSpecLabel;
 
-  public BMechDSBindRule[] dsBindRules;
+    public String state;
 
-  public BMechDSBindSpec()
-  {
-  }
+    public BMechDSBindRule[] dsBindRules;
+
+    public BMechDSBindSpec() {
+    }
 
 }

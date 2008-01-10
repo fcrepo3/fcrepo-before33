@@ -9,20 +9,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- *
- * <p><b>Title:</b> DigitalObject.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
  */
 public class DigitalObject {
 
-    protected HashMap basisStreams=new HashMap();
-    protected HashMap inlineStreams=new HashMap();
+    protected HashMap basisStreams = new HashMap();
 
-    private boolean m_dirty=true;
-    private String m_name="Untitled";
+    protected HashMap inlineStreams = new HashMap();
+
+    private boolean m_dirty = true;
+
+    private String m_name = "Untitled";
 
     public DigitalObject() {
     }
@@ -32,41 +29,47 @@ public class DigitalObject {
     }
 
     public void setName(String name) {
-        m_dirty=true;
-        m_name=name;
+        m_dirty = true;
+        m_name = name;
     }
 
     public boolean isDirty() {
-        if (m_dirty) return true;
-        Iterator iter;
-        iter=basisStreams.values().iterator();
-        while (iter.hasNext()) {
-            BasisDataStream basis=(BasisDataStream) iter.next();
-            if (basis.isDirty()) return true;
+        if (m_dirty) {
+            return true;
         }
-        iter=inlineStreams.values().iterator();
+        Iterator iter;
+        iter = basisStreams.values().iterator();
         while (iter.hasNext()) {
-            InlineDataStream inline=(InlineDataStream) iter.next();
-            if (inline.isDirty()) return true;
+            BasisDataStream basis = (BasisDataStream) iter.next();
+            if (basis.isDirty()) {
+                return true;
+            }
+        }
+        iter = inlineStreams.values().iterator();
+        while (iter.hasNext()) {
+            InlineDataStream inline = (InlineDataStream) iter.next();
+            if (inline.isDirty()) {
+                return true;
+            }
         }
         return false;
     }
 
     public void setClean() {
-        m_dirty=false;
+        m_dirty = false;
     }
 
     public void setAllClean() {
-        m_dirty=false;
+        m_dirty = false;
         Iterator iter;
-        iter=basisStreams.values().iterator();
+        iter = basisStreams.values().iterator();
         while (iter.hasNext()) {
-            BasisDataStream basis=(BasisDataStream) iter.next();
+            BasisDataStream basis = (BasisDataStream) iter.next();
             basis.setClean();
         }
-        iter=inlineStreams.values().iterator();
+        iter = inlineStreams.values().iterator();
         while (iter.hasNext()) {
-            InlineDataStream inline=(InlineDataStream) iter.next();
+            InlineDataStream inline = (InlineDataStream) iter.next();
             inline.setClean();
         }
     }

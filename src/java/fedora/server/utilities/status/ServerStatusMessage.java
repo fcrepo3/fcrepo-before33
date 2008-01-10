@@ -5,23 +5,25 @@
 
 package fedora.server.utilities.status;
 
-import java.text.*;
-import java.util.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import java.util.Date;
 
 public class ServerStatusMessage {
 
-    public static final ServerStatusMessage NEW_SERVER_MESSAGE = 
+    public static final ServerStatusMessage NEW_SERVER_MESSAGE =
             new ServerStatusMessage(ServerState.NEW_SERVER, null, null);
 
     public static final String TIME_FORMAT = "yyyy-MM-dd HH:mm:ssa z";
 
-    private ServerState _state;
+    private final ServerState _state;
+
     private Date _date;
+
     private String _detail;
 
-    public ServerStatusMessage(ServerState state,
-                               Date time,
-                               String detail) {
+    public ServerStatusMessage(ServerState state, Date time, String detail) {
         _state = state;
         _date = time;
         if (_date == null) {
@@ -44,6 +46,7 @@ public class ServerStatusMessage {
         return _detail;
     }
 
+    @Override
     public String toString() {
         StringBuffer out = new StringBuffer();
         out.append("STATE  : " + _state.getName() + "\n");

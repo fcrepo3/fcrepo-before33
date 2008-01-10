@@ -8,12 +8,7 @@ package fedora.client;
 import java.io.File;
 
 /**
- *
- * <p><b>Title:</b> InlineDataStream.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
  */
 public class InlineDataStream
         extends DataStream {
@@ -22,6 +17,7 @@ public class InlineDataStream
         super(tempDir, id);
     }
 
+    @Override
     public final int getType() {
         return DataStream.INLINE;
     }

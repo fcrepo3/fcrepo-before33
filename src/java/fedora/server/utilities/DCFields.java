@@ -5,12 +5,14 @@
 
 package fedora.server.utilities;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -21,34 +23,48 @@ import org.xml.sax.helpers.DefaultHandler;
 import fedora.common.Constants;
 import fedora.common.rdf.RDFName;
 
-import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.ObjectIntegrityException;
+import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.StreamIOException;
 
 /**
  * Dublin Core Fields.
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class DCFields
         extends DefaultHandler
         implements Constants {
-			
-    private ArrayList<String> m_titles=new ArrayList<String>();
-    private ArrayList<String> m_creators=new ArrayList<String>();
-    private ArrayList<String> m_subjects=new ArrayList<String>();
-    private ArrayList<String> m_descriptions=new ArrayList<String>();
-    private ArrayList<String> m_publishers=new ArrayList<String>();
-    private ArrayList<String> m_contributors=new ArrayList<String>();
-    private ArrayList<String> m_dates=new ArrayList<String>();
-    private ArrayList<String> m_types=new ArrayList<String>();
-    private ArrayList<String> m_formats=new ArrayList<String>();
-    private ArrayList<String> m_identifiers=new ArrayList<String>();
-    private ArrayList<String> m_sources=new ArrayList<String>();
-    private ArrayList<String> m_languages=new ArrayList<String>();
-    private ArrayList<String> m_relations=new ArrayList<String>();
-    private ArrayList<String> m_coverages=new ArrayList<String>();
-    private ArrayList<String> m_rights=new ArrayList<String>();
+
+    private final ArrayList<String> m_titles = new ArrayList<String>();
+
+    private final ArrayList<String> m_creators = new ArrayList<String>();
+
+    private final ArrayList<String> m_subjects = new ArrayList<String>();
+
+    private final ArrayList<String> m_descriptions = new ArrayList<String>();
+
+    private final ArrayList<String> m_publishers = new ArrayList<String>();
+
+    private final ArrayList<String> m_contributors = new ArrayList<String>();
+
+    private final ArrayList<String> m_dates = new ArrayList<String>();
+
+    private final ArrayList<String> m_types = new ArrayList<String>();
+
+    private final ArrayList<String> m_formats = new ArrayList<String>();
+
+    private final ArrayList<String> m_identifiers = new ArrayList<String>();
+
+    private final ArrayList<String> m_sources = new ArrayList<String>();
+
+    private final ArrayList<String> m_languages = new ArrayList<String>();
+
+    private final ArrayList<String> m_relations = new ArrayList<String>();
+
+    private final ArrayList<String> m_coverages = new ArrayList<String>();
+
+    private final ArrayList<String> m_rights = new ArrayList<String>();
 
     private StringBuffer m_currentContent;
 
@@ -58,11 +74,11 @@ public class DCFields
     public DCFields(InputStream in)
             throws RepositoryConfigurationException, ObjectIntegrityException,
             StreamIOException {
-        SAXParser parser=null;
+        SAXParser parser = null;
         try {
             SAXParserFactory spf = SAXParserFactory.newInstance();
             spf.setNamespaceAware(true);
-            parser=spf.newSAXParser();
+            parser = spf.newSAXParser();
         } catch (Exception e) {
             throw new RepositoryConfigurationException("Error getting SAX "
                     + "parser for DC metadata: " + e.getClass().getName()
@@ -71,21 +87,28 @@ public class DCFields
         try {
             parser.parse(in, this);
         } catch (SAXException saxe) {
-            throw new ObjectIntegrityException("Parse error parsing DC XML Metadata: " + saxe.getMessage());
+            throw new ObjectIntegrityException("Parse error parsing DC XML Metadata: "
+                    + saxe.getMessage());
         } catch (IOException ioe) {
-            throw new StreamIOException("Stream error parsing DC XML Metadata: " + ioe.getMessage());
+            throw new StreamIOException("Stream error parsing DC XML Metadata: "
+                    + ioe.getMessage());
         }
     }
 
-    public void startElement(String uri, String localName, String qName,
-            Attributes attrs) {
-        m_currentContent=new StringBuffer();
+    @Override
+    public void startElement(String uri,
+                             String localName,
+                             String qName,
+                             Attributes attrs) {
+        m_currentContent = new StringBuffer();
     }
 
+    @Override
     public void characters(char[] ch, int start, int length) {
         m_currentContent.append(ch, start, length);
     }
 
+    @Override
     public void endElement(String uri, String localName, String qName) {
         if (localName.equals("title")) {
             titles().add(m_currentContent.toString());
@@ -121,8 +144,8 @@ public class DCFields
     }
 
     /**
-     * Returns a Map with RDFName keys, each value containing List
-     * of String values for that field.
+     * Returns a Map with RDFName keys, each value containing List of String
+     * values for that field.
      */
     public Map<RDFName, List<String>> getMap() {
         Map<RDFName, List<String>> map = new HashMap<RDFName, List<String>>();
@@ -207,14 +230,14 @@ public class DCFields
     }
 
     /**
-     * Get the DCFields as a String in namespace-qualified XML form,
-     * matching the oai_dc schema.... but without the xml declaration.
+     * Get the DCFields as a String in namespace-qualified XML form, matching
+     * the oai_dc schema.... but without the xml declaration.
      */
     public String getAsXML() {
-        StringBuffer out=new StringBuffer();
-		out.append("<" + OAI_DC.prefix + ":dc"
-			+ " xmlns:"	+ OAI_DC.prefix + "=\"" + OAI_DC.uri + "\""
-			+ " xmlns:"	+ DC.prefix + "=\"" + DC.uri + "\">\n");
+        StringBuffer out = new StringBuffer();
+        out.append("<" + OAI_DC.prefix + ":dc" + " xmlns:" + OAI_DC.prefix
+                + "=\"" + OAI_DC.uri + "\"" + " xmlns:" + DC.prefix + "=\""
+                + DC.uri + "\">\n");
         appendXML(titles(), "title", out);
         appendXML(creators(), "creator", out);
         appendXML(subjects(), "subject", out);
@@ -235,7 +258,7 @@ public class DCFields
     }
 
     private void appendXML(List values, String name, StringBuffer out) {
-        for (int i=0; i<values.size(); i++) {
+        for (int i = 0; i < values.size(); i++) {
             out.append("  <dc:" + name + ">");
             out.append(StreamUtility.enc((String) values.get(i)));
             out.append("</dc:" + name + ">\n");

@@ -7,13 +7,14 @@ package fedora.server.journal.readerwriter.singlefile;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Map;
 
-import javanet.staxutils.IndentingXMLEventWriter;
+import java.util.Map;
 
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+
+import javanet.staxutils.IndentingXMLEventWriter;
 
 import fedora.server.journal.JournalException;
 import fedora.server.journal.JournalWriter;
@@ -21,23 +22,19 @@ import fedora.server.journal.ServerInterface;
 import fedora.server.journal.entry.CreatorJournalEntry;
 
 /**
+ * A rudimentary implementation of JournalWriter that just writes all entries
+ * to a single Journal file. Useful only for System tests.
  * 
- * <p>
- * <b>Title:</b> SingleFileJournalWriter.java
- * </p>
- * <p>
- * <b>Description:</b> A rudimentary implementation of JournalWriter that just
- * writes all entries to a single Journal file. Useful only for System tests.
- * </p>
- * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
+public class SingleFileJournalWriter
+        extends JournalWriter
+        implements SingleFileJournalConstants {
 
-public class SingleFileJournalWriter extends JournalWriter implements
-        SingleFileJournalConstants {
     private final FileWriter out;
+
     private final XMLEventWriter writer;
+
     private boolean fileHasHeader = false;
 
     /**
@@ -45,7 +42,9 @@ public class SingleFileJournalWriter extends JournalWriter implements
      * file, wrap it in an XMLEventWriter, and initialize it with a document
      * header.
      */
-    public SingleFileJournalWriter(Map parameters, String role, ServerInterface server)
+    public SingleFileJournalWriter(Map parameters,
+                                   String role,
+                                   ServerInterface server)
             throws JournalException {
         super(parameters, role, server);
 
@@ -55,12 +54,14 @@ public class SingleFileJournalWriter extends JournalWriter implements
         }
 
         try {
-            this.out = new FileWriter(((String) parameters
-                    .get(PARAMETER_JOURNAL_FILENAME)));
+            out =
+                    new FileWriter((String) parameters
+                            .get(PARAMETER_JOURNAL_FILENAME));
 
             XMLOutputFactory factory = XMLOutputFactory.newInstance();
-            this.writer = new IndentingXMLEventWriter(factory
-                    .createXMLEventWriter(out));
+            writer =
+                    new IndentingXMLEventWriter(factory
+                            .createXMLEventWriter(out));
         } catch (IOException e) {
             throw new JournalException(e);
         } catch (XMLStreamException e) {
@@ -72,9 +73,10 @@ public class SingleFileJournalWriter extends JournalWriter implements
      * Make sure that the file has been initialized before writing any journal
      * entries.
      */
+    @Override
     public void prepareToWriteJournalEntry() throws JournalException {
         if (!fileHasHeader) {
-            super.writeDocumentHeader(this.writer);
+            super.writeDocumentHeader(writer);
             fileHasHeader = true;
         }
     }
@@ -82,11 +84,12 @@ public class SingleFileJournalWriter extends JournalWriter implements
     /**
      * Every journal entry just gets added to the file.
      */
+    @Override
     public void writeJournalEntry(CreatorJournalEntry journalEntry)
             throws JournalException {
         try {
-            super.writeJournalEntry(journalEntry, this.writer);
-            this.writer.flush();
+            super.writeJournalEntry(journalEntry, writer);
+            writer.flush();
         } catch (XMLStreamException e) {
             throw new JournalException(e);
         }
@@ -95,12 +98,13 @@ public class SingleFileJournalWriter extends JournalWriter implements
     /**
      * Add the document trailer and close the journal file.
      */
+    @Override
     public void shutdown() throws JournalException {
         try {
             if (fileHasHeader) {
-                super.writeDocumentTrailer(this.writer);
+                super.writeDocumentTrailer(writer);
             }
-            this.writer.close();
+            writer.close();
             out.close();
         } catch (XMLStreamException e) {
             throw new JournalException(e);

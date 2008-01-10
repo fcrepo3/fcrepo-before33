@@ -6,23 +6,21 @@
 package fedora.server.errors;
 
 /**
- *
- * <p><b>Title:</b> InitializationException.java</p>
- * <p><b>Description:</b> Superclass for initialization-related exceptions.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * Superclass for initialization-related exceptions.
+ * 
+ * @author Chris Wilper
  */
 public class InitializationException
         extends ServerException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
+    /**
      * Creates an InitializationException.
-     *
-     * @param message An informative message explaining what happened and
-     *                (possibly) how to fix it.
+     * 
+     * @param message
+     *        An informative message explaining what happened and (possibly) how
+     *        to fix it.
      */
     public InitializationException(String message) {
         super(null, message, null, null, null);
@@ -32,8 +30,11 @@ public class InitializationException
         super(null, message, null, null, cause);
     }
 
-    public InitializationException(String bundleName, String code,
-            String[] replacements, String[] details, Throwable cause) {
+    public InitializationException(String bundleName,
+                                   String code,
+                                   String[] replacements,
+                                   String[] details,
+                                   Throwable cause) {
         super(bundleName, code, replacements, details, cause);
     }
 

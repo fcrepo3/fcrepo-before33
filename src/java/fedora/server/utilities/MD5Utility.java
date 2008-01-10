@@ -9,9 +9,8 @@ import com.twmacinta.util.MD5;
 
 /**
  * Static methods for creating evenly-distributed hashes.
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * 
+ * @author Chris Wilper
  */
 public abstract class MD5Utility {
 

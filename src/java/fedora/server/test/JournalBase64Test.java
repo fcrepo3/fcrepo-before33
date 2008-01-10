@@ -17,28 +17,23 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import junit.framework.TestCase;
+
 import fedora.server.journal.helpers.DecodingBase64OutputStream;
 import fedora.server.journal.helpers.EncodingBase64InputStream;
 
 /**
+ * Confirm that we can properly encode and decode any data stream that comes
+ * our way.
  * 
- * <p>
- * <b>Title:</b> JournalBase64Test.java
- * </p>
- * <p>
- * <b>Description:</b> Confirm that we can properly encode and decode any data
- * stream that comes our way.
- * </p>
- * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
-
-public class JournalBase64Test extends TestCase {
+public class JournalBase64Test
+        extends TestCase {
 
     private static final String WHITE_SPACE_CHARACTERS = " \t\n\r";
 
-    private static final String BASE64_ENCODING_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    private static final String BASE64_ENCODING_CHARACTERS =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
     public JournalBase64Test(String name) {
         super(name);
@@ -69,8 +64,8 @@ public class JournalBase64Test extends TestCase {
     public void testOnUTF8Characters() throws IOException {
         // create the source file and fill it.
         File source = createTempFile();
-        Writer writer = new OutputStreamWriter(new FileOutputStream(source),
-                "UTF-8");
+        Writer writer =
+                new OutputStreamWriter(new FileOutputStream(source), "UTF-8");
         for (int i = 0, charValue = 0; i < 256; i++) {
             writer.write(charValue);
             charValue += 131;
@@ -87,28 +82,31 @@ public class JournalBase64Test extends TestCase {
      * scheme. Encode it, decode it, test for correctness.
      */
     public void testOnKnownProblemFile() throws IOException {
-        byte[] problemData = new byte[] { 0x73, 0x00, 0x6F, 0x00, 0x75, 0x00,
-                0x72, 0x00, 0x63, 0x00, 0x65, 0x00, 0x73, 0x00, 0x20, 0x00,
-                0x61, 0x00, 0x6E, 0x00, 0x64, 0x00, 0x20, 0x00, 0x6C, 0x00,
-                0x65, 0x00, 0x61, 0x00, 0x72, 0x00, 0x6E, 0x00, 0x69, 0x00,
-                0x6E, 0x00, 0x67, 0x00, 0x20, 0x00, 0x61, 0x00, 0x63, 0x00,
-                0x74, 0x00, 0x69, 0x00, 0x76, 0x00, 0x69, 0x00, 0x74, 0x00,
-                0x69, 0x00, 0x65, 0x00, 0x73, 0x00, 0x20, 0x00, 0x74, 0x00,
-                0x68, 0x00, 0x61, 0x00, 0x74, 0x00, 0x20, 0x00, 0x72, 0x00,
-                0x65, 0x00, 0x66, 0x00, 0x6C, 0x00, 0x65, 0x00, 0x63, 0x00,
-                0x74, 0x00, 0x20, 0x00, 0x74, 0x00, 0x68, 0x00, 0x65, 0x00,
-                0x20, 0x00, 0x6D, 0x00, 0x75, 0x00, 0x73, 0x00, 0x65, 0x00,
-                0x75, 0x00, 0x6D, 0x00, (byte) 0xE2, 0x00, (byte) 0xAC, 0x20,
-                0x22, 0x21, 0x73, 0x00, 0x20, 0x00, 0x66, 0x00, 0x6F, 0x00,
-                0x75, 0x00, 0x6E, 0x00, 0x64, 0x00, 0x61, 0x00, 0x74, 0x00,
-                0x69, 0x00, 0x6F, 0x00, 0x6E, 0x00, 0x20, 0x00, 0x6F, 0x00,
-                0x66, 0x00, 0x20, 0x00, 0x70, 0x00, 0x6C, 0x00, 0x61, 0x00,
-                0x79, 0x00, 0x66, 0x00, 0x75, 0x00, 0x6C, 0x00, 0x20, 0x00,
-                0x65, 0x00, 0x78, 0x00, 0x68, 0x00, 0x69, 0x00, 0x62, 0x00,
-                0x69, 0x00, 0x74, 0x00, 0x2D, 0x00, 0x62, 0x00, 0x61, 0x00,
-                0x73, 0x00, 0x65, 0x00, 0x64, 0x00, 0x20, 0x00, 0x69, 0x00,
-                0x6E, 0x00, 0x71, 0x00, 0x75, 0x00, 0x69, 0x00, 0x72, 0x00,
-                0x79, 0x00, 0x20, 0x00 };
+        byte[] problemData =
+                new byte[] {0x73, 0x00, 0x6F, 0x00, 0x75, 0x00, 0x72, 0x00,
+                        0x63, 0x00, 0x65, 0x00, 0x73, 0x00, 0x20, 0x00, 0x61,
+                        0x00, 0x6E, 0x00, 0x64, 0x00, 0x20, 0x00, 0x6C, 0x00,
+                        0x65, 0x00, 0x61, 0x00, 0x72, 0x00, 0x6E, 0x00, 0x69,
+                        0x00, 0x6E, 0x00, 0x67, 0x00, 0x20, 0x00, 0x61, 0x00,
+                        0x63, 0x00, 0x74, 0x00, 0x69, 0x00, 0x76, 0x00, 0x69,
+                        0x00, 0x74, 0x00, 0x69, 0x00, 0x65, 0x00, 0x73, 0x00,
+                        0x20, 0x00, 0x74, 0x00, 0x68, 0x00, 0x61, 0x00, 0x74,
+                        0x00, 0x20, 0x00, 0x72, 0x00, 0x65, 0x00, 0x66, 0x00,
+                        0x6C, 0x00, 0x65, 0x00, 0x63, 0x00, 0x74, 0x00, 0x20,
+                        0x00, 0x74, 0x00, 0x68, 0x00, 0x65, 0x00, 0x20, 0x00,
+                        0x6D, 0x00, 0x75, 0x00, 0x73, 0x00, 0x65, 0x00, 0x75,
+                        0x00, 0x6D, 0x00, (byte) 0xE2, 0x00, (byte) 0xAC, 0x20,
+                        0x22, 0x21, 0x73, 0x00, 0x20, 0x00, 0x66, 0x00, 0x6F,
+                        0x00, 0x75, 0x00, 0x6E, 0x00, 0x64, 0x00, 0x61, 0x00,
+                        0x74, 0x00, 0x69, 0x00, 0x6F, 0x00, 0x6E, 0x00, 0x20,
+                        0x00, 0x6F, 0x00, 0x66, 0x00, 0x20, 0x00, 0x70, 0x00,
+                        0x6C, 0x00, 0x61, 0x00, 0x79, 0x00, 0x66, 0x00, 0x75,
+                        0x00, 0x6C, 0x00, 0x20, 0x00, 0x65, 0x00, 0x78, 0x00,
+                        0x68, 0x00, 0x69, 0x00, 0x62, 0x00, 0x69, 0x00, 0x74,
+                        0x00, 0x2D, 0x00, 0x62, 0x00, 0x61, 0x00, 0x73, 0x00,
+                        0x65, 0x00, 0x64, 0x00, 0x20, 0x00, 0x69, 0x00, 0x6E,
+                        0x00, 0x71, 0x00, 0x75, 0x00, 0x69, 0x00, 0x72, 0x00,
+                        0x79, 0x00, 0x20, 0x00};
 
         // create the source file and fill it.
         File source = createTempFile();
@@ -156,8 +154,8 @@ public class JournalBase64Test extends TestCase {
             throws IOException {
         // use a small buffer size, not a multiple, so we will do multiple
         // reads.
-        EncodingBase64InputStream encoder = new EncodingBase64InputStream(
-                new FileInputStream(source), 61);
+        EncodingBase64InputStream encoder =
+                new EncodingBase64InputStream(new FileInputStream(source), 61);
         StringBuffer encoded = new StringBuffer();
         String chunk;
         while (null != (chunk = encoder.read(35))) {
@@ -175,12 +173,13 @@ public class JournalBase64Test extends TestCase {
      * from the XmlReader.
      */
     private void writeClearFileFromEncodedString(File target,
-            String encodedString) throws FileNotFoundException, IOException {
+                                                 String encodedString)
+            throws FileNotFoundException, IOException {
         int maxChunkSize = 61;
         int length = encodedString.length();
 
-        DecodingBase64OutputStream decoder = new DecodingBase64OutputStream(
-                new FileOutputStream(target));
+        DecodingBase64OutputStream decoder =
+                new DecodingBase64OutputStream(new FileOutputStream(target));
 
         int start = 0;
         int remainder;
@@ -196,11 +195,9 @@ public class JournalBase64Test extends TestCase {
     /**
      * Base64 data should consist only of the 64 pemissible characters and the
      * equals sign, in groups of 4 characters. Equals should appear only at the
-     * end, and no more than 2 are allowed.
-     * 
-     * The spec allows any other characters to appear, and they should be
-     * ignored, but we'll be a little more strict and only allow white space
-     * characters.
+     * end, and no more than 2 are allowed. The spec allows any other characters
+     * to appear, and they should be ignored, but we'll be a little more strict
+     * and only allow white space characters.
      */
     private void assertStringContainsValidBase64(String string) {
         int howManyEqualsSigns = 0;
@@ -225,7 +222,7 @@ public class JournalBase64Test extends TestCase {
             fail("Too many equals signs: " + howManyEqualsSigns);
         }
         int totalCharacters = howManyEqualsSigns + howManyEncodingCharacters;
-        if (0 != ((totalCharacters) % 4)) {
+        if (0 != totalCharacters % 4) {
             fail("Number of encoding characters plus equals signs "
                     + "must be a multiple of 4, not " + totalCharacters);
         }
@@ -236,10 +233,10 @@ public class JournalBase64Test extends TestCase {
      */
     private void assertFileContentsAreEqual(File source, File target)
             throws IOException {
-        InputStream sourceStream = new BufferedInputStream(new FileInputStream(
-                source));
-        InputStream targetStream = new BufferedInputStream(new FileInputStream(
-                target));
+        InputStream sourceStream =
+                new BufferedInputStream(new FileInputStream(source));
+        InputStream targetStream =
+                new BufferedInputStream(new FileInputStream(target));
 
         for (int i = 0; true; i++) {
             int sourceByte = sourceStream.read();

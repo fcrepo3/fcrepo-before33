@@ -10,24 +10,18 @@ import fedora.server.journal.entry.JournalEntry;
 import fedora.server.management.ManagementDelegate;
 
 /**
+ * Adapter class for Management.modifyObject().
  * 
- * <p>
- * <b>Title:</b> ModifyObjectMethod.java
- * </p>
- * <p>
- * <b>Description:</b> Adapter class for Management.modifyObject()
- * </p>
- * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
-
-public class ModifyObjectMethod extends ManagementMethod {
+public class ModifyObjectMethod
+        extends ManagementMethod {
 
     public ModifyObjectMethod(JournalEntry parent) {
         super(parent);
     }
 
+    @Override
     public Object invoke(ManagementDelegate delegate) throws ServerException {
         return delegate.modifyObject(parent.getContext(), parent
                 .getStringArgument(ARGUMENT_NAME_PID), parent

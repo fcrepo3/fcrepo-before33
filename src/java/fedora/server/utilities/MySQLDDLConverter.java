@@ -11,9 +11,8 @@ import java.util.List;
 
 /**
  * A DDLConverter that works with MySQL.
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * 
+ * @author Chris Wilper
  */
 public class MySQLDDLConverter
         implements DDLConverter {
@@ -30,19 +29,19 @@ public class MySQLDDLConverter
         String tableName = parts[2];
         return "DROP TABLE " + tableName;
     }
-    
+
     public List getDDL(TableSpec spec) {
-        StringBuffer out=new StringBuffer();
-        StringBuffer end=new StringBuffer();
+        StringBuffer out = new StringBuffer();
+        StringBuffer end = new StringBuffer();
         out.append("CREATE TABLE " + spec.getName() + " (\n");
-        Iterator csi=spec.columnSpecIterator();
-        int csNum=0;
+        Iterator csi = spec.columnSpecIterator();
+        int csNum = 0;
         while (csi.hasNext()) {
-            if (csNum>0) {
+            if (csNum > 0) {
                 out.append(",\n");
             }
             csNum++;
-            ColumnSpec cs=(ColumnSpec) csi.next();
+            ColumnSpec cs = (ColumnSpec) csi.next();
             out.append("  ");
             out.append(cs.getName());
             out.append(' ');
@@ -66,7 +65,7 @@ public class MySQLDDLConverter
             if (cs.isAutoIncremented()) {
                 out.append(" auto_increment");
             }
-            if (cs.getDefaultValue()!=null) {
+            if (cs.getDefaultValue() != null) {
                 out.append(" default '");
                 out.append(cs.getDefaultValue());
                 out.append("'");
@@ -81,7 +80,7 @@ public class MySQLDDLConverter
                 end.append(cs.getName());
                 end.append(")");
             }
-            if (cs.getIndexName()!=null) {
+            if (cs.getIndexName() != null) {
                 if (!end.toString().equals("")) {
                     end.append(",\n");
                 }
@@ -91,7 +90,7 @@ public class MySQLDDLConverter
                 end.append(cs.getName());
                 end.append(")");
             }
-            if (cs.getForeignTableName()!=null) {
+            if (cs.getForeignTableName() != null) {
                 if (!end.toString().equals("")) {
                     end.append(",\n");
                 }
@@ -104,13 +103,13 @@ public class MySQLDDLConverter
                 end.append(" (");
                 end.append(cs.getForeignColumnName());
                 end.append(")");
-                if (cs.getOnDeleteAction()!=null) {
+                if (cs.getOnDeleteAction() != null) {
                     end.append(" ON DELETE ");
                     end.append(cs.getOnDeleteAction());
                 }
             }
         }
-        if (spec.getPrimaryColumnName()!=null) {
+        if (spec.getPrimaryColumnName() != null) {
             out.append(",\n  PRIMARY KEY (");
             out.append(spec.getPrimaryColumnName());
             out.append(")");
@@ -121,13 +120,12 @@ public class MySQLDDLConverter
         }
         out.append("\n");
         out.append(")");
-        if (spec.getType()!=null) {
+        if (spec.getType() != null) {
             out.append(" TYPE=" + spec.getType());
         }
-        ArrayList l=new ArrayList();
+        ArrayList l = new ArrayList();
         l.add(out.toString());
         return l;
     }
 
 }
-

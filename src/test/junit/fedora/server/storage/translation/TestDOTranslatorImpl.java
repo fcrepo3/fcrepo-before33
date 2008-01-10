@@ -1,3 +1,4 @@
+
 package fedora.server.storage.translation;
 
 import java.io.ByteArrayInputStream;
@@ -20,42 +21,42 @@ import static org.junit.Assert.fail;
 
 /**
  * Unit tests for DOTranslatorImpl.
- *
+ * 
  * @author Chris Wilper
  */
 public class TestDOTranslatorImpl {
-    
+
     private static final String TEST_PID = "test:pid";
-    
+
     private static final String FORMAT_1 = "format1";
-    
+
     private static final String FORMAT_2 = "format2";
-    
+
     private static final String FORMAT_UNKNOWN = "formatUnknown";
-    
+
     private DOTranslator m_trans;
-    
+
     //---
     // Setup/Teardown
     //---
-    
+
     @Before
     public void setUp() {
-        Map<String, DOSerializer> serializers
-                = new HashMap<String, DOSerializer>();
+        Map<String, DOSerializer> serializers =
+                new HashMap<String, DOSerializer>();
         serializers.put(FORMAT_1, new MockDOSerializer(FORMAT_1));
         serializers.put(FORMAT_2, new MockDOSerializer(FORMAT_2));
-        Map<String, DODeserializer> deserializers
-                = new HashMap<String, DODeserializer>();
+        Map<String, DODeserializer> deserializers =
+                new HashMap<String, DODeserializer>();
         deserializers.put(FORMAT_1, new MockDODeserializer(FORMAT_1));
         deserializers.put(FORMAT_2, new MockDODeserializer(FORMAT_2));
         m_trans = new DOTranslatorImpl(serializers, deserializers);
     }
-    
+
     //---
     // Tests
     //---
-    
+
     @Test
     public void testDeserializeKnownFormats() {
         DigitalObject obj1 = null;
@@ -72,7 +73,7 @@ public class TestDOTranslatorImpl {
         assertEquals(TEST_PID, obj2.getPid());
         assertEquals(FORMAT_2, obj2.getLabel());
     }
-    
+
     @Test
     public void testDeserializeUnknownFormat() {
         DigitalObject obj = null;
@@ -84,7 +85,7 @@ public class TestDOTranslatorImpl {
             // expected
         }
     }
-    
+
     @Test
     public void testSerializeKnownFormats() {
         try {
@@ -101,7 +102,7 @@ public class TestDOTranslatorImpl {
                     + "UnsupportedTranslationException");
         }
     }
-    
+
     @Test
     public void testSerializeUnknownFormat() {
         try {
@@ -112,11 +113,11 @@ public class TestDOTranslatorImpl {
             // expected
         }
     }
-    
+
     //---
     // Instance helpers
     //---
-    
+
     private DigitalObject doDeserialize(String format)
             throws UnsupportedTranslationException {
         DigitalObject obj = new BasicDigitalObject();
@@ -131,7 +132,7 @@ public class TestDOTranslatorImpl {
             throw new Error("Test failure: " + e.getClass().getName());
         }
     }
-    
+
     private String[] doSerialize(String format)
             throws UnsupportedTranslationException {
         DigitalObject obj = new BasicDigitalObject();
@@ -151,7 +152,7 @@ public class TestDOTranslatorImpl {
             throw new Error("Test failure: " + e.getClass().getName());
         }
     }
-    
+
     //---
     // Static helpers
     //---
@@ -163,11 +164,10 @@ public class TestDOTranslatorImpl {
             throw new Error(wontHappen);
         }
     }
-    
+
     // Supports legacy test runners
     public static junit.framework.Test suite() {
-        return new junit.framework.JUnit4TestAdapter(
-                TestDOTranslatorImpl.class);
+        return new junit.framework.JUnit4TestAdapter(TestDOTranslatorImpl.class);
     }
 
 }

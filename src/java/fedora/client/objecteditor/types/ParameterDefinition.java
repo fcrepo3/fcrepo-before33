@@ -5,35 +5,37 @@
 
 package fedora.client.objecteditor.types;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * Defines a single parameter for a method.
- * 
  */
 public class ParameterDefinition {
 
-    private String m_name;
-    private String m_label;
-    private boolean m_isRequired;
-    private String m_defaultValue;
-    private List m_validValues;
+    private final String m_name;
+
+    private final String m_label;
+
+    private final boolean m_isRequired;
+
+    private final String m_defaultValue;
+
+    private final List m_validValues;
 
     /**
-     * Initialize a parameter definition with all values.
-     *
-     * The label, defaultValue, and validValues may each be null or empty.
+     * Initialize a parameter definition with all values. The label,
+     * defaultValue, and validValues may each be null or empty.
      */
-    public ParameterDefinition(String name, 
-                               String label, 
-                               boolean isRequired, 
-                               String defaultValue, 
+    public ParameterDefinition(String name,
+                               String label,
+                               boolean isRequired,
+                               String defaultValue,
                                List validValues) {
-        m_name=name;
-        m_label=label;
-        m_isRequired=isRequired;
-        m_defaultValue=defaultValue;
-        m_validValues=validValues;
+        m_name = name;
+        m_label = label;
+        m_isRequired = isRequired;
+        m_defaultValue = defaultValue;
+        m_validValues = validValues;
     }
 
     public String getName() {

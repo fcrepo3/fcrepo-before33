@@ -6,20 +6,19 @@
 package fedora.server.errors;
 
 /**
- *
- * <p><b>Title:</b> ObjectAlreadyInLowLevelStorageException.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author wdn5e@virginia.edu
- * @version $Id$
+ * @author Bill Niebel
  */
-public class ObjectAlreadyInLowlevelStorageException extends LowlevelStorageException {
-	private static final long serialVersionUID = 1L;
-	
-	public ObjectAlreadyInLowlevelStorageException(String message, Throwable cause) {
-		super(false, message, cause);
-	}
-	public ObjectAlreadyInLowlevelStorageException(String message) {
-		this(message, null);
-	}
+public class ObjectAlreadyInLowlevelStorageException
+        extends LowlevelStorageException {
+
+    private static final long serialVersionUID = 1L;
+
+    public ObjectAlreadyInLowlevelStorageException(String message,
+                                                   Throwable cause) {
+        super(false, message, cause);
+    }
+
+    public ObjectAlreadyInLowlevelStorageException(String message) {
+        this(message, null);
+    }
 }

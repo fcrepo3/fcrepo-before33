@@ -1,3 +1,4 @@
+
 package fedora.server.storage.translation;
 
 import java.io.ByteArrayInputStream;
@@ -10,12 +11,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import org.xml.sax.SAXException;
-
 import org.w3c.dom.Document;
+
+import org.xml.sax.SAXException;
 
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
@@ -28,56 +28,53 @@ import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_S
 
 /**
  * Common unit tests and utility methods for XML-based serializers.
- *
+ * 
  * @author Chris Wilper
  */
 public abstract class TestXMLDOSerializer
         extends TranslationTest {
-    
+
     /** The serializer to test. */
     protected final DOSerializer m_serializer;
-    
+
     TestXMLDOSerializer(DOSerializer serializer) {
         m_serializer = serializer;
     }
-    
+
     //---
     // Tests
     //---
-    
+
     @Test
     public void testSerializeSimpleDataObject() {
-        doSerializeAllOrFail(
-                createTestObject(DigitalObject.FEDORA_OBJECT));
+        doSerializeAllOrFail(createTestObject(DigitalObject.FEDORA_OBJECT));
     }
-    
+
     @Test
     public void testSerializeSimpleBMechObject() {
-        doSerializeAllOrFail(
-                createTestObject(DigitalObject.FEDORA_BMECH_OBJECT));
+        doSerializeAllOrFail(createTestObject(DigitalObject.FEDORA_BMECH_OBJECT));
     }
-    
+
     @Test
     public void testSerializeSimpleBDefObject() {
-        doSerializeAllOrFail(
-                createTestObject(DigitalObject.FEDORA_BDEF_OBJECT));
+        doSerializeAllOrFail(createTestObject(DigitalObject.FEDORA_BDEF_OBJECT));
     }
-    
+
     //---
     // Instance helpers
     //---
-    
+
     protected void doSerializeAllOrFail(DigitalObject obj) {
         doSerializeOrFail(obj, SERIALIZE_EXPORT_ARCHIVE);
         doSerializeOrFail(obj, SERIALIZE_EXPORT_MIGRATE);
         doSerializeOrFail(obj, SERIALIZE_EXPORT_PUBLIC);
         doSerializeOrFail(obj, SERIALIZE_STORAGE_INTERNAL);
     }
-   
+
     protected Document doSerializeOrFail(DigitalObject obj) {
         return doSerializeOrFail(obj, SERIALIZE_STORAGE_INTERNAL);
     }
-    
+
     /**
      * Serialize the object, failing the test if an exception is thrown.
      */
@@ -94,13 +91,15 @@ public abstract class TestXMLDOSerializer
         }
         return result;
     }
-  
+
     /**
      * Serialize the object, failing the test only if obviously incorrect
      * behavior occurs.
      * 
-     * @throws ObjectIntegrityException if the serializer fails due to same.
-     * @throws SAXException if the result XML is not well-formed.
+     * @throws ObjectIntegrityException
+     *         if the serializer fails due to same.
+     * @throws SAXException
+     *         if the result XML is not well-formed.
      */
     protected Document doSerialize(DigitalObject obj, int transContext)
             throws ObjectIntegrityException, SAXException {
@@ -128,5 +127,5 @@ public abstract class TestXMLDOSerializer
             throw new Error(wontHappen);
         }
     }
-   
+
 }

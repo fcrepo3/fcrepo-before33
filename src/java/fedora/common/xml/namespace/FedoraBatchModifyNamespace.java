@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The Fedora Batch Modify XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://www.fedora.info/definitions/ 
  * Preferred Prefix : fbm
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class FedoraBatchModifyNamespace
         extends XMLNamespace {
@@ -124,8 +124,8 @@ public class FedoraBatchModifyNamespace
     //---
 
     /** The only instance of this class. */
-    private static final FedoraBatchModifyNamespace ONLY_INSTANCE
-            = new FedoraBatchModifyNamespace();
+    private static final FedoraBatchModifyNamespace ONLY_INSTANCE =
+            new FedoraBatchModifyNamespace();
 
     /**
      * Constructs the instance.
@@ -134,44 +134,46 @@ public class FedoraBatchModifyNamespace
         super("http://www.fedora.info/definitions/", "fbm");
 
         // elements
-        ADD_DATASTREAM              = new QName(this, "addDatastream");
-        ADD_OBJECT                  = new QName(this, "addObject");
-        BATCH_MODIFY                = new QName(this, "batchModify");
-        COMPARE_DATASTREAM_CHECKSUM = new QName(this, "compareDatastreamChecksum");
-        MODIFY_DATASTREAM           = new QName(this, "modifyDatastream");
-        MODIFY_OBJECT               = new QName(this, "modifyObject");
-        PURGE_DATASTREAM            = new QName(this, "purgeDatastream");
-        PURGE_OBJECT                = new QName(this, "purgeObject");
-        SET_DATASTREAM_STATE        = new QName(this, "setDatastreamState");
-        SET_DATASTREAM_VERSIONABLE  = new QName(this, "setDatastreamVersionable");
-        XML_DATA                    = new QName(this, "xmlData");
+        ADD_DATASTREAM = new QName(this, "addDatastream");
+        ADD_OBJECT = new QName(this, "addObject");
+        BATCH_MODIFY = new QName(this, "batchModify");
+        COMPARE_DATASTREAM_CHECKSUM =
+                new QName(this, "compareDatastreamChecksum");
+        MODIFY_DATASTREAM = new QName(this, "modifyDatastream");
+        MODIFY_OBJECT = new QName(this, "modifyObject");
+        PURGE_DATASTREAM = new QName(this, "purgeDatastream");
+        PURGE_OBJECT = new QName(this, "purgeObject");
+        SET_DATASTREAM_STATE = new QName(this, "setDatastreamState");
+        SET_DATASTREAM_VERSIONABLE =
+                new QName(this, "setDatastreamVersionable");
+        XML_DATA = new QName(this, "xmlData");
 
         // attributes
-        ALT_IDS               = new QName(this, "altIDs");
-        AS_OF_DATE            = new QName(this, "asOfDate");
-        CHECKSUM              = new QName(this, "checksum");
-        CHECKSUM_TYPE         = new QName(this, "checksumType");
-        CONTENT_MODEL         = new QName(this, "contentModel");
+        ALT_IDS = new QName(this, "altIDs");
+        AS_OF_DATE = new QName(this, "asOfDate");
+        CHECKSUM = new QName(this, "checksum");
+        CHECKSUM_TYPE = new QName(this, "checksumType");
+        CONTENT_MODEL = new QName(this, "contentModel");
         DS_CONTROL_GROUP_TYPE = new QName(this, "dsControlGroupType");
-        DS_ID                 = new QName(this, "dsID");
-        DS_LABEL              = new QName(this, "dsLabel");
-        DS_LOCATION           = new QName(this, "dsLocation");
-        DS_MIME               = new QName(this, "dsMIME");
-        DS_STATE              = new QName(this, "dsState");
-        END_DATE              = new QName(this, "endDate");
-        FORCE                 = new QName(this, "force");
-        FORMAT_URI            = new QName(this, "formatURI");
-        LABEL                 = new QName(this, "label");
-        LOG_MESSAGE           = new QName(this, "logMessage");
-        OWNER_ID              = new QName(this, "ownerId");
-        PID                   = new QName(this, "pid");
-        STATE                 = new QName(this, "state");
-        VERSIONABLE           = new QName(this, "versionable");
+        DS_ID = new QName(this, "dsID");
+        DS_LABEL = new QName(this, "dsLabel");
+        DS_LOCATION = new QName(this, "dsLocation");
+        DS_MIME = new QName(this, "dsMIME");
+        DS_STATE = new QName(this, "dsState");
+        END_DATE = new QName(this, "endDate");
+        FORCE = new QName(this, "force");
+        FORMAT_URI = new QName(this, "formatURI");
+        LABEL = new QName(this, "label");
+        LOG_MESSAGE = new QName(this, "logMessage");
+        OWNER_ID = new QName(this, "ownerId");
+        PID = new QName(this, "pid");
+        STATE = new QName(this, "state");
+        VERSIONABLE = new QName(this, "versionable");
     }
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static FedoraBatchModifyNamespace getInstance() {

@@ -5,27 +5,32 @@
 
 package fedora.server.utilities;
 
-import java.sql.*;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.Savepoint;
+import java.sql.Statement;
+
 import java.util.Map;
 
 /**
- *
- * <p><b>Title:</b> ConnectionWrapper.java</p>
- * <p><b>Description:</b> A wrapper around a java.sql.Connection that calls
- * the wrapped Connection's methods for all calls.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * A wrapper around a java.sql.Connection that calls the wrapped Connection's
+ * methods for all calls.
+ * 
+ * @author Chris Wilper
  */
 public abstract class ConnectionWrapper
         implements Connection {
 
-    private Connection m_wrappedConnection;
+    private final Connection m_wrappedConnection;
 
     public ConnectionWrapper(Connection wrapped) {
-        m_wrappedConnection=wrapped;
+        m_wrappedConnection = wrapped;
     }
-
+    
     /* JDBC_4_ANT_TOKEN_BEGIN -
 
     public boolean isWrapperFor(Class<?> iface) {
@@ -95,182 +100,170 @@ public abstract class ConnectionWrapper
 
     - JDBC_4_ANT_TOKEN_END */
 
-    public Statement createStatement()
-            throws SQLException {
+    public Statement createStatement() throws SQLException {
         return m_wrappedConnection.createStatement();
     }
 
-    public Statement createStatement(int resultSetType,
-            int resultSetConcurrency)
+    public Statement createStatement(int resultSetType, int resultSetConcurrency)
             throws SQLException {
-        return m_wrappedConnection.createStatement(resultSetType, resultSetConcurrency);
+        return m_wrappedConnection.createStatement(resultSetType,
+                                                   resultSetConcurrency);
     }
 
-    public PreparedStatement prepareStatement(String sql)
-            throws SQLException {
+    public PreparedStatement prepareStatement(String sql) throws SQLException {
         return m_wrappedConnection.prepareStatement(sql);
     }
 
-    public PreparedStatement prepareStatement(String sql, int resultSetType,
-            int resultSetConcurrency)
+    public PreparedStatement prepareStatement(String sql,
+                                              int resultSetType,
+                                              int resultSetConcurrency)
             throws SQLException {
-        return m_wrappedConnection.prepareStatement(sql, resultSetType, resultSetConcurrency);
+        return m_wrappedConnection.prepareStatement(sql,
+                                                    resultSetType,
+                                                    resultSetConcurrency);
     }
 
-    public CallableStatement prepareCall(String sql)
-            throws SQLException {
+    public CallableStatement prepareCall(String sql) throws SQLException {
         return m_wrappedConnection.prepareCall(sql);
     }
 
-    public CallableStatement prepareCall(String sql, int resultSetType,
-            int resultSetConcurrency)
+    public CallableStatement prepareCall(String sql,
+                                         int resultSetType,
+                                         int resultSetConcurrency)
             throws SQLException {
-        return m_wrappedConnection.prepareCall(sql, resultSetType, resultSetConcurrency);
+        return m_wrappedConnection.prepareCall(sql,
+                                               resultSetType,
+                                               resultSetConcurrency);
     }
 
-    public String nativeSQL(String sql)
-            throws SQLException {
+    public String nativeSQL(String sql) throws SQLException {
         return m_wrappedConnection.nativeSQL(sql);
     }
 
-    public boolean getAutoCommit()
-            throws SQLException {
+    public boolean getAutoCommit() throws SQLException {
         return m_wrappedConnection.getAutoCommit();
     }
 
-    public void setAutoCommit(boolean autoCommit)
-            throws SQLException {
+    public void setAutoCommit(boolean autoCommit) throws SQLException {
         m_wrappedConnection.setAutoCommit(autoCommit);
     }
 
-    public void commit()
-            throws SQLException {
+    public void commit() throws SQLException {
         m_wrappedConnection.commit();
     }
 
-    public void rollback()
-            throws SQLException {
+    public void rollback() throws SQLException {
         m_wrappedConnection.rollback();
     }
 
-    public void close()
-            throws SQLException {
+    public void close() throws SQLException {
         m_wrappedConnection.close();
     }
 
-    public boolean isClosed()
-            throws SQLException {
+    public boolean isClosed() throws SQLException {
         return m_wrappedConnection.isClosed();
     }
 
-    public DatabaseMetaData getMetaData()
-            throws SQLException {
+    public DatabaseMetaData getMetaData() throws SQLException {
         return m_wrappedConnection.getMetaData();
     }
 
-    public boolean isReadOnly()
-            throws SQLException {
+    public boolean isReadOnly() throws SQLException {
         return m_wrappedConnection.isReadOnly();
     }
 
-    public void setReadOnly(boolean readOnly)
-            throws SQLException {
+    public void setReadOnly(boolean readOnly) throws SQLException {
         m_wrappedConnection.setReadOnly(readOnly);
     }
 
-    public String getCatalog()
-            throws SQLException {
+    public String getCatalog() throws SQLException {
         return m_wrappedConnection.getCatalog();
     }
 
-    public void setCatalog(String catalog)
-            throws SQLException {
+    public void setCatalog(String catalog) throws SQLException {
         m_wrappedConnection.setCatalog(catalog);
     }
 
-    public int getTransactionIsolation()
-            throws SQLException {
+    public int getTransactionIsolation() throws SQLException {
         return m_wrappedConnection.getTransactionIsolation();
     }
 
-    public void setTransactionIsolation(int level)
-            throws SQLException {
+    public void setTransactionIsolation(int level) throws SQLException {
         m_wrappedConnection.setTransactionIsolation(level);
     }
 
-    public SQLWarning getWarnings()
-            throws SQLException {
+    public SQLWarning getWarnings() throws SQLException {
         return m_wrappedConnection.getWarnings();
     }
 
-    public void clearWarnings()
-            throws SQLException {
+    public void clearWarnings() throws SQLException {
         m_wrappedConnection.clearWarnings();
     }
 
-    public Map getTypeMap()
-            throws SQLException {
+    public Map getTypeMap() throws SQLException {
         return m_wrappedConnection.getTypeMap();
     }
 
-    public void setTypeMap(Map map)
-            throws SQLException {
+    public void setTypeMap(Map map) throws SQLException {
         m_wrappedConnection.setTypeMap(map);
     }
 
-    public void setHoldability(int holdability)
-            throws SQLException {
+    public void setHoldability(int holdability) throws SQLException {
         m_wrappedConnection.setHoldability(holdability);
     }
 
-    public int getHoldability()
-            throws SQLException {
+    public int getHoldability() throws SQLException {
         return m_wrappedConnection.getHoldability();
     }
 
-    public Savepoint setSavepoint()
-            throws SQLException {
+    public Savepoint setSavepoint() throws SQLException {
         return m_wrappedConnection.setSavepoint();
     }
 
-    public Savepoint setSavepoint(String name)
-            throws SQLException {
+    public Savepoint setSavepoint(String name) throws SQLException {
         return m_wrappedConnection.setSavepoint(name);
     }
 
-    public void rollback(Savepoint savepoint)
-            throws SQLException {
+    public void rollback(Savepoint savepoint) throws SQLException {
         m_wrappedConnection.rollback(savepoint);
     }
 
-    public void releaseSavepoint(Savepoint savepoint)
-            throws SQLException {
+    public void releaseSavepoint(Savepoint savepoint) throws SQLException {
         m_wrappedConnection.releaseSavepoint(savepoint);
     }
 
     public Statement createStatement(int resultSetType,
-            int resultSetConcurrency, int resultSetHoldability)
+                                     int resultSetConcurrency,
+                                     int resultSetHoldability)
             throws SQLException {
         return m_wrappedConnection.createStatement(resultSetType,
-                resultSetConcurrency, resultSetHoldability);
+                                                   resultSetConcurrency,
+                                                   resultSetHoldability);
     }
 
     public PreparedStatement prepareStatement(String sql,
-            int resultSetType, int resultSetConcurrency,
-            int resultSetHoldability)
+                                              int resultSetType,
+                                              int resultSetConcurrency,
+                                              int resultSetHoldability)
             throws SQLException {
-        return m_wrappedConnection.prepareStatement(sql, resultSetType,
-                resultSetConcurrency, resultSetHoldability);
+        return m_wrappedConnection.prepareStatement(sql,
+                                                    resultSetType,
+                                                    resultSetConcurrency,
+                                                    resultSetHoldability);
     }
 
-    public CallableStatement prepareCall(String sql, int resultSetType,
-            int resultSetConcurrency, int resultSetHoldability)
+    public CallableStatement prepareCall(String sql,
+                                         int resultSetType,
+                                         int resultSetConcurrency,
+                                         int resultSetHoldability)
             throws SQLException {
-        return m_wrappedConnection.prepareCall(sql, resultSetType,
-                resultSetConcurrency, resultSetHoldability);
+        return m_wrappedConnection.prepareCall(sql,
+                                               resultSetType,
+                                               resultSetConcurrency,
+                                               resultSetHoldability);
     }
 
-    public PreparedStatement prepareStatement(String sql,int autoGeneratedKeys)
+    public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys)
             throws SQLException {
         return m_wrappedConnection.prepareStatement(sql, autoGeneratedKeys);
     }

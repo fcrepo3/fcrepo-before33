@@ -27,61 +27,82 @@ import fedora.oai.SimpleSetInfo;
 /**
  * A sample implementation of OAIProvider for testing and demonstration
  * purposes.
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class SampleOAIProvider
         implements Constants, OAIProvider {
 
-    private static String s_rec1_identifier="sample:1";
+    private static String s_rec1_identifier = "sample:1";
 
-    private static String s_rec1_metadata="        <oai_dc:dc\n"
-        + "           xmlns:oai_dc=\"" + OAI_DC.uri + "\"\n"
-        + "           xmlns:dc=\"" + DC.uri + "\"\n"
-        + "           xmlns:xsi=\"" + XSI.uri + "\"\n"
-        + "           xsi:schemaLocation=\"" + OAI_DC.uri + "\n"
-        + "           " + OAI_DC2_0.xsdLocation + "\">\n"
-        + "          <dc:title>Using Structural Metadata to Localize Experience of \n"
-        + "                    Digital Content</dc:title>\n"
-        + "          <dc:creator>Dushay, Naomi</dc:creator>\n"
-        + "          <dc:subject>Digital Libraries</dc:subject>\n"
-        + "          <dc:description>With the increasing technical sophistication of\n"
-        + "              both information consumers and providers, there is\n"
-        + "              increasing demand for more meaningful experiences of digital\n"
-        + "              information. We present a framework that separates digital\n"
-        + "              object experience, or rendering, from digital object storage\n"
-        + "              and manipulation, so the rendering can be tailored to\n"
-        + "              particular communities of users.\n"
-        + "          </dc:description>\n"
-        + "          <dc:description>Comment: 23 pages including 2 appendices,\n"
-        + "              8 figures</dc:description>\n"
-        + "          <dc:date>2001-12-14</dc:date>\n"
-        + "        </oai_dc:dc>";
+    private static String s_rec1_metadata =
+            "        <oai_dc:dc\n" + "           xmlns:oai_dc=\""
+                    + OAI_DC.uri
+                    + "\"\n"
+                    + "           xmlns:dc=\""
+                    + DC.uri
+                    + "\"\n"
+                    + "           xmlns:xsi=\""
+                    + XSI.uri
+                    + "\"\n"
+                    + "           xsi:schemaLocation=\""
+                    + OAI_DC.uri
+                    + "\n"
+                    + "           "
+                    + OAI_DC2_0.xsdLocation
+                    + "\">\n"
+                    + "          <dc:title>Using Structural Metadata to Localize Experience of \n"
+                    + "                    Digital Content</dc:title>\n"
+                    + "          <dc:creator>Dushay, Naomi</dc:creator>\n"
+                    + "          <dc:subject>Digital Libraries</dc:subject>\n"
+                    + "          <dc:description>With the increasing technical sophistication of\n"
+                    + "              both information consumers and providers, there is\n"
+                    + "              increasing demand for more meaningful experiences of digital\n"
+                    + "              information. We present a framework that separates digital\n"
+                    + "              object experience, or rendering, from digital object storage\n"
+                    + "              and manipulation, so the rendering can be tailored to\n"
+                    + "              particular communities of users.\n"
+                    + "          </dc:description>\n"
+                    + "          <dc:description>Comment: 23 pages including 2 appendices,\n"
+                    + "              8 figures</dc:description>\n"
+                    + "          <dc:date>2001-12-14</dc:date>\n"
+                    + "        </oai_dc:dc>";
 
-    private static String s_rec1_about="        <provenance\n"
-        + "         xmlns=\"" + OAI_PROV.uri + "\"\n"
-        + "         xmlns:xsi=\"" + XSI.uri + "\"\n"
-        + "         xsi:schemaLocation=\"" + OAI_PROV.uri + "\n"
-        + "         " + OAI_PROV2_0.xsdLocation + "\">\n"
-        + "         <originDescription harvestDate=\"2002-01-01T11:10:01Z\" altered=\"true\">\n"
-        + "          <baseURL>http://some.oa.org</baseURL>\n"
-        + "          <identifier>oai:r2.org:klik001</identifier>\n"
-        + "          <datestamp>2001-01-01</datestamp>\n"
-        + "          <metadataNamespace>" + OAI_DC.uri + "</metadataNamespace>\n"
-        + "          </originDescription>\n"
-        + "        </provenance>";
+    private static String s_rec1_about =
+            "        <provenance\n"
+                    + "         xmlns=\""
+                    + OAI_PROV.uri
+                    + "\"\n"
+                    + "         xmlns:xsi=\""
+                    + XSI.uri
+                    + "\"\n"
+                    + "         xsi:schemaLocation=\""
+                    + OAI_PROV.uri
+                    + "\n"
+                    + "         "
+                    + OAI_PROV2_0.xsdLocation
+                    + "\">\n"
+                    + "         <originDescription harvestDate=\"2002-01-01T11:10:01Z\" altered=\"true\">\n"
+                    + "          <baseURL>http://some.oa.org</baseURL>\n"
+                    + "          <identifier>oai:r2.org:klik001</identifier>\n"
+                    + "          <datestamp>2001-01-01</datestamp>\n"
+                    + "          <metadataNamespace>" + OAI_DC.uri
+                    + "</metadataNamespace>\n"
+                    + "          </originDescription>\n"
+                    + "        </provenance>";
 
-    private SimpleHeader m_head1;
-    private SimpleRecord m_rec1;
+    private final SimpleHeader m_head1;
+
+    private final SimpleRecord m_rec1;
 
     public SampleOAIProvider() {
-        HashSet<String> s=new HashSet<String>();
+        HashSet<String> s = new HashSet<String>();
         s.add("cs");
         s.add("cornell");
-        m_head1=new SimpleHeader(s_rec1_identifier, new Date(), s, true);
-        HashSet<String> a=new HashSet<String>();
+        m_head1 = new SimpleHeader(s_rec1_identifier, new Date(), s, true);
+        HashSet<String> a = new HashSet<String>();
         a.add(s_rec1_about);
-        m_rec1=new SimpleRecord(m_head1, s_rec1_metadata, a);
+        m_rec1 = new SimpleRecord(m_head1, s_rec1_metadata, a);
     }
 
     public String getRepositoryName() {
@@ -109,7 +130,7 @@ public class SampleOAIProvider
     }
 
     public Set getAdminEmails() {
-        HashSet<String> s=new HashSet<String>();
+        HashSet<String> s = new HashSet<String>();
         s.add("nobody@nowhere.com");
         return s;
     }
@@ -124,7 +145,7 @@ public class SampleOAIProvider
 
     public Record getRecord(String identifier, String metadataPrefix)
             throws IDDoesNotExistException {
-            // throws CannotDisseminateFormatException, IDDoesNotExistException;
+        // throws CannotDisseminateFormatException, IDDoesNotExistException;
         if (identifier.equals("sample:1")) {
             return m_rec1;
         } else {
@@ -132,11 +153,13 @@ public class SampleOAIProvider
         }
     }
 
-    public List getRecords(Date from, Date until, String metadataPrefix,
-            String set) {
-            // throws CannotDisseminateFormatException,
-            // NoRecordsMatchException, NoSetHierarchyException;
-        ArrayList<SimpleRecord> a=new ArrayList<SimpleRecord>();
+    public List getRecords(Date from,
+                           Date until,
+                           String metadataPrefix,
+                           String set) {
+        // throws CannotDisseminateFormatException,
+        // NoRecordsMatchException, NoSetHierarchyException;
+        ArrayList<SimpleRecord> a = new ArrayList<SimpleRecord>();
         a.add(m_rec1);
         return a;
     }
@@ -146,9 +169,11 @@ public class SampleOAIProvider
         throw new BadResumptionTokenException("Sample doesn't support resumptionTokens.");
     }
 
-    public List getHeaders(Date from, Date until, String metadataPrefix,
-            String set) {
-        ArrayList<SimpleHeader> a=new ArrayList<SimpleHeader>();
+    public List getHeaders(Date from,
+                           Date until,
+                           String metadataPrefix,
+                           String set) {
+        ArrayList<SimpleHeader> a = new ArrayList<SimpleHeader>();
         a.add(m_head1);
         return a;
     }
@@ -159,9 +184,12 @@ public class SampleOAIProvider
     }
 
     public List getSets() {
-        ArrayList<SimpleSetInfo> a=new ArrayList<SimpleSetInfo>();
+        ArrayList<SimpleSetInfo> a = new ArrayList<SimpleSetInfo>();
         a.add(new SimpleSetInfo("Computer Science", "cs", new HashSet()));
-        a.add(new SimpleSetInfo("Cornell University", "cornell", new HashSet()));
+        a
+                .add(new SimpleSetInfo("Cornell University",
+                                       "cornell",
+                                       new HashSet()));
         return a;
     }
 
@@ -171,9 +199,10 @@ public class SampleOAIProvider
     }
 
     public Set getMetadataFormats(String id) {
-        HashSet<SimpleMetadataFormat> s=new HashSet<SimpleMetadataFormat>();
-        s.add(new SimpleMetadataFormat(OAI_DC.prefix, OAI_DC2_0.xsdLocation,
-                OAI_DC.uri));
+        HashSet<SimpleMetadataFormat> s = new HashSet<SimpleMetadataFormat>();
+        s.add(new SimpleMetadataFormat(OAI_DC.prefix,
+                                       OAI_DC2_0.xsdLocation,
+                                       OAI_DC.uri));
         return s;
     }
 

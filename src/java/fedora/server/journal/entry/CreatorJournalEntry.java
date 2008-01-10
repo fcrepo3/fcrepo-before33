@@ -12,21 +12,16 @@ import fedora.server.journal.JournalWriter;
 import fedora.server.management.ManagementDelegate;
 
 /**
+ * The JournalEntry to use when creating a journal file.
  * 
- * <p>
- * <b>Title:</b> CreatorJournalEntry.java
- * </p>
- * <p>
- * <b>Description:</b> The JournalEntry to use when creating a journal file.
- * When invoking the management method, take a moment to write to the journal
+ * <p>When invoking the management method, take a moment to write to the journal
  * before returning.
- * </p>
  * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
+public class CreatorJournalEntry
+        extends JournalEntry {
 
-public class CreatorJournalEntry extends JournalEntry {
     /**
      * Don't store the Context that was given; store a writable version of it.
      */
@@ -68,9 +63,10 @@ public class CreatorJournalEntry extends JournalEntry {
      * the JournalEntry, thereby cleaning up any temp files.
      */
     public Object invokeAndClose(ManagementDelegate delegate,
-            JournalWriter writer) throws ServerException, JournalException {
-        Object result = this.invokeMethod(delegate, writer);
-        this.close();
+                                 JournalWriter writer) throws ServerException,
+            JournalException {
+        Object result = invokeMethod(delegate, writer);
+        close();
         return result;
     }
 

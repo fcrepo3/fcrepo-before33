@@ -6,22 +6,21 @@
 package fedora.server.errors;
 
 /**
- *
- * <p><b>Title:</b> ObjectValidityException.java</p>
- * <p><b>Description:</b> Signals that an object is not valid.</p>
- *
- * @author payette@cs.cornell.edu
- * @version $Id$
+ * Signals that an object is not valid.
+ * 
+ * @author Sandy Payette
  */
-public class ObjectValidityException extends ServerException {
+public class ObjectValidityException
+        extends ServerException {
 
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     /**
      * Creates an ObjectValidityException.
-     *
-     * @param message An informative message explaining what happened and
-     *                (possibly) how to fix it.
+     * 
+     * @param message
+     *        An informative message explaining what happened and (possibly) how
+     *        to fix it.
      */
     public ObjectValidityException(String message) {
         super(null, message, null, null, null);
@@ -31,7 +30,11 @@ public class ObjectValidityException extends ServerException {
         super(null, message, null, null, cause);
     }
 
-    public ObjectValidityException(String a, String message, String[] b, String[] c, Throwable th) {
+    public ObjectValidityException(String a,
+                                   String message,
+                                   String[] b,
+                                   String[] c,
+                                   Throwable th) {
         super(a, message, b, c, th);
     }
 

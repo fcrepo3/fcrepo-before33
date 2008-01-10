@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The XML Schema Instance XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://www.w3.org/2001/XMLSchema-instance
  * Preferred Prefix : xsi
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class XSINamespace
         extends XMLNamespace {
@@ -30,8 +30,7 @@ public class XSINamespace
     //---
 
     /** The only instance of this class. */
-    private static final XSINamespace ONLY_INSTANCE
-            = new XSINamespace();
+    private static final XSINamespace ONLY_INSTANCE = new XSINamespace();
 
     /**
      * Constructs the instance.
@@ -45,7 +44,7 @@ public class XSINamespace
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static XSINamespace getInstance() {

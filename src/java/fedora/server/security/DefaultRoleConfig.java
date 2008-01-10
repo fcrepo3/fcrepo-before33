@@ -5,7 +5,8 @@
 
 package fedora.server.security;
 
-public class DefaultRoleConfig extends AbstractRoleConfig {
+public class DefaultRoleConfig
+        extends AbstractRoleConfig {
 
     public static final String ROLE = "default";
 
@@ -13,6 +14,7 @@ public class DefaultRoleConfig extends AbstractRoleConfig {
         super(null);
     }
 
+    @Override
     public String getRole() {
         return ROLE;
     }

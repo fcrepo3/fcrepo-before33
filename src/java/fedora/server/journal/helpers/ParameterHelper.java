@@ -11,20 +11,13 @@ import fedora.server.journal.JournalConstants;
 import fedora.server.journal.JournalException;
 
 /**
+ * A collection of utility methods to help the Journal classes to read 
+ * parameter values.
  * 
- * <p>
- * <b>Title:</b> ParameterHelper.java
- * </p>
- * <p>
- * <b>Description:</b> A collection of utility methods to help the Journal
- * classes to read parameter values.
- * </p>
- * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
-
-public class ParameterHelper implements JournalConstants {
+public class ParameterHelper
+        implements JournalConstants {
 
     private ParameterHelper() {
         // no need to instantiate - all methods are static.
@@ -34,12 +27,14 @@ public class ParameterHelper implements JournalConstants {
      * Get an optional boolean parameter. If not found, use the default value.
      * 
      * @throws JournalException
-     *             if a value is supplied that is neither "true" nor "false".
+     *         if a value is supplied that is neither "true" nor "false".
      * @throws NullPointerException
-     *             if either 'parameters' or 'parameterName' is null.
+     *         if either 'parameters' or 'parameterName' is null.
      */
     public static boolean getOptionalBooleanParameter(Map parameters,
-            String parameterName, boolean defaultValue) throws JournalException {
+                                                      String parameterName,
+                                                      boolean defaultValue)
+            throws JournalException {
         validateParameters(parameters);
         validateParameterName(parameterName);
 

@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The Fedora BESecurity XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : info:fedora/fedora-system:def/beSecurity#
  * Preferred Prefix : besecurity
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class FedoraBESecurityNamespace
         extends XMLNamespace {
@@ -23,8 +23,8 @@ public class FedoraBESecurityNamespace
     //---
 
     /** The only instance of this class. */
-    private static final FedoraBESecurityNamespace ONLY_INSTANCE
-            = new FedoraBESecurityNamespace();
+    private static final FedoraBESecurityNamespace ONLY_INSTANCE =
+            new FedoraBESecurityNamespace();
 
     /**
      * Constructs the instance.
@@ -35,7 +35,7 @@ public class FedoraBESecurityNamespace
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static FedoraBESecurityNamespace getInstance() {

@@ -6,20 +6,19 @@
 package fedora.server.storage.types;
 
 /**
- * @author payette@cs.cornell.edu
+ * @author Sandy Payette
  */
 @Deprecated
-public class DSBinding
-{
-  public String bindKeyName = null;
+public class DSBinding {
 
-  public String bindLabel = null;
+    public String bindKeyName = null;
 
-  public String datastreamID = null;
+    public String bindLabel = null;
 
-  public String seqNo = null;
+    public String datastreamID = null;
 
-  public DSBinding()
-  {
-  }
+    public String seqNo = null;
+
+    public DSBinding() {
+    }
 }

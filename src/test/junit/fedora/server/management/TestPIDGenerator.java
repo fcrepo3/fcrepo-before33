@@ -1,26 +1,30 @@
-/*
- * Created on May 19, 2005
- *
- */
+
 package fedora.server.management;
 
 import java.io.IOException;
+
 import java.util.Iterator;
 import java.util.Set;
 
 import junit.framework.TestCase;
+
 import fedora.common.PID;
 
 /**
  * @author Edwin Shin
- *
  */
-public abstract class TestPIDGenerator extends TestCase {
+public abstract class TestPIDGenerator
+        extends TestCase {
+
     private PIDGenerator testPIDGenerator;
+
     private Set namespaces;
+
     protected abstract PIDGenerator getTestPIDGenerator();
+
     protected abstract Set getNamespaces();
-    
+
+    @Override
     protected void setUp() {
         testPIDGenerator = getTestPIDGenerator();
         if (testPIDGenerator == null) {
@@ -31,18 +35,18 @@ public abstract class TestPIDGenerator extends TestCase {
             fail("must provide at least one namespace");
         }
     }
-    
+
     public void testGeneratePID() {
         Iterator it = namespaces.iterator();
         try {
             while (it.hasNext()) {
-                testPIDGenerator.generatePID((String)it.next());
+                testPIDGenerator.generatePID((String) it.next());
             }
         } catch (IOException e) {
             fail(e.getMessage());
         }
     }
-    
+
     public void testgetLastPID() {
         PID pid;
         try {
@@ -53,7 +57,7 @@ public abstract class TestPIDGenerator extends TestCase {
             fail(e.getMessage());
         }
     }
-    
+
     public void testNeverGeneratePID() {
         // TODO
     }

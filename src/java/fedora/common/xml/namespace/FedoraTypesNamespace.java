@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The Fedora Types XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://www.fedora.info/definitions/1/0/types/
  * Preferred Prefix : types
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class FedoraTypesNamespace
         extends XMLNamespace {
@@ -23,8 +23,8 @@ public class FedoraTypesNamespace
     //---
 
     /** The only instance of this class. */
-    private static final FedoraTypesNamespace ONLY_INSTANCE
-            = new FedoraTypesNamespace();
+    private static final FedoraTypesNamespace ONLY_INSTANCE =
+            new FedoraTypesNamespace();
 
     /**
      * Constructs the instance.
@@ -35,7 +35,7 @@ public class FedoraTypesNamespace
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static FedoraTypesNamespace getInstance() {

@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The OAI Friends XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://www.openarchives.org/OAI/2.0/friends/
  * Preferred Prefix : friends
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class OAIFriendsNamespace
         extends XMLNamespace {
@@ -23,8 +23,8 @@ public class OAIFriendsNamespace
     //---
 
     /** The only instance of this class. */
-    private static final OAIFriendsNamespace ONLY_INSTANCE
-            = new OAIFriendsNamespace();
+    private static final OAIFriendsNamespace ONLY_INSTANCE =
+            new OAIFriendsNamespace();
 
     /**
      * Constructs the instance.
@@ -35,7 +35,7 @@ public class OAIFriendsNamespace
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static OAIFriendsNamespace getInstance() {

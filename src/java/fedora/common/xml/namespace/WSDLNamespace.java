@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The WSDL XML Namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://schemas.xmlsoap.org/wsdl/
  * Preferred Prefix : wsdl
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class WSDLNamespace
         extends XMLNamespace {
@@ -23,8 +23,7 @@ public class WSDLNamespace
     //---
 
     /** The only instance of this class. */
-    private static final WSDLNamespace ONLY_INSTANCE
-            = new WSDLNamespace();
+    private static final WSDLNamespace ONLY_INSTANCE = new WSDLNamespace();
 
     /**
      * Constructs the instance.
@@ -35,7 +34,7 @@ public class WSDLNamespace
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static WSDLNamespace getInstance() {

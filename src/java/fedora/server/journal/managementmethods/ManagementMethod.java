@@ -12,26 +12,19 @@ import fedora.server.journal.entry.JournalEntry;
 import fedora.server.management.ManagementDelegate;
 
 /**
+ * Abstract base class for the classes that act as adapters to the 
+ * Management methods.
  * 
- * <p>
- * <b>Title:</b> ManagementMethod.java
- * </p>
- * <p>
- * <b>Description:</b> Abstract base class for the classes that act as adapters
- * to the Management methods.
- * </p>
- * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
-
-public abstract class ManagementMethod implements JournalConstants {
+public abstract class ManagementMethod
+        implements JournalConstants {
 
     /**
      * Get an instance of the proper class, based on the method name.
      */
     public static ManagementMethod getInstance(String methodName,
-            JournalEntry parent) {
+                                               JournalEntry parent) {
         if (METHOD_INGEST_OBJECT.equals(methodName)) {
             return new IngestObjectMethod(parent);
         } else if (METHOD_MODIFY_OBJECT.equals(methodName)) {
@@ -50,23 +43,23 @@ public abstract class ManagementMethod implements JournalConstants {
             return new SetDatastreamVersionableMethod(parent);
         } else if (METHOD_PURGE_DATASTREAM.equals(methodName)) {
             return new PurgeDatastreamMethod(parent);
-        } 
-//        else if (METHOD_ADD_DISSEMINATOR.equals(methodName)) 
-//        {
-//            return new AddDisseminatorMethod(parent);
-//        } 
-//        else if (METHOD_MODIFY_DISSEMINATOR.equals(methodName)) 
-//        {
-//            return new ModifyDisseminatorMethod(parent);
-//        } 
-//        else if (METHOD_SET_DISSEMINATOR_STATE.equals(methodName)) 
-//        {
-//            return new SetDisseminatorStateMethod(parent);
-//        } 
-//        else if (METHOD_PURGE_DISSEMINATOR.equals(methodName)) 
-//        {
-//            return new PurgeDisseminatorMethod(parent);
-//        } 
+        }
+        //        else if (METHOD_ADD_DISSEMINATOR.equals(methodName)) 
+        //        {
+        //            return new AddDisseminatorMethod(parent);
+        //        } 
+        //        else if (METHOD_MODIFY_DISSEMINATOR.equals(methodName)) 
+        //        {
+        //            return new ModifyDisseminatorMethod(parent);
+        //        } 
+        //        else if (METHOD_SET_DISSEMINATOR_STATE.equals(methodName)) 
+        //        {
+        //            return new SetDisseminatorStateMethod(parent);
+        //        } 
+        //        else if (METHOD_PURGE_DISSEMINATOR.equals(methodName)) 
+        //        {
+        //            return new PurgeDisseminatorMethod(parent);
+        //        } 
         else if (METHOD_PUT_TEMP_STREAM.equals(methodName)) {
             return new PutTempStreamMethod(parent);
         } else if (METHOD_GET_NEXT_PID.equals(methodName)) {

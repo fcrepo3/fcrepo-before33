@@ -8,13 +8,11 @@ package fedora.oai;
 import java.util.Set;
 
 /**
- *
- * <p><b>Title:</b> SetInfo.java</p>
- * <p><b>Description:</b> Describes a set in the repository.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
- * @see <a href="http://www.openarchives.org/OAI/openarchivesprotocol.html#ListSets">
+ * Describes a set in the repository.
+ * 
+ * @author Chris Wilper
+ * @see <a
+ *      href="http://www.openarchives.org/OAI/openarchivesprotocol.html#ListSets">
  *      http://www.openarchives.org/OAI/openarchivesprotocol.html#ListSets</a>
  */
 public interface SetInfo {

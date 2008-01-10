@@ -12,7 +12,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -25,12 +27,16 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.betwixt.XMLUtils;
+
 import org.apache.log4j.Logger;
+
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
+
 import org.w3c.dom.Document;
 
 import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.RecoveryContext;
@@ -65,23 +71,30 @@ import fedora.server.validation.ValidationUtility;
 /**
  * Implements API-M without regard to the transport/messaging protocol.
  * 
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
  */
-public class DefaultManagement extends Module implements Constants, Management,
-        ManagementDelegate {
+public class DefaultManagement
+        extends Module
+        implements Constants, Management, ManagementDelegate {
 
     /** Logger for this class. */
-    private static Logger LOG = Logger.getLogger(DefaultManagement.class
-            .getName());
+    private static Logger LOG =
+            Logger.getLogger(DefaultManagement.class.getName());
 
     private DOManager m_manager;
+
     private int m_uploadStorageMinutes;
+
     private int m_lastId;
+
     private File m_tempDir;
+
     private Hashtable<String, Long> m_uploadStartTime;
+
     private ExternalContentManager m_contentManager;
+
     private Authorization m_fedoraXACMLModule;
+
     public final static String s_RelsExt_Datastream = "RELS-EXT";
 
     /**
@@ -92,15 +105,15 @@ public class DefaultManagement extends Module implements Constants, Management,
      * initialization process.
      * 
      * @param moduleParameters
-     *            A pre-loaded Map of name-value pairs comprising the intended
-     *            configuration of this Module.
+     *        A pre-loaded Map of name-value pairs comprising the intended
+     *        configuration of this Module.
      * @param server
-     *            The <code>Server</code> instance.
+     *        The <code>Server</code> instance.
      * @param role
-     *            The role this module fulfills, a java class name.
+     *        The role this module fulfills, a java class name.
      * @throws ModuleInitializationException
-     *             If initialization values are invalid or initialization fails
-     *             for some other reason.
+     *         If initialization values are invalid or initialization fails for
+     *         some other reason.
      */
     public DefaultManagement(Map moduleParameters, Server server, String role)
             throws ModuleInitializationException {
@@ -111,8 +124,9 @@ public class DefaultManagement extends Module implements Constants, Management,
 
         // how many minutes should we hold on to uploaded files? default=5
         String min = getParameter("uploadStorageMinutes");
-        if (min == null)
+        if (min == null) {
             min = "5";
+        }
         try {
             m_uploadStorageMinutes = Integer.parseInt(min);
             if (m_uploadStorageMinutes < 1) {
@@ -120,9 +134,9 @@ public class DefaultManagement extends Module implements Constants, Management,
                         + "must be 1 or more, if specified.", getRole());
             }
         } catch (NumberFormatException nfe) {
-            throw new ModuleInitializationException(
-                    "uploadStorageMinutes must "
-                            + "be an integer, if specified.", getRole());
+            throw new ModuleInitializationException("uploadStorageMinutes must "
+                                                            + "be an integer, if specified.",
+                                                    getRole());
         }
         // initialize storage area by 1) ensuring the directory is there
         // and 2) reading in the existing files, if any, and setting their
@@ -137,12 +151,13 @@ public class DefaultManagement extends Module implements Constants, Management,
             String[] fNames = m_tempDir.list();
             Long leftoverStartTime = new Long(System.currentTimeMillis());
             m_lastId = 0;
-            for (int i = 0; i < fNames.length; i++) {
+            for (String element : fNames) {
                 try {
-                    int id = Integer.parseInt(fNames[i]);
-                    if (id > m_lastId)
+                    int id = Integer.parseInt(element);
+                    if (id > m_lastId) {
                         m_lastId = id;
-                    m_uploadStartTime.put(fNames[i], leftoverStartTime);
+                    }
+                    m_uploadStartTime.put(element, leftoverStartTime);
                 } catch (NumberFormatException nfe) {
                     // skip files that aren't named numerically
                 }
@@ -166,42 +181,54 @@ public class DefaultManagement extends Module implements Constants, Management,
     }
 
     public void postInitModule() throws ModuleInitializationException {
-        m_manager = (DOManager) getServer().getModule(
-                "fedora.server.storage.DOManager");
+        m_manager =
+                (DOManager) getServer()
+                        .getModule("fedora.server.storage.DOManager");
         if (m_manager == null) {
             throw new ModuleInitializationException("Can't get a DOManager "
                     + "from Server.getModule", getRole());
         }
-        m_contentManager = (ExternalContentManager) getServer().getModule(
-                "fedora.server.storage.ExternalContentManager");
+        m_contentManager =
+                (ExternalContentManager) getServer()
+                        .getModule("fedora.server.storage.ExternalContentManager");
         if (m_contentManager == null) {
-            throw new ModuleInitializationException(
-                    "Can't get an ExternalContentManager "
-                            + "from Server.getModule", getRole());
+            throw new ModuleInitializationException("Can't get an ExternalContentManager "
+                                                            + "from Server.getModule",
+                                                    getRole());
         }
 
-        m_fedoraXACMLModule = (Authorization) getServer().getModule(
-                "fedora.server.security.Authorization");
+        m_fedoraXACMLModule =
+                (Authorization) getServer()
+                        .getModule("fedora.server.security.Authorization");
         if (m_fedoraXACMLModule == null) {
-            throw new ModuleInitializationException(
-                    "Can't get Authorization module (in default management) from Server.getModule",
-                    getRole());
+            throw new ModuleInitializationException("Can't get Authorization module (in default management) from Server.getModule",
+                                                    getRole());
         }
 
     }
 
-    public String ingestObject(Context context, InputStream serialization,
-            String logMessage, String format, String encoding, boolean newPid)
-            throws ServerException {
+    public String ingestObject(Context context,
+                               InputStream serialization,
+                               String logMessage,
+                               String format,
+                               String encoding,
+                               boolean newPid) throws ServerException {
         DOWriter w = null;
         try {
             LOG.info("Entered ingestObject");
-            w = m_manager.getIngestWriter(Server.USE_DEFINITIVE_STORE, context,
-                    serialization, format, encoding, newPid);
+            w =
+                    m_manager.getIngestWriter(Server.USE_DEFINITIVE_STORE,
+                                              context,
+                                              serialization,
+                                              format,
+                                              encoding,
+                                              newPid);
             String pid = w.GetObjectPID();
 
-            m_fedoraXACMLModule.enforceIngestObject(context, pid, format,
-                    encoding);
+            m_fedoraXACMLModule.enforceIngestObject(context,
+                                                    pid,
+                                                    format,
+                                                    encoding);
 
             w.commit(logMessage);
             return pid;
@@ -223,15 +250,20 @@ public class DefaultManagement extends Module implements Constants, Management,
         }
     }
 
-    public Date modifyObject(Context context, String pid, String state,
-            String label, String ownerId, String logMessage)
-            throws ServerException {
+    public Date modifyObject(Context context,
+                             String pid,
+                             String state,
+                             String label,
+                             String ownerId,
+                             String logMessage) throws ServerException {
         DOWriter w = null;
         try {
             LOG.info("Entered modifyObject");
 
-            m_fedoraXACMLModule.enforceModifyObject(context, pid, state,
-                    ownerId);
+            m_fedoraXACMLModule.enforceModifyObject(context,
+                                                    pid,
+                                                    state,
+                                                    ownerId);
 
             checkObjectLabel(label);
 
@@ -239,11 +271,10 @@ public class DefaultManagement extends Module implements Constants, Management,
             if (state != null && !state.equals("")) {
                 if (!state.equals("A") && !state.equals("D")
                         && !state.equals("I")) {
-                    throw new InvalidStateException(
-                            "The object state of \""
-                                    + state
-                                    + "\" is invalid. The allowed values for state are: "
-                                    + " A (active), D (deleted), and I (inactive).");
+                    throw new InvalidStateException("The object state of \""
+                            + state
+                            + "\" is invalid. The allowed values for state are: "
+                            + " A (active), D (deleted), and I (inactive).");
                 }
                 w.setState(state);
             }
@@ -269,36 +300,29 @@ public class DefaultManagement extends Module implements Constants, Management,
             m_fedoraXACMLModule.enforceGetObjectProperties(context, pid);
 
             ArrayList<Property> props = new ArrayList<Property>();
-            DOReader reader = m_manager.getReader(Server.USE_DEFINITIVE_STORE,
-                    context, pid);
+            DOReader reader =
+                    m_manager.getReader(Server.USE_DEFINITIVE_STORE,
+                                        context,
+                                        pid);
 
-            props.add(new Property(
-                        MODEL.HAS_CONTENT_MODEL.uri,
-                        reader.getContentModelId()));
-                        
-            props.add(new Property(
-                        MODEL.LABEL.uri,
-                        reader.GetObjectLabel()));
-                        
-            props.add(new Property(
-                        MODEL.STATE.uri,
-                        reader.GetObjectState()));
-                        
-            props.add(new Property(
-                        MODEL.OWNER.uri,
-                        reader.getOwnerId()));
-                        
-            props.add(new Property(
-                        MODEL.CREATED_DATE.uri,
-                        DateUtility.convertDateToString(reader.getCreateDate())));
-                        
-            props.add(new Property(
-                        VIEW.LAST_MODIFIED_DATE.uri,
-                        DateUtility.convertDateToString(reader.getLastModDate())));
-            
+            props.add(new Property(MODEL.HAS_CONTENT_MODEL.uri, reader
+                    .getContentModelId()));
+
+            props.add(new Property(MODEL.LABEL.uri, reader.GetObjectLabel()));
+
+            props.add(new Property(MODEL.STATE.uri, reader.GetObjectState()));
+
+            props.add(new Property(MODEL.OWNER.uri, reader.getOwnerId()));
+
+            props.add(new Property(MODEL.CREATED_DATE.uri, DateUtility
+                    .convertDateToString(reader.getCreateDate())));
+
+            props.add(new Property(VIEW.LAST_MODIFIED_DATE.uri, DateUtility
+                    .convertDateToString(reader.getLastModDate())));
+
             //Property[] extProps=reader.getExtProperties();
-            
-            return (Property[])props.toArray(new Property[0]);
+
+            return (Property[]) props.toArray(new Property[0]);
         } finally {
             LOG.info("Exiting getObjectProperties");
         }
@@ -311,8 +335,10 @@ public class DefaultManagement extends Module implements Constants, Management,
 
             m_fedoraXACMLModule.enforceGetObjectXML(context, pid, encoding);
 
-            DOReader reader = m_manager.getReader(Server.USE_DEFINITIVE_STORE,
-                    context, pid);
+            DOReader reader =
+                    m_manager.getReader(Server.USE_DEFINITIVE_STORE,
+                                        context,
+                                        pid);
             InputStream instream = reader.GetObjectXML();
             return instream;
         } finally {
@@ -320,16 +346,24 @@ public class DefaultManagement extends Module implements Constants, Management,
         }
     }
 
-    public InputStream exportObject(Context context, String pid, String format,
-            String exportContext, String encoding) throws ServerException {
+    public InputStream exportObject(Context context,
+                                    String pid,
+                                    String format,
+                                    String exportContext,
+                                    String encoding) throws ServerException {
         try {
             LOG.info("Entered exportObject");
 
-            m_fedoraXACMLModule.enforceExportObject(context, pid, format,
-                    exportContext, encoding);
+            m_fedoraXACMLModule.enforceExportObject(context,
+                                                    pid,
+                                                    format,
+                                                    exportContext,
+                                                    encoding);
 
-            DOReader reader = m_manager.getReader(Server.USE_DEFINITIVE_STORE,
-                    context, pid);
+            DOReader reader =
+                    m_manager.getReader(Server.USE_DEFINITIVE_STORE,
+                                        context,
+                                        pid);
             InputStream instream = reader.ExportObject(format, exportContext);
             return instream;
         } finally {
@@ -337,8 +371,10 @@ public class DefaultManagement extends Module implements Constants, Management,
         }
     }
 
-    public Date purgeObject(Context context, String pid, String logMessage,
-            boolean force) throws ServerException {
+    public Date purgeObject(Context context,
+                            String pid,
+                            String logMessage,
+                            boolean force) throws ServerException {
         if (force) {
             throw new GeneralException("Forced object removal is not "
                     + "yet supported.");
@@ -358,30 +394,42 @@ public class DefaultManagement extends Module implements Constants, Management,
         }
     }
 
-    public String addDatastream(Context context, String pid, String dsID,
-            String[] altIDs, String dsLabel, boolean versionable,
-            String MIMEType, String formatURI, String dsLocation,
-            String controlGroup, String dsState, String checksumType,
-            String checksum, String logMessage) throws ServerException {
+    public String addDatastream(Context context,
+                                String pid,
+                                String dsID,
+                                String[] altIDs,
+                                String dsLabel,
+                                boolean versionable,
+                                String MIMEType,
+                                String formatURI,
+                                String dsLocation,
+                                String controlGroup,
+                                String dsState,
+                                String checksumType,
+                                String checksum,
+                                String logMessage) throws ServerException {
 
         LOG.info("Entered addDatastream");
 
         // empty MIME types are allowed. assume they meant "" if they provide it
         // as null.
-        if (MIMEType == null)
+        if (MIMEType == null) {
             MIMEType = "";
+        }
 
         // empty altIDs are allowed. assume they meant String[0] if they provide
         // it as null.
-        if (altIDs == null)
+        if (altIDs == null) {
             altIDs = new String[0];
+        }
 
         // If the datastream ID is not specified directly, see
         // if we can get it from the RecoveryContext
         if (dsID == null && context instanceof RecoveryContext) {
             RecoveryContext rContext = (RecoveryContext) context;
-            dsID = rContext
-                    .getRecoveryValue(Constants.RECOVERY.DATASTREAM_ID.uri);
+            dsID =
+                    rContext
+                            .getRecoveryValue(Constants.RECOVERY.DATASTREAM_ID.uri);
             if (dsID != null) {
                 LOG.debug("Using new dsID from recovery context");
             }
@@ -390,24 +438,32 @@ public class DefaultManagement extends Module implements Constants, Management,
         // check for valid xml name for datastream ID
         if (dsID != null) {
             if (!XMLUtils.isWellFormedXMLName(dsID)) {
-                throw new InvalidXMLNameException(
-                        "Invalid syntax for datastream ID. "
-                                + "The datastream ID of \"" + dsID + "\" is"
-                                + "not a valid XML Name");
+                throw new InvalidXMLNameException("Invalid syntax for datastream ID. "
+                        + "The datastream ID of \""
+                        + dsID
+                        + "\" is"
+                        + "not a valid XML Name");
             }
         }
 
         if (dsID != null
                 && (dsID.equals("AUDIT") || dsID.equals("FEDORA-AUDITTRAIL"))) {
-            throw new GeneralException(
-                    "Creation of a datastream with an"
-                            + " identifier of 'AUDIT' or 'FEDORA-AUDITTRAIL' is not permitted.");
+            throw new GeneralException("Creation of a datastream with an"
+                    + " identifier of 'AUDIT' or 'FEDORA-AUDITTRAIL' is not permitted.");
         }
         DOWriter w = null;
         try {
-            m_fedoraXACMLModule.enforceAddDatastream(context, pid, dsID,
-                    altIDs, MIMEType, formatURI, dsLocation, controlGroup,
-                    dsState, checksumType, checksum);
+            m_fedoraXACMLModule.enforceAddDatastream(context,
+                                                     pid,
+                                                     dsID,
+                                                     altIDs,
+                                                     MIMEType,
+                                                     formatURI,
+                                                     dsLocation,
+                                                     controlGroup,
+                                                     dsState,
+                                                     checksumType,
+                                                     checksum);
 
             checkDatastreamID(dsID);
             checkDatastreamLabel(dsLabel);
@@ -422,21 +478,25 @@ public class DefaultManagement extends Module implements Constants, Management,
                     if (dsLocation.startsWith("uploaded://")) {
                         in = getTempStream(dsLocation);
                     } else {
-                        in = m_contentManager.getExternalContent(dsLocation,
-                                context).getStream();
+                        in =
+                                m_contentManager.getExternalContent(dsLocation,
+                                                                    context)
+                                        .getStream();
                     }
-                    ((DatastreamXMLMetadata) ds).xmlContent = getEmbeddableXML(in);
+                    ((DatastreamXMLMetadata) ds).xmlContent =
+                            getEmbeddableXML(in);
                     // If it's a RELS-EXT datastream, do validation
                     if (dsID != null && dsID.equals("RELS-EXT")) {
-                        validateRelsExt(pid, new ByteArrayInputStream(
-                                ((DatastreamXMLMetadata) ds).xmlContent));
+                        validateRelsExt(pid,
+                                        new ByteArrayInputStream(((DatastreamXMLMetadata) ds).xmlContent));
                     }
                 } catch (Exception e) {
                     String extraInfo;
-                    if (e.getMessage() == null)
+                    if (e.getMessage() == null) {
                         extraInfo = "";
-                    else
+                    } else {
                         extraInfo = " : " + e.getMessage();
+                    }
                     throw new GeneralException("Error with " + dsLocation
                             + extraInfo);
                 }
@@ -466,20 +526,17 @@ public class DefaultManagement extends Module implements Constants, Management,
                 ds.DatastreamID = w.newDatastreamID();
             } else {
                 if (dsID.indexOf(" ") != -1) {
-                    throw new GeneralException(
-                            "Datastream ids cannot contain spaces.");
+                    throw new GeneralException("Datastream ids cannot contain spaces.");
                 }
                 if (dsID.indexOf("+") != -1) {
-                    throw new GeneralException(
-                            "Datastream ids cannot contain plusses.");
+                    throw new GeneralException("Datastream ids cannot contain plusses.");
                 }
                 if (dsID.indexOf(":") != -1) {
-                    throw new GeneralException(
-                            "Datastream ids cannot contain colons.");
+                    throw new GeneralException("Datastream ids cannot contain colons.");
                 }
                 if (w.GetDatastream(dsID, null) != null) {
-                    throw new GeneralException(
-                            "A datastream already exists with ID: " + dsID);
+                    throw new GeneralException("A datastream already exists with ID: "
+                            + dsID);
                 } else {
                     ds.DatastreamID = dsID;
                 }
@@ -510,8 +567,8 @@ public class DefaultManagement extends Module implements Constants, Management,
             audit.processType = "Fedora API-M";
             audit.action = "addDatastream";
             audit.componentID = ds.DatastreamID;
-            audit.responsibility = context
-                    .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
+            audit.responsibility =
+                    context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
             audit.date = nowUTC;
             audit.justification = logMessage;
             w.getAuditRecords().add(audit);
@@ -523,11 +580,19 @@ public class DefaultManagement extends Module implements Constants, Management,
         }
     }
 
-    public Date modifyDatastreamByReference(Context context, String pid,
-            String datastreamId, String[] altIDs, String dsLabel,
-            String mimeType, String formatURI, String dsLocation,
-            String checksumType, String checksum, String logMessage,
-            boolean force) throws ServerException {
+    public Date modifyDatastreamByReference(Context context,
+                                            String pid,
+                                            String datastreamId,
+                                            String[] altIDs,
+                                            String dsLabel,
+                                            String mimeType,
+                                            String formatURI,
+                                            String dsLocation,
+                                            String checksumType,
+                                            String checksum,
+                                            String logMessage,
+                                            boolean force)
+            throws ServerException {
 
         // check for valid xml name for datastream ID
         if (datastreamId != null) {
@@ -540,9 +605,8 @@ public class DefaultManagement extends Module implements Constants, Management,
 
         if (datastreamId.equals("AUDIT")
                 || datastreamId.equals("FEDORA-AUDITTRAIL")) {
-            throw new GeneralException(
-                    "Modification of the system-controlled AUDIT"
-                            + " datastream is not permitted.");
+            throw new GeneralException("Modification of the system-controlled AUDIT"
+                    + " datastream is not permitted.");
         }
 
         DOWriter w = null;
@@ -552,40 +616,49 @@ public class DefaultManagement extends Module implements Constants, Management,
             // FIXME: enforceModifyDatastreamByReference expects a parameter
             // of dsState, we no longer have. I'm passing in a value
             // of "" but this could cause a problem.
-            m_fedoraXACMLModule.enforceModifyDatastreamByReference(context,
-                    pid, datastreamId, altIDs, mimeType, formatURI, dsLocation,
-                    checksumType, checksum);
+            m_fedoraXACMLModule
+                    .enforceModifyDatastreamByReference(context,
+                                                        pid,
+                                                        datastreamId,
+                                                        altIDs,
+                                                        mimeType,
+                                                        formatURI,
+                                                        dsLocation,
+                                                        checksumType,
+                                                        checksum);
 
             checkDatastreamLabel(dsLabel);
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
-            fedora.server.storage.types.Datastream orig = w.GetDatastream(
-                    datastreamId, null);
+            fedora.server.storage.types.Datastream orig =
+                    w.GetDatastream(datastreamId, null);
             Date nowUTC; // variable for ds modified date
 
             // some forbidden scenarios...
             if (orig.DSControlGrp.equals("X")) {
-                throw new GeneralException(
-                        "Inline XML datastreams must be modified by value, not by reference.");
+                throw new GeneralException("Inline XML datastreams must be modified by value, not by reference.");
             }
             if (orig.DSState.equals("D")) {
-                throw new GeneralException(
-                        "Changing attributes on deleted datastreams is forbidden.");
+                throw new GeneralException("Changing attributes on deleted datastreams is forbidden.");
             }
 
             // A NULL INPUT PARM MEANS NO CHANGE TO DS ATTRIBUTE...
             // if input parms are null, the ds attribute should not be changed,
             // so set the parm values to the existing values in the datastream.
-            if (dsLabel == null)
+            if (dsLabel == null) {
                 dsLabel = orig.DSLabel;
-            if (mimeType == null)
+            }
+            if (mimeType == null) {
                 mimeType = orig.DSMIME;
-            if (formatURI == null)
+            }
+            if (formatURI == null) {
                 formatURI = orig.DSFormatURI;
-            if (altIDs == null)
+            }
+            if (altIDs == null) {
                 altIDs = orig.DatastreamAltIDs;
-            if (checksumType == null)
+            }
+            if (checksumType == null) {
                 checksumType = orig.DSChecksumType;
-            else {
+            } else {
                 checksumType = Datastream.validateChecksumType(checksumType);
             }
 
@@ -655,8 +728,9 @@ public class DefaultManagement extends Module implements Constants, Management,
             // the datastream
             // matches the one that is passed in.
             if (checksum != null) {
-                if (checksumType == null)
+                if (checksumType == null) {
                     newds.DSChecksumType = orig.DSChecksumType;
+                }
                 String check = newds.getChecksum();
                 if (!checksum.equals(check)) {
                     throw new ValidationException("Checksum Mismatch: " + check);
@@ -664,13 +738,14 @@ public class DefaultManagement extends Module implements Constants, Management,
             }
 
             // add the audit record
-            fedora.server.storage.types.AuditRecord audit = new fedora.server.storage.types.AuditRecord();
+            fedora.server.storage.types.AuditRecord audit =
+                    new fedora.server.storage.types.AuditRecord();
             audit.id = w.newAuditRecordID();
             audit.processType = "Fedora API-M";
             audit.action = "modifyDatastreamByReference";
             audit.componentID = newds.DatastreamID;
-            audit.responsibility = context
-                    .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
+            audit.responsibility =
+                    context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
             audit.date = nowUTC;
             audit.justification = logMessage;
             w.getAuditRecords().add(audit);
@@ -691,11 +766,18 @@ public class DefaultManagement extends Module implements Constants, Management,
         }
     }
 
-    public Date modifyDatastreamByValue(Context context, String pid,
-            String datastreamId, String[] altIDs, String dsLabel,
-            String mimeType, String formatURI, InputStream dsContent,
-            String checksumType, String checksum, String logMessage,
-            boolean force) throws ServerException {
+    public Date modifyDatastreamByValue(Context context,
+                                        String pid,
+                                        String datastreamId,
+                                        String[] altIDs,
+                                        String dsLabel,
+                                        String mimeType,
+                                        String formatURI,
+                                        InputStream dsContent,
+                                        String checksumType,
+                                        String checksum,
+                                        String logMessage,
+                                        boolean force) throws ServerException {
 
         // check for valid xml name for datastream ID
         if (datastreamId != null) {
@@ -708,9 +790,8 @@ public class DefaultManagement extends Module implements Constants, Management,
 
         if (datastreamId.equals("AUDIT")
                 || datastreamId.equals("FEDORA-AUDITTRAIL")) {
-            throw new GeneralException(
-                    "Modification of the system-controlled AUDIT"
-                            + " datastream is not permitted.");
+            throw new GeneralException("Modification of the system-controlled AUDIT"
+                    + " datastream is not permitted.");
         }
         DOWriter w = null;
         boolean mimeChanged = false;
@@ -720,41 +801,48 @@ public class DefaultManagement extends Module implements Constants, Management,
             // FIXME: enforceModifyDatastreamByReference expects a parameter
             // of dsState, we no longer have. I'm passing in a value
             // of "" but this could cause a problem.
-            m_fedoraXACMLModule.enforceModifyDatastreamByValue(context, pid,
-                    datastreamId, altIDs, mimeType, formatURI, checksumType,
-                    checksum);
+            m_fedoraXACMLModule.enforceModifyDatastreamByValue(context,
+                                                               pid,
+                                                               datastreamId,
+                                                               altIDs,
+                                                               mimeType,
+                                                               formatURI,
+                                                               checksumType,
+                                                               checksum);
 
             checkDatastreamLabel(dsLabel);
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
-            fedora.server.storage.types.Datastream orig = w.GetDatastream(
-                    datastreamId, null);
+            fedora.server.storage.types.Datastream orig =
+                    w.GetDatastream(datastreamId, null);
 
             // some forbidden scenarios...
             if (orig.DSState.equals("D")) {
-                throw new GeneralException(
-                        "Changing attributes on deleted datastreams is forbidden.");
+                throw new GeneralException("Changing attributes on deleted datastreams is forbidden.");
             }
             if (!orig.DSControlGrp.equals("X")) {
-                throw new GeneralException(
-                        "Only content of inline XML datastreams may"
-                                + " be modified by value.\n"
-                                + "Use modifyDatastreamByReference instead.");
+                throw new GeneralException("Only content of inline XML datastreams may"
+                        + " be modified by value.\n"
+                        + "Use modifyDatastreamByReference instead.");
             }
 
             // A NULL INPUT PARM MEANS NO CHANGE TO DS ATTRIBUTE...
             // if input parms are null, the ds attribute should not be changed,
             // so set the parm values to the existing values in the datastream.
-            if (dsLabel == null)
+            if (dsLabel == null) {
                 dsLabel = orig.DSLabel;
-            if (mimeType == null)
+            }
+            if (mimeType == null) {
                 mimeType = orig.DSMIME;
-            if (formatURI == null)
+            }
+            if (formatURI == null) {
                 formatURI = orig.DSFormatURI;
-            if (altIDs == null)
+            }
+            if (altIDs == null) {
                 altIDs = orig.DatastreamAltIDs;
-            if (checksumType == null)
+            }
+            if (checksumType == null) {
                 checksumType = orig.DSChecksumType;
-            else {
+            } else {
                 checksumType = Datastream.validateChecksumType(checksumType);
             }
             // If "force" is false and the mime type changed, validate the
@@ -780,8 +868,8 @@ public class DefaultManagement extends Module implements Constants, Management,
                 newds.xmlContent = getEmbeddableXML(dsContent);
                 // If it's a RELS-EXT datastream, do validation
                 if (orig.DatastreamID.equals("RELS-EXT")) {
-                    validateRelsExt(pid, new ByteArrayInputStream(
-                            ((DatastreamXMLMetadata) newds).xmlContent));
+                    validateRelsExt(pid,
+                                    new ByteArrayInputStream(((DatastreamXMLMetadata) newds).xmlContent));
                 }
             }
 
@@ -820,13 +908,14 @@ public class DefaultManagement extends Module implements Constants, Management,
             }
 
             // add the audit record
-            fedora.server.storage.types.AuditRecord audit = new fedora.server.storage.types.AuditRecord();
+            fedora.server.storage.types.AuditRecord audit =
+                    new fedora.server.storage.types.AuditRecord();
             audit.id = w.newAuditRecordID();
             audit.processType = "Fedora API-M";
             audit.action = "modifyDatastreamByValue";
             audit.componentID = newds.DatastreamID;
-            audit.responsibility = context
-                    .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
+            audit.responsibility =
+                    context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
             audit.date = nowUTC;
             audit.justification = logMessage;
             w.getAuditRecords().add(audit);
@@ -847,9 +936,13 @@ public class DefaultManagement extends Module implements Constants, Management,
         }
     }
 
-    public Date[] purgeDatastream(Context context, String pid,
-            String datastreamID, Date startDT, Date endDT, String logMessage,
-            boolean force) throws ServerException {
+    public Date[] purgeDatastream(Context context,
+                                  String pid,
+                                  String datastreamID,
+                                  Date startDT,
+                                  Date endDT,
+                                  String logMessage,
+                                  boolean force) throws ServerException {
         if (force) {
             throw new GeneralException("Forced datastream removal is not "
                     + "yet supported.");
@@ -858,12 +951,14 @@ public class DefaultManagement extends Module implements Constants, Management,
         try {
             LOG.info("Entered purgeDatastream");
 
-            m_fedoraXACMLModule.enforcePurgeDatastream(context, pid,
-                    datastreamID, endDT);
+            m_fedoraXACMLModule.enforcePurgeDatastream(context,
+                                                       pid,
+                                                       datastreamID,
+                                                       endDT);
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
-            Date[] deletedDates = w.removeDatastream(datastreamID, startDT,
-                    endDT);
+            Date[] deletedDates =
+                    w.removeDatastream(datastreamID, startDT, endDT);
             // check if there's at least one version with this id...
             if (w.GetDatastream(datastreamID, null) == null) {
                 // if deleting would result in no versions remaining,
@@ -871,8 +966,8 @@ public class DefaultManagement extends Module implements Constants, Management,
                 // this datastream.
                 // to do this, we must look through all versions of every
                 // disseminator, regardless of state
-                SimpleDateFormat formatter = new SimpleDateFormat(
-                        "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                SimpleDateFormat formatter =
+                        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                 ArrayList<String> usedList = new ArrayList<String>();
                 if (datastreamID.equals("DC")) {
                     usedList.add("The default disseminator");
@@ -913,16 +1008,21 @@ public class DefaultManagement extends Module implements Constants, Management,
             } else {
                 logMessage += " . . . ";
             }
-            logMessage += getPurgeLogMessage("datastream", datastreamID,
-                    startDT, endDT, deletedDates);
+            logMessage +=
+                    getPurgeLogMessage("datastream",
+                                       datastreamID,
+                                       startDT,
+                                       endDT,
+                                       deletedDates);
             Date nowUTC = Server.getCurrentDate(context);
-            fedora.server.storage.types.AuditRecord audit = new fedora.server.storage.types.AuditRecord();
+            fedora.server.storage.types.AuditRecord audit =
+                    new fedora.server.storage.types.AuditRecord();
             audit.id = w.newAuditRecordID();
             audit.processType = "Fedora API-M";
             audit.action = "purgeDatastream";
             audit.componentID = datastreamID;
-            audit.responsibility = context
-                    .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
+            audit.responsibility =
+                    context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
             audit.date = nowUTC;
             audit.justification = logMessage;
             // Normally we associate an audit record with a specific version
@@ -940,10 +1040,13 @@ public class DefaultManagement extends Module implements Constants, Management,
         }
     }
 
-    private String getPurgeLogMessage(String kindaThing, String id, Date start,
-            Date end, Date[] deletedDates) {
-        SimpleDateFormat formatter = new SimpleDateFormat(
-                "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private String getPurgeLogMessage(String kindaThing,
+                                      String id,
+                                      Date start,
+                                      Date end,
+                                      Date[] deletedDates) {
+        SimpleDateFormat formatter =
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         StringBuffer buf = new StringBuffer();
         buf.append("Purged ");
         buf.append(kindaThing);
@@ -975,48 +1078,59 @@ public class DefaultManagement extends Module implements Constants, Management,
         return buf.toString();
     }
 
-    public Datastream getDatastream(Context context, String pid,
-            String datastreamID, Date asOfDateTime) throws ServerException {
+    public Datastream getDatastream(Context context,
+                                    String pid,
+                                    String datastreamID,
+                                    Date asOfDateTime) throws ServerException {
         try {
             LOG.info("Entered getDatastream");
 
-            m_fedoraXACMLModule.enforceGetDatastream(context, pid,
-                    datastreamID, asOfDateTime);
+            m_fedoraXACMLModule.enforceGetDatastream(context,
+                                                     pid,
+                                                     datastreamID,
+                                                     asOfDateTime);
 
-            DOReader r = m_manager
-                    .getReader(Server.GLOBAL_CHOICE, context, pid);
+            DOReader r =
+                    m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
             return r.GetDatastream(datastreamID, asOfDateTime);
         } finally {
             LOG.info("Exiting getDatastream");
         }
     }
 
-    public Datastream[] getDatastreams(Context context, String pid,
-            Date asOfDateTime, String state) throws ServerException {
+    public Datastream[] getDatastreams(Context context,
+                                       String pid,
+                                       Date asOfDateTime,
+                                       String state) throws ServerException {
         try {
             LOG.info("Entered getDatastreams");
 
-            m_fedoraXACMLModule.enforceGetDatastreams(context, pid,
-                    asOfDateTime, state);
+            m_fedoraXACMLModule.enforceGetDatastreams(context,
+                                                      pid,
+                                                      asOfDateTime,
+                                                      state);
 
-            DOReader r = m_manager
-                    .getReader(Server.GLOBAL_CHOICE, context, pid);
+            DOReader r =
+                    m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
             return r.GetDatastreams(asOfDateTime, state);
         } finally {
             LOG.info("Exiting getDatastreams");
         }
     }
 
-    public Datastream[] getDatastreamHistory(Context context, String pid,
-            String datastreamID) throws ServerException {
+    public Datastream[] getDatastreamHistory(Context context,
+                                             String pid,
+                                             String datastreamID)
+            throws ServerException {
         try {
             LOG.info("Entered getDatastreamHistory");
 
-            m_fedoraXACMLModule.enforceGetDatastreamHistory(context, pid,
-                    datastreamID);
+            m_fedoraXACMLModule.enforceGetDatastreamHistory(context,
+                                                            pid,
+                                                            datastreamID);
 
-            DOReader r = m_manager
-                    .getReader(Server.GLOBAL_CHOICE, context, pid);
+            DOReader r =
+                    m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
             Date[] versionDates = r.getDatastreamVersions(datastreamID);
             Datastream[] versions = new Datastream[versionDates.length];
             for (int i = 0; i < versionDates.length; i++) {
@@ -1035,15 +1149,18 @@ public class DefaultManagement extends Module implements Constants, Management,
         }
     }
 
-    public class DatastreamDateComparator implements Comparator {
+    public class DatastreamDateComparator
+            implements Comparator {
 
         public int compare(Object o1, Object o2) {
             long ms1 = ((Datastream) o1).DSCreateDT.getTime();
             long ms2 = ((Datastream) o1).DSCreateDT.getTime();
-            if (ms1 < ms2)
+            if (ms1 < ms2) {
                 return -1;
-            if (ms1 > ms2)
+            }
+            if (ms1 > ms2) {
                 return 1;
+            }
             return 0;
         }
     }
@@ -1060,8 +1177,9 @@ public class DefaultManagement extends Module implements Constants, Management,
             // rather than generating new ones.
             if (context instanceof RecoveryContext) {
                 RecoveryContext rContext = (RecoveryContext) context;
-                pidList = rContext
-                        .getRecoveryValues(Constants.RECOVERY.PID_LIST.uri);
+                pidList =
+                        rContext
+                                .getRecoveryValues(Constants.RECOVERY.PID_LIST.uri);
                 if (pidList != null && pidList.length > 0) {
                     LOG.debug("Reserving and returning PID_LIST "
                             + "from recovery context");
@@ -1084,8 +1202,8 @@ public class DefaultManagement extends Module implements Constants, Management,
             throws StreamWriteException, AuthzException {
         m_fedoraXACMLModule.enforceUpload(context);
         // first clean up after old stuff
-        long minStartTime = System.currentTimeMillis()
-                - (60 * 1000 * m_uploadStorageMinutes);
+        long minStartTime =
+                System.currentTimeMillis() - 60 * 1000 * m_uploadStorageMinutes;
         ArrayList<String> removeList = new ArrayList<String>();
         Iterator iter = m_uploadStartTime.keySet().iterator();
         while (iter.hasNext()) {
@@ -1142,17 +1260,15 @@ public class DefaultManagement extends Module implements Constants, Management,
         // If the RecoveryContext has an uploaded://n url, use n.
         if (context instanceof RecoveryContext) {
             RecoveryContext rContext = (RecoveryContext) context;
-            String uploadURL = rContext
-                    .getRecoveryValue(Constants.RECOVERY.UPLOAD_ID.uri);
+            String uploadURL =
+                    rContext.getRecoveryValue(Constants.RECOVERY.UPLOAD_ID.uri);
             if (uploadURL != null) {
                 try {
                     String n = uploadURL.substring(11);
                     recoveryId = Integer.parseInt(n);
                 } catch (Exception e) {
-                    throw new IllegalArgumentException(
-                            "Unable to parse UPLOAD_ID "
-                                    + "from recovery context: '" + uploadURL
-                                    + "'");
+                    throw new IllegalArgumentException("Unable to parse UPLOAD_ID "
+                            + "from recovery context: '" + uploadURL + "'");
                 }
             }
         }
@@ -1184,15 +1300,19 @@ public class DefaultManagement extends Module implements Constants, Management,
         }
     }
 
-    public Date setDatastreamState(Context context, String pid,
-            String datastreamID, String dsState, String logMessage)
-            throws ServerException {
+    public Date setDatastreamState(Context context,
+                                   String pid,
+                                   String datastreamID,
+                                   String dsState,
+                                   String logMessage) throws ServerException {
         DOWriter w = null;
         try {
             LOG.info("Entered setDatastreamState");
 
-            m_fedoraXACMLModule.enforceSetDatastreamState(context, pid,
-                    datastreamID, dsState);
+            m_fedoraXACMLModule.enforceSetDatastreamState(context,
+                                                          pid,
+                                                          datastreamID,
+                                                          dsState);
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             if (!dsState.equals("A") && !dsState.equals("D")
@@ -1202,18 +1322,19 @@ public class DefaultManagement extends Module implements Constants, Management,
                         + "\" is invalid. The allowed values for state are: "
                         + " A (active), D (deleted), and I (inactive).");
             }
-            fedora.server.storage.types.Datastream ds = w.GetDatastream(
-                    datastreamID, null);
+            fedora.server.storage.types.Datastream ds =
+                    w.GetDatastream(datastreamID, null);
             w.setDatastreamState(datastreamID, dsState);
 
             // add the audit record
-            fedora.server.storage.types.AuditRecord audit = new fedora.server.storage.types.AuditRecord();
+            fedora.server.storage.types.AuditRecord audit =
+                    new fedora.server.storage.types.AuditRecord();
             audit.id = w.newAuditRecordID();
             audit.processType = "Fedora API-M";
             audit.action = "setDatastreamState";
             audit.componentID = datastreamID;
-            audit.responsibility = context
-                    .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
+            audit.responsibility =
+                    context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
             Date nowUTC = Server.getCurrentDate(context);
             audit.date = nowUTC;
             audit.justification = logMessage;
@@ -1227,29 +1348,35 @@ public class DefaultManagement extends Module implements Constants, Management,
         }
     }
 
-    public Date setDatastreamVersionable(Context context, String pid,
-            String datastreamID, boolean versionable, String logMessage)
+    public Date setDatastreamVersionable(Context context,
+                                         String pid,
+                                         String datastreamID,
+                                         boolean versionable,
+                                         String logMessage)
             throws ServerException {
         DOWriter w = null;
         try {
             LOG.info("Entered setDatastreamVersionable");
 
-            m_fedoraXACMLModule.enforceSetDatastreamVersionable(context, pid,
-                    datastreamID, versionable);
+            m_fedoraXACMLModule.enforceSetDatastreamVersionable(context,
+                                                                pid,
+                                                                datastreamID,
+                                                                versionable);
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
-            fedora.server.storage.types.Datastream ds = w.GetDatastream(
-                    datastreamID, null);
+            fedora.server.storage.types.Datastream ds =
+                    w.GetDatastream(datastreamID, null);
             w.setDatastreamVersionable(datastreamID, versionable);
 
             // add the audit record
-            fedora.server.storage.types.AuditRecord audit = new fedora.server.storage.types.AuditRecord();
+            fedora.server.storage.types.AuditRecord audit =
+                    new fedora.server.storage.types.AuditRecord();
             audit.id = w.newAuditRecordID();
             audit.processType = "Fedora API-M";
             audit.action = "setDatastreamVersionable";
             audit.componentID = datastreamID;
-            audit.responsibility = context
-                    .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
+            audit.responsibility =
+                    context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
             Date nowUTC = Server.getCurrentDate(context);
             audit.date = nowUTC;
             audit.justification = logMessage;
@@ -1263,14 +1390,19 @@ public class DefaultManagement extends Module implements Constants, Management,
         }
     }
 
-    public String compareDatastreamChecksum(Context context, String pid,
-            String datastreamID, Date versionDate) throws ServerException {
+    public String compareDatastreamChecksum(Context context,
+                                            String pid,
+                                            String datastreamID,
+                                            Date versionDate)
+            throws ServerException {
         DOReader r = null;
         try {
             LOG.info("Entered compareDatastreamChecksum");
 
-            m_fedoraXACMLModule.enforceCompareDatastreamChecksum(context, pid,
-                    datastreamID, versionDate);
+            m_fedoraXACMLModule.enforceCompareDatastreamChecksum(context,
+                                                                 pid,
+                                                                 datastreamID,
+                                                                 versionDate);
 
             LOG.debug("Getting Reader");
             r = m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);
@@ -1314,8 +1446,8 @@ public class DefaultManagement extends Module implements Constants, Management,
             fmt.setOmitXMLDeclaration(true);
             fmt.setOmitDocumentType(true);
             XMLSerializer ser = new XMLSerializer(out, fmt);
-            DocumentBuilderFactory factory = DocumentBuilderFactory
-                    .newInstance();
+            DocumentBuilderFactory factory =
+                    DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(in);
@@ -1323,8 +1455,9 @@ public class DefaultManagement extends Module implements Constants, Management,
             return out.toByteArray();
         } catch (Exception e) {
             String message = e.getMessage();
-            if (message == null)
+            if (message == null) {
                 message = "";
+            }
             throw new GeneralException("XML was not well-formed. " + message, e);
         }
     }
@@ -1332,14 +1465,11 @@ public class DefaultManagement extends Module implements Constants, Management,
     /**
      * Get a string indicating whether the associated binding map (or an empty
      * binding map, if none is found) is valid or invalid according to the data
-     * contract defined by the indicated behavior mechanism.
-     * 
-     * Returns null if valid, otherwise returns a String explaining why not.
-     * 
-     * This assumes the indicated bMech actually exists, and the binding map, if
-     * it exists and specifies any datastreams, refers to existing datastreams
-     * within the object. If these conditions are not met, an exception is
-     * thrown.
+     * contract defined by the indicated behavior mechanism. Returns null if
+     * valid, otherwise returns a String explaining why not. This assumes the
+     * indicated bMech actually exists, and the binding map, if it exists and
+     * specifies any datastreams, refers to existing datastreams within the
+     * object. If these conditions are not met, an exception is thrown.
      */
     // private String getBindingMapValidationReport(Context context,
     // DOReader doReader,
@@ -1364,17 +1494,13 @@ public class DefaultManagement extends Module implements Constants, Management,
     /**
      * Get a combined report indicating failure or success of data contract
      * validation for every disseminator in the given object that the indicated
-     * datastream is bound to.
-     * 
-     * The returned map's keys will be Disseminator objects. The values will be
-     * null in the case of successful validation, or Strings (explaining why) in
-     * the case of failure.
-     * 
-     * This assumes that all bMechs specified in the binding maps of the
-     * disseminators that use the indicated datastream actually exist, and the
-     * binding map, if it exists and specifies any datastreams, refers to
-     * existing datastreams within the object. If these conditions are not met,
-     * an exception is thrown.
+     * datastream is bound to. The returned map's keys will be Disseminator
+     * objects. The values will be null in the case of successful validation, or
+     * Strings (explaining why) in the case of failure. This assumes that all
+     * bMechs specified in the binding maps of the disseminators that use the
+     * indicated datastream actually exist, and the binding map, if it exists
+     * and specifies any datastreams, refers to existing datastreams within the
+     * object. If these conditions are not met, an exception is thrown.
      */
     // private Map getAllBindingMapValidationReports(Context context,
     // DOReader doReader,
@@ -1457,42 +1583,51 @@ public class DefaultManagement extends Module implements Constants, Management,
     }
 
     private void checkDatastreamID(String id) throws ValidationException {
-        checkString(id, "Datastream id",
-                ValidationConstants.DATASTREAM_ID_MAXLEN,
-                ValidationConstants.DATASTREAM_ID_BADCHARS);
+        checkString(id,
+                    "Datastream id",
+                    ValidationConstants.DATASTREAM_ID_MAXLEN,
+                    ValidationConstants.DATASTREAM_ID_BADCHARS);
     }
 
     private void checkDatastreamLabel(String label) throws ValidationException {
-        checkString(label, "Datastream label",
-                ValidationConstants.DATASTREAM_LABEL_MAXLEN, null);
+        checkString(label,
+                    "Datastream label",
+                    ValidationConstants.DATASTREAM_LABEL_MAXLEN,
+                    null);
     }
 
     private void checkDisseminatorID(String id) throws ValidationException {
-        checkString(id, "Disseminator id",
-                ValidationConstants.DISSEMINATOR_ID_MAXLEN,
-                ValidationConstants.DISSEMINATOR_ID_BADCHARS);
+        checkString(id,
+                    "Disseminator id",
+                    ValidationConstants.DISSEMINATOR_ID_MAXLEN,
+                    ValidationConstants.DISSEMINATOR_ID_BADCHARS);
     }
 
     private void checkDisseminatorLabel(String label)
             throws ValidationException {
-        checkString(label, "Disseminator label",
-                ValidationConstants.DISSEMINATOR_LABEL_MAXLEN, null);
+        checkString(label,
+                    "Disseminator label",
+                    ValidationConstants.DISSEMINATOR_LABEL_MAXLEN,
+                    null);
     }
 
     private void checkObjectLabel(String label) throws ValidationException {
-        checkString(label, "Object label",
-                ValidationConstants.OBJECT_LABEL_MAXLEN, null);
+        checkString(label,
+                    "Object label",
+                    ValidationConstants.OBJECT_LABEL_MAXLEN,
+                    null);
     }
 
-    private void checkString(String string, String kind, int maxLen,
-            char[] badChars) throws ValidationException {
+    private void checkString(String string,
+                             String kind,
+                             int maxLen,
+                             char[] badChars) throws ValidationException {
         if (string != null) {
             if (string.length() > maxLen) {
                 throw new ValidationException(kind + " is too long. Maximum "
                         + "length is " + maxLen + " characters.");
             } else if (badChars != null) {
-                for (int i = 0; i < badChars.length; i++) {
-                    char c = badChars[i];
+                for (char c : badChars) {
                     if (string.indexOf(c) != -1) {
                         throw new ValidationException(kind + " contains a "
                                 + "'" + c + "', but that character is not "
@@ -1508,14 +1643,17 @@ public class DefaultManagement extends Module implements Constants, Management,
         return true;
     }
 
-    public RelationshipTuple[] getRelationships(Context context, String pid,
-            String relationship) throws ServerException {
+    public RelationshipTuple[] getRelationships(Context context,
+                                                String pid,
+                                                String relationship)
+            throws ServerException {
         DOReader r = null;
         try {
             LOG.info("Entered getRelationships");
 
-            m_fedoraXACMLModule.enforceGetRelationships(context, pid,
-                    relationship);
+            m_fedoraXACMLModule.enforceGetRelationships(context,
+                                                        pid,
+                                                        relationship);
 
             LOG.debug("Getting Reader");
             r = m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);
@@ -1530,18 +1668,29 @@ public class DefaultManagement extends Module implements Constants, Management,
         }
     }
 
-    public boolean addRelationship(Context context, String pid,
-            String relationship, String object, boolean isLiteral,
-            String datatype) throws ServerException {
+    public boolean addRelationship(Context context,
+                                   String pid,
+                                   String relationship,
+                                   String object,
+                                   boolean isLiteral,
+                                   String datatype) throws ServerException {
         DOWriter w = null;
         try {
             LOG.info("Entered addRelationship");
-            m_fedoraXACMLModule.enforceAddRelationship(context, pid,
-                    relationship, object, isLiteral, datatype);
+            m_fedoraXACMLModule.enforceAddRelationship(context,
+                                                       pid,
+                                                       relationship,
+                                                       object,
+                                                       isLiteral,
+                                                       datatype);
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
-            boolean added = w.addRelationship(relationship, object,
-                    isLiteral, datatype);
+            boolean added =
+                    w
+                            .addRelationship(relationship,
+                                             object,
+                                             isLiteral,
+                                             datatype);
 
             // if all went ok, commit
             if (added) {
@@ -1553,18 +1702,28 @@ public class DefaultManagement extends Module implements Constants, Management,
         }
     }
 
-    public boolean purgeRelationship(Context context, String pid,
-            String relationship, String object, boolean isLiteral,
-            String datatype) throws ServerException {
+    public boolean purgeRelationship(Context context,
+                                     String pid,
+                                     String relationship,
+                                     String object,
+                                     boolean isLiteral,
+                                     String datatype) throws ServerException {
         DOWriter w = null;
         try {
             LOG.info("Entered purgeRelationship");
-            m_fedoraXACMLModule.enforcePurgeRelationship(context, pid,
-                    relationship, object, isLiteral, datatype);
+            m_fedoraXACMLModule.enforcePurgeRelationship(context,
+                                                         pid,
+                                                         relationship,
+                                                         object,
+                                                         isLiteral,
+                                                         datatype);
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
-            boolean purged = w.purgeRelationship(relationship,
-                    object, isLiteral, datatype);
+            boolean purged =
+                    w.purgeRelationship(relationship,
+                                        object,
+                                        isLiteral,
+                                        datatype);
 
             // if all went ok, commit
             if (purged) {

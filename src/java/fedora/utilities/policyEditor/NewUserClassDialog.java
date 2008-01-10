@@ -34,332 +34,344 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-/*
- * Created on May 24, 2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
+/**
+ * @author Robert Haschart
  */
+public class NewUserClassDialog
+        extends JDialog
+        implements ActionListener, ListSelectionListener, KeyListener {
 
-public class NewUserClassDialog extends JDialog implements ActionListener,
-		ListSelectionListener, KeyListener {
-	private static final long serialVersionUID = 1L;
-	
-	private CardLayout card = null;
+    private static final long serialVersionUID = 1L;
 
-	private JPanel mainPanel = null;
+    private CardLayout card = null;
 
-	private JPanel paramPanel = null;
+    private JPanel mainPanel = null;
 
-	private JTable compositeTable = null;
+    private JPanel paramPanel = null;
 
-	private JTable templateTable = null;
+    private JTable compositeTable = null;
 
-	private JButton createClass = null;
+    private JTable templateTable = null;
 
-	private JRadioButton andButton = null;
+    private JButton createClass = null;
 
-	public final static int PERMIT = 0;
+    private JRadioButton andButton = null;
 
-	public final static int DENY = 1;
+    public final static int PERMIT = 0;
 
-	public final static int TEMPLATE = 0;
+    public final static int DENY = 1;
 
-	public final static int COMPOSITE = 1;
+    public final static int TEMPLATE = 0;
 
-	private int permitOrDeny = PERMIT;
+    public final static int COMPOSITE = 1;
 
-	private int templateOrComposite = TEMPLATE;
+    private int permitOrDeny = PERMIT;
 
-	/**
-	 * @param owner
-	 * @param title
-	 * @throws java.awt.HeadlessException
-	 */
-	public NewUserClassDialog(Frame owner, String title)
-			throws HeadlessException {
-		super(owner, title, true);
+    private int templateOrComposite = TEMPLATE;
 
-		makeNewUserPanel();
-		pack();
-		setVisible(true);
+    /**
+     * @param owner
+     * @param title
+     * @throws java.awt.HeadlessException
+     */
+    public NewUserClassDialog(Frame owner, String title)
+            throws HeadlessException {
+        super(owner, title, true);
 
-	}
+        makeNewUserPanel();
+        pack();
+        setVisible(true);
 
-	private void makeNewUserPanel() {
-		JPanel topPanel = new JPanel();
-		JPanel topPanel1 = new JPanel();
-		JPanel topPanel2 = new JPanel();
-		mainPanel = new JPanel() {
-			private static final long serialVersionUID = 1L;
-			public Dimension getPreferredSize() {
-				return (new Dimension(500, 250));
-			}
-		};
-		JPanel botPanel = new JPanel();
+    }
 
-		ButtonGroup group1 = new ButtonGroup();
-		topPanel1.setLayout(new GridLayout(0, 1, 0, 5));
-		topPanel1.add(makeRadioButton(group1, "Permit", true));
-		topPanel1.add(makeRadioButton(group1, "Deny", false));
-		topPanel1.setBorder(new CompoundBorder(new TitledBorder("Rule Type"),
-				new EmptyBorder(10, 10, 10, 10)));
-		ButtonGroup group2 = new ButtonGroup();
-		topPanel2.setLayout(new GridLayout(0, 1, 0, 5));
-		topPanel2.add(makeRadioButton(group2,
-				"Create New User Class from Template", true));
-		topPanel2
-				.add(makeRadioButton(
-						group2,
-						"Create Composite User Class by Combining 2 (or more) existing classes",
-						false));
-		topPanel2.setBorder(new CompoundBorder(new EmptyBorder(0, 10, 0, 0),
-				new CompoundBorder(new TitledBorder(
-						"Type of User Class to Create"), new EmptyBorder(10,
-						10, 10, 10))));
-		topPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		topPanel.setLayout(new BorderLayout());
-		topPanel.add(topPanel1, BorderLayout.WEST);
-		topPanel.add(topPanel2, BorderLayout.CENTER);
+    private void makeNewUserPanel() {
+        JPanel topPanel = new JPanel();
+        JPanel topPanel1 = new JPanel();
+        JPanel topPanel2 = new JPanel();
+        mainPanel = new JPanel() {
 
-		JPanel fromTemplate = new JPanel();
-		JPanel combineExisting = new JPanel();
-		GroupRuleTableModel tModel = new GroupRuleTableModel(false, PERMIT);
-		compositeTable = new JTable(tModel);
-		compositeTable.getSelectionModel().addListSelectionListener(this);
+            private static final long serialVersionUID = 1L;
 
-		combineExisting.setLayout(new BorderLayout());
-		combineExisting.add(new JScrollPane(compositeTable),
-				BorderLayout.CENTER);
-		JPanel andOrPanel = new JPanel();
-		ButtonGroup group3 = new ButtonGroup();
-		andOrPanel.setBorder(new CompoundBorder(
-				new EmptyBorder(10, 10, 10, 10), new TitledBorder(
-						"Combine Classes Using:")));
-		andOrPanel.add(andButton = makeRadioButton(group3, "AND", true));
-		andOrPanel.add(makeRadioButton(group3, "OR", true));
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(500, 250);
+            }
+        };
+        JPanel botPanel = new JPanel();
 
-		combineExisting.add(andOrPanel, BorderLayout.SOUTH);
+        ButtonGroup group1 = new ButtonGroup();
+        topPanel1.setLayout(new GridLayout(0, 1, 0, 5));
+        topPanel1.add(makeRadioButton(group1, "Permit", true));
+        topPanel1.add(makeRadioButton(group1, "Deny", false));
+        topPanel1
+                .setBorder(new CompoundBorder(new TitledBorder("Rule Type"),
+                                              new EmptyBorder(10, 10, 10, 10)));
+        ButtonGroup group2 = new ButtonGroup();
+        topPanel2.setLayout(new GridLayout(0, 1, 0, 5));
+        topPanel2.add(makeRadioButton(group2,
+                                      "Create New User Class from Template",
+                                      true));
+        topPanel2
+                .add(makeRadioButton(group2,
+                                     "Create Composite User Class by Combining 2 (or more) existing classes",
+                                     false));
+        topPanel2
+                .setBorder(new CompoundBorder(new EmptyBorder(0, 10, 0, 0),
+                                              new CompoundBorder(new TitledBorder("Type of User Class to Create"),
+                                                                 new EmptyBorder(10,
+                                                                                 10,
+                                                                                 10,
+                                                                                 10))));
+        topPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        topPanel.setLayout(new BorderLayout());
+        topPanel.add(topPanel1, BorderLayout.WEST);
+        topPanel.add(topPanel2, BorderLayout.CENTER);
 
-		GroupRuleTableModel templateModel = new GroupRuleTableModel(
-				GroupRuleTableModel.TEMPLATES, false, PERMIT);
-		templateTable = new JTable(templateModel);
-		templateTable.getSelectionModel().setSelectionMode(
-				ListSelectionModel.SINGLE_SELECTION);
-		templateTable.getSelectionModel().addListSelectionListener(this);
-		fromTemplate.setLayout(new BorderLayout());
-		fromTemplate.add(new JScrollPane(templateTable), BorderLayout.CENTER);
-		paramPanel = new JPanel() {
-			private static final long serialVersionUID = 1L;
-			public Dimension getPreferredSize() {
-				return (new Dimension(400, 150));
-			}
-		};
-		paramPanel.setLayout(new ParagraphLayout());
-		paramPanel.setBorder(new CompoundBorder(
-				new EmptyBorder(10, 10, 10, 10), new TitledBorder(
-						"Enter Values For Parameters:")));
-		fromTemplate.add(paramPanel, BorderLayout.SOUTH);
+        JPanel fromTemplate = new JPanel();
+        JPanel combineExisting = new JPanel();
+        GroupRuleTableModel tModel = new GroupRuleTableModel(false, PERMIT);
+        compositeTable = new JTable(tModel);
+        compositeTable.getSelectionModel().addListSelectionListener(this);
 
-		mainPanel.setLayout(card = new CardLayout());
-		mainPanel.add(fromTemplate, "fromTemplate");
-		mainPanel.add(combineExisting, "combineExisting");
+        combineExisting.setLayout(new BorderLayout());
+        combineExisting.add(new JScrollPane(compositeTable),
+                            BorderLayout.CENTER);
+        JPanel andOrPanel = new JPanel();
+        ButtonGroup group3 = new ButtonGroup();
+        andOrPanel
+                .setBorder(new CompoundBorder(new EmptyBorder(10, 10, 10, 10),
+                                              new TitledBorder("Combine Classes Using:")));
+        andOrPanel.add(andButton = makeRadioButton(group3, "AND", true));
+        andOrPanel.add(makeRadioButton(group3, "OR", true));
 
-		botPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
-		botPanel.add(createClass = makeButton("Create User Class", false));
-		botPanel.add(makeButton("Cancel", true));
+        combineExisting.add(andOrPanel, BorderLayout.SOUTH);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(topPanel, BorderLayout.NORTH);
-		getContentPane().add(mainPanel, BorderLayout.CENTER);
-		getContentPane().add(botPanel, BorderLayout.SOUTH);
+        GroupRuleTableModel templateModel =
+                new GroupRuleTableModel(GroupRuleTableModel.TEMPLATES,
+                                        false,
+                                        PERMIT);
+        templateTable = new JTable(templateModel);
+        templateTable.getSelectionModel()
+                .setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        templateTable.getSelectionModel().addListSelectionListener(this);
+        fromTemplate.setLayout(new BorderLayout());
+        fromTemplate.add(new JScrollPane(templateTable), BorderLayout.CENTER);
+        paramPanel = new JPanel() {
 
-		updatePanel(permitOrDeny, templateOrComposite);
-	}
+            private static final long serialVersionUID = 1L;
 
-	private JRadioButton makeRadioButton(ButtonGroup group, String label,
-			boolean active) {
-		JRadioButton button = new JRadioButton(label);
-		group.add(button);
-		button.addActionListener(this);
-		button.setSelected(active);
-		return (button);
-	}
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(400, 150);
+            }
+        };
+        paramPanel.setLayout(new ParagraphLayout());
+        paramPanel
+                .setBorder(new CompoundBorder(new EmptyBorder(10, 10, 10, 10),
+                                              new TitledBorder("Enter Values For Parameters:")));
+        fromTemplate.add(paramPanel, BorderLayout.SOUTH);
 
-	private JButton makeButton(String label, boolean enabled) {
-		JButton button = new JButton(label);
-		button.addActionListener(this);
-		button.setEnabled(enabled);
-		return (button);
-	}
+        mainPanel.setLayout(card = new CardLayout());
+        mainPanel.add(fromTemplate, "fromTemplate");
+        mainPanel.add(combineExisting, "combineExisting");
 
-	private void updatePanel(int permitOrDeny, int templateOrComposite) {
-		if (templateOrComposite == COMPOSITE) {
-			((GroupRuleTableModel) compositeTable.getModel())
-					.setPermitDenyOrBoth(permitOrDeny);
-			// now enable/disable the createClass button.
-			createClass.setEnabled(compositeTable.getSelectedRowCount() > 1);
-		}
+        botPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        botPanel.add(createClass = makeButton("Create User Class", false));
+        botPanel.add(makeButton("Cancel", true));
 
-		if (templateOrComposite == TEMPLATE) {
-			((GroupRuleTableModel) templateTable.getModel())
-					.setPermitDenyOrBoth(permitOrDeny);
-			boolean enabled = (templateTable.getSelectedRowCount() == 1);
-			for (int i = 0; enabled && i < paramPanel.getComponentCount(); i++) {
-				if (paramPanel.getComponent(i) instanceof JTextField) {
-					if (((JTextField) paramPanel.getComponent(i)).getText()
-							.length() == 0) {
-						enabled = false;
-					}
-				}
-			}
-			createClass.setEnabled(enabled);
-		}
-	}
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(topPanel, BorderLayout.NORTH);
+        getContentPane().add(mainPanel, BorderLayout.CENTER);
+        getContentPane().add(botPanel, BorderLayout.SOUTH);
 
-	private void createCompositeClass() {
-		if (templateOrComposite == COMPOSITE) {
-			int totalNum = compositeTable.getSelectedRowCount();
-			int index[] = compositeTable.getSelectedRows();
-			GroupRuleTableModel model = ((GroupRuleTableModel) compositeTable
-					.getModel());
-			int andOrOr = andButton.isSelected() ? GroupRuleInfo.AND
-					: GroupRuleInfo.OR;
-			GroupRuleInfo.buildFromRules(model.isPermit(), index, andOrOr);
-		}
-	}
+        updatePanel(permitOrDeny, templateOrComposite);
+    }
 
-	private void createTemplateClass() {
-		if (templateOrComposite == TEMPLATE) {
-			String parmString = "";
-			for (int i = 0; i < paramPanel.getComponentCount(); i++) {
-				if (paramPanel.getComponent(i) instanceof JTextField) {
-					JTextField field = (JTextField) paramPanel.getComponent(i);
-					parmString = parmString
-							+ (parmString.length() > 0 ? ";" : "")
-							+ field.getName() + "=" + field.getText();
-				}
-			}
+    private JRadioButton makeRadioButton(ButtonGroup group,
+                                         String label,
+                                         boolean active) {
+        JRadioButton button = new JRadioButton(label);
+        group.add(button);
+        button.addActionListener(this);
+        button.setSelected(active);
+        return button;
+    }
 
-			int index = templateTable.getSelectedRow();
-			GroupRuleTableModel model = ((GroupRuleTableModel) templateTable
-					.getModel());
-			GroupRuleInfo.buildFromTemplate(model.isPermit(), model
-					.getRowNum(index), parmString);
-			// GroupRuleTableModel model2 =
-			// ((GroupRuleTableModel)compositeTable.getModel());
-			// model2.addRow(permitOrDeny, newgroup);
-		}
-	}
+    private JButton makeButton(String label, boolean enabled) {
+        JButton button = new JButton(label);
+        button.addActionListener(this);
+        button.setEnabled(enabled);
+        return button;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() instanceof JTextField) {
-			updatePanel(permitOrDeny, templateOrComposite);
-		} else if (e.getActionCommand().equals("Cancel")) {
-			this.setVisible(false);
-			this.dispose();
-		} else if (e.getActionCommand().startsWith("Create New")) {
-			card.show(mainPanel, "fromTemplate");
-			if (templateOrComposite != TEMPLATE) {
-				templateOrComposite = TEMPLATE;
-				updatePanel(permitOrDeny, templateOrComposite);
-			}
-		} else if (e.getActionCommand().startsWith("Create Composite")) {
-			card.show(mainPanel, "combineExisting");
-			if (templateOrComposite != COMPOSITE) {
-				templateOrComposite = COMPOSITE;
-				updatePanel(permitOrDeny, templateOrComposite);
-			}
-		} else if (e.getActionCommand().startsWith("Permit")) {
-			permitOrDeny = PERMIT;
-			updatePanel(permitOrDeny, templateOrComposite);
-		} else if (e.getActionCommand().startsWith("Deny")) {
-			permitOrDeny = DENY;
-			updatePanel(permitOrDeny, templateOrComposite);
-		} else if (e.getActionCommand().equals("Create User Class")) {
-			if (templateOrComposite == COMPOSITE) {
-				createCompositeClass();
-			}
-			if (templateOrComposite == TEMPLATE) {
-				createTemplateClass();
-			}
-			this.setVisible(false);
-			this.dispose();
+    private void updatePanel(int permitOrDeny, int templateOrComposite) {
+        if (templateOrComposite == COMPOSITE) {
+            ((GroupRuleTableModel) compositeTable.getModel())
+                    .setPermitDenyOrBoth(permitOrDeny);
+            // now enable/disable the createClass button.
+            createClass.setEnabled(compositeTable.getSelectedRowCount() > 1);
+        }
 
-		}
-	}
+        if (templateOrComposite == TEMPLATE) {
+            ((GroupRuleTableModel) templateTable.getModel())
+                    .setPermitDenyOrBoth(permitOrDeny);
+            boolean enabled = templateTable.getSelectedRowCount() == 1;
+            for (int i = 0; enabled && i < paramPanel.getComponentCount(); i++) {
+                if (paramPanel.getComponent(i) instanceof JTextField) {
+                    if (((JTextField) paramPanel.getComponent(i)).getText()
+                            .length() == 0) {
+                        enabled = false;
+                    }
+                }
+            }
+            createClass.setEnabled(enabled);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
-	 */
-	public void valueChanged(ListSelectionEvent e) {
-		// now enable/disable the createClass button.
-		if (templateOrComposite == COMPOSITE) {
-			createClass.setEnabled(compositeTable.getSelectedRowCount() > 1);
-		}
-		if (templateOrComposite == TEMPLATE) {
-			int row = templateTable.getSelectedRow();
-			GroupRuleTableModel model = ((GroupRuleTableModel) templateTable
-					.getModel());
-			paramPanel.removeAll();
-			paramPanel.invalidate();
-			if (row != -1) {
-				GroupRuleInfo entry = model.getRow(row);
-				for (int i = 0; i < entry.getNumParms(); i++) {
-					JLabel label = new JLabel(entry.getParmValue(i));
-					label.setName(entry.getParmName(i));
-					paramPanel.add(label, ParagraphLayout.NEW_PARAGRAPH);
-					JTextField field = new JTextField(35);
-					field.setName(entry.getParmName(i));
-					field.addActionListener(this);
-					field.addKeyListener(this);
-					paramPanel.add(field);
-				}
-			} else {
-				paramPanel.add(new JLabel("no template selected",
-						SwingConstants.CENTER));
-			}
-			paramPanel.validate();
-			paramPanel.repaint();
-		}
-	}
+    private void createCompositeClass() {
+        if (templateOrComposite == COMPOSITE) {
+            int totalNum = compositeTable.getSelectedRowCount();
+            int index[] = compositeTable.getSelectedRows();
+            GroupRuleTableModel model =
+                    (GroupRuleTableModel) compositeTable.getModel();
+            int andOrOr =
+                    andButton.isSelected() ? GroupRuleInfo.AND
+                            : GroupRuleInfo.OR;
+            GroupRuleInfo.buildFromRules(model.isPermit(), index, andOrOr);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
-	 */
-	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
+    private void createTemplateClass() {
+        if (templateOrComposite == TEMPLATE) {
+            String parmString = "";
+            for (int i = 0; i < paramPanel.getComponentCount(); i++) {
+                if (paramPanel.getComponent(i) instanceof JTextField) {
+                    JTextField field = (JTextField) paramPanel.getComponent(i);
+                    parmString =
+                            parmString + (parmString.length() > 0 ? ";" : "")
+                                    + field.getName() + "=" + field.getText();
+                }
+            }
 
-	}
+            int index = templateTable.getSelectedRow();
+            GroupRuleTableModel model =
+                    (GroupRuleTableModel) templateTable.getModel();
+            GroupRuleInfo.buildFromTemplate(model.isPermit(), model
+                    .getRowNum(index), parmString);
+            // GroupRuleTableModel model2 =
+            // ((GroupRuleTableModel)compositeTable.getModel());
+            // model2.addRow(permitOrDeny, newgroup);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
-	 */
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() instanceof JTextField) {
+            updatePanel(permitOrDeny, templateOrComposite);
+        } else if (e.getActionCommand().equals("Cancel")) {
+            setVisible(false);
+            dispose();
+        } else if (e.getActionCommand().startsWith("Create New")) {
+            card.show(mainPanel, "fromTemplate");
+            if (templateOrComposite != TEMPLATE) {
+                templateOrComposite = TEMPLATE;
+                updatePanel(permitOrDeny, templateOrComposite);
+            }
+        } else if (e.getActionCommand().startsWith("Create Composite")) {
+            card.show(mainPanel, "combineExisting");
+            if (templateOrComposite != COMPOSITE) {
+                templateOrComposite = COMPOSITE;
+                updatePanel(permitOrDeny, templateOrComposite);
+            }
+        } else if (e.getActionCommand().startsWith("Permit")) {
+            permitOrDeny = PERMIT;
+            updatePanel(permitOrDeny, templateOrComposite);
+        } else if (e.getActionCommand().startsWith("Deny")) {
+            permitOrDeny = DENY;
+            updatePanel(permitOrDeny, templateOrComposite);
+        } else if (e.getActionCommand().equals("Create User Class")) {
+            if (templateOrComposite == COMPOSITE) {
+                createCompositeClass();
+            }
+            if (templateOrComposite == TEMPLATE) {
+                createTemplateClass();
+            }
+            setVisible(false);
+            dispose();
 
-	}
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
-	 */
-	public void keyTyped(KeyEvent e) {
-		if (e.getSource() instanceof JTextField) {
-			updatePanel(permitOrDeny, templateOrComposite);
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
+     */
+    public void valueChanged(ListSelectionEvent e) {
+        // now enable/disable the createClass button.
+        if (templateOrComposite == COMPOSITE) {
+            createClass.setEnabled(compositeTable.getSelectedRowCount() > 1);
+        }
+        if (templateOrComposite == TEMPLATE) {
+            int row = templateTable.getSelectedRow();
+            GroupRuleTableModel model =
+                    (GroupRuleTableModel) templateTable.getModel();
+            paramPanel.removeAll();
+            paramPanel.invalidate();
+            if (row != -1) {
+                GroupRuleInfo entry = model.getRow(row);
+                for (int i = 0; i < entry.getNumParms(); i++) {
+                    JLabel label = new JLabel(entry.getParmValue(i));
+                    label.setName(entry.getParmName(i));
+                    paramPanel.add(label, ParagraphLayout.NEW_PARAGRAPH);
+                    JTextField field = new JTextField(35);
+                    field.setName(entry.getParmName(i));
+                    field.addActionListener(this);
+                    field.addKeyListener(this);
+                    paramPanel.add(field);
+                }
+            } else {
+                paramPanel.add(new JLabel("no template selected",
+                                          SwingConstants.CENTER));
+            }
+            paramPanel.validate();
+            paramPanel.repaint();
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
+     */
+    public void keyPressed(KeyEvent e) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
+     */
+    public void keyReleased(KeyEvent e) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
+     */
+    public void keyTyped(KeyEvent e) {
+        if (e.getSource() instanceof JTextField) {
+            updatePanel(permitOrDeny, templateOrComposite);
+        }
+    }
 
 }

@@ -24,40 +24,40 @@ import fedora.common.http.WebClient;
 
 import fedora.server.Context;
 import fedora.server.Server;
-
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ServerException;
-
 import fedora.server.storage.types.DigitalObject;
 
 /**
- * DefaultDOManager extension that updates a GSearch (Fedora 
- * Generic Search) service as object changes are committed.
- *
- * <p>To use, simply change fedora.fcfg, replacing "DefaultDOManager"
- * with "GSearchDOManager", and add the following xml param elements:</p>
- *
- * <p>Required:
+ * DefaultDOManager extension that updates a GSearch (Fedora Generic Search)
+ * service as object changes are committed.
+ * <p>
+ * To use, simply change fedora.fcfg, replacing "DefaultDOManager" with
+ * "GSearchDOManager", and add the following xml param elements:
+ * </p>
+ * <p>
+ * Required:
  * <ul>
- *   <li> &lt;param name="gSearchRESTURL" 
- *        value="http://localhost:8080/fedoragsearch/rest"/&gt;</li>
+ * <li> &lt;param name="gSearchRESTURL"
+ * value="http://localhost:8080/fedoragsearch/rest"/&gt;</li>
  * </ul>
  * </p>
- *
- * <p>Optional (only needed if basic auth is required for GSearch REST access):
+ * <p>
+ * Optional (only needed if basic auth is required for GSearch REST access):
  * <ul>
- *   <li> &lt;param name="gSearchUsername" value="exampleUsername"/&gt;</li>
- *   <li> &lt;param name="gSearchPassword" value="examplePassword"/&gt;</li>
+ * <li> &lt;param name="gSearchUsername" value="exampleUsername"/&gt;</li>
+ * <li> &lt;param name="gSearchPassword" value="examplePassword"/&gt;</li>
  * </ul>
  * </p>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
-public class GSearchDOManager extends DefaultDOManager {
+public class GSearchDOManager
+        extends DefaultDOManager {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(
-            GSearchDOManager.class.getName());
+    private static final Logger LOG =
+            Logger.getLogger(GSearchDOManager.class.getName());
 
     /** Required param: URL of GSearch REST interface. */
     public static final String GSEARCH_REST_URL = "gSearchRESTURL";
@@ -93,6 +93,7 @@ public class GSearchDOManager extends DefaultDOManager {
      * Performs superclass post-initialization, then completes initialization
      * using GSearch-specific parameters.
      */
+    @Override
     public void postInitModule() throws ModuleInitializationException {
 
         super.postInitModule();
@@ -120,8 +121,8 @@ public class GSearchDOManager extends DefaultDOManager {
             LOG.debug("Will authenticate to GSearch service as user: " + user);
             String pass = getParameter(GSEARCH_PASSWORD);
             if (pass != null) {
-                _gSearchCredentials = new UsernamePasswordCredentials(user,
-                        pass);
+                _gSearchCredentials =
+                        new UsernamePasswordCredentials(user, pass);
             } else {
                 throw new ModuleInitializationException(GSEARCH_PASSWORD
                         + " must be specified because " + GSEARCH_USERNAME
@@ -137,12 +138,15 @@ public class GSearchDOManager extends DefaultDOManager {
     }
 
     /**
-     * Commits the changes to the given object as usual, then attempts
-     * to propagate the change to the GSearch service.
+     * Commits the changes to the given object as usual, then attempts to
+     * propagate the change to the GSearch service.
      */
-    public void doCommit(boolean cachedObjectRequired, Context context, 
-            DigitalObject obj, String logMessage, boolean remove)
-            throws ServerException {
+    @Override
+    public void doCommit(boolean cachedObjectRequired,
+                         Context context,
+                         DigitalObject obj,
+                         String logMessage,
+                         boolean remove) throws ServerException {
 
         super.doCommit(cachedObjectRequired, context, obj, logMessage, remove);
 
@@ -174,8 +178,8 @@ public class GSearchDOManager extends DefaultDOManager {
     //
 
     /**
-     * Performs the given HTTP request, logging a warning if we don't
-     * get a 200 OK response.
+     * Performs the given HTTP request, logging a warning if we don't get a 200
+     * OK response.
      */
     private void sendRESTMessage(String url) {
         HttpInputStream response = null;
@@ -184,14 +188,14 @@ public class GSearchDOManager extends DefaultDOManager {
             response = _webClient.get(url, false, _gSearchCredentials);
             int code = response.getStatusCode();
             if (code != 200) {
-                LOG.warn("Error sending update to GSearch service (url="
-                        + url + ").  HTTP response code was " + code + ". "
+                LOG.warn("Error sending update to GSearch service (url=" + url
+                        + ").  HTTP response code was " + code + ". "
                         + "Body of response from GSearch follows:\n"
                         + getString(response));
             }
         } catch (Exception e) {
-            LOG.warn("Error sending update to GSearch service via URL: "
-                    + url, e);
+            LOG.warn("Error sending update to GSearch service via URL: " + url,
+                     e);
         } finally {
             if (response != null) {
                 try {
@@ -204,14 +208,14 @@ public class GSearchDOManager extends DefaultDOManager {
     }
 
     /**
-     * Read the remainder of the given stream as a String and return it,
-     * or an error message if we encounter an error.
+     * Read the remainder of the given stream as a String and return it, or an
+     * error message if we encounter an error.
      */
     private static String getString(InputStream in) {
         try {
             StringBuffer out = new StringBuffer();
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(in));
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(in));
             String line = reader.readLine();
             while (line != null) {
                 out.append(line + "\n");

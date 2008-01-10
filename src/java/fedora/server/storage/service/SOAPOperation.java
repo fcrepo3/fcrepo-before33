@@ -6,35 +6,29 @@
 package fedora.server.storage.service;
 
 /**
- *
- * <p><b>Title:</b> SOAPOperation.java</p>
- * <p><b>Description:</b> A data structure for holding WSDL SOAP binding for
- * an operation.</p>
- *
- * @author payette@cs.cornell.edu
- * @version $Id$
+ * A data structure for holding WSDL SOAP binding for an operation.
+ * 
+ * @author Sandy Payette
  */
-public class SOAPOperation extends AbstractOperation
-{
-  /**
-   * soapAction:  a URI for the soap request
-   */
-  public String soapAction;
+public class SOAPOperation
+        extends AbstractOperation {
 
-  /**
-   * soapActionStyle:  indicates whether the soap messages will be RPC-oriented
-   * (message contains parameters and return values) or document-oriented
-   * (message contains document or documents).
-   *
-   * Valid values for soapActionStyle:
-   * 1) rpc
-   * 2) document
-   */
-  public String soapActionStyle;
+    /**
+     * soapAction: a URI for the soap request
+     */
+    public String soapAction;
 
-  // FIXIT!  finish up defintion here....
+    /**
+     * soapActionStyle: indicates whether the soap messages will be RPC-oriented
+     * (message contains parameters and return values) or document-oriented
+     * (message contains document or documents). Valid values for
+     * soapActionStyle: 1) rpc 2) document
+     */
+    public String soapActionStyle;
 
-  //public String inputBindingScheme;
+    // FIXIT!  finish up defintion here....
 
-  //public String outputBindingScheme;
+    //public String inputBindingScheme;
+
+    //public String outputBindingScheme;
 }

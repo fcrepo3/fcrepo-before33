@@ -5,20 +5,26 @@
 
 package fedora.server.storage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-public class DOReaderCache extends Thread {
+public class DOReaderCache
+        extends Thread {
 
-    private int m_maxReaders;
-    private int m_maxCachedSeconds;
+    private final int m_maxReaders;
 
-    private Map m_readers;
-    private List m_pidList;
+    private final int m_maxCachedSeconds;
+
+    private final Map m_readers;
+
+    private final List m_pidList;
 
     private boolean m_stopRequested;
 
-    public DOReaderCache(int maxReaders,
-                         int maxCachedSeconds) {
+    public DOReaderCache(int maxReaders, int maxCachedSeconds) {
 
         m_maxReaders = maxReaders;
         m_maxCachedSeconds = maxCachedSeconds;
@@ -27,23 +33,28 @@ public class DOReaderCache extends Thread {
         m_pidList = new ArrayList();
 
         m_stopRequested = false;
-        this.start();
+        start();
     }
 
     /**
      * Until closed, check for and remove any expired entries every second.
      */
+    @Override
     public void run() {
         while (!m_stopRequested) {
             removeExpired();
             if (!m_stopRequested) {
-                try { Thread.sleep(1000); } catch (Exception e) { }
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                }
             }
         }
     }
 
     private void removeExpired() {
-        long cutoffTime = System.currentTimeMillis() - (1000 * m_maxCachedSeconds);
+        long cutoffTime =
+                System.currentTimeMillis() - 1000 * m_maxCachedSeconds;
         synchronized (m_readers) {
             if (m_pidList.size() > 0) {
                 boolean done = false;
@@ -68,9 +79,8 @@ public class DOReaderCache extends Thread {
     }
 
     /**
-     * Remove a DOReader from the cache.
-     *
-     * If it doesn't exist in the cache, do nothing.
+     * Remove a DOReader from the cache. If it doesn't exist in the cache, do
+     * nothing.
      */
     public void remove(String pid) {
         synchronized (m_readers) {
@@ -81,13 +91,15 @@ public class DOReaderCache extends Thread {
     }
 
     /**
-     * Add a DOReader to the cache.
-     *
-     * If it already exists in the cache, refresh the DOReader in the cache.
+     * Add a DOReader to the cache. If it already exists in the cache, refresh
+     * the DOReader in the cache.
      */
     public void put(DOReader reader) {
         String pid = null;
-        try { pid = reader.GetObjectPID(); } catch (Exception e) { }
+        try {
+            pid = reader.GetObjectPID();
+        } catch (Exception e) {
+        }
         Long time = new Long(System.currentTimeMillis());
         List l = new ArrayList();
         l.add(reader);
@@ -107,10 +119,8 @@ public class DOReaderCache extends Thread {
     }
 
     /**
-     * Get a DOReader from the cache.
-     *
-     * If it doesn't exist in the cache, return null.
-     * If it does exist, set its time to the current time and return it.
+     * Get a DOReader from the cache. If it doesn't exist in the cache, return
+     * null. If it does exist, set its time to the current time and return it.
      */
     public DOReader get(String pid) {
         DOReader reader = null;

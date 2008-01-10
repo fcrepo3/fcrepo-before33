@@ -13,27 +13,20 @@ import javax.xml.stream.XMLStreamException;
 import fedora.server.journal.JournalConstants;
 
 /**
+ * An abstract base class that provides some useful methods for the XML writer
+ * classes.
  * 
- * <p>
- * <b>Title:</b> AbstractXmlWriter.java
- * </p>
- * <p>
- * <b>Description:</b> An abstract base class that provides some useful methods
- * for the XML writer classes.
- * </p>
- * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
+public class AbstractXmlWriter
+        implements JournalConstants {
 
-public class AbstractXmlWriter implements JournalConstants {
-
-    private XMLEventFactory factory = XMLEventFactory.newInstance();
+    private final XMLEventFactory factory = XMLEventFactory.newInstance();
 
     protected void putStartDocument(XMLEventWriter writer)
             throws XMLStreamException {
         writer.add(factory.createStartDocument(DOCUMENT_ENCODING,
-                DOCUMENT_VERSION));
+                                               DOCUMENT_VERSION));
     }
 
     protected void putStartTag(XMLEventWriter writer, QName tagName)
@@ -47,7 +40,9 @@ public class AbstractXmlWriter implements JournalConstants {
     }
 
     protected void putAttributeIfNotNull(XMLEventWriter writer,
-            QName attributeName, String value) throws XMLStreamException {
+                                         QName attributeName,
+                                         String value)
+            throws XMLStreamException {
         if (value != null) {
             putAttribute(writer, attributeName, value);
         }

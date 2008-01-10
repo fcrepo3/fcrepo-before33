@@ -18,19 +18,10 @@ import fedora.server.journal.JournalException;
 import fedora.server.journal.helpers.FileMovingUtil;
 
 /**
+ * Encapsulate the information that goes with consuming a Journal file.
  * 
- * <p>
- * <b>Title:</b> JournalInputFile.java
- * </p>
- * <p>
- * <b>Description:</b> Encapsulate the information that goes with consuming a
- * Journal file.
- * </p>
- * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
-
 class JournalInputFile {
 
     private final File file;
@@ -39,7 +30,8 @@ class JournalInputFile {
 
     private final XMLEventReader xmlReader;
 
-    public JournalInputFile(File file) throws JournalException {
+    public JournalInputFile(File file)
+            throws JournalException {
         if (!file.isFile()) {
             throw new JournalException("Journal file '" + file.getPath()
                     + "' is not a file.");
@@ -52,8 +44,8 @@ class JournalInputFile {
         try {
             this.file = file;
             XMLInputFactory factory = XMLInputFactory.newInstance();
-            this.fileReader = new FileReader(file);
-            this.xmlReader = factory.createXMLEventReader(fileReader);
+            fileReader = new FileReader(file);
+            xmlReader = factory.createXMLEventReader(fileReader);
         } catch (FileNotFoundException e) {
             throw new JournalException(e);
         } catch (XMLStreamException e) {
@@ -62,7 +54,7 @@ class JournalInputFile {
     }
 
     public String getFilename() {
-        return this.file.getPath();
+        return file.getPath();
     }
 
     /**
@@ -73,15 +65,13 @@ class JournalInputFile {
             xmlReader.close();
             fileReader.close();
             File archiveFile = new File(archiveDirectory, file.getName());
-            
+
             /*
              * java.io.File.renameTo() has a known bug when working across
              * file-systems, see:
-             * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4073756
-             * 
-             * So instead of this call: file.renameTo(archiveFile);
-             * 
-             * We use the following line...
+             * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4073756 So
+             * instead of this call: file.renameTo(archiveFile); We use the
+             * following line...
              */
             boolean renamed = FileMovingUtil.move(file, archiveFile);
             if (!renamed) {
@@ -97,7 +87,7 @@ class JournalInputFile {
     }
 
     public XMLEventReader getReader() {
-        return this.xmlReader;
+        return xmlReader;
     }
 
 }

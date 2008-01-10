@@ -8,11 +8,13 @@ package fedora.utilities.install;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.net.URL;
 
-public class ClassLoaderDistribution extends Distribution {
+public class ClassLoaderDistribution
+        extends Distribution {
 
-    private ClassLoader _cl;
+    private final ClassLoader _cl;
 
     public ClassLoaderDistribution() {
         _cl = this.getClass().getClassLoader();
@@ -22,13 +24,15 @@ public class ClassLoaderDistribution extends Distribution {
         _cl = cl;
     }
 
+    @Override
     public boolean contains(String path) {
         return _cl.getResource(rewritePath(path)) != null;
     }
-    
+
     /**
      * Requested resources will automatically be prefixed with "resources/".
      */
+    @Override
     public InputStream get(String path) throws IOException {
         InputStream stream = _cl.getResourceAsStream(rewritePath(path));
         if (stream == null) {
@@ -37,21 +41,23 @@ public class ClassLoaderDistribution extends Distribution {
             return stream;
         }
     }
-    
+
+    @Override
     public URL getURL(String path) {
-    	return _cl.getResource(rewritePath(path));
+        return _cl.getResource(rewritePath(path));
     }
-    
+
     /**
      * Note: we don't check for backtracking.
+     * 
      * @param path
      * @return
      */
     private static String rewritePath(String path) {
-    	if (path.startsWith("/")) {
-    		path = path.substring(1);
-    	}
-    	// Note, ClassLoader paths are always absolute, so , so no leading slash
-    	return "resources/" + path;
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        // Note, ClassLoader paths are always absolute, so , so no leading slash
+        return "resources/" + path;
     }
 }

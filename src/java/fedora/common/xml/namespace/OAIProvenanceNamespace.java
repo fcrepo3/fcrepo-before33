@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The OAI Provenance XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://www.openarchives.org/OAI/2.0/provenance
  * Preferred Prefix : provenance
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class OAIProvenanceNamespace
         extends XMLNamespace {
@@ -23,8 +23,8 @@ public class OAIProvenanceNamespace
     //---
 
     /** The only instance of this class. */
-    private static final OAIProvenanceNamespace ONLY_INSTANCE
-            = new OAIProvenanceNamespace();
+    private static final OAIProvenanceNamespace ONLY_INSTANCE =
+            new OAIProvenanceNamespace();
 
     /**
      * Constructs the instance.
@@ -35,7 +35,7 @@ public class OAIProvenanceNamespace
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static OAIProvenanceNamespace getInstance() {

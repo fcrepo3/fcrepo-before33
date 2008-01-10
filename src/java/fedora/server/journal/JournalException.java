@@ -6,22 +6,15 @@
 package fedora.server.journal;
 
 /**
+ * An Exception type for use by the Journaller and its associated classes.
  * 
- * <p>
- * <b>Title:</b> JournalException.java
- * </p>
- * <p>
- * <b>Description:</b> An Exception type for use by the Journaller and its
- * associated classes.
- * </p>
- * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
-public class JournalException extends Exception {
+public class JournalException
+        extends Exception {
 
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     public JournalException() {
         super();
     }

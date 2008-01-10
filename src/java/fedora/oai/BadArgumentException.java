@@ -6,22 +6,19 @@
 package fedora.oai;
 
 /**
- *
- * <p><b>Title:</b> BadArgumentException.java</p>
- * <p><b>Description:</b> Signals that a request includes illegal arguments,
- * is missing required arguments, includes a repeated argument, or values for
- * arguments have an illegal syntax.</p>
- *
- * <p>This may occur while fulfilling any request.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * Signals that a request includes illegal arguments, is missing required
+ * arguments, includes a repeated argument, or values for arguments have 
+ * an illegal syntax.
+ * 
+ * This may occur while fulfilling any request.
+ * 
+ * @author Chris Wilper
  */
 public class BadArgumentException
         extends OAIException {
-	
-	private static final long serialVersionUID = 1L;
-	
+
+    private static final long serialVersionUID = 1L;
+
     public BadArgumentException() {
         super("badArgument", null);
     }

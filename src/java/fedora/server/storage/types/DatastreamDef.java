@@ -6,12 +6,7 @@
 package fedora.server.storage.types;
 
 /**
- *
- * <p><b>Title:</b> Datastream.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author rlw@virginia.edu
- * @version $Id$
+ * @author Ross Wayland
  */
 public class DatastreamDef {
 
@@ -21,5 +16,6 @@ public class DatastreamDef {
 
     public String dsMIME = null;
 
-    public DatastreamDef() {}
+    public DatastreamDef() {
+    }
 }

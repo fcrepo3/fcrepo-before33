@@ -1,3 +1,4 @@
+
 package fedora.server.journal.readerwriter.multifile;
 
 import java.util.ArrayList;
@@ -7,7 +8,9 @@ import fedora.server.errors.ServerException;
 import fedora.server.journal.ServerInterface;
 import fedora.server.management.ManagementDelegate;
 
-class MockServerForJournalTesting implements ServerInterface {
+class MockServerForJournalTesting
+        implements ServerInterface {
+
     // -------------------------------------------------------------------------
     // Mocking infrastructure.
     // -------------------------------------------------------------------------

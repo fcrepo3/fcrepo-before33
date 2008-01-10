@@ -20,29 +20,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import fedora.common.Constants;
+
 import fedora.server.utilities.RuntimeWSDL;
 
 /**
- * Dynamically provides complete and accurate WSDL files for Fedora APIs.
- *
- * This servlet directly includes the common XSD type definitions
- * in each WSDL file and ensures that the binding address reflects the
- * base URL of the Fedora instance, based on the request URI.
- *
- * @author cwilper@cs.cornell.edu
+ * Dynamically provides complete and accurate WSDL files for Fedora APIs. This
+ * servlet directly includes the common XSD type definitions in each WSDL file
+ * and ensures that the binding address reflects the base URL of the Fedora
+ * instance, based on the request URI.
+ * 
+ * @author Chris Wilper
  */
-public class WSDLServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+public class WSDLServlet
+        extends HttpServlet {
 
-    /** 
-     * This servlet's path, relative to the root of the webapp. 
-     *
-     * IMPLEMENTATION NOTE: For the servlet to work properly, this
-     *                      should match the url-pattern specified for
-     *                      this servlet's mapping in web.xml.
-     *                      This code intentionally does not use 
-     *                      request.getServletPath due to inconsistent
-     *                      behavior in various servlet containers.
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * This servlet's path, relative to the root of the webapp. IMPLEMENTATION
+     * NOTE: For the servlet to work properly, this should match the url-pattern
+     * specified for this servlet's mapping in web.xml. This code intentionally
+     * does not use request.getServletPath due to inconsistent behavior in
+     * various servlet containers.
      */
     private static final String _SERVLET_PATH = "/wsdl";
 
@@ -59,26 +58,25 @@ public class WSDLServlet extends HttpServlet {
     private File _serverDir;
 
     static {
-        _WSDL_PATHS.put("API-A",         "access/Fedora-API-A.wsdl");
-        _WSDL_PATHS.put("API-A-LITE",    "access/Fedora-API-A-LITE.wsdl");
-        _WSDL_PATHS.put("API-M",         "management/Fedora-API-M.wsdl");
-        _WSDL_PATHS.put("API-M-LITE",    "management/Fedora-API-M-LITE.wsdl");
+        _WSDL_PATHS.put("API-A", "access/Fedora-API-A.wsdl");
+        _WSDL_PATHS.put("API-A-LITE", "access/Fedora-API-A-LITE.wsdl");
+        _WSDL_PATHS.put("API-M", "management/Fedora-API-M.wsdl");
+        _WSDL_PATHS.put("API-M-LITE", "management/Fedora-API-M-LITE.wsdl");
 
-        _SERVICE_PATHS.put("API-A",      "services/access");
+        _SERVICE_PATHS.put("API-A", "services/access");
         _SERVICE_PATHS.put("API-A-LITE", "");
-        _SERVICE_PATHS.put("API-M",      "services/management");
+        _SERVICE_PATHS.put("API-M", "services/management");
         _SERVICE_PATHS.put("API-M-LITE", "management");
     }
 
     /**
-     * Respond to an HTTP GET request.
-     *
-     * The single parameter, "api", indicates which WSDL file to provide.
-     * If no parameters are given, a simple HTML index is given instead.
+     * Respond to an HTTP GET request. The single parameter, "api", indicates
+     * which WSDL file to provide. If no parameters are given, a simple HTML
+     * index is given instead.
      */
-    public void doGet(HttpServletRequest request, 
-                      HttpServletResponse response) 
-              throws IOException, ServletException {
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
 
         String body;
         String api = request.getParameter("api");
@@ -87,8 +85,9 @@ public class WSDLServlet extends HttpServlet {
             body = getIndex();
             response.setContentType("text/html; charset=UTF-8");
         } else {
-            body = getWSDL(api.toUpperCase(), 
-                           request.getRequestURL().toString());
+            body =
+                    getWSDL(api.toUpperCase(), request.getRequestURL()
+                            .toString());
             response.setContentType("text/xml; charset=UTF-8");
         }
 
@@ -99,8 +98,8 @@ public class WSDLServlet extends HttpServlet {
     }
 
     /**
-     * Get a simple HTML index pointing to each WSDL file 
-     * provided by the servlet.
+     * Get a simple HTML index pointing to each WSDL file provided by the
+     * servlet.
      */
     private String getIndex() {
         StringBuffer out = new StringBuffer();
@@ -108,8 +107,8 @@ public class WSDLServlet extends HttpServlet {
         Iterator names = _WSDL_PATHS.keySet().iterator();
         while (names.hasNext()) {
             String name = (String) names.next();
-            out.append("<li> <a href=\"?api=" + name + "\">" 
-                    + name + "</a></li>\n");
+            out.append("<li> <a href=\"?api=" + name + "\">" + name
+                    + "</a></li>\n");
         }
         out.append("</ul></body></html>");
         return out.toString();
@@ -118,8 +117,8 @@ public class WSDLServlet extends HttpServlet {
     /**
      * Get the self-contained WSDL given the api name and request URL.
      */
-    private String getWSDL(String api, String requestURL) 
-            throws IOException, ServletException {
+    private String getWSDL(String api, String requestURL) throws IOException,
+            ServletException {
 
         String wsdlPath = (String) _WSDL_PATHS.get(api);
         if (wsdlPath != null) {
@@ -130,9 +129,9 @@ public class WSDLServlet extends HttpServlet {
             String baseURL = getFedoraBaseURL(requestURL);
             String svcPath = (String) _SERVICE_PATHS.get(api);
 
-            RuntimeWSDL wsdl = new RuntimeWSDL(schemaFile, 
-                                               sourceWSDL, 
-                                               baseURL + "/" + svcPath);
+            RuntimeWSDL wsdl =
+                    new RuntimeWSDL(schemaFile, sourceWSDL, baseURL + "/"
+                            + svcPath);
 
             StringWriter stringWriter = new StringWriter();
             PrintWriter out = new PrintWriter(stringWriter);
@@ -142,18 +141,17 @@ public class WSDLServlet extends HttpServlet {
             out.close();
 
             return stringWriter.toString();
-            
+
         } else {
             throw new ServletException("No such api: '" + api + "'");
         }
     }
 
     /**
-     * Determine the base URL of the Fedora webapp given the request URL
-     * to this servlet.
+     * Determine the base URL of the Fedora webapp given the request URL to this
+     * servlet.
      */
-    private String getFedoraBaseURL(String requestURL) 
-            throws ServletException {
+    private String getFedoraBaseURL(String requestURL) throws ServletException {
         int i = requestURL.lastIndexOf(_SERVLET_PATH);
         if (i != -1) {
             return requestURL.substring(0, i);
@@ -164,10 +162,10 @@ public class WSDLServlet extends HttpServlet {
         }
     }
 
-
     /**
      * Initialize by setting serverDir based on FEDORA_HOME.
      */
+    @Override
     public void init() throws ServletException {
 
         String fedoraHome = Constants.FEDORA_HOME;
@@ -177,7 +175,7 @@ public class WSDLServlet extends HttpServlet {
         } else {
             _serverDir = new File(new File(fedoraHome), "server");
             if (!_serverDir.isDirectory()) {
-                throw new ServletException("No such directory: " 
+                throw new ServletException("No such directory: "
                         + _serverDir.getPath());
             }
         }

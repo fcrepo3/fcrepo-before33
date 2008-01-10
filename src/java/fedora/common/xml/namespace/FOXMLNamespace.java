@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The FOXML XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : info:fedora/fedora-system:def/foxml#
  * Preferred Prefix : foxml
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class FOXMLNamespace
         extends XMLNamespace {
@@ -151,50 +151,50 @@ public class FOXMLNamespace
         super("info:fedora/fedora-system:def/foxml#", "foxml");
 
         // elements
-        BINARY_CONTENT       = new QName(this, "binaryContent");
-        CONTENT_DIGEST       = new QName(this, "contentDigest");
-        CONTENT_LOCATION     = new QName(this, "contentLocation");
-        DATASTREAM           = new QName(this, "datastream");
-        DATASTREAM_BINDING   = new QName(this, "datastreamBinding");
-        DATASTREAM_VERSION   = new QName(this, "datastreamVersion");
-        DIGITAL_OBJECT       = new QName(this, "digitalObject"); 
-        DISSEMINATOR         = new QName(this, "disseminator");
+        BINARY_CONTENT = new QName(this, "binaryContent");
+        CONTENT_DIGEST = new QName(this, "contentDigest");
+        CONTENT_LOCATION = new QName(this, "contentLocation");
+        DATASTREAM = new QName(this, "datastream");
+        DATASTREAM_BINDING = new QName(this, "datastreamBinding");
+        DATASTREAM_VERSION = new QName(this, "datastreamVersion");
+        DIGITAL_OBJECT = new QName(this, "digitalObject");
+        DISSEMINATOR = new QName(this, "disseminator");
         DISSEMINATOR_VERSION = new QName(this, "disseminatorVersion");
-        EXT_PROPERTY         = new QName(this, "extproperty");
-        OBJECT_PROPERTIES    = new QName(this, "objectProperties");
-        PROPERTY             = new QName(this, "property");
-        SERVICE_INPUT_MAP    = new QName(this, "serviceInputMap");
-        XML_CONTENT          = new QName(this, "xmlContent");
+        EXT_PROPERTY = new QName(this, "extproperty");
+        OBJECT_PROPERTIES = new QName(this, "objectProperties");
+        PROPERTY = new QName(this, "property");
+        SERVICE_INPUT_MAP = new QName(this, "serviceInputMap");
+        XML_CONTENT = new QName(this, "xmlContent");
 
         // attributes
-        ALT_IDS           = new QName(this, "ALT_IDS");
+        ALT_IDS = new QName(this, "ALT_IDS");
         BDEF_CONTRACT_PID = new QName(this, "BDEF_CONTRACT_PID");
         BMECH_SERVICE_PID = new QName(this, "BMECH_SERVICE_PID");
-        CONTROL_GROUP     = new QName(this, "CONTROL_GROUP");
-        CREATED           = new QName(this, "CREATED");
-        DATASTREAM_ID     = new QName(this, "DATASTREAM_ID");
-        DIGEST            = new QName(this, "DIGEST");
-        FEDORA_URI        = new QName(this, "FEDORA_URI");
-        FORMAT_URI        = new QName(this, "FORMAT_URI");
-        ID                = new QName(this, "ID");
-        KEY               = new QName(this, "KEY");
-        LABEL             = new QName(this, "LABEL");
-        MIMETYPE          = new QName(this, "MIMETYPE");
-        NAME              = new QName(this, "NAME");
-        ORDER             = new QName(this, "ORDER");
-        PID               = new QName(this, "PID");
-        REF               = new QName(this, "REF");
-        SIZE              = new QName(this, "SIZE");
-        STATE             = new QName(this, "STATE");
-        TYPE              = new QName(this, "TYPE");
-        VALUE             = new QName(this, "VALUE");
-        VERSION           = new QName(this, "VERSION");
-        VERSIONABLE       = new QName(this, "VERSIONABLE");
+        CONTROL_GROUP = new QName(this, "CONTROL_GROUP");
+        CREATED = new QName(this, "CREATED");
+        DATASTREAM_ID = new QName(this, "DATASTREAM_ID");
+        DIGEST = new QName(this, "DIGEST");
+        FEDORA_URI = new QName(this, "FEDORA_URI");
+        FORMAT_URI = new QName(this, "FORMAT_URI");
+        ID = new QName(this, "ID");
+        KEY = new QName(this, "KEY");
+        LABEL = new QName(this, "LABEL");
+        MIMETYPE = new QName(this, "MIMETYPE");
+        NAME = new QName(this, "NAME");
+        ORDER = new QName(this, "ORDER");
+        PID = new QName(this, "PID");
+        REF = new QName(this, "REF");
+        SIZE = new QName(this, "SIZE");
+        STATE = new QName(this, "STATE");
+        TYPE = new QName(this, "TYPE");
+        VALUE = new QName(this, "VALUE");
+        VERSION = new QName(this, "VERSION");
+        VERSIONABLE = new QName(this, "VERSIONABLE");
     }
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static FOXMLNamespace getInstance() {

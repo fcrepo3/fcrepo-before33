@@ -6,10 +6,16 @@
 package fedora.server.search;
 
 import java.io.InputStream;
+
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.SQLException;
-import java.util.*;
+import java.sql.Statement;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -22,248 +28,286 @@ import fedora.server.errors.StorageDeviceException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnknownSessionTokenException;
 import fedora.server.errors.UnrecognizedFieldException;
-import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.BMechReader;
+import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.RepositoryReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
-//import fedora.server.storage.types.Disseminator;
-import fedora.server.storage.types.RelationshipTuple;
+import fedora.server.utilities.DCFields;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.SQLUtility;
-import fedora.server.utilities.DCFields;
 
 /**
- * A FieldSearch implementation that uses a relational
- * database as a backend.
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * A FieldSearch implementation that uses a relational database as a backend.
+ * 
+ * @author Chris Wilper
  */
 public class FieldSearchSQLImpl
         implements FieldSearch {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(
-            FieldSearchSQLImpl.class.getName());
+    private static final Logger LOG =
+            Logger.getLogger(FieldSearchSQLImpl.class.getName());
 
     /** Whether DC fields are being indexed or not. */
     private boolean m_indexDCFields = true;
 
-    private ConnectionPool m_cPool;
-    private RepositoryReader m_repoReader;
-    private int m_maxResults;
-    private int m_maxSecondsPerSession;
-    public static String[] DB_COLUMN_NAMES=new String[] {"pid", "label",
-            "fType", "cModel", "state", "ownerId", "cDate", "mDate", "dcmDate",
-            "bDef", "bMech", "dcTitle", "dcCreator", "dcSubject", "dcDescription",
-            "dcPublisher", "dcContributor", "dcDate", "dcType", "dcFormat",
-            "dcIdentifier", "dcSource", "dcLanguage", "dcRelation", "dcCoverage", "dcRights"};
-    private static boolean[] s_dbColumnNumeric=new boolean[] {false, false,
-            false, false, false, false, true, true, true, 
-            false, false, false, false, false, false, 
-            false, false, false, false, false, 
-            false, false, false, false, false, false};
-    public static String[] DB_COLUMN_NAMES_NODC=new String[] {"pid", "label",
-            "fType", "cModel", "state", "ownerId", "cDate", "mDate", "dcmDate",
-            "bDef", "bMech"};
-    private static boolean[] s_dbColumnNumericNoDC=new boolean[] {false, false,
-            false, false, false, false, true, true, true, 
-            false, false};
+    private final ConnectionPool m_cPool;
+
+    private final RepositoryReader m_repoReader;
+
+    private final int m_maxResults;
+
+    private final int m_maxSecondsPerSession;
+
+    public static String[] DB_COLUMN_NAMES =
+            new String[] {"pid", "label", "fType", "cModel", "state",
+                    "ownerId", "cDate", "mDate", "dcmDate", "bDef", "bMech",
+                    "dcTitle", "dcCreator", "dcSubject", "dcDescription",
+                    "dcPublisher", "dcContributor", "dcDate", "dcType",
+                    "dcFormat", "dcIdentifier", "dcSource", "dcLanguage",
+                    "dcRelation", "dcCoverage", "dcRights"};
+
+    private static boolean[] s_dbColumnNumeric =
+            new boolean[] {false, false, false, false, false, false, true,
+                    true, true, false, false, false, false, false, false,
+                    false, false, false, false, false, false, false, false,
+                    false, false, false};
+
+    public static String[] DB_COLUMN_NAMES_NODC =
+            new String[] {"pid", "label", "fType", "cModel", "state",
+                    "ownerId", "cDate", "mDate", "dcmDate", "bDef", "bMech"};
+
+    private static boolean[] s_dbColumnNumericNoDC =
+            new boolean[] {false, false, false, false, false, false, true,
+                    true, true, false, false};
 
     // a hash of token-keyed FieldSearchResultSQLImpls
-    private HashMap m_currentResults=new HashMap();
+    private final HashMap m_currentResults = new HashMap();
 
     /**
      * Construct a FieldSearchSQLImpl that indexes DC fields.
-     *
-     * @param cPool the ConnectionPool with connections to the db containing
+     * 
+     * @param cPool
+     *        the ConnectionPool with connections to the db containing the
+     *        fields
+     * @param repoReader
+     *        the RepositoryReader to use when getting the original values of
      *        the fields
-     * @param repoReader the RepositoryReader to use when getting the original
-     *        values of the fields
-     * @param maxResults the maximum number of results to return at a time,
-     *        regardless of what the user might request
-     * @param maxSecondsPerSession maximum number of seconds per session.
+     * @param maxResults
+     *        the maximum number of results to return at a time, regardless of
+     *        what the user might request
+     * @param maxSecondsPerSession
+     *        maximum number of seconds per session.
      */
     public FieldSearchSQLImpl(ConnectionPool cPool,
-            RepositoryReader repoReader, int maxResults, 
-            int maxSecondsPerSession) {
+                              RepositoryReader repoReader,
+                              int maxResults,
+                              int maxSecondsPerSession) {
         this(cPool, repoReader, maxResults, maxSecondsPerSession, true);
     }
 
     /**
      * Construct a FieldSearchSQLImpl that indexes DC fields only if specified.
-     *
-     * @param cPool the ConnectionPool with connections to the db containing
+     * 
+     * @param cPool
+     *        the ConnectionPool with connections to the db containing the
+     *        fields
+     * @param repoReader
+     *        the RepositoryReader to use when getting the original values of
      *        the fields
-     * @param repoReader the RepositoryReader to use when getting the original
-     *        values of the fields
-     * @param maxResults the maximum number of results to return at a time,
-     *        regardless of what the user might request
-     * @param maxSecondsPerSession maximum number of seconds per session.
-     * @param indexDCFields whether DC field values should be examined and
-     *        updated in the database.  If false, queries will behave as
-     *        if no values had been specified for the DC fields.
+     * @param maxResults
+     *        the maximum number of results to return at a time, regardless of
+     *        what the user might request
+     * @param maxSecondsPerSession
+     *        maximum number of seconds per session.
+     * @param indexDCFields
+     *        whether DC field values should be examined and updated in the
+     *        database. If false, queries will behave as if no values had been
+     *        specified for the DC fields.
      */
-    public FieldSearchSQLImpl(ConnectionPool cPool, 
-            RepositoryReader repoReader, int maxResults, 
-            int maxSecondsPerSession, boolean indexDCFields) {
+    public FieldSearchSQLImpl(ConnectionPool cPool,
+                              RepositoryReader repoReader,
+                              int maxResults,
+                              int maxSecondsPerSession,
+                              boolean indexDCFields) {
         LOG.debug("Entering constructor");
-        m_cPool=cPool;
-        m_repoReader=repoReader;
-        m_maxResults=maxResults;
-        m_maxSecondsPerSession=maxSecondsPerSession;
+        m_cPool = cPool;
+        m_repoReader = repoReader;
+        m_maxResults = maxResults;
+        m_maxSecondsPerSession = maxSecondsPerSession;
         m_indexDCFields = indexDCFields;
         LOG.debug("Exiting constructor");
     }
 
-    public void update(DOReader reader)
-            throws ServerException {
+    public void update(DOReader reader) throws ServerException {
         LOG.debug("Entering update(DOReader)");
-        String pid=reader.GetObjectPID();
-        Connection conn=null;
-        Statement st=null;
+        String pid = reader.GetObjectPID();
+        Connection conn = null;
+        Statement st = null;
         try {
-            conn=m_cPool.getConnection();
+            conn = m_cPool.getConnection();
             String[] dbRowValues;
             if (m_indexDCFields) {
                 dbRowValues = new String[DB_COLUMN_NAMES.length];
             } else {
                 dbRowValues = new String[DB_COLUMN_NAMES_NODC.length];
             }
-            dbRowValues[0]=reader.GetObjectPID();
+            dbRowValues[0] = reader.GetObjectPID();
             String v;
-            v=reader.GetObjectLabel();
-            if (v!=null) v=v.toLowerCase();
-            dbRowValues[1]=v;
-            dbRowValues[2]=reader.getFedoraObjectTypes().toLowerCase();
-            v=reader.getContentModelId();
-            if (v!=null) v=v.toLowerCase();
-            dbRowValues[3]=v;
-            dbRowValues[4]=reader.GetObjectState().toLowerCase();
-            v=reader.getOwnerId();
-            if (v!=null) v=v.toLowerCase();
-            dbRowValues[5]=v;
-            Date date=reader.getCreateDate();
-            if (date==null) {  // should never happen, but if it does, don't die
-                date=new Date();
+            v = reader.GetObjectLabel();
+            if (v != null) {
+                v = v.toLowerCase();
             }
-            dbRowValues[6]="" + date.getTime();
-            date=reader.getLastModDate();
-            if (date==null) {  // should never happen, but if it does, don't die
-                date=new Date();
+            dbRowValues[1] = v;
+            dbRowValues[2] = reader.getFedoraObjectTypes().toLowerCase();
+            v = reader.getContentModelId();
+            if (v != null) {
+                v = v.toLowerCase();
             }
-            dbRowValues[7]="" + date.getTime();
+            dbRowValues[3] = v;
+            dbRowValues[4] = reader.GetObjectState().toLowerCase();
+            v = reader.getOwnerId();
+            if (v != null) {
+                v = v.toLowerCase();
+            }
+            dbRowValues[5] = v;
+            Date date = reader.getCreateDate();
+            if (date == null) { // should never happen, but if it does, don't die
+                date = new Date();
+            }
+            dbRowValues[6] = "" + date.getTime();
+            date = reader.getLastModDate();
+            if (date == null) { // should never happen, but if it does, don't die
+                date = new Date();
+            }
+            dbRowValues[7] = "" + date.getTime();
             // add bdef and bmech ids for each active disseminator
             // and if the object is a bMech, add the bDefPID (from the
             // datastream input spec) to its list of bDefs
-//            Disseminator[] disses=reader.GetDisseminators(null, null);
-            ArrayList bDefs=new ArrayList();
-            ArrayList bMechs=new ArrayList();
-//            for (int i=0; i<disses.length; i++) {
-//                bDefs.add(disses[i].bDefID);
-//                bMechs.add(disses[i].bMechID);
-//            }
-//            RelationshipTuple cmPIDs[] = reader.getRelationships(null, "hasFormalContentModel");
-//            DOReader cmReader = null, bmechreader = null;
-//            boolean done = false;
-//            if (cmPIDs != null && cmPIDs.length > 0)
-//            {
-//                for (int i = 0; i < cmPIDs.length && !done; i++)
-//                {
-//                    cmReader = m_manager.getReader(false, context, cmPIDs[i].getObjectPID());
-//                    RelationshipTuple bMechPIDs[] = cmReader.getRelationships(null, "hasContractualBMech");
-//                    for (int j = 0; j < bMechPIDs.length && !done; j++)
-//                    {
-//                        bmechreader = m_manager.getBMechReader(asOfDateTime == null, context, bMechPIDs[j].getObjectPID());
-//                        RelationshipTuple bDefPIDs[] = bmechreader.getRelationships(null, "hasBDef");
-//                        for (int k = 0; k < bDefPIDs.length && !done; k++)
-//                        {
-//                            if (bDefPIDs[k].getObjectPID().endsWith(bDefPID))
-//                            {
-//                                done = true;
-//                                doCMDA = true;
-//                                break;
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-            if (dbRowValues[2].indexOf("m")!= -1) 
-            {
+            //            Disseminator[] disses=reader.GetDisseminators(null, null);
+            ArrayList bDefs = new ArrayList();
+            ArrayList bMechs = new ArrayList();
+            //            for (int i=0; i<disses.length; i++) {
+            //                bDefs.add(disses[i].bDefID);
+            //                bMechs.add(disses[i].bMechID);
+            //            }
+            //            RelationshipTuple cmPIDs[] = reader.getRelationships(null, "hasFormalContentModel");
+            //            DOReader cmReader = null, bmechreader = null;
+            //            boolean done = false;
+            //            if (cmPIDs != null && cmPIDs.length > 0)
+            //            {
+            //                for (int i = 0; i < cmPIDs.length && !done; i++)
+            //                {
+            //                    cmReader = m_manager.getReader(false, context, cmPIDs[i].getObjectPID());
+            //                    RelationshipTuple bMechPIDs[] = cmReader.getRelationships(null, "hasContractualBMech");
+            //                    for (int j = 0; j < bMechPIDs.length && !done; j++)
+            //                    {
+            //                        bmechreader = m_manager.getBMechReader(asOfDateTime == null, context, bMechPIDs[j].getObjectPID());
+            //                        RelationshipTuple bDefPIDs[] = bmechreader.getRelationships(null, "hasBDef");
+            //                        for (int k = 0; k < bDefPIDs.length && !done; k++)
+            //                        {
+            //                            if (bDefPIDs[k].getObjectPID().endsWith(bDefPID))
+            //                            {
+            //                                done = true;
+            //                                doCMDA = true;
+            //                                break;
+            //                            }
+            //                        }
+            //                    }
+            //                }
+            //            }
+            if (dbRowValues[2].indexOf("m") != -1) {
                 // get it as a BMechReader and add the bDefPID
-                BMechReader mechReader=m_repoReader.getBMechReader(Server.USE_DEFINITIVE_STORE,
-                        ReadOnlyContext.EMPTY,
-                        reader.GetObjectPID());
+                BMechReader mechReader =
+                        m_repoReader
+                                .getBMechReader(Server.USE_DEFINITIVE_STORE,
+                                                ReadOnlyContext.EMPTY,
+                                                reader.GetObjectPID());
                 bDefs.add(mechReader.getServiceDSInputSpec(null).bDefPID);
             }
-            dbRowValues[9]=getDbValueCaseSensitive(bDefs);
-            dbRowValues[10]=getDbValueCaseSensitive(bMechs);
+            dbRowValues[9] = getDbValueCaseSensitive(bDefs);
+            dbRowValues[10] = getDbValueCaseSensitive(bMechs);
             // do dc stuff if needed
-            DatastreamXMLMetadata dcmd=null;
+            DatastreamXMLMetadata dcmd = null;
             try {
-                dcmd=(DatastreamXMLMetadata) reader.GetDatastream("DC", null);
+                dcmd = (DatastreamXMLMetadata) reader.GetDatastream("DC", null);
             } catch (ClassCastException cce) {
-                throw new ObjectIntegrityException("Object " + reader.GetObjectPID()
+                throw new ObjectIntegrityException("Object "
+                        + reader.GetObjectPID()
                         + " has a DC datastream, but it's not inline XML.");
             }
-            if (dcmd==null) {
-                LOG.debug("Did not have DC Metadata datastream for this object.");
+            if (dcmd == null) {
+                LOG
+                        .debug("Did not have DC Metadata datastream for this object.");
             } else {
                 LOG.debug("Had DC Metadata datastream for this object.");
-                dbRowValues[8]="" + dcmd.DSCreateDT.getTime();
+                dbRowValues[8] = "" + dcmd.DSCreateDT.getTime();
 
                 if (m_indexDCFields) {
-                    InputStream in=dcmd.getContentStream();
-                    DCFields dc=new DCFields(in);
-    
-                    dbRowValues[11]=getDbValue(dc.titles());
-                    dbRowValues[12]=getDbValue(dc.creators());
-                    dbRowValues[13]=getDbValue(dc.subjects());
-                    dbRowValues[14]=getDbValue(dc.descriptions());
-                    dbRowValues[15]=getDbValue(dc.publishers());
-                    dbRowValues[16]=getDbValue(dc.contributors());
-                    dbRowValues[17]=getDbValue(dc.dates());
+                    InputStream in = dcmd.getContentStream();
+                    DCFields dc = new DCFields(in);
+
+                    dbRowValues[11] = getDbValue(dc.titles());
+                    dbRowValues[12] = getDbValue(dc.creators());
+                    dbRowValues[13] = getDbValue(dc.subjects());
+                    dbRowValues[14] = getDbValue(dc.descriptions());
+                    dbRowValues[15] = getDbValue(dc.publishers());
+                    dbRowValues[16] = getDbValue(dc.contributors());
+                    dbRowValues[17] = getDbValue(dc.dates());
                     // get any dc.dates strings that are formed such that they
                     // can be treated as a timestamp
-                    List wellFormedDates=null;
-                    for (int i=0; i<dc.dates().size(); i++) {
-                        if (i==0) {
-                            wellFormedDates=new ArrayList();
+                    List wellFormedDates = null;
+                    for (int i = 0; i < dc.dates().size(); i++) {
+                        if (i == 0) {
+                            wellFormedDates = new ArrayList();
                         }
-                        Date p=DateUtility.parseDateAsUTC((String) dc.dates().get(i));
-                        if (p!=null) {
+                        Date p = DateUtility.parseDateAsUTC(dc.dates().get(i));
+                        if (p != null) {
                             wellFormedDates.add(p);
                         }
                     }
-                    if (wellFormedDates!=null && wellFormedDates.size()>0) {
+                    if (wellFormedDates != null && wellFormedDates.size() > 0) {
                         // found at least one... so delete the existing dates
                         // in that table for this pid, then add these.
-                        st=conn.createStatement();
-                        st.executeUpdate("DELETE FROM dcDates WHERE pid='" + pid
-                                + "'");
-                        for (int i=0; i<wellFormedDates.size(); i++) {
-                            Date dt=(Date) wellFormedDates.get(i);
-                            st.executeUpdate("INSERT INTO dcDates (pid, dcDate) "
-                                    + "values ('" + pid + "', "
-                                    + dt.getTime() + ")");
+                        st = conn.createStatement();
+                        st.executeUpdate("DELETE FROM dcDates WHERE pid='"
+                                + pid + "'");
+                        for (int i = 0; i < wellFormedDates.size(); i++) {
+                            Date dt = (Date) wellFormedDates.get(i);
+                            st
+                                    .executeUpdate("INSERT INTO dcDates (pid, dcDate) "
+                                            + "values ('"
+                                            + pid
+                                            + "', "
+                                            + dt.getTime() + ")");
                         }
                     }
-                    dbRowValues[18]=getDbValue(dc.types());
-                    dbRowValues[19]=getDbValue(dc.formats());
-                    dbRowValues[20]=getDbValue(dc.identifiers());
-                    dbRowValues[21]=getDbValue(dc.sources());
-                    dbRowValues[22]=getDbValue(dc.languages());
-                    dbRowValues[23]=getDbValue(dc.relations());
-                    dbRowValues[24]=getDbValue(dc.coverages());
-                    dbRowValues[25]=getDbValue(dc.rights());
-                    LOG.debug("Formulating SQL and inserting/updating WITH DC...");
-                    SQLUtility.replaceInto(conn, "doFields", DB_COLUMN_NAMES,
-                            dbRowValues, "pid", s_dbColumnNumeric);
+                    dbRowValues[18] = getDbValue(dc.types());
+                    dbRowValues[19] = getDbValue(dc.formats());
+                    dbRowValues[20] = getDbValue(dc.identifiers());
+                    dbRowValues[21] = getDbValue(dc.sources());
+                    dbRowValues[22] = getDbValue(dc.languages());
+                    dbRowValues[23] = getDbValue(dc.relations());
+                    dbRowValues[24] = getDbValue(dc.coverages());
+                    dbRowValues[25] = getDbValue(dc.rights());
+                    LOG
+                            .debug("Formulating SQL and inserting/updating WITH DC...");
+                    SQLUtility.replaceInto(conn,
+                                           "doFields",
+                                           DB_COLUMN_NAMES,
+                                           dbRowValues,
+                                           "pid",
+                                           s_dbColumnNumeric);
                 } else {
-                    LOG.debug("Formulating SQL and inserting/updating WITHOUT DC...");
-                    SQLUtility.replaceInto(conn, "doFields", DB_COLUMN_NAMES_NODC,
-                            dbRowValues, "pid", s_dbColumnNumericNoDC);
+                    LOG
+                            .debug("Formulating SQL and inserting/updating WITHOUT DC...");
+                    SQLUtility.replaceInto(conn,
+                                           "doFields",
+                                           DB_COLUMN_NAMES_NODC,
+                                           dbRowValues,
+                                           "pid",
+                                           s_dbColumnNumericNoDC);
                 }
             }
         } catch (SQLException sqle) {
@@ -271,61 +315,73 @@ public class FieldSearchSQLImpl
                     + "update of " + pid, sqle);
         } finally {
             try {
-                if (st!=null) st.close();
-                if (conn!=null) m_cPool.free(conn);
+                if (st != null) {
+                    st.close();
+                }
+                if (conn != null) {
+                    m_cPool.free(conn);
+                }
             } catch (SQLException sqle2) {
                 throw new StorageDeviceException("Error closing statement "
-                        + "while attempting update of object" + sqle2.getMessage());
+                        + "while attempting update of object"
+                        + sqle2.getMessage());
             } finally {
-                st=null;
+                st = null;
                 LOG.debug("Exiting update(DOReader)");
             }
         }
     }
 
-    public boolean delete(String pid)
-            throws ServerException {
+    public boolean delete(String pid) throws ServerException {
         LOG.debug("Entering delete(String)");
-        Connection conn=null;
-        Statement st=null;
+        Connection conn = null;
+        Statement st = null;
         try {
-            conn=m_cPool.getConnection();
-            st=conn.createStatement();
+            conn = m_cPool.getConnection();
+            st = conn.createStatement();
             st.executeUpdate("DELETE FROM doFields WHERE pid='" + pid + "'");
             st.executeUpdate("DELETE FROM dcDates WHERE pid='" + pid + "'");
             return true;
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Error attempting delete of "
-                    + "object with pid '" + pid + "': "
-                    + sqle.getMessage());
+                    + "object with pid '" + pid + "': " + sqle.getMessage());
         } finally {
             try {
-                if (st!=null) st.close();
-                if (conn!=null) m_cPool.free(conn);
+                if (st != null) {
+                    st.close();
+                }
+                if (conn != null) {
+                    m_cPool.free(conn);
+                }
             } catch (SQLException sqle2) {
                 throw new StorageDeviceException("Error closing statement "
-                        + "while attempting update of object" + sqle2.getMessage());
+                        + "while attempting update of object"
+                        + sqle2.getMessage());
             } finally {
-                st=null;
+                st = null;
                 LOG.debug("Exiting delete(String)");
             }
         }
     }
 
     public FieldSearchResult findObjects(String[] resultFields,
-            int maxResults, FieldSearchQuery query)
+                                         int maxResults,
+                                         FieldSearchQuery query)
             throws UnrecognizedFieldException, ObjectIntegrityException,
             RepositoryConfigurationException, StreamIOException,
             ServerException, StorageDeviceException {
         closeAndForgetOldResults();
-        int actualMax=maxResults;
-        if (m_maxResults<maxResults) {
-            actualMax=m_maxResults;
+        int actualMax = maxResults;
+        if (m_maxResults < maxResults) {
+            actualMax = m_maxResults;
         }
         try {
-            return stepAndRemember(new FieldSearchResultSQLImpl(
-                    m_cPool, m_repoReader, resultFields, actualMax,
-                    m_maxSecondsPerSession, query));
+            return stepAndRemember(new FieldSearchResultSQLImpl(m_cPool,
+                                                                m_repoReader,
+                                                                resultFields,
+                                                                actualMax,
+                                                                m_maxSecondsPerSession,
+                                                                query));
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Error querying sql db: "
                     + sqle.getMessage());
@@ -337,9 +393,10 @@ public class FieldSearchSQLImpl
             RepositoryConfigurationException, StreamIOException,
             ServerException, UnknownSessionTokenException {
         closeAndForgetOldResults();
-        FieldSearchResultSQLImpl result=(FieldSearchResultSQLImpl)
-                m_currentResults.remove(sessionToken);
-        if (result==null) {
+        FieldSearchResultSQLImpl result =
+                (FieldSearchResultSQLImpl) m_currentResults
+                        .remove(sessionToken);
+        if (result == null) {
             throw new UnknownSessionTokenException("Session is expired "
                     + "or never existed.");
         }
@@ -351,7 +408,7 @@ public class FieldSearchSQLImpl
             RepositoryConfigurationException, StreamIOException,
             ServerException, UnrecognizedFieldException {
         result.step();
-        if (result.getToken()!=null) {
+        if (result.getToken() != null) {
             m_currentResults.put(result.getToken(), result);
         }
         return result;
@@ -359,36 +416,38 @@ public class FieldSearchSQLImpl
 
     // erase and cleanup expired stuff
     private void closeAndForgetOldResults() {
-        Iterator iter=m_currentResults.values().iterator();
-        ArrayList toRemove=new ArrayList();
+        Iterator iter = m_currentResults.values().iterator();
+        ArrayList toRemove = new ArrayList();
         while (iter.hasNext()) {
-            FieldSearchResultSQLImpl r=(FieldSearchResultSQLImpl) iter.next();
+            FieldSearchResultSQLImpl r = (FieldSearchResultSQLImpl) iter.next();
             if (r.isExpired()) {
-                LOG.debug("listSession " + r.getToken() + " expired; will forget it.");
+                LOG.debug("listSession " + r.getToken()
+                        + " expired; will forget it.");
                 toRemove.add(r.getToken());
             }
         }
-        for (int i=0; i<toRemove.size(); i++) {
-            String token=(String) toRemove.get(i);
+        for (int i = 0; i < toRemove.size(); i++) {
+            String token = (String) toRemove.get(i);
             m_currentResults.remove(token);
         }
     }
 
     /**
      * Get the string that should be inserted for a repeating-value column,
-     * given a list of values.  Turn each value to lowercase and separate them
-     * all by space characters.  If the list is empty, return null.
-     *
-     * @param dcItem a list of dublin core values
+     * given a list of values. Turn each value to lowercase and separate them
+     * all by space characters. If the list is empty, return null.
+     * 
+     * @param dcItem
+     *        a list of dublin core values
      * @return String the string to insert
      */
     private static String getDbValue(List dcItem) {
-        if (dcItem.size()==0) {
+        if (dcItem.size() == 0) {
             return null;
         }
-        StringBuffer out=new StringBuffer();
-        for (int i=0; i<dcItem.size(); i++) {
-            String val=(String) dcItem.get(i);
+        StringBuffer out = new StringBuffer();
+        for (int i = 0; i < dcItem.size(); i++) {
+            String val = (String) dcItem.get(i);
             out.append(" ");
             out.append(val.toLowerCase());
         }
@@ -398,12 +457,12 @@ public class FieldSearchSQLImpl
 
     // same as above, but for case sensitive repeating values
     public static String getDbValueCaseSensitive(List dcItem) {
-        if (dcItem.size()==0) {
+        if (dcItem.size() == 0) {
             return null;
         }
-        StringBuffer out=new StringBuffer();
-        for (int i=0; i<dcItem.size(); i++) {
-            String val=(String) dcItem.get(i);
+        StringBuffer out = new StringBuffer();
+        for (int i = 0; i < dcItem.size(); i++) {
+            String val = (String) dcItem.get(i);
             out.append(" ");
             out.append(val);
         }

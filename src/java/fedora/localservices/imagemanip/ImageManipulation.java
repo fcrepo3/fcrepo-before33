@@ -49,192 +49,230 @@
 
 package fedora.localservices.imagemanip;
 
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import javax.media.jai.JAI;
-import com.sun.media.jai.codec.MemoryCacheSeekableStream;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.sun.media.jai.codec.BMPEncodeParam;
-import com.sun.media.jai.codec.ImageEncodeParam;
 import com.sun.media.jai.codec.ImageCodec;
+import com.sun.media.jai.codec.ImageEncodeParam;
 import com.sun.media.jai.codec.JPEGEncodeParam;
+import com.sun.media.jai.codec.MemoryCacheSeekableStream;
 import com.sun.media.jai.codec.PNGEncodeParam;
 import com.sun.media.jai.codec.TIFFEncodeParam;
 
-import ij.*;
-import ij.io.*;
-import ij.process.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import ij.io.FileInfo;
+import ij.io.GifEncoder;
+
+import ij.process.ImageProcessor;
+import ij.process.MedianCut;
+
+import ij.ImagePlus;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 /**
- *    ImageManipulation is a Java servlet that takes a URL of an image as a param
- *    and based on other given parameters, can perform a variety of image related
- *    manipulations on the object. After the image is manipulated, it is then
- *    sent back as an image/type object to the calling parent, most often a
- *    browser or an HTML img tag.
- *
- *    @author Theodore Serbinski, tss24@cornell.edu
- *    @version $Id$
- *    @created April 2003
+ * ImageManipulation is a Java servlet that takes a URL of an image as a param
+ * and based on other given parameters, can perform a variety of image related
+ * manipulations on the object.
+ * 
+ * <p>After the image is manipulated, it is then sent back as an image/type
+ * object to the calling parent, most often a browser or an HTML img tag.
+ * 
+ * @author Theodore Serbinski
  */
-public class ImageManipulation extends HttpServlet {
+public class ImageManipulation
+        extends HttpServlet {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+
     private String inputMimeType;
-    private boolean alreadyConvertedToRGB=false;
-    private MultiThreadedHttpConnectionManager cManager=
+
+    private boolean alreadyConvertedToRGB = false;
+
+    private final MultiThreadedHttpConnectionManager cManager =
             new MultiThreadedHttpConnectionManager();
 
     /**
-     *    Method automatically called by browser to handle image manipulations.
-     *
-     *    @param    req    Browser request to servlet
-     *                    res Response sent back to browser after image manipulation
-     *    @throws    IOException    If an input or output exception occurred
-     *                    ServletException    If a servlet exception occurred
+     * Method automatically called by browser to handle image manipulations.
+     * 
+     * @param req
+     *        Browser request to servlet res Response sent back to browser after
+     *        image manipulation
+     * @throws IOException
+     *         If an input or output exception occurred ServletException If a
+     *         servlet exception occurred
      */
+    @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
 
         // collect all possible parameters for servlet
-        String url= req.getParameter("url");
-        String op= req.getParameter("op");
-        String newWidth= req.getParameter("newWidth");
-        String brightAmt= req.getParameter("brightAmt");
-        String zoomAmt= req.getParameter("zoomAmt");
-        String wmText= req.getParameter("wmText");
-        String cropX= req.getParameter("cropX");
-        String cropY= req.getParameter("cropY");
-        String cropWidth= req.getParameter("cropWidth");
-        String cropHeight= req.getParameter("cropHeight");
-        String convertTo= req.getParameter("convertTo");
-        if (convertTo!=null) convertTo=convertTo.toLowerCase();
+        String url = req.getParameter("url");
+        String op = req.getParameter("op");
+        String newWidth = req.getParameter("newWidth");
+        String brightAmt = req.getParameter("brightAmt");
+        String zoomAmt = req.getParameter("zoomAmt");
+        String wmText = req.getParameter("wmText");
+        String cropX = req.getParameter("cropX");
+        String cropY = req.getParameter("cropY");
+        String cropWidth = req.getParameter("cropWidth");
+        String cropHeight = req.getParameter("cropHeight");
+        String convertTo = req.getParameter("convertTo");
+        if (convertTo != null) {
+            convertTo = convertTo.toLowerCase();
+        }
         try {
-            if (op==null) throw new ServletException("op parameter not specified.");
+            if (op == null) {
+                throw new ServletException("op parameter not specified.");
+            }
             String outputMimeType;
             // get the image via url and put it into the ImagePlus processor.
-            BufferedImage img=getImage(url);
+            BufferedImage img = getImage(url);
             // do watermarking stuff
             if (op.equals("watermark")) {
-	        if (wmText==null) {
-		    throw new ServletException("Must specify wmText.");
-		}
-                Graphics g=img.getGraphics();
-                int fontSize=img.getWidth()*3/100;
-                if (fontSize<10) fontSize=10;
+                if (wmText == null) {
+                    throw new ServletException("Must specify wmText.");
+                }
+                Graphics g = img.getGraphics();
+                int fontSize = img.getWidth() * 3 / 100;
+                if (fontSize < 10) {
+                    fontSize = 10;
+                }
                 g.setFont(new Font("Lucida Sans", Font.BOLD, fontSize));
-		FontMetrics fm=g.getFontMetrics();
-                int stringWidth=(int) fm.getStringBounds(wmText, g).getWidth();
-		int x=img.getWidth()/2 - stringWidth/2;
-                int y=img.getHeight() - fm.getHeight();
+                FontMetrics fm = g.getFontMetrics();
+                int stringWidth =
+                        (int) fm.getStringBounds(wmText, g).getWidth();
+                int x = img.getWidth() / 2 - stringWidth / 2;
+                int y = img.getHeight() - fm.getHeight();
                 g.setColor(new Color(180, 180, 180));
-                g.fill3DRect(x-10, y-fm.getHeight()-4, stringWidth+20,
-                        fm.getHeight()+12, true);
+                g.fill3DRect(x - 10,
+                             y - fm.getHeight() - 4,
+                             stringWidth + 20,
+                             fm.getHeight() + 12,
+                             true);
                 g.setColor(new Color(100, 100, 100));
-                g.drawString(wmText, x+2, y+2);
+                g.drawString(wmText, x + 2, y + 2);
                 g.setColor(new Color(240, 240, 240));
                 g.drawString(wmText, x, y);
             }
-            ImageProcessor ip=new ImagePlus("temp", img).getProcessor();
+            ImageProcessor ip = new ImagePlus("temp", img).getProcessor();
             // if the inputMimeType is image/gif, need to convert to RGB in any case
             if (inputMimeType.equals("image/gif")) {
-                ip=ip.convertToRGB();
-                alreadyConvertedToRGB=true;
+                ip = ip.convertToRGB();
+                alreadyConvertedToRGB = true;
             }
             // causes scale() and resize() to do bilinear interpolation
             ip.setInterpolate(true);
             if (!op.equals("convert")) {
-                if (op.equals("resize")) ip=resize(ip,newWidth);
-                else if (op.equals("zoom")) ip=zoom(ip, zoomAmt);
-                else if (op.equals("brightness")) ip=brightness(ip, brightAmt);
-                else if (op.equals("watermark")) {
+                if (op.equals("resize")) {
+                    ip = resize(ip, newWidth);
+                } else if (op.equals("zoom")) {
+                    ip = zoom(ip, zoomAmt);
+                } else if (op.equals("brightness")) {
+                    ip = brightness(ip, brightAmt);
+                } else if (op.equals("watermark")) {
                     // this is now taken care of beforehand (see above)
-                }
-                else if (op.equals("grayscale")) ip=grayscale(ip);
-                else if (op.equals("crop")) ip=crop(ip,cropX,cropY,cropWidth,cropHeight);
-                else {
+                } else if (op.equals("grayscale")) {
+                    ip = grayscale(ip);
+                } else if (op.equals("crop")) {
+                    ip = crop(ip, cropX, cropY, cropWidth, cropHeight);
+                } else {
                     throw new ServletException("Invalid operation: " + op);
                 }
-                outputMimeType=inputMimeType;
+                outputMimeType = inputMimeType;
             } else {
-                if (convertTo==null) {
+                if (convertTo == null) {
                     throw new ServletException("Neither op nor convertTo was specified.");
                 }
                 if (convertTo.equals("jpg") || convertTo.equals("jpeg")) {
-                    outputMimeType="image/jpeg";
+                    outputMimeType = "image/jpeg";
                 } else if (convertTo.equals("gif")) {
-                    outputMimeType="image/gif";
+                    outputMimeType = "image/gif";
                 } else if (convertTo.equals("tiff")) {
-                    outputMimeType="image/tiff";
+                    outputMimeType = "image/tiff";
                 } else if (convertTo.equals("bmp")) {
-                    outputMimeType="image/bmp";
+                    outputMimeType = "image/bmp";
                 } else if (convertTo.equals("png")) {
-                    outputMimeType="image/png";
+                    outputMimeType = "image/png";
                 } else {
                     throw new ServletException("Invalid format: " + convertTo);
                 }
             }
             res.setContentType(outputMimeType);
-            BufferedOutputStream out=new BufferedOutputStream(res.getOutputStream());
+            BufferedOutputStream out =
+                    new BufferedOutputStream(res.getOutputStream());
             outputImage(ip, out, outputMimeType);
-            out.flush(); out.close();
+            out.flush();
+            out.close();
         } catch (Exception e) {
-        e.printStackTrace();
-            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    e.getClass().getName() + ": " + e.getMessage());
+            e.printStackTrace();
+            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e
+                    .getClass().getName()
+                    + ": " + e.getMessage());
         }
     }
 
     /**
      * Gets and deserializes the image at the given URL into an Image object.
-     *
      * This method also sets the inputMimeType based on the HTTP Content-Type
      * header so that, if the image needs to be returned in it's original
-     * format, the correct mime type can be sent in the response header.
-     *
-     * If the input image is not a gif, jpg, tiff, bmp, or png (according to
-     * the http response header), or some other kind of error occurs while
-     * reading the stream from the remote host, a ServletException is
-     * thrown.
-     *
-     * @param url The location of the input image.
+     * format, the correct mime type can be sent in the response header. If the
+     * input image is not a gif, jpg, tiff, bmp, or png (according to the http
+     * response header), or some other kind of error occurs while reading the
+     * stream from the remote host, a ServletException is thrown.
+     * 
+     * @param url
+     *        The location of the input image.
      * @return Image The image object, if successful.
-     * @throws Exception If any of the aforementioned problems occurs.
+     * @throws Exception
+     *         If any of the aforementioned problems occurs.
      */
-    private BufferedImage getImage(String url)
-            throws Exception {
-        GetMethod get=null;
+    private BufferedImage getImage(String url) throws Exception {
+        GetMethod get = null;
         try {
             cManager.getParams().setConnectionTimeout(20000);
-            HttpClient client=new HttpClient(cManager);
-            get=new GetMethod(url);
+            HttpClient client = new HttpClient(cManager);
+            get = new GetMethod(url);
             get.setFollowRedirects(true);
-            int resultCode=client.executeMethod(get);
-            if (resultCode!=200) {
+            int resultCode = client.executeMethod(get);
+            if (resultCode != 200) {
                 throw new ServletException("Could not load image: " + url
                         + ".  Errorcode " + resultCode + " from remote server.");
             }
-            inputMimeType=get.getResponseHeader("Content-Type").getValue();
-            if ( inputMimeType.equals("image/gif") ||
-                    inputMimeType.equals("image/jpeg") ||
-                    inputMimeType.equals("image/tiff") ||
-                    inputMimeType.equals("image/bmp") ||
-                    inputMimeType.equals("image/x-ms-bmp") ||
-                    inputMimeType.equals("image/x-bitmap") ||
-                    inputMimeType.equals("image/png") ) {
-               if (inputMimeType.endsWith("p"))
-                   inputMimeType="image/bmp"; // windows bitmaps are most
-                                              // commonly supported with this
-                                              // mime type, even though it's not
-                                              // an IANA-registered image type
-               return JAI.create("stream", new MemoryCacheSeekableStream(
-                        get.getResponseBodyAsStream())).getAsBufferedImage();
+            inputMimeType = get.getResponseHeader("Content-Type").getValue();
+            if (inputMimeType.equals("image/gif")
+                    || inputMimeType.equals("image/jpeg")
+                    || inputMimeType.equals("image/tiff")
+                    || inputMimeType.equals("image/bmp")
+                    || inputMimeType.equals("image/x-ms-bmp")
+                    || inputMimeType.equals("image/x-bitmap")
+                    || inputMimeType.equals("image/png")) {
+                if (inputMimeType.endsWith("p")) {
+                    inputMimeType = "image/bmp"; // windows bitmaps are most
+                }
+                // commonly supported with this
+                // mime type, even though it's not
+                // an IANA-registered image type
+                return JAI.create("stream",
+                                  new MemoryCacheSeekableStream(get
+                                          .getResponseBodyAsStream()))
+                        .getAsBufferedImage();
             } else {
                 throw new ServletException("Source image was not a gif, png, "
                         + "bmp, tiff, or jpg.");
@@ -242,135 +280,151 @@ public class ImageManipulation extends HttpServlet {
         } catch (Exception e) {
             throw e;
         } finally {
-            if (get!=null) get.releaseConnection();
+            if (get != null) {
+                get.releaseConnection();
+            }
         }
 
     }
 
-    private void outputImage(ImageProcessor ip, OutputStream out,
-            String outputMimeType)
-            throws Exception {
+    private void outputImage(ImageProcessor ip,
+                             OutputStream out,
+                             String outputMimeType) throws Exception {
         if (outputMimeType.equals("image/gif")) {
             if (!alreadyConvertedToRGB) {
-                ip=ip.convertToRGB();
+                ip = ip.convertToRGB();
             }
-            MedianCut mc=new MedianCut((int[])ip.getPixels(), ip.getWidth(), ip.getHeight());
-            ip=mc.convertToByte(256);
-            ImagePlus imp=new ImagePlus("temp",ip);
-            FileInfo fi=imp.getFileInfo();
-            byte pixels[]=(byte[])imp.getProcessor().getPixels();
-            GifEncoder ge=new GifEncoder(fi.width,fi.height,pixels,fi.reds,fi.greens,fi.blues);
+            MedianCut mc =
+                    new MedianCut((int[]) ip.getPixels(), ip.getWidth(), ip
+                            .getHeight());
+            ip = mc.convertToByte(256);
+            ImagePlus imp = new ImagePlus("temp", ip);
+            FileInfo fi = imp.getFileInfo();
+            byte pixels[] = (byte[]) imp.getProcessor().getPixels();
+            GifEncoder ge =
+                    new GifEncoder(fi.width,
+                                   fi.height,
+                                   pixels,
+                                   fi.reds,
+                                   fi.greens,
+                                   fi.blues);
             ge.write(out);
         } else {
-            ImageEncodeParam param=null;
-            String format=null;
+            ImageEncodeParam param = null;
+            String format = null;
             if (outputMimeType.equals("image/jpeg")) {
-                param = (ImageEncodeParam) new JPEGEncodeParam();
-                format="JPEG";
+                param = new JPEGEncodeParam();
+                format = "JPEG";
             } else if (outputMimeType.equals("image/tiff")) {
-                param = (ImageEncodeParam) new TIFFEncodeParam();
-                format="TIFF";
+                param = new TIFFEncodeParam();
+                format = "TIFF";
             } else if (outputMimeType.equals("image/bmp")) {
-                param = (ImageEncodeParam) new BMPEncodeParam();
-                format="BMP";
+                param = new BMPEncodeParam();
+                format = "BMP";
             } else if (outputMimeType.equals("image/png")) {
-                param = (ImageEncodeParam) new PNGEncodeParam.RGB();
-                format="PNG";
+                param = new PNGEncodeParam.RGB();
+                format = "PNG";
             }
-            ImageCodec.createImageEncoder(format, out, param).encode(
-                    JAI.create("AWTImage", ip.createImage()));
+            ImageCodec.createImageEncoder(format, out, param).encode(JAI
+                    .create("AWTImage", ip.createImage()));
         }
     }
 
     /**
-     *    Resizes an image to the supplied new width in pixels. The height is
-     *    reduced proportionally to the new width.
-     *
-     *    @param    ip The image to resize
-     *                     newWidth The width in pixels to resize the image to
-     *    @return The image resized
+     * Resizes an image to the supplied new width in pixels. The height is
+     * reduced proportionally to the new width.
+     * 
+     * @param ip
+     *        The image to resize newWidth The width in pixels to resize the
+     *        image to
+     * @return The image resized
      */
     private ImageProcessor resize(ImageProcessor ip, String newWidth) {
         if (newWidth != null) {
             try {
-                int width= Integer.parseInt(newWidth);
+                int width = Integer.parseInt(newWidth);
 
-                if (width < 0)
+                if (width < 0) {
                     return ip;
+                }
 
-                int imgWidth= ip.getWidth();
-                int imgHeight= ip.getHeight();
+                int imgWidth = ip.getWidth();
+                int imgHeight = ip.getHeight();
 
-                ip= ip.resize(width, width*imgHeight/imgWidth);
+                ip = ip.resize(width, width * imgHeight / imgWidth);
             }
             // no need to do anything with number format exception since the servlet
             // returns only images; just return the original image
-            catch (NumberFormatException e) {}
+            catch (NumberFormatException e) {
+            }
         }
 
         return ip;
     }
 
-
     /**
-     *    Zooms either in or out of an image by a supplied amount. The zooming
-     *    occurs from the center of the image.
-     *
-     *    @param    ip The image to zoom
-     *                    zoomAmt The amount to zoom the image.
-     *                                    0 < zoomAmt < 1 : zoom out
-     *                                    1 = zoomAmt     : original image
-     *                                    1 < zoomAmt            : zoom in
-     *    @return The image zoomed
+     * Zooms either in or out of an image by a supplied amount. The zooming
+     * occurs from the center of the image.
+     * 
+     * @param ip
+     *        The image to zoom zoomAmt The amount to zoom the image. 0 <
+     *        zoomAmt < 1 : zoom out 1 = zoomAmt : original image 1 < zoomAmt :
+     *        zoom in
+     * @return The image zoomed
      */
     private ImageProcessor zoom(ImageProcessor ip, String zoomAmt) {
         if (zoomAmt != null) {
             try {
-                float zoom= Float.parseFloat(zoomAmt);
+                float zoom = Float.parseFloat(zoomAmt);
 
-                if (zoom < 0)
+                if (zoom < 0) {
                     return ip;
+                }
 
-                ip.scale(zoom,zoom);
+                ip.scale(zoom, zoom);
 
                 // if the image is being zoomed out, trim the extra whitespace around the image
                 if (zoom < 1) {
-                    int imgWidth= ip.getWidth();
-                    int imgHeight= ip.getHeight();
+                    int imgWidth = ip.getWidth();
+                    int imgHeight = ip.getHeight();
 
                     // set a ROI around the image, minus the extra whitespace
-                    ip.setRoi((int)(Math.round(imgWidth/2-imgWidth*zoom/2)), (int)(Math.round(imgHeight/2-imgHeight*zoom/2)), (int)(Math.round(imgWidth*zoom)), (int)(Math.round(imgHeight*zoom)));
-                    ip= ip.crop();
+                    ip.setRoi(Math.round(imgWidth / 2 - imgWidth * zoom / 2),
+                              Math.round(imgHeight / 2 - imgHeight * zoom / 2),
+                              Math.round(imgWidth * zoom),
+                              Math.round(imgHeight * zoom));
+                    ip = ip.crop();
                 }
 
             }
 
             // no need to do anything with number format exception since the servlet
             // returns only images; just return the original image
-            catch (NumberFormatException e) {}
+            catch (NumberFormatException e) {
+            }
         }
 
         return ip;
     }
 
-
     /**
-     *    Adjusts the brightness of an image by a supplied amount.
-     *
-     *    @param    ip The image to adjust the brightness of
-     *                    brightAmt The amount to adjust the brightness of the image by
-     *                                    0 <= brightAmt < 1 : darkens image
-     *                                    1 = brightAmt      : original image
-     *                                    1 < brightAmt             : brightens image
-     *    @return The image with brightness levels adjusted
+     * Adjusts the brightness of an image by a supplied amount.
+     * 
+     * @param ip
+     *        The image to adjust the brightness of brightAmt The amount to
+     *        adjust the brightness of the image by 0 <= brightAmt < 1 : darkens
+     *        image 1 = brightAmt : original image 1 < brightAmt : brightens
+     *        image
+     * @return The image with brightness levels adjusted
      */
     private ImageProcessor brightness(ImageProcessor ip, String brightAmt) {
         if (brightAmt != null) {
             try {
-                float bright= Float.parseFloat(brightAmt);
+                float bright = Float.parseFloat(brightAmt);
 
-                if (bright < 0)
+                if (bright < 0) {
                     return ip;
+                }
 
                 ip.multiply(bright);
 
@@ -378,65 +432,76 @@ public class ImageManipulation extends HttpServlet {
 
             // no need to do anything with number format exception since the servlet
             // returns only images; just return the original image
-            catch (NumberFormatException e) {}
+            catch (NumberFormatException e) {
+            }
         }
 
         return ip;
     }
 
     /**
-     *    Converts an image to gray scale.
-     *
-     *    @param    ip The image to convert to grayscale
-     *    @return The image converted to grayscale
+     * Converts an image to gray scale.
+     * 
+     * @param ip
+     *        The image to convert to grayscale
+     * @return The image converted to grayscale
      */
     private ImageProcessor grayscale(ImageProcessor ip) {
-        ip= ip.convertToByte(true);
+        ip = ip.convertToByte(true);
 
         return ip;
     }
 
     /**
-     *    Crops an image with supplied starting point and ending point.
-     *
-     *    @param    ip The image to crop
-     *                    cropX The starting x position; x=0 corresponds to left side of image
-     *                    cropY    The starting y position; y=0 corresponds to top of image
-     *                    cropWidth The width of the crop, starting from the above x
-     *                    cropHeight The height of the crop, starting from the above y
-     *    @return The image cropped
+     * Crops an image with supplied starting point and ending point.
+     * 
+     * @param ip
+     *        The image to crop cropX The starting x position; x=0 corresponds
+     *        to left side of image cropY The starting y position; y=0
+     *        corresponds to top of image cropWidth The width of the crop,
+     *        starting from the above x cropHeight The height of the crop,
+     *        starting from the above y
+     * @return The image cropped
      */
-    public ImageProcessor crop(ImageProcessor ip, String cropX, String cropY, String cropWidth, String cropHeight) {
-        if ((cropX != null) && (cropY !=null)) {
+    public ImageProcessor crop(ImageProcessor ip,
+                               String cropX,
+                               String cropY,
+                               String cropWidth,
+                               String cropHeight) {
+        if (cropX != null && cropY != null) {
             try {
-                int x= Integer.parseInt(cropX);
-                int y= Integer.parseInt(cropY);
+                int x = Integer.parseInt(cropX);
+                int y = Integer.parseInt(cropY);
                 int width;
                 int height;
 
                 // if value for cropWidth is not given, just use the width of the image
-                if (cropWidth != null)
-                    width= Integer.parseInt(cropWidth);
-                else
-                    width= ip.getWidth();
+                if (cropWidth != null) {
+                    width = Integer.parseInt(cropWidth);
+                } else {
+                    width = ip.getWidth();
+                }
 
                 // if value for cropHeight is not given, just use the height of the image
-                if (cropHeight != null)
-                    height= Integer.parseInt(cropHeight);
-                else
-                    height= ip.getHeight();
+                if (cropHeight != null) {
+                    height = Integer.parseInt(cropHeight);
+                } else {
+                    height = ip.getHeight();
+                }
 
                 // if any value is negative, this causes ImageJ to explode, so just return
-                if (x < 0 || y < 0 || width < 0 || height < 0)
+                if (x < 0 || y < 0 || width < 0 || height < 0) {
                     return ip;
+                }
 
-                ip.setRoi(x,y,width,height);
-                ip= ip.crop();
+                ip.setRoi(x, y, width, height);
+                ip = ip.crop();
             }
 
             // no need to do anything with number format exception since the servlet
             // returns only images; just return the original image
-            catch (NumberFormatException e) {}
+            catch (NumberFormatException e) {
+            }
         }
 
         return ip;

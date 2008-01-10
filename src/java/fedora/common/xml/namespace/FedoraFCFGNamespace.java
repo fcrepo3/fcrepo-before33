@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The Fedora Configuration XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://www.fedora.info/definitions/1/0/config/
  * Preferred Prefix : fcfg
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class FedoraFCFGNamespace
         extends XMLNamespace {
@@ -23,8 +23,8 @@ public class FedoraFCFGNamespace
     //---
 
     /** The only instance of this class. */
-    private static final FedoraFCFGNamespace ONLY_INSTANCE
-            = new FedoraFCFGNamespace();
+    private static final FedoraFCFGNamespace ONLY_INSTANCE =
+            new FedoraFCFGNamespace();
 
     /**
      * Constructs the instance.
@@ -35,7 +35,7 @@ public class FedoraFCFGNamespace
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static FedoraFCFGNamespace getInstance() {

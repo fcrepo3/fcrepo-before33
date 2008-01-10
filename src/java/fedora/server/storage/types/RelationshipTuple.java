@@ -1,3 +1,4 @@
+
 package fedora.server.storage.types;
 
 import fedora.common.Constants;
@@ -6,22 +7,29 @@ import fedora.common.Constants;
  * A data structure for holding relationships consisting of predicate and
  * subject.
  * 
- * @author rh9ec@virginia.edu
- * @version $Id$
+ * @author Robert Haschart
  */
-public class RelationshipTuple implements Constants {
+public class RelationshipTuple
+        implements Constants {
 
     public String subject;
+
     public String predicate;
+
     public String object;
+
     public boolean isLiteral;
+
     public String datatype;
 
     public RelationshipTuple() {
     }
 
-    public RelationshipTuple(String subject, String predicate, String object,
-            boolean isLiteral, String datatype) {
+    public RelationshipTuple(String subject,
+                             String predicate,
+                             String object,
+                             boolean isLiteral,
+                             String datatype) {
         this.subject = subject;
         this.predicate = predicate;
         this.object = object;
@@ -47,23 +55,24 @@ public class RelationshipTuple implements Constants {
 
     public String getRelationship() {
         String prefixRel = RELS_EXT.uri;
-        if (predicate != null && predicate.startsWith(prefixRel))
-        {
+        if (predicate != null && predicate.startsWith(prefixRel)) {
             String rel = "rel:" + predicate.substring(prefixRel.length());
-            return(rel);
+            return rel;
         }
         String prefixModel = MODEL.uri;
-        if (predicate != null && predicate.startsWith(prefixModel))
-        {
-            String rel = "fedora-model:" + predicate.substring(prefixModel.length ());
-            return(rel);
+        if (predicate != null && predicate.startsWith(prefixModel)) {
+            String rel =
+                    "fedora-model:" + predicate.substring(prefixModel.length());
+            return rel;
         }
-        return(predicate);
+        return predicate;
     }
 
+    @Override
     public String toString() {
-        String retVal = "Sub: " + subject + "  Pred: " + predicate + "  Obj: ["
-                + object + ", " + isLiteral + ", " + datatype + "]";
+        String retVal =
+                "Sub: " + subject + "  Pred: " + predicate + "  Obj: ["
+                        + object + ", " + isLiteral + ", " + datatype + "]";
         return retVal;
     }
 }

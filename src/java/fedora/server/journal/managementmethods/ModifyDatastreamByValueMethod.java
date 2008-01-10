@@ -11,26 +11,20 @@ import fedora.server.journal.entry.JournalEntry;
 import fedora.server.management.ManagementDelegate;
 
 /**
+ * Adapter class for Management.modifyDatastreamByValue().
  * 
- * <p>
- * <b>Title:</b> ModifyDatastreamByValueMethod.java
- * </p>
- * <p>
- * <b>Description:</b> Adapter class for Management.modifyDatastreamByValue()
- * </p>
- * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
-
-public class ModifyDatastreamByValueMethod extends ManagementMethod {
+public class ModifyDatastreamByValueMethod
+        extends ManagementMethod {
 
     public ModifyDatastreamByValueMethod(JournalEntry parent) {
         super(parent);
     }
 
-    public Object invoke(ManagementDelegate delegate)
-            throws ServerException, JournalException {
+    @Override
+    public Object invoke(ManagementDelegate delegate) throws ServerException,
+            JournalException {
         return delegate.modifyDatastreamByValue(parent.getContext(), parent
                 .getStringArgument(ARGUMENT_NAME_PID), parent
                 .getStringArgument(ARGUMENT_NAME_DS_ID), parent

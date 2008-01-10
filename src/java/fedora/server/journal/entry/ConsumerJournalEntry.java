@@ -11,21 +11,16 @@ import fedora.server.journal.recoverylog.JournalRecoveryLog;
 import fedora.server.management.ManagementDelegate;
 
 /**
+ * The JournalEntry to use when consuming a journal file.
  * 
- * <p>
- * <b>Title:</b> ConsumerJournalEntry.java
- * </p>
- * <p>
- * <b>Description:</b> The JournalEntry to use when consuming a journal file.
- * Before invoking a method, write the entry to the recovery log. After invoking
- * the method, log a completion message.
- * </p>
+ * <p>Before invoking a method, write the entry to the recovery log. After 
+ * invoking the method, log a completion message.
  * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
+public class ConsumerJournalEntry
+        extends JournalEntry {
 
-public class ConsumerJournalEntry extends JournalEntry {
     private String identifier = "no identifier";
 
     public ConsumerJournalEntry(String methodName, JournalEntryContext context) {
@@ -33,7 +28,7 @@ public class ConsumerJournalEntry extends JournalEntry {
     }
 
     public void invokeMethod(ManagementDelegate delegate,
-            JournalRecoveryLog recoveryLog)
+                             JournalRecoveryLog recoveryLog)
             throws ServerException, JournalException {
         recoveryLog.log(this);
         super.getMethod().invoke(delegate);
@@ -43,7 +38,7 @@ public class ConsumerJournalEntry extends JournalEntry {
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
-    
+
     public String getIdentifier() {
         return identifier;
     }

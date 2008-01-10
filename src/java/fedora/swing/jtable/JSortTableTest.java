@@ -5,65 +5,63 @@
 
 package fedora.swing.jtable;
 
-import java.awt.*;
-import java.util.*;
-import javax.swing.*;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+
+import java.util.Vector;
+
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 /**
- * <p>
- * <b>Title:</b> JSortTableTest.java
- * </p>
- * <p>
- * <b>Description:</b>
- * <p>
+ * JSortTableTest.
  * 
- * -----------------------------------------------------------------------------
- * 
- * Portions created by Claude Duguay are Copyright &copy; Claude Duguay,
- * originally made available at
+ * <p>NOTICE: Portions created by Claude Duguay are Copyright &copy; 
+ * Claude Duguay, originally made available at 
  * http://www.fawcette.com/javapro/2002_08/magazine/columns/visualcomponents/
- * </p>
  * 
- * -----------------------------------------------------------------------------
- * 
- * @author Claude Duguay, cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Claude Duguay
+ * @author Chris Wilper
  */
-public class JSortTableTest extends JPanel {
-	private static final long serialVersionUID = 1L;
+public class JSortTableTest
+        extends JPanel {
 
-	public JSortTableTest() {
-		setLayout(new GridLayout());
-		setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-		setPreferredSize(new Dimension(400, 400));
-		add(new JScrollPane(new JSortTable(makeModel())));
-	}
+    private static final long serialVersionUID = 1L;
 
-	protected SortTableModel makeModel() {
-		Vector data = new Vector();
-		for (int i = 0; i < 25; i++) {
-			Vector row = new Vector();
-			for (int j = 0; j < 5; j++) {
-				row.add(new Integer((int) (Math.random() * 256)));
-			}
-			data.add(row);
-		}
+    public JSortTableTest() {
+        setLayout(new GridLayout());
+        setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+        setPreferredSize(new Dimension(400, 400));
+        add(new JScrollPane(new JSortTable(makeModel())));
+    }
 
-		Vector names = new Vector();
-		names.add("One");
-		names.add("Two");
-		names.add("Three");
-		names.add("Four");
-		names.add("Five");
+    protected SortTableModel makeModel() {
+        Vector data = new Vector();
+        for (int i = 0; i < 25; i++) {
+            Vector row = new Vector();
+            for (int j = 0; j < 5; j++) {
+                row.add(new Integer((int) (Math.random() * 256)));
+            }
+            data.add(row);
+        }
 
-		return new DefaultSortTableModel(data, names);
-	}
+        Vector names = new Vector();
+        names.add("One");
+        names.add("Two");
+        names.add("Three");
+        names.add("Four");
+        names.add("Five");
 
-	public static void main(String[] args) {
-		JFrame frame = new JFrame("JSortTable Test");
-		frame.getContentPane().setLayout(new GridLayout());
-		frame.getContentPane().add(new JSortTableTest());
-		frame.pack();
-		frame.setVisible(true);
-	}
+        return new DefaultSortTableModel(data, names);
+    }
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("JSortTable Test");
+        frame.getContentPane().setLayout(new GridLayout());
+        frame.getContentPane().add(new JSortTableTest());
+        frame.pack();
+        frame.setVisible(true);
+    }
 }

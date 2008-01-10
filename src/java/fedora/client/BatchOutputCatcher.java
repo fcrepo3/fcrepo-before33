@@ -4,28 +4,27 @@
  */
 
 package fedora.client;
+
 import java.io.OutputStream;
+
 import javax.swing.JTextArea;
 
 /**
- *
- * <p><b>Title:</b> BatchOutputCatcher.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author wdn5e@virginia.edu
- * @version $Id$
+ * @author Bill Niebel
  */
-public class BatchOutputCatcher extends OutputStream {
+public class BatchOutputCatcher
+        extends OutputStream {
 
-	private JTextArea jTextArea = null;
+    private JTextArea jTextArea = null;
 
-	public void write(int b) {
-		byte bv = (new Integer(b)).byteValue();
-		jTextArea.append(new String(new byte[] {bv} ));
-	}
+    @Override
+    public void write(int b) {
+        byte bv = (new Integer(b)).byteValue();
+        jTextArea.append(new String(new byte[] {bv}));
+    }
 
-	public BatchOutputCatcher(JTextArea jTextArea) {
-		this.jTextArea = jTextArea;
-	}
+    public BatchOutputCatcher(JTextArea jTextArea) {
+        this.jTextArea = jTextArea;
+    }
 
 }

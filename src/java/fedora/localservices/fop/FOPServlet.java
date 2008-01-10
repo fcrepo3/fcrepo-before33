@@ -5,41 +5,44 @@
 
 package fedora.localservices.fop;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-import org.xml.sax.InputSource;
-
-import org.apache.fop.apps.Driver;
-import org.apache.fop.messaging.MessageHandler;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
 
+import org.apache.fop.apps.Driver;
+import org.apache.fop.messaging.MessageHandler;
+
+import org.xml.sax.InputSource;
+
 /**
- *
- * <p><b>Title:</b> FOPServlet.java</p>
- * <p><b>Description:</b> Servlet for generating and serving a PDF, given the
- * URL to an XSL-FO file.</p>
- * <p>Servlet param is:</p>
+ * Servlet for generating and serving a PDF, given the URL to an XSL-FO file.
+ * 
+ * Servlet param is:
  * <ul>
- *   <li>source: the path to a formatting object file to render
+ * <li>source: the path to a formatting object file to render
  * </ul>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * 
+ * @author Chris Wilper
  */
-public class FOPServlet extends HttpServlet {
-	
-	private static final long serialVersionUID = 1L;
+public class FOPServlet
+        extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
 
     public static final String FO_REQUEST_PARAM = "source";
+
     Logger log = null;
 
-    public void doGet(HttpServletRequest request,
-                      HttpServletResponse response) throws ServletException {
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException {
         if (log == null) {
             log = new ConsoleLogger(ConsoleLogger.LEVEL_WARN);
             MessageHandler.setScreenLogger(log);
@@ -51,20 +54,19 @@ public class FOPServlet extends HttpServlet {
                 renderFO(new InputSource(foParam), response);
             } else {
                 PrintWriter out = response.getWriter();
-                out.println("<html><head><title>Error</title></head>\n"+
-                            "<body><h1>FOPServlet Error</h1><h3>No 'source' "+
-                            "request param given.</body></html>");
+                out.println("<html><head><title>Error</title></head>\n"
+                        + "<body><h1>FOPServlet Error</h1><h3>No 'source' "
+                        + "request param given.</body></html>");
             }
         } catch (ServletException ex) {
             throw ex;
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw new ServletException(ex);
         }
     }
 
-    public void renderFO(InputSource foFile,
-                         HttpServletResponse response) throws ServletException {
+    public void renderFO(InputSource foFile, HttpServletResponse response)
+            throws ServletException {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 

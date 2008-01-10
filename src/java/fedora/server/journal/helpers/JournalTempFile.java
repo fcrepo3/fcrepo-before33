@@ -10,16 +10,17 @@ import java.io.File;
 /**
  * Subclass of File is used as a marker.
  * 
- * An instance of this class behaves exactly as a java.io.File object would 
+ * <p>An instance of this class behaves exactly as a java.io.File object would
  * behave. However, it can be tested with instanceof to reveal that it is in 
  * fact a temp file, and as such can safely be deleted after use.
- *
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * 
+ * @author Jim Blake
  */
+public class JournalTempFile
+        extends File {
 
-public class JournalTempFile extends File {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+
     public JournalTempFile(File file) {
         super(file.getPath());
     }

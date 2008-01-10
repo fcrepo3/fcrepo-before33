@@ -5,32 +5,29 @@
 
 package fedora.server.storage.types;
 
-import java.util.*;
-
 /**
  * A datastream binding rule.
- *
- * @author payette@cs.cornell.edu
+ * 
+ * @author Sandy Payette
  */
-public class BMechDSBindRule
-{
-  public String bindingKeyName;
+public class BMechDSBindRule {
 
-  public int minNumBindings;
+    public String bindingKeyName;
 
-  public int maxNumBindings;
+    public int minNumBindings;
 
-  public boolean ordinality;
+    public int maxNumBindings;
 
-  public String bindingLabel;
+    public boolean ordinality;
 
-  public String bindingInstruction;
+    public String bindingLabel;
 
-  public String[] bindingMIMETypes;
+    public String bindingInstruction;
 
-  public BMechDSBindRule()
-  {
-  }
+    public String[] bindingMIMETypes;
+
+    public BMechDSBindRule() {
+    }
 
     private static final String ANY_MIME_TYPE = "*/*";
 
@@ -44,15 +41,21 @@ public class BMechDSBindRule
         }
         for (int i = 0; i < bindingMIMETypes.length; i++) {
             String allowed = bindingMIMETypes[i];
-            if (allowed == null) return ANY_MIME_TYPE;
-            if (allowed.equals("*/*")) return ANY_MIME_TYPE;
-            if (allowed.equals("*")) return ANY_MIME_TYPE;
+            if (allowed == null) {
+                return ANY_MIME_TYPE;
+            }
+            if (allowed.equals("*/*")) {
+                return ANY_MIME_TYPE;
+            }
+            if (allowed.equals("*")) {
+                return ANY_MIME_TYPE;
+            }
             if (i > 0) {
-                if ( i < bindingMIMETypes.length - 1) {
+                if (i < bindingMIMETypes.length - 1) {
                     out.append(", ");
                 } else {
-                    if ( i > 1 ) {
-                      out.append(",");
+                    if (i > 1) {
+                        out.append(",");
                     }
                     out.append(" or ");
                 }

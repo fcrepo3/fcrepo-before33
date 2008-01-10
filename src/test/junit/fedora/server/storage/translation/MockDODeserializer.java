@@ -1,3 +1,4 @@
+
 package fedora.server.storage.translation;
 
 import java.io.BufferedReader;
@@ -11,16 +12,16 @@ import fedora.server.errors.StreamIOException;
 import fedora.server.storage.types.DigitalObject;
 
 /**
- * A mock implementation of DODeserializer that reads format\n\pid,
- * and sets the object's label and pid to those read values, respectively.
- *
+ * A mock implementation of DODeserializer that reads format\n\pid, and sets the
+ * object's label and pid to those read values, respectively.
+ * 
  * @author Chris Wilper
  */
 public class MockDODeserializer
         implements DODeserializer {
-    
+
     private final String m_format;
-    
+
     public MockDODeserializer() {
         m_format = new String();
     }
@@ -33,11 +34,13 @@ public class MockDODeserializer
         return new MockDODeserializer(m_format);
     }
 
-    public void deserialize(InputStream in, DigitalObject obj, String encoding,
-            int transContext) throws ObjectIntegrityException,
+    public void deserialize(InputStream in,
+                            DigitalObject obj,
+                            String encoding,
+                            int transContext) throws ObjectIntegrityException,
             StreamIOException, UnsupportedEncodingException {
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(in, encoding));
+        BufferedReader reader =
+                new BufferedReader(new InputStreamReader(in, encoding));
         try {
             obj.setLabel(reader.readLine());
             obj.setPid(reader.readLine());

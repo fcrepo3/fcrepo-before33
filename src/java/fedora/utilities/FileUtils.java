@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -20,131 +21,135 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 public class FileUtils {
-	public static final int BUFFER = 2048;
-	
-	/**
-	 * Copy an InputStream to an OutputStream.
-	 * 
-	 * @param source
-	 * @param destination
-	 * @return <code>true</code> if the operation was successful;
-	 * 		   <code>false</code> otherwise (which includes a null input).
-	 */
-	public static boolean copy(InputStream source, OutputStream destination) {
-    	int count;
-    	byte data[] = new byte[BUFFER];
-    	BufferedOutputStream dest = new BufferedOutputStream(destination, BUFFER);
-    	
-    	try {
-	    	while ((count = source.read(data, 0, BUFFER)) != -1) {
-	    		dest.write(data, 0, count);
-	    	}
-			dest.flush();
-			dest.close();
-			return true;
-    	} catch (IOException e) {
-    		return false;
-    	}
+
+    public static final int BUFFER = 2048;
+
+    /**
+     * Copy an InputStream to an OutputStream.
+     * 
+     * @param source
+     * @param destination
+     * @return <code>true</code> if the operation was successful;
+     *         <code>false</code> otherwise (which includes a null input).
+     */
+    public static boolean copy(InputStream source, OutputStream destination) {
+        int count;
+        byte data[] = new byte[BUFFER];
+        BufferedOutputStream dest =
+                new BufferedOutputStream(destination, BUFFER);
+
+        try {
+            while ((count = source.read(data, 0, BUFFER)) != -1) {
+                dest.write(data, 0, count);
+            }
+            dest.flush();
+            dest.close();
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
-	
-	/**
-	 * Copy a file or directory.
-	 * 
-	 * @param source
-	 * @param destination
-	 * @return <code>true</code> if the operation was successful;
-	 * 		   <code>false</code> otherwise (which includes a null input).
-	 */
-	public static boolean copy(File source, File destination) {
-		boolean result = true;
-		if (source.isDirectory()) {
+
+    /**
+     * Copy a file or directory.
+     * 
+     * @param source
+     * @param destination
+     * @return <code>true</code> if the operation was successful;
+     *         <code>false</code> otherwise (which includes a null input).
+     */
+    public static boolean copy(File source, File destination) {
+        boolean result = true;
+        if (source.isDirectory()) {
             if (destination.exists()) {
                 result = result && destination.isDirectory();
             } else {
                 result = result && destination.mkdirs();
             }
-			File[] children = source.listFiles();
-			for (int i = 0; i < children.length; i++) {
-				result = result && copy(new File(source, children[i].getName()), 
-						new File(destination, children[i].getName()));
-			}
-			return result;
-		} else {
-			try {
-				InputStream in = new FileInputStream(source);
-		    	OutputStream out = new FileOutputStream(destination);
-		    	result = result && copy(in, out);
-		    	out.close();
-		    	in.close();
-		    	return result;
-			} catch (IOException e) {
-	    		return false;
-	    	}
-		}
+            File[] children = source.listFiles();
+            for (File element : children) {
+                result =
+                        result
+                                && copy(new File(source, element.getName()),
+                                        new File(destination, element.getName()));
+            }
+            return result;
+        } else {
+            try {
+                InputStream in = new FileInputStream(source);
+                OutputStream out = new FileOutputStream(destination);
+                result = result && copy(in, out);
+                out.close();
+                in.close();
+                return result;
+            } catch (IOException e) {
+                return false;
+            }
+        }
     }
-	
-	/**
-	 * Delete a File.
-	 * 
-	 * @param file the File to delete.
-	 * 
-	 * @return <code>true</code> if the operation was successful;
-	 * 		   <code>false</code> otherwise (which includes a null input).
-	 */
-	public static boolean delete(File file) {
+
+    /**
+     * Delete a File.
+     * 
+     * @param file
+     *        the File to delete.
+     * @return <code>true</code> if the operation was successful;
+     *         <code>false</code> otherwise (which includes a null input).
+     */
+    public static boolean delete(File file) {
         boolean result = true;
 
         if (file == null) {
-        	return false;
+            return false;
         }
         if (file.exists()) {
-        	if (file.isDirectory()) {
+            if (file.isDirectory()) {
                 // 1. delete content of directory:
                 File[] children = file.listFiles();
-                for (int i = 0; i < children.length; i++) { //for each file:
-                    File child = children[i];
+                for (File child : children) { //for each file:
                     result = result && delete(child);
                 }//next file
-        	}
-        	result = result && file.delete();
+            }
+            result = result && file.delete();
         } //else: input directory does not exist or is not a directory
         return result;
     }
-	
-	/**
-	 * Delete the specified file or directory.
-	 * @param file File or directory to delete
-	 * @return <code>true</code> if the operation was successful;
-	 * 		   <code>false</code> otherwise (which includes a null input).
-	 */
-	public static boolean delete(String file) {
+
+    /**
+     * Delete the specified file or directory.
+     * 
+     * @param file
+     *        File or directory to delete
+     * @return <code>true</code> if the operation was successful;
+     *         <code>false</code> otherwise (which includes a null input).
+     */
+    public static boolean delete(String file) {
         return delete(new File(file));
     }
-	
-	/**
-	 * Move a file or directory.
-	 * Initally attempts to move the File using java.io.File.renameTo(). 
-	 * However, should this operation fail (e.g. when source and destination 
-	 * are across different filesystems), will attempt to copy and then delete 
-	 * the source. 
-	 * 
-	 * @param source
-	 * @param destination
-	 * @return <code>true</code> if the operation was successful;
-	 * 		   <code>false</code> otherwise (which includes a null input).
-	 */
-	public static boolean move(File source, File destination) {
-		if (source == null || destination == null) {
-			return false;
-		}
-		if (source.renameTo(destination)) {
-			return true;
-		} else {
-			return copy(source, destination) && delete(source);
-		}
-	}
-	
-	/**
+
+    /**
+     * Move a file or directory. Initally attempts to move the File using
+     * java.io.File.renameTo(). However, should this operation fail (e.g. when
+     * source and destination are across different filesystems), will attempt to
+     * copy and then delete the source.
+     * 
+     * @param source
+     * @param destination
+     * @return <code>true</code> if the operation was successful;
+     *         <code>false</code> otherwise (which includes a null input).
+     */
+    public static boolean move(File source, File destination) {
+        if (source == null || destination == null) {
+            return false;
+        }
+        if (source.renameTo(destination)) {
+            return true;
+        } else {
+            return copy(source, destination) && delete(source);
+        }
+    }
+
+    /**
      * Load properties from the given file.
      */
     public static Properties loadProperties(File f) throws IOException {
@@ -154,14 +159,18 @@ public class FileUtils {
             props.load(in);
             return props;
         } finally {
-            try { in.close(); } catch (IOException e) { }
+            try {
+                in.close();
+            } catch (IOException e) {
+            }
         }
     }
-    
+
     /**
      * Loads a Map from the given Properties file.
      * 
-     * @param f the Properties file to parse.
+     * @param f
+     *        the Properties file to parse.
      * @return a Map<String, String> representing the given Properties file.
      * @throws IOException
      * @see java.util.Properties
@@ -176,23 +185,28 @@ public class FileUtils {
             Set<Entry<Object, Object>> entrySet = props.entrySet();
             for (Entry<Object, Object> entry : entrySet) {
                 // The casts to String should always succeed
-                map.put((String)entry.getKey(), (String)entry.getValue());
+                map.put((String) entry.getKey(), (String) entry.getValue());
             }
             return map;
         } finally {
-            try { in.close(); } catch (IOException e) { }
+            try {
+                in.close();
+            } catch (IOException e) {
+            }
         }
     }
-    
+
     public static FileFilter getPrefixFileFilter(String prefix) {
-    	return new PrefixFileFilter(prefix);
+        return new PrefixFileFilter(prefix);
     }
-    
+
     public static FileFilter getSuffixFileFilter(String suffix) {
-    	return new SuffixFileFilter(suffix);
+        return new SuffixFileFilter(suffix);
     }
-    
-    private static class PrefixFileFilter implements FileFilter {
+
+    private static class PrefixFileFilter
+            implements FileFilter {
+
         private final String filenamePrefix;
 
         PrefixFileFilter(String filenamePrefix) {
@@ -201,11 +215,13 @@ public class FileUtils {
 
         public boolean accept(File file) {
             String filename = file.getName();
-            return filename.startsWith(this.filenamePrefix);
+            return filename.startsWith(filenamePrefix);
         }
     }
-    
-    private static class SuffixFileFilter implements FileFilter {
+
+    private static class SuffixFileFilter
+            implements FileFilter {
+
         private final String filenameSuffix;
 
         SuffixFileFilter(String filenameSuffix) {
@@ -214,7 +230,7 @@ public class FileUtils {
 
         public boolean accept(File file) {
             String filename = file.getName();
-            return filename.endsWith(this.filenameSuffix);
+            return filename.endsWith(filenameSuffix);
         }
     }
 

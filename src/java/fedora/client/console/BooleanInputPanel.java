@@ -8,25 +8,22 @@ package fedora.client.console;
 import javax.swing.JCheckBox;
 
 /**
- *
- * <p><b>Title:</b> BooleanInputPanel.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
  */
 public class BooleanInputPanel
         extends InputPanel {
 
-	private static final long serialVersionUID = 1L;
-    private JCheckBox m_checkBox;
+    private static final long serialVersionUID = 1L;
+
+    private final JCheckBox m_checkBox;
 
     public BooleanInputPanel(boolean primitive) {
-        m_checkBox=new JCheckBox();
+        m_checkBox = new JCheckBox();
         m_checkBox.setSelected(false);
         add(m_checkBox);
     }
 
+    @Override
     public Object getValue() {
         return new Boolean(m_checkBox.isSelected());
     }

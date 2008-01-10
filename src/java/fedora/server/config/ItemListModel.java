@@ -5,17 +5,19 @@
 
 package fedora.server.config;
 
-import java.util.*;
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.DefaultListModel;
 
 /**
  * A ListModel, backed by a java-util-List.
- *
  */
-public class ItemListModel extends DefaultListModel {
+public class ItemListModel
+        extends DefaultListModel {
 
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     public ItemListModel(List items) {
         for (int i = 0; i < items.size(); i++) {
             addElement(items.get(i));
@@ -25,8 +27,8 @@ public class ItemListModel extends DefaultListModel {
     public List toList() {
         ArrayList out = new ArrayList();
         Object[] array = toArray();
-        for (int i = 0; i < array.length; i++) {
-            out.add(array[i]);
+        for (Object element : array) {
+            out.add(element);
         }
         return out;
     }

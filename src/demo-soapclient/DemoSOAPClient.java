@@ -38,7 +38,7 @@ import fedora.server.types.gen.Property;
  * A simple example of a SOAP client that makes calls to the Fedora SOAP 
  * interfaces (API-A and API-M).
  *
- * @author payette@cs.cornell.edu
+ * @author Sandy Payette
  */
 public class DemoSOAPClient
         implements Constants {

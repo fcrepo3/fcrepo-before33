@@ -12,46 +12,41 @@ import fedora.common.Constants;
 public class ServerStatusTool {
 
     /**
-     * Default number of seconds watch-startup should wait for 
-     * the state to change from NOT_STARTING to STARTING before 
-     * giving up.
+     * Default number of seconds watch-startup should wait for the state to
+     * change from NOT_STARTING to STARTING before giving up.
      */
     public static final int DEFAULT_STARTING_TIMEOUT = 45;
 
     /**
-     * Default number of seconds watch-startup should wait
-     * for the state to change from STARTING to STARTED or 
-     * STARTUP_FAILED before giving up.
+     * Default number of seconds watch-startup should wait for the state to
+     * change from STARTING to STARTED or STARTUP_FAILED before giving up.
      */
-    public static final int DEFAULT_STARTUP_TIMEOUT  = 120;
+    public static final int DEFAULT_STARTUP_TIMEOUT = 120;
 
     /**
-     * Default number of seconds watch-shutdown should wait for 
-     * the state to change from STARTED to STOPPING before 
-     * giving up.
+     * Default number of seconds watch-shutdown should wait for the state to
+     * change from STARTED to STOPPING before giving up.
      */
     public static final int DEFAULT_STOPPING_TIMEOUT = 45;
 
     /**
-     * Default number of seconds watch-shutdown should wait for 
-     * the state to change from STOPPING to STOPPED or
-     * STOPPED_WITH_ERR before giving up.
+     * Default number of seconds watch-shutdown should wait for the state to
+     * change from STOPPING to STOPPED or STOPPED_WITH_ERR before giving up.
      */
-    public static final int DEFAULT_SHUTDOWN_TIMEOUT  = 600;
+    public static final int DEFAULT_SHUTDOWN_TIMEOUT = 600;
 
-    private ServerStatusFile _statusFile;
+    private final ServerStatusFile _statusFile;
 
-    public ServerStatusTool(File serverHome) throws Exception {
+    public ServerStatusTool(File serverHome)
+            throws Exception {
 
         _statusFile = new ServerStatusFile(serverHome);
     }
 
     /**
-     * If the server appears not to be running, initialize the status file to 
-     * indicate that the server is not running and has not yet indicated that 
-     * it is starting (NOT_STARTING).
-     *
-     * Otherwise, throw an exception.
+     * If the server appears not to be running, initialize the status file to
+     * indicate that the server is not running and has not yet indicated that it
+     * is starting (NOT_STARTING). Otherwise, throw an exception.
      */
     public void init() throws Exception {
 
@@ -63,26 +58,26 @@ public class ServerStatusTool {
             if (lastMessage.getState() == ServerState.STARTED) {
                 throw new Exception("The server is already running or was shut down unexpectedly.\n"
                         + "If the server has shut down unexpectedly, you must manually delete\n"
-                        + "the following file: " + _statusFile.getPath() + "\n"
+                        + "the following file: "
+                        + _statusFile.getPath()
+                        + "\n"
                         + "then try again.");
             }
         }
 
         _statusFile.clear();
-        _statusFile.append(ServerState.NOT_STARTING, 
+        _statusFile.append(ServerState.NOT_STARTING,
                            "Waiting for startup to begin");
     }
 
     /**
-     * Watch the status file and print details to standard output
-     * until the STARTED or STARTUP_FAILED state is encountered.
-     *
-     * If there are any problems reading the status file,
-     * a timeout is reached, or STARTUP_FAILED is encountered,
-     * this will throw an exception.
+     * Watch the status file and print details to standard output until the
+     * STARTED or STARTUP_FAILED state is encountered. If there are any problems
+     * reading the status file, a timeout is reached, or STARTUP_FAILED is
+     * encountered, this will throw an exception.
      */
-    public void watchStartup(int startingTimeout,
-                             int startupTimeout) throws Exception {
+    public void watchStartup(int startingTimeout, int startupTimeout)
+            throws Exception {
 
         // use this for timeout checks later
         long startTime = System.currentTimeMillis();
@@ -100,8 +95,8 @@ public class ServerStatusTool {
             // update started and starting flags, and
             // throw a startup exception if startup failed
             // is encountered
-            for (int i = 0; i < messages.length; i++) {
-                ServerState state = messages[i].getState();
+            for (ServerStatusMessage element : messages) {
+                ServerState state = element.getState();
                 if (state == ServerState.STARTING) {
                     starting = true;
                 } else if (state == ServerState.STARTED) {
@@ -116,20 +111,22 @@ public class ServerStatusTool {
                 // wait half a second
                 try {
                     Thread.sleep(500);
-                } catch (Throwable th) { }
+                } catch (Throwable th) {
+                }
 
                 // throw an exception if either timeout has been
                 // exceeded
                 long now = System.currentTimeMillis();
                 if (!starting) {
-                    if ( ((now - startTime) / 1000) > startingTimeout ) {
-                        throw new Exception("Server startup did not begin within " + startingTimeout + " seconds");
+                    if ((now - startTime) / 1000 > startingTimeout) {
+                        throw new Exception("Server startup did not begin within "
+                                + startingTimeout + " seconds");
                     }
                 }
-                if ( ((now - startTime) / 1000) > startupTimeout ) {
-                    throw new Exception("Server startup did not complete within " + startupTimeout + " seconds");
+                if ((now - startTime) / 1000 > startupTimeout) {
+                    throw new Exception("Server startup did not complete within "
+                            + startupTimeout + " seconds");
                 }
-
 
                 // get next batch of messages
                 messages = _statusFile.getMessages(lastMessage);
@@ -140,29 +137,29 @@ public class ServerStatusTool {
 
         }
 
-        
     }
 
     private void showStartup(ServerStatusMessage[] messages) {
 
-        for (int i = 0; i < messages.length; i++) {
-            ServerState state = messages[i].getState();
+        for (ServerStatusMessage element : messages) {
+            ServerState state = element.getState();
             if (state != ServerState.STOPPING && state != ServerState.STOPPED) {
-                String detail = messages[i].getDetail();
-                System.out.print(
-                        ServerStatusMessage.dateToString(messages[i].getDate())
+                String detail = element.getDetail();
+                System.out.print(ServerStatusMessage.dateToString(element
+                        .getDate())
                         + " - ");
-                if (state == ServerState.NOT_STARTING || state == ServerState.STARTING) {
+                if (state == ServerState.NOT_STARTING
+                        || state == ServerState.STARTING) {
                     if (detail != null) {
                         // print it like: date - detail
                         System.out.println(detail);
                     } else {
                         // print it like: date - stateName
-                        System.out.println(messages[i].getState().getName());
+                        System.out.println(element.getState().getName());
                     }
                 } else {
                     // print it like: date - state[\ndetail]
-                    System.out.println(messages[i].getState().getName());
+                    System.out.println(element.getState().getName());
                     if (detail != null) {
                         System.out.println(detail);
                     }
@@ -172,19 +169,18 @@ public class ServerStatusTool {
     }
 
     /**
-     * Watch the status file and print details to standard output
-     * until the STOPPED or STOPPED_WITH_ERR state is encountered.
-     *
-     * If there are any problems reading the status file,
-     * a timeout is reached, or STOPPED_WITH_ERR is encountered,
-     * this will throw an exception.
+     * Watch the status file and print details to standard output until the
+     * STOPPED or STOPPED_WITH_ERR state is encountered. If there are any
+     * problems reading the status file, a timeout is reached, or
+     * STOPPED_WITH_ERR is encountered, this will throw an exception.
      */
-    public void watchShutdown(int stoppingTimeout,
-                              int shutdownTimeout) throws Exception {
+    public void watchShutdown(int stoppingTimeout, int shutdownTimeout)
+            throws Exception {
 
         if (!_statusFile.exists()) {
-            _statusFile.append(ServerState.STOPPING, 
-                               "WARNING: Server status file did not exist; re-created");
+            _statusFile
+                    .append(ServerState.STOPPING,
+                            "WARNING: Server status file did not exist; re-created");
         }
 
         // use this for timeout checks later
@@ -203,8 +199,8 @@ public class ServerStatusTool {
             // update stopping and stopped flags, and
             // throw a shutdown exception if STOPPED_WITH_ERR
             // is encountered
-            for (int i = 0; i < messages.length; i++) {
-                ServerState state = messages[i].getState();
+            for (ServerStatusMessage element : messages) {
+                ServerState state = element.getState();
                 if (state == ServerState.STOPPING) {
                     stopping = true;
                 } else if (state == ServerState.STOPPED) {
@@ -219,20 +215,22 @@ public class ServerStatusTool {
                 // wait half a second
                 try {
                     Thread.sleep(500);
-                } catch (Throwable th) { }
+                } catch (Throwable th) {
+                }
 
                 // throw an exception if either timeout has been
                 // exceeded
                 long now = System.currentTimeMillis();
                 if (!stopping) {
-                    if ( ((now - startTime) / 1000) > stoppingTimeout ) {
-                        throw new Exception("Server shutdown did not begin within " + stoppingTimeout + " seconds");
+                    if ((now - startTime) / 1000 > stoppingTimeout) {
+                        throw new Exception("Server shutdown did not begin within "
+                                + stoppingTimeout + " seconds");
                     }
                 }
-                if ( ((now - startTime) / 1000) > shutdownTimeout ) {
-                    throw new Exception("Server shutdown did not complete within " + shutdownTimeout + " seconds");
+                if ((now - startTime) / 1000 > shutdownTimeout) {
+                    throw new Exception("Server shutdown did not complete within "
+                            + shutdownTimeout + " seconds");
                 }
-
 
                 // get next batch of messages
                 messages = _statusFile.getMessages(lastMessage);
@@ -243,19 +241,17 @@ public class ServerStatusTool {
 
         }
 
-        
     }
 
     private void showShutdown(ServerStatusMessage[] messages) {
 
-        for (int i = 0; i < messages.length; i++) {
-            ServerState state = messages[i].getState();
-            if (state == ServerState.STOPPING 
-             || state == ServerState.STOPPED
-             || state == ServerState.STOPPED_WITH_ERR) {
-                String detail = messages[i].getDetail();
-                System.out.print(
-                        ServerStatusMessage.dateToString(messages[i].getDate())
+        for (ServerStatusMessage element : messages) {
+            ServerState state = element.getState();
+            if (state == ServerState.STOPPING || state == ServerState.STOPPED
+                    || state == ServerState.STOPPED_WITH_ERR) {
+                String detail = element.getDetail();
+                System.out.print(ServerStatusMessage.dateToString(element
+                        .getDate())
                         + " - ");
                 if (state == ServerState.STOPPING) {
                     if (detail != null) {
@@ -263,11 +259,11 @@ public class ServerStatusTool {
                         System.out.println(detail);
                     } else {
                         // print it like: date - stateName
-                        System.out.println(messages[i].getState().getName());
+                        System.out.println(element.getState().getName());
                     }
                 } else {
                     // print it like: date - state[\ndetail]
-                    System.out.println(messages[i].getState().getName());
+                    System.out.println(element.getState().getName());
                     if (state == ServerState.STOPPED_WITH_ERR && detail != null) {
                         System.out.println(detail);
                     }
@@ -277,11 +273,11 @@ public class ServerStatusTool {
     }
 
     /**
-     * Show a human-readable form of the latest message in the server 
-     * status file.  If the status file doesn't yet exist, this will
-     * print a special status message indicating the server is new.
+     * Show a human-readable form of the latest message in the server status
+     * file. If the status file doesn't yet exist, this will print a special
+     * status message indicating the server is new. The response will have the
+     * following form.
      * 
-     * The response will have the following form.
      * <pre>
      * STATE  : Some State
      * AS OF  : 2006-03-29 06:44:23AM EST
@@ -310,13 +306,15 @@ public class ServerStatusTool {
 
         ServerStatusMessage[] messages = _statusFile.getMessages(null);
         if (messages.length == 0) {
-            System.out.println("WARNING: Server status file is empty; re-creating");
+            System.out
+                    .println("WARNING: Server status file is empty; re-creating");
             init();
             messages = _statusFile.getMessages(null);
         }
         ServerState firstState = messages[0].getState();
         if (firstState != ServerState.NOT_STARTING) {
-            System.out.println("WARNING: Server status file is missing one or more messages");
+            System.out
+                    .println("WARNING: Server status file is missing one or more messages");
         }
         return messages;
     }
@@ -327,8 +325,10 @@ public class ServerStatusTool {
         }
         System.out.println("Usage: ServerStatusTool init");
         System.out.println("   Or: ServerStatusTool show-status");
-        System.out.println("   Or: ServerStatusTool watch-startup [starting-timeout] [startup-timeout]");
-        System.out.println("   Or: ServerStatusTool watch-shutdown [stopping-timeout] [shutdown-timeout]");
+        System.out
+                .println("   Or: ServerStatusTool watch-startup [starting-timeout] [startup-timeout]");
+        System.out
+                .println("   Or: ServerStatusTool watch-shutdown [stopping-timeout] [shutdown-timeout]");
     }
 
     private static int getInt(String s) throws Exception {
@@ -340,13 +340,15 @@ public class ServerStatusTool {
     }
 
     public static void main(String[] args) {
-        
+
         if (args.length < 1) {
             showUsage(null);
             System.exit(1);
         } else {
             String cmd = args[0];
-            if (cmd.equals("init") || cmd.equals("watch-startup") || cmd.equals("watch-shutdown") || cmd.equals("show-status")) {
+            if (cmd.equals("init") || cmd.equals("watch-startup")
+                    || cmd.equals("watch-shutdown")
+                    || cmd.equals("show-status")) {
                 try {
                     String fedoraHome = Constants.FEDORA_HOME;
                     if (fedoraHome == null) {
@@ -382,7 +384,9 @@ public class ServerStatusTool {
                     System.exit(0);
                 } catch (Exception e) {
                     String msg = e.getMessage();
-                    if (msg == null || !e.getClass().getName().equals("java.lang.Exception")) {
+                    if (msg == null
+                            || !e.getClass().getName()
+                                    .equals("java.lang.Exception")) {
                         System.out.println("ERROR: " + e.getClass().getName());
                         e.printStackTrace();
                     } else {

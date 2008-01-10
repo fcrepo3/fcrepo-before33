@@ -9,14 +9,14 @@ import fedora.common.xml.namespace.FOXMLNamespace;
 
 /**
  * The FOXML 1.0 XML format.
- *
+ * 
  * <pre>
  * Format URI        : info:fedora/fedora-system:FOXML-1.0
  * Primary Namespace : info:fedora/fedora-system:def/foxml#
  * XSD Schema URL    : http://www.fedora.info/definitions/1/0/foxml1-0.xsd
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class FOXML1_0Format
         extends XMLFormat {
@@ -29,13 +29,13 @@ public class FOXML1_0Format
      */
     private FOXML1_0Format() {
         super("info:fedora/fedora-system:FOXML-1.0",
-                FOXMLNamespace.getInstance(),
-                "http://www.fedora.info/definitions/1/0/foxml1-0.xsd");
+              FOXMLNamespace.getInstance(),
+              "http://www.fedora.info/definitions/1/0/foxml1-0.xsd");
     }
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static FOXML1_0Format getInstance() {

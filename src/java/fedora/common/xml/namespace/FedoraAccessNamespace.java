@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The Fedora Access XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://www.fedora.info/definitions/1/0/access/
  * Preferred Prefix : access
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class FedoraAccessNamespace
         extends XMLNamespace {
@@ -23,8 +23,8 @@ public class FedoraAccessNamespace
     //---
 
     /** The only instance of this class. */
-    private static final FedoraAccessNamespace ONLY_INSTANCE
-            = new FedoraAccessNamespace();
+    private static final FedoraAccessNamespace ONLY_INSTANCE =
+            new FedoraAccessNamespace();
 
     /**
      * Constructs the instance.
@@ -35,7 +35,7 @@ public class FedoraAccessNamespace
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static FedoraAccessNamespace getInstance() {

@@ -6,18 +6,17 @@
 package fedora.server.validation;
 
 /**
- * Constants for validating Fedora objects and their components.
- *
- * These constants are also expressed in the schematron rules.
- * They are only repeated here so that per-field validation 
- * can occur outside the context of schematron validation.
- *
- * @author cwilper@cs.cornell.edu
+ * Constants for validating Fedora objects and their components. These constants
+ * are also expressed in the schematron rules. They are only repeated here so
+ * that per-field validation can occur outside the context of schematron
+ * validation.
+ * 
+ * @author Chris Wilper
  */
 public interface ValidationConstants {
 
     /** Characters a datastream ID can never have. */
-    public static final char[] DATASTREAM_ID_BADCHARS = new char[] { '+', ':' };
+    public static final char[] DATASTREAM_ID_BADCHARS = new char[] {'+', ':'};
 
     /** Maximum characters a datastream ID can have. */
     public static final int DATASTREAM_ID_MAXLEN = 64;
@@ -29,7 +28,7 @@ public interface ValidationConstants {
     public static final int DISSEMINATOR_ID_MAXLEN = 64;
 
     /** Characters a disseminator ID can never have. */
-    public static final char[] DISSEMINATOR_ID_BADCHARS = new char[] { '+', ':' };
+    public static final char[] DISSEMINATOR_ID_BADCHARS = new char[] {'+', ':'};
 
     /** Maximum characters a disseminator label can have. */
     public static final int DISSEMINATOR_LABEL_MAXLEN = 255;

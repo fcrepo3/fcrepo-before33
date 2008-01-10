@@ -7,7 +7,9 @@ package fedora.server.journal.readerwriter.multifile;
 
 import java.io.File;
 import java.io.FileFilter;
+
 import java.text.SimpleDateFormat;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
@@ -20,32 +22,25 @@ import fedora.server.journal.JournalConstants;
 import fedora.server.journal.JournalException;
 
 /**
- * 
- * <p>
- * <b>Title:</b> MultiFileJournalHelper.java
- * </p>
- * <p>
- * <b>Description:</b> Utility methods for use by the
+ * Utility methods for use by the
  * {@link MultiFileJournalReader}, {@link MultiFileJournalWriter},
  * {@link MultiFileFollowingJournalReader}, and
  * {@link LockingFollowingJournalReader} classes.
- * </p>
  * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
-
-public class MultiFileJournalHelper implements JournalConstants,
-        MultiFileJournalConstants {
+public class MultiFileJournalHelper
+        implements JournalConstants, MultiFileJournalConstants {
 
     /**
      * Get the value of a parameter if there is one, or the default value if
      * there isn't.
      */
-    static String getOptionalParameter(Map parameters, String parameterName,
-            String defaultValue) {
+    static String getOptionalParameter(Map parameters,
+                                       String parameterName,
+                                       String defaultValue) {
         String value = (String) parameters.get(parameterName);
-        return (value == null) ? defaultValue : value;
+        return value == null ? defaultValue : value;
     }
 
     /**
@@ -92,8 +87,8 @@ public class MultiFileJournalHelper implements JournalConstants,
      */
     static long parseParametersForPollingInterval(Map parameters)
             throws JournalException {
-        String intervalString = (String) parameters
-                .get(PARAMETER_FOLLOW_POLLING_INTERVAL);
+        String intervalString =
+                (String) parameters.get(PARAMETER_FOLLOW_POLLING_INTERVAL);
         if (intervalString == null) {
             intervalString = DEFAULT_FOLLOW_POLLING_INTERVAL;
         }
@@ -121,7 +116,8 @@ public class MultiFileJournalHelper implements JournalConstants,
      */
     static String parseParametersForFilenamePrefix(Map parameters) {
         return getOptionalParameter(parameters,
-                PARAMETER_JOURNAL_FILENAME_PREFIX, DEFAULT_FILENAME_PREFIX);
+                                    PARAMETER_JOURNAL_FILENAME_PREFIX,
+                                    DEFAULT_FILENAME_PREFIX);
     }
 
     /**
@@ -129,9 +125,9 @@ public class MultiFileJournalHelper implements JournalConstants,
      * the current date.
      */
     public static String createTimestampedFilename(String filenamePrefix,
-            Date date) {
-        SimpleDateFormat formatter = new SimpleDateFormat(
-                FORMAT_JOURNAL_FILENAME_TIMESTAMP);
+                                                   Date date) {
+        SimpleDateFormat formatter =
+                new SimpleDateFormat(FORMAT_JOURNAL_FILENAME_TIMESTAMP);
         formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         return filenamePrefix + formatter.format(date) + "Z";
     }
@@ -140,7 +136,7 @@ public class MultiFileJournalHelper implements JournalConstants,
      * Get the Journal Files that exist the Journal Directory, sorted by name.
      */
     static File[] getSortedArrayOfJournalFiles(File journalDirectory,
-            String filenamePrefix) {
+                                               String filenamePrefix) {
         JournalFileFilter filter = new JournalFileFilter(filenamePrefix);
         File[] journalFiles = journalDirectory.listFiles(filter);
         Arrays.sort(journalFiles, new FilenameComparator());
@@ -150,7 +146,9 @@ public class MultiFileJournalHelper implements JournalConstants,
     /**
      * Allows us to search a directory for files that match the prefix.
      */
-    private static class JournalFileFilter implements FileFilter {
+    private static class JournalFileFilter
+            implements FileFilter {
+
         private final String filenamePrefix;
 
         JournalFileFilter(String filenamePrefix) {
@@ -159,14 +157,16 @@ public class MultiFileJournalHelper implements JournalConstants,
 
         public boolean accept(File file) {
             String filename = file.getName();
-            return filename.startsWith(this.filenamePrefix);
+            return filename.startsWith(filenamePrefix);
         }
     }
 
     /**
      * A comparator that sorts files by their names.
      */
-    private static class FilenameComparator implements Comparator {
+    private static class FilenameComparator
+            implements Comparator {
+
         public int compare(Object first, Object second) {
             return ((File) first).getName()
                     .compareTo(((File) second).getName());

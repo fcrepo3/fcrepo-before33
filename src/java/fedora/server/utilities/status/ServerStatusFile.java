@@ -5,16 +5,27 @@
 
 package fedora.server.utilities.status;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 /**
  * The file consists of one or more serialized <code>ServerStatusMessage</code>s.
- *
  * The format of the file is simple:
+ * 
  * <pre>
  * [STATUS]
  * State
@@ -33,14 +44,16 @@ public class ServerStatusFile {
     public static final String FILENAME = "status";
 
     public static final String BEGIN_LINE = "[STATUS]";
+
     public static final String END_LINE = "[/STATUS]";
 
-    private File _file;
+    private final File _file;
 
-    public ServerStatusFile(File serverHome) throws Exception {
+    public ServerStatusFile(File serverHome)
+            throws Exception {
 
         if (!serverHome.isDirectory()) {
-            throw new Exception("Server home directory not found: " 
+            throw new Exception("Server home directory not found: "
                     + serverHome.getPath());
         }
 
@@ -56,7 +69,8 @@ public class ServerStatusFile {
         if (_file.exists()) {
             boolean deleted = _file.delete();
             if (!deleted) {
-                throw new Exception("Failed to delete server status file: " + _file.getPath());
+                throw new Exception("Failed to delete server status file: "
+                        + _file.getPath());
             }
         }
     }
@@ -66,8 +80,8 @@ public class ServerStatusFile {
         return _file.exists();
     }
 
-    public synchronized void appendError(ServerState state,
-                                         Throwable detail) throws Exception {
+    public synchronized void appendError(ServerState state, Throwable detail)
+            throws Exception {
 
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter, true);
@@ -77,10 +91,11 @@ public class ServerStatusFile {
         append(state, stringWriter.toString());
     }
 
-    public synchronized void append(ServerState state,
-                                    String detail) throws Exception {
+    public synchronized void append(ServerState state, String detail)
+            throws Exception {
 
-        ServerStatusMessage message = new ServerStatusMessage(state, null, detail);
+        ServerStatusMessage message =
+                new ServerStatusMessage(state, null, detail);
 
         FileOutputStream out = null;
         FileChannel channel = null;
@@ -96,22 +111,37 @@ public class ServerStatusFile {
             writer.close();
 
         } catch (IOException ioe) {
-            throw new Exception("Error opening server status file for writing: " + _file.getPath(), ioe);
+            throw new Exception("Error opening server status file for writing: "
+                                        + _file.getPath(),
+                                ioe);
         } finally {
-            if (lock != null) try { lock.release(); } catch (Exception e) { }
-            if (channel != null) try { channel.close(); } catch (Exception e) { }
-            if (out != null) try { out.close(); } catch (Exception e) { }
+            if (lock != null) {
+                try {
+                    lock.release();
+                } catch (Exception e) {
+                }
+            }
+            if (channel != null) {
+                try {
+                    channel.close();
+                } catch (Exception e) {
+                }
+            }
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (Exception e) {
+                }
+            }
         }
     }
 
     /**
      * Get all messages in the status file, or only those after the given
-     * message if it is non-null.
-     *
-     * If the status file doesn't exist or can't be parsed, throw an exception.
+     * message if it is non-null. If the status file doesn't exist or can't be
+     * parsed, throw an exception.
      */
-    public synchronized ServerStatusMessage[] getMessages(
-            ServerStatusMessage afterMessage) 
+    public synchronized ServerStatusMessage[] getMessages(ServerStatusMessage afterMessage)
             throws Exception {
 
         boolean sawAfterMessage;
@@ -122,13 +152,14 @@ public class ServerStatusFile {
             sawAfterMessage = false;
             afterMessageString = afterMessage.toString();
         }
-        
+
         FileInputStream in = null;
         try {
 
             in = new FileInputStream(_file);
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(in));
 
             List messages = new ArrayList();
             ServerStatusMessage message = getNextMessage(reader);
@@ -143,18 +174,24 @@ public class ServerStatusFile {
                 message = getNextMessage(reader);
             }
 
-            return (ServerStatusMessage[]) 
-                   messages.toArray(new ServerStatusMessage[0]);
+            return (ServerStatusMessage[]) messages
+                    .toArray(new ServerStatusMessage[0]);
 
         } catch (IOException ioe) {
-            throw new Exception("Error opening server status file for reading: " + _file.getPath(), ioe);
+            throw new Exception("Error opening server status file for reading: "
+                                        + _file.getPath(),
+                                ioe);
         } finally {
-            if (in != null) try { in.close(); } catch (Exception e) { }
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (Exception e) {
+                }
+            }
         }
     }
 
-    private void serialize(ServerStatusMessage message, 
-                           PrintWriter writer) 
+    private void serialize(ServerStatusMessage message, PrintWriter writer)
             throws Exception {
 
         writer.println(BEGIN_LINE);
@@ -168,9 +205,9 @@ public class ServerStatusFile {
     }
 
     // return the next message, or null if there are no more messages in the file
-    private ServerStatusMessage getNextMessage(BufferedReader reader) 
+    private ServerStatusMessage getNextMessage(BufferedReader reader)
             throws Exception {
-  
+
         boolean messageStarted = false;
 
         String line = reader.readLine();
@@ -205,17 +242,17 @@ public class ServerStatusFile {
 
             return null;
         }
-        
+
     }
 
     // get the next line or throw an exception if eof was reached
-    private String getNextLine(BufferedReader reader)
-            throws Exception {
+    private String getNextLine(BufferedReader reader) throws Exception {
         String line = reader.readLine();
         if (line != null) {
             return line;
         } else {
-            throw new Exception("Error parsing server status file (unexpectedly ended): " + _file.getPath());
+            throw new Exception("Error parsing server status file (unexpectedly ended): "
+                    + _file.getPath());
         }
     }
 

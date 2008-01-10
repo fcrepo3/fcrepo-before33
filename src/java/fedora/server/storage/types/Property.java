@@ -6,24 +6,21 @@
 package fedora.server.storage.types;
 
 /**
- *
- * <p><b>Title:</b> Property.java</p>
- * <p><b>Description:</b> A data structure for holding properties as
- * name/value pairs. </p>
- *
- * @author rlw@virginia.edu
- * @version $Id$
+ * A data structure for holding properties as name/value pairs.
+ * 
+ * @author Ross Wayland
  */
-public class Property
-{
-  public String name;
-  public String value;
+public class Property {
 
-  public Property() {
-  }
-    
-  public Property(String propertyName, String propertyValue) {
-  	name=propertyName;
-  	value=propertyValue;
-  }
+    public String name;
+
+    public String value;
+
+    public Property() {
+    }
+
+    public Property(String propertyName, String propertyValue) {
+        name = propertyName;
+        value = propertyValue;
+    }
 }

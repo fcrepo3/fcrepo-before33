@@ -5,16 +5,17 @@
 
 package fedora.server.config;
 
-import java.util.*;
+import java.util.List;
 
 /**
  *
  */
-public class DatastoreConfiguration 
+public class DatastoreConfiguration
         extends Configuration {
 
-    private String m_id;
-    private String m_comment;
+    private final String m_id;
+
+    private final String m_comment;
 
     public DatastoreConfiguration(List<Parameter> parameters,
                                   String id,

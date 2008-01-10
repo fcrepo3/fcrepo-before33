@@ -1,8 +1,10 @@
+
 package fedora.server.journal.readerwriter.multifile;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +18,9 @@ import fedora.server.journal.JournalConstants;
 import fedora.server.journal.JournalConsumer;
 import fedora.server.journal.ServerInterface;
 
-public class TestLockingFollowingJournalReader extends TestCase implements
-        Constants, JournalConstants, MultiFileJournalConstants {
+public class TestLockingFollowingJournalReader
+        extends TestCase
+        implements Constants, JournalConstants, MultiFileJournalConstants {
 
     private static final int WAIT_INTERVAL = 5;
 
@@ -37,7 +40,7 @@ public class TestLockingFollowingJournalReader extends TestCase implements
 
     private ServerInterface server;
 
-    private String role = "DumbGrunt";
+    private final String role = "DumbGrunt";
 
     private MockManagementDelegateForJournalTesting delegate;
 
@@ -47,34 +50,37 @@ public class TestLockingFollowingJournalReader extends TestCase implements
         super(name);
     }
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 
         journalDirectory = createTempDirectory("fedoraTestingJournalFiles");
         archiveDirectory = createTempDirectory("fedoraTestingArchiveFiles");
 
-        lockRequestFile = new File(journalDirectory.getPath() + File.separator
-                + "lockRequested");
+        lockRequestFile =
+                new File(journalDirectory.getPath() + File.separator
+                        + "lockRequested");
         lockRequestFile.delete();
 
-        lockAcceptedFile = new File(journalDirectory.getPath() + File.separator
-                + "lockAccepted");
+        lockAcceptedFile =
+                new File(journalDirectory.getPath() + File.separator
+                        + "lockAccepted");
         lockAcceptedFile.delete();
 
         server = new MockServerForJournalTesting(DUMMY_HASH_VALUE);
 
         parameters = new HashMap();
         parameters.put(PARAMETER_JOURNAL_RECOVERY_LOG_CLASSNAME,
-                "fedora.server.journal.readerwriter.multifile."
-                        + "MockJournalRecoveryLogForJournalTesting");
+                       "fedora.server.journal.readerwriter.multifile."
+                               + "MockJournalRecoveryLogForJournalTesting");
         parameters.put(PARAMETER_JOURNAL_READER_CLASSNAME,
-                "fedora.server.journal.readerwriter.multifile."
-                        + "LockingFollowingJournalReader");
+                       "fedora.server.journal.readerwriter.multifile."
+                               + "LockingFollowingJournalReader");
         parameters.put(PARAMETER_JOURNAL_DIRECTORY, journalDirectory.getPath());
         parameters.put(PARAMETER_ARCHIVE_DIRECTORY, archiveDirectory.getPath());
         parameters.put(PARAMETER_FOLLOW_POLLING_INTERVAL, "1");
         parameters.put(PARAMETER_JOURNAL_FILENAME_PREFIX,
-                JOURNAL_FILENAME_PREFIX);
+                       JOURNAL_FILENAME_PREFIX);
         parameters.put(PARAMETER_LOCK_REQUESTED_FILENAME, lockRequestFile
                 .getPath());
         parameters.put(PARAMETER_LOCK_ACCEPTED_FILENAME, lockAcceptedFile
@@ -96,18 +102,20 @@ public class TestLockingFollowingJournalReader extends TestCase implements
             createJournalFileFromString(getSimpleIngestString());
 
             // create the JournalConsumer and run it.
-            JournalConsumer consumer = new JournalConsumer(parameters, role,
-                    server);
+            JournalConsumer consumer =
+                    new JournalConsumer(parameters, role, server);
             startConsumerThread(consumer);
             waitWhileThreadRuns(WAIT_INTERVAL);
             consumer.shutdown();
 
             assertEquals("Expected to see 3 ingests", 3, delegate
                     .getIngestCalls());
-            assertEquals("Journal files not all gone", 0,
-                    howManyFilesInDirectory(journalDirectory));
-            assertEquals("Wrong number of archive files", 3,
-                    howManyFilesInDirectory(archiveDirectory));
+            assertEquals("Journal files not all gone",
+                         0,
+                         howManyFilesInDirectory(journalDirectory));
+            assertEquals("Wrong number of archive files",
+                         3,
+                         howManyFilesInDirectory(archiveDirectory));
 
             System.out.println(MockJournalRecoveryLogForJournalTesting
                     .getInstance().getLogSummary());
@@ -129,8 +137,8 @@ public class TestLockingFollowingJournalReader extends TestCase implements
             createLockRequest();
 
             // create the JournalConsumer and run it.
-            JournalConsumer consumer = new JournalConsumer(parameters, role,
-                    server);
+            JournalConsumer consumer =
+                    new JournalConsumer(parameters, role, server);
             startConsumerThread(consumer);
 
             // we should see the lock accepted and no processing going on.
@@ -138,10 +146,12 @@ public class TestLockingFollowingJournalReader extends TestCase implements
             waitWhileThreadRuns(WAIT_INTERVAL);
             assertEquals("Journal files should not be processed", 0, delegate
                     .getIngestCalls());
-            assertEquals("Journal files should not be processed", 3,
-                    howManyFilesInDirectory(journalDirectory));
-            assertEquals("Journal files should not be processed", 0,
-                    howManyFilesInDirectory(archiveDirectory));
+            assertEquals("Journal files should not be processed",
+                         3,
+                         howManyFilesInDirectory(journalDirectory));
+            assertEquals("Journal files should not be processed",
+                         0,
+                         howManyFilesInDirectory(archiveDirectory));
             int lockMessageIndex = assertLockMessageInLog();
 
             // remove the request. We should see the lock released and
@@ -153,10 +163,12 @@ public class TestLockingFollowingJournalReader extends TestCase implements
 
             assertEquals("Expected to see 3 ingests", 3, delegate
                     .getIngestCalls());
-            assertEquals("Journal files not all gone", 0,
-                    howManyFilesInDirectory(journalDirectory));
-            assertEquals("Wrong number of archive files", 3,
-                    howManyFilesInDirectory(archiveDirectory));
+            assertEquals("Journal files not all gone",
+                         0,
+                         howManyFilesInDirectory(journalDirectory));
+            assertEquals("Wrong number of archive files",
+                         3,
+                         howManyFilesInDirectory(archiveDirectory));
             assertUnlockMessageInLog(lockMessageIndex);
 
             System.out.println(MockJournalRecoveryLogForJournalTesting
@@ -182,8 +194,8 @@ public class TestLockingFollowingJournalReader extends TestCase implements
             delegate.setIngestOperation(new LockAfterSecondIngest());
 
             // create the JournalConsumer and run it.
-            JournalConsumer consumer = new JournalConsumer(parameters, role,
-                    server);
+            JournalConsumer consumer =
+                    new JournalConsumer(parameters, role, server);
             startConsumerThread(consumer);
 
             // we should see the lock accepted and processing stop after the
@@ -192,10 +204,12 @@ public class TestLockingFollowingJournalReader extends TestCase implements
             waitWhileThreadRuns(WAIT_INTERVAL);
             assertEquals("We should stop after the second ingest", 2, delegate
                     .getIngestCalls());
-            assertEquals("One Journal file should not be processed", 1,
-                    howManyFilesInDirectory(journalDirectory));
-            assertEquals("Only two Journal files should be processed", 2,
-                    howManyFilesInDirectory(archiveDirectory));
+            assertEquals("One Journal file should not be processed",
+                         1,
+                         howManyFilesInDirectory(journalDirectory));
+            assertEquals("Only two Journal files should be processed",
+                         2,
+                         howManyFilesInDirectory(archiveDirectory));
             int lockMessageIndex = assertLockMessageInLog();
 
             // remove the request. We should see the lock released and
@@ -207,10 +221,12 @@ public class TestLockingFollowingJournalReader extends TestCase implements
 
             assertEquals("Expected to see 3 ingests", 3, delegate
                     .getIngestCalls());
-            assertEquals("Journal files not all gone", 0,
-                    howManyFilesInDirectory(journalDirectory));
-            assertEquals("Wrong number of archive files", 3,
-                    howManyFilesInDirectory(archiveDirectory));
+            assertEquals("Journal files not all gone",
+                         0,
+                         howManyFilesInDirectory(journalDirectory));
+            assertEquals("Wrong number of archive files",
+                         3,
+                         howManyFilesInDirectory(archiveDirectory));
             assertUnlockMessageInLog(lockMessageIndex);
 
             System.out.println(MockJournalRecoveryLogForJournalTesting
@@ -222,11 +238,10 @@ public class TestLockingFollowingJournalReader extends TestCase implements
 
     /**
      * A lock request created while the system if polling, which should prevent
-     * further processing until it is removed.
-     * 
-     * Create 1 files and watch it process all of them. Create a lock and wait
-     * for the ack. Create a 2nd file, and it will not be processed. Remove the
-     * lock; ack is removed and last file is processed.
+     * further processing until it is removed. Create 1 files and watch it
+     * process all of them. Create a lock and wait for the ack. Create a 2nd
+     * file, and it will not be processed. Remove the lock; ack is removed and
+     * last file is processed.
      */
     public void disabledtestLockWhilePollingAndResume() {
         try {
@@ -234,18 +249,21 @@ public class TestLockingFollowingJournalReader extends TestCase implements
             createJournalFileFromString(getSimpleIngestString());
 
             // create the JournalConsumer and run it.
-            JournalConsumer consumer = new JournalConsumer(parameters, role,
-                    server);
+            JournalConsumer consumer =
+                    new JournalConsumer(parameters, role, server);
             startConsumerThread(consumer);
 
             // the file should be processed and we being polling.
             waitWhileThreadRuns(WAIT_INTERVAL);
-            assertEquals("The first file should have been processed.", 1,
-                    delegate.getIngestCalls());
-            assertEquals("The first file should have been processed.", 0,
-                    howManyFilesInDirectory(journalDirectory));
-            assertEquals("The first file should have been processed.", 1,
-                    howManyFilesInDirectory(archiveDirectory));
+            assertEquals("The first file should have been processed.",
+                         1,
+                         delegate.getIngestCalls());
+            assertEquals("The first file should have been processed.",
+                         0,
+                         howManyFilesInDirectory(journalDirectory));
+            assertEquals("The first file should have been processed.",
+                         1,
+                         howManyFilesInDirectory(archiveDirectory));
 
             // create a lock request and wait for the acceptance.
             createLockRequest();
@@ -254,12 +272,15 @@ public class TestLockingFollowingJournalReader extends TestCase implements
             // create another Journal file, but it won't be processed.
             createJournalFileFromString(getSimpleIngestString());
             waitWhileThreadRuns(WAIT_INTERVAL);
-            assertEquals("The second file should not have been processed.", 1,
-                    delegate.getIngestCalls());
-            assertEquals("The second file should not have been processed.", 1,
-                    howManyFilesInDirectory(journalDirectory));
-            assertEquals("The second file should not have been processed.", 1,
-                    howManyFilesInDirectory(archiveDirectory));
+            assertEquals("The second file should not have been processed.",
+                         1,
+                         delegate.getIngestCalls());
+            assertEquals("The second file should not have been processed.",
+                         1,
+                         howManyFilesInDirectory(journalDirectory));
+            assertEquals("The second file should not have been processed.",
+                         1,
+                         howManyFilesInDirectory(archiveDirectory));
             int lockMessageIndex = assertLockMessageInLog();
 
             // remove the lock and the file is processed.
@@ -270,10 +291,12 @@ public class TestLockingFollowingJournalReader extends TestCase implements
 
             assertEquals("Expected to see 2 ingests", 2, delegate
                     .getIngestCalls());
-            assertEquals("Journal files not all gone", 0,
-                    howManyFilesInDirectory(journalDirectory));
-            assertEquals("Wrong number of archive files", 2,
-                    howManyFilesInDirectory(archiveDirectory));
+            assertEquals("Journal files not all gone",
+                         0,
+                         howManyFilesInDirectory(journalDirectory));
+            assertEquals("Wrong number of archive files",
+                         2,
+                         howManyFilesInDirectory(archiveDirectory));
             assertUnlockMessageInLog(lockMessageIndex);
 
             System.out.println(MockJournalRecoveryLogForJournalTesting
@@ -292,8 +315,9 @@ public class TestLockingFollowingJournalReader extends TestCase implements
     }
 
     private int howManyFilesInDirectory(File directory) {
-        return MultiFileJournalHelper.getSortedArrayOfJournalFiles(directory,
-                JOURNAL_FILENAME_PREFIX).length;
+        return MultiFileJournalHelper
+                .getSortedArrayOfJournalFiles(directory,
+                                              JOURNAL_FILENAME_PREFIX).length;
     }
 
     /**
@@ -360,15 +384,18 @@ public class TestLockingFollowingJournalReader extends TestCase implements
     }
 
     private int getNumberOfCurrentThreads() {
-        int i = Thread.currentThread().getThreadGroup()
-                .enumerate(new Thread[500]);
+        int i =
+                Thread.currentThread().getThreadGroup()
+                        .enumerate(new Thread[500]);
         System.out.println("There are " + i + " threads in the group");
         return i;
     }
 
     private void createJournalFileFromString(String text) throws IOException {
-        File journal = File.createTempFile(JOURNAL_FILENAME_PREFIX, null,
-                journalDirectory);
+        File journal =
+                File.createTempFile(JOURNAL_FILENAME_PREFIX,
+                                    null,
+                                    journalDirectory);
         journal.deleteOnExit();
         FileWriter writer = new FileWriter(journal);
         writer.write(text);
@@ -380,8 +407,9 @@ public class TestLockingFollowingJournalReader extends TestCase implements
      * its position in the log.
      */
     private int assertLockMessageInLog() {
-        List messages = MockJournalRecoveryLogForJournalTesting.getInstance()
-                .getLogMessages();
+        List messages =
+                MockJournalRecoveryLogForJournalTesting.getInstance()
+                        .getLogMessages();
         int lastMessageIndex = messages.size() - 1;
         String lastMessage = (String) messages.get(lastMessageIndex);
         assertStringStartsWith(lastMessage, "Lock request detected:");
@@ -393,8 +421,9 @@ public class TestLockingFollowingJournalReader extends TestCase implements
      * unlock message.
      */
     private void assertUnlockMessageInLog(int lockMessageIndex) {
-        List messages = MockJournalRecoveryLogForJournalTesting.getInstance()
-                .getLogMessages();
+        List messages =
+                MockJournalRecoveryLogForJournalTesting.getInstance()
+                        .getLogMessages();
         int unlockMessageIndex = lockMessageIndex + 1;
         assertTrue(messages.size() > unlockMessageIndex);
         String unlockMessage = (String) messages.get(unlockMessageIndex);
@@ -414,8 +443,8 @@ public class TestLockingFollowingJournalReader extends TestCase implements
                     + ((ServerException) e).getCode() + "', class='"
                     + e.getClass().getName() + "'");
             StackTraceElement[] traces = e.getStackTrace();
-            for (int i = 0; i < traces.length; i++) {
-                System.err.println(traces[i]);
+            for (StackTraceElement element : traces) {
+                System.err.println(element);
             }
             Throwable cause = e.getCause();
             if (cause != null) {
@@ -438,8 +467,8 @@ public class TestLockingFollowingJournalReader extends TestCase implements
 
     private void cleanOutDirectory(File directory) {
         File[] files = directory.listFiles();
-        for (int i = 0; i < files.length; i++) {
-            files[i].delete();
+        for (File element : files) {
+            element.delete();
         }
     }
 
@@ -465,7 +494,9 @@ public class TestLockingFollowingJournalReader extends TestCase implements
                 + "    </context>\n"
                 + "    <argument name=\"serialization\" type=\"stream\">PD94</argument>\n"
                 + "    <argument name=\"message\" type=\"string\">Minimal Ingest sample</argument>\n"
-                + "    <argument name=\"format\" type=\"string\">" + FOXML1_1.uri + "</argument>\n"
+                + "    <argument name=\"format\" type=\"string\">"
+                + FOXML1_1.uri
+                + "</argument>\n"
                 + "    <argument name=\"encoding\" type=\"string\">UTF-8</argument>\n"
                 + "    <argument name=\"newPid\" type=\"boolean\">true</argument>\n"
                 + "  </JournalEntry>\n" + "</FedoraJournal>\n";
@@ -475,7 +506,9 @@ public class TestLockingFollowingJournalReader extends TestCase implements
      * Set one of these as the ingest object on the ManagementDelegate. When the
      * second ingest operation begins, a Lock Request will be created.
      */
-    private final class LockAfterSecondIngest implements Runnable {
+    private final class LockAfterSecondIngest
+            implements Runnable {
+
         public void run() {
             if (delegate.getIngestCalls() == 2) {
                 try {

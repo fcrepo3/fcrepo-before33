@@ -5,28 +5,27 @@
 
 package fedora.server.errors.authorization;
 
-
 /**
- *
- * <p><b>Title:</b> NotAuthorizedException.java</p>
- * <p><b>Description:</b> Thrown when authorization is denied.</p>
- *
- *
- * @author wdn5e@virginia.edu
- * @version $Id$
+ * Thrown when authorization is denied.
+ * 
+ * @author Bill Niebel
  */
 public class AuthzDeniedException
         extends AuthzException {
-	private static final long serialVersionUID = 1L;
-	
-	public static final String BRIEF_DESC = "Authorized Denied";
+
+    private static final long serialVersionUID = 1L;
+
+    public static final String BRIEF_DESC = "Authorized Denied";
 
     public AuthzDeniedException(String message) {
         super(null, message, null, null, null);
     }
 
-    public AuthzDeniedException(String bundleName, String code,
-            String[] replacements, String[] details, Throwable cause) {
+    public AuthzDeniedException(String bundleName,
+                                String code,
+                                String[] replacements,
+                                String[] details,
+                                Throwable cause) {
         super(bundleName, code, replacements, details, cause);
     }
 

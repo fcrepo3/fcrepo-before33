@@ -5,37 +5,36 @@
 
 package fedora.client.objecteditor.types;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+
+import java.util.List;
 
 /**
- * Defines the datastreams that a behavior mechanism requires in
- * order to fulfill its behavior definition ("contract").
- *
- * A behavior mechanism object specifies this.
- * 
+ * Defines the datastreams that a behavior mechanism requires in order to
+ * fulfill its behavior definition ("contract"). A behavior mechanism object
+ * specifies this.
  */
 public class DatastreamInputSpec {
 
-    private String m_label;
-    private List m_bindingRules;
+    private final String m_label;
+
+    private final List m_bindingRules;
 
     /**
      * Initialize a DatastreamInputSpec object with all values.
      */
-    public DatastreamInputSpec(String label, 
-                               List bindingRules) {
-        m_label=label;
-        m_bindingRules=bindingRules;
+    public DatastreamInputSpec(String label, List bindingRules) {
+        m_label = label;
+        m_bindingRules = bindingRules;
     }
 
     /**
-     * Parse a stream of XML and return the datastream input spec
-     * defined therein.
-     *
-     * The parsing is very relaxed.  The xml may, but needn't be 
-     * namespace-qualified, and will only be validated according to the
-     * rules implied below in parentheses.
+     * Parse a stream of XML and return the datastream input spec defined
+     * therein. The parsing is very relaxed. The xml may, but needn't be
+     * namespace-qualified, and will only be validated according to the rules
+     * implied below in parentheses.
+     * 
      * <pre>
      * &lt;DSInputSpec label="SPEC_LABEL"&gt;
      *     &lt;DSInput DSMax="MAX_DATASTREAMS" 
@@ -49,13 +48,12 @@ public class DatastreamInputSpec {
      * &lt;/DSInputSpec&gt;
      * </pre>
      */
-    public static DatastreamInputSpec parse(InputStream xml) 
-            throws IOException {
+    public static DatastreamInputSpec parse(InputStream xml) throws IOException {
         return new DatastreamInputSpecDeserializer(xml).getResult();
     }
 
     /**
-     * Get a short description of the input specification.  This may be null.
+     * Get a short description of the input specification. This may be null.
      */
     public String getLabel() {
         return m_label;

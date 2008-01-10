@@ -5,54 +5,65 @@
 
 package fedora.client;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
-import fedora.client.Administrator;
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  * Launch a dialog for selecting which object type(s) the user is interested in:
- * bdefs, bmechs, data objects (any combination).  Result will come
- * back as string consisting of combination of "D", "M", and "O" characters,
- * respectively, if selected.
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * bdefs, bmechs, data objects (any combination).
+ * 
+ * <p>Result will come back as string consisting of combination of "D", "M", 
+ * and "O" characters, respectively, if selected.
+ * 
+ * @author Chris Wilper
  */
-
 public class FTypeDialog
         extends JDialog {
-        
-	private static final long serialVersionUID = 1L;
 
-	private String selections;
-    
-    private JCheckBox dButton;
-    private JCheckBox mButton;
-    private JCheckBox cButton;
-    private JCheckBox oButton;
+    private static final long serialVersionUID = 1L;
+
+    private String selections;
+
+    private final JCheckBox dButton;
+
+    private final JCheckBox mButton;
+
+    private final JCheckBox cButton;
+
+    private final JCheckBox oButton;
 
     public FTypeDialog() {
-        super(JOptionPane.getFrameForComponent(Administrator.getDesktop()), "Select Object Type(s)", true);
+        super(JOptionPane.getFrameForComponent(Administrator.getDesktop()),
+              "Select Object Type(s)",
+              true);
 
-        JPanel inputPane=new JPanel();
-        inputPane.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createCompoundBorder(
-                    BorderFactory.createEmptyBorder(6, 6, 6, 6),
-                    BorderFactory.createEtchedBorder()
-                ),
-                BorderFactory.createEmptyBorder(6,6,6,6)
-                ));
-                
+        JPanel inputPane = new JPanel();
+        inputPane.setBorder(BorderFactory
+                .createCompoundBorder(BorderFactory
+                        .createCompoundBorder(BorderFactory
+                                .createEmptyBorder(6, 6, 6, 6), BorderFactory
+                                .createEtchedBorder()), BorderFactory
+                        .createEmptyBorder(6, 6, 6, 6)));
+
         inputPane.setLayout(new GridLayout(0, 1));
-        dButton=new JCheckBox("Behavior Definitions");
+        dButton = new JCheckBox("Behavior Definitions");
         dButton.setMnemonic(KeyEvent.VK_D);
-        mButton=new JCheckBox("Behavior Mechanisms");
+        mButton = new JCheckBox("Behavior Mechanisms");
         mButton.setMnemonic(KeyEvent.VK_M);
-        cButton=new JCheckBox("Content Models");
+        cButton = new JCheckBox("Content Models");
         cButton.setMnemonic(KeyEvent.VK_C);
-        oButton=new JCheckBox("Data Objects");
+        oButton = new JCheckBox("Data Objects");
         oButton.setMnemonic(KeyEvent.VK_O);
         oButton.setSelected(true);
         inputPane.add(dButton);
@@ -60,45 +71,51 @@ public class FTypeDialog
         inputPane.add(cButton);
         inputPane.add(oButton);
 
-        JButton okButton=new JButton(new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        JButton okButton = new JButton(new AbstractAction() {
 
-			public void actionPerformed(ActionEvent evt) {
-                selections="";
+            private static final long serialVersionUID = 1L;
+
+            public void actionPerformed(ActionEvent evt) {
+                selections = "";
                 if (dButton.isSelected()) {
-                    selections+="D";
+                    selections += "D";
                 }
                 if (mButton.isSelected()) {
-                    selections+="M";
+                    selections += "M";
                 }
                 if (oButton.isSelected()) {
-                    selections+="O";
+                    selections += "O";
                 }
                 if (cButton.isSelected()) {
-                    selections+="C";
+                    selections += "C";
                 }
-                if (selections.equals("")) selections=null; 
+                if (selections.equals("")) {
+                    selections = null;
+                }
                 dispose();
             }
         });
         okButton.setText("OK");
-        JButton cancelButton=new JButton(new AbstractAction() {
-        	private static final long serialVersionUID = 1L;
+        JButton cancelButton = new JButton(new AbstractAction() {
+
+            private static final long serialVersionUID = 1L;
+
             public void actionPerformed(ActionEvent evt) {
                 dispose();
             }
         });
         cancelButton.setText("Cancel");
-        JPanel buttonPane=new JPanel();
+        JPanel buttonPane = new JPanel();
         buttonPane.add(okButton);
         buttonPane.add(cancelButton);
-        Container contentPane=getContentPane();
+        Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
         contentPane.add(inputPane, BorderLayout.CENTER);
         contentPane.add(buttonPane, BorderLayout.SOUTH);
-        
+
         pack();
-        setLocation(Administrator.INSTANCE.getCenteredPos(getWidth(), getHeight()));
+        setLocation(Administrator.INSTANCE.getCenteredPos(getWidth(),
+                                                          getHeight()));
         setVisible(true);
     }
 

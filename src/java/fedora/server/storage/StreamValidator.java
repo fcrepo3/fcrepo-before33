@@ -5,18 +5,12 @@
 
 package fedora.server.storage;
 
-import fedora.server.errors.ValidationException;
-
 import java.io.InputStream;
 
+import fedora.server.errors.ValidationException;
 
 /**
- *
- * <p><b>Title:</b> StreamValidator.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
  */
 public interface StreamValidator {
 

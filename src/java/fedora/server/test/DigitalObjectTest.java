@@ -6,43 +6,41 @@
 package fedora.server.test;
 
 import java.util.Date;
-import java.util.HashMap;
+
 import junit.framework.TestCase;
 
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.BasicDigitalObject;
-import fedora.server.storage.types.DigitalObject;
-//import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DigitalObject;
 
 /**
- *
- * <p><b>Title:</b> DigitalObjectTest.java</p>
- * <p><b>Description:</b> Tests the implementation of the DigitalObject
- * interface, BasicDigitalObject.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * Tests the implementation of the DigitalObject interface, BasicDigitalObject.
+ * 
+ * @author Chris Wilper
  */
 public class DigitalObjectTest
         extends TestCase {
 
     private DigitalObject m_obj, m_bdef, m_bmech;
+
     private Date m_startTime;
+
     private Datastream m_ds1_0, m_ds1_1, m_ds2_0;
-//    private Disseminator m_diss1_0, m_diss1_1, m_diss2_0;
-    private AuditRecord m_audit1, m_audit2, m_audit3, m_audit4,
-            m_audit5, m_audit6, m_audit7;
+
+    private AuditRecord m_audit1, m_audit2, m_audit3, m_audit4, m_audit5,
+            m_audit6, m_audit7;
 
     public DigitalObjectTest(String label) {
         super(label);
     }
 
+    @Override
     public void setUp() {
         // init common values
-        m_startTime=new Date();
+        m_startTime = new Date();
         // init data object
-        m_obj=new BasicDigitalObject();
+        m_obj = new BasicDigitalObject();
         m_obj.setCreateDate(m_startTime);
         m_obj.addFedoraObjectType(DigitalObject.FEDORA_OBJECT);
         m_obj.setLabel("Test Object");
@@ -51,49 +49,39 @@ public class DigitalObjectTest
         m_obj.setPid("test:1");
         m_obj.setState("A");
         // add some datastreams
-        m_ds1_0=new Datastream();
-        m_ds1_0.DatastreamID="DS1.0";
-        m_ds1_0.DSVersionID="DS1";
-        m_ds1_1=new Datastream();
-        m_ds1_1.DatastreamID="DS1.1";
-        m_ds1_1.DSVersionID="DS1";
-        m_ds2_0=new Datastream();
-        m_ds2_0.DatastreamID="DS2.0";
-        m_ds2_0.DSVersionID="DS2";
-        // ... and some disseminators
-//        m_diss1_0=new Disseminator();
-//        m_diss1_0.dissID="DISS1.0";
-//        m_diss1_0.dissVersionID="DISS1";
-//        m_diss1_1=new Disseminator();
-//        m_diss1_1.dissID="DISS1.1";
-//        m_diss1_1.dissVersionID="DISS1";
-//        m_diss2_0=new Disseminator();
-//        m_diss2_0.dissID="DISS2.0";
-//        m_diss2_0.dissVersionID="DISS2";
+        m_ds1_0 = new Datastream();
+        m_ds1_0.DatastreamID = "DS1.0";
+        m_ds1_0.DSVersionID = "DS1";
+        m_ds1_1 = new Datastream();
+        m_ds1_1.DatastreamID = "DS1.1";
+        m_ds1_1.DSVersionID = "DS1";
+        m_ds2_0 = new Datastream();
+        m_ds2_0.DatastreamID = "DS2.0";
+        m_ds2_0.DSVersionID = "DS2";
         // ... and some audit records
-        m_audit1=new AuditRecord();
-        m_audit1.id="AUDIT1";
-        m_audit1.action="Object Created";
-        m_audit2=new AuditRecord();
-        m_audit2.id="AUDIT2";
-        m_audit2.action="Datastream 1 Added";
-        m_audit3=new AuditRecord();
-        m_audit3.id="AUDIT3";
-        m_audit3.action="Datastream 1 Versioned";
-        m_audit4=new AuditRecord();
-        m_audit4.id="AUDIT4";
-        m_audit4.action="Datastream 2 Added";
-        m_audit5=new AuditRecord();
-        m_audit5.id="AUDIT5";
-        m_audit5.action="Disseminator 1 Added";
-        m_audit6=new AuditRecord();
-        m_audit6.id="AUDIT6";
-        m_audit6.action="Disseminator 1 Versioned";
-        m_audit7=new AuditRecord();
-        m_audit7.id="AUDIT7";
-        m_audit7.action="Disseminator 2 Added";
+        m_audit1 = new AuditRecord();
+        m_audit1.id = "AUDIT1";
+        m_audit1.action = "Object Created";
+        m_audit2 = new AuditRecord();
+        m_audit2.id = "AUDIT2";
+        m_audit2.action = "Datastream 1 Added";
+        m_audit3 = new AuditRecord();
+        m_audit3.id = "AUDIT3";
+        m_audit3.action = "Datastream 1 Versioned";
+        m_audit4 = new AuditRecord();
+        m_audit4.id = "AUDIT4";
+        m_audit4.action = "Datastream 2 Added";
+        m_audit5 = new AuditRecord();
+        m_audit5.id = "AUDIT5";
+        m_audit5.action = "Disseminator 1 Added";
+        m_audit6 = new AuditRecord();
+        m_audit6.id = "AUDIT6";
+        m_audit6.action = "Disseminator 1 Versioned";
+        m_audit7 = new AuditRecord();
+        m_audit7.id = "AUDIT7";
+        m_audit7.action = "Disseminator 2 Added";
         // init bdef
-        m_bdef=new BasicDigitalObject();
+        m_bdef = new BasicDigitalObject();
         m_bdef.setCreateDate(m_startTime);
         m_bdef.addFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
         m_bdef.setLabel("Test Behavior Definition Object");
@@ -102,7 +90,7 @@ public class DigitalObjectTest
         m_bdef.setPid("test:2");
         m_bdef.setState("W");
         // init bmech
-        m_bmech=new BasicDigitalObject();
+        m_bmech = new BasicDigitalObject();
         m_bmech.setCreateDate(m_startTime);
         m_bmech.addFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
         m_bmech.setLabel("Test Behavior Mechanism Object");
@@ -116,9 +104,12 @@ public class DigitalObjectTest
         assertEquals(m_obj.getCreateDate(), m_startTime);
         assertEquals(m_bdef.getCreateDate(), m_startTime);
         assertEquals(m_bmech.getCreateDate(), m_startTime);
-        assertEquals(m_obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT), true);
-        assertEquals(m_bdef.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT), true);
-        assertEquals(m_bmech.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT), true);
+        assertEquals(m_obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT),
+                     true);
+        assertEquals(m_bdef
+                .isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT), true);
+        assertEquals(m_bmech
+                .isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT), true);
         assertEquals(m_obj.getLabel(), "Test Object");
         assertEquals(m_bdef.getLabel(), "Test Behavior Definition Object");
         assertEquals(m_bmech.getLabel(), "Test Behavior Mechanism Object");
@@ -142,15 +133,12 @@ public class DigitalObjectTest
 
     public void testDatastreamComposition() {
         m_obj.getAuditRecords().add(m_audit2);
-        //m_ds1_0.auditRecordIdList().add(m_audit2.id);
         m_obj.datastreams("DS1").add(m_ds1_0);
 
         m_obj.getAuditRecords().add(m_audit3);
-        //m_ds1_1.auditRecordIdList().add(m_audit3.id);
         m_obj.datastreams("DS1").add(m_ds1_1);
 
         m_obj.getAuditRecords().add(m_audit4);
-        //m_ds2_0.auditRecordIdList().add(m_audit4.id);
         m_obj.datastreams("DS2").add(m_ds2_0);
     }
 

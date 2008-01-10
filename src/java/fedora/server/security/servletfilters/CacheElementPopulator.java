@@ -5,11 +5,11 @@
 
 package fedora.server.security.servletfilters;
 
-/** 
- *  @author Bill Niebel (niebel@virginia.edu)
+/**
+ * @author Bill Niebel
  */
 public interface CacheElementPopulator {
-	
-	public void populateCacheElement(CacheElement cacheElement, String password);
+
+    public void populateCacheElement(CacheElement cacheElement, String password);
 
 }

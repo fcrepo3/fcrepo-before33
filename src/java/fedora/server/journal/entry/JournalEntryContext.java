@@ -13,27 +13,28 @@ import fedora.server.MultiValueMap;
 import fedora.server.RecoveryContext;
 
 /**
+ * A fully writable context that can be used when recovering entries from a
+ * Journal.
  * 
- * <p>
- * <b>Title:</b> JournalEntryContext.java
- * </p>
- * <p>
- * <b>Description:</b> A fully writable context that can be used when
- * recovering entries from a Journal.
- * </p>
- * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
+public class JournalEntryContext
+        implements RecoveryContext {
 
-public class JournalEntryContext implements RecoveryContext {
     private MultiValueMap environmentAttributes = new MultiValueMap();
+
     private MultiValueMap subjectAttributes = new MultiValueMap();
+
     private MultiValueMap actionAttributes = new MultiValueMap();
+
     private MultiValueMap resourceAttributes = new MultiValueMap();
+
     private MultiValueMap recoveryAttributes = new MultiValueMap();
+
     private String password = "";
+
     private boolean noOp = false;
+
     private Date now = new Date();
 
     /**
@@ -48,27 +49,25 @@ public class JournalEntryContext implements RecoveryContext {
      * be read-only.
      */
     public JournalEntryContext(Context source) {
-        this.password = source.getPassword();
-        this.noOp = source.getNoOp();
-        this.now = source.now();
+        password = source.getPassword();
+        noOp = source.getNoOp();
+        now = source.now();
         for (Iterator keys = source.environmentAttributes(); keys.hasNext();) {
             String key = (String) keys.next();
-            storeInMap(this.environmentAttributes, key, source
+            storeInMap(environmentAttributes, key, source
                     .getEnvironmentValues(key));
         }
         for (Iterator keys = source.subjectAttributes(); keys.hasNext();) {
             String key = (String) keys.next();
-            storeInMap(this.subjectAttributes, key, source
-                    .getSubjectValues(key));
+            storeInMap(subjectAttributes, key, source.getSubjectValues(key));
         }
         for (Iterator keys = source.actionAttributes(); keys.hasNext();) {
             String key = (String) keys.next();
-            storeInMap(this.actionAttributes, key, source.getActionValues(key));
+            storeInMap(actionAttributes, key, source.getActionValues(key));
         }
         for (Iterator keys = source.resourceAttributes(); keys.hasNext();) {
             String key = (String) keys.next();
-            storeInMap(this.resourceAttributes, key, source
-                    .getResourceValues(key));
+            storeInMap(resourceAttributes, key, source.getResourceValues(key));
         }
     }
 
@@ -197,6 +196,7 @@ public class JournalEntryContext implements RecoveryContext {
     // Additional methods
     // -------------------------------------------------------------------------
 
+    @Override
     public String toString() {
         return this.getClass().getName() + "[environmentAttributes="
                 + environmentAttributes + ", subjectAttributes="
@@ -207,7 +207,7 @@ public class JournalEntryContext implements RecoveryContext {
     }
 
     // Make the class fully read/write.
-    
+
     public MultiValueMap getActionAttributes() {
         return actionAttributes;
     }
@@ -237,11 +237,11 @@ public class JournalEntryContext implements RecoveryContext {
     }
 
     public void setRecoveryValue(String attribute, String value) {
-        setRecoveryValues(attribute, new String[] { value });
+        setRecoveryValues(attribute, new String[] {value});
     }
 
     public void setRecoveryValues(String attribute, String[] values) {
-        storeInMap(this.recoveryAttributes, attribute, values);
+        storeInMap(recoveryAttributes, attribute, values);
     }
 
     public void setNoOp(boolean noOp) {

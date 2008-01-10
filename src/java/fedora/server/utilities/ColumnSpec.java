@@ -6,42 +6,54 @@
 package fedora.server.utilities;
 
 /**
- *
- * <p><b>Title:</b> ColumnSpec.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
  */
 public class ColumnSpec {
 
-    private String m_name;
-    private boolean m_binary;
-    private String m_type;
-    private String m_defaultValue;
-    private boolean m_isAutoIncremented;
-    private String m_indexName;
-    private boolean m_isUnique;
-    private boolean m_isNotNull;
-    private String m_foreignTableName;
-    private String m_foreignColumnName;
-    private String m_onDeleteAction;
+    private final String m_name;
 
-    public ColumnSpec(String name, String type, boolean binary, String defaultValue,
-            boolean isAutoIncremented, String indexName, boolean isUnique,
-            boolean isNotNull, String foreignTableName, String foreignColumnName,
-            String onDeleteAction) {
-        m_name=name;
-        m_type=type;
-        m_binary=binary;
-        m_defaultValue=defaultValue;
-        m_isAutoIncremented=isAutoIncremented;
-        m_indexName=indexName;
-        m_isUnique=isUnique;
-        m_isNotNull=isNotNull;
-        m_foreignTableName=foreignTableName;
-        m_foreignColumnName=foreignColumnName;
-        m_onDeleteAction=onDeleteAction;
+    private final boolean m_binary;
+
+    private final String m_type;
+
+    private final String m_defaultValue;
+
+    private final boolean m_isAutoIncremented;
+
+    private final String m_indexName;
+
+    private final boolean m_isUnique;
+
+    private final boolean m_isNotNull;
+
+    private final String m_foreignTableName;
+
+    private final String m_foreignColumnName;
+
+    private final String m_onDeleteAction;
+
+    public ColumnSpec(String name,
+                      String type,
+                      boolean binary,
+                      String defaultValue,
+                      boolean isAutoIncremented,
+                      String indexName,
+                      boolean isUnique,
+                      boolean isNotNull,
+                      String foreignTableName,
+                      String foreignColumnName,
+                      String onDeleteAction) {
+        m_name = name;
+        m_type = type;
+        m_binary = binary;
+        m_defaultValue = defaultValue;
+        m_isAutoIncremented = isAutoIncremented;
+        m_indexName = indexName;
+        m_isUnique = isUnique;
+        m_isNotNull = isNotNull;
+        m_foreignTableName = foreignTableName;
+        m_foreignColumnName = foreignColumnName;
+        m_onDeleteAction = onDeleteAction;
     }
 
     public String getName() {

@@ -10,24 +10,18 @@ import fedora.server.journal.entry.JournalEntry;
 import fedora.server.management.ManagementDelegate;
 
 /**
+ * Adapter class for Management.setDatastreamVersionable()
  * 
- * <p>
- * <b>Title:</b> SetDatastreamVersionableMethod.java
- * </p>
- * <p>
- * <b>Description:</b> Adapter class for Management.setDatastreamVersionable()
- * </p>
- * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
-
-public class SetDatastreamVersionableMethod extends ManagementMethod {
+public class SetDatastreamVersionableMethod
+        extends ManagementMethod {
 
     public SetDatastreamVersionableMethod(JournalEntry parent) {
         super(parent);
     }
 
+    @Override
     public Object invoke(ManagementDelegate delegate) throws ServerException {
         return delegate.setDatastreamVersionable(parent.getContext(), parent
                 .getStringArgument(ARGUMENT_NAME_PID), parent

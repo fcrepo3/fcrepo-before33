@@ -6,19 +6,20 @@
 package fedora.server.errors;
 
 /**
- *
- * <p><b>Title:</b> ValidationException.java</p>
- * <p><b>Description:</b> Signals an error while validating.</p>
- *
- * @author payette@cs.cornell.edu
- * @version $Id$
+ * Signals an error while validating.
+ * 
+ * @author Sandy Payette
  */
 public class ValidationException
         extends ObjectIntegrityException {
-	private static final long serialVersionUID = 1L;
 
-    public ValidationException(String bundleName, String code, String[] values,
-            String[] details, Throwable cause) {
+    private static final long serialVersionUID = 1L;
+
+    public ValidationException(String bundleName,
+                               String code,
+                               String[] values,
+                               String[] details,
+                               Throwable cause) {
         super(bundleName, code, values, details, cause);
     }
 

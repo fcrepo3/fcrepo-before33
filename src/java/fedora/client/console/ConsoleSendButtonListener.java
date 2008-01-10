@@ -18,48 +18,49 @@ import javax.swing.JPanel;
 import fedora.client.Administrator;
 
 /**
- *
- * <p><b>Title:</b> ConsoleSendButtonListener.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
  */
 public class ConsoleSendButtonListener
         implements ActionListener {
 
-    private Administrator m_mainFrame;
-    private ComboBoxModel m_model;
-    private Console m_console;
+    private final Administrator m_mainFrame;
 
-    public ConsoleSendButtonListener(ComboBoxModel model, Administrator mainFrame, Console console) {
-        m_model=model;
-        m_mainFrame=mainFrame;
-        m_console=console;
+    private final ComboBoxModel m_model;
+
+    private final Console m_console;
+
+    public ConsoleSendButtonListener(ComboBoxModel model,
+                                     Administrator mainFrame,
+                                     Console console) {
+        m_model = model;
+        m_mainFrame = mainFrame;
+        m_console = console;
     }
 
     public void actionPerformed(ActionEvent event) {
-        ConsoleCommand command=(ConsoleCommand) m_model.getSelectedItem();
-        JDialog jd=new JDialog(m_mainFrame, "Send Command", true);
-        JPanel panel=new JPanel();
+        ConsoleCommand command = (ConsoleCommand) m_model.getSelectedItem();
+        JDialog jd = new JDialog(m_mainFrame, "Send Command", true);
+        JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-        ConsoleCommandInvoker invoker=new ConsoleCommandInvoker(command, m_console);
-        invoker.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
+        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        ConsoleCommandInvoker invoker =
+                new ConsoleCommandInvoker(command, m_console);
+        invoker.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
         panel.add(invoker, BorderLayout.CENTER);
-        JPanel okCancelPanel=new JPanel();
+        JPanel okCancelPanel = new JPanel();
         okCancelPanel.setLayout(new BorderLayout());
-        JButton okButton=new JButton("OK");
-        InvokeDialogListener listener=new InvokeDialogListener(jd, invoker);
+        JButton okButton = new JButton("OK");
+        InvokeDialogListener listener = new InvokeDialogListener(jd, invoker);
         okButton.addActionListener(listener);
-        JButton cancelButton=new JButton("Cancel");
+        JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(listener);
         okCancelPanel.add(cancelButton, BorderLayout.WEST);
         okCancelPanel.add(okButton, BorderLayout.EAST);
         panel.add(okCancelPanel, BorderLayout.SOUTH);
         jd.getContentPane().add(panel, BorderLayout.CENTER);
         jd.pack();
-        jd.setLocation(m_mainFrame.getCenteredPos(jd.getWidth(),jd.getHeight()));
+        jd.setLocation(m_mainFrame
+                .getCenteredPos(jd.getWidth(), jd.getHeight()));
         jd.setVisible(true);
     }
 }

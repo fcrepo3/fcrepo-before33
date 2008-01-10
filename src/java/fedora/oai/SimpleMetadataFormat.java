@@ -6,26 +6,26 @@
 package fedora.oai;
 
 /**
- *
- * <p><b>Title:</b> SimpleMetadataFormat.java</p>
- * <p><b>Description:</b> A simple implementation of MetadataFormat that
- * provides getters on the values passed in the constructor.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * A simple implementation of MetadataFormat that provides getters on the 
+ * values passed in the constructor.
+ * 
+ * @author Chris Wilper
  */
 public class SimpleMetadataFormat
         implements MetadataFormat {
 
-    private String m_prefix;
-    private String m_schemaLocation;
-    private String m_namespaceURI;
+    private final String m_prefix;
 
-    public SimpleMetadataFormat(String prefix, String schemaLocation,
-            String namespaceURI) {
-        m_prefix=prefix;
-        m_schemaLocation=schemaLocation;
-        m_namespaceURI=namespaceURI;
+    private final String m_schemaLocation;
+
+    private final String m_namespaceURI;
+
+    public SimpleMetadataFormat(String prefix,
+                                String schemaLocation,
+                                String namespaceURI) {
+        m_prefix = prefix;
+        m_schemaLocation = schemaLocation;
+        m_namespaceURI = namespaceURI;
     }
 
     public String getPrefix() {

@@ -5,12 +5,10 @@
 
 package fedora.server.storage.translation;
 
-import static fedora.common.Constants.METS_EXT1_0;
-
 /**
  * Serializes objects in METS Fedora Extension 1.0 format.
  * 
- * @author cwilper@cs.cornell.edu
+ * @author Chris Wilper
  */
 public class METSFedoraExt1_0DOSerializer
         extends METSFedoraExtDOSerializer {

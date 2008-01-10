@@ -11,11 +11,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,44 +41,43 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
+
 import org.apache.log4j.Logger;
+
 import org.jrdf.graph.Literal;
 import org.jrdf.graph.Node;
+
 import org.trippi.RDFFormat;
 import org.trippi.TrippiException;
 import org.trippi.TupleIterator;
 
 import fedora.common.Constants;
+
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.utilities.DateUtility;
 
 /**
- * General-purpose utility class for Fedora clients.  
+ * General-purpose utility class for Fedora clients. Provides methods to get
+ * SOAP stubs for Fedora APIs. Also serves as one-stop-shopping for issuing HTTP
+ * requests using Apache's HttpClient. Provides option for client to handle HTTP
+ * redirects (notably 302 status that occurs with SSL auto-redirects at server.)
  * 
- * Provides methods to get SOAP stubs for Fedora APIs.  Also serves as 
- * one-stop-shopping for issuing HTTP requests using Apache's HttpClient.  
- * 
- * Provides option for client to handle HTTP redirects
- * (notably 302 status that occurs with SSL auto-redirects at server.)
- *
- * @author cwilper@cs.cornell.edu
- * @author payette@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
+ * @author Sandy Payette
  */
-public class FedoraClient implements Constants {
+public class FedoraClient
+        implements Constants {
 
     public static final String FEDORA_URI_PREFIX = "info:fedora/";
 
-    /** 
+    /**
      * Should FedoraClient take over log4j configuration?
-     *
      * <h2>Deprecated as of Fedora 2.2</h2>
-     *
-     * FedoraClient no longer takes over Log4J configuration, and setting
-     * this value has no effect.  Applications that use this class should
-     * configure Log4J themselves, or make a log4j.xml or log4j.properties
-     * file available from the runtime CLASSPATH.
+     * FedoraClient no longer takes over Log4J configuration, and setting this
+     * value has no effect. Applications that use this class should configure
+     * Log4J themselves, or make a log4j.xml or log4j.properties file available
+     * from the runtime CLASSPATH.
      */
     @Deprecated
     public static boolean FORCE_LOG4J_CONFIGURATION = false;
@@ -96,24 +98,29 @@ public class FedoraClient implements Constants {
     public boolean FOLLOW_REDIRECTS = true;
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(
-            FedoraClient.class.getName());
+    private static final Logger LOG =
+            Logger.getLogger(FedoraClient.class.getName());
 
-    private SOAPEndpoint m_accessEndpoint = new SOAPEndpoint("access");
-    private SOAPEndpoint m_managementEndpoint = new SOAPEndpoint("management");
+    private final SOAPEndpoint m_accessEndpoint = new SOAPEndpoint("access");
+
+    private final SOAPEndpoint m_managementEndpoint =
+            new SOAPEndpoint("management");
 
     private String m_baseURL;
-    private String m_user;
-    private String m_pass;
 
-    private AuthScope m_authScope;
-    private UsernamePasswordCredentials m_creds;
+    private final String m_user;
 
-    private MultiThreadedHttpConnectionManager m_cManager;
+    private final String m_pass;
+
+    private final AuthScope m_authScope;
+
+    private final UsernamePasswordCredentials m_creds;
+
+    private final MultiThreadedHttpConnectionManager m_cManager;
 
     private String m_serverVersion;
 
-    /** 
+    /**
      * Location of Fedora's upload interface, set on first call to
      * getUploadURL().
      */
@@ -130,68 +137,74 @@ public class FedoraClient implements Constants {
         }
     }
 
-    public FedoraClient(String baseURL, String user, String pass) throws MalformedURLException {
-    	m_baseURL = baseURL;
+    public FedoraClient(String baseURL, String user, String pass)
+            throws MalformedURLException {
+        m_baseURL = baseURL;
         m_user = user;
         m_pass = pass;
-        if (!baseURL.endsWith("/")) m_baseURL += "/";
+        if (!baseURL.endsWith("/")) {
+            m_baseURL += "/";
+        }
         URL url = new URL(m_baseURL);
-        m_authScope = new AuthScope(url.getHost(), AuthScope.ANY_PORT, AuthScope.ANY_REALM);
+        m_authScope =
+                new AuthScope(url.getHost(),
+                              AuthScope.ANY_PORT,
+                              AuthScope.ANY_REALM);
         m_creds = new UsernamePasswordCredentials(user, pass);
-        m_cManager = new MultiThreadedHttpConnectionManager();       
+        m_cManager = new MultiThreadedHttpConnectionManager();
     }
 
-	public HttpClient getHttpClient() {
-		m_cManager.getParams().setDefaultMaxConnectionsPerHost(MAX_CONNECTIONS_PER_HOST);
-		m_cManager.getParams().setMaxTotalConnections(MAX_TOTAL_CONNECTIONS);
-		m_cManager.getParams().setConnectionTimeout(TIMEOUT_SECONDS * 1000);
-		m_cManager.getParams().setSoTimeout(SOCKET_TIMEOUT_SECONDS * 1000);
-		HttpClient client = new HttpClient(m_cManager);
-		client.getState().setCredentials(m_authScope, m_creds);
-		client.getParams().setAuthenticationPreemptive(true);
-		return client;
-	}
+    public HttpClient getHttpClient() {
+        m_cManager.getParams()
+                .setDefaultMaxConnectionsPerHost(MAX_CONNECTIONS_PER_HOST);
+        m_cManager.getParams().setMaxTotalConnections(MAX_TOTAL_CONNECTIONS);
+        m_cManager.getParams().setConnectionTimeout(TIMEOUT_SECONDS * 1000);
+        m_cManager.getParams().setSoTimeout(SOCKET_TIMEOUT_SECONDS * 1000);
+        HttpClient client = new HttpClient(m_cManager);
+        client.getState().setCredentials(m_authScope, m_creds);
+        client.getParams().setAuthenticationPreemptive(true);
+        return client;
+    }
 
     /**
      * Upload the given file to Fedora's upload interface via HTTP POST.
-     *
-     * @return the temporary id which can then be passed to API-M requests
-     *         as a URL.  It will look like uploaded://123
+     * 
+     * @return the temporary id which can then be passed to API-M requests as a
+     *         URL. It will look like uploaded://123
      */
-    public String uploadFile(File file)
-            throws IOException {
+    public String uploadFile(File file) throws IOException {
         PostMethod post = null;
         try {
             // prepare the post method
             post = new PostMethod(getUploadURL());
             post.setDoAuthentication(true);
-            post.getParams().setParameter("Connection","Keep-Alive");
+            post.getParams().setParameter("Connection", "Keep-Alive");
 
             // chunked encoding is not required by the Fedora server,
             // but makes uploading very large files possible
             post.setContentChunked(true);
 
             // add the file part
-            Part[] parts = { new FilePart("file", file) };
-            post.setRequestEntity(new MultipartRequestEntity(parts, 
-                    post.getParams()));
+            Part[] parts = {new FilePart("file", file)};
+            post.setRequestEntity(new MultipartRequestEntity(parts, post
+                    .getParams()));
 
             // execute and get the response
             int responseCode = getHttpClient().executeMethod(post);
             String body = null;
-            try { 
+            try {
                 body = post.getResponseBodyAsString();
             } catch (Exception e) {
-                LOG.warn("Error reading response body", e); 
+                LOG.warn("Error reading response body", e);
             }
             if (body == null) {
                 body = "[empty response body]";
             }
             body = body.trim();
             if (responseCode != HttpStatus.SC_CREATED) {
-                throw new IOException("Upload failed: " 
-                        + HttpStatus.getStatusText(responseCode)
-                        + ": " + replaceNewlines(body, " "));
+                throw new IOException("Upload failed: "
+                        + HttpStatus.getStatusText(responseCode) + ": "
+                        + replaceNewlines(body, " "));
             } else {
                 return replaceNewlines(body, "");
             }
@@ -212,8 +225,7 @@ public class FedoraClient implements Constants {
     /**
      * Get the URL to which API-M upload requests will be sent.
      */
-    public synchronized String getUploadURL()
-            throws IOException {
+    public synchronized String getUploadURL() throws IOException {
         if (m_uploadURL != null) {
             return m_uploadURL;
         } else {
@@ -228,153 +240,184 @@ public class FedoraClient implements Constants {
         }
     }
 
-	/**
-	 * Get an HTTP resource with the response as an InputStream, given a resource
-     * locator that either begins with 'info:fedora/' , 'http://', or '/'.
-     *
-     * This method will follow redirects if FOLLOW_REDIRECTS is true.
-     *
-     * Note that if the HTTP response has no body, the InputStream will
-     * be empty.  The success of a request can be checked with
-     * getResponseCode().  Usually you'll want to see a 200.
-     * See http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for other 
-     * codes.
+    /**
+     * Get an HTTP resource with the response as an InputStream, given a
+     * resource locator that either begins with 'info:fedora/' , 'http://', or
+     * '/'. This method will follow redirects if FOLLOW_REDIRECTS is true. Note
+     * that if the HTTP response has no body, the InputStream will be empty. The
+     * success of a request can be checked with getResponseCode(). Usually
+     * you'll want to see a 200. See
+     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for other codes.
      * 
-	 * @param locator         A URL, relative Fedora URL, or Fedora URI that we want to 
-	 *                        do an HTTP GET upon
-	 * @param failIfNotOK     boolean value indicating if an exception should be thrown
-	 *                        if we do NOT receive an HTTP 200 response (OK)
-	 * @return HttpInputStream  the HTTP response
-	 * @throws IOException
+     * @param locator
+     *        A URL, relative Fedora URL, or Fedora URI that we want to do an
+     *        HTTP GET upon
+     * @param failIfNotOK
+     *        boolean value indicating if an exception should be thrown if we do
+     *        NOT receive an HTTP 200 response (OK)
+     * @return HttpInputStream the HTTP response
+     * @throws IOException
      */
-    public HttpInputStream get(String locator, boolean failIfNotOK) throws IOException {
+    public HttpInputStream get(String locator, boolean failIfNotOK)
+            throws IOException {
         return get(locator, failIfNotOK, FOLLOW_REDIRECTS);
     }
-	  
-	/**
-	 * Get an HTTP resource with the response as an InputStream, given a URL.
-     *
-     * This method will follow redirects if FOLLOW_REDIRECTS is true.
-     *
-     * Note that if the HTTP response has no body, the InputStream will
-     * be empty.  The success of a request can be checked with
-     * getResponseCode().  Usually you'll want to see a 200.
-     * See http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for other codes.
+
+    /**
+     * Get an HTTP resource with the response as an InputStream, given a URL.
+     * This method will follow redirects if FOLLOW_REDIRECTS is true. Note that
+     * if the HTTP response has no body, the InputStream will be empty. The
+     * success of a request can be checked with getResponseCode(). Usually
+     * you'll want to see a 200. See
+     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for other codes.
      * 
-	 * @param url             A URL that we want to do an HTTP GET upon
-	 * @param failIfNotOK     boolean value indicating if an exception should be thrown
-	 *                        if we do NOT receive an HTTP 200 response (OK)
-	 * @return HttpInputStream  the HTTP response
-	 * @throws IOException
+     * @param url
+     *        A URL that we want to do an HTTP GET upon
+     * @param failIfNotOK
+     *        boolean value indicating if an exception should be thrown if we do
+     *        NOT receive an HTTP 200 response (OK)
+     * @return HttpInputStream the HTTP response
+     * @throws IOException
      */
     public HttpInputStream get(URL url, boolean failIfNotOK) throws IOException {
         return get(url, failIfNotOK, FOLLOW_REDIRECTS);
     }
-	   
-	/**
-	 * Get an HTTP resource with the response as an InputStream, given a resource
-     * locator that either begins with 'info:fedora/' , 'http://', or '/'.
-     *
-     * Note that if the HTTP response has no body, the InputStream will
-     * be empty.  The success of a request can be checked with
-     * getResponseCode().  Usually you'll want to see a 200.
-     * See http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for other codes.
+
+    /**
+     * Get an HTTP resource with the response as an InputStream, given a
+     * resource locator that either begins with 'info:fedora/' , 'http://', or
+     * '/'. Note that if the HTTP response has no body, the InputStream will be
+     * empty. The success of a request can be checked with getResponseCode().
+     * Usually you'll want to see a 200. See
+     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for other codes.
      * 
-	 * @param locator         A URL, relative Fedora URL, or Fedora URI that we want to 
-	 *                        do an HTTP GET upon
-	 * @param failIfNotOK     boolean value indicating if an exception should be thrown
-	 *                        if we do NOT receive an HTTP 200 response (OK)
-	 * @param followRedirects boolean value indicating whether HTTP redirects
-	 *                        should be handled in this method, or be passed along
-	 *                        so that they can be handled later.
-	 * @return HttpInputStream  the HTTP response
-	 * @throws IOException
-	 */
-    public HttpInputStream get(String locator, boolean failIfNotOK, boolean followRedirects) throws IOException {
+     * @param locator
+     *        A URL, relative Fedora URL, or Fedora URI that we want to do an
+     *        HTTP GET upon
+     * @param failIfNotOK
+     *        boolean value indicating if an exception should be thrown if we do
+     *        NOT receive an HTTP 200 response (OK)
+     * @param followRedirects
+     *        boolean value indicating whether HTTP redirects should be handled
+     *        in this method, or be passed along so that they can be handled
+     *        later.
+     * @return HttpInputStream the HTTP response
+     * @throws IOException
+     */
+    public HttpInputStream get(String locator,
+                               boolean failIfNotOK,
+                               boolean followRedirects) throws IOException {
 
         // Convert the locator to a proper Fedora URL and the do a get.
         String url = getLocatorAsURL(locator);
         return get(new URL(url), failIfNotOK, followRedirects);
     }
-    
-	/**
-	 * Get an HTTP resource with the response as an InputStream, given a URL.
-	 *
-	 * Note that if the HTTP response has no body, the InputStream will
-	 * be empty.  The success of a request can be checked with
-	 * getResponseCode().  Usually you'll want to see a 200.
-	 * See http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for other codes.
-	 * 
-	 * @param url             A URL that we want to do an HTTP GET upon
-	 * @param failIfNotOK     boolean value indicating if an exception should be thrown
-	 *                        if we do NOT receive an HTTP 200 response (OK)
-	 * @param followRedirects boolean value indicating whether HTTP redirects
-	 *                        should be handled in this method, or be passed along
-	 *                        so that they can be handled later.
-	 * @return HttpInputStream  the HTTP response
-	 * @throws IOException
-	 */
-	public HttpInputStream get(URL url, boolean failIfNotOK, boolean followRedirects) throws IOException {
 
-		String urlString = url.toString();
-		LOG.debug("FedoraClient is getting " + urlString);		
-		HttpClient client = getHttpClient();
-		GetMethod getMethod = new GetMethod(urlString);
-		getMethod.setDoAuthentication(true);
-		getMethod.setFollowRedirects(followRedirects);
-		HttpInputStream in = new HttpInputStream(client, getMethod, urlString);
-		int status = in.getStatusCode();
-		if (failIfNotOK) {
-			if (status != 200) {
-				if (followRedirects && (300 <= status && status <= 399)) {
-					// Handle the redirect here !
-					LOG.debug("FedoraClient is handling redirect for HTTP STATUS=" + status);
-					Header hLoc = in.getResponseHeader("location");
-					if (hLoc != null) {
-						LOG.debug("FedoraClient is trying redirect location: " + hLoc.getValue());
-						// Try the redirect location, but don't try to handle another level of redirection.						
-						return get(hLoc.getValue(), true, false);	
-					} else {
-						try { 
-							throw new IOException("Request failed [" + status + " " + in.getStatusText() + "]");
-						} finally {
-							try { in.close(); } catch (Exception e) {LOG.error("Can't close InputStream: " + e.getMessage());}
-						}
-					}
-				} else {
-					try { 
-						throw new IOException("Request failed [" + in.getStatusCode() + " " + in.getStatusText() + "]");
-					} finally {
-						try { in.close(); } catch (Exception e) {LOG.error("Can't close InputStream: " + e.getMessage());}
-					}
-				}
-			}
-		}
-		return in;
-	}
+    /**
+     * Get an HTTP resource with the response as an InputStream, given a URL.
+     * Note that if the HTTP response has no body, the InputStream will be
+     * empty. The success of a request can be checked with getResponseCode().
+     * Usually you'll want to see a 200. See
+     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for other codes.
+     * 
+     * @param url
+     *        A URL that we want to do an HTTP GET upon
+     * @param failIfNotOK
+     *        boolean value indicating if an exception should be thrown if we do
+     *        NOT receive an HTTP 200 response (OK)
+     * @param followRedirects
+     *        boolean value indicating whether HTTP redirects should be handled
+     *        in this method, or be passed along so that they can be handled
+     *        later.
+     * @return HttpInputStream the HTTP response
+     * @throws IOException
+     */
+    public HttpInputStream get(URL url,
+                               boolean failIfNotOK,
+                               boolean followRedirects) throws IOException {
 
-	/**
-     * Get an HTTP resource with the response as a String instead of an InputStream, 
-     * given a resource locator that either begins with 'info:fedora/' , 'http://', or '/'.
-	 * 
-	 * @param locator         A URL, relative Fedora URL, or Fedora URI that we want to 
-	 *                        do an HTTP GET upon
-	 * @param failIfNotOK     boolean value indicating if an exception should be thrown
-	 *                        if we do NOT receive an HTTP 200 response (OK)
-	 * @param followRedirects boolean value indicating whether HTTP redirects
-	 *                        should be handled in this method, or be passed along
-	 *                        so that they can be handled later. 
-	 * @return String  the HTTP response as a string
-	 * @throws IOException
-	 */
-    public String getResponseAsString(String locator, boolean failIfNotOK, boolean followRedirects) throws IOException {
-       
+        String urlString = url.toString();
+        LOG.debug("FedoraClient is getting " + urlString);
+        HttpClient client = getHttpClient();
+        GetMethod getMethod = new GetMethod(urlString);
+        getMethod.setDoAuthentication(true);
+        getMethod.setFollowRedirects(followRedirects);
+        HttpInputStream in = new HttpInputStream(client, getMethod, urlString);
+        int status = in.getStatusCode();
+        if (failIfNotOK) {
+            if (status != 200) {
+                if (followRedirects && 300 <= status && status <= 399) {
+                    // Handle the redirect here !
+                    LOG
+                            .debug("FedoraClient is handling redirect for HTTP STATUS="
+                                    + status);
+                    Header hLoc = in.getResponseHeader("location");
+                    if (hLoc != null) {
+                        LOG.debug("FedoraClient is trying redirect location: "
+                                + hLoc.getValue());
+                        // Try the redirect location, but don't try to handle another level of redirection.						
+                        return get(hLoc.getValue(), true, false);
+                    } else {
+                        try {
+                            throw new IOException("Request failed [" + status
+                                    + " " + in.getStatusText() + "]");
+                        } finally {
+                            try {
+                                in.close();
+                            } catch (Exception e) {
+                                LOG.error("Can't close InputStream: "
+                                        + e.getMessage());
+                            }
+                        }
+                    }
+                } else {
+                    try {
+                        throw new IOException("Request failed ["
+                                + in.getStatusCode() + " " + in.getStatusText()
+                                + "]");
+                    } finally {
+                        try {
+                            in.close();
+                        } catch (Exception e) {
+                            LOG.error("Can't close InputStream: "
+                                    + e.getMessage());
+                        }
+                    }
+                }
+            }
+        }
+        return in;
+    }
+
+    /**
+     * Get an HTTP resource with the response as a String instead of an
+     * InputStream, given a resource locator that either begins with
+     * 'info:fedora/' , 'http://', or '/'.
+     * 
+     * @param locator
+     *        A URL, relative Fedora URL, or Fedora URI that we want to do an
+     *        HTTP GET upon
+     * @param failIfNotOK
+     *        boolean value indicating if an exception should be thrown if we do
+     *        NOT receive an HTTP 200 response (OK)
+     * @param followRedirects
+     *        boolean value indicating whether HTTP redirects should be handled
+     *        in this method, or be passed along so that they can be handled
+     *        later.
+     * @return String the HTTP response as a string
+     * @throws IOException
+     */
+    public String getResponseAsString(String locator,
+                                      boolean failIfNotOK,
+                                      boolean followRedirects)
+            throws IOException {
+
         InputStream in = get(locator, failIfNotOK, followRedirects);
-        
+
         // Convert the response into a String.
         try {
-            BufferedReader reader = new BufferedReader(
-                                        new InputStreamReader(in));
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(in));
             StringBuffer buffer = new StringBuffer();
             String line = reader.readLine();
             while (line != null) {
@@ -383,16 +426,23 @@ public class FedoraClient implements Constants {
             }
             return buffer.toString();
         } finally {
-			try { in.close(); } catch (Exception e) {LOG.error("Can't close InputStream: " + e.getMessage());}
+            try {
+                in.close();
+            } catch (Exception e) {
+                LOG.error("Can't close InputStream: " + e.getMessage());
+            }
         }
     }
 
     private String getLocatorAsURL(String locator) throws IOException {
-        
+
         String url;
         if (locator.startsWith(FEDORA_URI_PREFIX)) {
-            url = m_baseURL + "get/" + locator.substring(FEDORA_URI_PREFIX.length());
-        } else if (locator.startsWith("http://") || locator.startsWith("https://")) {
+            url =
+                    m_baseURL + "get/"
+                            + locator.substring(FEDORA_URI_PREFIX.length());
+        } else if (locator.startsWith("http://")
+                || locator.startsWith("https://")) {
             url = locator;
         } else if (locator.startsWith("/")) {
             // assume it's for something within this Fedora server
@@ -401,43 +451,42 @@ public class FedoraClient implements Constants {
             }
             url = m_baseURL + locator;
         } else {
-            throw new IOException("Bad locator (must start with '" + FEDORA_URI_PREFIX + "', 'http[s]://', or '/'");
+            throw new IOException("Bad locator (must start with '"
+                    + FEDORA_URI_PREFIX + "', 'http[s]://', or '/'");
         }
         return url;
     }
-    
-	/**
-	 * Get a new SOAP stub for API-A.
-	 *
-	 * If the baseURL for this <code>FedoraClient</code> specifies "http", 
-	 * regular HTTP communication will be attempted first.  If the server 
-	 * redirects this client to use HTTPS instead, the redirect will be 
-	 * followed and SSL will be used automatically.
-	 */
-	public FedoraAPIA getAPIA() throws Exception {
+
+    /**
+     * Get a new SOAP stub for API-A. If the baseURL for this
+     * <code>FedoraClient</code> specifies "http", regular HTTP communication
+     * will be attempted first. If the server redirects this client to use HTTPS
+     * instead, the redirect will be followed and SSL will be used
+     * automatically.
+     */
+    public FedoraAPIA getAPIA() throws Exception {
         return (FedoraAPIA) getSOAPStub(m_accessEndpoint);
     }
 
     public URL getAPIAEndpointURL() throws IOException {
         return m_accessEndpoint.getURL();
     }
-	
-	/**
-	 * Get a new SOAP stub for API-M.
-	 *
-	 * If the baseURL for this <code>FedoraClient</code> specifies "http", 
-	 * regular HTTP communication will be attempted first.  If the server 
-	 * redirects this client to use HTTPS instead, the redirect will be 
-	 * followed and SSL will be used automatically.
-	 */
-	public FedoraAPIM getAPIM() throws Exception {
+
+    /**
+     * Get a new SOAP stub for API-M. If the baseURL for this
+     * <code>FedoraClient</code> specifies "http", regular HTTP communication
+     * will be attempted first. If the server redirects this client to use HTTPS
+     * instead, the redirect will be followed and SSL will be used
+     * automatically.
+     */
+    public FedoraAPIM getAPIM() throws Exception {
         return (FedoraAPIM) getSOAPStub(m_managementEndpoint);
     }
 
     public URL getAPIMEndpointURL() throws IOException {
         return m_managementEndpoint.getURL();
     }
-	
+
     /**
      * Get the appropriate API-A/M stub, given a SOAPEndpoint.
      */
@@ -446,19 +495,21 @@ public class FedoraClient implements Constants {
         URL url = endpoint.getURL();
 
         String protocol = url.getProtocol();
-        String host     = url.getHost();
-        int    port     = url.getPort();   
-        String path     = url.getPath();
-        if (port == -1) port = url.getDefaultPort();
+        String host = url.getHost();
+        int port = url.getPort();
+        String path = url.getPath();
+        if (port == -1) {
+            port = url.getDefaultPort();
+        }
 
         if (endpoint == m_accessEndpoint) {
-		    APIAStubFactory.SOCKET_TIMEOUT_SECONDS = SOCKET_TIMEOUT_SECONDS;
-            return APIAStubFactory.getStubAltPath(protocol, host, port, 
-                                                  url.getPath(), m_user, m_pass);
+            APIAStubFactory.SOCKET_TIMEOUT_SECONDS = SOCKET_TIMEOUT_SECONDS;
+            return APIAStubFactory.getStubAltPath(protocol, host, port, url
+                    .getPath(), m_user, m_pass);
         } else if (endpoint == m_managementEndpoint) {
-		    APIMStubFactory.SOCKET_TIMEOUT_SECONDS = SOCKET_TIMEOUT_SECONDS; 
-            return APIMStubFactory.getStubAltPath(protocol, host, port,
-                                                  url.getPath(), m_user, m_pass);
+            APIMStubFactory.SOCKET_TIMEOUT_SECONDS = SOCKET_TIMEOUT_SECONDS;
+            return APIMStubFactory.getStubAltPath(protocol, host, port, url
+                    .getPath(), m_user, m_pass);
         } else {
             throw new Exception("Unrecognized endpoint: " + endpoint.getName());
         }
@@ -466,20 +517,22 @@ public class FedoraClient implements Constants {
 
     public static String getVersion() {
 
-       ResourceBundle bundle = ResourceBundle.getBundle("fedora.client.resources.Client");
-       return bundle.getString("version");
+        ResourceBundle bundle =
+                ResourceBundle.getBundle("fedora.client.resources.Client");
+        return bundle.getString("version");
     }
 
     public static List<String> getCompatibleServerVersions() {
 
-        ResourceBundle bundle = ResourceBundle.getBundle("fedora.client.resources.Client");
+        ResourceBundle bundle =
+                ResourceBundle.getBundle("fedora.client.resources.Client");
         List<String> list = new ArrayList<String>();
 
         String versions = bundle.getString("compatibleServerVersions");
         if (versions != null && versions.trim().length() > 0) {
             String[] va = versions.trim().split(" ");
-            for (int i = 0; i < va.length; i++) {
-                list.add(va[i]);
+            for (String element : va) {
+                list.add(element);
             }
         }
         String clientVersion = getVersion();
@@ -498,7 +551,7 @@ public class FedoraClient implements Constants {
         if (m_serverVersion == null) {
             // Make the APIA call for describe repository
             // and make sure that HTTP 302 status is handled.
-			String desc = getResponseAsString("/describe?xml=true", true, true);
+            String desc = getResponseAsString("/describe?xml=true", true, true);
             LOG.debug("describeRepository response:\n" + desc);
             String[] parts = desc.split("<repositoryVersion>");
             if (parts.length < 2) {
@@ -516,9 +569,10 @@ public class FedoraClient implements Constants {
 
     /**
      * Return the current date as reported by the Fedora server.
-     *
-     * @throws IOException if the HTTP Date header is not provided by the server
-     *                     for any reason, or it is in the wrong format.
+     * 
+     * @throws IOException
+     *         if the HTTP Date header is not provided by the server for any
+     *         reason, or it is in the wrong format.
      */
     public Date getServerDate() throws IOException {
         HttpInputStream in = get("/describe", false, false);
@@ -532,13 +586,14 @@ public class FedoraClient implements Constants {
             dateString = header.getValue();
 
             // This is the date format recommended by RFC2616
-            SimpleDateFormat format = new SimpleDateFormat(
-                    "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+            SimpleDateFormat format =
+                    new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z",
+                                         Locale.US);
             format.setTimeZone(TimeZone.getTimeZone("UTC"));
             return format.parse(dateString);
 
         } catch (ParseException e) {
-            throw new IOException("Unparsable date (" + dateString 
+            throw new IOException("Unparsable date (" + dateString
                     + ") in HTTP response header for " + m_baseURL + "describe");
         } finally {
             in.close();
@@ -546,102 +601,112 @@ public class FedoraClient implements Constants {
     }
 
     public Date getLastModifiedDate(String locator) throws IOException {
-    	if (locator.startsWith(FEDORA_URI_PREFIX)) {
-    		String query = "select $date " +
-    					   "from <#ri> " +
-    					   "where <" + locator + "> <" + VIEW.LAST_MODIFIED_DATE.uri + "> $date";
-    		Map<String, String> map = new HashMap<String, String>();
-    		map.put("lang", "itql");
-    		map.put("query", query);
-    		TupleIterator tuples = getTuples(map);
-    		try {
-				if (tuples.hasNext()) {
-					Map<String, Node> row = tuples.next();
-					Literal dateLiteral = (Literal) row.get("date");
-				    if (dateLiteral == null) {
-				        throw new IOException("A row was returned, but it did not contain a 'date' binding");
-				    }
-				    return DateUtility.parseDateAsUTC(dateLiteral.getLexicalForm());
-				} else {
-					throw new IOException("No rows were returned");
-				}
-			} catch (TrippiException e) {
-				throw new IOException(e.getMessage());
-			} finally {
-                try { tuples.close(); } catch (Exception e) { }
-			}
-    	} else {
-	    	HttpClient client = getHttpClient();
+        if (locator.startsWith(FEDORA_URI_PREFIX)) {
+            String query =
+                    "select $date " + "from <#ri> " + "where <" + locator
+                            + "> <" + VIEW.LAST_MODIFIED_DATE.uri + "> $date";
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("lang", "itql");
+            map.put("query", query);
+            TupleIterator tuples = getTuples(map);
+            try {
+                if (tuples.hasNext()) {
+                    Map<String, Node> row = tuples.next();
+                    Literal dateLiteral = (Literal) row.get("date");
+                    if (dateLiteral == null) {
+                        throw new IOException("A row was returned, but it did not contain a 'date' binding");
+                    }
+                    return DateUtility.parseDateAsUTC(dateLiteral
+                            .getLexicalForm());
+                } else {
+                    throw new IOException("No rows were returned");
+                }
+            } catch (TrippiException e) {
+                throw new IOException(e.getMessage());
+            } finally {
+                try {
+                    tuples.close();
+                } catch (Exception e) {
+                }
+            }
+        } else {
+            HttpClient client = getHttpClient();
 
-	    	HeadMethod head = new HeadMethod(locator);
+            HeadMethod head = new HeadMethod(locator);
             head.setDoAuthentication(true);
-	    	head.setFollowRedirects(FOLLOW_REDIRECTS);
+            head.setFollowRedirects(FOLLOW_REDIRECTS);
 
             try {
-    	    	int statusCode = client.executeMethod(head);
-    	    	if (statusCode != HttpStatus.SC_OK) {
-    	            throw new IOException("Method failed: " + head.getStatusLine());
-    	          }
-    	    	Header[] headers = head.getResponseHeaders();
-    	
-    	        // Retrieve just the last modified header value.
-    	    	Header header = head.getResponseHeader("last-modified");
-    	    	if (header != null) {
-    	    		String lastModified = header.getValue();
-    	    		return DateUtility.convertStringToDate(lastModified);
-    	    	} else {
-    	    		// return current date time
-    	    		return new Date();
-    	    	}
+                int statusCode = client.executeMethod(head);
+                if (statusCode != HttpStatus.SC_OK) {
+                    throw new IOException("Method failed: "
+                            + head.getStatusLine());
+                }
+                Header[] headers = head.getResponseHeaders();
+
+                // Retrieve just the last modified header value.
+                Header header = head.getResponseHeader("last-modified");
+                if (header != null) {
+                    String lastModified = header.getValue();
+                    return DateUtility.convertStringToDate(lastModified);
+                } else {
+                    // return current date time
+                    return new Date();
+                }
             } finally {
                 head.releaseConnection();
             }
-    	}
+        }
     }
 
-	public void reloadPolicies() throws IOException {
+    public void reloadPolicies() throws IOException {
 
-		InputStream in = null;		
-		try {
-			in = get("/management/control?action=reloadPolicies", true, true);
-		} finally {
-			try { in.close(); } catch (Exception e) {LOG.error("Can't close InputStream: " + e.getMessage());}
-		}
-	}
-
+        InputStream in = null;
+        try {
+            in = get("/management/control?action=reloadPolicies", true, true);
+        } finally {
+            try {
+                in.close();
+            } catch (Exception e) {
+                LOG.error("Can't close InputStream: " + e.getMessage());
+            }
+        }
+    }
 
     /**
-     * Get tuples from the remote resource index.
-     *
-     * The map contains <em>String</em> values for parameters that should be 
-     * passed to the service. Two parameters are required:
-     *
-     * 1) lang
-     * 2) query
-     *
-     * Two parameters to the risearch service are implied: 
-     * 
-     * 1) type = tuples
-     * 2) format = sparql
-     *
-     * See http://www.fedora.info/download/2.0/userdocs/server/webservices/risearch/#app.tuples
+     * Get tuples from the remote resource index. The map contains
+     * <em>String</em> values for parameters that should be passed to the
+     * service. Two parameters are required: 1) lang 2) query Two parameters to
+     * the risearch service are implied: 1) type = tuples 2) format = sparql See
+     * http://www.fedora.info/download/2.0/userdocs/server/webservices/risearch/#app.tuples
      */
-    public TupleIterator getTuples(Map<String, String> params) throws IOException {
+    public TupleIterator getTuples(Map<String, String> params)
+            throws IOException {
         params.put("type", "tuples");
         params.put("format", RDFFormat.SPARQL.getName());
         try {
             String url = getRIQueryURL(params);
-            return TupleIterator.fromStream(get(url, true, true), RDFFormat.SPARQL);
+            return TupleIterator.fromStream(get(url, true, true),
+                                            RDFFormat.SPARQL);
         } catch (TrippiException e) {
-            throw new IOException("Error getting tuple iterator: " + e.getMessage());
+            throw new IOException("Error getting tuple iterator: "
+                    + e.getMessage());
         }
     }
 
     private String getRIQueryURL(Map<String, String> params) throws IOException {
-        if (params.get("type") == null) throw new IOException("'type' parameter is required");
-        if (params.get("lang") == null) throw new IOException("'lang' parameter is required");
-        if (params.get("query") == null) throw new IOException("'query' parameter is required");
-        if (params.get("format") == null) throw new IOException("'format' parameter is required");
+        if (params.get("type") == null) {
+            throw new IOException("'type' parameter is required");
+        }
+        if (params.get("lang") == null) {
+            throw new IOException("'lang' parameter is required");
+        }
+        if (params.get("query") == null) {
+            throw new IOException("'query' parameter is required");
+        }
+        if (params.get("format") == null) {
+            throw new IOException("'format' parameter is required");
+        }
         return m_baseURL + "risearch?" + encodeParameters(params);
     }
 
@@ -664,13 +729,12 @@ public class FedoraClient implements Constants {
         }
         return encoded.toString();
     }
-    
+
     /**
-     * Ping the given endpoint to see if an HTTP 302 status code is returned.  
-     *
-     * If so, return the location given in the HTTP response header.
-     * If not, return null.
-     */    
+     * Ping the given endpoint to see if an HTTP 302 status code is returned. If
+     * so, return the location given in the HTTP response header. If not, return
+     * null.
+     */
     private URL getRedirectURL(String location) throws IOException {
         HttpInputStream in = get(location, false, false);
         try {
@@ -682,26 +746,28 @@ public class FedoraClient implements Constants {
             }
             return null;
         } finally {
-            try { in.close(); } catch (Exception e) { }
+            try {
+                in.close();
+            } catch (Exception e) {
+            }
         }
     }
 
     /**
-     * Class for storing a Fedora SOAP endpoint, which consists of an
-     * endpoint name and a URL.
-     *
-     * The endpoint name is provided to the constructor.
-     * The URL is determined automatically, once, based on:
+     * Class for storing a Fedora SOAP endpoint, which consists of an endpoint
+     * name and a URL. The endpoint name is provided to the constructor. The URL
+     * is determined automatically, once, based on:
      * <ul>
-     *   <li> The baseURL provided to the FedoraClient instance.</li>
-     *   <li> The server version.</li>
-     *   <li> Whether the server automatically redirects non-SSL SOAP
-     *        requests to an SSL endpoint.</li>
+     * <li> The baseURL provided to the FedoraClient instance.</li>
+     * <li> The server version.</li>
+     * <li> Whether the server automatically redirects non-SSL SOAP requests to
+     * an SSL endpoint.</li>
      * </ul>
      */
     public class SOAPEndpoint {
 
         String m_name;
+
         URL m_url;
 
         public SOAPEndpoint(String name) {

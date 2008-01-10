@@ -6,41 +6,43 @@
 package fedora.server.errors;
 
 /**
- *
- * <p><b>Title:</b> LowLevelStorageException.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author wdn5e@virginia.edu
- * @version $Id$
+ * @author Bill Niebel
  */
-public class LowlevelStorageException extends StorageException {
-	private static final long serialVersionUID = 1L;
-	
-	public LowlevelStorageException(boolean serverCaused, String bundleName, String code, String[] values,
-			String[] details, Throwable cause) {
-		super(null, code, null, null, cause);
-		if (serverCaused) {
-			setWasServer();
-		}
-	}
-	public LowlevelStorageException(boolean serverCaused, String message, Throwable cause) {
-		this(serverCaused, null, message, null, null, cause);
-	}
-	public LowlevelStorageException(boolean serverCaused, String message) {
-		this(serverCaused, message, null);
-	}
+public class LowlevelStorageException
+        extends StorageException {
 
-	public String getMessage() {
-		Throwable e = getCause();
-		String temp = super.getMessage();
-		if (e != null) {
-			temp += ("\t" + e.getMessage());
-		}
-		return temp;
-	}
+    private static final long serialVersionUID = 1L;
+
+    public LowlevelStorageException(boolean serverCaused,
+                                    String bundleName,
+                                    String code,
+                                    String[] values,
+                                    String[] details,
+                                    Throwable cause) {
+        super(null, code, null, null, cause);
+        if (serverCaused) {
+            setWasServer();
+        }
+    }
+
+    public LowlevelStorageException(boolean serverCaused,
+                                    String message,
+                                    Throwable cause) {
+        this(serverCaused, null, message, null, null, cause);
+    }
+
+    public LowlevelStorageException(boolean serverCaused, String message) {
+        this(serverCaused, message, null);
+    }
+
+    @Override
+    public String getMessage() {
+        Throwable e = getCause();
+        String temp = super.getMessage();
+        if (e != null) {
+            temp += "\t" + e.getMessage();
+        }
+        return temp;
+    }
 
 }
-
-
-
-

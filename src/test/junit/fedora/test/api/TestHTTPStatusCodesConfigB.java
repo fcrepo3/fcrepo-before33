@@ -1,3 +1,4 @@
+
 package fedora.test.api;
 
 import junit.framework.Test;
@@ -22,16 +23,15 @@ import static fedora.test.api.TestHTTPStatusCodes.checkOK;
 
 /**
  * HTTP status code tests to be run when API-A authentication is on.
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class TestHTTPStatusCodesConfigB
         extends FedoraServerTestCase {
 
     public static Test suite() {
-        TestSuite suite = new TestSuite(
-                "TestHTTPStatusCodesConfigB TestSuite");
-		suite.addTestSuite(TestHTTPStatusCodesConfigB.class);
+        TestSuite suite = new TestSuite("TestHTTPStatusCodesConfigB TestSuite");
+        suite.addTestSuite(TestHTTPStatusCodesConfigB.class);
         return new DemoObjectTestSetup(suite);
     }
 

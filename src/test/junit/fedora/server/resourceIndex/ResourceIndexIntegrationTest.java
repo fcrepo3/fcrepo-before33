@@ -1,16 +1,16 @@
-package fedora.server.resourceIndex;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+package fedora.server.resourceIndex;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,14 +20,17 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
+
 import org.jrdf.graph.GraphElementFactory;
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.Triple;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+
 import org.trippi.RDFFormat;
 import org.trippi.RDFUtil;
 import org.trippi.TripleIterator;
@@ -51,21 +54,25 @@ import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 /**
  * Superclass for <code>ResourceIndex</code> integration tests.
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public abstract class ResourceIndexIntegrationTest {
 
-    private static final Logger LOG = 
+    private static final Logger LOG =
             Logger.getLogger(ResourceIndexIntegrationTest.class.getName());
 
-    private static final String TEST_DIR    = "build/junit";
+    private static final String TEST_DIR = "build/junit";
 
-    private static final String DB_DRIVER   = "org.apache.derby.jdbc.EmbeddedDriver";
+    private static final String DB_DRIVER =
+            "org.apache.derby.jdbc.EmbeddedDriver";
 
-    private static final String DB_URL      = "jdbc:derby:test;create=true";
+    private static final String DB_URL = "jdbc:derby:test;create=true";
 
     private static final String DB_USERNAME = "test";
 
@@ -90,16 +97,17 @@ public abstract class ResourceIndexIntegrationTest {
      * Where to get DB connections from.
      */
     private static ConnectionPool _dbPool;
-    
+
     private GraphElementFactory _geFactory;
 
     // Test setUp
 
     /**
-     * Prepare for testing by instantiating a fresh 
+     * Prepare for testing by instantiating a fresh
      * <code>ResourceIndexImpl</code>.
-     *
-     * @throws Exception if setup fails for any reason.
+     * 
+     * @throws Exception
+     *         if setup fails for any reason.
      */
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -107,49 +115,65 @@ public abstract class ResourceIndexIntegrationTest {
         System.setProperty("derby.system.home", TEST_DIR + "/derby");
 
         // set up the db pool
-        _dbPool = new ConnectionPool(DB_DRIVER, DB_URL, DB_USERNAME, 
-                DB_PASSWORD, 20, 5, -1L, 0, -1L, 3, -1L, false, false, false, 
-                (byte) 1);
+        _dbPool =
+                new ConnectionPool(DB_DRIVER,
+                                   DB_URL,
+                                   DB_USERNAME,
+                                   DB_PASSWORD,
+                                   20,
+                                   5,
+                                   -1L,
+                                   0,
+                                   -1L,
+                                   3,
+                                   -1L,
+                                   false,
+                                   false,
+                                   false,
+                                   (byte) 1);
 
         // set up the tables needed by the ri
         Connection conn = _dbPool.getConnection();
         Statement st = conn.createStatement();
         st.executeUpdate("CREATE TABLE riMethod (\n"
-                       + "  methodId   VARCHAR(255) NOT NULL,\n"
-                       + "  bDefPid    VARCHAR(255) NOT NULL,\n"
-                       + "  methodName VARCHAR(255) NOT NULL\n"
-                       + ")");
+                + "  methodId   VARCHAR(255) NOT NULL,\n"
+                + "  bDefPid    VARCHAR(255) NOT NULL,\n"
+                + "  methodName VARCHAR(255) NOT NULL\n" + ")");
         st.executeUpdate("CREATE INDEX riMethod_bDefPid ON riMethod(bDefPid)");
 
         st.executeUpdate("CREATE TABLE riMethodImpl (\n"
-                       + "  methodImplId VARCHAR(255) NOT NULL,\n"
-                       + "  bMechPid     VARCHAR(255) NOT NULL,\n"
-                       + "  methodId     VARCHAR(255) NOT NULL\n"
-                       + ")");
-        st.executeUpdate("CREATE INDEX riMethodImpl_bMechPid ON riMethodImpl(bMechPid)");
-        st.executeUpdate("CREATE INDEX riMethodImpl_methodId ON riMethodImpl(methodId)");
+                + "  methodImplId VARCHAR(255) NOT NULL,\n"
+                + "  bMechPid     VARCHAR(255) NOT NULL,\n"
+                + "  methodId     VARCHAR(255) NOT NULL\n" + ")");
+        st
+                .executeUpdate("CREATE INDEX riMethodImpl_bMechPid ON riMethodImpl(bMechPid)");
+        st
+                .executeUpdate("CREATE INDEX riMethodImpl_methodId ON riMethodImpl(methodId)");
 
-        st.executeUpdate("CREATE TABLE riMethodImplBinding (\n"
-                       + "  methodImplBindingId INT NOT NULL GENERATED ALWAYS AS IDENTITY,\n"
-                       + "  methodImplId        VARCHAR(255) NOT NULL,\n"
-                       + "  dsBindKey           VARCHAR(255) NOT NULL\n"
-                       + ")");
-        st.executeUpdate("CREATE INDEX riMethodImplBinding_methodImplId ON riMethodImplBinding(methodImplId)");
-        st.executeUpdate("CREATE INDEX riMethodImplBinding_dsBindKey ON riMethodImplBinding(dsBindKey)");
+        st
+                .executeUpdate("CREATE TABLE riMethodImplBinding (\n"
+                        + "  methodImplBindingId INT NOT NULL GENERATED ALWAYS AS IDENTITY,\n"
+                        + "  methodImplId        VARCHAR(255) NOT NULL,\n"
+                        + "  dsBindKey           VARCHAR(255) NOT NULL\n" + ")");
+        st
+                .executeUpdate("CREATE INDEX riMethodImplBinding_methodImplId ON riMethodImplBinding(methodImplId)");
+        st
+                .executeUpdate("CREATE INDEX riMethodImplBinding_dsBindKey ON riMethodImplBinding(dsBindKey)");
 
-        st.executeUpdate("CREATE TABLE riMethodPermutation (\n"
-                       + "  permutationId INT NOT NULL GENERATED ALWAYS AS IDENTITY,\n"
-                       + "  methodId      VARCHAR(255) NOT NULL,\n"
-                       + "  permutation   VARCHAR(255) NOT NULL\n"
-                       + ")");
-        st.executeUpdate("CREATE INDEX riMethodPermutation_methodId ON riMethodPermutation(methodId)");
+        st
+                .executeUpdate("CREATE TABLE riMethodPermutation (\n"
+                        + "  permutationId INT NOT NULL GENERATED ALWAYS AS IDENTITY,\n"
+                        + "  methodId      VARCHAR(255) NOT NULL,\n"
+                        + "  permutation   VARCHAR(255) NOT NULL\n" + ")");
+        st
+                .executeUpdate("CREATE INDEX riMethodPermutation_methodId ON riMethodPermutation(methodId)");
 
         st.executeUpdate("CREATE TABLE riMethodMimeType (\n"
-                       + "  mimeTypeId   INT NOT NULL GENERATED ALWAYS AS IDENTITY,\n"
-                       + "  methodImplId VARCHAR(255) NOT NULL,\n"
-                       + "  mimeType     VARCHAR(255) NOT NULL\n"
-                       + ")");
-        st.executeUpdate("CREATE INDEX riMethodMimeType_methodImplId ON riMethodMimeType(methodImplId)");
+                + "  mimeTypeId   INT NOT NULL GENERATED ALWAYS AS IDENTITY,\n"
+                + "  methodImplId VARCHAR(255) NOT NULL,\n"
+                + "  mimeType     VARCHAR(255) NOT NULL\n" + ")");
+        st
+                .executeUpdate("CREATE INDEX riMethodMimeType_methodImplId ON riMethodMimeType(methodImplId)");
 
         st.close();
         _dbPool.free(conn);
@@ -167,7 +191,9 @@ public abstract class ResourceIndexIntegrationTest {
         LOG.warn(out.toString());
     }
 
-    private void addTableStateInfo(String table, boolean firstInt, StringBuffer out) throws Exception {
+    private void addTableStateInfo(String table,
+                                   boolean firstInt,
+                                   StringBuffer out) throws Exception {
         out.append(table);
         out.append("\n---------------------\n");
         Connection conn = _dbPool.getConnection();
@@ -177,9 +203,9 @@ public abstract class ResourceIndexIntegrationTest {
         while (r.next()) {
             for (int i = 0; i < cols; i++) {
                 if (i == 0 && firstInt) {
-                    out.append(r.getInt(i+1));
+                    out.append(r.getInt(i + 1));
                 } else {
-                    out.append("\t" + r.getString(i+1));
+                    out.append("\t" + r.getString(i + 1));
                 }
             }
         }
@@ -190,97 +216,93 @@ public abstract class ResourceIndexIntegrationTest {
     }
 
     /**
-     * Initialize the RI at the given level and return it.
-     *
-     * If the RI is already initialized, it will be closed and re-initialized
-     * at the given level.
+     * Initialize the RI at the given level and return it. If the RI is already
+     * initialized, it will be closed and re-initialized at the given level.
      */
     protected void initRI(int indexLevel) throws Exception {
         if (_ri != null) {
-            try { _ri.close(); } catch (Exception e) { }
+            try {
+                _ri.close();
+            } catch (Exception e) {
+            }
         }
         TriplestoreConnector connector = getConnector();
         _geFactory = connector.getElementFactory();
-        TripleGenerator generator =
-                new BaseTripleGenerator(_geFactory);
-        
-        _ri = new ResourceIndexImpl(connector,
-                                       generator,
-                                       indexLevel,
-                                       false);
+        TripleGenerator generator = new BaseTripleGenerator(_geFactory);
+
+        _ri = new ResourceIndexImpl(connector, generator, indexLevel, false);
     }
 
     /**
      * Get the <code>TriplestoreConnector</code> to be used in conjunction
      * with the <code>ResourceIndexImpl</code>.
-     *
-     * @throws Exception if constructing the connector fails for any reason.
+     * 
+     * @throws Exception
+     *         if constructing the connector fails for any reason.
      */
     private static TriplestoreConnector getConnector() throws Exception {
 
         HashMap<String, String> config = new HashMap<String, String>();
-        
+
         ///*
-        config.put("backslashIsEscape",       "false");
-        config.put("ddlGenerator",            "org.nsdl.mptstore.impl.derby.DerbyDDLGenerator");
-        config.put("autoFlushBufferSize",     "1000");
+        config.put("backslashIsEscape", "false");
+        config.put("ddlGenerator",
+                   "org.nsdl.mptstore.impl.derby.DerbyDDLGenerator");
+        config.put("autoFlushBufferSize", "1000");
         config.put("autoFlushDormantSeconds", "5");
-        config.put("bufferFlushBatchSize",    "1000");
-        config.put("bufferSafeCapacity",      "1000");
-        config.put("fetchSize",               "1000");
-        config.put("jdbcDriver",              DB_DRIVER);
-        config.put("jdbcURL",                 DB_URL);
-        config.put("username",                DB_USERNAME);
-        config.put("password",                DB_PASSWORD);
-        config.put("poolInitialSize",         "5");
-        config.put("poolMaxSize",             "10");
+        config.put("bufferFlushBatchSize", "1000");
+        config.put("bufferSafeCapacity", "1000");
+        config.put("fetchSize", "1000");
+        config.put("jdbcDriver", DB_DRIVER);
+        config.put("jdbcURL", DB_URL);
+        config.put("username", DB_USERNAME);
+        config.put("password", DB_PASSWORD);
+        config.put("poolInitialSize", "5");
+        config.put("poolMaxSize", "10");
 
         return TriplestoreConnector.init("org.trippi.impl.mpt.MPTConnector",
                                          config);
         //*/
-        
-        /*
-        config.put("jdbcDriver",              DB_DRIVER);
-        config.put("jdbcURL",                 DB_URL);
-        config.put("username",                DB_USERNAME);
-        config.put("password",                DB_PASSWORD);
-        
-        config.put("serverName",                "server1");
-        config.put("modelName",                 "ri");
-        config.put("readOnly",                  "false");
-        config.put("autoCreate",                "true");
-        config.put("autoTextIndex",             "false");
-        config.put("autoFlushBufferSize",       "1000");
-        config.put("autoFlushDormantSeconds",   "5");
-        config.put("bufferFlushBatchSize",      "1000");
-        config.put("bufferSafeCapacity",        "2000");
-        config.put("poolInitialSize",           "2");
-        config.put("poolMaxSize",               "5");
-        config.put("poolMaxGrowth",             "-1");
-        config.put("remote",                "true");
-        config.put("host",                "localhost");
-        config.put("path",                  "/tmp/riTest");
 
-        return TriplestoreConnector.init("org.trippi.impl.mulgara.MulgaraConnector",
-                                         config);
-        */
+        /*
+         * config.put("jdbcDriver", DB_DRIVER); config.put("jdbcURL", DB_URL);
+         * config.put("username", DB_USERNAME); config.put("password",
+         * DB_PASSWORD); config.put("serverName", "server1");
+         * config.put("modelName", "ri"); config.put("readOnly", "false");
+         * config.put("autoCreate", "true"); config.put("autoTextIndex",
+         * "false"); config.put("autoFlushBufferSize", "1000");
+         * config.put("autoFlushDormantSeconds", "5");
+         * config.put("bufferFlushBatchSize", "1000");
+         * config.put("bufferSafeCapacity", "2000");
+         * config.put("poolInitialSize", "2"); config.put("poolMaxSize", "5");
+         * config.put("poolMaxGrowth", "-1"); config.put("remote", "true");
+         * config.put("host", "localhost"); config.put("path", "/tmp/riTest");
+         * return
+         * TriplestoreConnector.init("org.trippi.impl.mulgara.MulgaraConnector",
+         * config);
+         */
     }
 
     // Test tearDown
 
     @After
     public void tearDownTest() throws Exception {
-        if (_ri != null) tearDownTriplestore();
+        if (_ri != null) {
+            tearDownTriplestore();
+        }
     }
 
     /**
      * Clean up so the next test can run with fresh data.
-     *
-     * @throws Exception if tearDown fails for any reason.
+     * 
+     * @throws Exception
+     *         if tearDown fails for any reason.
      */
     @AfterClass
     public static void tearDownClass() throws Exception {
-        if (_dbPool != null) tearDownDB();
+        if (_dbPool != null) {
+            tearDownDB();
+        }
     }
 
     private void tearDownTriplestore() throws Exception {
@@ -293,15 +315,21 @@ public abstract class ResourceIndexIntegrationTest {
             TripleIterator triples = _ri.findTriples(null, null, null, -1);
             out = new FileOutputStream(dump);
             triples.toStream(out, RDFFormat.TURTLE);
-            try { out.close(); } catch (Exception e) { }
+            try {
+                out.close();
+            } catch (Exception e) {
+            }
             out = null;
 
             // load all from temp file
-            triples = TripleIterator.fromStream(new FileInputStream(dump), 
-                                                RDFFormat.TURTLE);
+            triples =
+                    TripleIterator.fromStream(new FileInputStream(dump),
+                                              RDFFormat.TURTLE);
             _ri.delete(triples, true);
         } finally {
-            if (out != null) out.close();
+            if (out != null) {
+                out.close();
+            }
             dump.delete();
         }
 
@@ -324,23 +352,23 @@ public abstract class ResourceIndexIntegrationTest {
 
     // do test methods
 
-    protected void doAddDelTest(int riLevel, DigitalObject obj) 
+    protected void doAddDelTest(int riLevel, DigitalObject obj)
             throws Exception {
         Set<DigitalObject> set = new HashSet<DigitalObject>();
         set.add(obj);
         doAddDelTest(riLevel, set);
     }
 
-    protected void doAddDelTest(int riLevel,
-                                Set<DigitalObject> objects)
+    protected void doAddDelTest(int riLevel, Set<DigitalObject> objects)
             throws Exception {
 
         initRI(riLevel);
 
         addAll(objects, true);
         assertTrue("Did not get expected triples after add",
-                   sameTriples(getExpectedTriples(riLevel, objects), 
-                           getActualTriples(), true));
+                   sameTriples(getExpectedTriples(riLevel, objects),
+                               getActualTriples(),
+                               true));
 
         deleteAll(objects, true);
         assertEquals("Some triples remained after delete",
@@ -350,8 +378,7 @@ public abstract class ResourceIndexIntegrationTest {
 
     protected void doModifyTest(int riLevel,
                                 DigitalObject origObject,
-                                DigitalObject modifiedObject)
-            throws Exception {
+                                DigitalObject modifiedObject) throws Exception {
         Set<DigitalObject> origObjects = new HashSet<DigitalObject>();
         origObjects.add(origObject);
         doModifyTest(riLevel, origObjects, modifiedObject);
@@ -361,8 +388,7 @@ public abstract class ResourceIndexIntegrationTest {
     // and we don't need to change the ri level
     protected void doModifyTest(int riLevel,
                                 Set<DigitalObject> origObjects,
-                                DigitalObject modifiedObject)
-            throws Exception {
+                                DigitalObject modifiedObject) throws Exception {
 
         if (riLevel > -1) {
             initRI(riLevel);
@@ -386,7 +412,8 @@ public abstract class ResourceIndexIntegrationTest {
 
         assertTrue("Did not get expected triples after modify",
                    sameTriples(getExpectedTriples(riLevel, newObjects),
-                           getActualTriples(), true));
+                               getActualTriples(),
+                               true));
     }
 
     // Utility methods for tests
@@ -416,30 +443,33 @@ public abstract class ResourceIndexIntegrationTest {
         deser.deserialize(in, objCopy, charEncoding, transContext);
 
         // make sure dates of any to-be-added new components differ
-        try { Thread.sleep(100); } catch (Exception e) { }
+        try {
+            Thread.sleep(100);
+        } catch (Exception e) {
+        }
 
         return objCopy;
     }
 
-    protected void modify(DigitalObject origObject, 
+    protected void modify(DigitalObject origObject,
                           DigitalObject modifiedObject,
                           boolean flush) throws Exception {
-        if (origObject.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT))
-        {
+        if (origObject.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) {
             _ri.modifyBDefObject(getBDefReader(origObject),
                                  getBDefReader(modifiedObject));
         }
-        if (origObject.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT))
-        {
+        if (origObject
+                .isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) {
             _ri.modifyCModelObject(getDOReader(origObject),
-                                 getDOReader(modifiedObject));
+                                   getDOReader(modifiedObject));
         }
-        if (origObject.isFedoraObjectType(DigitalObject.FEDORA_OBJECT))
-        {
+        if (origObject.isFedoraObjectType(DigitalObject.FEDORA_OBJECT)) {
             _ri.modifyDataObject(getDOReader(origObject),
                                  getDOReader(modifiedObject));
         }
-        if (flush) _ri.flushBuffer();
+        if (flush) {
+            _ri.flushBuffer();
+        }
     }
 
     protected BDefReader getBDefReader(DigitalObject obj) throws Exception {
@@ -454,81 +484,64 @@ public abstract class ResourceIndexIntegrationTest {
         return new SimpleDOReader(null, null, null, null, null, obj);
     }
 
-    protected void addObj(DigitalObject obj, boolean flush)
-            throws Exception {
+    protected void addObj(DigitalObject obj, boolean flush) throws Exception {
         Set<DigitalObject> set = new HashSet<DigitalObject>();
         set.add(obj);
         addAll(set, flush);
     }
 
-    protected void addAll(Set<DigitalObject> objects,
-                          boolean flush)
+    protected void addAll(Set<DigitalObject> objects, boolean flush)
             throws Exception {
         addOrDelAll(objects, flush, true);
     }
 
-    protected void deleteAll(Set<DigitalObject> objects,
-                             boolean flush)
+    protected void deleteAll(Set<DigitalObject> objects, boolean flush)
             throws Exception {
         addOrDelAll(objects, flush, false);
     }
 
     private void addOrDelAll(Set<DigitalObject> objects,
-            boolean flush, boolean add) throws Exception 
-    {
-        for (DigitalObject obj : objects) 
-        {
-            if (add) 
-            {
-                if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT))
-                {
+                             boolean flush,
+                             boolean add) throws Exception {
+        for (DigitalObject obj : objects) {
+            if (add) {
+                if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) {
                     _ri.addBDefObject(getBDefReader(obj));
                     _ri.flushBuffer();
                 }
-            } 
-            else 
-            {
-                if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT))
-                {
+            } else {
+                if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT)) {
                     _ri.deleteDataObject(getDOReader(obj));
                 }
             }
         }
-        for (DigitalObject obj : objects) 
-        {
-            if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT))
-            {
-                if (add) 
-                {
+        for (DigitalObject obj : objects) {
+            if (obj
+                    .isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) {
+                if (add) {
                     _ri.addCModelObject(getDOReader(obj));
                     _ri.flushBuffer();
-                } 
-                else 
-                {
+                } else {
                     _ri.deleteCModelObject(getDOReader(obj));
                     _ri.flushBuffer();
                 }
             }
         }
-        for (DigitalObject obj : objects) 
-        {
-            if (add) 
-            {
-                if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT))
-                {
+        for (DigitalObject obj : objects) {
+            if (add) {
+                if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT)) {
                     _ri.addDataObject(getDOReader(obj));
                 }
-            } 
-            else 
-            {
-                if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT))
-                {
+            } else {
+                if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) {
                     _ri.deleteBDefObject(getBDefReader(obj));
                     _ri.flushBuffer();
                 }
             }
         }
-        if (flush) _ri.flushBuffer();
+        if (flush) {
+            _ri.flushBuffer();
+        }
     }
 
     protected Set<Triple> getExpectedTriples(int riLevel,
@@ -539,7 +552,7 @@ public abstract class ResourceIndexIntegrationTest {
         if (riLevel == 0) {
             return new HashSet<Triple>();
         }
-        
+
         // add all to a mock repository reader
         MockRepositoryReader repo = new MockRepositoryReader();
         for (DigitalObject obj : objects) {
@@ -552,32 +565,27 @@ public abstract class ResourceIndexIntegrationTest {
         Set<Triple> expected = new HashSet<Triple>();
 
         // get triples for all bdefs
-        for (DigitalObject obj : objects) 
-        {
-            if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT))
-            {
-                BDefReader reader = repo.getBDefReader(false, null, 
-                        obj.getPid());
+        for (DigitalObject obj : objects) {
+            if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) {
+                BDefReader reader =
+                        repo.getBDefReader(false, null, obj.getPid());
                 expected.addAll(generator.getTriplesForBDef(reader));
             }
         }
 
         // get triples for all cmodels
-        for (DigitalObject obj : objects) 
-        {
-            if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT))
-            {
-                BMechReader reader = repo.getBMechReader(false, null, 
-                        obj.getPid());
+        for (DigitalObject obj : objects) {
+            if (obj
+                    .isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) {
+                BMechReader reader =
+                        repo.getBMechReader(false, null, obj.getPid());
                 expected.addAll(generator.getTriplesForCModelObject(reader));
             }
         }
 
         // get triples for all data objects
-        for (DigitalObject obj : objects) 
-        {
-            if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT))
-            {
+        for (DigitalObject obj : objects) {
+            if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT)) {
                 DOReader reader = repo.getReader(false, null, obj.getPid());
                 expected.addAll(generator.getTriplesForDataObject(reader));
             }
@@ -606,7 +614,8 @@ public abstract class ResourceIndexIntegrationTest {
             if (logDiffs) {
                 StringBuffer out = new StringBuffer();
                 out.append("Triple sets differ.\n");
-                out.append("Expected set has " + expected.size() + " triples.\n");
+                out.append("Expected set has " + expected.size()
+                        + " triples.\n");
                 out.append("Actual set has " + actual.size() + " triples.\n\n");
                 out.append("Expected triples:\n");
                 for (String t : eStrings) {
@@ -623,15 +632,13 @@ public abstract class ResourceIndexIntegrationTest {
 
     }
 
-    protected Set<Triple> getActualTriples()
-            throws Exception {
+    protected Set<Triple> getActualTriples() throws Exception {
         return getActualTriples(null, null, null);
     }
 
     protected Set<Triple> getActualTriples(SubjectNode subject,
                                            PredicateNode predicate,
-                                           ObjectNode object)
-            throws Exception {
+                                           ObjectNode object) throws Exception {
         Set<Triple> set = new HashSet<Triple>();
         TripleIterator iter = _ri.findTriples(subject, predicate, object, -1);
         while (iter.hasNext()) {
@@ -647,7 +654,8 @@ public abstract class ResourceIndexIntegrationTest {
     protected String getDC(String content) {
         StringBuffer x = new StringBuffer();
         x.append("<oai_dc:dc xmlns:dc=\"http://purl.org/dc/elements/1.1/\"");
-        x.append(" xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\">\n");
+        x
+                .append(" xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\">\n");
         x.append(content + "\n");
         x.append("</oai_dc:dc>");
         return x.toString();
@@ -658,7 +666,8 @@ public abstract class ResourceIndexIntegrationTest {
      */
     protected String getRELSEXT(String content) {
         StringBuffer x = new StringBuffer();
-        x.append("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"");
+        x
+                .append("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"");
         x.append(" xmlns:foo=\"http://example.org/foo#\">\n");
         x.append("<rdf:Description rdf:about=\"info:fedora/test:1\">\n");
         x.append(content + "\n");
@@ -699,7 +708,7 @@ public abstract class ResourceIndexIntegrationTest {
                 if (domain.size() > 0) {
                     xml.append("      <ValidParmValues>\n");
                     for (String value : domain) {
-                        xml.append("        <ValidParm value=\"" + value 
+                        xml.append("        <ValidParm value=\"" + value
                                 + "\"/>\n");
                     }
                     xml.append("      </ValidParmValues>\n");
@@ -710,8 +719,8 @@ public abstract class ResourceIndexIntegrationTest {
                 Set<String> keys = inputKeys.get(method);
                 if (keys != null) {
                     for (String key : keys) {
-                        xml.append("    <DatastreamInputParm parmName=\""
-                                + key + "\" passBy=\"URL_REF\"/>\n");
+                        xml.append("    <DatastreamInputParm parmName=\"" + key
+                                + "\" passBy=\"URL_REF\"/>\n");
                     }
                 }
 
@@ -732,7 +741,7 @@ public abstract class ResourceIndexIntegrationTest {
                                          Map<String, Set<String>> inputTypes) {
         StringBuffer xml = new StringBuffer();
         xml.append("<DSInputSpec xmlns=\"http://fedora.comm.nsdlib.org/"
-                + "service/bindspec\" bDefPID=\"" + bDefPID 
+                + "service/bindspec\" bDefPID=\"" + bDefPID
                 + "\" label=\"InputSpec\">\n");
         for (String key : inputTypes.keySet()) {
             xml.append("  <DSInput DSMin=\"1\" DSMax=\"1\" DSOrdinality=\""
@@ -804,8 +813,8 @@ public abstract class ResourceIndexIntegrationTest {
             xml.append("  <message name=\"" + method + "Request\">\n");
             // one part per user param
             for (String name : methodDef.keySet()) {
-                xml.append("    <part name=\"" + name + "\" type=\"this:" + name
-                        + "Type\"/>\n");
+                xml.append("    <part name=\"" + name + "\" type=\"this:"
+                        + name + "Type\"/>\n");
             }
             // one part per ds input key
             for (String key : inputKeys.get(method)) {
@@ -826,7 +835,7 @@ public abstract class ResourceIndexIntegrationTest {
         for (ParamDomainMap methodDef : methodDefs) {
             String method = methodDef.getMethodName();
             xml.append("    <operation name=\"" + method + "\">\n");
-            xml.append("      <input message=\"this:" + method 
+            xml.append("      <input message=\"this:" + method
                     + "Request\"/>\n");
             xml.append("      <output message=\"this:dissemResponse\"/>\n");
             xml.append("    </operation>\n");
@@ -839,14 +848,16 @@ public abstract class ResourceIndexIntegrationTest {
         xml.append("  <service name=\"MyService\">\n");
         xml.append("    <port binding=\"this:MyService_http\" "
                 + "name=\"MyService_port\">\n");
-        xml.append("      <http:address location=\"http://example.org/MyService/\"/>\n");
+        xml
+                .append("      <http:address location=\"http://example.org/MyService/\"/>\n");
         xml.append("    </port>\n");
         xml.append("  </service>\n");
 
         //
         // operation locations and input/output bindings
         //
-        xml.append("  <binding name=\"MyService_http\" type=\"this:MyServicePortType\">\n");
+        xml
+                .append("  <binding name=\"MyService_http\" type=\"this:MyServicePortType\">\n");
         xml.append("    <http:binding verb=\"GET\"/>\n");
         for (ParamDomainMap methodDef : methodDefs) {
             String method = methodDef.getMethodName();
@@ -870,7 +881,7 @@ public abstract class ResourceIndexIntegrationTest {
                 location.append(key.toLowerCase() + "=(" + key + ")");
                 first = false;
             }
-            xml.append("      <http:operation location=\"" 
+            xml.append("      <http:operation location=\""
                     + location.toString() + "\"/>\n");
 
             // input is always urlReplacement
@@ -929,12 +940,17 @@ public abstract class ResourceIndexIntegrationTest {
         addDatastream(obj, id, ds);
     }
 
-    protected static void addXDatastream(DigitalObject obj, String id, String xml) {
+    protected static void addXDatastream(DigitalObject obj,
+                                         String id,
+                                         String xml) {
         DatastreamXMLMetadata ds = new DatastreamXMLMetadata();
         ds.DSControlGrp = "X";
         ds.DSMIME = "text/xml";
         ds.DSSize = xml.length();
-        try { ds.xmlContent = xml.getBytes("UTF-8"); } catch (Exception e) { }
+        try {
+            ds.xmlContent = xml.getBytes("UTF-8");
+        } catch (Exception e) {
+        }
         addDatastream(obj, id, ds);
     }
 
@@ -948,7 +964,9 @@ public abstract class ResourceIndexIntegrationTest {
         addDatastream(obj, id, ds);
     }
 
-    private static void addDatastream(DigitalObject obj, String id, Datastream ds) {
+    private static void addDatastream(DigitalObject obj,
+                                      String id,
+                                      Datastream ds) {
         List<Datastream> versions = obj.datastreams(id);
         ds.DatastreamID = id;
         ds.DSState = "A";
@@ -959,36 +977,50 @@ public abstract class ResourceIndexIntegrationTest {
         versions.add(ds);
     }
 
-    protected static DigitalObject getTestObject(String pid,
-                                                 String label) {
+    protected static DigitalObject getTestObject(String pid, String label) {
         Date now = new Date();
-        return getTestObject(pid, DigitalObject.FEDORA_OBJECT, "A",
-                "someOwnerId", label, now, now);
+        return getTestObject(pid,
+                             DigitalObject.FEDORA_OBJECT,
+                             "A",
+                             "someOwnerId",
+                             label,
+                             now,
+                             now);
     }
 
     protected static DigitalObject getTestBDef(String pid,
                                                String label,
                                                Set<ParamDomainMap> methodDefs) {
         Date now = new Date();
-        DigitalObject obj = getTestObject(pid, 
-                DigitalObject.FEDORA_BDEF_OBJECT, "A",
-                "someOwnerId", label, now, now);
+        DigitalObject obj =
+                getTestObject(pid,
+                              DigitalObject.FEDORA_BDEF_OBJECT,
+                              "A",
+                              "someOwnerId",
+                              label,
+                              now,
+                              now);
         addXDatastream(obj, "METHODMAP", getMethodMap(methodDefs));
         return obj;
     }
 
-    protected static DigitalObject getTestBMech(String pid, 
-            String label,
-            String bDefPID, 
-            Set<ParamDomainMap> methodDefs,
-            Map<String, Set<String>> inputKeys, 
-            Map<String, Set<String>> inputTypes,
-            Map<String, Set<String>> outputTypes) {
+    protected static DigitalObject getTestBMech(String pid,
+                                                String label,
+                                                String bDefPID,
+                                                Set<ParamDomainMap> methodDefs,
+                                                Map<String, Set<String>> inputKeys,
+                                                Map<String, Set<String>> inputTypes,
+                                                Map<String, Set<String>> outputTypes) {
 
         Date now = new Date();
-        DigitalObject obj = getTestObject(pid, 
-                DigitalObject.FEDORA_BMECH_OBJECT, "A",
-                "someOwnerId", label, now, now);
+        DigitalObject obj =
+                getTestObject(pid,
+                              DigitalObject.FEDORA_BMECH_OBJECT,
+                              "A",
+                              "someOwnerId",
+                              label,
+                              now,
+                              now);
 
         String methodMapXML = getMethodMap(methodDefs, inputKeys, true);
         addXDatastream(obj, "METHODMAP", methodMapXML);
@@ -1037,7 +1069,6 @@ public abstract class ResourceIndexIntegrationTest {
         methodDefs.add(methodTwo);
         return getTestBDef("test:bdef1b", "bdef1b", methodDefs);
     }
-
 
     // bdef:1c has one no-parameter method (same as bdef:1)
     protected static DigitalObject getBDefOneC() {
@@ -1116,9 +1147,9 @@ public abstract class ResourceIndexIntegrationTest {
 
     // construct a map representing key-to-ds bindings with 1 or 2 keys
     protected static Map<String, Set<String>> getMap(String key1,
-                                                   String[] values1,
-                                                   String key2,
-                                                   String[] values2) {
+                                                     String[] values1,
+                                                     String key2,
+                                                     String[] values2) {
         Set<String> valueSet1 = new HashSet<String>();
         for (String value : values1) {
             valueSet1.add(value);
@@ -1141,11 +1172,22 @@ public abstract class ResourceIndexIntegrationTest {
         ParamDomainMap methodOne = new ParamDomainMap("methodOne");
         methodDefs.add(methodOne);
 
-        return getTestBMech("test:bmech1", "bmech1", "test:bdef1", 
-                methodDefs, 
-                getMap("methodOne", new String[] {"KEY1"}, null, null),
-                getMap("KEY1", new String[] {"text/xml"}, null, null),
-                getMap("methodOne", new String[] {"text/xml"}, null, null));
+        return getTestBMech("test:bmech1",
+                            "bmech1",
+                            "test:bdef1",
+                            methodDefs,
+                            getMap("methodOne",
+                                   new String[] {"KEY1"},
+                                   null,
+                                   null),
+                            getMap("KEY1",
+                                   new String[] {"text/xml"},
+                                   null,
+                                   null),
+                            getMap("methodOne",
+                                   new String[] {"text/xml"},
+                                   null,
+                                   null));
     }
 
     // bmech:1b implements bdef:1b and takes one datastream
@@ -1156,14 +1198,22 @@ public abstract class ResourceIndexIntegrationTest {
         ParamDomainMap methodTwo = new ParamDomainMap("methodTwo");
         methodDefs.add(methodTwo);
 
-        return getTestBMech("test:bmech1b", "bmech1b", "test:bdef1b", 
-                methodDefs, 
-                getMap("methodOne", new String[] {"KEY1"}, 
-                       "methodTwo", new String[] {"KEY2"}),
-                getMap("KEY1", new String[] {"text/xml"}, 
-                       "KEY2", new String[] {"text/xml"}),
-                getMap("methodOne", new String[] {"text/xml"},
-                       "methodTwo", new String[] {"text/xml"}));
+        return getTestBMech("test:bmech1b",
+                            "bmech1b",
+                            "test:bdef1b",
+                            methodDefs,
+                            getMap("methodOne",
+                                   new String[] {"KEY1"},
+                                   "methodTwo",
+                                   new String[] {"KEY2"}),
+                            getMap("KEY1",
+                                   new String[] {"text/xml"},
+                                   "KEY2",
+                                   new String[] {"text/xml"}),
+                            getMap("methodOne",
+                                   new String[] {"text/xml"},
+                                   "methodTwo",
+                                   new String[] {"text/xml"}));
     }
 
     // bmech:1c implements bdef:1c and takes one datastream
@@ -1172,11 +1222,22 @@ public abstract class ResourceIndexIntegrationTest {
         ParamDomainMap methodOne = new ParamDomainMap("methodOne");
         methodDefs.add(methodOne);
 
-        return getTestBMech("test:bmech1c", "bmech1c", "test:bdef1c", 
-                methodDefs, 
-                getMap("methodOne", new String[] {"KEY1"}, null, null),
-                getMap("KEY1", new String[] {"text/xml"}, null, null),
-                getMap("methodOne", new String[] {"text/xml"}, null, null));
+        return getTestBMech("test:bmech1c",
+                            "bmech1c",
+                            "test:bdef1c",
+                            methodDefs,
+                            getMap("methodOne",
+                                   new String[] {"KEY1"},
+                                   null,
+                                   null),
+                            getMap("KEY1",
+                                   new String[] {"text/xml"},
+                                   null,
+                                   null),
+                            getMap("methodOne",
+                                   new String[] {"text/xml"},
+                                   null,
+                                   null));
     }
 
     // bmech:1d implements bdef:1 and takes TWO datastreams
@@ -1185,11 +1246,22 @@ public abstract class ResourceIndexIntegrationTest {
         ParamDomainMap methodOne = new ParamDomainMap("methodOne");
         methodDefs.add(methodOne);
 
-        return getTestBMech("test:bmech1d", "bmech1d", "test:bdef1", 
-                methodDefs, 
-                getMap("methodOne", new String[] {"KEY1", "KEY2"}, null, null),
-                getMap("KEY1", new String[] {"text/xml"}, "KEY2", new String[] {"text/xml"}),
-                getMap("methodOne", new String[] {"text/xml"}, null, null));
+        return getTestBMech("test:bmech1d",
+                            "bmech1d",
+                            "test:bdef1",
+                            methodDefs,
+                            getMap("methodOne",
+                                   new String[] {"KEY1", "KEY2"},
+                                   null,
+                                   null),
+                            getMap("KEY1",
+                                   new String[] {"text/xml"},
+                                   "KEY2",
+                                   new String[] {"text/xml"}),
+                            getMap("methodOne",
+                                   new String[] {"text/xml"},
+                                   null,
+                                   null));
     }
 
     // bmech:2 implements bdef:2 and takes one datastream
@@ -1202,11 +1274,22 @@ public abstract class ResourceIndexIntegrationTest {
         methodOne.put("argOne", argOneDomain);
         methodDefs.add(methodOne);
 
-        return getTestBMech("test:bmech2", "bmech2", "test:bdef2", 
-                methodDefs, 
-                getMap("methodOne", new String[] {"KEY1"}, null, null),
-                getMap("KEY1", new String[] {"text/xml"}, null, null),
-                getMap("methodOne", new String[] {"text/xml"}, null, null));
+        return getTestBMech("test:bmech2",
+                            "bmech2",
+                            "test:bdef2",
+                            methodDefs,
+                            getMap("methodOne",
+                                   new String[] {"KEY1"},
+                                   null,
+                                   null),
+                            getMap("KEY1",
+                                   new String[] {"text/xml"},
+                                   null,
+                                   null),
+                            getMap("methodOne",
+                                   new String[] {"text/xml"},
+                                   null,
+                                   null));
     }
 
     // bmech:2b implements bdef:2b and takes one datastream
@@ -1222,14 +1305,22 @@ public abstract class ResourceIndexIntegrationTest {
         methodTwo.put("argOne", argOneDomain);
         methodDefs.add(methodTwo);
 
-        return getTestBMech("test:bmech2b", "bmech2b", "test:bdef2b", 
-                methodDefs, 
-                getMap("methodOne", new String[] {"KEY1"}, 
-                       "methodTwo", new String[] {"KEY2"}),
-                getMap("KEY1", new String[] {"text/xml"}, 
-                       "KEY2", new String[] {"text/xml"}),
-                getMap("methodOne", new String[] {"text/xml"},
-                       "methodTwo", new String[] {"text/xml"}));
+        return getTestBMech("test:bmech2b",
+                            "bmech2b",
+                            "test:bdef2b",
+                            methodDefs,
+                            getMap("methodOne",
+                                   new String[] {"KEY1"},
+                                   "methodTwo",
+                                   new String[] {"KEY2"}),
+                            getMap("KEY1",
+                                   new String[] {"text/xml"},
+                                   "KEY2",
+                                   new String[] {"text/xml"}),
+                            getMap("methodOne",
+                                   new String[] {"text/xml"},
+                                   "methodTwo",
+                                   new String[] {"text/xml"}));
     }
 
     // bmech:3 implements bdef:3 and takes one datastream
@@ -1240,11 +1331,22 @@ public abstract class ResourceIndexIntegrationTest {
         methodOne.put("argOne", argOneDomain);
         methodDefs.add(methodOne);
 
-        return getTestBMech("test:bmech3", "bmech3", "test:bdef3", 
-                methodDefs, 
-                getMap("methodOne", new String[] {"KEY1"}, null, null),
-                getMap("KEY1", new String[] {"text/xml"}, null, null),
-                getMap("methodOne", new String[] {"text/xml"}, null, null));
+        return getTestBMech("test:bmech3",
+                            "bmech3",
+                            "test:bdef3",
+                            methodDefs,
+                            getMap("methodOne",
+                                   new String[] {"KEY1"},
+                                   null,
+                                   null),
+                            getMap("KEY1",
+                                   new String[] {"text/xml"},
+                                   null,
+                                   null),
+                            getMap("methodOne",
+                                   new String[] {"text/xml"},
+                                   null,
+                                   null));
     }
 
     // bmech:3b implements bdef:3b and takes one datastream
@@ -1258,14 +1360,22 @@ public abstract class ResourceIndexIntegrationTest {
         methodTwo.put("argOne", argOneDomain);
         methodDefs.add(methodTwo);
 
-        return getTestBMech("test:bmech3b", "bmech3b", "test:bdef3b", 
-                methodDefs, 
-                getMap("methodOne", new String[] {"KEY1"}, 
-                       "methodTwo", new String[] {"KEY2"}),
-                getMap("KEY1", new String[] {"text/xml"}, 
-                       "KEY2", new String[] {"text/xml"}),
-                getMap("methodOne", new String[] {"text/xml"},
-                       "methodTwo", new String[] {"text/xml"}));
+        return getTestBMech("test:bmech3b",
+                            "bmech3b",
+                            "test:bdef3b",
+                            methodDefs,
+                            getMap("methodOne",
+                                   new String[] {"KEY1"},
+                                   "methodTwo",
+                                   new String[] {"KEY2"}),
+                            getMap("KEY1",
+                                   new String[] {"text/xml"},
+                                   "KEY2",
+                                   new String[] {"text/xml"}),
+                            getMap("methodOne",
+                                   new String[] {"text/xml"},
+                                   "methodTwo",
+                                   new String[] {"text/xml"}));
     }
 
     // bmech:4 implements bdef:4 and takes one datastream
@@ -1282,14 +1392,22 @@ public abstract class ResourceIndexIntegrationTest {
         methodTwo.put("argOne", argOneDomain);
         methodDefs.add(methodTwo);
 
-        return getTestBMech("test:bmech4", "bmech4", "test:bdef4", 
-                methodDefs, 
-                getMap("methodOne", new String[] {"KEY1"}, 
-                       "methodTwo", new String[] {"KEY2"}),
-                getMap("KEY1", new String[] {"text/xml"}, 
-                       "KEY2", new String[] {"text/xml"}),
-                getMap("methodOne", new String[] {"text/xml"},
-                       "methodTwo", new String[] {"text/xml"}));
+        return getTestBMech("test:bmech4",
+                            "bmech4",
+                            "test:bdef4",
+                            methodDefs,
+                            getMap("methodOne",
+                                   new String[] {"KEY1"},
+                                   "methodTwo",
+                                   new String[] {"KEY2"}),
+                            getMap("KEY1",
+                                   new String[] {"text/xml"},
+                                   "KEY2",
+                                   new String[] {"text/xml"}),
+                            getMap("methodOne",
+                                   new String[] {"text/xml"},
+                                   "methodTwo",
+                                   new String[] {"text/xml"}));
     }
 
     protected Map<String, String> getBindings(int numKeys) {
@@ -1312,7 +1430,7 @@ public abstract class ResourceIndexIntegrationTest {
     }
 
     public void startFlushing(int sleepMS) throws Exception {
-        if (_flusher != null) { 
+        if (_flusher != null) {
             try {
                 finishFlushing();
             } catch (Exception e) {
@@ -1337,19 +1455,24 @@ public abstract class ResourceIndexIntegrationTest {
     /**
      * A Thread that continuously flushes the buffer.
      */
-    public class Flusher extends Thread {
+    public class Flusher
+            extends Thread {
 
-        private ResourceIndex _ri;
-        private int _sleepMS;
+        private final ResourceIndex _ri;
+
+        private final int _sleepMS;
+
         private boolean _shouldFinish = false;
+
         private Exception _error;
 
         /**
          * Construct a flusher that sleeps the given number of milliseconds
          * between flush attempts.
-         *
-         * @param sleepMS milliseconds to sleep.  Will simply yield between
-         *                flush attempts if less than 1.
+         * 
+         * @param sleepMS
+         *        milliseconds to sleep. Will simply yield between flush
+         *        attempts if less than 1.
          */
         public Flusher(ResourceIndex ri, int sleepMS) {
             _ri = ri;
@@ -1358,14 +1481,18 @@ public abstract class ResourceIndexIntegrationTest {
 
         /**
          * Set signal for flusher to finish and wait for it.
-         *
-         * @throws Exception if the flusher encountered an error any time 
-         *                   while it was running.
+         * 
+         * @throws Exception
+         *         if the flusher encountered an error any time while it was
+         *         running.
          */
         public void finish() throws Exception {
             _shouldFinish = true;
-            while (this.isAlive()) {
-                try { Thread.sleep(50); } catch (InterruptedException e) { }
+            while (isAlive()) {
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                }
             }
             if (_error != null) {
                 throw _error;
@@ -1373,14 +1500,16 @@ public abstract class ResourceIndexIntegrationTest {
         }
 
         /**
-         * Flush the buffer until the finish signal arrives from another
-         * thread.
+         * Flush the buffer until the finish signal arrives from another thread.
          */
         public void run() {
             try {
                 while (!_shouldFinish) {
                     if (_sleepMS > 0) {
-                        try { Thread.sleep(_sleepMS); } catch (InterruptedException e) { }
+                        try {
+                            Thread.sleep(_sleepMS);
+                        } catch (InterruptedException e) {
+                        }
                     } else {
                         Thread.yield();
                     }

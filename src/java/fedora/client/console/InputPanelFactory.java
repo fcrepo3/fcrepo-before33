@@ -6,12 +6,7 @@
 package fedora.client.console;
 
 /**
- *
- * <p><b>Title:</b> InputPanelFactory.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
  */
 public abstract class InputPanelFactory {
 
@@ -29,15 +24,15 @@ public abstract class InputPanelFactory {
             return new BooleanInputPanel(false);
         }
         if (cl.getName().equals("java.util.Date")) {
-          return new DateTimeInputPanel();
+            return new DateTimeInputPanel();
         }
         if (cl.getName().equals("org.apache.axis.types.NonNegativeInteger")) {
-          return new NonNegativeIntegerInputPanel();
+            return new NonNegativeIntegerInputPanel();
         }
         if (cl.getName().startsWith("[L")) {
             try {
-                return new ArrayInputPanel(Class.forName(
-                        cl.getName().substring(2, cl.getName().length()-1)));
+                return new ArrayInputPanel(Class.forName(cl.getName()
+                        .substring(2, cl.getName().length() - 1)));
             } catch (ClassNotFoundException cnfe) {
                 // will fall through as unrecognized
             }

@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The Fedora Binding Specification XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://fedora.comm.nsdlib.org/service/bindspec 
  * Preferred Prefix : fbs
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class FedoraBindingSpecNamespace
         extends XMLNamespace {
@@ -64,8 +64,8 @@ public class FedoraBindingSpecNamespace
     //---
 
     /** The only instance of this class. */
-    private static final FedoraBindingSpecNamespace ONLY_INSTANCE
-            = new FedoraBindingSpecNamespace();
+    private static final FedoraBindingSpecNamespace ONLY_INSTANCE =
+            new FedoraBindingSpecNamespace();
 
     /**
      * Constructs the instance.
@@ -74,24 +74,24 @@ public class FedoraBindingSpecNamespace
         super("http://fedora.comm.nsdlib.org/service/bindspec", "fbs");
 
         // elements
-        DS_INPUT             = new QName(this, "DSInput");
+        DS_INPUT = new QName(this, "DSInput");
         DS_INPUT_INSTRUCTION = new QName(this, "DSInputInstruction");
-        DS_INPUT_LABEL       = new QName(this, "DSInputLabel");
-        DS_INPUT_SPEC        = new QName(this, "DSInputSpec");
-        DS_MIME              = new QName(this, "DSMIME");
+        DS_INPUT_LABEL = new QName(this, "DSInputLabel");
+        DS_INPUT_SPEC = new QName(this, "DSInputSpec");
+        DS_MIME = new QName(this, "DSMIME");
 
         // attributes
-        BDEF_PID           = new QName(this, "bDefPID");
-        DS_MAX             = new QName(this, "DSMax");
-        DS_MIN             = new QName(this, "DSMin");
-        DS_ORDINALITY      = new QName(this, "DSOrdinality");
-        LABEL              = new QName(this, "label");
+        BDEF_PID = new QName(this, "bDefPID");
+        DS_MAX = new QName(this, "DSMax");
+        DS_MIN = new QName(this, "DSMin");
+        DS_ORDINALITY = new QName(this, "DSOrdinality");
+        LABEL = new QName(this, "label");
         WSDL_MSG_PART_NAME = new QName(this, "wsdlMsgPartName");
     }
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static FedoraBindingSpecNamespace getInstance() {

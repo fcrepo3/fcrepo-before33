@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The Fedora Audit XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : info:fedora/fedora-system:def/audit#
  * Preferred Prefix : audit
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class FedoraAuditNamespace
         extends XMLNamespace {
@@ -61,8 +61,8 @@ public class FedoraAuditNamespace
     //---
 
     /** The only instance of this class. */
-    private static final FedoraAuditNamespace ONLY_INSTANCE
-            = new FedoraAuditNamespace();
+    private static final FedoraAuditNamespace ONLY_INSTANCE =
+            new FedoraAuditNamespace();
 
     /**
      * Constructs the instance.
@@ -71,23 +71,23 @@ public class FedoraAuditNamespace
         super("info:fedora/fedora-system:def/audit#", "audit");
 
         // elements
-        ACTION         = new QName(this, "action");
-        AUDIT_TRAIL    = new QName(this, "auditTrail");
-        COMPONENT_ID   = new QName(this, "componentID");
-        DATE           = new QName(this, "date");
-        JUSTIFICATION  = new QName(this, "justification");
-        PROCESS        = new QName(this, "process");
-        RECORD         = new QName(this, "record");
+        ACTION = new QName(this, "action");
+        AUDIT_TRAIL = new QName(this, "auditTrail");
+        COMPONENT_ID = new QName(this, "componentID");
+        DATE = new QName(this, "date");
+        JUSTIFICATION = new QName(this, "justification");
+        PROCESS = new QName(this, "process");
+        RECORD = new QName(this, "record");
         RESPONSIBILITY = new QName(this, "responsibility");
 
         // attributes
-        ID   = new QName(this, "ID");
+        ID = new QName(this, "ID");
         TYPE = new QName(this, "type");
     }
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static FedoraAuditNamespace getInstance() {

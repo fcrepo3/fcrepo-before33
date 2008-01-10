@@ -18,26 +18,37 @@ import java.util.Set;
 /**
  * A basic implementation of DigitalObject that stores things in memory.
  * 
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
  */
 @SuppressWarnings("deprecation")
-public class BasicDigitalObject implements DigitalObject {
+public class BasicDigitalObject
+        implements DigitalObject {
 
     private boolean m_isNew;
+
     private String m_fedoraObjectType;
+
     private String m_pid;
+
     private String m_state;
+
     private String m_ownerId;
+
     private String m_label;
+
     private String m_contentModelId;
+
     private Date m_createDate;
+
     private Date m_lastModDate;
-    private ArrayList<AuditRecord> m_auditRecords;
-    private HashMap<String, List<Datastream>> m_datastreams;
-    private HashMap<String, List<Disseminator>> m_disseminators;
-    private Map m_prefixes;
-    private Map<String, String> m_extProperties;
+
+    private final ArrayList<AuditRecord> m_auditRecords;
+
+    private final HashMap<String, List<Datastream>> m_datastreams;
+
+    private final HashMap<String, List<Disseminator>> m_disseminators;
+
+    private final Map<String, String> m_extProperties;
 
     public BasicDigitalObject() {
         m_auditRecords = new ArrayList<AuditRecord>();
@@ -58,7 +69,7 @@ public class BasicDigitalObject implements DigitalObject {
     }
 
     public boolean isFedoraObjectType(int type) {
-        return (m_fedoraObjectType.indexOf(type) != -1);
+        return m_fedoraObjectType.indexOf(type) != -1;
     }
 
     public String getFedoraObjectTypes() {
@@ -73,8 +84,8 @@ public class BasicDigitalObject implements DigitalObject {
 
     public void removeFedoraObjectType(int type) {
         if (m_fedoraObjectType.indexOf(type) != -1) {
-            m_fedoraObjectType = m_fedoraObjectType.replaceAll(
-                    "" + (char) type, "");
+            m_fedoraObjectType =
+                    m_fedoraObjectType.replaceAll("" + (char) type, "");
         }
     }
 
@@ -147,7 +158,7 @@ public class BasicDigitalObject implements DigitalObject {
         HashSet<String> set = new HashSet<String>();
         Iterator<String> iter = map.keySet().iterator();
         while (iter.hasNext()) {
-            String key = (String) iter.next();
+            String key = iter.next();
             List list = (List) map.get(key);
             if (list.size() > 0) {
                 set.add(key);
@@ -157,8 +168,8 @@ public class BasicDigitalObject implements DigitalObject {
     }
 
     public List<Datastream> datastreams(String id) {
-        ArrayList<Datastream> ret = (ArrayList<Datastream>) m_datastreams
-                .get(id);
+        ArrayList<Datastream> ret =
+                (ArrayList<Datastream>) m_datastreams.get(id);
         if (ret == null) {
             ret = new ArrayList<Datastream>();
             m_datastreams.put(id, ret);
@@ -191,8 +202,8 @@ public class BasicDigitalObject implements DigitalObject {
 
     @Deprecated
     public List<Disseminator> disseminators(String id) {
-        ArrayList<Disseminator> ret = (ArrayList<Disseminator>) m_disseminators
-                .get(id);
+        ArrayList<Disseminator> ret =
+                (ArrayList<Disseminator>) m_disseminators.get(id);
         if (ret == null) {
             ret = new ArrayList<Disseminator>();
             m_disseminators.put(id, ret);
@@ -218,7 +229,7 @@ public class BasicDigitalObject implements DigitalObject {
         ArrayList<String> auditIDs = new ArrayList<String>();
         Iterator<AuditRecord> iter = m_auditRecords.iterator();
         while (iter.hasNext()) {
-            AuditRecord record = (AuditRecord) iter.next();
+            AuditRecord record = iter.next();
             auditIDs.add(record.id);
         }
         return newID(auditIDs.iterator(), "AUDREC");
@@ -228,7 +239,7 @@ public class BasicDigitalObject implements DigitalObject {
      * Sets an extended property on the object.
      * 
      * @param propName
-     *            The extende property name, either a string, or URI as string.
+     *        The extende property name, either a string, or URI as string.
      */
     public void setExtProperty(String propName, String propValue) {
         m_extProperties.put(propName, propValue);
@@ -241,7 +252,7 @@ public class BasicDigitalObject implements DigitalObject {
      * @return The property value.
      */
     public String getExtProperty(String propName) {
-        return (String) m_extProperties.get(propName);
+        return m_extProperties.get(propName);
 
     }
 
@@ -269,8 +280,9 @@ public class BasicDigitalObject implements DigitalObject {
             if (id.startsWith(start) && id.length() > start.length()) {
                 try {
                     int num = Integer.parseInt(id.substring(start.length()));
-                    if (num > highest)
+                    if (num > highest) {
                         highest = num;
+                    }
                 } catch (NumberFormatException ignored) {
                 }
             }

@@ -9,9 +9,12 @@ package fedora.server.validation;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+
 import java.net.URI;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 import java.util.TimeZone;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -19,86 +22,99 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.log4j.Logger;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import fedora.common.Constants;
 import fedora.common.PID;
+
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.ValidationException;
 
 /**
- * This class will validate relationship metadata that may exist in a digital
- * object. The validator will SAX parse the content of the RELS-EXT datastream
- * which must be an RDF stream that asserts relationships for a digital object.
- * The validator will enforce the following restrictions on the RDF stream:
+ * Validates the RDF/XML content of the RELS-EXT datastream.
+ *
+ * <p>The following restrictions are enforced:
+ *
+ * <ul>
+ *   <li> The RDF must follow a prescribed RDF/XML authoring style where there
+ *        is ONE subject encoded as an RDF &lt;Description&gt; with an RDF 
+ *        <code>about</code> attribute containing a digital object URI.
+ *        The sub-elements are the relationship properties of the subject.
+ *        Each relationship may refer to any resource (identified by URI) via
+ *        an RDF 'resource' attribute, or a literal.  Relationship assertions
+ *        can be from the default Fedora relationship ontology, or from other
+ *        namespaces. For example:
+ * <pre>
+ * &lt;rdf:Description about="info:fedora/demo:5"&gt;
+ *   &lt;fedora:isMemberOfCollection resource="info:fedora/demo:100"/&gt;
+ *   &lt;nsdl:isAugmentedBy resource="info:fedora/demo:333"/&gt;
+ *   &lt;example:source resource="http://example.org/bsmith/article1.html"/&gt;
+ *   &lt;example:primaryAuthor&gt;Bob Smith&lt;/example:primaryAuthor&gt;
+ * &lt;/rdf:Description&gt;<pre></li>
+ *   <li> There must be only ONE  &lt;rdf:Description&gt; element.</li>
+ *   <li> There must be NO nesting of assertions. In terms of XML depth, 
+ *        the RDF root element is considered depth of 0. Then, the 
+ *        &lt;rdf:Description&gt; element must be at depth of 1, and the 
+ *        relationship properties must exist at depth of 2. That's it.</li>
+ *   <li> The RDF <code>about</code> attribute of the RDF &lt;Description&gt;
+ *        must be the URI of the digital object in which the RELS-EXT 
+ *        datastream resides. This means that all relationships are FROM 
+ *        "this" object to other objects.</li>
+ *   <li> If the target of the statement is a resource (identified by a URI),
+ *        the RDF <code>resource</code> attribute must specify a syntactically
+ *        valid, absolute URI.</li>
+ *   <li> The RDF <code>resource</code> attribute of a relationship assertion 
+ *        must NOT be the URI of the digital object that is the subject of 
+ *        the relationships. In other words, NO SELF-REFERENTIAL 
+ *        relationships.</li>
+ *   <li> There must NOT be any assertion of properties from the DC namespace
+ *        or from the Fedora object properties namespaces (model and view),
+ *        with the following exceptions:
+ * <pre>
+ * fedora-model:hasBDef (0 or more, target=rdf:resource)
+ * fedora-model:hasContentModel (0 or 1, target=rdf:resource)
+ * fedora-model:isContractor (0 or more, target=rdf:resource)</pre>
+ *        These assertions are allowed in the RELS-EXT datastream, but all 
+ *        others from the <code>fedora-model</code> and <code>fedora-view</code>
+ *        namespaces are inferred from values expressed elsewhere in the
+ *        digital object, and we do not want duplication.</li>
+ * </ul>
  * 
- * 1. The RDF must follow a prescribed RDF/XML authoring style where there is
- * ONE subject encoded as an RDF <Description> with an RDF 'about' attribute
- * containing a digital object URI. The sub-elements are the relationship
- * properties of the subject. Each relationship may refer to any resource
- * (identified by URI) via an RDF 'resource' attribute, or a literal.
- * Relationship assertions can be from the default Fedora relationship ontology,
- * or from other namespaces. For example: <rdf:Description
- * about="info:fedora/demo:5"> <fedora:isMemberOfCollection
- * resource="info:fedora/demo:100"/> <nsdl:isAugmentedBy
- * resource="info:fedora/demo:333"/> <example:source
- * resource="http://example.org/bsmith/article1.html"/>
- * <example:primaryAuthor>Bob Smith</example:primaryAuthor> </rdf:Description>
- * 
- * 2. There must be only ONE RDF <Description> in the RELS-EXT datastream.
- * 
- * 3. There must be NO nesting of assertions. In terms of XML depth, the RDF
- * root element is considered depth of 0. Then, the RDF <Description> must be at
- * depth of 1, and the relationship properties must exist at depth of 2. That's
- * it.
- * 
- * 4. The RDF 'about' attribute of the RDF <Description> must be the URI of the
- * digital object in which the RELS-EXT datastream resides. This means that all
- * relationships are FROM "this" object to other objects.
- * 
- * 5. If the target of the statement is a resource (identified by a URI), the
- * RDF 'resource' attribute must specify a syntactically valid, absolute URI.
- * 
- * 6. The RDF 'resource' attribute of a relationship assertion must NOT be the
- * URI of the digital object that is the subject of the relationships. In other
- * words, NO SELF-REFERENTIAL relationships.
- * 
- * 7. There must NOT be any assertion of properties from the DC namespace or
- * from the Fedora object properties namespaces (model and view), with
- * the following exceptions:
- *   fedora-model:hasBDef         (0 or more, target=rdf:resource)
- *   fedora-model:hasContentModel (0 or 1, target=rdf:resource)
- *   fedora-model:isContractor    (0 or more, target=rdf:resource)
- * These assertions are allowed in the RELS-EXT datastream, but
- * all others from fedora-model/fedora-view are inferred from values
- * expressed elsewhere in the digital object, and we do not want
- * duplication.
- * 
- * @author payette@cs.cornell.edu
+ * @author Sandy Payette
  * @author Eddie Shin
  * @author Chris Wilper
  */
-public class RelsExtValidator extends DefaultHandler implements Constants {
+public class RelsExtValidator
+        extends DefaultHandler
+        implements Constants {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(RelsExtValidator.class
-            .getName());
+    private static final Logger LOG =
+            Logger.getLogger(RelsExtValidator.class.getName());
 
     // state variables
-    private String m_characterEncoding;
+    private final String m_characterEncoding;
+
     private String m_doURI;
+
     private boolean m_rootRDFFound;
+
     private boolean m_descriptionFound;
+
     private int m_depth;
+
     private String m_literalType;
+
     private StringBuffer m_literalValue;
+
     private boolean m_hasContentModel;
 
     // SAX parser
-    private SAXParser m_parser;
+    private final SAXParser m_parser;
 
     public RelsExtValidator(String characterEncoding, boolean validate)
             throws ParserConfigurationException, SAXException,
@@ -142,8 +158,10 @@ public class RelsExtValidator extends DefaultHandler implements Constants {
         LOG.debug("Just finished parse.");
     }
 
-    public void startElement(String nsURI, String localName, String qName,
-            Attributes a) throws SAXException {
+    public void startElement(String nsURI,
+                             String localName,
+                             String qName,
+                             Attributes a) throws SAXException {
 
         if (nsURI.equals(RDF.uri) && localName.equalsIgnoreCase("RDF")) {
             m_rootRDFFound = true;
@@ -175,10 +193,10 @@ public class RelsExtValidator extends DefaultHandler implements Constants {
                         // be fedora-model:hasBDef, hasContentModel, or
                         // isContractor
                         if (localName.equals(MODEL.HAS_BDEF.localName)
-                                || localName.equals(
-                                MODEL.HAS_CONTENT_MODEL.localName)
-                                || localName.equals(
-                                MODEL.IS_CONTRACTOR.localName)) {
+                                || localName
+                                        .equals(MODEL.HAS_CONTENT_MODEL.localName)
+                                || localName
+                                        .equals(MODEL.IS_CONTRACTOR.localName)) {
                             throw new SAXException("RelsExtValidator: "
                                     + "Target of " + qName + " statement "
                                     + "MUST be an rdf:resource");
@@ -236,8 +254,9 @@ public class RelsExtValidator extends DefaultHandler implements Constants {
         }
     }
 
-    private static String grab(Attributes a, String namespace,
-            String elementName) {
+    private static String grab(Attributes a,
+                               String namespace,
+                               String elementName) {
         String ret = a.getValue(namespace, elementName);
         if (ret == null) {
             ret = a.getValue(elementName);
@@ -257,10 +276,10 @@ public class RelsExtValidator extends DefaultHandler implements Constants {
      * Then, the RDF <Description> must be at depth of 1, and the relationship
      * properties must exist at depth of 2. That's it.
      * 
-     * @param depth -
-     *            the depth of the XML element being evaluated
-     * @param qName -
-     *            the name of the relationship property being evaluated
+     * @param depth
+     *        the depth of the XML element being evaluated
+     * @param qName
+     *        the name of the relationship property being evaluated
      * @throws SAXException
      */
     private void checkDepth(int depth, String qName) throws SAXException {
@@ -278,13 +297,17 @@ public class RelsExtValidator extends DefaultHandler implements Constants {
     }
 
     /**
-	 * checkBadAssertion: checks that the DC and fedora-view namespace
-     * are not being used in RELS-EXT, and that if fedora-model is used,
-     * the localName is hasBDef, hasContentModel, or isContractor.
-     * Also ensures that fedora-model:hasContentModel is only used once.
-	 * @param nsURI - the namespace URI of the predicate being evaluated
-	 * @param localName - the local name of the predicate being evaluated
-	 * @param qName - the qualified name of the predicate being evaluated
+     * checkBadAssertion: checks that the DC and fedora-view namespace are not
+     * being used in RELS-EXT, and that if fedora-model is used, the localName
+     * is hasBDef, hasContentModel, or isContractor. Also ensures that
+     * fedora-model:hasContentModel is only used once.
+     * 
+     * @param nsURI
+     *        the namespace URI of the predicate being evaluated
+     * @param localName
+     *        the local name of the predicate being evaluated
+     * @param qName
+     *        the qualified name of the predicate being evaluated
      */
     private void checkBadAssertion(String nsURI, String localName, String qName)
             throws SAXException {
@@ -295,7 +318,7 @@ public class RelsExtValidator extends DefaultHandler implements Constants {
                     + " relationship assertion: " + qName + ".\n"
                     + " No Dublin Core assertions allowed"
                     + " in Fedora relationship metadata.");
-		} else if (nsURI.equals(MODEL.uri)) {
+        } else if (nsURI.equals(MODEL.uri)) {
             if (localName.equals(MODEL.HAS_CONTENT_MODEL.localName)) {
                 if (!m_hasContentModel) {
                     m_hasContentModel = true;
@@ -306,16 +329,18 @@ public class RelsExtValidator extends DefaultHandler implements Constants {
             } else if (!localName.equals(MODEL.HAS_BDEF.localName)
                     && !localName.equals(MODEL.IS_CONTRACTOR.localName)) {
                 throw new SAXException("RelsExtValidator:"
-                    + " Disallowed predicate in RELS-EXT: " + qName + "\n"
-                    + " The only predicates from the fedora-model namespace"
-                    + " allowed in RELS-EXT are hasBDef, hasContentModel, and"
-                    + " isContractor.");
+                        + " Disallowed predicate in RELS-EXT: "
+                        + qName
+                        + "\n"
+                        + " The only predicates from the fedora-model namespace"
+                        + " allowed in RELS-EXT are hasBDef, hasContentModel, and"
+                        + " isContractor.");
             }
         } else if (nsURI.equals(VIEW.uri)) {
             throw new SAXException("RelsExtValidator:"
-                + " Disallowed predicate in RELS-EXT: " + qName + "\n"
-                + " The fedora-view namespace is reserved by Fedora.");
-		}
+                    + " Disallowed predicate in RELS-EXT: " + qName + "\n"
+                    + " The fedora-view namespace is reserved by Fedora.");
+        }
     }
 
     /**
@@ -324,8 +349,8 @@ public class RelsExtValidator extends DefaultHandler implements Constants {
      * datastream is only supposed to capture relationships about "this" digital
      * object.
      * 
-     * @param aboutURI -
-     *            the URI value of the RDF 'about' attribute
+     * @param aboutURI
+     *        the URI value of the RDF 'about' attribute
      * @throws SAXException
      */
     private void checkAboutURI(String aboutURI) throws SAXException {
@@ -345,10 +370,10 @@ public class RelsExtValidator extends DefaultHandler implements Constants {
      * checkResourceURI: ensure that the target resource is a proper URI and is
      * not self-referential.
      * 
-     * @param resourceURI -
-     *            the URI value of the RDF 'resource' attribute
-     * @param relName -
-     *            the name of the relationship property being evaluated
+     * @param resourceURI
+     *        the URI value of the RDF 'resource' attribute
+     * @param relName
+     *        the name of the relationship property being evaluated
      * @throws SAXException
      */
     private void checkResourceURI(String resourceURI, String relName)
@@ -387,16 +412,17 @@ public class RelsExtValidator extends DefaultHandler implements Constants {
      * checkTypedValue: ensure that the datatype of a literal is one of the
      * supported types and that it's a valid value for that type.
      * 
-     * @param datatypeURI -
-     *            the URI value of the RDF 'datatype' attribute
-     * @param value -
-     *            the value
-     * @param relName -
-     *            the name of the property being evaluated
+     * @param datatypeURI
+     *        the URI value of the RDF 'datatype' attribute
+     * @param value
+     *        the value
+     * @param relName
+     *        the name of the property being evaluated
      * @throws SAXException
      */
-    private void checkTypedValue(String datatypeURI, String value,
-            String relName) throws SAXException {
+    private void checkTypedValue(String datatypeURI,
+                                 String value,
+                                 String relName) throws SAXException {
         if (datatypeURI.equals(RDF_XSD.INT.uri)) {
             try {
                 Integer.parseInt(value);
@@ -442,16 +468,15 @@ public class RelsExtValidator extends DefaultHandler implements Constants {
                         + "  yyyy-MM-ddTHH:mm:ss.SSSZ");
             }
         } else {
-            throw new SAXException(
-                    "RelsExtValidator:"
-                            + " Error in relationship '"
-                            + relName
-                            + "'.\n"
-                            + " The RELS-EXT datastream does not support the specified"
-                            + " datatype.\n"
-                            + "If specified, the RDF 'datatype' must be the URI of one of\n"
-                            + "the following W3C XML Schema data types: int, long, float,\n"
-                            + "double, or dateTime");
+            throw new SAXException("RelsExtValidator:"
+                    + " Error in relationship '"
+                    + relName
+                    + "'.\n"
+                    + " The RELS-EXT datastream does not support the specified"
+                    + " datatype.\n"
+                    + "If specified, the RDF 'datatype' must be the URI of one of\n"
+                    + "the following W3C XML Schema data types: int, long, float,\n"
+                    + "double, or dateTime");
         }
     }
 
@@ -461,7 +486,7 @@ public class RelsExtValidator extends DefaultHandler implements Constants {
      */
     private static boolean isValidDateTime(String lex) {
         SimpleDateFormat format = new SimpleDateFormat();
-        
+
         format.setTimeZone(TimeZone.getTimeZone("UTC"));
         int length = lex.length();
         if (lex.startsWith("-")) {

@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The Fedora Service Profile XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://fedora.comm.nsdlib.org/service/profile
  * Preferred Prefix : fsvp
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class FedoraServiceProfileNamespace
         extends XMLNamespace {
@@ -79,8 +79,8 @@ public class FedoraServiceProfileNamespace
     //---
 
     /** The only instance of this class. */
-    private static final FedoraServiceProfileNamespace ONLY_INSTANCE
-            = new FedoraServiceProfileNamespace();
+    private static final FedoraServiceProfileNamespace ONLY_INSTANCE =
+            new FedoraServiceProfileNamespace();
 
     /**
      * Constructs the instance.
@@ -89,29 +89,30 @@ public class FedoraServiceProfileNamespace
         super("http://fedora.comm.nsdlib.org/service/profile", "fsvp");
 
         // elements
-        MIME_TYPE                  = new QName(this, "MIMEType");
-        SERVICE_DESCRIPTION        = new QName(this, "serviceDescription");
-        SERVICE_IMPLEMENTATION     = new QName(this, "serviceImplementation");
-        SERVICE_IMPL_DEPENDENCIES  = new QName(this, "serviceImplDependencies");
-        SERVICE_INPUT_FORMATS      = new QName(this, "serviceInputFormats");
-        SERVICE_LIVE_TEST_URL      = new QName(this, "serviceLiveTestURL");
-        SERVICE_MESSAGING_PROTOCOL = new QName(this, "serviceMessagingProtocol");
-        SERVICE_PROFILE            = new QName(this, "serviceProfile");
-        SERVICE_OUTPUT_FORMATS     = new QName(this, "serviceOutputFormats");
-        SOFTWARE                   = new QName(this, "software");
+        MIME_TYPE = new QName(this, "MIMEType");
+        SERVICE_DESCRIPTION = new QName(this, "serviceDescription");
+        SERVICE_IMPLEMENTATION = new QName(this, "serviceImplementation");
+        SERVICE_IMPL_DEPENDENCIES = new QName(this, "serviceImplDependencies");
+        SERVICE_INPUT_FORMATS = new QName(this, "serviceInputFormats");
+        SERVICE_LIVE_TEST_URL = new QName(this, "serviceLiveTestURL");
+        SERVICE_MESSAGING_PROTOCOL =
+                new QName(this, "serviceMessagingProtocol");
+        SERVICE_PROFILE = new QName(this, "serviceProfile");
+        SERVICE_OUTPUT_FORMATS = new QName(this, "serviceOutputFormats");
+        SOFTWARE = new QName(this, "software");
 
         // attributes
-        BDEF_PID    = new QName(this, "bDefPID");
-        NAME        = new QName(this, "name");
-        LICENSE     = new QName(this, "license");
+        BDEF_PID = new QName(this, "bDefPID");
+        NAME = new QName(this, "name");
+        LICENSE = new QName(this, "license");
         OPEN_SOURCE = new QName(this, "opensource");
-        TYPE        = new QName(this, "type");
-        VERSION     = new QName(this, "version");
+        TYPE = new QName(this, "type");
+        VERSION = new QName(this, "version");
     }
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static FedoraServiceProfileNamespace getInstance() {

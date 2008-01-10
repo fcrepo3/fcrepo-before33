@@ -6,21 +6,18 @@
 package fedora.oai;
 
 /**
- *
- * <p><b>Title:</b> NoRecordsMatchException.java</p>
- * <p><b>Description:</b> Signals that the combination of the values of the
- * from, until, set and metadataPrefix arguments results in an empty list.</p>
- *
- * <p>This may occur while fulfilling a ListIdentifiers or ListRecords request.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * Signals that the combination of the values of the from, until, set and 
+ * metadataPrefix arguments results in an empty list.
+ * 
+ * This may occur while fulfilling a ListIdentifiers or ListRecords request.
+ * 
+ * @author Chris Wilper
  */
 public class NoRecordsMatchException
         extends OAIException {
 
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     public NoRecordsMatchException() {
         super("noRecordsMatch", null);
     }

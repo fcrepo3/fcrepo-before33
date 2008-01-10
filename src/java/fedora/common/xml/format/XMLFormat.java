@@ -9,8 +9,8 @@ import fedora.common.xml.namespace.XMLNamespace;
 
 /**
  * An XML format.
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class XMLFormat {
 
@@ -25,11 +25,15 @@ public class XMLFormat {
 
     /**
      * Constructs an instance.
-     *
-     * @param uri the URI of the format.
-     * @param xmlNamespace the primary XML namespace.
-     * @param xsdSchemaLocation the public location of the XSD schema.
-     * @throws IllegalArgumentException if any parameter is null.
+     * 
+     * @param uri
+     *        the URI of the format.
+     * @param xmlNamespace
+     *        the primary XML namespace.
+     * @param xsdSchemaLocation
+     *        the public location of the XSD schema.
+     * @throws IllegalArgumentException
+     *         if any parameter is null.
      */
     public XMLFormat(String uri, XMLNamespace namespace, String xsdLocation) {
         if (uri == null) {
@@ -39,8 +43,7 @@ public class XMLFormat {
             throw new IllegalArgumentException("namespace cannot be null");
         }
         if (xsdLocation == null) {
-            throw new IllegalArgumentException(
-                    "xsdLocation cannot be null");
+            throw new IllegalArgumentException("xsdLocation cannot be null");
         }
         this.uri = uri;
         this.namespace = namespace;
@@ -52,9 +55,7 @@ public class XMLFormat {
     //---
 
     /**
-     * Returns the URI of the format.
-     *
-     * {@inheritDoc}
+     * Returns the URI of the format. {@inheritDoc}
      */
     @Override
     public String toString() {
@@ -62,10 +63,8 @@ public class XMLFormat {
     }
 
     /**
-     * Returns true iff the given object is an instance of this class
-     * and has the same URI.
-     *
-     * {@inheritDoc}
+     * Returns true iff the given object is an instance of this class and has
+     * the same URI. {@inheritDoc}
      */
     @Override
     public boolean equals(Object o) {

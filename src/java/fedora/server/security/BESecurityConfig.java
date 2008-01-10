@@ -5,79 +5,100 @@
 
 package fedora.server.security;
 
-import java.io.*;
-import java.util.*;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
-import javax.xml.parsers.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-import org.w3c.dom.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import fedora.common.Constants;
 
 /**
  * Security configuration for backend services.
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class BESecurityConfig
         implements Constants {
 
-    private static final String _CONFIG            = "serviceSecurityDescription";
-    private static final String _INTERNAL_PREFIX   = "fedoraInternalCall-";
-    private final static String _ROLE              = "role";
-    private final static String _CALLSSL           = "callSSL";
-    private final static String _CALLBASICAUTH     = "callBasicAuth";
-    private final static String _CALLUSERNAME      = "callUsername";
-    private final static String _CALLPASSWORD      = "callPassword";
-    private final static String _CALLBACKSSL       = "callbackSSL";
-    private final static String _CALLBACKBASICAUTH = "callbackBasicAuth";
-    private final static String _IPLIST            = "iplist";
+    private static final String _CONFIG = "serviceSecurityDescription";
 
-    /** 
-     * The default role configuration, specifying the values to be assumed
-     * for any internal call or BMech configuration value which is null.
+    private static final String _INTERNAL_PREFIX = "fedoraInternalCall-";
+
+    private final static String _ROLE = "role";
+
+    private final static String _CALLSSL = "callSSL";
+
+    private final static String _CALLBASICAUTH = "callBasicAuth";
+
+    private final static String _CALLUSERNAME = "callUsername";
+
+    private final static String _CALLPASSWORD = "callPassword";
+
+    private final static String _CALLBACKSSL = "callbackSSL";
+
+    private final static String _CALLBACKBASICAUTH = "callbackBasicAuth";
+
+    private final static String _IPLIST = "iplist";
+
+    /**
+     * The default role configuration, specifying the values to be assumed for
+     * any internal call or BMech configuration value which is null.
      */
     private DefaultRoleConfig m_defaultConfig;
 
     /**
      * Whether Fedora-to-self calls should use SSL.
      */
-    private Boolean           m_internalSSL;
+    private Boolean m_internalSSL;
 
     /**
      * Whether Fedora-to-self calls should use basic auth.
      */
-    private Boolean           m_internalBasicAuth;
+    private Boolean m_internalBasicAuth;
 
     /**
-     * The username to be used for basic-authenticaed Fedora-to-self calls.
-     * This value, along with the username, should also be configured in 
+     * The username to be used for basic-authenticaed Fedora-to-self calls. This
+     * value, along with the username, should also be configured in
      * tomcat-users.xml or whatever other authentication database is in effect.
      */
-    private String            m_internalUsername;
+    private String m_internalUsername;
 
     /**
-     * The password to be used for basic-authenticaed Fedora-to-self calls.
-     * This value, along with the password, should also be configured in 
+     * The password to be used for basic-authenticaed Fedora-to-self calls. This
+     * value, along with the password, should also be configured in
      * tomcat-users.xml or whatever other authentication database is in effect.
      */
-    private String            m_internalPassword;
+    private String m_internalPassword;
 
     /**
-     * The list of IP addresses that are allowed for Fedora-to-self calls.
-     * This should normally contain 127.0.0.1 and the external IP address
-     * of the running server, if known.
+     * The list of IP addresses that are allowed for Fedora-to-self calls. This
+     * should normally contain 127.0.0.1 and the external IP address of the
+     * running server, if known.
      */
-    private String[]          m_internalIPList;
+    private String[] m_internalIPList;
 
     /**
      * A sorted, PID-keyed map of <code>BMechRoleConfig</code>s.
      */
-    private SortedMap<String, BMechRoleConfig>         m_bMechConfigs;
+    private final SortedMap<String, BMechRoleConfig> m_bMechConfigs;
 
     /**
-     * Create an empty BESecurityConfig with an empty map of 
-     * <code>BMechRoleConfig</code>s and <code>null</code> values for 
+     * Create an empty BESecurityConfig with an empty map of
+     * <code>BMechRoleConfig</code>s and <code>null</code> values for
      * everything else.
      */
     public BESecurityConfig() {
@@ -101,19 +122,17 @@ public class BESecurityConfig
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Get whether SSL should be used for Fedora-to-self calls.
-     *
-     * This should be true if API-A is only available via SSL.
+     * Get whether SSL should be used for Fedora-to-self calls. This should be
+     * true if API-A is only available via SSL.
      */
     public Boolean getInternalSSL() {
         return m_internalSSL;
     }
 
     /**
-     * Get whether SSL is effectively used for Fedora-to-self calls.
-     *
-     * This will be the internalSSL value, if set, or the inherited
-     * call value from the default role, if set, or Boolean.FALSE.
+     * Get whether SSL is effectively used for Fedora-to-self calls. This will
+     * be the internalSSL value, if set, or the inherited call value from the
+     * default role, if set, or Boolean.FALSE.
      */
     public Boolean getEffectiveInternalSSL() {
         if (m_internalSSL != null) {
@@ -135,19 +154,17 @@ public class BESecurityConfig
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Get whether basic auth should be used for Fedora-to-self calls.
-     *
-     * This should be true if API-A requires basic auth.
+     * Get whether basic auth should be used for Fedora-to-self calls. This
+     * should be true if API-A requires basic auth.
      */
     public Boolean getInternalBasicAuth() {
         return m_internalBasicAuth;
     }
 
     /**
-     * Get whether basic auth is effectively used for Fedora-to-self calls.
-     *
-     * This will be the internalBasicAuth value, if set, or the inherited
-     * call value from the default role, if set, or Boolean.FALSE.
+     * Get whether basic auth is effectively used for Fedora-to-self calls. This
+     * will be the internalBasicAuth value, if set, or the inherited call value
+     * from the default role, if set, or Boolean.FALSE.
      */
     public Boolean getEffectiveInternalBasicAuth() {
         if (m_internalBasicAuth != null) {
@@ -177,9 +194,8 @@ public class BESecurityConfig
 
     /**
      * Get the effective internal username for basic auth Fedora-to-self calls.
-     *
-     * This will be the internal username, if set, or the inherited
-     * call value from the default role, if set, or null.
+     * This will be the internal username, if set, or the inherited call value
+     * from the default role, if set, or null.
      */
     public String getEffectiveInternalUsername() {
         if (m_internalUsername != null) {
@@ -209,9 +225,8 @@ public class BESecurityConfig
 
     /**
      * Get the effective internal password for basic auth Fedora-to-self calls.
-     *
-     * This will be the internal password, if set, or the inherited
-     * call value from the default role, if set, or null.
+     * This will be the internal password, if set, or the inherited call value
+     * from the default role, if set, or null.
      */
     public String getEffectiveInternalPassword() {
         if (m_internalPassword != null) {
@@ -240,10 +255,9 @@ public class BESecurityConfig
     }
 
     /**
-     * Get the effective list of internal IP addresses.
-     *
-     * This will be the internalIPList value, if set, or the inherited value
-     * from the default role, if set, or null.
+     * Get the effective list of internal IP addresses. This will be the
+     * internalIPList value, if set, or the inherited value from the default
+     * role, if set, or null.
      */
     public String[] getEffectiveInternalIPList() {
         if (m_internalIPList != null) {
@@ -274,27 +288,31 @@ public class BESecurityConfig
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Add empty bMech and method configurations given by the map if they
-     * are not already already defined.
+     * Add empty bMech and method configurations given by the map if they are
+     * not already already defined.
      */
     public void addEmptyConfigs(Map pidToMethodList) {
         Iterator pIter = pidToMethodList.keySet().iterator();
         while (pIter.hasNext()) {
             String bMechPID = (String) pIter.next();
             // add the bMech indicated by the key if it doesn't exist
-            BMechRoleConfig bMechRoleConfig = (BMechRoleConfig) m_bMechConfigs.get(bMechPID);
+            BMechRoleConfig bMechRoleConfig = m_bMechConfigs.get(bMechPID);
             if (bMechRoleConfig == null) {
-                bMechRoleConfig = new BMechRoleConfig(m_defaultConfig, bMechPID);
+                bMechRoleConfig =
+                        new BMechRoleConfig(m_defaultConfig, bMechPID);
                 m_bMechConfigs.put(bMechPID, bMechRoleConfig);
             }
             // add each method indicated by the List which doesn't already exist
             Iterator mIter = ((List) pidToMethodList.get(bMechPID)).iterator();
             while (mIter.hasNext()) {
                 String methodName = (String) mIter.next();
-                MethodRoleConfig methodRoleConfig = (MethodRoleConfig) bMechRoleConfig.getMethodConfigs().get(methodName);
+                MethodRoleConfig methodRoleConfig =
+                        bMechRoleConfig.getMethodConfigs().get(methodName);
                 if (methodRoleConfig == null) {
-                    methodRoleConfig = new MethodRoleConfig(bMechRoleConfig, methodName);
-                    bMechRoleConfig.getMethodConfigs().put(methodName, methodRoleConfig);
+                    methodRoleConfig =
+                            new MethodRoleConfig(bMechRoleConfig, methodName);
+                    bMechRoleConfig.getMethodConfigs().put(methodName,
+                                                           methodRoleConfig);
                 }
             }
         }
@@ -333,7 +351,8 @@ public class BESecurityConfig
             Element e = (Element) nodes.item(i);
             String role = e.getAttribute(_ROLE);
             if (role.indexOf(":") != -1 && role.indexOf("/") == -1) {
-                BMechRoleConfig bMechRoleConfig = new BMechRoleConfig(defaultRoleConfig, role);
+                BMechRoleConfig bMechRoleConfig =
+                        new BMechRoleConfig(defaultRoleConfig, role);
                 setValuesFromElement(bMechRoleConfig, e);
                 config.getBMechConfigs().put(role, bMechRoleConfig);
             } else if (role.equals(_INTERNAL_PREFIX + "1")) {
@@ -353,22 +372,26 @@ public class BESecurityConfig
             if (parts.length == 2) {
                 String bMechPID = parts[0];
                 String methodName = parts[1];
-                BMechRoleConfig bMechRoleConfig = (BMechRoleConfig) config.getBMechConfigs().get(bMechPID);
+                BMechRoleConfig bMechRoleConfig =
+                        config.getBMechConfigs().get(bMechPID);
                 if (bMechRoleConfig == null) {
-                    bMechRoleConfig = new BMechRoleConfig(defaultRoleConfig, bMechPID);
+                    bMechRoleConfig =
+                            new BMechRoleConfig(defaultRoleConfig, bMechPID);
                     config.getBMechConfigs().put(bMechPID, bMechRoleConfig);
                 }
-                MethodRoleConfig methodRoleConfig = new MethodRoleConfig(bMechRoleConfig, methodName);
+                MethodRoleConfig methodRoleConfig =
+                        new MethodRoleConfig(bMechRoleConfig, methodName);
                 setValuesFromElement(methodRoleConfig, e);
-                bMechRoleConfig.getMethodConfigs().put(methodName, methodRoleConfig);
+                bMechRoleConfig.getMethodConfigs().put(methodName,
+                                                       methodRoleConfig);
             }
         }
 
         return config;
     }
 
-    private static void setValuesFromElement(BERoleConfig roleConfig,
-                                             Element e) throws Exception {
+    private static void setValuesFromElement(BERoleConfig roleConfig, Element e)
+            throws Exception {
         roleConfig.setCallSSL(getBoolean(e, _CALLSSL));
         roleConfig.setCallBasicAuth(getBoolean(e, _CALLBASICAUTH));
         roleConfig.setCallUsername(getString(e, _CALLUSERNAME));
@@ -400,7 +423,9 @@ public class BESecurityConfig
         String s = getString(e, name);
         if (s != null) {
             String[] array = s.split(" +");
-            if (array.length == 1 && array[0].length() == 0) return null;
+            if (array.length == 1 && array[0].length() == 0) {
+                return null;
+            }
             return array;
         } else {
             return null;
@@ -408,27 +433,32 @@ public class BESecurityConfig
     }
 
     /**
-     * Serialize to the given stream, closing it when finished.
-     *
-     * If skipNonOverrides is true, any configuration whose values are all
-     * null will not be written.
+     * Serialize to the given stream, closing it when finished. If
+     * skipNonOverrides is true, any configuration whose values are all null
+     * will not be written.
      */
-    public void toStream(boolean skipNonOverrides, OutputStream out) throws Exception {
+    public void toStream(boolean skipNonOverrides, OutputStream out)
+            throws Exception {
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
             write(skipNonOverrides, true, writer);
         } finally {
-            try { writer.close(); } catch (Throwable th) { }
-            try { out.close(); } catch (Throwable th) { }
+            try {
+                writer.close();
+            } catch (Throwable th) {
+            }
+            try {
+                out.close();
+            } catch (Throwable th) {
+            }
         }
     }
 
     /**
-     * Serialize to the given writer, keeping it open when finished.
-     *
-     * If skipNonOverrides is true, any configuration whose values are all
-     * null will not be written.
+     * Serialize to the given writer, keeping it open when finished. If
+     * skipNonOverrides is true, any configuration whose values are all null
+     * will not be written.
      */
     public void write(boolean skipNonOverrides,
                       boolean withXMLDeclaration,
@@ -438,7 +468,7 @@ public class BESecurityConfig
 
         // header
         if (withXMLDeclaration) {
-          writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         }
         writer.println("<" + _CONFIG + " xmlns=\"" + BE_SECURITY.uri + "\"");
         writer.println(indent + " xmlns:xsi=\"" + XSI.uri + "\"");
@@ -451,30 +481,33 @@ public class BESecurityConfig
         writer.println(">");
 
         // fedoraInternalCall-1 and -2
-        writeInternalConfig(1, m_internalSSL, 
-                               m_internalBasicAuth, 
-                               m_internalUsername, 
-                               m_internalPassword, 
-                               m_internalIPList, 
-                               writer);
-        writeInternalConfig(2, Boolean.FALSE, 
-                               Boolean.FALSE, 
-                               null, 
-                               null, 
-                               m_internalIPList, 
-                               writer);
+        writeInternalConfig(1,
+                            m_internalSSL,
+                            m_internalBasicAuth,
+                            m_internalUsername,
+                            m_internalPassword,
+                            m_internalIPList,
+                            writer);
+        writeInternalConfig(2,
+                            Boolean.FALSE,
+                            Boolean.FALSE,
+                            null,
+                            null,
+                            m_internalIPList,
+                            writer);
 
         // bMech roles
         Iterator bIter = m_bMechConfigs.keySet().iterator();
         while (bIter.hasNext()) {
             String bMechRole = (String) bIter.next();
-            BMechRoleConfig bConfig = (BMechRoleConfig) m_bMechConfigs.get(bMechRole);
+            BMechRoleConfig bConfig = m_bMechConfigs.get(bMechRole);
             write(bConfig, true, skipNonOverrides, writer);
             // per-method roles
             Iterator mIter = bConfig.getMethodConfigs().keySet().iterator();
             while (mIter.hasNext()) {
                 String methodName = (String) mIter.next();
-                MethodRoleConfig mConfig = (MethodRoleConfig) bConfig.getMethodConfigs().get(methodName);
+                MethodRoleConfig mConfig =
+                        bConfig.getMethodConfigs().get(methodName);
                 write(mConfig, true, skipNonOverrides, writer);
             }
         }
@@ -491,52 +524,51 @@ public class BESecurityConfig
                                             String[] ipList,
                                             PrintWriter writer) {
         writer.print("  <" + _CONFIG);
-        writeAttribute(_ROLE,              _INTERNAL_PREFIX + n, writer);
-        writeAttribute(_CALLSSL,           ssl,                  writer);
-        writeAttribute(_CALLBASICAUTH,     basicAuth,            writer);
-        writeAttribute(_CALLUSERNAME,      username,             writer);
-        writeAttribute(_CALLPASSWORD,      password,             writer);
-        writeAttribute(_CALLBACKSSL,       ssl,                  writer);
-        writeAttribute(_CALLBACKBASICAUTH, basicAuth,            writer);
-        writeAttribute(_IPLIST,            ipList,               writer);
+        writeAttribute(_ROLE, _INTERNAL_PREFIX + n, writer);
+        writeAttribute(_CALLSSL, ssl, writer);
+        writeAttribute(_CALLBASICAUTH, basicAuth, writer);
+        writeAttribute(_CALLUSERNAME, username, writer);
+        writeAttribute(_CALLPASSWORD, password, writer);
+        writeAttribute(_CALLBACKSSL, ssl, writer);
+        writeAttribute(_CALLBACKBASICAUTH, basicAuth, writer);
+        writeAttribute(_IPLIST, ipList, writer);
         writer.println("/>");
     }
-
 
     /**
      * Write all the defined attributes of the given <code>BERoleConfig</code>,
      * surrounding them with the appropriate element start/end text if
-     * <code>wholeElement</code> is true.
-     *
-     * Skip the entire element if skipIfAllNull is true.
+     * <code>wholeElement</code> is true. Skip the entire element if
+     * skipIfAllNull is true.
      */
-    private static void write(BERoleConfig config, 
-                              boolean wholeElement, 
+    private static void write(BERoleConfig config,
+                              boolean wholeElement,
                               boolean skipIfAllNull,
                               PrintWriter writer) {
 
         if (wholeElement) {
-            if (skipIfAllNull
-                    && config.getCallSSL()           == null
-                    && config.getCallBasicAuth()     == null
-                    && config.getCallUsername()      == null
-                    && config.getCallPassword()      == null
-                    && config.getCallbackSSL()       == null
+            if (skipIfAllNull && config.getCallSSL() == null
+                    && config.getCallBasicAuth() == null
+                    && config.getCallUsername() == null
+                    && config.getCallPassword() == null
+                    && config.getCallbackSSL() == null
                     && config.getCallbackBasicAuth() == null
-                    && config.getIPList()            == null) {
+                    && config.getIPList() == null) {
                 return;
             }
             writer.print("  <" + _CONFIG);
         }
 
-        writeAttribute(_ROLE,              config.getRole(),              writer);
-        writeAttribute(_CALLSSL,           config.getCallSSL(),           writer);
-        writeAttribute(_CALLBASICAUTH,     config.getCallBasicAuth(),     writer);
-        writeAttribute(_CALLUSERNAME,      config.getCallUsername(),      writer);
-        writeAttribute(_CALLPASSWORD,      config.getCallPassword(),      writer);
-        writeAttribute(_CALLBACKSSL,       config.getCallbackSSL(),       writer);
-        writeAttribute(_CALLBACKBASICAUTH, config.getCallbackBasicAuth(), writer);
-        writeAttribute(_IPLIST,            config.getIPList(),            writer);
+        writeAttribute(_ROLE, config.getRole(), writer);
+        writeAttribute(_CALLSSL, config.getCallSSL(), writer);
+        writeAttribute(_CALLBASICAUTH, config.getCallBasicAuth(), writer);
+        writeAttribute(_CALLUSERNAME, config.getCallUsername(), writer);
+        writeAttribute(_CALLPASSWORD, config.getCallPassword(), writer);
+        writeAttribute(_CALLBACKSSL, config.getCallbackSSL(), writer);
+        writeAttribute(_CALLBACKBASICAUTH,
+                       config.getCallbackBasicAuth(),
+                       writer);
+        writeAttribute(_IPLIST, config.getIPList(), writer);
 
         if (wholeElement) {
             writer.println("/>");
@@ -546,7 +578,9 @@ public class BESecurityConfig
     /**
      * Write (space)name="value" to the given PrintWriter if value is defined.
      */
-    private static void writeAttribute(String name, Object value, PrintWriter writer) {
+    private static void writeAttribute(String name,
+                                       Object value,
+                                       PrintWriter writer) {
         if (value != null) {
             String s;
             if (value instanceof String || value instanceof Boolean) {
@@ -557,7 +591,9 @@ public class BESecurityConfig
                 String[] tokens = (String[]) value;
                 StringBuffer buf = new StringBuffer();
                 for (int i = 0; i < tokens.length; i++) {
-                    if (i > 0) buf.append(' ');
+                    if (i > 0) {
+                        buf.append(' ');
+                    }
                     buf.append(tokens[i]);
                 }
                 s = buf.toString();

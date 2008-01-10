@@ -5,8 +5,9 @@
 
 package fedora.client.objecteditor;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
 import javax.swing.JComponent;
 
 /**
@@ -29,16 +30,17 @@ public abstract class ContentViewer {
     public abstract JComponent getComponent();
 
     /**
-     * Gets a new instance of this class, which has been constructed
-     * and immediately thereafter, init(...)'ed.  Intended to be called by
+     * Gets a new instance of this class, which has been constructed and
+     * immediately thereafter, init(...)'ed. Intended to be called by
      * ContentHandlerFactory only.
      */
-    protected final ContentViewer newInstance(String type, InputStream data, 
-            boolean viewOnly) 
+    protected final ContentViewer newInstance(String type,
+                                              InputStream data,
+                                              boolean viewOnly)
             throws IOException {
-        ContentViewer instance=null;
+        ContentViewer instance = null;
         try {
-            instance=(ContentViewer) this.getClass().newInstance();
+            instance = this.getClass().newInstance();
         } catch (Exception e) {
             throw new IOException(e.getMessage());
         }
@@ -47,29 +49,26 @@ public abstract class ContentViewer {
     }
 
     /**
-     * Returns a list of content types that this component can handle.
-     * This will usually be a list of MIME Types, but may also include
-     * other notions of type known to be understood by the users of
-     * ContentHandlerFactory.
+     * Returns a list of content types that this component can handle. This will
+     * usually be a list of MIME Types, but may also include other notions of
+     * type known to be understood by the users of ContentHandlerFactory.
      */
     public abstract String[] getTypes();
 
     /**
-     * Initializes the handler.  This should only be called once per instance,
-     * and is guaranteed to have been called when this component is provided
-     * by the ContentHandlerFactory.
-     *
-     * The viewOnly parameter signals to ContentEditor implementations that
-     * editing capabilities are not desired by the caller.
+     * Initializes the handler. This should only be called once per instance,
+     * and is guaranteed to have been called when this component is provided by
+     * the ContentHandlerFactory. The viewOnly parameter signals to
+     * ContentEditor implementations that editing capabilities are not desired
+     * by the caller.
      */
     public abstract void init(String type, InputStream data, boolean viewOnly)
             throws IOException;
 
     /**
-     * Re-initializes the handler given new input data.
-     * The old data can be discarded.
+     * Re-initializes the handler given new input data. The old data can be
+     * discarded.
      */
-    public abstract void setContent(InputStream data) 
-            throws IOException;
+    public abstract void setContent(InputStream data) throws IOException;
 
 }

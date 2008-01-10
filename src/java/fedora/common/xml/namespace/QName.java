@@ -7,8 +7,8 @@ package fedora.common.xml.namespace;
 
 /**
  * A namespace-qualified name in XML.
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class QName {
 
@@ -20,17 +20,20 @@ public class QName {
 
     /**
      * A string of the form: <code>prefix:localName</code>, acceptable for
-     * use in an instance document.  The prefix used will be the preferred
-     * prefix of the namespace.
+     * use in an instance document. The prefix used will be the preferred prefix
+     * of the namespace.
      */
     public final String qName;
 
     /**
      * Constructs an instance.
-     *
-     * @param namespace the namespace to which this name belongs.
-     * @param localName the local part of the qualified name.
-     * @throws IllegalArgumentException if either parameter is null.
+     * 
+     * @param namespace
+     *        the namespace to which this name belongs.
+     * @param localName
+     *        the local part of the qualified name.
+     * @throws IllegalArgumentException
+     *         if either parameter is null.
      */
     public QName(XMLNamespace namespace, String localName) {
         if (namespace == null) {
@@ -41,7 +44,7 @@ public class QName {
         }
         this.namespace = namespace;
         this.localName = localName;
-        this.qName = namespace.prefix + ":" + localName;
+        qName = namespace.prefix + ":" + localName;
     }
 
     //---
@@ -50,7 +53,6 @@ public class QName {
 
     /**
      * Returns a string of the form: <code>{namespace-uri}localName</code>.
-     *
      * {@inheritDoc}
      */
     @Override
@@ -59,10 +61,8 @@ public class QName {
     }
 
     /**
-     * Returns true iff the given object is an instance of this class
-     * and has the same namespace and localName values.
-     *
-     * {@inheritDoc}
+     * Returns true iff the given object is an instance of this class and has
+     * the same namespace and localName values. {@inheritDoc}
      */
     @Override
     public boolean equals(Object o) {

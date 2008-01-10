@@ -17,19 +17,12 @@ import fedora.server.journal.helpers.JournalHelper;
 import fedora.server.journal.helpers.PasswordCipher;
 
 /**
+ * Write an entire Context object to the Journal file.
  * 
- * <p>
- * <b>Title:</b> ContextXmlWriter.java
- * </p>
- * <p>
- * <b>Description:</b> Write an entire Context object to the Journal file.
- * </p>
- * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
-
-public class ContextXmlWriter extends AbstractXmlWriter {
+public class ContextXmlWriter
+        extends AbstractXmlWriter {
 
     public void writeContext(JournalEntryContext context, XMLEventWriter writer)
             throws XMLStreamException {
@@ -85,8 +78,9 @@ public class ContextXmlWriter extends AbstractXmlWriter {
         putEndTag(writer, QNAME_TAG_NOW);
     }
 
-    private void writeMultiMap(XMLEventWriter writer, String mapName,
-            MultiValueMap map) throws XMLStreamException {
+    private void writeMultiMap(XMLEventWriter writer,
+                               String mapName,
+                               MultiValueMap map) throws XMLStreamException {
         putStartTag(writer, QNAME_TAG_MULTI_VALUE_MAP);
         putAttribute(writer, QNAME_ATTR_NAME, mapName);
         for (Iterator attributes = map.names(); attributes.hasNext();) {
@@ -94,9 +88,9 @@ public class ContextXmlWriter extends AbstractXmlWriter {
             putStartTag(writer, QNAME_TAG_MULTI_VALUE_MAP_KEY);
             putAttribute(writer, QNAME_ATTR_NAME, attribute);
             String[] values = map.getStringArray(attribute);
-            for (int i = 0; i < values.length; i++) {
+            for (String element : values) {
                 putStartTag(writer, QNAME_TAG_MULTI_VALUE_MAP_VALUE);
-                putCharacters(writer, values[i]);
+                putCharacters(writer, element);
                 putEndTag(writer, QNAME_TAG_MULTI_VALUE_MAP_VALUE);
             }
             putEndTag(writer, QNAME_TAG_MULTI_VALUE_MAP_KEY);

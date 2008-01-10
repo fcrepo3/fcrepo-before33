@@ -6,20 +6,26 @@
 package fedora.server.config;
 
 import java.io.File;
-import java.util.*;
+
+import java.util.Map;
 
 import fedora.common.Constants;
 
 /**
  *
  */
-public class Parameter implements Constants {
+public class Parameter
+        implements Constants {
 
-    private String m_name;
+    private final String m_name;
+
     private String m_value;
+
     private boolean m_isFilePath;
+
     private String m_comment;
-    private Map m_profileValues;
+
+    private final Map m_profileValues;
 
     public Parameter(String name,
                      String value,
@@ -39,32 +45,34 @@ public class Parameter implements Constants {
 
     /**
      * Gets the value of the parameter. Same as getValue(false).
+     * 
      * @return The value of the parameter
      */
     public String getValue() {
-    	return getValue(false);
+        return getValue(false);
     }
-    
+
     /**
-     * Gets the value of the parameter.
-     * Prepends the location of FEDORA_HOME if asAbsolutePath is true and the 
-     * parameter location does not already specify an absolute pathname.
+     * Gets the value of the parameter. Prepends the location of FEDORA_HOME if
+     * asAbsolutePath is true and the parameter location does not already
+     * specify an absolute pathname.
      * 
-     * @param asAbsolutePath Whether to return the parameter value as an 
-     * absolute file path relative to FEDORA_HOME.
+     * @param asAbsolutePath
+     *        Whether to return the parameter value as an absolute file path
+     *        relative to FEDORA_HOME.
      * @return The value, null if undefined.
      */
     public String getValue(boolean asAbsolutePath) {
-    	String path = m_value;
-    	if (asAbsolutePath) {
-        	if (path != null && m_isFilePath) {
-    	    	File f = new File(path);
-    	    	if (!f.isAbsolute()) {
-    	    		path = FEDORA_HOME + File.separator + path;
-    			}
-        	}
-    	}
-    	return path;
+        String path = m_value;
+        if (asAbsolutePath) {
+            if (path != null && m_isFilePath) {
+                File f = new File(path);
+                if (!f.isAbsolute()) {
+                    path = FEDORA_HOME + File.separator + path;
+                }
+            }
+        }
+        return path;
     }
 
     public void setValue(String newValue) {
@@ -74,13 +82,13 @@ public class Parameter implements Constants {
     public Map getProfileValues() {
         return m_profileValues;
     }
-    
+
     public void setIsFilePath(boolean newValue) {
-    	m_isFilePath = newValue;
+        m_isFilePath = newValue;
     }
-    
+
     public boolean getIsFilePath() {
-    	return m_isFilePath;
+        return m_isFilePath;
     }
 
     public String getComment() {
@@ -91,6 +99,7 @@ public class Parameter implements Constants {
         m_comment = comment;
     }
 
+    @Override
     public String toString() {
         return m_name;
     }

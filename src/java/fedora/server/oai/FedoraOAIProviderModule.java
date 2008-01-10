@@ -13,26 +13,36 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import fedora.oai.*;
+import fedora.oai.BadResumptionTokenException;
+import fedora.oai.CannotDisseminateFormatException;
+import fedora.oai.DateGranularitySupport;
+import fedora.oai.DeletedRecordSupport;
+import fedora.oai.IDDoesNotExistException;
+import fedora.oai.NoMetadataFormatsException;
+import fedora.oai.NoRecordsMatchException;
+import fedora.oai.NoSetHierarchyException;
+import fedora.oai.OAIProvider;
+import fedora.oai.Record;
+import fedora.oai.RepositoryException;
+
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.search.FieldSearch;
 
 /**
- * An OAIProvider that acts as a server module and wraps
- * FedoraOAIProvider.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * An OAIProvider that acts as a server module and wraps FedoraOAIProvider.
+ * </p>
+ * 
+ * @author Chris Wilper
  */
 public class FedoraOAIProviderModule
         extends Module
         implements OAIProvider {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(
-            FedoraOAIProviderModule.class.getName());
+    private static final Logger LOG =
+            Logger.getLogger(FedoraOAIProviderModule.class.getName());
 
     private FedoraOAIProvider m_wrappedOAIProvider;
 
@@ -41,109 +51,134 @@ public class FedoraOAIProviderModule
         super(params, server, role);
     }
 
-    public void postInitModule()
-            throws ModuleInitializationException {
-        String repositoryName=getParameter("repositoryName");
-        if (repositoryName==null) {
-            throw new ModuleInitializationException("repositoryName must be specified.", getRole());
+    @Override
+    public void postInitModule() throws ModuleInitializationException {
+        String repositoryName = getParameter("repositoryName");
+        if (repositoryName == null) {
+            throw new ModuleInitializationException("repositoryName must be specified.",
+                                                    getRole());
         }
-        String repositoryDomainName=getParameter("repositoryDomainName");
-        if (repositoryDomainName==null) {
-            throw new ModuleInitializationException("repositoryDomainName must be specified.", getRole());
+        String repositoryDomainName = getParameter("repositoryDomainName");
+        if (repositoryDomainName == null) {
+            throw new ModuleInitializationException("repositoryDomainName must be specified.",
+                                                    getRole());
         }
-        String host=getServer().getParameter("fedoraServerHost");
-        if (host==null) {
-            throw new ModuleInitializationException("fedoraServerHost must be specified as primary server config element.", getRole());
+        String host = getServer().getParameter("fedoraServerHost");
+        if (host == null) {
+            throw new ModuleInitializationException("fedoraServerHost must be specified as primary server config element.",
+                                                    getRole());
         }
-        String port=getServer().getParameter("fedoraServerPort");
-        if (port==null) {
-            throw new ModuleInitializationException("fedoraServerPort must be specified as primary server config element.", getRole());
+        String port = getServer().getParameter("fedoraServerPort");
+        if (port == null) {
+            throw new ModuleInitializationException("fedoraServerPort must be specified as primary server config element.",
+                                                    getRole());
         }
-        Module mgr=(Module) getServer().getModule("fedora.server.storage.DOManager");
-        if (mgr==null) {
-            throw new ModuleInitializationException("DOManager is required (for pidNamespace param), but isn't loaded.", getRole());
+        Module mgr = getServer().getModule("fedora.server.storage.DOManager");
+        if (mgr == null) {
+            throw new ModuleInitializationException("DOManager is required (for pidNamespace param), but isn't loaded.",
+                                                    getRole());
         }
-        String pidNamespace=mgr.getParameter("pidNamespace");
-        if (pidNamespace==null) {
-            throw new ModuleInitializationException("DOManager did not specify a pidNamespace, but this module requires that it does.", getRole());
+        String pidNamespace = mgr.getParameter("pidNamespace");
+        if (pidNamespace == null) {
+            throw new ModuleInitializationException("DOManager did not specify a pidNamespace, but this module requires that it does.",
+                                                    getRole());
         }
-        String aes=getParameter("adminEmails");
-        if (aes==null) {
-            throw new ModuleInitializationException("adminEmails must be specified.", getRole());
+        String aes = getParameter("adminEmails");
+        if (aes == null) {
+            throw new ModuleInitializationException("adminEmails must be specified.",
+                                                    getRole());
         }
-        HashSet<String> adminEmails=new HashSet<String>();
-        if (aes.indexOf(" ")==-1) {
+        HashSet<String> adminEmails = new HashSet<String>();
+        if (aes.indexOf(" ") == -1) {
             adminEmails.add(aes);
         } else {
-            String[] emails=aes.split(" ");
-            for (int i=0; i<emails.length; i++) {
-                adminEmails.add(emails[i]);
+            String[] emails = aes.split(" ");
+            for (String element : emails) {
+                adminEmails.add(element);
             }
         }
-        HashSet<String> friends=new HashSet<String>();
-        if (getParameter("friends")!=null) {
-            String f=getParameter("friends");
-            if (f.indexOf(" ")==-1) {
+        HashSet<String> friends = new HashSet<String>();
+        if (getParameter("friends") != null) {
+            String f = getParameter("friends");
+            if (f.indexOf(" ") == -1) {
                 friends.add(f);
             } else {
-                String[] fs=f.split(" ");
-                for (int i=0; i<fs.length; i++) {
-                    friends.add(fs[i]);
+                String[] fs = f.split(" ");
+                for (String element : fs) {
+                    friends.add(element);
                 }
             }
         }
-        FieldSearch fieldSearch=(FieldSearch) getServer().getModule("fedora.server.search.FieldSearch");
-        if (fieldSearch==null) {
-            throw new ModuleInitializationException("FieldSearch module was not loaded, but is required.", getRole());
+        FieldSearch fieldSearch =
+                (FieldSearch) getServer()
+                        .getModule("fedora.server.search.FieldSearch");
+        if (fieldSearch == null) {
+            throw new ModuleInitializationException("FieldSearch module was not loaded, but is required.",
+                                                    getRole());
         }
-        Module fsModule=(Module) getServer().getModule("fedora.server.search.FieldSearch");
+        Module fsModule =
+                getServer().getModule("fedora.server.search.FieldSearch");
 
-        if (fsModule.getParameter("maxResults")==null) {
-            throw new ModuleInitializationException(
-                "maxResults parameter must be specified in FieldSearch module's configuration.", getRole());
+        if (fsModule.getParameter("maxResults") == null) {
+            throw new ModuleInitializationException("maxResults parameter must be specified in FieldSearch module's configuration.",
+                                                    getRole());
         }
-        int maxResults=0;
+        int maxResults = 0;
         try {
-            maxResults=Integer.parseInt(fsModule.getParameter("maxResults"));
-            if (maxResults<1) {
+            maxResults = Integer.parseInt(fsModule.getParameter("maxResults"));
+            if (maxResults < 1) {
                 throw new NumberFormatException("");
             }
         } catch (NumberFormatException nfe) {
-            throw new ModuleInitializationException(
-                "maxResults specified in FieldSearch module's configuration must be a positive integer.", getRole());
+            throw new ModuleInitializationException("maxResults specified in FieldSearch module's configuration must be a positive integer.",
+                                                    getRole());
         }
 
-        long maxSets=100; // unused for now, but passed in the constructor anyway
-        long maxRecords=maxResults;
-        long maxHeaders=maxResults;
-        String maxRecordsString=getParameter("maxRecords");
-        if (maxRecordsString!=null) {
+        long maxSets = 100; // unused for now, but passed in the constructor anyway
+        long maxRecords = maxResults;
+        long maxHeaders = maxResults;
+        String maxRecordsString = getParameter("maxRecords");
+        if (maxRecordsString != null) {
             try {
-                maxRecords=Long.parseLong(maxRecordsString);
-                if (maxRecords>maxResults) {
-                    LOG.warn("maxRecords was over the limit given by the FieldSearch module, using highest possible value: " + maxResults);
-                    maxRecords=maxResults;
+                maxRecords = Long.parseLong(maxRecordsString);
+                if (maxRecords > maxResults) {
+                    LOG
+                            .warn("maxRecords was over the limit given by the FieldSearch module, using highest possible value: "
+                                    + maxResults);
+                    maxRecords = maxResults;
                 }
             } catch (NumberFormatException nfe) {
-                throw new ModuleInitializationException("maxRecords value is invalid.", getRole());
+                throw new ModuleInitializationException("maxRecords value is invalid.",
+                                                        getRole());
             }
         }
-        String maxHeadersString=getParameter("maxHeaders");
-        if (maxHeadersString!=null) {
+        String maxHeadersString = getParameter("maxHeaders");
+        if (maxHeadersString != null) {
             try {
-                maxHeaders=Long.parseLong(maxHeadersString);
-                if (maxHeaders>maxResults) {
-                    LOG.warn("maxHeaders was over the limit given by the FieldSearch module, using highest possible value: " + maxResults);
-                    maxHeaders=maxResults;
+                maxHeaders = Long.parseLong(maxHeadersString);
+                if (maxHeaders > maxResults) {
+                    LOG
+                            .warn("maxHeaders was over the limit given by the FieldSearch module, using highest possible value: "
+                                    + maxResults);
+                    maxHeaders = maxResults;
                 }
             } catch (NumberFormatException nfe) {
-                throw new ModuleInitializationException("maxHeaders value is invalid.", getRole());
+                throw new ModuleInitializationException("maxHeaders value is invalid.",
+                                                        getRole());
             }
         }
-        m_wrappedOAIProvider=new FedoraOAIProvider(repositoryName, 
-                repositoryDomainName, host, "/fedora/oai", 
-		   		adminEmails, friends, pidNamespace, maxSets, 
-                maxRecords, maxHeaders, fieldSearch);
+        m_wrappedOAIProvider =
+                new FedoraOAIProvider(repositoryName,
+                                      repositoryDomainName,
+                                      host,
+                                      "/fedora/oai",
+                                      adminEmails,
+                                      friends,
+                                      pidNamespace,
+                                      maxSets,
+                                      maxRecords,
+                                      maxHeaders,
+                                      fieldSearch);
     }
 
     public String getRepositoryName() {
@@ -188,64 +223,64 @@ public class FedoraOAIProviderModule
         return m_wrappedOAIProvider.getRecord(identifier, metadataPrefix);
     }
 
-    public List getRecords(Date from, Date until, String metadataPrefix,
-            String set)
-            throws CannotDisseminateFormatException,
+    public List getRecords(Date from,
+                           Date until,
+                           String metadataPrefix,
+                           String set) throws CannotDisseminateFormatException,
             NoRecordsMatchException, NoSetHierarchyException,
             RepositoryException {
-        return m_wrappedOAIProvider.getRecords(from, until, metadataPrefix, set);
+        return m_wrappedOAIProvider
+                .getRecords(from, until, metadataPrefix, set);
     }
 
     public List getRecords(String resumptionToken)
-            throws CannotDisseminateFormatException,
-            NoRecordsMatchException, NoSetHierarchyException,
-            BadResumptionTokenException, RepositoryException {
+            throws CannotDisseminateFormatException, NoRecordsMatchException,
+            NoSetHierarchyException, BadResumptionTokenException,
+            RepositoryException {
         return m_wrappedOAIProvider.getRecords(resumptionToken);
     }
 
-    public List getHeaders(Date from, Date until, String metadataPrefix,
-            String set)
-            throws CannotDisseminateFormatException, NoRecordsMatchException,
-            NoSetHierarchyException, RepositoryException {
-        return m_wrappedOAIProvider.getHeaders(from, until, metadataPrefix, set);
+    public List getHeaders(Date from,
+                           Date until,
+                           String metadataPrefix,
+                           String set) throws CannotDisseminateFormatException,
+            NoRecordsMatchException, NoSetHierarchyException,
+            RepositoryException {
+        return m_wrappedOAIProvider
+                .getHeaders(from, until, metadataPrefix, set);
     }
 
     public List getHeaders(String resumptionToken)
-            throws CannotDisseminateFormatException,
-            NoRecordsMatchException, NoSetHierarchyException,
-            BadResumptionTokenException, RepositoryException {
+            throws CannotDisseminateFormatException, NoRecordsMatchException,
+            NoSetHierarchyException, BadResumptionTokenException,
+            RepositoryException {
         return m_wrappedOAIProvider.getHeaders(resumptionToken);
     }
 
-    public List getSets()
-            throws NoSetHierarchyException, RepositoryException {
+    public List getSets() throws NoSetHierarchyException, RepositoryException {
         return m_wrappedOAIProvider.getSets();
     }
 
     public List getSets(String resumptionToken)
-            throws BadResumptionTokenException,
-            NoSetHierarchyException, RepositoryException {
+            throws BadResumptionTokenException, NoSetHierarchyException,
+            RepositoryException {
         return m_wrappedOAIProvider.getSets(resumptionToken);
     }
 
-    public Set getMetadataFormats(String id)
-            throws NoMetadataFormatsException, IDDoesNotExistException,
-            RepositoryException {
+    public Set getMetadataFormats(String id) throws NoMetadataFormatsException,
+            IDDoesNotExistException, RepositoryException {
         return m_wrappedOAIProvider.getMetadataFormats(id);
     }
 
-    public long getMaxSets()
-            throws RepositoryException {
+    public long getMaxSets() throws RepositoryException {
         return m_wrappedOAIProvider.getMaxSets();
     }
 
-    public long getMaxRecords()
-            throws RepositoryException {
+    public long getMaxRecords() throws RepositoryException {
         return m_wrappedOAIProvider.getMaxRecords();
     }
 
-    public long getMaxHeaders()
-            throws RepositoryException {
+    public long getMaxHeaders() throws RepositoryException {
         return m_wrappedOAIProvider.getMaxHeaders();
     }
 

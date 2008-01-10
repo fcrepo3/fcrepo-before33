@@ -1,3 +1,4 @@
+
 package fedora.server.journal.readerwriter.multifile;
 
 import java.util.ArrayList;
@@ -9,7 +10,9 @@ import fedora.server.errors.ModuleInitializationException;
 import fedora.server.journal.ServerInterface;
 import fedora.server.journal.recoverylog.JournalRecoveryLog;
 
-public class MockJournalRecoveryLogForJournalTesting extends JournalRecoveryLog {
+public class MockJournalRecoveryLogForJournalTesting
+        extends JournalRecoveryLog {
+
     // -------------------------------------------------------------------------
     // Mocking infrastructure.
     // -------------------------------------------------------------------------
@@ -22,10 +25,10 @@ public class MockJournalRecoveryLogForJournalTesting extends JournalRecoveryLog 
 
     private final List logMessages = new ArrayList();
 
-    private boolean running = true;
-
-    public MockJournalRecoveryLogForJournalTesting(Map parameters, String role,
-            ServerInterface server) throws ModuleInitializationException {
+    public MockJournalRecoveryLogForJournalTesting(Map parameters,
+                                                   String role,
+                                                   ServerInterface server)
+            throws ModuleInitializationException {
         super(parameters, role, server);
         instance = this;
     }
@@ -33,7 +36,7 @@ public class MockJournalRecoveryLogForJournalTesting extends JournalRecoveryLog 
     public List getLogMessages() {
         return Collections.unmodifiableList(logMessages);
     }
-    
+
     public String getLogSummary() {
         StringBuffer result = new StringBuffer("Log Summary:\n");
         for (int i = 0; i < logMessages.size(); i++) {
@@ -53,12 +56,13 @@ public class MockJournalRecoveryLogForJournalTesting extends JournalRecoveryLog 
     // Mocked methods.
     // -------------------------------------------------------------------------
 
+    @Override
     public void log(String message) {
         logMessages.add(message);
     }
 
+    @Override
     public void shutdown() {
-        running = false;
     }
 
     // -------------------------------------------------------------------------

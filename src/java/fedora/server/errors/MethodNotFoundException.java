@@ -6,35 +6,28 @@
 package fedora.server.errors;
 
 /**
- * <p>
- * <b>Title: </b>MethodNotFoundException.java
- * </p>
- * <p>
- * <b>Description: </b>Signals that a method associated with a Behavior
- * </p>
- * <p>
- * Mechanism could not be found.
- * </p>
+ * Signals that a method associated with a Behavior Mechanism could not 
+ * be found.
  * 
- * @author rlw@virginia.edu
- * @version $Id$
+ * @author Ross Wayland
  */
-public class MethodNotFoundException extends StorageException {
+public class MethodNotFoundException
+        extends StorageException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Creates a MethodNotFoundException.
-	 * 
-	 * @param message
-	 *            An informative message explaining what happened and (possibly)
-	 *            how to fix it.
-	 */
-	public MethodNotFoundException(String message) {
-		super(message);
-	}
-	
-	public MethodNotFoundException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * Creates a MethodNotFoundException.
+     * 
+     * @param message
+     *        An informative message explaining what happened and (possibly) how
+     *        to fix it.
+     */
+    public MethodNotFoundException(String message) {
+        super(message);
+    }
+
+    public MethodNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

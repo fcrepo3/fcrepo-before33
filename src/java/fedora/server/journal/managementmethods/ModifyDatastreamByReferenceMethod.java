@@ -10,25 +10,18 @@ import fedora.server.journal.entry.JournalEntry;
 import fedora.server.management.ManagementDelegate;
 
 /**
+ * Adapter class for Management.modifyDatastreamByReference()
  * 
- * <p>
- * <b>Title:</b> ModifyDatastreamByReferenceMethod.java
- * </p>
- * <p>
- * <b>Description:</b> Adapter class for
- * Management.modifyDatastreamByReference()
- * </p>
- * 
- * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @author Jim Blake
  */
-
-public class ModifyDatastreamByReferenceMethod extends ManagementMethod {
+public class ModifyDatastreamByReferenceMethod
+        extends ManagementMethod {
 
     public ModifyDatastreamByReferenceMethod(JournalEntry parent) {
         super(parent);
     }
 
+    @Override
     public Object invoke(ManagementDelegate delegate) throws ServerException {
         return delegate.modifyDatastreamByReference(parent.getContext(), parent
                 .getStringArgument(ARGUMENT_NAME_PID), parent

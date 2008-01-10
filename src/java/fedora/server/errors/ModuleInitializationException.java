@@ -6,42 +6,42 @@
 package fedora.server.errors;
 
 /**
- *
- * <p><b>Title:</b> ModuleInitializationException.java</p>
- * <p><b>Description:</b> Signifies that an error occurred during a module's
- * initialization.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * Signals that an error occurred during a module's initialization.
+ * 
+ * @author Chris Wilper
  */
 public class ModuleInitializationException
         extends InitializationException {
 
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     /** The role of the module in which the error occurred */
-    private String m_role;
+    private final String m_role;
 
     /**
      * Creates a ModuleInitializationException.
-     *
-     * @param message An informative message explaining what happened and
-     *                (possibly) how to fix it.
-     * @param role The role of the module.
+     * 
+     * @param message
+     *        An informative message explaining what happened and (possibly) how
+     *        to fix it.
+     * @param role
+     *        The role of the module.
      */
     public ModuleInitializationException(String message, String role) {
         super(message);
-        m_role=role;
+        m_role = role;
     }
 
-    public ModuleInitializationException(String message, String role, Throwable cause) {
+    public ModuleInitializationException(String message,
+                                         String role,
+                                         Throwable cause) {
         super(null, message, null, null, cause);
-        m_role=role;
+        m_role = role;
     }
 
     /**
      * Gets the role of the module in which the error occurred.
-     *
+     * 
      * @return The role.
      */
     public String getRole() {

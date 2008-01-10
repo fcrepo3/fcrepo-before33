@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The Fedora Management XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://www.fedora.info/definitions/1/0/management/
  * Preferred Prefix : management
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class FedoraManagementNamespace
         extends XMLNamespace {
@@ -23,20 +23,20 @@ public class FedoraManagementNamespace
     //---
 
     /** The only instance of this class. */
-    private static final FedoraManagementNamespace ONLY_INSTANCE
-            = new FedoraManagementNamespace();
+    private static final FedoraManagementNamespace ONLY_INSTANCE =
+            new FedoraManagementNamespace();
 
     /**
      * Constructs the instance.
      */
     private FedoraManagementNamespace() {
         super("http://www.fedora.info/definitions/1/0/management/",
-                "management");
+              "management");
     }
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static FedoraManagementNamespace getInstance() {

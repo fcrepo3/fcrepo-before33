@@ -31,45 +31,70 @@ import fedora.server.storage.ConnectionPool;
 
 /**
  * SQL-related utility methods.
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * 
+ * @author Chris Wilper
  */
 public abstract class SQLUtility {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(
-            SQLUtility.class.getName());
+    private static final Logger LOG =
+            Logger.getLogger(SQLUtility.class.getName());
 
-    public static ConnectionPool getConnectionPool(ServerConfiguration fcfg) throws SQLException {
-        ModuleConfiguration mcfg = fcfg.getModuleConfiguration("fedora.server.storage.ConnectionPoolManager");
+    public static ConnectionPool getConnectionPool(ServerConfiguration fcfg)
+            throws SQLException {
+        ModuleConfiguration mcfg =
+                fcfg
+                        .getModuleConfiguration("fedora.server.storage.ConnectionPoolManager");
         String defaultPool = mcfg.getParameter("defaultPoolName").getValue();
-        DatastoreConfiguration dcfg = fcfg.getDatastoreConfiguration(defaultPool);
+        DatastoreConfiguration dcfg =
+                fcfg.getDatastoreConfiguration(defaultPool);
         return getConnectionPool(dcfg);
     }
-    
-    public static ConnectionPool getConnectionPool(DatastoreConfiguration cpDC) throws SQLException {
+
+    public static ConnectionPool getConnectionPool(DatastoreConfiguration cpDC)
+            throws SQLException {
         String cpUsername = cpDC.getParameter("dbUsername").getValue();
         String cpPassword = cpDC.getParameter("dbPassword").getValue();
         String cpURL = cpDC.getParameter("jdbcURL").getValue();
         String cpDriver = cpDC.getParameter("jdbcDriverClass").getValue();
         String cpDDLConverter = cpDC.getParameter("ddlConverter").getValue();
-        int cpMaxActive = Integer.parseInt(cpDC.getParameter("maxActive").getValue());
-        int cpMaxIdle = Integer.parseInt(cpDC.getParameter("maxIdle").getValue());
-        long cpMaxWait = Long.parseLong(cpDC.getParameter("maxWait").getValue()); 
-        int cpMinIdle = Integer.parseInt(cpDC.getParameter("minIdle").getValue());
-        long cpMinEvictableIdleTimeMillis = Long.parseLong(cpDC.getParameter("minEvictableIdleTimeMillis").getValue());
-        int cpNumTestsPerEvictionRun = Integer.parseInt(cpDC.getParameter("numTestsPerEvictionRun").getValue());
-        long cpTimeBetweenEvictionRunsMillis = Long.parseLong(cpDC.getParameter("timeBetweenEvictionRunsMillis").getValue());
-        boolean cpTestOnBorrow = Boolean.parseBoolean(cpDC.getParameter("testOnBorrow").getValue());
-        boolean cpTestOnReturn = Boolean.parseBoolean(cpDC.getParameter("testOnReturn").getValue());
-        boolean cpTestWhileIdle = Boolean.parseBoolean(cpDC.getParameter("testWhileIdle").getValue());
-        byte cpWhenExhaustedAction = Byte.parseByte(cpDC.getParameter("whenExhaustedAction").getValue());
-        
+        int cpMaxActive =
+                Integer.parseInt(cpDC.getParameter("maxActive").getValue());
+        int cpMaxIdle =
+                Integer.parseInt(cpDC.getParameter("maxIdle").getValue());
+        long cpMaxWait =
+                Long.parseLong(cpDC.getParameter("maxWait").getValue());
+        int cpMinIdle =
+                Integer.parseInt(cpDC.getParameter("minIdle").getValue());
+        long cpMinEvictableIdleTimeMillis =
+                Long.parseLong(cpDC.getParameter("minEvictableIdleTimeMillis")
+                        .getValue());
+        int cpNumTestsPerEvictionRun =
+                Integer.parseInt(cpDC.getParameter("numTestsPerEvictionRun")
+                        .getValue());
+        long cpTimeBetweenEvictionRunsMillis =
+                Long.parseLong(cpDC
+                        .getParameter("timeBetweenEvictionRunsMillis")
+                        .getValue());
+        boolean cpTestOnBorrow =
+                Boolean.parseBoolean(cpDC.getParameter("testOnBorrow")
+                        .getValue());
+        boolean cpTestOnReturn =
+                Boolean.parseBoolean(cpDC.getParameter("testOnReturn")
+                        .getValue());
+        boolean cpTestWhileIdle =
+                Boolean.parseBoolean(cpDC.getParameter("testWhileIdle")
+                        .getValue());
+        byte cpWhenExhaustedAction =
+                Byte.parseByte(cpDC.getParameter("whenExhaustedAction")
+                        .getValue());
+
         DDLConverter ddlConverter = null;
         if (cpDDLConverter != null) {
             try {
-                ddlConverter=(DDLConverter) Class.forName(cpDDLConverter).newInstance();
+                ddlConverter =
+                        (DDLConverter) Class.forName(cpDDLConverter)
+                                .newInstance();
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
@@ -78,37 +103,56 @@ public abstract class SQLUtility {
                 e.printStackTrace();
             }
         }
-        return new ConnectionPool(cpDriver, cpURL, cpUsername, 
-                cpPassword, ddlConverter, cpMaxActive, cpMaxIdle, 
-                cpMaxWait, cpMinIdle, cpMinEvictableIdleTimeMillis, 
-                cpNumTestsPerEvictionRun, cpTimeBetweenEvictionRunsMillis, 
-                cpTestOnBorrow, cpTestOnReturn, cpTestWhileIdle, 
-                cpWhenExhaustedAction);
+        return new ConnectionPool(cpDriver,
+                                  cpURL,
+                                  cpUsername,
+                                  cpPassword,
+                                  ddlConverter,
+                                  cpMaxActive,
+                                  cpMaxIdle,
+                                  cpMaxWait,
+                                  cpMinIdle,
+                                  cpMinEvictableIdleTimeMillis,
+                                  cpNumTestsPerEvictionRun,
+                                  cpTimeBetweenEvictionRunsMillis,
+                                  cpTestOnBorrow,
+                                  cpTestOnReturn,
+                                  cpTestWhileIdle,
+                                  cpWhenExhaustedAction);
     }
-    
-    public static void replaceInto(Connection conn, String tableName,
-            String[] columns, String[] values, String uniqueColumn)
-            throws SQLException {
+
+    public static void replaceInto(Connection conn,
+                                   String tableName,
+                                   String[] columns,
+                                   String[] values,
+                                   String uniqueColumn) throws SQLException {
         replaceInto(conn, tableName, columns, values, uniqueColumn, null);
     }
 
     /**
      * Adds or replaces a row in the given table.
-     *
-     * @param conn the connection to use
-     * @param table the name of the table
-     * @param columns the names of the columns whose values we're setting.
-     * @param values associated values
-     * @param uniqueColumn which column name is unique?  The value of this
-     *        column will be used in the where clause.  It must be
-     *        a column which is not numeric.
-     * @param numeric for each associated column, is it numeric?
-     *        if null, all columns are assumed to be strings.
+     * 
+     * @param conn
+     *        the connection to use
+     * @param table
+     *        the name of the table
+     * @param columns
+     *        the names of the columns whose values we're setting.
+     * @param values
+     *        associated values
+     * @param uniqueColumn
+     *        which column name is unique? The value of this column will be used
+     *        in the where clause. It must be a column which is not numeric.
+     * @param numeric
+     *        for each associated column, is it numeric? if null, all columns
+     *        are assumed to be strings.
      */
-    public static void replaceInto(Connection conn, String table,
-            String[] columns, String[] values, String uniqueColumn,
-            boolean[] numeric)
-            throws SQLException {
+    public static void replaceInto(Connection conn,
+                                   String table,
+                                   String[] columns,
+                                   String[] values,
+                                   String uniqueColumn,
+                                   boolean[] numeric) throws SQLException {
         if (!updateRow(conn, table, columns, values, uniqueColumn, numeric)) {
             addRow(conn, table, columns, values, numeric);
         }
@@ -116,14 +160,16 @@ public abstract class SQLUtility {
 
     /**
      * Updates an existing row.
-     *
-     * @return false if the row did not previously exist and therefore was
-     *         not updated.
+     * 
+     * @return false if the row did not previously exist and therefore was not
+     *         updated.
      */
-    public static boolean updateRow(Connection conn, String table,
-            String[] columns, String[] values, String uniqueColumn,
-            boolean[] numeric)
-            throws SQLException {
+    public static boolean updateRow(Connection conn,
+                                    String table,
+                                    String[] columns,
+                                    String[] values,
+                                    String uniqueColumn,
+                                    boolean[] numeric) throws SQLException {
 
         // prepare update statement
         StringBuffer sql = new StringBuffer();
@@ -162,8 +208,10 @@ public abstract class SQLUtility {
                 }
             }
             varIndex++;
-            stmt.setString(varIndex,
-                           getSelector(columns, values, uniqueColumn));
+            stmt
+                    .setString(varIndex, getSelector(columns,
+                                                     values,
+                                                     uniqueColumn));
 
             // execute and return true if existing row was updated
             return stmt.executeUpdate() > 0;
@@ -175,12 +223,15 @@ public abstract class SQLUtility {
 
     /**
      * Adds a new row.
-     *
-     * @throws SQLException if the row could not be added.
+     * 
+     * @throws SQLException
+     *         if the row could not be added.
      */
-    public static void addRow(Connection conn, String table,
-            String[] columns, String[] values, boolean[] numeric)
-            throws SQLException {
+    public static void addRow(Connection conn,
+                              String table,
+                              String[] columns,
+                              String[] values,
+                              boolean[] numeric) throws SQLException {
 
         // prepare insert statement
         StringBuffer sql = new StringBuffer();
@@ -230,37 +281,37 @@ public abstract class SQLUtility {
     }
 
     /**
-     * Sets a numeric value in the prepared statement.
-     *
-     * Parsing the string is attempted as an int, then
-     * a long, and if that fails, a SQLException is thrown.
+     * Sets a numeric value in the prepared statement. Parsing the string is
+     * attempted as an int, then a long, and if that fails, a SQLException is
+     * thrown.
      */
     private static void setNumeric(PreparedStatement stmt,
-            int varIndex, String columnName, String value)
-            throws SQLException {
+                                   int varIndex,
+                                   String columnName,
+                                   String value) throws SQLException {
         try {
             stmt.setInt(varIndex, Integer.parseInt(value));
         } catch (NumberFormatException e) {
             try {
                 stmt.setLong(varIndex, Long.parseLong(value));
             } catch (NumberFormatException e2) {
-                throw new SQLException("Value specified for "
-                        + columnName + ", '" + value + "' was"
+                throw new SQLException("Value specified for " + columnName
+                        + ", '" + value + "' was"
                         + " specified as numeric, but is not");
             }
         }
     }
 
-    /** 
-     * Gets the value in the given array whose associated column name
-     * matches the given uniqueColumn name.
-     *
-     * @throws SQLException if the uniqueColumn doesn't exist in the given
-     *         column array.
+    /**
+     * Gets the value in the given array whose associated column name matches
+     * the given uniqueColumn name.
+     * 
+     * @throws SQLException
+     *         if the uniqueColumn doesn't exist in the given column array.
      */
-    private static String getSelector(String[] columns, String[] values,
-            String uniqueColumn)
-            throws SQLException {
+    private static String getSelector(String[] columns,
+                                      String[] values,
+                                      String uniqueColumn) throws SQLException {
         String selector = null;
         for (int i = 0; i < columns.length; i++) {
             if (columns[i].equals(uniqueColumn)) {
@@ -280,7 +331,7 @@ public abstract class SQLUtility {
         for (int i = 0; i < in.length(); i++) {
             char c = in.charAt(i);
             if (c == '\\') {
-                out.append("\\\\");  // slash slash
+                out.append("\\\\"); // slash slash
             } else {
                 out.append(c);
             }
@@ -289,10 +340,11 @@ public abstract class SQLUtility {
     }
 
     /**
-     * Get a long string, which could be a TEXT or CLOB type.
-     * (CLOBs require special handling -- this method normalizes the reading of them)
+     * Get a long string, which could be a TEXT or CLOB type. (CLOBs require
+     * special handling -- this method normalizes the reading of them)
      */
-    public static String getLongString(ResultSet rs, int pos) throws SQLException {
+    public static String getLongString(ResultSet rs, int pos)
+            throws SQLException {
         String s = rs.getString(pos);
         if (s != null) {
             // It's a String-based datatype, so just return it.
@@ -310,120 +362,126 @@ public abstract class SQLUtility {
     }
 
     public static void createNonExistingTables(ConnectionPool cPool,
-            InputStream dbSpec)
+                                               InputStream dbSpec)
             throws IOException, InconsistentTableSpecException, SQLException {
-        List nonExisting=null;
-        Connection conn=null;
+        List nonExisting = null;
+        Connection conn = null;
         try {
-            conn=cPool.getConnection();
-            nonExisting=SQLUtility.getNonExistingTables(conn,
-                    TableSpec.getTableSpecs(dbSpec));
+            conn = cPool.getConnection();
+            nonExisting =
+                    SQLUtility.getNonExistingTables(conn, TableSpec
+                            .getTableSpecs(dbSpec));
         } finally {
-            if (conn!=null) {
+            if (conn != null) {
                 cPool.free(conn);
             }
         }
-        if (nonExisting.size()>0) {
-            TableCreatingConnection tcConn=null;
+        if (nonExisting.size() > 0) {
+            TableCreatingConnection tcConn = null;
             try {
-                tcConn=cPool.getTableCreatingConnection();
-                if (tcConn==null) {
-                    throw new SQLException(
-                          "Unable to construct CREATE TABLE "
-                        + "statement(s) because there is no DDLConverter "
-                        + "registered for this connection type.");
+                tcConn = cPool.getTableCreatingConnection();
+                if (tcConn == null) {
+                    throw new SQLException("Unable to construct CREATE TABLE "
+                            + "statement(s) because there is no DDLConverter "
+                            + "registered for this connection type.");
                 }
                 SQLUtility.createTables(tcConn, nonExisting);
             } finally {
-                if (tcConn!=null) {
+                if (tcConn != null) {
                     cPool.free(tcConn);
                 }
             }
         }
     }
 
-    public static List getNonExistingTables(Connection conn,
-            List tSpecs)
+    public static List getNonExistingTables(Connection conn, List tSpecs)
             throws SQLException {
 
-      ArrayList nonExisting=new ArrayList();
-      DatabaseMetaData dbMeta=conn.getMetaData();
-      Iterator tSpecIter=tSpecs.iterator();
-      ResultSet r = null;
-      // Get a list of tables that don't exist, if any
-      try
-      {
-        r=dbMeta.getTables(null, null, "%", null);
-        HashSet existingTableSet=new HashSet();
-        while (r.next()) {
-            existingTableSet.add(r.getString("TABLE_NAME").toLowerCase());
-        }
-        r.close();
-        r=null;
-        while (tSpecIter.hasNext()) {
-            TableSpec spec=(TableSpec) tSpecIter.next();
-            if (!existingTableSet.contains(spec.getName().toLowerCase())) {
-                nonExisting.add(spec);
+        ArrayList nonExisting = new ArrayList();
+        DatabaseMetaData dbMeta = conn.getMetaData();
+        Iterator tSpecIter = tSpecs.iterator();
+        ResultSet r = null;
+        // Get a list of tables that don't exist, if any
+        try {
+            r = dbMeta.getTables(null, null, "%", null);
+            HashSet existingTableSet = new HashSet();
+            while (r.next()) {
+                existingTableSet.add(r.getString("TABLE_NAME").toLowerCase());
+            }
+            r.close();
+            r = null;
+            while (tSpecIter.hasNext()) {
+                TableSpec spec = (TableSpec) tSpecIter.next();
+                if (!existingTableSet.contains(spec.getName().toLowerCase())) {
+                    nonExisting.add(spec);
+                }
+            }
+        } catch (SQLException sqle) {
+            throw new SQLException(sqle.getMessage());
+        } finally {
+            try {
+                if (r != null) {
+                    r.close();
+                }
+            } catch (SQLException sqle2) {
+                throw sqle2;
+            } finally {
+                r = null;
             }
         }
-      } catch (SQLException sqle)
-      {
-        throw new SQLException(sqle.getMessage());
-      } finally
-      {
-        try {
-            if (r != null) r.close();
-        } catch (SQLException sqle2) {
-            throw sqle2;
-        } finally {
-            r=null;
-        }
-      }
-      return nonExisting;
+        return nonExisting;
     }
 
     public static void createTables(TableCreatingConnection tcConn, List tSpecs)
             throws SQLException {
-        Iterator nii=tSpecs.iterator();
+        Iterator nii = tSpecs.iterator();
         while (nii.hasNext()) {
-            TableSpec spec=(TableSpec) nii.next();
+            TableSpec spec = (TableSpec) nii.next();
             if (LOG.isInfoEnabled()) {
-                StringBuffer sqlCmds=new StringBuffer();
-                Iterator iter=tcConn.getDDLConverter().getDDL(spec).iterator();
+                StringBuffer sqlCmds = new StringBuffer();
+                Iterator iter =
+                        tcConn.getDDLConverter().getDDL(spec).iterator();
                 while (iter.hasNext()) {
                     sqlCmds.append("\n");
                     sqlCmds.append((String) iter.next());
                     sqlCmds.append(";");
                 }
-                LOG.info("Creating new "
-                        + "table '" + spec.getName() + "' with command(s): "
-                        + sqlCmds.toString());
+                LOG.info("Creating new " + "table '" + spec.getName()
+                        + "' with command(s): " + sqlCmds.toString());
             }
             tcConn.createTable(spec);
         }
     }
 
     public static String backslashEscape(String in) {
-        if (in==null) return in;
-        if (in.indexOf("\\")==-1) return in;
-        StringBuffer out=new StringBuffer();
-        for (int i=0; i<in.length(); i++) {
-          char c=in.charAt(i);
-          if (c=='\\') {
-            out.append('\\');
-          }
-          out.append(c);
+        if (in == null) {
+            return in;
+        }
+        if (in.indexOf("\\") == -1) {
+            return in;
+        }
+        StringBuffer out = new StringBuffer();
+        for (int i = 0; i < in.length(); i++) {
+            char c = in.charAt(i);
+            if (c == '\\') {
+                out.append('\\');
+            }
+            out.append(c);
         }
         return out.toString();
     }
 
     public static String aposEscape(String in) {
-        if (in==null) return in;
-        if (in.indexOf("'")==-1) return in;
-        StringBuffer out=new StringBuffer();
-        for (int i=0; i<in.length(); i++) {
-            char c=in.charAt(i);
-            if (c=='\'') {
+        if (in == null) {
+            return in;
+        }
+        if (in.indexOf("'") == -1) {
+            return in;
+        }
+        StringBuffer out = new StringBuffer();
+        for (int i = 0; i < in.length(); i++) {
+            char c = in.charAt(i);
+            if (c == '\'') {
                 out.append('\'');
             }
             out.append(c);

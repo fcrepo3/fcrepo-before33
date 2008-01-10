@@ -9,42 +9,27 @@ package fedora.server.utilities;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.TimeZone;
 
 /**
+ * A collection of utility methods for performing frequently required tasks.
  * 
- * <p>
- * <b>Title: </b> DateUtility.java
- * </p>
- * <p>
- * <b>Description: </b> A collection of utility methods for performing
- * </p>
- * <p>
- * frequently required tasks.
- * </p>
- * 
- * @author rlw@virginia.edu
- * @version $Id$
+ * @author Ross Wayland
  */
 public abstract class DateUtility {
 
     private static final Date ONE_BCE = new Date(-62167392000000L);
-    private static final Date ONE_CE = new Date(-62135769600000L);   
+
+    private static final Date ONE_CE = new Date(-62135769600000L);
 
     /**
-     * <p>
      * Converts a datetime string into and instance of java.util.Date using the
      * date format: yyyy-MM-ddTHH:mm:ss.SSSZ.
-     * </p>
-     * 
-     * <p>
-     * Follows Postel's Law (lenient about what it accepts, as long as it's
-     * sensible)
-     * </p>
      * 
      * @param dateTime
-     *            A datetime string
+     *        A datetime string
      * @return Corresponding instance of java.util.Date (returns null if
      *         dateTime string argument is empty string or null)
      */
@@ -53,13 +38,11 @@ public abstract class DateUtility {
     }
 
     /**
-     * <p>
      * Converts an instance of java.util.Date into a String using the date
      * format: yyyy-MM-ddTHH:mm:ss.SSSZ.
-     * </p>
      * 
      * @param date
-     *            Instance of java.util.Date.
+     *        Instance of java.util.Date.
      * @return ISO 8601 String representation (yyyy-MM-ddTHH:mm:ss.SSSZ) of the
      *         Date argument or null if the Date argument is null.
      */
@@ -74,9 +57,9 @@ public abstract class DateUtility {
      * desired.
      * 
      * @param date
-     *            Instance of java.util.Date.
+     *        Instance of java.util.Date.
      * @param millis
-     *            Whether or not the return value should include milliseconds.
+     *        Whether or not the return value should include milliseconds.
      * @return ISO 8601 String representation of the Date argument or null if
      *         the Date argument is null.
      */
@@ -91,7 +74,7 @@ public abstract class DateUtility {
                 df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
             }
             df.setTimeZone(TimeZone.getTimeZone("UTC"));
-            
+
             if (date.before(ONE_CE)) {
                 StringBuilder sb = new StringBuilder(df.format(date));
                 sb.insert(0, "-");
@@ -101,22 +84,26 @@ public abstract class DateUtility {
             }
         }
     }
-    
+
     /**
-     * Converts an instance of <code>Date</code> into the canonical lexical 
-     * representation of an XSD dateTime with the following exceptions:
-     * - Dates before 1 CE (i.e. 1 AD) are handled according to ISO 8601:2000
-     *   Second Edition:
-     *     "0000" is the lexical representation of 1 BCE
-     *     "-0001" is the lexical representation of 2 BCE
+     * Converts an instance of <code>Date</code> into the canonical lexical
+     * representation of an XSD dateTime with the following exceptions: - Dates
+     * before 1 CE (i.e. 1 AD) are handled according to ISO 8601:2000 Second
+     * Edition: "0000" is the lexical representation of 1 BCE "-0001" is the
+     * lexical representation of 2 BCE
      * 
-     * @param date Instance of java.util.Date.
-     * @return the lexical form of the XSD dateTime value, e.g. "2006-11-13T09:40:55.001Z".
-     * @see <a href="http://www.w3.org/TR/xmlschema-2/#date-canonical-representation">3.2.7.2 Canonical representation</a>
-     * 
+     * @param date
+     *        Instance of java.util.Date.
+     * @return the lexical form of the XSD dateTime value, e.g.
+     *         "2006-11-13T09:40:55.001Z".
+     * @see <a
+     *      href="http://www.w3.org/TR/xmlschema-2/#date-canonical-representation">3.2.7.2
+     *      Canonical representation</a>
      */
     public static String convertDateToXSDString(Date date) {
-        if (date == null) return null;
+        if (date == null) {
+            return null;
+        }
         StringBuilder lexicalForm;
         String dateTime = convertDateToString(date, true);
         int len = dateTime.length() - 1;
@@ -136,8 +123,9 @@ public abstract class DateUtility {
         if (date.before(ONE_CE)) {
             DateFormat df = new SimpleDateFormat("yyyy");
             df.setTimeZone(TimeZone.getTimeZone("UTC"));
-            StringBuilder year = new StringBuilder(String.valueOf(Integer
-                    .parseInt(df.format(date)) - 1));
+            StringBuilder year =
+                    new StringBuilder(String.valueOf(Integer.parseInt(df
+                            .format(date)) - 1));
             while (year.length() < 4) {
                 year.insert(0, '0');
             }
@@ -151,13 +139,11 @@ public abstract class DateUtility {
     }
 
     /**
-     * <p>
      * Converts an instance of java.util.Date into a String using the date
      * format: yyyy-MM-ddZ.
-     * </p>
      * 
      * @param date
-     *            Instance of java.util.Date.
+     *        Instance of java.util.Date.
      * @return Corresponding date string (returns null if Date argument is
      *         null).
      */
@@ -172,13 +158,11 @@ public abstract class DateUtility {
     }
 
     /**
-     * <p>
      * Converts an instance of java.util.Date into a String using the date
      * format: HH:mm:ss.SSSZ.
-     * </p>
      * 
      * @param date
-     *            Instance of java.util.Date.
+     *        Instance of java.util.Date.
      * @return Corresponding time string (returns null if Date argument is
      *         null).
      */
@@ -197,7 +181,7 @@ public abstract class DateUtility {
      * as a Date. If the string is not of that form, return null.
      * 
      * @param dateString
-     *            the date string to parse
+     *        the date string to parse
      * @return Date the date, if parse was successful; null otherwise
      */
     public static Date parseDateAsUTC(String dateString) {

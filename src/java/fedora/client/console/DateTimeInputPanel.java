@@ -6,6 +6,7 @@
 package fedora.client.console;
 
 import java.awt.BorderLayout;
+
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
@@ -15,13 +16,10 @@ import javax.swing.JTextField;
 import fedora.server.utilities.DateUtility;
 
 /**
- * <p><b>Title:</b> DateTimeInputPanel.java</p>
- * <p><b>Description:</b> Creates an input panel for entering datetime stamps.
- * The input format must be of the form:</p>
- * <ul>
- * YYYY-MM-DDTHH:mm:ss
- * </ul>
- * <p>where</p>
+ * Creates an input panel for entering datetime stamps.
+ * 
+ * The input format must be of the form:
+ * <code>YYYY-MM-DDTHH:mm:ss</code>, where:
  * <ul>
  * <li>YYYY - 4 digit year</li>
  * <li>MM - 2 digit month</li>
@@ -30,42 +28,44 @@ import fedora.server.utilities.DateUtility;
  * <li>mm - 2 digit minutes of the hour</li>
  * <li>ss - 2 digit seconds of the minute</li>
  * </ul>
- *
- * @author rlw@virginia.edu
- * @version $Id$
+ * 
+ * @author Ross Wayland
  */
 public class DateTimeInputPanel
         extends InputPanel {
-	
-	private static final long serialVersionUID = 1L;
-    private JRadioButton m_nullRadioButton;
-    private JTextField m_textField;
+
+    private static final long serialVersionUID = 1L;
+
+    private final JRadioButton m_nullRadioButton;
+
+    private final JTextField m_textField;
 
     public DateTimeInputPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        JPanel nullPanel=new JPanel();
+        JPanel nullPanel = new JPanel();
         nullPanel.setLayout(new BorderLayout());
-        m_nullRadioButton=new JRadioButton("Use null");
+        m_nullRadioButton = new JRadioButton("Use null");
         m_nullRadioButton.setSelected(true);
         nullPanel.add(m_nullRadioButton, BorderLayout.WEST);
         add(nullPanel);
 
-        JPanel textPanel=new JPanel();
+        JPanel textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.X_AXIS));
-        JRadioButton textRadioButton=new JRadioButton("Use text: ");
+        JRadioButton textRadioButton = new JRadioButton("Use text: ");
         textRadioButton.setSelected(false);
         textPanel.add(textRadioButton);
-        m_textField=new JTextField(10);
+        m_textField = new JTextField(10);
         textPanel.add(m_textField);
         add(textPanel);
 
-        ButtonGroup g=new ButtonGroup();
+        ButtonGroup g = new ButtonGroup();
         g.add(m_nullRadioButton);
         g.add(textRadioButton);
 
     }
 
+    @Override
     public Object getValue() {
         if (m_nullRadioButton.isSelected()) {
             return null;

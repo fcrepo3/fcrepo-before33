@@ -6,54 +6,41 @@
 package fedora.client;
 
 import java.io.File;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
 import java.util.HashSet;
 import java.util.Iterator;
 
 /**
- *
- * <p><b>Title:</b> BasisDataStream.java</p>
- * <p><b>Description:</b> </p>
- * <p>Basis datastreams can be:</p>
- * <p>custodianship:</p>
- * <ul>
- * <li>internally managed</li>
- * <li>externally managed</li>
- * </ul>
- * <p>storage:</p>
- * <ul>
- * <li>internally stored</li>
- * <li>externally stored</li>
- * <ul>
- * <li>must be externally </li>
- * </ul></ul>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
  */
 public class BasisDataStream
         extends DataStream {
 
-    private HashSet<InlineDataStream> m_descriptiveStreams=new HashSet<InlineDataStream>();
-    private boolean m_internallyStored=true;
+    private final HashSet<InlineDataStream> m_descriptiveStreams =
+            new HashSet<InlineDataStream>();
+
+    private boolean m_internallyStored = true;
+
     private String m_location;
 
     public BasisDataStream(File tempDir, String id) {
         super(tempDir, id);
     }
 
+    @Override
     public final int getType() {
         return DataStream.BASIS;
     }
 
     public void addDescriptiveStream(InlineDataStream inlineStream) {
-        m_dirty=true;
+        m_dirty = true;
         m_descriptiveStreams.add(inlineStream);
     }
 
     public void removeDescriptiveStream(InlineDataStream inlineStream) {
-        m_dirty=true;
+        m_dirty = true;
         m_descriptiveStreams.remove(inlineStream);
     }
 
@@ -66,8 +53,8 @@ public class BasisDataStream
     }
 
     public void setLocation(String location) {
-        m_location=location;
-        m_internallyStored=false;
+        m_location = location;
+        m_internallyStored = false;
         clearData();
     }
 
@@ -75,11 +62,11 @@ public class BasisDataStream
         return m_location;
     }
 
-    public void setData(InputStream in)
-            throws IOException {
+    @Override
+    public void setData(InputStream in) throws IOException {
         super.setData(in);
-        m_location=null;
-        m_internallyStored=true;
+        m_location = null;
+        m_internallyStored = true;
     }
 
 }

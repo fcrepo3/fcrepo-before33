@@ -8,12 +8,7 @@ package fedora.server.storage.types;
 import java.util.Date;
 
 /**
- *
- * <p><b>Title:</b> AuditRecord.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
  */
 public class AuditRecord {
 
@@ -21,10 +16,16 @@ public class AuditRecord {
     }
 
     public String id;
+
     public String processType;
+
     public String action;
+
     public String componentID;
+
     public String responsibility;
+
     public Date date;
+
     public String justification;
 }

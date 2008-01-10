@@ -14,24 +14,23 @@ import fedora.server.Server;
 import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ServerException;
-import fedora.server.storage.ConnectionPoolManager;
 import fedora.server.storage.ConnectionPool;
+import fedora.server.storage.ConnectionPoolManager;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 
 /**
  * Module that wraps FieldSearchSQLImpl.
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * 
+ * @author Chris Wilper
  */
 public class FieldSearchSQLModule
         extends Module
         implements FieldSearch {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(
-            FieldSearchSQLModule.class.getName());
+    private static final Logger LOG =
+            Logger.getLogger(FieldSearchSQLModule.class.getName());
 
     private FieldSearchSQLImpl m_wrappedFieldSearch;
 
@@ -40,43 +39,44 @@ public class FieldSearchSQLModule
         super(params, server, role);
     }
 
-    public void postInitModule()
-            throws ModuleInitializationException {
+    @Override
+    public void postInitModule() throws ModuleInitializationException {
 
         //
         // get and validate maxResults
         //
-        if (getParameter("maxResults")==null) {
-            throw new ModuleInitializationException(
-                "maxResults parameter must be specified.", getRole());
+        if (getParameter("maxResults") == null) {
+            throw new ModuleInitializationException("maxResults parameter must be specified.",
+                                                    getRole());
         }
-        int maxResults=0;
+        int maxResults = 0;
         try {
-            maxResults=Integer.parseInt(getParameter("maxResults"));
-            if (maxResults<1) {
+            maxResults = Integer.parseInt(getParameter("maxResults"));
+            if (maxResults < 1) {
                 throw new NumberFormatException("");
             }
         } catch (NumberFormatException nfe) {
-            throw new ModuleInitializationException(
-                "maxResults must be a positive integer.", getRole());
+            throw new ModuleInitializationException("maxResults must be a positive integer.",
+                                                    getRole());
         }
 
         //
         // get and validate maxSecondsPerSession
         //
-        if (getParameter("maxSecondsPerSession")==null) {
-            throw new ModuleInitializationException(
-                "maxSecondsPerSession parameter must be specified.", getRole());
+        if (getParameter("maxSecondsPerSession") == null) {
+            throw new ModuleInitializationException("maxSecondsPerSession parameter must be specified.",
+                                                    getRole());
         }
-        int maxSecondsPerSession=0;
+        int maxSecondsPerSession = 0;
         try {
-            maxSecondsPerSession=Integer.parseInt(getParameter("maxSecondsPerSession"));
-            if (maxSecondsPerSession<1) {
+            maxSecondsPerSession =
+                    Integer.parseInt(getParameter("maxSecondsPerSession"));
+            if (maxSecondsPerSession < 1) {
                 throw new NumberFormatException("");
             }
         } catch (NumberFormatException nfe) {
-            throw new ModuleInitializationException(
-                "maxSecondsPerSession must be a positive integer.", getRole());
+            throw new ModuleInitializationException("maxSecondsPerSession must be a positive integer.",
+                                                    getRole());
         }
 
         //
@@ -97,23 +97,24 @@ public class FieldSearchSQLModule
         //
         // get connectionPool from ConnectionPoolManager
         //
-        ConnectionPoolManager cpm=(ConnectionPoolManager) getServer().
-                getModule("fedora.server.storage.ConnectionPoolManager");
-        if (cpm==null) {
-            throw new ModuleInitializationException(
-                "ConnectionPoolManager module was required, but apparently has "
-                + "not been loaded.", getRole());
+        ConnectionPoolManager cpm =
+                (ConnectionPoolManager) getServer()
+                        .getModule("fedora.server.storage.ConnectionPoolManager");
+        if (cpm == null) {
+            throw new ModuleInitializationException("ConnectionPoolManager module was required, but apparently has "
+                                                            + "not been loaded.",
+                                                    getRole());
         }
-        String cPoolName=getParameter("connectionPool");
-        ConnectionPool cPool=null;
+        String cPoolName = getParameter("connectionPool");
+        ConnectionPool cPool = null;
         try {
-            if (cPoolName==null) {
+            if (cPoolName == null) {
                 LOG.debug("connectionPool unspecified; using default from "
                         + "ConnectionPoolManager.");
-                cPool=cpm.getPool();
+                cPool = cpm.getPool();
             } else {
                 LOG.debug("connectionPool specified: " + cPoolName);
-                cPool=cpm.getPool(cPoolName);
+                cPool = cpm.getPool(cPoolName);
             }
         } catch (ConnectionPoolNotFoundException cpnfe) {
             throw new ModuleInitializationException("Could not find requested "
@@ -122,40 +123,45 @@ public class FieldSearchSQLModule
         //
         // get the doManager
         //
-        DOManager doManager=(DOManager) getServer().
-                getModule("fedora.server.storage.DOManager");
-        if (doManager==null) {
-            throw new ModuleInitializationException(
-                "DOManager module was required, but apparently has "
-                + "not been loaded.", getRole());
+        DOManager doManager =
+                (DOManager) getServer()
+                        .getModule("fedora.server.storage.DOManager");
+        if (doManager == null) {
+            throw new ModuleInitializationException("DOManager module was required, but apparently has "
+                                                            + "not been loaded.",
+                                                    getRole());
         }
         //
         // things look ok...get the wrapped instance
         //
-        m_wrappedFieldSearch=new FieldSearchSQLImpl(cPool, doManager,
-                maxResults, maxSecondsPerSession, indexDCFields);
+        m_wrappedFieldSearch =
+                new FieldSearchSQLImpl(cPool,
+                                       doManager,
+                                       maxResults,
+                                       maxSecondsPerSession,
+                                       indexDCFields);
     }
 
+    @Override
     public String[] getRequiredModuleRoles() {
         return new String[] {"fedora.server.storage.ConnectionPoolManager",
                 "fedora.server.storage.DOManager"};
     }
 
-    public void update(DOReader reader)
-            throws ServerException {
+    public void update(DOReader reader) throws ServerException {
         m_wrappedFieldSearch.update(reader);
     }
 
-    public boolean delete(String pid)
-            throws ServerException {
+    public boolean delete(String pid) throws ServerException {
         return m_wrappedFieldSearch.delete(pid);
     }
 
     public FieldSearchResult findObjects(String[] resultFields,
-            int maxResults, FieldSearchQuery query)
+                                         int maxResults,
+                                         FieldSearchQuery query)
             throws ServerException {
-        return m_wrappedFieldSearch.findObjects(resultFields,
-                maxResults, query);
+        return m_wrappedFieldSearch
+                .findObjects(resultFields, maxResults, query);
     }
 
     public FieldSearchResult resumeFindObjects(String sessionToken)

@@ -23,20 +23,21 @@ import fedora.server.storage.types.DigitalObject;
 
 /**
  * <code>DOTranslatorImpl</code> wrapped as a <code>Module</code>.
+ * <p>
+ * To configure the DOTranslatorImpl, this module accepts parameters with names
+ * starting with <code>serializer_</code> and <code>deserializer_</code>.
+ * The latter part of each parameter name assigns the name of the format
+ * (typically a format URI), and the value of the parameter is a fully-qualified
+ * class name, denoting a <code>DOSerializer</code> or
+ * <code>DODeserializer</code>, respectively.
+ * </p>
  * 
- * <p>To configure the DOTranslatorImpl, this module accepts parameters with
- * names starting with <code>serializer_</code> and <code>deserializer_</code>.
- * The latter part of each parameter name assigns the name of the format 
- * (typically a  format URI), and the value of the parameter is a 
- * fully-qualified class name, denoting a <code>DOSerializer</code> or 
- * <code>DODeserializer</code>, respectively.</p>
- *
- * @author cwilper@cs.cornell.edu
+ * @author Chris Wilper
  */
 public class DOTranslatorModule
         extends Module
         implements DOTranslator {
-   
+
     /** Prefix for deserializer parameter names. */
     private static final String DESER_PARAM_PREFIX = "deserializer_";
 
@@ -48,12 +49,12 @@ public class DOTranslatorModule
 
     /**
      * Creates an instance using the standard <code>Module</code> constructor.
-     */ 
+     */
     public DOTranslatorModule(Map params, Server server, String role)
             throws ModuleInitializationException {
         super(params, server, role);
     }
-    
+
     //---
     // Module overrides
     //---
@@ -63,41 +64,46 @@ public class DOTranslatorModule
      */
     @Override
     public void initModule() throws ModuleInitializationException {
-        Map<String, DOSerializer> serMap
-                = new HashMap<String, DOSerializer>();
-        Map<String, DODeserializer> deserMap
-                = new HashMap<String, DODeserializer>();
+        Map<String, DOSerializer> serMap = new HashMap<String, DOSerializer>();
+        Map<String, DODeserializer> deserMap =
+                new HashMap<String, DODeserializer>();
         Iterator<String> nameIter = parameterNames();
         while (nameIter.hasNext()) {
             String paramName = nameIter.next();
             if (paramName.startsWith(SER_PARAM_PREFIX)) {
                 String serName = paramName.substring(SER_PARAM_PREFIX.length());
                 try {
-                    DOSerializer ser = (DOSerializer) Class.forName(
-                            getParameter(paramName)).newInstance();
+                    DOSerializer ser =
+                            (DOSerializer) Class
+                                    .forName(getParameter(paramName))
+                                    .newInstance();
                     serMap.put(serName, ser);
                 } catch (Exception e) {
-                    throw new ModuleInitializationException(
-                            "Can't instantiate serializer class for format "
-                            + serName, getRole(), e);
+                    throw new ModuleInitializationException("Can't instantiate serializer class for format "
+                                                                    + serName,
+                                                            getRole(),
+                                                            e);
                 }
             } else if (paramName.startsWith(DESER_PARAM_PREFIX)) {
-                String deserName = paramName.substring(
-                        DESER_PARAM_PREFIX.length());
+                String deserName =
+                        paramName.substring(DESER_PARAM_PREFIX.length());
                 try {
-                    DODeserializer deser = (DODeserializer) Class.forName(
-                            getParameter(paramName)).newInstance();
+                    DODeserializer deser =
+                            (DODeserializer) Class
+                                    .forName(getParameter(paramName))
+                                    .newInstance();
                     deserMap.put(deserName, deser);
                 } catch (Exception e) {
-                    throw new ModuleInitializationException(
-                            "Can't instantiate deserializer class for format "
-                            + deserName, getRole(), e);
+                    throw new ModuleInitializationException("Can't instantiate deserializer class for format "
+                                                                    + deserName,
+                                                            getRole(),
+                                                            e);
                 }
             }
         }
         m_wrappedTranslator = new DOTranslatorImpl(serMap, deserMap);
     }
-    
+
     //---
     // DOTranslator implementation
     //---
@@ -105,21 +111,26 @@ public class DOTranslatorModule
     /**
      * {@inheritDoc}
      */
-    public void deserialize(InputStream in, DigitalObject out,
-            String format, String encoding, int transContext)
-            throws ObjectIntegrityException, StreamIOException,
-            UnsupportedTranslationException, ServerException {
-        m_wrappedTranslator.deserialize(in, out, format, encoding, transContext); 
+    public void deserialize(InputStream in,
+                            DigitalObject out,
+                            String format,
+                            String encoding,
+                            int transContext) throws ObjectIntegrityException,
+            StreamIOException, UnsupportedTranslationException, ServerException {
+        m_wrappedTranslator
+                .deserialize(in, out, format, encoding, transContext);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void serialize(DigitalObject in, OutputStream out,
-			String format, String encoding, int transContext)
-            throws ObjectIntegrityException, StreamIOException,
-            UnsupportedTranslationException, ServerException {
-		m_wrappedTranslator.serialize(in, out, format, encoding, transContext);
+    public void serialize(DigitalObject in,
+                          OutputStream out,
+                          String format,
+                          String encoding,
+                          int transContext) throws ObjectIntegrityException,
+            StreamIOException, UnsupportedTranslationException, ServerException {
+        m_wrappedTranslator.serialize(in, out, format, encoding, transContext);
     }
 
 }

@@ -7,6 +7,7 @@ package fedora.server.resourceIndex;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.Triple;
+
 import org.trippi.FlushErrorHandler;
 import org.trippi.RDFFormat;
 import org.trippi.TripleIterator;
@@ -32,28 +34,29 @@ import fedora.server.storage.DOReader;
 
 /**
  * Implementation of the <code>ResourceIndex</code>.
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
-public class ResourceIndexImpl implements ResourceIndex {
+public class ResourceIndexImpl
+        implements ResourceIndex {
 
     /** Interface to the underlying triplestore. */
-    private TriplestoreConnector _connector;
+    private final TriplestoreConnector _connector;
 
     /** Writer for the underlying triplestore. */
-    private TriplestoreWriter _writer;
+    private final TriplestoreWriter _writer;
 
     /** The TripleGenerator this instance will use. */
-    private TripleGenerator _generator;
+    private final TripleGenerator _generator;
 
     /** The current index level. */
-    private int _indexLevel;
+    private final int _indexLevel;
 
     /**
-     * Whether triples should be flushed to storage before returning from
-     * each object modification method.
+     * Whether triples should be flushed to storage before returning from each
+     * object modification method.
      */
-    private boolean _syncUpdates;
+    private final boolean _syncUpdates;
 
     ////////////////////
     // Initialization //
@@ -70,7 +73,6 @@ public class ResourceIndexImpl implements ResourceIndex {
         _syncUpdates = syncUpdates;
     }
 
-
     ///////////////////////////
     // ResourceIndex methods //
     ///////////////////////////
@@ -78,15 +80,14 @@ public class ResourceIndexImpl implements ResourceIndex {
     /**
      * {@inheritDoc}
      */
-	public int getIndexLevel() {
+    public int getIndexLevel() {
         return _indexLevel;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void addBDefObject(BDefReader reader)
-            throws ResourceIndexException {
+    public void addBDefObject(BDefReader reader) throws ResourceIndexException {
         if (_indexLevel > INDEX_LEVEL_OFF) {
             updateTriples(_generator.getTriplesForBDef(reader), false);
         }
@@ -95,18 +96,16 @@ public class ResourceIndexImpl implements ResourceIndex {
     /**
      * {@inheritDoc}
      */
-    public void addDataObject(DOReader reader)
-            throws ResourceIndexException {
+    public void addDataObject(DOReader reader) throws ResourceIndexException {
         if (_indexLevel > INDEX_LEVEL_OFF) {
             updateTriples(_generator.getTriplesForDataObject(reader), false);
         }
     }
-  
+
     /**
      * {@inheritDoc}
      */
-    public void addCModelObject(DOReader reader)
-            throws ResourceIndexException {
+    public void addCModelObject(DOReader reader) throws ResourceIndexException {
         if (_indexLevel > INDEX_LEVEL_OFF) {
             updateTriples(_generator.getTriplesForCModelObject(reader), false);
         }
@@ -119,7 +118,7 @@ public class ResourceIndexImpl implements ResourceIndex {
             throws ResourceIndexException {
         if (_indexLevel > INDEX_LEVEL_OFF) {
             updateTripleDiffs(_generator.getTriplesForBDef(oldReader),
-                        _generator.getTriplesForBDef(newReader));
+                              _generator.getTriplesForBDef(newReader));
         }
     }
 
@@ -130,10 +129,10 @@ public class ResourceIndexImpl implements ResourceIndex {
             throws ResourceIndexException {
         if (_indexLevel > INDEX_LEVEL_OFF) {
             updateTripleDiffs(_generator.getTriplesForDataObject(oldReader),
-                        _generator.getTriplesForDataObject(newReader));
+                              _generator.getTriplesForDataObject(newReader));
         }
     }
-   
+
     /**
      * {@inheritDoc}
      */
@@ -141,7 +140,7 @@ public class ResourceIndexImpl implements ResourceIndex {
             throws ResourceIndexException {
         if (_indexLevel > INDEX_LEVEL_OFF) {
             updateTripleDiffs(_generator.getTriplesForCModelObject(oldReader),
-                        _generator.getTriplesForCModelObject(newReader));
+                              _generator.getTriplesForCModelObject(newReader));
         }
     }
 
@@ -164,7 +163,7 @@ public class ResourceIndexImpl implements ResourceIndex {
             updateTriples(_generator.getTriplesForDataObject(oldReader), true);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -174,12 +173,12 @@ public class ResourceIndexImpl implements ResourceIndex {
             updateTriples(_generator.getTriplesForCModelObject(oldReader), true);
         }
     }
-	
+
     /**
      * {@inheritDoc}
      */
-	public void export(OutputStream out, RDFFormat format)
-	        throws ResourceIndexException {
+    public void export(OutputStream out, RDFFormat format)
+            throws ResourceIndexException {
         try {
             TripleIterator it = _writer.findTriples(null, null, null, 0);
             it.setAliasMap(_writer.getAliasMap());
@@ -189,14 +188,13 @@ public class ResourceIndexImpl implements ResourceIndex {
         }
     }
 
-
     /////////////////////
     // Private Methods //
     /////////////////////
 
     /**
-     * Applies the given adds or deletes to the triplestore.
-     * If _syncUpdates is true, changes will be flushed before returning.
+     * Applies the given adds or deletes to the triplestore. If _syncUpdates is
+     * true, changes will be flushed before returning.
      */
     private void updateTriples(Set<Triple> set, boolean delete)
             throws ResourceIndexException {
@@ -212,9 +210,9 @@ public class ResourceIndexImpl implements ResourceIndex {
     }
 
     /**
-     * Computes the difference between the given sets and applies
-     * the appropriate deletes and adds to the triplestore.
-     * If _syncUpdates is true, changes will be flushed before returning.
+     * Computes the difference between the given sets and applies the
+     * appropriate deletes and adds to the triplestore. If _syncUpdates is true,
+     * changes will be flushed before returning.
      */
     private void updateTripleDiffs(Set<Triple> existing, Set<Triple> desired)
             throws ResourceIndexException {
@@ -237,10 +235,22 @@ public class ResourceIndexImpl implements ResourceIndex {
      */
     private static TripleIterator getTripleIterator(final Set<Triple> set) {
         return new TripleIterator() {
-            private Iterator<Triple> _iter = set.iterator();
-            public boolean hasNext() { return _iter.hasNext(); }
-            public Triple next() { return _iter.next(); }
-            public void close() { }
+
+            private final Iterator<Triple> _iter = set.iterator();
+
+            @Override
+            public boolean hasNext() {
+                return _iter.hasNext();
+            }
+
+            @Override
+            public Triple next() {
+                return _iter.next();
+            }
+
+            @Override
+            public void close() {
+            }
         };
     }
 
@@ -251,7 +261,8 @@ public class ResourceIndexImpl implements ResourceIndex {
     /**
      * {@inheritDoc}
      */
-    public void setAliasMap(Map<String, String> aliasToPrefix) throws TrippiException {
+    public void setAliasMap(Map<String, String> aliasToPrefix)
+            throws TrippiException {
         _writer.setAliasMap(aliasToPrefix);
     }
 
@@ -265,75 +276,91 @@ public class ResourceIndexImpl implements ResourceIndex {
     /**
      * {@inheritDoc}
      */
-    public TupleIterator findTuples(String queryLang, String tupleQuery,
-            int limit, boolean distinct)
-            throws TrippiException {
+    public TupleIterator findTuples(String queryLang,
+                                    String tupleQuery,
+                                    int limit,
+                                    boolean distinct) throws TrippiException {
         return _writer.findTuples(queryLang, tupleQuery, limit, distinct);
     }
 
     /**
      * {@inheritDoc}
      */
-    public int countTuples(String queryLang, String tupleQuery, int limit,
-            boolean distinct)
-            throws TrippiException {
+    public int countTuples(String queryLang,
+                           String tupleQuery,
+                           int limit,
+                           boolean distinct) throws TrippiException {
         return _writer.countTuples(queryLang, tupleQuery, limit, distinct);
     }
 
     /**
      * {@inheritDoc}
      */
-    public TripleIterator findTriples(String queryLang, String tripleQuery,
-            int limit, boolean distinct)
-            throws TrippiException {
+    public TripleIterator findTriples(String queryLang,
+                                      String tripleQuery,
+                                      int limit,
+                                      boolean distinct) throws TrippiException {
         return _writer.findTriples(queryLang, tripleQuery, limit, distinct);
     }
 
     /**
      * {@inheritDoc}
      */
-    public int countTriples(String queryLang, String tripleQuery, int limit,
-            boolean distinct)
-            throws TrippiException {
+    public int countTriples(String queryLang,
+                            String tripleQuery,
+                            int limit,
+                            boolean distinct) throws TrippiException {
         return _writer.countTriples(queryLang, tripleQuery, limit, distinct);
     }
 
     /**
      * {@inheritDoc}
      */
-    public TripleIterator findTriples(SubjectNode subject, 
-            PredicateNode predicate, ObjectNode object, int limit)
-            throws TrippiException {
+    public TripleIterator findTriples(SubjectNode subject,
+                                      PredicateNode predicate,
+                                      ObjectNode object,
+                                      int limit) throws TrippiException {
         return _writer.findTriples(subject, predicate, object, limit);
     }
 
     /**
      * {@inheritDoc}
      */
-    public int countTriples(SubjectNode subject, PredicateNode predicate,
-            ObjectNode object, int limit)
-            throws TrippiException {
+    public int countTriples(SubjectNode subject,
+                            PredicateNode predicate,
+                            ObjectNode object,
+                            int limit) throws TrippiException {
         return _writer.countTriples(subject, predicate, object, limit);
     }
 
     /**
      * {@inheritDoc}
      */
-    public TripleIterator findTriples(String queryLang, String tupleQuery, 
-            String tripleTemplate, int limit, boolean distinct)
-            throws TrippiException {
-        return _writer.findTriples(queryLang, tupleQuery, tripleTemplate,
-                limit, distinct);
+    public TripleIterator findTriples(String queryLang,
+                                      String tupleQuery,
+                                      String tripleTemplate,
+                                      int limit,
+                                      boolean distinct) throws TrippiException {
+        return _writer.findTriples(queryLang,
+                                   tupleQuery,
+                                   tripleTemplate,
+                                   limit,
+                                   distinct);
     }
 
     /**
      * {@inheritDoc}
      */
-    public int countTriples(String queryLang, String tupleQuery, 
-            String tripleTemplate, int limit, boolean distinct)
-            throws TrippiException {
-        return _writer.countTriples(queryLang, tupleQuery, tripleTemplate,
-                limit, distinct);
+    public int countTriples(String queryLang,
+                            String tupleQuery,
+                            String tripleTemplate,
+                            int limit,
+                            boolean distinct) throws TrippiException {
+        return _writer.countTriples(queryLang,
+                                    tupleQuery,
+                                    tripleTemplate,
+                                    limit,
+                                    distinct);
     }
 
     /**
@@ -357,88 +384,90 @@ public class ResourceIndexImpl implements ResourceIndex {
         _connector.close();
     }
 
-
     ///////////////////////////////
     // TriplestoreWriter methods //
     ///////////////////////////////
-   
-    /**
-     * {@inheritDoc}
-     */
-	public void add(List<Triple> triples, boolean flush)
-	        throws IOException, TrippiException {
-        _writer.add(triples, flush);
-	}
 
     /**
      * {@inheritDoc}
      */
-	public void add(TripleIterator triples, boolean flush)
-	        throws IOException, TrippiException {
+    public void add(List<Triple> triples, boolean flush) throws IOException,
+            TrippiException {
         _writer.add(triples, flush);
-	}
+    }
 
     /**
      * {@inheritDoc}
      */
-	public void add(Triple triple, boolean flush)
-	        throws IOException, TrippiException {
+    public void add(TripleIterator triples, boolean flush) throws IOException,
+            TrippiException {
+        _writer.add(triples, flush);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void add(Triple triple, boolean flush) throws IOException,
+            TrippiException {
         _writer.add(triple, flush);
-	}
+    }
 
     /**
      * {@inheritDoc}
      */
-	public void delete(List<Triple> triples, boolean flush)
-	        throws IOException, TrippiException {
+    public void delete(List<Triple> triples, boolean flush) throws IOException,
+            TrippiException {
         _writer.delete(triples, flush);
-	}
+    }
 
     /**
      * {@inheritDoc}
      */
-	public void delete(TripleIterator triples, boolean flush)
-	        throws IOException, TrippiException {
+    public void delete(TripleIterator triples, boolean flush)
+            throws IOException, TrippiException {
         _writer.delete(triples, flush);
-	}
+    }
 
     /**
      * {@inheritDoc}
      */
-	public void delete(Triple triple, boolean flush)
-	        throws IOException, TrippiException {
+    public void delete(Triple triple, boolean flush) throws IOException,
+            TrippiException {
         _writer.delete(triple, flush);
-	}
+    }
 
     /**
      * {@inheritDoc}
      */
-	public void flushBuffer()
-	        throws IOException, TrippiException {
+    public void flushBuffer() throws IOException, TrippiException {
         _writer.flushBuffer();
-	}
+    }
 
     /**
      * {@inheritDoc}
      */
-	public void setFlushErrorHandler(FlushErrorHandler h) {
-		_writer.setFlushErrorHandler(h);
-	}
+    public void setFlushErrorHandler(FlushErrorHandler h) {
+        _writer.setFlushErrorHandler(h);
+    }
 
     /**
      * {@inheritDoc}
      */
-	public int getBufferSize() {
-		return _writer.getBufferSize();
-	}
+    public int getBufferSize() {
+        return _writer.getBufferSize();
+    }
 
     /**
      * {@inheritDoc}
      */
-	public List<TripleUpdate> findBufferedUpdates(SubjectNode subject, 
-	        PredicateNode predicate, ObjectNode object, int updateType) {
-		return _writer.findBufferedUpdates(subject, predicate, object, 
-		        updateType);
-	}
-	
+    public List<TripleUpdate> findBufferedUpdates(SubjectNode subject,
+                                                  PredicateNode predicate,
+                                                  ObjectNode object,
+                                                  int updateType) {
+        return _writer.findBufferedUpdates(subject,
+                                           predicate,
+                                           object,
+                                           updateType);
+    }
+
 }

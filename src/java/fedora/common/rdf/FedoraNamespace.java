@@ -12,12 +12,14 @@ package fedora.common.rdf;
  * Namespace URI    : info:fedora/
  * Preferred Prefix : fedora
  * </pre>
- *
- * @see <a href="http://info-uri.info/registry/OAIHandler?verb=GetRecord&metadataPrefix=reg&identifier=info:fedora/">
+ * 
+ * @see <a
+ *      href="http://info-uri.info/registry/OAIHandler?verb=GetRecord&metadataPrefix=reg&identifier=info:fedora/">
  *      "info" URI Scheme Registry page</a>
- * @author cwilper@fedora-commons.org
+ * @author Chris Wilper
  */
-public class FedoraNamespace extends RDFNamespace {
+public class FedoraNamespace
+        extends RDFNamespace {
 
     /**
      * The content model for Behavior Definition objects;
@@ -44,17 +46,17 @@ public class FedoraNamespace extends RDFNamespace {
     public final RDFName DEFAULT_CMODEL;
 
     private static final long serialVersionUID = 1L;
-    
+
     public FedoraNamespace() {
 
-        this.uri = "info:fedora/";
-        this.prefix = "fedora";
+        uri = "info:fedora/";
+        prefix = "fedora";
 
         final String sys = "fedora-system";
-        this.BDEF_CMODEL    = new RDFName(this, sys + ":BehaviorDefinition");
-        this.BMECH_CMODEL   = new RDFName(this, sys + ":BehaviorMechanism");
-        this.CMODEL_CMODEL  = new RDFName(this, sys + ":ContentModel");
-        this.DEFAULT_CMODEL = new RDFName(this, sys + ":DefaultContentModel-1");
+        BDEF_CMODEL = new RDFName(this, sys + ":BehaviorDefinition");
+        BMECH_CMODEL = new RDFName(this, sys + ":BehaviorMechanism");
+        CMODEL_CMODEL = new RDFName(this, sys + ":ContentModel");
+        DEFAULT_CMODEL = new RDFName(this, sys + ":DefaultContentModel-1");
     }
 
 }

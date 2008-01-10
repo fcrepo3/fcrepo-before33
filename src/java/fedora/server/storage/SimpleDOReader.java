@@ -9,8 +9,11 @@ package fedora.server.storage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+
 import java.net.URI;
+
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -18,14 +21,17 @@ import java.util.List;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
+
 import org.jrdf.graph.Literal;
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.Triple;
+
 import org.trippi.RDFFormat;
 import org.trippi.TripleIterator;
 import org.trippi.TrippiException;
 
 import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.errors.DisseminationException;
 import fedora.server.errors.GeneralException;
@@ -51,29 +57,37 @@ import fedora.server.utilities.DateUtility;
 /**
  * A DOReader backed by a DigitalObject.
  * 
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @author Chris Wilper
  */
-public class SimpleDOReader implements DOReader {
+public class SimpleDOReader
+        implements DOReader {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(SimpleDOReader.class
-            .getName());
+    private static final Logger LOG =
+            Logger.getLogger(SimpleDOReader.class.getName());
 
     protected DigitalObject m_obj;
-    private Context m_context;
-    private RepositoryReader m_repoReader;
-    private DOTranslator m_translator;
-    private String m_exportFormat;
+
+    private final Context m_context;
+
+    private final RepositoryReader m_repoReader;
+
+    private final DOTranslator m_translator;
+
+    private final String m_exportFormat;
+
     private String m_storageFormat;
-    private String m_encoding;
 
-    private SimpleDateFormat m_formatter = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private final SimpleDateFormat m_formatter =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-    public SimpleDOReader(Context context, RepositoryReader repoReader,
-            DOTranslator translator, String exportFormat, String storageFormat,
-            String encoding, InputStream serializedObject)
+    public SimpleDOReader(Context context,
+                          RepositoryReader repoReader,
+                          DOTranslator translator,
+                          String exportFormat,
+                          String storageFormat,
+                          String encoding,
+                          InputStream serializedObject)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         m_context = context;
@@ -81,59 +95,58 @@ public class SimpleDOReader implements DOReader {
         m_translator = translator;
         m_exportFormat = exportFormat;
         m_storageFormat = storageFormat;
-        m_encoding = encoding;
         m_obj = new BasicDigitalObject();
-        m_translator.deserialize(serializedObject, m_obj, m_storageFormat,
-                encoding, DOTranslationUtility.DESERIALIZE_INSTANCE);
+        m_translator.deserialize(serializedObject,
+                                 m_obj,
+                                 m_storageFormat,
+                                 encoding,
+                                 DOTranslationUtility.DESERIALIZE_INSTANCE);
     }
 
     /**
      * Alternate constructor for when a DigitalObject is already available for
      * some reason.
      */
-    public SimpleDOReader(Context context, RepositoryReader repoReader,
-            DOTranslator translator, String exportFormat, String encoding,
-            DigitalObject obj) {
+    public SimpleDOReader(Context context,
+                          RepositoryReader repoReader,
+                          DOTranslator translator,
+                          String exportFormat,
+                          String encoding,
+                          DigitalObject obj) {
         m_context = context;
         m_repoReader = repoReader;
         m_translator = translator;
         m_exportFormat = exportFormat;
-        m_encoding = encoding;
         m_obj = obj;
     }
 
     public String getFedoraObjectTypes() {
-        return (m_obj.getFedoraObjectTypes());
+        return m_obj.getFedoraObjectTypes();
     }
 
     public boolean isFedoraObjectType(int type) {
-        return (m_obj.isFedoraObjectType(type));
+        return m_obj.isFedoraObjectType(type);
     }
 
     /**
-     * Gets the content model of the object.
-     *
-     * As of Fedora 3.0, this comes from the fedora-view:hasContentModel
-     * relationship.  An appropriate system-defined content model is assumed
-     * if unasserted in RELS-EXT.
-     *
+     * Gets the content model of the object. As of Fedora 3.0, this comes from
+     * the fedora-view:hasContentModel relationship. An appropriate
+     * system-defined content model is assumed if unasserted in RELS-EXT.
+     * 
      * @return the content model.
      */
     public String getContentModelId() {
         try {
-            RelationshipTuple rels[] = getRelationships(
-                    Constants.MODEL.HAS_CONTENT_MODEL.uri);
+            RelationshipTuple rels[] =
+                    getRelationships(Constants.MODEL.HAS_CONTENT_MODEL.uri);
             if (rels != null && rels.length > 0) {
                 return rels[0].object;
             } else {
-                if (isFedoraObjectType(
-                        DigitalObject.FEDORA_BDEF_OBJECT)) {
+                if (isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) {
                     return Constants.FEDORA.BDEF_CMODEL.uri;
-                } else if (isFedoraObjectType(
-                        DigitalObject.FEDORA_BMECH_OBJECT)) {
+                } else if (isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)) {
                     return Constants.FEDORA.BMECH_CMODEL.uri;
-                } else if (isFedoraObjectType(
-                        DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) {
+                } else if (isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) {
                     return Constants.FEDORA.CMODEL_CMODEL.uri;
                 } else {
                     return Constants.FEDORA.DEFAULT_CMODEL.uri;
@@ -168,25 +181,26 @@ public class SimpleDOReader implements DOReader {
     public InputStream GetObjectXML() throws ObjectIntegrityException,
             StreamIOException, UnsupportedTranslationException, ServerException {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        m_translator.serialize(m_obj, bytes, m_storageFormat, "UTF-8",
-                DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
+        m_translator.serialize(m_obj,
+                               bytes,
+                               m_storageFormat,
+                               "UTF-8",
+                               DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
         return new ByteArrayInputStream(bytes.toByteArray());
     }
 
     /**
      * Return the object as an XML input stream in the specified XML format and
-     * in the specified export context.
-     * 
-     * See DOTranslationUtility.class for description of export contexts
-     * (translation contexts).
+     * in the specified export context. See DOTranslationUtility.class for
+     * description of export contexts (translation contexts).
      * 
      * @param format
-     *            The format to export the object in. If null or "default", will
-     *            use the repository's configured default export format.
+     *        The format to export the object in. If null or "default", will use
+     *        the repository's configured default export format.
      * @param exportContext
-     *            The use case for export (public, migrate, archive) which
-     *            results in different ways of representing datastream URLs or
-     *            datastream content in the output.
+     *        The use case for export (public, migrate, archive) which results
+     *        in different ways of representing datastream URLs or datastream
+     *        content in the output.
      */
     public InputStream ExportObject(String format, String exportContext)
             throws ObjectIntegrityException, StreamIOException,
@@ -214,8 +228,11 @@ public class SimpleDOReader implements DOReader {
         if (format == null || format.equals("")
                 || format.equalsIgnoreCase("default")) {
             LOG.debug("ExportObject in default format: " + m_exportFormat);
-            m_translator.serialize(m_obj, bytes, m_exportFormat, "UTF-8",
-                    transContext);
+            m_translator.serialize(m_obj,
+                                   bytes,
+                                   m_exportFormat,
+                                   "UTF-8",
+                                   transContext);
         } else {
             LOG.debug("ExportObject in format: " + format);
             m_translator.serialize(m_obj, bytes, format, "UTF-8", transContext);
@@ -233,8 +250,9 @@ public class SimpleDOReader implements DOReader {
     }
 
     public String GetObjectState() {
-        if (m_obj.getState() == null)
+        if (m_obj.getState() == null) {
             return "A"; // shouldn't happen, but if it does don't die
+        }
         return m_obj.getState();
     }
 
@@ -303,8 +321,7 @@ public class SimpleDOReader implements DOReader {
             } else {
                 long diff = vTime - ds.DSCreateDT.getTime();
                 if (diff >= 0) {
-                    if ((diff < bestTimeDifference)
-                            || (bestTimeDifference == -1)) {
+                    if (diff < bestTimeDifference || bestTimeDifference == -1) {
                         bestTimeDifference = diff;
                         closestWithoutGoingOver = ds;
                     }
@@ -330,8 +347,8 @@ public class SimpleDOReader implements DOReader {
     public Datastream[] GetDatastreams(Date versDateTime, String state) {
         String[] ids = ListDatastreamIDs(null);
         ArrayList<Datastream> al = new ArrayList<Datastream>();
-        for (int i = 0; i < ids.length; i++) {
-            Datastream ds = GetDatastream(ids[i], versDateTime);
+        for (String element : ids) {
+            Datastream ds = GetDatastream(element, versDateTime);
             if (ds != null && (state == null || ds.DSState.equals(state))) {
                 al.add(ds);
             }
@@ -354,24 +371,26 @@ public class SimpleDOReader implements DOReader {
      * </p>
      * 
      * @param PID
-     *            The persistent identifier of the digitla object.
+     *        The persistent identifier of the digitla object.
      * @return An Array containing the list of timestamps indicating when
      *         changes were made to the object.
      */
     public String[] getObjectHistory(String PID) {
         String[] dsIDs = ListDatastreamIDs("A");
         TreeSet<String> modDates = new TreeSet<String>();
-        for (int i = 0; i < dsIDs.length; i++) {
-            Date[] dsDates = getDatastreamVersions(dsIDs[i]);
-            for (int j = 0; j < dsDates.length; j++) {
-                modDates.add(DateUtility.convertDateToString(dsDates[j]));
+        for (String element : dsIDs) {
+            Date[] dsDates = getDatastreamVersions(element);
+            for (Date element2 : dsDates) {
+                modDates.add(DateUtility.convertDateToString(element2));
             }
         }
-        return (String[]) modDates.toArray(new String[0]);
+        return modDates.toArray(new String[0]);
     }
 
-    public MethodDef[] listMethods(String bDefPID, BMechReader bmechreader,
-            Date versDateTime) throws MethodNotFoundException, ServerException {
+    public MethodDef[] listMethods(String bDefPID,
+                                   BMechReader bmechreader,
+                                   Date versDateTime)
+            throws MethodNotFoundException, ServerException {
         if (bDefPID.equalsIgnoreCase("fedora-system:1")
                 || bDefPID.equalsIgnoreCase("fedora-system:3")) {
             throw new MethodNotFoundException("[getObjectMethods] The object, "
@@ -404,9 +423,9 @@ public class SimpleDOReader implements DOReader {
     public MethodParmDef[] filterParms(MethodDef method) {
         ArrayList filteredParms = new ArrayList();
         MethodParmDef[] parms = method.methodParms;
-        for (int i = 0; i < parms.length; i++) {
-            if (parms[i].parmType.equalsIgnoreCase(MethodParmDef.USER_INPUT)) {
-                filteredParms.add(parms[i]);
+        for (MethodParmDef element : parms) {
+            if (element.parmType.equalsIgnoreCase(MethodParmDef.USER_INPUT)) {
+                filteredParms.add(element);
             }
         }
         return (MethodParmDef[]) filteredParms.toArray(new MethodParmDef[0]);
@@ -426,30 +445,37 @@ public class SimpleDOReader implements DOReader {
         ArrayList bDefIDList = new ArrayList();
 
         BMechReader bmechreader = null;
-        RelationshipTuple cmPIDs[] = getRelationships(Constants.MODEL.HAS_CONTENT_MODEL.uri);
+        RelationshipTuple cmPIDs[] =
+                getRelationships(Constants.MODEL.HAS_CONTENT_MODEL.uri);
         if (cmPIDs != null && cmPIDs.length > 0) {
-            for (int i = 0; i < cmPIDs.length; i++) {
+            for (RelationshipTuple element : cmPIDs) {
                 DOReader cmReader;
-                String cModelPid = cmPIDs[i].getObjectPID();
+                String cModelPid = element.getObjectPID();
                 if (cModelPid.equals("self")) {
                     cmReader = this;
                     cModelPid = GetObjectPID();
                 } else {
                     try {
-                        cmReader = m_repoReader.getReader(false, m_context,
-                                cModelPid);
+                        cmReader =
+                                m_repoReader.getReader(false,
+                                                       m_context,
+                                                       cModelPid);
                     } catch (StorageException e) {
                         throw new DisseminationException(null,
-                                "Content Model Object " + cModelPid
-                                        + " does not exist.", null, null, e);
+                                                         "Content Model Object "
+                                                                 + cModelPid
+                                                                 + " does not exist.",
+                                                         null,
+                                                         null,
+                                                         e);
                     }
                 }
-                RelationshipTuple bDefPIDs[] = cmReader
-                        .getRelationships(Constants.MODEL.HAS_BDEF.uri);
+                RelationshipTuple bDefPIDs[] =
+                        cmReader.getRelationships(Constants.MODEL.HAS_BDEF.uri);
                 if (bDefPIDs != null && bDefPIDs.length > 0) {
                     boolean initialized = false;
-                    for (int j = 0; j < bDefPIDs.length; j++) {
-                        String bDefPid = bDefPIDs[j].getObjectPID();
+                    for (RelationshipTuple element2 : bDefPIDs) {
+                        String bDefPid = element2.getObjectPID();
                         DOManager manager = null;
                         MethodDef[] methods = null;
                         if (m_repoReader instanceof DOManager) {
@@ -458,30 +484,33 @@ public class SimpleDOReader implements DOReader {
                                 manager.initializeCModelBmechHashMap(m_context);
                                 initialized = true;
                             }
-                            String bMechPid = manager.lookupBmechForCModel(
-                                    cModelPid, bDefPid);
+                            String bMechPid =
+                                    manager.lookupBmechForCModel(cModelPid,
+                                                                 bDefPid);
                             if (bMechPid == null) {
-                                throw new DisseminationException(
-                                        "No BMech defined as Contractor for Content Model "
-                                                + cModelPid);
+                                throw new DisseminationException("No BMech defined as Contractor for Content Model "
+                                        + cModelPid);
                             }
                             try {
-                                bmechreader = m_repoReader.getBMechReader(
-                                        false, m_context, bMechPid);
+                                bmechreader =
+                                        m_repoReader.getBMechReader(false,
+                                                                    m_context,
+                                                                    bMechPid);
                             } catch (StorageException se) {
-                                throw new DisseminationException(
-                                        "BMech "
-                                                + bMechPid
-                                                + " defined as Contractor for Content Model "
-                                                + cModelPid + " not found.");
+                                throw new DisseminationException("BMech "
+                                        + bMechPid
+                                        + " defined as Contractor for Content Model "
+                                        + cModelPid + " not found.");
                             }
-                            methods = listMethods(bDefPIDs[j].getObjectPID(),
-                                    bmechreader, versDateTime);
+                            methods =
+                                    listMethods(element2.getObjectPID(),
+                                                bmechreader,
+                                                versDateTime);
                         }
                         if (methods != null) {
-                            for (int k = 0; k < methods.length; k++) {
-                                methodList.add(methods[k]);
-                                bDefIDList.add(bDefPIDs[j].getObjectPID());
+                            for (MethodDef element3 : methods) {
+                                methodList.add(element3);
+                                bDefIDList.add(element2.getObjectPID());
                             }
                         }
                     }
@@ -510,7 +539,8 @@ public class SimpleDOReader implements DOReader {
             return new RelationshipTuple[0];
         }
 
-        ArrayList<RelationshipTuple> tuples = new ArrayList<RelationshipTuple>();
+        ArrayList<RelationshipTuple> tuples =
+                new ArrayList<RelationshipTuple>();
         InputStream dsContent = ds.getContentStream();
         TripleIterator iter = null;
         try {
@@ -532,16 +562,19 @@ public class SimpleDOReader implements DOReader {
                     isLiteral = objectNode instanceof Literal;
                     datatype = null;
                     if (isLiteral) {
-                        object = ((Literal)objectNode).getLexicalForm();
-                        datatypeURI = ((Literal)objectNode).getDatatypeURI();
+                        object = ((Literal) objectNode).getLexicalForm();
+                        datatypeURI = ((Literal) objectNode).getDatatypeURI();
                         if (datatypeURI != null) {
                             datatype = datatypeURI.toString();
                         }
                     } else {
                         object = triple.getObject().toString();
                     }
-                    tuples.add(new RelationshipTuple(subject, predicate,
-                            object, isLiteral, datatype));
+                    tuples.add(new RelationshipTuple(subject,
+                                                     predicate,
+                                                     object,
+                                                     isLiteral,
+                                                     datatype));
                 }
             }
         } catch (TrippiException e) {

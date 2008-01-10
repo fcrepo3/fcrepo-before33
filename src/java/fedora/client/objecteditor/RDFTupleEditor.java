@@ -1,3 +1,4 @@
+
 package fedora.client.objecteditor;
 
 import java.awt.BorderLayout;
@@ -5,14 +6,18 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -41,38 +46,54 @@ import org.jrdf.graph.GraphElementFactoryException;
 import org.jrdf.graph.Literal;
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.Triple;
+
 import org.trippi.RDFFormat;
 import org.trippi.TripleIterator;
 import org.trippi.TrippiException;
 
 import fedora.client.Administrator;
+
 import fedora.common.Constants;
 import fedora.common.PID;
+
 import fedora.server.storage.types.RelationshipTuple;
 
 /**
  * A general-purpose text editor/viewer with XML pretty-printing.
- * 
  */
-public class RDFTupleEditor extends ContentEditor implements DocumentListener,
-        ActionListener, PropertyChangeListener {
+public class RDFTupleEditor
+        extends ContentEditor
+        implements DocumentListener, ActionListener, PropertyChangeListener {
 
     /** This class handles all the common text MIME types by default. */
-    public static String[] s_types = new String[] { "text/rdf" };
+    public static String[] s_types = new String[] {"text/rdf"};
 
     protected boolean m_dirty;
+
     protected ActionListener m_dataChangeListener;
+
     protected JTable m_editor;
+
     protected JScrollPane m_scrollPane;
+
     protected JPanel m_component;
+
     protected RDFDataModel m_origContent;
+
     protected RDFDataModel m_dataModel;
+
     protected boolean m_isEditable;
+
     protected JButton m_add;
+
     protected JButton m_edit;
+
     protected JButton m_delete;
+
     protected String pid;
+
     protected String dsid; // not used
+
     protected HashMap<String, String> m_map;
 
     private static boolean s_registered = false;
@@ -84,18 +105,28 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
         }
     }
 
+    @Override
     public String[] getTypes() {
         return s_types;
     }
 
+    @Override
     public void setPIDAndDSID(String pid, String dsid) {
         this.pid = pid;
         this.dsid = dsid;
     }
 
+    @Override
     public void init(String type, InputStream data, boolean viewOnly)
             throws IOException {
         m_editor = new JTable() {
+
+            /**
+             * 
+             */
+            private static final long serialVersionUID = 1L;
+
+            @Override
             public void valueChanged(ListSelectionEvent e) {
                 super.valueChanged(e);
                 firePropertyChange("selection", e.getFirstIndex(), -1);
@@ -103,7 +134,7 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
         };
         m_editor.setFont(new Font("monospaced", Font.PLAIN, 12));
         setContent(data);
-        m_isEditable = (!viewOnly);
+        m_isEditable = !viewOnly;
         m_scrollPane = new JScrollPane(m_editor);
         m_component = new JPanel();
         m_component.setLayout(new BorderLayout());
@@ -140,43 +171,51 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
         button.setActionCommand(label);
         button.addActionListener(listener);
         Administrator.constrainHeight(button);
-        return (button);
+        return button;
     }
 
+    @Override
     public void setContent(InputStream data) throws IOException {
         // get a string from the inputstream, assume it's UTF-8
         m_dataModel = new RDFDataModel(data);
         m_editor.setModel(m_dataModel);
-        if (m_origContent == null)
-            m_origContent = (RDFDataModel) m_dataModel.clone();
+        if (m_origContent == null) {
+            m_origContent = m_dataModel.clone();
+        }
     }
 
+    @Override
     public JComponent getComponent() {
         return m_component;
     }
 
+    @Override
     public void changesSaved() {
         m_origContent = m_dataModel.clone();
         dataChanged();
     }
 
+    @Override
     public void undoChanges() {
         m_dataModel = m_origContent.clone();
         m_editor.setModel(m_dataModel);
         dataChanged();
     }
 
+    @Override
     public boolean isDirty() {
-        return (!m_origContent.serializeAsString().equals(
-                m_dataModel.serializeAsString()));
+        return !m_origContent.serializeAsString().equals(m_dataModel
+                .serializeAsString());
     }
 
+    @Override
     public void setContentChangeListener(ActionListener listener) {
         m_dataChangeListener = listener;
     }
 
+    @Override
     public InputStream getContent() throws IOException {
-        return (m_dataModel.serializeAsStream());
+        return m_dataModel.serializeAsStream();
     }
 
     // Forward DocumentListener's events to the passed-in ActionListener
@@ -194,16 +233,24 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
 
     private void dataChanged() {
         if (m_dataChangeListener != null) {
-            m_dataChangeListener.actionPerformed(new ActionEvent(this, 0,
-                    "dataChanged"));
+            m_dataChangeListener
+                    .actionPerformed(new ActionEvent(this, 0, "dataChanged"));
         }
         m_editor.revalidate();
         m_editor.repaint();
     }
 
-    class RDFDataModel extends AbstractTableModel {
+    class RDFDataModel
+            extends AbstractTableModel {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
+
         // Create columns names
-        String columnNames[] = { "Subject", "Predicate", "Object" };
+        String columnNames[] = {"Subject", "Predicate", "Object"};
+
         ArrayList<RelationshipTuple> entries = null;
 
         private RDFDataModel() {
@@ -223,13 +270,16 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
                     if (oNode instanceof Literal) {
                         isLiteral = true;
                         URI typeURI = ((Literal) oNode).getDatatypeURI();
-                        datatype = (typeURI == null) ? null : typeURI
-                                .toString();
+                        datatype = typeURI == null ? null : typeURI.toString();
                     }
                     object = oNode.toString();
                     entries.add(new RelationshipTuple(triple.getSubject()
-                            .toString(), triple.getPredicate().toString(),
-                            object, isLiteral, datatype));
+                                                              .toString(),
+                                                      triple.getPredicate()
+                                                              .toString(),
+                                                      object,
+                                                      isLiteral,
+                                                      datatype));
 
                 }
             } catch (TrippiException e) {
@@ -238,10 +288,11 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
             }
         }
 
+        @Override
         public RDFDataModel clone() {
             RDFDataModel clone = new RDFDataModel();
-            clone.entries = (ArrayList<RelationshipTuple>) this.entries.clone();
-            return (clone);
+            clone.entries = (ArrayList<RelationshipTuple>) entries.clone();
+            return clone;
         }
 
         public void deleteRow(int i) {
@@ -249,24 +300,36 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
             dataChanged();
         }
 
-        public void addRow(String subject, String predicate, String object,
-                boolean isLiteral, String datatype) {
-            entries.add(new RelationshipTuple(subject, predicate, object,
-                    isLiteral, datatype));
+        public void addRow(String subject,
+                           String predicate,
+                           String object,
+                           boolean isLiteral,
+                           String datatype) {
+            entries.add(new RelationshipTuple(subject,
+                                              predicate,
+                                              object,
+                                              isLiteral,
+                                              datatype));
             dataChanged();
         }
 
-        public void replaceRow(int selectedRow, String subject,
-                String predicate, String object, boolean isLiteral,
-                String datatype) {
-            entries.set(selectedRow, new RelationshipTuple(subject, predicate,
-                    object, isLiteral, datatype));
+        public void replaceRow(int selectedRow,
+                               String subject,
+                               String predicate,
+                               String object,
+                               boolean isLiteral,
+                               String datatype) {
+            entries.set(selectedRow, new RelationshipTuple(subject,
+                                                           predicate,
+                                                           object,
+                                                           isLiteral,
+                                                           datatype));
             dataChanged();
         }
 
         public InputStream serializeAsStream() {
-            TupleArrayTripleIterator iter = new TupleArrayTripleIterator(
-                    entries);
+            TupleArrayTripleIterator iter =
+                    new TupleArrayTripleIterator(entries);
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             try {
                 iter.toStream(os, RDFFormat.RDF_XML, false);
@@ -274,13 +337,14 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+            ByteArrayInputStream is =
+                    new ByteArrayInputStream(os.toByteArray());
             return is;
         }
 
         public String serializeAsString() {
-            TupleArrayTripleIterator iter = new TupleArrayTripleIterator(
-                    entries);
+            TupleArrayTripleIterator iter =
+                    new TupleArrayTripleIterator(entries);
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             try {
                 iter.toStream(os, RDFFormat.RDF_XML, false);
@@ -292,33 +356,38 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
             return results;
         }
 
-       public Object getValueAt(int iRowIndex, int iColumnIndex) {
-           RelationshipTuple tuple = entries.get(iRowIndex);
-           switch (iColumnIndex) {
-           case 0:
-               return tuple.subject;
-           case 1:
-               return (tuple.getRelationship());
-           case 2:
-               if (tuple.isLiteral) {
-                   if (tuple.datatype == null) {
-                       return String.format("\"%s\"", tuple.object);
-                   }
-                   else {
-                       String trimmedDataType = tuple.datatype;
-                       if (tuple.datatype.startsWith(Constants.XML_XSD.uri+"#")) {
-                           trimmedDataType = tuple.datatype.substring(Constants.XML_XSD.uri.length()+1);
-                       }
-                       return String.format("\"%s\"^^<%s>", tuple.object, trimmedDataType);
-                   }
-               }
-               else {
-                   return tuple.object;
-               }
-           }
-           return ("");
-       }
+        public Object getValueAt(int iRowIndex, int iColumnIndex) {
+            RelationshipTuple tuple = entries.get(iRowIndex);
+            switch (iColumnIndex) {
+                case 0:
+                    return tuple.subject;
+                case 1:
+                    return tuple.getRelationship();
+                case 2:
+                    if (tuple.isLiteral) {
+                        if (tuple.datatype == null) {
+                            return String.format("\"%s\"", tuple.object);
+                        } else {
+                            String trimmedDataType = tuple.datatype;
+                            if (tuple.datatype.startsWith(Constants.XML_XSD.uri
+                                    + "#")) {
+                                trimmedDataType =
+                                        tuple.datatype
+                                                .substring(Constants.XML_XSD.uri
+                                                        .length() + 1);
+                            }
+                            return String.format("\"%s\"^^<%s>",
+                                                 tuple.object,
+                                                 trimmedDataType);
+                        }
+                    } else {
+                        return tuple.object;
+                    }
+            }
+            return "";
+        }
 
+        @Override
         public void setValueAt(Object aValue, int iRowIndex, int iColumnIndex) {
         }
 
@@ -326,8 +395,9 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
             return 3;
         }
 
+        @Override
         public String getColumnName(int i) {
-            return (columnNames[i]);
+            return columnNames[i];
         }
 
         public int getRowCount() {
@@ -351,15 +421,18 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
                 String objectURI = dialog.getObjectURI();
                 boolean literalValue = dialog.getIsLiteral();
                 String literalType = dialog.getLiteralType();
-                m_dataModel.addRow(subject, predicate, objectURI, literalValue,
-                        literalType);
+                m_dataModel.addRow(subject,
+                                   predicate,
+                                   objectURI,
+                                   literalValue,
+                                   literalType);
             }
             dialog = null;
         } else if (e.getActionCommand().equals("Edit...")) {
             if (m_editor.getSelectedRow() != -1) {
-                TripleEditDialog dialog = new TripleEditDialog(
-                        m_dataModel.entries.get(m_editor.getSelectedRow()),
-                        m_map);
+                TripleEditDialog dialog =
+                        new TripleEditDialog(m_dataModel.entries.get(m_editor
+                                .getSelectedRow()), m_map);
                 dialog.setVisible(true);
                 if (!dialog.isCancelled()) {
                     String subject = dialog.getSubject();
@@ -367,8 +440,12 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
                     String objectURI = dialog.getObjectURI();
                     boolean literalValue = dialog.getIsLiteral();
                     String literalType = dialog.getLiteralType();
-                    m_dataModel.replaceRow(m_editor.getSelectedRow(), subject,
-                            predicate, objectURI, literalValue, literalType);
+                    m_dataModel.replaceRow(m_editor.getSelectedRow(),
+                                           subject,
+                                           predicate,
+                                           objectURI,
+                                           literalValue,
+                                           literalType);
                 }
                 dialog = null;
             }
@@ -379,34 +456,50 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
         }
     }
 
-    class TripleEditDialog extends JDialog implements ActionListener,
-            DocumentListener {
+    class TripleEditDialog
+            extends JDialog
+            implements ActionListener, DocumentListener {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
+
         private JTextField m_subject;
-        private JComboBox m_predicate;
+
+        private final JComboBox m_predicate;
+
         private JTextField m_objectURI;
+
         private JCheckBox m_isLiteral;
+
         private JComboBox m_literalType;
+
         private JLabel lab1, lab2, lab3, lab4, lab5;
+
         private boolean cancelled = true;
 
         public TripleEditDialog(RelationshipTuple tuple,
-                HashMap<String, String> map) {
+                                HashMap<String, String> map) {
             super(Administrator.getInstance(),
-                    (tuple == null) ? "Enter Relationship"
-                            : "Edit Relationship", true);
+                  tuple == null ? "Enter Relationship" : "Edit Relationship",
+                  true);
 
             JPanel mainPanel = new JPanel();
             mainPanel.setLayout(new SpringLayout());
 
             mainPanel.add(lab1 = new JLabel("Subject:", SwingConstants.RIGHT));
-            mainPanel.add(m_subject = new JTextField(
-                    tuple != null ? tuple.subject : PID.toURI(pid)));
+            mainPanel.add(m_subject =
+                    new JTextField(tuple != null ? tuple.subject : PID
+                            .toURI(pid)));
             m_subject.setBackground(Administrator.BACKGROUND_COLOR);
             m_subject.setEditable(false);
 
-            mainPanel.add(lab2 = new JLabel("Predicate:", SwingConstants.RIGHT));
-            String rels[] = {"", "fedora-model:hasBDef", "fedora-model:isContractor", "fedora-model:hasContentModel", 
-                            "rel:isMemberOf"};
+            mainPanel
+                    .add(lab2 = new JLabel("Predicate:", SwingConstants.RIGHT));
+            String rels[] =
+                    {"", "fedora-model:hasBDef", "fedora-model:isContractor",
+                            "fedora-model:hasContentModel", "rel:isMemberOf"};
             m_predicate = new JComboBox(rels);
             m_predicate.setEditable(true);
             Administrator.constrainHeight(m_predicate);
@@ -421,15 +514,17 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
             mainPanel.add(m_isLiteral = new JCheckBox());
             m_isLiteral.setSelected(false);
             m_isLiteral.addActionListener(new ActionListener() {
+
                 public void actionPerformed(ActionEvent e) {
                     updateFields();
                     // setVisible(false);
                 }
             });
 
-            mainPanel
-                    .add(lab5 = new JLabel("      Type:", SwingConstants.RIGHT));
-            String types[] = { "<untyped>", "long", "int", "float", "double", "dateTime" };
+            mainPanel.add(lab5 =
+                    new JLabel("      Type:", SwingConstants.RIGHT));
+            String types[] =
+                    {"<untyped>", "long", "int", "float", "double", "dateTime"};
             mainPanel.add(m_literalType = new JComboBox(types));
             m_literalType.setEditable(false);
             Administrator.constrainHeight(m_literalType);
@@ -440,8 +535,10 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
 
             // Lay out the panel.
             SpringUtilities.makeCompactGrid(mainPanel, 5, 2, // rows, cols
-                    6, 6, // initX, initY
-                    6, 6); // xPad, yPad
+                                            6,
+                                            6, // initX, initY
+                                            6,
+                                            6); // xPad, yPad
 
             getContentPane().setLayout(new BorderLayout());
             getContentPane().add(mainPanel, BorderLayout.CENTER);
@@ -454,27 +551,28 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
             buttonPanel.add(MakeButton("Cancel", this));
             getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
-           if (tuple != null) {
-               m_subject.setText(tuple.subject);
-               m_predicate.setSelectedItem(tuple.getRelationship());
-               m_objectURI.setText(tuple.object == null ? "" : tuple.object);
-               m_isLiteral.setSelected(tuple.isLiteral);
-               String trimmedDataType = null;
-               if (tuple.datatype == null) {
-                   trimmedDataType = "<untyped>";
-               }
-               else if (tuple.datatype.startsWith(Constants.XML_XSD.uri +"#")) {
-                   trimmedDataType = tuple.datatype.substring(Constants.XML_XSD.uri.length()+1);
-               }
-               else {
-                   trimmedDataType = tuple.datatype;
-               }
-               m_literalType.setSelectedItem(trimmedDataType);
-               if (m_isLiteral.isSelected()) {
-                   m_literalType.setEnabled(true);
-               } else {
-                   m_literalType.setEnabled(false);
-               }
+            if (tuple != null) {
+                m_subject.setText(tuple.subject);
+                m_predicate.setSelectedItem(tuple.getRelationship());
+                m_objectURI.setText(tuple.object == null ? "" : tuple.object);
+                m_isLiteral.setSelected(tuple.isLiteral);
+                String trimmedDataType = null;
+                if (tuple.datatype == null) {
+                    trimmedDataType = "<untyped>";
+                } else if (tuple.datatype.startsWith(Constants.XML_XSD.uri
+                        + "#")) {
+                    trimmedDataType =
+                            tuple.datatype.substring(Constants.XML_XSD.uri
+                                    .length() + 1);
+                } else {
+                    trimmedDataType = tuple.datatype;
+                }
+                m_literalType.setSelectedItem(trimmedDataType);
+                if (m_isLiteral.isSelected()) {
+                    m_literalType.setEnabled(true);
+                } else {
+                    m_literalType.setEnabled(false);
+                }
             }
             validate();
             pack();
@@ -487,22 +585,27 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
                 String msg = "predicate";
                 try {
                     URI uriSub = new URI(m_subject.getText());
-                    TupleArrayTripleIterator.makePredicateResourceFromRel(
-                            getPredicate(), m_map);
+                    TupleArrayTripleIterator
+                            .makePredicateResourceFromRel(getPredicate(), m_map);
                     msg = "object";
-                    TupleArrayTripleIterator.makeObjectFromURIandLiteral(
-                            getObjectURI(), getIsLiteral(), getLiteralType());
+                    TupleArrayTripleIterator
+                            .makeObjectFromURIandLiteral(getObjectURI(),
+                                                         getIsLiteral(),
+                                                         getLiteralType());
                 } catch (URISyntaxException e) {
                     JOptionPane.showMessageDialog(this,
-                            "Error: Invalid URI in " + msg);
+                                                  "Error: Invalid URI in "
+                                                          + msg);
                     return;
                 } catch (GraphElementFactoryException e) {
                     JOptionPane.showMessageDialog(this,
-                            "Error: Invalid URI in " + msg);
+                                                  "Error: Invalid URI in "
+                                                          + msg);
                     return;
                 } catch (IllegalArgumentException e) {
                     JOptionPane.showMessageDialog(this,
-                            "Error: Invalid URI in " + msg);
+                                                  "Error: Invalid URI in "
+                                                          + msg);
                     return;
                 }
                 cancelled = false;
@@ -538,19 +641,19 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
             return cancelled;
         }
 
-       public String getLiteralType() {
-           if (!getIsLiteral()) {
-               return null;
-           }
-           if (m_literalType.getSelectedItem().toString().equals("<untyped>")) {
-               return null;
-           }
-           String litType = m_literalType.getSelectedItem().toString();
-           if (litType.startsWith(Constants.XML_XSD.uri)) {
-               return(litType);
-           }
-           return (Constants.XML_XSD.uri + "#" + litType);
-       }
+        public String getLiteralType() {
+            if (!getIsLiteral()) {
+                return null;
+            }
+            if (m_literalType.getSelectedItem().toString().equals("<untyped>")) {
+                return null;
+            }
+            String litType = m_literalType.getSelectedItem().toString();
+            if (litType.startsWith(Constants.XML_XSD.uri)) {
+                return litType;
+            }
+            return Constants.XML_XSD.uri + "#" + litType;
+        }
 
         public boolean getIsLiteral() {
             return m_isLiteral.isSelected();
@@ -563,20 +666,21 @@ public class RDFTupleEditor extends ContentEditor implements DocumentListener,
             return m_objectURI.getText();
         }
 
-       public String getPredicate() {
-           String predicate = (m_predicate.getSelectedItem().toString());
-           if (predicate.startsWith(Constants.RELS_EXT.prefix))
-           {
-               predicate = Constants.RELS_EXT.uri +
-                      predicate.substring(Constants.RELS_EXT.prefix.length() + 1);
-           }
-           else if (predicate.startsWith(Constants.MODEL.prefix))
-           {
-               predicate = Constants.MODEL.uri +
-                      predicate.substring(Constants.MODEL.prefix.length() + 1);
-           }
-           return(predicate);
-       }
+        public String getPredicate() {
+            String predicate = m_predicate.getSelectedItem().toString();
+            if (predicate.startsWith(Constants.RELS_EXT.prefix)) {
+                predicate =
+                        Constants.RELS_EXT.uri
+                                + predicate.substring(Constants.RELS_EXT.prefix
+                                        .length() + 1);
+            } else if (predicate.startsWith(Constants.MODEL.prefix)) {
+                predicate =
+                        Constants.MODEL.uri
+                                + predicate.substring(Constants.MODEL.prefix
+                                        .length() + 1);
+            }
+            return predicate;
+        }
 
         public String getSubject() {
             return m_subject.getText();

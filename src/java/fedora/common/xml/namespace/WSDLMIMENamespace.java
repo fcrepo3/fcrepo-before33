@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The WSDL MIME XML Namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://schemas.xmlsoap.org/wsdl/mime/
  * Preferred Prefix : mime
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class WSDLMIMENamespace
         extends XMLNamespace {
@@ -23,8 +23,8 @@ public class WSDLMIMENamespace
     //---
 
     /** The only instance of this class. */
-    private static final WSDLMIMENamespace ONLY_INSTANCE
-            = new WSDLMIMENamespace();
+    private static final WSDLMIMENamespace ONLY_INSTANCE =
+            new WSDLMIMENamespace();
 
     /**
      * Constructs the instance.
@@ -35,7 +35,7 @@ public class WSDLMIMENamespace
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static WSDLMIMENamespace getInstance() {

@@ -5,25 +5,22 @@
 
 package fedora.client.bmech;
 
-import javax.swing.filechooser.FileFilter;
 import java.io.File;
 
+import javax.swing.filechooser.FileFilter;
+
 /**
- *
- * <p><b>Title:</b> XMLFileChooserFilter.java</p>
- * <p><b>Description:</b> </p>
- *
- * @author payette@cs.cornell.edu
- * @version $Id$
+ * @author Sandy Payette
  */
-public class XMLFileChooserFilter extends FileFilter
-{
-    public XMLFileChooserFilter()
-    {
+public class XMLFileChooserFilter
+        extends FileFilter {
+
+    public XMLFileChooserFilter() {
     }
+
     //Accept all directories and all xml files
-    public boolean accept(File f)
-    {
+    @Override
+    public boolean accept(File f) {
         if (f.isDirectory()) {
             return true;
         }
@@ -31,7 +28,7 @@ public class XMLFileChooserFilter extends FileFilter
         String extension = getExtension(f);
         if (extension != null) {
             if (extension.equals("xml")) {
-                    return true;
+                return true;
             } else {
                 return false;
             }
@@ -41,21 +38,19 @@ public class XMLFileChooserFilter extends FileFilter
     }
 
     //The description of this filter
-    public String getDescription()
-    {
+    @Override
+    public String getDescription() {
         return "XML Files";
     }
 
-    public String getExtension(File f)
-    {
+    public String getExtension(File f) {
         String ext = null;
         String s = f.getName();
         int i = s.lastIndexOf('.');
 
-        if (i > 0 &&  i < s.length() - 1)
-        {
-            ext = s.substring(i+1).toLowerCase();
+        if (i > 0 && i < s.length() - 1) {
+            ext = s.substring(i + 1).toLowerCase();
         }
         return ext;
     }
-  }
+}

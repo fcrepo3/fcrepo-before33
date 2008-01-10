@@ -1,9 +1,11 @@
+
 package fedora.server.config;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -11,25 +13,31 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.custommonkey.xmlunit.SimpleXpathEngine;
 import org.custommonkey.xmlunit.XMLUnit;
+
 import org.w3c.dom.Document;
 
 import fedora.test.FedoraTestCase;
 
 /**
  * @author Edwin Shin
- * @version $Id$
  */
-public class TestServerConfiguration extends FedoraTestCase {
-    private static final File FCFG_BASE = new File(
-            "src/fcfg/server/fedora-base.fcfg");
+public class TestServerConfiguration
+        extends FedoraTestCase {
+
+    private static final File FCFG_BASE =
+            new File("src/fcfg/server/fedora-base.fcfg");
+
     private static final String NS_FCFG_PREFIX = "fcfg";
+
     private DocumentBuilder builder;
+
     private ByteArrayOutputStream out;
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(TestServerConfiguration.class);
     }
 
+    @Override
     protected void setUp() throws Exception {
         out = new ByteArrayOutputStream();
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -42,6 +50,7 @@ public class TestServerConfiguration extends FedoraTestCase {
         XMLUnit.setIgnoreWhitespace(false);
     }
 
+    @Override
     protected void tearDown() throws Exception {
         SimpleXpathEngine.clearNamespaces();
         XMLUnit.setIgnoreWhitespace(false);
@@ -50,18 +59,20 @@ public class TestServerConfiguration extends FedoraTestCase {
 
     /*
      * public void testServerConfiguration() { //TODO Implement
-     * ServerConfiguration(). }
-     * 
-     * public void testCopy() { //TODO Implement copy(). }
+     * ServerConfiguration(). } public void testCopy() { //TODO Implement
+     * copy(). }
      */
 
     public void testApplyProperties() throws Exception {
-        ServerConfiguration config = new ServerConfigurationParser(
-                new FileInputStream(FCFG_BASE)).parse();
+        ServerConfiguration config =
+                new ServerConfigurationParser(new FileInputStream(FCFG_BASE))
+                        .parse();
 
         String testVal = "9999";
-        String xpath = "/" + NS_FCFG_PREFIX + ":server/" + NS_FCFG_PREFIX
-                + ":param[@name='fedoraServerPort'][@value='" + testVal + "']";
+        String xpath =
+                "/" + NS_FCFG_PREFIX + ":server/" + NS_FCFG_PREFIX
+                        + ":param[@name='fedoraServerPort'][@value='" + testVal
+                        + "']";
         Properties props = new Properties();
         props.put("server.fedoraServerPort", testVal);
 
@@ -79,14 +90,15 @@ public class TestServerConfiguration extends FedoraTestCase {
     }
 
     public void testSerialize() throws Exception {
-        ServerConfiguration config = new ServerConfigurationParser(
-                new FileInputStream(FCFG_BASE)).parse();
+        ServerConfiguration config =
+                new ServerConfigurationParser(new FileInputStream(FCFG_BASE))
+                        .parse();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         config.serialize(out);
 
         Document original = builder.parse(FCFG_BASE);
-        Document generated = builder.parse(new ByteArrayInputStream(out
-                .toByteArray()));
+        Document generated =
+                builder.parse(new ByteArrayInputStream(out.toByteArray()));
         XMLUnit.setIgnoreWhitespace(true);
         assertXMLEqual(original, generated);
     }

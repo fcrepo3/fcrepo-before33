@@ -6,21 +6,18 @@
 package fedora.oai;
 
 /**
- *
- * <p><b>Title:</b> NoSetHierarchyException.java</p>
- * <p><b>Description:</b> Signals that the repository does not support sets.</p>
- *
- * <p>This may occur while fulfilling a ListSets, ListIdentifiers, or ListRecords
- * request.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * Signals that the repository does not support sets.
+ * 
+ * This may occur while fulfilling a ListSets, ListIdentifiers, or ListRecords
+ * request.
+ * 
+ * @author Chris Wilper
  */
 public class NoSetHierarchyException
         extends OAIException {
 
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     public NoSetHierarchyException() {
         super("noSetHierarchy", null);
     }

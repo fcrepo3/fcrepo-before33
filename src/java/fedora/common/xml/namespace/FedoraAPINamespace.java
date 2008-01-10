@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The Fedora API XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://www.fedora.info/definitions/1/0/api/
  * Preferred Prefix : api
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class FedoraAPINamespace
         extends XMLNamespace {
@@ -23,8 +23,8 @@ public class FedoraAPINamespace
     //---
 
     /** The only instance of this class. */
-    private static final FedoraAPINamespace ONLY_INSTANCE
-            = new FedoraAPINamespace();
+    private static final FedoraAPINamespace ONLY_INSTANCE =
+            new FedoraAPINamespace();
 
     /**
      * Constructs the instance.
@@ -35,7 +35,7 @@ public class FedoraAPINamespace
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static FedoraAPINamespace getInstance() {

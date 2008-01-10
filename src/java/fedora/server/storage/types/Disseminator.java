@@ -8,37 +8,35 @@ package fedora.server.storage.types;
 import java.util.Date;
 
 /**
- * @author payette@cs.cornell.edu
+ * @author Sandy Payette
  */
 @Deprecated
-public class Disseminator
-{
+public class Disseminator {
 
-  public String parentPID;
+    public String parentPID;
 
-  public boolean isNew=false;
+    public boolean isNew = false;
 
-  public String dissID;
+    public String dissID;
 
-  public String dissLabel;
+    public String dissLabel;
 
-  public String dissVersionID;
+    public String dissVersionID;
 
-  public String bDefID;
+    public String bDefID;
 
-  public String bMechID;
+    public String bMechID;
 
-  public String dsBindMapID;
+    public String dsBindMapID;
 
-  public DSBindingMap dsBindMap;
+    public DSBindingMap dsBindMap;
 
-  public Date dissCreateDT;
+    public Date dissCreateDT;
 
-  public String dissState;
-  
-  public boolean dissVersionable;
+    public String dissState;
 
-  public Disseminator()
-  {
-  }
+    public boolean dissVersionable;
+
+    public Disseminator() {
+    }
 }

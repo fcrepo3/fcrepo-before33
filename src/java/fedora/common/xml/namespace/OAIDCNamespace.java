@@ -7,13 +7,13 @@ package fedora.common.xml.namespace;
 
 /**
  * The OAI DC XML namespace.
- *
+ * 
  * <pre>
  * Namespace URI    : http://www.openarchives.org/OAI/2.0/oai_dc/
  * Preferred Prefix : oai_dc
  * </pre>
- *
- * @author cwilper@cs.cornell.edu
+ * 
+ * @author Chris Wilper
  */
 public class OAIDCNamespace
         extends XMLNamespace {
@@ -30,8 +30,7 @@ public class OAIDCNamespace
     //---
 
     /** The only instance of this class. */
-    private static final OAIDCNamespace ONLY_INSTANCE
-            = new OAIDCNamespace();
+    private static final OAIDCNamespace ONLY_INSTANCE = new OAIDCNamespace();
 
     /**
      * Constructs the instance.
@@ -45,7 +44,7 @@ public class OAIDCNamespace
 
     /**
      * Gets the only instance of this class.
-     *
+     * 
      * @return the instance.
      */
     public static OAIDCNamespace getInstance() {

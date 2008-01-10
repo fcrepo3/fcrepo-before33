@@ -1,3 +1,4 @@
+
 package fedora.server.resourceIndex;
 
 import org.junit.Test;
@@ -5,11 +6,10 @@ import org.junit.Test;
 import fedora.server.storage.types.DigitalObject;
 
 /**
- * Tests modifying objects in the RI, with respect to their datastreams.
- *
- * Note: All tests run at RI level 1 unless otherwise noted.
- *
- * @author cwilper@cs.cornell.edu
+ * Tests modifying objects in the RI, with respect to their datastreams. Note:
+ * All tests run at RI level 1 unless otherwise noted.
+ * 
+ * @author Chris Wilper
  */
 public class ResourceIndexModDSIntegrationTest
         extends ResourceIndexIntegrationTest {
@@ -18,8 +18,7 @@ public class ResourceIndexModDSIntegrationTest
      * Add a datastream to an existing object.
      */
     @Test
-    public void testModObjOnceAddDS()
-            throws Exception {
+    public void testModObjOnceAddDS() throws Exception {
         DigitalObject original = getTestObject("test:1", "test1");
 
         DigitalObject modified = deepCopy(original);
@@ -32,8 +31,7 @@ public class ResourceIndexModDSIntegrationTest
      * Delete a datastream from an existing object.
      */
     @Test
-    public void testModObjOnceDelDS()
-            throws Exception {
+    public void testModObjOnceDelDS() throws Exception {
         DigitalObject original = getTestObject("test:1", "test1");
         addEDatastream(original, "DS1");
 
@@ -47,8 +45,7 @@ public class ResourceIndexModDSIntegrationTest
      * Add a datastream and delete another from an existing object.
      */
     @Test
-    public void testModObjOnceAddOneDSDelAnother()
-            throws Exception {
+    public void testModObjOnceAddOneDSDelAnother() throws Exception {
         DigitalObject original = getTestObject("test:1", "test1");
         addEDatastream(original, "DS1");
 
@@ -63,14 +60,13 @@ public class ResourceIndexModDSIntegrationTest
      * Add a Dublin Core field to the DC datastream of an existing object.
      */
     @Test
-    public void testModObjOnceAddOneDCField()
-            throws Exception {
+    public void testModObjOnceAddOneDCField() throws Exception {
         DigitalObject original = getTestObject("test:1", "test1");
         addXDatastream(original, "DC", getDC("<dc:title>test</dc:title>"));
 
         DigitalObject modified = deepCopy(original);
         addXDatastream(modified, "DC", getDC("<dc:title>test</dc:title>\n"
-                                           + "<dc:identifier>id</dc:identifier>"));
+                + "<dc:identifier>id</dc:identifier>"));
 
         doModifyTest(1, original, modified);
     }
@@ -79,11 +75,10 @@ public class ResourceIndexModDSIntegrationTest
      * Delete a Dublin Core field from the DC datastream of an existing object.
      */
     @Test
-    public void testModObjOnceDelOneDCField()
-            throws Exception {
+    public void testModObjOnceDelOneDCField() throws Exception {
         DigitalObject original = getTestObject("test:1", "test1");
         addXDatastream(original, "DC", getDC("<dc:title>test</dc:title>\n"
-                                           + "<dc:identifier>id</dc:identifier>"));
+                + "<dc:identifier>id</dc:identifier>"));
 
         DigitalObject modified = deepCopy(original);
         addXDatastream(modified, "DC", getDC("<dc:title>test</dc:title>"));
@@ -92,17 +87,18 @@ public class ResourceIndexModDSIntegrationTest
     }
 
     /**
-     * Add a Dublin Core field and delete another from the DC datastream of
-     * an existing object.
+     * Add a Dublin Core field and delete another from the DC datastream of an
+     * existing object.
      */
     @Test
-    public void testModObjOnceAddOneDCFieldDelAnother()
-            throws Exception {
+    public void testModObjOnceAddOneDCFieldDelAnother() throws Exception {
         DigitalObject original = getTestObject("test:1", "test1");
         addXDatastream(original, "DC", getDC("<dc:title>test</dc:title>"));
 
         DigitalObject modified = deepCopy(original);
-        addXDatastream(modified, "DC", getDC("<dc:identifier>id</dc:identifier>"));
+        addXDatastream(modified,
+                       "DC",
+                       getDC("<dc:identifier>id</dc:identifier>"));
 
         doModifyTest(1, original, modified);
     }
@@ -111,8 +107,7 @@ public class ResourceIndexModDSIntegrationTest
      * Add a relation to the RELS-EXT datastream of an existing object.
      */
     @Test
-    public void testModObjOnceAddOneRELSEXTField()
-            throws Exception {
+    public void testModObjOnceAddOneRELSEXTField() throws Exception {
         String rel1 = "<foo:bar rdf:resource=\"http://example.org/baz\"/>";
         String rel2 = "<foo:bar rdf:resource=\"http://example.org/quux\"/>";
 
@@ -129,8 +124,7 @@ public class ResourceIndexModDSIntegrationTest
      * Delete a relation from the RELS-EXT datastream of an existing object.
      */
     @Test
-    public void testModObjOnceDelOneRELSEXTField()
-            throws Exception {
+    public void testModObjOnceDelOneRELSEXTField() throws Exception {
         String rel1 = "<foo:bar rdf:resource=\"http://example.org/baz\"/>";
         String rel2 = "<foo:bar rdf:resource=\"http://example.org/quux\"/>";
 
@@ -148,8 +142,7 @@ public class ResourceIndexModDSIntegrationTest
      * existing object.
      */
     @Test
-    public void testModObjOnceAddOneRELSEXTFieldDelAnother()
-            throws Exception {
+    public void testModObjOnceAddOneRELSEXTFieldDelAnother() throws Exception {
         String rel1 = "<foo:bar rdf:resource=\"http://example.org/baz\"/>";
         String rel2 = "<foo:bar rdf:resource=\"http://example.org/quux\"/>";
 
@@ -164,8 +157,7 @@ public class ResourceIndexModDSIntegrationTest
 
     // Supports legacy test runners
     public static junit.framework.Test suite() {
-        return new junit.framework.JUnit4TestAdapter(
-                ResourceIndexModDSIntegrationTest.class);
+        return new junit.framework.JUnit4TestAdapter(ResourceIndexModDSIntegrationTest.class);
     }
 
 }

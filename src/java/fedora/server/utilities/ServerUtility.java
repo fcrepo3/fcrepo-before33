@@ -5,9 +5,9 @@
 
 package fedora.server.utilities;
 
-import java.io.IOException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 
 import java.util.Properties;
 
@@ -21,13 +21,12 @@ import fedora.common.http.WebClient;
 
 import fedora.server.config.ServerConfiguration;
 import fedora.server.config.ServerConfigurationParser;
-import fedora.server.errors.GeneralException;
 
 public class ServerUtility {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(
-            ServerUtility.class.getName());
+    private static final Logger LOG =
+            Logger.getLogger(ServerUtility.class.getName());
 
     public static final String HTTP = "http";
 
@@ -48,8 +47,9 @@ public class ServerUtility {
         } else {
             File fcfgFile = new File(fedoraHome, "server/config/fedora.fcfg");
             try {
-                CONFIG = new ServerConfigurationParser(
-                        new FileInputStream(fcfgFile)).parse();
+                CONFIG =
+                        new ServerConfigurationParser(new FileInputStream(fcfgFile))
+                                .parse();
             } catch (IOException e) {
                 LOG.warn("Unable to read server configuration from "
                         + fcfgFile.getPath(), e);
@@ -60,8 +60,7 @@ public class ServerUtility {
     /**
      * Tell whether the server is running by pinging it as a client.
      */
-    public static boolean pingServer(String protocol, String user,
-            String pass) {
+    public static boolean pingServer(String protocol, String user, String pass) {
         try {
             getServerResponse(protocol, user, pass, "/describe");
             return true;
@@ -74,7 +73,6 @@ public class ServerUtility {
 
     /**
      * Get the baseURL of the Fedora server from the host and port configured.
-     *
      * It will look like http://localhost:8080/fedora
      */
     public static String getBaseURL(String protocol) {
@@ -94,20 +92,22 @@ public class ServerUtility {
     /**
      * Signals for the server to reload its policies.
      */
-    public static void reloadPolicies(String protocol, String user,
-            String pass)
+    public static void reloadPolicies(String protocol, String user, String pass)
             throws IOException {
-        getServerResponse(protocol, user, pass, 
-                 "/management/control?action=reloadPolicies");
+        getServerResponse(protocol,
+                          user,
+                          pass,
+                          "/management/control?action=reloadPolicies");
     }
 
     /**
-     * Hits the given Fedora Server URL and returns the response
-     * as a String. Throws an IOException if the response code is not 200(OK).
+     * Hits the given Fedora Server URL and returns the response as a String.
+     * Throws an IOException if the response code is not 200(OK).
      */
-    private static String getServerResponse(String protocol, String user,
-            String pass, String path)
-            throws IOException {
+    private static String getServerResponse(String protocol,
+                                            String user,
+                                            String pass,
+                                            String path) throws IOException {
         String url = getBaseURL(protocol) + path;
         LOG.info("Getting URL: " + url);
         UsernamePasswordCredentials creds =
@@ -116,44 +116,49 @@ public class ServerUtility {
     }
 
     /**
-     * Tell whether the given URL appears to be referring to somewhere
-     * within the Fedora webapp.
+     * Tell whether the given URL appears to be referring to somewhere within
+     * the Fedora webapp.
      */
     public static boolean isURLFedoraServer(String url) {
 
-        String fedoraServerHost = CONFIG.getParameter(FEDORA_SERVER_HOST).getValue();
-        String fedoraServerPort = CONFIG.getParameter(FEDORA_SERVER_PORT).getValue();
-        String fedoraServerRedirectPort = CONFIG.getParameter(FEDORA_REDIRECT_PORT).getValue();
+        String fedoraServerHost =
+                CONFIG.getParameter(FEDORA_SERVER_HOST).getValue();
+        String fedoraServerPort =
+                CONFIG.getParameter(FEDORA_SERVER_PORT).getValue();
+        String fedoraServerRedirectPort =
+                CONFIG.getParameter(FEDORA_REDIRECT_PORT).getValue();
 
         // Check for URLs that are callbacks to the Fedora server
-        if (url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/fedora/") ||
-            url.startsWith("http://"+fedoraServerHost+"/fedora/") ||   
-            url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/fedora/") ||
-            url.startsWith("https://"+fedoraServerHost+"/fedora/") ) {
-            LOG.debug("URL was Fedora-to-Fedora callback: "+url);
+        if (url.startsWith("http://" + fedoraServerHost + ":"
+                + fedoraServerPort + "/fedora/")
+                || url.startsWith("http://" + fedoraServerHost + "/fedora/")
+                || url.startsWith("https://" + fedoraServerHost + ":"
+                        + fedoraServerRedirectPort + "/fedora/")
+                || url.startsWith("https://" + fedoraServerHost + "/fedora/")) {
+            LOG.debug("URL was Fedora-to-Fedora callback: " + url);
             return true;
         } else {
-            LOG.debug("URL was Non-Fedora callback: "+url);
+            LOG.debug("URL was Non-Fedora callback: " + url);
             return false;
         }
-            
+
     }
 
     /**
-     * Initializes logging to use Log4J and to send WARN messages to STDOUT for 
+     * Initializes logging to use Log4J and to send WARN messages to STDOUT for
      * command-line use.
      */
     private static void initLogging() {
-		// send all log4j output to STDOUT and configure levels
-		Properties props = new Properties();
-		props.setProperty("log4j.appender.STDOUT",
-		         "org.apache.log4j.ConsoleAppender");
-        props.setProperty("log4j.appender.STDOUT.layout", 
-                "org.apache.log4j.PatternLayout");
+        // send all log4j output to STDOUT and configure levels
+        Properties props = new Properties();
+        props.setProperty("log4j.appender.STDOUT",
+                          "org.apache.log4j.ConsoleAppender");
+        props.setProperty("log4j.appender.STDOUT.layout",
+                          "org.apache.log4j.PatternLayout");
         props.setProperty("log4j.appender.STDOUT.layout.ConversionPattern",
-                "%p: %m%n");
-		props.setProperty("log4j.rootLogger", "WARN, STDOUT");
-		PropertyConfigurator.configure(props);
+                          "%p: %m%n");
+        props.setProperty("log4j.rootLogger", "WARN, STDOUT");
+        PropertyConfigurator.configure(props);
 
         // tell commons-logging to use Log4J
         final String pfx = "org.apache.commons.logging.";
@@ -162,9 +167,8 @@ public class ServerUtility {
     }
 
     /**
-     * Command-line entry point to reload policies.
-     *
-     * Takes 3 args: protocol user pass
+     * Command-line entry point to reload policies. Takes 3 args: protocol user
+     * pass
      */
     public static void main(String[] args) {
         initLogging();
@@ -175,7 +179,8 @@ public class ServerUtility {
                 System.exit(0);
             } catch (Throwable th) {
                 th.printStackTrace();
-                System.err.println("ERROR: Reloading policies failed; see above");
+                System.err
+                        .println("ERROR: Reloading policies failed; see above");
                 System.exit(1);
             }
         } else {
@@ -184,5 +189,5 @@ public class ServerUtility {
             System.exit(1);
         }
     }
-    
+
 }

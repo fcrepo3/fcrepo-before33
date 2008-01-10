@@ -5,19 +5,26 @@
 
 package fedora.common.policy;
 
-import java.net.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-import org.jrdf.graph.*;
+import org.jrdf.graph.TypedNodeVisitor;
+import org.jrdf.graph.URIReference;
 
 /**
  * A URIReference from a known namespace.
- *
  */
-public class XacmlName implements URIReference {
-	private static final long serialVersionUID = 1L;
+public class XacmlName
+        implements URIReference {
+
+    private static final long serialVersionUID = 1L;
+
     public XacmlNamespace parent;
+
     public String localName;
+
     public String datatype;
+
     public String uri;
 
     private URI m_uri;
@@ -27,34 +34,39 @@ public class XacmlName implements URIReference {
             this.parent = parent;
             this.localName = localName;
             this.datatype = datatype;
-            this.uri = parent.uri + ":" + localName;
-            m_uri = new URI(this.uri);
+            uri = parent.uri + ":" + localName;
+            m_uri = new URI(uri);
         } catch (URISyntaxException e) {
             throw new RuntimeException("Bad URI Syntax", e);
         }
     }
-    
+
     public XacmlName(XacmlNamespace parent, String localName) {
-    	this(parent, localName, "");
+        this(parent, localName, "");
     }
 
     /**
-     * Does the given string loosely match this name?
-     *
-     * Either: 1) It matches localName (case insensitive)
-     *         2) It matches uri (case sensitive)
-     * if (firstLocalNameChar == true):
-     *         3) It is one character long, and that character
-     *            matches the first character of localName (case insensitive)
+     * Does the given string loosely match this name? Either: 1) It matches
+     * localName (case insensitive) 2) It matches uri (case sensitive) if
+     * (firstLocalNameChar == true): 3) It is one character long, and that
+     * character matches the first character of localName (case insensitive)
      */
     public boolean looselyMatches(String in, boolean tryFirstLocalNameChar) {
-        if (in == null || in.length() == 0) return false;
-        if (in.equalsIgnoreCase(this.localName)) return true;
-        if (in.equals(uri)) return true;
+        if (in == null || in.length() == 0) {
+            return false;
+        }
+        if (in.equalsIgnoreCase(localName)) {
+            return true;
+        }
+        if (in.equals(uri)) {
+            return true;
+        }
         if (tryFirstLocalNameChar
-                && in.length() == 1 
-                && in.toUpperCase().charAt(0) == 
-                        localName.toUpperCase().charAt(0)) return true;
+                && in.length() == 1
+                && in.toUpperCase().charAt(0) == localName.toUpperCase()
+                        .charAt(0)) {
+            return true;
+        }
         return false;
     }
 
@@ -70,8 +82,9 @@ public class XacmlName implements URIReference {
         return m_uri;
     }
 
+    @Override
     public String toString() {
-        return this.uri + "\t" + this.datatype;
+        return uri + "\t" + datatype;
     }
 
 }

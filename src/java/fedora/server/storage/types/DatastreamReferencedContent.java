@@ -5,31 +5,31 @@
 
 package fedora.server.storage.types;
 
-import fedora.server.errors.StreamIOException;
 import java.io.InputStream;
+
 import fedora.common.http.HttpInputStream;
 import fedora.common.http.WebClient;
 
+import fedora.server.errors.StreamIOException;
+
 /**
- *
- * <p><b>Title:</b> DatastreamReferencedContent.java</p>
- * <p><b>Description:</b> Referenced Content.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * Referenced Content.
+ * 
+ * @author Chris Wilper
  */
 public class DatastreamReferencedContent
         extends Datastream {
 
-	private static WebClient s_http;
-	
-	static {
-		s_http = new WebClient();
-	}
-	
+    private static WebClient s_http;
+
+    static {
+        s_http = new WebClient();
+    }
+
     public DatastreamReferencedContent() {
     }
 
+    @Override
     public Datastream copy() {
         DatastreamReferencedContent ds = new DatastreamReferencedContent();
         copy(ds);
@@ -39,29 +39,32 @@ public class DatastreamReferencedContent
     /**
      * Gets an InputStream to the content of this externally-referenced
      * datastream.
-     * <p></p>
-     * The DSLocation of this datastream must be non-null before invoking
+     * 
+     * <p>The DSLocation of this datastream must be non-null before invoking 
      * this method.
-     * <p></p>
-     * If successful, the DSMIME type is automatically set based on the
-     * web server's response header.  If the web server doesn't send a
-     * valid Content-type: header, as a last resort, the content-type
-     * is guessed by using a map of common extensions to mime-types.
-     * <p></p>
-     * If the content-length header is present in the response, DSSize
-     * will be set accordingly.
+     * 
+     * <p>If successful, the DSMIME type is automatically set based on the web
+     * server's response header. If the web server doesn't send a valid
+     * Content-type: header, as a last resort, the content-type is guessed by
+     * using a map of common extensions to mime-types.
+     * 
+     * <p>If the content-length header is present in the response, DSSize will 
+     * be set accordingly.
      */
-    public InputStream getContentStream()
-            throws StreamIOException {
+    @Override
+    public InputStream getContentStream() throws StreamIOException {
 
-      	HttpInputStream contentStream = null;
-      	try {
+        HttpInputStream contentStream = null;
+        try {
             contentStream = s_http.get(DSLocation, true);
-            DSSize = new Long(contentStream.getResponseHeaderValue("content-length","0")).longValue();
-      	} catch (Throwable th) {
-      		throw new StreamIOException("Error getting content stream", th);
-      	}  	
-    	return(contentStream);
-    }    
-    
+            DSSize =
+                    new Long(contentStream
+                            .getResponseHeaderValue("content-length", "0"))
+                            .longValue();
+        } catch (Throwable th) {
+            throw new StreamIOException("Error getting content stream", th);
+        }
+        return contentStream;
+    }
+
 }

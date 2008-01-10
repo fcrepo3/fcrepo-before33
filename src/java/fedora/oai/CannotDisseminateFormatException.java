@@ -6,23 +6,19 @@
 package fedora.oai;
 
 /**
- *
- * <p><b>Title:</b> CannotDisseminateFormatException.java</p>
- * <p><b>Description:</b> Signals that the metadata format identified by the
- * value given for the metadataPrefix argument is not supported by the item or
- * by the repository.</p>
- *
- * <p>This may occur while fulfilling a GetRecord, ListIdentifiers, or ListRecords
- * request.</p>
- *
- * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * Signals that the metadata format identified by the value given for the 
+ * metadataPrefix argument is not supported by the item or by the repository.
+ * 
+ * This may occur while fulfilling a GetRecord, ListIdentifiers, or ListRecords
+ * request.
+ * 
+ * @author Chris Wilper
  */
 public class CannotDisseminateFormatException
         extends OAIException {
 
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     public CannotDisseminateFormatException() {
         super("cannotDisseminateFormat", null);
     }
