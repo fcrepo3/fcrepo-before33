@@ -291,7 +291,6 @@
                       fedora/server/management/FedoraAPIMBindingSOAPHTTPStub.java,
                       fedora/server/utilities/MethodInvokerThread.java,
                       fedora/server/utilities/StreamUtility.java,
-                      fedora/swing/jhelp/**,
                       fedora/swing/jtable/**,
                       fedora/swing/mdi/**"/>
     </target>
@@ -632,7 +631,6 @@
     
     <target name="client-jar" depends="compile-client"
             description="">
-        <mkdir dir="${client.build.dir}/classes/help"/>
         <mkdir dir="${client.build.dir}/classes/images"/>
         <mkdir dir="${fedora.home.build.dir}/client"/>
         
@@ -646,12 +644,6 @@
                 <filter token="version" value="${fedora.version}"/>
                 <filter token="releaseDate" value="${fedora.releaseDate}"/>
             </filterset>
-        </copy>
-        
-        <copy todir="${client.build.dir}/classes/help">
-            <fileset dir="src/html/client/help"/>
-            <fileset dir="src/images/client/help"/>
-            <fileset dir="src/jhelp"/>
         </copy>
         
         <!-- Create the client manifest classpath -->
