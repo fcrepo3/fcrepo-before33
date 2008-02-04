@@ -11,6 +11,7 @@ import org.dom4j.Element;
 
 import fedora.utilities.XMLDocument;
 import fedora.utilities.install.InstallOptions;
+import fedora.utilities.install.InstallationFailedException;
 
 public class TomcatServerXML extends XMLDocument {
 	private static final String KEYSTORE_LOCATION = Tomcat.CONF + "/" + Tomcat.KEYSTORE;
@@ -27,21 +28,31 @@ public class TomcatServerXML extends XMLDocument {
 		options = installOptions;
 	}
 	
-	public void update() {
+	public void update() throws InstallationFailedException {
 		setHTTPPort();
 		setShutdownPort();
 		setSSLPort();
 	}
 	
-	public void setHTTPPort() {
+	public void setHTTPPort() throws InstallationFailedException {
 		// Note this very significant assumption: this xpath will select exactly one connector
 		Element httpConnector = (Element)getDocument().selectSingleNode("/Server/Service[@name='Catalina']/Connector[not(@scheme='https' or contains(@protocol, 'AJP'))]");
+		
+		if (httpConnector == null) {
+            throw new InstallationFailedException("Unable to set server.xml HTTP Port. XPath for Connector element failed.");
+        }
+		
 		httpConnector.addAttribute("port", options.getValue(InstallOptions.TOMCAT_HTTP_PORT));	
 		httpConnector.addAttribute("enableLookups", "true"); // supports client dns/fqdn in xacml authz policies
 	}
 	
-	public void setShutdownPort() {
+	public void setShutdownPort() throws InstallationFailedException {
 		Element server = (Element)getDocument().selectSingleNode("/Server[@shutdown and @port]");
+		
+		if (server == null) {
+            throw new InstallationFailedException("Unable to set server.xml shutdown port. XPath for Server element failed.");
+        }
+		
 		server.addAttribute("port", options.getValue(InstallOptions.TOMCAT_SHUTDOWN_PORT));	
 	}
 	
@@ -49,9 +60,10 @@ public class TomcatServerXML extends XMLDocument {
 	 * Sets the port and keystore information on the SSL connector if it 
 	 * already exists; creates a new SSL connector, otherwise.
 	 * Also sets the redirectPort on the non-SSL connector to match.
+	 * @throws InstallationFailedException 
 	 *
 	 */
-	public void setSSLPort() {
+	public void setSSLPort() throws InstallationFailedException {
 		Element httpsConnector = (Element)getDocument().selectSingleNode("/Server/Service[@name='Catalina']/Connector[@scheme='https' and not(contains(@protocol, 'AJP'))]");
 		if (options.getBooleanValue(InstallOptions.SSL_AVAILABLE, true)) {
 			if (httpsConnector == null) {
@@ -88,7 +100,7 @@ public class TomcatServerXML extends XMLDocument {
 			if (httpConnector != null) {
 				httpConnector.addAttribute("redirectPort", options.getValue(InstallOptions.TOMCAT_SSL_PORT));
 			} else {
-				System.out.println("/n/t*** httpConnector is null ***");
+			    throw new InstallationFailedException("Unable to set server.xml SSL Port. XPath for Connector element failed.");
 			}
 		} else if (httpsConnector != null) {
 			httpsConnector.getParent().remove(httpsConnector);

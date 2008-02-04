@@ -361,6 +361,8 @@ public class FieldSearchServlet
                 out.print(html.toString());
                 out.print("</center>");
                 out.print("</body>");
+                out.flush(); 
+                out.close();
             } else {
                 response.setContentType("text/xml; charset=UTF-8");
                 PrintWriter out=new PrintWriter(
