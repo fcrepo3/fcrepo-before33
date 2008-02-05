@@ -1,6 +1,14 @@
 
 package fedora.test.api;
 
+import static org.apache.commons.httpclient.HttpStatus.SC_CREATED;
+import static org.apache.commons.httpclient.HttpStatus.SC_NOT_FOUND;
+import static org.apache.commons.httpclient.HttpStatus.SC_OK;
+import static org.apache.commons.httpclient.HttpStatus.SC_TEMPORARY_REDIRECT;
+
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
@@ -15,19 +23,15 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
-
+import org.apache.commons.httpclient.methods.multipart.FilePart;
+import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
+import org.apache.commons.httpclient.methods.multipart.Part;
+import org.apache.commons.httpclient.methods.multipart.StringPart;
 import org.junit.Test;
 
 import fedora.common.PID;
-
 import fedora.server.management.FedoraAPIM;
-
 import fedora.test.FedoraServerTestCase;
-
-import static org.apache.commons.httpclient.HttpStatus.SC_CREATED;
-import static org.apache.commons.httpclient.HttpStatus.SC_NOT_FOUND;
-import static org.apache.commons.httpclient.HttpStatus.SC_OK;
-import static org.apache.commons.httpclient.HttpStatus.SC_TEMPORARY_REDIRECT;
 
 /**
  * Tests of the REST API. Tests assume a running instance of Fedora with the
@@ -259,28 +263,49 @@ public class TestRESTAPI
     }
 
     public void testAddDatastream() throws Exception {
+        // inline (X) datastream
         String xmlData = "<foo>bar</foo>";
         url =
                 String
                         .format("/objects/%s/datastreams/FOO?controlGroup=X&dsLabel=bar",
                                 pid.toString());
         assertEquals(SC_CREATED, post(xmlData, true).getStatusCode());
+
+        // managed (M) datastream
+        url =
+                String
+                        .format("/objects/%s/datastreams/BAR?controlGroup=M&dsLabel=bar",
+                                pid.toString());
+        File temp = File.createTempFile("test", null);
+        DataOutputStream os = new DataOutputStream(new FileOutputStream(temp));
+        os.write(42);
+        os.close();
+        assertEquals(SC_CREATED, post(temp, true).getStatusCode());
     }
 
     //public void testDescribeUser() throws Exception {}
 
     public void testModifyDatastreamByReference() throws Exception {
-        String dsLocation =
-                getBaseURL() + "/objects/" + pid.toString() + ".xml";
         url =
                 String
-                        .format("/objects/%s/datastreams/DS1?controlGroup=E&dsLocation=%s",
-                                pid.toString(),
-                                dsLocation);
+                        .format("/objects/%s/datastreams/BAR?controlGroup=M&dsLabel=bar",
+                                pid.toString());
+        File temp = File.createTempFile("test", null);
+        DataOutputStream os = new DataOutputStream(new FileOutputStream(temp));
+        os.write(42);
+        os.close();
+        assertEquals(SC_CREATED, post(temp, true).getStatusCode());
 
-        assertEquals(SC_CREATED, put("", true).getStatusCode());
-
-        // TODO: test managed datastream
+        url =
+                String
+                        .format("/objects/%s/datastreams/BAR?controlGroup=M",
+                                pid.toString());
+        
+        temp = File.createTempFile("test2", null);
+        os = new DataOutputStream(new FileOutputStream(temp));
+        os.write(42);
+        os.close();
+        assertEquals(SC_CREATED, put(temp, true).getStatusCode());
     }
 
     public void testModifyDatastreamByValue() throws Exception {
@@ -374,7 +399,15 @@ public class TestRESTAPI
             throws Exception {
         return putOrPost("POST", requestContent, authenticate);
     }
-
+    
+    private HttpResponse put(File requestContent, boolean authenticate) throws Exception {
+        return putOrPost("PUT", requestContent, authenticate);
+    }
+    
+    private HttpResponse post(File requestContent, boolean authenticate) throws Exception {
+        return putOrPost("POST", requestContent, authenticate);
+    }
+    
     private HttpResponse getOrDelete(String method, boolean authenticate)
             throws Exception {
         if (url == null || url.length() == 0) {
@@ -404,7 +437,7 @@ public class TestRESTAPI
     }
 
     private HttpResponse putOrPost(String method,
-                                   String requestContent,
+                                   Object requestContent,
                                    boolean authenticate) throws Exception {
         if (url == null || url.length() == 0) {
             throw new IllegalArgumentException("url must be a non-empty value");
@@ -425,9 +458,24 @@ public class TestRESTAPI
             httpMethod.setDoAuthentication(authenticate);
             httpMethod.getParams().setParameter("Connection", "Keep-Alive");
             httpMethod.setContentChunked(true);
-            httpMethod.setRequestEntity(new StringRequestEntity(requestContent,
-                                                                "text/xml",
-                                                                "utf-8"));
+            if (requestContent instanceof String) {
+                httpMethod
+                        .setRequestEntity(new StringRequestEntity((String) requestContent,
+                                                                  "text/xml",
+                                                                  "utf-8"));
+            } else if (requestContent instanceof File) {
+                Part[] parts =
+                        {
+                                new StringPart("param_name", "value"),
+                                new FilePart(((File) requestContent).getName(),
+                                             (File) requestContent)};
+                httpMethod
+                        .setRequestEntity(new MultipartRequestEntity(parts,
+                                                                     httpMethod
+                                                                             .getParams()));
+            } else {
+                throw new IllegalArgumentException("requestContent must be a String or File");
+            }
             getClient(authenticate).executeMethod(httpMethod);
             return new HttpResponse(httpMethod);
         } finally {

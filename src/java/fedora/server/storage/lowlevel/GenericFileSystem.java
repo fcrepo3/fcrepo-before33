@@ -195,25 +195,6 @@ public class GenericFileSystem
                         + getPath(file) + "not readable");
             }
 
-            /*
-             * compiler complains on new array[long], i.e., on new
-             * byte[file.length()]; also, signature
-             * fileInputStream.read(byte[],int,int) balks on ...,long,long)
-             */
-            long lFileLength;
-            try {
-                lFileLength = file.length();
-            } catch (Exception eCaughtStatFile) { //<== make specific
-                throw new LowlevelStorageException(true,
-                                                   "file "
-                                                           + getPath(file)
-                                                           + "couldn't be statted for reading",
-                                                   eCaughtStatFile);
-            }
-            if (lFileLength > Integer.MAX_VALUE) {
-                throw new LowlevelStorageException(true, "file "
-                        + getPath(file) + "too large for reading");
-            }
             try {
                 fileInputStream = new FileInputStream(file);
             } catch (IOException eCaughtOpenFile) {

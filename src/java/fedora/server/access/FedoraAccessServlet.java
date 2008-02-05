@@ -173,7 +173,7 @@ public class FedoraAccessServlet
     /** Instance of URLDecoder */
     private final URLDecoder decoder = new URLDecoder();
 
-    /** Fedora server protocl * */
+    /** Fedora server protocol * */
     private String fedoraServerProtocol = null;
 
     /** HTTP protocol * */
@@ -184,6 +184,9 @@ public class FedoraAccessServlet
 
     /** Configured Fedora server hostname */
     private static String fedoraServerHost = null;
+    
+    /** 4K Buffer */
+    private final static int BUF = 4096;
 
     /**
      * <p>
@@ -563,10 +566,9 @@ public class FedoraAccessServlet
                     out =
                             new OutputStreamWriter(response.getOutputStream(),
                                                    "UTF-8");
-                    int bufSize = 4096;
-                    char[] buf = new char[bufSize];
+                    char[] buf = new char[BUF];
                     int len = 0;
-                    while ((len = pr.read(buf, 0, bufSize)) != -1) {
+                    while ((len = pr.read(buf, 0, BUF)) != -1) {
                         out.write(buf, 0, len);
                     }
                     out.flush();
@@ -702,7 +704,7 @@ public class FedoraAccessServlet
                 int byteStream = 0;
                 LOG.debug("Started reading dissemination stream");
                 InputStream dissemResult = dissemination.getStream();
-                byte[] buffer = new byte[255];
+                byte[] buffer = new byte[BUF];
                 while ((byteStream = dissemResult.read(buffer)) != -1) {
                     out.write(buffer, 0, byteStream);
                 }
@@ -838,7 +840,7 @@ public class FedoraAccessServlet
                 int byteStream = 0;
                 LOG.debug("Started reading dissemination stream");
                 InputStream dissemResult = dissemination.getStream();
-                byte[] buffer = new byte[255];
+                byte[] buffer = new byte[BUF];
                 while ((byteStream = dissemResult.read(buffer)) != -1) {
                     out.write(buffer, 0, byteStream);
                 }

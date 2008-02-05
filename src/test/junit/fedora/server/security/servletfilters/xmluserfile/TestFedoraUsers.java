@@ -1,9 +1,8 @@
-
 package fedora.server.security.servletfilters.xmluserfile;
 
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.File;
 
 import org.junit.Test;
 
@@ -12,12 +11,23 @@ public class TestFedoraUsers {
     @Test
     public void testGetInstance() throws Exception {
         FedoraUsers fu = FedoraUsers.getInstance();
-        org.junit.Assert.assertNotNull(fu);
-        Writer outputWriter =
-                new BufferedWriter(new OutputStreamWriter(System.out));
-        fu.write(outputWriter);
-        outputWriter.close();
+        assertNotNull(fu);
+        //Writer outputWriter = new BufferedWriter(new OutputStreamWriter(System.out));
+        //fu.write(outputWriter);
+        //outputWriter.close();
     }
+    
+    @Test
+    public void testGetInstanceString() throws Exception {
+        String fedoraUsersXML = "src/fcfg/server/fedora-users.xml";
+        File f = new File(fedoraUsersXML);
+        FedoraUsers fu = FedoraUsers.getInstance(f.toURI());
+        assertNotNull(fu);
+        //Writer outputWriter = new BufferedWriter(new OutputStreamWriter(System.out));
+        //fu.write(outputWriter);
+        //outputWriter.close();
+    }
+    
     /*
      * @Test public void testGetInstanceString() { fail("Not yet implemented"); }
      * @Test public void testGetRoles() { fail("Not yet implemented"); } @Test

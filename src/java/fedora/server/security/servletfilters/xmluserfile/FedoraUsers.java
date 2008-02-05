@@ -6,18 +6,16 @@
 package fedora.server.security.servletfilters.xmluserfile;
 
 import java.beans.IntrospectionException;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
-
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.betwixt.io.BeanReader;
 import org.apache.commons.betwixt.io.BeanWriter;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -45,10 +43,10 @@ public class FedoraUsers
     }
 
     public static FedoraUsers getInstance() {
-        return getInstance(fedoraUsersXML.getAbsolutePath());
+        return getInstance(fedoraUsersXML.toURI());
     }
 
-    public static FedoraUsers getInstance(String fedoraUsersXML) {
+    public static FedoraUsers getInstance(URI fedoraUsersXML) {
         FedoraUsers fu = null;
         BeanReader reader = new BeanReader();
         reader.getXMLIntrospector().getConfiguration()
@@ -57,7 +55,7 @@ public class FedoraUsers
 
         try {
             reader.registerMultiMapping(getBetwixtMapping());
-            fu = (FedoraUsers) reader.parse(fedoraUsersXML);
+            fu = (FedoraUsers) reader.parse(fedoraUsersXML.toString());
         } catch (IntrospectionException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
