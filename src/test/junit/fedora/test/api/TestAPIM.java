@@ -415,6 +415,7 @@ public class TestAPIM extends FedoraServerTestCase {
         SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
         SimpleXpathEngine.registerNamespace("dc", "http://purl.org/dc/elements/1.1/");
         SimpleXpathEngine.registerNamespace("foxml", "info:fedora/fedora-system:def/foxml#");
+        SimpleXpathEngine.registerNamespace("audit", "info:fedora/fedora-system:def/audit#");        
     }
     
     public void tearDown() throws Exception {
@@ -452,6 +453,7 @@ public class TestAPIM extends FedoraServerTestCase {
         String pid = apim.ingest(demo998FOXMLObjectXML, "foxml1.0", "ingesting new foxml object");
         //System.out.println("***** Testcase: TestAPIM.testIngestObject ingest demo998FOXML: "+pid);
         assertNotNull(pid);
+        serverAssignedPIDs.add(pid);
         
         byte [] objectXML = apim.getObjectXML(pid);
         assertTrue(objectXML.length > 0);
@@ -461,10 +463,11 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
+        assertXpathExists("//foxml:datastream[@ID='AUDIT']", xmlIn);
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         assertXpathEvaluatesTo("1", "count(//foxml:disseminator)",xmlIn);
         
-        pid = apim.ingest(changeme1FOXMLObjectXML, "foxml1.0", "ingesting new foxml object");
+        pid = apim.ingest(changeme1FOXMLObjectXML, "foxml1.0", null);
         //System.out.println("***** Testcase: TestAPIM.testIngestObject ingest changeme1FOXML: "+pid);
         assertNotNull(pid);
         serverAssignedPIDs.add(pid);
@@ -477,12 +480,14 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
+        assertXpathNotExists("//foxml:datastream[@ID='AUDIT']", xmlIn); // No audit trail should be created  
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         assertXpathEvaluatesTo("1", "count(//foxml:disseminator)",xmlIn);
         
         pid = apim.ingest(demo999METSObjectXML, "metslikefedora1", "ingesting new mets object");
         //System.out.println("***** Testcase: TestAPIM.testIngestObject ingest demo999METS: "+pid);
         assertNotNull(pid);
+        serverAssignedPIDs.add(pid);
         
         objectXML = apim.getObjectXML(pid);
         assertTrue(objectXML.length > 0);
@@ -522,6 +527,8 @@ public class TestAPIM extends FedoraServerTestCase {
         //System.out.println("***** Testcase: TestAPIM.testModifyObject demo:5\n"+xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state'and @VALUE='Inactive']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label'and @VALUE='Image of Coliseum in Rome']",xmlIn);
+        assertXpathExists("//audit:auditTrail/audit:record[last()]/audit:action['modifyObject']", xmlIn);
+        assertXpathExists("//audit:auditTrail/audit:record[last()]/audit:justification['changed state to Inactive']", xmlIn);
         
         // test changing object demo:5 by modifying label to "changed label"; leave state unchanged from last value
         result = apim.modifyObject("demo:5", null, "changed label", null, "changed label");
@@ -539,6 +546,13 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Deleted']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='label of object to be deleted']",xmlIn);
     
+        // reset demo:5
+        result = apim.modifyObject("demo:5", "A", "Image of Coliseum in Rome", null, "reset label and state");
+        objectXML = apim.getObjectXML("demo:5");
+        xmlIn = new String(objectXML, "UTF-8");
+        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']", xmlIn);
+        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']", xmlIn);        
+        
         // (3) test export
         System.out.println("Running TestAPIM.testExport...");
         // test exporting object as foxml with exportContext of default
@@ -782,8 +796,16 @@ public class TestAPIM extends FedoraServerTestCase {
  
         // (5) test purgeDatastream
         System.out.println("Running TestAPIM.testPurgeDatastream...");
+
+        // test specifying datetime for startDate and null for endDate        
+        String[] results = apim.purgeDatastream("demo:14", "NEWDS1", "1900-01-01T00:00:00.000Z", null, "purging datastream NEWDS1", false);
+        for (int i=0; i<results.length; i++) {
+            System.out.println("***** Testcase: TestAPIM.testPurgeDatastream specifying startDate=\"1900-01-01T00:00:00.000Z\" and endDate=null dsID: " + results[i]);
+        }
+        assertTrue(results.length > 0);
+        
         // test specifying null for endDate
-        String[] results = apim.purgeDatastream("demo:14", "NEWDS2", null, null, "purging datastream NEWDS2", false);
+        results = apim.purgeDatastream("demo:14", "NEWDS2", null, null, "purging datastream NEWDS2", false);
         for (int i=0; i<results.length; i++) {
             System.out.println("***** Testcase: TestAPIM.testPurgeDatastream specifying startDate=null and endDate=null dsID: "+results[i]);
         }

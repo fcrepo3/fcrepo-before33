@@ -172,6 +172,12 @@ public class DefaultManagement
             
             m_fedoraXACMLModule.enforceIngestObject(context, pid, format, encoding);
 
+            // Only create an audit record if there is a log message to capture
+            if (logMessage != null && !logMessage.equals("")) {
+                Date nowUTC = Server.getCurrentDate(context);
+                addAuditRecord(context, w, "ingestObject", "", logMessage, nowUTC);
+            }            
+            
             w.commit(logMessage);
             return pid;
         } finally {
@@ -223,6 +229,11 @@ public class DefaultManagement
             if (ownerId!=null) {
                 w.setOwnerId(ownerId);
             }
+            
+            // Update audit trail
+            Date nowUTC = Server.getCurrentDate(context);
+            addAuditRecord(context, w, "modifyObject", "", logMessage, nowUTC);            
+            
             w.commit(logMessage);
             return w.getLastModDate();
         } finally {
@@ -333,6 +344,15 @@ public class DefaultManagement
             w.commit(logMessage);
             return Server.getCurrentDate(context);
         } finally {
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg = new StringBuilder("Completed purgeObject(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", logMessage: ").append(logMessage);
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }
+            
             finishModification(w, "purgeObject");
         }
     }
@@ -1814,5 +1834,25 @@ public class DefaultManagement
         return true;
     }
 
+    /**
+     * Creates a new audit record and adds it to the digital object audit trail. 
+     */
+    private void addAuditRecord(Context context,
+                                DOWriter w,
+                                String action,
+                                String componentID,
+                                String justification,
+                                Date nowUTC) throws ServerException {
+        AuditRecord audit = new AuditRecord();
+        audit.id = w.newAuditRecordID();
+        audit.processType = "Fedora API-M";
+        audit.action = action;
+        audit.componentID = componentID;
+        audit.responsibility =
+                context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
+        audit.date = nowUTC;
+        audit.justification = justification;
+        w.getAuditRecords().add(audit);
+     }
 
 }
