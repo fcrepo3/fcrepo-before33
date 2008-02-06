@@ -215,7 +215,7 @@ public class DefaultManagement
                                boolean newPid) throws ServerException {
         DOWriter w = null;
         try {
-            LOG.info("Entered ingestObject");
+            LOG.debug("Entered ingestObject");
             w =
                     m_manager.getIngestWriter(Server.USE_DEFINITIVE_STORE,
                                               context,
@@ -230,20 +230,45 @@ public class DefaultManagement
                                                     format,
                                                     encoding);
 
+            // Only create an audit record if there is a log message to capture
+            if (logMessage != null && !logMessage.equals("")) {
+                Date nowUTC = Server.getCurrentDate(context);
+                addAuditRecord(context,
+                               w,
+                               "ingestObject",
+                               "",
+                               logMessage,
+                               nowUTC);
+            }            
+            
             w.commit(logMessage);
+                      
             return pid;
         } finally {
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed ingestObject(");
+                logMsg.append("objectXML");
+                logMsg.append(", format: ").append(format);
+                logMsg.append(", encoding: ").append(encoding);
+                logMsg.append(", newPid: ").append(newPid);
+                logMsg.append(", logMessage: ").append(logMessage);
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }            
+            
             finishModification(w, "ingestObject");
         }
     }
 
     private void finishModification(DOWriter w, String method)
-            throws ServerException {
-        LOG.info("Exiting " + method);
+            throws ServerException {        
         if (w != null) {
             m_manager.releaseWriter(w);
         }
         if (LOG.isDebugEnabled()) {
+            LOG.debug("Exiting " + method);
             Runtime r = Runtime.getRuntime();
             LOG.debug("Memory: " + r.freeMemory() + " bytes free of "
                     + r.totalMemory() + " available.");
@@ -258,7 +283,7 @@ public class DefaultManagement
                              String logMessage) throws ServerException {
         DOWriter w = null;
         try {
-            LOG.info("Entered modifyObject");
+            LOG.debug("Entered modifyObject");
 
             m_fedoraXACMLModule.enforceModifyObject(context,
                                                     pid,
@@ -285,9 +310,28 @@ public class DefaultManagement
             if (ownerId != null) {
                 w.setOwnerId(ownerId);
             }
+            
+            // Update audit trail
+            Date nowUTC = Server.getCurrentDate(context);
+            addAuditRecord(context, w, "modifyObject", "", logMessage, nowUTC);
+                       
             w.commit(logMessage);
+            
             return w.getLastModDate();
         } finally {
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed modifyObject(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", state: ").append(state);
+                logMsg.append(", label: ").append(label);
+                logMsg.append(", ownderId: ").append(ownerId);
+                logMsg.append(", logMessage: ").append(logMessage);
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }            
+            
             finishModification(w, "modifyObject");
         }
     }
@@ -295,7 +339,7 @@ public class DefaultManagement
     public Property[] getObjectProperties(Context context, String pid)
             throws ServerException {
         try {
-            LOG.info("Entered getObjectProperties");
+            LOG.debug("Entered getObjectProperties");
 
             m_fedoraXACMLModule.enforceGetObjectProperties(context, pid);
 
@@ -324,14 +368,23 @@ public class DefaultManagement
 
             return (Property[]) props.toArray(new Property[0]);
         } finally {
-            LOG.info("Exiting getObjectProperties");
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed getObjectProperties(");
+                logMsg.append("pid: ").append(pid);          
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }             
+            
+            LOG.debug("Exiting getObjectProperties");
         }
     }
 
     public InputStream getObjectXML(Context context, String pid, String encoding)
             throws ServerException {
         try {
-            LOG.info("Entered getObjectXML");
+            LOG.debug("Entered getObjectXML");
 
             m_fedoraXACMLModule.enforceGetObjectXML(context, pid, encoding);
 
@@ -342,7 +395,17 @@ public class DefaultManagement
             InputStream instream = reader.GetObjectXML();
             return instream;
         } finally {
-            LOG.info("Exiting getObjectXML");
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed getObjectXML(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", encoding: ").append(encoding);              
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }            
+            
+            LOG.debug("Exiting getObjectXML");
         }
     }
 
@@ -352,7 +415,7 @@ public class DefaultManagement
                                     String exportContext,
                                     String encoding) throws ServerException {
         try {
-            LOG.info("Entered exportObject");
+            LOG.debug("Entered exportObject");
 
             m_fedoraXACMLModule.enforceExportObject(context,
                                                     pid,
@@ -365,9 +428,22 @@ public class DefaultManagement
                                         context,
                                         pid);
             InputStream instream = reader.ExportObject(format, exportContext);
+                        
             return instream;
         } finally {
-            LOG.info("Exiting exportObject");
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed exportObject(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", format: ").append(format);
+                logMsg.append(", exportContext: ").append(exportContext);
+                logMsg.append(", encoding: ").append(encoding);                
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }            
+            
+            LOG.debug("Exiting exportObject");
         }
     }
 
@@ -381,15 +457,26 @@ public class DefaultManagement
         }
         DOWriter w = null;
         try {
-            LOG.info("Entered purgeObject");
+            LOG.debug("Entered purgeObject");
 
             m_fedoraXACMLModule.enforcePurgeObject(context, pid);
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             w.remove();
             w.commit(logMessage);
+
             return Server.getCurrentDate(context);
         } finally {
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed purgeObject(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", logMessage: ").append(logMessage);
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }            
+            
             finishModification(w, "purgeObject");
         }
     }
@@ -409,7 +496,7 @@ public class DefaultManagement
                                 String checksum,
                                 String logMessage) throws ServerException {
 
-        LOG.info("Entered addDatastream");
+        LOG.debug("Entered addDatastream");
 
         // empty MIME types are allowed. assume they meant "" if they provide it
         // as null.
@@ -560,22 +647,44 @@ public class DefaultManagement
                     throw new ValidationException("Checksum Mismatch: " + check);
                 }
             }
+            
+            // Update audit trail 
             Date nowUTC = Server.getCurrentDate(context);
+            addAuditRecord(context,
+                           w,
+                           "addDatastream",
+                           ds.DatastreamID,
+                           logMessage,
+                           nowUTC);
+            
+            // Commit the updates
             ds.DSCreateDT = nowUTC;
-            AuditRecord audit = new fedora.server.storage.types.AuditRecord();
-            audit.id = w.newAuditRecordID();
-            audit.processType = "Fedora API-M";
-            audit.action = "addDatastream";
-            audit.componentID = ds.DatastreamID;
-            audit.responsibility =
-                    context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
-            audit.date = nowUTC;
-            audit.justification = logMessage;
-            w.getAuditRecords().add(audit);
             w.addDatastream(ds, true);
             w.commit("Added a new datastream");
+                        
             return ds.DatastreamID;
         } finally {
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed addDatastream(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", dsID: ").append(dsID);
+                appendAltIDs(logMsg, altIDs);
+                logMsg.append(", dsLabel: ").append(dsLabel);
+                logMsg.append(", versionable: ").append(versionable);
+                logMsg.append(", MIMEType: ").append(MIMEType);
+                logMsg.append(", formatURI: ").append(formatURI);
+                logMsg.append(", dsLocation: ").append(dsLocation);
+                logMsg.append(", controlGroup: ").append(controlGroup);
+                logMsg.append(", dsState: ").append(dsState);
+                logMsg.append(", checksumType: ").append(checksumType);
+                logMsg.append(", checksum: ").append(checksum);
+                logMsg.append(", logMessage: ").append(logMessage);
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }
+            
             finishModification(w, "addDatastream");
         }
     }
@@ -611,7 +720,7 @@ public class DefaultManagement
 
         DOWriter w = null;
         try {
-            LOG.info("Entered modifyDatastreamByReference");
+            LOG.debug("Entered modifyDatastreamByReference");
 
             // FIXME: enforceModifyDatastreamByReference expects a parameter
             // of dsState, we no longer have. I'm passing in a value
@@ -737,19 +846,14 @@ public class DefaultManagement
                 }
             }
 
-            // add the audit record
-            fedora.server.storage.types.AuditRecord audit =
-                    new fedora.server.storage.types.AuditRecord();
-            audit.id = w.newAuditRecordID();
-            audit.processType = "Fedora API-M";
-            audit.action = "modifyDatastreamByReference";
-            audit.componentID = newds.DatastreamID;
-            audit.responsibility =
-                    context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
-            audit.date = nowUTC;
-            audit.justification = logMessage;
-            w.getAuditRecords().add(audit);
-
+            // Update audit trail           
+            addAuditRecord(context,
+                           w,
+                           "modifyDatastreamByReference",
+                           newds.DatastreamID,
+                           logMessage,
+                           nowUTC);
+            
             // if all went ok, check if we need to validate, then commit.
             // if (oldValidationReports != null) { // mime changed and
             // force=false
@@ -760,8 +864,28 @@ public class DefaultManagement
             // datastreamId));
             // }
             w.commit(logMessage);
+
             return nowUTC;
         } finally {
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed modifyDatastreamByReference(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", datastreamId: ").append(datastreamId);
+                appendAltIDs(logMsg, altIDs);
+                logMsg.append(", dsLabel: ").append(dsLabel);
+                logMsg.append(", mimeType: ").append(mimeType);
+                logMsg.append(", formatURI: ").append(formatURI);
+                logMsg.append(", dsLocation: ").append(dsLocation);
+                logMsg.append(", checksumType: ").append(checksumType);
+                logMsg.append(", checksum: ").append(checksum);
+                logMsg.append(", logMessage: ").append(logMessage);
+                logMsg.append(", force: ").append(force);
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }
+            
             finishModification(w, "modifyDatastreamByReference");
         }
     }
@@ -796,7 +920,7 @@ public class DefaultManagement
         DOWriter w = null;
         boolean mimeChanged = false;
         try {
-            LOG.info("Entered modifyDatastreamByValue");
+            LOG.debug("Entered modifyDatastreamByValue");
 
             // FIXME: enforceModifyDatastreamByReference expects a parameter
             // of dsState, we no longer have. I'm passing in a value
@@ -907,18 +1031,13 @@ public class DefaultManagement
                 }
             }
 
-            // add the audit record
-            fedora.server.storage.types.AuditRecord audit =
-                    new fedora.server.storage.types.AuditRecord();
-            audit.id = w.newAuditRecordID();
-            audit.processType = "Fedora API-M";
-            audit.action = "modifyDatastreamByValue";
-            audit.componentID = newds.DatastreamID;
-            audit.responsibility =
-                    context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
-            audit.date = nowUTC;
-            audit.justification = logMessage;
-            w.getAuditRecords().add(audit);
+            // Update audit trail
+            addAuditRecord(context,
+                           w,
+                           "modifyDatastreamByValue",
+                           newds.DatastreamID,
+                           logMessage,
+                           nowUTC);                        
 
             // if all went ok, check if we need to validate, then commit.
             // if (oldValidationReports != null) { // mime changed and
@@ -930,8 +1049,28 @@ public class DefaultManagement
             // datastreamId));
             // }
             w.commit(logMessage);
+
             return nowUTC;
         } finally {
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed modifyDatastreamByValue(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", datastreamId: ").append(datastreamId);
+                appendAltIDs(logMsg, altIDs);
+                logMsg.append(", dsLabel: ").append(dsLabel);
+                logMsg.append(", mimeType: ").append(mimeType);
+                logMsg.append(", formatURI: ").append(formatURI);
+                logMsg.append(", dsContent ");
+                logMsg.append(", checksumType: ").append(checksumType);
+                logMsg.append(", checksum: ").append(checksum);
+                logMsg.append(", logMessage: ").append(logMessage);
+                logMsg.append(", force: ").append(force);
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }            
+            
             finishModification(w, "modifyDatastreamByValue");
         }
     }
@@ -949,7 +1088,7 @@ public class DefaultManagement
         }
         DOWriter w = null;
         try {
-            LOG.info("Entered purgeDatastream");
+            LOG.debug("Entered purgeDatastream");
 
             m_fedoraXACMLModule.enforcePurgeDatastream(context,
                                                        pid,
@@ -1014,28 +1153,34 @@ public class DefaultManagement
                                        startDT,
                                        endDT,
                                        deletedDates);
-            Date nowUTC = Server.getCurrentDate(context);
-            fedora.server.storage.types.AuditRecord audit =
-                    new fedora.server.storage.types.AuditRecord();
-            audit.id = w.newAuditRecordID();
-            audit.processType = "Fedora API-M";
-            audit.action = "purgeDatastream";
-            audit.componentID = datastreamID;
-            audit.responsibility =
-                    context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
-            audit.date = nowUTC;
-            audit.justification = logMessage;
-            // Normally we associate an audit record with a specific version
-            // of a datastream, but in this case we are talking about a range
-            // of versions. So we'll just add it to the object, but not
-            // associate
-            // it with anything.
-            w.getAuditRecords().add(audit);
+            
+            // Update audit trail
+            Date nowUTC = Server.getCurrentDate(context);            
+            addAuditRecord(context,
+                           w,
+                           "purgeDatastream",
+                           datastreamID,
+                           logMessage,
+                           nowUTC); 
+            
             // It looks like all went ok, so commit
             w.commit(logMessage);
             // ... then give the response
             return deletedDates;
         } finally {
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed purgeDatastream(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", datastreamID: ").append(datastreamID);
+                logMsg.append(", startDT: ").append(startDT);
+                logMsg.append(", endDT: ").append(endDT);
+                logMsg.append(", logMessage: ").append(logMessage);
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }            
+            
             finishModification(w, "purgeDatastream");
         }
     }
@@ -1083,7 +1228,7 @@ public class DefaultManagement
                                     String datastreamID,
                                     Date asOfDateTime) throws ServerException {
         try {
-            LOG.info("Entered getDatastream");
+            LOG.debug("Entered getDatastream");
 
             m_fedoraXACMLModule.enforceGetDatastream(context,
                                                      pid,
@@ -1092,9 +1237,21 @@ public class DefaultManagement
 
             DOReader r =
                     m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
+                        
             return r.GetDatastream(datastreamID, asOfDateTime);
         } finally {
-            LOG.info("Exiting getDatastream");
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed getDatastream(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", datastreamID: ").append(datastreamID);
+                logMsg.append(", asOfDateTime: ").append(asOfDateTime);              
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }             
+            
+            LOG.debug("Exiting getDatastream");
         }
     }
 
@@ -1103,7 +1260,7 @@ public class DefaultManagement
                                        Date asOfDateTime,
                                        String state) throws ServerException {
         try {
-            LOG.info("Entered getDatastreams");
+            LOG.debug("Entered getDatastreams");
 
             m_fedoraXACMLModule.enforceGetDatastreams(context,
                                                       pid,
@@ -1112,9 +1269,21 @@ public class DefaultManagement
 
             DOReader r =
                     m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
+                                  
             return r.GetDatastreams(asOfDateTime, state);
         } finally {
-            LOG.info("Exiting getDatastreams");
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed getDatastreams(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", asOfDateTime: ").append(asOfDateTime);              
+                logMsg.append(", state: ").append(state);
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }
+            
+            LOG.debug("Exiting getDatastreams");
         }
     }
 
@@ -1123,7 +1292,7 @@ public class DefaultManagement
                                              String datastreamID)
             throws ServerException {
         try {
-            LOG.info("Entered getDatastreamHistory");
+            LOG.debug("Entered getDatastreamHistory");
 
             m_fedoraXACMLModule.enforceGetDatastreamHistory(context,
                                                             pid,
@@ -1143,9 +1312,20 @@ public class DefaultManagement
             for (int i = 0; i < versions.length; i++) {
                 out[i] = versions[versions.length - 1 - i];
             }
+                       
             return out;
-        } finally {
-            LOG.info("Exiting getDatastreamHistory");
+        } finally {            
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed getDatastreamHistory(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", datastreamID: ").append(datastreamID);        
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }            
+            
+            LOG.debug("Exiting getDatastreamHistory");
         }
     }
 
@@ -1168,7 +1348,7 @@ public class DefaultManagement
     public String[] getNextPID(Context context, int numPIDs, String namespace)
             throws ServerException {
         try {
-            LOG.info("Entered getNextPID");
+            LOG.debug("Entered getNextPID");
             m_fedoraXACMLModule.enforceGetNextPid(context, namespace, numPIDs);
 
             String[] pidList = null;
@@ -1194,7 +1374,17 @@ public class DefaultManagement
             return pidList;
 
         } finally {
-            LOG.info("Exiting getNextPID");
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed getNextPID(");
+                logMsg.append("numPIDs: ").append(numPIDs);
+                logMsg.append(", namespace: ").append(namespace);              
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }            
+            
+            LOG.debug("Exiting getNextPID");
         }
     }
 
@@ -1307,7 +1497,7 @@ public class DefaultManagement
                                    String logMessage) throws ServerException {
         DOWriter w = null;
         try {
-            LOG.info("Entered setDatastreamState");
+            LOG.debug("Entered setDatastreamState");
 
             m_fedoraXACMLModule.enforceSetDatastreamState(context,
                                                           pid,
@@ -1326,24 +1516,31 @@ public class DefaultManagement
                     w.GetDatastream(datastreamID, null);
             w.setDatastreamState(datastreamID, dsState);
 
-            // add the audit record
-            fedora.server.storage.types.AuditRecord audit =
-                    new fedora.server.storage.types.AuditRecord();
-            audit.id = w.newAuditRecordID();
-            audit.processType = "Fedora API-M";
-            audit.action = "setDatastreamState";
-            audit.componentID = datastreamID;
-            audit.responsibility =
-                    context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
-            Date nowUTC = Server.getCurrentDate(context);
-            audit.date = nowUTC;
-            audit.justification = logMessage;
-            w.getAuditRecords().add(audit);
-
+            // Update audit trail
+            Date nowUTC = Server.getCurrentDate(context); 
+            addAuditRecord(context,
+                           w,
+                           "setDatastreamState",
+                           datastreamID,
+                           logMessage,
+                           nowUTC);             
+            
             // if all went ok, commit
             w.commit(logMessage);
             return nowUTC;
         } finally {
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed setDatastreamState(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", datastreamID: ").append(datastreamID);
+                logMsg.append(", dsState: ").append(dsState);
+                logMsg.append(", logMessage: ").append(logMessage);              
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }             
+            
             finishModification(w, "setDatastreamState");
         }
     }
@@ -1356,7 +1553,7 @@ public class DefaultManagement
             throws ServerException {
         DOWriter w = null;
         try {
-            LOG.info("Entered setDatastreamVersionable");
+            LOG.debug("Entered setDatastreamVersionable");
 
             m_fedoraXACMLModule.enforceSetDatastreamVersionable(context,
                                                                 pid,
@@ -1368,24 +1565,31 @@ public class DefaultManagement
                     w.GetDatastream(datastreamID, null);
             w.setDatastreamVersionable(datastreamID, versionable);
 
-            // add the audit record
-            fedora.server.storage.types.AuditRecord audit =
-                    new fedora.server.storage.types.AuditRecord();
-            audit.id = w.newAuditRecordID();
-            audit.processType = "Fedora API-M";
-            audit.action = "setDatastreamVersionable";
-            audit.componentID = datastreamID;
-            audit.responsibility =
-                    context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
-            Date nowUTC = Server.getCurrentDate(context);
-            audit.date = nowUTC;
-            audit.justification = logMessage;
-            w.getAuditRecords().add(audit);
-
+            // Update audit trail
+            Date nowUTC = Server.getCurrentDate(context);             
+            addAuditRecord(context,
+                           w,
+                           "setDatastreamVersionable",
+                           datastreamID,
+                           logMessage,
+                           nowUTC);             
+            
             // if all went ok, commit
             w.commit(logMessage);
             return nowUTC;
         } finally {
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed setDatastreamVersionable(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", datastreamID: ").append(datastreamID);
+                logMsg.append(", versionable: ").append(versionable);
+                logMsg.append(", logMessage: ").append(logMessage);              
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }            
+            
             finishModification(w, "setDatastreamVersionable");
         }
     }
@@ -1397,7 +1601,7 @@ public class DefaultManagement
             throws ServerException {
         DOReader r = null;
         try {
-            LOG.info("Entered compareDatastreamChecksum");
+            LOG.debug("Entered compareDatastreamChecksum");
 
             m_fedoraXACMLModule.enforceCompareDatastreamChecksum(context,
                                                                  pid,
@@ -1412,10 +1616,21 @@ public class DefaultManagement
             LOG.debug("Got Datastream, comparing checksum");
             boolean check = ds.compareChecksum();
             LOG.debug("compared checksum = " + check);
-
+                        
             return check ? ds.getChecksum() : "Checksum validation error";
         } finally {
-            LOG.info("Exiting compareDatastreamChecksum");
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed compareDatastreamChecksum(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", datastreamID: ").append(datastreamID);
+                logMsg.append(", versionDate: ").append(versionDate);
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }            
+            
+            LOG.debug("Exiting compareDatastreamChecksum");
         }
     }
 
@@ -1649,7 +1864,7 @@ public class DefaultManagement
             throws ServerException {
         DOReader r = null;
         try {
-            LOG.info("Entered getRelationships");
+            LOG.debug("Entered getRelationships");
 
             m_fedoraXACMLModule.enforceGetRelationships(context,
                                                         pid,
@@ -1664,7 +1879,17 @@ public class DefaultManagement
 
             return rels;
         } finally {
-            LOG.info("Exiting getRelationships");
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed getRelationships(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", relationship: ").append(relationship);              
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }             
+            
+            LOG.debug("Exiting getRelationships");
         }
     }
 
@@ -1676,7 +1901,7 @@ public class DefaultManagement
                                    String datatype) throws ServerException {
         DOWriter w = null;
         try {
-            LOG.info("Entered addRelationship");
+            LOG.debug("Entered addRelationship");
             m_fedoraXACMLModule.enforceAddRelationship(context,
                                                        pid,
                                                        relationship,
@@ -1696,8 +1921,22 @@ public class DefaultManagement
             if (added) {
                 w.commit(null);
             }
+                        
             return added;
         } finally {
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed addRelationship(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", relationship: ").append(relationship);
+                logMsg.append(", object: ").append(object);
+                logMsg.append(", isLiteral: ").append(isLiteral);
+                logMsg.append(", datatype: ").append(datatype);
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }            
+            
             finishModification(w, "addRelationship");
         }
     }
@@ -1710,7 +1949,7 @@ public class DefaultManagement
                                      String datatype) throws ServerException {
         DOWriter w = null;
         try {
-            LOG.info("Entered purgeRelationship");
+            LOG.debug("Entered purgeRelationship");
             m_fedoraXACMLModule.enforcePurgeRelationship(context,
                                                          pid,
                                                          relationship,
@@ -1731,8 +1970,55 @@ public class DefaultManagement
             }
             return purged;
         } finally {
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed purgeRelationship(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", relationship: ").append(relationship);
+                logMsg.append(", object: ").append(object);
+                logMsg.append(", isLiteral: ").append(isLiteral);
+                logMsg.append(", datatype: ").append(datatype);                
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }             
+            
             finishModification(w, "purgeRelationship");
         }
     }
+    
+    /**
+     * Creates a new audit record and adds it to the digital object audit trail. 
+     */
+    private void addAuditRecord(Context context,
+                                DOWriter w,
+                                String action,
+                                String componentID,
+                                String justification,
+                                Date nowUTC) throws ServerException {
+        AuditRecord audit = new AuditRecord();
+        audit.id = w.newAuditRecordID();
+        audit.processType = "Fedora API-M";
+        audit.action = action;
+        audit.componentID = componentID;
+        audit.responsibility =
+                context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
+        audit.date = nowUTC;
+        audit.justification = justification;
+        w.getAuditRecords().add(audit);
+    }
 
+    /**
+     * Appends alt IDs to the log message.
+     */
+    private static void appendAltIDs(StringBuilder logMsg, String[] altIDs) {
+        logMsg.append(", altIDs: ");
+        if (altIDs == null) {
+            logMsg.append("null");
+        } else {
+            for (String altID : altIDs) {
+                logMsg.append("'").append(altID).append("'");
+            }
+        }
+    }
 }

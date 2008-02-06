@@ -425,6 +425,9 @@ public class TestAPIM
         SimpleXpathEngine
                 .registerNamespace("foxml",
                                    "info:fedora/fedora-system:def/foxml#");
+        SimpleXpathEngine
+                .registerNamespace("audit",
+                                   "info:fedora/fedora-system:def/audit#");        
     }
 
     public void tearDown() throws Exception {
@@ -466,6 +469,7 @@ public class TestAPIM
                             FOXML1_1.uri,
                             "ingesting new foxml object");
         assertNotNull(pid);
+        serverAssignedPIDs.add(pid);        
 
         byte[] objectXML = apim.getObjectXML(pid);
         assertTrue(objectXML.length > 0);
@@ -475,6 +479,7 @@ public class TestAPIM
                           xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",
                           xmlIn);
+        assertXpathExists("//foxml:datastream[@ID='AUDIT']", xmlIn);
         assertXpathEvaluatesTo("5",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
                                xmlIn);
@@ -482,7 +487,7 @@ public class TestAPIM
         pid =
                 apim.ingest(changeme1FOXMLObjectXML,
                             FOXML1_1.uri,
-                            "ingesting new foxml object");
+                            null);
         assertNotNull(pid);
         serverAssignedPIDs.add(pid);
 
@@ -494,6 +499,7 @@ public class TestAPIM
                           xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",
                           xmlIn);
+        assertXpathNotExists("//foxml:datastream[@ID='AUDIT']", xmlIn); // No audit trail should be created      
         assertXpathEvaluatesTo("5",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
                                xmlIn);
@@ -503,6 +509,7 @@ public class TestAPIM
                             METS_EXT1_1.uri,
                             "ingesting new mets object");
         assertNotNull(pid);
+        serverAssignedPIDs.add(pid);        
 
         objectXML = apim.getObjectXML(pid);
         assertTrue(objectXML.length > 0);
@@ -548,11 +555,14 @@ public class TestAPIM
         objectXML = apim.getObjectXML("demo:5");
         assertTrue(objectXML.length > 0);
         xmlIn = new String(objectXML, "UTF-8");
-        //System.out.println("***** Testcase: TestAPIM.testModifyObject demo:5\n"+xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state'and @VALUE='Inactive']",
                           xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label'and @VALUE='Image of Coliseum in Rome']",
                           xmlIn);
+        assertXpathExists("//audit:auditTrail/audit:record[last()]/audit:action['modifyObject']",
+                          xmlIn);
+        assertXpathExists("//audit:auditTrail/audit:record[last()]/audit:justification['changed state to Inactive']",
+                          xmlIn);        
 
         // test changing object demo:5 by modifying label to "changed label"; leave state unchanged from last value
         result =
@@ -563,7 +573,6 @@ public class TestAPIM
                                   "changed label");
         objectXML = apim.getObjectXML("demo:5");
         xmlIn = new String(objectXML, "UTF-8");
-        //System.out.println("***** Testcase: TestAPIM.testModifyObject demo:5\n"+xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Inactive']",
                           xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='changed label']",
@@ -578,12 +587,25 @@ public class TestAPIM
                                   "changed label and state");
         objectXML = apim.getObjectXML("demo:5");
         xmlIn = new String(objectXML, "UTF-8");
-        //System.out.println("***** Testcase: TestAPIM.testModifyObject demo:5\n"+xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Deleted']",
                           xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='label of object to be deleted']",
                           xmlIn);
 
+        // reset demo:5
+        result =
+                apim.modifyObject("demo:5",
+                                  "A",
+                                  "Image of Coliseum in Rome",
+                                  null,
+                                  "reset label and state");
+        objectXML = apim.getObjectXML("demo:5");
+        xmlIn = new String(objectXML, "UTF-8");
+        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",
+                          xmlIn);
+        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",
+                          xmlIn);        
+        
         // (3) test export
         System.out.println("Running TestAPIM.testExport...");
         // test exporting object as foxml with exportContext of default
@@ -766,6 +788,8 @@ public class TestAPIM
                           xmlIn);
         assertXpathExists("//foxml:datastreamVersion[@ID='NEWDS1.0' and @MIMETYPE='text/xml' and @LABEL='A New M-type Datastream' and @ALT_IDS='Datastream 1 Alternate ID' and @FORMAT_URI='info:myFormatURI/Mtype/stuff#junk']",
                           xmlIn);
+        assertXpathExists("//audit:auditTrail/audit:record[last()]/audit:action['addDatastream']",
+                          xmlIn);        
         assertXpathEvaluatesTo("6",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
                                xmlIn);
@@ -798,6 +822,8 @@ public class TestAPIM
                           xmlIn);
         assertXpathExists("//foxml:datastreamVersion[@ID='NEWDS2.0' and @MIMETYPE='text/xml' and @LABEL='A New X-type Datastream' and @ALT_IDS='Datastream 2 Alternate ID' and @FORMAT_URI='info:myFormatURI/Xtype/stuff#junk']",
                           xmlIn);
+        assertXpathExists("//audit:auditTrail/audit:record[last()]/audit:action['addDatastream']",
+                          xmlIn);         
         assertXpathEvaluatesTo("7",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
                                xmlIn);
@@ -829,6 +855,8 @@ public class TestAPIM
                           xmlIn);
         assertXpathExists("//foxml:datastreamVersion[@ID='NEWDS3.0' and @MIMETYPE='text/xml' and @LABEL='A New E-type Datastream' and @ALT_IDS='Datastream 3 Alternate ID' and @FORMAT_URI='info:myFormatURI/Etype/stuff#junk']",
                           xmlIn);
+        assertXpathExists("//audit:auditTrail/audit:record[last()]/audit:action['addDatastream']",
+                          xmlIn);         
         assertXpathEvaluatesTo("8",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
                                xmlIn);
@@ -862,6 +890,8 @@ public class TestAPIM
                           xmlIn);
         assertXpathExists("//foxml:datastreamVersion[@ID='NEWDS1.1' and @MIMETYPE='text/xml' and @LABEL='Modified M-type Datastream' and @ALT_IDS='Datastream 1 Modified Alternate ID' and @FORMAT_URI='info:newMyFormatURI/Mtype/stuff#junk']",
                           xmlIn);
+        assertXpathExists("//audit:auditTrail/audit:record[last()]/audit:action['modifyDatastreamByReference']",
+                          xmlIn);         
         assertXpathEvaluatesTo("8",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
                                xmlIn);
@@ -896,6 +926,8 @@ public class TestAPIM
                           xmlIn);
         assertXpathExists("foxml:digitalObject/foxml:datastream[@ID='NEWDS2'][//dc:identifier='Identifier 5']",
                           xmlIn);
+        assertXpathExists("//audit:auditTrail/audit:record[last()]/audit:action['modifyDatastreamByValue']",
+                          xmlIn);  
         assertXpathEvaluatesTo("8",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
                                xmlIn);
@@ -1027,8 +1059,23 @@ public class TestAPIM
 
         // (5) test purgeDatastream
         System.out.println("Running TestAPIM.testPurgeDatastream...");
-        // test specifying null for endDate
+        // test specifying date-time for startDate and null for endDate
         String[] results =
+                apim.purgeDatastream("demo:14",
+                                     "NEWDS1",
+                                     "1900-01-01T00:00:00.000Z",
+                                     null,
+                                     "purging datastream NEWDS1",
+                                     false);
+        for (String element : results) {
+            System.out
+                    .println("***** Testcase: TestAPIM.testPurgeDatastream specifying startDate=\"1900-01-01T00:00:00.000Z\" and endDate=null dsID: "
+                            + element);
+        }
+        assertTrue(results.length > 0);
+        
+        // test specifying null for both startDate and endDate
+        results =
                 apim.purgeDatastream("demo:14",
                                      "NEWDS2",
                                      null,
@@ -1042,7 +1089,7 @@ public class TestAPIM
         }
         assertTrue(results.length > 0);
 
-        // test specifying datetime for endDate
+        // test specifying date-time for both startDate and endDate
         results =
                 apim.purgeDatastream("demo:14",
                                      "NEWDS3",
@@ -1056,7 +1103,15 @@ public class TestAPIM
                             + element);
         }
         assertTrue(results.length > 0);
-
+        
+        // test purgeDatastream audit 
+        objectXML = apim.getObjectXML("demo:14");
+        assertTrue(objectXML.length > 0);
+        xmlIn = new String(objectXML, "UTF-8");
+        assertXpathExists("foxml:digitalObject[@PID='demo:14']", xmlIn);
+        assertXpathExists("//audit:auditTrail/audit:record[last()]/audit:action['purgeDatastream']",
+                          xmlIn);
+       
         // (6) test getDatastream
         System.out.println("Running TestAPIM.testGetDatastream...");
         // test getting datastream id XML_SOURCE for object demo:26 specifying null for datetime
@@ -1310,13 +1365,63 @@ public class TestAPIM
                 apim.setDatastreamState("demo:5",
                                         "DC",
                                         "I",
-                                        "changed state to Inactive");
+                                        "changed state of datstream DC to Inactive");
         assertNotNull(result);
         Datastream ds = apim.getDatastream("demo:5", "DC", null);
         assertEquals("I", ds.getState());
         //System.out.println("***** Testcase: TestAPIM.testSetDatastreamState new state: "+ds.getState());
+        
+        // test setDatastreamState audit        
+        byte[] objectXML = apim.getObjectXML("demo:5");
+        assertTrue(objectXML.length > 0);
+        String xmlIn = new String(objectXML, "UTF-8");
+        assertXpathExists("foxml:digitalObject[@PID='demo:5']", xmlIn);
+        assertXpathExists("//audit:auditTrail/audit:record[last()]/audit:action['setDatastreamState']",
+                          xmlIn);
+
+        // reset datastream state
+        result =
+                apim.setDatastreamState("demo:5",
+                                        "DC",
+                                        "A",
+                                        "reset state of datastream DC to Active");
+        assertNotNull(result);
+        ds = apim.getDatastream("demo:5", "DC", null);
+        assertEquals("A", ds.getState());
     }
 
+    public void testSetDatastreamVersionable() throws Exception {
+
+        // test setting datastream to not versionalble for datastream id DC of object demo:5
+        System.out.println("Running TestAPIM.testSetDatastreamVersionable...");
+        String result =
+                apim.setDatastreamVersionable("demo:5",
+                                              "DC",
+                                              false,
+                                              "changed versionable on datastream DC to false");
+        assertNotNull(result);
+        Datastream ds = apim.getDatastream("demo:5", "DC", null);
+        assertEquals(false, ds.isVersionable());
+
+        // test setDatastreamVersionable audit        
+        byte[] objectXML = apim.getObjectXML("demo:5");
+        assertTrue(objectXML.length > 0);
+        String xmlIn = new String(objectXML, "UTF-8");
+        assertXpathExists("foxml:digitalObject[@PID='demo:5']", xmlIn);
+        assertXpathExists("//audit:auditTrail/audit:record[last()]/audit:action['setDatastreamVersionable']",
+                          xmlIn);
+
+        // reset datastream to versionable
+        result =
+                apim.setDatastreamVersionable("demo:5",
+                                              "DC",
+                                              true,
+                                              "reset versionable on datastream DC to true");
+        assertNotNull(result);
+        ds = apim.getDatastream("demo:5", "DC", null);
+        assertEquals(true, ds.isVersionable());
+    }    
+    
     public void testGetNextPID() throws Exception {
 
         // test null for both arguments
