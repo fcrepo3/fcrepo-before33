@@ -83,7 +83,8 @@ public class FieldSearchSQLImpl
                     true, true, false, false};
 
     // a hash of token-keyed FieldSearchResultSQLImpls
-    private final HashMap m_currentResults = new HashMap();
+    private final HashMap<String, FieldSearchResultSQLImpl> m_currentResults =
+            new HashMap<String, FieldSearchResultSQLImpl>();
 
     /**
      * Construct a FieldSearchSQLImpl that indexes DC fields.
@@ -186,8 +187,8 @@ public class FieldSearchSQLImpl
             // and if the object is a bMech, add the bDefPID (from the
             // datastream input spec) to its list of bDefs
             //            Disseminator[] disses=reader.GetDisseminators(null, null);
-            ArrayList bDefs = new ArrayList();
-            ArrayList bMechs = new ArrayList();
+            ArrayList<String> bDefs = new ArrayList<String>();
+            ArrayList<String> bMechs = new ArrayList<String>();
             //            for (int i=0; i<disses.length; i++) {
             //                bDefs.add(disses[i].bDefID);
             //                bMechs.add(disses[i].bMechID);
@@ -255,12 +256,18 @@ public class FieldSearchSQLImpl
                     dbRowValues[15] = getDbValue(dc.publishers());
                     dbRowValues[16] = getDbValue(dc.contributors());
                     dbRowValues[17] = getDbValue(dc.dates());
+
+                    // delete any dc.dates that survive from earlier versions
+                   st = conn.createStatement();
+                    st.executeUpdate("DELETE FROM dcDates WHERE pid='" + pid
+                            + "'");
+
                     // get any dc.dates strings that are formed such that they
                     // can be treated as a timestamp
-                    List wellFormedDates = null;
+                    List<Date> wellFormedDates = null;
                     for (int i = 0; i < dc.dates().size(); i++) {
                         if (i == 0) {
-                            wellFormedDates = new ArrayList();
+                            wellFormedDates = new ArrayList<Date>();
                         }
                         Date p = DateUtility.parseDateAsUTC(dc.dates().get(i));
                         if (p != null) {
@@ -268,13 +275,9 @@ public class FieldSearchSQLImpl
                         }
                     }
                     if (wellFormedDates != null && wellFormedDates.size() > 0) {
-                        // found at least one... so delete the existing dates
-                        // in that table for this pid, then add these.
-                        st = conn.createStatement();
-                        st.executeUpdate("DELETE FROM dcDates WHERE pid='"
-                                + pid + "'");
+                        // found at least one valid date, so add them.
                         for (int i = 0; i < wellFormedDates.size(); i++) {
-                            Date dt = (Date) wellFormedDates.get(i);
+                            Date dt = wellFormedDates.get(i);
                             st
                                     .executeUpdate("INSERT INTO dcDates (pid, dcDate) "
                                             + "values ('"
@@ -416,8 +419,9 @@ public class FieldSearchSQLImpl
 
     // erase and cleanup expired stuff
     private void closeAndForgetOldResults() {
-        Iterator iter = m_currentResults.values().iterator();
-        ArrayList toRemove = new ArrayList();
+        Iterator<FieldSearchResultSQLImpl> iter =
+                m_currentResults.values().iterator();
+        ArrayList<String> toRemove = new ArrayList<String>();
         while (iter.hasNext()) {
             FieldSearchResultSQLImpl r = (FieldSearchResultSQLImpl) iter.next();
             if (r.isExpired()) {
@@ -441,13 +445,13 @@ public class FieldSearchSQLImpl
      *        a list of dublin core values
      * @return String the string to insert
      */
-    private static String getDbValue(List dcItem) {
+    private static String getDbValue(List<String> dcItem) {
         if (dcItem.size() == 0) {
             return null;
         }
         StringBuffer out = new StringBuffer();
         for (int i = 0; i < dcItem.size(); i++) {
-            String val = (String) dcItem.get(i);
+            String val = dcItem.get(i);
             out.append(" ");
             out.append(val.toLowerCase());
         }
@@ -456,13 +460,13 @@ public class FieldSearchSQLImpl
     }
 
     // same as above, but for case sensitive repeating values
-    public static String getDbValueCaseSensitive(List dcItem) {
+    public static String getDbValueCaseSensitive(List<String> dcItem) {
         if (dcItem.size() == 0) {
             return null;
         }
         StringBuffer out = new StringBuffer();
         for (int i = 0; i < dcItem.size(); i++) {
-            String val = (String) dcItem.get(i);
+            String val = dcItem.get(i);
             out.append(" ");
             out.append(val);
         }
