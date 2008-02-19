@@ -84,6 +84,65 @@ public abstract class TestXMLDODeserializer
         assertEquals(1, result.datastreams(dsID2).size());
     }
 
+    /**
+     * Tests for deterministic inline-XML content between generations. Addresses
+     * bug #1771136: inlineXML would increase in size between copy generations
+     * due to added whitespace.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testInlineXMLCopyIntegrity() throws Exception {
+
+        DigitalObject original = createTestObject(DigitalObject.FEDORA_OBJECT);
+        final String dsID1 = "DS1";
+
+        /* Populate the object with a test datastream and serialize */
+        DatastreamXMLMetadata ds1 = createXDatastream(dsID1);
+        original.datastreams(dsID1).add(ds1);
+
+        DigitalObject copy = translatedCopy(original);
+        DigitalObject copyOfCopy = translatedCopy(copy);
+
+        DatastreamXMLMetadata ds1copy =
+                (DatastreamXMLMetadata) copy.datastreams(dsID1).get(0);
+        DatastreamXMLMetadata ds1copyOfCopy =
+                (DatastreamXMLMetadata) copyOfCopy.datastreams(dsID1).get(0);
+
+        assertEquals("Length of XML datastream copies is not deterministic!",
+                     ds1copy.xmlContent.length,
+                     ds1copyOfCopy.xmlContent.length);
+    }
+
+    /**
+     * Copies of an object by deserializing and re-serializing. In theory, there
+     * should be no difference between copy generations..
+     * 
+     * @param original
+     *        Object to copy
+     * @return Copy formed by serializing and de-serializing the original.
+     * @throws UnsupportedEncodingException
+     * @throws ObjectIntegrityException
+     * @throws StreamIOException
+     */
+    private DigitalObject translatedCopy(DigitalObject original)
+            throws UnsupportedEncodingException, ObjectIntegrityException,
+            StreamIOException {
+        DigitalObject copy = new BasicDigitalObject();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        m_serializer.serialize(original,
+                               out,
+                               "UTF-8",
+                               SERIALIZE_STORAGE_INTERNAL);
+        ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+        m_deserializer.deserialize(in,
+                                   copy,
+                                   "UTF-8",
+                                   SERIALIZE_STORAGE_INTERNAL);
+        return copy;
+    }
+
     //---
     // Instance helpers
     //---

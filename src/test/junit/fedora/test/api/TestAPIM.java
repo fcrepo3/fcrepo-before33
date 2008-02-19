@@ -1195,9 +1195,9 @@ public class TestAPIM
                         0,
                         new String[] {});
 
-        int expectedTEISize = 901;
+        int expectedTEISize = 893;
         if (testingMETS()) {
-            expectedTEISize = 931;
+            expectedTEISize = 921;
         }
 
         checkDatastream(dsArray,
@@ -1213,9 +1213,9 @@ public class TestAPIM
                         expectedTEISize,
                         new String[] {});
 
-        int expectedRELSSize = 395;
+        int expectedRELSSize = 376;
         if (testingMETS()) {
-            expectedRELSSize = 363;
+            expectedRELSSize = 349;
         }
 
         checkDatastream(dsArray,

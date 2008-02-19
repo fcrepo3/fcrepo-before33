@@ -5,8 +5,6 @@
 
 package fedora.server.storage.translation;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
@@ -344,42 +342,18 @@ public class METSFedoraExtDOSerializer
                     && ds.DatastreamID.equals("SERVICE-PROFILE")
                     || ds.DatastreamID.equals("WSDL")) {
                 buf.append(DOTranslationUtility
-                        .normalizeInlineXML(new String(ds.xmlContent, "UTF-8"),
-                                            m_transContext));
+                        .normalizeInlineXML(new String(ds.xmlContent, "UTF-8")
+                                .trim(), m_transContext));
             } else {
-                appendStream(ds.getContentStream(), buf, encoding);
+                DOTranslationUtility.appendXMLStream(ds.getContentStream(),
+                                                     buf,
+                                                     encoding);
             }
-            buf.append("        </" + METS.prefix + ":xmlData>");
+            buf.append("\n        </" + METS.prefix + ":xmlData>");
             buf.append("      </" + METS.prefix + ":mdWrap>\n");
             buf.append("    </" + METS.prefix + ":" + innerName + ">\n");
         }
         buf.append("  </" + METS.prefix + ":" + outerName + ">\n");
-    }
-
-    private void appendStream(InputStream in, StringBuffer buf, String encoding)
-            throws ObjectIntegrityException, UnsupportedEncodingException,
-            StreamIOException {
-        if (in == null) {
-            throw new ObjectIntegrityException("Object's inline descriptive "
-                    + "metadata stream cannot be null.");
-        }
-        try {
-            byte[] byteBuf = new byte[4096];
-            int len;
-            while ((len = in.read(byteBuf)) != -1) {
-                buf.append(new String(byteBuf, 0, len, encoding));
-            }
-        } catch (UnsupportedEncodingException uee) {
-            throw uee;
-        } catch (IOException ioe) {
-            throw new StreamIOException("Error reading from inline datastream.");
-        } finally {
-            try {
-                in.close();
-            } catch (IOException closeProb) {
-                throw new StreamIOException("Error closing read stream.");
-            }
-        }
     }
 
     private void appendAuditRecordAdminMD(DigitalObject obj, StringBuffer buf)
