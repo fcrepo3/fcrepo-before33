@@ -1,7 +1,6 @@
 package fedora.server.storage.translation;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -372,37 +371,13 @@ public class FOXMLDOSerializer
 			  	// the whole block of inline XML. We really only want to 
 			  	// look at service URLs in the XML.
 	            buf.append(DOTranslationUtility.normalizeInlineXML(
-	            	new String(ds.xmlContent, "UTF-8"), m_transContext));
+	            	new String(ds.xmlContent, "UTF-8").trim(), m_transContext));
         } else {
-            appendXMLStream(ds.getContentStream(), buf, encoding);
+            DOTranslationUtility.appendXMLStream(ds.getContentStream(), 
+                                                 buf, 
+                                                 encoding);
         }
-        buf.append("            </" + FOXML_PREFIX + ":xmlContent>\n");
-    }
-
-    private void appendXMLStream(InputStream in, StringBuffer buf, String encoding)
-            throws ObjectIntegrityException, UnsupportedEncodingException,
-            StreamIOException {
-        if (in==null) {
-            throw new ObjectIntegrityException("Object's inline xml "
-                    + "stream cannot be null.");
-        }
-        try {
-            byte[] byteBuf = new byte[4096];
-            int len;
-            while ( ( len = in.read( byteBuf ) ) != -1 ) {
-                buf.append(new String(byteBuf, 0, len, encoding));
-            }
-        } catch (UnsupportedEncodingException uee) {
-            throw uee;
-        } catch (IOException ioe) {
-            throw new StreamIOException("Error reading from inline xml datastream.");
-        } finally {
-            try {
-                in.close();
-            } catch (IOException closeProb) {
-                throw new StreamIOException("Error closing read stream.");
-            }
-        }
+        buf.append("\n            </" + FOXML_PREFIX + ":xmlContent>\n");
     }
 
     private void appendDisseminators(DigitalObject obj, StringBuffer buf)

@@ -906,8 +906,8 @@ public class TestAPIM extends FedoraServerTestCase {
             assertEquals(dsArray[1].getAltIDs()[0],"");
         }
 
-        int expectedTEISize = 901;
-        if (testingMETS()) expectedTEISize = 931;
+        int expectedTEISize = 893;
+        if (testingMETS()) expectedTEISize = 921;
 
         // assert datastream TEISOURCE matches
         assertEquals(dsArray[2].getID(),"TEISOURCE");

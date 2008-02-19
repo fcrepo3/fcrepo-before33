@@ -1,6 +1,13 @@
 package fedora.server.storage.translation;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+
+import java.nio.charset.Charset;
+
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
@@ -10,6 +17,7 @@ import fedora.common.Constants;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectIntegrityException;
+import fedora.server.errors.StreamIOException;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.Disseminator;
@@ -602,4 +610,92 @@ public abstract class DOTranslationUtility {
 		}
 		return diss;
 	}
+	
+	/**
+     * Appends XML to a StringBuffer. Essentially, just appends all text content
+     * of the inputStream, trimming any leading and trailing whitespace. It does
+     * his in a streaming fashion, with resource consumption entirely comprised
+     * of fixed internal buffers.
+     * 
+     * @param in
+     *        InputStreaming containing serialized XML.
+     * @param buf
+     *        StringBuffer to write XML content to.
+     * @param encoding
+     *        Character set encoding.
+     */
+    public static void appendXMLStream(InputStream in,
+                                       StringBuffer buf,
+                                       String encoding)
+            throws ObjectIntegrityException, UnsupportedEncodingException,
+            StreamIOException {
+        if (in == null) {
+            throw new ObjectIntegrityException("Object's inline xml "
+                    + "stream cannot be null.");
+        }
+        try {
+            InputStreamReader chars =
+                    new InputStreamReader(in, Charset.forName(encoding));
+
+            /* Content buffer */
+            char[] charBuf = new char[4096];
+
+            /* Beginning/ending whitespace buffer */
+            char[] wsBuf = new char[4096];
+
+            int len;
+            int start;
+            int end;
+            int wsLen = 0;
+            boolean atBeginning = true;
+            while ((len = chars.read(charBuf)) != -1) {
+                start = 0;
+                end = len - 1;
+
+                /* Strip out any leading whitespace */
+                if (atBeginning) {
+                    while (start < len) {
+                        if (charBuf[start] > 0x20) break;
+                        start++;
+                    }
+                    if (start < len) atBeginning = false;
+                }
+
+                /*
+                 * Hold aside any whitespace at the end of the current chunk. If
+                 * we make it to the next chunk, then append our whitespace to
+                 * the buffer. Using this methodology, we may "trim" at most
+                 * {buffer length} characters from the end.
+                 */
+
+                if (wsLen > 0) {
+                    /* Commit previous ending whitespace */
+                    buf.append(wsBuf, 0, wsLen);
+                    wsLen = 0;
+                }
+
+                while (end > start) {
+                    /* Buffer current ending whitespace */
+                    if (charBuf[end] > 0x20) break;
+                    wsBuf[wsLen] = charBuf[end];
+                    wsLen++;
+                    end--;
+                }
+
+                if (start < len) {
+                    buf.append(charBuf, start, end + 1 - start);
+                }
+            }
+        } catch (UnsupportedEncodingException uee) {
+            throw uee;
+        } catch (IOException ioe) {
+            throw new StreamIOException("Error reading from inline xml datastream.");
+        } finally {
+            try {
+                in.close();
+            } catch (IOException closeProb) {
+                throw new StreamIOException("Error closing read stream.");
+            }
+        }
+    }
 }
