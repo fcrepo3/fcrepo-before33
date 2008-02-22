@@ -1,6 +1,7 @@
 package fedora.server.config.webxml;
 
 import java.beans.IntrospectionException;
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
@@ -51,7 +52,7 @@ public class WebXML implements Serializable {
 
 		try {
 			reader.registerMultiMapping(getBetwixtMapping());
-			wx = (WebXML)reader.parse(webxml);			
+			wx = (WebXML)reader.parse(new File(webxml).toURI().toString());			
 		} catch (IntrospectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
