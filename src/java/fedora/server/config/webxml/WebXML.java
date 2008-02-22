@@ -6,18 +6,16 @@
 package fedora.server.config.webxml;
 
 import java.beans.IntrospectionException;
-
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.betwixt.io.BeanReader;
 import org.apache.commons.betwixt.io.BeanWriter;
 import org.apache.commons.betwixt.strategy.NamespacePrefixMapper;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -85,7 +83,7 @@ public class WebXML
 
         try {
             reader.registerMultiMapping(getBetwixtMapping());
-            wx = (WebXML) reader.parse(webxml);
+            wx = (WebXML) reader.parse(new File(webxml).toURI().toString());
         } catch (IntrospectionException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
