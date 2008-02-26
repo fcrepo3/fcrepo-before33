@@ -30,7 +30,6 @@ import fedora.client.FedoraClient;
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.RepositoryInfo;
-import fedora.server.types.gen.UserInfo;
 
 /**
  * Launch a dialog for entering login information for a source repository.
@@ -56,8 +55,6 @@ public class SourceRepoDialog
     private FedoraAPIM m_apim;
 
     private RepositoryInfo m_repositoryInfo;
-
-    private UserInfo m_userInfo;
 
     private static String s_lastServer;
 
@@ -181,9 +178,6 @@ public class SourceRepoDialog
                              */
                             try {
                                 m_repositoryInfo = m_apia.describeRepository();
-                                m_userInfo =
-                                        m_apim.describeUser(m_usernameField
-                                                .getText());
                                 s_lastServer = m_host + ":" + m_port;
                                 s_lastProtocol = m_protocol;
                                 s_lastUsername = m_usernameField.getText();
@@ -305,10 +299,6 @@ public class SourceRepoDialog
 
     public RepositoryInfo getRepositoryInfo() {
         return m_repositoryInfo;
-    }
-
-    public UserInfo getUserInfo() {
-        return m_userInfo;
     }
 
     public void addLabelValueRows(JLabel[] labels,

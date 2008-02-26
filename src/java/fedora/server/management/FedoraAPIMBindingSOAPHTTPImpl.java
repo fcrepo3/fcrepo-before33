@@ -81,19 +81,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    /**
-     * @deprecated This remains in Fedora 2.0 for backward compatibility. It
-     *             assumes METS-Fedora as the ingest format. It will be removed
-     *             in a future version. Replaced by
-     *             {@link #ingest(byte[], String, String)}
-     */
-    @Deprecated
-    public String ingestObject(byte[] METSXML, String logMessage)
-            throws java.rmi.RemoteException {
-        assertInitialized();
-        return ingest(METSXML, METS_EXT1_1.uri, logMessage);
-    }
-
     public String ingest(byte[] XML, String format, String logMessage)
             throws java.rmi.RemoteException {
         LOG.debug("start: ingest");
@@ -102,12 +89,12 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             // always gens pid, unless pid in stream starts with "test:" "demo:"
             // or other prefix that is configured in the retainPIDs parameter of
             // fedora.fcfg
-            return s_management.ingestObject(ReadOnlyContext.getSoapContext(),
-                                             new ByteArrayInputStream(XML),
-                                             logMessage,
-                                             format,
-                                             "UTF-8",
-                                             true);
+            return s_management.ingest(ReadOnlyContext.getSoapContext(),
+                                       new ByteArrayInputStream(XML),
+                                       logMessage,
+                                       format,
+                                       "UTF-8",
+                                       true);
         } catch (Throwable th) {
             LOG.error("Error ingesting", th);
             throw AxisUtility.getFault(th);
@@ -154,25 +141,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public fedora.server.types.gen.UserInfo describeUser(String id)
-            throws RemoteException {
-        Context context = ReadOnlyContext.getSoapContext();
-        try {
-            s_management.adminPing(context);
-        } catch (Throwable th) {
-            LOG.error("Error getting user info", th);
-            throw AxisUtility.getFault(th);
-        }
-        fedora.server.types.gen.UserInfo inf =
-                new fedora.server.types.gen.UserInfo();
-        inf.setId(id);
-        // so, for the purposes of this method, an administrator is whoever is
-        // permitted action "adminPing"
-        // and only administrators can be "described"
-        inf.setAdministrator(true);
-        return inf;
-    }
-
     public byte[] getObjectXML(String PID) throws RemoteException {
         assertInitialized();
         try {
@@ -189,34 +157,16 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public byte[] exportObject(String PID) throws RemoteException {
-        assertInitialized();
-        try {
-            InputStream in =
-                    s_management.exportObject(ReadOnlyContext.getSoapContext(),
-                                              PID,
-                                              null,
-                                              null,
-                                              "UTF-8");
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            pipeStream(in, out);
-            return out.toByteArray();
-        } catch (Throwable th) {
-            LOG.error("Error exporting object", th);
-            throw AxisUtility.getFault(th);
-        }
-    }
-
     public byte[] export(String PID, String format, String exportContext)
             throws RemoteException {
         assertInitialized();
         try {
             InputStream in =
-                    s_management.exportObject(ReadOnlyContext.getSoapContext(),
-                                              PID,
-                                              format,
-                                              exportContext,
-                                              "UTF-8");
+                    s_management.export(ReadOnlyContext.getSoapContext(),
+                                        PID,
+                                        format,
+                                        exportContext,
+                                        "UTF-8");
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             pipeStream(in, out);
             return out.toByteArray();

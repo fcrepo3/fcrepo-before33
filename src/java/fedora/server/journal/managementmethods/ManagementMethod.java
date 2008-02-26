@@ -25,8 +25,8 @@ public abstract class ManagementMethod
      */
     public static ManagementMethod getInstance(String methodName,
                                                JournalEntry parent) {
-        if (METHOD_INGEST_OBJECT.equals(methodName)) {
-            return new IngestObjectMethod(parent);
+        if (METHOD_INGEST.equals(methodName)) {
+            return new IngestMethod(parent);
         } else if (METHOD_MODIFY_OBJECT.equals(methodName)) {
             return new ModifyObjectMethod(parent);
         } else if (METHOD_PURGE_OBJECT.equals(methodName)) {

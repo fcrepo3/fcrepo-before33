@@ -707,14 +707,14 @@ public class DefaultAuthorization
     // }
     // }
 
-    public final void enforceExportObject(Context context,
-                                          String pid,
-                                          String format,
-                                          String exportContext,
-                                          String exportEncoding)
+    public final void enforceExport(Context context,
+                                    String pid,
+                                    String format,
+                                    String exportContext,
+                                    String exportEncoding)
             throws AuthzException {
         try {
-            LOG.debug("Entered enforceExportObject");
+            LOG.debug("Entered enforceExport");
             String target = Constants.ACTION.EXPORT.uri;
             log("enforcing " + target);
             context.setActionAttributes(null);
@@ -748,8 +748,21 @@ public class DefaultAuthorization
                              extractNamespace(pid),
                              context);
         } finally {
-            LOG.debug("Exiting enforceExportObject");
+            LOG.debug("Exiting enforceExport");
         }
+    }
+    
+    /**
+     * @deprecated in Fedora 3.0, use enforceExport() instead 
+     */
+    @Deprecated
+    public final void enforceExportObject(Context context,
+                                          String pid,
+                                          String format,
+                                          String exportContext,
+                                          String exportEncoding)
+            throws AuthzException {
+        enforceExport(context, pid, format, exportContext, exportEncoding);
     }
 
     // public final void enforceGetDisseminatorHistory(Context context, String
@@ -1062,13 +1075,13 @@ public class DefaultAuthorization
         }
     }
 
-    public final void enforceIngestObject(Context context,
-                                          String pid,
-                                          String format,
-                                          String ingestEncoding)
+    public final void enforceIngest(Context context,
+                                    String pid,
+                                    String format,
+                                    String ingestEncoding)
             throws AuthzException {
         try {
-            LOG.debug("Entered enforceIngestObject");
+            LOG.debug("Entered enforceIngest");
             String target = Constants.ACTION.INGEST.uri;
             log("enforcing " + target);
             context.setActionAttributes(null);
@@ -1098,10 +1111,22 @@ public class DefaultAuthorization
                              extractNamespace(pid),
                              context);
         } finally {
-            LOG.debug("Exiting enforceIngestObject");
+            LOG.debug("Exiting enforceIngest");
         }
     }
 
+    /**
+     * @deprecated in Fedora 3.0, use enforceIngest() instead 
+     */
+    @Deprecated
+    public final void enforceIngestObject(Context context,
+                                          String pid,
+                                          String format,
+                                          String ingestEncoding)
+            throws AuthzException {
+        enforceIngest(context, pid, format, ingestEncoding);
+    }
+    
     public final void enforceListObjectInFieldSearchResults(Context context,
                                                             String pid)
             throws AuthzException {
@@ -1881,26 +1906,6 @@ public class DefaultAuthorization
                              context);
         } finally {
             LOG.debug("Exiting enforceListMethods");
-        }
-    }
-
-    public void enforceAdminPing(Context context) throws AuthzException {
-        try {
-            LOG.debug("Entered enforceAdminPing");
-            String target = Constants.ACTION.ADMIN_PING.uri;
-            log("enforcing " + target);
-            context.setActionAttributes(null);
-            context.setResourceAttributes(null);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
-                             target,
-                             "",
-                             "",
-                             "",
-                             context);
-        } finally {
-            LOG.debug("Exiting enforceAdminPing");
         }
     }
 

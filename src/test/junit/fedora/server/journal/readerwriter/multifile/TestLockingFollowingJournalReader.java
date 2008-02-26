@@ -477,7 +477,7 @@ public class TestLockingFollowingJournalReader
                 + "<FedoraJournal repositoryHash=\""
                 + DUMMY_HASH_VALUE
                 + "\" timestamp=\"2006-08-11T11:14:43.011-0400\">\n"
-                + "  <JournalEntry method=\"ingestObject\" timestamp=\"2006-08-11T11:14:42.690-0400\" clientIpAddress=\"128.84.103.30\" loginId=\"fedoraAdmin\">\n"
+                + "  <JournalEntry method=\"ingest\" timestamp=\"2006-08-11T11:14:42.690-0400\" clientIpAddress=\"128.84.103.30\" loginId=\"fedoraAdmin\">\n"
                 + "    <context>\n"
                 + "      <password>junk</password>\n"
                 + "      <noOp>false</noOp>\n"

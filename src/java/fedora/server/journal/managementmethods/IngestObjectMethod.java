@@ -16,7 +16,9 @@ import fedora.server.management.ManagementDelegate;
  * Adapter class for Management.ingestObject()
  * 
  * @author Jim Blake
+ * @deprecated in Fedora 3.0, use IngestMethod instead
  */
+@Deprecated
 public class IngestObjectMethod
         extends ManagementMethod {
 
@@ -28,7 +30,7 @@ public class IngestObjectMethod
     public Object invoke(ManagementDelegate delegate) throws ServerException,
             JournalException {
         String pid =
-                delegate.ingestObject(parent.getContext(), parent
+                delegate.ingest(parent.getContext(), parent
                         .getStreamArgument(ARGUMENT_NAME_SERIALIZATION), parent
                         .getStringArgument(ARGUMENT_NAME_LOG_MESSAGE), parent
                         .getStringArgument(ARGUMENT_NAME_FORMAT), parent

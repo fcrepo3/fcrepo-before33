@@ -94,15 +94,15 @@ public class JournalCreator
     /**
      * Let the delegate do it, and then write a journal entry.
      */
-    public String ingestObject(Context context,
-                               InputStream serialization,
-                               String logMessage,
-                               String format,
-                               String encoding,
-                               boolean newPid) throws ServerException {
+    public String ingest(Context context,
+                         InputStream serialization,
+                         String logMessage,
+                         String format,
+                         String encoding,
+                         boolean newPid) throws ServerException {
         try {
             CreatorJournalEntry cje =
-                    new CreatorJournalEntry(METHOD_INGEST_OBJECT, context);
+                    new CreatorJournalEntry(METHOD_INGEST, context);
             cje.addArgument(ARGUMENT_NAME_SERIALIZATION, serialization);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
             cje.addArgument(ARGUMENT_NAME_FORMAT, format);
@@ -112,6 +112,24 @@ public class JournalCreator
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
+    }
+    
+    /**
+     * @deprecated in Fedora 3.0, use ingest() instead
+     */
+    @Deprecated
+    public String ingestObject(Context context,
+                               InputStream serialization,
+                               String logMessage,
+                               String format,
+                               String encoding,
+                               boolean newPid) throws ServerException {
+        return ingest(context,
+                      serialization,
+                      logMessage,
+                      format,
+                      encoding,
+                      newPid);
     }
 
     /**
@@ -467,18 +485,26 @@ public class JournalCreator
     /**
      * Let the delegate do it.
      */
+    public InputStream export(Context context,
+                              String pid,
+                              String format,
+                              String exportContext,
+                              String encoding) throws ServerException {
+        return delegate.export(context, pid, format, exportContext, encoding);
+    }
+
+    /**
+     * @deprecated in Fedora 3.0, use export() instead
+     */
+    @Deprecated
     public InputStream exportObject(Context context,
                                     String pid,
                                     String format,
                                     String exportContext,
                                     String encoding) throws ServerException {
-        return delegate.exportObject(context,
-                                     pid,
-                                     format,
-                                     exportContext,
-                                     encoding);
+        return export(context, pid, format, exportContext, encoding);
     }
-
+    
     /**
      * Let the delegate do it.
      */
@@ -514,13 +540,6 @@ public class JournalCreator
      */
     public InputStream getTempStream(String id) throws ServerException {
         return delegate.getTempStream(id);
-    }
-
-    /**
-     * Let the delegate do it.
-     */
-    public boolean adminPing(Context context) throws ServerException {
-        return delegate.adminPing(context);
     }
 
 }

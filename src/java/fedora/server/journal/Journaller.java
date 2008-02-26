@@ -146,20 +146,38 @@ public class Journaller
     /**
      * Delegate to the JournalWorker.
      */
+    public String ingest(Context context,
+                         InputStream serialization,
+                         String logMessage,
+                         String format,
+                         String encoding,
+                         boolean newPid) throws ServerException {
+        return worker.ingest(context,
+                             serialization,
+                             logMessage,
+                             format,
+                             encoding,
+                             newPid);
+    }
+
+    /**
+     * @deprecated in Fedora 3.0, use ingest() instead
+     */
+    @Deprecated    
     public String ingestObject(Context context,
                                InputStream serialization,
                                String logMessage,
                                String format,
                                String encoding,
                                boolean newPid) throws ServerException {
-        return worker.ingestObject(context,
-                                   serialization,
-                                   logMessage,
-                                   format,
-                                   encoding,
-                                   newPid);
-    }
-
+        return ingest(context,
+                      serialization,
+                      logMessage,
+                      format,
+                      encoding,
+                      newPid);
+    }    
+    
     /**
      * Delegate to the JournalWorker.
      */
@@ -196,18 +214,26 @@ public class Journaller
     /**
      * Delegate to the JournalWorker.
      */
+    public InputStream export(Context context,
+                              String pid,
+                              String format,
+                              String exportContext,
+                              String encoding) throws ServerException {
+        return worker.export(context, pid, format, exportContext, encoding);
+    }
+
+    /**
+     * @deprecated in Fedora 3.0, use export() instead
+     */
+    @Deprecated    
     public InputStream exportObject(Context context,
                                     String pid,
                                     String format,
                                     String exportContext,
                                     String encoding) throws ServerException {
-        return worker.exportObject(context,
-                                   pid,
-                                   format,
-                                   exportContext,
-                                   encoding);
-    }
-
+        return export(context, pid, format, exportContext, encoding);
+    }    
+    
     /**
      * Delegate to the JournalWorker.
      */
@@ -423,13 +449,6 @@ public class Journaller
     public String[] getNextPID(Context context, int numPIDs, String namespace)
             throws ServerException {
         return worker.getNextPID(context, numPIDs, namespace);
-    }
-
-    /**
-     * Delegate to the JournalWorker.
-     */
-    public boolean adminPing(Context context) throws ServerException {
-        return worker.adminPing(context);
     }
 
     /**

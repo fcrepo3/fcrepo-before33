@@ -114,7 +114,7 @@ public interface JournalConstants {
     QName QNAME_ATTR_USERID = QName.valueOf("userId");
 
     // Names of the management methods that are written to the Journal
-    String METHOD_INGEST_OBJECT = "ingestObject";
+    String METHOD_INGEST = "ingest";
 
     String METHOD_MODIFY_OBJECT = "modifyObject";
 

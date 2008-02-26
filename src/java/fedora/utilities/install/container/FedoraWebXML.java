@@ -56,8 +56,8 @@ public class FedoraWebXML {
             new String[] {"/services/access"};
 
     private static final String[] FILTER_APIM_SERVLET_NAMES =
-            new String[] {"AxisServlet", "BESecurityServlet", "ControlServlet",
-                    "GetNextPIDServlet", "UploadServlet"};
+            new String[] {"AxisServlet", "ControlServlet", "GetNextPIDServlet",
+                    "UploadServlet"};
 
     private static final String[] FILTER_APIM_URL_PATTERNS =
             new String[] {"/getDSAuthenticated", "/index.html",
@@ -71,8 +71,8 @@ public class FedoraWebXML {
 
     private static final String[] SC_APIM_URL_PATTERNS =
             new String[] {"/index.html", "/getDSAuthenticated",
-                    "/management/backendSecurity", "/management/getNextPID",
-                    "/management/upload", "/services/management", "*.jws"};
+                    "/management/getNextPID", "/management/upload",
+                    "/services/management", "*.jws"};
 
     private final WebXMLOptions options;
 

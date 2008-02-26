@@ -283,8 +283,6 @@ public class TestRESTAPI
         assertEquals(SC_CREATED, post(temp, true).getStatusCode());
     }
 
-    //public void testDescribeUser() throws Exception {}
-
     public void testModifyDatastreamByReference() throws Exception {
         url =
                 String

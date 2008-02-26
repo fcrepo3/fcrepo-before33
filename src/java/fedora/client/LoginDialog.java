@@ -43,7 +43,6 @@ import org.apache.log4j.Logger;
 
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
-import fedora.server.types.gen.UserInfo;
 
 /**
  * Launch a dialog for logging into a Fedora repository.
@@ -349,9 +348,6 @@ public class LoginDialog
             // set SOAP stubs for Administrator
             Administrator.APIA = fc.getAPIA();
             Administrator.APIM = fc.getAPIM();
-
-            // attempt an API-M (SOAP) operation
-            UserInfo inf = fc.getAPIM().describeUser(user);
 
         } catch (Exception e) {
             if (e.getMessage().indexOf("Unauthorized") != -1

@@ -66,7 +66,7 @@ public class DirectoryBasedRepositoryReader
      * @param translator
      *        the serialization/deserialization engine for objects.
      * @param exportFormat
-     *        the format to use for exportObject requests.
+     *        the format to use for export requests.
      * @param storageFormat
      *        the format of the objects on disk.
      * @param encoding

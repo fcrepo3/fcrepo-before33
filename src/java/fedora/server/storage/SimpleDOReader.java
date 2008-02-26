@@ -202,13 +202,13 @@ public class SimpleDOReader
      *        in different ways of representing datastream URLs or datastream
      *        content in the output.
      */
-    public InputStream ExportObject(String format, String exportContext)
+    public InputStream Export(String format, String exportContext)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         int transContext;
         // first, set the translation context...
-        LOG.debug("ExportObject export context: " + exportContext);
+        LOG.debug("Export context: " + exportContext);
 
         if (exportContext == null || exportContext.equals("")
                 || exportContext.equalsIgnoreCase("default")) {
@@ -227,19 +227,29 @@ public class SimpleDOReader
         // now serialize for export in the proper XML format...
         if (format == null || format.equals("")
                 || format.equalsIgnoreCase("default")) {
-            LOG.debug("ExportObject in default format: " + m_exportFormat);
+            LOG.debug("Export in default format: " + m_exportFormat);
             m_translator.serialize(m_obj,
                                    bytes,
                                    m_exportFormat,
                                    "UTF-8",
                                    transContext);
         } else {
-            LOG.debug("ExportObject in format: " + format);
+            LOG.debug("Export in format: " + format);
             m_translator.serialize(m_obj, bytes, format, "UTF-8", transContext);
         }
 
         return new ByteArrayInputStream(bytes.toByteArray());
     }
+
+    /**
+     * @deprecated in Fedora 3.0, use Export instead
+     */
+    @Deprecated
+    public InputStream ExportObject(String format, String exportContext)
+            throws ObjectIntegrityException, StreamIOException,
+            UnsupportedTranslationException, ServerException {
+        return Export(format, exportContext);
+    }    
 
     public String GetObjectPID() {
         return m_obj.getPid();

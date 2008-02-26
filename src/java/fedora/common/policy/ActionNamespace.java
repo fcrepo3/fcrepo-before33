@@ -32,8 +32,6 @@ public class ActionNamespace
     // Values of ID   
     public final XacmlName ADD_DATASTREAM;
 
-    public final XacmlName ADMIN_PING;
-
     public final XacmlName EXPORT;
 
     public final XacmlName GET_DATASTREAM;
@@ -63,7 +61,7 @@ public class ActionNamespace
     public final XacmlName SET_DATASTREAM_STATE;
 
     public final XacmlName DESCRIBE_REPOSITORY;
-
+    
     public final XacmlName FIND_OBJECTS;
 
     public final XacmlName RI_FIND_OBJECTS;
@@ -117,7 +115,6 @@ public class ActionNamespace
         ID = addName(new XacmlName(this, "id", StringAttribute.identifier));
         // derived from respective Java methods in Access.java or Management.java    	
         ADD_DATASTREAM = addName(new XacmlName(this, "id-addDatastream"));
-        ADMIN_PING = addName(new XacmlName(this, "id-adminPing"));
         EXPORT = addName(new XacmlName(this, "id-export"));
         GET_DATASTREAM = addName(new XacmlName(this, "id-getDatastream"));
         GET_DATASTREAM_HISTORY =

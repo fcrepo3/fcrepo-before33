@@ -56,6 +56,8 @@ public class AutoIngestor
     }
 
     /**
+     * For backward compatibility: assumes format METS_EXT1_0.uri
+     * 
      * @deprecated use ingestAndCommit(apia, apim, in, ingestFormat, logMessage)
      *             instead.
      */
@@ -67,7 +69,7 @@ public class AutoIngestor
             throws RemoteException, IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         StreamUtility.pipeStream(in, out, 4096);
-        String pid = apim.ingestObject(out.toByteArray(), logMessage);
+        String pid = apim.ingest(out.toByteArray(), METS_EXT1_0.uri, logMessage);
         return pid;
     }
 
@@ -89,9 +91,7 @@ public class AutoIngestor
 
         // For backward compatibility:
         // For pre-2.0 repositories, the only valid ingest format is
-        // METS_EXT1_0.uri (formerly known as metslikefedora1) and 
-        // there only exists the 'ingestObject' APIM method which 
-        // assumes this format.
+        // METS_EXT1_0.uri (formerly known as metslikefedora1)
         RepositoryInfo repoInfo = s_repoInfo.get(apia);
         if (repoInfo == null) {
             repoInfo = apia.describeRepository();
@@ -105,7 +105,7 @@ public class AutoIngestor
                         + "which will only accept the format \""
                         + METS_EXT1_0.uri + "\" for ingest.");
             } else {
-                return apim.ingestObject(out.toByteArray(), logMessage);
+                return apim.ingest(out.toByteArray(), METS_EXT1_0.uri, logMessage);
             }
 
         } else {

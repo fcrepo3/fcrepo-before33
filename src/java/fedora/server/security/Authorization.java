@@ -62,6 +62,13 @@ public interface Authorization {
     //	public void enforceAddDisseminator(Context context, String pid, String bDefPid, String bMechPid, String dissState) 
     //	throws AuthzException;
 
+    public void enforceExport(Context context,
+                              String pid,
+                              String format,
+                              String exportContext,
+                              String exportEncoding) throws AuthzException;    
+    
+    @Deprecated
     public void enforceExportObject(Context context,
                                     String pid,
                                     String format,
@@ -106,12 +113,18 @@ public interface Authorization {
                                     String objectXmlEncoding)
             throws AuthzException;
 
+    public void enforceIngest(Context context,
+                              String pid,
+                              String format,
+                              String ingestEncoding) throws AuthzException;
+
+    @Deprecated
     public void enforceIngestObject(Context context,
                                     String pid,
                                     String format,
                                     String ingestEncoding)
             throws AuthzException;
-
+    
     public void enforceListObjectInFieldSearchResults(Context context,
                                                       String pid)
             throws AuthzException;
@@ -239,8 +252,6 @@ public interface Authorization {
 
     public void enforceListMethods(Context context, String pid, Date ofAsDate)
             throws AuthzException;
-
-    public void enforceAdminPing(Context context) throws AuthzException;
 
     public void enforceServerShutdown(Context context) throws AuthzException;
 

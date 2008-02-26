@@ -180,22 +180,6 @@
     </complexType>
   </element>
 
-  <element name="ingestObject">
-    <complexType>
-      <sequence>
-        <element name="METSXML" type="xsd:base64Binary"/>
-        <element name="logMessage" type="xsd:string"/>
-      </sequence>
-    </complexType>
-  </element>
-  <element name="ingestObjectResponse">
-    <complexType>
-      <sequence>
-        <element name="objectPID" type="xsd:string"/>
-      </sequence>
-    </complexType>
-  </element>
-
   <element name="modifyObject">
     <complexType>
       <sequence>
@@ -247,21 +231,6 @@
     </complexType>
   </element>
 
-  <element name="exportObject">
-    <complexType>
-      <sequence>
-        <element name="pid" type="xsd:string"/>
-      </sequence>
-    </complexType>
-  </element>
-  <element name="exportObjectResponse">
-    <complexType>
-      <sequence>
-        <element name="METSXML" type="xsd:base64Binary"/>
-      </sequence>
-    </complexType>
-  </element>
-
   <element name="purgeObject">
     <complexType>
       <sequence>
@@ -302,21 +271,6 @@
     <complexType>
       <sequence>
         <element name="datastreamID" type="xsd:string"/>
-      </sequence>
-    </complexType>
-  </element>
-
-  <element name="describeUser">
-    <complexType>
-      <sequence>
-        <element name="id" type="xsd:string"/>
-      </sequence>
-    </complexType>
-  </element>
-  <element name="describeUserResponse">
-    <complexType>
-      <sequence>
-        <element name="userInfo" type="fedora-types:UserInfo"/>
       </sequence>
     </complexType>
   </element>
@@ -829,16 +783,6 @@
       <element name="sampleAccessURL" nillable="true" type="xsd:string"/>
       <element name="sampleOAIURL" nillable="true" type="xsd:string"/>
       <element name="retainPIDs" nillable="true" type="fedora-types:ArrayOfString"/>
-    </sequence>
-  </complexType>
-
-  <complexType name="UserInfo">
-    <annotation>
-      <documentation>Key information about a user</documentation>
-    </annotation>
-    <sequence>
-      <element name="id" nillable="true" type="xsd:string"/>
-      <element name="administrator" type="xsd:boolean"/>
     </sequence>
   </complexType>
 

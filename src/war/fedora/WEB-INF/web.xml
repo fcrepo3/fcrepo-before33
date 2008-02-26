@@ -61,11 +61,6 @@
 		<servlet-class>fedora.server.management.GetNextPIDServlet</servlet-class>
 	</servlet>
 	<servlet>
-		<display-name>Fedora Backend Security Configuration Servlet</display-name>
-		<servlet-name>BESecurityServlet</servlet-name>
-		<servlet-class>fedora.server.management.BESecurityServlet</servlet-class>
-	</servlet>
-	<servlet>
 		<display-name>Fedora Object History Servlet</display-name>
 		<servlet-name>GetObjectHistoryServlet</servlet-name>
 		<servlet-class>fedora.server.access.GetObjectHistoryServlet</servlet-class>
@@ -134,10 +129,6 @@
 	<servlet-mapping>
 		<servlet-name>AccessServlet</servlet-name>
 		<url-pattern>/get/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>BESecurityServlet</servlet-name>
-		<url-pattern>/management/backendSecurity</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ControlServlet</servlet-name>
@@ -253,10 +244,6 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>EnforceAuthnFilter</filter-name>
-		<servlet-name>BESecurityServlet</servlet-name>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>EnforceAuthnFilter</filter-name>
 		<servlet-name>ControlServlet</servlet-name>
 	</filter-mapping>
 	<filter-mapping>
@@ -302,7 +289,6 @@
 			<description>APIM</description>
 			<url-pattern>/index.html</url-pattern>
 			<url-pattern>/getDSAuthenticated</url-pattern>
-			<url-pattern>/management/backendSecurity</url-pattern>
 			<url-pattern>/management/getNextPID</url-pattern>
 			<url-pattern>/management/upload</url-pattern>
 			<url-pattern>/services/management</url-pattern>

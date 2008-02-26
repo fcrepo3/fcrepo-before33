@@ -21,13 +21,6 @@
     <part name="parameters" element="fedora-types:ingestResponse"/>
   </message>
 
-  <message name="ingestObjectRequest">
-    <part name="parameters" element="fedora-types:ingestObject"/>
-  </message>
-  <message name="ingestObjectResponse">
-    <part name="parameters" element="fedora-types:ingestObjectResponse"/>
-  </message>
-
   <message name="modifyObjectRequest">
     <part name="parameters" element="fedora-types:modifyObject"/>
   </message>
@@ -49,13 +42,6 @@
     <part name="parameters" element="fedora-types:exportResponse"/>
   </message>
 
-  <message name="exportObjectRequest">
-    <part name="parameters" element="fedora-types:exportObject"/>
-  </message>
-  <message name="exportObjectResponse">
-    <part name="parameters" element="fedora-types:exportObjectResponse"/>
-  </message>
-
   <message name="purgeObjectRequest">
     <part name="parameters" element="fedora-types:purgeObject"/>
   </message>
@@ -68,13 +54,6 @@
   </message>
   <message name="addDatastreamResponse">
     <part name="parameters" element="fedora-types:addDatastreamResponse"/>
-  </message>
-
-  <message name="describeUserRequest">
-    <part name="parameters" element="fedora-types:describeUser"/>
-  </message>
-  <message name="describeUserResponse">
-    <part name="parameters" element="fedora-types:describeUserResponse"/>
   </message>
 
   <message name="modifyDatastreamByReferenceRequest">
@@ -173,14 +152,6 @@
       <input message="fedora-api:ingestRequest"/>
       <output message="fedora-api:ingestResponse"/>
     </operation>
-    <operation name="ingestObject">
-      <input message="fedora-api:ingestObjectRequest"/>
-      <output message="fedora-api:ingestObjectResponse"/>
-    </operation>
-    <operation name="describeUser">
-      <input message="fedora-api:describeUserRequest"/>
-      <output message="fedora-api:describeUserResponse"/>
-    </operation>
     <operation name="modifyObject">
       <input message="fedora-api:modifyObjectRequest"/>
       <output message="fedora-api:modifyObjectResponse"/>
@@ -192,10 +163,6 @@
     <operation name="export">
       <input message="fedora-api:exportRequest"/>
       <output message="fedora-api:exportResponse"/>
-    </operation>
-    <operation name="exportObject">
-      <input message="fedora-api:exportObjectRequest"/>
-      <output message="fedora-api:exportObjectResponse"/>
     </operation>
     <operation name="purgeObject">
       <input message="fedora-api:purgeObjectRequest"/>
@@ -269,24 +236,6 @@
         <soap:body use="literal"/>
       </output>
     </operation>
-    <operation name="ingestObject">
-      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#ingestObject"/>
-      <input>
-        <soap:body use="literal"/>
-      </input>
-      <output>
-        <soap:body use="literal"/>
-      </output>
-    </operation>
-    <operation name="describeUser">
-      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#describeUser"/>
-      <input>
-        <soap:body use="literal"/>
-      </input>
-      <output>
-        <soap:body use="literal"/>
-      </output>
-    </operation>
     <operation name="modifyObject">
       <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#modifyObject"/>
       <input>
@@ -307,15 +256,6 @@
     </operation>
     <operation name="export">
       <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#export"/>
-      <input>
-        <soap:body use="literal"/>
-      </input>
-      <output>
-        <soap:body use="literal"/>
-      </output>
-    </operation>
-    <operation name="exportObject">
-      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#exportObject"/>
       <input>
         <soap:body use="literal"/>
       </input>

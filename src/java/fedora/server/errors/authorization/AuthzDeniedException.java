@@ -15,7 +15,7 @@ public class AuthzDeniedException
 
     private static final long serialVersionUID = 1L;
 
-    public static final String BRIEF_DESC = "Authorized Denied";
+    public static final String BRIEF_DESC = "Authorization Denied";
 
     public AuthzDeniedException(String message) {
         super(null, message, null, null, null);

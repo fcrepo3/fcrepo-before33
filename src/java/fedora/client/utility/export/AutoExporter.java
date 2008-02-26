@@ -78,9 +78,8 @@ public class AutoExporter
 
         byte[] bytes;
         // For backward compatibility:
-        // For pre-2.0 repositories, use the "exportObject" APIM method. 
-        // Also pre-2.0 repositories will only export "metslikefedora1".
-        // For 2.0+ repositories use the "export" method which takes a format arg.
+        // Pre-2.0 repositories will only export "metslikefedora1" format.
+        // For 2.0+ repositories the format arg is sent to "export" method.
         StringTokenizer stoken =
                 new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
         int majorVersion = new Integer(stoken.nextToken()).intValue();
@@ -93,7 +92,7 @@ public class AutoExporter
                     System.out
                             .println("WARNING: Repository does not support METS Fedora Extension 1.1; exporting older format (v1.0) instead");
                 }
-                bytes = apim.exportObject(pid);
+                bytes = apim.export(pid, METS_EXT1_0.uri, exportContext);
             } else {
                 throw new IOException("You are connected to a pre-2.0 Fedora repository "
                         + "which will only export the XML format \"metslikefedora1\".");

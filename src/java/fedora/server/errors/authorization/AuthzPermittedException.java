@@ -15,7 +15,7 @@ public class AuthzPermittedException
 
     private static final long serialVersionUID = 1L;
 
-    public static final String BRIEF_DESC = "Authorized Permitted";
+    public static final String BRIEF_DESC = "Authorization Permitted";
 
     public AuthzPermittedException(String message) {
         super(null, message, null, null, null);

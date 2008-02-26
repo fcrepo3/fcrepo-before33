@@ -111,6 +111,11 @@ public class MockDOReader
         throw new RuntimeException("MockDOReader.ExportObject not implemented");
     }
 
+    public InputStream Export(String format, String exportContext)
+            throws ServerException {
+        throw new RuntimeException("MockDOReader.Export not implemented");
+    }
+
     public Datastream[] GetDatastreams(Date versDateTime, String state)
             throws ServerException {
         throw new RuntimeException("MockDOReader.GetDatastreams not implemented");

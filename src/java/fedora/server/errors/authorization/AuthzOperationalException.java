@@ -15,7 +15,7 @@ public class AuthzOperationalException
 
     private static final long serialVersionUID = 1L;
 
-    public static final String BRIEF_DESC = "Authorized Failed";
+    public static final String BRIEF_DESC = "Authorization Failed";
 
     public AuthzOperationalException(String message) {
         super(null, message, null, null, null);

@@ -39,19 +39,37 @@ class MockManagementDelegateForJournalTesting
      * Increment the count of ingested objects. If an ingest operation has been
      * requested, run it before completing this call.
      */
+    public String ingest(Context context,
+                         InputStream serialization,
+                         String logMessage,
+                         String format,
+                         String encoding,
+                         boolean newPid) throws ServerException {
+        ingestCalls++;
+        if (ingestOperation != null) {
+            ingestOperation.run();
+        }
+        return "Ingest:" + ingestCalls;
+    }
+
+    /**
+     * @deprecated in Fedora 3.0, use ingest() instead
+     */
+    @Deprecated     
     public String ingestObject(Context context,
                                InputStream serialization,
                                String logMessage,
                                String format,
                                String encoding,
                                boolean newPid) throws ServerException {
-        ingestCalls++;
-        if (ingestOperation != null) {
-            ingestOperation.run();
-        }
-        return "IngestObject:" + ingestCalls;
-    }
-
+        return ingest(context,
+                      serialization,
+                      logMessage,
+                      format,
+                      encoding,
+                      newPid);
+    }   
+    
     // -------------------------------------------------------------------------
     // Non-implemented methods.
     // -------------------------------------------------------------------------
@@ -78,15 +96,26 @@ class MockManagementDelegateForJournalTesting
 
     }
 
+    public InputStream export(Context context,
+                              String pid,
+                              String format,
+                              String exportContext,
+                              String encoding) throws ServerException {
+        throw new RuntimeException("MockManagementDelegateForJournalTesting.export not implemented"); // KLUGE
+    }
+
+    /**
+     * @deprecated in Fedora 3.0, use export() instead
+     */
+    @Deprecated    
     public InputStream exportObject(Context context,
                                     String pid,
                                     String format,
                                     String exportContext,
                                     String encoding) throws ServerException {
         throw new RuntimeException("MockManagementDelegateForJournalTesting.exportObject not implemented"); // KLUGE
-
     }
-
+    
     public Date purgeObject(Context context,
                             String pid,
                             String logMessage,
@@ -212,11 +241,6 @@ class MockManagementDelegateForJournalTesting
     public String[] getNextPID(Context context, int numPIDs, String namespace)
             throws ServerException {
         throw new RuntimeException("MockManagementDelegateForJournalTesting.getNextPID not implemented"); // KLUGE
-
-    }
-
-    public boolean adminPing(Context context) throws ServerException {
-        throw new RuntimeException("MockManagementDelegateForJournalTesting.adminPing not implemented"); // KLUGE
 
     }
 

@@ -207,15 +207,15 @@ public class DefaultManagement
 
     }
 
-    public String ingestObject(Context context,
-                               InputStream serialization,
-                               String logMessage,
-                               String format,
-                               String encoding,
-                               boolean newPid) throws ServerException {
+    public String ingest(Context context,
+                         InputStream serialization,
+                         String logMessage,
+                         String format,
+                         String encoding,
+                         boolean newPid) throws ServerException {
         DOWriter w = null;
         try {
-            LOG.debug("Entered ingestObject");
+            LOG.debug("Entered ingest");
             w =
                     m_manager.getIngestWriter(Server.USE_DEFINITIVE_STORE,
                                               context,
@@ -225,17 +225,14 @@ public class DefaultManagement
                                               newPid);
             String pid = w.GetObjectPID();
 
-            m_fedoraXACMLModule.enforceIngestObject(context,
-                                                    pid,
-                                                    format,
-                                                    encoding);
+            m_fedoraXACMLModule.enforceIngest(context, pid, format, encoding);
 
             // Only create an audit record if there is a log message to capture
             if (logMessage != null && !logMessage.equals("")) {
                 Date nowUTC = Server.getCurrentDate(context);
                 addAuditRecord(context,
                                w,
-                               "ingestObject",
+                               "ingest",
                                "",
                                logMessage,
                                nowUTC);
@@ -248,7 +245,7 @@ public class DefaultManagement
             // Log completion
             if (LOG.isInfoEnabled()) {
                 StringBuilder logMsg =
-                        new StringBuilder("Completed ingestObject(");
+                        new StringBuilder("Completed ingest(");
                 logMsg.append("objectXML");
                 logMsg.append(", format: ").append(format);
                 logMsg.append(", encoding: ").append(encoding);
@@ -258,10 +255,28 @@ public class DefaultManagement
                 LOG.info(logMsg.toString());
             }            
             
-            finishModification(w, "ingestObject");
+            finishModification(w, "ingest");
         }
     }
 
+    /**
+     * @deprecated in Fedora 3.0, use ingest() instead
+     */
+    @Deprecated
+    public String ingestObject(Context context,
+                               InputStream serialization,
+                               String logMessage,
+                               String format,
+                               String encoding,
+                               boolean newPid) throws ServerException {
+        return ingest(context,
+                      serialization,
+                      logMessage,
+                      format,
+                      encoding,
+                      newPid);
+    }    
+    
     private void finishModification(DOWriter w, String method)
             throws ServerException {        
         if (w != null) {
@@ -409,32 +424,32 @@ public class DefaultManagement
         }
     }
 
-    public InputStream exportObject(Context context,
-                                    String pid,
-                                    String format,
-                                    String exportContext,
-                                    String encoding) throws ServerException {
+    public InputStream export(Context context,
+                              String pid,
+                              String format,
+                              String exportContext,
+                              String encoding) throws ServerException {
         try {
-            LOG.debug("Entered exportObject");
+            LOG.debug("Entered export");
 
-            m_fedoraXACMLModule.enforceExportObject(context,
-                                                    pid,
-                                                    format,
-                                                    exportContext,
-                                                    encoding);
+            m_fedoraXACMLModule.enforceExport(context,
+                                              pid,
+                                              format,
+                                              exportContext,
+                                              encoding);
 
             DOReader reader =
                     m_manager.getReader(Server.USE_DEFINITIVE_STORE,
                                         context,
                                         pid);
-            InputStream instream = reader.ExportObject(format, exportContext);
+            InputStream instream = reader.Export(format, exportContext);
                         
             return instream;
         } finally {
             // Log completion
             if (LOG.isInfoEnabled()) {
                 StringBuilder logMsg =
-                        new StringBuilder("Completed exportObject(");
+                        new StringBuilder("Completed export(");
                 logMsg.append("pid: ").append(pid);
                 logMsg.append(", format: ").append(format);
                 logMsg.append(", exportContext: ").append(exportContext);
@@ -443,10 +458,22 @@ public class DefaultManagement
                 LOG.info(logMsg.toString());
             }            
             
-            LOG.debug("Exiting exportObject");
+            LOG.debug("Exiting export");
         }
     }
 
+    /**
+     * @deprecated in Fedora 3.0, use export() instead 
+     */
+    @Deprecated
+    public InputStream exportObject(Context context,
+                                    String pid,
+                                    String format,
+                                    String exportContext,
+                                    String encoding) throws ServerException {
+        return export(context, pid, format, exportContext, encoding);
+    }    
+    
     public Date purgeObject(Context context,
                             String pid,
                             String logMessage,
@@ -1851,11 +1878,6 @@ public class DefaultManagement
                 }
             }
         }
-    }
-
-    public boolean adminPing(Context context) throws ServerException {
-        m_fedoraXACMLModule.enforceAdminPing(context);
-        return true;
     }
 
     public RelationshipTuple[] getRelationships(Context context,
