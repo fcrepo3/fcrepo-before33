@@ -90,7 +90,7 @@ public interface JournalConstants {
     String METHOD_SET_DISSEMINATOR_STATE = "setDisseminatorState";
     String METHOD_PURGE_DISSEMINATOR = "purgeDisseminator";
     String METHOD_PUT_TEMP_STREAM = "putTempStream";
-    String METHOD_GET_NEXT_PID = "getNextPid";
+    String METHOD_GET_NEXT_PID = "getNextPID";
 
     // Types of arguments to the management methods, as written to the Journal
     String ARGUMENT_TYPE_STRING = "string";

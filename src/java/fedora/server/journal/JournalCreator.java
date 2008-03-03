@@ -1,6 +1,7 @@
 package fedora.server.journal;
 
 import java.io.InputStream;
+
 import java.util.Date;
 import java.util.Map;
 
@@ -12,7 +13,6 @@ import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
 import fedora.server.journal.entry.CreatorJournalEntry;
-import fedora.server.journal.helpers.JournalHelper;
 import fedora.server.management.ManagementDelegate;
 import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.Datastream;
@@ -277,24 +277,6 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     /**
      * Create a journal entry, add the arguments, and invoke the method.
      */
-    public String compareDatastreamChecksum(Context context, String pid, 
-            String dsID, Date versionDate) 
-            throws ServerException {
-        try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_SET_DATASTREAM_VERSIONABLE, context);
-            cje.addArgument(ARGUMENT_NAME_PID, pid);
-            cje.addArgument(ARGUMENT_NAME_DS_ID, dsID);
-            cje.addArgument(ARGUMENT_NAME_VERSION_DATE, versionDate);
-            return (String) cje.invokeAndClose(delegate, writer);
-        } catch (JournalException e) {
-            throw new GeneralException("Problem creating the Journal", e);
-        }
-    }
-
-    /**
-     * Create a journal entry, add the arguments, and invoke the method.
-     */
     public Date[] purgeDatastream(Context context, String pid,
             String datastreamID, Date startDT, Date endDT, String logMessage, 
             boolean force)
@@ -436,6 +418,20 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     // 
     // -------------------------------------------------------------------------
     //
+
+    /**
+     * Let the delegate do it.
+     */
+    public String compareDatastreamChecksum(Context context,
+                                            String pid,
+                                            String dsID,
+                                            Date versionDate)
+            throws ServerException {
+        return delegate.compareDatastreamChecksum(context,
+                                                  pid,
+                                                  dsID,
+                                                  versionDate);
+    }
 
     /**
      * Let the delegate do it.

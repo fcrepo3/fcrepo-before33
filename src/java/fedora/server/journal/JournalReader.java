@@ -3,7 +3,9 @@ package fedora.server.journal;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -253,6 +255,8 @@ public abstract class JournalReader extends AbstractXmlReader implements
             readIntegerArgument(reader, journalEntry, argName);
         } else if (ARGUMENT_TYPE_BOOLEAN.equals(argType)) {
             readBooleanArgument(reader, journalEntry, argName);
+        } else if (ARGUMENT_TYPE_DATE.equals(argType)) {
+            readDateArgument(reader, journalEntry, argName);
         } else if (ARGUMENT_TYPE_STREAM.equals(argType)) {
             readStreamArgument(reader, journalEntry, argName);
         } else if (ARGUMENT_TYPE_BINDING_MAP.equals(argType)) {
@@ -334,6 +338,34 @@ public abstract class JournalReader extends AbstractXmlReader implements
         }
     }
 
+
+    private void readDateArgument(XMLEventReader reader,
+                                  ConsumerJournalEntry journalEntry,
+                                  String name) throws XMLStreamException,
+            JournalException {
+        XMLEvent chars = reader.nextEvent();
+        if (!chars.isCharacters()) {
+            throw getUnexpectedEventInArgumentException(name,
+                                                        ARGUMENT_TYPE_BOOLEAN,
+                                                        journalEntry
+                                                                .getMethodName(),
+                                                        chars);
+        }
+
+        Date dateValue =
+                JournalHelper.parseDate(chars.asCharacters().getData());
+
+        XMLEvent endTag = reader.nextEvent();
+        if (isEndTagEvent(endTag, QNAME_TAG_ARGUMENT)) {
+            journalEntry.addArgument(name, dateValue);
+        } else {
+            throw getUnexpectedEventInArgumentException(name,
+                                                        ARGUMENT_TYPE_DATE,
+                                                        journalEntry
+                                                                .getMethodName(),
+                                                        endTag);
+        }
+    }
 
     /**
      * An InputStream argument appears as a Base64-encoded String. It must be

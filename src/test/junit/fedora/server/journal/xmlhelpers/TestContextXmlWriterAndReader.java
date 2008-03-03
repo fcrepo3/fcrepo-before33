@@ -55,7 +55,6 @@ public class TestContextXmlWriterAndReader extends TestCase {
         contextWriter.writeContext(context1, xmlWriter);
 
         String xmlString = xmlStringWriter.toString();
-        System.out.println(xmlString);
         XMLEventReader xmlReader = createXmlReaderAndPosition(xmlString);
 
         ContextXmlReader contextReader = new ContextXmlReader();

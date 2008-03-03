@@ -43,4 +43,11 @@ public class ConsumerJournalEntry extends JournalEntry {
         return identifier;
     }
 
+    @Override
+    public String toString() {
+        return "ConsumerJournalEntry[identifier=" + identifier
+                + ", methodName=" + getMethodName() + ", context="
+                + getContext() + "]";
+    }
+
 }

@@ -251,4 +251,37 @@ public class JournalEntryContext implements RecoveryContext {
         this.now = now;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!obj.getClass().equals(JournalEntryContext.class)) {
+            return false;
+        }
+        JournalEntryContext that = (JournalEntryContext) obj;
+
+        return (this.environmentAttributes.equals(that.environmentAttributes)
+                && this.subjectAttributes.equals(that.subjectAttributes)
+                && this.actionAttributes.equals(that.actionAttributes)
+                && this.resourceAttributes.equals(that.resourceAttributes)
+                && this.recoveryAttributes.equals(that.recoveryAttributes)
+                && this.password.equals(that.password)
+                && (this.noOp == that.noOp) && this.now.equals(that.now));
+    }
+
+    @Override
+    public int hashCode() {
+        return this.environmentAttributes.hashCode()
+                ^ this.subjectAttributes.hashCode()
+                ^ this.actionAttributes.hashCode()
+                ^ this.resourceAttributes.hashCode()
+                ^ this.environmentAttributes.hashCode()
+                ^ this.password.hashCode() ^ this.now.hashCode()
+                + (noOp ? 0 : 1);
+    }
+
 }
