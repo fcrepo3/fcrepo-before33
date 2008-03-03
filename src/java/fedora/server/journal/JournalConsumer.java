@@ -110,21 +110,6 @@ public class JournalConsumer
 
     /**
      * Reject API calls from outside while we are in recovery mode.
-     * 
-     * @deprecated in Fedora 3.0, use ingest() instead
-     */
-    @Deprecated
-    public String ingestObject(Context context,
-                               InputStream serialization,
-                               String logMessage,
-                               String format,
-                               String encoding,
-                               boolean newPid) throws ServerException {
-        throw rejectCallsFromOutsideWhileInRecoveryMode();
-    }    
-    
-    /**
-     * Reject API calls from outside while we are in recovery mode.
      */
     public Date modifyObject(Context context,
                              String pid,
@@ -162,20 +147,6 @@ public class JournalConsumer
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
-    /**
-     * Reject API calls from outside while we are in recovery mode.
-     * 
-     * @deprecated in Fedora 3.0, use export() instead
-     */
-    @Deprecated
-    public InputStream exportObject(Context context,
-                                    String pid,
-                                    String format,
-                                    String exportContext,
-                                    String encoding) throws ServerException {
-        throw rejectCallsFromOutsideWhileInRecoveryMode();
-    }    
-    
     /**
      * Reject API calls from outside while we are in recovery mode.
      */

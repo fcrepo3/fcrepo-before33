@@ -61,7 +61,6 @@ public class TestContextXmlWriterAndReader
         contextWriter.writeContext(context1, xmlWriter);
 
         String xmlString = xmlStringWriter.toString();
-        System.out.println(xmlString);
         XMLEventReader xmlReader = createXmlReaderAndPosition(xmlString);
 
         ContextXmlReader contextReader = new ContextXmlReader();
@@ -87,7 +86,6 @@ public class TestContextXmlWriterAndReader
                         + "  <multimap name=\"recovery\"></multimap>\n"
                         + "</context>\n";
 
-        System.out.println(xmlString);
         XMLEventReader xmlReader = createXmlReaderAndPosition(xmlString);
 
         ContextXmlReader contextReader = new ContextXmlReader();

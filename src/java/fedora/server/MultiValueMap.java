@@ -5,6 +5,7 @@
 
 package fedora.server;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -113,6 +114,69 @@ public class MultiValueMap {
             buffer.append("]\n");
         }
         return buffer.toString();
+    }
+
+    /**
+     * Test whether this map is equal to another similar one. We can't just test
+     * for equality of the underlying maps, since they may contain arrays of
+     * Strings as values, and those arrays are only equal if identical.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!obj.getClass().equals(MultiValueMap.class)) {
+            return false;
+        }
+        MultiValueMap that = (MultiValueMap) obj;
+
+        return locked == that.locked && equalMaps(attributes, that.attributes);
+    }
+
+    private static boolean equalMaps(Map thisMap, Map thatMap) {
+
+        /* Check for obvious differences (same number and value of keys) */
+        if (!thisMap.keySet().equals(thatMap.keySet())) {
+            return false;
+        }
+
+        Iterator theseKeys = thisMap.keySet().iterator();
+
+        /* Now do a deep compare of contents.. */
+        while (theseKeys.hasNext()) {
+            Object key = theseKeys.next();
+            if (!equalValues(thisMap.get(key), thatMap.get(key))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * If values are arrays, we need to check deep equality. If not arrays, just
+     * test simple equality. One array and one non-array? Those aren't equal.
+     */
+    private static boolean equalValues(Object thisValue, Object thatValue) {
+        if (thisValue instanceof Object[]) {
+            if (thatValue instanceof Object[]) {
+                return Arrays
+                        .equals((Object[]) thisValue, (Object[]) thatValue);
+            } else {
+                return false;
+            }
+        } else {
+            return thisValue.equals(thatValue);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return attributes.hashCode() + (locked ? 1 : 0);
     }
 
     protected static final String here;

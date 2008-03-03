@@ -161,24 +161,6 @@ public class Journaller
     }
 
     /**
-     * @deprecated in Fedora 3.0, use ingest() instead
-     */
-    @Deprecated    
-    public String ingestObject(Context context,
-                               InputStream serialization,
-                               String logMessage,
-                               String format,
-                               String encoding,
-                               boolean newPid) throws ServerException {
-        return ingest(context,
-                      serialization,
-                      logMessage,
-                      format,
-                      encoding,
-                      newPid);
-    }    
-    
-    /**
      * Delegate to the JournalWorker.
      */
     public Date modifyObject(Context context,
@@ -222,18 +204,6 @@ public class Journaller
         return worker.export(context, pid, format, exportContext, encoding);
     }
 
-    /**
-     * @deprecated in Fedora 3.0, use export() instead
-     */
-    @Deprecated    
-    public InputStream exportObject(Context context,
-                                    String pid,
-                                    String format,
-                                    String exportContext,
-                                    String encoding) throws ServerException {
-        return export(context, pid, format, exportContext, encoding);
-    }    
-    
     /**
      * Delegate to the JournalWorker.
      */

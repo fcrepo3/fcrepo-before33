@@ -143,7 +143,7 @@ public interface JournalConstants {
 
     String METHOD_PUT_TEMP_STREAM = "putTempStream";
 
-    String METHOD_GET_NEXT_PID = "getNextPid";
+    String METHOD_GET_NEXT_PID = "getNextPID";
 
     String METHOD_ADD_RELATIONSHIP = "addRelationship";
 

@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -33,11 +34,11 @@ import fedora.server.journal.xmlhelpers.ContextXmlReader;
 
 /**
  * The abstract base for all JournalReader classes.
- * 
- * <p>Each child class is responsible for providing an XMLEventReader that is
- * positioned at the beginning of a JournalEntry tag. This class will read the 
- * entry and leave the XMLEventReader positioned after the corresponding 
- * closing tag.
+ * <p>
+ * Each child class is responsible for providing an XMLEventReader that is
+ * positioned at the beginning of a JournalEntry tag. This class will read the
+ * entry and leave the XMLEventReader positioned after the corresponding closing
+ * tag.
  * 
  * @author Jim Blake
  */
@@ -263,6 +264,8 @@ public abstract class JournalReader
             readIntegerArgument(reader, journalEntry, argName);
         } else if (ARGUMENT_TYPE_BOOLEAN.equals(argType)) {
             readBooleanArgument(reader, journalEntry, argName);
+        } else if (ARGUMENT_TYPE_DATE.equals(argType)) {
+            readDateArgument(reader, journalEntry, argName);
         } else if (ARGUMENT_TYPE_STREAM.equals(argType)) {
             readStreamArgument(reader, journalEntry, argName);
         } else {
@@ -361,6 +364,34 @@ public abstract class JournalReader
         } else {
             throw getUnexpectedEventInArgumentException(name,
                                                         ARGUMENT_TYPE_BOOLEAN,
+                                                        journalEntry
+                                                                .getMethodName(),
+                                                        endTag);
+        }
+    }
+
+    private void readDateArgument(XMLEventReader reader,
+                                  ConsumerJournalEntry journalEntry,
+                                  String name) throws XMLStreamException,
+            JournalException {
+        XMLEvent chars = reader.nextEvent();
+        if (!chars.isCharacters()) {
+            throw getUnexpectedEventInArgumentException(name,
+                                                        ARGUMENT_TYPE_BOOLEAN,
+                                                        journalEntry
+                                                                .getMethodName(),
+                                                        chars);
+        }
+
+        Date dateValue =
+                JournalHelper.parseDate(chars.asCharacters().getData());
+
+        XMLEvent endTag = reader.nextEvent();
+        if (isEndTagEvent(endTag, QNAME_TAG_ARGUMENT)) {
+            journalEntry.addArgument(name, dateValue);
+        } else {
+            throw getUnexpectedEventInArgumentException(name,
+                                                        ARGUMENT_TYPE_DATE,
                                                         journalEntry
                                                                 .getMethodName(),
                                                         endTag);

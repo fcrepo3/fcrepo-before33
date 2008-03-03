@@ -230,22 +230,16 @@ public class DefaultManagement
             // Only create an audit record if there is a log message to capture
             if (logMessage != null && !logMessage.equals("")) {
                 Date nowUTC = Server.getCurrentDate(context);
-                addAuditRecord(context,
-                               w,
-                               "ingest",
-                               "",
-                               logMessage,
-                               nowUTC);
-            }            
-            
+                addAuditRecord(context, w, "ingest", "", logMessage, nowUTC);
+            }
+
             w.commit(logMessage);
-                      
+
             return pid;
         } finally {
             // Log completion
             if (LOG.isInfoEnabled()) {
-                StringBuilder logMsg =
-                        new StringBuilder("Completed ingest(");
+                StringBuilder logMsg = new StringBuilder("Completed ingest(");
                 logMsg.append("objectXML");
                 logMsg.append(", format: ").append(format);
                 logMsg.append(", encoding: ").append(encoding);
@@ -253,32 +247,14 @@ public class DefaultManagement
                 logMsg.append(", logMessage: ").append(logMessage);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
-            }            
-            
+            }
+
             finishModification(w, "ingest");
         }
     }
 
-    /**
-     * @deprecated in Fedora 3.0, use ingest() instead
-     */
-    @Deprecated
-    public String ingestObject(Context context,
-                               InputStream serialization,
-                               String logMessage,
-                               String format,
-                               String encoding,
-                               boolean newPid) throws ServerException {
-        return ingest(context,
-                      serialization,
-                      logMessage,
-                      format,
-                      encoding,
-                      newPid);
-    }    
-    
     private void finishModification(DOWriter w, String method)
-            throws ServerException {        
+            throws ServerException {
         if (w != null) {
             m_manager.releaseWriter(w);
         }
@@ -325,13 +301,13 @@ public class DefaultManagement
             if (ownerId != null) {
                 w.setOwnerId(ownerId);
             }
-            
+
             // Update audit trail
             Date nowUTC = Server.getCurrentDate(context);
             addAuditRecord(context, w, "modifyObject", "", logMessage, nowUTC);
-                       
+
             w.commit(logMessage);
-            
+
             return w.getLastModDate();
         } finally {
             // Log completion
@@ -345,8 +321,8 @@ public class DefaultManagement
                 logMsg.append(", logMessage: ").append(logMessage);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
-            }            
-            
+            }
+
             finishModification(w, "modifyObject");
         }
     }
@@ -387,11 +363,11 @@ public class DefaultManagement
             if (LOG.isInfoEnabled()) {
                 StringBuilder logMsg =
                         new StringBuilder("Completed getObjectProperties(");
-                logMsg.append("pid: ").append(pid);          
+                logMsg.append("pid: ").append(pid);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
-            }             
-            
+            }
+
             LOG.debug("Exiting getObjectProperties");
         }
     }
@@ -415,11 +391,11 @@ public class DefaultManagement
                 StringBuilder logMsg =
                         new StringBuilder("Completed getObjectXML(");
                 logMsg.append("pid: ").append(pid);
-                logMsg.append(", encoding: ").append(encoding);              
+                logMsg.append(", encoding: ").append(encoding);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
-            }            
-            
+            }
+
             LOG.debug("Exiting getObjectXML");
         }
     }
@@ -443,37 +419,24 @@ public class DefaultManagement
                                         context,
                                         pid);
             InputStream instream = reader.Export(format, exportContext);
-                        
+
             return instream;
         } finally {
             // Log completion
             if (LOG.isInfoEnabled()) {
-                StringBuilder logMsg =
-                        new StringBuilder("Completed export(");
+                StringBuilder logMsg = new StringBuilder("Completed export(");
                 logMsg.append("pid: ").append(pid);
                 logMsg.append(", format: ").append(format);
                 logMsg.append(", exportContext: ").append(exportContext);
-                logMsg.append(", encoding: ").append(encoding);                
+                logMsg.append(", encoding: ").append(encoding);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
-            }            
-            
+            }
+
             LOG.debug("Exiting export");
         }
     }
 
-    /**
-     * @deprecated in Fedora 3.0, use export() instead 
-     */
-    @Deprecated
-    public InputStream exportObject(Context context,
-                                    String pid,
-                                    String format,
-                                    String exportContext,
-                                    String encoding) throws ServerException {
-        return export(context, pid, format, exportContext, encoding);
-    }    
-    
     public Date purgeObject(Context context,
                             String pid,
                             String logMessage,
@@ -502,8 +465,8 @@ public class DefaultManagement
                 logMsg.append(", logMessage: ").append(logMessage);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
-            }            
-            
+            }
+
             finishModification(w, "purgeObject");
         }
     }
@@ -674,7 +637,7 @@ public class DefaultManagement
                     throw new ValidationException("Checksum Mismatch: " + check);
                 }
             }
-            
+
             // Update audit trail 
             Date nowUTC = Server.getCurrentDate(context);
             addAuditRecord(context,
@@ -683,12 +646,12 @@ public class DefaultManagement
                            ds.DatastreamID,
                            logMessage,
                            nowUTC);
-            
+
             // Commit the updates
             ds.DSCreateDT = nowUTC;
             w.addDatastream(ds, true);
             w.commit("Added a new datastream");
-                        
+
             return ds.DatastreamID;
         } finally {
             // Log completion
@@ -711,7 +674,7 @@ public class DefaultManagement
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
             }
-            
+
             finishModification(w, "addDatastream");
         }
     }
@@ -880,7 +843,7 @@ public class DefaultManagement
                            newds.DatastreamID,
                            logMessage,
                            nowUTC);
-            
+
             // if all went ok, check if we need to validate, then commit.
             // if (oldValidationReports != null) { // mime changed and
             // force=false
@@ -912,7 +875,7 @@ public class DefaultManagement
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
             }
-            
+
             finishModification(w, "modifyDatastreamByReference");
         }
     }
@@ -1064,7 +1027,7 @@ public class DefaultManagement
                            "modifyDatastreamByValue",
                            newds.DatastreamID,
                            logMessage,
-                           nowUTC);                        
+                           nowUTC);
 
             // if all went ok, check if we need to validate, then commit.
             // if (oldValidationReports != null) { // mime changed and
@@ -1096,8 +1059,8 @@ public class DefaultManagement
                 logMsg.append(", force: ").append(force);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
-            }            
-            
+            }
+
             finishModification(w, "modifyDatastreamByValue");
         }
     }
@@ -1180,16 +1143,16 @@ public class DefaultManagement
                                        startDT,
                                        endDT,
                                        deletedDates);
-            
+
             // Update audit trail
-            Date nowUTC = Server.getCurrentDate(context);            
+            Date nowUTC = Server.getCurrentDate(context);
             addAuditRecord(context,
                            w,
                            "purgeDatastream",
                            datastreamID,
                            logMessage,
-                           nowUTC); 
-            
+                           nowUTC);
+
             // It looks like all went ok, so commit
             w.commit(logMessage);
             // ... then give the response
@@ -1206,8 +1169,8 @@ public class DefaultManagement
                 logMsg.append(", logMessage: ").append(logMessage);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
-            }            
-            
+            }
+
             finishModification(w, "purgeDatastream");
         }
     }
@@ -1264,7 +1227,7 @@ public class DefaultManagement
 
             DOReader r =
                     m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
-                        
+
             return r.GetDatastream(datastreamID, asOfDateTime);
         } finally {
             // Log completion
@@ -1273,11 +1236,11 @@ public class DefaultManagement
                         new StringBuilder("Completed getDatastream(");
                 logMsg.append("pid: ").append(pid);
                 logMsg.append(", datastreamID: ").append(datastreamID);
-                logMsg.append(", asOfDateTime: ").append(asOfDateTime);              
+                logMsg.append(", asOfDateTime: ").append(asOfDateTime);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
-            }             
-            
+            }
+
             LOG.debug("Exiting getDatastream");
         }
     }
@@ -1296,7 +1259,7 @@ public class DefaultManagement
 
             DOReader r =
                     m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
-                                  
+
             return r.GetDatastreams(asOfDateTime, state);
         } finally {
             // Log completion
@@ -1304,12 +1267,12 @@ public class DefaultManagement
                 StringBuilder logMsg =
                         new StringBuilder("Completed getDatastreams(");
                 logMsg.append("pid: ").append(pid);
-                logMsg.append(", asOfDateTime: ").append(asOfDateTime);              
+                logMsg.append(", asOfDateTime: ").append(asOfDateTime);
                 logMsg.append(", state: ").append(state);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
             }
-            
+
             LOG.debug("Exiting getDatastreams");
         }
     }
@@ -1339,19 +1302,19 @@ public class DefaultManagement
             for (int i = 0; i < versions.length; i++) {
                 out[i] = versions[versions.length - 1 - i];
             }
-                       
+
             return out;
-        } finally {            
+        } finally {
             // Log completion
             if (LOG.isInfoEnabled()) {
                 StringBuilder logMsg =
                         new StringBuilder("Completed getDatastreamHistory(");
                 logMsg.append("pid: ").append(pid);
-                logMsg.append(", datastreamID: ").append(datastreamID);        
+                logMsg.append(", datastreamID: ").append(datastreamID);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
-            }            
-            
+            }
+
             LOG.debug("Exiting getDatastreamHistory");
         }
     }
@@ -1406,11 +1369,11 @@ public class DefaultManagement
                 StringBuilder logMsg =
                         new StringBuilder("Completed getNextPID(");
                 logMsg.append("numPIDs: ").append(numPIDs);
-                logMsg.append(", namespace: ").append(namespace);              
+                logMsg.append(", namespace: ").append(namespace);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
-            }            
-            
+            }
+
             LOG.debug("Exiting getNextPID");
         }
     }
@@ -1544,14 +1507,14 @@ public class DefaultManagement
             w.setDatastreamState(datastreamID, dsState);
 
             // Update audit trail
-            Date nowUTC = Server.getCurrentDate(context); 
+            Date nowUTC = Server.getCurrentDate(context);
             addAuditRecord(context,
                            w,
                            "setDatastreamState",
                            datastreamID,
                            logMessage,
-                           nowUTC);             
-            
+                           nowUTC);
+
             // if all went ok, commit
             w.commit(logMessage);
             return nowUTC;
@@ -1563,11 +1526,11 @@ public class DefaultManagement
                 logMsg.append("pid: ").append(pid);
                 logMsg.append(", datastreamID: ").append(datastreamID);
                 logMsg.append(", dsState: ").append(dsState);
-                logMsg.append(", logMessage: ").append(logMessage);              
+                logMsg.append(", logMessage: ").append(logMessage);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
-            }             
-            
+            }
+
             finishModification(w, "setDatastreamState");
         }
     }
@@ -1593,14 +1556,14 @@ public class DefaultManagement
             w.setDatastreamVersionable(datastreamID, versionable);
 
             // Update audit trail
-            Date nowUTC = Server.getCurrentDate(context);             
+            Date nowUTC = Server.getCurrentDate(context);
             addAuditRecord(context,
                            w,
                            "setDatastreamVersionable",
                            datastreamID,
                            logMessage,
-                           nowUTC);             
-            
+                           nowUTC);
+
             // if all went ok, commit
             w.commit(logMessage);
             return nowUTC;
@@ -1612,11 +1575,11 @@ public class DefaultManagement
                 logMsg.append("pid: ").append(pid);
                 logMsg.append(", datastreamID: ").append(datastreamID);
                 logMsg.append(", versionable: ").append(versionable);
-                logMsg.append(", logMessage: ").append(logMessage);              
+                logMsg.append(", logMessage: ").append(logMessage);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
-            }            
-            
+            }
+
             finishModification(w, "setDatastreamVersionable");
         }
     }
@@ -1643,7 +1606,7 @@ public class DefaultManagement
             LOG.debug("Got Datastream, comparing checksum");
             boolean check = ds.compareChecksum();
             LOG.debug("compared checksum = " + check);
-                        
+
             return check ? ds.getChecksum() : "Checksum validation error";
         } finally {
             // Log completion
@@ -1655,8 +1618,8 @@ public class DefaultManagement
                 logMsg.append(", versionDate: ").append(versionDate);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
-            }            
-            
+            }
+
             LOG.debug("Exiting compareDatastreamChecksum");
         }
     }
@@ -1906,11 +1869,11 @@ public class DefaultManagement
                 StringBuilder logMsg =
                         new StringBuilder("Completed getRelationships(");
                 logMsg.append("pid: ").append(pid);
-                logMsg.append(", relationship: ").append(relationship);              
+                logMsg.append(", relationship: ").append(relationship);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
-            }             
-            
+            }
+
             LOG.debug("Exiting getRelationships");
         }
     }
@@ -1943,7 +1906,7 @@ public class DefaultManagement
             if (added) {
                 w.commit(null);
             }
-                        
+
             return added;
         } finally {
             // Log completion
@@ -1957,8 +1920,8 @@ public class DefaultManagement
                 logMsg.append(", datatype: ").append(datatype);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
-            }            
-            
+            }
+
             finishModification(w, "addRelationship");
         }
     }
@@ -2000,17 +1963,17 @@ public class DefaultManagement
                 logMsg.append(", relationship: ").append(relationship);
                 logMsg.append(", object: ").append(object);
                 logMsg.append(", isLiteral: ").append(isLiteral);
-                logMsg.append(", datatype: ").append(datatype);                
+                logMsg.append(", datatype: ").append(datatype);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
-            }             
-            
+            }
+
             finishModification(w, "purgeRelationship");
         }
     }
-    
+
     /**
-     * Creates a new audit record and adds it to the digital object audit trail. 
+     * Creates a new audit record and adds it to the digital object audit trail.
      */
     private void addAuditRecord(Context context,
                                 DOWriter w,

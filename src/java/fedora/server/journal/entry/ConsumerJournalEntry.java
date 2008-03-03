@@ -12,9 +12,9 @@ import fedora.server.management.ManagementDelegate;
 
 /**
  * The JournalEntry to use when consuming a journal file.
- * 
- * <p>Before invoking a method, write the entry to the recovery log. After 
- * invoking the method, log a completion message.
+ * <p>
+ * Before invoking a method, write the entry to the recovery log. After invoking
+ * the method, log a completion message.
  * 
  * @author Jim Blake
  */
@@ -41,6 +41,13 @@ public class ConsumerJournalEntry
 
     public String getIdentifier() {
         return identifier;
+    }
+
+    @Override
+    public String toString() {
+        return "ConsumerJournalEntry[identifier=" + identifier
+                + ", methodName=" + getMethodName() + ", context="
+                + getContext() + "]";
     }
 
 }

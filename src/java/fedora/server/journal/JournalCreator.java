@@ -25,8 +25,8 @@ import fedora.server.storage.types.RelationshipTuple;
 
 /**
  * This is the worker class to use in Journalling mode (normal mode).
- * 
- * <p>Each time a "writing" Management method is called, create a
+ * <p>
+ * Each time a "writing" Management method is called, create a
  * CreatorJournalEntry and ask it to invoke the method on the
  * ManagementDelegate. If a "read-only" Management method is called, just pass
  * it along to the ManagementDelegate.
@@ -112,24 +112,6 @@ public class JournalCreator
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
-    }
-    
-    /**
-     * @deprecated in Fedora 3.0, use ingest() instead
-     */
-    @Deprecated
-    public String ingestObject(Context context,
-                               InputStream serialization,
-                               String logMessage,
-                               String format,
-                               String encoding,
-                               boolean newPid) throws ServerException {
-        return ingest(context,
-                      serialization,
-                      logMessage,
-                      format,
-                      encoding,
-                      newPid);
     }
 
     /**
@@ -334,27 +316,6 @@ public class JournalCreator
     /**
      * Create a journal entry, add the arguments, and invoke the method.
      */
-    public String compareDatastreamChecksum(Context context,
-                                            String pid,
-                                            String dsID,
-                                            Date versionDate)
-            throws ServerException {
-        try {
-            CreatorJournalEntry cje =
-                    new CreatorJournalEntry(METHOD_SET_DATASTREAM_VERSIONABLE,
-                                            context);
-            cje.addArgument(ARGUMENT_NAME_PID, pid);
-            cje.addArgument(ARGUMENT_NAME_DS_ID, dsID);
-            cje.addArgument(ARGUMENT_NAME_VERSION_DATE, versionDate);
-            return (String) cje.invokeAndClose(delegate, writer);
-        } catch (JournalException e) {
-            throw new GeneralException("Problem creating the Journal", e);
-        }
-    }
-
-    /**
-     * Create a journal entry, add the arguments, and invoke the method.
-     */
     public Date[] purgeDatastream(Context context,
                                   String pid,
                                   String datastreamID,
@@ -459,6 +420,20 @@ public class JournalCreator
     /**
      * Let the delegate do it.
      */
+    public String compareDatastreamChecksum(Context context,
+                                            String pid,
+                                            String dsID,
+                                            Date versionDate)
+            throws ServerException {
+        return delegate.compareDatastreamChecksum(context,
+                                                  pid,
+                                                  dsID,
+                                                  versionDate);
+    }
+
+    /**
+     * Let the delegate do it.
+     */
     public Property[] getObjectProperties(Context context, String pid)
             throws ServerException {
         return delegate.getObjectProperties(context, pid);
@@ -493,18 +468,6 @@ public class JournalCreator
         return delegate.export(context, pid, format, exportContext, encoding);
     }
 
-    /**
-     * @deprecated in Fedora 3.0, use export() instead
-     */
-    @Deprecated
-    public InputStream exportObject(Context context,
-                                    String pid,
-                                    String format,
-                                    String exportContext,
-                                    String encoding) throws ServerException {
-        return export(context, pid, format, exportContext, encoding);
-    }
-    
     /**
      * Let the delegate do it.
      */

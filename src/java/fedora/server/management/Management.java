@@ -22,23 +22,12 @@ import fedora.server.storage.types.RelationshipTuple;
  */
 public interface Management {
 
-	public String ingest(Context context,
+    public String ingest(Context context,
                          InputStream serialization,
                          String logMessage,
                          String format,
                          String encoding,
                          boolean newPid) throws ServerException;
-
-    /**
-     * @deprecated in Fedora 3.0, use ingest() instead 
-     */
-	@Deprecated
-    public String ingestObject(Context context,
-                               InputStream serialization,
-                               String logMessage,
-                               String format,
-                               String encoding,
-                               boolean newPid) throws ServerException;
 
     public Date modifyObject(Context context,
                              String pid,
@@ -54,20 +43,10 @@ public interface Management {
             throws ServerException;
 
     public InputStream export(Context context,
-                                    String pid,
-                                    String format,
-                                    String exportContext,
-                                    String encoding) throws ServerException;   
-    
-    /**
-     * @deprecated in Fedora 3.0, use export() instead 
-     */
-    @Deprecated
-    public InputStream exportObject(Context context,
-                                    String pid,
-                                    String format,
-                                    String exportContext,
-                                    String encoding) throws ServerException;
+                              String pid,
+                              String format,
+                              String exportContext,
+                              String encoding) throws ServerException;
 
     public Date purgeObject(Context context,
                             String pid,

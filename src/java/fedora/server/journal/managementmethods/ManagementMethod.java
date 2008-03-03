@@ -12,8 +12,15 @@ import fedora.server.journal.entry.JournalEntry;
 import fedora.server.management.ManagementDelegate;
 
 /**
- * Abstract base class for the classes that act as adapters to the 
- * Management methods.
+ * <p>
+ * Abstract base class for the classes that act as adapters to the Management
+ * methods.
+ * </p>
+ * <p>
+ * An adapter is needed for each method that modifies the contents of the
+ * repository in any way. If a method is read-only, it will not be written to
+ * the journal, and so doesn't require an adapter class.
+ * </p>
  * 
  * @author Jim Blake
  */
@@ -43,27 +50,14 @@ public abstract class ManagementMethod
             return new SetDatastreamVersionableMethod(parent);
         } else if (METHOD_PURGE_DATASTREAM.equals(methodName)) {
             return new PurgeDatastreamMethod(parent);
-        }
-        //        else if (METHOD_ADD_DISSEMINATOR.equals(methodName)) 
-        //        {
-        //            return new AddDisseminatorMethod(parent);
-        //        } 
-        //        else if (METHOD_MODIFY_DISSEMINATOR.equals(methodName)) 
-        //        {
-        //            return new ModifyDisseminatorMethod(parent);
-        //        } 
-        //        else if (METHOD_SET_DISSEMINATOR_STATE.equals(methodName)) 
-        //        {
-        //            return new SetDisseminatorStateMethod(parent);
-        //        } 
-        //        else if (METHOD_PURGE_DISSEMINATOR.equals(methodName)) 
-        //        {
-        //            return new PurgeDisseminatorMethod(parent);
-        //        } 
-        else if (METHOD_PUT_TEMP_STREAM.equals(methodName)) {
+        } else if (METHOD_PURGE_RELATIONSHIP.equals(methodName)) {
+            return new PurgeRelationshipMethod(parent);
+        } else if (METHOD_PUT_TEMP_STREAM.equals(methodName)) {
             return new PutTempStreamMethod(parent);
         } else if (METHOD_GET_NEXT_PID.equals(methodName)) {
             return new GetNextPidMethod(parent);
+        } else if (METHOD_ADD_RELATIONSHIP.equals(methodName)) {
+            return new AddRelationshipMethod(parent);
         } else {
             throw new IllegalArgumentException("Unrecognized method name: '"
                     + methodName + "'");

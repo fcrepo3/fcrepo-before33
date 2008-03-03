@@ -8,7 +8,7 @@ import fedora.server.errors.ServerException;
 import fedora.server.journal.ServerInterface;
 import fedora.server.management.ManagementDelegate;
 
-class MockServerForJournalTesting
+public class MockServerForJournalTesting
         implements ServerInterface {
 
     // -------------------------------------------------------------------------
@@ -17,13 +17,14 @@ class MockServerForJournalTesting
 
     private final String hashValue;
 
-    private final List logCache = new ArrayList();
+    private final List<String> logCache = new ArrayList<String>();
 
     private final ManagementDelegate managementDelegate;
 
-    public MockServerForJournalTesting(String hashValue) {
+    public MockServerForJournalTesting(ManagementDelegate managementDelegate,
+                                       String hashValue) {
         this.hashValue = hashValue;
-        managementDelegate = new MockManagementDelegateForJournalTesting();
+        this.managementDelegate = managementDelegate;
     }
 
     // -------------------------------------------------------------------------

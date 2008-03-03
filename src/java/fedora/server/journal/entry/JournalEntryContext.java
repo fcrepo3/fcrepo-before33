@@ -256,4 +256,33 @@ public class JournalEntryContext
         this.now = now;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!obj.getClass().equals(JournalEntryContext.class)) {
+            return false;
+        }
+        JournalEntryContext that = (JournalEntryContext) obj;
+
+        return environmentAttributes.equals(that.environmentAttributes)
+                && subjectAttributes.equals(that.subjectAttributes)
+                && actionAttributes.equals(that.actionAttributes)
+                && resourceAttributes.equals(that.resourceAttributes)
+                && recoveryAttributes.equals(that.recoveryAttributes)
+                && password.equals(that.password) && noOp == that.noOp
+                && now.equals(that.now);
+    }
+
+    @Override
+    public int hashCode() {
+        return environmentAttributes.hashCode() ^ subjectAttributes.hashCode()
+                ^ actionAttributes.hashCode() ^ resourceAttributes.hashCode()
+                ^ environmentAttributes.hashCode() ^ password.hashCode()
+                ^ now.hashCode() + (noOp ? 0 : 1);
+    }
 }
