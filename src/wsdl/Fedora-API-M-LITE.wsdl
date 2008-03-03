@@ -34,6 +34,17 @@
 			<documentation>The getNextPID response contains a list of the requested next available pids.</documentation>
 		</part>
 	</message>
+	
+	<message name="uploadRequest">
+    <part name="file" type="xsd:base64Binary">
+      <documentation>A multipart file, which must be sent via an HTTP POST.</documentation>
+    </part>
+  </message>
+  <message name="uploadResponse">
+    <part name="response" type="xsd:string">
+      <documentation>The upload response contains a temporary URI which may be passed into other management APIs for object ingestion or datastream addition or update.</documentation>
+    </part>
+  </message>
 
 	<portType name="Fedora-API-M-LITE">
 		<documentation>  This is a simple URI-oriented service definition for the Management service 
@@ -41,9 +52,12 @@
 			Fedora Management web service (in contrast to a traditional SOAP web service definition).  
 			This means that we define a simple URL syntax that can be used to issue service requests.
 			API-M-LITE does not provide service bindings for all of the operations defined in Fedora's full
-			Management service (API-M).  API-M-LITE currently only provides bindings for getNextPID. 
-			The result of the getNextPID request is either HTML or XML, whichever the client requested. 
-			 When URL syntax is shown below, green indicates required parts and red indicates optional parts.
+			Management service (API-M).  API-M-LITE currently only provides bindings for getNextPID
+			and upload services. The result of the getNextPID request is either HTML or XML, whichever the 
+			client requested. The result of upload is a URI string, which can be used as a file URI within
+			subsequent API-M calls. 
+			 
+			When URL syntax is shown below, green indicates required parts and red indicates optional parts.
 		</documentation>
 		<operation name="getNextPID">
 			<documentation>
@@ -61,6 +75,17 @@
 			<input message="fedora-api:getNextPIDRequest"/>
 			<output message="fedora-api:getNextPIDResponse"/>
 		</operation>
+    <operation name="upload">
+ 			<documentation>
+ 			  <p>Uploads the given file to the Fedora repository server. This file can be used to create new objects or datastreams by
+ 			  passing the returned URI into an API-M ingest, create, or update method. Note that the uploaded file is only available
+ 			  temporarily, so beware of timing problems! The default timeout is five minutes. You can set a higher value by adding 
+ 			  the "uploadStorageMinutes" param to your fedora.fcfg. This parameter goes in the Management module's configuration section, 
+ 			  and specifies the number of minutes after which uploaded content will be automatically deleted if not used.</p>
+			</documentation> 			
+      <input message="fedora-api:uploadRequest"/>
+      <output message="fedora-api:uploadResponse"/>
+    </operation>		
 	</portType>
 
 	<binding name="Fedora-API-M-LITE-Binding" type="fedora-api:Fedora-API-M-LITE">
@@ -69,23 +94,21 @@
 			<http:operation location="getNextPID[?numPids=(numPids)&amp;pidNamespace=(pidNamespace)&amp;xml=(boolean)]"/>
 			<input>
 				<http:urlReplacement/>
-				<documentation>  This URL replacement syntax is used to request a description
-					of the Fedora repository server.  The request will return key metadata elements
-					about the repository server including repository name, version, baseURL,
-					PID pidNamespace, and sample request URLs.  When putting together a proper URL, 
-					the client should replace parenthesized parts of the operation location URL with actual values.  
-					For example, "(boolean)" 	should be replaced with a "true" or "false" to indicate
-					whether the repository information should be returned as XML (alternative is HTML).
-					Parts of the operation location URL that are surrounded by brackets ("[ ]") are optional.  
+				<documentation>  This URL replacement syntax is used to request the next available PID(s) from the
+				  Fedora repository server.  The request will return the number of PIDs requested in the given
+				  PID namespace. When putting together a proper URL, the client should replace parenthesized parts 
+				  of the operation location URL with actual values. For example, "(numPids)" 	should be replaced with a 
+				  number to indicate the number of PIDs to return. The parts of the operation location URL that are 
+				  surrounded by brackets ("[ ]") are optional.  
 					To construct a proper URL the client must replace the following variables with real information:
-					      - numPids : an optional parameter. Client can specify the number of PIDs to request as a string
-					        representing a positive integer. If omitted, the value defaults to "1".
-					      - pidNamespace : an optional parameter. Client can specifiy the namespace of the requested PIDs
-					        as a string. If omitted, the value defaults to the namespace defined in the fedora.fcfg file.
+					  - numPids : an optional parameter. Client can specify the number of PIDs to request as a string
+					      representing a positive integer. If omitted, the value defaults to "1".
+					  - pidNamespace : an optional parameter. Client can specifiy the namespace of the requested PIDs
+					      as a string. If omitted, the value defaults to the namespace defined in the fedora.fcfg file.
 					 	- xml : an optional parameter.  Client can specify that the output of 
-					 	  the operation be HTML or XML.   A value of "true" indicates a return type of 
-					 	  text/xml; the absence of the xml parameter or a value of "false" indicates 
-					 	  format is to be text/html.
+					 	    the operation be HTML or XML.   A value of "true" indicates a return type of 
+					 	    text/xml; the absence of the xml parameter or a value of "false" indicates 
+					 	    format is to be text/html.
 				</documentation>
 			</input>
 			<output>
@@ -93,6 +116,24 @@
 				<mime:content type="text/html"/>
 			</output>
 		</operation>
+		
+		<http:binding verb="POST"/>
+		<operation name="upload">
+			<http:operation location="upload?file=(file)"/>
+			<input>
+				<http:urlReplacement/>
+				<documentation>  This URL replacement syntax is used to request that a file be uploaded to
+					the Fedora repository server.  The request will return a temporary URI value which has been
+					assigned to the file by the repository. This URI can be used as a reference to the uploaded
+					file within other API calls. When putting together a proper URL, the client should replace 
+					parenthesized parts of the operation location URL with actual values, i.e. "(file)" should be 
+					replaced with a multipart file to upload.
+				</documentation>
+			</input>
+			<output>
+				<mime:content type="text/plain"/>
+			</output>
+		</operation>		
 	</binding>
 
 	<service name="Fedora-API-M-LITE">
