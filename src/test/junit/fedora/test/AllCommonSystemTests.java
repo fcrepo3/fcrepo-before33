@@ -10,6 +10,7 @@ import org.junit.runners.Suite;
 	fedora.test.api.TestAPIM.class,
 	fedora.test.api.TestAPIMLite.class,
 	fedora.test.api.TestHTTPStatusCodes.class,
+    fedora.test.api.TestManyDisseminations.class,
 	fedora.test.integration.TestCommandLineUtilities.class
 })
 
@@ -26,6 +27,7 @@ public class AllCommonSystemTests {
         suite.addTest(fedora.test.api.TestAPIM.suite());
         suite.addTest(fedora.test.api.TestAPIMLite.suite());
         suite.addTest(fedora.test.api.TestHTTPStatusCodes.suite());
+        suite.addTest(fedora.test.api.TestManyDisseminations.suite());
         suite.addTest(fedora.test.integration.TestCommandLineUtilities.suite());
 
         return suite;

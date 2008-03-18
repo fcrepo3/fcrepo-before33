@@ -1,6 +1,9 @@
 package fedora.server.storage.types;
 
+import java.io.IOException;
 import java.io.InputStream;
+
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -12,6 +15,8 @@ import java.io.InputStream;
  */
 public class MIMETypedStream
 {
+    private static final Logger LOG = Logger.getLogger(MIMETypedStream.class);
+    
     public String MIMEType;
     private InputStream stream;
     public Property[] header;
@@ -37,5 +42,31 @@ public class MIMETypedStream
     public void setStream(InputStream stream)
     {
       this.stream = stream;
+    }
+   
+    /**
+     * Closes the underlying stream if it's not already closed.
+     * 
+     * In the event of an error, a warning will be logged.
+     */
+    public void close() {
+        if (this.stream != null) {
+            try {
+                this.stream.close();
+                this.stream = null;
+            } catch (IOException e) {
+                LOG.warn("Error closing stream", e);
+            }
+        }
+    }
+   
+    /**
+     * Ensures the underlying stream is closed at garbage-collection time.
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public void finalize() {
+        close();
     }
 }
