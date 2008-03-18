@@ -1,0 +1,64 @@
+For information about this file and how it is maintained, see
+https://fedora-commons.svn.sourceforge.net/svnroot/fedora-commons/fedora/trunk/src/doc/devdocs/CommittersGuide.odt
+
+Active Committers
+-----------------
+Aaron Birkland (birkland)
+Bill Branan    (bbranan)
+Chris Wilper   (cwilper)
+Eddie Shin     (pangloss)
+Jim Blake      (j2blake)
+
+Branch History
+--------------
+dev-146877
+  Created   : 2008/03/04 from trunk r6681
+  Developer : Jim Blake
+  Reviewer  : Bill Brenan
+
+dev-146699
+  Created   : 2008/02/29 from trunk r6681
+  Developer : Jim Blake
+  Reviewer  : Bill Branan
+
+dev-145413
+  Created   : 2008/02/26 from trunk r6681
+  Developer : Chris Wilper
+  Reviewer  : Eddie Shin
+  Merged    : 2008/03/18 into trunk r6797
+
+dev-146597
+  Created   : 2008/02/22 from maintanance-2.2 r6638
+  Developer : Jim Blake
+  Reviewer  : Aaron Birkland
+  Merged    : 2008/03/03 into maintenance-2.2 r6726
+
+dev-146267
+  Created   : 2008/02/13 from maintanance-2.2 r6594
+  Developer : Aaron Birkland
+  Reviewer  : Chris Wilper
+  Merged    : 2008/02/19 into trunk r6618
+
+dev-146271
+  Created   : 2008/02/13 from trunk r6588
+  Developer : Jim Blake
+  Reviewer  : Aaron Birkland
+  Merged    : 2008/03/03 into trunk r6729
+
+dev-146232
+  Created   : 2008/02/12 from trunk r6557
+  Developer : Bill Branan
+  Reviewer  : Chris Wilper
+  Merged    : 2008/02/26 into trunk r6681
+  
+dev-146083
+  Created   : 2008/02/06 from trunk r6566
+  Developer : Aaron Birkland
+  Reviewer  : Chris Wilper
+  Merged    : 2008/02/19 into trunk r6619
+
+dev-145412
+  Created   : 2008/01/10 from maintenance-2.2 r6474
+  Developer : Chris Wilper
+  Reviewer  : Eddie Shin
+  Merged    : 2008/03/18 into maintenance-2.2 r6795

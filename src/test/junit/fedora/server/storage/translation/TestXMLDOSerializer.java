@@ -77,7 +77,7 @@ public abstract class TestXMLDOSerializer
                 unicodeContent.length + OPEN.length() + CLOSE.length());
         
         for (int i = 0; i < unicodeContent.length; i++) {
-            unicodeContent[i] = 'ℏ';
+            unicodeContent[i] = '\u0e57'; // Thai digit 7
         }
         
         payload.append(OPEN);
@@ -93,7 +93,7 @@ public abstract class TestXMLDOSerializer
         obj.datastreams(dsID1).add(ds1);
         
         String serializedContent = doSerialize(obj, SERIALIZE_STORAGE_INTERNAL)
-            .getElementsByTagName(TAG).item(0).getTextContent();
+            .getElementsByTagName(TAG).item(0).getFirstChild().getNodeValue();
         
         assertTrue("UTF-8 chars are not serialized properly!", 
                 new String(unicodeContent).equals(serializedContent));

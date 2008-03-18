@@ -631,8 +631,7 @@ public class FedoraAccessServlet
                                                     PID,
                                                     dsID,
                                                     asOfDateTime);
-        if (dissemination != null) {
-
+        try {
             // testing to see what's in request header that might be of interest
             if (LOG.isDebugEnabled()) {
                 for (Enumeration e = request.getHeaderNames(); e
@@ -644,8 +643,8 @@ public class FedoraAccessServlet
                         sb.append((String) headerValues.nextElement());
                     }
                     String value = sb.toString();
-                    LOG.debug("FEDORASERVLET REQUEST HEADER CONTAINED: " + name
-                            + " : " + value);
+                    LOG.debug("FEDORASERVLET REQUEST HEADER CONTAINED: "
+                            + name + " : " + value);
                 }
             }
 
@@ -653,21 +652,16 @@ public class FedoraAccessServlet
             // Return MIMETypedStream back to browser client
             if (dissemination.MIMEType
                     .equalsIgnoreCase("application/fedora-redirect")) {
-                // A MIME type of application/fedora-redirect signals that the
-                // MIMETypedStream returned from the dissemination is a special
-                // Fedora-specific MIME type. In this case, the Fedora server
-                // will
-                // not proxy the datastream, but instead perform a simple
-                // redirect to
-                // the URL contained within the body of the MIMETypedStream.
-                // This
-                // special MIME type is used primarily for streaming media where
-                // it
-                // is more efficient to stream the data directly between the
-                // streaming
-                // server and the browser client rather than proxy it through
-                // the
-                // Fedora server.
+                // A MIME type of application/fedora-redirect signals that 
+                // the MIMETypedStream returned from the dissemination is 
+                // a special Fedora-specific MIME type. In this case, the 
+                // Fedora server will not proxy the datastream, but 
+                // instead perform a simple redirect to the URL contained 
+                // within the body of the MIMETypedStream. This special 
+                // MIME type is used primarily for streaming media where
+                // it is more efficient to stream the data directly 
+                // between the streaming server and the browser client 
+                // rather than proxy it through the Fedora server.
 
                 BufferedReader br =
                         new BufferedReader(new InputStreamReader(dissemination
@@ -686,17 +680,16 @@ public class FedoraAccessServlet
                 if (headerArray != null) {
                     for (int i = 0; i < headerArray.length; i++) {
                         if (headerArray[i].name != null
-                                && !headerArray[i].name
-                                        .equalsIgnoreCase("transfer-encoding")
-                                && !headerArray[i].name
-                                        .equalsIgnoreCase("content-type")) {
+                                && !headerArray[i].name.
+                                equalsIgnoreCase("transfer-encoding")
+                                && !headerArray[i].name.
+                                equalsIgnoreCase("content-type")) {
                             response.addHeader(headerArray[i].name,
                                                headerArray[i].value);
-                            LOG
-                                    .debug("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "
-                                            + headerArray[i].name
-                                            + " : "
-                                            + headerArray[i].value);
+                            LOG.debug("THIS WAS ADDED TO FEDORASERVLET "
+                                      + "RESPONSE HEADER FROM ORIGINATING "
+                                      + "PROVIDER " + headerArray[i].name
+                                      + " : " + headerArray[i].value);
                         }
                     }
                 }
@@ -715,10 +708,8 @@ public class FedoraAccessServlet
                 out.close();
                 LOG.debug("Finished reading dissemination stream");
             }
-
-        } else {
-            // Dissemination request failed; echo back request parameter.
-            LOG.error("No datastream dissemination result was returned");
+        } finally {
+            dissemination.close();
         }
     }
 
@@ -768,8 +759,7 @@ public class FedoraAccessServlet
                                           userParms,
                                           asOfDateTime);
         out = response.getOutputStream();
-        if (dissemination != null) {
-
+        try {
             // testing to see what's in request header that might be of interest
             if (LOG.isDebugEnabled()) {
                 for (Enumeration e = request.getHeaderNames(); e
@@ -781,8 +771,8 @@ public class FedoraAccessServlet
                         sb.append((String) headerValues.nextElement());
                     }
                     String value = sb.toString();
-                    LOG.debug("FEDORASERVLET REQUEST HEADER CONTAINED: " + name
-                            + " : " + value);
+                    LOG.debug("FEDORASERVLET REQUEST HEADER CONTAINED: "
+                            + name + " : " + value);
                 }
             }
 
@@ -790,21 +780,16 @@ public class FedoraAccessServlet
             // Return MIMETypedStream back to browser client
             if (dissemination.MIMEType
                     .equalsIgnoreCase("application/fedora-redirect")) {
-                // A MIME type of application/fedora-redirect signals that the
-                // MIMETypedStream returned from the dissemination is a special
-                // Fedora-specific MIME type. In this case, the Fedora server
-                // will
-                // not proxy the datastream, but instead perform a simple
-                // redirect to
-                // the URL contained within the body of the MIMETypedStream.
-                // This
-                // special MIME type is used primarily for streaming media where
-                // it
-                // is more efficient to stream the data directly between the
-                // streaming
-                // server and the browser client rather than proxy it through
-                // the
-                // Fedora server.
+                // A MIME type of application/fedora-redirect signals that 
+                // the MIMETypedStream returned from the dissemination is 
+                // a special Fedora-specific MIME type. In this case, the 
+                // Fedora server will not proxy the datastream, but 
+                // instead perform a simple redirect to the URL contained 
+                // within the body of the MIMETypedStream. This special 
+                // MIME type is used primarily for streaming media where
+                // it is more efficient to stream the data directly between
+                // the streaming server and the browser client rather than 
+                // proxy it through the Fedora server.
 
                 BufferedReader br =
                         new BufferedReader(new InputStreamReader(dissemination
@@ -817,7 +802,6 @@ public class FedoraAccessServlet
 
                 response.sendRedirect(sb.toString());
             } else {
-
                 response.setContentType(dissemination.MIMEType);
                 Property[] headerArray = dissemination.header;
                 if (headerArray != null) {
@@ -829,11 +813,10 @@ public class FedoraAccessServlet
                                         .equalsIgnoreCase("content-type")) {
                             response.addHeader(headerArray[i].name,
                                                headerArray[i].value);
-                            LOG
-                                    .debug("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "
-                                            + headerArray[i].name
-                                            + " : "
-                                            + headerArray[i].value);
+                            LOG.debug("THIS WAS ADDED TO FEDORASERVLET "
+                                      + "RESPONSE HEADER FROM ORIGINATING "
+                                      + "PROVIDER " + headerArray[i].name
+                                      + " : " + headerArray[i].value);
                         }
                     }
                 }
@@ -851,8 +834,8 @@ public class FedoraAccessServlet
                 out.close();
                 LOG.debug("Finished reading dissemination stream");
             }
-        } else {
-            throw new GeneralException("No dissemination result returned");
+        } finally {
+            dissemination.close();
         }
     }
 
