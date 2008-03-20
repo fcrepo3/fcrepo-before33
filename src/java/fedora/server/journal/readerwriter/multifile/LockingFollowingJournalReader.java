@@ -1,7 +1,9 @@
+
 package fedora.server.journal.readerwriter.multifile;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.util.Map;
 
 import fedora.server.journal.JournalException;
@@ -10,7 +12,6 @@ import fedora.server.journal.helpers.ParameterHelper;
 import fedora.server.journal.recoverylog.JournalRecoveryLog;
 
 /**
- * 
  * <p>
  * <b>Title:</b> LockingFollowingJournalReader.java
  * </p>
@@ -30,10 +31,13 @@ import fedora.server.journal.recoverylog.JournalRecoveryLog;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: LockingFollowingJournalReader.java 5025 2006-09-01 22:08:17
+ *          +0000 (Fri, 01 Sep 2006) cwilper $
  */
 
-public class LockingFollowingJournalReader extends MultiFileJournalReader {
+public class LockingFollowingJournalReader
+        extends MultiFileJournalReader {
+
     /** How many milliseconds between polls? */
     private final long pollingIntervalMillis;
 
@@ -59,31 +63,37 @@ public class LockingFollowingJournalReader extends MultiFileJournalReader {
      * Require parameters for polling interval, lock request filename and lock
      * acceptance filename.
      */
-    public LockingFollowingJournalReader(Map parameters, String role,
-            JournalRecoveryLog recoveryLog, ServerInterface server)
+    public LockingFollowingJournalReader(Map<String, String> parameters,
+                                         String role,
+                                         JournalRecoveryLog recoveryLog,
+                                         ServerInterface server)
             throws JournalException {
         super(parameters, role, recoveryLog, server);
-        pollingIntervalMillis = MultiFileJournalHelper
-                .parseParametersForPollingInterval(parameters);
-        lockRequestedFile = new File(MultiFileJournalHelper
-                .getRequiredParameter(parameters,
-                        PARAMETER_LOCK_REQUESTED_FILENAME));
-        lockAcceptedFile = new File(MultiFileJournalHelper
-                .getRequiredParameter(parameters,
-                        PARAMETER_LOCK_ACCEPTED_FILENAME));
-        pauseBeforePolling = ParameterHelper.getOptionalBooleanParameter(
-                parameters, PARAMETER_PAUSE_BEFORE_POLLING, false);
+        pollingIntervalMillis =
+                MultiFileJournalHelper
+                        .parseParametersForPollingInterval(parameters);
+        lockRequestedFile =
+                new File(MultiFileJournalHelper
+                        .getRequiredParameter(parameters,
+                                              PARAMETER_LOCK_REQUESTED_FILENAME));
+        lockAcceptedFile =
+                new File(MultiFileJournalHelper
+                        .getRequiredParameter(parameters,
+                                              PARAMETER_LOCK_ACCEPTED_FILENAME));
+        pauseBeforePolling =
+                ParameterHelper
+                        .getOptionalBooleanParameter(parameters,
+                                                     PARAMETER_PAUSE_BEFORE_POLLING,
+                                                     false);
     }
 
     /**
      * Process the locking mechanism. If we are not locked, we should look for
-     * another journal file to process.
-     * 
-     * Ask for a new file, using the superclass method, but if none is found,
-     * wait for a while and repeat.
-     * 
-     * This will continue until we get a server shutdown signal.
+     * another journal file to process. Ask for a new file, using the superclass
+     * method, but if none is found, wait for a while and repeat. This will
+     * continue until we get a server shutdown signal.
      */
+    @Override
     protected synchronized JournalInputFile openNextFile()
             throws JournalException {
         while (open) {
@@ -116,6 +126,7 @@ public class LockingFollowingJournalReader extends MultiFileJournalReader {
     /**
      * If the server requests a shutdown, stop waiting the next file to come in.
      */
+    @Override
     public synchronized void shutdown() throws JournalException {
         super.shutdown();
         notifyAll();
@@ -127,7 +138,7 @@ public class LockingFollowingJournalReader extends MultiFileJournalReader {
      * 
      * @return true if locked, false if not locked.
      * @throws JournalException
-     *             if we fail to create the 'lock accepted' file.
+     *         if we fail to create the 'lock accepted' file.
      */
     private boolean processLockingMechanism() throws JournalException {
         boolean locked;
@@ -137,9 +148,8 @@ public class LockingFollowingJournalReader extends MultiFileJournalReader {
                     lockAcceptedFile.createNewFile();
                 }
             } catch (IOException e) {
-                throw new JournalException(
-                        "Unable to create 'Lock Accepted' file at '"
-                                + lockAcceptedFile.getPath() + "'");
+                throw new JournalException("Unable to create 'Lock Accepted' file at '"
+                        + lockAcceptedFile.getPath() + "'");
             }
             locked = true;
         } else {

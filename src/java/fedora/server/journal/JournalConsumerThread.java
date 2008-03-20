@@ -1,3 +1,4 @@
+
 package fedora.server.journal;
 
 import java.util.Map;
@@ -10,7 +11,6 @@ import fedora.server.journal.recoverylog.JournalRecoveryLog;
 import fedora.server.management.ManagementDelegate;
 
 /**
- * 
  * <p>
  * <b>Title:</b> JournalConsumerThread.java
  * </p>
@@ -20,20 +20,24 @@ import fedora.server.management.ManagementDelegate;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: JournalConsumerThread.java 5367 2006-12-08 08:51:00 +0000 (Fri,
+ *          08 Dec 2006) cwilper $
  */
-public class JournalConsumerThread extends Thread {
+public class JournalConsumerThread
+        extends Thread {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(
-            JournalConsumerThread.class.getName());
+    private static final Logger LOG =
+            Logger.getLogger(JournalConsumerThread.class.getName());
 
-    private final Map parameters;
-    private final String role;
     private final ServerInterface server;
+
     private final JournalReader reader;
+
     private final JournalRecoveryLog recoveryLog;
+
     private ManagementDelegate delegate;
+
     private boolean shutdown = false;
 
     /**
@@ -41,10 +45,11 @@ public class JournalConsumerThread extends Thread {
      * ManagementDelegate is provided, and we won't get that until the
      * post-initialization stage.
      */
-    public JournalConsumerThread(Map parameters, String role, ServerInterface server,
-            JournalReader reader, JournalRecoveryLog recoveryLog) {
-        this.parameters = parameters;
-        this.role = role;
+    public JournalConsumerThread(Map<String, String> parameters,
+                                 String role,
+                                 ServerInterface server,
+                                 JournalReader reader,
+                                 JournalRecoveryLog recoveryLog) {
         this.server = server;
         this.reader = reader;
         this.recoveryLog = recoveryLog;
@@ -56,7 +61,7 @@ public class JournalConsumerThread extends Thread {
      */
     public void setManagementDelegate(ManagementDelegate delegate) {
         this.delegate = delegate;
-        this.start();
+        start();
     }
 
     /**
@@ -64,6 +69,7 @@ public class JournalConsumerThread extends Thread {
      * entries until the reader says there are no more, or until a shutdown is
      * requested.
      */
+    @Override
     public void run() {
         try {
             waitUntilServerIsInitialized();
@@ -88,12 +94,10 @@ public class JournalConsumerThread extends Thread {
             /*
              * It makes sense to catch Exception here, because any uncaught
              * exception will not be reported - there is no console to print the
-             * stack trace!
-             * 
-             * It might not be appropriate to catch Throwable, but it's the only
-             * way we can know about missing class files and such. Of course, if
-             * we catch an OutOfMemoryError or a VirtualMachineError, all bets
-             * are off.
+             * stack trace! It might not be appropriate to catch Throwable, but
+             * it's the only way we can know about missing class files and such.
+             * Of course, if we catch an OutOfMemoryError or a
+             * VirtualMachineError, all bets are off.
              */
             LOG.fatal("Error during Journal recovery", e);
             String stackTrace = JournalHelper.captureStackTrace(e);

@@ -34,7 +34,7 @@ public class MockJournalReader
 
     private XMLEventReader xmlReader;
 
-    public MockJournalReader(Map parameters,
+    public MockJournalReader(Map<String, String> parameters,
                              String role,
                              JournalRecoveryLog recoveryLog,
                              ServerInterface server)

@@ -1,3 +1,4 @@
+
 package fedora.server.journal.xmlhelpers;
 
 import javax.xml.namespace.QName;
@@ -8,7 +9,6 @@ import javax.xml.stream.XMLStreamException;
 import fedora.server.journal.JournalConstants;
 
 /**
- * 
  * <p>
  * <b>Title:</b> AbstractXmlWriter.java
  * </p>
@@ -18,17 +18,19 @@ import fedora.server.journal.JournalConstants;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: AbstractXmlWriter.java 5025 2006-09-01 22:08:17 +0000 (Fri, 01
+ *          Sep 2006) cwilper $
  */
 
-public class AbstractXmlWriter implements JournalConstants {
+public class AbstractXmlWriter
+        implements JournalConstants {
 
-    private XMLEventFactory factory = XMLEventFactory.newInstance();
+    private final XMLEventFactory factory = XMLEventFactory.newInstance();
 
     protected void putStartDocument(XMLEventWriter writer)
             throws XMLStreamException {
         writer.add(factory.createStartDocument(DOCUMENT_ENCODING,
-                DOCUMENT_VERSION));
+                                               DOCUMENT_VERSION));
     }
 
     protected void putStartTag(XMLEventWriter writer, QName tagName)
@@ -42,7 +44,9 @@ public class AbstractXmlWriter implements JournalConstants {
     }
 
     protected void putAttributeIfNotNull(XMLEventWriter writer,
-            QName attributeName, String value) throws XMLStreamException {
+                                         QName attributeName,
+                                         String value)
+            throws XMLStreamException {
         if (value != null) {
             putAttribute(writer, attributeName, value);
         }

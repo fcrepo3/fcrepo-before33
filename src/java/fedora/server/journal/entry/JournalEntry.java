@@ -1,3 +1,4 @@
+
 package fedora.server.journal.entry;
 
 import java.io.File;
@@ -5,8 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -16,7 +17,6 @@ import fedora.server.journal.managementmethods.ManagementMethod;
 import fedora.server.storage.types.DSBindingMap;
 
 /**
- * 
  * <p>
  * <b>Title:</b> JournalEntry.java
  * </p>
@@ -31,21 +31,27 @@ import fedora.server.storage.types.DSBindingMap;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: JournalEntry.java 5507 2007-01-17 04:57:30 +0000 (Wed, 17 Jan
+ *          2007) cwilper $
  */
 
 public abstract class JournalEntry {
+
     private boolean open = true;
-    
-    private final Map arguments = new LinkedHashMap();
+
+    private final Map<String, Object> arguments =
+            new LinkedHashMap<String, Object>();
+
     private final String methodName;
+
     private final ManagementMethod method;
+
     private final JournalEntryContext context;
 
     protected JournalEntry(String methodName, JournalEntryContext context) {
         this.methodName = methodName;
         this.context = context;
-        this.method = ManagementMethod.getInstance(methodName, this);
+        method = ManagementMethod.getInstance(methodName, this);
     }
 
     public JournalEntryContext getContext() {
@@ -57,15 +63,15 @@ public abstract class JournalEntry {
         checkOpen();
         return method;
     }
-    
+
     public String getMethodName() {
         checkOpen();
         return methodName;
     }
 
-    public Map getArgumentsMap() {
+    public Map<String, Object> getArgumentsMap() {
         checkOpen();
-        return new LinkedHashMap(arguments);
+        return new LinkedHashMap<String, Object>(arguments);
     }
 
     public void addArgument(String key, boolean value) {
@@ -84,9 +90,9 @@ public abstract class JournalEntry {
     }
 
     /**
-     * If handed an InputStream as an argument, copy it to a temp file and
-     * store that File in the arguments map instead.  If the InputStream is
-     * null, store null in the arguments map.
+     * If handed an InputStream as an argument, copy it to a temp file and store
+     * that File in the arguments map instead. If the InputStream is null, store
+     * null in the arguments map.
      */
     public void addArgument(String key, InputStream stream)
             throws JournalException {
@@ -106,13 +112,13 @@ public abstract class JournalEntry {
     // convenience method for setting values into the Context recovery space.
     public void setRecoveryValue(String attribute, String value) {
         checkOpen();
-        this.context.setRecoveryValue(attribute, value);
+        context.setRecoveryValue(attribute, value);
     }
 
     // convenience method for setting values into the Context recovery space.
     public void setRecoveryValues(String attribute, String[] values) {
         checkOpen();
-        this.context.setRecoveryValues(attribute, values);
+        context.setRecoveryValues(attribute, values);
     }
 
     //
@@ -145,8 +151,8 @@ public abstract class JournalEntry {
 
     /**
      * If they ask for an InputStream argument, get the File from the arguments
-     * map and create an InputStream on that file.  If the value from the
-     * map is null, return null.
+     * map and create an InputStream on that file. If the value from the map is
+     * null, return null.
      */
     public InputStream getStreamArgument(String name) throws JournalException {
         checkOpen();
@@ -173,11 +179,10 @@ public abstract class JournalEntry {
      */
     public void close() {
         checkOpen();
-        
+
         open = false;
-        
-        for (Iterator args = arguments.values().iterator(); args.hasNext();) {
-            Object arg = args.next();
+
+        for (Object arg : arguments.values()) {
             if (arg instanceof File) {
                 File file = (File) arg;
                 if (JournalHelper.isTempFile(file)) {
@@ -193,12 +198,13 @@ public abstract class JournalEntry {
      * Every non-private method should call this first, to prevent accessing the
      * object after it has been closed.
      * 
-     * @throws IllegalStateException if the open flag has been reset.
+     * @throws IllegalStateException
+     *         if the open flag has been reset.
      */
     private void checkOpen() throws IllegalStateException {
         if (!open) {
-            throw new IllegalStateException("JournalEntry must not be " +
-                    "accessed after close() has been called");
+            throw new IllegalStateException("JournalEntry must not be "
+                    + "accessed after close() has been called");
         }
     }
 }

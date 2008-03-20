@@ -1,3 +1,4 @@
+
 package fedora.server.journal;
 
 import java.io.InputStream;
@@ -20,7 +21,6 @@ import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.Property;
 
 /**
- * 
  * <p>
  * <b>Title:</b> JournalCreator.java
  * </p>
@@ -36,16 +36,19 @@ import fedora.server.storage.types.Property;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: JournalCreator.java 6726 2008-03-03 20:04:05 +0000 (Mon, 03 Mar
+ *          2008) birkland $
  */
 
-public class JournalCreator implements JournalWorker, JournalConstants {
+public class JournalCreator
+        implements JournalWorker, JournalConstants {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(
-            JournalCreator.class.getName());
+    private static final Logger LOG =
+            Logger.getLogger(JournalCreator.class.getName());
 
     private final JournalWriter writer;
+
     private final String role;
 
     private ManagementDelegate delegate;
@@ -53,12 +56,14 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     /**
      * Get a JournalWriter to use, based on the server parameters.
      */
-    public JournalCreator(Map parameters, String role, ServerInterface server)
+    public JournalCreator(Map<String, String> parameters,
+                          String role,
+                          ServerInterface server)
             throws ModuleInitializationException {
         this.role = role;
-        
+
         try {
-            this.writer = JournalWriter.getInstance(parameters, role, server);
+            writer = JournalWriter.getInstance(parameters, role, server);
         } catch (JournalException e) {
             String msg = "Problem creating the JournalWriter";
             LOG.error(msg, e);
@@ -80,8 +85,9 @@ public class JournalCreator implements JournalWorker, JournalConstants {
         try {
             writer.shutdown();
         } catch (JournalException e) {
-            throw new ModuleShutdownException(
-                    "JournalWriter generated an error on shutdown()", role, e);
+            throw new ModuleShutdownException("JournalWriter generated an error on shutdown()",
+                                              role,
+                                              e);
         }
     }
 
@@ -97,12 +103,15 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     /**
      * Let the delegate do it, and then write a journal entry.
      */
-    public String ingestObject(Context context, InputStream serialization,
-            String logMessage, String format, String encoding, boolean newPid)
-            throws ServerException {
+    public String ingestObject(Context context,
+                               InputStream serialization,
+                               String logMessage,
+                               String format,
+                               String encoding,
+                               boolean newPid) throws ServerException {
         try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_INGEST_OBJECT, context);
+            CreatorJournalEntry cje =
+                    new CreatorJournalEntry(METHOD_INGEST_OBJECT, context);
             cje.addArgument(ARGUMENT_NAME_SERIALIZATION, serialization);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
             cje.addArgument(ARGUMENT_NAME_FORMAT, format);
@@ -117,11 +126,15 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     /**
      * Create a journal entry, add the arguments, and invoke the method.
      */
-    public Date modifyObject(Context context, String pid, String state,
-            String label, String ownerId, String logMessage) throws ServerException {
+    public Date modifyObject(Context context,
+                             String pid,
+                             String state,
+                             String label,
+                             String ownerId,
+                             String logMessage) throws ServerException {
         try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_MODIFY_OBJECT, context);
+            CreatorJournalEntry cje =
+                    new CreatorJournalEntry(METHOD_MODIFY_OBJECT, context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_STATE, state);
             cje.addArgument(ARGUMENT_NAME_LABEL, label);
@@ -136,11 +149,13 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     /**
      * Create a journal entry, add the arguments, and invoke the method.
      */
-    public Date purgeObject(Context context, String pid, String logMessage,
-            boolean force) throws ServerException {
+    public Date purgeObject(Context context,
+                            String pid,
+                            String logMessage,
+                            boolean force) throws ServerException {
         try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_PURGE_OBJECT, context);
+            CreatorJournalEntry cje =
+                    new CreatorJournalEntry(METHOD_PURGE_OBJECT, context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
             cje.addArgument(ARGUMENT_NAME_FORCE, force);
@@ -153,15 +168,23 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     /**
      * Create a journal entry, add the arguments, and invoke the method.
      */
-    public String addDatastream(Context context, String pid, String dsID,
-            String[] altIDs, String dsLabel, boolean versionable,
-            String MIMEType, String formatURI, String location,
-            String controlGroup, String dsState, String checksumType,
-            String checksum, String logMessage)
-            throws ServerException {
+    public String addDatastream(Context context,
+                                String pid,
+                                String dsID,
+                                String[] altIDs,
+                                String dsLabel,
+                                boolean versionable,
+                                String MIMEType,
+                                String formatURI,
+                                String location,
+                                String controlGroup,
+                                String dsState,
+                                String checksumType,
+                                String checksum,
+                                String logMessage) throws ServerException {
         try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_ADD_DATASTREAM, context);
+            CreatorJournalEntry cje =
+                    new CreatorJournalEntry(METHOD_ADD_DATASTREAM, context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_DS_ID, dsID);
             cje.addArgument(ARGUMENT_NAME_ALT_IDS, altIDs);
@@ -184,14 +207,22 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     /**
      * Create a journal entry, add the arguments, and invoke the method.
      */
-    public Date modifyDatastreamByValue(Context context, String pid,
-            String datastreamID, String[] altIDs, String dsLabel,
-            String mimeType, String formatURI, InputStream dsContent,
-            String checksumType, String checksum, 
-            String logMessage, boolean force) throws ServerException {
+    public Date modifyDatastreamByValue(Context context,
+                                        String pid,
+                                        String datastreamID,
+                                        String[] altIDs,
+                                        String dsLabel,
+                                        String mimeType,
+                                        String formatURI,
+                                        InputStream dsContent,
+                                        String checksumType,
+                                        String checksum,
+                                        String logMessage,
+                                        boolean force) throws ServerException {
         try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_MODIFY_DATASTREAM_BY_VALUE, context);
+            CreatorJournalEntry cje =
+                    new CreatorJournalEntry(METHOD_MODIFY_DATASTREAM_BY_VALUE,
+                                            context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_DS_ID, datastreamID);
             cje.addArgument(ARGUMENT_NAME_ALT_IDS, altIDs);
@@ -212,14 +243,23 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     /**
      * Create a journal entry, add the arguments, and invoke the method.
      */
-    public Date modifyDatastreamByReference(Context context, String pid,
-            String datastreamID, String[] altIDs, String dsLabel,
-            String mimeType, String formatURI, String dsLocation, 
-            String checksumType, String checksum, 
-            String logMessage, boolean force) throws ServerException {
+    public Date modifyDatastreamByReference(Context context,
+                                            String pid,
+                                            String datastreamID,
+                                            String[] altIDs,
+                                            String dsLabel,
+                                            String mimeType,
+                                            String formatURI,
+                                            String dsLocation,
+                                            String checksumType,
+                                            String checksum,
+                                            String logMessage,
+                                            boolean force)
+            throws ServerException {
         try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_MODIFY_DATASTREAM_BY_REFERENCE, context);
+            CreatorJournalEntry cje =
+                    new CreatorJournalEntry(METHOD_MODIFY_DATASTREAM_BY_REFERENCE,
+                                            context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_DS_ID, datastreamID);
             cje.addArgument(ARGUMENT_NAME_ALT_IDS, altIDs);
@@ -240,11 +280,15 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     /**
      * Create a journal entry, add the arguments, and invoke the method.
      */
-    public Date setDatastreamState(Context context, String pid, String dsID,
-            String dsState, String logMessage) throws ServerException {
+    public Date setDatastreamState(Context context,
+                                   String pid,
+                                   String dsID,
+                                   String dsState,
+                                   String logMessage) throws ServerException {
         try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_SET_DATASTREAM_STATE, context);
+            CreatorJournalEntry cje =
+                    new CreatorJournalEntry(METHOD_SET_DATASTREAM_STATE,
+                                            context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_DS_ID, dsID);
             cje.addArgument(ARGUMENT_NAME_DS_STATE, dsState);
@@ -258,12 +302,16 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     /**
      * Create a journal entry, add the arguments, and invoke the method.
      */
-    public Date setDatastreamVersionable(Context context, String pid, 
-            String dsID, boolean versionable, String logMessage) 
+    public Date setDatastreamVersionable(Context context,
+                                         String pid,
+                                         String dsID,
+                                         boolean versionable,
+                                         String logMessage)
             throws ServerException {
         try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_SET_DATASTREAM_VERSIONABLE, context);
+            CreatorJournalEntry cje =
+                    new CreatorJournalEntry(METHOD_SET_DATASTREAM_VERSIONABLE,
+                                            context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_DS_ID, dsID);
             cje.addArgument(ARGUMENT_NAME_VERSIONABLE, versionable);
@@ -277,13 +325,16 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     /**
      * Create a journal entry, add the arguments, and invoke the method.
      */
-    public Date[] purgeDatastream(Context context, String pid,
-            String datastreamID, Date startDT, Date endDT, String logMessage, 
-            boolean force)
-            throws ServerException {
+    public Date[] purgeDatastream(Context context,
+                                  String pid,
+                                  String datastreamID,
+                                  Date startDT,
+                                  Date endDT,
+                                  String logMessage,
+                                  boolean force) throws ServerException {
         try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_PURGE_DATASTREAM, context);
+            CreatorJournalEntry cje =
+                    new CreatorJournalEntry(METHOD_PURGE_DATASTREAM, context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_DS_ID, datastreamID);
             cje.addArgument(ARGUMENT_NAME_START_DATE, startDT);
@@ -299,12 +350,17 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     /**
      * Create a journal entry, add the arguments, and invoke the method.
      */
-    public String addDisseminator(Context context, String pid, String bDefPID,
-            String bMechPid, String dissLabel, DSBindingMap bindingMap,
-            String dissState, String logMessage) throws ServerException {
+    public String addDisseminator(Context context,
+                                  String pid,
+                                  String bDefPID,
+                                  String bMechPid,
+                                  String dissLabel,
+                                  DSBindingMap bindingMap,
+                                  String dissState,
+                                  String logMessage) throws ServerException {
         try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_ADD_DISSEMINATOR, context);
+            CreatorJournalEntry cje =
+                    new CreatorJournalEntry(METHOD_ADD_DISSEMINATOR, context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_BDEF_PID, bDefPID);
             cje.addArgument(ARGUMENT_NAME_BMECH_PID, bMechPid);
@@ -321,13 +377,18 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     /**
      * Create a journal entry, add the arguments, and invoke the method.
      */
-    public Date modifyDisseminator(Context context, String pid,
-            String disseminatorID, String bMechPid, String dissLabel,
-            DSBindingMap bindingMap, String dissState, String logMessage,
-            boolean force) throws ServerException {
+    public Date modifyDisseminator(Context context,
+                                   String pid,
+                                   String disseminatorID,
+                                   String bMechPid,
+                                   String dissLabel,
+                                   DSBindingMap bindingMap,
+                                   String dissState,
+                                   String logMessage,
+                                   boolean force) throws ServerException {
         try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_MODIFY_DISSEMINATOR, context);
+            CreatorJournalEntry cje =
+                    new CreatorJournalEntry(METHOD_MODIFY_DISSEMINATOR, context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_DISSEMINATOR_ID, disseminatorID);
             cje.addArgument(ARGUMENT_NAME_BMECH_PID, bMechPid);
@@ -345,12 +406,15 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     /**
      * Create a journal entry, add the arguments, and invoke the method.
      */
-    public Date setDisseminatorState(Context context, String pid,
-            String disseminatorID, String dissState, String logMessage)
-            throws ServerException {
+    public Date setDisseminatorState(Context context,
+                                     String pid,
+                                     String disseminatorID,
+                                     String dissState,
+                                     String logMessage) throws ServerException {
         try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_SET_DISSEMINATOR_STATE, context);
+            CreatorJournalEntry cje =
+                    new CreatorJournalEntry(METHOD_SET_DISSEMINATOR_STATE,
+                                            context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_DISSEMINATOR_ID, disseminatorID);
             cje.addArgument(ARGUMENT_NAME_DISSEMINATOR_STATE, dissState);
@@ -364,12 +428,14 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     /**
      * Create a journal entry, add the arguments, and invoke the method.
      */
-    public Date[] purgeDisseminator(Context context, String pid,
-            String disseminatorID, Date endDT, String logMessage)
-            throws ServerException {
+    public Date[] purgeDisseminator(Context context,
+                                    String pid,
+                                    String disseminatorID,
+                                    Date endDT,
+                                    String logMessage) throws ServerException {
         try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_PURGE_DISSEMINATOR, context);
+            CreatorJournalEntry cje =
+                    new CreatorJournalEntry(METHOD_PURGE_DISSEMINATOR, context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_DISSEMINATOR_ID, disseminatorID);
             cje.addArgument(ARGUMENT_NAME_END_DATE, endDT);
@@ -386,8 +452,8 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     public String putTempStream(Context context, InputStream in)
             throws ServerException {
         try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_PUT_TEMP_STREAM, context);
+            CreatorJournalEntry cje =
+                    new CreatorJournalEntry(METHOD_PUT_TEMP_STREAM, context);
             cje.addArgument(ARGUMENT_NAME_IN, in);
             return (String) cje.invokeAndClose(delegate, writer);
         } catch (JournalException e) {
@@ -401,8 +467,8 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     public String[] getNextPID(Context context, int numPIDs, String namespace)
             throws ServerException {
         try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_GET_NEXT_PID, context);
+            CreatorJournalEntry cje =
+                    new CreatorJournalEntry(METHOD_GET_NEXT_PID, context);
             cje.addArgument(ARGUMENT_NAME_NUM_PIDS, numPIDs);
             cje.addArgument(ARGUMENT_NAME_NAMESPACE, namespace);
             return (String[]) cje.invokeAndClose(delegate, writer);
@@ -452,58 +518,80 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     /**
      * Let the delegate do it.
      */
-    public InputStream exportObject(Context context, String pid, String format,
-            String exportContext, String encoding) throws ServerException {
-        return delegate.exportObject(context, pid, format, exportContext,
-                encoding);
+    public InputStream exportObject(Context context,
+                                    String pid,
+                                    String format,
+                                    String exportContext,
+                                    String encoding) throws ServerException {
+        return delegate.exportObject(context,
+                                     pid,
+                                     format,
+                                     exportContext,
+                                     encoding);
     }
 
     /**
      * Let the delegate do it.
      */
-    public Datastream getDatastream(Context context, String pid,
-            String datastreamID, Date asOfDateTime) throws ServerException {
+    public Datastream getDatastream(Context context,
+                                    String pid,
+                                    String datastreamID,
+                                    Date asOfDateTime) throws ServerException {
         return delegate.getDatastream(context, pid, datastreamID, asOfDateTime);
     }
 
     /**
      * Let the delegate do it.
      */
-    public Datastream[] getDatastreams(Context context, String pid,
-            Date asOfDateTime, String dsState) throws ServerException {
+    public Datastream[] getDatastreams(Context context,
+                                       String pid,
+                                       Date asOfDateTime,
+                                       String dsState) throws ServerException {
         return delegate.getDatastreams(context, pid, asOfDateTime, dsState);
     }
 
     /**
      * Let the delegate do it.
      */
-    public Datastream[] getDatastreamHistory(Context context, String pid,
-            String datastreamID) throws ServerException {
+    public Datastream[] getDatastreamHistory(Context context,
+                                             String pid,
+                                             String datastreamID)
+            throws ServerException {
         return delegate.getDatastreamHistory(context, pid, datastreamID);
     }
 
     /**
      * Let the delegate do it.
      */
-    public Disseminator getDisseminator(Context context, String pid,
-            String disseminatorID, Date asOfDateTime) throws ServerException {
-        return delegate.getDisseminator(context, pid, disseminatorID,
-                asOfDateTime);
+    public Disseminator getDisseminator(Context context,
+                                        String pid,
+                                        String disseminatorID,
+                                        Date asOfDateTime)
+            throws ServerException {
+        return delegate.getDisseminator(context,
+                                        pid,
+                                        disseminatorID,
+                                        asOfDateTime);
     }
 
     /**
      * Let the delegate do it.
      */
-    public Disseminator[] getDisseminators(Context context, String pid,
-            Date asOfDateTime, String dissState) throws ServerException {
+    public Disseminator[] getDisseminators(Context context,
+                                           String pid,
+                                           Date asOfDateTime,
+                                           String dissState)
+            throws ServerException {
         return delegate.getDisseminators(context, pid, asOfDateTime, dissState);
     }
 
     /**
      * Let the delegate do it.
      */
-    public Disseminator[] getDisseminatorHistory(Context context, String pid,
-            String disseminatorID) throws ServerException {
+    public Disseminator[] getDisseminatorHistory(Context context,
+                                                 String pid,
+                                                 String disseminatorID)
+            throws ServerException {
         return delegate.getDisseminatorHistory(context, pid, disseminatorID);
     }
 

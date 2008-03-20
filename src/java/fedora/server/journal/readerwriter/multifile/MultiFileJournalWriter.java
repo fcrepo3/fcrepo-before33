@@ -1,10 +1,10 @@
+
 package fedora.server.journal.readerwriter.multifile;
 
 import java.io.File;
+
 import java.util.Date;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
@@ -13,9 +13,10 @@ import fedora.server.journal.JournalException;
 import fedora.server.journal.JournalWriter;
 import fedora.server.journal.ServerInterface;
 import fedora.server.journal.entry.CreatorJournalEntry;
+import fedora.server.journal.helpers.JournalHelper;
+import fedora.server.journal.helpers.ParameterHelper;
 
 /**
- * 
  * <p>
  * <b>Title:</b> MultiFileJournalWriter.java
  * </p>
@@ -26,11 +27,13 @@ import fedora.server.journal.entry.CreatorJournalEntry;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: MultiFileJournalWriter.java 5450 2007-01-04 21:40:14 +0000
+ *          (Thu, 04 Jan 2007) cwilper $
  */
 
-public class MultiFileJournalWriter extends JournalWriter implements
-        MultiFileJournalConstants {
+public class MultiFileJournalWriter
+        extends JournalWriter
+        implements MultiFileJournalConstants {
 
     /** the directory that will hold the journal files. */
     private final File journalDirectory;
@@ -52,76 +55,21 @@ public class MultiFileJournalWriter extends JournalWriter implements
     /**
      * Parse the parameters to find out how we are operating.
      */
-    public MultiFileJournalWriter(Map parameters, String role,
-            ServerInterface server) throws JournalException {
+    public MultiFileJournalWriter(Map<String, String> parameters,
+                                  String role,
+                                  ServerInterface server)
+            throws JournalException {
         super(parameters, role, server);
-        this.journalDirectory = MultiFileJournalHelper
-                .parseParametersForDirectory(parameters,
-                        PARAMETER_JOURNAL_DIRECTORY);
-        this.filenamePrefix = MultiFileJournalHelper
-                .parseParametersForFilenamePrefix(parameters);
-        this.sizeLimit = parseParametersForSizeLimit();
-        this.ageLimit = parseParametersForAgeLimit();
+        journalDirectory =
+                ParameterHelper
+                        .parseParametersForWritableDirectory(parameters,
+                                                             PARAMETER_JOURNAL_DIRECTORY);
+        filenamePrefix =
+                ParameterHelper.parseParametersForFilenamePrefix(parameters);
+        sizeLimit = ParameterHelper.parseParametersForSizeLimit(parameters);
+        ageLimit = ParameterHelper.parseParametersForAgeLimit(parameters);
 
         checkForPotentialFilenameConflict();
-    }
-
-    /**
-     * Get the size limit parameter (or let it default), and convert it to
-     * bytes.
-     */
-    private long parseParametersForSizeLimit() throws JournalException {
-        String sizeString = MultiFileJournalHelper.getOptionalParameter(
-                parameters, PARAMETER_JOURNAL_FILE_SIZE_LIMIT,
-                DEFAULT_SIZE_LIMIT);
-        Pattern p = Pattern.compile("([0-9]+)([KMG]?)");
-        Matcher m = p.matcher(sizeString);
-        if (!m.matches()) {
-            throw new JournalException("Parameter '"
-                    + PARAMETER_JOURNAL_FILE_SIZE_LIMIT
-                    + "' must be an integer number of bytes, "
-                    + "optionally followed by 'K', 'M', or 'G', "
-                    + "or a 0 to indicate no size limit");
-        }
-        long size = Long.parseLong(m.group(1));
-        String factor = m.group(2);
-        if ("K".equals(factor)) {
-            size *= 1024;
-        } else if ("M".equals(factor)) {
-            size *= 1024 * 1024;
-        } else if ("G".equals(factor)) {
-            size *= 1024 * 1024 * 1024;
-        }
-        return size;
-    }
-
-    /**
-     * Get the age limit parameter (or let it default), and convert it to
-     * milliseconds.
-     */
-    private long parseParametersForAgeLimit() throws JournalException {
-        String ageString = MultiFileJournalHelper
-                .getOptionalParameter(parameters,
-                        PARAMETER_JOURNAL_FILE_AGE_LIMIT, DEFAULT_AGE_LIMIT);
-        Pattern p = Pattern.compile("([0-9]+)([DHM]?)");
-        Matcher m = p.matcher(ageString);
-        if (!m.matches()) {
-            throw new JournalException("Parameter '"
-                    + PARAMETER_JOURNAL_FILE_AGE_LIMIT
-                    + "' must be an integer number of seconds, optionally "
-                    + "followed by 'D'(days), 'H'(hours), or 'M'(minutes), "
-                    + "or a 0 to indicate no age limit");
-        }
-        long age = Long.parseLong(m.group(1)) * 1000;
-        String factor = m.group(2);
-        if ("D".equals(factor)) {
-            age *= 24 * 60 * 60;
-        } else if ("H".equals(factor)) {
-            age *= 60 * 60;
-        } else if ("M".equals(factor)) {
-            age *= 60;
-        }
-        return age;
     }
 
     /**
@@ -129,21 +77,24 @@ public class MultiFileJournalWriter extends JournalWriter implements
      * any new files we create won't conflict with them.
      */
     private void checkForPotentialFilenameConflict() throws JournalException {
-        File[] journalFiles = MultiFileJournalHelper
-                .getSortedArrayOfJournalFiles(journalDirectory, filenamePrefix);
+        File[] journalFiles =
+                MultiFileJournalHelper
+                        .getSortedArrayOfJournalFiles(journalDirectory,
+                                                      filenamePrefix);
         if (journalFiles.length == 0) {
             return;
         }
 
         String newestFilename = journalFiles[journalFiles.length - 1].getName();
-        String potentialFilename = MultiFileJournalHelper
-                .createTimestampedFilename(filenamePrefix, new Date());
+        String potentialFilename =
+                JournalHelper.createTimestampedFilename(filenamePrefix,
+                                                        new Date());
         if (newestFilename.compareTo(potentialFilename) > 0) {
-            throw new JournalException(
-                    "The name of one or more existing files in the journal "
-                            + "directory (e.g. '" + newestFilename
-                            + "') may conflict with new Journal "
-                            + "files. Has the system clock changed?");
+            throw new JournalException("The name of one or more existing files in the journal "
+                    + "directory (e.g. '"
+                    + newestFilename
+                    + "') may conflict with new Journal "
+                    + "files. Has the system clock changed?");
         }
     }
 
@@ -151,13 +102,18 @@ public class MultiFileJournalWriter extends JournalWriter implements
      * Before writing an entry, check to see whether we need to close the
      * current file and/or open a new one.
      */
+    @Override
     public void prepareToWriteJournalEntry() throws JournalException {
         if (open) {
-            this.currentJournal.closeIfAppropriate();
+            currentJournal.closeIfAppropriate();
 
-            if (!this.currentJournal.isOpen()) {
-                this.currentJournal = new JournalOutputFile(this,
-                        filenamePrefix, journalDirectory, sizeLimit, ageLimit);
+            if (!currentJournal.isOpen()) {
+                currentJournal =
+                        new JournalOutputFile(this,
+                                              filenamePrefix,
+                                              journalDirectory,
+                                              sizeLimit,
+                                              ageLimit);
             }
         }
     }
@@ -167,16 +123,16 @@ public class MultiFileJournalWriter extends JournalWriter implements
      * synchronize on the file, so we don't get an asynchronous close while
      * we're writing. After writing the entry, flush the file.
      */
+    @Override
     public void writeJournalEntry(CreatorJournalEntry journalEntry)
             throws JournalException {
         if (open) {
             try {
                 synchronized (JournalWriter.SYNCHRONIZER) {
-                    XMLEventWriter xmlWriter = this.currentJournal
-                            .getXmlWriter();
+                    XMLEventWriter xmlWriter = currentJournal.getXmlWriter();
                     super.writeJournalEntry(journalEntry, xmlWriter);
                     xmlWriter.flush();
-                    this.currentJournal.closeIfAppropriate();
+                    currentJournal.closeIfAppropriate();
                 }
             } catch (XMLStreamException e) {
                 throw new JournalException(e);
@@ -187,9 +143,10 @@ public class MultiFileJournalWriter extends JournalWriter implements
     /**
      * Close the current journal file.
      */
+    @Override
     public void shutdown() throws JournalException {
         if (open) {
-            this.currentJournal.close();
+            currentJournal.close();
             open = false;
         }
     }
@@ -212,6 +169,7 @@ public class MultiFileJournalWriter extends JournalWriter implements
     /**
      * Create an informative message for debugging purposes.
      */
+    @Override
     public String toString() {
         return super.toString() + ", journalDirectory='" + journalDirectory
                 + "', filenamePrefix='" + filenamePrefix + "', sizeLimit="

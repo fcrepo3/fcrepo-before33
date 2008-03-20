@@ -1,7 +1,9 @@
+
 package fedora.server.journal.recoverylog;
 
 import java.io.IOException;
 import java.io.Writer;
+
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
@@ -18,7 +20,6 @@ import fedora.server.journal.entry.JournalEntryContext;
 import fedora.server.journal.helpers.JournalHelper;
 
 /**
- * 
  * <p>
  * <b>Title:</b> JournalRecoveryLog.java
  * </p>
@@ -27,13 +28,15 @@ import fedora.server.journal.helpers.JournalHelper;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: JournalRecoveryLog.java 5218 2006-11-20 05:10:11 +0000 (Mon, 20
+ *          Nov 2006) cwilper $
  */
-public abstract class JournalRecoveryLog implements JournalConstants {
+public abstract class JournalRecoveryLog
+        implements JournalConstants {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(
-            JournalRecoveryLog.class.getName());
+    private static final Logger LOG =
+            Logger.getLogger(JournalRecoveryLog.class.getName());
 
     private static final int LEVEL_LOW = 0;
 
@@ -49,35 +52,44 @@ public abstract class JournalRecoveryLog implements JournalConstants {
      * Create an instance of the proper JournalRecoveryLog child class, as
      * determined by the server parameters.
      */
-    public static JournalRecoveryLog getInstance(Map parameters, String role,
-            ServerInterface server) throws ModuleInitializationException {
+    public static JournalRecoveryLog getInstance(Map<String, String> parameters,
+                                                 String role,
+                                                 ServerInterface server)
+            throws ModuleInitializationException {
 
         try {
-            Object recoveryLog = JournalHelper
-                    .createInstanceAccordingToParameter(
-                            PARAMETER_JOURNAL_RECOVERY_LOG_CLASSNAME,
-                            new Class[] { Map.class, String.class,
-                                    ServerInterface.class }, new Object[] {
-                                    parameters, role, server }, parameters);
+            Object recoveryLog =
+                    JournalHelper
+                            .createInstanceAccordingToParameter(PARAMETER_JOURNAL_RECOVERY_LOG_CLASSNAME,
+                                                                new Class[] {
+                                                                        Map.class,
+                                                                        String.class,
+                                                                        ServerInterface.class},
+                                                                new Object[] {
+                                                                        parameters,
+                                                                        role,
+                                                                        server},
+                                                                parameters);
             LOG.info("JournalRecoveryLog is " + recoveryLog.toString());
             return (JournalRecoveryLog) recoveryLog;
         } catch (JournalException e) {
-            throw new ModuleInitializationException(
-                    "Can't create JournalRecoveryLog", role, e);
+            throw new ModuleInitializationException("Can't create JournalRecoveryLog",
+                                                    role,
+                                                    e);
         }
     }
 
     /**
-     * Concrete sub-classes must implement this constructor.
-     * 
-     * Checks the server parameters to find out what Logging Level to use -
-     * default is Low.
+     * Concrete sub-classes must implement this constructor. Checks the server
+     * parameters to find out what Logging Level to use - default is Low.
      */
-    protected JournalRecoveryLog(Map parameters, String role,
-            ServerInterface server) throws ModuleInitializationException {
+    protected JournalRecoveryLog(Map<String, String> parameters,
+                                 String role,
+                                 ServerInterface server)
+            throws ModuleInitializationException {
         this.server = server;
 
-        String level = (String) parameters.get(PARAMETER_RECOVERY_LOG_LEVEL);
+        String level = parameters.get(PARAMETER_RECOVERY_LOG_LEVEL);
         if (level == null) {
             logLevel = LEVEL_LOW;
         } else if (VALUE_RECOVERY_LOG_LEVEL_HIGH.equals(level)) {
@@ -104,7 +116,6 @@ public abstract class JournalRecoveryLog implements JournalConstants {
     /**
      * Concrete sub-classes should probably synchronize this method, since it
      * can be called either from the JournalConsumerThread or from the Server.
-     * 
      * For the same reason, they should also provide for the possibility that it
      * will be called multiple times, or that a call to log() will happen after
      * the call to shutdown().
@@ -120,9 +131,10 @@ public abstract class JournalRecoveryLog implements JournalConstants {
      * Concrete sub-classes should call this method from their constructor, or
      * as soon as the log is ready for writing.
      */
-    public void logHeaderInfo(Map parameters) {
+    public void logHeaderInfo(Map<String, String> parameters) {
         StringBuffer buffer = new StringBuffer("Recovery parameters:");
-        for (Iterator keys = parameters.keySet().iterator(); keys.hasNext();) {
+        for (Iterator<String> keys = parameters.keySet().iterator(); keys
+                .hasNext();) {
             Object key = keys.next();
             Object value = parameters.get(key);
             buffer.append("\n    ").append(key).append("=").append(value);
@@ -154,17 +166,15 @@ public abstract class JournalRecoveryLog implements JournalConstants {
             buffer.append(writeMapValues("recoveryAttributes", context
                     .getRecoveryAttributes()));
             buffer.append("        password='*********'\n");
-            buffer.append("        noOp=").append(context.getNoOp()).append(
-                    "\n");
+            buffer.append("        noOp=").append(context.getNoOp())
+                    .append("\n");
         }
-        if ((logLevel == LEVEL_HIGH) || (logLevel == LEVEL_MEDIUM)) {
+        if (logLevel == LEVEL_HIGH || logLevel == LEVEL_MEDIUM) {
             buffer.append("        now=" + journalEntry.getContext().getNoOp()
                     + "\n");
             buffer.append("    arguments\n");
-            Map argumentsMap = journalEntry.getArgumentsMap();
-            for (Iterator names = argumentsMap.keySet().iterator(); names
-                    .hasNext();) {
-                String name = (String) names.next();
+            Map<String, Object> argumentsMap = journalEntry.getArgumentsMap();
+            for (String name : argumentsMap.keySet()) {
                 Object value = argumentsMap.get(name);
                 if (value instanceof String[]) {
                     buffer.append(writeStringArray(name, (String[]) value));
@@ -204,9 +214,8 @@ public abstract class JournalRecoveryLog implements JournalConstants {
             String name = (String) names.next();
             buffer.append("            ").append(name).append("\n");
             String[] values = map.getStringArray(name);
-            for (int i = 0; i < values.length; i++) {
-                buffer.append("                ").append(values[i])
-                        .append("\n");
+            for (String element : values) {
+                buffer.append("                ").append(element).append("\n");
             }
         }
         return buffer.toString();

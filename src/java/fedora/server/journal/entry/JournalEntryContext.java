@@ -1,3 +1,4 @@
+
 package fedora.server.journal.entry;
 
 import java.util.Date;
@@ -8,7 +9,6 @@ import fedora.server.MultiValueMap;
 import fedora.server.RecoveryContext;
 
 /**
- * 
  * <p>
  * <b>Title:</b> JournalEntryContext.java
  * </p>
@@ -18,17 +18,27 @@ import fedora.server.RecoveryContext;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: JournalEntryContext.java 6726 2008-03-03 20:04:05 +0000 (Mon,
+ *          03 Mar 2008) birkland $
  */
 
-public class JournalEntryContext implements RecoveryContext {
+public class JournalEntryContext
+        implements RecoveryContext {
+
     private MultiValueMap environmentAttributes = new MultiValueMap();
+
     private MultiValueMap subjectAttributes = new MultiValueMap();
+
     private MultiValueMap actionAttributes = new MultiValueMap();
+
     private MultiValueMap resourceAttributes = new MultiValueMap();
+
     private MultiValueMap recoveryAttributes = new MultiValueMap();
+
     private String password = "";
+
     private boolean noOp = false;
+
     private Date now = new Date();
 
     /**
@@ -43,27 +53,25 @@ public class JournalEntryContext implements RecoveryContext {
      * be read-only.
      */
     public JournalEntryContext(Context source) {
-        this.password = source.getPassword();
-        this.noOp = source.getNoOp();
-        this.now = source.now();
+        password = source.getPassword();
+        noOp = source.getNoOp();
+        now = source.now();
         for (Iterator keys = source.environmentAttributes(); keys.hasNext();) {
             String key = (String) keys.next();
-            storeInMap(this.environmentAttributes, key, source
+            storeInMap(environmentAttributes, key, source
                     .getEnvironmentValues(key));
         }
         for (Iterator keys = source.subjectAttributes(); keys.hasNext();) {
             String key = (String) keys.next();
-            storeInMap(this.subjectAttributes, key, source
-                    .getSubjectValues(key));
+            storeInMap(subjectAttributes, key, source.getSubjectValues(key));
         }
         for (Iterator keys = source.actionAttributes(); keys.hasNext();) {
             String key = (String) keys.next();
-            storeInMap(this.actionAttributes, key, source.getActionValues(key));
+            storeInMap(actionAttributes, key, source.getActionValues(key));
         }
         for (Iterator keys = source.resourceAttributes(); keys.hasNext();) {
             String key = (String) keys.next();
-            storeInMap(this.resourceAttributes, key, source
-                    .getResourceValues(key));
+            storeInMap(resourceAttributes, key, source.getResourceValues(key));
         }
     }
 
@@ -192,6 +200,7 @@ public class JournalEntryContext implements RecoveryContext {
     // Additional methods
     // -------------------------------------------------------------------------
 
+    @Override
     public String toString() {
         return this.getClass().getName() + "[environmentAttributes="
                 + environmentAttributes + ", subjectAttributes="
@@ -202,7 +211,7 @@ public class JournalEntryContext implements RecoveryContext {
     }
 
     // Make the class fully read/write.
-    
+
     public MultiValueMap getActionAttributes() {
         return actionAttributes;
     }
@@ -232,11 +241,11 @@ public class JournalEntryContext implements RecoveryContext {
     }
 
     public void setRecoveryValue(String attribute, String value) {
-        setRecoveryValues(attribute, new String[] { value });
+        setRecoveryValues(attribute, new String[] {value});
     }
 
     public void setRecoveryValues(String attribute, String[] values) {
-        storeInMap(this.recoveryAttributes, attribute, values);
+        storeInMap(recoveryAttributes, attribute, values);
     }
 
     public void setNoOp(boolean noOp) {
@@ -264,24 +273,21 @@ public class JournalEntryContext implements RecoveryContext {
         }
         JournalEntryContext that = (JournalEntryContext) obj;
 
-        return (this.environmentAttributes.equals(that.environmentAttributes)
-                && this.subjectAttributes.equals(that.subjectAttributes)
-                && this.actionAttributes.equals(that.actionAttributes)
-                && this.resourceAttributes.equals(that.resourceAttributes)
-                && this.recoveryAttributes.equals(that.recoveryAttributes)
-                && this.password.equals(that.password)
-                && (this.noOp == that.noOp) && this.now.equals(that.now));
+        return environmentAttributes.equals(that.environmentAttributes)
+                && subjectAttributes.equals(that.subjectAttributes)
+                && actionAttributes.equals(that.actionAttributes)
+                && resourceAttributes.equals(that.resourceAttributes)
+                && recoveryAttributes.equals(that.recoveryAttributes)
+                && password.equals(that.password) && noOp == that.noOp
+                && now.equals(that.now);
     }
 
     @Override
     public int hashCode() {
-        return this.environmentAttributes.hashCode()
-                ^ this.subjectAttributes.hashCode()
-                ^ this.actionAttributes.hashCode()
-                ^ this.resourceAttributes.hashCode()
-                ^ this.environmentAttributes.hashCode()
-                ^ this.password.hashCode() ^ this.now.hashCode()
-                + (noOp ? 0 : 1);
+        return environmentAttributes.hashCode() ^ subjectAttributes.hashCode()
+                ^ actionAttributes.hashCode() ^ resourceAttributes.hashCode()
+                ^ environmentAttributes.hashCode() ^ password.hashCode()
+                ^ now.hashCode() + (noOp ? 0 : 1);
     }
 
 }

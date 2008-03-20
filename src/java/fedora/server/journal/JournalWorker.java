@@ -1,3 +1,4 @@
+
 package fedora.server.journal;
 
 import fedora.server.errors.ModuleInitializationException;
@@ -17,10 +18,13 @@ import fedora.server.management.ManagementDelegate;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: JournalWorker.java 5025 2006-09-01 22:08:17 +0000 (Fri, 01 Sep
+ *          2006) cwilper $
  */
 
-public interface JournalWorker extends Management {
+public interface JournalWorker
+        extends Management {
+
     /**
      * Called by the Journaller during post-initialization, with a reference to
      * the ManagementDelegate module.

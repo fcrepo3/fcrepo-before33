@@ -48,7 +48,9 @@ public class MockJournalWriter
 
     private boolean firstEntry = true;
 
-    public MockJournalWriter(Map parameters, String role, ServerInterface server)
+    public MockJournalWriter(Map<String, String> parameters,
+                             String role,
+                             ServerInterface server)
             throws XMLStreamException, FactoryConfigurationError {
         super(parameters, role, server);
         xmlWriter =

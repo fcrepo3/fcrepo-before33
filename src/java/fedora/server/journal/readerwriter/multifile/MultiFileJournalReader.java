@@ -1,6 +1,8 @@
+
 package fedora.server.journal.readerwriter.multifile;
 
 import java.io.File;
+
 import java.util.Map;
 
 import javax.xml.stream.XMLEventReader;
@@ -13,10 +15,10 @@ import fedora.server.journal.JournalException;
 import fedora.server.journal.JournalReader;
 import fedora.server.journal.ServerInterface;
 import fedora.server.journal.entry.ConsumerJournalEntry;
+import fedora.server.journal.helpers.ParameterHelper;
 import fedora.server.journal.recoverylog.JournalRecoveryLog;
 
 /**
- * 
  * <p>
  * <b>Title:</b> MultiFileJournalReader.java
  * </p>
@@ -28,11 +30,14 @@ import fedora.server.journal.recoverylog.JournalRecoveryLog;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: MultiFileJournalReader.java 5025 2006-09-01 22:08:17 +0000
+ *          (Fri, 01 Sep 2006) cwilper $
  */
 
-public class MultiFileJournalReader extends JournalReader implements
-        MultiFileJournalConstants {
+public class MultiFileJournalReader
+        extends JournalReader
+        implements MultiFileJournalConstants {
+
     // the directory that holds the journal files before they are processed.
     private final File journalDirectory;
 
@@ -46,32 +51,36 @@ public class MultiFileJournalReader extends JournalReader implements
 
     protected boolean open = true;
 
-    public MultiFileJournalReader(Map parameters, String role,
-            JournalRecoveryLog recoveryLog, ServerInterface server)
+    public MultiFileJournalReader(Map<String, String> parameters,
+                                  String role,
+                                  JournalRecoveryLog recoveryLog,
+                                  ServerInterface server)
             throws JournalException {
         super(parameters, role, recoveryLog, server);
-        this.journalDirectory = MultiFileJournalHelper
-                .parseParametersForDirectory(parameters,
-                        PARAMETER_JOURNAL_DIRECTORY);
-        this.archiveDirectory = MultiFileJournalHelper
-                .parseParametersForDirectory(parameters,
-                        PARAMETER_ARCHIVE_DIRECTORY);
-        this.filenamePrefix = MultiFileJournalHelper
-                .parseParametersForFilenamePrefix(parameters);
+        journalDirectory =
+                ParameterHelper
+                        .parseParametersForWritableDirectory(parameters,
+                                                             PARAMETER_JOURNAL_DIRECTORY);
+        archiveDirectory =
+                ParameterHelper
+                        .parseParametersForWritableDirectory(parameters,
+                                                             PARAMETER_ARCHIVE_DIRECTORY);
+        filenamePrefix =
+                ParameterHelper.parseParametersForFilenamePrefix(parameters);
         checkDirectoriesAreDifferent();
     }
 
     private void checkDirectoriesAreDifferent() throws JournalException {
-        if (this.archiveDirectory.equals(this.journalDirectory)) {
-            throw new JournalException(
-                    "Archive directory and Journal directory are identical: '"
-                            + this.archiveDirectory.getPath() + "'");
+        if (archiveDirectory.equals(journalDirectory)) {
+            throw new JournalException("Archive directory and Journal directory are identical: '"
+                    + archiveDirectory.getPath() + "'");
         }
     }
 
     /*
      * Close the current file and set the closed flag.
      */
+    @Override
     public synchronized void shutdown() throws JournalException {
         if (open) {
             recoveryLog.log("Shutdown requested by server.");
@@ -84,6 +93,7 @@ public class MultiFileJournalReader extends JournalReader implements
      * Advance to the next tag. If its end of file, close and get next file. If
      * null, return a null entry.
      */
+    @Override
     public synchronized ConsumerJournalEntry readJournalEntry()
             throws JournalException, XMLStreamException {
         if (!open) {
@@ -96,8 +106,8 @@ public class MultiFileJournalReader extends JournalReader implements
             return null;
         } else {
             String identifier = peekAtJournalEntryIdentifier(currentFile);
-            ConsumerJournalEntry journalEntry = super
-                    .readJournalEntry(currentFile.getReader());
+            ConsumerJournalEntry journalEntry =
+                    super.readJournalEntry(currentFile.getReader());
             journalEntry.setIdentifier(identifier);
             return journalEntry;
         }
@@ -105,9 +115,8 @@ public class MultiFileJournalReader extends JournalReader implements
 
     /**
      * Create an identifier string for the Journal Entry, so we can easily
-     * connect the entries in the Recovery Log with those in the Journal.
-     * 
-     * Call this before calling
+     * connect the entries in the Recovery Log with those in the Journal. Call
+     * this before calling
      * {@link JournalReader#readJournalEntry(XMLEventReader)}, because the
      * reader is positioned at the beginning of the JournalEntry, so a peek()
      * will give us the start tag, with the info we need.
@@ -120,8 +129,8 @@ public class MultiFileJournalReader extends JournalReader implements
         String timeString = "unknown";
         if (event.isStartElement()) {
             StartElement start = event.asStartElement();
-            Attribute timeStamp = start
-                    .getAttributeByName(QNAME_ATTR_TIMESTAMP);
+            Attribute timeStamp =
+                    start.getAttributeByName(QNAME_ATTR_TIMESTAMP);
             if (timeStamp != null) {
                 timeString = timeStamp.getValue();
             }
@@ -152,23 +161,23 @@ public class MultiFileJournalReader extends JournalReader implements
                         closeCurrentFile();
                     } else {
                         // problems
-                        throw getNotNextMemberOrEndOfGroupException(
-                                QNAME_TAG_JOURNAL, QNAME_TAG_JOURNAL_ENTRY,
-                                next);
+                        throw getNotNextMemberOrEndOfGroupException(QNAME_TAG_JOURNAL,
+                                                                    QNAME_TAG_JOURNAL_ENTRY,
+                                                                    next);
                     }
                 }
 
                 // If we don't have a file open, try to open one.
                 if (currentFile == null) {
-                currentFile = openNextFile();
+                    currentFile = openNextFile();
                 }
-                
+
                 // If we still don't have a file open, we're finished.
                 if (currentFile == null) {
                     // if there was no next file, we're done.
                     return;
                 }
-                
+
                 // A new file needs to be advanced before using.
                 advanceIntoFile(currentFile.getReader());
             }
@@ -182,8 +191,10 @@ public class MultiFileJournalReader extends JournalReader implements
      * leave with currentFile still null. If we find one, advance into it.
      */
     protected JournalInputFile openNextFile() throws JournalException {
-        File[] journalFiles = MultiFileJournalHelper
-                .getSortedArrayOfJournalFiles(journalDirectory, filenamePrefix);
+        File[] journalFiles =
+                MultiFileJournalHelper
+                        .getSortedArrayOfJournalFiles(journalDirectory,
+                                                      filenamePrefix);
 
         if (journalFiles.length == 0) {
             return null;
@@ -202,20 +213,19 @@ public class MultiFileJournalReader extends JournalReader implements
             throws XMLStreamException, JournalException {
         XMLEvent event = reader.nextEvent();
         if (!event.isStartDocument()) {
-            throw new JournalException(
-                    "Expecting XML document header, but event was '" + event
-                            + "'");
+            throw new JournalException("Expecting XML document header, but event was '"
+                    + event + "'");
         }
 
         event = reader.nextTag();
         if (!isStartTagEvent(event, QNAME_TAG_JOURNAL)) {
-            throw new JournalException(
-                    "Expecting FedoraJournal start tag, but event was '"
-                            + event + "'");
+            throw new JournalException("Expecting FedoraJournal start tag, but event was '"
+                    + event + "'");
         }
 
-        String hash = getOptionalAttributeValue(event.asStartElement(),
-                QNAME_ATTR_REPOSITORY_HASH);
+        String hash =
+                getOptionalAttributeValue(event.asStartElement(),
+                                          QNAME_ATTR_REPOSITORY_HASH);
         checkRepositoryHash(hash);
     }
 
@@ -228,6 +238,7 @@ public class MultiFileJournalReader extends JournalReader implements
         }
     }
 
+    @Override
     public String toString() {
         return super.toString() + ", journalDirectory='" + journalDirectory
                 + "', archiveDirectory='" + archiveDirectory

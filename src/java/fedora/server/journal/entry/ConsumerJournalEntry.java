@@ -1,3 +1,4 @@
+
 package fedora.server.journal.entry;
 
 import fedora.server.errors.ServerException;
@@ -6,7 +7,6 @@ import fedora.server.journal.recoverylog.JournalRecoveryLog;
 import fedora.server.management.ManagementDelegate;
 
 /**
- * 
  * <p>
  * <b>Title:</b> ConsumerJournalEntry.java
  * </p>
@@ -17,10 +17,13 @@ import fedora.server.management.ManagementDelegate;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: ConsumerJournalEntry.java 6726 2008-03-03 20:04:05 +0000 (Mon,
+ *          03 Mar 2008) birkland $
  */
 
-public class ConsumerJournalEntry extends JournalEntry {
+public class ConsumerJournalEntry
+        extends JournalEntry {
+
     private String identifier = "no identifier";
 
     public ConsumerJournalEntry(String methodName, JournalEntryContext context) {
@@ -28,7 +31,7 @@ public class ConsumerJournalEntry extends JournalEntry {
     }
 
     public void invokeMethod(ManagementDelegate delegate,
-            JournalRecoveryLog recoveryLog)
+                             JournalRecoveryLog recoveryLog)
             throws ServerException, JournalException {
         recoveryLog.log(this);
         super.getMethod().invoke(delegate);
@@ -38,7 +41,7 @@ public class ConsumerJournalEntry extends JournalEntry {
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
-    
+
     public String getIdentifier() {
         return identifier;
     }

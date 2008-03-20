@@ -35,7 +35,7 @@ public class MockJournalRecoveryLog
         return new ArrayList<String>(messages);
     }
 
-    public MockJournalRecoveryLog(Map parameters,
+    public MockJournalRecoveryLog(Map<String, String> parameters,
                                   String role,
                                   ServerInterface server)
             throws ModuleInitializationException {

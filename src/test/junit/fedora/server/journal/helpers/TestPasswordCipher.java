@@ -1,3 +1,4 @@
+
 package fedora.server.journal.helpers;
 
 import java.util.HashSet;
@@ -5,7 +6,9 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-public class TestPasswordCipher extends TestCase {
+public class TestPasswordCipher
+        extends TestCase {
+
     private static final String CIPHER_TYPE_1 = "1";
 
     private static final String KEY_1 = "Now is the time for all";
@@ -14,7 +17,7 @@ public class TestPasswordCipher extends TestCase {
 
     private static final String KEY_3 = "@lk<>2lkj-\u1234***";
 
-    private static final String[] KEYS = new String[] { KEY_1, KEY_2, KEY_3 };
+    private static final String[] KEYS = new String[] {KEY_1, KEY_2, KEY_3};
 
     private static final String TEXT_1 = "Silly boys!";
 
@@ -22,7 +25,7 @@ public class TestPasswordCipher extends TestCase {
 
     private static final String TEXT_3 = "FRED\u6655";
 
-    private static final String[] TEXTS = new String[] { TEXT_1, TEXT_2, TEXT_3 };
+    private static final String[] TEXTS = new String[] {TEXT_1, TEXT_2, TEXT_3};
 
     public TestPasswordCipher(String name) {
         super(name);
@@ -71,10 +74,10 @@ public class TestPasswordCipher extends TestCase {
      * is empty).
      */
     public void testCipherDoesSomething() {
-        for (int k = 0; k < KEYS.length; k++) {
-            for (int t = 0; t < TEXTS.length; t++) {
-                String cipher = PasswordCipher.encipher(KEYS[k], TEXTS[t]);
-                assertFalse(TEXTS[t].equals(cipher));
+        for (String element : KEYS) {
+            for (String element2 : TEXTS) {
+                String cipher = PasswordCipher.encipher(element, element2);
+                assertFalse(element2.equals(cipher));
             }
         }
     }
@@ -83,11 +86,11 @@ public class TestPasswordCipher extends TestCase {
      * If I don't supply the type of cipher, deciphering has no effect.
      */
     public void testNullCipherDoesNothing() {
-        for (int k = 0; k < KEYS.length; k++) {
-            for (int t = 0; t < TEXTS.length; t++) {
-                String deciphered = PasswordCipher.decipher(KEYS[k], TEXTS[t],
-                        null);
-                assertEquals(TEXTS[t], deciphered);
+        for (String element : KEYS) {
+            for (String element2 : TEXTS) {
+                String deciphered =
+                        PasswordCipher.decipher(element, element2, null);
+                assertEquals(element2, deciphered);
             }
         }
     }
@@ -97,12 +100,12 @@ public class TestPasswordCipher extends TestCase {
      * original text back.
      */
     public void testCipherIsReversible() {
-        for (int k = 0; k < KEYS.length; k++) {
-            for (int t = 0; t < TEXTS.length; t++) {
-                String cipher = PasswordCipher.encipher(KEYS[k], TEXTS[t]);
-                String clear = PasswordCipher.decipher(KEYS[k], cipher,
-                        CIPHER_TYPE_1);
-                assertEquals(TEXTS[t], clear);
+        for (String element : KEYS) {
+            for (String element2 : TEXTS) {
+                String cipher = PasswordCipher.encipher(element, element2);
+                String clear =
+                        PasswordCipher.decipher(element, cipher, CIPHER_TYPE_1);
+                assertEquals(element2, clear);
             }
         }
     }
@@ -112,13 +115,13 @@ public class TestPasswordCipher extends TestCase {
      * come out the same.
      */
     public void testCipherIsWellDistributed() {
-        Set ciphers = new HashSet();
+        Set<String> ciphers = new HashSet<String>();
 
-        for (int k = 0; k < KEYS.length; k++) {
-            for (int t = 0; t < TEXTS.length; t++) {
-                String cipher = PasswordCipher.encipher(KEYS[k], TEXTS[t]);
+        for (String element : KEYS) {
+            for (String element2 : TEXTS) {
+                String cipher = PasswordCipher.encipher(element, element2);
                 assertTrue("Set of ciphers already contains '" + cipher + "'",
-                        ciphers.add(cipher));
+                           ciphers.add(cipher));
             }
         }
     }

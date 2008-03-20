@@ -1,3 +1,4 @@
+
 package fedora.server.journal.helpers;
 
 import java.io.IOException;
@@ -6,7 +7,6 @@ import java.io.InputStream;
 import com.oreilly.servlet.Base64Encoder;
 
 /**
- * 
  * <p>
  * <b>Title:</b> EncodingBase64InputStream.java
  * </p>
@@ -21,10 +21,12 @@ import com.oreilly.servlet.Base64Encoder;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: EncodingBase64InputStream.java 5025 2006-09-01 22:08:17 +0000
+ *          (Fri, 01 Sep 2006) cwilper $
  */
 
 public class EncodingBase64InputStream {
+
     public static final int DEFAULT_BUFFER_SIZE = 1024;
 
     private final InputStream stream;
@@ -39,29 +41,26 @@ public class EncodingBase64InputStream {
 
     /**
      * @param stream
-     *            the source of data bytes to be encoded.
-     * 
+     *        the source of data bytes to be encoded.
      */
     public EncodingBase64InputStream(InputStream stream) {
         this(stream, DEFAULT_BUFFER_SIZE);
     }
 
     /**
-     * 
      * @param stream
-     *            the source of data bytes to be encoded.
+     *        the source of data bytes to be encoded.
      * @param bufferSize
-     *            the maximum number of bytes to read at one time.
+     *        the maximum number of bytes to read at one time.
      * @throws IllegalArgumentException
-     *             if bufferSize is not between 10 and 1,000,000.
+     *         if bufferSize is not between 10 and 1,000,000.
      */
     public EncodingBase64InputStream(InputStream stream, int bufferSize) {
-        if ((bufferSize < 10) || (bufferSize > 1000000)) {
-            throw new IllegalArgumentException(
-                    "Buffer size must be between 10 and 1,000,000. Cannot be "
-                            + bufferSize);
+        if (bufferSize < 10 || bufferSize > 1000000) {
+            throw new IllegalArgumentException("Buffer size must be between 10 and 1,000,000. Cannot be "
+                    + bufferSize);
         }
-        this.buffer = new byte[bufferSize];
+        buffer = new byte[bufferSize];
         this.stream = stream;
     }
 
@@ -70,44 +69,41 @@ public class EncodingBase64InputStream {
      * encoded into 4-character sequences, per the Base64 specification. As many
      * bytes as possible will be read, limited by the amount of data available
      * and by the limitation of maxStringLength on the size of the resulting
-     * encoded String.
-     * 
-     * Since the smallest unit of encoded data is 4 characters, maxStringLength
-     * must not be less than 4.
+     * encoded String. Since the smallest unit of encoded data is 4 characters,
+     * maxStringLength must not be less than 4.
      * 
      * @param maxStringLength
-     *            the resulting String will be no longer than this.
+     *        the resulting String will be no longer than this.
      * @return a String that is no longer than maxStringLength, or null if no
      *         data remains to be read.
      * @throws IllegalArgumentException
-     *             if maxStringLength is less than 4.
+     *         if maxStringLength is less than 4.
      * @throws IllegalStateException
-     *             if called after the stream is closed.
+     *         if called after the stream is closed.
      * @throws IOException
-     *             from inner InputStream.
+     *         from inner InputStream.
      */
     public String read(int maxStringLength) throws IOException {
         if (maxStringLength < 4) {
-            throw new IllegalArgumentException(
-                    "maxStringLength must be 4 or more, not " + maxStringLength);
+            throw new IllegalArgumentException("maxStringLength must be 4 or more, not "
+                    + maxStringLength);
         }
 
         if (!open) {
             throw new IllegalStateException("Stream has already been closed.");
         }
 
-        int bytesRequestedForEncoding = (maxStringLength / 4) * 3;
+        int bytesRequestedForEncoding = maxStringLength / 4 * 3;
 
-        if (bytesRequestedForEncoding > this.bytesInBuffer) {
+        if (bytesRequestedForEncoding > bytesInBuffer) {
             readMoreBytesFromStream();
         }
 
-        if ((this.bytesInBuffer == 0) && (!this.innerStreamHasMoreData)) {
+        if (bytesInBuffer == 0 && !innerStreamHasMoreData) {
             return null;
         }
 
-        int bytesToEncode = Math.min(bytesRequestedForEncoding,
-                this.bytesInBuffer);
+        int bytesToEncode = Math.min(bytesRequestedForEncoding, bytesInBuffer);
         String result = encodeBytesFromBuffer(bytesToEncode);
         return result;
     }
@@ -116,7 +112,7 @@ public class EncodingBase64InputStream {
      * Close the InputStream, and prevent any further reads.
      * 
      * @throws IOException
-     *             from the inner InputStream
+     *         from the inner InputStream
      */
     public void close() throws IOException {
         open = false;
@@ -127,43 +123,42 @@ public class EncodingBase64InputStream {
      * Fill the buffer with more data from the InputStream, if there is any.
      * 
      * @throws IOException
-     *             from the inner InputStream
+     *         from the inner InputStream
      */
     private void readMoreBytesFromStream() throws IOException {
-        if (!this.innerStreamHasMoreData) {
+        if (!innerStreamHasMoreData) {
             return;
         }
 
-        int bufferSpaceAvailable = this.buffer.length - this.bytesInBuffer;
+        int bufferSpaceAvailable = buffer.length - bytesInBuffer;
         if (bufferSpaceAvailable <= 0) {
             return;
         }
 
-        int bytesRead = stream.read(this.buffer, this.bytesInBuffer,
-                bufferSpaceAvailable);
+        int bytesRead =
+                stream.read(buffer, bytesInBuffer, bufferSpaceAvailable);
 
         if (bytesRead == -1) {
-            this.innerStreamHasMoreData = false;
+            innerStreamHasMoreData = false;
         } else {
-            this.bytesInBuffer += bytesRead;
+            bytesInBuffer += bytesRead;
         }
     }
 
     /**
-     * Encode a group of bytes and remove them from the buffer.
-     * 
-     * If the input stream has more data, we need to limit the encoding to a
-     * multiple of 3, to avoid prematurely padding the result with equals signs.
+     * Encode a group of bytes and remove them from the buffer. If the input
+     * stream has more data, we need to limit the encoding to a multiple of 3,
+     * to avoid prematurely padding the result with equals signs.
      * 
      * @param howMany
-     *            how many bytes should be encoded and remove from the buffer.
+     *        how many bytes should be encoded and remove from the buffer.
      * @return the Base64-encoded characters.
      */
     private String encodeBytesFromBuffer(int howMany) {
         String result;
 
-        if (this.innerStreamHasMoreData) {
-            howMany = howMany - (howMany % 3);
+        if (innerStreamHasMoreData) {
+            howMany = howMany - howMany % 3;
         }
 
         if (howMany == 0) {
@@ -171,13 +166,12 @@ public class EncodingBase64InputStream {
         }
 
         byte[] encodeBuffer = new byte[howMany];
-        System.arraycopy(this.buffer, 0, encodeBuffer, 0, howMany);
+        System.arraycopy(buffer, 0, encodeBuffer, 0, howMany);
         result = Base64Encoder.encode(encodeBuffer);
 
-        this.bytesInBuffer -= howMany;
-        if (this.bytesInBuffer != 0) {
-            System.arraycopy(this.buffer, howMany, this.buffer, 0,
-                    this.bytesInBuffer);
+        bytesInBuffer -= howMany;
+        if (bytesInBuffer != 0) {
+            System.arraycopy(buffer, howMany, buffer, 0, bytesInBuffer);
         }
 
         return result;

@@ -1,3 +1,4 @@
+
 package fedora.server.journal.xmlhelpers;
 
 import java.util.ArrayList;
@@ -13,7 +14,6 @@ import fedora.server.storage.types.DSBinding;
 import fedora.server.storage.types.DSBindingMap;
 
 /**
- * 
  * <p>
  * <b>Title:</b> BindingMapXmlReader.java
  * </p>
@@ -23,10 +23,12 @@ import fedora.server.storage.types.DSBindingMap;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: BindingMapXmlReader.java 5166 2006-10-25 11:05:45 +0000 (Wed,
+ *          25 Oct 2006) eddie $
  */
 
-public class BindingMapXmlReader extends AbstractXmlReader {
+public class BindingMapXmlReader
+        extends AbstractXmlReader {
 
     public DSBindingMap readBindingMap(XMLEventReader reader)
             throws JournalException, XMLStreamException {
@@ -48,12 +50,13 @@ public class BindingMapXmlReader extends AbstractXmlReader {
         }
 
         StartElement start = event.asStartElement();
-        map.dsBindMapID = getRequiredAttributeValue(start,
-                QNAME_ATTR_DS_BIND_MAP_ID);
-        map.dsBindMechanismPID = getRequiredAttributeValue(start,
-                QNAME_ATTR_DS_BIND_MECHANISM_PID);
-        map.dsBindMapLabel = getRequiredAttributeValue(start,
-                QNAME_ATTR_DS_BIND_MAP_LABEL);
+        map.dsBindMapID =
+                getRequiredAttributeValue(start, QNAME_ATTR_DS_BIND_MAP_ID);
+        map.dsBindMechanismPID =
+                getRequiredAttributeValue(start,
+                                          QNAME_ATTR_DS_BIND_MECHANISM_PID);
+        map.dsBindMapLabel =
+                getRequiredAttributeValue(start, QNAME_ATTR_DS_BIND_MAP_LABEL);
         map.state = getRequiredAttributeValue(start, QNAME_ATTR_STATE);
         return map;
     }
@@ -71,11 +74,12 @@ public class BindingMapXmlReader extends AbstractXmlReader {
             } else if (isEndTagEvent(event, QNAME_TAG_DS_BINDING_MAP)) {
                 break;
             } else {
-                throw getNotNextMemberOrEndOfGroupException(
-                        QNAME_TAG_DS_BINDING_MAP, QNAME_TAG_DS_BINDING, event);
+                throw getNotNextMemberOrEndOfGroupException(QNAME_TAG_DS_BINDING_MAP,
+                                                            QNAME_TAG_DS_BINDING,
+                                                            event);
             }
         }
-        return (DSBinding[]) bindings.toArray(new DSBinding[bindings.size()]);
+        return bindings.toArray(new DSBinding[bindings.size()]);
     }
 
     /**
@@ -85,12 +89,12 @@ public class BindingMapXmlReader extends AbstractXmlReader {
     private DSBinding readBinding(XMLEventReader reader, StartElement start)
             throws JournalException, XMLStreamException {
         DSBinding binding = new DSBinding();
-        binding.bindKeyName = getRequiredAttributeValue(start,
-                QNAME_ATTR_BIND_KEY_NAME);
-        binding.bindLabel = getRequiredAttributeValue(start,
-                QNAME_ATTR_BIND_LABEL);
-        binding.datastreamID = getRequiredAttributeValue(start,
-                QNAME_ATTR_DATASTREAM_ID);
+        binding.bindKeyName =
+                getRequiredAttributeValue(start, QNAME_ATTR_BIND_KEY_NAME);
+        binding.bindLabel =
+                getRequiredAttributeValue(start, QNAME_ATTR_BIND_LABEL);
+        binding.datastreamID =
+                getRequiredAttributeValue(start, QNAME_ATTR_DATASTREAM_ID);
         binding.seqNo = getRequiredAttributeValue(start, QNAME_ATTR_SEQ_NO);
         XMLEvent endTag = reader.nextTag();
         if (!isEndTagEvent(endTag, QNAME_TAG_DS_BINDING)) {

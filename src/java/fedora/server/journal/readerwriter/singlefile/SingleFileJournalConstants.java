@@ -1,7 +1,7 @@
+
 package fedora.server.journal.readerwriter.singlefile;
 
 /**
- * 
  * <p>
  * <b>Title:</b> SingleFileJournalConstants.java
  * </p>
@@ -11,10 +11,12 @@ package fedora.server.journal.readerwriter.singlefile;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: SingleFileJournalConstants.java 5025 2006-09-01 22:08:17 +0000
+ *          (Fri, 01 Sep 2006) cwilper $
  */
 
 public interface SingleFileJournalConstants {
+
     String PARAMETER_JOURNAL_FILENAME = "journalFilename";
 
 }

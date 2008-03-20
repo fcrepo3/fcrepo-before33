@@ -1,3 +1,4 @@
+
 package fedora.server.journal.managementmethods;
 
 import fedora.server.errors.ServerException;
@@ -5,7 +6,6 @@ import fedora.server.journal.entry.JournalEntry;
 import fedora.server.management.ManagementDelegate;
 
 /**
- * 
  * <p>
  * <b>Title:</b> PurgeDatastreamMethod.java
  * </p>
@@ -14,15 +14,18 @@ import fedora.server.management.ManagementDelegate;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: PurgeDatastreamMethod.java 5046 2006-09-05 18:11:02 +0000 (Tue,
+ *          05 Sep 2006) cwilper $
  */
 
-public class PurgeDatastreamMethod extends ManagementMethod {
+public class PurgeDatastreamMethod
+        extends ManagementMethod {
 
     public PurgeDatastreamMethod(JournalEntry parent) {
         super(parent);
     }
 
+    @Override
     public Object invoke(ManagementDelegate delegate) throws ServerException {
         return delegate.purgeDatastream(parent.getContext(), parent
                 .getStringArgument(ARGUMENT_NAME_PID), parent

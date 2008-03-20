@@ -17,6 +17,7 @@ import fedora.server.errors.ServerException;
 import fedora.server.journal.JournalConstants;
 import fedora.server.journal.JournalConsumer;
 import fedora.server.journal.MockJournalRecoveryLog;
+import fedora.server.journal.MockServerForJournalTesting;
 import fedora.server.journal.ServerInterface;
 import fedora.server.management.MockManagementDelegate;
 
@@ -38,7 +39,7 @@ public class TestLockingFollowingJournalReader
 
     private File lockAcceptedFile;
 
-    private Map parameters;
+    private Map<String, String> parameters;
 
     private ServerInterface server;
 
@@ -52,6 +53,7 @@ public class TestLockingFollowingJournalReader
         super(name);
     }
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 
@@ -72,7 +74,7 @@ public class TestLockingFollowingJournalReader
 
         server = new MockServerForJournalTesting(delegate, DUMMY_HASH_VALUE);
 
-        parameters = new HashMap();
+        parameters = new HashMap<String, String>();
         parameters.put(PARAMETER_JOURNAL_RECOVERY_LOG_CLASSNAME,
                        MockJournalRecoveryLog.class.getName());
         parameters.put(PARAMETER_JOURNAL_READER_CLASSNAME,
@@ -397,9 +399,9 @@ public class TestLockingFollowingJournalReader
      * its position in the log.
      */
     private int assertLockMessageInLog() {
-        List messages = MockJournalRecoveryLog.getMessages();
+        List<String> messages = MockJournalRecoveryLog.getMessages();
         int lastMessageIndex = messages.size() - 1;
-        String lastMessage = (String) messages.get(lastMessageIndex);
+        String lastMessage = messages.get(lastMessageIndex);
         assertStringStartsWith(lastMessage, "Lock request detected:");
         return lastMessageIndex;
     }
@@ -409,10 +411,10 @@ public class TestLockingFollowingJournalReader
      * unlock message.
      */
     private void assertUnlockMessageInLog(int lockMessageIndex) {
-        List messages = MockJournalRecoveryLog.getMessages();
+        List<String> messages = MockJournalRecoveryLog.getMessages();
         int unlockMessageIndex = lockMessageIndex + 1;
         assertTrue(messages.size() > unlockMessageIndex);
-        String unlockMessage = (String) messages.get(unlockMessageIndex);
+        String unlockMessage = messages.get(unlockMessageIndex);
         assertStringStartsWith(unlockMessage, "Lock request removed");
     }
 

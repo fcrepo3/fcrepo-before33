@@ -1,3 +1,4 @@
+
 package fedora.server.journal.readerwriter.multifile;
 
 import java.util.Map;
@@ -7,7 +8,6 @@ import fedora.server.journal.ServerInterface;
 import fedora.server.journal.recoverylog.JournalRecoveryLog;
 
 /**
- * 
  * <p>
  * <b>Title:</b> MultiFileFollowingJournalReader.java
  * </p>
@@ -23,21 +23,29 @@ import fedora.server.journal.recoverylog.JournalRecoveryLog;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: MultiFileFollowingJournalReader.java 6765 2008-03-09 20:24:44
+ *          +0000 (Sun, 09 Mar 2008) j2blake $
+ * @deprecated Use {@link LockingFollowingJournalReader} instead.
  */
 
-public class MultiFileFollowingJournalReader extends MultiFileJournalReader {
+@Deprecated
+public class MultiFileFollowingJournalReader
+        extends MultiFileJournalReader {
+
     private final long pollingIntervalMillis;
 
     /**
      * Do the super-class constructor, and then find the polling interval.
      */
-    public MultiFileFollowingJournalReader(Map parameters, String role,
-            JournalRecoveryLog recoveryLog, ServerInterface server)
+    public MultiFileFollowingJournalReader(Map<String, String> parameters,
+                                           String role,
+                                           JournalRecoveryLog recoveryLog,
+                                           ServerInterface server)
             throws JournalException {
         super(parameters, role, recoveryLog, server);
-        pollingIntervalMillis = MultiFileJournalHelper
-                .parseParametersForPollingInterval(parameters);
+        pollingIntervalMillis =
+                MultiFileJournalHelper
+                        .parseParametersForPollingInterval(parameters);
     }
 
     /**
@@ -45,6 +53,7 @@ public class MultiFileFollowingJournalReader extends MultiFileJournalReader {
      * wait for a while and ask again. This will continue until we get a server
      * shutdown signal.
      */
+    @Override
     protected synchronized JournalInputFile openNextFile()
             throws JournalException {
         while (open) {
@@ -64,6 +73,7 @@ public class MultiFileFollowingJournalReader extends MultiFileJournalReader {
     /**
      * If the server requests a shutdown, stop waiting the next file to come in.
      */
+    @Override
     public synchronized void shutdown() throws JournalException {
         super.shutdown();
         notifyAll();

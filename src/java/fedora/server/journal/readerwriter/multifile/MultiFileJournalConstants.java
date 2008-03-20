@@ -1,43 +1,29 @@
+
 package fedora.server.journal.readerwriter.multifile;
 
 /**
- * 
  * <p>
  * <b>Title:</b> MultiFileJournalConstants.java
  * </p>
  * <p>
  * <b>Description:</b> Parameters, formats and default values for use by the
- * {@link MultiFileJournalReader}, {@link MultiFileJournalWriter}, and
- * {@link MultiFileFollowingJournalReader} classes.
+ * Multi-file journalling classes.
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: MultiFileJournalConstants.java 6760 2008-03-09 19:24:02 +0000
+ *          (Sun, 09 Mar 2008) j2blake $
  */
 
 public interface MultiFileJournalConstants {
+
     String PARAMETER_JOURNAL_DIRECTORY = "journalDirectory";
-
-    String PARAMETER_JOURNAL_FILENAME_PREFIX = "journalFilenamePrefix";
-
-    String PARAMETER_JOURNAL_FILE_SIZE_LIMIT = "journalFileSizeLimit";
-
-    String PARAMETER_JOURNAL_FILE_AGE_LIMIT = "journalFileAgeLimit";
 
     String PARAMETER_ARCHIVE_DIRECTORY = "archiveDirectory";
 
-    String DEFAULT_FILENAME_PREFIX = "fedoraJournal";
-
-    String DEFAULT_SIZE_LIMIT = "5M";
-
-    String DEFAULT_AGE_LIMIT = "1D";
-
-    String FORMAT_JOURNAL_FILENAME_TIMESTAMP = "yyyyMMdd.HHmmss.SSS";
-
-    /** Used by following readers like {@link MultiFileFollowingJournalReader} */
+    /** Used by following readers */
     String PARAMETER_FOLLOW_POLLING_INTERVAL = "followPollingInterval";
 
-    /** Used by following readers like {@link MultiFileFollowingJournalReader} */
     String DEFAULT_FOLLOW_POLLING_INTERVAL = "3";
 
     /** Used by locking readers like {@link LockingFollowingJournalReader} */

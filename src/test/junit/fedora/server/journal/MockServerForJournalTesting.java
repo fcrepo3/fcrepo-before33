@@ -1,11 +1,10 @@
 
-package fedora.server.journal.readerwriter.multifile;
+package fedora.server.journal;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import fedora.server.errors.ServerException;
-import fedora.server.journal.ServerInterface;
 import fedora.server.management.ManagementDelegate;
 
 public class MockServerForJournalTesting

@@ -25,7 +25,6 @@ import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
 import fedora.server.journal.entry.JournalEntryContext;
-import fedora.server.journal.readerwriter.multifile.MockServerForJournalTesting;
 import fedora.server.management.Management;
 import fedora.server.management.MockManagementDelegate;
 import fedora.server.management.MockManagementDelegate.Call;
@@ -295,14 +294,13 @@ public class TestJournalRoundTrip {
                                 "encodingScheme");
     }
 
-    // TODO: This should use testNonJournalledMethod() when the read-only mode is folded in.
     /**
      * This one will always be special, in that it doesn't use a context as its
      * first argument. If it were a Journalled method, that would be a problem.
      */
     @Test
     public void getTempStream() throws ServerException {
-        testGetTempStream(METHOD_GET_TEMP_STREAM, "streamID");
+        testNonJournalledMethod(METHOD_GET_TEMP_STREAM, "streamID");
     }
 
     @Test
@@ -512,38 +510,6 @@ public class TestJournalRoundTrip {
      * </p>
      */
     private void testNonJournalledMethod(String methodName, Object... arguments)
-            throws ServerException {
-        buildExpectedCall(methodName, arguments);
-
-        setupLeader();
-        executeManagmentMethod(creator, methodName, arguments);
-        closeLeader();
-
-        assertEmptyJournal();
-        assertExpectedCall("leading", leadingDelegate);
-
-        setupFollower();
-        letFollowerCatchUp();
-        // For now, even non-journalled methods throw exceptions. Soon, we 
-        // expect to use the next code block instead.
-        try {
-            executeManagmentMethod(consumer, methodName, arguments);
-            fail("expected an InvalidStateException");
-        } catch (InvalidStateException e) {
-            // That's the one we expected.
-        }
-        // Soon, we will use this code instead, since read-only methods won't 
-        // throw exceptions.
-        //        executeManagmentMethod(consumer, methodName, arguments);
-        //        assertExpectedCall("following", followingDelegate);
-    }
-
-    /**
-     * TODO: For now, this is the only non-Journalled method that doesn't throw
-     * an exception when invoked on the JournalConsumer. When we install the
-     * read-only mode code, this goes away.
-     */
-    private void testGetTempStream(String methodName, Object... arguments)
             throws ServerException {
         buildExpectedCall(methodName, arguments);
 

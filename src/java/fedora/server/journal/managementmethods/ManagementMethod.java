@@ -1,3 +1,4 @@
+
 package fedora.server.journal.managementmethods;
 
 import fedora.server.errors.ServerException;
@@ -7,7 +8,6 @@ import fedora.server.journal.entry.JournalEntry;
 import fedora.server.management.ManagementDelegate;
 
 /**
- * 
  * <p>
  * <b>Title:</b> ManagementMethod.java
  * </p>
@@ -17,16 +17,18 @@ import fedora.server.management.ManagementDelegate;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: ManagementMethod.java 5046 2006-09-05 18:11:02 +0000 (Tue, 05
+ *          Sep 2006) cwilper $
  */
 
-public abstract class ManagementMethod implements JournalConstants {
+public abstract class ManagementMethod
+        implements JournalConstants {
 
     /**
      * Get an instance of the proper class, based on the method name.
      */
     public static ManagementMethod getInstance(String methodName,
-            JournalEntry parent) {
+                                               JournalEntry parent) {
         if (METHOD_INGEST_OBJECT.equals(methodName)) {
             return new IngestObjectMethod(parent);
         } else if (METHOD_MODIFY_OBJECT.equals(methodName)) {

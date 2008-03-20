@@ -1,3 +1,4 @@
+
 package fedora.server.journal.managementmethods;
 
 import fedora.server.errors.ServerException;
@@ -5,7 +6,6 @@ import fedora.server.journal.entry.JournalEntry;
 import fedora.server.management.ManagementDelegate;
 
 /**
- * 
  * <p>
  * <b>Title:</b> ModifyDisseminatorMethod.java
  * </p>
@@ -14,15 +14,18 @@ import fedora.server.management.ManagementDelegate;
  * </p>
  * 
  * @author jblake@cs.cornell.edu
- * @version $Id$
+ * @version $Id: ModifyDisseminatorMethod.java 5025 2006-09-01 22:08:17 +0000
+ *          (Fri, 01 Sep 2006) cwilper $
  */
 
-public class ModifyDisseminatorMethod extends ManagementMethod {
+public class ModifyDisseminatorMethod
+        extends ManagementMethod {
 
     public ModifyDisseminatorMethod(JournalEntry parent) {
         super(parent);
     }
 
+    @Override
     public Object invoke(ManagementDelegate delegate) throws ServerException {
         return delegate.modifyDisseminator(parent.getContext(), parent
                 .getStringArgument(ARGUMENT_NAME_PID), parent
