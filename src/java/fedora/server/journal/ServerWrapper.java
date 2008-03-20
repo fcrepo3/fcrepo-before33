@@ -13,8 +13,8 @@ import fedora.server.storage.DOManager;
 /**
  * Wrap a Server in an object that implements an interface, so it can be passed
  * to the JournalWorker classes and their dependents.
- * 
- * <p>It's also easy to mock, for unit tests.
+ * <p>
+ * It's also easy to mock, for unit tests.
  * 
  * @author Jim Blake
  */

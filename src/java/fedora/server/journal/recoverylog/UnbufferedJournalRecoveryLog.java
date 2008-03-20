@@ -18,9 +18,9 @@ import fedora.server.journal.ServerInterface;
 
 /**
  * A basic implementation of RecoveryLog.
- * 
- * <p>All entries are written to a log, which is flushed after each entry so 
- * the log will be up to date even if the server crashes.
+ * <p>
+ * All entries are written to a log, which is flushed after each entry so the
+ * log will be up to date even if the server crashes.
  * 
  * @author Jim Blake
  */
@@ -41,7 +41,7 @@ public class UnbufferedJournalRecoveryLog
      * Get the name of the logfile from the server parameters and create the
      * file.
      */
-    public UnbufferedJournalRecoveryLog(Map parameters,
+    public UnbufferedJournalRecoveryLog(Map<String, String> parameters,
                                         String role,
                                         ServerInterface server)
             throws ModuleInitializationException {
@@ -54,8 +54,7 @@ public class UnbufferedJournalRecoveryLog
                                                                 + "' is not set.",
                                                         role);
             }
-            String fileName =
-                    (String) parameters.get(PARAMETER_RECOVERY_LOG_FILENAME);
+            String fileName = parameters.get(PARAMETER_RECOVERY_LOG_FILENAME);
             logFile = new File(fileName);
             writer = new FileWriter(logFile);
 

@@ -50,7 +50,7 @@ public abstract class JournalReader
     private static final Logger LOG =
             Logger.getLogger(JournalReader.class.getName());
 
-    protected final Map parameters;
+    protected final Map<String, String> parameters;
 
     protected final String role;
 
@@ -64,7 +64,7 @@ public abstract class JournalReader
      * Create an instance of the proper JournalReader child class, as determined
      * by the server parameters.
      */
-    public static JournalReader getInstance(Map parameters,
+    public static JournalReader getInstance(Map<String, String> parameters,
                                             String role,
                                             JournalRecoveryLog recoveryLog,
                                             ServerInterface server)
@@ -97,7 +97,7 @@ public abstract class JournalReader
     /**
      * Concrete sub-classes must implement this constructor.
      */
-    protected JournalReader(Map parameters,
+    protected JournalReader(Map<String, String> parameters,
                             String role,
                             JournalRecoveryLog recoveryLog,
                             ServerInterface server)
@@ -110,7 +110,7 @@ public abstract class JournalReader
     }
 
     private void parseParameters() throws JournalException {
-        String ignore = (String) parameters.get(PARAMETER_IGNORE_HASH);
+        String ignore = parameters.get(PARAMETER_IGNORE_HASH);
         if (ignore == null) {
             ignoreHashErrors = false;
         } else if (ignore.equals(VALUE_FALSE)) {
@@ -291,7 +291,7 @@ public abstract class JournalReader
                                          ConsumerJournalEntry journalEntry,
                                          String name)
             throws XMLStreamException, JournalException {
-        List values = new ArrayList();
+        List<String> values = new ArrayList<String>();
         while (true) {
             XMLEvent event = reader.nextTag();
             if (isStartTagEvent(event, QNAME_TAG_ARRAYELEMENT)) {

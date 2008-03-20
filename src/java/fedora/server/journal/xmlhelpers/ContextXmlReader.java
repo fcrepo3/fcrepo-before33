@@ -20,7 +20,7 @@ import fedora.server.journal.helpers.JournalHelper;
 import fedora.server.journal.helpers.PasswordCipher;
 
 /**
- * Reads a Context tag from the journal file, and assembles a 
+ * Reads a Context tag from the journal file, and assembles a
  * JournalEntryContext from it.
  * 
  * @author Jim Blake
@@ -162,7 +162,7 @@ public class ContextXmlReader
      */
     private String[] readMultiMapValuesForKey(XMLEventReader reader)
             throws XMLStreamException, JournalException {
-        List values = new ArrayList();
+        List<String> values = new ArrayList<String>();
         while (true) {
             XMLEvent event = reader.nextTag();
             if (isStartTagEvent(event, QNAME_TAG_MULTI_VALUE_MAP_VALUE)) {
@@ -170,7 +170,7 @@ public class ContextXmlReader
                         .add(readCharactersUntilEndTag(reader,
                                                        QNAME_TAG_MULTI_VALUE_MAP_VALUE));
             } else if (isEndTagEvent(event, QNAME_TAG_MULTI_VALUE_MAP_KEY)) {
-                return (String[]) values.toArray(new String[values.size()]);
+                return values.toArray(new String[values.size()]);
             } else {
                 throw getNotNextMemberOrEndOfGroupException(QNAME_TAG_MULTI_VALUE_MAP_KEY,
                                                             QNAME_TAG_MULTI_VALUE_MAP_VALUE,

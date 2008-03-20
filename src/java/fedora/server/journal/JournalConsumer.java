@@ -49,7 +49,9 @@ public class JournalConsumer
      * server parameters, and create a JournalConsumerThread that will process
      * the journal entries, using that reader and that log.
      */
-    public JournalConsumer(Map parameters, String role, ServerInterface server)
+    public JournalConsumer(Map<String, String> parameters,
+                           String role,
+                           ServerInterface server)
             throws ModuleInitializationException {
         this.role = role;
         recoveryLog = JournalRecoveryLog.getInstance(parameters, role, server);
@@ -91,7 +93,8 @@ public class JournalConsumer
     //
     // -------------------------------------------------------------------------
     // 
-    // Reject any outside calls to the Management API methods.
+    // Reject outside calls to Management API methods that modify the 
+    // repository.
     // 
     // -------------------------------------------------------------------------
     //
@@ -117,33 +120,6 @@ public class JournalConsumer
                              String label,
                              String ownerId,
                              String logMessage) throws ServerException {
-        throw rejectCallsFromOutsideWhileInRecoveryMode();
-    }
-
-    /**
-     * Reject API calls from outside while we are in recovery mode.
-     */
-    public Property[] getObjectProperties(Context context, String pid)
-            throws ServerException {
-        throw rejectCallsFromOutsideWhileInRecoveryMode();
-    }
-
-    /**
-     * Reject API calls from outside while we are in recovery mode.
-     */
-    public InputStream getObjectXML(Context context, String pid, String encoding)
-            throws ServerException {
-        throw rejectCallsFromOutsideWhileInRecoveryMode();
-    }
-
-    /**
-     * Reject API calls from outside while we are in recovery mode.
-     */
-    public InputStream export(Context context,
-                              String pid,
-                              String format,
-                              String exportContext,
-                              String encoding) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
@@ -230,50 +206,9 @@ public class JournalConsumer
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public Datastream getDatastream(Context context,
-                                    String pid,
-                                    String datastreamID,
-                                    Date asOfDateTime) throws ServerException {
-        throw rejectCallsFromOutsideWhileInRecoveryMode();
-    }
-
-    /**
-     * Reject API calls from outside while we are in recovery mode.
-     */
-    public Datastream[] getDatastreams(Context context,
-                                       String pid,
-                                       Date asOfDateTime,
-                                       String dsState) throws ServerException {
-        throw rejectCallsFromOutsideWhileInRecoveryMode();
-    }
-
-    /**
-     * Reject API calls from outside while we are in recovery mode.
-     */
-    public Datastream[] getDatastreamHistory(Context context,
-                                             String pid,
-                                             String datastreamID)
-            throws ServerException {
-        throw rejectCallsFromOutsideWhileInRecoveryMode();
-    }
-
-    /**
-     * Reject API calls from outside while we are in recovery mode.
-     */
     public String putTempStream(Context context, InputStream in)
             throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
-    }
-
-    /**
-     * Delegate to the ManagementDelegate. Note: Unlike other methods of the
-     * Management interface, this method is not exposed at the service level.
-     * Therefore, it is safe to forward the call to the delegate. It is also
-     * necessary because, in the course of fulfilling API-M requests that
-     * involve uploaded content, this method is invoked by internal server code.
-     */
-    public InputStream getTempStream(String id) throws ServerException {
-        return delegate.getTempStream(id);
     }
 
     /**
@@ -302,17 +237,6 @@ public class JournalConsumer
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public String compareDatastreamChecksum(Context context,
-                                            String pid,
-                                            String dsID,
-                                            Date versionDate)
-            throws ServerException {
-        throw rejectCallsFromOutsideWhileInRecoveryMode();
-    }
-
-    /**
-     * Reject API calls from outside while we are in recovery mode.
-     */
     public Date setDisseminatorState(Context context,
                                      String pid,
                                      String dsID,
@@ -325,16 +249,6 @@ public class JournalConsumer
      * Reject API calls from outside while we are in recovery mode.
      */
     public String[] getNextPID(Context context, int numPIDs, String namespace)
-            throws ServerException {
-        throw rejectCallsFromOutsideWhileInRecoveryMode();
-    }
-
-    /**
-     * Reject API calls from outside while we are in recovery mode.
-     */
-    public RelationshipTuple[] getRelationships(Context context,
-                                                String pid,
-                                                String relationship)
             throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
@@ -361,6 +275,107 @@ public class JournalConsumer
                                      boolean isLiteral,
                                      String datatype) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
+    }
+
+    //
+    // -------------------------------------------------------------------------
+    // 
+    // Permit outside calls to Management API methods that do not modify the 
+    // repository.
+    // 
+    // -------------------------------------------------------------------------
+    //
+
+    /**
+     * Read-only method: pass the call to the {@link ManagementDelegate}.
+     */
+    public String compareDatastreamChecksum(Context context,
+                                            String pid,
+                                            String dsID,
+                                            Date versionDate)
+            throws ServerException {
+        return delegate.compareDatastreamChecksum(context,
+                                                  pid,
+                                                  dsID,
+                                                  versionDate);
+    }
+
+    /**
+     * Read-only method: pass the call to the {@link ManagementDelegate}.
+     */
+    public InputStream export(Context context,
+                              String pid,
+                              String format,
+                              String exportContext,
+                              String encoding) throws ServerException {
+        return delegate.export(context, pid, format, exportContext, encoding);
+    }
+
+    /**
+     * Read-only method: pass the call to the {@link ManagementDelegate}.
+     */
+    public Property[] getObjectProperties(Context context, String pid)
+            throws ServerException {
+        return delegate.getObjectProperties(context, pid);
+    }
+
+    /**
+     * Read-only method: pass the call to the {@link ManagementDelegate}.
+     */
+    public InputStream getObjectXML(Context context, String pid, String encoding)
+            throws ServerException {
+        return delegate.getObjectXML(context, pid, encoding);
+    }
+
+    /**
+     * Read-only method: pass the call to the {@link ManagementDelegate}.
+     */
+    public Datastream getDatastream(Context context,
+                                    String pid,
+                                    String datastreamID,
+                                    Date asOfDateTime) throws ServerException {
+        return delegate.getDatastream(context, pid, datastreamID, asOfDateTime);
+    }
+
+    /**
+     * Read-only method: pass the call to the {@link ManagementDelegate}.
+     */
+    public Datastream[] getDatastreams(Context context,
+                                       String pid,
+                                       Date asOfDateTime,
+                                       String dsState) throws ServerException {
+        return delegate.getDatastreams(context, pid, asOfDateTime, dsState);
+    }
+
+    /**
+     * Read-only method: pass the call to the {@link ManagementDelegate}.
+     */
+    public Datastream[] getDatastreamHistory(Context context,
+                                             String pid,
+                                             String datastreamID)
+            throws ServerException {
+        return delegate.getDatastreamHistory(context, pid, datastreamID);
+    }
+
+    /**
+     * Read-only method: pass the call to the {@link ManagementDelegate}.
+     */
+    public RelationshipTuple[] getRelationships(Context context,
+                                                String pid,
+                                                String relationship)
+            throws ServerException {
+        return delegate.getRelationships(context, pid, relationship);
+    }
+
+    /**
+     * Delegate to the ManagementDelegate. Note: Unlike other methods of the
+     * Management interface, this method is not exposed at the service level.
+     * Therefore, it is safe to forward the call to the delegate. It is also
+     * necessary because, in the course of fulfilling API-M requests that
+     * involve uploaded content, this method is invoked by internal server code.
+     */
+    public InputStream getTempStream(String id) throws ServerException {
+        return delegate.getTempStream(id);
     }
 
     /**

@@ -1,3 +1,8 @@
+/*
+ * The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://www.fedora.info/license/).
+ */
 
 package fedora.server.journal.helpers;
 
@@ -14,7 +19,7 @@ public class AllUnitTests {
         junit.framework.TestSuite suite =
                 new junit.framework.TestSuite(AllUnitTests.class.getName());
 
-        suite.addTestSuite(TestParameterHelper.class);
+        suite.addTest(TestParameterHelper.suite());
         suite.addTestSuite(TestPasswordCipher.class);
 
         return suite;

@@ -1,3 +1,8 @@
+/*
+ * The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://www.fedora.info/license/).
+ */
 
 package fedora.server.journal;
 
@@ -35,7 +40,7 @@ public class MockJournalRecoveryLog
         return new ArrayList<String>(messages);
     }
 
-    public MockJournalRecoveryLog(Map parameters,
+    public MockJournalRecoveryLog(Map<String, String> parameters,
                                   String role,
                                   ServerInterface server)
             throws ModuleInitializationException {

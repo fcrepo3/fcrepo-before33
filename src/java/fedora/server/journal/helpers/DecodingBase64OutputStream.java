@@ -13,11 +13,11 @@ import java.util.regex.Pattern;
 import com.oreilly.servlet.Base64Decoder;
 
 /**
- * Wraps an OutputStream with a Base64 decoder, so when you "write" to the 
- * stream, you write Strings of Base64-encoded characters, but the 
- * OutputStream receives decoded bytes.
- * 
- * <p>Base64 encoding is defined in Internet RFC 3548, found at
+ * Wraps an OutputStream with a Base64 decoder, so when you "write" to the
+ * stream, you write Strings of Base64-encoded characters, but the OutputStream
+ * receives decoded bytes.
+ * <p>
+ * Base64 encoding is defined in Internet RFC 3548, found at
  * http://tools.ietf.org/html/rfc3548 (among other places).
  * 
  * @author Jim Blake

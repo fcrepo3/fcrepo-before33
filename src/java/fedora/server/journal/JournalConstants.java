@@ -34,6 +34,12 @@ public interface JournalConstants {
 
     String PARAMETER_IGNORE_HASH = "continueOnHashError";
 
+    String PARAMETER_JOURNAL_FILENAME_PREFIX = "journalFilenamePrefix";
+
+    String PARAMETER_JOURNAL_FILE_SIZE_LIMIT = "journalFileSizeLimit";
+
+    String PARAMETER_JOURNAL_FILE_AGE_LIMIT = "journalFileAgeLimit";
+
     // Acceptable values for server parameters.
     String VALUE_TRUE = "true";
 
@@ -49,6 +55,13 @@ public interface JournalConstants {
 
     String VALUE_RECOVERY_LOG_LEVEL_LOW = "low";
 
+    // Default values for server parameters.
+    String DEFAULT_FILENAME_PREFIX = "fedoraJournal";
+
+    String DEFAULT_SIZE_LIMIT = "5M";
+
+    String DEFAULT_AGE_LIMIT = "1D";
+
     // Strings for the XML document header of the Journal file
     String DOCUMENT_ENCODING = "UTF-8";
 
@@ -60,6 +73,10 @@ public interface JournalConstants {
     QName QNAME_TAG_ARRAYELEMENT = QName.valueOf("element");
 
     QName QNAME_TAG_CONTEXT = QName.valueOf("context");
+
+    QName QNAME_TAG_DS_BINDING = QName.valueOf("dsBinding");
+
+    QName QNAME_TAG_DS_BINDING_MAP = QName.valueOf("dsBindingMap");
 
     QName QNAME_TAG_JOURNAL = QName.valueOf("FedoraJournal");
 
@@ -162,6 +179,8 @@ public interface JournalConstants {
 
     String ARGUMENT_TYPE_STREAM = "stream";
 
+    String ARGUMENT_TYPE_BINDING_MAP = "bindingMap";
+
     String ARGUMENT_TYPE_NULL = "null";
 
     // Names of arguments to the management methods, as written to the Journal
@@ -256,6 +275,9 @@ public interface JournalConstants {
 
     // Format of time stamps used in the Journal and in the recovery log
     String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
+    // Format of time stamps used in names of Journal files and recover logs.
+    String FORMAT_JOURNAL_FILENAME_TIMESTAMP = "yyyyMMdd.HHmmss.SSS";
 
     // Type code for the latest and greatest password cipher.
     String PASSWORD_CIPHER_TYPE = "1";

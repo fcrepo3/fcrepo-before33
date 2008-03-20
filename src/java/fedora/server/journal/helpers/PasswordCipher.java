@@ -10,11 +10,10 @@ import com.oreilly.servlet.Base64Encoder;
 
 /**
  * Encipher the password so we aren't writing it to the file in clear.
- * 
- * <p>The encipher method does not allow options for cipher type. It should 
- * always use the latest and greatest. The decipher method accepts different 
- * cipher types so it can be used to read older Journal Files. Known types 
- * include:
+ * <p>
+ * The encipher method does not allow options for cipher type. It should always
+ * use the latest and greatest. The decipher method accepts different cipher
+ * types so it can be used to read older Journal Files. Known types include:
  * <ul>
  * <li>"" or null - empty cipher, clear text is the same as cipher text</li>
  * <li>"1" - rotating key XOR cipher</li>

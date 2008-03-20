@@ -11,9 +11,9 @@ import fedora.server.management.ManagementDelegate;
 /**
  * Pass this to the constructors of the JournalWorker classes and their
  * dependents instead of passing a Server.
- * 
- * <p>This makes it much easier to write unit tests, since I don't need to 
- * create a Server instance.
+ * <p>
+ * This makes it much easier to write unit tests, since I don't need to create a
+ * Server instance.
  * 
  * @author Jim Blake
  */

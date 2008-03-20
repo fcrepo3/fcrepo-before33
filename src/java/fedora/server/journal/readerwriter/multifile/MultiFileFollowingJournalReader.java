@@ -14,11 +14,11 @@ import fedora.server.journal.recoverylog.JournalRecoveryLog;
 /**
  * A JournalReader implementation for "following" a leading server, when the
  * leading server is using a {@link MultiFileJournalWriter}, or the equivalent.
- * 
- * <p>The recovery is never complete, as the reader continues to poll for 
+ * <p>
+ * The recovery is never complete, as the reader continues to poll for
  * recently-created files, until the server shuts down.
- * 
- * <p>This class should likely be superceded by
+ * <p>
+ * This class should likely be superceded by
  * {@link LockingFollowingJournalReader}.
  * 
  * @author Jim Blake
@@ -31,7 +31,7 @@ public class MultiFileFollowingJournalReader
     /**
      * Do the super-class constructor, and then find the polling interval.
      */
-    public MultiFileFollowingJournalReader(Map parameters,
+    public MultiFileFollowingJournalReader(Map<String, String> parameters,
                                            String role,
                                            JournalRecoveryLog recoveryLog,
                                            ServerInterface server)

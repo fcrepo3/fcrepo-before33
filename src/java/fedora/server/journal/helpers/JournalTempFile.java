@@ -9,9 +9,9 @@ import java.io.File;
 
 /**
  * Subclass of File is used as a marker.
- * 
- * <p>An instance of this class behaves exactly as a java.io.File object would
- * behave. However, it can be tested with instanceof to reveal that it is in 
+ * <p>
+ * An instance of this class behaves exactly as a java.io.File object would
+ * behave. However, it can be tested with instanceof to reveal that it is in
  * fact a temp file, and as such can safely be deleted after use.
  * 
  * @author Jim Blake

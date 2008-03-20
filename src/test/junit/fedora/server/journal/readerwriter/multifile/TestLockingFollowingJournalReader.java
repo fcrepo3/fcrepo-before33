@@ -1,3 +1,8 @@
+/*
+ * The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://www.fedora.info/license/).
+ */
 
 package fedora.server.journal.readerwriter.multifile;
 
@@ -19,6 +24,7 @@ import fedora.server.errors.ServerException;
 import fedora.server.journal.JournalConstants;
 import fedora.server.journal.JournalConsumer;
 import fedora.server.journal.MockJournalRecoveryLog;
+import fedora.server.journal.MockServerForJournalTesting;
 import fedora.server.journal.ServerInterface;
 import fedora.server.management.MockManagementDelegate;
 
@@ -397,9 +403,9 @@ public class TestLockingFollowingJournalReader
      * its position in the log.
      */
     private int assertLockMessageInLog() {
-        List messages = MockJournalRecoveryLog.getMessages();
+        List<String> messages = MockJournalRecoveryLog.getMessages();
         int lastMessageIndex = messages.size() - 1;
-        String lastMessage = (String) messages.get(lastMessageIndex);
+        String lastMessage = messages.get(lastMessageIndex);
         assertStringStartsWith(lastMessage, "Lock request detected:");
         return lastMessageIndex;
     }
@@ -409,10 +415,10 @@ public class TestLockingFollowingJournalReader
      * unlock message.
      */
     private void assertUnlockMessageInLog(int lockMessageIndex) {
-        List messages = MockJournalRecoveryLog.getMessages();
+        List<String> messages = MockJournalRecoveryLog.getMessages();
         int unlockMessageIndex = lockMessageIndex + 1;
         assertTrue(messages.size() > unlockMessageIndex);
-        String unlockMessage = (String) messages.get(unlockMessageIndex);
+        String unlockMessage = messages.get(unlockMessageIndex);
         assertStringStartsWith(unlockMessage, "Lock request removed");
     }
 

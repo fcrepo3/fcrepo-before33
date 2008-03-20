@@ -11,9 +11,9 @@ import fedora.server.management.Management;
 import fedora.server.management.ManagementDelegate;
 
 /**
- * A common interface for the <code>JournalConsumer</code>
- * and <code>JournalCreator</code> classes. These classes form the
- * implementation layer between the <code>Journaller</code> and the
+ * A common interface for the <code>JournalConsumer</code> and
+ * <code>JournalCreator</code> classes. These classes form the implementation
+ * layer between the <code>Journaller</code> and the
  * <code>ManagementDelegate</code>.
  * 
  * @author Jim Blake

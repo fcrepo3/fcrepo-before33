@@ -71,13 +71,14 @@ class JournalInputFile {
              * file-systems, see:
              * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4073756 So
              * instead of this call: file.renameTo(archiveFile); We use the
-             * following line...
+             * following line, and check for exception...
              */
-            boolean renamed = FileMovingUtil.move(file, archiveFile);
-            if (!renamed) {
+            try {
+                FileMovingUtil.move(file, archiveFile);
+            } catch (IOException e) {
                 throw new JournalException("Failed to rename file from '"
                         + file.getPath() + "' to '" + archiveFile.getPath()
-                        + "'");
+                        + "'", e);
             }
         } catch (XMLStreamException e) {
             throw new JournalException(e);

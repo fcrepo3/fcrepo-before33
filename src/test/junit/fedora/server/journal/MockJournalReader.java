@@ -1,3 +1,8 @@
+/*
+ * The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://www.fedora.info/license/).
+ */
 
 package fedora.server.journal;
 
@@ -34,7 +39,7 @@ public class MockJournalReader
 
     private XMLEventReader xmlReader;
 
-    public MockJournalReader(Map parameters,
+    public MockJournalReader(Map<String, String> parameters,
                              String role,
                              JournalRecoveryLog recoveryLog,
                              ServerInterface server)

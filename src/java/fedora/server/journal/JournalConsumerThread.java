@@ -42,7 +42,7 @@ public class JournalConsumerThread
      * ManagementDelegate is provided, and we won't get that until the
      * post-initialization stage.
      */
-    public JournalConsumerThread(Map parameters,
+    public JournalConsumerThread(Map<String, String> parameters,
                                  String role,
                                  ServerInterface server,
                                  JournalReader reader,

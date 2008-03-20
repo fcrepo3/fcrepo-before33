@@ -23,11 +23,12 @@ import javanet.staxutils.IndentingXMLEventWriter;
 import fedora.server.journal.JournalException;
 import fedora.server.journal.JournalWriter;
 import fedora.server.journal.helpers.FileMovingUtil;
+import fedora.server.journal.helpers.JournalHelper;
 
 /**
  * Encapsulate the information that goes with the creation of a Journal file.
- * 
- * <p><b>CAUTION:</b> This file includes an asynchronous timer thread that can
+ * <p>
+ * <b>CAUTION:</b> This file includes an asynchronous timer thread that can
  * close the file. The {@link #isOpen()} and {@link #close()} methods are
  * synchronized against the {@link JournalWriter#SYNCHRONIZER} to guard against
  * problems. Any other operations on the file or on its
@@ -112,8 +113,8 @@ class JournalOutputFile
     private File createFilename(String filenamePrefix, File journalDirectory)
             throws JournalException {
         String filename =
-                MultiFileJournalHelper
-                        .createTimestampedFilename(filenamePrefix, new Date());
+                JournalHelper.createTimestampedFilename(filenamePrefix,
+                                                        new Date());
         File theFile = new File(journalDirectory, filename);
 
         if (theFile.exists()) {
@@ -136,14 +137,14 @@ class JournalOutputFile
     /**
      * Create and open the temporary file.
      */
-    private FileWriter createTempFile(File file) throws IOException,
+    private FileWriter createTempFile(File tempfile) throws IOException,
             JournalException {
-        boolean created = file.createNewFile();
+        boolean created = tempfile.createNewFile();
         if (!created) {
             throw new JournalException("Unable to create file '"
-                    + file.getPath() + "'.");
+                    + tempfile.getPath() + "'.");
         }
-        return new FileWriter(file);
+        return new FileWriter(tempfile);
     }
 
     /**
@@ -231,12 +232,14 @@ class JournalOutputFile
                  * file-systems, see:
                  * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4073756 So
                  * instead of this call: tempFile.renameTo(file); We use the
-                 * following line...
+                 * following line, and check for exception...
                  */
-                boolean renamed = FileMovingUtil.move(tempFile, file);
-                if (!renamed) {
-                    throw new JournalException("Unable to rename file '"
-                            + tempFile + "' to '" + file + "'.");
+                try {
+                    FileMovingUtil.move(tempFile, file);
+                } catch (IOException e) {
+                    throw new JournalException("Failed to rename file from '"
+                            + tempFile.getPath() + "' to '" + file.getPath()
+                            + "'", e);
                 }
 
                 open = false;

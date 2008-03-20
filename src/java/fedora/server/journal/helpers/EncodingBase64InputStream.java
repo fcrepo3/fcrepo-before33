@@ -12,10 +12,10 @@ import com.oreilly.servlet.Base64Encoder;
 
 /**
  * Wraps an InputStream with a Base64 encoder, so when you "read" from the
- * stream, you don't get bytes from the InputStream, you get Strings of 
+ * stream, you don't get bytes from the InputStream, you get Strings of
  * Base64-encoded characters.
- * 
- * <p>Base64 encoding is defined in Internet RFC 3548, found at
+ * <p>
+ * Base64 encoding is defined in Internet RFC 3548, found at
  * http://tools.ietf.org/html/rfc3548 (among other places).
  * 
  * @author Jim Blake

@@ -18,12 +18,12 @@ import fedora.server.errors.ModuleInitializationException;
 import fedora.server.journal.ServerInterface;
 
 /**
- * A simple implementation of JournalRecoveryLog that keeps the entire log in
- * a StringBuffer, and writes it to a file on shutdown().
- * 
- * <p>This is memory-intensive, so it should only be used for System Tests, 
- * where the presence of the log file can be treated as a signal that the 
- * recovery is complete.
+ * A simple implementation of JournalRecoveryLog that keeps the entire log in a
+ * StringBuffer, and writes it to a file on shutdown().
+ * <p>
+ * This is memory-intensive, so it should only be used for System Tests, where
+ * the presence of the log file can be treated as a signal that the recovery is
+ * complete.
  * 
  * @author Jim Blake
  */
@@ -44,7 +44,7 @@ public class BufferedJournalRecoveryLog
      * Get the name of the log file from the server parameters, but don't create
      * the file yet. Just create the StringWriter that we will use as a buffer.
      */
-    public BufferedJournalRecoveryLog(Map parameters,
+    public BufferedJournalRecoveryLog(Map<String, String> parameters,
                                       String role,
                                       ServerInterface server)
             throws ModuleInitializationException {
@@ -56,8 +56,7 @@ public class BufferedJournalRecoveryLog
             throw new ModuleInitializationException("Parameter '"
                     + PARAMETER_RECOVERY_LOG_FILENAME + "' is not set.", role);
         }
-        String fileName =
-                (String) parameters.get(PARAMETER_RECOVERY_LOG_FILENAME);
+        String fileName = parameters.get(PARAMETER_RECOVERY_LOG_FILENAME);
         logFile = new File(fileName);
 
         super.logHeaderInfo(parameters);

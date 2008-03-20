@@ -1,5 +1,6 @@
-/* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+/*
+ * The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -49,7 +50,9 @@ public class JournalCreator
     /**
      * Get a JournalWriter to use, based on the server parameters.
      */
-    public JournalCreator(Map parameters, String role, ServerInterface server)
+    public JournalCreator(Map<String, String> parameters,
+                          String role,
+                          ServerInterface server)
             throws ModuleInitializationException {
         this.role = role;
 

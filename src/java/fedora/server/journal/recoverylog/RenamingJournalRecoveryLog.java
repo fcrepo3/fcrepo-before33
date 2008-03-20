@@ -16,14 +16,14 @@ import org.apache.log4j.Logger;
 
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.journal.ServerInterface;
-import fedora.server.journal.readerwriter.multifile.MultiFileJournalHelper;
+import fedora.server.journal.helpers.JournalHelper;
 
 /**
  * A production-oriented implementation of {@link JournalRecoveryLog}.
- * 
- * <p>The name of the log file contains a time-stamp, so we can be sure that 
- * it won't over-write an existing log file. Also, the name is prefixed with 
- * an '_' (underscore) while the recovery is in progress, so we can see when it
+ * <p>
+ * The name of the log file contains a time-stamp, so we can be sure that it
+ * won't over-write an existing log file. Also, the name is prefixed with an '_'
+ * (underscore) while the recovery is in progress, so we can see when it
  * finishes.
  * 
  * @author Jim Blake
@@ -53,7 +53,7 @@ public class RenamingJournalRecoveryLog
      * @param server
      * @throws ModuleInitializationException
      */
-    public RenamingJournalRecoveryLog(Map parameters,
+    public RenamingJournalRecoveryLog(Map<String, String> parameters,
                                       String role,
                                       ServerInterface server)
             throws ModuleInitializationException {
@@ -67,11 +67,10 @@ public class RenamingJournalRecoveryLog
                                                         role);
             }
             String fileNameTemplate =
-                    (String) parameters.get(PARAMETER_RECOVERY_LOG_FILENAME);
+                    parameters.get(PARAMETER_RECOVERY_LOG_FILENAME);
             fileName =
-                    MultiFileJournalHelper
-                            .createTimestampedFilename(fileNameTemplate,
-                                                       new Date());
+                    JournalHelper.createTimestampedFilename(fileNameTemplate,
+                                                            new Date());
             tempFileName = insertHyphenBeforeFilename(fileName);
             logFile = new File(tempFileName);
             writer = new FileWriter(logFile);

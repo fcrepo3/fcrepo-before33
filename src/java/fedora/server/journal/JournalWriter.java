@@ -11,7 +11,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.stream.XMLEventWriter;
@@ -29,11 +28,40 @@ import fedora.server.journal.xmlhelpers.AbstractXmlWriter;
 import fedora.server.journal.xmlhelpers.ContextXmlWriter;
 
 /**
+ * <p>
  * The abstract base for all JournalWriter classes.
- * 
- * <p>Each child class is responsible for providing an XMLEventWriter that 
- * will receive the JournalEntry tag. This class will format a JournalEntry 
- * object into XML and add it to the XMLEventWriter.
+ * </p>
+ * <p>
+ * Each child class is responsible for providing an XMLEventWriter that will
+ * receive the JournalEntry tag. This class will format a JournalEntry object
+ * into XML and add it to the XMLEventWriter.
+ * </p>
+ * <p>
+ * Note that the writing of an entry is necessarily a three step process,
+ * consisting of
+ * <ol>
+ * <li>calling {@link #prepareToWriteJournalEntry()},</li>
+ * <li>invoking the management method,</li>
+ * <li>calling {@link #writeJournalEntry(CreatorJournalEntry)}</li>
+ * </ol>
+ * Several factors combine to require this sequence.
+ * <ul>
+ * <li>Each new journal file starts with a repository hash.</li>
+ * <li>Repository hashes are expensive to calculate (on the order of 10
+ * seconds). We don't want to calculate a hash unless it is needed for a new
+ * journal file.</li>
+ * <li>We cannot predict in advance which journal entry will require that a new
+ * journal file be opened. The preceding file may be closed asynchronously as a
+ * result of a period of inactivity.</li>
+ * <li>The repository hash must be calculated before the management method is
+ * invoked, so the receiver can confirm the file before making any changes to
+ * its own repository.</li>
+ * <li>The journal entry must be written after the management method is
+ * invoked. The management method may add values to the context object in the
+ * {@link CreatorJournalEntry}, and these values must be written to the
+ * journal.</li>
+ * </ul>
+ * </p>
  * 
  * @author Jim Blake
  */
@@ -57,7 +85,7 @@ public abstract class JournalWriter
      * Create an instance of the proper JournalWriter child class, as determined
      * by the server parameters.
      */
-    public static JournalWriter getInstance(Map parameters,
+    public static JournalWriter getInstance(Map<String, String> parameters,
                                             String role,
                                             ServerInterface server)
             throws JournalException {
@@ -79,14 +107,16 @@ public abstract class JournalWriter
 
     protected final String role;
 
-    protected final Map parameters;
+    protected final Map<String, String> parameters;
 
     protected final ServerInterface server;
 
     /**
      * Concrete sub-classes must implement this constructor.
      */
-    protected JournalWriter(Map parameters, String role, ServerInterface server) {
+    protected JournalWriter(Map<String, String> parameters,
+                            String role,
+                            ServerInterface server) {
         this.parameters = parameters;
         this.role = role;
         this.server = server;
@@ -106,7 +136,9 @@ public abstract class JournalWriter
     /**
      * Concrete sub-classes should provide an XMLEventWriter, and call
      * {@link #writeJournalEntry(XMLEventWriter)}, after which, they should
-     * probably flush the XMLEventWriter.
+     * probably flush the XMLEventWriter. This method is called after the
+     * Management method is invoked, since the Management method may modify the
+     * context object in the journal entry.
      */
     public abstract void writeJournalEntry(CreatorJournalEntry journalEntry)
             throws JournalException;
@@ -116,14 +148,23 @@ public abstract class JournalWriter
      */
     protected void writeDocumentHeader(XMLEventWriter writer)
             throws JournalException {
+        writeDocumentHeader(writer, getRepositoryHash(), new Date());
+    }
+
+    /**
+     * Subclasses should call this method to initialize a new Journal file, if
+     * they already know the repository hash and the current date.
+     */
+    protected void writeDocumentHeader(XMLEventWriter writer,
+                                       String repositoryHash,
+                                       Date currentDate)
+            throws JournalException {
         try {
             putStartDocument(writer);
             putStartTag(writer, QNAME_TAG_JOURNAL);
-            putAttribute(writer,
-                         QNAME_ATTR_REPOSITORY_HASH,
-                         getRepositoryHash());
+            putAttribute(writer, QNAME_ATTR_REPOSITORY_HASH, repositoryHash);
             putAttribute(writer, QNAME_ATTR_TIMESTAMP, JournalHelper
-                    .formatDate(new Date()));
+                    .formatDate(currentDate));
         } catch (XMLStreamException e) {
             throw new JournalException(e);
         }
@@ -156,6 +197,7 @@ public abstract class JournalWriter
             writeArguments(journalEntry.getArgumentsMap(), writer);
 
             putEndTag(writer, QNAME_TAG_JOURNAL_ENTRY);
+            writer.flush();
         } catch (XMLStreamException e) {
             throw new JournalException(e);
         }
@@ -185,10 +227,10 @@ public abstract class JournalWriter
         }
     }
 
-    private void writeArguments(Map arguments, XMLEventWriter writer)
+    private void writeArguments(Map<String, Object> arguments,
+                                XMLEventWriter writer)
             throws XMLStreamException, JournalException {
-        for (Iterator args = arguments.keySet().iterator(); args.hasNext();) {
-            String key = (String) args.next();
+        for (String key : arguments.keySet()) {
             Object value = arguments.get(key);
             if (value == null) {
                 writeNullArgument(key, writer);

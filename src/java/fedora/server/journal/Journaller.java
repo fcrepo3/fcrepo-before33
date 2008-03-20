@@ -9,8 +9,8 @@ package fedora.server.journal;
 import java.io.InputStream;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -47,7 +47,9 @@ public class Journaller
 
     private ServerInterface serverInterface;
 
-    public Journaller(Map moduleParameters, Server server, String role)
+    public Journaller(Map<String, String> moduleParameters,
+                      Server server,
+                      String role)
             throws ModuleInitializationException {
         super(moduleParameters, server, role);
     }
@@ -59,7 +61,7 @@ public class Journaller
      */
     @Override
     public void initModule() throws ModuleInitializationException {
-        Map parameters = getParameters();
+        Map<String, String> parameters = getParameters();
         copyPropertiesOverParameters(parameters);
         serverInterface = new ServerWrapper(getServer());
         LOG.info("Journalling parameters: " + parameters);
@@ -101,13 +103,13 @@ public class Journaller
      * System Property of "fedora.journal.mode" will override a server parameter
      * of "mode".
      */
-    private void copyPropertiesOverParameters(Map parameters) {
-        Map properties = System.getProperties();
-        for (Iterator keys = properties.keySet().iterator(); keys.hasNext();) {
-            String key = (String) keys.next();
+    private void copyPropertiesOverParameters(Map<String, String> parameters) {
+        Properties properties = System.getProperties();
+        for (Object object : properties.keySet()) {
+            String key = (String) object;
             if (key.startsWith(SYSTEM_PROPERTY_PREFIX)) {
                 parameters.put(key.substring(SYSTEM_PROPERTY_PREFIX.length()),
-                               properties.get(key));
+                               properties.getProperty(key));
             }
         }
     }
@@ -116,11 +118,11 @@ public class Journaller
      * Check the parameters for required values and for acceptable values. At
      * this point, the only parameter we care about is "mode".
      */
-    private void parseParameters(Map parameters)
+    private void parseParameters(Map<String, String> parameters)
             throws ModuleInitializationException {
         LOG.info("Parameters: " + parameters);
 
-        String mode = (String) parameters.get(PARAMETER_JOURNAL_MODE);
+        String mode = parameters.get(PARAMETER_JOURNAL_MODE);
         if (mode == null) {
             inRecoveryMode = false;
         } else if (mode.equals(VALUE_JOURNAL_MODE_NORMAL)) {

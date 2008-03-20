@@ -8,13 +8,14 @@ package fedora.server.journal.entry;
 import fedora.server.Context;
 import fedora.server.errors.ServerException;
 import fedora.server.journal.JournalException;
+import fedora.server.journal.JournalOperatingMode;
 import fedora.server.journal.JournalWriter;
 import fedora.server.management.ManagementDelegate;
 
 /**
- * The JournalEntry to use when creating a journal file.
- * 
- * <p>When invoking the management method, take a moment to write to the journal
+ * The {@link JournalEntry} to use when creating a journal file.
+ * <p>
+ * When invoking the management method, take a moment to write to the journal
  * before returning.
  * 
  * @author Jim Blake
@@ -32,25 +33,29 @@ public class CreatorJournalEntry
     /**
      * Process the management method:
      * <ul>
-     * <li>prepare the writer in case we need to initialize a new file with a
-     * repository hash</li>
-     * <li>invoke the method on the ManagementDelegate</li>
-     * <li>write the full journal entry, including any context changes from the
-     * Management method</li>
+     * <li>Check the operating mode - if we are in
+     * {@link JournalOperatingMode#READ_ONLY Read-Only} mode, this check will
+     * throw an exception.</li>
+     * <li>Prepare the writer in case we need to initialize a new file with a
+     * repository hash.</li>
+     * <li>Invoke the method on the ManagementDelegate.</li>
+     * <li>Write the full journal entry, including any context changes from the
+     * Management method.</li>
      * </ul>
-     * Note that these operations occur within a synchronized block. We must be
-     * sure that any pending operations are complete before we get the
-     * repository hash, so we are confident that the hash accurately reflects
-     * the state of the repository. Since all API-M operations go through this
-     * synchronized block, we can be confident that the previous one had
-     * completed before the current one started.
+     * These operations occur within a synchronized block. We must be sure that
+     * any pending operations are complete before we get the repository hash, so
+     * we are confident that the hash accurately reflects the state of the
+     * repository. Since all API-M operations go through this synchronized
+     * block, we can be confident that the previous one had completed before the
+     * current one started.
      * <p>
-     * Note also - there might be a way to enforce this at a lower level, thus
-     * increasing throughput, but we haven't explored it yet.
+     * There might be a way to enforce the synchronization at a lower level,
+     * thus increasing throughput, but we haven't explored it yet.
      */
     public Object invokeMethod(ManagementDelegate delegate, JournalWriter writer)
             throws ServerException, JournalException {
         synchronized (JournalWriter.SYNCHRONIZER) {
+            JournalOperatingMode.enforceCurrentMode();
             writer.prepareToWriteJournalEntry();
             Object result = super.getMethod().invoke(delegate);
             writer.writeJournalEntry(this);

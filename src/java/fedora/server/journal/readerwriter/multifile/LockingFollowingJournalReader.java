@@ -16,18 +16,18 @@ import fedora.server.journal.helpers.ParameterHelper;
 import fedora.server.journal.recoverylog.JournalRecoveryLog;
 
 /**
- * A Following Journal Reader that can be made quiescent by the presence of a 
- * lock file. 
- * 
- * <p>This works like the MultiFileFollowingJournalReader, except that when 
- * looking for the next Journal file to be processed, it will take a moment to 
- * check the locking protocol. If a lock has been requested, it will accept 
- * the lock, and ignore any additional Journal files if present.
- *
- * <p>Polling continues, however. At each polling interval, the reader will 
- * check for the lock request. If the request has been removed, the lock 
- * acceptance will be removed also, and the reader will process the next 
- * Journal file, if one is found.
+ * A Following Journal Reader that can be made quiescent by the presence of a
+ * lock file.
+ * <p>
+ * This works like the MultiFileFollowingJournalReader, except that when looking
+ * for the next Journal file to be processed, it will take a moment to check the
+ * locking protocol. If a lock has been requested, it will accept the lock, and
+ * ignore any additional Journal files if present.
+ * <p>
+ * Polling continues, however. At each polling interval, the reader will check
+ * for the lock request. If the request has been removed, the lock acceptance
+ * will be removed also, and the reader will process the next Journal file, if
+ * one is found.
  * 
  * @author Jim Blake
  */
@@ -59,7 +59,7 @@ public class LockingFollowingJournalReader
      * Require parameters for polling interval, lock request filename and lock
      * acceptance filename.
      */
-    public LockingFollowingJournalReader(Map parameters,
+    public LockingFollowingJournalReader(Map<String, String> parameters,
                                          String role,
                                          JournalRecoveryLog recoveryLog,
                                          ServerInterface server)

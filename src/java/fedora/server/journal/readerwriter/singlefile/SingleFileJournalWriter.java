@@ -22,8 +22,8 @@ import fedora.server.journal.ServerInterface;
 import fedora.server.journal.entry.CreatorJournalEntry;
 
 /**
- * A rudimentary implementation of JournalWriter that just writes all entries
- * to a single Journal file. Useful only for System tests.
+ * A rudimentary implementation of JournalWriter that just writes all entries to
+ * a single Journal file. Useful only for System tests.
  * 
  * @author Jim Blake
  */
@@ -42,7 +42,7 @@ public class SingleFileJournalWriter
      * file, wrap it in an XMLEventWriter, and initialize it with a document
      * header.
      */
-    public SingleFileJournalWriter(Map parameters,
+    public SingleFileJournalWriter(Map<String, String> parameters,
                                    String role,
                                    ServerInterface server)
             throws JournalException {
@@ -54,9 +54,7 @@ public class SingleFileJournalWriter
         }
 
         try {
-            out =
-                    new FileWriter((String) parameters
-                            .get(PARAMETER_JOURNAL_FILENAME));
+            out = new FileWriter(parameters.get(PARAMETER_JOURNAL_FILENAME));
 
             XMLOutputFactory factory = XMLOutputFactory.newInstance();
             writer =

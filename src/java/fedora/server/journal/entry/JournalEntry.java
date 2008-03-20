@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -22,11 +21,11 @@ import fedora.server.journal.managementmethods.ManagementMethod;
 
 /**
  * An abstract base class for the JournalEntry classes.
- * 
- * <p>At this level, a JournalEntry is a method name, a method adapter, and a 
- * map of arguments.
- * 
- * <p>NOTE: when finished with the JournalEntry, call close(). This will release
+ * <p>
+ * At this level, a JournalEntry is a method name, a method adapter, and a map
+ * of arguments.
+ * <p>
+ * NOTE: when finished with the JournalEntry, call close(). This will release
  * any temporary files associated with the entry.
  * 
  * @author Jim Blake
@@ -35,7 +34,8 @@ public abstract class JournalEntry {
 
     private boolean open = true;
 
-    private final Map arguments = new LinkedHashMap();
+    private final Map<String, Object> arguments =
+            new LinkedHashMap<String, Object>();
 
     private final String methodName;
 
@@ -64,9 +64,9 @@ public abstract class JournalEntry {
         return methodName;
     }
 
-    public Map getArgumentsMap() {
+    public Map<String, Object> getArgumentsMap() {
         checkOpen();
-        return new LinkedHashMap(arguments);
+        return new LinkedHashMap<String, Object>(arguments);
     }
 
     public void addArgument(String key, boolean value) {
@@ -172,8 +172,7 @@ public abstract class JournalEntry {
 
         open = false;
 
-        for (Iterator args = arguments.values().iterator(); args.hasNext();) {
-            Object arg = args.next();
+        for (Object arg : arguments.values()) {
             if (arg instanceof File) {
                 File file = (File) arg;
                 if (JournalHelper.isTempFile(file)) {

@@ -49,7 +49,7 @@ public abstract class JournalRecoveryLog
      * Create an instance of the proper JournalRecoveryLog child class, as
      * determined by the server parameters.
      */
-    public static JournalRecoveryLog getInstance(Map parameters,
+    public static JournalRecoveryLog getInstance(Map<String, String> parameters,
                                                  String role,
                                                  ServerInterface server)
             throws ModuleInitializationException {
@@ -80,13 +80,13 @@ public abstract class JournalRecoveryLog
      * Concrete sub-classes must implement this constructor. Checks the server
      * parameters to find out what Logging Level to use - default is Low.
      */
-    protected JournalRecoveryLog(Map parameters,
+    protected JournalRecoveryLog(Map<String, String> parameters,
                                  String role,
                                  ServerInterface server)
             throws ModuleInitializationException {
         this.server = server;
 
-        String level = (String) parameters.get(PARAMETER_RECOVERY_LOG_LEVEL);
+        String level = parameters.get(PARAMETER_RECOVERY_LOG_LEVEL);
         if (level == null) {
             logLevel = LEVEL_LOW;
         } else if (VALUE_RECOVERY_LOG_LEVEL_HIGH.equals(level)) {
@@ -128,9 +128,10 @@ public abstract class JournalRecoveryLog
      * Concrete sub-classes should call this method from their constructor, or
      * as soon as the log is ready for writing.
      */
-    public void logHeaderInfo(Map parameters) {
+    public void logHeaderInfo(Map<String, String> parameters) {
         StringBuffer buffer = new StringBuffer("Recovery parameters:");
-        for (Iterator keys = parameters.keySet().iterator(); keys.hasNext();) {
+        for (Iterator<String> keys = parameters.keySet().iterator(); keys
+                .hasNext();) {
             Object key = keys.next();
             Object value = parameters.get(key);
             buffer.append("\n    ").append(key).append("=").append(value);

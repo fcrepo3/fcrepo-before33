@@ -28,8 +28,8 @@ import fedora.server.journal.recoverylog.JournalRecoveryLog;
 /**
  * A rudimentary implementation of JournalReader that just reads all entries
  * from a single Journal file.
- * 
- * <p>Useful only for System tests.
+ * <p>
+ * Useful only for System tests.
  * 
  * @author Jim Blake
  */
@@ -52,7 +52,7 @@ public class SingleFileJournalReader
      * 
      * @throws JournalException
      */
-    public SingleFileJournalReader(Map parameters,
+    public SingleFileJournalReader(Map<String, String> parameters,
                                    String role,
                                    JournalRecoveryLog recoveryLog,
                                    ServerInterface server)
@@ -65,7 +65,7 @@ public class SingleFileJournalReader
                     + PARAMETER_JOURNAL_FILENAME + "' not set.", role);
         }
 
-        String filename = (String) parameters.get(PARAMETER_JOURNAL_FILENAME);
+        String filename = parameters.get(PARAMETER_JOURNAL_FILENAME);
         journalFile = new File(filename);
 
         if (!journalFile.exists()) {

@@ -19,14 +19,15 @@ import fedora.server.journal.JournalException;
 import fedora.server.journal.JournalReader;
 import fedora.server.journal.ServerInterface;
 import fedora.server.journal.entry.ConsumerJournalEntry;
+import fedora.server.journal.helpers.ParameterHelper;
 import fedora.server.journal.recoverylog.JournalRecoveryLog;
 
 /**
- * A JournalReader implementation for "recovering", when using a 
+ * A JournalReader implementation for "recovering", when using a
  * {@link MultiFileJournalWriter}, or the equivalent.
- * 
- * <p>The recovery is complete when the all of the files in the journal 
- * directory have been processed and moved to the archive directory.
+ * <p>
+ * The recovery is complete when the all of the files in the journal directory
+ * have been processed and moved to the archive directory.
  * 
  * @author Jim Blake
  */
@@ -47,23 +48,22 @@ public class MultiFileJournalReader
 
     protected boolean open = true;
 
-    public MultiFileJournalReader(Map parameters,
+    public MultiFileJournalReader(Map<String, String> parameters,
                                   String role,
                                   JournalRecoveryLog recoveryLog,
                                   ServerInterface server)
             throws JournalException {
         super(parameters, role, recoveryLog, server);
         journalDirectory =
-                MultiFileJournalHelper
-                        .parseParametersForDirectory(parameters,
-                                                     PARAMETER_JOURNAL_DIRECTORY);
+                ParameterHelper
+                        .parseParametersForWritableDirectory(parameters,
+                                                             PARAMETER_JOURNAL_DIRECTORY);
         archiveDirectory =
-                MultiFileJournalHelper
-                        .parseParametersForDirectory(parameters,
-                                                     PARAMETER_ARCHIVE_DIRECTORY);
+                ParameterHelper
+                        .parseParametersForWritableDirectory(parameters,
+                                                             PARAMETER_ARCHIVE_DIRECTORY);
         filenamePrefix =
-                MultiFileJournalHelper
-                        .parseParametersForFilenamePrefix(parameters);
+                ParameterHelper.parseParametersForFilenamePrefix(parameters);
         checkDirectoriesAreDifferent();
     }
 

@@ -1,3 +1,8 @@
+/*
+ * The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://www.fedora.info/license/).
+ */
 
 package fedora.server.journal.xmlhelpers;
 
@@ -158,12 +163,12 @@ public class TestContextXmlWriterAndReader
             assertEquals(name1, name2);
             String[] values1 = map1.getStringArray(name1);
             String[] values2 = map1.getStringArray(name2);
-            assertEqualSets(new HashSet(Arrays.asList(values1)),
-                            new HashSet(Arrays.asList(values2)));
+            assertEqualSets(new HashSet<String>(Arrays.asList(values1)),
+                            new HashSet<String>(Arrays.asList(values2)));
         }
     }
 
-    private void assertEqualSets(Set set1, Set set2) {
+    private void assertEqualSets(Set<String> set1, Set<String> set2) {
         assertEquals(set1, set2);
     }
 
