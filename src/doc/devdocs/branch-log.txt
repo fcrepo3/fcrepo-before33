@@ -21,6 +21,11 @@ dev-147179
   Developer : Chris Wilper
   Reviewer  : Jim Blake
 
+dev-142358
+  Created   : 2008/03/05 from genericsearch/trunk
+  Developer : Bill Branan
+  Reviewer  : Eddie Shin
+
 dev-146877
   Created   : 2008/03/04 from trunk r6681
   Developer : Jim Blake
