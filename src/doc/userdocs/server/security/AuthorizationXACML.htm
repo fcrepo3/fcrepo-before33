@@ -355,7 +355,10 @@ Contents<o:p></o:p></span></h2>
       href="#CONFIG-VALIDATE">2.4 Enabling/Disabling Policy Validation</a><o:p></o:p></span></li>
   <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l6 level2 lfo1;
       tab-stops:list 1.0in'><span style='font-family:Arial'><a
-      href="#CONFIG-SURROG">2.5 Surrogate feature no longer requires policies.</a><o:p></o:p></span></li>
+      href="#CONFIG-OWNER-ID">2.5 Configuring Multiple Owner IDs</a><o:p></o:p></span></li>
+  <li class=MsoNormal style='color:black;line-height:15.0pt;mso-list:l6 level2 lfo1;
+      tab-stops:list 1.0in'><span style='font-family:Arial'><a
+      href="#CONFIG-SURROG">2.6 Surrogate feature no longer requires policies.</a><o:p></o:p></span></li>
  </ul>
 </ol>
 
@@ -561,151 +564,25 @@ policy enforcement.<o:p></o:p></span></p>
 <p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
 Arial;color:black'>&nbsp;<o:p></o:p></span></p>
 
-<div style='border:solid black 1.0pt;mso-border-alt:solid black .75pt;
-padding:4.0pt 4.0pt 4.0pt 4.0pt;margin-left:3.75pt;margin-top:3.75pt;
-margin-right:3.75pt;margin-bottom:3.75pt'>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'>&lt;module role=&quot;fedora.server.security.Authorization&quot; class=&quot;fedora.server.security.DefaultAuthorization&quot;&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>    </span>&lt;comment&gt;Builds and manages Fedora's authorization structure.&lt;/comment&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>    </span>&lt;param name=&quot;REPOSITORY-POLICIES-DIRECTORY&quot; value=&quot;/fedora-xacml-policies/repository-policies&quot;/&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>    </span>&lt;param name=&quot;XACML-COMBINING-ALGORITHM&quot; value=&quot;com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg&quot;/&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>    </span>&lt;param name=&quot;ENFORCE-MODE&quot; value=&quot;enforce-policies&quot;/&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>    </span>&lt;param name=&quot;POLICY-SCHEMA-PATH&quot; value=&quot;xsd/cs-xacml-schema-policy-01.xsd&quot;/&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>    </span>&lt;param name=&quot;VALIDATE-REPOSITORY-POLICIES&quot; value=&quot;true&quot;/&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'><span style='mso-spacerun:yes'>    </span>&lt;param name=&quot;VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM&quot; value=&quot;false&quot;/&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-tab-count:1'>  </span><o:p></o:p></span></p>
-
-<pre style='line-height:15.0pt;background:#DDDDFF;text-autospace:none'><span
-style='color:black'>&lt;/module&gt;<o:p></o:p></span></pre>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><o:p>&nbsp;</o:p></span></p>
-
-<p class=MsoNormal style='margin:0in;margin-bottom:.0001pt;line-height:15.0pt;
-background:#DDDDFF'><span style='font-family:"Lucida Console";mso-bidi-font-family:
-Arial;color:black'><span style='mso-spacerun:yes'>      </span><o:p></o:p></span></p>
+<div class="code"><pre>
+&lt;module role="fedora.server.security.Authorization"
+        class="fedora.server.security.DefaultAuthorization"&gt;
+    &lt;comment&gt;Builds and manages Fedora's authorization structure.&lt;/comment&gt;
+    &lt;param name="REPOSITORY-POLICIES-DIRECTORY"
+           value="/fedora-xacml-policies/repository-policies"/&gt;
+    &lt;param name="XACML-COMBINING-ALGORITHM"
+           value="com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg"/&gt;
+    &lt;param name="ENFORCE-MODE" value="enforce-policies"/&gt;
+    &lt;param name="POLICY-SCHEMA-PATH" value="xsd/cs-xacml-schema-policy-01.xsd"/&gt;
+    &lt;param name="VALIDATE-REPOSITORY-POLICIES" value="true"/&gt;
+    &lt;param name="VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM" value="false"/&gt;
+    &lt;param name="OWNER-ID-SEPARATOR" value=","/&gt;
+&lt;/module>
+</pre></div>
 
 </div>
 
-<p style='line-height:15.0pt'><span style='font-family:Arial;color:black'>&nbsp;<o:p></o:p></span></p>
+<br/>
 
 <h3 style='line-height:15.0pt'><span style='font-family:Arial'>2<a
 name=CONFIG-ENABLE>.1 Enabling/Disabling XACML Policy Enforcement</a><o:p></o:p></span></h3>
@@ -1252,6 +1129,23 @@ fedora.fcfg setting. <o:p></o:p></span></p>
 <p style='line-height:15.0pt;text-autospace:none'><b><i><span style='font-family:
 Arial;color:black'>&nbsp;&nbsp;</span></i></b><span style='font-family:Arial;
 color:black'><o:p></o:p></span></p>
+
+
+<h3 style='line-height:15.0pt'><span style='font-family:Arial'>2<a
+name=CONFIG-OWNER-ID>.5 Configuring Multiple Owner IDs</a><o:p></o:p></span></h3>
+
+<p style='font-family:Arial'>
+  The <code>OWNER-ID-SEPARATOR</code> value specifies the delimiter used
+  between multiple values within the ownerId property of the objects stored
+  in the repository.  It is specified as a regular expression, and the
+  default value is ',' (comma).  This delimiter allows the use of policies
+  that act on objects with multiple possible ownerId values.  For more 
+  information, see the sample policies in the
+  <a href="XACMLPolicyGuide.htm">Fedora XACML Policy Writing Guide</a>.
+</p>
+
+<p style='line-height:15.0pt;text-autospace:none'><span style='font-family:
+Arial;color:black'>&nbsp;<o:p></o:p></span></p>
 
 <h3 style='line-height:15.0pt'><span style='font-family:Arial'>2<a
 name=CONFIG-SURROG>.5 Surrogate feature no longer requires policies.</a><o:p></o:p></span></h3>

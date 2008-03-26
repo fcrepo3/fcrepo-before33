@@ -2082,25 +2082,8 @@ public class DefaultAuthorization
         }
     }
 
-    private static final String pad(int n, int length) throws Exception {
-        String asString = Integer.toString(n);
-        if (asString.length() > length) {
-            throw new Exception("value as string is too long");
-        }
-        StringBuffer padding = new StringBuffer();
-        for (int i = 0; i < length - asString.length(); i++) {
-            padding.append('0');
-        }
-        return padding + asString;
-    }
-
     public static final String dateAsString(Date date) throws Exception {
         return DateUtility.convertDateToString(date, false);
-    }
-
-    private static final void putAsOfDate(Hashtable resourceAttributes,
-                                          Date asOfDate) throws Exception {
-        resourceAttributes.put("asOfDate", dateAsString(asOfDate));
     }
 
     private static boolean log = false;

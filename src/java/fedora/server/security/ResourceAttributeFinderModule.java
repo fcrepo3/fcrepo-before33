@@ -108,8 +108,7 @@ class ResourceAttributeFinderModule
         try {
             datastreamIdUri = new URI(Constants.DATASTREAM.ID.uri);
         } catch (URISyntaxException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         EvaluationResult attribute =
                 context.getResourceAttribute(STRING_ATTRIBUTE_URI,
@@ -207,23 +206,23 @@ class ResourceAttributeFinderModule
                     return null;
                 }
             } else if (Constants.OBJECT.OWNER.uri.equals(attributeId)) {
-                try {
-                    LOG
-                            .debug("ResourceAttributeFinder.getAttributeLocally using ownerIdSeparator==["
-                                    + ownerIdSeparator + "]");
-                    values = reader.getOwnerId().split(ownerIdSeparator);
-                    String temp = "got " + Constants.OBJECT.OWNER.uri + "=";
-                    for (String element : values) {
-                        temp += " [" + element + "]";
+				try {
+                    LOG.debug("ResourceAttributeFinder.getAttributeLocally using ownerIdSeparator==[" + ownerIdSeparator + "]");
+                    String ownerId = reader.getOwnerId();
+                    if (ownerId == null) {
+                        values = new String[0];
+                    } else {
+                        values = reader.getOwnerId().split(ownerIdSeparator);
                     }
-                    LOG.debug(temp);
-                    //values = new String[1];
-                    //values[0] = reader.getOwnerId();
-                    //LOG.debug("got " + Constants.OBJECT.OWNER.uri + "=" + values[0]);
-                } catch (ServerException e) {
-                    LOG.debug("failed getting " + Constants.OBJECT.OWNER.uri);
-                    return null;
-                }
+					String temp = "got " + Constants.OBJECT.OWNER.uri + "=";						
+					for (int i = 0; i < values.length; i++) {
+						temp += (" [" + values[i] + "]");						
+					}
+					LOG.debug(temp);
+				} catch (ServerException e) {
+					LOG.debug("failed getting " + Constants.OBJECT.OWNER.uri);
+					return null;					
+				}
             } else if (Constants.OBJECT.CONTENT_MODEL.uri.equals(attributeId)) {
                 try {
                     values = new String[1];
@@ -355,7 +354,7 @@ class ResourceAttributeFinderModule
             resourceIdType = new URI(StringAttribute.identifier);
             resourceIdId = new URI(Constants.OBJECT.PID.uri);
         } catch (URISyntaxException e) {
-            LOG.error("Bad URI syntax", e);
+            throw new RuntimeException(e);
         }
         EvaluationResult attribute =
                 context

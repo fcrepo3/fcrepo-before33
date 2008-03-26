@@ -21,6 +21,8 @@ import fedora.test.FedoraServerTestCase;
 /**
  * Tests a series of many dissemination requests.
  * 
+ * NOTE: This test requies API-A to be open (non-authenticating)
+ * 
  * @author Chris Wilper
  */
 public class TestManyDisseminations
@@ -122,9 +124,10 @@ public class TestManyDisseminations
             throws Exception {
         final int num = 30;
         System.out.println("Getting " + what + " " + num + " times...");
+        int i = 0;
         try {
             URL url = new URL(BASE_URL + "/get/" + what);
-            for (int i = 0; i < num; i++) {
+            for (i = 0; i < num; i++) {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 InputStream in = conn.getInputStream();
                 in.read();
@@ -132,7 +135,7 @@ public class TestManyDisseminations
                 conn.disconnect();
             }
         } catch (Exception e) {
-            fail("Dissemination of " + what + " failed: "
+            fail("Dissemination of " + what + " failed on iter " + i + ": "
                  + e.getMessage());
         }
     }

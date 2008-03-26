@@ -8,7 +8,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses( {fedora.test.AllCommonSystemTests.class,
         fedora.test.api.TestAPIAConfigA.class,
         fedora.test.api.TestAPIALiteConfigA.class,
-        fedora.test.api.TestHTTPStatusCodesConfigA.class})
+        fedora.test.api.TestHTTPStatusCodesConfigA.class,
+        fedora.test.api.TestManyDisseminations.class})
 public class AllSystemTestsConfigA {
 
     // Supports legacy tests runners
@@ -22,6 +23,7 @@ public class AllSystemTestsConfigA {
         suite.addTest(fedora.test.api.TestAPIAConfigA.suite());
         suite.addTest(fedora.test.api.TestAPIALiteConfigA.suite());
         suite.addTest(fedora.test.api.TestHTTPStatusCodesConfigA.suite());
+        suite.addTest(fedora.test.api.TestManyDisseminations.suite());
 
         return suite;
     }
