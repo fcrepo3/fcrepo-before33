@@ -1,6 +1,5 @@
 package fedora.test.api;
 
-import java.beans.IntrospectionException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -69,6 +68,29 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
 		suite.addTestSuite(TestXACMLPolicies.class);
 		return new DemoObjectTestSetup(suite);
 	}
+
+    public void testXACMLMultiOwnerAccess() throws Exception {
+        // demo:MultiOwnerObject is owned by fedoraAdmin and testuser1
+        addMultiOwnerObject();
+        try {
+            assertTrue(canWrite(admin, "demo:MultiOwnerObject"));
+            assertTrue(canWrite(testuser1, "demo:MultiOwnerObject"));
+            assertFalse(canWrite(testuserroleA, "demo:MultiOwnerObject"));
+        } finally {
+            removeMultiOwnerObject();
+        }
+    }
+
+    private boolean canWrite(FedoraClient client, String pid) 
+            throws Exception {
+        FedoraAPIM apim = client.getAPIM();
+        try {
+            apim.modifyObject(pid, null, null, null, "log message");
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 	
 	public void testXACMLAPIMAccess() throws Exception 
     {
@@ -81,25 +103,16 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
         String URL3 = getBaseURL()+"-demo/simple-image-demo/col3.jpg";
         Class modDSArgs[] = { String.class, String.class, String[].class, String.class, String.class, String.class, String.class, String.class, String.class, String.class, Boolean.TYPE };
         Object modDSParms1[] = { "demo:5", "DS3", null, null, null, null, null, null, null, null, Boolean.FALSE };
-//        Object modDSParms2[] = { "demo:5", "DS3", null, ", null, null, null, null, false };
         Class purgeDSArgs[] = { String.class, String.class, String.class, String.class, String.class, Boolean.TYPE };
         Object purgeDSParms1[] = { "demo:5", "DS3", null, null, null, Boolean.FALSE };
         Class setVersionableArgs[] = { String.class, String.class, Boolean.TYPE, String.class };
         Object setVersionableFalse[] = { "demo:5", "DS3", Boolean.FALSE, null };
         Object setVersionableTrue[] = { "demo:5", "DS3", Boolean.TRUE, null };
         
-        //        Object modDSParms2[] = { "demo:5", "DS3", null, null, null, null, URL2, null, false };
-//        Object modDSParms3[] = { "demo:5", "DS3", null, null, null, null, null, null, false };
-//        Object modDSParms4[] = { "demo:5", "DS3", null, null, null, null, URL3, null, false };
-        
         // APIM access by user without access- should fail
         // testuserroleA does not have permission to modify a datastream, so this should fail
         invokeAPIMFailure(testuserroleA, "testuserroleA", "modifyDatastreamByReference", modDSArgs, modDSParms1);
         
-        // APIM access by user without access- should fail
-        // testuserroleA does not have permission to modify a datastream, so this should fail
-     //   invokeAPIMFailure(testuser2, "testuser2", "modifyDatastreamByReference", modDSArgs, modDSParms1);
-         
         //APIM accesses by users with access- should succeed
         modDSParms1[6] = URL1;
         dateOfFirstSuccess = invokeAPIMSuccessString(testuser1, "testuser1", "modifyDatastreamByReference", modDSArgs, modDSParms1);
@@ -141,12 +154,6 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
         // testuser1 does not have permission to purge a datastream, so this should fail
         invokeAPIMFailure(testuser1, "testuser1", "purgeDatastream", purgeDSArgs, purgeDSParms1);
 
-        // APIM access by user without access- should fail
-        purgeDSParms1[2] = dateOfFirstSuccess;
-        purgeDSParms1[3] = dateOfFourthSuccess;
-        // testuser2 does not have permission to purge a datastream, so this should fail
-        //  invokeAPIMFailure(testuser2, "testuser2", "purgeDatastream", purgeDSArgs, purgeDSParms1);
-        
         //APIM access by user without access- should fail
         // testuserroleA does have permission to to purge a datastream, but only if
         // datastream is in Deleted(D) state. Datastream here is still in Active(A) state
@@ -184,7 +191,7 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
             
             // APIA access by user without access- should fail
             // testuser2 does not have permission to access api-a at all, so this should fail
-       //     invokeAPIAFailure(testuser2, "testuser2", "getDatastreamDissemination", getDDArgs, getDDParms);
+            invokeAPIAFailure(testuser2, "testuser2", "getDatastreamDissemination", getDDArgs, getDDParms);
 
             // APIA access by user without access- should fail
             // testuser3 does not have permission to access Datastreams named DS3, so this should fail
@@ -284,7 +291,7 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
         }
         catch (IOException ioe)
         {
-            System.out.println("    Reason = " +ioe.getMessage()/*.substring(ioe.getMessage().lastIndexOf("["))*/);
+            System.out.println("    Reason = " +ioe.getMessage());
             assertTrue(ioe.getMessage().contains("[403 Forbidden]"));
             System.out.println("Access denied correctly");
             // exception was expected, all is A-OK
@@ -505,7 +512,6 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
 
     private void traverseAndCopy(File srcFiles[], File destDir)
     {
-  //      assertEquals(testDir.isDirectory(), true);
         for ( int i = 0; i < srcFiles.length; i++)
         {
             File destFile = new File(destDir, srcFiles[i].getName());
@@ -542,20 +548,12 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
             in = new FileInputStream(src);
             OutputStream out = new FileOutputStream(dest);
             StreamUtility.pipeStream(in, out, 1024);
-        }
-        catch (FileNotFoundException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return(false);
+            return true;
         }
         catch (IOException e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return(false);
+            throw new RuntimeException(e);
         }
-        return(true);
     }
     
     private void reloadPolicies()
@@ -571,8 +569,7 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
         }
         catch (Exception e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
     
@@ -588,7 +585,7 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
         copyFile(FedoraUsers.fedoraUsersXML, fedoraUsersBackup);                  
@@ -608,6 +605,7 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
     {
         String sep = System.getProperty("line.seperator");
         if (sep == null) sep = "\n";
+        System.out.println("\n\n" + getUsername() + "\n" + getPassword() + "\n\n\n");
         String data = "<?xml version='1.0' ?>  " + sep +
                 "<fedora-users>" + sep +
                 "    <user name=\""+getUsername()+"\" password=\""+getPassword()+"\">" + sep +
@@ -654,87 +652,12 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
             pw.write(data);
             pw.close();
         }
-        catch (FileNotFoundException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         catch (IOException e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
- /*   public static FedoraUsers getFedoraUsers() 
-    {
-        System.out.println("Getting Fedora Users");
-        FedoraUsers fu = null;
-        BeanReader reader = new BeanReader();
-        if (reader == null) System.out.println("Reader is null");
-        reader.getXMLIntrospector().getConfiguration().setAttributesForPrimitives(false);
-        reader.getBindingConfiguration().setMapIDs(false);
-        System.out.println("Got Reader");
 
-        try {
-            reader.registerMultiMapping(getBetwixtMapping());
-            System.out.println("GotBetwixtMapping");
-            fu = (FedoraUsers)reader.parse(FedoraUsers.fedoraUsersXML);
-            System.out.println("Got f u ");
-            if (fu == null) System.out.println("FU is null");
-            
-        } catch (IntrospectionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (SAXException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return fu;
-    }
-    private static final String BETWIXT_MAPPING = "/fedora/server/security/servletfilters/xmluserfile/fedorausers-mapping.xml";
-
-    private static InputSource getBetwixtMapping() 
-    {
-        InputSource is = new InputSource(FedoraUsers.class.getResourceAsStream(BETWIXT_MAPPING));
-        if (is == null) System.out.println("Betwixt mapping is null");
-        return(is);
-    }
-    
-    private void addNewTestUsersToFedoraUsers() throws IOException
-    {
-        System.out.println("Adding new Users");
-        System.out.println("Fedora Users: " + FedoraUsers.fedoraUsersXML.getAbsolutePath());
-        FedoraUsers users = getFedoraUsers();
-        users.addUser(makeNewUser("testuser1", "testuser1", null));
-        users.addUser(makeNewUser("testuser2", "testuser2", null));
-        users.addUser(makeNewUser("testuser3", "testuser3", null));
-        users.addUser(makeNewUser("testuser4", "testuser4", null));
-        users.addUser(makeNewUser("testuserroleA", "testuserroleA", "roleA"));
-        users.addUser(makeNewUser("testuserroleB", "testuserroleB", "roleB"));
-        users.addUser(makeNewUser("testuserroleC", "testuserroleC", "roleC"));
-        Writer outputWriter = new BufferedWriter(new FileWriter(FedoraUsers.fedoraUsersXML));
-        users.write(outputWriter);
-        outputWriter.close();        
-    }
-    
-    private User makeNewUser(String name, String password, String fedoraRole)
-    {
-        User user = new User();
-        user.setName(name);
-        user.setPassword(password);
-        if (fedoraRole != null)
-        {
-            Attribute att = new Attribute();
-            att.setName("fedoraRole");
-            att.addValue(fedoraRole);
-            user.addAttribute(att);
-        }
-        return(user);
-    }
-*/
     public void setUp() throws Exception {
         
         System.out.println("setting Up XACML test");
@@ -743,7 +666,6 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
         SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
         SimpleXpathEngine.registerNamespace("uvalibadmin", "http://dl.lib.virginia.edu/bin/admin/admin.dtd/");
         backupFedoraUsersFile();
-        //addNewTestUsersToFedoraUsers();
         createNewFedoraUsersFileWithTestUsers();
         installJunitPolicies();
         reloadPolicies();
@@ -817,6 +739,36 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
         } catch (Exception e) {
             throw new RuntimeException("Failure removing object-specific "
                     + "policies", e);
+        }
+    }
+    
+    private void addMultiOwnerObject() {
+        try {
+            StringBuffer xml = new StringBuffer();
+            xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            xml.append("<foxml:digitalObject PID=\"demo:MultiOwnerObject\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\">");
+            xml.append("  <foxml:objectProperties>");
+            xml.append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"FedoraObject\"/>");
+            xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#ownerId\" VALUE=\"fedoraAdmin,testuser1\"/>");
+            xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
+            xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"MultiOwnerObject\"/>");
+            xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#createdDate\" VALUE=\"2004-12-10T00:21:57Z\"/>");
+            xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/view#lastModifiedDate\" VALUE=\"2004-12-10T00:21:57Z\"/>");
+            xml.append("  </foxml:objectProperties>");
+            xml.append("</foxml:digitalObject>");
+            admin.getAPIM().ingest(xml.toString().getBytes("UTF-8"),
+                    "foxml1.0", "");
+        } catch (Exception e) {
+            throw new RuntimeException("Failure adding multi-owner object", e);
+        }
+    }
+    
+    private void removeMultiOwnerObject() {
+        try {
+            admin.getAPIM().purgeObject("demo:MultiOwnerObject", "",
+                    false);
+        } catch (Exception e) {
+            throw new RuntimeException("Failure removing multi-owner object");
         }
     }
     

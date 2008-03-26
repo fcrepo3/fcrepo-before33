@@ -1,7 +1,5 @@
 package fedora.server.security;
 
-import java.io.File;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -29,7 +27,6 @@ import com.sun.xacml.finder.PolicyFinder;
 import fedora.common.Constants;
 
 import fedora.server.Context;
-import fedora.server.Server;
 import fedora.server.errors.authorization.AuthzDeniedException;
 import fedora.server.errors.authorization.AuthzException;
 import fedora.server.errors.authorization.AuthzOperationalException;
@@ -141,12 +138,11 @@ public class PolicyEnforcementPoint {
 	public final void newPdp() throws Exception {
 		AttributeFinder attrFinder = new AttributeFinder();
 		List<AttributeFinderModule> attrModules = new ArrayList<AttributeFinderModule>();
-		//AttributeFinderModule attrModule = SSIAttributeFinder.getInstance(servletContext);
-		//attrModules.add(attrModule);
 		
 		ResourceAttributeFinderModule resourceAttributeFinder = ResourceAttributeFinderModule.getInstance();
 		resourceAttributeFinder.setServletContext(servletContext);
 		resourceAttributeFinder.setDOManager(manager);
+		resourceAttributeFinder.setOwnerIdSeparator(this.ownerIdSeparator); 
 		attrModules.add(resourceAttributeFinder);		
 		try {
         LOG.debug("about to set contextAttributeFinder in original");
@@ -163,11 +159,6 @@ public class PolicyEnforcementPoint {
         LOG.debug("just set contextAttributeFinder=" + contextAttributeFinder);
 		contextAttributeFinder.setServletContext(servletContext);
 		attrModules.add(contextAttributeFinder);		
-
-		
-		
-		//=>>AttributeFinderModule resourceAttributeModule = new FedoraObjectAttributeFinder(manager, servletContext);
-		//==>>attrModules.add(resourceAttributeModule);
 
 		attrFinder.setModules(attrModules);		
         LOG.debug("before building policy finder");
@@ -214,13 +205,15 @@ public class PolicyEnforcementPoint {
 	boolean validateRepositoryPolicies = false;
 	boolean validateObjectPoliciesFromDatastream = false; 
 	String policySchemaPath = null;
+	String ownerIdSeparator = ",";
 
 	public void initPep(String enforceMode, String combiningAlgorithm, String globalPolicyConfig, 
 		String globalBackendPolicyConfig, String globalPolicyGuiToolConfig, 
 		DOManager manager,
 		boolean validateRepositoryPolicies,
 		boolean validateObjectPoliciesFromDatastream, 
-		String policySchemaPath
+		String policySchemaPath, 
+		String ownerIdSeparator
 	) throws Exception {
 		LOG.debug("in initPep()");
 		destroy();
@@ -236,14 +229,11 @@ public class PolicyEnforcementPoint {
 		this.globalPolicyConfig = globalPolicyConfig; 
 		this.globalBackendPolicyConfig = globalBackendPolicyConfig;
 		this.globalPolicyGuiToolConfig = globalPolicyGuiToolConfig;
-		// SDP: removed since object policies directory is obsolete in Fedora 2.1
-		//this.localPolicyConfig = localPolicyConfig;
 		this.manager = manager;
 		this.validateRepositoryPolicies = validateRepositoryPolicies;
-		// SDP: removed since object policies directory is obsolete in Fedora 2.1
-		//this.validateObjectPoliciesFromFile = validateObjectPoliciesFromFile;
 		this.validateObjectPoliciesFromDatastream = validateObjectPoliciesFromDatastream;
 		this.policySchemaPath = policySchemaPath;
+		this.ownerIdSeparator = ownerIdSeparator;
 		LOG.debug("***in initPep(), before calling newPdp()");	
 		newPdp();
 		LOG.debug("***exiting initPep()");
@@ -271,42 +261,6 @@ public class PolicyEnforcementPoint {
 			LOG.debug("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());		
 		}
 		subjectAttributes.add(subjectAttribute);		
-		/*
-		Iterator it = context.names();
-		while (it.hasNext()) {
-			String name = (String) it.next();
-			if (name.indexOf(":") == -1) {
-				String value = context.get(name);
-				try {
-					singleSubjectAttribute = new Attribute(new URI(name), null, null, new StringAttribute(value));
-				} catch (URISyntaxException e1) {
-				}
-				subjectAttributes.add(singleSubjectAttribute);				
-			}
-		}
-		*/
-		
-		/*
-		if (roles != null) {
-			for (int i=0; i<roles.length; i++) {
-				String[] parts = parseRole(roles[i]);
-				if ((parts == null) || (parts.length == 0)|| (parts[0] == null)) {
-					log("no attributes for subjectId=" + subjectId + " for roles[" + i + "]=" + roles[i]);
-				} else {
-					if ((parts[1] == null) || "".equals(parts[1])) {
-						parts[1] = "X";
-					}
-					log("XXXXXXXXXXXXX " + i + " " + parts[0] + "value i.e. parts[1] = " + parts[1]);
-					try {
-						singleSubjectAttribute = new Attribute(new URI(parts[0]), null, null, new StringAttribute(parts[1]));
-					} catch (URISyntaxException e1) {
-						throw new AuthzOperationalException("couldn't wrap subject roles", e1);
-					}
-					subjectAttributes.add(singleSubjectAttribute);			
-				}
-			}			
-		}
-*/
 		Subject singleSubject = new Subject(subjectAttributes);
 		Set<Subject> subjects = new HashSet<Subject>();
 		subjects.add(singleSubject);
@@ -339,50 +293,6 @@ public class PolicyEnforcementPoint {
 		resources.add(attribute);
 		return resources;
 	}
-
-/*
-	private final Set wrapEnvironment(Context context) throws AuthzOperationalException {
-		Set environment = new HashSet();
-		Attribute attribute = null;
-		attribute = new Attribute(ENVIRONMENT_CURRENT_DATETIME_URI, null, null, new DateTimeAttribute()); //<<<<<<<<<<<<<<<<<<<<<<<<<<<
-		environment.add(attribute);
-		attribute = new Attribute(ENVIRONMENT_CURRENT_DATE_URI, null, null, new DateAttribute()); //<<<<<<<<<<<<<<<<<<<<<<<<<<<
-		environment.add(attribute);
-		attribute = new Attribute(ENVIRONMENT_CURRENT_TIME_URI, null, null, new TimeAttribute()); //<<<<<<<<<<<<<<<<<<<<<<<<<<<
-		environment.add(attribute);
-		attribute = new Attribute(ENVIRONMENT_REQUEST_PROTOCOL_URI, null, null, new StringAttribute(context.get(ENVIRONMENT_REQUEST_PROTOCOL_URI_STRING)));
-		environment.add(attribute);
-		attribute = new Attribute(ENVIRONMENT_REQUEST_SCHEME_URI, null, null, new StringAttribute(context.get(ENVIRONMENT_REQUEST_SCHEME_URI_STRING)));
-		environment.add(attribute);
-		attribute = new Attribute(ENVIRONMENT_REQUEST_SECURITY_URI, null, null, new StringAttribute(context.get(ENVIRONMENT_REQUEST_SECURITY_URI_STRING)));
-		environment.add(attribute);
-		attribute = new Attribute(ENVIRONMENT_REQUEST_AUTHTYPE_URI, null, null, new StringAttribute(context.get(ENVIRONMENT_REQUEST_AUTHTYPE_URI_STRING)));
-		environment.add(attribute);
-		attribute = new Attribute(ENVIRONMENT_REQUEST_METHOD_URI, null, null, new StringAttribute(context.get(ENVIRONMENT_REQUEST_METHOD_URI_STRING)));
-		environment.add(attribute);
-		attribute = new Attribute(ENVIRONMENT_REQUEST_SESSION_ENCODING_URI, null, null, new StringAttribute(context.get(ENVIRONMENT_REQUEST_SESSION_ENCODING_URI_STRING)));
-		environment.add(attribute);
-		attribute = new Attribute(ENVIRONMENT_REQUEST_SESSION_STATUS_URI, null, null, new StringAttribute(context.get(ENVIRONMENT_REQUEST_SESSION_STATUS_URI_STRING)));
-		environment.add(attribute);
-		attribute = new Attribute(ENVIRONMENT_REQUEST_CONTENT_LENGTH_URI, null, null, new StringAttribute(context.get(ENVIRONMENT_REQUEST_CONTENT_LENGTH_URI_STRING)));
-		environment.add(attribute);
-		attribute = new Attribute(ENVIRONMENT_REQUEST_CONTENT_TYPE_URI, null, null, new StringAttribute(context.get(ENVIRONMENT_REQUEST_CONTENT_TYPE_URI_STRING)));
-		environment.add(attribute);
-		attribute = new Attribute(ENVIRONMENT_REQUEST_SOAP_OR_REST_URI, null, null, new StringAttribute(context.get(ENVIRONMENT_REQUEST_SOAP_OR_REST_URI_STRING)));
-		environment.add(attribute);
-		attribute = new Attribute(ENVIRONMENT_CLIENT_FQDN_URI, null, null, new StringAttribute(context.get(ENVIRONMENT_CLIENT_FQDN_URI_STRING)));
-		environment.add(attribute);
-		attribute = new Attribute(ENVIRONMENT_CLIENT_IP_URI, null, null, new StringAttribute(context.get(ENVIRONMENT_CLIENT_IP_URI_STRING)));
-		environment.add(attribute);
-		attribute = new Attribute(ENVIRONMENT_SERVER_FQDN_URI, null, null, new StringAttribute(context.get(ENVIRONMENT_SERVER_FQDN_URI_STRING)));
-		environment.add(attribute);
-		attribute = new Attribute(ENVIRONMENT_SERVER_IP_URI, null, null, new StringAttribute(context.get(ENVIRONMENT_SERVER_IP_URI_STRING)));
-		environment.add(attribute);
-		attribute = new Attribute(ENVIRONMENT_SERVER_PORT_URI, null, null, new StringAttribute(context.get(ENVIRONMENT_SERVER_PORT_URI_STRING)));
-		environment.add(attribute);
-		return environment;
-	}
-*/
 
 	private int n = 0;
 	
@@ -424,35 +334,6 @@ public class PolicyEnforcementPoint {
     					Attribute tempobj = (Attribute) tempit.next();
     					LOG.debug("request action has " + tempobj.getId() + "=" + tempobj.getValue().toString());
     				}
-				/*
-				Set testSubjects = request.getSubjects();
-				Iterator testIt = testSubjects.iterator();
-				while (testIt.hasNext()) {
-					Subject testSubject = (Subject) testIt.next();
-					log("testSubject=" + testSubject);
-					Set testAttributes = testSubject.getAttributes();
-					Iterator testIt2 = testAttributes.iterator();
-					while (testIt2.hasNext()) {
-						Attribute testAttribute = (Attribute) testIt2.next();
-						log("testAttribute=" + testAttribute);
-						AttributeValue attributeValue = testAttribute.getValue();
-						log("attributeValue=" + attributeValue);
-						log("attributeValue.toString()=" + attributeValue.toString());
-					}
-				}
-				*/ /*
-				log("vvv environment vvv");
-				Set testEnvironmentAttributes = request.getEnvironmentAttributes();
-				Iterator testIt2 = testEnvironmentAttributes.iterator();
-				while (testIt2.hasNext()) {
-					Attribute testAttribute = (Attribute) testIt2.next();
-					URI testAttributeId = testAttribute.getId();
-					AttributeValue testAttributeValue = testAttribute.getValue();
-					log("test env attributeId=" + testAttributeId);
-					log("test env attributeValue=" + testAttributeValue);
-					log("test env attributeValue.toString()=" + testAttributeValue.toString());
-				}
-				*/
                     LOG.debug("about to ref contextAttributeFinder=" + contextAttributeFinder);
     				contextAttributeFinder.registerContext(contextIndex, context);
 

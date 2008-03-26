@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -54,6 +52,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 
 	private String combiningAlgorithm = ""; //"com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg";
 	private String enforceMode = "";
+	private String ownerIdSeparator = ",";
 
 	private final String REPOSITORY_POLICIES_DIRECTORY_KEY = "REPOSITORY-POLICIES-DIRECTORY";
 	private final String REPOSITORY_POLICY_GUITOOL_DIRECTORY_KEY = "REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY";	
@@ -62,10 +61,11 @@ public class DefaultAuthorization extends Module implements Authorization {
 	private final String POLICY_SCHEMA_PATH_KEY = "POLICY-SCHEMA-PATH";
 	private final String VALIDATE_REPOSITORY_POLICIES_KEY = "VALIDATE-REPOSITORY-POLICIES";
 	private final String VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM_KEY = "VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM";
+	private final String OWNER_ID_SEPARATOR_KEY = "OWNER-ID-SEPARATOR";
+	
 	
 	private static final String XACML_DIST_BASE = "fedora-internal-use";	
 	private static final String DEFAULT_REPOSITORY_POLICIES_DIRECTORY = XACML_DIST_BASE + "/fedora-internal-use-repository-policies-approximating-2.0"; 
-	private static final String BE_SECURITY_PROPERTIES_LOCATION = "config/beSecurity.properties"; 
 	private static final String BE_SECURITY_XML_LOCATION = "config/beSecurity.xml";	
 	private static final String BACKEND_POLICIES_ACTIVE_DIRECTORY = XACML_DIST_BASE + "/fedora-internal-use-backend-service-policies"; 
 	private static final String BACKEND_POLICIES_XSL_LOCATION = XACML_DIST_BASE + "/build-backend-policy.xsl";
@@ -114,6 +114,10 @@ public class DefaultAuthorization extends Module implements Authorization {
     }
     if (moduleParameters.containsKey(ENFORCE_MODE_KEY)) {
     	enforceMode = (String) moduleParameters.get(ENFORCE_MODE_KEY);
+    }
+    if (moduleParameters.containsKey(OWNER_ID_SEPARATOR_KEY)) {
+    	ownerIdSeparator = (String) moduleParameters.get(OWNER_ID_SEPARATOR_KEY);
+        LOG.debug("ownerIdSeparator from config set == [" + ownerIdSeparator + "]");
     }
     log("looking for POLICY_SCHEMA_PATH");
     if (moduleParameters.containsKey(POLICY_SCHEMA_PATH_KEY)) {
@@ -342,7 +346,7 @@ public class DefaultAuthorization extends Module implements Authorization {
         //xacmlPep.initPep(enforceMode, combiningAlgorithm, repositoryPoliciesActiveDirectory, fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY, repositoryPolicyGuitoolDirectory, objectPoliciesActiveDirectory, m_manager, 
        	//	validateRepositoryPolicies, validateObjectPoliciesFromFile, validateObjectPoliciesFromDatastream, policySchemaPath);
 		xacmlPep.initPep(enforceMode, combiningAlgorithm, repositoryPoliciesActiveDirectory, fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY, repositoryPolicyGuitoolDirectory, m_manager, 
-			validateRepositoryPolicies, validateObjectPoliciesFromDatastream, policySchemaPath);
+			validateRepositoryPolicies, validateObjectPoliciesFromDatastream, policySchemaPath, ownerIdSeparator);
       	log("in DefaultAuthorization.postInitModule() 7");
     } catch (Throwable e1) {
       	log("in DefaultAuthorization.postInitModule() 8");
@@ -1376,24 +1380,8 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 	}
 
-	  private static final String pad(int n, int length) throws Exception {
-	  	String asString = Integer.toString(n);
-	  	if (asString.length() > length) {
-	  		throw new Exception("value as string is too long");
-	  	}
-	  	StringBuffer padding = new StringBuffer();
-	  	for (int i=0; i<(length - asString.length()); i++) {
-	  		padding.append('0');
-	  	}
-	  	return padding + asString; 
-	  }
-	  
 	  public static final String dateAsString (Date date) throws Exception {
 	  	return DateUtility.convertDateToString(date, false);
-	  }
-	  
-	  private static final void putAsOfDate (Hashtable resourceAttributes, Date asOfDate) throws Exception {
-	  	resourceAttributes.put("asOfDate", dateAsString(asOfDate));
 	  }
 	  
 	  private static boolean log = false;
