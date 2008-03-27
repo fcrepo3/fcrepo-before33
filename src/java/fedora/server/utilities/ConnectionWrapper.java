@@ -5,6 +5,14 @@
 
 package fedora.server.utilities;
 
+/* JDBC_4_ANT_TOKEN_BEGIN -
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.NClob;
+import java.sql.SQLXML;
+import java.sql.Struct;
+- JDBC_4_ANT_TOKEN_END */
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -200,11 +208,11 @@ public abstract class ConnectionWrapper
         m_wrappedConnection.clearWarnings();
     }
 
-    public Map getTypeMap() throws SQLException {
+    public Map<String, Class<?>> getTypeMap() throws SQLException {
         return m_wrappedConnection.getTypeMap();
     }
 
-    public void setTypeMap(Map map) throws SQLException {
+    public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
         m_wrappedConnection.setTypeMap(map);
     }
 
