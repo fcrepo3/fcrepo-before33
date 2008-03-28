@@ -176,12 +176,12 @@
                   now be configured to communicate via RMI.
                 </li>
                 <li> <em>Multicast Support</em> - Journaling now supports
-                  multiple followers via RMI.
+                  multiple followers via disk, RMI, or combination.
                 </li>
                 <li> <em>Read-only Mode</em> - Formerly, when configured
-                  as a follower, a Fedora repository could not be exposed
-                  via API-A or API-M.  Now it is possible to set a follower
-                  to be exposed via API-A.
+                  as a follower, a Fedora repository would give an error
+                  for any API-M call.  Now, a follower will allow calls to
+                  API-M methods that do not make changes to the repository.
                 </li>
               </ul>
             </li>
