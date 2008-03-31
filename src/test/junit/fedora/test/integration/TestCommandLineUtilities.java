@@ -183,27 +183,24 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
     private void ingestFoxmlDirectory(File dir) 
     {
         //fedora-ingest f obj1.xml foxml1.0 myrepo.com:8443 jane jpw https
-        execute(FEDORA_HOME + "/client/bin/fedora-ingest", "d " + dir.getAbsolutePath() + 
-                " foxml1.0 DMO " + getHost() + ":" + getPort() + " " + getUsername() + 
-                " " + getPassword() + " " + getProtocol() + " \"junit ingest\"");
+        execute(FEDORA_HOME + "/client/bin/fedora-ingest", "d", dir.getAbsolutePath(),
+                "foxml1.0", "DMO", getHost() + ":" + getPort(), getUsername(), 
+                getPassword(), getProtocol(), "junit ingest");
     }
     
     private void ingestFoxmlFile(File f) 
     {
         //fedora-ingest f obj1.xml foxml1.0 myrepo.com:8443 jane jpw https
-        
-    //    File exe = new File("client/bin/fedora-ingest");
-        execute(FEDORA_HOME + "/client/bin/fedora-ingest", "f " + f.getAbsolutePath() + 
-                " foxml1.0 " + getHost() + ":" + getPort() + " " + getUsername() + 
-                " " + getPassword() + " " + getProtocol() + " junit-ingest");
+        execute(FEDORA_HOME + "/client/bin/fedora-ingest", "f", f.getAbsolutePath(),
+                "foxml1.0", getHost() + ":" + getPort(), getUsername(),
+                getPassword(), getProtocol(), "junit-ingest");
     }
     
     private static void purgeUsingScript(String pid) 
     {
     //    File exe = new File("client/bin/fedora-purge");
-        execute(FEDORA_HOME + "/client/bin/fedora-purge", getHost() + ":" + getPort() +
-                " " + getUsername() + " " + getPassword() + " " + pid + " " + 
-                getProtocol() + " junit-purge");
+        execute(FEDORA_HOME + "/client/bin/fedora-purge", getHost() + ":" + getPort(),
+                getUsername(), getPassword(), pid, getProtocol(), "junit-purge");
     }
 
     private static void purgeFast(String pid) throws Exception {
@@ -229,59 +226,61 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
 
     private void batchBuild(File objectTemplateFile, File objectSpecificDir, File objectDir, File logFile)
     {
-        execute(FEDORA_HOME + "/client/bin/fedora-batch-build", objectTemplateFile.getAbsolutePath() + " " + 
-                objectSpecificDir.getAbsolutePath() + " " + objectDir.getAbsolutePath() + " " + 
-                logFile.getAbsolutePath() + " text");
+        execute(FEDORA_HOME + "/client/bin/fedora-batch-build", 
+                objectTemplateFile.getAbsolutePath(),
+                objectSpecificDir.getAbsolutePath(),
+                objectDir.getAbsolutePath(),
+                logFile.getAbsolutePath(), "text");
     }
     
     private void batchIngest(File objectDir, File logFile)
     {
-        execute(FEDORA_HOME + "/client/bin/fedora-batch-ingest", objectDir.getAbsolutePath() + " " + 
-                logFile.getAbsolutePath() + " text foxml1.0 " + getHost() + ":" + getPort() +
-                " " + getUsername() + " " + getPassword() + " " + getProtocol() );
+        execute(FEDORA_HOME + "/client/bin/fedora-batch-ingest", objectDir.getAbsolutePath(),
+                logFile.getAbsolutePath(), "text", "foxml1.0", getHost() + ":" + getPort(),
+                getUsername(), getPassword(), getProtocol());
     }
     
     private void batchBuildIngest(File objectTemplateFile, File objectSpecificDir, File objectDir, File logFile)
     {
-        execute(FEDORA_HOME + "/client/bin/fedora-batch-buildingest", objectTemplateFile.getAbsolutePath() + " " + 
-                objectSpecificDir.getAbsolutePath() + " " + objectDir.getAbsolutePath() + " " + 
-                logFile.getAbsolutePath() + " text " + getHost() + ":" + getPort() +
-                    " " + getUsername() + " " + getPassword() + " " + getProtocol() );
+        execute(FEDORA_HOME + "/client/bin/fedora-batch-buildingest", 
+                objectTemplateFile.getAbsolutePath(),
+                objectSpecificDir.getAbsolutePath(),
+                objectDir.getAbsolutePath(),
+                logFile.getAbsolutePath(), "text", getHost() + ":" + getPort(),
+                getUsername(), getPassword(), getProtocol());
     }
     
     private void batchModify(File batchDirectives, File logFile)
     {
-        execute(FEDORA_HOME + "/client/bin/fedora-modify", getHost() + ":" + getPort() + " " + 
-                getUsername() + " " + getPassword() + " " + batchDirectives.getAbsolutePath() + " " + 
-                logFile.getAbsolutePath() + " " + getProtocol() );
+        execute(FEDORA_HOME + "/client/bin/fedora-modify", getHost() + ":" + getPort(), 
+                getUsername(), getPassword(), batchDirectives.getAbsolutePath(),
+                logFile.getAbsolutePath(), getProtocol());
     }
 
     private void exportObj(String pid, File dir)
     {
-        execute(FEDORA_HOME + "/client/bin/fedora-export", getHost() + ":" + getPort() + " " + 
-                getUsername() + " " + getPassword() + " " + pid + " foxml1.0 public " + 
-                dir.getAbsolutePath() + " " + getProtocol() );
+        execute(FEDORA_HOME + "/client/bin/fedora-export", getHost() + ":" + getPort(),
+                getUsername(), getPassword(), pid, "foxml1.0", "public",
+                dir.getAbsolutePath(), getProtocol());
     }
     
-    public static void execute(String cmd, String args) 
+    private static void execute(String... cmd) 
     {
     	String osName = System.getProperty("os.name");
 		if (!osName.startsWith("Windows")) {
 			// needed for the Fedora shell scripts
-			cmd = cmd + ".sh";
+			cmd[0] = cmd[0] + ".sh";
 		}
- //       System.out.println("Executing cmd:" + cmd + " " + args);
         if (sbOut != null && sbErr != null)
         {
             sbOut.reset();
             sbErr.reset();
-            ExecUtility.execCommandLineUtility(cmd + " " + args, sbOut, sbErr);
+            ExecUtility.execCommandLineUtility(cmd, sbOut, sbErr);
          }
         else
         {
-            ExecUtility.execCommandLineUtility(cmd + " " + args);
+            ExecUtility.execCommandLineUtility(cmd);
         }
- //       System.out.println("Executed cmd:" + cmd );
    }
 
     public void setUp() throws Exception {
