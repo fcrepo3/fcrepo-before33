@@ -253,7 +253,7 @@ public class FedoraHome {
     		files = dir.listFiles();
     	}
 		for (int i = 0; i < files.length; i++) {
-			ExecUtility.exec("chmod +x " + files[i].getAbsolutePath());
+			ExecUtility.exec(new String[]{"chmod", "+x", files[i].getAbsolutePath()});
 		}
     }
 }

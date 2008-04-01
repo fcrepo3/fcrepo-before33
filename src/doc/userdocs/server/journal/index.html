@@ -55,7 +55,7 @@
     <a href="../../index.html" id="logo"></a>
     <div id="title">
         <h1>Journalling Guide</h1>
-        <h2>Fedora Release 2.2.1</h2>
+        <h2>Fedora Release 2.2.2</h2>
     </div>
 </div>
 
@@ -86,6 +86,7 @@
                     <li><a href="#options.general">General options</a></li>
                     <li><a href="#options.single">Options for single-file operation</a></li>
                     <li><a href="#options.multi">Options for multi-file operation</a></li>
+                    <li><a href="#options.multicast">Multicast Journaling</a></li>
                     <li><a href="#options.log">Options for recovery log</a></li>
                 </ol>
             </li>
@@ -551,7 +552,66 @@ with any configurable components.
 </div>
 
 <div class="subsect">
-<h3><a name="options.log">D. Options for the recovery log</a></h3>
+<h3><a name="options.multicast">D. Multicast Journaling</a></h3>
+<p>
+The MulticastJournalWriter is configured with one or more Transport objects,
+each of which writes an identical set of Journal files to its destination. So
+far, these Transport classes are available:
+</p>
+<ul>
+  <li> <code>fedora.server.journal.readerwriter.multicast.LocalDirectoryTransport</code><br/>
+Writes a set of Journal files to a directory on the local file system. This
+functions very much like a MultiFileJournalWriter, adapted for multicasting.
+  <li> <code>fedora.server.journal.readerwriter.multicast.RmiTransport</code><br/>
+Writes a set of Journal files to an instance of RmiJournalReceiver running on
+the same or another server.
+</ul>
+The MulticastJournalWriter can write to any combination of these Transports.
+</p><p>
+If a Transport encounters an error while writing a Journal entry, the action
+taken depends on whether the Transport has been configured as "crucial" or
+not. If the Transport is not crucial, the exception is written to the log,
+and operation continues normally. If the Transport is crucuial, the exception
+is passed on, and the user sees an error status on their request, The server
+is placed into read-only mode, and will accept no further alterations to the
+repository until the error is corrected.
+</p><p>
+At least one Transport must be configured as "crucial".
+</p><p>
+The following excerpt from <code>fedora.fcfg</code> shows a server that 
+writes Journal files to a local file system, and to two follower systems via 
+RMI.
+</p>
+
+<div class="code"><pre>
+&lt;module role="fedora.server.management.Management" class="fedora.server.journal.Journaller"&gt;
+  &lt;param name="journalFileSizeLimit" value="100M"/&gt;
+  &lt;param name="journalFileAgeLimit" value="1H"/&gt;
+  &lt;param name="journalWriterClassname"
+        value="fedora.server.journal.readerwriter.multicast.MulticastJournalWriter"/&gt;
+
+  &lt;param name="transport.local.classname"
+        value="fedora.server.journal.readerwriter.multicast.LocalDirectoryTransport"/&gt;
+  &lt;param name="transport.local.directoryPath" value="/usr/local/journals/archiveFiles"/&gt;
+  &lt;param name="transport.local.crucial" value="true"/&gt;
+
+  &lt;param name="transport.follow1.classname"
+     value="fedora.server.journal.readerwriter.multicast.rmi.RmiTransport"/&gt;
+  &lt;param name="transport.follow1.crucial" value="false"/&gt;
+  &lt;param name="transport.follow1.hostName" value="follow1.nsdl.org"/&gt;
+  &lt;param name="transport.follow1.service" value="RmiJournalReceiver"/&gt;
+
+  &lt;param name="transport.follow2.classname"
+     value="fedora.server.journal.readerwriter.multicast.rmi.RmiTransport"/&gt;
+  &lt;param name="transport.follow2.crucial" value="false"/&gt;
+  &lt;param name="transport.follow2.hostName" value="follow2.nsdl.org"/&gt;
+  &lt;param name="transport.follow2.service" value="RmiJournalReceiver"/&gt;
+&lt;/module&gt;</pre></div>
+
+</div>
+
+<div class="subsect">
+<h3><a name="options.log">E. Options for the recovery log</a></h3>
 <p>These options are recognized by all of the current RecoveryLog 
 components.</p>
 <div class="boxed">
@@ -816,7 +876,7 @@ components.</p>
 
 <div id="footer">
     <div id="copyright">
-        Copyright &copy; 2002-2007 Fedora Project
+        Copyright &copy; 2002-2008 Fedora Project
     </div>
     <div id="lastModified">
         Last Modified

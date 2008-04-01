@@ -17,16 +17,33 @@ public class ExecUtility {
 	public static Process exec(String cmd) {
 		return exec(cmd, null, System.out, null);
 	}
+	
+	public static Process exec(String[] cmd) {
+        return exec(cmd, null, System.out, null);
+    }
 
 	public static Process exec(String cmd, OutputStream out) {
 		return exec(cmd, null, out, null);
 	}
+	
+	public static Process exec(String[] cmd, OutputStream out) {
+        return exec(cmd, null, out, null);
+    }
 
 	public static Process exec(String cmd, File dir) {
 		return exec(cmd, dir, System.out, null);
 	}
-
+	
+	public static Process exec(String[] cmd, File dir) {
+        return exec(cmd, dir, System.out, null);
+    }
+	
 	public static Process exec(String cmd, File dir, OutputStream out,
+	                           OutputStream err) {
+	    return exec(new String[]{cmd}, dir, out, err);
+	}
+
+	public static Process exec(String[] cmd, File dir, OutputStream out,
 			OutputStream err) {
 		Process cp = null;
 		try {
@@ -57,7 +74,7 @@ public class ExecUtility {
 						new InputStreamReader(cp.getErrorStream()));
 				while (true) {
 					try {
-						int val = cp.exitValue();
+						cp.exitValue();
 						break; // process exited,
 					} catch (IllegalThreadStateException e) {
 						// process has not terminated check for output
@@ -98,38 +115,44 @@ public class ExecUtility {
 	}
 
 	public static Process execCommandLineUtility(String cmd) {
-		String osName = System.getProperty("os.name");
-		if (osName.startsWith("Windows")) {
-			cmd = "cmd.exe /C " + cmd;
-		}
-		return exec(cmd, null, System.out, null);
+		return execCommandLineUtility(cmd, System.out, null);
 	}
-
-	public static Process execCommandLineUtilityWError(String cmd) {
-		String osName = System.getProperty("os.name");
-		if (osName.startsWith("Windows")) {
-			cmd = "cmd.exe /C " + cmd;
-		}
-		return exec(cmd, null, System.out, System.err);
-	}
+	
+	public static Process execCommandLineUtility(String[] cmd) {
+        return execCommandLineUtility(cmd, System.out, null);
+    }
 
 	public static Process execCommandLineUtility(String cmd, OutputStream out,
 			OutputStream err) {
-		String osName = System.getProperty("os.name");
-		if (osName.startsWith("Windows")) {
-			cmd = "cmd.exe /C " + cmd;
-		}
-		return exec(cmd, null, out, err);
+		return execCommandLineUtility(new String[] {cmd}, out, err);
 	}
-
-	public static Process altExec(String command) {
+	
+	public static Process execCommandLineUtility(String[] cmd,
+                                                 OutputStream out,
+                                                 OutputStream err) {
+        String osName = System.getProperty("os.name");
+        if (osName.startsWith("Windows")) {
+            String[] temp = new String[cmd.length + 2];
+            System.arraycopy(cmd, 0, temp, 2, temp.length);
+            temp[0] = "cmd.exe";
+            temp[1] = "/C";
+            cmd = temp;
+        }
+        return exec(cmd, null, out, err);
+    }
+	
+	public static Process altExec(String cmd) {
+	    return altExec(new String[]{cmd});
+	}
+	
+	public static Process altExec(String[] cmd) {
 		int result;
 		// prepare buffers for process output and error streams
 		StringBuffer err = new StringBuffer();
 		StringBuffer out = new StringBuffer();
 
 		try {
-			Process proc = Runtime.getRuntime().exec(command);
+			Process proc = Runtime.getRuntime().exec(cmd);
 			//create thread for reading inputStream (process' stdout)
 			StreamReaderThread outThread = new StreamReaderThread(proc
 					.getInputStream(), out);
@@ -146,18 +169,18 @@ public class ExecUtility {
 			errThread.join();
 
 			if (result != 0) {
-				System.out.println("Process " + command
+				System.out.println("Process " + cmd
 						+ " returned non-zero value:" + result);
 				System.out.println("Process output:\n" + out.toString());
 				System.out.println("Process error:\n" + err.toString());
 			} else {
-				System.out.println("Process " + command
+				System.out.println("Process " + cmd
 						+ " executed successfully");
 				System.out.println("Process output:\n" + out.toString());
 				System.out.println("Process error:\n" + err.toString());
 			}
 		} catch (Exception e) {
-			System.out.println("Error executing " + command);
+			System.out.println("Error executing " + cmd);
 			e.printStackTrace();
 			//throw e;
 		}

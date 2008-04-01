@@ -105,9 +105,9 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
     }
     
     public static void ingestDemoObjects() {
-        ExecUtility.execCommandLineUtility(FEDORA_HOME + "/client/bin/fedora-ingest-demos " + 
-                getHost() + " " + getPort() + " " + getUsername() + " " + 
-                getPassword() + " " + getProtocol());
+        String[] cmd = {FEDORA_HOME + "/client/bin/fedora-ingest-demos", 
+                getHost(), getPort(), getUsername(), getPassword(), getProtocol()};
+        ExecUtility.execCommandLineUtility(cmd);
     }
     
     /**
@@ -117,14 +117,14 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
      * @return set of PIDs of the specified object type
      * @throws Exception
      */
-    public static Set getDemoObjects(String[] fTypes) throws Exception {
+    public static Set<String> getDemoObjects(String[] fTypes) throws Exception {
         if (fTypes == null || fTypes.length == 0) {
             fTypes = new String[] {"O", "M", "D"};
         }
         
         FedoraClient client = getFedoraClient();
         InputStream queryResult;
-        Set pids = new LinkedHashSet();
+        Set<String> pids = new LinkedHashSet<String>();
         for (int i = 0; i < fTypes.length; i++) {
             queryResult = client.get(getBaseURL() + "/search?query=pid~*%20fType=" +
             		                 fTypes[i] + "&maxResults=1000&pid=true&xml=true", 
@@ -137,13 +137,13 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
     
     public static void purgeDemoObjects() throws Exception {
         String[] fTypes = {"O", "M", "D"};
-        Set pids = getDemoObjects(fTypes);
-        Iterator it = pids.iterator();
+        Set<String> pids = getDemoObjects(fTypes);
+        Iterator<String> it = pids.iterator();
         while (it.hasNext()) {
-            ExecUtility.execCommandLineUtility(FEDORA_HOME + "/client/bin/fedora-purge " + 
-                    getHost() + ":" + getPort() + " " + getUsername() + " " + 
-                    getPassword() + " " + (String)it.next() + " " + getProtocol() + 
-                    " for testing");
+            String[] cmd = {FEDORA_HOME + "/client/bin/fedora-purge", 
+                    getHost() + ":" + getPort(), getUsername(), getPassword(), 
+                    it.next(), getProtocol(), "for testing"};
+            ExecUtility.execCommandLineUtility(cmd);
         }
         //FedoraServerTestSetup.dropDBTables();
         //FedoraServerTestSetup.deleteStores();

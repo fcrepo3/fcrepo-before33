@@ -4,7 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
 <head>
-	<title>Fedora 2.2.1 Release Notes</title>
+	<title>Fedora 2.2.2 Release Notes</title>
 	<link rel="stylesheet" type="text/css" href="../docstyle.css" />
 </head>
 
@@ -13,8 +13,8 @@
 <div id="header">
 	<a href="../index.html" id="logo"></a>
 	<div id="title">
-		<h1>Fedora 2.2.1 Release Notes</h1>
-		<h2>August 13th, 2007</h2>
+		<h1>Fedora 2.2.2 Release Notes</h1>
+		<h2>March 31st, 2008</h2>
 	</div>
 </div>
 
@@ -24,6 +24,7 @@
 	<div id="tocbox">
 		<ol>
 			<li><a href="#bugs">Bug Fixes</a></li>
+			<li><a href="#other">Additional Improvements</a></li>
 			<li><a href="#issues">Known Issues</a></li>
 			<li><a href="#install">Installation</a></li>
 			<li><a href="#history">Historic Release Notes (prior releases)</a></li>
@@ -33,45 +34,173 @@
 
 <div id="introduction">
 	<br/>
-	<p>Fedora 2.2.1 is a minor maintenance release that addresses several
-	installation and security-related bugs discovered with Fedora 2.2.</p>
+	<p>
+	  This is a maintenance release that fixes several bugs
+	  present in Fedora 2.2.1.  In addition, the release includes 
+	  key improvements to the journaling and policy enforcement modules.
+      See below for more detail.
+	</p>
 </div>
 
 <div id="relnotes">
 	<ol type="1">
+
 		<li><a id="bugs" name="bugs">Bug Fixes</a>
-            <p>The following bugs have been addressed for this release.</p>
+            <p>The following bugs have been fixed in this release.</p>
 			<ul>
-                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1661682&group_id=177054&atid=879703">
-                  Bug #1661682</a>: 
-                  Bundled Postgres fails to copy during install
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1663737&group_id=177054&atid=879703">
+                  Bug #1663737</a>:
+                  User-provided log messages NOT recorded
                 </li>
-                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1661683&group_id=177054&atid=879703">
-                  Bug #1661683</a>: 
-                  Postgres NumberFormatException at startup
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1697137&group_id=177054&atid=879703">
+                  Bug #1697137</a>:
+                  fedora.war deployment fails in JBoss AS with OnlyOnceError
                 </li>
-                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1686346&group_id=177054&atid=879703">
-                  Bug #1686346</a>: 
-                  WSDL provided under target /fedora/wsdl is not public
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1701766&group_id=177054&atid=879703">
+                  Bug #1701766</a>:
+                  Clean up prompts/messages for "other" servlet container
                 </li>
-                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1721620&group_id=177054&atid=879703">
-                  Bug #1721620</a>: 
-                  IllegalStateException when authorization header not provided
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1714089&group_id=177054&atid=879703">
+                  Bug #1714089</a>:
+                  HTTP Error Codes are not being returned correctly
                 </li>
-                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1731608&group_id=177054&atid=879703">
-                  Bug #1731608</a>: 
-                  LDAP, JNDI, and Servlet Filter Cache issues
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1710801&group_id=177054&atid=879703">
+                  Bug #1710801</a>:
+                  HTTP Requests include bad HTTP basic Auth
                 </li>
-                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1768738&group_id=177054&atid=879703">
-                  Bug #1768738</a>: 
-                  Saxon Servlet not respecting base URLs
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1716106&group_id=177054&atid=879703">
+                  Bug #1716106</a>:
+                  demo soapclient fails to compile/run
                 </li>
-                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1772984&group_id=177054&atid=879703">
-                  Bug #1772984</a>: 
-                  Automatic rename of do table to dobj sometimes fails
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1716636&group_id=177054&atid=879703">
+                  Bug #1716636</a>:
+                  addDatastream allows invalid values for checksumType
                 </li>
-			</ul>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1720485&group_id=177054&atid=879703">
+                  Bug #1720485</a>:
+                  Null pointer running v2.2 installer
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1740417&group_id=177054&atid=879703">
+                  Bug #1740417</a>:
+                  dcDates table not updated when DC datastream modified
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1747186&group_id=177054&atid=879703">
+                  Bug #1747186</a>:
+                  FedoraAccessServlet hardcodes tiny buffer for datastreams
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1771136&group_id=177054&atid=879703">
+                  Bug #1771136</a>:
+                  Whitespace added when modifying Inline XML
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1773195&group_id=177054&atid=879703">
+                  Bug #1773195</a>:
+                  Incorrect XACML demo policies involving state
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1785608&group_id=177054&atid=879703">
+                  Bug #1785608</a>:
+                  SQL rebuild sometimes fails to populate pidGen correctly
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1791683&group_id=177054&atid=879703">
+                  Bug #1791683</a>:
+                  Installer creates one-jar doc directory
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1816735&group_id=177054&atid=879703">
+                  Bug #1816735</a>:
+                  Flush and close missing in FieldSearchServlet
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1832564&group_id=177054&atid=879703">
+                  Bug #1832564</a>:
+                  XSD dateTimes can have incorrect fractional seconds
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1835449&group_id=177054&atid=879703">
+                  Bug #1835449</a>:
+                  Object-specific POLICY datastream ignored when using Oracle
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1838750&group_id=177054&atid=879703">
+                  Bug #1838750</a>:
+                  improper handling of default namespace in batchModify
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1844803&group_id=177054&atid=879703">
+                  Bug #1844803</a>:
+                  Incorrect protocol/port in DefaultExternalContentManager
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1848092&group_id=177054&atid=879703">
+                  Bug #1848092</a>:
+                  Incorrect handling of dates before 1CE
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1848095&group_id=177054&atid=879703">
+                  Bug #1848095</a>:
+                  RelsExtValidator rejects valid UTC dateTimes
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1853905&group_id=177054&atid=879703">
+                  Bug #1853905</a>:
+                  Installer fails if FEDORA_HOME contains a space
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1863382&group_id=177054&atid=879703">
+                  Bug #1863382</a>:
+                  Lockup after frequent dissemination requests
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1878847&group_id=177054&atid=879703">
+                  Bug #1878847</a>:
+                  Problem with utf-8 characters in datastream
+                </li>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1927861&group_id=177054&atid=879703">
+                  Bug #1927861</a>:
+                  ExecUtility calls can fail if command has a space
+                </li>
+            </ul>
 			<br/>					
+		</li>
+		
+		<li><a id="other" name="other">Additional Improvements</a>
+          <ul>
+            <br/>
+            <li> <strong>Policy Enforcement</strong><br/>
+              <ul>
+                <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1743769&group_id=177054&atid=879706">
+                  Feature #1743769</a>:
+                  Multiple Owner id Support</a><br/>
+                  Fedora's bundled XACML engine can now act on policies 
+                  involving objects that have more than one owner.  See <i>
+                  <a href="../server/security/AuthorizationXACML.htm">Fedora
+                  Authorization with XACML</a></i> for more information
+                  on configuring and using this feature.
+                </li>
+              </ul>
+            </li>
+            <br/>
+            <!-- task 146877 -->
+            <li> <strong>Journaling</strong><br/>
+              The following improvements enable more sophisticated high 
+              availability configurations with Fedora.  See the 
+              <a href="../server/journal/index.html">Journaling Guide</a>
+              for more information on configuring and using these features.
+              <ul>
+                <li> <em>RMI Support</em> - Journal leaders/followers can 
+                  now be configured to communicate via RMI.
+                </li>
+                <li> <em>Multicast Support</em> - Journaling now supports
+                  multiple followers via disk, RMI, or combination.
+                </li>
+                <li> <em>Read-only Mode</em> - Formerly, when configured
+                  as a follower, a Fedora repository would give an error
+                  for any API-M call.  Now, a follower will allow calls to
+                  API-M methods that do not make changes to the repository.
+                </li>
+              </ul>
+            </li>
+            <br/>
+            <li> <strong>Miscellaneous</strong><br/>
+              <ul>
+                <!-- refactoring 1817857 -->
+                <li> Fedora's out-of-box SSL server certificate (not intended
+                     for production use) has been updated with a later
+                     expiration date, for convenience.</li>
+              </ul>
+            </li>
+            <br/>
+          </ul>
+          <br/>
 		</li>
 		
 		<li><a id="issues" name="issues">Known Issues</a>
@@ -92,6 +221,7 @@
   
 <div>
 &nbsp;&nbsp;&nbsp;&nbsp; Release notes for previous versions of Fedora:  
+	[<a href="http://fedora.info/download/2.2.1/userdocs/distribution/release-notes.html">2.2.1</a>], 
 	[<a href="http://fedora.info/download/2.2/userdocs/distribution/release-notes.html">2.2</a>], 
 	[<a href="http://fedora.info/download/2.1.1/userdocs/distribution/release-notes.html">2.1.1</a>], 
 	[<a href="http://fedora.info/download/2.1/userdocs/distribution/release-notes.html">2.1</a>], 
@@ -109,7 +239,7 @@
 </div>
 
 <div id="footer">
-	<div id="copyright"> Copyright &#xA9; 2002-2007 Fedora Project </div>
+	<div id="copyright"> Copyright &#xA9; 2002-2008 Fedora Project </div>
 	<div id="lastModified">
       Last Modified <script type="text/javascript">
       //<![CDATA[
