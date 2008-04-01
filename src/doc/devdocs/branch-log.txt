@@ -15,6 +15,7 @@ dev-147292
   Created   : 2008/03/24 from trunk r6834
   Developer : Chris Wilper
   Reviewer  : Jim Blake
+  Merged    : 2008/03/26 into trunk r6862
 
 dev-147245
   Created   : 2008/03/21 from trunk r6821
@@ -25,6 +26,7 @@ dev-147179
   Created   : 2008/03/18 from maintenance-2.2 r6795
   Developer : Chris Wilper
   Reviewer  : Jim Blake
+  Merged    : 2008/03/26 into maintenance-2.2 r6858
 
 dev-142358
   Created   : 2008/03/05 from genericsearch/trunk
