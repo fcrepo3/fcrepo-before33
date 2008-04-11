@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+  <head>
+    <title>Fedora Messaging Guide</title>
+    <link rel="stylesheet" type="text/css" href="../../docstyle.css" />
+  </head>
+
+  <body>
+
+    <div id="header">
+      <h1>Fedora Messaging Guide</h1>
+      <h2>Fedora Release 3.0 Beta 2</h2>
+    </div>
+
+    <div id="toc">
+      <h2>Table of Contents</h2>
+      <ol>
+        <li><a href="#intro">Introduction</a></li>
+        <li><a href="#messaging">Messaging in Fedora</a></li>
+        <li><a href="#config">Configuring Messaging</a></li>
+        <li><a href="#client">Notification Client</a></li>
+        <li><a href="#messages">Messages</a></li>
+      </ol>
+    </div>
+
+    <div id="content">
+
+      <h2 id="intro">Introduction</h2>
+
+      <p>
+        Messaging is a communication mechanism used to send and receive information in a manner which allows the senders
+        and receivers to be unaware of the activities or status of the other parties involved in the exchange. This loose
+        coupling is achieved through the use of an intermediary queue or topic managed by a messaging provider.
+        The messaging provider is responsible for delivering messages sent by message producers to message consumers.
+        Messaging in Fedora is implemented using the <a href="http://java.sun.com/products/jms/">Java Messaging Service (JMS)</a>
+        which is a specification used by many messaging providers that allows messages to be sent or received from a queue or
+        topic in a generic fashion.
+      </p>
+
+      <h2 id="messaging">Messaging in Fedora</h2>
+
+      <p>
+      	The goal of messaging in Fedora is to provide updates about the activities of the repository as they occur.
+	    This allows external applications to monitor and perform actions based on those activities. In order to provide
+	    the capability for multiple independent clients to receive identical update messages simultaneously, an asynchronous
+	    publish-and-subscribe model was chosen as the default for Fedora's messaging capability. The messages sent using this
+	    model indicate when functions of API-M have been exercised, thus providing information about every update made to
+        digital objects within the repository.
+      </p>
+
+      <p>
+        Fedora uses <a href="http://activemq.apache.org/index.html">Apache ActiveMQ</a> as its default messaging provider.
+        While the use of JMS suggests that any messaging provider supporting JMS can replace ActiveMQ, no other providers
+        have been tested. If you do use Fedora with another JMS-compliant messaging provider, please
+        <a href="http://sourceforge.net/mail/?group_id=177054">let us know</a> your results.
+      </p>
+
+      <h2 id="config">Configuring Messaging</h2>
+
+      <p>
+        Messaging in Fedora is configured primarily through the messaging module within the fedora.fcfg file. The following
+        parameters, specified as part of the messaging module, are required in order to establish a JMS Connection:
+        <ul>
+          <li>
+            <strong>enabled</strong>
+            <ul>
+              <li>Default: false</li>
+              <li>Determines whether the messaging module should be initialized in order to send messages. If you want messages
+              to be sent, this must be set to true.</li>
+            </ul>
+          </li>
+          <li>
+            <strong>java.naming.factory.initial</strong>
+            <ul>
+              <li>Default: org.apache.activemq.jndi.ActiveMQInitialContextFactory</li>
+              <li>Specifies the JNDI initial context with which the connection factory and destination administered objects
+              will be looked up. As indicated by the default value, Fedora uses <a href="http://activemq.apache.org/index.html">ActiveMQ</a>
+              as its default JNDI provider as well as its default messaging provider. The messaging provider and JNDI
+              provider do not need to be the same.</li>
+            </ul>
+          </li>
+          <li>
+            <strong>java.naming.provider.url</strong>
+            <ul>
+              <li>Default: tcp://localhost:61616</li>
+              <li>Specifies the address at which a connection can be made to the messaging provider. Depending on the
+              provider, this address may indicate any of several protocols and may include additional parameters.
+              An example from ActiveMQ is - vm://localhost?broker.persistent=false - which indicates the use of
+              an internal JVM transport along with non-persistent messages.</li>
+              <li>Fedora will attempt to connect to the messaging provider at this address on startup, so make sure
+              that your provider is running and available.</li>
+            </ul>
+          </li>
+          <li>
+            <strong>connection.factory.name</strong>
+            <ul>
+              <li>Default: ConnectionFactory</li>
+              <li>Specifies the JNDI name of the ConnectionFactory object needed to create a connection to the JMS
+              provider. ActiveMQ creates a connection factory on startup and stores it under the name ConnectionFactory
+              in its included JNDI provider. If you are using a different JMS or JNDI provider, you will need to create
+              a connection factory in JNDI and specify the name under which it is stored as the value of this parameter.</li>
+            </ul>
+          </li>
+		</ul>
+      </p>
+
+      <p>
+         Once a connection is established to the JMS provider, Fedora needs to know where to publish messages.
+         Two topics are currently available for this purpose:
+        <ul>
+          <li>
+            <strong>fedora.apim.update</strong> - API-M methods which cause an update to occur within the repository. This
+            includes all ingest, add, modify, set, and purge activities.
+          </li>
+          <li>
+            <strong>fedora.apim.access</strong> - API-M methods which access the repository but do not cause an update
+          	to occur. This includes all methods not considered updates.
+          </li>
+        </ul>
+      </p>
+
+      <p>
+        The names of these topics may be changed by specifying new values for the name parameter of the apimUpdateMessages
+        and apimAccessMessages datastores within the fedora.fcfg file. Changing the names will not alter the messages being
+        sent but will send those messages to different destinations.
+      </p>
+      <p>
+      	If a point-to-point messaging model is preferred, the type parameters of the datastores mentioned above can be changed
+      	to "queue", which will result in the messages being placed in a queue of the name specified in the datastore. Queues
+      	allow only a single entity to retrieve and process each message, but they do remove timing dependencies inherent with
+      	the publish-and-subscribe model (subscribers must register their interest prior to a message being published in order
+      	to receive that message.)
+      </p>
+
+      <h2 id="client">Notification Client</h2>
+
+      <p>
+        In order to receive the messages that are being sent by Fedora, you will need to create a message consumer to listen
+        for Fedora's notifications. To aid in this effort, the Notification Client was created. To build the Notification Client,
+        run the notification-client Ant target from the source distribution. After the build completes, look in the
+        dist directory for fedora-notification-client.zip, which includes all of the jars necessary to use the Fedora
+        Notification Client. If you are using a messaging provider other than ActiveMQ, you will need to replace the activemq-all
+        jar with the appropriate jars from your messaging provider of choice.
+      </p>
+
+      <p>
+        The Notification Client was designed to provide a simple Java interface for receiving messages from Fedora. Some configuration
+        parameters are necessary in order for the client to create a connection and listen to the appropriate topic or queue. The parameter
+        names here are the same as those listed above for messaging, and the values should be the same as those in your fedora.fcfg
+        file. The topic or queue name(s) on which to listen are also included as parameters and the value(s) should match those
+        in the fedora.fcfg datastores. If you are using ActiveMQ as your JMS and JNDI providers each topic or queue will be created for
+        you, otherwise you will need to create destination object(s) in JNDI to match the property values you specify here.
+
+        <ul>
+          <li><strong>java.naming.factory.initial</strong> - this String value can be found in javax.naming.Context.INITIAL_CONTEXT_FACTORY</li>
+          <li><strong>java.naming.provider.url</strong> - this String value can be found in javax.naming.Context.PROVIDER_URL</li>
+          <li><strong>connection.factory.name</strong> - this String value can be found in fedora.server.messaging.JMSManager.CONNECTION_FACTORY_NAME</li>
+          <li><strong>topic.{name} OR queue.{name}</strong> - topics are specified using the prefix "topic." followed by a topic name.
+          Queues are specified using the prefix "queue." followed by a queue name.</li>
+        </ul>
+      </p>
+
+      <p>
+        The code below is a simple example of how to use the Notification Client. The JmsNotificationClient constructor requires
+        three parameters besides the properties. These parameters include the client ID, the NotificationListener instance, and a
+        flag which determines whether durable subscribers should be used to listen over the topics listed in the properties.
+        More information about each of these parameters can be found in the JmsNotificationClient javadocs.
+      </p>
+
+      <p>
+      <textarea class="code" style="width: 900px; height: 400px;">
+      public class Example implements NotificationListener {
+          NotificationClient notificationClient;
+
+          public void start() throws NotificationException {
+              Properties properties = new Properties();
+              properties.setProperty(Context.INITIAL_CONTEXT_FACTORY,
+                                     "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
+              properties.setProperty(Context.PROVIDER_URL, "tcp://localhost:61616");
+              properties.setProperty(JMSManager.CONNECTION_FACTORY_NAME, "ConnectionFactory");
+              properties.setProperty("topic.fedora", "fedora.apim.*");
+
+              notificationClient = new JmsNotificationClient("client0", this, properties, false);
+              notificationClient.start();
+          }
+
+          public void stop() throws NotificationException {
+              notificationClient.stop(false);
+          }
+
+          public void onNotification(String clientId, Notification notification) {
+              System.out.println("Notification received: " + notification.getText());
+          }
+      }
+      </textarea>
+      </p>
+
+      <h2 id="messages">Messages</h2>
+
+      <p>
+        The messages sent by Fedora take the form of feed entries based on the
+        <a href="http://www.atomenabled.org/developers/syndication/">Atom Syndication Format</a>. Each message will be
+        similar to the following example:
+      </p>
+
+      <p>
+        TODO: Include an example message here.
+      </p>
+
+    </div>
+
+    <div id="footer">
+      <p id="copyright">
+        Copyright &copy; 2002-2008 Fedora Project
+      </p>
+      <script type="text/javascript">
+        var cvsDate = "$Date: 2008-04-11 08:00:00 -0000 (Fri, 11 Apr 2008) $";
+        var parts = cvsDate.split(" ");
+        var modifiedDate = parts[1];
+        var p = document.createElement("p");
+        p.setAttribute("id", "lastModified");
+        var footer = document.getElementById("footer");
+        footer.appendChild(p);
+        p.innerHTML = "Last Modified "+modifiedDate;
+      </script>
+    </div>
+
+  </body>
+</html>

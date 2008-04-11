@@ -215,3 +215,10 @@ div.notice{
 #toc ul{
   list-style-type: square;
 }
+textarea.code {
+  background: #f1f1f1;
+  padding: 5px;
+  font-size: 14px;
+  border: solid 1px #999;
+  overflow: hidden;
+}
