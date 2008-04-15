@@ -5,9 +5,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStream;
-
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -15,14 +13,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.custommonkey.xmlunit.SimpleXpathEngine;
-
 import org.w3c.dom.Document;
 
 import fedora.client.FedoraClient;
 import fedora.client.search.SearchResultParser;
-
 import fedora.test.FedoraServerTestCase;
-
 import fedora.utilities.ExecUtility;
 
 /**
@@ -33,8 +28,6 @@ import fedora.utilities.ExecUtility;
  */
 public class TestIngestDemoObjects
         extends FedoraServerTestCase {
-
-    private String baseURL;
 
     private FedoraClient client;
 
@@ -56,7 +49,7 @@ public class TestIngestDemoObjects
         SimpleXpathEngine.clearNamespaces();
     }
 
-    public void xtestIngestDemoObjects() throws Exception {
+    public void testIngestDemoObjects() throws Exception {
         client = getFedoraClient();
 
         // check that demo objects were ingested
@@ -66,13 +59,13 @@ public class TestIngestDemoObjects
                                 + "/client/demo/foxml/local-server-demos"),
                         new File(FEDORA_HOME
                                 + "/client/demo/foxml/open-server-demos")};
-        Set demoObjectFiles = new HashSet();
+        Set<File> demoObjectFiles = new HashSet<File>();
         for (File element : demoDirs) {
             demoObjectFiles.addAll(getFiles(element, "FedoraBDefObject"));
             demoObjectFiles.addAll(getFiles(element, "FedoraBMechObject"));
             demoObjectFiles.addAll(getFiles(element, "FedoraObject"));
         }
-        Set repositoryDemoObjects = getDemoObjects(null);
+        Set<String> repositoryDemoObjects = getDemoObjects(null);
 
         // simple test to see if the count of demo object files matches the 
         // count from an APIA-Lite search
@@ -82,19 +75,16 @@ public class TestIngestDemoObjects
         DocumentBuilder builder = factory.newDocumentBuilder();
         InputStream in;
 
-        Iterator it = repositoryDemoObjects.iterator();
-        while (it.hasNext()) {
-            String pid = (String) it.next();
-            System.out.println("Checking for " + pid);
-            in = client.get(baseURL + "/get/" + pid + "?xml=true", true, true);
+        for (String pid : repositoryDemoObjects) {
+            in = client.get(getBaseURL() + "/get/" + pid + "?xml=true", true, true);
             Document result = builder.parse(in);
             // simple test of the objects in the repo
             assertXpathExists("/objectProfile", result);
         }
     }
 
-    private static Set getFiles(File dir, String searchString) throws Exception {
-        Set set = new HashSet();
+    private static Set<File> getFiles(File dir, String searchString) throws Exception {
+        Set<File> set = new HashSet<File>();
         File[] files = dir.listFiles();
         for (File element : files) {
             if (element.isDirectory()) {
@@ -128,10 +118,14 @@ public class TestIngestDemoObjects
     }
 
     public static void ingestDemoObjects() {
-        ExecUtility.execCommandLineUtility(FEDORA_HOME
-                + "/client/bin/fedora-ingest-demos " + getHost() + " "
-                + getPort() + " " + getUsername() + " " + getPassword() + " "
-                + getProtocol());
+        String osName = System.getProperty("os.name");
+        String[] cmd = {FEDORA_HOME + "/client/bin/fedora-ingest-demos", 
+                getHost(), getPort(), getUsername(), getPassword(), getProtocol()};
+        if (!osName.startsWith("Windows")) {
+            // needed for the Fedora shell scripts
+            cmd[0] = cmd[0] + ".sh";
+        }
+        ExecUtility.execCommandLineUtility(cmd);
     }
 
     /**
@@ -143,14 +137,14 @@ public class TestIngestDemoObjects
      * @return set of PIDs of the specified object type
      * @throws Exception
      */
-    public static Set getDemoObjects(String[] fTypes) throws Exception {
+    public static Set<String> getDemoObjects(String[] fTypes) throws Exception {
         if (fTypes == null || fTypes.length == 0) {
             fTypes = new String[] {"O", "M", "D"};
         }
 
         FedoraClient client = getFedoraClient();
         InputStream queryResult;
-        Set pids = new LinkedHashSet();
+        Set<String> pids = new LinkedHashSet<String>();
         for (String element : fTypes) {
             queryResult =
                     client.get(getBaseURL() + "/search?query=pid~*%20fType="
@@ -165,19 +159,19 @@ public class TestIngestDemoObjects
     }
 
     public static void purgeDemoObjects() throws Exception {
+        String osName = System.getProperty("os.name");
         String[] fTypes = {"O", "M", "D"};
-        Set pids = getDemoObjects(fTypes);
-        Iterator it = pids.iterator();
-        while (it.hasNext()) {
-            ExecUtility
-                    .execCommandLineUtility(FEDORA_HOME
-                            + "/client/bin/fedora-purge " + getHost() + ":"
-                            + getPort() + " " + getUsername() + " "
-                            + getPassword() + " " + (String) it.next() + " "
-                            + getProtocol() + " for testing");
+        Set<String> pids = getDemoObjects(fTypes);
+        for (String pid : pids) {
+            String[] cmd = {FEDORA_HOME + "/client/bin/fedora-purge", 
+                    getHost() + ":" + getPort(), getUsername(), getPassword(), 
+                    pid, getProtocol(), "testing"};
+            if (!osName.startsWith("Windows")) {
+                // needed for the Fedora shell scripts
+                cmd[0] = cmd[0] + ".sh";
+            }
+            ExecUtility.execCommandLineUtility(cmd);
         }
-        //FedoraServerTestSetup.dropDBTables();
-        //FedoraServerTestSetup.deleteStores();
     }
 
     public static void main(String[] args) {

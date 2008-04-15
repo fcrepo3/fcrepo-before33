@@ -317,7 +317,7 @@ public class FedoraHome {
             files = dir.listFiles();
         }
         for (File element : files) {
-            ExecUtility.exec("chmod +x " + element.getAbsolutePath());
+            ExecUtility.exec(new String[]{"chmod", "+x", element.getAbsolutePath()});
         }
     }
 }
