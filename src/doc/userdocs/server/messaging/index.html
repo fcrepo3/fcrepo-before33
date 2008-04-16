@@ -202,12 +202,71 @@
 
       <p>
         The messages sent by Fedora take the form of feed entries based on the
-        <a href="http://www.atomenabled.org/developers/syndication/">Atom Syndication Format</a>. Each message will be
-        similar to the following example:
+        <a href="http://www.atomenabled.org/developers/syndication/">Atom Syndication Format</a>. These messages
+        correspond to API-M method calls, indicating the name of the method, its parameters, return value, and
+        other information about the method. Each message will be similar to the following example:
       </p>
 
       <p>
-        TODO: Include an example message here.
+      <textarea class="code" style="width: 900px; height: 300px;">
+      <?xml version="1.0" encoding="UTF-8"?>
+      <entry xmlns="http://www.w3.org/2005/Atom"
+             xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <id>urn:uuid:3773e144-1b63-4dde-8786-464243af9186</id>
+        <updated>2008-04-14T22:35:13.953Z</updated>
+        <author>
+          <name>fedoraAdmin</name>
+          <uri>http://localhost:8080/fedora</uri>
+        </author>
+        <title type="text">purgeObject</title>
+        <category term="demo:5" scheme="fedora-types:pid" label="xsd:string"></category>
+        <category term="purge message" scheme="fedora-types:logMessage" label="xsd:string"></category>
+        <category term="false" scheme="fedora-types:force" label="xsd:boolean"></category>
+        <summary type="text">demo:5</summary>
+        <content type="text">2008-04-14T22:35:13.953Z</content>
+      </entry>
+      </textarea>
+      </p>
+
+      <p>
+        The Atom tags in each message will have the following values:
+        <ul>
+          <li>&lt;id&gt; uniquely identifies each entry</li>
+          <li>&lt;updated&gt; indicates the date and time at which the call occurred
+          <li>&lt;author&gt; identifies the initiation point of the API-M method call
+            <ul>
+              <li>&lt;name&gt; specifies the name of the user making the call
+              <li>&lt;uri&gt; corresponds to the baseURL of the Fedora
+              repository from which the call originated</li>
+            </ul>
+          </li>
+          <li>&lt;title&gt; specifies the method name</li>
+          <li>Each &lt;category&gt; corresponds to a method's argument:
+            <ul>
+              <li>The term indicates the argument value. However, null values are
+              indicated as "null", and non-null <code>xsd:base64Binary</code> values are
+              indicated as "[OMITTED]".</li>
+              <li>The scheme indicates the argument name</li>
+              <li>The label indicates the argument datatype</li>
+            </ul>
+          </li>
+          <li>&lt;summary&gt; corresponds to the PID of the object operated on by the method, if applicable.</li>
+          <li>&lt;content&gt; corresponds to the textual representation of the method's
+          return value, noting the following:
+            <ul>
+              <li>Null values are represented as "null".</li>
+              <li><code>fedora-types:ArrayOfString</code> values are represented as a
+              comma-separated list, e.g. "value1, value2, value3".</li>
+              <li>Non-null <code>xsd:base64Binary</code> values are not returned, and
+              only indicated as "[OMITTED]".</li>
+              <li>Non-null <code>fedora-types:Datastream</code> values are not returned,
+              and only indicated as "[OMITTED]".</li>
+              <li><code>fedora-types:RelationshipTuple</code> values are represented in
+              Notation3 (N3).</li>
+            </ul>
+          </li>
+        </ul>
       </p>
 
     </div>
