@@ -21,7 +21,7 @@
         <li><a href="#intro">Introduction</a></li>
         <li><a href="#messaging">Messaging in Fedora</a></li>
         <li><a href="#config">Configuring Messaging</a></li>
-        <li><a href="#client">Notification Client</a></li>
+        <li><a href="#client">Messaging Client</a></li>
         <li><a href="#messages">Messages</a></li>
       </ol>
     </div>
@@ -135,19 +135,19 @@
       	to receive that message.)
       </p>
 
-      <h2 id="client">Notification Client</h2>
+      <h2 id="client">Messaging Client</h2>
 
       <p>
         In order to receive the messages that are being sent by Fedora, you will need to create a message consumer to listen
-        for Fedora's notifications. To aid in this effort, the Notification Client was created. To build the Notification Client,
-        run the notification-client Ant target from the source distribution. After the build completes, look in the
-        dist directory for fedora-notification-client.zip, which includes all of the jars necessary to use the Fedora
-        Notification Client. If you are using a messaging provider other than ActiveMQ, you will need to replace the activemq-all
+        for Fedora's notification messages. To aid in this effort, the Messaging Client was created. To build the Messaging Client,
+        run the messaging-client Ant target from the source distribution. After the build completes, look in the
+        dist directory for fedora-messaging-client.zip, which includes all of the jars necessary to use the Fedora
+        Messaging Client. If you are using a messaging provider other than ActiveMQ, you will need to replace the activemq-all
         jar with the appropriate jars from your messaging provider of choice.
       </p>
 
       <p>
-        The Notification Client was designed to provide a simple Java interface for receiving messages from Fedora. Some configuration
+        The Messaging Client was designed to provide a simple Java interface for receiving messages from Fedora. Some configuration
         parameters are necessary in order for the client to create a connection and listen to the appropriate topic or queue. The parameter
         names here are the same as those listed above for messaging, and the values should be the same as those in your fedora.fcfg
         file. The topic or queue name(s) on which to listen are also included as parameters and the value(s) should match those
@@ -164,35 +164,37 @@
       </p>
 
       <p>
-        The code below is a simple example of how to use the Notification Client. The JmsNotificationClient constructor requires
-        three parameters besides the properties. These parameters include the client ID, the NotificationListener instance, and a
+        The code below is a simple example of how to use the Messaging Client. The JmsMessagingClient constructor requires
+        three parameters besides the properties. These parameters include the client ID, the MessagingListener instance, and a
         flag which determines whether durable subscribers should be used to listen over the topics listed in the properties.
-        More information about each of these parameters can be found in the JmsNotificationClient javadocs.
+        More information about each of these parameters can be found in the JmsMessagingClient javadocs.
       </p>
 
       <p>
-      <textarea class="code" style="width: 900px; height: 400px;">
-      public class Example implements NotificationListener {
-          NotificationClient notificationClient;
-
-          public void start() throws NotificationException {
+      <textarea class="code" style="width: 900px; height: 430px;">
+      public class Example implements MessagingListener {
+          MessagingClient messagingClient;
+          public void start() throws MessagingException {
               Properties properties = new Properties();
               properties.setProperty(Context.INITIAL_CONTEXT_FACTORY,
                                      "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
               properties.setProperty(Context.PROVIDER_URL, "tcp://localhost:61616");
               properties.setProperty(JMSManager.CONNECTION_FACTORY_NAME, "ConnectionFactory");
               properties.setProperty("topic.fedora", "fedora.apim.*");
-
-              notificationClient = new JmsNotificationClient("client0", this, properties, false);
-              notificationClient.start();
+              messagingClient = new JmsMessagingClient("example1", this, properties, false);
+              messagingClient.start();
           }
-
-          public void stop() throws NotificationException {
-              notificationClient.stop(false);
+          public void stop() throws MessagingException {
+              messagingClient.stop(false);
           }
-
-          public void onNotification(String clientId, Notification notification) {
-              System.out.println("Notification received: " + notification.getText());
+          public void onMessage(String clientId, Message message) {
+              String messageText = "";
+              try {
+                  messageText = ((TextMessage)message).getText();
+              } catch(JMSException e) {
+                  System.err.println("Error retrieving message text " + e.getMessage());
+              }
+              System.out.println("Message received: " + messageText + " from client " + clientId);
           }
       }
       </textarea>
