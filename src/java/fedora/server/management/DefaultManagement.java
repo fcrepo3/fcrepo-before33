@@ -12,39 +12,30 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-
 import java.text.SimpleDateFormat;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.betwixt.XMLUtils;
-
 import org.apache.log4j.Logger;
-
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
-
 import org.w3c.dom.Document;
 
 import fedora.common.Constants;
-
 import fedora.server.Context;
-import fedora.server.Module;
 import fedora.server.RecoveryContext;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.InvalidStateException;
 import fedora.server.errors.InvalidXMLNameException;
-import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamReadException;
 import fedora.server.errors.StreamWriteException;
@@ -72,16 +63,22 @@ import fedora.server.validation.ValidationUtility;
  * Implements API-M without regard to the transport/messaging protocol.
  * 
  * @author Chris Wilper
+ * @version $Id$
  */
 public class DefaultManagement
-        extends Module
         implements Constants, Management, ManagementDelegate {
 
     /** Logger for this class. */
     private static Logger LOG =
             Logger.getLogger(DefaultManagement.class.getName());
+    
+    public final static String s_RelsExt_Datastream = "RELS-EXT";
 
+    private Authorization m_fedoraXACMLModule;
+    
     private DOManager m_manager;
+    
+    private ExternalContentManager m_contentManager;
 
     private int m_uploadStorageMinutes;
 
@@ -102,7 +99,6 @@ public class DefaultManagement
         m_tempDir = tempDir;
         m_uploadStartTime = uploadStartTime;
     }
-
 
     public String ingest(Context context,
                          InputStream serialization,
