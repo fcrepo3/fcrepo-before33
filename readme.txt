@@ -51,9 +51,9 @@ be run with the Fedora server configured in a specific way:
 
   [fedora.test.AllSystemTestsConfigB]
     When running this suite, the server should be configured
-    with API-A authentication turned ON, and with the
-    Resource Index module enabled at level 1.  This suite can
-    also be run without external internet access.
+    with API-A authentication turned ON, with the
+    Resource Index and Messaging modules enabled.  
+    This suite can also be run without external internet access.
 
   [fedora.test.AllSystemTestsConfigC]
     When running this suite, the server should be installed

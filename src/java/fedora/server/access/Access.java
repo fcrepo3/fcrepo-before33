@@ -24,7 +24,7 @@ import fedora.server.storage.types.Property;
 public interface Access {
 
     public MIMETypedStream getDatastreamDissemination(Context context,
-                                                      String PID,
+                                                      String pid,
                                                       String dsID,
                                                       Date asOfDateTime)
             throws ServerException;
@@ -51,7 +51,7 @@ public interface Access {
      *         If any type of error occurred fulfilling the request.
      */
     public MIMETypedStream getDissemination(Context context,
-                                            String PID,
+                                            String pid,
                                             String bDefPID,
                                             String methodName,
                                             Property[] userParms,
@@ -73,17 +73,17 @@ public interface Access {
      *         If any type of error occurred fulfilling the request.
      */
     public ObjectProfile getObjectProfile(Context context,
-                                          String PID,
+                                          String pid,
                                           Date asOfDateTime)
             throws ServerException;
 
     public ObjectMethodsDef[] listMethods(Context context,
-                                          String PID,
+                                          String pid,
                                           Date asOfDateTime)
             throws ServerException;
 
     public DatastreamDef[] listDatastreams(Context context,
-                                           String PID,
+                                           String pid,
                                            Date asOfDateTime)
             throws ServerException;
 
@@ -151,7 +151,7 @@ public interface Access {
      * @throws ServerException
      *         If any type of error occurred fulfilling the request.
      */
-    public String[] getObjectHistory(Context context, String PID)
+    public String[] getObjectHistory(Context context, String pid)
             throws ServerException;
 
 }

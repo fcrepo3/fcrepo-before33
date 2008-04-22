@@ -70,7 +70,11 @@ public class InstallOptions {
     public static final String RI_ENABLED = "ri.enabled";
 
     public static final String REST_ENABLED = "rest.enabled";
-
+    
+    public static final String MESSAGING_ENABLED = "messaging.enabled";
+    
+    public static final String MESSAGING_URI = "messaging.uri";
+    
     public static final String DEPLOY_LOCAL_SERVICES = "deploy.local.services";
 
     public static final String UNATTENDED = "unattended";
@@ -174,6 +178,7 @@ public class InstallOptions {
             _map.put(DATABASE_PASSWORD, "fedoraAdmin");
             _map.put(DATABASE_JDBCURL, includedJDBCURL);
             _map.put(DATABASE_DRIVERCLASS, "com.mckoi.JDBCDriver");
+            _map.put(MESSAGING_ENABLED, Boolean.toString(false));
             _map.put(DEPLOY_LOCAL_SERVICES, null); // true
             applyDefaults();
             return;
@@ -207,9 +212,6 @@ public class InstallOptions {
                 }
             }
         }
-        inputOption(XACML_ENABLED);
-        inputOption(RI_ENABLED);
-        inputOption(REST_ENABLED);
 
         // Database selection
         // Ultimately we want to provide the following properties:
@@ -245,7 +247,15 @@ public class InstallOptions {
                 dbValidated = validateDatabaseConnection();
             }
         }
-
+        
+        inputOption(XACML_ENABLED);
+        inputOption(RI_ENABLED);
+        inputOption(REST_ENABLED);  
+        inputOption(MESSAGING_ENABLED);
+        if(getValue(MESSAGING_ENABLED).equals(Boolean.toString(true))) {                     
+            inputOption(MESSAGING_URI);
+        }            
+        
         // If using an "other" servlet container, we can't automatically deploy
         // the local services, so don't even bother to ask.
         if (getValue(SERVLET_ENGINE).equals(OTHER)) {

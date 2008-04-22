@@ -78,6 +78,21 @@ public class RelsExtValidatorTest
         deser = new RelsExtValidator("UTF-8", false);
         deser.deserialize(in, pid.toURI());
     }
+    
+    public void testEmpty() throws Exception {
+        pid = PID.getInstance("demo:demo");
+        InputStream in;
+        String[] empties = {"", " ", "</>"};
+        
+        for (String s : empties) {
+            in = new ByteArrayInputStream(s.getBytes());
+            
+            try {
+                RelsExtValidator.validate(pid, in);
+                fail("Empty RELS-EXT datastream not allowed: \"" + s + "\"");
+            } catch (ValidationException e) {}
+        }
+    }
 
     public void testBadAssertions() throws Exception {
         pid = PID.getInstance("demo:foo");

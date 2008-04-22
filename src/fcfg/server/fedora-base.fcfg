@@ -164,12 +164,13 @@
             authentication.</comment>
         </param>
 	</module>
-	<module role="fedora.server.management.Management" class="fedora.server.management.DefaultManagement">
+	<module role="fedora.server.management.Management" class="fedora.server.management.ManagementModule">
 		<comment>The management subsystem. This implements the methods necessary 
 		to fulfill API-M requests without regard to:
                  - how the service is exposed
                  - how bytestreams and java types might be marshalled/demarshalled over the wire
                  - how the storage subsystem is implemented.</comment>
+        <param name="decorator1" value="fedora.server.messaging.NotificationInvocationHandler" />
 		<param name="autoChecksum" value="false">
 			<comment>Controls whether a checksum is automatically computed for 
 			every datastream as the datastream is added to the repository. This 
@@ -354,10 +355,24 @@
 		<param name="deserializer_info:fedora/fedora-system:METSFedoraExt-1.1" value="fedora.server.storage.translation.METSFedoraExt1_1DODeserializer"/>
 		<param name="serializer_info:fedora/fedora-system:FOXML-1.1" value="fedora.server.storage.translation.FOXML1_1DOSerializer"/>
 		<param name="deserializer_info:fedora/fedora-system:FOXML-1.1" value="fedora.server.storage.translation.FOXML1_1DODeserializer"/>
+		<param name="serializer_info:fedora/fedora-system:FOXML-1.0" value="fedora.server.storage.translation.FOXML1_0DOSerializer"/>
+		<param name="deserializer_info:fedora/fedora-system:FOXML-1.0" value="fedora.server.storage.translation.FOXML1_0DODeserializer"/>
 	</module>
 	<module role="fedora.server.management.PIDGenerator" class="fedora.server.management.BasicPIDGenerator">
 		<comment>The pid generator.</comment>
 		<param name="pidgen_log_dir" value="pidgen"/>
+	</module>
+	<module role="fedora.server.messaging.Messaging" class="fedora.server.messaging.MessagingModule">
+		<comment>Fedora's Java Messaging Service (JMS) Module</comment>
+		<param name="enabled" value="false" />
+		<param name="java.naming.factory.initial" value="org.apache.activemq.jndi.ActiveMQInitialContextFactory" />
+		<param name="java.naming.provider.url" value="vm:(broker:(tcp://localhost:61616))"/>
+		<param name="datastore1" value="apimUpdateMessages">
+			<comment>A datastore representing a JMS Destination for APIM events which update the repository</comment>
+		</param>
+		<param name="datastore2" value="apimAccessMessages">
+			<comment>A datastore representing a JMS Destination for APIM events which do not update the repository</comment>
+		</param>
 	</module>
 	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
 		<comment>This module facilitates obtaining ConnectionPools</comment>
@@ -375,9 +390,13 @@
              schema used to do XML schema validation of digital objects.</comment>
 		</param>
 		<param name="xsd_info:fedora/fedora-system:FOXML-1.1" value="xsd/foxml1-1.xsd">
-			<comment>this is local path for the Fedora FOXML XML schema
+			<comment>this is local path for the Fedora FOXML 1.1 XML schema
              used to do XML schema validation of digital objects</comment>
 		</param>
+    <param name="xsd_info:fedora/fedora-system:FOXML-1.0" value="xsd/foxml1-0.xsd">
+      <comment>this is local path for the Fedora FOXML 1.0 XML schema
+             used to do XML schema validation of digital objects</comment>
+    </param>		
 		<param name="xsd_xacml_policy1.0" value="xsd/cs-xacml-schema-policy-1.0.xsd">
 			<comment>this is local path for the OASIS XACML XML
              policy schema used to do XML schema validation of XACML policies.</comment>
@@ -389,10 +408,16 @@
         </param>
 		<param name="rules_info:fedora/fedora-system:FOXML-1.1" value="schematron/foxmlRules1-1.xml">
 			<comment>This is the local path to the Fedora
-            Schematron Rules used to do Fedora-specific on FOXML XML files. -
+            Schematron Rules used to do Fedora-specific on FOXML 1.1 XML files. -
             schtron_preprocessor: this is the local path to the "skeleton" style
             sheet for schematron processing</comment>
 		</param>
+    <param name="rules_info:fedora/fedora-system:FOXML-1.0" value="schematron/foxmlRules1-0.xml">
+      <comment>This is the local path to the Fedora
+            Schematron Rules used to do Fedora-specific on FOXML 1.0 XML files. -
+            schtron_preprocessor: this is the local path to the &quot;skeleton&quot; style
+            sheet for schematron processing</comment>
+    </param>		
 		<param name="schtron_preprocessor" value="schematron/preprocessor.xslt"/>
 		<param name="tempDir" value="work">
 			<comment>(required)
@@ -823,5 +848,29 @@
 		<param name="autoFlushBufferSize" value="1000"/>
 		<param name="bufferFlushBatchSize" value="1000"/>
 		<param name="bufferSafeCapacity" value="2000"/>
+	</datastore>
+	<datastore id="apimUpdateMessages">
+        <comment>Messaging Destination for API-M events which update the repository</comment>
+        <param name="messageTypes" value="apimUpdate">
+            <comment>A space-separated list of message types that will be 
+            delivered to this Destination. Currently, "apimUpdate" and 
+            "apimAccess" are the only supported message types.</comment>
+        </param>
+        <param name="name" value="fedora.apim.update" />
+        <param name="type" value="topic">
+            <comment>Optional, defaults to topic.</comment>
+        </param>
+	</datastore>
+	<datastore id="apimAccessMessages">
+        <comment>Messaging Destination for API-M events which did not make changes to the repository</comment>
+        <param name="messageTypes" value="apimAccess">
+            <comment>A space-separated list of message types that will be 
+            delivered to this Destination. Currently, "apimUpdate" and 
+            "apimAccess" are the only supported message types.</comment>
+        </param>
+        <param name="name" value="fedora.apim.access" />
+        <param name="type" value="topic">
+            <comment>Optional, defaults to topic.</comment>
+        </param>
 	</datastore>
 </server>

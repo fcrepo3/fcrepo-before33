@@ -73,8 +73,6 @@ public class TestServerConfiguration
                 "/" + NS_FCFG_PREFIX + ":server/" + NS_FCFG_PREFIX
                         + ":param[@name='fedoraServerPort'][@value='" + testVal
                         + "']";
-        Properties props = new Properties();
-        props.put("server.fedoraServerPort", testVal);
 
         // ensure the new property is really new
         config.serialize(out);
@@ -83,7 +81,8 @@ public class TestServerConfiguration
         // apply the new property and ensure it is present in the serialized
         // output
         out.reset();
-        props.put("server.fedoraServerPort", testVal);
+        Properties props = new Properties();
+        props.put("server:fedoraServerPort", testVal);
         config.applyProperties(props);
         config.serialize(out);
         assertXpathExists(xpath, getDocument(out));

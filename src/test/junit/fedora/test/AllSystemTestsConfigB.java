@@ -9,7 +9,8 @@ import org.junit.runners.Suite;
         fedora.test.api.TestAuthentication.class,
         fedora.test.api.TestHTTPStatusCodesConfigB.class,
         fedora.test.api.TestXACMLPolicies.class,
-        fedora.test.api.TestRelationships.class})
+        fedora.test.api.TestRelationships.class,
+        fedora.test.api.TestManagementNotifications.class})
 public class AllSystemTestsConfigB {
 
     // Supports legacy tests runners
@@ -24,6 +25,7 @@ public class AllSystemTestsConfigB {
         suite.addTest(fedora.test.api.TestHTTPStatusCodesConfigB.suite());
         suite.addTest(fedora.test.api.TestXACMLPolicies.suite());
         suite.addTest(fedora.test.api.TestRelationships.suite());
+        suite.addTest(fedora.test.api.TestManagementNotifications.suite());
 
         return suite;
     }

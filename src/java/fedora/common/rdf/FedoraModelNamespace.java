@@ -14,11 +14,12 @@ package fedora.common.rdf;
  * </pre>
  * 
  * @author Chris Wilper
+ * @version $Id$
  */
 public class FedoraModelNamespace
         extends RDFNamespace {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     // Properties
 

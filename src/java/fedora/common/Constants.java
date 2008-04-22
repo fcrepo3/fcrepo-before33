@@ -24,6 +24,7 @@ import fedora.common.rdf.MulgaraNamespace;
 import fedora.common.rdf.RDFSyntaxNamespace;
 import fedora.common.rdf.RDFXSDNamespace;
 import fedora.common.rdf.RecoveryNamespace;
+import fedora.common.xml.format.AtomApiM1_0Format;
 import fedora.common.xml.format.FOXML1_0Format;
 import fedora.common.xml.format.FOXML1_1Format;
 import fedora.common.xml.format.FedoraAudit1_0Format;
@@ -77,6 +78,8 @@ import fedora.common.xml.namespace.XSINamespace;
 
 /**
  * Constants of general utility.
+ * 
+ * @version $Id$
  */
 @SuppressWarnings("deprecation")
 public interface Constants {
@@ -420,6 +423,13 @@ public interface Constants {
     //---
     // XML Formats
     //---
+    
+    /**
+     * The Atom APIM 1.0 XML format;
+     * <code>info:fedora/fedora-system:format/ATOM-APIM-1.0</code>
+     */
+    public static final AtomApiM1_0Format ATOM_APIM1_0 =
+            AtomApiM1_0Format.getInstance();
 
     /**
      * The Fedora Audit 1.0 XML format;

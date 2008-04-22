@@ -14,11 +14,12 @@ package fedora.common.rdf;
  * </pre>
  * 
  * @author Chris Wilper
+ * @version $Id$
  */
 public class FedoraViewNamespace
         extends RDFNamespace {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     // Properties
 
@@ -37,6 +38,8 @@ public class FedoraViewNamespace
     public final RDFName LAST_MODIFIED_DATE;
 
     public final RDFName MIME_TYPE;
+    
+    public final RDFName VERSION;
 
     public FedoraViewNamespace() {
 
@@ -50,6 +53,7 @@ public class FedoraViewNamespace
         IS_VOLATILE = new RDFName(this, "isVolatile");
         LAST_MODIFIED_DATE = new RDFName(this, "lastModifiedDate");
         MIME_TYPE = new RDFName(this, "mimeType");
+        VERSION = new RDFName(this, "version");
     }
 
 }

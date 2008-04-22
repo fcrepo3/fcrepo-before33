@@ -6,11 +6,11 @@
 package fedora.server.management;
 
 import java.io.InputStream;
-
 import java.util.Date;
 
 import fedora.server.Context;
 import fedora.server.errors.ServerException;
+import fedora.server.messaging.PName;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.Property;
 import fedora.server.storage.types.RelationshipTuple;
@@ -19,149 +19,150 @@ import fedora.server.storage.types.RelationshipTuple;
  * The management subsystem interface.
  * 
  * @author Chris Wilper
+ * @version $Id$
  */
 public interface Management {
+    
+    public String ingest(@PName("context")Context context,
+                         @PName("serialization")InputStream serialization,
+                         @PName("logMessage")String logMessage,
+                         @PName("format")String format,
+                         @PName("encoding")String encoding,
+                         @PName("newPid")boolean newPid) throws ServerException;
 
-    public String ingest(Context context,
-                         InputStream serialization,
-                         String logMessage,
-                         String format,
-                         String encoding,
-                         boolean newPid) throws ServerException;
-
-    public Date modifyObject(Context context,
-                             String pid,
-                             String state,
-                             String label,
-                             String ownerId,
-                             String logMessage) throws ServerException;
-
-    public Property[] getObjectProperties(Context context, String pid)
+    public Date modifyObject(@PName("context")Context context,
+                             @PName("pid")String pid,
+                             @PName("state")String state,
+                             @PName("label")String label,
+                             @PName("ownerID")String ownerID,
+                             @PName("logMessage")String logMessage) throws ServerException;
+    
+    public Property[] getObjectProperties(@PName("context")Context context, @PName("pid")String pid)
             throws ServerException;
 
-    public InputStream getObjectXML(Context context, String pid, String encoding)
+    public InputStream getObjectXML(@PName("context")Context context, @PName("pid")String pid, @PName("encoding")String encoding)
             throws ServerException;
 
-    public InputStream export(Context context,
-                              String pid,
-                              String format,
-                              String exportContext,
-                              String encoding) throws ServerException;
+    public InputStream export(@PName("context")Context context,
+                              @PName("pid")String pid,
+                              @PName("format")String format,
+                              @PName("exportContext")String exportContext,
+                              @PName("encoding")String encoding) throws ServerException;
 
-    public Date purgeObject(Context context,
-                            String pid,
-                            String logMessage,
-                            boolean force) throws ServerException;
+    public Date purgeObject(@PName("context")Context context,
+                            @PName("pid")String pid,
+                            @PName("logMessage")String logMessage,
+                            @PName("force")boolean force) throws ServerException;
 
-    public String addDatastream(Context context,
-                                String pid,
-                                String dsID,
-                                String[] altIDs,
-                                String dsLabel,
-                                boolean versionable,
-                                String MIMEType,
-                                String formatURI,
-                                String location,
-                                String controlGroup,
-                                String dsState,
-                                String checksumType,
-                                String checksum,
-                                String logMessage) throws ServerException;
+    public String addDatastream(@PName("context")Context context,
+                                @PName("pid")String pid,
+                                @PName("dsID")String dsID,
+                                @PName("altIDs")String[] altIDs,
+                                @PName("dsLabel")String dsLabel,
+                                @PName("versionable")boolean versionable,
+                                @PName("mimeType")String mimeType,
+                                @PName("formatURI")String formatURI,
+                                @PName("dsLocation")String dsLocation,
+                                @PName("controlGroup")String controlGroup,
+                                @PName("dsState")String dsState,
+                                @PName("checksumType")String checksumType,
+                                @PName("checksum")String checksum,
+                                @PName("logMessage")String logMessage) throws ServerException;
 
-    public Date modifyDatastreamByReference(Context context,
-                                            String pid,
-                                            String datastreamID,
-                                            String[] altIDs,
-                                            String dsLabel,
-                                            String mimeType,
-                                            String formatURI,
-                                            String dsLocation,
-                                            String checksumType,
-                                            String checksum,
-                                            String logMessage,
-                                            boolean force)
+    public Date modifyDatastreamByReference(@PName("context")Context context,
+                                            @PName("pid")String pid,
+                                            @PName("dsID")String dsID,
+                                            @PName("altIDs")String[] altIDs,
+                                            @PName("dsLabel")String dsLabel,
+                                            @PName("mimeType")String mimeType,
+                                            @PName("formatURI")String formatURI,
+                                            @PName("dsLocation")String dsLocation,
+                                            @PName("checksumType")String checksumType,
+                                            @PName("checksum")String checksum,
+                                            @PName("logMessage")String logMessage,
+                                            @PName("force")boolean force)
             throws ServerException;
 
-    public Date modifyDatastreamByValue(Context context,
-                                        String pid,
-                                        String datastreamID,
-                                        String[] altIDs,
-                                        String dsLabel,
-                                        String mimeType,
-                                        String formatURI,
-                                        InputStream dsContent,
-                                        String checksumType,
-                                        String checksum,
-                                        String logMessage,
-                                        boolean force) throws ServerException;
+    public Date modifyDatastreamByValue(@PName("context")Context context,
+                                        @PName("pid")String pid,
+                                        @PName("dsID")String dsID,
+                                        @PName("altIDs")String[] altIDs,
+                                        @PName("dsLabel")String dsLabel,
+                                        @PName("mimeType")String mimeType,
+                                        @PName("formatURI")String formatURI,
+                                        @PName("dsContent")InputStream dsContent,
+                                        @PName("checksumType")String checksumType,
+                                        @PName("checksum")String checksum,
+                                        @PName("logMessage")String logMessage,
+                                        @PName("force")boolean force) throws ServerException;
 
-    public Date[] purgeDatastream(Context context,
-                                  String pid,
-                                  String datastreamID,
-                                  Date startDT,
-                                  Date endDT,
-                                  String logMessage,
-                                  boolean force) throws ServerException;
+    public Date[] purgeDatastream(@PName("context")Context context,
+                                  @PName("pid")String pid,
+                                  @PName("dsID")String dsID,
+                                  @PName("startDT")Date startDT,
+                                  @PName("endDT")Date endDT,
+                                  @PName("logMessage")String logMessage,
+                                  @PName("force")boolean force) throws ServerException;
 
-    public Datastream getDatastream(Context context,
-                                    String pid,
-                                    String datastreamID,
-                                    Date asOfDateTime) throws ServerException;
+    public Datastream getDatastream(@PName("context")Context context,
+                                    @PName("pid")String pid,
+                                    @PName("dsID")String dsID,
+                                    @PName("asOfDateTime")Date asOfDateTime) throws ServerException;
 
-    public Datastream[] getDatastreams(Context context,
-                                       String pid,
-                                       Date asOfDateTime,
-                                       String dsState) throws ServerException;
+    public Datastream[] getDatastreams(@PName("context")Context context,
+                                       @PName("pid")String pid,
+                                       @PName("asOfDateTime")Date asOfDateTime,
+                                       @PName("dsState")String dsState) throws ServerException;
 
-    public Datastream[] getDatastreamHistory(Context context,
-                                             String pid,
-                                             String datastreamID)
+    public Datastream[] getDatastreamHistory(@PName("context")Context context,
+                                             @PName("pid")String pid,
+                                             @PName("dsID")String dsID)
             throws ServerException;
 
-    public String putTempStream(Context context, InputStream in)
+    public String putTempStream(@PName("context")Context context, @PName("in")InputStream in)
             throws ServerException;
 
-    public InputStream getTempStream(String id) throws ServerException;
+    public InputStream getTempStream(@PName("id")String id) throws ServerException;
 
-    public Date setDatastreamState(Context context,
-                                   String pid,
-                                   String dsID,
-                                   String dsState,
-                                   String logMessage) throws ServerException;
+    public Date setDatastreamState(@PName("context")Context context,
+                                   @PName("pid")String pid,
+                                   @PName("dsID")String dsID,
+                                   @PName("dsState")String dsState,
+                                   @PName("logMessage")String logMessage) throws ServerException;
 
-    public Date setDatastreamVersionable(Context context,
-                                         String pid,
-                                         String dsID,
-                                         boolean versionable,
-                                         String logMessage)
+    public Date setDatastreamVersionable(@PName("context")Context context,
+                                         @PName("pid")String pid,
+                                         @PName("dsID")String dsID,
+                                         @PName("versionable")boolean versionable,
+                                         @PName("logMessage")String logMessage)
             throws ServerException;
 
-    public String compareDatastreamChecksum(Context context,
-                                            String pid,
-                                            String dsID,
-                                            Date asOfDateTime)
+    public String compareDatastreamChecksum(@PName("context")Context context,
+                                            @PName("pid")String pid,
+                                            @PName("dsID")String dsID,
+                                            @PName("asOfDateTime")Date asOfDateTime)
             throws ServerException;
 
-    public String[] getNextPID(Context context, int numPIDs, String namespace)
+    public String[] getNextPID(@PName("context")Context context, @PName("numPIDs")int numPIDs, @PName("namespace")String namespace)
             throws ServerException;
 
-    public RelationshipTuple[] getRelationships(Context context,
-                                                String pid,
-                                                String relationship)
+    public RelationshipTuple[] getRelationships(@PName("context")Context context,
+                                                @PName("pid")String pid,
+                                                @PName("relationship")String relationship)
             throws ServerException;
 
-    public boolean addRelationship(Context context,
-                                   String pid,
-                                   String relationship,
-                                   String object,
-                                   boolean isLiteral,
-                                   String datatype) throws ServerException;
+    public boolean addRelationship(@PName("context")Context context,
+                                   @PName("pid")String pid,
+                                   @PName("relationship")String relationship,
+                                   @PName("object")String object,
+                                   @PName("isLiteral")boolean isLiteral,
+                                   @PName("datatype")String datatype) throws ServerException;
 
-    public boolean purgeRelationship(Context context,
-                                     String pid,
-                                     String relationship,
-                                     String object,
-                                     boolean isLiteral,
-                                     String datatype) throws ServerException;
+    public boolean purgeRelationship(@PName("context")Context context,
+                                     @PName("pid")String pid,
+                                     @PName("relationship")String relationship,
+                                     @PName("object")String object,
+                                     @PName("isLiteral")boolean isLiteral,
+                                     @PName("datatype")String datatype) throws ServerException;
 
 }

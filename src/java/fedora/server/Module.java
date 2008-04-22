@@ -102,7 +102,7 @@ public abstract class Module
 
     /**
      * Second stage of Module initialization. This is guaranteed to run after
-     * all Module's initModule() methods have run.
+     * all Modules' initModule() methods have run.
      * 
      * @throws ModuleInitializationException
      *         If initialization values are invalid or initialization fails for
@@ -128,5 +128,4 @@ public abstract class Module
             throw new ModuleShutdownException(null, null);
         }
     }
-
 }

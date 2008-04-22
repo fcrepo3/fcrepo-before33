@@ -164,6 +164,16 @@
         	<!-- JAXP libs (may be able to remove these in next release) -->
         	<pathelement location="${lib.xerces}"/>
             <pathelement location="${lib.xml-apis}"/>
+            
+            <!-- Abdera libs -->
+            <pathelement location="${lib.abdera-il8n}"/>
+            <pathelement location="${lib.abdera.core}"/>
+            <pathelement location="${lib.abdera.parser}"/>
+            <pathelement location="${lib.axiom-api}"/>
+            <pathelement location="${lib.axiom-impl}"/>
+            
+            <!-- ActiveMQ libs -->
+            <pathelement location="${lib.activemq-all}"/>
         </path>
         <map from="${lib.dir}${file.separator}" to=""/>
     </pathconvert>
@@ -574,7 +584,7 @@
         </axis-wsdl2java>
     </target>
     
-    <target name="client" depends="compile-client, client-jar"
+    <target name="client" depends="compile-client, client-jar, messaging-client"
         description="">
         <mkdir dir="${fedora.home.build.dir}/client/bin"/>
         <mkdir dir="${fedora.home.build.dir}/client/demo/batch-demo/object-specifics"/>
@@ -916,7 +926,7 @@
         </checksum>
 	</target>
     
-    <target name="api-jar">
+    <target name="api-jar" depends="init">
         <mkdir dir="${api.build.dir}/classes"/>
         <md-compile 
             srcdir="${java.src.dir}" 
@@ -953,10 +963,43 @@
         <jar destfile="${api.build.dir}/fedora-${fedora.version}-api.jar" 
              basedir="${api.build.dir}/classes">
             <manifest>
-                <attribute name="Version" value="${fedora-version}"/>
+                <attribute name="Version" value="${fedora.version}"/>
                 <attribute name="Build" value="${build.tstamp}"/>
                 <attribute name="Built-By" value="${user.name}"/>
             </manifest>
         </jar>
+    </target>
+	
+    <target name="messaging-client" depends="init">
+        <mkdir dir="${client.build.dir}/messaging/classes"/>
+        <md-compile 
+            srcdir="${java.src.dir}" 
+            destdir="${client.build.dir}/messaging/classes" 
+            includes="fedora/client/messaging/**,
+        	          fedora/server/messaging/APIMMessage.java,
+        	          fedora/server/messaging/AtomAPIMMessage.java"/>        
+        <jar destfile="${client.build.dir}/messaging/fedora-${fedora.version}-messaging-client.jar" 
+             basedir="${client.build.dir}/messaging/classes">
+            <manifest>
+                <attribute name="Version" value="${fedora.version}"/>
+                <attribute name="Build" value="${build.tstamp}"/>
+                <attribute name="Built-By" value="${user.name}"/>
+            </manifest>
+        </jar>  	
+        <zip destfile="${dist.dir}/fedora-messaging-client.zip">
+            <fileset file="${client.build.dir}/messaging/fedora-${fedora.version}-messaging-client.jar" />
+            <fileset file="${lib.abdera-il8n}"/>
+            <fileset file="${lib.abdera.core}"/>
+            <fileset file="${lib.abdera.parser}"/>
+            <fileset file="${lib.activation}"/>
+            <fileset file="${lib.activemq-all}"/>
+            <fileset file="${lib.axiom-api}"/>
+            <fileset file="${lib.axiom-impl}"/>
+            <fileset file="${lib.dom4j}"/>
+            <fileset file="${lib.jaxen}"/>
+            <fileset file="${lib.log4j}"/>        	
+            <fileset file="${lib.staxapi}"/>
+            <fileset file="${lib.sjsxp}"/>
+        </zip>
     </target>
 </project>

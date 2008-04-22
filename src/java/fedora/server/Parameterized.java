@@ -6,7 +6,6 @@
 package fedora.server;
 
 import java.io.File;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -19,15 +18,7 @@ import fedora.common.Constants;
  * 
  * @author Chris Wilper
  */
-
-/**
- * Abstract superclass of all Fedora components that can be configured by a 
- * set of name-value pairs.
- * 
- * @author Chris Wilper
- */
-public abstract class Parameterized
-        implements Constants {
+public abstract class Parameterized implements Constants {
 
     /** a reference to the provided params for this component */
     private Map<String, String> m_parameters;

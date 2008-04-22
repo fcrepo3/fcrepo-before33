@@ -115,19 +115,19 @@ public class FedoraHome {
 
         Properties props = new Properties();
         if (_opts.getValue(InstallOptions.TOMCAT_HTTP_PORT) != null) {
-            props.put("server.fedoraServerPort", _opts
+            props.put("server:fedoraServerPort", _opts
                     .getValue(InstallOptions.TOMCAT_HTTP_PORT));
         }
         if (_opts.getValue(InstallOptions.TOMCAT_SHUTDOWN_PORT) != null) {
-            props.put("server.fedoraShutdownPort", _opts
+            props.put("server:fedoraShutdownPort", _opts
                     .getValue(InstallOptions.TOMCAT_SHUTDOWN_PORT));
         }
         if (_opts.getValue(InstallOptions.TOMCAT_SSL_PORT) != null) {
-            props.put("server.fedoraRedirectPort", _opts
+            props.put("server:fedoraRedirectPort", _opts
                     .getValue(InstallOptions.TOMCAT_SSL_PORT));
         }
         if (_opts.getValue(InstallOptions.FEDORA_SERVERHOST) != null) {
-            props.put("server.fedoraServerHost", _opts
+            props.put("server:fedoraServerHost", _opts
                     .getValue(InstallOptions.FEDORA_SERVERHOST));
         }
 
@@ -149,47 +149,57 @@ public class FedoraHome {
             throw new InstallationFailedException("unable to configure for unknown database: "
                     + database);
         }
-        props.put("module.fedora.server.storage.DOManager.storagePool",
+        props.put("module.fedora.server.storage.DOManager:storagePool",
                   dbPoolName);
-        props.put("module.fedora.server.search.FieldSearch.connectionPool",
+        props.put("module.fedora.server.search.FieldSearch:connectionPool",
                   dbPoolName);
         props
-                .put("module.fedora.server.storage.ConnectionPoolManager.poolNames",
+                .put("module.fedora.server.storage.ConnectionPoolManager:poolNames",
                      dbPoolName);
         props
-                .put("module.fedora.server.storage.ConnectionPoolManager.defaultPoolName",
+                .put("module.fedora.server.storage.ConnectionPoolManager:defaultPoolName",
                      dbPoolName);
         props
-                .put("module.fedora.server.storage.lowlevel.ILowlevelStorage.backslash_is_escape",
+                .put("module.fedora.server.storage.lowlevel.ILowlevelStorage:backslash_is_escape",
                      backslashIsEscape);
-        props.put("datastore." + dbPoolName + ".jdbcURL", _opts
+        props.put("datastore." + dbPoolName + ":jdbcURL", _opts
                 .getValue(InstallOptions.DATABASE_JDBCURL));
-        props.put("datastore." + dbPoolName + ".dbUsername", _opts
+        props.put("datastore." + dbPoolName + ":dbUsername", _opts
                 .getValue(InstallOptions.DATABASE_USERNAME));
-        props.put("datastore." + dbPoolName + ".dbPassword", _opts
+        props.put("datastore." + dbPoolName + ":dbPassword", _opts
                 .getValue(InstallOptions.DATABASE_PASSWORD));
-        props.put("datastore." + dbPoolName + ".jdbcDriverClass", _opts
+        props.put("datastore." + dbPoolName + ":jdbcDriverClass", _opts
                 .getValue(InstallOptions.DATABASE_DRIVERCLASS));
 
         if (_opts.getBooleanValue(InstallOptions.XACML_ENABLED, true)) {
             props
-                    .put("module.fedora.server.security.Authorization.ENFORCE-MODE",
+                    .put("module.fedora.server.security.Authorization:ENFORCE-MODE",
                          "enforce-policies");
         } else {
             props
-                    .put("module.fedora.server.security.Authorization.ENFORCE-MODE",
+                    .put("module.fedora.server.security.Authorization:ENFORCE-MODE",
                          "permit-all-requests");
         }
 
         if (_opts.getBooleanValue(InstallOptions.RI_ENABLED, true)) {
-            props.put("module.fedora.server.resourceIndex.ResourceIndex.level",
+            props.put("module.fedora.server.resourceIndex.ResourceIndex:level",
                       String.valueOf(ResourceIndex.INDEX_LEVEL_ON));
         } else {
-            props.put("module.fedora.server.resourceIndex.ResourceIndex.level",
+            props.put("module.fedora.server.resourceIndex.ResourceIndex:level",
                       String.valueOf(ResourceIndex.INDEX_LEVEL_OFF));
         }
 
-        props.put("module.fedora.server.access.Access.doMediateDatastreams",
+        if (_opts.getBooleanValue(InstallOptions.MESSAGING_ENABLED, false)) {
+            props.put("module.fedora.server.messaging.Messaging:enabled",
+                      String.valueOf(true));
+            props.put("module.fedora.server.messaging.Messaging:java.naming.provider.url", 
+                      _opts.getValue(InstallOptions.MESSAGING_URI));
+        } else {
+            props.put("module.fedora.server.messaging.Messaging:enabled",
+                      String.valueOf(false));
+        }        
+        
+        props.put("module.fedora.server.access.Access:doMediateDatastreams",
                   _opts.getValue(InstallOptions.APIA_AUTH_REQUIRED));
 
         try {

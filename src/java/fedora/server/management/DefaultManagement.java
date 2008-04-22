@@ -91,121 +91,18 @@ public class DefaultManagement
 
     private Hashtable<String, Long> m_uploadStartTime;
 
-    private ExternalContentManager m_contentManager;
-
-    private Authorization m_fedoraXACMLModule;
-
-    public final static String s_RelsExt_Datastream = "RELS-EXT";
-
-    /**
-     * Creates and initializes the Management Module.
-     * <p>
-     * </p>
-     * When the server is starting up, this is invoked as part of the
-     * initialization process.
-     * 
-     * @param moduleParameters
-     *        A pre-loaded Map of name-value pairs comprising the intended
-     *        configuration of this Module.
-     * @param server
-     *        The <code>Server</code> instance.
-     * @param role
-     *        The role this module fulfills, a java class name.
-     * @throws ModuleInitializationException
-     *         If initialization values are invalid or initialization fails for
-     *         some other reason.
-     */
-    public DefaultManagement(Map moduleParameters, Server server, String role)
-            throws ModuleInitializationException {
-        super(moduleParameters, server, role);
+    public DefaultManagement(Authorization auth, DOManager doMgr, 
+                             ExternalContentManager ecMgr, int uploadMinutes, 
+                             int lastId, File tempDir, Hashtable<String, Long> uploadStartTime) {
+        m_fedoraXACMLModule = auth;
+        m_manager = doMgr;
+        m_contentManager = ecMgr;
+        m_uploadStorageMinutes = uploadMinutes;
+        m_lastId = lastId;
+        m_tempDir = tempDir;
+        m_uploadStartTime = uploadStartTime;
     }
 
-    public void initModule() throws ModuleInitializationException {
-
-        // how many minutes should we hold on to uploaded files? default=5
-        String min = getParameter("uploadStorageMinutes");
-        if (min == null) {
-            min = "5";
-        }
-        try {
-            m_uploadStorageMinutes = Integer.parseInt(min);
-            if (m_uploadStorageMinutes < 1) {
-                throw new ModuleInitializationException("uploadStorageMinutes "
-                        + "must be 1 or more, if specified.", getRole());
-            }
-        } catch (NumberFormatException nfe) {
-            throw new ModuleInitializationException("uploadStorageMinutes must "
-                                                            + "be an integer, if specified.",
-                                                    getRole());
-        }
-        // initialize storage area by 1) ensuring the directory is there
-        // and 2) reading in the existing files, if any, and setting their
-        // startTime to the current time.
-        try {
-            m_tempDir = new File(getServer().getHomeDir(), "management/upload");
-            if (!m_tempDir.isDirectory()) {
-                m_tempDir.mkdirs();
-            }
-            // put leftovers in hash, while saving highest id as m_lastId
-            m_uploadStartTime = new Hashtable<String, Long>();
-            String[] fNames = m_tempDir.list();
-            Long leftoverStartTime = new Long(System.currentTimeMillis());
-            m_lastId = 0;
-            for (String element : fNames) {
-                try {
-                    int id = Integer.parseInt(element);
-                    if (id > m_lastId) {
-                        m_lastId = id;
-                    }
-                    m_uploadStartTime.put(element, leftoverStartTime);
-                } catch (NumberFormatException nfe) {
-                    // skip files that aren't named numerically
-                }
-            }
-        } catch (Exception e) {
-            throw new ModuleInitializationException("Error while initializing "
-                    + "temporary storage area: " + e.getClass().getName()
-                    + ": " + e.getMessage(), getRole(), e);
-        }
-
-        // initialize variables pertaining to checksumming datastreams.
-        String auto = getParameter("autoChecksum");
-        LOG.debug("Got Parameter: autoChecksum = " + auto);
-        if (auto.equalsIgnoreCase("true")) {
-            Datastream.autoChecksum = true;
-            Datastream.defaultChecksumType = getParameter("checksumAlgorithm");
-        }
-        LOG.debug("autoChecksum is " + auto);
-        LOG.debug("defaultChecksumType is " + Datastream.defaultChecksumType);
-
-    }
-
-    public void postInitModule() throws ModuleInitializationException {
-        m_manager =
-                (DOManager) getServer()
-                        .getModule("fedora.server.storage.DOManager");
-        if (m_manager == null) {
-            throw new ModuleInitializationException("Can't get a DOManager "
-                    + "from Server.getModule", getRole());
-        }
-        m_contentManager =
-                (ExternalContentManager) getServer()
-                        .getModule("fedora.server.storage.ExternalContentManager");
-        if (m_contentManager == null) {
-            throw new ModuleInitializationException("Can't get an ExternalContentManager "
-                                                            + "from Server.getModule",
-                                                    getRole());
-        }
-
-        m_fedoraXACMLModule =
-                (Authorization) getServer()
-                        .getModule("fedora.server.security.Authorization");
-        if (m_fedoraXACMLModule == null) {
-            throw new ModuleInitializationException("Can't get Authorization module (in default management) from Server.getModule",
-                                                    getRole());
-        }
-
-    }
 
     public String ingest(Context context,
                          InputStream serialization,
@@ -234,7 +131,6 @@ public class DefaultManagement
             }
 
             w.commit(logMessage);
-
             return pid;
         } finally {
             // Log completion
@@ -307,7 +203,6 @@ public class DefaultManagement
             addAuditRecord(context, w, "modifyObject", "", logMessage, nowUTC);
 
             w.commit(logMessage);
-
             return w.getLastModDate();
         } finally {
             // Log completion
@@ -454,8 +349,8 @@ public class DefaultManagement
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             w.remove();
             w.commit(logMessage);
-
-            return Server.getCurrentDate(context);
+            Date serverDate = Server.getCurrentDate(context);
+            return serverDate;
         } finally {
             // Log completion
             if (LOG.isInfoEnabled()) {

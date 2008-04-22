@@ -64,18 +64,18 @@ public class ServerConfiguration
         while (iter.hasNext()) {
             String fullName = (String) iter.next();
             String value = props.getProperty(fullName).trim();
-            if (fullName.indexOf(".") != -1 && value != null
+            if (fullName.indexOf(":") != -1 && value != null
                     && value.length() > 0) {
-                String name = fullName.substring(fullName.lastIndexOf(".") + 1);
-                if (fullName.startsWith("server.")) {
-                    if (name.equals("class")) {
+                String name = fullName.substring(fullName.lastIndexOf(":") + 1);
+                if (fullName.startsWith("server:")) {
+                    if (name.endsWith(".class")) {
                         m_className = value;
                     } else {
                         setParameterValue(name, value, true);
                     }
                 } else if (fullName.startsWith("module.")) {
                     String role =
-                            fullName.substring(7, fullName.lastIndexOf("."));
+                            fullName.substring(7, fullName.lastIndexOf(":"));
                     ModuleConfiguration module = getModuleConfiguration(role);
                     if (module == null) {
                         module =
@@ -85,14 +85,14 @@ public class ServerConfiguration
                                                         null);
                         m_moduleConfigurations.add(module);
                     }
-                    if (name.equals("class")) {
+                    if (name.endsWith(".class")) {
                         module.setClassName(value);
                     } else {
                         module.setParameterValue(name, value, true);
                     }
                 } else if (fullName.startsWith("datastore.")) {
                     String id =
-                            fullName.substring(10, fullName.lastIndexOf("."));
+                            fullName.substring(10, fullName.lastIndexOf(":"));
                     DatastoreConfiguration datastore =
                             getDatastoreConfiguration(id);
                     if (datastore == null) {
