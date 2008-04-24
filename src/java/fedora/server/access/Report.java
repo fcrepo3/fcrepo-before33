@@ -11,10 +11,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -29,7 +27,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import fedora.common.Constants;
-
 import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
@@ -41,6 +38,7 @@ import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.search.ObjectFields;
 import fedora.server.utilities.StreamUtility;
+import fedora.utilities.XmlTransformUtility;
 
 /**
  * Implements reporting functionality.
@@ -819,7 +817,7 @@ public class Report {
         Hashtable params = null;
 
         protected void xform(Source source) throws TransformerException {
-            TransformerFactory factory = TransformerFactory.newInstance();
+            TransformerFactory factory = XmlTransformUtility.getTransformerFactory();
             transformer =
                     factory.newTransformer(new StreamSource(s_server
                             .getHomeDir()

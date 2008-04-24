@@ -10,9 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import java.net.URI;
-
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Vector;
@@ -25,9 +23,11 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import fedora.common.Constants;
+import fedora.utilities.XmlTransformUtility;
 
 /**
  * @author Bill Niebel
+ * @version $Id$
  */
 class BatchXforms
         implements Constants {
@@ -94,11 +94,7 @@ class BatchXforms
     }
 
     final void process() throws TransformerConfigurationException, Exception {
-        //System.err.println("before TransformerFactory.newInstance()"); //<<==
-        //System.err.println("xformPath=[" + xformPath + "]"); //<<==
-        //SAXTransformerFactory tfactory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
-        TransformerFactory tfactory = TransformerFactory.newInstance(); //try this from RunXSLT
-        //System.err.println("after TransformerFactory.newInstance(); tf is null?=" + (tfactory == null)); //<<==
+        TransformerFactory tfactory = XmlTransformUtility.getTransformerFactory();
         keys = new Vector<String>();
         if (good2go) {
             File file4catch = null;

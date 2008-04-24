@@ -130,6 +130,7 @@
         	<pathelement location="${lib.commons-digester}"/>
             <pathelement location="${lib.commons-httpclient}"/>
             <pathelement location="${lib.saxon}"/>
+            <pathelement location="${lib.saxon-dom}"/>
 
             <pathelement location="${lib.staxapi}"/>
             <pathelement location="${lib.sjsxp}"/>

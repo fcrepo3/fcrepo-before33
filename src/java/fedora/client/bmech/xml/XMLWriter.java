@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-
 import java.util.Properties;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -33,8 +32,11 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import fedora.utilities.XmlTransformUtility;
+
 /**
  * @author Sandy Payette
+ * @version $Id$
  */
 public class XMLWriter {
 
@@ -57,7 +59,7 @@ public class XMLWriter {
         Writer w = new StringWriter();
         PrintWriter out = new PrintWriter(w);
 
-        TransformerFactory tfactory = TransformerFactory.newInstance();
+        TransformerFactory tfactory = XmlTransformUtility.getTransformerFactory();
         Transformer transformer = tfactory.newTransformer();
         Properties transProps = new Properties();
         transProps.put("method", "xml");
@@ -75,7 +77,7 @@ public class XMLWriter {
             IOException {
         PrintWriter out =
                 new PrintWriter(new BufferedWriter(new FileWriter(file)));
-        TransformerFactory tfactory = TransformerFactory.newInstance();
+        TransformerFactory tfactory = XmlTransformUtility.getTransformerFactory();
         Transformer transformer = tfactory.newTransformer();
         Properties transProps = new Properties();
         transProps.put("method", "xml");
@@ -92,7 +94,7 @@ public class XMLWriter {
             TransformerConfigurationException, ParserConfigurationException,
             IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        TransformerFactory tfactory = TransformerFactory.newInstance();
+        TransformerFactory tfactory = XmlTransformUtility.getTransformerFactory();
         Transformer transformer = tfactory.newTransformer();
         Properties transProps = new Properties();
         transProps.put("method", "xml");

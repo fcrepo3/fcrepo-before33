@@ -5,10 +5,14 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
+import javax.xml.transform.TransformerFactory;
+
+import net.sf.saxon.FeatureKeys;
+
 import org.custommonkey.xmlunit.XMLTestCase;
+import org.custommonkey.xmlunit.XMLUnit;
 
 import fedora.client.FedoraClient;
-
 import fedora.server.config.ServerConfiguration;
 import fedora.server.config.ServerConfigurationParser;
 
@@ -25,10 +29,18 @@ public abstract class FedoraTestCase
 
     public FedoraTestCase() {
         super();
+        TransformerFactory factory = XMLUnit.getTransformerFactory();
+        if (factory.getClass().getName().equals("net.sf.saxon.TransformerFactoryImpl")) {
+            factory.setAttribute(FeatureKeys.VERSION_WARNING, Boolean.FALSE);
+        }
     }
 
     public FedoraTestCase(String name) {
         super(name);
+        TransformerFactory factory = XMLUnit.getTransformerFactory();
+        if (factory.getClass().getName().equals("net.sf.saxon.TransformerFactoryImpl")) {
+            factory.setAttribute(FeatureKeys.VERSION_WARNING, Boolean.FALSE);
+        }
     }
 
     public static ServerConfiguration getServerConfiguration() {

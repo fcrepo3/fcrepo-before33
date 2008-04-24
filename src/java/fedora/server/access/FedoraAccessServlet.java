@@ -13,9 +13,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
-
 import java.net.URLDecoder;
-
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -26,7 +24,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -36,7 +33,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
-
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -58,6 +54,7 @@ import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Property;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
+import fedora.utilities.XmlTransformUtility;
 
 /**
  * Implements the three methods GetObjectProfile, GetDissemination, and
@@ -582,7 +579,7 @@ public class FedoraAccessServlet
                             new File(s_server.getHomeDir(),
                                      "access/viewObjectProfile.xslt");
                     TransformerFactory factory =
-                            TransformerFactory.newInstance();
+                            XmlTransformUtility.getTransformerFactory();
                     Templates template =
                             factory.newTemplates(new StreamSource(xslFile));
                     Transformer transformer = template.newTransformer();

@@ -9,9 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
-
 import java.net.URL;
-
 import java.util.HashMap;
 
 import javax.xml.transform.Transformer;
@@ -25,6 +23,7 @@ import org.apache.log4j.Logger;
 
 import fedora.server.errors.ObjectValidityException;
 import fedora.server.errors.ServerException;
+import fedora.utilities.XmlTransformUtility;
 
 /**
  * Schematron validation for fedora objects encoded in schematron schema for
@@ -35,6 +34,7 @@ import fedora.server.errors.ServerException;
  * which are not requirements for METS objects in general.
  * 
  * @author Sandy Payette
+ * @version $Id$
  */
 public class DOValidatorSchematron {
 
@@ -109,7 +109,7 @@ public class DOValidatorSchematron {
             // Create a transformer that uses the validating stylesheet.
             // Run the Schematron validation of the Fedora object and
             // output results in DOM format.
-            TransformerFactory tfactory = TransformerFactory.newInstance();
+            TransformerFactory tfactory = XmlTransformUtility.getTransformerFactory();
             Transformer vtransformer =
                     tfactory.newTransformer(validatingStyleSheet);
             DOMResult validationResult = new DOMResult();
@@ -194,7 +194,7 @@ public class DOValidatorSchematron {
         try {
             // Create a transformer for that uses the Schematron preprocessor stylesheet.
             // Transform the Schematron schema (rules) into a validating stylesheet.
-            TransformerFactory tfactory = TransformerFactory.newInstance();
+            TransformerFactory tfactory = XmlTransformUtility.getTransformerFactory();
             Transformer ptransformer =
                     tfactory.newTransformer(preprocessorSource);
             ptransformer.setParameter("phase", phase);

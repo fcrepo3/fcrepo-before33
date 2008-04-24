@@ -8,7 +8,6 @@ package fedora.server.validation;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-
 import java.util.Properties;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -21,12 +20,13 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import fedora.utilities.XmlTransformUtility;
 
 /**
  * Schematron validation with FedoraRules schema as default.
@@ -52,7 +52,7 @@ public class DOValidatorSchematronResult {
         Writer w = new StringWriter();
         PrintWriter out = new PrintWriter(w);
 
-        TransformerFactory tfactory = TransformerFactory.newInstance();
+        TransformerFactory tfactory = XmlTransformUtility.getTransformerFactory();
         Transformer transformer = tfactory.newTransformer();
         Properties transProps = new Properties();
         transProps.put("method", "xml");

@@ -14,10 +14,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
-
 import java.net.URL;
 import java.net.URLDecoder;
-
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -28,7 +26,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import javax.xml.namespace.QName;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
@@ -36,7 +33,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import com.icl.saxon.expr.StringValue;
+import net.sf.saxon.value.StringValue;
 
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
@@ -44,7 +41,6 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 
 import fedora.common.Constants;
-
 import fedora.server.types.gen.DatastreamDef;
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
@@ -56,6 +52,7 @@ import fedora.server.types.gen.Property;
 import fedora.server.types.gen.RepositoryInfo;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
+import fedora.utilities.XmlTransformUtility;
 
 /**
  * An example of a web-based client that provides a front end to the Fedora
@@ -754,7 +751,7 @@ public class FedoraAccessSoapServlet
                                     new OutputStreamWriter(response
                                             .getOutputStream(), "UTF-8");
                             TransformerFactory factory =
-                                    TransformerFactory.newInstance();
+                                    XmlTransformUtility.getTransformerFactory();
                             Templates template =
                                     factory
                                             .newTemplates(new StreamSource(getServletContext()
@@ -878,7 +875,7 @@ public class FedoraAccessSoapServlet
                                     new OutputStreamWriter(response
                                             .getOutputStream(), "UTF-8");
                             TransformerFactory factory =
-                                    TransformerFactory.newInstance();
+                                    XmlTransformUtility.getTransformerFactory();
                             Templates template =
                                     factory
                                             .newTemplates(new StreamSource(getServletContext()
@@ -1006,7 +1003,7 @@ public class FedoraAccessSoapServlet
                                     new File(getServletContext()
                                             .getRealPath("WEB-INF/xsl/viewObjectProfile.xslt"));
                             TransformerFactory factory =
-                                    TransformerFactory.newInstance();
+                                    XmlTransformUtility.getTransformerFactory();
                             Templates template =
                                     factory
                                             .newTemplates(new StreamSource(xslFile));
@@ -1122,8 +1119,7 @@ public class FedoraAccessSoapServlet
                             File xslFile =
                                     new File(getServletContext()
                                             .getRealPath("WEB-INF/xsl/viewRepositoryInfo.xslt"));
-                            TransformerFactory factory =
-                                    TransformerFactory.newInstance();
+                            TransformerFactory factory = XmlTransformUtility.getTransformerFactory();
                             Templates template =
                                     factory
                                             .newTemplates(new StreamSource(xslFile));
@@ -1237,7 +1233,7 @@ public class FedoraAccessSoapServlet
                                     new File(getServletContext()
                                             .getRealPath("WEB-INF/xsl/viewObjectHistory.xslt"));
                             TransformerFactory factory =
-                                    TransformerFactory.newInstance();
+                                    XmlTransformUtility.getTransformerFactory();
                             Templates template =
                                     factory
                                             .newTemplates(new StreamSource(xslFile));

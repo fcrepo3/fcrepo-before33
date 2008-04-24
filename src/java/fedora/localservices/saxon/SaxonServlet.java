@@ -7,10 +7,8 @@ package fedora.localservices.saxon;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,7 +20,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
@@ -31,7 +28,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import com.icl.saxon.expr.StringValue;
+import net.sf.saxon.FeatureKeys;
+import net.sf.saxon.value.StringValue;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
@@ -60,11 +58,12 @@ import org.apache.commons.httpclient.methods.GetMethod;
  * @author Michael Kay
  * @author Ross Wayland
  * @author Chris Wilper
+ * @version $Id$
  */
 public class SaxonServlet
         extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     /** time to wait for getting data via http before giving up */
     public final int TIMEOUT_SECONDS = 10;
@@ -236,8 +235,10 @@ public class SaxonServlet
         if (x == null) {
             synchronized (m_cache) {
                 if (!m_cache.containsKey(url)) {
-                    TransformerFactory factory =
-                            TransformerFactory.newInstance();
+                    TransformerFactory factory = TransformerFactory.newInstance();
+                    if (factory.getClass().getName().equals("net.sf.saxon.TransformerFactoryImpl")) {
+                        factory.setAttribute(FeatureKeys.VERSION_WARNING, Boolean.FALSE);
+                    }
                     StreamSource ss = new StreamSource(getInputStream(url));
                     ss.setSystemId(url);
                     x = factory.newTemplates(ss);

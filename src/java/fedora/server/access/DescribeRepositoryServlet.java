@@ -10,9 +10,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
-
 import java.net.URLDecoder;
-
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -20,7 +18,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -30,7 +27,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
-
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -41,6 +37,7 @@ import fedora.server.errors.StreamIOException;
 import fedora.server.errors.authorization.AuthzException;
 import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
 import fedora.server.errors.servletExceptionExtensions.RootException;
+import fedora.utilities.XmlTransformUtility;
 
 /**
  * Implements the "describeRepository" functionality of the Fedora Access LITE
@@ -195,7 +192,7 @@ public class DescribeRepositoryServlet
                             new File(s_server.getHomeDir(),
                                      "access/viewRepositoryInfo.xslt");
                     TransformerFactory factory =
-                            TransformerFactory.newInstance();
+                            XmlTransformUtility.getTransformerFactory();
                     Templates template =
                             factory.newTemplates(new StreamSource(xslFile));
                     Transformer transformer = template.newTransformer();

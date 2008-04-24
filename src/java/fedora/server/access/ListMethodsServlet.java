@@ -10,9 +10,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
-
 import java.net.URLDecoder;
-
 import java.util.Date;
 import java.util.Properties;
 
@@ -20,7 +18,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -30,7 +27,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
-
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -50,6 +46,7 @@ import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
+import fedora.utilities.XmlTransformUtility;
 
 /**
  * Implements listMethods method of Fedora Access LITE (API-A-LITE) interface
@@ -85,6 +82,7 @@ import fedora.server.utilities.StreamUtility;
  * </ol>
  * 
  * @author Ross Wayland
+ * @version $Id$
  */
 public class ListMethodsServlet
         extends HttpServlet
@@ -288,7 +286,7 @@ public class ListMethodsServlet
                 File xslFile =
                         new File(s_server.getHomeDir(),
                                  "access/listMethods.xslt");
-                TransformerFactory factory = TransformerFactory.newInstance();
+                TransformerFactory factory = XmlTransformUtility.getTransformerFactory();
                 Templates template =
                         factory.newTemplates(new StreamSource(xslFile));
                 Transformer transformer = template.newTransformer();

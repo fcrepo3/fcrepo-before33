@@ -10,7 +10,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
@@ -36,6 +35,7 @@ import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.ObjectMethodsDef;
+import fedora.utilities.XmlTransformUtility;
 
 /**
  * Implements the methods defined in the DefaultDisseminator interface.
@@ -50,6 +50,7 @@ import fedora.server.storage.types.ObjectMethodsDef;
  * or Behavior Mechanism Object stored in the repository.
  * 
  * @author Sandy Payette
+ * @version $Id$
  */
 public class DefaultDisseminatorImpl
         extends InternalService
@@ -120,7 +121,7 @@ public class DefaultDisseminatorImpl
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             File xslFile =
                     new File(reposHomeDir, "access/viewObjectProfile.xslt");
-            TransformerFactory factory = TransformerFactory.newInstance();
+            TransformerFactory factory = XmlTransformUtility.getTransformerFactory();
             Templates template =
                     factory.newTemplates(new StreamSource(xslFile));
             Transformer transformer = template.newTransformer();
@@ -183,7 +184,7 @@ public class DefaultDisseminatorImpl
             //File xslFile = new File(reposHomeDir, "access/objectMethods.xslt");
             File xslFile =
                     new File(reposHomeDir, "access/viewObjectMethods.xslt");
-            TransformerFactory factory = TransformerFactory.newInstance();
+            TransformerFactory factory = XmlTransformUtility.getTransformerFactory();
             Templates template =
                     factory.newTemplates(new StreamSource(xslFile));
             Transformer transformer = template.newTransformer();
@@ -228,7 +229,7 @@ public class DefaultDisseminatorImpl
             //InputStream in = getItemIndex().getStream();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             File xslFile = new File(reposHomeDir, "access/viewItemIndex.xslt");
-            TransformerFactory factory = TransformerFactory.newInstance();
+            TransformerFactory factory = XmlTransformUtility.getTransformerFactory();
             Templates template =
                     factory.newTemplates(new StreamSource(xslFile));
             Transformer transformer = template.newTransformer();
@@ -281,7 +282,7 @@ public class DefaultDisseminatorImpl
             //InputStream in = getDublinCore().getStream();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             File xslFile = new File(reposHomeDir, "access/viewDublinCore.xslt");
-            TransformerFactory factory = TransformerFactory.newInstance();
+            TransformerFactory factory = XmlTransformUtility.getTransformerFactory();
             Templates template =
                     factory.newTemplates(new StreamSource(xslFile));
             Transformer transformer = template.newTransformer();

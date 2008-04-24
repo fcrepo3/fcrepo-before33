@@ -68,8 +68,7 @@ public class DCFields
 
     private StringBuffer m_currentContent;
 
-    public DCFields() {
-    }
+    public DCFields() {}
 
     public DCFields(InputStream in)
             throws RepositoryConfigurationException, ObjectIntegrityException,
@@ -257,10 +256,10 @@ public class DCFields
         return out.toString();
     }
 
-    private void appendXML(List values, String name, StringBuffer out) {
+    private void appendXML(List<String> values, String name, StringBuffer out) {
         for (int i = 0; i < values.size(); i++) {
             out.append("  <dc:" + name + ">");
-            out.append(StreamUtility.enc((String) values.get(i)));
+            out.append(StreamUtility.enc(values.get(i)));
             out.append("</dc:" + name + ">\n");
         }
     }

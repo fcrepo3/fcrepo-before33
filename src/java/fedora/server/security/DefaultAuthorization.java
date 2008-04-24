@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -19,7 +18,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
-
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.MultiValueMap;
@@ -30,12 +28,14 @@ import fedora.server.errors.authorization.AuthzOperationalException;
 import fedora.server.storage.DOManager;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.status.ServerState;
+import fedora.utilities.XmlTransformUtility;
 
 /**
  * The Authorization module, protecting access to Fedora's API-A and API-M
  * endpoints.
  * 
  * @author Bill Niebel
+ * @version $Id$
  */
 public class DefaultAuthorization
         extends Module
@@ -350,7 +350,7 @@ public class DefaultAuthorization
         log("in DefaultAuthorization.generateBackendPolicies() 5");
         log("tempfiles=" + tempfiles);
         log("tempfiles.length=" + tempfiles.size());
-        TransformerFactory tfactory = TransformerFactory.newInstance();
+        TransformerFactory tfactory = XmlTransformUtility.getTransformerFactory();
         try {
             Iterator iterator = tempfiles.keySet().iterator();
             while (iterator.hasNext()) {
