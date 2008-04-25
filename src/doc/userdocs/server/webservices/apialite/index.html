@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-                      
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
   <head>
     <title>Fedora API-A-Lite Documentation</title>
@@ -25,16 +25,16 @@
         <li><a href="#wsdl">WSDL</a></li>
       </ol>
     </div>
-    
+
     <div id="content">
-    
+
       <h2 id="intro">Introduction</h2>
-      
+
       <p>
         The Fedora API-A-Lite interface is implemented as an HTTP
         service that consists of the following methods:
       </p>
-      
+
       <ul>
         <li>
           <a href="#describeRepository">describeRepository</a> - provides information
@@ -76,17 +76,17 @@
           at a time.
         </li>
       </ul>
-      
+
       <p>
         For more information on the method definitions, refer to the API descriptions
         located at
         <a href="http://www.fedora.info/definitions/1/0/api/">http://www.fedora.info/definitions/1/0/api/</a>
       </p>
-      
+
       <h2 id="syntax">Client Syntax</h2>
-      
+
       <h3 id="describeRepository">describeRepository syntax:</h3>
-      
+
       <p>
         http://hostname:port/fedora/describe<strong>[?xml=BOOLEAN]</strong>
         <br />
@@ -97,7 +97,7 @@
         returned providing a browser-savvy means of viewing the object profile. If the value
         specified is "true", then a MIME-typed stream consisting of XML is returned.
       </p>
-      
+
       <ul>
         <li>
           hostname - required hostname of the Fedora server.
@@ -119,21 +119,21 @@
           parameter or a value of "false" indicates format is to be text/html.
         </li>
       </ul>
-      
+
       <code class="block">
-      
+
 <pre>
         Example:
 
         Get respository information using the describe request as XML:
 
             http://localhost:8080/fedora/describe?xml=true
-</pre>      
-      
+</pre>
+
       </code>
-      
+
       <h3 id="getDatastreamDissemination">getDatastreamDissemination syntax:</h3>
-      
+
       <p>
         http://hostname:port/fedora/get/PID/DSID<strong>[/dateTime]</strong>
         <br />
@@ -141,7 +141,7 @@
         specified method of the associated behavior definition object. The result
         is returned as a MIME-typed stream.
       </p>
-      
+
       <ul>
         <li>
           hostname - required hostname of the Fedora server.
@@ -168,25 +168,25 @@
           YYYY-MM-DDTHH:MM:SS.SSSZ where HH is 24-hour clock and SSS is milliseconds.
         </li>
       </ul>
-      
+
       <code class="block">
-      
+
 <pre>
         Examples:
-        
+
         Get the Dublin Core (DC) datastream of demo object demo:5:
 
             http://localhost:8080/fedora/get/demo:5/DC
- 
+
         Get the thumbnail datastream (DS1) of demo object demo:5:
 
             http://localhost:8080/fedora/get/demo:5/DS1
 </pre>
-      
+
       </code>
-      
+
       <h3 id="getDissemination">getDissemination syntax:</h3>
-      
+
       <p>
         http://hostname:port/fedora/get/PID/bDefPID/methodName<strong>[/dateTime][?parmArray]
         </strong>
@@ -195,7 +195,7 @@
         method of the associated behavior definition object. The result is returned as a
         MIME-typed stream.
       </p>
-      
+
       <ul>
         <li>
           hostname - required hostname of the Fedora server.
@@ -230,23 +230,23 @@
           name/value pairs in the form parm1=value1&amp;parm2=value2...
         </li>
       </ul>
-      
+
       <code class="block">
-      
+
 <pre>
         Example:
-        
-        Get the Dissemination for a data object with a PID of demo:5 and 
-        associated behavior definition object with a PID of demo:1 and 
+
+        Get the Dissemination for a data object with a PID of demo:5 and
+        associated behavior definition object with a PID of demo:1 and
         methodName of getThumbnail:
 
             http://localhost:8080/fedora/get/demo:5/demo:1/getThumbnail
 </pre>
-      
+
       </code>
 
       <h3 id="getObjectHistory">getObjectHistory syntax:</h3>
-      
+
       <p>
         http://hostname:port/fedora/getObjectHistory/PID<strong>[?xml=BOOLEAN]</strong>
         <br />
@@ -260,7 +260,7 @@
         means of viewing the object history. If the value specified is "true", then a
         MIME-typed stream consisting of XML is returned.
       </p>
-      
+
       <ul>
         <li>
           hostname - required hostname of the Fedora server.
@@ -284,25 +284,25 @@
           the xml parameter or a value of "false" indicates format is to be text/html.
         </li>
       </ul>
-      
+
       <code class="block">
-      
+
 <pre>
         Examples:
-          
+
         Get the object history of demo object demo:5 and display the results as html:
 
             http://localhost:8080/fedora/getObjectHistory/demo:5
-   
+
         Get the object history of demo object demo:5 and display the results as xml:
 
             http://localhost:8080/fedora/getObjectHistory/demo:5?xml=true
 </pre>
-      
+
       </code>
-      
+
       <h3 id="getObjectProfile">getObjectProfile syntax:</h3>
-      
+
       <p>
         http://hostname:port/fedora/get/PID<strong>[/dateTime][?xml=BOOLEAN]</strong>
         <br />
@@ -312,7 +312,7 @@
         returned providing a browser-savvy means of viewing the object profile. If the value
         specified is "true", then a MIME-typed stream consisting of XML is returned.
       </p>
-      
+
       <ul>
         <li>
           hostname - required hostname of the Fedora server.
@@ -342,25 +342,25 @@
           to be text/html.
         </li>
       </ul>
-      
+
       <code class="block">
-      
+
 <pre>
         Examples:
-      
+
         Get the ObjectProfile for a data object with a PID of demo:5 as HTML:
 
             http://localhost:8080/fedora/get/demo:5
- 
+
         Get the ObjectProfile for a data object with a PID of demo:5 as XML:
 
             http://localhost:8080/fedora/get/demo:5?xml=true
 </pre>
-      
+
       </code>
-      
+
       <h3 id="findObjects">findObjects syntax:</h3>
-      
+
       <p>
         http://hostname:port/fedora/search?<strong>{terms=TERMS|query=QUERY
         [&amp;maxResults=MAXRESULTS][&amp;xml=true][&amp;pid=true][&amp;label=true]
@@ -378,7 +378,7 @@
         to specify the search criteria as either a phrase (a simple keyword search), or as
         a set of name value pairs (a field-based search).
       </p>
-      
+
       <ul>
         <li>
           hostname - required hostname of the Fedora server.
@@ -429,7 +429,7 @@
           html document.
         </li>
         <li>
-          <strong>pid</strong> - if true, thec Fedora persistent identifier (PID) element
+          <strong>pid</strong> - if true, the Fedora persistent identifier (PID) element
           of matching objects will be included in the response.
         </li>
         <li>
@@ -525,38 +525,38 @@
           will be included in the response.
         </li>
       </ul>
-      
+
       <code class="block">
-      
+
 <pre>
         Examples:
-      
-        Find objects in the repostiory that are indexed with the keyword "fedora." The result set should provide the PID and Dublin 
+
+        Find objects in the repostiory that are indexed with the keyword "fedora." The result set should provide the PID and Dublin
         Core title elements for each object:
 
             http://localhost:8080/fedora/search?terms=fedora&amp;pid=true&amp;title=true
 
-        Find objects in the repository where the Dublin Core title contains the word "Rome" and the Dublin Core creator contains 
+        Find objects in the repository where the Dublin Core title contains the word "Rome" and the Dublin Core creator contains
         the word "Staples". The result set should provide the PID, plus the Dubin Core creator and title elements for each object:
-          
+
             http://localhost:8080/fedora/search?query=title%7Erome%20creator%7Estaples&amp;pid=true&amp;title=true&amp;creator=true
 
-        Find objects in the repository whose PID ends with the number 1. The result set should provide a max of 50 hits at a time, 
+        Find objects in the repository whose PID ends with the number 1. The result set should provide a max of 50 hits at a time,
         and it should provide the PID and Dubin Core title element for each object. The result set should be returned as xml:
 
             http://localhost:8080/fedora/search?query=pid%7E*1&amp;maxResults=50&amp;xml=true&amp;pid=true&amp;title=true
 </pre>
-      
+
       </code>
-     
+
       <h3 id="listDatastreams">listDatastreams syntax:</h3>
-      
+
       <p>
-        http://hostname:port/fedora/listDatastreams/PID/<strong>[/dateTime][?xml=BOOLEAN]</strong>
+        http://hostname:port/fedora/listDatastreams/PID<strong>[/dateTime][?xml=BOOLEAN]</strong>
         <br />
         This syntax requests a list of datastreams contained in the digital object.
       </p>
-      
+
       <ul>
         <li>
           <b>hostname</b> - required hostname of the Fedora server.
@@ -576,7 +576,7 @@
         </li>
         <li>
           <b>dateTime</b> - value indicating dissemination of a version of the digital
-          object at the specified point in time. Proper syntax is YYYY-MM-DDTHH:MM:SS.SSSZ where 
+          object at the specified point in time. Proper syntax is YYYY-MM-DDTHH:MM:SS.SSSZ where
           HH is 24-hour clock and SSS is milliseconds.
         </li>
         <li>
@@ -585,12 +585,12 @@
           or a value of "false" indicates format is to be text/html.
         </li>
       </ul>
-      
+
       <code class="block">
-      
+
 <pre>
         Examples:
-        
+
         List the datastreams in a data object with PID of demo:5 as HTML:
 
             http://localhost:8080/fedora/listDatastreams/demo:5
@@ -599,17 +599,17 @@
 
             http://localhost:8080/fedora/listDatastreams/demo:5?xml=true
 </pre>
-      
+
       </code>
 
       <h3 id="listMethods">listMethods syntax:</h3>
-      
+
       <p>
         http://hostname:port/fedora/listMethods/PID<strong>[/dateTime][?xml=BOOLEAN]</strong>
         <br />
         This syntax requests a list of methods available in the digital object.
       </p>
-      
+
       <ul>
         <li>
           hostname - required hostname of the Fedora server.
@@ -638,9 +638,25 @@
           or a value of "false" indicates format is to be text/html.
         </li>
       </ul>
-      
+
+      <code class="block">
+
+<pre>
+      Examples:
+
+      List the methods for a data object with PID of demo:5 as HTML:
+
+          http://localhost:8080/fedora/listMethods/demo:5
+
+      List the methods for a data object with PID of demo:5 as XML:
+
+          http://localhost:8080/fedora/listMethods/demo:5?xml=true
+</pre>
+
+      </code>
+
       <h3 id="resumeFindObjects">resumeFindObjects syntax:</h3>
-      
+
       <p>
         http://hostname:port/fedora/search<strong>?sessionToken=SESSIONID[&amp;xml=BOOLEAN]
         </strong>
@@ -649,8 +665,12 @@
         findObjects request. If the findObjects request was run and there are more "hits" in
         the result set than the maxResults setting on the findObjects request, then the
         resumeFindObjects request is used to obtain the next group of items in the result set.
+        Fields to be included as part of the result set are the same as those available for
+        findObjects, and must be specified as part of the syntax for resumeFindObjects as well
+        (i.e. if the parameters ?pid=true&title=true are part of the findObjects query, those
+        same parameters should be included as part of the resumeFindObjects query.)
       </p>
-      
+
       <ul>
         <li>
           hostname - required hostname of the Fedora server.
@@ -676,26 +696,10 @@
           provided in a simple html document.
         </li>
       </ul>
-      
-      <code class="block">
-      
-<pre>
-      Examples:
-      
-      List the methods for a data object with PID of demo:5 as HTML:
-
-          http://localhost:8080/fedora/listMethods/demo:5
-
-      List the methods for a data object with PID of demo:5 as XML:
-        
-          http://localhost:8080/fedora/listMethods/demo:5?xml=true
-</pre>
-      
-      </code>
 
     <h2 id="wsdl">WSDL</h2>
       <span class="plaintext">
-      </span> 
+      </span>
       <ol class="alpha">
         <li>Offline
           <span class="plaintext">
@@ -715,7 +719,7 @@
       </ol>
 
     </div>
-    
+
     <div id="footer">
       <p id="copyright">
         Copyright &copy; 2002-2007 Fedora Project
@@ -731,6 +735,6 @@
         p.innerHTML = "Last Modified "+modifiedDate;
       </script>
     </div>
-    
+
   </body>
 </html>
