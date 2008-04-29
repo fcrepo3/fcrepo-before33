@@ -25,6 +25,7 @@ public class AllAPITests {
         suite.addTest(TestAPIMLite.suite());
         suite.addTest(TestXACMLPolicies.suite());
         suite.addTest(TestCommandLineUtilities.suite());
+        suite.addTest(TestRESTAPI.suite());
         return suite;
     }
 }

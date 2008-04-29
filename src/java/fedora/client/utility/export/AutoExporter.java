@@ -196,12 +196,14 @@ public class AutoExporter
             return;
         }
         if (!format.equals(FOXML1_1.uri) && !format.equals(METS_EXT1_1.uri)
-                && !format.equals("default")) {
+                && !format.equals(ATOM1_0.uri) && !format.equals("default")) {
             throw new IOException("Invalid export format. Valid FORMAT values are: "
                     + "'"
                     + FOXML1_1.uri
                     + "' '"
                     + METS_EXT1_1.uri
+                    + "' '"
+                    + ATOM1_0.uri
                     + "' and 'default'");
         }
     }

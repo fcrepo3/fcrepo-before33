@@ -5,7 +5,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses( {TestFileUtils.class, TestZip.class})
+@Suite.SuiteClasses( {fedora.utilities.install.container.AllUnitTests.class,
+    TestFileUtils.class, 
+    TestZip.class, 
+    NamespaceContextImplTest.class})
 public class AllUnitTests {
 
     // Supports legacy tests runners
@@ -13,9 +16,11 @@ public class AllUnitTests {
 
         junit.framework.TestSuite suite =
                 new junit.framework.TestSuite(AllUnitTests.class.getName());
-
+        
+        suite.addTest(fedora.utilities.install.container.AllUnitTests.suite());
         suite.addTestSuite(TestFileUtils.class);
         suite.addTestSuite(TestZip.class);
+        suite.addTest(NamespaceContextImplTest.suite());
 
         return suite;
     }

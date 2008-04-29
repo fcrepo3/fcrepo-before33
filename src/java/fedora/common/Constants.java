@@ -25,6 +25,7 @@ import fedora.common.rdf.RDFSyntaxNamespace;
 import fedora.common.rdf.RDFXSDNamespace;
 import fedora.common.rdf.RecoveryNamespace;
 import fedora.common.xml.format.AtomApiM1_0Format;
+import fedora.common.xml.format.ATOM1_0Format;
 import fedora.common.xml.format.FOXML1_0Format;
 import fedora.common.xml.format.FOXML1_1Format;
 import fedora.common.xml.format.FedoraAudit1_0Format;
@@ -533,6 +534,13 @@ public interface Constants {
      */
     public static final METSFedoraExt1_1Format METS_EXT1_1 =
             METSFedoraExt1_1Format.getInstance();
+    
+    /**
+     * The ATOM 1.0 XML format;
+     * <code>info:fedora/fedora-system:ATOM-1.0</code>
+     */
+    public static final ATOM1_0Format ATOM1_0 = ATOM1_0Format.getInstance();
+
 
     /**
      * The OAI DC 2.0 XML format;

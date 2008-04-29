@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>info:fedora/demo:SmileyBeerGlass</id>
+  <title type="text">Smiley Beer Glass</title>
+  <updated>2008-04-18T15:40:05.290Z</updated>
+  <author>
+    <name>fedoraAdmin</name>
+  </author>
+  <category term="FedoraObject" scheme="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"></category>
+  <category term="Active" scheme="info:fedora/fedora-system:def/model#state"></category>
+  <category term="2008-04-18T15:40:05.290Z" scheme="info:fedora/fedora-system:def/model#createdDate"></category>
+  <icon>http://www.fedora-commons.org/images/logo_vertical_transparent_200_251.png</icon>
+  <entry>
+    <id>info:fedora/demo:SmileyBeerGlass/RELS-EXT</id>
+    <title type="text">RELS-EXT</title>
+    <updated>2008-04-18T15:40:05.290Z</updated>
+    <link href="info:fedora/demo:SmileyBeerGlass/RELS-EXT/2008-04-18T15:40:05.290Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:SmileyBeerGlass/RELS-EXT/2008-04-18T15:40:05.290Z</id>
+    <title type="text">RELS-EXT.0</title>
+    <updated>2008-04-18T15:40:05.290Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:SmileyBeerGlass/RELS-EXT"></thr:in-reply-to>
+    <category term="Relationships to other objects" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="550" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
+          
+        <rdf:Description rdf:about="info:fedora/demo:SmileyBeerGlass">
+            
+          <rel:isMemberOf rdf:resource="info:fedora/demo:SmileyStuff"></rel:isMemberOf>
+            
+          <fedora-model:hasContentModel rdf:resource="info:fedora/demo:CmodelForBMech_DualResImageImpl"></fedora-model:hasContentModel>
+          </rdf:Description>
+        </rdf:RDF>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:SmileyBeerGlass/FULL_SIZE</id>
+    <title type="text">FULL_SIZE</title>
+    <updated>2008-04-18T15:40:05.290Z</updated>
+    <link href="info:fedora/demo:SmileyBeerGlass/FULL_SIZE/2008-04-18T15:40:05.290Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="E" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:SmileyBeerGlass/FULL_SIZE/2008-04-18T15:40:05.290Z</id>
+    <title type="text">FullSize.jpg.0</title>
+    <updated>2008-04-18T15:40:05.290Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:SmileyBeerGlass/FULL_SIZE"></thr:in-reply-to>
+    <category term="Full-size image" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="0" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <summary type="text">FullSize.jpg.0</summary>
+    <content type="image/jpeg" src="http://localhost:8080/fedora-demo/image-collection-demo/SmileyBeerGlass-FullSize.jpg"></content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:SmileyBeerGlass/DC</id>
+    <title type="text">DC</title>
+    <updated>2008-04-18T15:40:05.290Z</updated>
+    <link href="info:fedora/demo:SmileyBeerGlass/DC/2008-04-18T15:40:05.290Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:SmileyBeerGlass/DC/2008-04-18T15:40:05.290Z</id>
+    <title type="text">DC.1</title>
+    <updated>2008-04-18T15:40:05.290Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:SmileyBeerGlass/DC"></thr:in-reply-to>
+    <category term="Dublin Core Metadata" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="379" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+          
+        <dc:title>Smiley Beer Glass</dc:title>
+          
+        <dc:description>I guess you could drink other things out of it, but I haven't tried.</dc:description>
+          
+        <dc:identifier>demo:SmileyBeerGlass</dc:identifier>
+        </oai_dc:dc>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:SmileyBeerGlass/MEDIUM_SIZE</id>
+    <title type="text">MEDIUM_SIZE</title>
+    <updated>2008-04-18T15:40:05.290Z</updated>
+    <link href="info:fedora/demo:SmileyBeerGlass/MEDIUM_SIZE/2008-04-18T15:40:05.290Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="E" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:SmileyBeerGlass/MEDIUM_SIZE/2008-04-18T15:40:05.290Z</id>
+    <title type="text">MediumSize.jpg.0</title>
+    <updated>2008-04-18T15:40:05.290Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:SmileyBeerGlass/MEDIUM_SIZE"></thr:in-reply-to>
+    <category term="Medium-size image" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="0" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <summary type="text">MediumSize.jpg.0</summary>
+    <content type="image/jpeg" src="http://localhost:8080/fedora-demo/image-collection-demo/SmileyBeerGlass-MediumSize.jpg"></content>
+  </entry>
+</feed>

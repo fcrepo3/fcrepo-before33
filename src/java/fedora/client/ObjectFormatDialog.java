@@ -40,6 +40,8 @@ public class ObjectFormatDialog
     private final JRadioButton foxmlButton;
 
     private final JRadioButton metsfButton;
+    
+    private final JRadioButton atomButton;
 
     private final ButtonGroup fmt_buttonGroup = new ButtonGroup();
 
@@ -84,11 +86,16 @@ public class ObjectFormatDialog
         metsfButton = new JRadioButton("METS (Fedora METS Extension)", false);
         metsfButton.setActionCommand(METS_EXT1_1.uri);
         metsfButton.addActionListener(this);
+        atomButton = new JRadioButton("Atom (Fedora Atom)", false);
+        atomButton.setActionCommand(ATOM1_0.uri);
+        atomButton.addActionListener(this);
         fmt_buttonGroup.add(foxmlButton);
         fmt_buttonGroup.add(metsfButton);
+        fmt_buttonGroup.add(atomButton);
         fmt_chosen = FOXML1_1.uri;
         inputPane.add(foxmlButton);
         inputPane.add(metsfButton);
+        inputPane.add(atomButton);
 
         JButton okButton = new JButton(new AbstractAction() {
 
@@ -135,6 +142,8 @@ public class ObjectFormatDialog
             fmt_chosen = FOXML1_1.uri;
         } else if (metsfButton.isSelected()) {
             fmt_chosen = METS_EXT1_1.uri;
+        } else if (atomButton.isSelected()) {
+            fmt_chosen = ATOM1_0.uri;
         }
     }
 }

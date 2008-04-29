@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>info:fedora/demo:2</id>
+  <title type="text">Behavior Mechanism Object implementing the UVA Simple Image BDEF contract using the Fedora HTTP Image Getter Service.</title>
+  <updated>2008-04-18T15:40:05.637Z</updated>
+  <author>
+    <name>fedoraAdmin</name>
+  </author>
+  <category term="FedoraBMechObject" scheme="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"></category>
+  <category term="Active" scheme="info:fedora/fedora-system:def/model#state"></category>
+  <category term="2008-04-18T15:40:05.637Z" scheme="info:fedora/fedora-system:def/model#createdDate"></category>
+  <icon>http://www.fedora-commons.org/images/logo_vertical_transparent_200_251.png</icon>
+  <entry>
+    <id>info:fedora/demo:2/DS1</id>
+    <title type="text">DS1</title>
+    <updated>2008-04-18T15:40:05.637Z</updated>
+    <link href="info:fedora/demo:2/DS1/2008-04-18T15:40:05.637Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="E" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:2/DS1/2008-04-18T15:40:05.637Z</id>
+    <title type="text">DS1.0</title>
+    <updated>2008-04-18T15:40:05.637Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:2/DS1"></thr:in-reply-to>
+    <category term="Programmer documentation" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="0" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <summary type="text">DS1.0</summary>
+    <content type="text/html" src="http://uva.lib.edu/mech/stdImage/doc/stdimage.html"></content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:2/WSDL</id>
+    <title type="text">WSDL</title>
+    <updated>2008-04-18T15:40:05.637Z</updated>
+    <link href="info:fedora/demo:2/WSDL/2008-04-18T15:40:05.637Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:2/WSDL/2008-04-18T15:40:05.637Z</id>
+    <title type="text">WSDL1.0</title>
+    <updated>2008-04-18T15:40:05.637Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:2/WSDL"></thr:in-reply-to>
+    <category term="WSDL definition for Fedora HTTP Image Getter" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="3828" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:this="imgget" name="Fedora HTTP Image Getter Service" targetNamespace="imgget">
+					
+        <wsdl:types>
+						
+          <xsd:schema targetNamespace="imgget">
+							
+            <xsd:simpleType name="imageURLType">
+								
+              <xsd:restriction base="xsd:string"></xsd:restriction>
+							</xsd:simpleType>
+						</xsd:schema>
+					</wsdl:types>
+					
+        <wsdl:message name="getThumbRequest">
+						
+          <wsdl:part name="THUMBRES_IMG" type="this:imageURLType"></wsdl:part>
+					</wsdl:message>
+					
+        <wsdl:message name="getMedRequest">
+						
+          <wsdl:part name="MEDRES_IMG" type="this:imageURLType"></wsdl:part>
+					</wsdl:message>
+					
+        <wsdl:message name="getHighRequest">
+						
+          <wsdl:part name="HIGHRES_IMG" type="this:imageURLType"></wsdl:part>
+					</wsdl:message>
+					
+        <wsdl:message name="getVeryHighRequest">
+						
+          <wsdl:part name="VERYHIGHRES_IMG" type="this:imageURLType"></wsdl:part>
+					</wsdl:message>
+					
+        <wsdl:message name="image_response">
+						
+          <wsdl:part name="image" type="xsd:base64Binary"></wsdl:part>
+					</wsdl:message>
+					
+        <wsdl:portType name="GetImagePortType">
+						
+          <wsdl:operation name="getThumbnail">
+							
+            <wsdl:input message="this:getThumbRequest"></wsdl:input>
+							
+            <wsdl:output message="this:image_response"></wsdl:output>
+						</wsdl:operation>
+						
+          <wsdl:operation name="getMedium">
+							
+            <wsdl:input message="this:getMedRequest"></wsdl:input>
+							
+            <wsdl:output message="this:image_response"></wsdl:output>
+						</wsdl:operation>
+						
+          <wsdl:operation name="getHigh">
+							
+            <wsdl:input message="this:getHighRequest"></wsdl:input>
+							
+            <wsdl:output message="this:image_response"></wsdl:output>
+						</wsdl:operation>
+						
+          <wsdl:operation name="getVeryHigh">
+							
+            <wsdl:input message="this:getVeryHighRequest"></wsdl:input>
+							
+            <wsdl:output message="this:image_response"></wsdl:output>
+						</wsdl:operation>
+					</wsdl:portType>
+					
+        <wsdl:service name="GetImage">
+						
+          <wsdl:port binding="this:GetImage_http" name="GetImage_port">
+							
+            <http:address location="LOCAL"></http:address>
+						</wsdl:port>
+					</wsdl:service>
+					
+        <wsdl:binding name="GetImage_http" type="this:GetImagePortType">
+						
+          <http:binding verb="GET"></http:binding>
+						
+          <wsdl:operation name="getThumbnail">
+							
+            <http:operation location="(THUMBRES_IMG)"></http:operation>
+							
+            <wsdl:input>
+								
+              <http:urlReplacement></http:urlReplacement>
+							</wsdl:input>
+							
+            <wsdl:output>
+								
+              <mime:content type="image/jpg"></mime:content>
+							</wsdl:output>
+						</wsdl:operation>
+						
+          <wsdl:operation name="getMedium">
+							
+            <http:operation location="(MEDRES_IMG)"></http:operation>
+							
+            <wsdl:input>
+								
+              <http:urlReplacement></http:urlReplacement>
+							</wsdl:input>
+							
+            <wsdl:output>
+								
+              <mime:content type="image/jpg"></mime:content>
+							</wsdl:output>
+						</wsdl:operation>
+						
+          <wsdl:operation name="getHigh">
+							
+            <http:operation location="(HIGHRES_IMG)"></http:operation>
+							
+            <wsdl:input>
+								
+              <http:urlReplacement></http:urlReplacement>
+							</wsdl:input>
+							
+            <wsdl:output>
+								
+              <mime:content type="image/jpg"></mime:content>
+							</wsdl:output>
+						</wsdl:operation>
+						
+          <wsdl:operation name="getVeryHigh">
+							
+            <http:operation location="(VERYHIGHRES_IMG)"></http:operation>
+							
+            <wsdl:input>
+								
+              <http:urlReplacement></http:urlReplacement>
+							</wsdl:input>
+							
+            <wsdl:output>
+								
+              <mime:content type="image/jpg"></mime:content>
+							</wsdl:output>
+						</wsdl:operation>
+					</wsdl:binding>
+				</wsdl:definitions>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:2/RELS-EXT</id>
+    <title type="text">RELS-EXT</title>
+    <updated>2008-04-18T15:40:05.637Z</updated>
+    <link href="info:fedora/demo:2/RELS-EXT/2008-04-18T15:40:05.637Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:2/RELS-EXT/2008-04-18T15:40:05.637Z</id>
+    <title type="text">RELS-EXT1.0</title>
+    <updated>2008-04-18T15:40:05.637Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:2/RELS-EXT"></thr:in-reply-to>
+    <category term="Relationships to other objects" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="569" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
+      				
+        <rdf:Description rdf:about="info:fedora/demo:2">
+ 	       				
+          <fedora-model:hasBDef rdf:resource="info:fedora/demo:1"></fedora-model:hasBDef>
+   	         			
+          <fedora-model:isContractor rdf:resource="info:fedora/demo:CMImage"></fedora-model:isContractor>
+            			
+          <fedora-model:isContractor rdf:resource="info:fedora/demo:UVA_STD_IMAGE_1"></fedora-model:isContractor>
+      				</rdf:Description>
+    				</rdf:RDF>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:2/SERVICE-PROFILE</id>
+    <title type="text">SERVICE-PROFILE</title>
+    <updated>2008-04-18T15:40:05.637Z</updated>
+    <link href="info:fedora/demo:2/SERVICE-PROFILE/2008-04-18T15:40:05.637Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:2/SERVICE-PROFILE/2008-04-18T15:40:05.637Z</id>
+    <title type="text">SERVICE-PROFILE1.0</title>
+    <updated>2008-04-18T15:40:05.637Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:2/SERVICE-PROFILE"></thr:in-reply-to>
+    <category term="Service Profile - Technical description of the service" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="986" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <fsvp:serviceProfile xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile" bDefPID="demo:1" name="Fedora HTTP Service">
+					
+        <fsvp:serviceDescription>Fedora internal HTTP resolver used to perform simple HTTP GET requests on jpeg images</fsvp:serviceDescription>
+					
+        <fsvp:serviceImplementation>
+						
+          <fsvp:serviceLiveTestURL>http:localhost:8080/fedora</fsvp:serviceLiveTestURL>
+						
+          <fsvp:serviceMessagingProtocol>HTTP GET</fsvp:serviceMessagingProtocol>
+						
+          <fsvp:serviceInputFormats>
+							
+            <fsvp:MIMEType>image/jpeg</fsvp:MIMEType>
+						</fsvp:serviceInputFormats>
+						
+          <fsvp:serviceOutputFormats>
+							
+            <fsvp:MIMEType>image/jpeg</fsvp:MIMEType>
+						</fsvp:serviceOutputFormats>
+						
+          <fsvp:serviceImplDependencies>
+							
+            <fsvp:software license="Mozilla_Public_License" name="fedora" opensource="true" type="Server_Application" version="1.2"></fsvp:software>
+						</fsvp:serviceImplDependencies>
+					</fsvp:serviceImplementation>
+				</fsvp:serviceProfile>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:2/DC</id>
+    <title type="text">DC</title>
+    <updated>2008-04-18T15:40:05.637Z</updated>
+    <link href="info:fedora/demo:2/DC/2008-04-18T15:40:05.637Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:2/DC/2008-04-18T15:40:05.637Z</id>
+    <title type="text">DC1.0</title>
+    <updated>2008-04-18T15:40:05.637Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:2/DC"></thr:in-reply-to>
+    <category term="Dublin Core Metadata" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="327" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+					
+        <dc:title>Behavior Mechanism Object implementing the UVA Simple Image BDEF contract using the Fedora HTTP Image Getter Service.</dc:title>
+					
+        <dc:identifier>demo:2</dc:identifier>
+				</oai_dc:dc>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:2/DSINPUTSPEC</id>
+    <title type="text">DSINPUTSPEC</title>
+    <updated>2008-04-18T15:40:05.637Z</updated>
+    <link href="info:fedora/demo:2/DSINPUTSPEC/2008-04-18T15:40:05.637Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:2/DSINPUTSPEC/2008-04-18T15:40:05.637Z</id>
+    <title type="text">DSINPUTSPEC1.0</title>
+    <updated>2008-04-18T15:40:05.637Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:2/DSINPUTSPEC"></thr:in-reply-to>
+    <category term="Datastream Input Specification for Fedora HTTP Image Getter service" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="1402" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <fbs:DSInputSpec xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec" bDefPID="demo:1" label="Datastream Input Specification">
+					
+        <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="THUMBRES_IMG">
+						
+          <fbs:DSInputLabel>thumbnail image</fbs:DSInputLabel>
+						
+          <fbs:DSMIME>image/jpeg</fbs:DSMIME>
+						
+          <fbs:DSInputInstruction>image of type image/jpeg at 100 dpi</fbs:DSInputInstruction>
+					</fbs:DSInput>
+					
+        <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="MEDRES_IMG">
+						
+          <fbs:DSInputLabel>medium resolution image</fbs:DSInputLabel>
+						
+          <fbs:DSMIME>image/jpeg</fbs:DSMIME>
+						
+          <fbs:DSInputInstruction>image of type image/jpeg at 300 dpi</fbs:DSInputInstruction>
+					</fbs:DSInput>
+					
+        <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="HIGHRES_IMG">
+						
+          <fbs:DSInputLabel>high resolution image</fbs:DSInputLabel>
+						
+          <fbs:DSMIME>image/jpeg</fbs:DSMIME>
+						
+          <fbs:DSInputInstruction>image of type image/jpeg at 600 dpi</fbs:DSInputInstruction>
+					</fbs:DSInput>
+					
+        <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="VERYHIGHRES_IMG">
+						
+          <fbs:DSInputLabel>very high resolution image</fbs:DSInputLabel>
+						
+          <fbs:DSMIME>image/jpeg</fbs:DSMIME>
+						
+          <fbs:DSInputInstruction>image of type image/jpeg at 1200 dpi</fbs:DSInputInstruction>
+					</fbs:DSInput>
+				</fbs:DSInputSpec>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:2/METHODMAP</id>
+    <title type="text">METHODMAP</title>
+    <updated>2008-04-18T15:40:05.637Z</updated>
+    <link href="info:fedora/demo:2/METHODMAP/2008-04-18T15:40:05.637Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:2/METHODMAP/2008-04-18T15:40:05.637Z</id>
+    <title type="text">METHODMAP1.0</title>
+    <updated>2008-04-18T15:40:05.637Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:2/METHODMAP"></thr:in-reply-to>
+    <category term="Mapping of WSDL to Fedora notion of Method Definitions" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="1589" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <fmm:MethodMap xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap" bDefPID="demo:1" name="MethodMap - Fedora HTTP Image Getter BMech for UVA Simple Image BDEF">
+					
+        <fmm:Method operationName="getThumbnail" wsdlMsgName="getThumbRequest" wsdlMsgOutput="image_response">
+						
+          <fmm:DatastreamInputParm parmName="THUMBRES_IMG" passBy="URL_REF" required="true"></fmm:DatastreamInputParm>
+						
+          <fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/jpeg"></fmm:MethodReturnType>
+					</fmm:Method>
+					
+        <fmm:Method operationName="getMedium" wsdlMsgName="getMedRequest" wsdlMsgOutput="image_response">
+						
+          <fmm:DatastreamInputParm parmName="MEDRES_IMG" passBy="URL_REF" required="true"></fmm:DatastreamInputParm>
+						
+          <fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/jpeg"></fmm:MethodReturnType>
+					</fmm:Method>
+					
+        <fmm:Method operationName="getHigh" wsdlMsgName="getHighRequest" wsdlMsgOutput="image_response">
+						
+          <fmm:DatastreamInputParm parmName="HIGHRES_IMG" passBy="URL_REF" required="true"></fmm:DatastreamInputParm>
+						
+          <fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/jpeg"></fmm:MethodReturnType>
+					</fmm:Method>
+					
+        <fmm:Method operationName="getVeryHigh" wsdlMsgName="getVeryHighRequest" wsdlMsgOutput="image_response">
+						
+          <fmm:DatastreamInputParm parmName="VERYHIGHRES_IMG" passBy="URL_REF" required="true"></fmm:DatastreamInputParm>
+						
+          <fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/jpeg"></fmm:MethodReturnType>
+					</fmm:Method>
+				</fmm:MethodMap>
+    </content>
+  </entry>
+</feed>

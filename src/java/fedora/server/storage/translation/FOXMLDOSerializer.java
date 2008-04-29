@@ -7,7 +7,6 @@ package fedora.server.storage.translation;
 
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -16,11 +15,8 @@ import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
 import fedora.common.xml.format.XMLFormat;
-import fedora.common.xml.namespace.QName;
-
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
-import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DSBinding;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
@@ -149,8 +145,8 @@ public class FOXMLDOSerializer
                                   String encoding)
             throws ObjectIntegrityException {
 
-        String ftype = getTypeAttribute(obj);
-        String state = getStateAttribute(obj);
+        String ftype = DOTranslationUtility.getTypeAttribute(obj, m_format);
+        String state = DOTranslationUtility.getStateAttribute(obj);
         String ownerId = obj.getOwnerId();
         String label = obj.getLabel();
         Date cdate = obj.getCreateDate();
@@ -370,92 +366,11 @@ public class FOXMLDOSerializer
                     + "\"" + " MIMETYPE=\"" + "text/xml" + "\""
                     + " FORMAT_URI=\"" + AUDIT1_0.uri + "\">\n");
             buf.append("            <" + FOXML.prefix + ":xmlContent>\n");
-            final String indent0 = "            ";
-            final String indent1 = indent0 + "    ";
-            final String indent2 = indent1 + "    ";
-            appendOpenElement(buf, indent0, AUDIT.AUDIT_TRAIL, true);
-            for (int i = 0; i < obj.getAuditRecords().size(); i++) {
-                AuditRecord audit = (AuditRecord) obj.getAuditRecords().get(i);
-                validateAudit(audit);
-                appendOpenElement(buf,
-                                  indent1,
-                                  AUDIT.RECORD,
-                                  AUDIT.ID,
-                                  audit.id);
-                appendFullElement(buf,
-                                  indent2,
-                                  AUDIT.PROCESS,
-                                  AUDIT.TYPE,
-                                  audit.processType);
-                appendFullElement(buf, indent2, AUDIT.ACTION, audit.action);
-                appendFullElement(buf,
-                                  indent2,
-                                  AUDIT.COMPONENT_ID,
-                                  audit.componentID);
-                appendFullElement(buf,
-                                  indent2,
-                                  AUDIT.RESPONSIBILITY,
-                                  audit.responsibility);
-                appendFullElement(buf, indent2, AUDIT.DATE, DateUtility
-                        .convertDateToString(audit.date));
-                appendFullElement(buf,
-                                  indent2,
-                                  AUDIT.JUSTIFICATION,
-                                  audit.justification);
-                appendCloseElement(buf, indent1, AUDIT.RECORD);
-            }
-            appendCloseElement(buf, indent0, AUDIT.AUDIT_TRAIL);
+            buf.append(DOTranslationUtility.getAuditTrail(obj));
             buf.append("            </" + FOXML.prefix + ":xmlContent>\n");
             buf.append("        </" + FOXML.prefix + ":datastreamVersion>\n");
             buf.append("    </" + FOXML.prefix + ":datastream>\n");
         }
-    }
-
-    private static void appendOpenElement(StringBuffer buf,
-                                          String indent,
-                                          QName element,
-                                          boolean declareNamespace) {
-        buf.append(indent + "<" + element.qName);
-        if (declareNamespace) {
-            buf.append(" xmlns:" + element.namespace.prefix);
-            buf.append("=\"" + element.namespace.uri + "\"");
-        }
-        buf.append(">\n");
-    }
-
-    private static void appendOpenElement(StringBuffer buf,
-                                          String indent,
-                                          QName element,
-                                          QName attribute,
-                                          String attributeContent) {
-        buf.append(indent + "<" + element.qName + " ");
-        buf.append(attribute.localName + "=\"");
-        buf.append(StreamUtility.enc(attributeContent) + "\">\n");
-    }
-
-    private static void appendCloseElement(StringBuffer buf,
-                                           String indent,
-                                           QName element) {
-        buf.append(indent + "</" + element.qName + ">\n");
-    }
-
-    private static void appendFullElement(StringBuffer buf,
-                                          String indent,
-                                          QName element,
-                                          QName attribute,
-                                          String attributeContent) {
-        buf.append(indent + "<" + element.qName + " ");
-        buf.append(attribute.localName + "=\"");
-        buf.append(StreamUtility.enc(attributeContent) + "\"/>\n");
-    }
-
-    private static void appendFullElement(StringBuffer buf,
-                                          String indent,
-                                          QName element,
-                                          String elementContent) {
-        buf.append(indent + "<" + element.qName + ">");
-        buf.append(StreamUtility.enc(elementContent));
-        buf.append("</" + element.qName + ">\n");
     }
 
     private void appendInlineXML(DigitalObject obj,
@@ -570,85 +485,4 @@ public class FOXMLDOSerializer
     private void appendRootElementEnd(StringBuffer buf) {
         buf.append("</" + FOXML.prefix + ":digitalObject>");
     }
-
-    private void validateAudit(AuditRecord audit)
-            throws ObjectIntegrityException {
-        if (audit.id == null || audit.id.equals("")) {
-            throw new ObjectIntegrityException("Audit record must have id.");
-        }
-        if (audit.date == null || audit.date.equals("")) {
-            throw new ObjectIntegrityException("Audit record must have date.");
-        }
-        if (audit.processType == null || audit.processType.equals("")) {
-            throw new ObjectIntegrityException("Audit record must have processType.");
-        }
-        if (audit.action == null || audit.action.equals("")) {
-            throw new ObjectIntegrityException("Audit record must have action.");
-        }
-        if (audit.componentID == null) {
-            audit.componentID = ""; // for backwards compatibility, no error on null
-            // throw new ObjectIntegrityException("Audit record must have componentID.");
-        }
-        if (audit.responsibility == null || audit.responsibility.equals("")) {
-            throw new ObjectIntegrityException("Audit record must have responsibility.");
-        }
-    }
-
-    private String getTypeAttribute(DigitalObject obj)
-            throws ObjectIntegrityException {
-        String retVal = "";
-        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) {
-            if (m_format.equals(FOXML1_0)) {
-                return MODEL.BDEF_OBJECT.localName;
-            }
-            retVal =
-                    (retVal.length() == 0 ? "" : retVal + ";")
-                            + MODEL.BDEF_OBJECT.localName;
-        }
-        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)) {
-            if (m_format.equals(FOXML1_0)) {
-                return MODEL.BMECH_OBJECT.localName;
-            }
-            retVal =
-                    (retVal.length() == 0 ? "" : retVal + ";")
-                            + MODEL.BMECH_OBJECT.localName;
-        }
-        if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) {
-            if (m_format.equals(FOXML1_0)) {
-                // FOXML 1.0 doesn't support this type; down-convert
-                return MODEL.DATA_OBJECT.localName;
-            }
-            retVal =
-                    (retVal.length() == 0 ? "" : retVal + ";")
-                            + MODEL.CMODEL_OBJECT.localName;
-        }
-        if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT)) {
-            if (m_format.equals(FOXML1_0)) {
-                return MODEL.DATA_OBJECT.localName;
-            }
-            retVal =
-                    (retVal.length() == 0 ? "" : retVal + ";")
-                            + MODEL.DATA_OBJECT.localName;
-        }
-        if (retVal.length() == 0) {
-            throw new ObjectIntegrityException("Object must have a FedoraObjectType.");
-        }
-        return retVal;
-    }
-
-    private String getStateAttribute(DigitalObject obj) {
-        try {
-            char s = obj.getState().toUpperCase().charAt(0);
-            if (s == 'D') {
-                return MODEL.DELETED.localName;
-            } else if (s == 'I') {
-                return MODEL.INACTIVE.localName;
-            } else {
-                return MODEL.ACTIVE.localName;
-            }
-        } catch (Throwable th) {
-            return null;
-        }
-    }
-
 }

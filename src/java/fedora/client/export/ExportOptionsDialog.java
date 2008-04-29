@@ -45,6 +45,8 @@ public class ExportOptionsDialog
     private JRadioButton foxmlButton;
 
     private JRadioButton metsfButton;
+    
+    private JRadioButton atomButton;
 
     private final ButtonGroup fmt_buttonGroup = new ButtonGroup();
 
@@ -164,9 +166,24 @@ public class ExportOptionsDialog
             }
         });
         formatPanel.add(metsfButton, gbc);
+        // atom radio button
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        atomButton = new JRadioButton("ATOM (Fedora Atom)", false);
+        atomButton.setActionCommand(ATOM1_0.uri);
+        atomButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                if (atomButton.isSelected()) {
+                    fmt_chosen = ATOM1_0.uri;
+                }
+            }
+        });
+        formatPanel.add(atomButton, gbc);
         // button grouping and default value
         fmt_buttonGroup.add(foxmlButton);
         fmt_buttonGroup.add(metsfButton);
+        fmt_buttonGroup.add(atomButton);
         fmt_chosen = FOXML1_1.uri;
         return formatPanel;
     }
@@ -248,10 +265,12 @@ public class ExportOptionsDialog
                         + " must be completed:\n\n"
                         + " (1) Select the export FORMAT:\n\n"
                         + "     FOXML - select this option if you want the export file\n"
-                        + "             to be encoded according the FOXML XML schema.\n\n"
-                        + "     METS -  select this option if you want the export file\n"
-                        + "             to be encoded according the Fedora extension of\n"
+                        + "             to be encoded according to the FOXML XML schema.\n\n"
+                        + "     METS  - select this option if you want the export file\n"
+                        + "             to be encoded according to the Fedora extension of\n"
                         + "             the METS XML schema.\n\n"
+                        + "     ATOM  - select this option if you want the export file\n"
+                        + "             to be encoded according to the ATOM XML schema.\n\n"
                         + " *************************************************************************\n"
                         + " (2) Select the export CONTEXT:\n\n"
                         + "     Migrate - (Default) select this option if you want the export file\n"

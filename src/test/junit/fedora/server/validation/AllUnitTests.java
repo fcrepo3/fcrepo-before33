@@ -5,7 +5,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses( {RelsExtValidatorTest.class})
+@Suite.SuiteClasses( {RelsExtValidatorTest.class, DOValidatorXMLSchemaTest.class})
 public class AllUnitTests {
 
     // Supports legacy tests runners
@@ -15,6 +15,7 @@ public class AllUnitTests {
                 new junit.framework.TestSuite(AllUnitTests.class.getName());
 
         suite.addTestSuite(RelsExtValidatorTest.class);
+        suite.addTest(DOValidatorXMLSchemaTest.suite());
 
         return suite;
     }

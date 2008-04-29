@@ -22,16 +22,24 @@ public class FedoraModelNamespace
     private static final long serialVersionUID = 2L;
 
     // Properties
+    
+    public final RDFName ALT_IDS;
 
     /**
      * Deprecated as of Fedora 3.0. Replaced by HAS_CONTENT_MODEL.
      */
     @Deprecated
     public final RDFName CONTENT_MODEL;
+    
+    public final RDFName CONTROL_GROUP;
 
     public final RDFName CREATED_DATE;
 
     public final RDFName DEFINES_METHOD;
+    
+    public final RDFName DIGEST;
+    
+    public final RDFName DIGEST_TYPE;
 
     /**
      * Deprecated as of Fedora 3.0. No replacement. This information is no
@@ -39,6 +47,10 @@ public class FedoraModelNamespace
      */
     @Deprecated
     public final RDFName DEPENDS_ON;
+    
+    public final RDFName EXT_PROPERTY;
+    
+    public final RDFName FORMAT_URI;
 
     /**
      * Deprecated as of Fedora 3.0. Replaced by HAS_BDEF.
@@ -47,6 +59,8 @@ public class FedoraModelNamespace
     public final RDFName IMPLEMENTS_BDEF;
 
     public final RDFName LABEL;
+    
+    public final RDFName LENGTH;
 
     public final RDFName OWNER;
 
@@ -59,6 +73,8 @@ public class FedoraModelNamespace
      */
     @Deprecated
     public final RDFName USES_BMECH;
+    
+    public final RDFName VERSIONABLE;
 
     // Values
     public final RDFName ACTIVE;
@@ -89,16 +105,24 @@ public class FedoraModelNamespace
         prefix = "fedora-model";
 
         // Properties
+        ALT_IDS = new RDFName(this, "altIds");
         CONTENT_MODEL = new RDFName(this, "contentModel");
+        CONTROL_GROUP = new RDFName(this, "controlGroup");
         CREATED_DATE = new RDFName(this, "createdDate");
         DEFINES_METHOD = new RDFName(this, "definesMethod");
         DEPENDS_ON = new RDFName(this, "dependsOn");
+        DIGEST = new RDFName(this, "digest");
+        DIGEST_TYPE = new RDFName(this, "digestType");
+        EXT_PROPERTY = new RDFName(this, "extProperty");
+        FORMAT_URI = new RDFName(this, "formatURI");
         IMPLEMENTS_BDEF = new RDFName(this, "implementsBDef");
         LABEL = new RDFName(this, "label");
+        LENGTH = new RDFName(this, "length");
 
         OWNER = new RDFName(this, "ownerId");
         STATE = new RDFName(this, "state");
         USES_BMECH = new RDFName(this, "usesBMech");
+        VERSIONABLE = new RDFName(this, "versionable");
 
         // Values
         ACTIVE = new RDFName(this, "Active");

@@ -1080,16 +1080,16 @@ public class DefaultAccess
 
     private String getReposBaseURL(String protocol, String port) {
         String reposBaseURL = null;
-        InetAddress hostIP = null;
-        try {
-            hostIP = InetAddress.getLocalHost();
-        } catch (UnknownHostException uhe) {
-            LOG.error("Unable to resolve host of Fedora server", uhe);
-        }
-
         String fedoraServerHost = getServer().getParameter("fedoraServerHost");
         if (fedoraServerHost == null || fedoraServerHost.equals("")) {
-            fedoraServerHost = hostIP.getHostName();
+            LOG.warn("Configuration parameter fedoraServerHost is empty.");
+            try {
+                InetAddress hostIP = InetAddress.getLocalHost();
+                fedoraServerHost = hostIP.getHostName();
+            } catch (UnknownHostException e) {
+                LOG.error("Unable to resolve host of Fedora server", e);
+                fedoraServerHost = "localhost";
+            }  
         }
         reposBaseURL = protocol + "://" + fedoraServerHost + ":" + port;
         return reposBaseURL;

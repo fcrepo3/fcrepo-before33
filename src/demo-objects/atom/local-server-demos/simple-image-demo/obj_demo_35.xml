@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>info:fedora/demo:35</id>
+  <title type="text">Image of Coliseum in Rome</title>
+  <updated>2008-04-18T15:40:05.706Z</updated>
+  <author>
+    <name>fedoraAdmin</name>
+  </author>
+  <category term="FedoraObject" scheme="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"></category>
+  <category term="Active" scheme="info:fedora/fedora-system:def/model#state"></category>
+  <category term="2008-04-18T15:40:05.706Z" scheme="info:fedora/fedora-system:def/model#createdDate"></category>
+  <icon>http://www.fedora-commons.org/images/logo_vertical_transparent_200_251.png</icon>
+  <entry>
+    <id>info:fedora/demo:35/MEDIUM</id>
+    <title type="text">MEDIUM</title>
+    <updated>2008-04-18T15:40:05.706Z</updated>
+    <link href="info:fedora/demo:35/MEDIUM/2008-04-18T15:40:05.706Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="M" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:35/MEDIUM/2008-04-18T15:40:05.706Z</id>
+    <title type="text">MEDIUM1.0</title>
+    <updated>2008-04-18T15:40:05.706Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:35/MEDIUM"></thr:in-reply-to>
+    <category term="Thorny's Coliseum medium jpg image" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="0" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <summary type="text">MEDIUM1.0</summary>
+    <content type="image/jpeg" src="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-medium.jpg"></content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:35/RELS-EXT</id>
+    <title type="text">RELS-EXT</title>
+    <updated>2008-04-18T15:40:05.706Z</updated>
+    <link href="info:fedora/demo:35/RELS-EXT/2008-04-18T15:40:05.706Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:35/RELS-EXT/2008-04-18T15:40:05.706Z</id>
+    <title type="text">RELS-EXT1.0</title>
+    <updated>2008-04-18T15:40:05.706Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:35/RELS-EXT"></thr:in-reply-to>
+    <category term="Relationships to other objects" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="361" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
+          
+        <rdf:Description rdf:about="info:fedora/demo:35">
+            
+          <fedora-model:hasContentModel rdf:resource="info:fedora/demo:CMImage"></fedora-model:hasContentModel>
+          </rdf:Description>
+        </rdf:RDF>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:35/VERYHIGH</id>
+    <title type="text">VERYHIGH</title>
+    <updated>2008-04-18T15:40:05.706Z</updated>
+    <link href="info:fedora/demo:35/VERYHIGH/2008-04-18T15:40:05.706Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="M" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:35/VERYHIGH/2008-04-18T15:40:05.706Z</id>
+    <title type="text">VERYHIGH1.0</title>
+    <updated>2008-04-18T15:40:05.706Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:35/VERYHIGH"></thr:in-reply-to>
+    <category term="Thorny's Coliseum veryhigh jpg image" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="0" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <summary type="text">VERYHIGH1.0</summary>
+    <content type="image/jpeg" src="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg"></content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:35/THUMB</id>
+    <title type="text">THUMB</title>
+    <updated>2008-04-18T15:40:05.706Z</updated>
+    <link href="info:fedora/demo:35/THUMB/2008-04-18T15:40:05.706Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="M" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:35/THUMB/2008-04-18T15:40:05.706Z</id>
+    <title type="text">THUMB1.0</title>
+    <updated>2008-04-18T15:40:05.706Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:35/THUMB"></thr:in-reply-to>
+    <category term="Thorny's Coliseum thumbnail jpg image" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="0" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <summary type="text">THUMB1.0</summary>
+    <content type="image/jpeg" src="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg"></content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:35/DC</id>
+    <title type="text">DC</title>
+    <updated>2008-04-18T15:40:05.706Z</updated>
+    <link href="info:fedora/demo:35/DC/2008-04-18T15:40:05.706Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:35/DC/2008-04-18T15:40:05.706Z</id>
+    <title type="text">DC1.0</title>
+    <updated>2008-04-18T15:40:05.706Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:35/DC"></thr:in-reply-to>
+    <category term="DC Record for Coliseum image object" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="492" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+					
+        <dc:title>Coliseum in Rome</dc:title>
+					
+        <dc:creator>Thornton Staples</dc:creator>
+					
+        <dc:subject>Architecture, Roman</dc:subject>
+					
+        <dc:description>Image of Coliseum in Rome</dc:description>
+					
+        <dc:publisher>University of Virginia Library</dc:publisher>
+					
+        <dc:format>image/jpeg</dc:format>
+					
+        <dc:identifier>demo:35</dc:identifier>
+				</oai_dc:dc>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:35/HIGH</id>
+    <title type="text">HIGH</title>
+    <updated>2008-04-18T15:40:05.706Z</updated>
+    <link href="info:fedora/demo:35/HIGH/2008-04-18T15:40:05.706Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="M" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:35/HIGH/2008-04-18T15:40:05.706Z</id>
+    <title type="text">HIGH1.0</title>
+    <updated>2008-04-18T15:40:05.706Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:35/HIGH"></thr:in-reply-to>
+    <category term="Thorny's Coliseum high jpg image" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="0" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <summary type="text">HIGH1.0</summary>
+    <content type="image/jpeg" src="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-high.jpg"></content>
+  </entry>
+</feed>

@@ -7,7 +7,6 @@ package fedora.server.storage.translation;
 
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -16,10 +15,8 @@ import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
 import fedora.common.xml.format.XMLFormat;
-
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
-import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DSBinding;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
@@ -136,7 +133,7 @@ public class METSFedoraExtDOSerializer
             buf.append(" " + METS_EXT.EXT_VERSION.localName + "=\"1.1\"");
         }
         buf.append(" " + METS.OBJID.localName + "=\"" + obj.getPid() + "\"");
-        buf.append(" " + METS.TYPE.localName + "=\"" + getTypeAttribute(obj)
+        buf.append(" " + METS.TYPE.localName + "=\"" + DOTranslationUtility.getTypeAttribute(obj, m_format)
                 + "\"");
 
         if (m_format.equals(METS_EXT1_0)) {
@@ -164,48 +161,6 @@ public class METSFedoraExtDOSerializer
         buf.append("        xmlns:" + XSI.prefix + "=\"" + XSI.uri + "\"\n");
         buf.append("        " + XSI.SCHEMA_LOCATION.qName + "=\"" + METS.uri
                 + " " + m_format.xsdLocation + "\">\n");
-    }
-
-    private String getTypeAttribute(DigitalObject obj)
-            throws ObjectIntegrityException {
-        String retVal = "";
-        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) {
-            if (m_format.equals(METS_EXT1_0)) {
-                return MODEL.BDEF_OBJECT.localName;
-            }
-            retVal =
-                    (retVal.length() == 0 ? "" : retVal + ";")
-                            + MODEL.BDEF_OBJECT.localName;
-        }
-        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)) {
-            if (m_format.equals(METS_EXT1_0)) {
-                return MODEL.BMECH_OBJECT.localName;
-            }
-            retVal =
-                    (retVal.length() == 0 ? "" : retVal + ";")
-                            + MODEL.BMECH_OBJECT.localName;
-        }
-        if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) {
-            if (m_format.equals(METS_EXT1_0)) {
-                // METS_EXT 1.0 doesn't support this type; down-convert
-                return MODEL.DATA_OBJECT.localName;
-            }
-            retVal =
-                    (retVal.length() == 0 ? "" : retVal + ";")
-                            + MODEL.CMODEL_OBJECT.localName;
-        }
-        if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT)) {
-            if (m_format.equals(METS_EXT1_0)) {
-                return MODEL.DATA_OBJECT.localName;
-            }
-            retVal =
-                    (retVal.length() == 0 ? "" : retVal + ";")
-                            + MODEL.DATA_OBJECT.localName;
-        }
-        if (retVal.length() == 0) {
-            throw new ObjectIntegrityException("Object must have a FedoraObjectType.");
-        }
-        return retVal;
     }
 
     private void appendHdr(DigitalObject obj, StringBuffer buf) {
@@ -244,9 +199,9 @@ public class METSFedoraExtDOSerializer
                                      String encoding)
             throws ObjectIntegrityException, UnsupportedEncodingException,
             StreamIOException {
-        Iterator iter = obj.datastreamIdIterator();
+        Iterator<String> iter = obj.datastreamIdIterator();
         while (iter.hasNext()) {
-            String id = (String) iter.next();
+            String id = iter.next();
             Datastream firstDS = (Datastream) obj.datastreams(id).get(0);
             if (firstDS.DSControlGrp.equals("X")
                     && ((DatastreamXMLMetadata) firstDS).DSMDClass == DatastreamXMLMetadata.DESCRIPTIVE) {
@@ -263,7 +218,7 @@ public class METSFedoraExtDOSerializer
     private void appendMDSec(DigitalObject obj,
                              String outerName,
                              String innerName,
-                             List XMLMetadata,
+                             List<Datastream> XMLMetadata,
                              StringBuffer buf,
                              String encoding) throws ObjectIntegrityException,
             UnsupportedEncodingException, StreamIOException {
@@ -361,71 +316,22 @@ public class METSFedoraExtDOSerializer
         if (obj.getAuditRecords().size() > 0) {
             buf.append("  <" + METS.prefix + ":amdSec ID=\"AUDIT\""
                     + " STATUS=\"A\" VERSIONABLE=\"false\">\n");
-            for (int i = 0; i < obj.getAuditRecords().size(); i++) {
-                AuditRecord audit = (AuditRecord) obj.getAuditRecords().get(i);
-                // The audit record is created by the system, so programmatic
-                // validation here is o.k.  Normally, validation takes place
-                // via XML Schema and Schematron.
-                if (audit.id == null || audit.id.equals("")) {
-                    throw new ObjectIntegrityException("Audit record must have id.");
-                }
-                if (audit.date == null || audit.date.equals("")) {
-                    throw new ObjectIntegrityException("Audit record must have date.");
-                }
-                if (audit.processType == null || audit.processType.equals("")) {
-                    throw new ObjectIntegrityException("Audit record must have processType.");
-                }
-                if (audit.action == null || audit.action.equals("")) {
-                    throw new ObjectIntegrityException("Audit record must have action.");
-                }
-                if (audit.componentID == null) {
-                    audit.componentID = ""; // for backwards compatibility, no error on null
-                }
-                if (audit.responsibility == null
-                        || audit.responsibility.equals("")) {
-                    throw new ObjectIntegrityException("Audit record must have responsibility.");
-                }
                 buf
                         .append("    <" + METS.prefix + ":digiprovMD ID=\""
-                                + audit.id + "\" CREATED=\""
-                                + DateUtility.convertDateToString(audit.date)
+                                + "AUDIT.0\" CREATED=\""
+                                + DateUtility.convertDateToString(obj.getCreateDate())
                                 + "\">\n");
                 buf
                         .append("      <"
                                 + METS.prefix
                                 + ":mdWrap MIMETYPE=\"text/xml\" "
                                 + "MDTYPE=\"OTHER\" OTHERMDTYPE=\"FEDORA-AUDIT\""
-                                + " LABEL=\"Audit record for '"
-                                + StreamUtility.enc(audit.action)
-                                + "' action by "
-                                + StreamUtility.enc(audit.responsibility)
-                                + " at "
-                                + DateUtility.convertDateToString(audit.date)
-                                + "\">\n");
+                                + " LABEL=\"Fedora Object Audit Trail\">\n");
                 buf.append("        <" + METS.prefix + ":xmlData>\n");
-                buf.append("            <" + AUDIT.prefix + ":record>\n");
-                buf.append("            <" + AUDIT.prefix + ":process type=\""
-                        + StreamUtility.enc(audit.processType) + "\"/>\n");
-                buf.append("            <" + AUDIT.prefix + ":action>"
-                        + StreamUtility.enc(audit.action) + "</" + AUDIT.prefix
-                        + ":action>\n");
-                buf.append("            <" + AUDIT.prefix + ":componentID>"
-                        + StreamUtility.enc(audit.componentID) + "</"
-                        + AUDIT.prefix + ":componentID>\n");
-                buf.append("            <" + AUDIT.prefix + ":responsibility>"
-                        + StreamUtility.enc(audit.responsibility) + "</"
-                        + AUDIT.prefix + ":responsibility>\n");
-                buf.append("            <" + AUDIT.prefix + ":date>"
-                        + DateUtility.convertDateToString(audit.date) + "</"
-                        + AUDIT.prefix + ":date>\n");
-                buf.append("            <" + AUDIT.prefix + ":justification>"
-                        + StreamUtility.enc(audit.justification) + "</"
-                        + AUDIT.prefix + ":justification>\n");
-                buf.append("          </" + AUDIT.prefix + ":record>\n");
+                buf.append(DOTranslationUtility.getAuditTrail(obj));
                 buf.append("        </" + METS.prefix + ":xmlData>\n");
                 buf.append("      </" + METS.prefix + ":mdWrap>\n");
                 buf.append("    </" + METS.prefix + ":digiprovMD>\n");
-            }
             buf.append("  </" + METS.prefix + ":amdSec>\n");
         }
     }
@@ -435,9 +341,9 @@ public class METSFedoraExtDOSerializer
                                     String encoding)
             throws ObjectIntegrityException, UnsupportedEncodingException,
             StreamIOException {
-        Iterator iter = obj.datastreamIdIterator();
+        Iterator<String> iter = obj.datastreamIdIterator();
         while (iter.hasNext()) {
-            String id = (String) iter.next();
+            String id = iter.next();
             Datastream firstDS = (Datastream) obj.datastreams(id).get(0);
             // First, work with the first version to get the mdClass set to
             // a proper value required in the METS XML Schema.
@@ -469,12 +375,12 @@ public class METSFedoraExtDOSerializer
 
     private void appendFileSecs(DigitalObject obj, StringBuffer buf)
             throws ObjectIntegrityException, StreamIOException {
-        Iterator iter = obj.datastreamIdIterator();
+        Iterator<String> iter = obj.datastreamIdIterator();
         boolean didFileSec = false;
         while (iter.hasNext()) {
             Datastream ds =
                     DOTranslationUtility.setDatastreamDefaults((Datastream) obj
-                            .datastreams((String) iter.next()).get(0));
+                            .datastreams(iter.next()).get(0));
             if (!ds.DSControlGrp.equals("X")) {
                 if (!didFileSec) {
                     didFileSec = true;
@@ -485,13 +391,12 @@ public class METSFedoraExtDOSerializer
                 buf.append("      <" + METS.prefix + ":fileGrp ID=\""
                         + ds.DatastreamID + "\" STATUS=\"" + ds.DSState
                         + "\" VERSIONABLE=\"" + ds.DSVersionable + "\">\n");
-                Iterator contentIter =
+                Iterator<Datastream> contentIter =
                         obj.datastreams(ds.DatastreamID).iterator();
                 while (contentIter.hasNext()) {
                     Datastream dsc =
                             DOTranslationUtility
-                                    .setDatastreamDefaults((Datastream) contentIter
-                                            .next());
+                                    .setDatastreamDefaults(contentIter.next());
                     String labelAttr = "";
                     if (dsc.DSLabel != null && !dsc.DSLabel.equals("")) {
                         labelAttr =
@@ -589,14 +494,14 @@ public class METSFedoraExtDOSerializer
 
     private void appendStructMaps(DigitalObject obj, StringBuffer buf)
             throws ObjectIntegrityException {
-        Iterator dissIdIter = obj.disseminatorIdIterator();
+        Iterator<String> dissIdIter = obj.disseminatorIdIterator();
         while (dissIdIter.hasNext()) {
-            String did = (String) dissIdIter.next();
-            Iterator dissIter = obj.disseminators(did).iterator();
+            String did = dissIdIter.next();
+            Iterator<Disseminator> dissIter = obj.disseminators(did).iterator();
             while (dissIter.hasNext()) {
                 Disseminator diss =
                         DOTranslationUtility
-                                .setDisseminatorDefaults((Disseminator) dissIter
+                                .setDisseminatorDefaults(dissIter
                                         .next());
                 String labelAttr = "";
                 if (diss.dsBindMap.dsBindMapLabel != null
@@ -648,13 +553,12 @@ public class METSFedoraExtDOSerializer
 
     private void appendDisseminators(DigitalObject obj, StringBuffer buf)
             throws ObjectIntegrityException {
-        Iterator dissIdIter = obj.disseminatorIdIterator();
+        Iterator<String> dissIdIter = obj.disseminatorIdIterator();
         while (dissIdIter.hasNext()) {
-            String did = (String) dissIdIter.next();
-            Iterator dissIter = obj.disseminators(did).iterator();
+            String did = dissIdIter.next();
             Disseminator diss =
                     DOTranslationUtility
-                            .setDisseminatorDefaults((Disseminator) obj
+                            .setDisseminatorDefaults(obj
                                     .disseminators(did).get(0));
             buf.append("  <" + METS.prefix + ":behaviorSec ID=\"" + did
                     + "\" STATUS=\"" + diss.dissState + "\">\n");

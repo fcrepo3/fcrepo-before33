@@ -30,7 +30,7 @@
 	<foxml:datastream ID="TEI_SOURCE" CONTROL_GROUP="X" STATE="A">
 		<foxml:datastreamVersion ID="TEI_SOURCE1.0" MIMETYPE="text/xml" LABEL="TEI Source">
 			<foxml:xmlContent>
-				<TEI.2>
+				<TEI.2 xmlns="">
 					<teiHeader>
 						<fileDesc>
 							<titleStmt>
@@ -74,4 +74,21 @@
       		</foxml:xmlContent>
     	</foxml:datastreamVersion>
   	</foxml:datastream>
+	<foxml:datastream CONTROL_GROUP="X" ID="AUDIT" STATE="A" VERSIONABLE="false">
+    <foxml:datastreamVersion CREATED="2008-04-26T02:43:49.531Z"
+      FORMAT_URI="info:fedora/fedora-system:format/xml.fedora.audit" ID="AUDIT.0" LABEL="Fedora Object Audit Trail" MIMETYPE="text/xml">
+      <foxml:xmlContent>
+        <audit:auditTrail xmlns:audit="info:fedora/fedora-system:def/audit#">
+          <audit:record ID="AUDREC1">
+            <audit:process type="Fedora API-M"/>
+            <audit:action>ingest</audit:action>
+            <audit:componentID/>
+            <audit:responsibility>fedoraAdmin</audit:responsibility>
+            <audit:date>2008-04-26T02:43:49.531Z</audit:date>
+            <audit:justification>spite</audit:justification>
+          </audit:record>
+        </audit:auditTrail>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
 </foxml:digitalObject>

@@ -357,6 +357,8 @@
 		<param name="deserializer_info:fedora/fedora-system:FOXML-1.1" value="fedora.server.storage.translation.FOXML1_1DODeserializer"/>
 		<param name="serializer_info:fedora/fedora-system:FOXML-1.0" value="fedora.server.storage.translation.FOXML1_0DOSerializer"/>
 		<param name="deserializer_info:fedora/fedora-system:FOXML-1.0" value="fedora.server.storage.translation.FOXML1_0DODeserializer"/>
+	    <param name="serializer_info:fedora/fedora-system:ATOM-1.0" value="fedora.server.storage.translation.AtomDOSerializer"/>
+	    <param name="deserializer_info:fedora/fedora-system:ATOM-1.0" value="fedora.server.storage.translation.AtomDODeserializer"/>
 	</module>
 	<module role="fedora.server.management.PIDGenerator" class="fedora.server.management.BasicPIDGenerator">
 		<comment>The pid generator.</comment>
@@ -393,10 +395,14 @@
 			<comment>this is local path for the Fedora FOXML 1.1 XML schema
              used to do XML schema validation of digital objects</comment>
 		</param>
-    <param name="xsd_info:fedora/fedora-system:FOXML-1.0" value="xsd/foxml1-0.xsd">
-      <comment>this is local path for the Fedora FOXML 1.0 XML schema
+		<param name="xsd_info:fedora/fedora-system:FOXML-1.0" value="xsd/foxml1-0.xsd">
+            <comment>this is local path for the Fedora FOXML 1.0 XML schema
+            used to do XML schema validation of digital objects</comment>
+        </param>
+		<param name="xsd_info:fedora/fedora-system:ATOM-1.0" value="xsd/atom.xsd">
+            <comment>this is local path for the Fedora FOXML XML schema
              used to do XML schema validation of digital objects</comment>
-    </param>		
+        </param>
 		<param name="xsd_xacml_policy1.0" value="xsd/cs-xacml-schema-policy-1.0.xsd">
 			<comment>this is local path for the OASIS XACML XML
              policy schema used to do XML schema validation of XACML policies.</comment>
@@ -411,13 +417,18 @@
             Schematron Rules used to do Fedora-specific on FOXML 1.1 XML files. -
             schtron_preprocessor: this is the local path to the "skeleton" style
             sheet for schematron processing</comment>
-		</param>
-    <param name="rules_info:fedora/fedora-system:FOXML-1.0" value="schematron/foxmlRules1-0.xml">
-      <comment>This is the local path to the Fedora
+		</param>	
+    	<param name="rules_info:fedora/fedora-system:FOXML-1.0" value="schematron/foxmlRules1-0.xml">
+      		<comment>This is the local path to the Fedora
             Schematron Rules used to do Fedora-specific on FOXML 1.0 XML files. -
             schtron_preprocessor: this is the local path to the &quot;skeleton&quot; style
             sheet for schematron processing</comment>
-    </param>		
+    	</param>	
+		<param name="rules_info:fedora/fedora-system:ATOM-1.0" value="schematron/atom-bogus.xml">
+            <comment>this is the local path to the Fedora
+             Schematron Rules used to do Fedora-specific on Fedora-METS XML
+             files.</comment>
+        </param>
 		<param name="schtron_preprocessor" value="schematron/preprocessor.xslt"/>
 		<param name="tempDir" value="work">
 			<comment>(required)

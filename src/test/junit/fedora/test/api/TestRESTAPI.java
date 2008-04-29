@@ -35,10 +35,13 @@ import fedora.test.FedoraServerTestCase;
 
 /**
  * Tests of the REST API. Tests assume a running instance of Fedora with the
- * REST API enabled. //TODO: actually validate the ResponseBody instead of just
- * HTTP status codes
+ * REST API enabled. 
+ * 
+ * //TODO: actually validate the ResponseBody instead of just HTTP status codes
  * 
  * @author Edwin Shin
+ * @since 3.0
+ * @version $Id$
  */
 public class TestRESTAPI
         extends FedoraServerTestCase {

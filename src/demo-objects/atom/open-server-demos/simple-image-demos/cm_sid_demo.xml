@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>info:fedora/demo:CMSID</id>
+  <title type="text">Content Model for MrSID Images</title>
+  <updated>2008-04-18T15:40:04.077Z</updated>
+  <author>
+    <name>fedoraAdmin</name>
+  </author>
+  <category term="FedoraCModelObject" scheme="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"></category>
+  <category term="Active" scheme="info:fedora/fedora-system:def/model#state"></category>
+  <category term="2008-04-18T15:40:04.077Z" scheme="info:fedora/fedora-system:def/model#createdDate"></category>
+  <icon>http://www.fedora-commons.org/images/logo_vertical_transparent_200_251.png</icon>
+  <entry>
+    <id>info:fedora/demo:CMSID/RELS-EXT</id>
+    <title type="text">RELS-EXT</title>
+    <updated>2008-04-18T15:40:04.077Z</updated>
+    <link href="info:fedora/demo:CMSID/RELS-EXT/2008-04-18T15:40:04.077Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:CMSID/RELS-EXT/2008-04-18T15:40:04.077Z</id>
+    <title type="text">RELS-EXT1.0</title>
+    <updated>2008-04-18T15:40:04.077Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:CMSID/RELS-EXT"></thr:in-reply-to>
+    <category term="Relationships to other objects" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="342" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
+      				
+        <rdf:Description rdf:about="info:fedora/demo:CMSID">
+        				
+          <fedora-model:hasBDef rdf:resource="info:fedora/demo:1"></fedora-model:hasBDef>
+      				</rdf:Description>
+    			</rdf:RDF>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:CMSID/DC</id>
+    <title type="text">DC</title>
+    <updated>2008-04-18T15:40:04.077Z</updated>
+    <link href="info:fedora/demo:CMSID/DC/2008-04-18T15:40:04.077Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:CMSID/DC/2008-04-18T15:40:04.077Z</id>
+    <title type="text">DC1.0</title>
+    <updated>2008-04-18T15:40:04.077Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:CMSID/DC"></thr:in-reply-to>
+    <category term="DC Record for Content Model for MrSID Images" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="269" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+					
+        <dc:title>Content Model for MrSID model for CMDA proof of concept</dc:title>
+					
+        <dc:identifier>demo:CMSID</dc:identifier>
+				</oai_dc:dc>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:CMSID/DS-COMPOSITE-MODEL</id>
+    <title type="text">DS-COMPOSITE-MODEL</title>
+    <updated>2007-08-15T14:36:30.369Z</updated>
+    <link href="info:fedora/demo:CMSID/DS-COMPOSITE-MODEL/2007-08-15T14:36:30.369Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:CMSID/DS-COMPOSITE-MODEL/2007-08-15T14:36:30.369Z</id>
+    <title type="text">DS-COMPOSITE-MODEL1.0</title>
+    <updated>2007-08-15T14:36:30.369Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:CMSID/DS-COMPOSITE-MODEL"></thr:in-reply-to>
+    <category term="DS Composite Model" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="435" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <dsCompositeModel xmlns="info:fedora/fedora-system:def/dsCompositeModel#">
+          
+        <dsTypeModel ID="DC">
+            
+          <form MIME="text/xml"></form>
+          </dsTypeModel>
+          
+        <dsTypeModel ID="RELS-EXT">
+            
+          <form MIME="text/xml"></form>
+          </dsTypeModel>
+          
+        <dsTypeModel ID="MRSID">
+            
+          <form MIME="image/x-mrsid-image"></form>
+          </dsTypeModel>
+        </dsCompositeModel>
+    </content>
+  </entry>
+</feed>

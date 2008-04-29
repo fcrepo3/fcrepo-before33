@@ -31,7 +31,7 @@ public class TestAPIALiteConfigA
         // The object contains an E datastream that is a dissemination of the local SAXON service.
         // This datastream is input to another dissemination that uses the local FOP service.
         HttpInputStream his = client.get("/get/demo:26/demo:19/getPDF", false);
-        assertEquals(his.getContentType(), "application/pdf");
+        assertEquals("application/pdf", his.getContentType());
         his.close();
     }
 

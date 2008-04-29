@@ -31,6 +31,8 @@ public class Datastream {
             Logger.getLogger(Datastream.class.getName());
 
     public final static String CHECKSUMTYPE_DISABLED = "DISABLED";
+    
+    public final static String CHECKSUM_NONE = "none";
 
     public final static String CHECKSUM_IOEXCEPTION = "ExceptionReadingStream";
 

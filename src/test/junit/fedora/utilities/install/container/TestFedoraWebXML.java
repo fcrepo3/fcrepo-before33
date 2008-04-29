@@ -1,14 +1,14 @@
 
 package fedora.utilities.install.container;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Edwin Shin
@@ -80,5 +80,9 @@ public class TestFedoraWebXML {
         options.setFedoraHome(new File(fedoraHome));
         return options;
     }
-
+    
+    // Supports legacy test runners
+    public static junit.framework.Test suite() {
+        return new junit.framework.JUnit4TestAdapter(TestFedoraWebXML.class);
+    }
 }

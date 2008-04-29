@@ -88,13 +88,13 @@ public class METSFedoraExtDODeserializer
     private boolean hasRels = false;
 
     /** Hashtables to record DMDID references */
-    private HashMap m_dsDMDIDs; // key=dsVersionID, value=ArrayList of dsID
+    private HashMap<String, List<String>> m_dsDMDIDs; // key=dsVersionID, value=ArrayList of dsID
 
     /** Hashtables to record ADMID references */
-    private HashMap m_dsADMIDs; // key=dsVersionID, value=ArrayList of dsID
+    private HashMap<String, List<String>> m_dsADMIDs; // key=dsVersionID, value=ArrayList of dsID
 
     /** Hashtables to correlate audit record ids to datastreams */
-    private HashMap m_AuditIdToComponentId;
+    private HashMap<String, String> m_AuditIdToComponentId;
 
     private SAXParser m_parser;
 
@@ -176,6 +176,8 @@ public class METSFedoraExtDODeserializer
     /** String buffer for audit element contents */
     private StringBuffer m_auditBuffer;
 
+    private String m_auditId;
+    
     private String m_auditProcessType;
 
     private String m_auditAction;
@@ -191,7 +193,7 @@ public class METSFedoraExtDODeserializer
     /**
      * Hashmap for holding disseminators during parsing, keyed by structMapId
      */
-    private HashMap m_dissems;
+    private HashMap<String, Disseminator> m_dissems;
 
     /**
      * Currently-being-initialized disseminator, during structmap parsing.
@@ -293,9 +295,9 @@ public class METSFedoraExtDODeserializer
         if (m_format.equals(METS_EXT1_0)) {
             // DISSEMINATORS... put disseminators in the instantiated digital
             // object
-            Iterator dissemIter = m_dissems.values().iterator();
+            Iterator<Disseminator> dissemIter = m_dissems.values().iterator();
             while (dissemIter.hasNext()) {
-                Disseminator diss = (Disseminator) dissemIter.next();
+                Disseminator diss = dissemIter.next();
                 m_obj.disseminators(diss.dissID).add(diss);
             }
         }
@@ -474,7 +476,7 @@ public class METSFedoraExtDODeserializer
                 m_dsControlGrp = grab(a, METS.uri, "OWNERID");
                 String ADMID = grab(a, METS.uri, "ADMID");
                 if (ADMID != null && !"".equals(ADMID)) {
-                    ArrayList al = new ArrayList();
+                    ArrayList<String> al = new ArrayList<String>();
                     if (ADMID.indexOf(" ") != -1) {
                         String[] admIds = ADMID.split(" ");
                         for (String element : admIds) {
@@ -598,7 +600,9 @@ public class METSFedoraExtDODeserializer
                 // ready to accept data by allocating a new StringBuffer
                 if (m_dsId.equals("FEDORA-AUDITTRAIL")
                         || m_dsId.equals("AUDIT")) {
-                    if (localName.equals("process")) {
+                    if (localName.equals("record")) {
+                        m_auditId = grab(a, uri, "ID");
+                    } else if (localName.equals("process")) {
                         m_auditProcessType = grab(a, uri, "type");
                     } else if (localName.equals("action")
                             || localName.equals("componentID")
@@ -656,7 +660,7 @@ public class METSFedoraExtDODeserializer
                     // of the <digiprovMD> element for the audit record id.
                     // This amdSec is treated like a datastream, and each 
                     // digiprovMD is a version, so id was parsed into dsVersId.
-                    a.id = m_dsVersId;
+                    a.id = m_auditId; //m_dsVersId;
                     a.processType = m_auditProcessType;
                     a.action = m_auditAction;
                     a.componentID = m_auditComponentID;
@@ -1026,25 +1030,25 @@ public class METSFedoraExtDODeserializer
             // NOTE:  we do not look at disseminators because in pre-2.0
             // the disseminators did not point to their audit records as
             // did the datastreams.
-            Iterator dsIdIter = m_obj.datastreamIdIterator();
+            Iterator<String> dsIdIter = m_obj.datastreamIdIterator();
             while (dsIdIter.hasNext()) {
-                List datastreams = m_obj.datastreams((String) dsIdIter.next());
+                List<Datastream> datastreams = m_obj.datastreams(dsIdIter.next());
                 // The list is a set of versions of the same datastream...
                 for (int i = 0; i < datastreams.size(); i++) {
-                    Datastream ds = (Datastream) datastreams.get(i);
+                    Datastream ds = datastreams.get(i);
                     // ADMID processing...
                     // get list of ADMIDs that go with a datastream version
-                    List admIdList = (List) m_dsADMIDs.get(ds.DSVersionID);
-                    List cleanAdmIdList = new ArrayList();
+                    List<String> admIdList = m_dsADMIDs.get(ds.DSVersionID);
+                    List<String> cleanAdmIdList = new ArrayList<String>();
                     if (admIdList != null) {
-                        Iterator admIdIter = admIdList.iterator();
+                        Iterator<String> admIdIter = admIdList.iterator();
                         while (admIdIter.hasNext()) {
-                            String admId = (String) admIdIter.next();
+                            String admId = admIdIter.next();
                             // Detect ADMIDs that reference audit records 
                             // vs. regular admin metadata. Drop audits from
                             // the list. We know we have an audit if the ADMID
                             // is not a regular datatream in the object.
-                            List matchedDatastreams = m_obj.datastreams(admId);
+                            List<Datastream> matchedDatastreams = m_obj.datastreams(admId);
                             if (matchedDatastreams.size() <= 0) {
                                 // Keep track of audit metadata correlated with the 
                                 // datastream version it's about (for later use).
@@ -1072,9 +1076,9 @@ public class METSFedoraExtDODeserializer
             }
             // Now, put component ids on audit records.  Pre-Fedora 2.0
             // datastream versions pointed to their audit records.
-            Iterator iter = ((ArrayList) m_obj.getAuditRecords()).iterator();
+            Iterator<AuditRecord> iter = m_obj.getAuditRecords().iterator();
             while (iter.hasNext()) {
-                AuditRecord au = (AuditRecord) iter.next();
+                AuditRecord au = iter.next();
                 if (au.componentID == null || au.componentID.equals("")) {
                     // Before Fedora 2.0 audit records were associated with 
                     // datastream version ids.  From now on, the datastream id
@@ -1082,8 +1086,7 @@ public class METSFedoraExtDODeserializer
                     // and associations to particular datastream versions can
                     // be derived via the datastream version dates and the audit
                     // record dates.
-                    String dsVersId =
-                            (String) m_AuditIdToComponentId.get(au.id);
+                    String dsVersId = m_AuditIdToComponentId.get(au.id);
                     if (dsVersId != null && !dsVersId.equals("")) {
                         au.componentID =
                                 dsVersId.substring(0, dsVersId.indexOf("."));
@@ -1103,26 +1106,26 @@ public class METSFedoraExtDODeserializer
     private void createRelsInt() {
 
         // create a new RELS-INT datastream only if one does not already exist.
-        List metsrels = m_obj.datastreams("RELS-INT");
+        List<Datastream> metsrels = m_obj.datastreams("RELS-INT");
         if (metsrels.size() <= 0) {
             m_relsBuffer = new StringBuffer();
             appendRDFStart(m_relsBuffer);
-            Iterator dsIds = m_obj.datastreamIdIterator();
+            Iterator<String> dsIds = m_obj.datastreamIdIterator();
             while (dsIds.hasNext()) {
                 // initialize hash sets to keep a list of
                 // unique DMDIDs or ADMIDs at the datatream id level.
                 HashSet<String> uniqueDMDIDs = new HashSet<String>();
-                HashSet uniqueADMIDs = new HashSet();
+                HashSet<String> uniqueADMIDs = new HashSet<String>();
                 // get list of datastream *versions*
-                List dsVersionList = m_obj.datastreams((String) dsIds.next());
+                List<Datastream> dsVersionList = m_obj.datastreams(dsIds.next());
                 for (int i = 0; i < dsVersionList.size(); i++) {
                     Datastream dsVersion = (Datastream) dsVersionList.get(i);
                     // DMDID processing...
-                    List dmdIdList =
-                            (List) m_dsDMDIDs.get(dsVersion.DSVersionID);
+                    List<String> dmdIdList =
+                            m_dsDMDIDs.get(dsVersion.DSVersionID);
                     if (dmdIdList != null) {
                         hasRels = true;
-                        Iterator dmdIdIter = dmdIdList.iterator();
+                        Iterator<String> dmdIdIter = dmdIdList.iterator();
                         while (dmdIdIter.hasNext()) {
                             String dmdId = (String) dmdIdIter.next();
                             // APPEND TO RDF: record the DMDID relationship.
@@ -1141,11 +1144,11 @@ public class METSFedoraExtDODeserializer
                         }
                     }
                     // ADMID processing (already cleansed of audit refs)...
-                    List cleanAdmIdList =
-                            (List) m_dsADMIDs.get(dsVersion.DSVersionID);
+                    List<String> cleanAdmIdList =
+                            m_dsADMIDs.get(dsVersion.DSVersionID);
                     if (cleanAdmIdList != null) {
                         hasRels = true;
-                        Iterator admIdIter = cleanAdmIdList.iterator();
+                        Iterator<String> admIdIter = cleanAdmIdList.iterator();
                         while (admIdIter.hasNext()) {
                             String admId = (String) admIdIter.next();
                             // APPEND TO RDF: record the ADMID relationship.
@@ -1241,8 +1244,8 @@ public class METSFedoraExtDODeserializer
         m_rootElementFound = false;
         m_inXMLMetadata = false;
         m_prefixMap = new HashMap<String, String>();
-        m_localPrefixMap = new HashMap();
-        m_prefixList = new ArrayList();
+        m_localPrefixMap = new HashMap<String, String>();
+        m_prefixList = new ArrayList<String>();
 
         // temporary variables for processing datastreams		
         m_dsId = "";
@@ -1262,16 +1265,17 @@ public class METSFedoraExtDODeserializer
         m_dsMDClass = 0;
         m_dsLabel = "";
         m_dsXMLBuffer = null;
-        m_dsADMIDs = new HashMap();
-        m_dsDMDIDs = new HashMap();
+        m_dsADMIDs = new HashMap<String, List<String>>();
+        m_dsDMDIDs = new HashMap<String, List<String>>();
         m_dsChecksum = "";
         m_dsChecksumType = "";
 
         // temporary variables for processing disseminators
-        m_dissems = new HashMap();
+        m_dissems = new HashMap<String, Disseminator>();
 
         // temporary variables for processing audit records
         m_auditBuffer = null;
+        m_auditId = "";
         m_auditComponentID = "";
         m_auditProcessType = "";
         m_auditAction = "";
@@ -1279,7 +1283,7 @@ public class METSFedoraExtDODeserializer
         m_auditDate = "";
         m_auditJustification = "";
 
-        m_AuditIdToComponentId = new HashMap();
+        m_AuditIdToComponentId = new HashMap<String, String>();
         m_relsBuffer = null;
     }
 

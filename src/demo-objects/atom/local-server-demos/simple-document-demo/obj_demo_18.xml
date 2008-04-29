@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>info:fedora/demo:18</id>
+  <title type="text">The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services</title>
+  <updated>2008-04-18T15:40:04.880Z</updated>
+  <author>
+    <name>fedoraAdmin</name>
+  </author>
+  <category term="FedoraObject" scheme="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"></category>
+  <category term="Active" scheme="info:fedora/fedora-system:def/model#state"></category>
+  <category term="2008-04-18T15:40:04.880Z" scheme="info:fedora/fedora-system:def/model#createdDate"></category>
+  <icon>http://www.fedora-commons.org/images/logo_vertical_transparent_200_251.png</icon>
+  <entry>
+    <id>info:fedora/demo:18/DS3</id>
+    <title type="text">DS3</title>
+    <updated>2008-04-18T15:40:04.880Z</updated>
+    <link href="info:fedora/demo:18/DS3/2008-04-18T15:40:04.880Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="M" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:18/DS3/2008-04-18T15:40:04.880Z</id>
+    <title type="text">DS3.0</title>
+    <updated>2008-04-18T15:40:04.880Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:18/DS3"></thr:in-reply-to>
+    <category term="The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services (Formatted in PS)" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="0" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <summary type="text">DS3.0</summary>
+    <content type="application/ps" src="http://localhost:8080/fedora-demo/simple-document-demo/ecdl2002pay.ps"></content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:18/DS1</id>
+    <title type="text">DS1</title>
+    <updated>2008-04-18T15:40:04.880Z</updated>
+    <link href="info:fedora/demo:18/DS1/2008-04-18T15:40:04.880Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="M" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:18/DS1/2008-04-18T15:40:04.880Z</id>
+    <title type="text">DS1.0</title>
+    <updated>2008-04-18T15:40:04.880Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:18/DS1"></thr:in-reply-to>
+    <category term="The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services (Formatted in MSWord)" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="0" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <summary type="text">DS1.0</summary>
+    <content type="application/msword" src="http://localhost:8080/fedora-demo/simple-document-demo/ecdl2002pay.doc"></content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:18/DS2</id>
+    <title type="text">DS2</title>
+    <updated>2008-04-18T15:40:04.880Z</updated>
+    <link href="info:fedora/demo:18/DS2/2008-04-18T15:40:04.880Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="M" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:18/DS2/2008-04-18T15:40:04.880Z</id>
+    <title type="text">DS2.0</title>
+    <updated>2008-04-18T15:40:04.880Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:18/DS2"></thr:in-reply-to>
+    <category term="The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services (Formatted in PDF)" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="0" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <summary type="text">DS2.0</summary>
+    <content type="application/pdf" src="http://localhost:8080/fedora-demo/simple-document-demo/ecdl2002pay.pdf"></content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:18/DC</id>
+    <title type="text">DC</title>
+    <updated>2008-04-18T15:40:04.880Z</updated>
+    <link href="info:fedora/demo:18/DC/2008-04-18T15:40:04.880Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:18/DC/2008-04-18T15:40:04.880Z</id>
+    <title type="text">DC1.0</title>
+    <updated>2008-04-18T15:40:04.880Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:18/DC"></thr:in-reply-to>
+    <category term="Dublin Core for the Document object" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="1073" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+					
+        <dc:title>The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services</dc:title>
+					
+        <dc:creator>Sandra Payette</dc:creator>
+					
+        <dc:creator>Thornton Staples</dc:creator>
+					
+        <dc:subject>Fedora</dc:subject>
+					
+        <dc:subject>repository architecture</dc:subject>
+					
+        <dc:subject>digital libraries</dc:subject>
+					
+        <dc:subject>web service</dc:subject>
+					
+        <dc:subject>open source software</dc:subject>
+					
+        <dc:description>Paper on the Fedora project, presented at the European Digital Library Conference (ECDL) in 2002, Rome, Italy</dc:description>
+					
+        <dc:publisher>Springer</dc:publisher>
+					
+        <dc:date>2002-09-17</dc:date>
+					
+        <dc:format>application/pdf</dc:format>
+					
+        <dc:format>application/msword</dc:format>
+					
+        <dc:format>application/ps</dc:format>
+					
+        <dc:identifier>demo:18</dc:identifier>
+					
+        <dc:relation>http://www.fedora.info</dc:relation>
+					
+        <dc:rights>unrestricted</dc:rights>
+				</oai_dc:dc>
+    </content>
+  </entry>
+</feed>

@@ -180,11 +180,11 @@ public class BasicDigitalObject
     public void addDatastreamVersion(Datastream ds, boolean addNewVersion) {
         List<Datastream> datastreams = datastreams(ds.DatastreamID);
         if (!addNewVersion) {
-            Iterator dsIter = datastreams.iterator();
+            Iterator<Datastream> dsIter = datastreams.iterator();
             Datastream latestCreated = null;
             long latestCreateTime = -1;
             while (dsIter.hasNext()) {
-                Datastream ds1 = (Datastream) dsIter.next();
+                Datastream ds1 = dsIter.next();
                 if (ds1.DSCreateDT.getTime() > latestCreateTime) {
                     latestCreateTime = ds1.DSCreateDT.getTime();
                     latestCreated = ds1;

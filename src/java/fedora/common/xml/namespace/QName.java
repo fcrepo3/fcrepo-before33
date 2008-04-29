@@ -9,8 +9,11 @@ package fedora.common.xml.namespace;
  * A namespace-qualified name in XML.
  * 
  * @author Chris Wilper
+ * @version $Id$
  */
-public class QName {
+public class QName extends javax.xml.namespace.QName {
+
+    private static final long serialVersionUID = 6368425528110304020L;
 
     /** The namespace to which this name belongs. */
     public final XMLNamespace namespace;
@@ -36,6 +39,8 @@ public class QName {
      *         if either parameter is null.
      */
     public QName(XMLNamespace namespace, String localName) {
+        super(namespace.uri, localName, namespace.prefix);
+        
         if (namespace == null) {
             throw new IllegalArgumentException("namespace cannot be null");
         }
@@ -45,41 +50,5 @@ public class QName {
         this.namespace = namespace;
         this.localName = localName;
         qName = namespace.prefix + ":" + localName;
-    }
-
-    //---
-    // Object overrides
-    //---
-
-    /**
-     * Returns a string of the form: <code>{namespace-uri}localName</code>.
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return "{" + namespace.uri + "}" + localName;
-    }
-
-    /**
-     * Returns true iff the given object is an instance of this class and has
-     * the same namespace and localName values. {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof QName) {
-            QName q = (QName) o;
-            return namespace.equals(q.namespace)
-                    && localName.equals(q.localName);
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return namespace.hashCode() + localName.hashCode();
     }
 }

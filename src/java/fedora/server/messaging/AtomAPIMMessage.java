@@ -274,13 +274,10 @@ public class AtomAPIMMessage
      * Serialization of the API-M message as an Atom entry. {@inheritDoc}
      */
     public String toString() {
-        org.apache.abdera.writer.Writer writer =
-                abdera.getWriterFactory().getWriter("prettyxml");
-
         Writer sWriter = new StringWriter();
 
         try {
-            entry.writeTo(writer, sWriter);
+            entry.writeTo("prettyxml", sWriter);
         } catch (IOException e) {
             LOG.error(e.getMessage());
         }

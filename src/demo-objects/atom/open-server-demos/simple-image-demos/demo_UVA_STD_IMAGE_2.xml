@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>info:fedora/demo:UVA_STD_IMAGE_2</id>
+  <title type="text">Generated Content Model</title>
+  <updated>2007-08-15T15:59:21.878Z</updated>
+  <author>
+    <name>fedoraAdmin</name>
+  </author>
+  <category term="FedoraCModelObject" scheme="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"></category>
+  <category term="Active" scheme="info:fedora/fedora-system:def/model#state"></category>
+  <category term="2007-08-15T14:36:37.171Z" scheme="info:fedora/fedora-system:def/model#createdDate"></category>
+  <icon>http://www.fedora-commons.org/images/logo_vertical_transparent_200_251.png</icon>
+  <entry>
+    <id>info:fedora/demo:UVA_STD_IMAGE_2/RELS-EXT</id>
+    <title type="text">RELS-EXT</title>
+    <updated>2007-08-15T14:36:37.171Z</updated>
+    <link href="info:fedora/demo:UVA_STD_IMAGE_2/RELS-EXT/2007-08-15T14:36:37.171Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="false" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:UVA_STD_IMAGE_2/RELS-EXT/2007-08-15T14:36:37.171Z</id>
+    <title type="text">RELS-EXT1.0</title>
+    <updated>2007-08-15T14:36:37.171Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:UVA_STD_IMAGE_2/RELS-EXT"></thr:in-reply-to>
+    <category term="Relationships" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="352" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
+          
+        <rdf:Description rdf:about="info:fedora/demo:UVA_STD_IMAGE_2">
+            
+          <fedora-model:hasBDef rdf:resource="info:fedora/demo:1"></fedora-model:hasBDef>
+          </rdf:Description>
+        </rdf:RDF>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:UVA_STD_IMAGE_2/DC</id>
+    <title type="text">DC</title>
+    <updated>2007-08-15T14:36:37.171Z</updated>
+    <link href="info:fedora/demo:UVA_STD_IMAGE_2/DC/2007-08-15T14:36:37.171Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:UVA_STD_IMAGE_2/DC/2007-08-15T14:36:37.171Z</id>
+    <title type="text">DC1.0</title>
+    <updated>2007-08-15T14:36:37.171Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:UVA_STD_IMAGE_2/DC"></thr:in-reply-to>
+    <category term="Dublin Core Metadata" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="268" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+          
+        <dc:title>Generated Content Model</dc:title>
+          
+        <dc:identifier>demo:UVA_STD_IMAGE_2</dc:identifier>
+        </oai_dc:dc>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:UVA_STD_IMAGE_2/DS-COMPOSITE-MODEL</id>
+    <title type="text">DS-COMPOSITE-MODEL</title>
+    <updated>2007-08-15T14:36:30.369Z</updated>
+    <link href="info:fedora/demo:UVA_STD_IMAGE_2/DS-COMPOSITE-MODEL/2007-08-15T14:36:30.369Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:UVA_STD_IMAGE_2/DS-COMPOSITE-MODEL/2007-08-15T14:36:30.369Z</id>
+    <title type="text">DS-COMPOSITE-MODEL1.0</title>
+    <updated>2007-08-15T14:36:30.369Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:UVA_STD_IMAGE_2/DS-COMPOSITE-MODEL"></thr:in-reply-to>
+    <category term="DS Composite Model" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="764" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <dsCompositeModel xmlns="info:fedora/fedora-system:def/dsCompositeModel#">
+          
+        <dsTypeModel ID="DC">
+            
+          <form MIME="text/xml"></form>
+          </dsTypeModel>
+          
+        <dsTypeModel ID="RELS-EXT">
+            
+          <form MIME="text/xml"></form>
+          </dsTypeModel>
+          
+        <dsTypeModel ID="LOWRES_IMG">
+            
+          <form MIME="image/jpeg"></form>
+          </dsTypeModel>
+          
+        <dsTypeModel ID="MEDRES_IMG">
+            
+          <form MIME="image/jpeg"></form>
+          </dsTypeModel>
+          
+        <dsTypeModel ID="HIGHRES_IMG">
+            
+          <form MIME="image/jpeg"></form>
+          </dsTypeModel>
+          
+        <dsTypeModel ID="VERYHIGHRES_IMG">
+            
+          <form MIME="image/jpeg"></form>
+          </dsTypeModel>
+        </dsCompositeModel>
+    </content>
+  </entry>
+</feed>

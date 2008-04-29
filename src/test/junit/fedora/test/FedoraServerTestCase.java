@@ -4,8 +4,6 @@ package fedora.test;
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
-
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -19,9 +17,7 @@ import fedora.client.search.SearchResultParser;
 import fedora.client.utility.AutoPurger;
 import fedora.client.utility.ingest.Ingest;
 import fedora.client.utility.ingest.IngestCounter;
-
 import fedora.common.Constants;
-
 import fedora.server.management.FedoraAPIM;
 
 /**
@@ -75,6 +71,11 @@ public abstract class FedoraServerTestCase
         String format = System.getProperty("demo.format");
         return format != null && format.equalsIgnoreCase("mets");
     }
+    
+    public static boolean testingATOM() {
+        String format = System.getProperty("demo.format");
+        return format != null && format.equalsIgnoreCase("atom");
+    }
 
     public static void ingestDemoObjects() throws Exception {
         File dir;
@@ -83,6 +84,10 @@ public abstract class FedoraServerTestCase
             System.out.println("Ingesting all demo objects in METS format");
             dir = new File(FEDORA_HOME, "client/demo/mets");
             ingestFormat = METS_EXT1_1.uri;
+        } else if (testingATOM()) {
+            System.out.println("Ingesting all demo objects in Atom format");
+            dir = new File(FEDORA_HOME, "client/demo/atom");
+            ingestFormat = ATOM1_0.uri;
         } else {
             System.out.println("Ingesting all demo objects in FOXML format");
             dir = new File(FEDORA_HOME, "client/demo/foxml");
@@ -112,14 +117,14 @@ public abstract class FedoraServerTestCase
      * @return set of PIDs of the specified object type
      * @throws Exception
      */
-    public static Set getDemoObjects(String[] fTypes) throws Exception {
+    public static Set<String> getDemoObjects(String[] fTypes) throws Exception {
         if (fTypes == null || fTypes.length == 0) {
             fTypes = new String[] {"O", "M", "D", "C"};
         }
 
         FedoraClient client = getFedoraClient();
         InputStream queryResult;
-        Set pids = new LinkedHashSet();
+        Set<String> pids = new LinkedHashSet<String>();
         for (String element : fTypes) {
             queryResult =
                     client.get(getBaseURL()
@@ -136,10 +141,9 @@ public abstract class FedoraServerTestCase
         FedoraAPIM apim = client.getAPIM();
 
         String[] fTypes = {"O", "M", "D", "C"};
-        Set pids = getDemoObjects(fTypes);
-        Iterator it = pids.iterator();
-        while (it.hasNext()) {
-            AutoPurger.purge(apim, (String) it.next(), null, false);
+        Set<String> pids = getDemoObjects(fTypes);
+        for (String pid : pids) {
+            AutoPurger.purge(apim, pid, null, false);
         }
     }
 

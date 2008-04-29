@@ -169,6 +169,7 @@
             <!-- Abdera libs -->
             <pathelement location="${lib.abdera-il8n}"/>
             <pathelement location="${lib.abdera.core}"/>
+            <pathelement location="${lib.abdera.extensions}"/>
             <pathelement location="${lib.abdera.parser}"/>
             <pathelement location="${lib.axiom-api}"/>
             <pathelement location="${lib.axiom-impl}"/>
@@ -311,6 +312,13 @@
 					destdir="${junit.build.dir}"
 					classpathref="junit.classpath"/>
         <copy todir="${junit.build.dir}" file="${junit.src.dir}/log4j.xml"/>
+	    
+	    <copy todir="${junit.build.dir}">
+            <fileset dir="${java.src.dir}">
+                <include name="**/OptionDefinition.properties"/>
+                <include name="**/webxml-mapping.xml"/>
+            </fileset>
+        </copy>
 	</target>
     
     <target name="compile-localservices" depends="init" 
@@ -430,6 +438,7 @@
         <copy todir="${fedora.home.build.dir}/server/xsd">
             <fileset dir="${src.dir}/xsd">
                 <include name="**/*.xsd"/>
+                <include name="**/*.dtd"/>
             </fileset>
         </copy>
 
@@ -621,6 +630,9 @@
             <fileset dir="${src.dir}/demo-objects/mets">
             	<exclude name="**/batch-demo/**" />
         	</fileset>
+        </copy>
+        <copy todir="${fedora.home.build.dir}/client/demo/atom">
+            <fileset dir="${src.dir}/demo-objects/atom"/>
         </copy>
         <!-- SOAP demo client (simple java reference client) -->
         <copy todir="${fedora.home.build.dir}/client/demo/soapclient">

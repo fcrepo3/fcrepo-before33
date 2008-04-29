@@ -10,24 +10,38 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
+
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
-
+import fedora.common.xml.format.XMLFormat;
+import fedora.common.xml.namespace.QName;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.StreamWriteException;
+import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
+import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.utilities.DateUtility;
+import fedora.server.utilities.StreamUtility;
 
 /**
  * Utility methods for usage by digital object serializers and deserializers.
@@ -52,7 +66,8 @@ import fedora.server.utilities.DateUtility;
  * @author Sandy Payette
  */
 @SuppressWarnings("deprecation")
-public abstract class DOTranslationUtility {
+public abstract class DOTranslationUtility
+        implements Constants {
 
     /** Logger for this class. */
     private static final Logger LOG =
@@ -193,6 +208,8 @@ public abstract class DOTranslationUtility {
     private static boolean m_serverOnPort80 = false;
 
     private static boolean m_serverOnRedirectPort443 = false;
+    
+    private static XMLInputFactory m_xmlInputFactory = XMLInputFactory.newInstance();
 
     // initialize static class with stuff that's used by all DO Serializerers
     static {
@@ -413,7 +430,6 @@ public abstract class DOTranslationUtility {
                                                      int transContext) {
 
         Datastream ds = origDS.copy();
-
         if (transContext == DOTranslationUtility.DESERIALIZE_INSTANCE) {
             if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")) {
                 // MAKE ABSOLUTE REPO URLs
@@ -424,6 +440,8 @@ public abstract class DOTranslationUtility {
                 // MAKE ABSOLUTE REPO URLs
                 ds.DSLocation = makeAbsoluteURLs(ds.DSLocation);
             } else if (ds.DSControlGrp.equals("M")) {
+                //if (!ds.DSLocation.startsWith("http://localhost:8080/fedora-demo")) {
+
                 // MAKE DISSEMINATION URLs
                 if (ds.DSCreateDT == null) {
                     ds.DSLocation =
@@ -438,6 +456,7 @@ public abstract class DOTranslationUtility {
                                     + DateUtility
                                             .convertDateToString(ds.DSCreateDT);
                 }
+                //}
             }
         } else if (transContext == DOTranslationUtility.SERIALIZE_EXPORT_MIGRATE) {
             if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")) {
@@ -752,5 +771,270 @@ public abstract class DOTranslationUtility {
                 }
             }
         }
+    }
+
+    protected static String getStateAttribute(DigitalObject obj) {
+        try {
+            char s = obj.getState().toUpperCase().charAt(0);
+            if (s == 'D') {
+                return MODEL.DELETED.localName;
+            } else if (s == 'I') {
+                return MODEL.INACTIVE.localName;
+            } else {
+                return MODEL.ACTIVE.localName;
+            }
+        } catch (Throwable th) {
+            return null;
+        }
+    }
+
+    /**
+     * @param obj
+     * @param format
+     *        The Serializer format. Defaults to FOXML1_1 if null.
+     * @return
+     * @throws ObjectIntegrityException
+     *         if no type attribute is set
+     */
+    protected static String getTypeAttribute(DigitalObject obj, XMLFormat format)
+            throws ObjectIntegrityException {
+        if (format == null) {
+            format = FOXML1_1;
+        }
+        String retVal = "";
+        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) {
+            if (format.equals(METS_EXT1_0) || format.equals(FOXML1_0)) {
+                return MODEL.BDEF_OBJECT.localName;
+            }
+            retVal =
+                    (retVal.length() == 0 ? "" : retVal + ";")
+                            + MODEL.BDEF_OBJECT.localName;
+        }
+        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)) {
+            if (format.equals(METS_EXT1_0) || format.equals(FOXML1_0)) {
+                return MODEL.BMECH_OBJECT.localName;
+            }
+            retVal =
+                    (retVal.length() == 0 ? "" : retVal + ";")
+                            + MODEL.BMECH_OBJECT.localName;
+        }
+        if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) {
+            if (format.equals(METS_EXT1_0) || format.equals(FOXML1_0)) {
+                // METS_EXT & FOXML 1.0 doesn't support this type; down-convert
+                return MODEL.DATA_OBJECT.localName;
+            }
+            retVal =
+                    (retVal.length() == 0 ? "" : retVal + ";")
+                            + MODEL.CMODEL_OBJECT.localName;
+        }
+        if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT)) {
+            if (format.equals(METS_EXT1_0) || format.equals(FOXML1_0)) {
+                return MODEL.DATA_OBJECT.localName;
+            }
+            retVal =
+                    (retVal.length() == 0 ? "" : retVal + ";")
+                            + MODEL.DATA_OBJECT.localName;
+        }
+        if (retVal.length() == 0) {
+            throw new ObjectIntegrityException("Object must have a FedoraObjectType.");
+        }
+        return retVal;
+    }
+
+    /**
+     * The audit record is created by the system, so programmatic validation
+     * here is o.k. Normally, validation takes place via XML Schema and
+     * Schematron.
+     * 
+     * @param audit
+     * @throws ObjectIntegrityException
+     */
+    protected static void validateAudit(AuditRecord audit)
+            throws ObjectIntegrityException {
+        if (audit.id == null || audit.id.equals("")) {
+            throw new ObjectIntegrityException("Audit record must have id.");
+        }
+        if (audit.date == null || audit.date.equals("")) {
+            throw new ObjectIntegrityException("Audit record must have date.");
+        }
+        if (audit.processType == null || audit.processType.equals("")) {
+            throw new ObjectIntegrityException("Audit record must have processType.");
+        }
+        if (audit.action == null || audit.action.equals("")) {
+            throw new ObjectIntegrityException("Audit record must have action.");
+        }
+        if (audit.componentID == null) {
+            audit.componentID = ""; // for backwards compatibility, no error on null
+            // throw new ObjectIntegrityException("Audit record must have componentID.");
+        }
+        if (audit.responsibility == null || audit.responsibility.equals("")) {
+            throw new ObjectIntegrityException("Audit record must have responsibility.");
+        }
+    }
+
+    protected static String getAuditTrail(DigitalObject obj)
+            throws ObjectIntegrityException {
+        StringBuffer buf = new StringBuffer();
+        final String indent0 = "            ";
+        final String indent1 = indent0 + "    ";
+        final String indent2 = indent1 + "    ";
+        appendOpenElement(buf, indent0, AUDIT.AUDIT_TRAIL, true);
+        for (AuditRecord audit : obj.getAuditRecords()) {
+            DOTranslationUtility.validateAudit(audit);
+            appendOpenElement(buf, indent1, AUDIT.RECORD, AUDIT.ID, audit.id);
+            appendFullElement(buf,
+                              indent2,
+                              AUDIT.PROCESS,
+                              AUDIT.TYPE,
+                              audit.processType);
+            appendFullElement(buf, indent2, AUDIT.ACTION, audit.action);
+            appendFullElement(buf,
+                              indent2,
+                              AUDIT.COMPONENT_ID,
+                              audit.componentID);
+            appendFullElement(buf,
+                              indent2,
+                              AUDIT.RESPONSIBILITY,
+                              audit.responsibility);
+            appendFullElement(buf, indent2, AUDIT.DATE, DateUtility
+                    .convertDateToString(audit.date));
+            appendFullElement(buf,
+                              indent2,
+                              AUDIT.JUSTIFICATION,
+                              audit.justification);
+            appendCloseElement(buf, indent1, AUDIT.RECORD);
+        }
+        appendCloseElement(buf, indent0, AUDIT.AUDIT_TRAIL);
+        return buf.toString();
+    }
+    
+    protected static List<AuditRecord> getAuditRecords(XMLEventReader reader) throws XMLStreamException {
+        List<AuditRecord> records = new ArrayList<AuditRecord>();
+        String inElement = null;
+        
+        while (reader.hasNext()) {
+            XMLEvent event = reader.nextEvent();
+            if (event.isStartElement()) {
+                StartElement element = (StartElement) event;
+                inElement = element.getName().getLocalPart();
+                if (inElement.equals(AUDIT.RECORD.localName)) {
+                    AuditRecord record = new AuditRecord();
+                    java.util.Iterator<?> it = element.getAttributes();
+                    while (it.hasNext()) {
+                        Attribute attr = (Attribute)it.next();
+                        if (attr.getName().getLocalPart().equals(AUDIT.ID.localName)) {
+                            record.id = attr.getValue();
+                        }
+                    }
+                    records.add(record);
+                } else if (inElement.equals(AUDIT.PROCESS.localName)) {
+                    java.util.Iterator<?> it = element.getAttributes();
+                    while (it.hasNext()) {
+                        Attribute attr = (Attribute)it.next();
+                        if (attr.getName().getLocalPart().equals(AUDIT.TYPE.localName)) {
+                            records.get(records.size() - 1).processType = attr.getValue();
+                        }
+                    }
+                }
+            }
+            if (event.isEndElement()) {
+                inElement = "";
+            }
+            if (event.isCharacters()) {
+                Characters characters = (Characters) event;
+                if (!records.isEmpty()) {
+                    AuditRecord record = records.get(records.size() - 1);
+                    if (inElement.equals(AUDIT.ACTION.localName)) {
+                        record.action = characters.getData();                        
+                    } else if (inElement.equals(AUDIT.COMPONENT_ID.localName)) {
+                        record.componentID = characters.getData();
+                    } else if (inElement.equals(AUDIT.DATE.localName)) {
+                        record.date = DateUtility.convertStringToDate(characters.getData());
+                    } else if (inElement.equals(AUDIT.JUSTIFICATION.localName)) {
+                        record.justification = characters.getData();
+                    } else if (inElement.equals(AUDIT.RESPONSIBILITY.localName)) {
+                        record.responsibility = characters.getData();
+                    }
+                }
+            }
+        }
+        return records;
+    }
+    
+    /**
+     * Parse an audit:auditTrail and return a list of AuditRecords.
+     * 
+     * @since 3.0
+     * @param auditTrail
+     * @return
+     * @throws XMLStreamException
+     */
+    protected static List<AuditRecord> getAuditRecords(InputStream auditTrail)
+            throws XMLStreamException {
+        XMLEventReader eventReader;
+        synchronized(m_xmlInputFactory) {
+            eventReader = m_xmlInputFactory.createXMLEventReader(auditTrail);
+        }
+        List<AuditRecord> records = getAuditRecords(eventReader);
+        eventReader.close();
+        return records;
+    }
+    
+    protected static List<AuditRecord> getAuditRecords(Reader auditTrail)
+            throws XMLStreamException {
+        XMLEventReader eventReader;
+        synchronized (m_xmlInputFactory) {
+            eventReader = m_xmlInputFactory.createXMLEventReader(auditTrail);
+        }
+        List<AuditRecord> records = getAuditRecords(eventReader);
+        eventReader.close();
+        return records;
+    }
+
+    private static void appendOpenElement(StringBuffer buf,
+                                          String indent,
+                                          QName element,
+                                          boolean declareNamespace) {
+        buf.append(indent + "<" + element.qName);
+        if (declareNamespace) {
+            buf.append(" xmlns:" + element.namespace.prefix);
+            buf.append("=\"" + element.namespace.uri + "\"");
+        }
+        buf.append(">\n");
+    }
+
+    private static void appendOpenElement(StringBuffer buf,
+                                          String indent,
+                                          QName element,
+                                          QName attribute,
+                                          String attributeContent) {
+        buf.append(indent + "<" + element.qName + " ");
+        buf.append(attribute.localName + "=\"");
+        buf.append(StreamUtility.enc(attributeContent) + "\">\n");
+    }
+
+    private static void appendCloseElement(StringBuffer buf,
+                                           String indent,
+                                           QName element) {
+        buf.append(indent + "</" + element.qName + ">\n");
+    }
+
+    private static void appendFullElement(StringBuffer buf,
+                                          String indent,
+                                          QName element,
+                                          QName attribute,
+                                          String attributeContent) {
+        buf.append(indent + "<" + element.qName + " ");
+        buf.append(attribute.localName + "=\"");
+        buf.append(StreamUtility.enc(attributeContent) + "\"/>\n");
+    }
+
+    private static void appendFullElement(StringBuffer buf,
+                                          String indent,
+                                          QName element,
+                                          String elementContent) {
+        buf.append(indent + "<" + element.qName + ">");
+        buf.append(StreamUtility.enc(elementContent));
+        buf.append("</" + element.qName + ">\n");
     }
 }

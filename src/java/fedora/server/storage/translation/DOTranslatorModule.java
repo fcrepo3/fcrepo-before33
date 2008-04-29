@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.ModuleInitializationException;
@@ -33,10 +35,15 @@ import fedora.server.storage.types.DigitalObject;
  * </p>
  * 
  * @author Chris Wilper
+ * @version $Id$
  */
 public class DOTranslatorModule
         extends Module
         implements DOTranslator {
+    
+    /** Logger for this class. */
+    private static final Logger LOG =
+            Logger.getLogger(DOTranslatorModule.class.getName());
 
     /** Prefix for deserializer parameter names. */
     private static final String DESER_PARAM_PREFIX = "deserializer_";
@@ -50,7 +57,7 @@ public class DOTranslatorModule
     /**
      * Creates an instance using the standard <code>Module</code> constructor.
      */
-    public DOTranslatorModule(Map params, Server server, String role)
+    public DOTranslatorModule(Map<String, String> params, Server server, String role)
             throws ModuleInitializationException {
         super(params, server, role);
     }

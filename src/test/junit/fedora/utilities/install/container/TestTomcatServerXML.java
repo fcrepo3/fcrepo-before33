@@ -105,5 +105,9 @@ public class TestTomcatServerXML {
         
         return new InstallOptions(null, map);
     }
-
+    
+    // Supports legacy test runners
+    public static junit.framework.Test suite() {
+        return new junit.framework.JUnit4TestAdapter(TestTomcatServerXML.class);
+    }
 }

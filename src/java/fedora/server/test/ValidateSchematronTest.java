@@ -33,7 +33,7 @@ public class ValidateSchematronTest
     @Override
     protected void setUp() {
         tempdir = "TestValidation";
-        inSchematronPPFile = "src/xsl/schematron/preprocessor.xslt";
+        inSchematronPPFile = "src/schematron/preprocessor.xslt";
 
         // FOXML
         //inFile="TestValidation/foxml-reference-example.xml";

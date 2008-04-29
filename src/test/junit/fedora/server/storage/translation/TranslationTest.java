@@ -1,8 +1,9 @@
 
 package fedora.server.storage.translation;
 
-import org.custommonkey.xmlunit.XMLTestCase;
+import java.util.Date;
 
+import org.custommonkey.xmlunit.XMLTestCase;
 import org.junit.Before;
 
 import fedora.server.storage.types.BasicDigitalObject;
@@ -44,6 +45,8 @@ public abstract class TranslationTest
         DigitalObject obj = new BasicDigitalObject();
         obj.addFedoraObjectType(fType);
         obj.setPid(TEST_PID);
+        obj.setCreateDate(new Date());
+        obj.setLastModDate(new Date());
         return obj;
     }
 
@@ -53,6 +56,7 @@ public abstract class TranslationTest
         ds.DSVersionID = id + ".0";
         ds.DSControlGrp = "X";
         ds.xmlContent = "<doc/>".getBytes();
+        ds.DSCreateDT = new Date();
         return ds;
     }
 

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>info:fedora/demo:27</id>
+  <title type="text">Behavior Definition Object for Image Manipulation Servlet</title>
+  <updated>2008-04-18T15:40:06.893Z</updated>
+  <author>
+    <name>fedoraAdmin</name>
+  </author>
+  <category term="FedoraBDefObject" scheme="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"></category>
+  <category term="Active" scheme="info:fedora/fedora-system:def/model#state"></category>
+  <category term="2008-04-18T15:40:06.893Z" scheme="info:fedora/fedora-system:def/model#createdDate"></category>
+  <icon>http://www.fedora-commons.org/images/logo_vertical_transparent_200_251.png</icon>
+  <entry>
+    <id>info:fedora/demo:27/DC</id>
+    <title type="text">DC</title>
+    <updated>2008-04-18T15:40:06.893Z</updated>
+    <link href="info:fedora/demo:27/DC/2008-04-18T15:40:06.893Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:27/DC/2008-04-18T15:40:06.893Z</id>
+    <title type="text">DC1.0</title>
+    <updated>2008-04-18T15:40:06.893Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:27/DC"></thr:in-reply-to>
+    <category term="Dublin Core Metadata" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="268" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+					
+        <dc:title>Behavior Definition Object for Image Manipulation Servlet</dc:title>
+					
+        <dc:identifier>demo:27</dc:identifier>
+				</oai_dc:dc>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:27/METHODMAP</id>
+    <title type="text">METHODMAP</title>
+    <updated>2008-04-18T15:40:06.893Z</updated>
+    <link href="info:fedora/demo:27/METHODMAP/2008-04-18T15:40:06.893Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:27/METHODMAP/2008-04-18T15:40:06.893Z</id>
+    <title type="text">METHODMAP1.0</title>
+    <updated>2008-04-18T15:40:06.893Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:27/METHODMAP"></thr:in-reply-to>
+    <category term="Method Map for Fedora Behavior Definition for Image Manipulation Servlet" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="1981" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <fmm:MethodMap xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap" bDefPID="demo:27" name="Fedora MethodMap for Image Manipulation Servlet">
+					
+        <fmm:Method operationName="resizeImage">
+						
+          <fmm:UserInputParm defaultValue="150" parmName="width" passBy="VALUE" required="true"></fmm:UserInputParm>
+					</fmm:Method>
+					
+        <fmm:Method operationName="zoomImage">
+						
+          <fmm:UserInputParm defaultValue="3" parmName="zoom" passBy="VALUE" required="true"></fmm:UserInputParm>
+					</fmm:Method>
+					
+        <fmm:Method operationName="brightImage">
+						
+          <fmm:UserInputParm defaultValue="3.5" parmName="bright" passBy="VALUE" required="true"></fmm:UserInputParm>
+					</fmm:Method>
+					
+        <fmm:Method operationName="watermarkImage">
+						
+          <fmm:UserInputParm defaultValue="Watermarked 2003" parmName="watermark" passBy="VALUE" required="true"></fmm:UserInputParm>
+					</fmm:Method>
+					
+        <fmm:Method operationName="grayscaleImage"></fmm:Method>
+					
+        <fmm:Method operationName="cropImage">
+						
+          <fmm:UserInputParm defaultValue="30" parmName="x" passBy="VALUE" required="true"></fmm:UserInputParm>
+						
+          <fmm:UserInputParm defaultValue="100" parmName="y" passBy="VALUE" required="true"></fmm:UserInputParm>
+						
+          <fmm:UserInputParm defaultValue="" parmName="width" passBy="VALUE" required="false"></fmm:UserInputParm>
+						
+          <fmm:UserInputParm defaultValue="" parmName="height" passBy="VALUE" required="false"></fmm:UserInputParm>
+					</fmm:Method>
+					
+        <fmm:Method operationName="convertImage">
+						
+          <fmm:UserInputParm defaultValue="gif" parmName="convertTo" passBy="VALUE" required="true">
+							
+            <fmm:ValidParmValues>
+								
+              <fmm:ValidParm value="jpg"></fmm:ValidParm>
+								
+              <fmm:ValidParm value="gif"></fmm:ValidParm>
+								
+              <fmm:ValidParm value="tiff"></fmm:ValidParm>
+								
+              <fmm:ValidParm value="png"></fmm:ValidParm>
+								
+              <fmm:ValidParm value="bmp"></fmm:ValidParm>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+					</fmm:Method>
+				</fmm:MethodMap>
+    </content>
+  </entry>
+</feed>

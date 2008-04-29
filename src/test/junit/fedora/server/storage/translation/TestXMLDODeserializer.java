@@ -1,24 +1,30 @@
 
 package fedora.server.storage.translation;
 
+import static fedora.server.storage.translation.DOTranslationUtility.DESERIALIZE_INSTANCE;
+import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-
+import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import org.junit.Test;
 
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
+import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
-
-import static fedora.server.storage.translation.DOTranslationUtility.DESERIALIZE_INSTANCE;
-import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL;
 
 /**
  * Common unit tests and utility methods for XML-based deserializers.
@@ -112,6 +118,46 @@ public abstract class TestXMLDODeserializer
         assertEquals("Length of XML datastream copies is not deterministic!",
                      ds1copy.xmlContent.length,
                      ds1copyOfCopy.xmlContent.length);
+    }
+    
+    @Test
+    public void testAuditDatastream() throws Exception {
+        AuditRecord record = new AuditRecord();
+        record.action = "modifyDatastreamByReference";
+        record.componentID = "DRAWING-ICON";
+        record.date = new Date(0L);
+        record.id = "AUDREC1";
+        record.justification = "malice";
+        record.processType = "Fedora API-M";
+        record.responsibility = "fedoraAdmin";
+        
+        DigitalObject original = createTestObject(DigitalObject.FEDORA_OBJECT);
+        original.getAuditRecords().add(record);
+        
+        // serialize to file
+        File temp = File.createTempFile("audit", ".xml");
+        OutputStream out = new FileOutputStream(temp);
+        m_serializer.serialize(original, out, "utf-8", DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC);
+        out.close();
+        
+        // deserialize
+        DigitalObject candidate = new BasicDigitalObject();
+        InputStream in = new FileInputStream(temp);
+        m_deserializer.deserialize(in, candidate, "utf-8", DOTranslationUtility.DESERIALIZE_INSTANCE);
+        List<AuditRecord> a1 = original.getAuditRecords();
+        List<AuditRecord> a2 = candidate.getAuditRecords();
+        assertEquals(a1.size(), a2.size());
+        for (int i = 0; i < a1.size(); i++) {
+            assertEquals(a1.get(i).action, a2.get(i).action);
+            assertEquals(a1.get(i).componentID, a2.get(i).componentID);
+            assertEquals(a1.get(i).date, a2.get(i).date);
+            assertEquals(a1.get(i).id, a2.get(i).id);
+            assertEquals(a1.get(i).justification, a2.get(i).justification);
+            assertEquals(a1.get(i).processType, a2.get(i).processType);
+            assertEquals(a1.get(i).responsibility, a2.get(i).responsibility);
+        }
+        
+        temp.delete();
     }
 
     /**
@@ -215,7 +261,7 @@ public abstract class TestXMLDODeserializer
         int numDisseminators = 0;
         Iterator<String> iter = result.disseminatorIdIterator();
         while (iter.hasNext()) {
-            String id = iter.next();
+            iter.next();
             numDisseminators++;
         }
         assertEquals(2, numDisseminators);

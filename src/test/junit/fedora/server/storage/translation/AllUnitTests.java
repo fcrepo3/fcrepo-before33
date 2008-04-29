@@ -6,16 +6,16 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses( {TestDOTranslatorImpl.class,
-
-TestFOXML1_0DOSerializer.class, TestFOXML1_0DODeserializer.class,
-
-TestFOXML1_1DOSerializer.class, TestFOXML1_1DODeserializer.class,
-
-TestMETSFedoraExt1_0DOSerializer.class,
+        TestFOXML1_0DOSerializer.class, TestFOXML1_0DODeserializer.class,
+        TestFOXML1_1DOSerializer.class, TestFOXML1_1DODeserializer.class,
+        TestMETSFedoraExt1_0DOSerializer.class,
         TestMETSFedoraExt1_0DODeserializer.class,
-
         TestMETSFedoraExt1_1DOSerializer.class,
-        TestMETSFedoraExt1_1DODeserializer.class})
+        TestMETSFedoraExt1_1DODeserializer.class,
+        TestAtomDOSerializer.class,
+        TestAtomDODeserializer.class,
+        DOTranslationUtilityTest.class})
+        
 public class AllUnitTests {
 
     // Supports legacy tests runners
@@ -37,6 +37,11 @@ public class AllUnitTests {
 
         suite.addTest(TestMETSFedoraExt1_1DOSerializer.suite());
         suite.addTest(TestMETSFedoraExt1_1DODeserializer.suite());
+        
+        suite.addTest(TestAtomDOSerializer.suite());
+        suite.addTest(TestAtomDODeserializer.suite());
+        
+        suite.addTest(DOTranslationUtilityTest.suite());
 
         return suite;
     }
