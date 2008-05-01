@@ -3,7 +3,7 @@ package fedora.server.storage.translation;
 
 import org.junit.Test;
 
-import fedora.server.storage.types.DigitalObject;
+import static fedora.common.Models.CONTENT_MODEL_3_0;
 
 /**
  * Unit tests for FOXML1_1DODeserializer.
@@ -25,7 +25,7 @@ public class TestFOXML1_1DODeserializer
 
     @Test
     public void testDeserializeSimpleCModelObject() {
-        doSimpleTest(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT);
+        doSimpleTest(CONTENT_MODEL_3_0);
     }
 
     // Supports legacy test runners

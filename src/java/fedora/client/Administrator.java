@@ -57,10 +57,10 @@ import fedora.client.actions.ViewObject;
 import fedora.client.actions.ViewObjectXML;
 import fedora.client.batch.BatchModify;
 import fedora.client.batch.BatchModifyValidate;
-import fedora.client.bmech.BDefBuilder;
-import fedora.client.bmech.BMechBuilder;
 import fedora.client.console.access.AccessConsole;
 import fedora.client.console.management.ManagementConsole;
+import fedora.client.deployment.ServiceDefinitionBuilder;
+import fedora.client.deployment.ServiceDeploymentBuilder;
 import fedora.client.export.ExportDialog;
 import fedora.client.ingest.IngestDialog;
 import fedora.client.search.Search;
@@ -358,31 +358,7 @@ public class Administrator
     protected JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        // [F]ile
-        //   [N]ew
-        //     [O]bject
-        //     [C]ontent Model
-        //     Behavior [M]echanism
-        //     Behavior [D]efinition
-        //   [O]pen Object...
-        //   -----------
-        //   [I]ngest
-        //     [O]ne Object
-        //       From [F]ile...
-        //       From [R]epository...
-        //     [M]ultiple Objects
-        //       From [D]irectory
-        //       From [R]epository...
-        //   [E]xport
-        //     [O]ne Object...
-        //     [M]ultiple Objects
-        //   -----------
-        //   [P]urge Object
-        //   [V]iew Object XML
-        //     ---------------------
-        //   -----------
-        //   [L]ogin
-        //   E[x]it
+       
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
@@ -405,28 +381,28 @@ public class Administrator
                 new NewObjectDialog(true);
             }
         });
-        JMenuItem fileNewBMech =
-                new JMenuItem("Behavior Mechanism", KeyEvent.VK_M);
-        fileNewBMech.addActionListener(new ActionListener() {
+        JMenuItem fileNewSDep =
+                new JMenuItem("Service Deployment", KeyEvent.VK_M);
+        fileNewSDep.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                createBMechBuilder();
+                createSDepBuilder();
             }
         });
 
-        JMenuItem fileNewBDef =
-                new JMenuItem("Behavior Definition", KeyEvent.VK_D);
-        fileNewBDef.addActionListener(new ActionListener() {
+        JMenuItem fileNewSDef =
+                new JMenuItem("Service Definition", KeyEvent.VK_D);
+        fileNewSDef.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                createBDefBuilder();
+                createSDefBuilder();
             }
         });
 
         fileNew.add(fileNewObject);
         fileNew.add(fileNewCModel);
-        fileNew.add(fileNewBMech);
-        fileNew.add(fileNewBDef);
+        fileNew.add(fileNewSDep);
+        fileNew.add(fileNewSDef);
 
         //   [O]pen
         JMenuItem fileOpen = new JMenuItem(new ViewObject());
@@ -461,7 +437,7 @@ public class Administrator
         });
         fileIngestOne.add(fileIngestOneFromFile);
         fileIngestOne.add(fileIngestOneFromRepository);
-        JMenu fileIngestMultiple = new JMenu("Objects By Type");
+        JMenu fileIngestMultiple = new JMenu("Multiple Objects");
         fileIngestMultiple.setMnemonic(KeyEvent.VK_M);
         JMenuItem fileIngestMultipleFromFile =
                 new JMenuItem("From Directory...", KeyEvent.VK_D);
@@ -503,7 +479,7 @@ public class Administrator
             }
         });
 
-        JMenuItem fileExportMultiple = new JMenuItem("Objects By Type...");
+        JMenuItem fileExportMultiple = new JMenuItem("Multiple Objects...");
         fileExportMultiple.setMnemonic(KeyEvent.VK_M);
         fileExportMultiple
                 .setToolTipText("Exports multiple serialized Digitial Objects to disk.");
@@ -677,27 +653,27 @@ public class Administrator
         buildersMenu.setMnemonic(KeyEvent.VK_B);
         buildersMenu.setToolTipText("Tools to build objects");
 
-        JMenuItem buildersBDef =
-                new JMenuItem("Behavior Definition Builder", KeyEvent.VK_D);
-        buildersBDef.setToolTipText("Create a new Behavior Definition Object");
-        buildersBDef.addActionListener(new ActionListener() {
+        JMenuItem buildersSDef =
+                new JMenuItem("Service Definition Builder", KeyEvent.VK_D);
+        buildersSDef.setToolTipText("Create a new Service Definition Object");
+        buildersSDef.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                createBDefBuilder();
+                createSDefBuilder();
             }
         });
-        buildersMenu.add(buildersBDef);
+        buildersMenu.add(buildersSDef);
 
-        JMenuItem buildersBMech =
-                new JMenuItem("Behavior Mechanism Builder", KeyEvent.VK_M);
-        buildersBMech.setToolTipText("Create a new Behavior Mechanism Object");
-        buildersBMech.addActionListener(new ActionListener() {
+        JMenuItem buildersSDep =
+                new JMenuItem("Service Deployment Builder", KeyEvent.VK_M);
+        buildersSDep.setToolTipText("Create a new Service Deployment Object");
+        buildersSDep.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                createBMechBuilder();
+                createSDepBuilder();
             }
         });
-        buildersMenu.add(buildersBMech);
+        buildersMenu.add(buildersSDep);
         menuBar.add(buildersMenu);
 
         WindowMenu windowMenu = new WindowMenu(s_desktop, "Window");
@@ -789,9 +765,9 @@ public class Administrator
         s_lastDir = f;
     }
 
-    protected void createBDefBuilder() {
-        BDefBuilder frame =
-                new BDefBuilder(s_protocol,
+    protected void createSDefBuilder() {
+        ServiceDefinitionBuilder frame =
+                new ServiceDefinitionBuilder(s_protocol,
                                 s_host,
                                 s_port,
                                 s_user,
@@ -805,9 +781,9 @@ public class Administrator
         }
     }
 
-    protected void createBMechBuilder() {
-        BMechBuilder frame =
-                new BMechBuilder(s_protocol,
+    protected void createSDepBuilder() {
+        ServiceDeploymentBuilder frame =
+                new ServiceDeploymentBuilder(s_protocol,
                                  s_host,
                                  s_port,
                                  s_user,

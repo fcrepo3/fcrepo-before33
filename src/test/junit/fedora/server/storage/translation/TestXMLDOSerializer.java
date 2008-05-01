@@ -5,20 +5,15 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
 import org.junit.Test;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
@@ -31,6 +26,10 @@ import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_E
 import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_EXPORT_MIGRATE;
 import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC;
 import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL;
+
+import static fedora.common.Models.FEDORA_OBJECT_3_0;
+import static fedora.common.Models.SERVICE_DEFINITION_3_0;
+import static fedora.common.Models.SERVICE_DEPLOYMENT_3_0;
 
 /**
  * Common unit tests and utility methods for XML-based serializers.
@@ -53,50 +52,53 @@ public abstract class TestXMLDOSerializer
 
     @Test
     public void testSerializeSimpleDataObject() {
-        doSerializeAllOrFail(createTestObject(DigitalObject.FEDORA_OBJECT));
+        doSerializeAllOrFail(createTestObject(FEDORA_OBJECT_3_0));
     }
 
     @Test
-    public void testSerializeSimpleBMechObject() {
-        doSerializeAllOrFail(createTestObject(DigitalObject.FEDORA_BMECH_OBJECT));
+    public void testSerializeSimpleSDepObject() {
+        doSerializeAllOrFail(createTestObject(SERVICE_DEPLOYMENT_3_0));
     }
 
     @Test
-    public void testSerializeSimpleBDefObject() {
-        doSerializeAllOrFail(createTestObject(DigitalObject.FEDORA_BDEF_OBJECT));
+    public void testSerializeSimpleSDefObject() {
+        doSerializeAllOrFail(createTestObject(SERVICE_DEFINITION_3_0));
     }
 
-    @Test 
+    @Test
     public void testInlineXMLEncoding() throws Exception {
         final String TAG = "test";
         final String OPEN = "<" + TAG + ">";
         final String CLOSE = "</" + TAG + ">";
         char[] unicodeContent = new char[1365];
-        
-        StringBuilder payload = new StringBuilder(
-                unicodeContent.length + OPEN.length() + CLOSE.length());
-        
+
+        StringBuilder payload =
+                new StringBuilder(unicodeContent.length + OPEN.length()
+                        + CLOSE.length());
+
         for (int i = 0; i < unicodeContent.length; i++) {
             unicodeContent[i] = '\u0e57'; // Thai digit 7
         }
-        
+
         payload.append(OPEN);
         payload.append(unicodeContent);
         payload.append(CLOSE);
-        
-        DigitalObject obj = createTestObject(DigitalObject.FEDORA_OBJECT);
+
+        DigitalObject obj = createTestObject(FEDORA_OBJECT_3_0);
         final String dsID1 = "DS1";
-        
+
         /* Populate the object with a test datastream and serialize */
         DatastreamXMLMetadata ds1 = createXDatastream(dsID1);
         ds1.xmlContent = payload.toString().getBytes("UTF-8");
-        obj.datastreams(dsID1).add(ds1);
-        
-        String serializedContent = doSerialize(obj, SERIALIZE_STORAGE_INTERNAL)
-            .getElementsByTagName(TAG).item(0).getFirstChild().getNodeValue();
-        
-        assertTrue("UTF-8 chars are not serialized properly!", 
-                new String(unicodeContent).equals(serializedContent));
+        obj.addDatastreamVersion(ds1, true);
+
+        String serializedContent =
+                doSerialize(obj, SERIALIZE_STORAGE_INTERNAL)
+                        .getElementsByTagName(TAG).item(0).getFirstChild()
+                        .getNodeValue();
+
+        assertTrue("UTF-8 chars are not serialized properly!",
+                   new String(unicodeContent).equals(serializedContent));
     }
 
     //---
@@ -151,12 +153,14 @@ public abstract class TestXMLDOSerializer
             fail("Serializer doesn't support UTF-8!?");
         }
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
         DocumentBuilder builder = null;
         try {
             builder = factory.newDocumentBuilder();
         } catch (ParserConfigurationException wontHappen) {
             throw new Error(wontHappen);
         }
+
         InputStream in = new ByteArrayInputStream(out.toByteArray());
         try {
             return builder.parse(in);

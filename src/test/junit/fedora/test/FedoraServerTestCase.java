@@ -4,7 +4,6 @@ package fedora.test;
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -94,12 +93,10 @@ public abstract class FedoraServerTestCase
             ingestFormat = FOXML1_1.uri;
         }
 
-        String fTypes = "DMOC";
         FedoraClient client = FedoraTestCase.getFedoraClient();
 
         Ingest.multiFromDirectory(dir,
                                   ingestFormat,
-                                  fTypes,
                                   client.getAPIA(),
                                   client.getAPIM(),
                                   null,
@@ -109,40 +106,30 @@ public abstract class FedoraServerTestCase
     }
 
     /**
-     * Gets the PIDs of objects of the specified type in the "demo" pid
-     * namespace that are in the repository
+     * Gets the PIDs of objects in the "demo" pid namespace that are in the
+     * repository
      * 
-     * @param fTypes
-     *        any combination of O, D, or M
      * @return set of PIDs of the specified object type
      * @throws Exception
      */
-    public static Set<String> getDemoObjects(String[] fTypes) throws Exception {
-        if (fTypes == null || fTypes.length == 0) {
-            fTypes = new String[] {"O", "M", "D", "C"};
-        }
+    public static Set<String> getDemoObjects() throws Exception {
 
         FedoraClient client = getFedoraClient();
         InputStream queryResult;
-        Set<String> pids = new LinkedHashSet<String>();
-        for (String element : fTypes) {
-            queryResult =
-                    client.get(getBaseURL()
-                            + "/search?query=pid~demo:*%20fType=" + element
-                            + "&maxResults=1000&pid=true&xml=true", true, true);
-            SearchResultParser parser = new SearchResultParser(queryResult);
-            pids.addAll(parser.getPIDs());
-        }
-        return pids;
+        queryResult =
+                client.get(getBaseURL() + "/search?query=pid~demo:*"
+                        + "&maxResults=1000&pid=true&xml=true", true, true);
+        SearchResultParser parser = new SearchResultParser(queryResult);
+
+        return parser.getPIDs();
     }
 
     public static void purgeDemoObjects() throws Exception {
         FedoraClient client = getFedoraClient();
         FedoraAPIM apim = client.getAPIM();
 
-        String[] fTypes = {"O", "M", "D", "C"};
-        Set<String> pids = getDemoObjects(fTypes);
-        for (String pid : pids) {
+
+        for (String pid : getDemoObjects()) {
             AutoPurger.purge(apim, pid, null, false);
         }
     }

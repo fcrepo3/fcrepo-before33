@@ -6,8 +6,8 @@
 package fedora.common;
 
 import fedora.common.policy.ActionNamespace;
-import fedora.common.policy.BDefNamespace;
-import fedora.common.policy.BMechNamespace;
+import fedora.common.policy.ServiceDefinitionNamespace;
+import fedora.common.policy.ServiceDeploymentNamespace;
 import fedora.common.policy.DatastreamNamespace;
 import fedora.common.policy.DisseminatorNamespace;
 import fedora.common.policy.EnvironmentNamespace;
@@ -162,16 +162,16 @@ public interface Constants {
     public static final ActionNamespace ACTION = ActionNamespace.getInstance();
 
     /**
-     * The Fedora BDef XACML namespace;
-     * <code>urn:fedora:names:fedora:2.1:resource:bdef</code>
+     * The Fedora service definition XACML namespace;
+     * <code>urn:fedora:names:fedora:2.1:resource:sdef</code>
      */
-    public static final BDefNamespace BDEF = BDefNamespace.getInstance();
+    public static final ServiceDefinitionNamespace SDEF = ServiceDefinitionNamespace.getInstance();
 
     /**
-     * The Fedora BMech XACML namespace;
-     * <code>urn:fedora:names:fedora:2.1:resource:bmech</code>
+     * The Fedora service deployment XACML namespace;
+     * <code>urn:fedora:names:fedora:2.1:resource:sdep</code>
      */
-    public static final BMechNamespace BMECH = BMechNamespace.getInstance();
+    public static final ServiceDeploymentNamespace SDEP = ServiceDeploymentNamespace.getInstance();
 
     /**
      * The Fedora Datastream XACML namespace;

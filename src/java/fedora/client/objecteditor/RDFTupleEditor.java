@@ -58,6 +58,8 @@ import fedora.common.PID;
 
 import fedora.server.storage.types.RelationshipTuple;
 
+import static fedora.common.Constants.MODEL;
+
 /**
  * A general-purpose text editor/viewer with XML pretty-printing.
  */
@@ -498,8 +500,11 @@ public class RDFTupleEditor
             mainPanel
                     .add(lab2 = new JLabel("Predicate:", SwingConstants.RIGHT));
             String rels[] =
-                    {"", "fedora-model:hasBDef", "fedora-model:isContractor",
-                            "fedora-model:hasContentModel", "rel:isMemberOf"};
+                    {"", "fedora-model:" + MODEL.HAS_MODEL,
+                            "fedora-model:" + MODEL.HAS_SERVICE,
+                            "fedora-model:" + MODEL.IS_CONTRACTOR_OF,
+                            "fedora-model:" + MODEL.IS_DEPLOYMENT_OF,
+                            "rel:" + Constants.RELS_EXT.IS_MEMBER_OF};
             m_predicate = new JComboBox(rels);
             m_predicate.setEditable(true);
             Administrator.constrainHeight(m_predicate);

@@ -65,96 +65,8 @@ public class Ingest
      * Ingest from directory
      **************************************************************************/
 
-    // if logMessage is null, will use original path in logMessage
     public static void multiFromDirectory(File dir,
-                                          String ingestFormat,
-                                          String fTypes,
-                                          FedoraAPIA targetRepoAPIA,
-                                          FedoraAPIM targetRepoAPIM,
-                                          String logMessage,
-                                          PrintStream log,
-                                          IngestCounter c) throws Exception {
-        String tps = fTypes.toUpperCase();
-        if (tps.indexOf("D") != -1) {
-            multiFromDirectory(dir,
-                               ingestFormat,
-                               'D',
-                               targetRepoAPIA,
-                               targetRepoAPIM,
-                               logMessage,
-                               log,
-                               c);
-        }
-        if (tps.indexOf("M") != -1) {
-            multiFromDirectory(dir,
-                               ingestFormat,
-                               'M',
-                               targetRepoAPIA,
-                               targetRepoAPIM,
-                               logMessage,
-                               log,
-                               c);
-        }
-        if (tps.indexOf("C") != -1) {
-            multiFromDirectory(dir,
-                               ingestFormat,
-                               'C',
-                               targetRepoAPIA,
-                               targetRepoAPIM,
-                               logMessage,
-                               log,
-                               c);
-        }
-        if (tps.indexOf("O") != -1) {
-            multiFromDirectory(dir,
-                               ingestFormat,
-                               'O',
-                               targetRepoAPIA,
-                               targetRepoAPIM,
-                               logMessage,
-                               log,
-                               c);
-        }
-    }
-
-    private static String getSearchString(char fType) {
-        if (fType == 'D') {
-            return "FedoraBDefObject";
-        } else if (fType == 'M') {
-            return "FedoraBMechObject";
-        } else if (fType == 'O') {
-            return "FedoraObject";
-        } else if (fType == 'C') {
-            return "FedoraCModelObject";
-        } else {
-            throw new RuntimeException("Unrecognized fType: " + fType);
-        }
-    }
-
-    public static void multiFromDirectory(File dir,
-                                          String ingestFormat,
-                                          char fType,
-                                          FedoraAPIA targetRepoAPIA,
-                                          FedoraAPIM targetRepoAPIM,
-                                          String logMessage,
-                                          PrintStream log,
-                                          IngestCounter c) throws Exception {
-        String searchString = getSearchString(fType);
-        multiFromDirectory(dir,
-                           ingestFormat,
-                           fType,
-                           searchString,
-                           targetRepoAPIA,
-                           targetRepoAPIM,
-                           logMessage,
-                           log,
-                           c);
-    }
-
-    private static void multiFromDirectory(File dir,
                                            String ingestFormat,
-                                           char fType,
-                                           String searchString,
                                            FedoraAPIA targetRepoAPIA,
                                            FedoraAPIM targetRepoAPIM,
                                            String logMessage,
@@ -166,29 +78,26 @@ public class Ingest
             if (element.isDirectory()) {
                 multiFromDirectory(element,
                                    ingestFormat,
-                                   fType,
-                                   searchString,
                                    targetRepoAPIA,
                                    targetRepoAPIM,
                                    logMessage,
                                    log,
                                    c);
             } else {
-                if (matches(element, searchString)) {
-                    try {
-                        String pid =
-                                oneFromFile(element,
-                                            ingestFormat,
-                                            targetRepoAPIA,
-                                            targetRepoAPIM,
-                                            logMessage);
-                        c.successes++;
-                        IngestLogger.logFromFile(log, element, fType, pid);
-                    } catch (Exception e) {
-                        // failed... just log it and continue
-                        c.failures++;
-                        IngestLogger.logFailedFromFile(log, element, fType, e);
-                    }
+
+                try {
+                    String pid =
+                            oneFromFile(element,
+                                        ingestFormat,
+                                        targetRepoAPIA,
+                                        targetRepoAPIM,
+                                        logMessage);
+                    c.successes++;
+                    IngestLogger.logFromFile(log, element, pid);
+                } catch (Exception e) {
+                    // failed... just log it and continue
+                    c.failures++;
+                    IngestLogger.logFailedFromFile(log, element, e);
                 }
             }
         }
@@ -260,90 +169,16 @@ public class Ingest
                                            FedoraAPIA sourceRepoAPIA,
                                            FedoraAPIM sourceRepoAPIM,
                                            String sourceExportFormat,
-                                           String fTypes,
-                                           FedoraAPIA targetRepoAPIA,
-                                           FedoraAPIM targetRepoAPIM,
-                                           String logMessage,
-                                           PrintStream log,
-                                           IngestCounter c) throws Exception {
-        String tps = fTypes.toUpperCase();
-        if (tps.indexOf("D") != -1) {
-            multiFromRepository(sourceProtocol,
-                                sourceHost,
-                                sourcePort,
-                                sourceRepoAPIA,
-                                sourceRepoAPIM,
-                                sourceExportFormat,
-                                'D',
-                                targetRepoAPIA,
-                                targetRepoAPIM,
-                                logMessage,
-                                log,
-                                c);
-        }
-        if (tps.indexOf("M") != -1) {
-            multiFromRepository(sourceProtocol,
-                                sourceHost,
-                                sourcePort,
-                                sourceRepoAPIA,
-                                sourceRepoAPIM,
-                                sourceExportFormat,
-                                'M',
-                                targetRepoAPIA,
-                                targetRepoAPIM,
-                                logMessage,
-                                log,
-                                c);
-        }
-        if (tps.indexOf("C") != -1) {
-            multiFromRepository(sourceProtocol,
-                                sourceHost,
-                                sourcePort,
-                                sourceRepoAPIA,
-                                sourceRepoAPIM,
-                                sourceExportFormat,
-                                'C',
-                                targetRepoAPIA,
-                                targetRepoAPIM,
-                                logMessage,
-                                log,
-                                c);
-        }
-        if (tps.indexOf("O") != -1) {
-            multiFromRepository(sourceProtocol,
-                                sourceHost,
-                                sourcePort,
-                                sourceRepoAPIA,
-                                sourceRepoAPIM,
-                                sourceExportFormat,
-                                'O',
-                                targetRepoAPIA,
-                                targetRepoAPIM,
-                                logMessage,
-                                log,
-                                c);
-        }
-    }
-
-    public static void multiFromRepository(String sourceProtocol,
-                                           String sourceHost,
-                                           int sourcePort,
-                                           FedoraAPIA sourceRepoAPIA,
-                                           FedoraAPIM sourceRepoAPIM,
-                                           String sourceExportFormat,
-                                           char fType,
                                            FedoraAPIA targetRepoAPIA,
                                            FedoraAPIM targetRepoAPIM,
                                            String logMessage,
                                            PrintStream log,
                                            IngestCounter c) throws Exception {
         // prepare the FieldSearch query
-        String fTypeString = "" + fType;
         FieldSearchQuery query = new FieldSearchQuery();
         Condition cond = new Condition();
-        cond.setProperty("fType");
-        cond.setOperator(ComparisonOperator.fromValue("eq"));
-        cond.setValue(fTypeString);
+        cond.setProperty("pid");
+        cond.setOperator(ComparisonOperator.fromValue("has"));
         Condition[] conditions = new Condition[1];
         conditions[0] = cond;
         query.setConditions(conditions);
@@ -374,11 +209,11 @@ public class Ingest
                                               targetRepoAPIM,
                                               logMessage);
                     c.successes++;
-                    IngestLogger.logFromRepos(log, pid, fType, newPID);
+                    IngestLogger.logFromRepos(log, pid, newPID);
                 } catch (Exception e) {
                     // failed... just log it and continue
                     c.failures++;
-                    IngestLogger.logFailedFromRepos(log, pid, fType, e);
+                    IngestLogger.logFailedFromRepos(log, pid, e);
                 }
             }
 
@@ -454,9 +289,9 @@ public class Ingest
         System.err
                 .println("  fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS TPROTOCOL [LOG]");
         System.err
-                .println("  fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS TPROTOCOL [LOG]");
+                .println("  fedora-ingest d[ir] INPATH FORMAT THST:TPRT TUSR TPSS TPROTOCOL [LOG]");
         System.err
-                .println("  fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT TUSR TPSS SPROTOCOL TPROTOCOL [LOG]");
+                .println("  fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|* THST:TPRT TUSR TPSS SPROTOCOL TPROTOCOL [LOG]");
         System.err.println();
         System.err.println("Where:");
         System.err
@@ -465,12 +300,6 @@ public class Ingest
                 + FOXML1_1.uri + "' or '" + METS_EXT1_1.uri + "')");
         System.err
                 .println("             which indicates the XML format of the ingest file(s)");
-        System.err
-                .println("  FTYPS      is any combination of the characters O, D, M, and C specifying");
-        System.err
-                .println("             which Fedora object type(s) should be ingested. O=data objects,");
-        System.err
-                .println("             D=behavior definitions, M=behavior mechanisms, and C=content models.");
         System.err
                 .println("  PID        is the id of the object to ingest from the source repository.");
         System.err
@@ -505,24 +334,17 @@ public class Ingest
         System.err.println("  the source path+filename.");
         System.err.println();
         System.err.println("fedora-ingest d c:\\archive " + FOXML1_1.uri
-                + " M myrepo.com:80 jane janepw http \"\"");
+                + " myrepo.com:80 jane janepw http \"\"");
         System.err.println();
         System.err
                 .println("  Traverses entire directory structure of c:\\archive, and ingests ");
         System.err
-                .println("  any file that looks like a behavior mechanism object (M). ");
+                .println("  any file. ");
         System.err
                 .println("  It assumes all files will be in the FOXML 1.1 format");
         System.err
                 .println("  and will fail on ingests of files that are not of this format.");
         System.err.println("  All log messages will be the quoted string.");
-        System.err.println();
-        System.err.println("fedora-ingest d c:\\archive " + FOXML1_1.uri
-                + " DMOC myrepo.com:80 jane janepw http \"for jane\"");
-        System.err.println();
-        System.err
-                .println("  Same as above, but ingests all four types of objects (O,D,M,C).");
-        System.err.println();
         System.err
                 .println("fedora-ingest r jrepo.com:8081 mike mpw demo:1 myrepo.com:8443 jane jpw http https \"\"");
         System.err.println();
@@ -613,22 +435,22 @@ public class Ingest
                     System.out.println("Ingested PID: " + pid);
                 }
             } else if (kind == 'd') {
-                // USAGE: fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS PROTOCOL [LOG]
-                if (args.length < 8 || args.length > 9) {
+                // USAGE: fedora-ingest d[ir] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [LOG]
+                if (args.length < 7 || args.length > 8) {
                     Ingest.badArgs("Wrong number of arguments (" + args.length
                             + ") for directory ingest.");
                     System.out
-                            .println("USAGE: fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS PROTOCOL [LOG]");
+                            .println("USAGE: fedora-ingest d[ir] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [LOG]");
                 }
                 File d = new File(args[1]);
                 String ingestFormat = args[2];
                 String logMessage = null;
-                if (args.length == 9) {
-                    logMessage = args[8];
+                if (args.length == 8) {
+                    logMessage = args[7];
                 }
 
-                String protocol = args[7];
-                String[] hp = args[4].split(":");
+                String protocol = args[6];
+                String[] hp = args[3].split(":");
 
                 // ******************************************
                 // NEW: use new client utility class
@@ -636,7 +458,7 @@ public class Ingest
                 String baseURL =
                         protocol + "://" + hp[0] + ":"
                                 + Integer.parseInt(hp[1]) + "/fedora";
-                FedoraClient fc = new FedoraClient(baseURL, args[5], args[6]);
+                FedoraClient fc = new FedoraClient(baseURL, args[4], args[5]);
                 FedoraAPIA targetRepoAPIA = fc.getAPIA();
                 FedoraAPIM targetRepoAPIM = fc.getAPIM();
                 //*******************************************
@@ -650,7 +472,6 @@ public class Ingest
                 IngestLogger.openLog(log, logRootName);
                 Ingest.multiFromDirectory(d,
                                           ingestFormat,
-                                          args[3],
                                           targetRepoAPIA,
                                           targetRepoAPIM,
                                           logMessage,
@@ -659,7 +480,7 @@ public class Ingest
                 IngestLogger.closeLog(log, logRootName);
                 summarize(counter, logFile);
             } else if (kind == 'r') {
-                // USAGE: fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT TUSR TPSS SPROTOCOL TPROTOCOL [LOG]
+                // USAGE: fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|* THST:TPRT TUSR TPSS SPROTOCOL TPROTOCOL [LOG]
                 if (args.length < 10 || args.length > 11) {
                     Ingest
                             .badArgs("Wrong number of arguments for repository ingest.");
@@ -767,7 +588,6 @@ public class Ingest
                                                sourceRepoAPIA,
                                                sourceRepoAPIM,
                                                sourceExportFormat,
-                                               args[4],
                                                targetRepoAPIA,
                                                targetRepoAPIM,
                                                logMessage,

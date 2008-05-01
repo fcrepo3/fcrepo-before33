@@ -16,8 +16,8 @@ import fedora.client.utility.export.Export;
 
 /**
  * Class to initiate an interactive export dialog for use by Fedora
- * Administrator. This class calls AutoExporter.class which is reponsible
- * for making the API-M SOAP calls for the export.
+ * Administrator. This class calls AutoExporter.class which is reponsible for
+ * making the API-M SOAP calls for the export.
  * 
  * @author Chris Wilper
  */
@@ -56,26 +56,19 @@ public class ExportDialog {
                                     + pid + "'.");
                         }
                     } else {
-                        FTypeDialog dlg = new FTypeDialog();
-                        if (dlg.getResult() != null) {
-                            String fTypes = dlg.getResult();
-                            long st = System.currentTimeMillis();
-                            int count =
-                                    Export
-                                            .multi(Administrator.APIA,
-                                                   Administrator.APIM,
-                                                   fTypes,
-                                                   optsDialog
-                                                           .getFormatSelection(),
-                                                   optsDialog
-                                                           .getContextSelection(),
-                                                   file);
-                            long et = System.currentTimeMillis();
-                            JOptionPane.showMessageDialog(Administrator
-                                    .getDesktop(), "Export of " + count
-                                    + " objects finished.\n" + "Time elapsed: "
-                                    + Export.getDuration(et - st));
-                        }
+
+                        long st = System.currentTimeMillis();
+                        int count =
+                                Export.multi(Administrator.APIA,
+                                             Administrator.APIM,
+                                             optsDialog.getFormatSelection(),
+                                             optsDialog.getContextSelection(),
+                                             file);
+                        long et = System.currentTimeMillis();
+                        JOptionPane.showMessageDialog(Administrator
+                                .getDesktop(), "Export of " + count
+                                + " objects finished.\n" + "Time elapsed: "
+                                + Export.getDuration(et - st));
                     }
                 }
             }

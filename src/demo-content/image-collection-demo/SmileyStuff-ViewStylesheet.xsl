@@ -27,13 +27,13 @@
               <xsl:attribute name="href">
                 <xsl:text>/fedora/get/</xsl:text>
                 <xsl:value-of select="$pid"/>
-                <xsl:text>/demo:DualResImage/fullSize</xsl:text>
+                <xsl:text>/demo:DualResolution/fullSize</xsl:text>
               </xsl:attribute>
               <img width="160" height="120">
                 <xsl:attribute name="src">
                   <xsl:text>/fedora/get/</xsl:text>
                   <xsl:value-of select="$pid"/>
-                  <xsl:text>/demo:DualResImage/mediumSize</xsl:text>
+                  <xsl:text>/demo:DualResolution/mediumSize</xsl:text>
                 </xsl:attribute>
               </img><br/>
               ( Full Size )

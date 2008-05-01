@@ -270,7 +270,6 @@ public class BatchModifyParser
             // Get required attributes
             m_obj.pid = attrs.getValue("pid");
             m_obj.label = attrs.getValue("label");
-            m_obj.cModel = attrs.getValue("contentModel");
             m_obj.logMessage = attrs.getValue("logMessage");
 
             try {
@@ -803,7 +802,6 @@ public class BatchModifyParser
                     xml.append(FOXML.uri + " " + FOXML1_1.xsdLocation);
                     xml.append("\">\n");
                     xml.append("  <" + FOXML.OBJECT_PROPERTIES.qName + ">\n");
-                    appendProperty(xml, RDF.TYPE.uri, "FedoraObject");
                     appendProperty(xml, MODEL.LABEL.uri, m_obj.label);
                     xml.append("  </" + FOXML.OBJECT_PROPERTIES.qName + ">\n");
                     xml.append("</" + FOXML.DIGITAL_OBJECT.qName + ">");
@@ -1262,7 +1260,7 @@ public class BatchModifyParser
         out.println("  </succeeded>");
     }
 
-    public static Map getBDefLabelMap() throws IOException {
+    public static Map getServiceLabelMap() throws IOException {
         try {
             HashMap<String, String> labelMap = new HashMap<String, String>();
             FieldSearchQuery query = new FieldSearchQuery();
@@ -1273,6 +1271,12 @@ public class BatchModifyParser
             conditions[0].setValue("D");
             query.setConditions(conditions);
             String[] fields = new String[] {"pid", "label"};
+
+            if (true) {
+                /* FIXME: find some other way to do this */
+                throw new UnsupportedOperationException("This operation uses obsolete field search semantics");
+            }
+
             FieldSearchResult result =
                     APIA.findObjects(fields,
                                      new NonNegativeInteger("50"),
@@ -1297,16 +1301,16 @@ public class BatchModifyParser
     }
 
     /**
-     * Get a map of pid-to-label of behavior mechanisms that implement the
-     * behavior defined by the indicated bdef.
+     * Get a map of pid-to-label of service deployments that implement the
+     * service defined by the indicated definition.
      * 
-     * @param bDefPID
-     *        PID of the associated behavior defintion object.
-     * @return A list of the behavior mechanism labels.
+     * @param sDefPID
+     *        PID of the associated service defintion object.
+     * @return A list of the service deployment labels.
      * @throws IOException
      *         If an error occurs in retrieving the list of labels.
      */
-    public static Map getBMechLabelMap(String bDefPID) throws IOException {
+    public static Map getDeploymentLabelMap(String sDefPID) throws IOException {
         try {
             HashMap<String, String> labelMap = new HashMap<String, String>();
             FieldSearchQuery query = new FieldSearchQuery();
@@ -1318,9 +1322,18 @@ public class BatchModifyParser
             conditions[1] = new Condition();
             conditions[1].setProperty("bDef");
             conditions[1].setOperator(ComparisonOperator.fromValue("has"));
-            conditions[1].setValue(bDefPID);
+            conditions[1].setValue(sDefPID);
             query.setConditions(conditions);
             String[] fields = new String[] {"pid", "label"};
+
+            if (true) {
+                /*
+                 * FIXME: find some other way to do this, if we care. It uses
+                 * fType and bDef in field search, which are no longer
+                 * available.
+                 */
+                throw new UnsupportedOperationException("This operation uses obsolete field search semantics");
+            }
             FieldSearchResult result =
                     APIA.findObjects(fields,
                                      new NonNegativeInteger("50"),

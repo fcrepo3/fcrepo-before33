@@ -25,7 +25,7 @@ public class Disseminator {
 
     public String bDefID;
 
-    public String bMechID;
+    public String sDepID;
 
     public String dsBindMapID;
 

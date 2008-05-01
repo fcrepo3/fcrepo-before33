@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>info:fedora/demo:3</id>
+  <title type="text">Service Deployment Object implementing the Simple Image BDEF contract using the UVA ImageZoomer Service.</title>
+  <updated>2008-04-30T03:54:31.745Z</updated>
+  <author>
+    <name>fedoraAdmin</name>
+  </author>
+  <category term="Active" scheme="info:fedora/fedora-system:def/model#state"></category>
+  <category term="2008-04-30T03:54:31.745Z" scheme="info:fedora/fedora-system:def/model#createdDate"></category>
+  <icon>http://www.fedora-commons.org/images/logo_vertical_transparent_200_251.png</icon>
+  <entry>
+    <id>info:fedora/demo:3/DC</id>
+    <title type="text">DC</title>
+    <updated>2008-04-30T03:54:31.734Z</updated>
+    <link href="info:fedora/demo:3/DC/2008-04-30T03:54:31.734Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:3/DC/2008-04-30T03:54:31.734Z</id>
+    <title type="text">DC1.0</title>
+    <updated>2008-04-30T03:54:31.734Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:3/DC"></thr:in-reply-to>
+    <category term="Dublin Core Metadata" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="314" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+					
+        <dc:title>Service Deployment Object implementing the Simple Image BDEF contract using the UVA ImageZoomer Service.</dc:title>
+					
+        <dc:identifier>demo:3</dc:identifier>
+				</oai_dc:dc>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:3/WSDL</id>
+    <title type="text">WSDL</title>
+    <updated>2008-04-30T03:54:31.735Z</updated>
+    <link href="info:fedora/demo:3/WSDL/2008-04-30T03:54:31.735Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:3/WSDL/2008-04-30T03:54:31.735Z</id>
+    <title type="text">WSDL1.0</title>
+    <updated>2008-04-30T03:54:31.735Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:3/WSDL"></thr:in-reply-to>
+    <category term="WSDL definition for UVA ImageZoomer service" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="3970" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:this="imgsize" name="Image Sizer Service" targetNamespace="imgsize">
+					
+        <wsdl:types>
+						
+          <xsd:schema targetNamespace="imgsize">
+							
+            <xsd:simpleType name="imageURLType">
+								
+              <xsd:restriction base="xsd:string"></xsd:restriction>
+							</xsd:simpleType>
+						</xsd:schema>
+					</wsdl:types>
+					
+        <wsdl:message name="getThumbRequest">
+						
+          <wsdl:part name="LOWRES_IMG" type="this:imageURLType"></wsdl:part>
+					</wsdl:message>
+					
+        <wsdl:message name="getMedRequest">
+						
+          <wsdl:part name="MEDRES_IMG" type="this:imageURLType"></wsdl:part>
+					</wsdl:message>
+					
+        <wsdl:message name="getHighRequest">
+						
+          <wsdl:part name="HIGHRES_IMG" type="this:imageURLType"></wsdl:part>
+					</wsdl:message>
+					
+        <wsdl:message name="getVeryHighRequest">
+						
+          <wsdl:part name="VERYHIGHRES_IMG" type="this:imageURLType"></wsdl:part>
+					</wsdl:message>
+					
+        <wsdl:message name="imageApplet_response">
+						
+          <wsdl:part name="imageApplet" type="xsd:base64Binary"></wsdl:part>
+					</wsdl:message>
+					
+        <wsdl:portType name="ImageZoomerPortType">
+						
+          <wsdl:operation name="getThumbnail">
+							
+            <wsdl:input message="this:getThumbRequest"></wsdl:input>
+							
+            <wsdl:output message="this:imageApplet_response"></wsdl:output>
+						</wsdl:operation>
+						
+          <wsdl:operation name="getMedium">
+							
+            <wsdl:input message="this:getMedRequest"></wsdl:input>
+							
+            <wsdl:output message="this:imageApplet_response"></wsdl:output>
+						</wsdl:operation>
+						
+          <wsdl:operation name="getHigh">
+							
+            <wsdl:input message="this:getHighRequest"></wsdl:input>
+							
+            <wsdl:output message="this:imageApplet_response"></wsdl:output>
+						</wsdl:operation>
+						
+          <wsdl:operation name="getVeryHigh">
+							
+            <wsdl:input message="this:getVeryHighRequest"></wsdl:input>
+							
+            <wsdl:output message="this:imageApplet_response"></wsdl:output>
+						</wsdl:operation>
+					</wsdl:portType>
+					
+        <wsdl:service name="ImageZoomer">
+						
+          <wsdl:port binding="this:ImageZoomer_http" name="ImageZoomer_port">
+							
+            <http:address location="http://icarus.lib.virginia.edu/servlet/"></http:address>
+						</wsdl:port>
+					</wsdl:service>
+					
+        <wsdl:binding name="ImageZoomer_http" type="this:ImageZoomerPortType">
+						
+          <http:binding verb="GET"></http:binding>
+						
+          <wsdl:operation name="getThumbnail">
+							
+            <http:operation location="ImageSizer?image=(LOWRES_IMG)"></http:operation>
+							
+            <wsdl:input>
+								
+              <http:urlReplacement></http:urlReplacement>
+							</wsdl:input>
+							
+            <wsdl:output>
+								
+              <mime:content type="text/html"></mime:content>
+							</wsdl:output>
+						</wsdl:operation>
+						
+          <wsdl:operation name="getMedium">
+							
+            <http:operation location="ImageSizer?image=(MEDRES_IMG)"></http:operation>
+							
+            <wsdl:input>
+								
+              <http:urlReplacement></http:urlReplacement>
+							</wsdl:input>
+							
+            <wsdl:output>
+								
+              <mime:content type="text/html"></mime:content>
+							</wsdl:output>
+						</wsdl:operation>
+						
+          <wsdl:operation name="getHigh">
+							
+            <http:operation location="ImageSizer?image=(HIGHRES_IMG)"></http:operation>
+							
+            <wsdl:input>
+								
+              <http:urlReplacement></http:urlReplacement>
+							</wsdl:input>
+							
+            <wsdl:output>
+								
+              <mime:content type="text/html"></mime:content>
+							</wsdl:output>
+						</wsdl:operation>
+						
+          <wsdl:operation name="getVeryHigh">
+							
+            <http:operation location="ImageSizer?image=(VERYHIGHRES_IMG)"></http:operation>
+							
+            <wsdl:input>
+								
+              <http:urlReplacement></http:urlReplacement>
+							</wsdl:input>
+							
+            <wsdl:output>
+								
+              <mime:content type="text/html"></mime:content>
+							</wsdl:output>
+						</wsdl:operation>
+					</wsdl:binding>
+				</wsdl:definitions>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:3/SERVICE-PROFILE</id>
+    <title type="text">SERVICE-PROFILE</title>
+    <updated>2008-04-30T03:54:31.737Z</updated>
+    <link href="info:fedora/demo:3/SERVICE-PROFILE/2008-04-30T03:54:31.737Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:3/SERVICE-PROFILE/2008-04-30T03:54:31.737Z</id>
+    <title type="text">SERVICE-PROFILE1.0</title>
+    <updated>2008-04-30T03:54:31.737Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:3/SERVICE-PROFILE"></thr:in-reply-to>
+    <category term="Service Profile - Technical description of the service" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="1332" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <fsvp:serviceProfile xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile" bDefPID="demo:1" name="UVA ImageZoomer Service">
+					
+        <fsvp:serviceDescription>UVA ImageZoomer Service wraps image in Zoomable Java Applet embedded in html page.</fsvp:serviceDescription>
+					
+        <fsvp:serviceImplementation>
+						
+          <fsvp:serviceLiveTestURL>http://icarus.lib.virginia.edu/servlet/ImageSizer?image=http://icarus.lib.virginia.edu/images/iva/archerd05medium1.jpg</fsvp:serviceLiveTestURL>
+						
+          <fsvp:serviceMessagingProtocol>HTTP GET</fsvp:serviceMessagingProtocol>
+						
+          <fsvp:serviceInputFormats>
+							
+            <fsvp:MIMEType>image/gif</fsvp:MIMEType>
+							
+            <fsvp:MIMEType>image/jpeg</fsvp:MIMEType>
+						</fsvp:serviceInputFormats>
+						
+          <fsvp:serviceOutputFormats>
+							
+            <fsvp:MIMEType>text/html</fsvp:MIMEType>
+							
+            <fsvp:MIMEType>application/java</fsvp:MIMEType>
+						</fsvp:serviceOutputFormats>
+						
+          <fsvp:serviceImplDependencies>
+							
+            <fsvp:software license="Sun_Community_Source_License" name="java" opensource="true" type="Programming_Language" version="1.3"></fsvp:software>
+							
+            <fsvp:software license="Apache_Software_License" name="tomcat" opensource="true" type="Server_Application" version="4.1"></fsvp:software>
+						</fsvp:serviceImplDependencies>
+					</fsvp:serviceImplementation>
+				</fsvp:serviceProfile>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:3/DSINPUTSPEC</id>
+    <title type="text">DSINPUTSPEC</title>
+    <updated>2008-04-30T03:54:31.737Z</updated>
+    <link href="info:fedora/demo:3/DSINPUTSPEC/2008-04-30T03:54:31.737Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:3/DSINPUTSPEC/2008-04-30T03:54:31.737Z</id>
+    <title type="text">DSINPUTSPEC1.0</title>
+    <updated>2008-04-30T03:54:31.737Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:3/DSINPUTSPEC"></thr:in-reply-to>
+    <category term="Datastream Input Specification for Image Sizer service" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="1474" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <fbs:DSInputSpec xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec" bDefPID="demo:1" label="Datastream Input Specification">
+					
+        <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="LOWRES_IMG">
+						
+          <fbs:DSInputLabel>low resolution image</fbs:DSInputLabel>
+						
+          <fbs:DSMIME>image/gif image/jpeg</fbs:DSMIME>
+						
+          <fbs:DSInputInstruction>image of type image/gif or image/jpeg at 200 dpi</fbs:DSInputInstruction>
+					</fbs:DSInput>
+					
+        <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="MEDRES_IMG">
+						
+          <fbs:DSInputLabel>medium resolution image</fbs:DSInputLabel>
+						
+          <fbs:DSMIME>image/gif image/jpeg</fbs:DSMIME>
+						
+          <fbs:DSInputInstruction>image of type image/gif or image/jpeg at 300 dpi</fbs:DSInputInstruction>
+					</fbs:DSInput>
+					
+        <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="HIGHRES_IMG">
+						
+          <fbs:DSInputLabel>high resolution image</fbs:DSInputLabel>
+						
+          <fbs:DSMIME>image/gif image/jpeg</fbs:DSMIME>
+						
+          <fbs:DSInputInstruction>image of type image/gif or image/jpeg at 600 dpi</fbs:DSInputInstruction>
+					</fbs:DSInput>
+					
+        <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="VERYHIGHRES_IMG">
+						
+          <fbs:DSInputLabel>very high resolution image</fbs:DSInputLabel>
+						
+          <fbs:DSMIME>image/jpeg</fbs:DSMIME>
+						
+          <fbs:DSInputInstruction>image of type image/jpeg at 1200 dpi</fbs:DSInputInstruction>
+					</fbs:DSInput>
+				</fbs:DSInputSpec>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:3/METHODMAP</id>
+    <title type="text">METHODMAP</title>
+    <updated>2008-04-30T03:54:31.737Z</updated>
+    <link href="info:fedora/demo:3/METHODMAP/2008-04-30T03:54:31.737Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:3/METHODMAP/2008-04-30T03:54:31.737Z</id>
+    <title type="text">METHODMAP1.0</title>
+    <updated>2008-04-30T03:54:31.737Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:3/METHODMAP"></thr:in-reply-to>
+    <category term="Mapping of WSDL to Fedora notion of Method Definitions" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="1570" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <fmm:MethodMap xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap" bDefPID="demo:1" name="MethodMap - UVA ImageZoomer BMech for Simple Image BDEF">
+					
+        <fmm:Method operationName="getThumbnail" wsdlMsgName="getThumbRequest" wsdlMsgOutput="image_response">
+						
+          <fmm:DatastreamInputParm parmName="LOWRES_IMG" passBy="URL_REF" required="true"></fmm:DatastreamInputParm>
+						
+          <fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="text/html"></fmm:MethodReturnType>
+					</fmm:Method>
+					
+        <fmm:Method operationName="getMedium" wsdlMsgName="getMedRequest" wsdlMsgOutput="image_response">
+						
+          <fmm:DatastreamInputParm parmName="MEDRES_IMG" passBy="URL_REF" required="true"></fmm:DatastreamInputParm>
+						
+          <fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="text/html"></fmm:MethodReturnType>
+					</fmm:Method>
+					
+        <fmm:Method operationName="getHigh" wsdlMsgName="getHighRequest" wsdlMsgOutput="image_response">
+						
+          <fmm:DatastreamInputParm parmName="HIGHRES_IMG" passBy="URL_REF" required="true"></fmm:DatastreamInputParm>
+						
+          <fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="text/html"></fmm:MethodReturnType>
+					</fmm:Method>
+					
+        <fmm:Method operationName="getVeryHigh" wsdlMsgName="getVeryHighRequest" wsdlMsgOutput="image_response">
+						
+          <fmm:DatastreamInputParm parmName="VERYHIGHRES_IMG" passBy="URL_REF" required="true"></fmm:DatastreamInputParm>
+						
+          <fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="text/html"></fmm:MethodReturnType>
+					</fmm:Method>
+				</fmm:MethodMap>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:3/DS1</id>
+    <title type="text">DS1</title>
+    <updated>2008-04-30T03:54:31.737Z</updated>
+    <link href="info:fedora/demo:3/DS1/2008-04-30T03:54:31.737Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="E" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:3/DS1/2008-04-30T03:54:31.737Z</id>
+    <title type="text">DS1.0</title>
+    <updated>2008-04-30T03:54:31.737Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:3/DS1"></thr:in-reply-to>
+    <category term="Programmer documentation" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="0" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <summary type="text">DS1.0</summary>
+    <content type="text/html" src="http://icarus.lib.virginia.edu/test/ImageSizer/doc/overview.html"></content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:3/RELS-EXT</id>
+    <title type="text">RELS-EXT</title>
+    <updated>2008-04-30T03:54:31.737Z</updated>
+    <link href="info:fedora/demo:3/RELS-EXT/2008-04-30T03:54:31.737Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="false" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:3/RELS-EXT/2008-04-30T03:54:31.737Z</id>
+    <title type="text">RELS-EXT1.0</title>
+    <updated>2008-04-30T03:54:31.737Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:3/RELS-EXT"></thr:in-reply-to>
+    <category term="Relationships" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="616" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
+          			
+        <rdf:Description rdf:about="info:fedora/demo:3">
+            			
+          <fedora-model:isDeploymentOf rdf:resource="info:fedora/demo:1"></fedora-model:isDeploymentOf>
+            			
+          <fedora-model:isContractorOf rdf:resource="info:fedora/demo:UVA_STD_IMAGE_2"></fedora-model:isContractorOf>
+            			
+          <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:ServiceDeployment-3.0"></fedora-model:hasModel>
+          			</rdf:Description>
+        		</rdf:RDF>
+    </content>
+  </entry>
+</feed>

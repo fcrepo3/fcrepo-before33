@@ -55,7 +55,7 @@ public class Search
     private final JTabbedPane m_tabbedPane;
 
     protected static String[] s_fieldArray =
-            {"pid", "label", "fType", "bDef", "bMech", "cModel", "state",
+            {"pid", "label", "state",
                     "ownerId", "cDate", "mDate", "dcmDate", "title", "creator",
                     "subject", "description", "publisher", "contributor",
                     "date", "type", "format", "identifier", "source",
@@ -332,8 +332,8 @@ public class Search
 
         private List<String> m_selectedFields;
 
-        private final JCheckBox pidBox, bDefBox, typeBox, labelBox, bMechBox,
-                formatBox, fTypeBox, titleBox, identifierBox, cModelBox,
+        private final JCheckBox pidBox, typeBox, labelBox,
+                formatBox, titleBox, identifierBox,
                 creatorBox, sourceBox, stateBox, subjectBox, languageBox,
                 ownerIdBox, descriptionBox, relationBox, cDateBox,
                 publisherBox, coverageBox, mDateBox, contributorBox, rightsBox,
@@ -348,23 +348,15 @@ public class Search
 
             pidBox = new JCheckBox("pid", fieldList.contains("pid"));
             pidBox.setToolTipText("a globally unique id");
-            bDefBox = new JCheckBox("bDef", fieldList.contains("bDef"));
-            bDefBox
-                    .setToolTipText("a list of behavior definition pids indicating disseminator contracts");
             typeBox = new JCheckBox("type", fieldList.contains("type"));
             typeBox
                     .setToolTipText("a list of dc:type values, indicating nature or genre");
             labelBox = new JCheckBox("label", fieldList.contains("label"));
             labelBox.setToolTipText("a human-readable name");
-            bMechBox = new JCheckBox("bMech", fieldList.contains("bMech"));
-            bMechBox
-                    .setToolTipText("a list of behavior mechanism pids indicating disseminator implementations");
             formatBox = new JCheckBox("format", fieldList.contains("format"));
             formatBox
                     .setToolTipText("a list of dc:format values, indicating physical or digital forms");
-            fTypeBox = new JCheckBox("fType", fieldList.contains("fType"));
-            fTypeBox
-                    .setToolTipText("the object type (D=Behavior Def, M=Behavior Mech, O=Data Object)");
+
             titleBox = new JCheckBox("title", fieldList.contains("title"));
             titleBox.setToolTipText("a list of dc:title values (names)");
             identifierBox =
@@ -372,9 +364,6 @@ public class Search
                             .contains("identifier"));
             identifierBox
                     .setToolTipText("a list of dc:identifier values, providing unambiguous ids in certain contexts");
-            cModelBox = new JCheckBox("cModel", fieldList.contains("cModel"));
-            cModelBox
-                    .setToolTipText("content model, the pid of the object upon which this object is based");
             creatorBox =
                     new JCheckBox("creator", fieldList.contains("creator"));
             creatorBox
@@ -439,15 +428,11 @@ public class Search
             northPanel.setLayout(new GridLayout(9, 3));
             northPanel.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
             northPanel.add(pidBox);
-            northPanel.add(bDefBox);
             northPanel.add(typeBox);
             northPanel.add(labelBox);
-            northPanel.add(bMechBox);
             northPanel.add(formatBox);
-            northPanel.add(fTypeBox);
             northPanel.add(titleBox);
             northPanel.add(identifierBox);
-            northPanel.add(cModelBox);
             northPanel.add(creatorBox);
             northPanel.add(sourceBox);
             northPanel.add(stateBox);
@@ -511,18 +496,6 @@ public class Search
             }
             if (labelBox.isSelected()) {
                 m_selectedFields.add("label");
-            }
-            if (fTypeBox.isSelected()) {
-                m_selectedFields.add("fType");
-            }
-            if (bDefBox.isSelected()) {
-                m_selectedFields.add("bDef");
-            }
-            if (bMechBox.isSelected()) {
-                m_selectedFields.add("bMech");
-            }
-            if (cModelBox.isSelected()) {
-                m_selectedFields.add("cModel");
             }
             if (stateBox.isSelected()) {
                 m_selectedFields.add("state");

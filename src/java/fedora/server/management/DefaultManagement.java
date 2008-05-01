@@ -87,7 +87,7 @@ public class DefaultManagement
     private File m_tempDir;
 
     private Hashtable<String, Long> m_uploadStartTime;
-
+    
     public DefaultManagement(Authorization auth, DOManager doMgr, 
                              ExternalContentManager ecMgr, int uploadMinutes, 
                              int lastId, File tempDir, Hashtable<String, Long> uploadStartTime) {
@@ -231,8 +231,10 @@ public class DefaultManagement
                                         context,
                                         pid);
 
-            props.add(new Property(MODEL.HAS_CONTENT_MODEL.uri, reader
-                    .getContentModelId()));
+            /*
+             * FIXME: Content models are no longer object properties, so they
+             * are no longer exposed here. Is that OK?
+             */
 
             props.add(new Property(MODEL.LABEL.uri, reader.GetObjectLabel()));
 
@@ -1558,107 +1560,6 @@ public class DefaultManagement
         }
     }
 
-    /**
-     * Get a string indicating whether the associated binding map (or an empty
-     * binding map, if none is found) is valid or invalid according to the data
-     * contract defined by the indicated behavior mechanism. Returns null if
-     * valid, otherwise returns a String explaining why not. This assumes the
-     * indicated bMech actually exists, and the binding map, if it exists and
-     * specifies any datastreams, refers to existing datastreams within the
-     * object. If these conditions are not met, an exception is thrown.
-     */
-    // private String getBindingMapValidationReport(Context context,
-    // DOReader doReader,
-    // String bMechPID)
-    // throws ServerException {
-    //
-    // // find the associated datastream binding map, else use an empty one.
-    // DSBindingMapAugmented augMap = new DSBindingMapAugmented();
-    // DSBindingMapAugmented[] augMaps = doReader.GetDSBindingMaps(null);
-    // for (int i = 0; i < augMaps.length; i++) {
-    // if (augMaps[i].dsBindMechanismPID.equals(bMechPID)) {
-    // augMap = augMaps[i];
-    // }
-    // }
-    //
-    // // load the bmech, then validate the bindings
-    // BMechReader mReader = m_manager.getBMechReader(Server.USE_CACHE, context,
-    // bMechPID);
-    // BMechDSBindSpec spec = mReader.getServiceDSInputSpec(null);
-    // return spec.validate(augMap.dsBindingsAugmented);
-    // }
-    /**
-     * Get a combined report indicating failure or success of data contract
-     * validation for every disseminator in the given object that the indicated
-     * datastream is bound to. The returned map's keys will be Disseminator
-     * objects. The values will be null in the case of successful validation, or
-     * Strings (explaining why) in the case of failure. This assumes that all
-     * bMechs specified in the binding maps of the disseminators that use the
-     * indicated datastream actually exist, and the binding map, if it exists
-     * and specifies any datastreams, refers to existing datastreams within the
-     * object. If these conditions are not met, an exception is thrown.
-     */
-    // private Map getAllBindingMapValidationReports(Context context,
-    // DOReader doReader,
-    // String dsID)
-    // throws ServerException {
-    // HashMap<Disseminator, String> map = new HashMap<Disseminator, String>();
-    // // for all disseminators in the object,
-    // Disseminator[] disses = doReader.GetDisseminators(null, null);
-    // for (int i = 0; i < disses.length; i++) {
-    // DSBinding[] bindings = disses[i].dsBindMap.dsBindings;
-    // boolean isUsed = false;
-    // // check each binding to see if it's the indicated datastream
-    // for (int j = 0; j < bindings.length && !isUsed; j++) {
-    // if (bindings[j].datastreamID.equals(dsID)) isUsed = true;
-    // }
-    // if (isUsed) {
-    // // if it's used, add it's validation information to the map.
-    // map.put(disses[i],
-    // getBindingMapValidationReport(context,
-    // doReader,
-    // disses[i].bMechID));
-    // }
-    // }
-    // return map;
-    // }
-    // private Map getNewFailedValidationReports(Map oldReport,
-    // Map newReport) {
-    // HashMap<Disseminator, String> map = new HashMap<Disseminator, String>();
-    // Iterator newIter = newReport.keySet().iterator();
-    // // For each disseminator in the new report:
-    // while (newIter.hasNext()) {
-    // Disseminator diss = (Disseminator) newIter.next();
-    // String failedMessage = (String) newReport.get(diss);
-    // // Did it fail in the new report . . .
-    // if (failedMessage != null) {
-    // // . . . but not in the old one?
-    // if (oldReport.get(diss) == null) {
-    // map.put(diss, failedMessage);
-    // }
-    // }
-    // }
-    // return map;
-    // }
-    // private void rejectMimeChangeIfCausedInvalidation(Map oldReports,
-    // Map newReports)
-    // throws ServerException {
-    // Map causedFailures = getNewFailedValidationReports(oldReports,
-    // newReports);
-    // int numFailures = causedFailures.keySet().size();
-    // if (numFailures > 0) {
-    // StringBuffer buf = new StringBuffer();
-    // buf.append("This mime type change would invalidate "
-    // + numFailures + " disseminator(s):");
-    // Iterator iter = causedFailures.keySet().iterator();
-    // while (iter.hasNext()) {
-    // Disseminator diss = (Disseminator) iter.next();
-    // String reason = (String) causedFailures.get(diss);
-    // buf.append("\n" + diss.dissID + ": " + reason);
-    // }
-    // throw new GeneralException(buf.toString());
-    // }
-    // }
     private void validateRelsExt(String pid, InputStream relsext)
             throws ServerException {
         // RELATIONSHIP METADATA VALIDATION:

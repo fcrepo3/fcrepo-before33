@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- * Defines a method that an object exposes via Fedora. A behavior definition
+ * Defines a method that an object exposes via Fedora. A service definition
  * object specifies this.
  */
 public class MethodDefinition {

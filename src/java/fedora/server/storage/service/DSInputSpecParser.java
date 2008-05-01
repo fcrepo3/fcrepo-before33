@@ -24,14 +24,14 @@ import fedora.common.Constants;
 
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
-import fedora.server.storage.types.BMechDSBindRule;
-import fedora.server.storage.types.BMechDSBindSpec;
+import fedora.server.storage.types.DeploymentDSBindRule;
+import fedora.server.storage.types.DeploymentDSBindSpec;
 
 /**
  * A class for parsing the special XML format in Fedora for a Datastream Input
- * Specification (DSInputSpec). A DSInputSpec exists within a Behavior Mechanism
- * Object (bmech), and is used to define the "data contract" between the service
- * represented by the bmech and a data object.
+ * Specification (DSInputSpec). A DSInputSpec exists within a Service Deployment
+ * Object, and is used to define the "data contract" between the service
+ * represented by the deployment and a data object.
  * 
  * @author Sandy Payette
  */
@@ -51,11 +51,11 @@ public class DSInputSpecParser
     private boolean inDSInputMIME = false;
 
     // Fedora Datastream Binding Spec objects
-    private BMechDSBindSpec dsInputSpec;
+    private DeploymentDSBindSpec dsInputSpec;
 
-    private BMechDSBindRule dsInputRule;
+    private DeploymentDSBindRule dsInputRule;
 
-    private final String BMechPID;
+    private final String sDepPID;
 
     // Working variables...
     private Vector tmp_InputRules;
@@ -64,7 +64,7 @@ public class DSInputSpecParser
      * Constructor to enable another class to initiate the parsing
      */
     public DSInputSpecParser(String parentPID) {
-        BMechPID = parentPID;
+        sDepPID = parentPID;
     }
 
     /**
@@ -72,7 +72,7 @@ public class DSInputSpecParser
      */
     public DSInputSpecParser(String parentPID, InputStream in)
             throws RepositoryConfigurationException, ObjectIntegrityException {
-        BMechPID = parentPID;
+        sDepPID = parentPID;
         XMLReader xmlReader = null;
         try {
             SAXParserFactory saxfactory = SAXParserFactory.newInstance();
@@ -98,7 +98,7 @@ public class DSInputSpecParser
         }
     }
 
-    public BMechDSBindSpec getServiceDSInputSpec() {
+    public DeploymentDSBindSpec getServiceDSInputSpec() {
         return dsInputSpec;
     }
 
@@ -106,14 +106,14 @@ public class DSInputSpecParser
     public void startDocument() throws SAXException {
         nsPrefixMap = new HashMap();
         tmp_InputRules = new Vector();
-        dsInputSpec = new BMechDSBindSpec();
+        dsInputSpec = new DeploymentDSBindSpec();
     }
 
     @Override
     public void endDocument() throws SAXException {
         dsInputSpec.dsBindRules =
-                (BMechDSBindRule[]) tmp_InputRules
-                        .toArray(new BMechDSBindRule[0]);
+                (DeploymentDSBindRule[]) tmp_InputRules
+                        .toArray(new DeploymentDSBindRule[0]);
         tmp_InputRules = null;
         nsPrefixMap = null;
     }
@@ -160,14 +160,13 @@ public class DSInputSpecParser
                              Attributes attrs) throws SAXException {
         if (namespaceURI.equalsIgnoreCase(BINDING_SPEC.uri)
                 && localName.equalsIgnoreCase("DSInputSpec")) {
-            dsInputSpec.bDefPID = attrs.getValue("bDefPID");
-            //SDP: bMechPID no longer embedded within DSBindingSpec inline metadata.
-            //dsInputSpec.bMechPID = attrs.getValue("bMechPID");
-            dsInputSpec.bMechPID = BMechPID;
+            //FIXME: bDefPid attribute may be removed?
+            dsInputSpec.serviceDefinitionPID = attrs.getValue("bDefPID");
+            dsInputSpec.serviceDeploymentPID = sDepPID;
             dsInputSpec.bindSpecLabel = attrs.getValue("label");
         } else if (namespaceURI.equalsIgnoreCase(BINDING_SPEC.uri)
                 && localName.equalsIgnoreCase("DSInput")) {
-            dsInputRule = new BMechDSBindRule();
+            dsInputRule = new DeploymentDSBindRule();
             dsInputRule.bindingKeyName = attrs.getValue("wsdlMsgPartName");
             dsInputRule.maxNumBindings =
                     new Integer(attrs.getValue("DSMax")).intValue();

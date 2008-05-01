@@ -115,11 +115,11 @@
 		<part name="pid" type="xsd:string">
 			<documentation>the persistent identifier of the object.</documentation>
 		</part>
-		<part name="bDefPid" type="xsd:string">
-			<documentation>the persistent identifier of the behavior definition.</documentation>
+		<part name="sDefPid" type="xsd:string">
+			<documentation>the persistent identifier of the service definition.</documentation>
 		</part>
 		<part name="methodName" type="xsd:string">
-			<documentation>the name of the behavior method to invoke.</documentation>
+			<documentation>the name of the service method to invoke.</documentation>
 		</part>
 		<part name="asOfDateTime" type="xsd:string">
 			<documentation>the date/time stamp specifying that the dissemination should reflect
@@ -129,7 +129,7 @@
 			</documentation>
 		</part>
 		<part name="parameters" type="xsd:string">
-			<documentation>a set of name-value pairs that are parameters to the behavior method.</documentation>
+			<documentation>a set of name-value pairs that are parameters to the service method.</documentation>
 		</part>
 	</message>
 	<message name="getDisseminationResponse">
@@ -147,8 +147,8 @@
 		<part name="query" type="xsd:string">
 			<documentation>a sequence of space-separated conditions.  A condition
            consists of a field name followed directly by an operator, followed
-           directly be a value.  Valid field names are (pid, label, fType, cModel,
-           state, ownerId, cDate, mDate, dcmDate, bDef, bMech, title, creator, subject,
+           directly be a value.  Valid field names are (pid, label,
+           state, ownerId, cDate, mDate, dcmDate, title, creator, subject,
            description, publisher, contributor, date, type, format, identifier,
            source, language, relation, coverage, rights).
            Valid operators are =, ~, &gt;, &gt;=, &lt;, &lt;=.  The contains (~) operator
@@ -316,7 +316,7 @@
 			<output message="fedora-api:getObjectProfileResponse"/>
 		</operation>
 		<operation name="listMethods">
-			<documentation>Inquires upon all object Disseminators to obtain Behavior Definition pids,
+			<documentation>Inquires upon all object Disseminators to obtain Service Definition pids,
 				and methodNames supported by a digital object.  This returns a set of method definitions
 				that represent all possible disseminations that can be run on the object.
 			</documentation>
@@ -333,12 +333,12 @@
 		</operation>
 		<operation name="getDissemination">
 			<documentation>Gets a MIME-typed view of the digital object, given the 
-				behavior definition id, the behavior method name and any parameters to the 
-				behavior method. The getDissemination request hides from the client the details
-				of how a behavior method is fulfilled by the Fedora Access service  (i.e., it does
-				not require the client to know about the behavior mechanism that performs the work, 
-				or how the request is invoked upon the behavior mechanism).  The client need only
-				specify an abstract behavior definition information in the request.
+				service definition id, the service method name and any parameters to the 
+				service method. The getDissemination request hides from the client the details
+				of how a service method is fulfilled by the Fedora Access service  (i.e., it does
+				not require the client to know about the service mechanism that performs the work, 
+				or how the request is invoked upon the service deployment).  The client need only
+				specify an abstract service definition information in the request.
 			</documentation>
 			<input message="fedora-api:getDisseminationRequest"/>
 			<output message="fedora-api:getDisseminationResponse"/>
@@ -364,8 +364,8 @@
 				<p>URL Syntax:</p>
 				<p>
 					<b>http(s)://<font color="#22cc22">host:port</font>/fedora/search?{<font color="#22cc22">terms=TERMS</font>|<font color="#22cc22">query=QUERY</font>}<font color="#cc2222">&amp;maxResults=MAXRESULTS<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;xml=true&amp;pid=true&amp;label=true&amp;fType=true&amp;cModel=true&amp;state=true&amp;ownerId=true<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;cDate=true&amp;mDate=true&amp;dcmDate=true&amp;bDef=true&amp;bMech=true&amp;title=true<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;xml=true&amp;pid=true&amp;label=true&amp;state=true&amp;ownerId=true<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;cDate=true&amp;mDate=true&amp;dcmDate=true&amp;title=true<br/>
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;creator=true&amp;subject=true&amp;description=true&amp;publisher=true&amp;contributor=true<br/>
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;date=true&amp;type=true&amp;format=true&amp;identifier=true&amp;source=true&amp;language=true<br/>
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;relation=true&amp;coverage=true&amp;rights=true</font>
@@ -402,8 +402,6 @@ It asks for up to 50 results at a time from the server, and requests that the re
   &lt;resultList&gt;
     &lt;objectFields&gt;
         &lt;pid&gt;demo:5&lt;/pid&gt;
-        &lt;bDef&gt;demo:1&lt;/bDef&gt;
-        &lt;bDef&gt;demo:3&lt;/bDef&gt;
         &lt;subject&gt;My Subject&lt;/subject&gt;
         ...
     &lt;/objectFields&gt;
@@ -558,7 +556,7 @@ It asks for up to 50 results at a time from the server, and requests that the re
 			</output>
 		</operation>
 		<operation name="getDissemination">
-			<http:operation location="get/(pid)/(bDefPid)/(methodName)[/(asOfDateTime)][?(parameters)]"/>
+			<http:operation location="get/(pid)/(sDefPid)/(methodName)[/(asOfDateTime)][?(parameters)]"/>
 			<input>
 				<documentation>  This URL replacement syntax is used to request a dissemination of the object.
 					When putting together a proper URL, the client should replace parenthesized
@@ -568,14 +566,14 @@ It asks for up to 50 results at a time from the server, and requests that the re
 					location syntax that are surrounded by brackets ("[ ]") are optional.  
 					To construct a proper URL the client must replace the following variables with real information:
 						- pid : a required parameter. Client must provide the persistent identifier of the digital object.
-						- bDefPid : a required parameter. Client must provide the persistent identifier of the 
-						  behavior definition object to which the digital object subscribes.
-						- methodName - a required parameter.  Client must provide the name of the behavior
-						  method to be executed.  A behavior method is also known as a dissemination method.
+						- sDefPid : a required parameter. Client must provide the persistent identifier of the 
+						  service definition object to which the digital object subscribes.
+						- methodName - a required parameter.  Client must provide the name of the service
+						  method to be executed. 
 						- asOfDateTime : an optional parameter.  Client can specifiy a dateTime value 
 					 	  indicating that the client wants the object profile to reflect how the object looked 
 					 	  as of a particular date and time.
-						- parameters - an optional array of parameters to the behavior method.  The parameter array
+						- parameters - an optional array of parameters to the service method.  The parameter array
 						  must begin with a question mark to delimit it from the rest of the URL.  Then, the
 						  parameters follow as a set of name/value pairs separated by ampersands. 
 						  Each name and value is connected by an equal sign. This is in accordance with normal
@@ -588,7 +586,7 @@ It asks for up to 50 results at a time from the server, and requests that the re
 			</output>
 		</operation>
 		<operation name="findObjects">
-			<http:operation location="search?{terms=(terms)|query=(query)}[&amp;maxResults=(maxResults)][&amp;xml=(boolean)][&amp;pid=(pid)][&amp;label=(label)][&amp;fType=(fType)][&amp;cModel=(cModel)][&amp;state=(state)][&amp;ownerId=(ownerId)][&amp;cDate=(cDate)][&amp;mDate=(mDate)][&amp;dcmDate=(dcmDate)][&amp;bDef=(bDef)][&amp;bMech=(bMech)][&amp;title=(title)][&amp;creator=(creator)][&amp;subject=(subject)][&amp;description=(description)][&amp;publisher=(publisher)][&amp;contributor=(contributor)][&amp;date=(date)][&amp;type=(type)][&amp;format=(format)][&amp;identifier=(identifier)][&amp;source=(source)][&amp;language=(language)][&amp;relation=(relation)][&amp;coverage=(coverage)][&amp;rights=(rights)]"/>
+			<http:operation location="search?{terms=(terms)|query=(query)}[&amp;maxResults=(maxResults)][&amp;xml=(boolean)][&amp;pid=(pid)][&amp;label=(label)][&amp;state=(state)][&amp;ownerId=(ownerId)][&amp;cDate=(cDate)][&amp;mDate=(mDate)][&amp;dcmDate=(dcmDate)][&amp;title=(title)][&amp;creator=(creator)][&amp;subject=(subject)][&amp;description=(description)][&amp;publisher=(publisher)][&amp;contributor=(contributor)][&amp;date=(date)][&amp;type=(type)][&amp;format=(format)][&amp;identifier=(identifier)][&amp;source=(source)][&amp;language=(language)][&amp;relation=(relation)][&amp;coverage=(coverage)][&amp;rights=(rights)]"/>
 			<input>
 				<documentation>This URL replacement syntax is used to perform a search on the objects in the repository.
                The brace ({ and }) characters are used to denote a choice between items separated by the pipe (|) character.

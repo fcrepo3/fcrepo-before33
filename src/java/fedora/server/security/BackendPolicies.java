@@ -167,7 +167,7 @@ public class BackendPolicies {
                     if (-1 == parts[0].indexOf(":")) {
                         filename1 = "callback-by:" + parts[0];
                     } else {
-                        filename1 = "callback-by-bmech-" + parts[0];
+                        filename1 = "callback-by-sdep-" + parts[0];
                     }
                     if ("".equals(filename2)) {
                         if (!"default".equals(parts[0])) {

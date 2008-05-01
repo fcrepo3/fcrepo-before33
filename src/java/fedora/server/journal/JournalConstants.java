@@ -186,10 +186,6 @@ public interface JournalConstants {
     // Names of arguments to the management methods, as written to the Journal
     String ARGUMENT_NAME_ALT_IDS = "altIds";
 
-    String ARGUMENT_NAME_BDEF_PID = "bDefPID";
-
-    String ARGUMENT_NAME_BMECH_PID = "bMechPid";
-
     String ARGUMENT_NAME_CHECKSUM = "checksum";
 
     String ARGUMENT_NAME_CHECKSUM_TYPE = "checksumType";

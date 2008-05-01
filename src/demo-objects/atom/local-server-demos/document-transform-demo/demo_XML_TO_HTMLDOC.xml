@@ -2,69 +2,13 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <id>info:fedora/demo:XML_TO_HTMLDOC</id>
   <title type="text">Generated Content Model</title>
-  <updated>2007-08-15T14:36:30.369Z</updated>
+  <updated>2008-04-30T03:54:30.030Z</updated>
   <author>
     <name>fedoraAdmin</name>
   </author>
-  <category term="FedoraCModelObject" scheme="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"></category>
   <category term="Active" scheme="info:fedora/fedora-system:def/model#state"></category>
-  <category term="2007-08-15T14:36:30.369Z" scheme="info:fedora/fedora-system:def/model#createdDate"></category>
+  <category term="2008-04-30T03:54:30.030Z" scheme="info:fedora/fedora-system:def/model#createdDate"></category>
   <icon>http://www.fedora-commons.org/images/logo_vertical_transparent_200_251.png</icon>
-  <entry>
-    <id>info:fedora/demo:XML_TO_HTMLDOC/RELS-EXT</id>
-    <title type="text">RELS-EXT</title>
-    <updated>2007-08-15T14:36:30.369Z</updated>
-    <link href="info:fedora/demo:XML_TO_HTMLDOC/RELS-EXT/2007-08-15T14:36:30.369Z" rel="alternate"></link>
-    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
-    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
-    <category term="false" scheme="info:fedora/fedora-system:def/model#versionable"></category>
-  </entry>
-  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
-    <id>info:fedora/demo:XML_TO_HTMLDOC/RELS-EXT/2007-08-15T14:36:30.369Z</id>
-    <title type="text">RELS-EXT1.0</title>
-    <updated>2007-08-15T14:36:30.369Z</updated>
-    <thr:in-reply-to ref="info:fedora/demo:XML_TO_HTMLDOC/RELS-EXT"></thr:in-reply-to>
-    <category term="Relationships" scheme="info:fedora/fedora-system:def/model#label"></category>
-    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
-    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
-    <category term="352" scheme="info:fedora/fedora-system:def/model#length"></category>
-    <content type="text/xml">
-      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
-          
-        <rdf:Description rdf:about="info:fedora/demo:XML_TO_HTMLDOC">
-            
-          <fedora-model:hasBDef rdf:resource="info:fedora/demo:12"></fedora-model:hasBDef>
-          </rdf:Description>
-        </rdf:RDF>
-    </content>
-  </entry>
-  <entry>
-    <id>info:fedora/demo:XML_TO_HTMLDOC/DC</id>
-    <title type="text">DC</title>
-    <updated>2007-08-15T14:36:30.369Z</updated>
-    <link href="info:fedora/demo:XML_TO_HTMLDOC/DC/2007-08-15T14:36:30.369Z" rel="alternate"></link>
-    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
-    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
-    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
-  </entry>
-  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
-    <id>info:fedora/demo:XML_TO_HTMLDOC/DC/2007-08-15T14:36:30.369Z</id>
-    <title type="text">DC1.0</title>
-    <updated>2007-08-15T14:36:30.369Z</updated>
-    <thr:in-reply-to ref="info:fedora/demo:XML_TO_HTMLDOC/DC"></thr:in-reply-to>
-    <category term="Dublin Core Metadata" scheme="info:fedora/fedora-system:def/model#label"></category>
-    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
-    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
-    <category term="267" scheme="info:fedora/fedora-system:def/model#length"></category>
-    <content type="text/xml">
-      <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
-          
-        <dc:title>Generated Content Model</dc:title>
-          
-        <dc:identifier>demo:XML_TO_HTMLDOC</dc:identifier>
-        </oai_dc:dc>
-    </content>
-  </entry>
   <entry>
     <id>info:fedora/demo:XML_TO_HTMLDOC/DS-COMPOSITE-MODEL</id>
     <title type="text">DS-COMPOSITE-MODEL</title>
@@ -111,6 +55,63 @@
           <form MIME="text/xml"></form>
           </dsTypeModel>
         </dsCompositeModel>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:XML_TO_HTMLDOC/RELS-EXT</id>
+    <title type="text">RELS-EXT</title>
+    <updated>2007-08-15T14:36:30.369Z</updated>
+    <link href="info:fedora/demo:XML_TO_HTMLDOC/RELS-EXT/2007-08-15T14:36:30.369Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="false" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:XML_TO_HTMLDOC/RELS-EXT/2007-08-15T14:36:30.369Z</id>
+    <title type="text">RELS-EXT1.0</title>
+    <updated>2007-08-15T14:36:30.369Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:XML_TO_HTMLDOC/RELS-EXT"></thr:in-reply-to>
+    <category term="Relationships" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="476" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
+          
+        <rdf:Description rdf:about="info:fedora/demo:XML_TO_HTMLDOC">
+            
+          <fedora-model:hasService rdf:resource="info:fedora/demo:12"></fedora-model:hasService>
+            
+          <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:ContentModel-3.0"></fedora-model:hasModel>
+          </rdf:Description>
+        </rdf:RDF>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:XML_TO_HTMLDOC/DC</id>
+    <title type="text">DC</title>
+    <updated>2007-08-15T14:36:30.369Z</updated>
+    <link href="info:fedora/demo:XML_TO_HTMLDOC/DC/2007-08-15T14:36:30.369Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:XML_TO_HTMLDOC/DC/2007-08-15T14:36:30.369Z</id>
+    <title type="text">DC1.0</title>
+    <updated>2007-08-15T14:36:30.369Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:XML_TO_HTMLDOC/DC"></thr:in-reply-to>
+    <category term="Dublin Core Metadata" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="267" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+          
+        <dc:title>Generated Content Model</dc:title>
+          
+        <dc:identifier>demo:XML_TO_HTMLDOC</dc:identifier>
+        </oai_dc:dc>
     </content>
   </entry>
 </feed>

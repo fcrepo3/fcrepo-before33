@@ -11,7 +11,6 @@ import org.trippi.RDFFormat;
 import org.trippi.TriplestoreWriter;
 
 import fedora.server.errors.ResourceIndexException;
-import fedora.server.storage.BDefReader;
 import fedora.server.storage.DOReader;
 
 /**
@@ -46,97 +45,35 @@ public interface ResourceIndex
     int getIndexLevel();
 
     /**
-     * Adds a behavior definition object.
+     * Adds the appripriate triples implied by the given object to the
+     * ResourceIndex.
      * 
      * @param reader
-     *        the behavior definition to add.
+     *        The given object to index.
      * @throws ResourceIndexException
-     *         if the operation fails for any reason.
      */
-    void addBDefObject(BDefReader reader) throws ResourceIndexException;
+    void addObject(DOReader reader) throws ResourceIndexException;
 
     /**
-     * Adds a data object.
-     * 
-     * @param reader
-     *        the data object to add.
-     * @throws ResourceIndexException
-     *         if the operation fails for any reason.
-     */
-    void addDataObject(DOReader reader) throws ResourceIndexException;
-
-    /**
-     * Adds a content model object.
-     * 
-     * @param reader
-     *        the content model object to add.
-     * @throws ResourceIndexException
-     *         if the operation fails for any reason.
-     */
-    void addCModelObject(DOReader reader) throws ResourceIndexException;
-
-    /**
-     * Modifies a behavior definition object.
+     * Updates any appropriate triples implied a modified object.
      * 
      * @param oldReader
-     *        the original behavior definition.
+     *        Pre-modification version of the oject.
      * @param newReader
-     *        the modified behavior definition.
+     *        Post-modification version of the object.
      * @throws ResourceIndexException
-     *         if the operation fails for any reason.
      */
-    void modifyBDefObject(BDefReader oldReader, BDefReader newReader)
+    void modifyObject(DOReader oldReader, DOReader newReader)
             throws ResourceIndexException;
 
     /**
-     * Modifies a data object.
+     * Removes the triples implied by a given object from the ResourceIndex.
      * 
      * @param oldReader
-     *        the original data object.
-     * @param newReader
-     *        the modified data object.
+     *        Object whose triples shall be removed from the index.
      * @throws ResourceIndexException
-     *         if the operation fails for any reason.
      */
-    void modifyDataObject(DOReader oldReader, DOReader newReader)
-            throws ResourceIndexException;
-
-    /**
-     * Modifies a CModel object.
-     * 
-     * @param oldReader
-     *        the original content model object.
-     * @param newReader
-     *        the modified content model object.
-     * @throws ResourceIndexException
-     *         if the operation fails for any reason.
-     */
-    void modifyCModelObject(DOReader oldReader, DOReader newReader)
-            throws ResourceIndexException;
-
-    /**
-     * Deletes a behavior definition object.
-     * 
-     * @param oldReader
-     *        the original behavior definition.
-     */
-    void deleteBDefObject(BDefReader oldReader) throws ResourceIndexException;
-
-    /**
-     * Deletes a data object.
-     * 
-     * @param oldReader
-     *        the original data object.
-     */
-    void deleteDataObject(DOReader oldReader) throws ResourceIndexException;
-
-    /**
-     * Deletes a content model object.
-     * 
-     * @param oldReader
-     *        the original content model object.
-     */
-    void deleteCModelObject(DOReader oldReader) throws ResourceIndexException;
+    void deleteObject(DOReader oldReader) throws ResourceIndexException;
 
     /**
      * Exports all triples in the RI.

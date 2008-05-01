@@ -81,7 +81,7 @@ import fedora.utilities.XmlTransformUtility;
  * <li>ListDatastreams - Gets a list of all datastreams of an object.</li>
  * </ol>
  * <li>PID_ - persistent identifier of the digital object</li>
- * <li>bDefPID_ - persistent identifier of the Behavior Definiton object</li>
+ * <li>sDefPID_ - persistent identifier of the Service Definiton object</li>
  * <li>dsID_ - identifier of the datastream</li>
  * <li>methodName_ - name of the method</li>
  * <li>asOfDateTime_ - versioning datetime stamp</li>
@@ -89,7 +89,7 @@ import fedora.utilities.XmlTransformUtility;
  * ListMethods, GetObjectProfile, and DescribeRepository that determines whether
  * output is formatted as XML or as HTML; value of "true" indicates XML format;
  * value of false or omission indicates HTML format.
- * <li>userParms - behavior methods may require or provide optional parameters
+ * <li>userParms - methods may require or provide optional parameters
  * that may be input as arguments to the method; these method parameters are
  * entered as name/value pairs like the other serlvet parameters.Used in
  * conjunction with GetDissemination. (optional)</li>
@@ -107,11 +107,11 @@ import fedora.utilities.XmlTransformUtility;
  * <ol>
  * <li>GetDissemination URL syntax:
  * <p>
- * protocol://hostname:port/soapclient/apia?action_=GetDissemination&PID_=pid&bDefPID_=bdefpid&methodName_=methodname[&asOfDateTime_=dateTime][?parmArray]
+ * protocol://hostname:port/soapclient/apia?action_=GetDissemination&PID_=pid&sDefPID_=sdefpid&methodName_=methodname[&asOfDateTime_=dateTime][?parmArray]
  * </p>
  * <p>
  * This syntax requests a dissemination of the specified object using the
- * specified method of the associated behavior definition object. The result is
+ * specified method of the associated service definition object. The result is
  * returned as a MIME-typed stream.
  * </p>
  * </li>
@@ -124,7 +124,7 @@ import fedora.utilities.XmlTransformUtility;
  * <li> GetDissemination - required action name for getting a dissemination
  * request.</li>
  * <li>pid - required persistent idenitifer of the digital object.</li>
- * <li>bdefpid - required persistent identifier of the behavior definition
+ * <li>sdefpid - required persistent identifier of the service definition
  * object to which the digital object subscribes.</li>
  * <li>methodname - required name of the method to be executed.</li>
  * <li>dateTime - optional dateTime value indicating dissemination of a version
@@ -350,7 +350,7 @@ public class FedoraAccessSoapServlet
         String asOfDateTime = null;
         Date versDateTime = null;
         String action = null;
-        String bDefPID = null;
+        String sDefPID = null;
         String methodName = null;
         String PID = null;
         String dsID = null;
@@ -391,8 +391,8 @@ public class FedoraAccessSoapServlet
                 action = request.getParameter(parm);
             } else if (parm.equals("PID_")) {
                 PID = URLDecoder.decode(request.getParameter(parm), "UTF-8");
-            } else if (parm.equals("bDefPID_")) {
-                bDefPID =
+            } else if (parm.equals("sDefPID_")) {
+                sDefPID =
                         URLDecoder.decode(request.getParameter(parm), "UTF-8");
             } else if (parm.equals("dsID_")) {
                 dsID = URLDecoder.decode(request.getParameter(parm), "UTF-8");
@@ -434,7 +434,7 @@ public class FedoraAccessSoapServlet
         // parameters are valid for the request.
         if (isValidURLParms(action,
                             PID,
-                            bDefPID,
+                            sDefPID,
                             dsID,
                             methodName,
                             versDateTime,
@@ -449,7 +449,7 @@ public class FedoraAccessSoapServlet
                     MIMETypedStream dissemination = null;
                     dissemination =
                             getDissemination(PID,
-                                             bDefPID,
+                                             sDefPID,
                                              methodName,
                                              userParms,
                                              asOfDateTime);
@@ -548,7 +548,7 @@ public class FedoraAccessSoapServlet
                         System.err.println(message);
                         showURLParms(action,
                                      PID,
-                                     bDefPID,
+                                     sDefPID,
                                      methodName,
                                      asOfDateTime,
                                      userParms,
@@ -567,7 +567,7 @@ public class FedoraAccessSoapServlet
                     System.err.println(message);
                     showURLParms(action,
                                  PID,
-                                 bDefPID,
+                                 sDefPID,
                                  methodName,
                                  asOfDateTime,
                                  userParms,
@@ -1481,17 +1481,18 @@ public class FedoraAccessSoapServlet
                     pw.write(" " + OBJ_METHODS1_0.xsdLocation + "\">");
 
                     // ObjectMethodsDef SERIALIZATION
-                    String nextBdef = "null";
-                    String currentBdef = "";
+                    String nextSdef = "null";
+                    String currentSdef = "";
                     for (int i = 0; i < methodDefs.length; i++) {
-                        currentBdef = methodDefs[i].getBDefPID();
-                        if (!currentBdef.equalsIgnoreCase(nextBdef)) {
+                        currentSdef = methodDefs[i].getServiceDefinitionPID();
+                        if (!currentSdef.equalsIgnoreCase(nextSdef)) {
                             if (i != 0) {
-                                pw.write("</bDef>");
+                                pw.write("</sDef>");
                             }
-                            pw.write("<bDef pid=\""
+                            pw.write("<sDef pid=\""
                                     + StreamUtility.enc(methodDefs[i]
-                                            .getBDefPID()) + "\" >");
+                                            .getServiceDefinitionPID())
+                                    + "\" >");
                         }
                         pw.write("<method name=\""
                                 + StreamUtility.enc(methodDefs[i]
@@ -1524,9 +1525,9 @@ public class FedoraAccessSoapServlet
                         }
 
                         pw.write("</method>");
-                        nextBdef = currentBdef;
+                        nextSdef = currentSdef;
                     }
-                    pw.write("</bDef>");
+                    pw.write("</sDef>");
                     pw.write("</objectMethods>");
 
                     pw.flush();
@@ -1613,23 +1614,10 @@ public class FedoraAccessSoapServlet
                     // PROFILE FIELDS SERIALIZATION
                     pw.write("<objLabel>" + objProfile.getObjLabel()
                             + "</objLabel>");
-                    pw.write("<objContentModel>"
-                            + objProfile.getObjContentModel()
-                            + "</objContentModel>");
                     String cDate = objProfile.getObjCreateDate();
                     pw.write("<objCreateDate>" + cDate + "</objCreateDate>");
                     String mDate = objProfile.getObjLastModDate();
                     pw.write("<objLastModDate>" + mDate + "</objLastModDate>");
-                    String objType = objProfile.getObjType();
-                    pw.write("<objType>");
-                    if (objType.equalsIgnoreCase("O")) {
-                        pw.write("Fedora Data Object");
-                    } else if (objType.equalsIgnoreCase("D")) {
-                        pw.write("Fedora Behavior Definition Object");
-                    } else if (objType.equalsIgnoreCase("M")) {
-                        pw.write("Fedora Behavior Mechanism Object");
-                    }
-                    pw.write("</objType>");
                     pw.write("<objDissIndexViewURL>"
                             + objProfile.getObjDissIndexViewURL()
                             + "</objDissIndexViewURL>");
@@ -1784,7 +1772,7 @@ public class FedoraAccessSoapServlet
          * @param PID
          *        The persistent identifier of the specified digital object.
          * @param objectHistoryArray
-         *        An array of behavior method definitions.
+         *        An array of method definitions.
          * @param pw
          *        A PipedWriter to which the serialization info is written.
          */
@@ -1857,7 +1845,7 @@ public class FedoraAccessSoapServlet
 
     /**
      * <p>
-     * Gets a list of Behavior Definition object PIDs for the specified digital
+     * Gets a list of Service Definition object PIDs for the specified digital
      * object by invoking the appropriate Fedora Access SOAP service.
      * </p>
      * 
@@ -1887,8 +1875,8 @@ public class FedoraAccessSoapServlet
      * 
      * @param PID
      *        The persistent identifier of the digital object.
-     * @param bDefPID
-     *        The persistent identifier of the Behavior Definition object.
+     * @param sDefPID
+     *        The persistent identifier of the Service Definition object.
      * @param methodName
      *        The name of the method.
      * @param asOfDateTime
@@ -1901,7 +1889,7 @@ public class FedoraAccessSoapServlet
      *         service.
      */
     public MIMETypedStream getDissemination(String PID,
-                                            String bDefPID,
+                                            String sDefPID,
                                             String methodName,
                                             Property[] userParms,
                                             String asOfDateTime)
@@ -1937,7 +1925,7 @@ public class FedoraAccessSoapServlet
                                      new BeanDeserializerFactory(Property.class,
                                                                  qn2));
         dissemination =
-                (MIMETypedStream) call.invoke(new Object[] {PID, bDefPID,
+                (MIMETypedStream) call.invoke(new Object[] {PID, sDefPID,
                         methodName, userParms, asOfDateTime});
         return dissemination;
     }
@@ -2315,8 +2303,8 @@ public class FedoraAccessSoapServlet
      *        The Fedora service to be executed
      * @param PID
      *        The persistent identifier of the Digital Object.
-     * @param bDefPID
-     *        The persistent identifier of the Behavior Definition object.
+     * @param sDefPID
+     *        The persistent identifier of the Service Definition object.
      * @param methodName
      *        The method name.
      * @param versDateTime
@@ -2331,7 +2319,7 @@ public class FedoraAccessSoapServlet
      */
     private boolean isValidURLParms(String action,
                                     String PID,
-                                    String bDefPID,
+                                    String sDefPID,
                                     String dsID,
                                     String methodName,
                                     Date versDateTime,
@@ -2345,8 +2333,8 @@ public class FedoraAccessSoapServlet
         String versDate = DateUtility.convertDateToString(versDateTime);
         StringBuffer html = new StringBuffer();
         if (action != null && action.equals(GET_DISSEMINATION)) {
-            if (PID == null || bDefPID == null || methodName == null) {
-                // Dissemination requires PID, bDefPID, and methodName;
+            if (PID == null || sDefPID == null || methodName == null) {
+                // Dissemination requires PID, sDefPID, and methodName;
                 // asOfDateTime is optional.
                 response.setContentType(CONTENT_TYPE_HTML);
                 html.append("<html>");
@@ -2371,8 +2359,8 @@ public class FedoraAccessSoapServlet
                 html.append("<td><font color='blue'>(REQUIRED)</font></td>");
                 html.append("</tr>");
                 html.append("<tr>");
-                html.append("<td><font color='red'>bDefPID_</font></td>");
-                html.append("<td> = </td><td>" + bDefPID + "</td>");
+                html.append("<td><font color='red'>sDefPID_</font></td>");
+                html.append("<td> = </td><td>" + sDefPID + "</td>");
                 html.append("<td><font color='blue'>(REQUIRED)</font></td>");
                 html.append("</tr>");
                 html.append("<tr>");
@@ -2620,9 +2608,9 @@ public class FedoraAccessSoapServlet
             html.append("<td>" + PID + "</td>");
             html.append("</tr>");
             html.append("<tr>");
-            html.append("<td><font color='red'>bDefPID_</td>");
+            html.append("<td><font color='red'>sDefPID_</td>");
             html.append("<td> = </td>");
-            html.append("<td>" + bDefPID + "</td>");
+            html.append("<td>" + sDefPID + "</td>");
             html.append("</tr>");
             html.append("<tr>");
             html.append("<td><font color='red'>methodName_</td>");
@@ -2674,8 +2662,8 @@ public class FedoraAccessSoapServlet
      *        The Fedora service requested.
      * @param PID
      *        The persistent identifier of the digital object.
-     * @param bDefPID
-     *        The persistent identifier of the Behavior Definition object.
+     * @param sDefPID
+     *        The persistent identifier of the Service Definition object.
      * @param methodName
      *        the name of the method.
      * @param asOfDateTime
@@ -2691,7 +2679,7 @@ public class FedoraAccessSoapServlet
      */
     private void showURLParms(String action,
                               String PID,
-                              String bDefPID,
+                              String sDefPID,
                               String methodName,
                               String asOfDateTime,
                               Property[] userParms,
@@ -2723,9 +2711,9 @@ public class FedoraAccessSoapServlet
         html.append("<td>" + PID + "</td>");
         html.append("</tr>");
         html.append("<tr>");
-        html.append("<td><font color='red'>bDefPID_</font></td>");
+        html.append("<td><font color='red'>sDefPID_</font></td>");
         html.append("<td> = </td>");
-        html.append("<td>" + bDefPID + "</td>");
+        html.append("<td>" + sDefPID + "</td>");
         html.append("</tr>");
         html.append("<tr>");
         html.append("<td><font color='red'>methodName_</font></td>");

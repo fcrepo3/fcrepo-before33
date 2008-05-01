@@ -36,12 +36,12 @@ import fedora.server.Context;
 import fedora.server.config.DatastoreConfiguration;
 import fedora.server.errors.InconsistentTableSpecException;
 import fedora.server.errors.ServerException;
-import fedora.server.storage.BMechReader;
 import fedora.server.storage.ConnectionPool;
-import fedora.server.storage.MockBMechReader;
+import fedora.server.storage.MockServiceDeploymentReader;
 import fedora.server.storage.MockDOReader;
 import fedora.server.storage.MockRepositoryReader;
-import fedora.server.storage.types.BMechDSBindSpec;
+import fedora.server.storage.ServiceDeploymentReader;
+import fedora.server.storage.types.DeploymentDSBindSpec;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.utilities.SQLUtility;
@@ -79,27 +79,17 @@ public class TestFieldSearchSQLImpl {
 	}
 
 	private static final ObjectData OBJECT_WITH_NO_DC = new ObjectData(
-			"somePid", "myLabel", 'X', "cmodeL", "A", "theOwner", new Date(
-					12345), new Date(67890), new Date(10000), null, null, null);
+			"somePid", "myLabel", "A", "theOwner", new Date(
+					12345), new Date(67890), new Date(10000), null);
 
 	private static final ObjectData OBJECT_WITH_DC = new ObjectData("somePid",
-			"myLabel", 'X', "cmodeL", "A", "theOwner", new Date(12345),
-			new Date(67890), new Date(10000), null, null, DC_PAYLOAD_NO_DATES);
+			"myLabel", "A", "theOwner", new Date(12345),
+			new Date(67890), new Date(10000), DC_PAYLOAD_NO_DATES);
 
 	private static final ObjectData OBJECT_WITH_DC_AND_DATES = new ObjectData(
-			"somePid", "myLabel", 'X', "cmodeL", "A", "theOwner", new Date(
-					12345), new Date(67890), new Date(10000), null, null,
-			DC_PAYLOAD_WITH_DATES);
-
-	private static final ObjectData BMECH_WITH_NO_DC = new ObjectData(
-			"somePid", "myLabel", 'M', "cmodeL", "A", "theOwner", new Date(
+			"somePid", "myLabel",  "A", "theOwner", new Date(
 					12345), new Date(67890), new Date(10000),
-			new String[] { "bmechPid" }, null, null);
-
-	private static final ObjectData BMECH_WITH_DC = new ObjectData("somePid",
-			"myLabel", 'M', "cmodeL", "A", "theOwner", new Date(12345),
-			new Date(67890), new Date(10000), new String[] { "bmechWithDC" },
-			null, DC_PAYLOAD_NO_DATES);
+			DC_PAYLOAD_WITH_DATES);
 
 	private static SQLUtility saveSqlUtility;
 
@@ -216,40 +206,6 @@ public class TestFieldSearchSQLImpl {
 		checkExpectations();
 	}
 
-	@Test
-	public void noDcBmech() throws ServerException {
-		setSqlUtilityInstance(new UnusedMockSqlUtility());
-		this.mockConnection = new UnusedMockConnection();
-		this.mockRepositoryReader = new BmechMockRepositoryReader("someBdefPid");
-
-		updateRecord(BMECH_WITH_NO_DC, false);
-		checkExpectations();
-	}
-
-	@Test
-	public void dcNoDatesShortFieldsBmech() throws ServerException {
-		setSqlUtilityInstance(new UpdatingMockSqlUtility(SHORT_FIELDS,
-				BMECH_WITH_DC.getShortFieldValueList()));
-		this.mockConnection = new UnusedMockConnection();
-		this.mockRepositoryReader = new BmechMockRepositoryReader("bmechWithDC");
-
-		updateRecord(BMECH_WITH_DC, false);
-		checkExpectations();
-	}
-
-	@Test
-	public void dcNoDatesLongFieldsBmech() throws ServerException {
-		setSqlUtilityInstance(new UpdatingMockSqlUtility(LONG_FIELDS,
-				BMECH_WITH_DC.getLongFieldValueList()));
-		this.mockConnection = new UpdatingMockConnection();
-		this.expectedDateDeletes = 1;
-		this.expectedDateInserts = 0;
-		this.mockRepositoryReader = new BmechMockRepositoryReader("bmechWithDC");
-
-		updateRecord(BMECH_WITH_DC, true);
-		checkExpectations();
-	}
-
 	private void updateRecord(ObjectData objectData, boolean longFields)
 			throws ServerException {
 		// Create a DC datastream if appropriate.
@@ -265,8 +221,10 @@ public class TestFieldSearchSQLImpl {
 		BasicDigitalObject theObject = new BasicDigitalObject();
 		theObject.setPid(objectData.getPid());
 		theObject.setLabel(objectData.getLabel());
-		theObject.addFedoraObjectType(objectData.getFType());
-		theObject.setContentModelId(objectData.getCModel());
+		
+		/* FIXME: Ignoing obsolete properties, remove if OK */
+		//theObject.addFedoraObjectType(objectData.getFType());
+		//theObject.setContentModelId(objectData.getCModel());
 		theObject.setState(objectData.getState());
 		theObject.setOwnerId(objectData.getOwnerId());
 		theObject.setCreateDate(objectData.getCreateDate());
@@ -291,8 +249,8 @@ public class TestFieldSearchSQLImpl {
 					expectedDateDeletes, expectedDateInserts);
 		}
 
-		if (mockRepositoryReader instanceof BmechMockRepositoryReader) {
-			((BmechMockRepositoryReader) mockRepositoryReader)
+		if (mockRepositoryReader instanceof SDepMockRepositoryReader) {
+			((SDepMockRepositoryReader) mockRepositoryReader)
 					.checkExpectations();
 		}
 	}
@@ -538,38 +496,38 @@ public class TestFieldSearchSQLImpl {
 	private static class UnusedMockRepositoryReader extends
 			MockRepositoryReader {
 		@Override
-		public synchronized BMechReader getBMechReader(
+		public synchronized ServiceDeploymentReader getServiceDeploymentReader(
 				boolean cachedObjectRequired, Context context, String pid)
 				throws ServerException {
-			fail("Unexpected call to UnusedMockRepositoryReader.getBMechReader");
+			fail("Unexpected call to UnusedMockRepositoryReader.getServiceDeploymentReader");
 			return null;
 		}
 	}
 
-	private static class BmechMockRepositoryReader extends MockRepositoryReader {
-		private final String bdefPid;
+	private static class SDepMockRepositoryReader extends MockRepositoryReader {
+		private final String sdefPid;
 
 		private int calls;
 
-		public BmechMockRepositoryReader(String bdefPid) {
-			this.bdefPid = bdefPid;
+		public SDepMockRepositoryReader(String sdefPid) {
+			this.sdefPid = sdefPid;
 		}
 
 		public void checkExpectations() {
-			assertEquals("bmech reader calls", 1, calls);
+			assertEquals("sDep reader calls", 1, calls);
 		}
 
 		@Override
-		public synchronized BMechReader getBMechReader(
+		public synchronized ServiceDeploymentReader getServiceDeploymentReader(
 				boolean cachedObjectRequired, Context context, String pid)
 				throws ServerException {
 			calls++;
-			return new MockBMechReader(null) {
+			return new MockServiceDeploymentReader(null) {
 				@Override
-				public BMechDSBindSpec getServiceDSInputSpec(Date versDateTime)
+				public DeploymentDSBindSpec getServiceDSInputSpec(Date versDateTime)
 						throws ServerException {
-					BMechDSBindSpec spec = new BMechDSBindSpec();
-					spec.bDefPID = bdefPid;
+					DeploymentDSBindSpec spec = new DeploymentDSBindSpec();
+					spec.serviceDefinitionPID = sdefPid;
 					return spec;
 				}
 			};
@@ -589,10 +547,6 @@ public class TestFieldSearchSQLImpl {
 
 		private final String label;
 
-		private final char fType;
-
-		private final String cModel;
-
 		private final String state;
 
 		private final String ownerId;
@@ -603,27 +557,18 @@ public class TestFieldSearchSQLImpl {
 
 		private final Date dcModifiedDate;
 
-		private final String[] bDef;
-
-		private final String bMech;
-
 		private final String dcPayload;
 
-		public ObjectData(String pid, String label, char fType, String cModel,
+		public ObjectData(String pid, String label,
 				String state, String ownerId, Date createDate,
-				Date lastModDate, Date dcModifiedDate, String[] bDef,
-				String bMech, String dcPayload) {
+				Date lastModDate, Date dcModifiedDate, String dcPayload) {
 			this.pid = pid;
 			this.label = label;
-			this.fType = fType;
-			this.cModel = cModel;
 			this.state = state;
 			this.ownerId = ownerId;
 			this.createDate = createDate;
 			this.lastModDate = lastModDate;
 			this.dcModifiedDate = dcModifiedDate;
-			this.bDef = bDef;
-			this.bMech = bMech;
 			this.dcPayload = dcPayload;
 		}
 
@@ -631,15 +576,11 @@ public class TestFieldSearchSQLImpl {
 			List<String> result = new ArrayList<String>();
 			result.add(pid);
 			result.add(lowerCase(label));
-			result.add(lowerCase(String.valueOf(fType)));
-			result.add(lowerCase(cModel));
 			result.add(lowerCase(state));
 			result.add(lowerCase(ownerId));
 			result.add(dateStamp(createDate));
 			result.add(dateStamp(lastModDate));
 			result.add(dateStamp(dcModifiedDate));
-			result.add(joinStrings(bDef));
-			result.add(bMech);
 			return result;
 		}
 
@@ -672,14 +613,6 @@ public class TestFieldSearchSQLImpl {
 			return label;
 		}
 
-		public char getFType() {
-			return fType;
-		}
-
-		public String getCModel() {
-			return cModel;
-		}
-
 		public String getState() {
 			return state;
 		}
@@ -698,14 +631,6 @@ public class TestFieldSearchSQLImpl {
 
 		public Date getDcModifiedDate() {
 			return dcModifiedDate;
-		}
-
-		public String[] getBDef() {
-			return bDef;
-		}
-
-		public String getBMech() {
-			return bMech;
 		}
 
 		public String getDcPayload() {
@@ -735,12 +660,7 @@ public class TestFieldSearchSQLImpl {
 
 			return joinStrings(values);
 		}
-
-		private String joinStrings(String[] strings) {
-			return (strings == null) ? null : joinStrings(Arrays
-					.asList(strings));
-		}
-
+		
 		private String joinStrings(Collection<String> strings) {
 			if ((strings == null) || (strings.isEmpty())) {
 				return null;

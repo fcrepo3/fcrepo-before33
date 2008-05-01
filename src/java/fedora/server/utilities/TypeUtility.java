@@ -9,6 +9,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import org.apache.log4j.Logger;
 
@@ -97,9 +99,11 @@ public abstract class TypeUtility {
             throws fedora.server.errors.InvalidOperatorException,
             fedora.server.errors.QueryParseException {
         java.util.ArrayList list = new java.util.ArrayList();
-        for (Condition c : genConditions) {
-            list.add(new fedora.server.search.Condition(c.getProperty(), c
-                    .getOperator().toString(), c.getValue()));
+        if (genConditions != null) {
+            for (Condition c : genConditions) {
+                list.add(new fedora.server.search.Condition(c.getProperty(), c
+                        .getOperator().toString(), c.getValue()));
+            }
         }
         return list;
     }
@@ -119,12 +123,6 @@ public abstract class TypeUtility {
             if (sf.getLabel() != null) {
                 gf.setLabel(sf.getLabel());
             }
-            if (sf.getFType() != null) {
-                gf.setFType(sf.getFType());
-            }
-            if (sf.getCModel() != null) {
-                gf.setCModel(sf.getCModel());
-            }
             if (sf.getState() != null) {
                 gf.setState(sf.getState());
             }
@@ -139,12 +137,6 @@ public abstract class TypeUtility {
             }
             if (sf.getDCMDate() != null) {
                 gf.setDcmDate(DateUtility.convertDateToString(sf.getDCMDate()));
-            }
-            if (sf.bDefs().size() != 0) {
-                gf.setBDef(toStringArray(sf.bDefs()));
-            }
-            if (sf.bMechs().size() != 0) {
-                gf.setBMech(toStringArray(sf.bMechs()));
             }
             // Dublin core fields
             if (sf.titles().size() != 0) {
@@ -527,7 +519,8 @@ public abstract class TypeUtility {
                 fedora.server.storage.types.ObjectMethodsDef objectMethodDef =
                         new fedora.server.storage.types.ObjectMethodsDef();
                 objectMethodDef.PID = genObjectMethodDefs[i].getPID();
-                objectMethodDef.bDefPID = genObjectMethodDefs[i].getBDefPID();
+                objectMethodDef.sDefPID =
+                        genObjectMethodDefs[i].getServiceDefinitionPID();
                 objectMethodDef.methodName =
                         genObjectMethodDefs[i].getMethodName();
 
@@ -568,7 +561,8 @@ public abstract class TypeUtility {
             fedora.server.storage.types.ObjectMethodsDef objectMethodDef =
                     new fedora.server.storage.types.ObjectMethodsDef();
             objectMethodDef.PID = genObjectMethodDef.getPID();
-            objectMethodDef.bDefPID = genObjectMethodDef.getBDefPID();
+            objectMethodDef.sDefPID =
+                    genObjectMethodDef.getServiceDefinitionPID();
             objectMethodDef.methodName = genObjectMethodDef.getMethodName();
             fedora.server.types.gen.MethodParmDef[] genMethodParmDefs =
                     genObjectMethodDef.getMethodParmDefs();
@@ -604,7 +598,8 @@ public abstract class TypeUtility {
                 fedora.server.types.gen.ObjectMethodsDef genObjectMethodDef =
                         new fedora.server.types.gen.ObjectMethodsDef();
                 genObjectMethodDef.setPID(objectMethodDefs[i].PID);
-                genObjectMethodDef.setBDefPID(objectMethodDefs[i].bDefPID);
+                genObjectMethodDef
+                        .setServiceDefinitionPID(objectMethodDefs[i].sDefPID);
                 genObjectMethodDef
                         .setMethodName(objectMethodDefs[i].methodName);
                 fedora.server.storage.types.MethodParmDef[] methodParmDefs =
@@ -644,7 +639,7 @@ public abstract class TypeUtility {
             fedora.server.types.gen.ObjectMethodsDef genObjectMethodDef =
                     new fedora.server.types.gen.ObjectMethodsDef();
             genObjectMethodDef.setPID(objectMethodDef.PID);
-            genObjectMethodDef.setBDefPID(objectMethodDef.bDefPID);
+            genObjectMethodDef.setServiceDefinitionPID(objectMethodDef.sDefPID);
             genObjectMethodDef.setMethodName(objectMethodDef.methodName);
             return genObjectMethodDef;
 
@@ -669,15 +664,15 @@ public abstract class TypeUtility {
                     new fedora.server.access.ObjectProfile();
             objectProfile.PID = genObjectProfile.getPid();
             objectProfile.objectLabel = genObjectProfile.getObjLabel();
-            objectProfile.objectContentModel =
-                    genObjectProfile.getObjContentModel();
-            objectProfile.objectType = genObjectProfile.getObjType();
             objectProfile.objectCreateDate =
                     DateUtility.convertStringToDate(genObjectProfile
                             .getObjCreateDate());
             objectProfile.objectLastModDate =
                     DateUtility.convertStringToDate(genObjectProfile
                             .getObjLastModDate());
+            objectProfile.objectModels =
+                    new HashSet<String>(Arrays.asList(genObjectProfile
+                            .getObjModels()));
             objectProfile.dissIndexViewURL =
                     genObjectProfile.getObjDissIndexViewURL();
             objectProfile.itemIndexViewURL =
@@ -694,9 +689,9 @@ public abstract class TypeUtility {
                     new fedora.server.types.gen.ObjectProfile();
             genObjectProfile.setPid(objectProfile.PID);
             genObjectProfile.setObjLabel(objectProfile.objectLabel);
-            genObjectProfile
-                    .setObjContentModel(objectProfile.objectContentModel);
-            genObjectProfile.setObjType(objectProfile.objectType);
+
+            genObjectProfile.setObjModels(objectProfile.objectModels
+                    .toArray(new String[0]));
             genObjectProfile.setObjCreateDate(DateUtility
                     .convertDateToString(objectProfile.objectCreateDate));
             genObjectProfile.setObjLastModDate(DateUtility
@@ -834,23 +829,6 @@ public abstract class TypeUtility {
         }
         return genProperty;
     }
-
-    //  public static fedora.server.types.gen.Disseminator
-    //          convertDisseminatorToGenDisseminator(
-    //          fedora.server.storage.types.Disseminator in)
-    //  {
-    //      fedora.server.types.gen.Disseminator out=
-    //              new fedora.server.types.gen.Disseminator();
-    //      out.setCreateDate(DateUtility.convertDateToString(in.dissCreateDT));
-    //      out.setBDefPID(in.bDefID);
-    //      out.setBMechPID(in.bMechID);
-    //      out.setID(in.dissID);
-    //      out.setLabel(in.dissLabel);
-    //      out.setState(in.dissState);
-    //      out.setVersionID(in.dissVersionID);
-    //      out.setDsBindMap(convertDSBindingMapToGenDatastreamBindingMap(in.dsBindMap));
-    //      return out;
-    //    }
 
     public static fedora.server.types.gen.RelationshipTuple convertRelsTupleToGenRelsTuple(fedora.server.storage.types.RelationshipTuple in) {
         if (in == null) {
@@ -1092,10 +1070,10 @@ public abstract class TypeUtility {
             fedora.server.storage.types.ObjectMethodsDef objectMethod2 =
                     new fedora.server.storage.types.ObjectMethodsDef();
             objectMethod1.PID = "PID1";
-            objectMethod1.bDefPID = "bDefPID1";
+            objectMethod1.sDefPID = "sDefPID1";
             objectMethod1.methodName = "method1";
             objectMethod2.PID = "PID2";
-            objectMethod2.bDefPID = "bDefPID2";
+            objectMethod2.sDefPID = "sDefPID2";
             objectMethod2.methodName = "method2";
             objectMethods[0] = objectMethod1;
             objectMethods[1] = objectMethod2;
@@ -1121,8 +1099,8 @@ public abstract class TypeUtility {
             System.out.println("\nObjectMethod  values:");
             for (int i = 0; i < objectMethods.length; i++) {
                 System.out.println("ObjectMethod[" + i + "] = " + "\nPID = "
-                        + objectMethods[i].PID + "\nbDefPID = "
-                        + objectMethods[i].bDefPID + "\nmethod = "
+                        + objectMethods[i].PID + "\nsDefPID = "
+                        + objectMethods[i].sDefPID + "\nmethod = "
                         + objectMethods[i].methodName);
             }
 
@@ -1183,9 +1161,9 @@ public abstract class TypeUtility {
                             .convertObjectMethodsDefArrayToGenObjectMethodsDefArray(objectMethods);
             for (int i = 0; i < genObjectMethods.length; i++) {
                 System.out.println("GenProp[" + i + "]: " + "\nPID = "
-                        + genObjectMethods[i].getPID() + "\nbDefPID = "
-                        + genObjectMethods[i].getBDefPID() + "\nmethod = "
-                        + genObjectMethods[i].getMethodName());
+                        + genObjectMethods[i].getPID() + "\nsDefPID = "
+                        + genObjectMethods[i].getServiceDefinitionPID()
+                        + "\nmethod = " + genObjectMethods[i].getMethodName());
             }
             System.out
                     .println("\n----- Converting GenObjectMethodsDefArray to "
@@ -1195,8 +1173,8 @@ public abstract class TypeUtility {
                             .convertGenObjectMethodsDefArrayToObjectMethodsDefArray(genObjectMethods);
             for (int i = 0; i < objectMethods.length; i++) {
                 System.out.println("ObjectMethods[" + i + "]: " + "\nPID = "
-                        + objectMethods[i].PID + "\nbDefPID = "
-                        + objectMethods[i].bDefPID + "\nmethod = "
+                        + objectMethods[i].PID + "\nsDefPID = "
+                        + objectMethods[i].sDefPID + "\nmethod = "
                         + objectMethods[i].methodName);
             }
 

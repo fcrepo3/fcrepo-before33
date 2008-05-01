@@ -19,6 +19,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import fedora.common.Constants;
+import fedora.common.Models;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.ObjectIntegrityException;
@@ -28,10 +30,11 @@ import fedora.server.errors.StorageDeviceException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnknownSessionTokenException;
 import fedora.server.errors.UnrecognizedFieldException;
-import fedora.server.storage.BMechReader;
+
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.RepositoryReader;
+import fedora.server.storage.ServiceDeploymentReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.utilities.DCFields;
 import fedora.server.utilities.DateUtility;
@@ -61,26 +64,23 @@ public class FieldSearchSQLImpl
     private final int m_maxSecondsPerSession;
 
     public static String[] DB_COLUMN_NAMES =
-            new String[] {"pid", "label", "fType", "cModel", "state",
-                    "ownerId", "cDate", "mDate", "dcmDate", "bDef", "bMech",
-                    "dcTitle", "dcCreator", "dcSubject", "dcDescription",
-                    "dcPublisher", "dcContributor", "dcDate", "dcType",
-                    "dcFormat", "dcIdentifier", "dcSource", "dcLanguage",
-                    "dcRelation", "dcCoverage", "dcRights"};
+            new String[] {"pid", "label", "state", "ownerId", "cDate", "mDate",
+                    "dcmDate", "dcTitle", "dcCreator", "dcSubject",
+                    "dcDescription", "dcPublisher", "dcContributor", "dcDate",
+                    "dcType", "dcFormat", "dcIdentifier", "dcSource",
+                    "dcLanguage", "dcRelation", "dcCoverage", "dcRights"};
 
     private static boolean[] s_dbColumnNumeric =
-            new boolean[] {false, false, false, false, false, false, true,
-                    true, true, false, false, false, false, false, false,
+            new boolean[] {false, false, false, false, true, true, true, false,
                     false, false, false, false, false, false, false, false,
-                    false, false, false};
+                    false, false, false, false, false, false};
 
     public static String[] DB_COLUMN_NAMES_NODC =
-            new String[] {"pid", "label", "fType", "cModel", "state",
-                    "ownerId", "cDate", "mDate", "dcmDate", "bDef", "bMech"};
+            new String[] {"pid", "label", "state", "ownerId", "cDate", "mDate",
+                    "dcmDate"};
 
     private static boolean[] s_dbColumnNumericNoDC =
-            new boolean[] {false, false, false, false, false, false, true,
-                    true, true, false, false};
+            new boolean[] {false, false, false, false, true, true, true};
 
     // a hash of token-keyed FieldSearchResultSQLImpls
     private final HashMap<String, FieldSearchResultSQLImpl> m_currentResults =
@@ -161,74 +161,24 @@ public class FieldSearchSQLImpl
                 v = v.toLowerCase();
             }
             dbRowValues[1] = v;
-            dbRowValues[2] = reader.getFedoraObjectTypes().toLowerCase();
-            v = reader.getContentModelId();
-            if (v != null) {
-                v = v.toLowerCase();
-            }
-            dbRowValues[3] = v;
-            dbRowValues[4] = reader.GetObjectState().toLowerCase();
+
+            dbRowValues[2] = reader.GetObjectState().toLowerCase();
             v = reader.getOwnerId();
             if (v != null) {
                 v = v.toLowerCase();
             }
-            dbRowValues[5] = v;
+            dbRowValues[3] = v;
             Date date = reader.getCreateDate();
             if (date == null) { // should never happen, but if it does, don't die
                 date = new Date();
             }
-            dbRowValues[6] = "" + date.getTime();
+            dbRowValues[4] = "" + date.getTime();
             date = reader.getLastModDate();
             if (date == null) { // should never happen, but if it does, don't die
                 date = new Date();
             }
-            dbRowValues[7] = "" + date.getTime();
-            // add bdef and bmech ids for each active disseminator
-            // and if the object is a bMech, add the bDefPID (from the
-            // datastream input spec) to its list of bDefs
-            //            Disseminator[] disses=reader.GetDisseminators(null, null);
-            ArrayList<String> bDefs = new ArrayList<String>();
-            ArrayList<String> bMechs = new ArrayList<String>();
-            //            for (int i=0; i<disses.length; i++) {
-            //                bDefs.add(disses[i].bDefID);
-            //                bMechs.add(disses[i].bMechID);
-            //            }
-            //            RelationshipTuple cmPIDs[] = reader.getRelationships(null, "hasFormalContentModel");
-            //            DOReader cmReader = null, bmechreader = null;
-            //            boolean done = false;
-            //            if (cmPIDs != null && cmPIDs.length > 0)
-            //            {
-            //                for (int i = 0; i < cmPIDs.length && !done; i++)
-            //                {
-            //                    cmReader = m_manager.getReader(false, context, cmPIDs[i].getObjectPID());
-            //                    RelationshipTuple bMechPIDs[] = cmReader.getRelationships(null, "hasContractualBMech");
-            //                    for (int j = 0; j < bMechPIDs.length && !done; j++)
-            //                    {
-            //                        bmechreader = m_manager.getBMechReader(asOfDateTime == null, context, bMechPIDs[j].getObjectPID());
-            //                        RelationshipTuple bDefPIDs[] = bmechreader.getRelationships(null, "hasBDef");
-            //                        for (int k = 0; k < bDefPIDs.length && !done; k++)
-            //                        {
-            //                            if (bDefPIDs[k].getObjectPID().endsWith(bDefPID))
-            //                            {
-            //                                done = true;
-            //                                doCMDA = true;
-            //                                break;
-            //                            }
-            //                        }
-            //                    }
-            //                }
-            //            }
-            if (dbRowValues[2].indexOf("m") != -1) {
-                // get it as a BMechReader and add the bDefPID
-                BMechReader mechReader =
-                        m_repoReader
-                                .getBMechReader(Server.USE_DEFINITIVE_STORE,
-                                                ReadOnlyContext.EMPTY,
-                                                reader.GetObjectPID());
-                bDefs.add(mechReader.getServiceDSInputSpec(null).bDefPID);
-            }
-            dbRowValues[9] = getDbValueCaseSensitive(bDefs);
-            dbRowValues[10] = getDbValueCaseSensitive(bMechs);
+            dbRowValues[5] = "" + date.getTime();
+
             // do dc stuff if needed
             DatastreamXMLMetadata dcmd = null;
             try {
@@ -243,22 +193,22 @@ public class FieldSearchSQLImpl
                         .debug("Did not have DC Metadata datastream for this object.");
             } else {
                 LOG.debug("Had DC Metadata datastream for this object.");
-                dbRowValues[8] = "" + dcmd.DSCreateDT.getTime();
+                dbRowValues[6] = "" + dcmd.DSCreateDT.getTime();
 
                 if (m_indexDCFields) {
                     InputStream in = dcmd.getContentStream();
                     DCFields dc = new DCFields(in);
 
-                    dbRowValues[11] = getDbValue(dc.titles());
-                    dbRowValues[12] = getDbValue(dc.creators());
-                    dbRowValues[13] = getDbValue(dc.subjects());
-                    dbRowValues[14] = getDbValue(dc.descriptions());
-                    dbRowValues[15] = getDbValue(dc.publishers());
-                    dbRowValues[16] = getDbValue(dc.contributors());
-                    dbRowValues[17] = getDbValue(dc.dates());
+                    dbRowValues[7] = getDbValue(dc.titles());
+                    dbRowValues[8] = getDbValue(dc.creators());
+                    dbRowValues[9] = getDbValue(dc.subjects());
+                    dbRowValues[10] = getDbValue(dc.descriptions());
+                    dbRowValues[11] = getDbValue(dc.publishers());
+                    dbRowValues[12] = getDbValue(dc.contributors());
+                    dbRowValues[13] = getDbValue(dc.dates());
 
                     // delete any dc.dates that survive from earlier versions
-                   st = conn.createStatement();
+                    st = conn.createStatement();
                     st.executeUpdate("DELETE FROM dcDates WHERE pid='" + pid
                             + "'");
 
@@ -286,14 +236,14 @@ public class FieldSearchSQLImpl
                                             + dt.getTime() + ")");
                         }
                     }
-                    dbRowValues[18] = getDbValue(dc.types());
-                    dbRowValues[19] = getDbValue(dc.formats());
-                    dbRowValues[20] = getDbValue(dc.identifiers());
-                    dbRowValues[21] = getDbValue(dc.sources());
-                    dbRowValues[22] = getDbValue(dc.languages());
-                    dbRowValues[23] = getDbValue(dc.relations());
-                    dbRowValues[24] = getDbValue(dc.coverages());
-                    dbRowValues[25] = getDbValue(dc.rights());
+                    dbRowValues[14] = getDbValue(dc.types());
+                    dbRowValues[15] = getDbValue(dc.formats());
+                    dbRowValues[16] = getDbValue(dc.identifiers());
+                    dbRowValues[17] = getDbValue(dc.sources());
+                    dbRowValues[18] = getDbValue(dc.languages());
+                    dbRowValues[19] = getDbValue(dc.relations());
+                    dbRowValues[20] = getDbValue(dc.coverages());
+                    dbRowValues[21] = getDbValue(dc.rights());
                     LOG
                             .debug("Formulating SQL and inserting/updating WITH DC...");
                     SQLUtility.replaceInto(conn,
@@ -387,7 +337,7 @@ public class FieldSearchSQLImpl
                                                                 query));
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Error querying sql db: "
-                    + sqle.getMessage());
+                    + sqle.getMessage(), sqle);
         }
     }
 
@@ -473,5 +423,4 @@ public class FieldSearchSQLImpl
         out.append(" .");
         return out.toString();
     }
-
 }

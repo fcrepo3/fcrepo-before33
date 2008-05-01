@@ -10,9 +10,9 @@ public class MethodRoleConfig
 
     private final String m_role;
 
-    public MethodRoleConfig(BMechRoleConfig bMechConfig, String methodName) {
-        super(bMechConfig);
-        m_role = bMechConfig.getRole() + "/" + methodName;
+    public MethodRoleConfig(ServiceDeploymentRoleConfig sDepConfig, String methodName) {
+        super(sDepConfig);
+        m_role = sDepConfig.getRole() + "/" + methodName;
     }
 
     @Override

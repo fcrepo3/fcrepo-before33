@@ -332,7 +332,7 @@ h3 {
                      <xsl:element name="select">
                         <xsl:attribute name="id">activeLayerChooser</xsl:attribute>
                         <xsl:attribute name="size">
-                           <!-- the number of bDefs or 10, whichever is less -->
+                           <!-- the number of sDefs or 10, whichever is less -->
                            <xsl:choose>
                               <xsl:when test="count(/&desc;/&desc;[not(contains(@role,'/'))]) &lt; 10">
                                  <xsl:value-of select="count(/&desc;/&desc;[not(contains(@role,'/'))])"/>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>info:fedora/demo:DualResolution</id>
+  <title type="text">Dual Resolution Image</title>
+  <updated>2008-04-30T03:54:30.955Z</updated>
+  <author>
+    <name>fedoraAdmin</name>
+  </author>
+  <category term="Active" scheme="info:fedora/fedora-system:def/model#state"></category>
+  <category term="2008-04-30T03:54:30.955Z" scheme="info:fedora/fedora-system:def/model#createdDate"></category>
+  <icon>http://www.fedora-commons.org/images/logo_vertical_transparent_200_251.png</icon>
+  <entry>
+    <id>info:fedora/demo:DualResolution/DC</id>
+    <title type="text">DC</title>
+    <updated>2008-04-30T03:54:30.947Z</updated>
+    <link href="info:fedora/demo:DualResolution/DC/2008-04-30T03:54:30.947Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:DualResolution/DC/2008-04-30T03:54:30.947Z</id>
+    <title type="text">DC1.0</title>
+    <updated>2008-04-30T03:54:30.947Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:DualResolution/DC"></thr:in-reply-to>
+    <category term="Dublin Core Metadata for Service" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="265" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+          
+        <dc:title>Dual Resolution Image</dc:title>
+          
+        <dc:identifier>demo:DualResolution</dc:identifier>
+        </oai_dc:dc>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:DualResolution/METHODMAP</id>
+    <title type="text">METHODMAP</title>
+    <updated>2008-04-30T03:54:30.948Z</updated>
+    <link href="info:fedora/demo:DualResolution/METHODMAP/2008-04-30T03:54:30.948Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:DualResolution/METHODMAP/2008-04-30T03:54:30.948Z</id>
+    <title type="text">METHODMAP1.0</title>
+    <updated>2008-04-30T03:54:30.948Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:DualResolution/METHODMAP"></thr:in-reply-to>
+    <category term="Abstract Method Definitions" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="335" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <fmm:MethodMap xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap" name="MethodMap - Dual Resolution Image">
+          
+        <fmm:Method label="A full-size image" operationName="fullSize"></fmm:Method>
+          
+        <fmm:Method label="A medium-size image" operationName="mediumSize"></fmm:Method>
+        </fmm:MethodMap>
+    </content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:DualResolution/RELS-EXT</id>
+    <title type="text">RELS-EXT</title>
+    <updated>2008-04-30T03:54:30.948Z</updated>
+    <link href="info:fedora/demo:DualResolution/RELS-EXT/2008-04-30T03:54:30.948Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="false" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:DualResolution/RELS-EXT/2008-04-30T03:54:30.948Z</id>
+    <title type="text">RELS-EXT1.0</title>
+    <updated>2008-04-30T03:54:30.948Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:DualResolution/RELS-EXT"></thr:in-reply-to>
+    <category term="Relationships" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="382" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
+          
+        <rdf:Description rdf:about="info:fedora/demo:DualResolution">
+            
+          <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:ServiceDefinition-3.0"></fedora-model:hasModel>
+          </rdf:Description>
+        </rdf:RDF>
+    </content>
+  </entry>
+</feed>

@@ -735,7 +735,7 @@ class WSDLParser
         return msg;
     }
 
-    // FIXIT!! We probably want to look for stuff we can't support when bmech objects
+    // FIXIT!! We probably want to look for stuff we can't support when sdep objects
     // are ingested into the repository!  We can create Schematron rules to look for
     // unsupported patterns.  I am throwing these exceptions for now, and may continue
     // to do so just to be conservative.  If someone picks up this code and expects it

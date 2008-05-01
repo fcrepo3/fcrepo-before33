@@ -56,25 +56,13 @@ public class ObjectInfoAsXML
         // PROFILE FIELDS SERIALIZATION
         out.append("<objLabel>" + StreamUtility.enc(objProfile.objectLabel)
                 + "</objLabel>");
-        out.append("<objContentModel>"
-                + StreamUtility.enc(objProfile.objectContentModel)
-                + "</objContentModel>");
+
         String cDate =
                 DateUtility.convertDateToString(objProfile.objectCreateDate);
         out.append("<objCreateDate>" + cDate + "</objCreateDate>");
         String mDate =
                 DateUtility.convertDateToString(objProfile.objectLastModDate);
         out.append("<objLastModDate>" + mDate + "</objLastModDate>");
-        String objType = objProfile.objectType;
-        out.append("<objType>");
-        if (objType.equalsIgnoreCase("O")) {
-            out.append("Fedora Data Object");
-        } else if (objType.equalsIgnoreCase("D")) {
-            out.append("Fedora Behavior Definition Object");
-        } else if (objType.equalsIgnoreCase("M")) {
-            out.append("Fedora Behavior Mechanism Object");
-        }
-        out.append("</objType>");
         out.append("<objDissIndexViewURL>"
                 + StreamUtility.enc(objProfile.dissIndexViewURL)
                 + "</objDissIndexViewURL>");
@@ -154,16 +142,16 @@ public class ObjectInfoAsXML
         out.append(" xsi:schemaLocation=\"" + ACCESS.uri + " ");
         out.append(OBJ_METHODS1_0.xsdLocation + "\">");
 
-        String nextBdef = "null";
-        String currentBdef = "";
+        String nextSdef = "null";
+        String currentSdef = "";
         for (int i = 0; i < methods.length; i++) {
-            currentBdef = methods[i].bDefPID;
-            if (!currentBdef.equalsIgnoreCase(nextBdef)) {
+            currentSdef = methods[i].sDefPID;
+            if (!currentSdef.equalsIgnoreCase(nextSdef)) {
                 if (i != 0) {
-                    out.append("</bdef>");
+                    out.append("</sdef>");
                 }
-                out.append("<bdef pid=\""
-                        + StreamUtility.enc(methods[i].bDefPID) + "\" >");
+                out.append("<sdef pid=\""
+                        + StreamUtility.enc(methods[i].sDefPID) + "\" >");
             }
             String versDate =
                     DateUtility.convertDateToString(methods[i].asOfDate);
@@ -193,9 +181,9 @@ public class ObjectInfoAsXML
             }
 
             out.append("</method>");
-            nextBdef = currentBdef;
+            nextSdef = currentSdef;
         }
-        out.append("</bdef>");
+        out.append("</sdef>");
         out.append("</objectMethods>");
         return out.toString();
     }
@@ -309,13 +297,13 @@ public class ObjectInfoAsXML
             label = "";
         }
         out.append("<label>" + StreamUtility.enc(label) + "</label>\n");
-        out.append("<fType>" + StreamUtility.enc(reader.getFedoraObjectTypes())
-                + "</fType>\n");
-        String cModel = reader.getContentModelId();
-        if (cModel == null) {
-            cModel = "";
-        }
-        out.append("<cModel>" + StreamUtility.enc(cModel) + "</cModel>\n");
+
+        /*
+         * FIXME: gone is the <cModel> search field, since it's no longer a
+         * single object property. Do we want to expose the HAS_MODEL
+         * relationship in field search?
+         */
+
         out.append("<state>" + StreamUtility.enc(reader.GetObjectState())
                 + "</state>\n");
         String ownerId = reader.getOwnerId();

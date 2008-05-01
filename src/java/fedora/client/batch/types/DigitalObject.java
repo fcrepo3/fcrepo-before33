@@ -18,8 +18,6 @@ public class DigitalObject {
 
     public String label;
 
-    public String cModel;
-
     public boolean force = false;
 
     public String state;

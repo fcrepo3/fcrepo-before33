@@ -12,6 +12,12 @@
 <!--               o Removed #contentModel property (As of Fedora 3.0,     -->
 <!--                 content model is asserted via RELS-EXT predicate,     -->
 <!--                 fedora-model:hasContentModel                          -->
+<!--               o Removed rules for rdf:type property.                  -->
+<!--                 Typeness is determined by content model(s)            -->
+<!--               o Removed rules governing existence of certain          -->
+<!--                 datastreams in service definition & deployment        -->
+<!--                 objects.  This should be handled by a separate        -->
+<!--                 content model validator                               -->
 <!--***********************************************************************-->
 <sch:schema xmlns:sch="http://www.ascc.net/xml/schematron">
 	<sch:ns prefix="foxml" uri="info:fedora/fedora-system:def/foxml#"/>
@@ -29,28 +35,13 @@
 	</sch:phase>
 	<!-- PRELIMINARY INGEST RULES PATTERN: -->
 	<!-- These rules are to be applied to objects no matter what phase of the object lifecycle they are in.-->
-	<sch:pattern name="Preliminary Object Checks" id="preliminary">
-		<!-- RULE:  check that Behavior Mechanism objects have the proper kinds of datastreams (DSINPUTSPEC, METHODMAP, and WSDL).-->
-		<sch:rule context="foxml:property[@NAME='http://www.w3.org/1999/02/22-rdf-syntax-ns#type' and ( @VALUE='FedoraBMechObject' or @VALUE='info:fedora/fedora-system:def/model#FedoraBMechObject')]">
-			<sch:assert test="../../foxml:datastream[@ID='DSINPUTSPEC']">Behavior Mechanism Objects must have an inline Datastream representing a Datastream Input Spec (foxml:datastream with ID="DSINPUTSPEC" must exist).</sch:assert>
-			<sch:assert test="../../foxml:datastream[@ID='METHODMAP']">Behavior Mechanism Objects must have an inline Datastream representing a Fedora Method Map (foxml:datastream with ID="METHODMAP" must exist).</sch:assert>
-			<sch:assert test="../../foxml:datastream[@ID='WSDL']">Behavior Mechanism Objects must have an inline Datastream representing WSDL service bindings (foxml:datastream with ID="WSDL" must exist).</sch:assert>
-		</sch:rule>
-		<!-- RULE:  check that Behavior Definition objects have the proper kinds of datastreams (METHODMAP).-->
-		<sch:rule context="foxml:property[@NAME='http://www.w3.org/1999/02/22-rdf-syntax-ns#type' and (@VALUE='FedoraBDefObject' or @VALUE='info:fedora/fedora-system:def/model#FedoraBDefObject')]">
-			<sch:assert test="../../foxml:datastream[@ID='METHODMAP']">Behavior Definition Objects must have an inline Datastream representing a Fedora Method Map (foxml:datastream with ID="METHODMAP" must exist).</sch:assert>
-		</sch:rule>
-		<!-- RULE:  check that the Fedora object type (fType) contains a valid value (FedoraObject, FedoraBDefObject, or FedoraBMechObject).-->
-		<sch:rule context="foxml:property[@NAME='http://www.w3.org/1999/02/22-rdf-syntax-ns#type']">
-			<sch:assert test="@VALUE = 'FedoraObject' or @VALUE = 'FedoraBDefObject' or @VALUE = 'FedoraBMechObject' or @VALUE = 'FedoraCModelObject' or @VALUE = 'info:fedora/fedora-system:def/model#FedoraObject' or @VALUE = 'info:fedora/fedora-system:def/model#FedoraBDefObject' or @VALUE = 'info:fedora/fedora-system:def/model#FedoraBMechObject' or @VALUE = 'info:fedora/fedora-system:def/model#FedoraCModelObject'">Object must be of type "FedoraObject|FedoraBDefObject|FedoraBMechObject|FedoraCModelObject" (foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" has an invalid VALUE).</sch:assert>
-		</sch:rule>
+	<sch:pattern name="Preliminary Object Checks" id="preliminary">		
 		<!-- RULE:  check that the Fedora AUDIT datastream is not versioned.-->
 		<sch:rule context="foxml:datastream[@ID='AUDIT']">
 			<sch:assert test="count(foxml:datastreamVersion) = 1">The AUDIT Datastream can only have ONE version since it is a non-versionable datastream. (foxml: datastreamVersion)</sch:assert>
 		</sch:rule>
 		<!-- RULE:  check that non-repeatable object properties do not occur more than once.-->
 		<sch:rule context="foxml:objectProperties">
-			<sch:assert test="count(foxml:property[@NAME='http://www.w3.org/1999/02/22-rdf-syntax-ns#type']) = 1 or count(foxml:property[@NAME='http://www.w3.org/1999/02/22-rdf-syntax-ns#type']) = 0">DUPLICATE object property: type (foxml:property NAME='http://www.w3.org/1999/02/22-rdf-syntax-ns#type')</sch:assert>
 			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/model#label']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/model#label']) = 0">DUPLICATE object property: label (foxml:property NAME='info:fedora/fedora-system:def/model#label')</sch:assert>
 			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/model#state']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/model#state']) = 0">DUPLICATE object property: state (foxml:property NAME='info:fedora/fedora-system:def/model#state')</sch:assert>
 			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/model#createdDate']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/model#createdDate']) = 0">DUPLICATE object property: creation date (foxml:property NAME='info:fedora/fedora-system:def/model#createdDate' )</sch:assert>

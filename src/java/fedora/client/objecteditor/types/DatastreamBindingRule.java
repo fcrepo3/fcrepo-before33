@@ -6,7 +6,7 @@
 package fedora.client.objecteditor.types;
 
 /**
- * A single rule of a behavior mechanism's datastream binding specification. For
+ * A single rule of a service deployment's datastream binding specification. For
  * a certain binding key (the "key" of the rule), a rule specifies a range
  * indicating the number of datastreams to be bound, whether order is important,
  * and the types of datastreams that may be bound.

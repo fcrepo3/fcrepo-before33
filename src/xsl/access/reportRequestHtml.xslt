@@ -37,12 +37,12 @@
 												<option value="all objects" selected="selected">all objects</option>
 												<option value="active objects">active objects</option>
 												<option value="inactive objects">inactive objects</option>
-												<option value="all bdefs">all bdefs</option>
-												<option value="active bdefs">active bdefs</option>
-												<option value="inactive bdefs">inactive bdefs</option>																								
-												<option value="all bmechs">all bmechs</option>
-												<option value="active bmechs">active bmechs</option>
-												<option value="inactive bmechs">inactive bmechs</option>																								
+												<option value="all sdefs">all service definitions</option>
+												<option value="active sdefs">active service definitions</option>
+												<option value="inactive sdefs">inactive service definitions</option>																								
+												<option value="all sdeps">all sercice deployments</option>
+												<option value="active sdeps">active service deployments</option>
+												<option value="inactive sdeps">inactive service deployments</option>																								
 											</select>
 										</font>
 										<font>

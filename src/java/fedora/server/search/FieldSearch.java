@@ -15,11 +15,11 @@ import fedora.server.storage.DOReader;
  * <p>Key object metadata and dublin core fields are searchable from via
  * implementations of this interface.
  * 
- * <p>Key fields include:<dir> <i>pid, label, cModel, state, ownerId, cDate,
+ * <p>Key fields include:<dir> <i>pid, label, state, ownerId, cDate,
  * mDate, dcmDate</i></dir>
  * 
  * <p>Dublin core fields include:<dir> <i>title, creator, subject, description,
- * publisher, contributor, date, type, format, identifier, source, language,
+ * publisher, contributor, date, format, identifier, source, language,
  * relation, coverage, rights</i></dir>
  * 
  * @author Chris Wilper

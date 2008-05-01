@@ -71,14 +71,6 @@ public class FieldSearchServlet
                 && req.getParameter("label").equalsIgnoreCase("true")) {
             l.add("label");
         }
-        if (req.getParameter("fType") != null
-                && req.getParameter("fType").equalsIgnoreCase("true")) {
-            l.add("fType");
-        }
-        if (req.getParameter("cModel") != null
-                && req.getParameter("cModel").equalsIgnoreCase("true")) {
-            l.add("cModel");
-        }
         if (req.getParameter("state") != null
                 && req.getParameter("state").equalsIgnoreCase("true")) {
             l.add("state");
@@ -98,14 +90,6 @@ public class FieldSearchServlet
         if (req.getParameter("dcmDate") != null
                 && req.getParameter("dcmDate").equalsIgnoreCase("true")) {
             l.add("dcmDate");
-        }
-        if (req.getParameter("bDef") != null
-                && req.getParameter("bDef").equalsIgnoreCase("true")) {
-            l.add("bDef");
-        }
-        if (req.getParameter("bMech") != null
-                && req.getParameter("bMech").equalsIgnoreCase("true")) {
-            l.add("bMech");
         }
         if (req.getParameter("title") != null
                 && req.getParameter("title").equalsIgnoreCase("true")) {
@@ -238,16 +222,6 @@ public class FieldSearchServlet
                                         : "")
                                 + "> <a href=\"#\" onClick=\"javascript:alert('Label\\n\\nThe label of the object')\">label</a><br>");
                 html
-                        .append("<input type=\"checkbox\" name=\"fType\" value=\"true\""
-                                + (fieldHash.contains("fType") ? " checked"
-                                        : "")
-                                + "> <a href=\"#\" onClick=\"javascript:alert('Fedora Object Type\\n\\nThe type of Fedora object.\\nThis will be one of:\\n  D - Behavior Definition\\n  M - Behavior Mechanism\\n  O - Data Object')\">fType</a><br>");
-                html
-                        .append("<input type=\"checkbox\" name=\"cModel\" value=\"true\""
-                                + (fieldHash.contains("cModel") ? " checked"
-                                        : "")
-                                + "> <a href=\"#\" onClick=\"javascript:alert('Content Model\\n\\nIdentifies the template upon\\nwhich the object is based')\">cModel</a><br>");
-                html
                         .append("<input type=\"checkbox\" name=\"state\" value=\"true\""
                                 + (fieldHash.contains("state") ? " checked"
                                         : "")
@@ -273,15 +247,6 @@ public class FieldSearchServlet
                                         : "")
                                 + "> <a href=\"#\" onClick=\"javascript:alert('Dublin Core Modified Date\\n\\nThe UTC date the DC datastream was last modified,\\nin YYYY-MM-DDTHH:MM:SS.SSSZ format')\">dcmDate</a><br>");
                 html.append("</font></td><td valign=top><font size=-1>");
-                html
-                        .append("<input type=\"checkbox\" name=\"bDef\" value=\"true\""
-                                + (fieldHash.contains("bDef") ? " checked" : "")
-                                + "> <a href=\"#\" onClick=\"javascript:alert('Behavior Definition Pid\\n\\nThe pid of the behavior definition\\nobject(s) to which this object subscribes.\\nThis is a repeating field.')\">bDef</a><br>");
-                html
-                        .append("<input type=\"checkbox\" name=\"bMech\" value=\"true\""
-                                + (fieldHash.contains("bMech") ? " checked"
-                                        : "")
-                                + "> <a href=\"#\" onClick=\"javascript:alert('Behavior Mechanism Pid\\n\\nThe pid of the behavior mechanism\\nobject(s) this object uses.\\nThis is a repeating field.\\nThe order will coincide with that of the bDef field values.')\">bMech</a><br>");
                 html
                         .append("<input type=\"checkbox\" name=\"title\" value=\"true\" checked> <a href=\"#\" onClick=\"javascript:alert('Title\\n\\nA name given to the resource.\\nThis is a repeating field.')\">title</a><br>");
                 html
@@ -364,7 +329,7 @@ public class FieldSearchServlet
                         .append("Or search specific field(s): <input type=\"text\" name=\"query\" size=\"15\" value=\""
                                 + (query == null ? "" : StreamUtility
                                         .enc(query))
-                                + "\"> <a href=\"#\" onClick=\"javascript:alert('Search Specific Field(s)\\n\\nEnter one or more conditions, separated by space.  Objects matching all conditions will be returned.\\nA condition is a field (choose from the field names on the left) followed by an operator, followed by a value.\\nThe = operator will match if the field\\'s entire value matches the value given.\\nThe ~ operator will match on phrases within fields, and accepts the ? and * wildcards.\\nThe &lt;, &gt;, &lt;=, and &gt;= operators can be used with numeric values, such as dates.\\n\\nExamples:\\n\\n  fType=M\\n    Matches all behavior mechanism objects.\\n\\n  pid~demo:* description~fedora\\n    Matches all demo objects with a description containing the word fedora.\\n\\n  cDate&gt;=1976-03-04 creator~*n*\\n    Matches objects created on or after March 4th, 1976 where at least one of the creators has an n in their name.\\n\\n  mDate&gt;2002-10-2 mDate&lt;2002-10-2T12:00:00\\n    Matches objects modified sometime before noon (UTC) on October 2nd, 2002')\"><i>help</i></a><p> ");
+                                + "\"> <a href=\"#\" onClick=\"javascript:alert('Search Specific Field(s)\\n\\nEnter one or more conditions, separated by space.  Objects matching all conditions will be returned.\\nA condition is a field (choose from the field names on the left) followed by an operator, followed by a value.\\nThe = operator will match if the field\\'s entire value matches the value given.\\nThe ~ operator will match on phrases within fields, and accepts the ? and * wildcards.\\nThe &lt;, &gt;, &lt;=, and &gt;= operators can be used with numeric values, such as dates.\\n\\nExamples:\\n\\n  pid~demo:* description~fedora\\n    Matches all demo objects with a description containing the word fedora.\\n\\n  cDate&gt;=1976-03-04 creator~*n*\\n    Matches objects created on or after March 4th, 1976 where at least one of the creators has an n in their name.\\n\\n  mDate&gt;2002-10-2 mDate&lt;2002-10-2T12:00:00\\n    Matches objects modified sometime before noon (UTC) on October 2nd, 2002')\"><i>help</i></a><p> ");
                 html
                         .append("Maximum Results: <select name=\"maxResults\"><option value=\"20\">20</option><option value=\"40\">40</option><option value=\"60\">60</option><option value=\"80\">80</option></select> ");
                 html.append("<p><input type=\"submit\" value=\"Search\"> ");
@@ -415,15 +380,11 @@ public class FieldSearchServlet
                         xmlBuf.append("  <objectFields>\n");
                         appendXML("pid", f.getPid(), xmlBuf);
                         appendXML("label", f.getLabel(), xmlBuf);
-                        appendXML("fType", f.getFType(), xmlBuf);
-                        appendXML("cModel", f.getCModel(), xmlBuf);
                         appendXML("state", f.getState(), xmlBuf);
                         appendXML("ownerId", f.getOwnerId(), xmlBuf);
                         appendXML("cDate", f.getCDate(), formatter, xmlBuf);
                         appendXML("mDate", f.getMDate(), formatter, xmlBuf);
                         appendXML("dcmDate", f.getDCMDate(), formatter, xmlBuf);
-                        appendXML("bDef", f.bDefs(), xmlBuf);
-                        appendXML("bMech", f.bMechs(), xmlBuf);
                         appendXML("title", f.titles(), xmlBuf);
                         appendXML("creator", f.creators(), xmlBuf);
                         appendXML("subject", f.subjects(), xmlBuf);
@@ -456,13 +417,6 @@ public class FieldSearchServlet
                                             .append(StreamUtility.enc(f
                                                     .getLabel()));
                                 }
-                            } else if (l.equalsIgnoreCase("fType")) {
-                                html.append(f.getFType());
-                            } else if (l.equalsIgnoreCase("cModel")) {
-                                if (f.getCModel() != null) {
-                                    html.append(StreamUtility
-                                            .enc(f.getCModel()));
-                                }
                             } else if (l.equalsIgnoreCase("state")) {
                                 html.append(f.getState());
                             } else if (l.equalsIgnoreCase("ownerId")) {
@@ -478,10 +432,6 @@ public class FieldSearchServlet
                                     html.append(formatter
                                             .format(f.getDCMDate()));
                                 }
-                            } else if (l.equalsIgnoreCase("bDef")) {
-                                html.append(getList(f.bDefs()));
-                            } else if (l.equalsIgnoreCase("bMech")) {
-                                html.append(getList(f.bMechs()));
                             } else if (l.equalsIgnoreCase("title")) {
                                 html.append(getList(f.titles()));
                             } else if (l.equalsIgnoreCase("creator")) {
@@ -546,14 +496,6 @@ public class FieldSearchServlet
                             html
                                     .append("<input type=\"hidden\" name=\"label\" value=\"true\">");
                         }
-                        if (fieldHash.contains("fType")) {
-                            html
-                                    .append("<input type=\"hidden\" name=\"fType\" value=\"true\">");
-                        }
-                        if (fieldHash.contains("cModel")) {
-                            html
-                                    .append("<input type=\"hidden\" name=\"cModel\" value=\"true\">");
-                        }
                         if (fieldHash.contains("state")) {
                             html
                                     .append("<input type=\"hidden\" name=\"state\" value=\"true\">");
@@ -573,14 +515,6 @@ public class FieldSearchServlet
                         if (fieldHash.contains("dcmDate")) {
                             html
                                     .append("<input type=\"hidden\" name=\"dcmDate\" value=\"true\">");
-                        }
-                        if (fieldHash.contains("bDef")) {
-                            html
-                                    .append("<input type=\"hidden\" name=\"bDef\" value=\"true\">");
-                        }
-                        if (fieldHash.contains("bMech")) {
-                            html
-                                    .append("<input type=\"hidden\" name=\"bMech\" value=\"true\">");
                         }
                         if (fieldHash.contains("title")) {
                             html

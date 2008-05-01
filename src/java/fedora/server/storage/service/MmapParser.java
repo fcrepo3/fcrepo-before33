@@ -28,11 +28,10 @@ import fedora.server.storage.types.MethodParmDef;
 
 /**
  * A class for parsing the special XML format in Fedora for a Method Map. A
- * DSInputSpec exists within a Behavior Mechanism Object (bmech) and a Behavior
- * Definition Object (bdef). The Method Map defines abstract methods
- * definitions. In a bdef these are the "behavior contract." In a bmech, these
+ * DSInputSpec exists within a Service Deployment (sDep) and a Service Definition Object (sDef). The Method Map defines abstract methods
+ * definitions. In a sDef these are the "behavior contract." In a sDep, these
  * are abstract definitions that are then implemented by the service represented
- * by the bmech.
+ * by the sDep.
  * 
  * @author Sandy Payette
  */

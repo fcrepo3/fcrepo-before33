@@ -11,13 +11,13 @@
 	<!-- complex type declarations -->
 	<xsd:complexType name="objectMethodsType">
 		<xsd:sequence>
-			<xsd:element name="bDef" type="bDefType" maxOccurs="unbounded"/>
+			<xsd:element name="sDef" type="serviceDefinitionType" maxOccurs="unbounded"/>
 		</xsd:sequence>
 		<xsd:attribute name="pid" type="xsd:string" use="required"/>
 		<xsd:attribute name="asOfDateTime" type="xsd:string" use="optional"/>
 		<xsd:attribute name="baseURL" type="xsd:string" use="required"/>
 	</xsd:complexType>
-	<xsd:complexType name="bDefType">
+	<xsd:complexType name="serviceDefinitionType">
 		<xsd:sequence>
 			<xsd:element name="method" type="methodType" maxOccurs="unbounded"/>
 		</xsd:sequence>

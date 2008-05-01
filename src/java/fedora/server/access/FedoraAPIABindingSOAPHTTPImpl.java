@@ -85,13 +85,13 @@ public class FedoraAPIABindingSOAPHTTPImpl
         Context context = ReadOnlyContext.getSoapContext();
         assertInitialized();
         try {
-            String[] bDefs = s_access.getObjectHistory(context, PID);
-            if (bDefs != null && debug) {
-                for (int i = 0; i < bDefs.length; i++) {
-                    LOG.debug("bDef[" + i + "] = " + bDefs[i]);
+            String[] sDefs = s_access.getObjectHistory(context, PID);
+            if (sDefs != null && debug) {
+                for (int i = 0; i < sDefs.length; i++) {
+                    LOG.debug("sDef[" + i + "] = " + sDefs[i]);
                 }
             }
-            return bDefs;
+            return sDefs;
         } catch (Throwable th) {
             LOG.error("Error getting object history", th);
             throw AxisUtility.getFault(th);
@@ -105,8 +105,8 @@ public class FedoraAPIABindingSOAPHTTPImpl
      * 
      * @param PID
      *        The persistent identifier of the Digital Object.
-     * @param bDefPID
-     *        The persistent identifier of the Behavior Definition object.
+     * @param sDefPID
+     *        The persistent identifier of the Service Definition object.
      * @param methodName
      *        The name of the method.
      * @param asOfDateTime
@@ -117,7 +117,7 @@ public class FedoraAPIABindingSOAPHTTPImpl
      * @throws java.rmi.RemoteException
      */
     public fedora.server.types.gen.MIMETypedStream getDissemination(String PID,
-                                                                    String bDefPID,
+                                                                    String sDefPID,
                                                                     String methodName,
                                                                     fedora.server.types.gen.Property[] userParms,
                                                                     String asOfDateTime)
@@ -132,7 +132,7 @@ public class FedoraAPIABindingSOAPHTTPImpl
                     s_access
                             .getDissemination(context,
                                               PID,
-                                              bDefPID,
+                                              sDefPID,
                                               methodName,
                                               properties,
                                               DateUtility

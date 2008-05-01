@@ -15,6 +15,8 @@
 <!--               o Removed #contentModel property (As of Fedora 3.0,     -->
 <!--                 content model is asserted via RELS-EXT predicate,     -->
 <!--                 fedora-model:hasContentModel                          -->
+<!--               o Removed rdf:type property, since typeness is          -->
+<!--                 determined by the content model(s)                    -->
 <!--***********************************************************************-->
 <xsd:schema targetNamespace="info:fedora/fedora-system:def/foxml#" xmlns="info:fedora/fedora-system:def/foxml#" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<!-- the root element for FOXML: digitalObject -->
@@ -132,7 +134,6 @@
 		<xsd:attribute name="NAME" use="required">
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:string">
-					<xsd:enumeration value="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"/>
 					<xsd:enumeration value="info:fedora/fedora-system:def/model#state"/>
 					<xsd:enumeration value="info:fedora/fedora-system:def/model#label"/>
 					<xsd:enumeration value="info:fedora/fedora-system:def/model#createdDate"/>

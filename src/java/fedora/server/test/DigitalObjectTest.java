@@ -22,7 +22,7 @@ import fedora.server.storage.types.DigitalObject;
 public class DigitalObjectTest
         extends TestCase {
 
-    private DigitalObject m_obj, m_bdef, m_bmech;
+    private DigitalObject m_obj, m_sdef, m_sdep;
 
     private Date m_startTime;
 
@@ -42,7 +42,7 @@ public class DigitalObjectTest
         // init data object
         m_obj = new BasicDigitalObject();
         m_obj.setCreateDate(m_startTime);
-        m_obj.addFedoraObjectType(DigitalObject.FEDORA_OBJECT);
+        //m_obj.addModel(Models.FEDORA_OBJECT_3_0.uri);
         m_obj.setLabel("Test Object");
         m_obj.setLastModDate(m_startTime);
         m_obj.setOwnerId("userId1");
@@ -80,51 +80,42 @@ public class DigitalObjectTest
         m_audit7 = new AuditRecord();
         m_audit7.id = "AUDIT7";
         m_audit7.action = "Disseminator 2 Added";
-        // init bdef
-        m_bdef = new BasicDigitalObject();
-        m_bdef.setCreateDate(m_startTime);
-        m_bdef.addFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
-        m_bdef.setLabel("Test Behavior Definition Object");
-        m_bdef.setLastModDate(m_startTime);
-        m_bdef.setOwnerId("userId2");
-        m_bdef.setPid("test:2");
-        m_bdef.setState("W");
-        // init bmech
-        m_bmech = new BasicDigitalObject();
-        m_bmech.setCreateDate(m_startTime);
-        m_bmech.addFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
-        m_bmech.setLabel("Test Behavior Mechanism Object");
-        m_bmech.setLastModDate(m_startTime);
-        m_bmech.setOwnerId("userId3");
-        m_bmech.setPid("test:3");
-        m_bmech.setState("D");
+        // init sdef
+        m_sdef = new BasicDigitalObject();
+        m_sdef.setCreateDate(m_startTime);
+        m_sdef.setLabel("Test Service Definition Object");
+        m_sdef.setLastModDate(m_startTime);
+        m_sdef.setOwnerId("userId2");
+        m_sdef.setPid("test:2");
+        m_sdef.setState("W");
+        m_sdep = new BasicDigitalObject();
+        m_sdep.setCreateDate(m_startTime);
+        m_sdep.setLabel("Test Service Deployment Object");
+        m_sdep.setLastModDate(m_startTime);
+        m_sdep.setOwnerId("userId3");
+        m_sdep.setPid("test:3");
+        m_sdep.setState("D");
     }
 
     public void testSimpleParts() {
         assertEquals(m_obj.getCreateDate(), m_startTime);
-        assertEquals(m_bdef.getCreateDate(), m_startTime);
-        assertEquals(m_bmech.getCreateDate(), m_startTime);
-        assertEquals(m_obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT),
-                     true);
-        assertEquals(m_bdef
-                .isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT), true);
-        assertEquals(m_bmech
-                .isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT), true);
+        assertEquals(m_sdef.getCreateDate(), m_startTime);
+        assertEquals(m_sdep.getCreateDate(), m_startTime);
         assertEquals(m_obj.getLabel(), "Test Object");
-        assertEquals(m_bdef.getLabel(), "Test Behavior Definition Object");
-        assertEquals(m_bmech.getLabel(), "Test Behavior Mechanism Object");
+        assertEquals(m_sdef.getLabel(), "Test Service Deployment Object");
+        assertEquals(m_sdep.getLabel(), "Test Service Deployment Object");
         assertEquals(m_obj.getLastModDate(), m_startTime);
-        assertEquals(m_bdef.getLastModDate(), m_startTime);
-        assertEquals(m_bmech.getLastModDate(), m_startTime);
+        assertEquals(m_sdef.getLastModDate(), m_startTime);
+        assertEquals(m_sdep.getLastModDate(), m_startTime);
         assertEquals(m_obj.getOwnerId(), "userId1");
-        assertEquals(m_bdef.getOwnerId(), "userId2");
-        assertEquals(m_bmech.getOwnerId(), "userId3");
+        assertEquals(m_sdef.getOwnerId(), "userId2");
+        assertEquals(m_sdep.getOwnerId(), "userId3");
         assertEquals(m_obj.getPid(), "test:1");
-        assertEquals(m_bdef.getPid(), "test:2");
-        assertEquals(m_bmech.getPid(), "test:3");
+        assertEquals(m_sdef.getPid(), "test:2");
+        assertEquals(m_sdep.getPid(), "test:3");
         assertEquals(m_obj.getState(), "A");
-        assertEquals(m_bdef.getState(), "W");
-        assertEquals(m_bmech.getState(), "D");
+        assertEquals(m_sdef.getState(), "W");
+        assertEquals(m_sdep.getState(), "D");
     }
 
     public void testAuditRecordComposition() {
@@ -133,13 +124,13 @@ public class DigitalObjectTest
 
     public void testDatastreamComposition() {
         m_obj.getAuditRecords().add(m_audit2);
-        m_obj.datastreams("DS1").add(m_ds1_0);
+        m_obj.addDatastreamVersion(m_ds1_0, true);
 
         m_obj.getAuditRecords().add(m_audit3);
-        m_obj.datastreams("DS1").add(m_ds1_1);
-
+        m_obj.addDatastreamVersion(m_ds1_1, true);
+        
         m_obj.getAuditRecords().add(m_audit4);
-        m_obj.datastreams("DS2").add(m_ds2_0);
+        m_obj.addDatastreamVersion(m_ds2_0, true);
     }
 
     public void testDisseminatorComposition() {

@@ -27,7 +27,6 @@ import javax.swing.JTextArea;
 import javax.swing.text.JTextComponent;
 
 import fedora.client.Administrator;
-import fedora.client.FTypeDialog;
 import fedora.client.ObjectFormatDialog;
 import fedora.client.utility.ingest.Ingest;
 import fedora.client.utility.ingest.IngestCounter;
@@ -97,38 +96,33 @@ public class IngestDialog {
                         browse.showOpenDialog(Administrator.getDesktop());
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = browse.getSelectedFile();
-                    Administrator.setLastDir(file);
-                    FTypeDialog dlg = new FTypeDialog();
-                    if (dlg.getResult() != null) {
-                        String fTypes = dlg.getResult();
-                        logRootName = "ingest-from-dir";
-                        logFile = IngestLogger.newLogFile(logRootName);
-                        log =
-                                new PrintStream(new FileOutputStream(logFile),
-                                                true,
-                                                "UTF-8");
-                        IngestLogger.openLog(log, logRootName);
-                        long st = System.currentTimeMillis();
-                        ObjectFormatDialog fmtDialog =
-                                new ObjectFormatDialog("Select XML Format of Ingest File(s)");
-                        if (fmtDialog.getSelection() != null) {
-                            String ingestFormat = fmtDialog.getSelection();
-                            Ingest.multiFromDirectory(file,
-                                                      ingestFormat,
-                                                      fTypes,
-                                                      Administrator.APIA,
-                                                      Administrator.APIM,
-                                                      null,
-                                                      log,
-                                                      counter);
-                            long et = System.currentTimeMillis();
-                            JOptionPane.showMessageDialog(Administrator
-                                    .getDesktop(), counter.successes
-                                    + " objects successfully ingested.\n"
-                                    + counter.failures + " objects failed.\n"
-                                    + "Time elapsed: "
-                                    + Ingest.getDuration(et - st));
-                        }
+                    Administrator.setLastDir(file);;
+                    logRootName = "ingest-from-dir";
+                    logFile = IngestLogger.newLogFile(logRootName);
+                    log =
+                            new PrintStream(new FileOutputStream(logFile),
+                                            true,
+                                            "UTF-8");
+                    IngestLogger.openLog(log, logRootName);
+                    long st = System.currentTimeMillis();
+                    ObjectFormatDialog fmtDialog =
+                            new ObjectFormatDialog("Select XML Format of Ingest File(s)");
+                    if (fmtDialog.getSelection() != null) {
+                        String ingestFormat = fmtDialog.getSelection();
+                        Ingest.multiFromDirectory(file,
+                                                  ingestFormat,
+                                                  Administrator.APIA,
+                                                  Administrator.APIM,
+                                                  null,
+                                                  log,
+                                                  counter);
+                        long et = System.currentTimeMillis();
+                        JOptionPane.showMessageDialog(Administrator
+                                .getDesktop(), counter.successes
+                                + " objects successfully ingested.\n"
+                                + counter.failures + " objects failed.\n"
+                                + "Time elapsed: "
+                                + Ingest.getDuration(et - st));
                     }
                 }
             } else if (kind == ONE_FROM_REPOS) {
@@ -182,38 +176,36 @@ public class IngestDialog {
                     } else {
                         sourceExportFormat = repoinfo.getDefaultExportFormat();
                     }
-                    FTypeDialog dlg = new FTypeDialog();
-                    if (dlg.getResult() != null) {
-                        // looks ok... do the request
-                        String fTypes = dlg.getResult();
-                        long st = System.currentTimeMillis();
-                        logRootName = "ingest-from-repos";
-                        logFile = IngestLogger.newLogFile(logRootName);
-                        log =
-                                new PrintStream(new FileOutputStream(logFile),
-                                                true,
-                                                "UTF-8");
-                        IngestLogger.openLog(log, logRootName);
-                        Ingest.multiFromRepository(sdlg.getProtocol(),
-                                                   sdlg.getHost(),
-                                                   sdlg.getPort(),
-                                                   sdlg.getAPIA(),
-                                                   sdlg.getAPIM(),
-                                                   sourceExportFormat,
-                                                   fTypes,
-                                                   Administrator.APIA,
-                                                   Administrator.APIM,
-                                                   null,
-                                                   log,
-                                                   counter);
-                        long et = System.currentTimeMillis();
-                        JOptionPane.showMessageDialog(Administrator
-                                .getDesktop(), counter.successes
-                                + " objects successfully ingested.\n"
-                                + counter.failures + " objects failed.\n"
-                                + "Time elapsed: "
-                                + Ingest.getDuration(et - st));
-                    }
+                    // looks ok... do the request
+                    long st = System.currentTimeMillis();
+                    logRootName = "ingest-from-repos";
+                    logFile = IngestLogger.newLogFile(logRootName);
+                    log =
+                            new PrintStream(new FileOutputStream(logFile),
+                                            true,
+                                            "UTF-8");
+                    IngestLogger.openLog(log, logRootName);
+                    Ingest.multiFromRepository(sdlg.getProtocol(),
+                                               sdlg.getHost(),
+                                               sdlg.getPort(),
+                                               sdlg.getAPIA(),
+                                               sdlg.getAPIM(),
+                                               sourceExportFormat,
+                                               Administrator.APIA,
+                                               Administrator.APIM,
+                                               null,
+                                               log,
+                                               counter);
+                    long et = System.currentTimeMillis();
+                    JOptionPane
+                            .showMessageDialog(Administrator.getDesktop(),
+                                               counter.successes
+                                                       + " objects successfully ingested.\n"
+                                                       + counter.failures
+                                                       + " objects failed.\n"
+                                                       + "Time elapsed: "
+                                                       + Ingest.getDuration(et
+                                                               - st));
                 }
             }
         } catch (Exception e) {

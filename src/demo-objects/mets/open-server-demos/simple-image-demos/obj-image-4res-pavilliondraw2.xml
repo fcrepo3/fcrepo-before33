@@ -17,7 +17,7 @@
 <!-- enabling Fedora to control access rights. This example demonstrates a temporary work around if the user -->
 <!-- has password-protected content that they would like to disseminate using Fedora. -->
 <!---************************************************************************-->
-<METS:mets EXT_VERSION="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd" OBJID="demo:30" TYPE="FedoraObject" LABEL="Image of Coliseum in Rome" PROFILE="UVA_STD_IMAGE">
+<METS:mets EXT_VERSION="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd" OBJID="demo:30" LABEL="Image of Coliseum in Rome">
 <METS:metsHdr>
 <METS:agent ROLE="IPOWNER">
 	<METS:name>fedoraAdmin</METS:name>
@@ -58,7 +58,8 @@
 				<METS:xmlData>
 					<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
 						<rdf:Description rdf:about="info:fedora/demo:30">
-							<fedora-model:hasContentModel rdf:resource="info:fedora/demo:UVA_STD_IMAGE_1"/>
+                            <fedora-model:hasModel rdf:resource="info:fedora/demo:UVA_STD_IMAGE_1"/>
+                            <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"/>
 						</rdf:Description>
 					</rdf:RDF>			
 				</METS:xmlData>

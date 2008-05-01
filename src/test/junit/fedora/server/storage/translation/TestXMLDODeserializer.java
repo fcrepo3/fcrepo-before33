@@ -12,9 +12,16 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import org.jrdf.graph.URIReference;
 
 import org.junit.Test;
 
@@ -22,9 +29,13 @@ import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.BasicDigitalObject;
+import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
+
+import static fedora.common.Constants.MODEL;
+import static fedora.common.Models.*;
 
 /**
  * Common unit tests and utility methods for XML-based deserializers.
@@ -52,22 +63,22 @@ public abstract class TestXMLDODeserializer
 
     @Test
     public void testDeserializeSimpleDataObject() {
-        doSimpleTest(DigitalObject.FEDORA_OBJECT);
+        doSimpleTest(FEDORA_OBJECT_3_0);
     }
 
     @Test
-    public void testDeserializeSimpleBMechObject() {
-        doSimpleTest(DigitalObject.FEDORA_BMECH_OBJECT);
+    public void testDeserializeSimpleSDepObject() {
+        doSimpleTest(SERVICE_DEPLOYMENT_3_0);
     }
 
     @Test
-    public void testDeserializeSimpleBDefObject() {
-        doSimpleTest(DigitalObject.FEDORA_BDEF_OBJECT);
+    public void testDeserializeSimpleSDefObject() {
+        doSimpleTest(SERVICE_DEFINITION_3_0);
     }
 
     @Test
     public void testTwoInlineDatastreams() {
-        DigitalObject obj = createTestObject(DigitalObject.FEDORA_OBJECT);
+        DigitalObject obj = createTestObject(FEDORA_OBJECT_3_0);
 
         final String dsID1 = "DS1";
         DatastreamXMLMetadata ds1 = createXDatastream(dsID1);
@@ -75,8 +86,8 @@ public abstract class TestXMLDODeserializer
         final String dsID2 = "DS2";
         DatastreamXMLMetadata ds2 = createXDatastream(dsID2);
 
-        obj.datastreams(dsID1).add(ds1);
-        obj.datastreams(dsID2).add(ds2);
+        obj.addDatastreamVersion(ds1, true);
+        obj.addDatastreamVersion(ds2, true);
 
         DigitalObject result = doDeserializeOrFail(obj);
         int numDatastreams = 0;
@@ -85,9 +96,11 @@ public abstract class TestXMLDODeserializer
             iter.next();
             numDatastreams++;
         }
-        assertEquals(2, numDatastreams);
-        assertEquals(1, result.datastreams(dsID1).size());
-        assertEquals(1, result.datastreams(dsID2).size());
+
+        /* 3 datastreams: ds1, ds2, rels-ext */
+        assertEquals(3, numDatastreams);
+        assertTrue(result.datastreams(dsID1).iterator().hasNext());
+        assertTrue(result.datastreams(dsID2).iterator().hasNext());
     }
 
     /**
@@ -100,20 +113,22 @@ public abstract class TestXMLDODeserializer
     @Test
     public void testInlineXMLCopyIntegrity() throws Exception {
 
-        DigitalObject original = createTestObject(DigitalObject.FEDORA_OBJECT);
+        DigitalObject original = createTestObject(FEDORA_OBJECT_3_0);
         final String dsID1 = "DS1";
 
         /* Populate the object with a test datastream and serialize */
         DatastreamXMLMetadata ds1 = createXDatastream(dsID1);
-        original.datastreams(dsID1).add(ds1);
+        original.addDatastreamVersion(ds1, true);
 
         DigitalObject copy = translatedCopy(original);
         DigitalObject copyOfCopy = translatedCopy(copy);
 
         DatastreamXMLMetadata ds1copy =
-                (DatastreamXMLMetadata) copy.datastreams(dsID1).get(0);
+                (DatastreamXMLMetadata) copy.datastreams(dsID1).iterator()
+                        .next();
         DatastreamXMLMetadata ds1copyOfCopy =
-                (DatastreamXMLMetadata) copyOfCopy.datastreams(dsID1).get(0);
+                (DatastreamXMLMetadata) copyOfCopy.datastreams(dsID1)
+                        .iterator().next();
 
         assertEquals("Length of XML datastream copies is not deterministic!",
                      ds1copy.xmlContent.length,
@@ -131,7 +146,7 @@ public abstract class TestXMLDODeserializer
         record.processType = "Fedora API-M";
         record.responsibility = "fedoraAdmin";
         
-        DigitalObject original = createTestObject(DigitalObject.FEDORA_OBJECT);
+        DigitalObject original = createTestObject(FEDORA_OBJECT_3_0);
         original.getAuditRecords().add(record);
         
         // serialize to file
@@ -158,6 +173,28 @@ public abstract class TestXMLDODeserializer
         }
         
         temp.delete();
+    }
+
+    @Test
+    public void testFedoraLocalServerSubstitution() {
+
+        DigitalObject o = createTestObject(SERVICE_DEPLOYMENT_3_0);
+        DatastreamXMLMetadata ds1 = createXDatastream("WSDL");
+        ds1.xmlContent = "<test>http://local.fedora.server/</test>".getBytes();
+
+        o.addDatastreamVersion(ds1, false);
+
+        DigitalObject processed = doDeserializeOrFail(o);
+
+        DatastreamXMLMetadata ds1proc =
+                (DatastreamXMLMetadata) processed.datastreams("WSDL")
+                        .iterator().next();
+
+        Iterator<String> ids = processed.datastreamIdIterator();
+
+        String content = new String(ds1proc.xmlContent);
+        assertFalse(content.contains("local.fedora.server"));
+        assertTrue(content.contains("http"));
     }
 
     /**
@@ -193,10 +230,14 @@ public abstract class TestXMLDODeserializer
     // Instance helpers
     //---
 
-    protected void doSimpleTest(int fType) {
-        DigitalObject input = createTestObject(fType);
+    protected void doSimpleTest(URIReference... models) {
+        DigitalObject input = createTestObject(models);
         DigitalObject obj = doDeserializeOrFail(input);
-        assertTrue(obj.isFedoraObjectType(fType));
+
+        for (URIReference model : models) {
+            assertTrue("Did not detect that object had model " + model, obj
+                    .hasRelationship(MODEL.HAS_MODEL, model));
+        }
         assertEquals(TEST_PID, obj.getPid());
     }
 
@@ -214,14 +255,53 @@ public abstract class TestXMLDODeserializer
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     protected DigitalObject doDeserialize(DigitalObject obj)
             throws ObjectIntegrityException, StreamIOException {
+        /*
+         * Make RELS-EXT the last datastream, just to make things trickiest for
+         * deserializers (i.e. if serializers need to know relationships before
+         * RELS-EXT has been parsed..)
+         */
+        try {
+
+            Field dsField =
+                    BasicDigitalObject.class.getDeclaredField("m_datastreams");
+            dsField.setAccessible(true);
+
+            LinkedHashMap<String, List<Datastream>> nativelyOrdered =
+                    (LinkedHashMap<String, List<Datastream>>) dsField.get(obj);
+
+            LinkedHashMap<String, List<Datastream>> speciallyOrdered =
+                    new LinkedHashMap<String, List<Datastream>>();
+
+            Iterator<String> di = obj.datastreamIdIterator();
+
+            /* Just copy everything EXCEPT rels ext */
+            while (di.hasNext()) {
+                String id = di.next();
+                if (!id.equals("RELS-EXT")) {
+                    speciallyOrdered.put(id, nativelyOrdered.get(id));
+                }
+            }
+
+            /* Put RELS-EXT last, if defined */
+            List<Datastream> rels = nativelyOrdered.get("RELS-EXT");
+            if (rels != null) {
+                speciallyOrdered.put("RELS-EXT", rels);
+            }
+
+            dsField.set(obj, speciallyOrdered);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return doDeserialize(getStream(obj));
     }
 
     protected DigitalObject doDeserialize(InputStream in)
             throws ObjectIntegrityException, StreamIOException {
-        DigitalObject obj = new BasicDigitalObject();
+        BasicDigitalObject obj = new BasicDigitalObject();
+
         try {
             m_deserializer.deserialize(in, obj, "UTF-8", DESERIALIZE_INSTANCE);
         } catch (UnsupportedEncodingException wontHappen) {
@@ -246,7 +326,7 @@ public abstract class TestXMLDODeserializer
     }
 
     protected void doTestTwoDisseminators() {
-        DigitalObject obj = createTestObject(DigitalObject.FEDORA_OBJECT);
+        DigitalObject obj = createTestObject(FEDORA_OBJECT_3_0);
 
         final String dissID1 = "DISS1";
         Disseminator diss1 = createDisseminator(dissID1, 1);

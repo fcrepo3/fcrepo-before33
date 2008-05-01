@@ -16,6 +16,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -26,6 +27,7 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
+import fedora.common.Models;
 
 import fedora.server.Context;
 import fedora.server.Module;
@@ -39,12 +41,11 @@ import fedora.server.errors.InvalidUserParmException;
 import fedora.server.errors.MethodNotFoundException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ServerException;
-import fedora.server.errors.StorageException;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.security.Authorization;
-import fedora.server.storage.BDefReader;
-import fedora.server.storage.BMechReader;
+import fedora.server.storage.ServiceDefinitionReader;
+import fedora.server.storage.ServiceDeploymentReader;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.ExternalContentManager;
@@ -181,15 +182,15 @@ public class DefaultAccess
     /**
      * <p>
      * Disseminates the content produced by executing the specified method of
-     * the associated Behavior Mechanism object of the specified digital object.
+     * the associated deployment object of the specified digital object.
      * </p>
      * 
      * @param context
      *        The context of this request.
      * @param PID
      *        The persistent identifier of the digital object.
-     * @param bDefPID
-     *        The persistent identifier of the Behavior Definition object.
+     * @param sDefPID
+     *        The persistent identifier of the Service Definition object.
      * @param methodName
      *        The name of the method to be executed.
      * @param userParms
@@ -203,29 +204,30 @@ public class DefaultAccess
      */
     public MIMETypedStream getDissemination(Context context,
                                             String PID,
-                                            String bDefPID,
+                                            String sDefPID,
                                             String methodName,
                                             Property[] userParms,
                                             Date asOfDateTime)
             throws ServerException {
         PID = Server.getPID(PID).toString();
-        bDefPID = Server.getPID(bDefPID).toString();
+        sDefPID = Server.getPID(sDefPID).toString();
         long initStartTime = new Date().getTime();
         long startTime = new Date().getTime();
         long stopTime;
         long interval;
-        BMechReader bmechreader = null;
+        ServiceDeploymentReader deploymentReader = null;
+        DOReader cmReader = null;
 
         DOReader reader =
                 m_manager.getReader(asOfDateTime == null, context, PID);
         String authzAux_objState = reader.GetObjectState();
 
-        // DYNAMIC!! If the behavior definition (bDefPID) is defined as dynamic, then
+        // DYNAMIC!! If service deployment is defined as dynamic, then
         // perform the dissemination via the DynamicAccess module.
-        if (m_dynamicAccess.isDynamicBehaviorDefinition(context, PID, bDefPID)) {
+        if (m_dynamicAccess.isDynamicService(context, PID, sDefPID)) {
             m_authorizationModule.enforceGetDissemination(context,
                                                           PID,
-                                                          bDefPID,
+                                                          sDefPID,
                                                           methodName,
                                                           asOfDateTime,
                                                           authzAux_objState,
@@ -236,7 +238,7 @@ public class DefaultAccess
             MIMETypedStream retVal =
                     m_dynamicAccess.getDissemination(context,
                                                      PID,
-                                                     bDefPID,
+                                                     sDefPID,
                                                      methodName,
                                                      userParms,
                                                      asOfDateTime);
@@ -246,112 +248,122 @@ public class DefaultAccess
                     + " milliseconds.");
             return retVal;
         }
-        boolean doCMDA = false;
 
-        DOReader cmReader = null;
-        RelationshipTuple cmPIDs[] =
-                reader.getRelationships(Constants.MODEL.HAS_CONTENT_MODEL.uri);
-        if (cmPIDs.length == 0) {
-            throw new DisseminationException("No Content Model defined for object: "
-                    + PID);
-        }
-        boolean done = false;
-        m_manager.initializeCModelBmechHashMap(context);
-        if (cmPIDs != null && cmPIDs.length > 0) {
-            for (int i = 0; i < cmPIDs.length && !done; i++) {
-                String cModelPid = cmPIDs[i].getObjectPID();
-                if (cModelPid.equals("self")) {
-                    cmReader = reader;
-                    cModelPid = PID;
-                } else {
-                    try {
-                        cmReader =
-                                m_manager.getReader(asOfDateTime == null,
-                                                    context,
-                                                    cModelPid);
-                    } catch (StorageException e) {
-                        throw new DisseminationException(null,
-                                                         "Content Model Object "
-                                                                 + cModelPid
-                                                                 + " does not exist.",
-                                                         null,
-                                                         null,
-                                                         e);
-                    }
+        /*
+         * Find the service deployment that is contractor for a model this
+         * object has, and deploys the requested service. If object<->model
+         * mappings are ever stored in the registry, this may be simplified.
+         */
+        String serviceDeploymentPID = null;
+        String contentModelPID = null;
+        for (RelationshipTuple rel : reader.getRelationships(MODEL.HAS_MODEL,
+                                                             null)) {
+            String cModelPID = rel.getObjectPID();
+            String foundDeploymentPID =
+                    m_manager.lookupDeploymentForCModel(cModelPID, sDefPID);
+
+            if (foundDeploymentPID != null) {
+                if (serviceDeploymentPID != null
+                        && !foundDeploymentPID.equals(serviceDeploymentPID)) {
+                    throw new DisseminationException("More than one deployment ("
+                            + foundDeploymentPID
+                            + ", "
+                            + serviceDeploymentPID
+                            + ") found for service "
+                            + sDefPID
+                            + " in model "
+                            + cModelPID);
+
                 }
-                RelationshipTuple bDefPIDs[] =
-                        cmReader.getRelationships(Constants.MODEL.HAS_BDEF.uri);
-                if (bDefPIDs == null || bDefPIDs.length == 0) {
-                    throw new DisseminationException("No BDef defined for Content Model "
-                            + cModelPid);
-                }
-                for (int j = 0; j < bDefPIDs.length && !done; j++) {
-                    if (bDefPIDs[j].getObjectPID().endsWith(bDefPID)) {
-                        bmechreader =
-                                FindBMechForBDefAndCModel(context,
-                                                          bDefPID,
-                                                          cModelPid);
-                        if (bmechreader != null) {
-                            done = true;
-                            doCMDA = true;
-                        }
-                    }
-                }
+
+                serviceDeploymentPID = foundDeploymentPID;
+                contentModelPID = cModelPID;
+            } else {
+                LOG.debug("No deployment for (" + cModelPID + ", " + sDefPID
+                        + ")");
             }
         }
 
-        BDefReader bDefReader =
-                m_manager.getBDefReader(asOfDateTime == null, context, bDefPID);
-        String authzAux_bdefState = bDefReader.GetObjectState();
+        if (serviceDeploymentPID != null) {
+            deploymentReader =
+                    m_manager.getServiceDeploymentReader(false,
+                                                         context,
+                                                         serviceDeploymentPID);
+            cmReader = m_manager.getReader(false, context, contentModelPID);
+        }
+
+        ServiceDefinitionReader sDefReader =
+                m_manager.getServiceDefinitionReader(asOfDateTime == null,
+                                                     context,
+                                                     sDefPID);
+
+        String authzAux_sdefState = sDefReader.GetObjectState();
 
         String authzAux_dissState = "unknown";
 
-        // SDP: get a bmech reader to get information that is specific to
-        // a mechanism.
-        Date versDateTime = asOfDateTime;
-        //    BMechReader bmechreader = null;
-        if (!doCMDA) {
-            String message =
-                    "[DefaultAccess] Disseminators are no longer supported ";
-            throw new DisseminatorNotFoundException(message);
-        }
+        /*
+         * if reader is null, it means that no suitable deployments have been
+         * found. This can happen if (a), the object does not have any models
+         * that have that service, or (b) the object has a suitable model, but
+         * no implementation of that service has been deployed. We do a bit of
+         * checking here to determine which case this represents, as the error
+         * message could be very useful.
+         */
+        if (deploymentReader == null) {
 
-        // if bmechreader is null, it means that no disseminators matched the specified bDef PID
-        // This can occur if a date/time stamp value is specified that is earlier than the creation
-        // date of all disseminators or if the specified bDef PID does not match the bDef of
-        // any disseminators in the object.
-        if (bmechreader == null) {
-            String message =
-                    "[DefaultAccess] Either there are no disseminators found in "
-                            + "the object \""
-                            + PID
-                            + "\" that match the specified date/time stamp "
-                            + "of \""
-                            + DateUtility.convertDateToString(asOfDateTime)
-                            + "\"  OR "
-                            + "the specified bDef PID of \""
-                            + bDefPID
-                            + "\" does not match the "
-                            + "bDef PID of any disseminators for this digital object.";
+            boolean suitableModelFound = false;
+            String cModelPID = null;
+            String message = null;
+
+            models: for (RelationshipTuple rel : reader
+                    .getRelationships(MODEL.HAS_MODEL, null)) {
+                cModelPID = rel.getObjectPID();
+                
+                /* Skip over system models */
+                if (Models.contains("info:fedora/" + cModelPID)) continue;
+                
+                /* Open up each model and peek at its sDefs for a match */
+                for (RelationshipTuple r : m_manager.getReader(false,
+                                                               context,
+                                                               cModelPID)
+                        .getRelationships(MODEL.HAS_SERVICE, null)) {
+                    if (sDefPID.equals(r.getObjectPID())) {
+                        suitableModelFound = true;
+                        break models;
+                    }
+                }
+            }
+
+            if (suitableModelFound) {
+                message =
+                        "Unable to find deployment for service " + sDefPID
+                                + " on " + reader.GetObjectPID() + " in model "
+                                + cModelPID;
+            } else {
+                message =
+                        reader.GetObjectPID()
+                                + " does not have a model with service "
+                                + sDefPID;
+            }
             throw new DisseminatorNotFoundException(message);
         }
         stopTime = new Date().getTime();
         interval = stopTime - startTime;
         LOG.debug("Roundtrip Looping Diss: " + interval + " milliseconds.");
 
-        // Check bmech object state
-        String authzAux_bmechState = bmechreader.GetObjectState();
-        String authzAux_bmechPID = bmechreader.GetObjectPID();
+        // Check deployment object state
+        String authzAux_sDepState = deploymentReader.GetObjectState();
+        String authzAux_sDepPID = deploymentReader.GetObjectPID();
 
         m_authorizationModule.enforceGetDissemination(context,
                                                       PID,
-                                                      bDefPID,
+                                                      sDefPID,
                                                       methodName,
                                                       asOfDateTime,
                                                       authzAux_objState,
-                                                      authzAux_bdefState,
-                                                      authzAux_bmechPID,
-                                                      authzAux_bmechState,
+                                                      authzAux_sdefState,
+                                                      authzAux_sDepPID,
+                                                      authzAux_sDepState,
                                                       authzAux_dissState);
 
         // Get method parms
@@ -366,26 +378,14 @@ public class DefaultAccess
                 h_userParms.put(element.name, element.value);
             }
         }
-
-        if (!doCMDA) {
-            // Validate user-supplied parameters
-            validateUserParms(context,
-                              PID,
-                              bDefPID,
-                              null,
-                              methodName,
-                              h_userParms,
-                              versDateTime);
-        } else {
-            // Validate user-supplied parameters
-            validateUserParms(context,
-                              PID,
-                              bDefPID,
-                              bmechreader,
-                              methodName,
-                              h_userParms,
-                              versDateTime);
-        }
+        // Validate user-supplied parameters
+        validateUserParms(context,
+                          PID,
+                          sDefPID,
+                          deploymentReader,
+                          methodName,
+                          h_userParms,
+                          asOfDateTime);
 
         stopTime = new Date().getTime();
         interval = stopTime - startTime;
@@ -393,11 +393,11 @@ public class DefaultAccess
                 + " milliseconds.");
 
         startTime = new Date().getTime();
-        // SDP: GET INFO FROM BMECH READER:
+        // SDP: GET INFO FROM DEPLOYMENT READER:
         // Add any default method parameters to validated user parm list
-        //defaultMethodParms = reader.GetBMechDefaultMethodParms(bDefPID,
         defaultMethodParms =
-                bmechreader.getServiceMethodParms(methodName, versDateTime);
+                deploymentReader
+                        .getServiceMethodParms(methodName, asOfDateTime);
         for (int i = 0; i < defaultMethodParms.length; i++) {
             if (!defaultMethodParms[i].parmType
                     .equals(MethodParmDef.DATASTREAM_INPUT)) {
@@ -425,27 +425,19 @@ public class DefaultAccess
 
         stopTime = new Date().getTime();
         interval = stopTime - startTime;
-        LOG.debug("Roundtrip Get BMech Parms: " + interval + " milliseconds.");
+        LOG.debug("Roundtrip Get Deployment Parms: " + interval
+                + " milliseconds.");
 
         startTime = new Date().getTime();
         DisseminationBindingInfo[] dissBindInfo;
-        if (doCMDA) {
-            // Get dissemination binding info.
-            dissBindInfo =
-                    GetCMDADisseminationBindingInfo(reader,
-                                                    cmReader,
-                                                    bmechreader,
-                                                    methodName,
-                                                    versDateTime);
 
-        } else {
-            String message =
-                    "[DefaultAccess] Disseminators are no longer supported ";
-            throw new DisseminatorNotFoundException(message);
-            //        // Get dissemination binding info.
-            //        dissBindInfo =
-            //            reader.getDisseminationBindingInfo(bDefPID, methodName, versDateTime);
-        }
+        // Get dissemination binding info.
+        dissBindInfo =
+                GetCMDADisseminationBindingInfo(reader,
+                                                cmReader,
+                                                deploymentReader,
+                                                methodName,
+                                                asOfDateTime);
 
         // Assemble and execute the dissemination request from the binding info.
         String reposBaseURL =
@@ -461,8 +453,8 @@ public class DefaultAccess
                                                   PID,
                                                   h_userParms,
                                                   dissBindInfo,
-                                                  authzAux_bmechPID,
-                                                  bmechreader,
+                                                  authzAux_sDepPID,
+                                                  deploymentReader,
                                                   methodName);
 
         stopTime = new Date().getTime();
@@ -476,29 +468,9 @@ public class DefaultAccess
         return dissemination;
     }
 
-    private BMechReader FindBMechForBDefAndCModel(Context context,
-                                                  String bDefPID,
-                                                  String cModelPID)
-            throws ServerException {
-        String bMechPID = m_manager.lookupBmechForCModel(cModelPID, bDefPID);
-        if (bMechPID == null) {
-            throw new DisseminationException("No BMech defined as Contractor for Content Model "
-                    + cModelPID);
-        }
-        BMechReader bmReader;
-        try {
-            bmReader = m_manager.getBMechReader(false, context, bMechPID);
-        } catch (StorageException se) {
-            throw new DisseminationException("BMech " + bMechPID
-                    + " defined as Contractor for Content Model " + cModelPID
-                    + " not found.");
-        }
-        return bmReader;
-    }
-
     private DisseminationBindingInfo[] GetCMDADisseminationBindingInfo(DOReader dObj,
                                                                        DOReader cmReader,
-                                                                       BMechReader bmReader,
+                                                                       ServiceDeploymentReader bmReader,
                                                                        String methodName,
                                                                        Date versDateTime)
             throws MethodNotFoundException, ServerException {
@@ -510,9 +482,8 @@ public class DefaultAccess
         String[] dsNames = dObj.ListDatastreamIDs(null);
         int dsCount = dsNames.length;
         bindingInfo = new DisseminationBindingInfo[dsCount];
-        // The bmech reader provides information about the service and params.
+        // The sDep reader provides information about the service and params.
         //wdn5e 2005.04.24 for 2.1 : using false here becuase of versDateTime
-        //     BMechReader mech = m_repoReader.getBMechReader(false, m_context, diss.bMechID);
         MethodParmDef[] methodParms =
                 bmReader.getServiceMethodParms(methodName, versDateTime);
         // Find the operation bindings for the method in question
@@ -648,10 +619,14 @@ public class DefaultAccess
         profile.PID = reader.GetObjectPID();
         profile.objectLabel = reader.GetObjectLabel();
         profile.objectOwnerId = reader.getOwnerId();
-        profile.objectContentModel = reader.getContentModelId();
+        profile.objectModels = new HashSet<String>();
         profile.objectCreateDate = reader.getCreateDate();
         profile.objectLastModDate = reader.getLastModDate();
-        profile.objectType = reader.getFedoraObjectTypes();
+
+        
+        for (RelationshipTuple rel : reader.getRelationships(Constants.MODEL.HAS_MODEL, null)) {
+            profile.objectModels.add(rel.object);
+        }
 
         String reposBaseURL =
                 getReposBaseURL(context
@@ -832,7 +807,7 @@ public class DefaultAccess
     /**
      * <p>
      * Validates user-supplied method parameters against values in the
-     * corresponding Behavior Definition object. The method will validate for:
+     * corresponding Service Definition object. The method will validate for:
      * </p>
      * <ol>
      * <li> Valid name - each name must match a valid method parameter name</li>
@@ -846,8 +821,8 @@ public class DefaultAccess
      *        The context of this request.
      * @param PID
      *        The persistent identifier of the digital object.
-     * @param bDefPID
-     *        The persistent identifier of the Behavior Definition object.
+     * @param sDefPID
+     *        The persistent identifier of the Service Definition object.
      * @param methodName
      *        The name of the method.
      * @param h_userParms
@@ -859,13 +834,13 @@ public class DefaultAccess
      */
     private void validateUserParms(Context context,
                                    String PID,
-                                   String bDefPID,
-                                   BMechReader bmechreader,
+                                   String sDefPID,
+                                   ServiceDeploymentReader sdepreader,
                                    String methodName,
                                    Hashtable h_userParms,
                                    Date versDateTime) throws ServerException {
         PID = Server.getPID(PID).toString();
-        bDefPID = Server.getPID(bDefPID).toString();
+        sDefPID = Server.getPID(sDefPID).toString();
         MethodParmDef[] methodParms = null;
         MethodParmDef methodParm = null;
         StringBuffer sb = new StringBuffer();
@@ -874,9 +849,9 @@ public class DefaultAccess
 
         DOReader reader = null;
 
-        if (bmechreader != null) // this code will be used for the CMDA example
+        if (sdepreader != null) // this code will be used for the CMDA example
         {
-            MethodDef[] methods = bmechreader.getServiceMethods(versDateTime);
+            MethodDef[] methods = sdepreader.getServiceMethods(versDateTime);
             // Filter out parms that are internal to the mechanism and not part
             // of the abstract method definition.  We just want user parms.
             reader = m_manager.getReader(false, context, PID);
@@ -900,7 +875,7 @@ public class DefaultAccess
                     "[DefaultAccess] Old-style disseminators are no longer supported ";
             throw new DisseminatorNotFoundException(message);
             //        reader = m_manager.getReader(Server.GLOBAL_CHOICE, context, PID);
-            //        methodParms = reader.getObjectMethodParms(bDefPID, methodName, versDateTime);
+            //        methodParms = reader.getObjectMethodParms(sDefPID, methodName, versDateTime);
         }
 
         // Put valid method parameters and their attributes into hashtable

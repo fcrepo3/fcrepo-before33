@@ -56,7 +56,7 @@ public class BESecurityConfig
 
     /**
      * The default role configuration, specifying the values to be assumed for
-     * any internal call or BMech configuration value which is null.
+     * any internal call or SDep configuration value which is null.
      */
     private DefaultRoleConfig m_defaultConfig;
 
@@ -92,17 +92,17 @@ public class BESecurityConfig
     private String[] m_internalIPList;
 
     /**
-     * A sorted, PID-keyed map of <code>BMechRoleConfig</code>s.
+     * A sorted, PID-keyed map of <code>ServiceDeploymentRoleConfig</code>s.
      */
-    private final SortedMap<String, BMechRoleConfig> m_bMechConfigs;
+    private final SortedMap<String, ServiceDeploymentRoleConfig> m_sDepConfigs;
 
     /**
      * Create an empty BESecurityConfig with an empty map of
-     * <code>BMechRoleConfig</code>s and <code>null</code> values for
+     * <code>ServiceDeploymentRoleConfig</code>s and <code>null</code> values for
      * everything else.
      */
     public BESecurityConfig() {
-        m_bMechConfigs = new TreeMap<String, BMechRoleConfig>();
+        m_sDepConfigs = new TreeMap<String, ServiceDeploymentRoleConfig>();
     }
 
     /**
@@ -279,39 +279,39 @@ public class BESecurityConfig
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Get the mutable, sorted, PID-keyed map of <code>BMechRoleConfig</code>s.
+     * Get the mutable, sorted, PID-keyed map of <code>ServiceDeploymentRoleConfig</code>s.
      */
-    public SortedMap<String, BMechRoleConfig> getBMechConfigs() {
-        return m_bMechConfigs;
+    public SortedMap<String, ServiceDeploymentRoleConfig> getServiceDeploymentConfigs() {
+        return m_sDepConfigs;
     }
 
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Add empty bMech and method configurations given by the map if they are
+     * Add empty sDep and method configurations given by the map if they are
      * not already already defined.
      */
     public void addEmptyConfigs(Map pidToMethodList) {
         Iterator pIter = pidToMethodList.keySet().iterator();
         while (pIter.hasNext()) {
-            String bMechPID = (String) pIter.next();
-            // add the bMech indicated by the key if it doesn't exist
-            BMechRoleConfig bMechRoleConfig = m_bMechConfigs.get(bMechPID);
-            if (bMechRoleConfig == null) {
-                bMechRoleConfig =
-                        new BMechRoleConfig(m_defaultConfig, bMechPID);
-                m_bMechConfigs.put(bMechPID, bMechRoleConfig);
+            String sDepPID = (String) pIter.next();
+            // add the sDep indicated by the key if it doesn't exist
+            ServiceDeploymentRoleConfig sDepRoleConfig = m_sDepConfigs.get(sDepPID);
+            if (sDepRoleConfig == null) {
+                sDepRoleConfig =
+                        new ServiceDeploymentRoleConfig(m_defaultConfig, sDepPID);
+                m_sDepConfigs.put(sDepPID, sDepRoleConfig);
             }
             // add each method indicated by the List which doesn't already exist
-            Iterator mIter = ((List) pidToMethodList.get(bMechPID)).iterator();
+            Iterator mIter = ((List) pidToMethodList.get(sDepPID)).iterator();
             while (mIter.hasNext()) {
                 String methodName = (String) mIter.next();
                 MethodRoleConfig methodRoleConfig =
-                        bMechRoleConfig.getMethodConfigs().get(methodName);
+                        sDepRoleConfig.getMethodConfigs().get(methodName);
                 if (methodRoleConfig == null) {
                     methodRoleConfig =
-                            new MethodRoleConfig(bMechRoleConfig, methodName);
-                    bMechRoleConfig.getMethodConfigs().put(methodName,
+                            new MethodRoleConfig(sDepRoleConfig, methodName);
+                    sDepRoleConfig.getMethodConfigs().put(methodName,
                                                            methodRoleConfig);
                 }
             }
@@ -345,16 +345,16 @@ public class BESecurityConfig
         // get all child config nodes for repeated use
         NodeList nodes = root.getElementsByTagName(_CONFIG);
 
-        // parse and add all explicitly configured bdef configurations
+        // parse and add all explicitly configured sdef configurations
         // while also parsing fedoraInternalCall-1 and setting appropriate vals
         for (int i = 0; i < nodes.getLength(); i++) {
             Element e = (Element) nodes.item(i);
             String role = e.getAttribute(_ROLE);
             if (role.indexOf(":") != -1 && role.indexOf("/") == -1) {
-                BMechRoleConfig bMechRoleConfig =
-                        new BMechRoleConfig(defaultRoleConfig, role);
-                setValuesFromElement(bMechRoleConfig, e);
-                config.getBMechConfigs().put(role, bMechRoleConfig);
+                ServiceDeploymentRoleConfig sDepRoleConfig =
+                        new ServiceDeploymentRoleConfig(defaultRoleConfig, role);
+                setValuesFromElement(sDepRoleConfig, e);
+                config.getServiceDeploymentConfigs().put(role, sDepRoleConfig);
             } else if (role.equals(_INTERNAL_PREFIX + "1")) {
                 config.setInternalSSL(getBoolean(e, _CALLSSL));
                 config.setInternalBasicAuth(getBoolean(e, _CALLBASICAUTH));
@@ -365,24 +365,24 @@ public class BESecurityConfig
         }
 
         // finally, parse and add all configured methods, first adding
-        // a blank bdef role configuration if needed
+        // a blank sdef role configuration if needed
         for (int i = 0; i < nodes.getLength(); i++) {
             Element e = (Element) nodes.item(i);
             String[] parts = e.getAttribute(_ROLE).split("/");
             if (parts.length == 2) {
-                String bMechPID = parts[0];
+                String sDepPID = parts[0];
                 String methodName = parts[1];
-                BMechRoleConfig bMechRoleConfig =
-                        config.getBMechConfigs().get(bMechPID);
-                if (bMechRoleConfig == null) {
-                    bMechRoleConfig =
-                            new BMechRoleConfig(defaultRoleConfig, bMechPID);
-                    config.getBMechConfigs().put(bMechPID, bMechRoleConfig);
+                ServiceDeploymentRoleConfig sDepRoleConfig =
+                        config.getServiceDeploymentConfigs().get(sDepPID);
+                if (sDepRoleConfig == null) {
+                    sDepRoleConfig =
+                            new ServiceDeploymentRoleConfig(defaultRoleConfig, sDepPID);
+                    config.getServiceDeploymentConfigs().put(sDepPID, sDepRoleConfig);
                 }
                 MethodRoleConfig methodRoleConfig =
-                        new MethodRoleConfig(bMechRoleConfig, methodName);
+                        new MethodRoleConfig(sDepRoleConfig, methodName);
                 setValuesFromElement(methodRoleConfig, e);
-                bMechRoleConfig.getMethodConfigs().put(methodName,
+                sDepRoleConfig.getMethodConfigs().put(methodName,
                                                        methodRoleConfig);
             }
         }
@@ -496,11 +496,11 @@ public class BESecurityConfig
                             m_internalIPList,
                             writer);
 
-        // bMech roles
-        Iterator bIter = m_bMechConfigs.keySet().iterator();
+        // sDep roles
+        Iterator bIter = m_sDepConfigs.keySet().iterator();
         while (bIter.hasNext()) {
-            String bMechRole = (String) bIter.next();
-            BMechRoleConfig bConfig = m_bMechConfigs.get(bMechRole);
+            String role = (String) bIter.next();
+            ServiceDeploymentRoleConfig bConfig = m_sDepConfigs.get(role);
             write(bConfig, true, skipNonOverrides, writer);
             // per-method roles
             Iterator mIter = bConfig.getMethodConfigs().keySet().iterator();

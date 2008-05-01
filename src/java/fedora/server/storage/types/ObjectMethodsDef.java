@@ -16,7 +16,7 @@ public class ObjectMethodsDef {
 
     public String PID = null;
 
-    public String bDefPID = null;
+    public String sDefPID = null;
 
     public String methodName = null;
 

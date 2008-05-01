@@ -30,7 +30,7 @@ public class TestAPIAConfigC
     }
 
     public void testGetRemoteDissemination() throws Exception {
-        // test dissemination with E datastream as input to a remote bmech service (MrSID)
+        // test dissemination with E datastream as input to a remote service (MrSID)
         MIMETypedStream diss =
                 apia.getDissemination("demo:11",
                                       "demo:8",
@@ -40,7 +40,7 @@ public class TestAPIAConfigC
         assertEquals(diss.getMIMEType(), "image/jpeg");
         assertTrue(diss.getStream().length > 0);
 
-        // test dissemination using remote bmech service (MrSID) with user input parms		
+        // test dissemination using remote service (MrSID) with user input parms		
         Property[] parms = new Property[2];
         Property p = new Property();
         p.setName("ZOOM");

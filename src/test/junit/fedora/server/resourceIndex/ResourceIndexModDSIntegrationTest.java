@@ -3,6 +3,7 @@ package fedora.server.resourceIndex;
 
 import org.junit.Test;
 
+import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
 
 /**
@@ -36,7 +37,10 @@ public class ResourceIndexModDSIntegrationTest
         addEDatastream(original, "DS1");
 
         DigitalObject modified = deepCopy(original);
-        modified.datastreams("DS1").clear();
+        
+        for (Datastream d : modified.datastreams("DS1")) {
+            modified.removeDatastreamVersion(d);
+        }
 
         doModifyTest(1, original, modified);
     }
@@ -51,7 +55,10 @@ public class ResourceIndexModDSIntegrationTest
 
         DigitalObject modified = deepCopy(original);
         addEDatastream(modified, "DS2");
-        modified.datastreams("DS1").clear();
+        
+        for (Datastream d : modified.datastreams("DS1")) {
+            modified.removeDatastreamVersion(d);
+        }
 
         doModifyTest(1, original, modified);
     }

@@ -6,6 +6,7 @@
 package fedora.server.access;
 
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Data structure to contain a profile of a digital object that includes 
@@ -21,10 +22,8 @@ public class ObjectProfile {
     public String objectLabel = null;
 
     public String objectOwnerId = null;
-
-    public String objectType = null;
-
-    public String objectContentModel = null;
+    
+    public Set<String> objectModels = null;
 
     public Date objectCreateDate = null;
 

@@ -7,13 +7,23 @@
 package fedora.server.storage.types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.jrdf.graph.Literal;
+import org.jrdf.graph.ObjectNode;
+import org.jrdf.graph.PredicateNode;
+
+import fedora.server.errors.ServerException;
+import fedora.server.storage.RDFRelationshipReader;
 
 /**
  * A basic implementation of DigitalObject that stores things in memory.
@@ -26,8 +36,6 @@ public class BasicDigitalObject
 
     private boolean m_isNew;
 
-    private String m_fedoraObjectType;
-
     private String m_pid;
 
     private String m_state;
@@ -36,15 +44,21 @@ public class BasicDigitalObject
 
     private String m_label;
 
-    private String m_contentModelId;
+    private Set<RelationshipTuple> m_rels;
 
     private Date m_createDate;
 
     private Date m_lastModDate;
 
+    private DatastreamProcessor m_datastreamProcessor;
+
     private final ArrayList<AuditRecord> m_auditRecords;
 
-    private final HashMap<String, List<Datastream>> m_datastreams;
+    /*
+     * Although not required, this will assure that datastreamsIDs may be
+     * iterated in insertion order.
+     */
+    private final LinkedHashMap<String, List<Datastream>> m_datastreams;
 
     private final HashMap<String, List<Disseminator>> m_disseminators;
 
@@ -52,12 +66,11 @@ public class BasicDigitalObject
 
     public BasicDigitalObject() {
         m_auditRecords = new ArrayList<AuditRecord>();
-        m_datastreams = new HashMap<String, List<Datastream>>();
+        m_datastreams = new LinkedHashMap<String, List<Datastream>>();
         m_disseminators = new HashMap<String, List<Disseminator>>();
         m_extProperties = new HashMap<String, String>();
+        m_datastreamProcessor = new RelationshipProcessor();
         setNew(false);
-        setContentModelId("");
-        m_fedoraObjectType = "";
     }
 
     public boolean isNew() {
@@ -66,27 +79,6 @@ public class BasicDigitalObject
 
     public void setNew(boolean isNew) {
         m_isNew = isNew;
-    }
-
-    public boolean isFedoraObjectType(int type) {
-        return m_fedoraObjectType.indexOf(type) != -1;
-    }
-
-    public String getFedoraObjectTypes() {
-        return m_fedoraObjectType;
-    }
-
-    public void addFedoraObjectType(int type) {
-        if (m_fedoraObjectType.indexOf(type) == -1) {
-            m_fedoraObjectType = m_fedoraObjectType + (char) type;
-        }
-    }
-
-    public void removeFedoraObjectType(int type) {
-        if (m_fedoraObjectType.indexOf(type) != -1) {
-            m_fedoraObjectType =
-                    m_fedoraObjectType.replaceAll("" + (char) type, "");
-        }
     }
 
     public String getPid() {
@@ -121,15 +113,6 @@ public class BasicDigitalObject
         m_label = label;
     }
 
-    @Deprecated
-    public String getContentModelId() {
-        return m_contentModelId;
-    }
-
-    public void setContentModelId(String id) {
-        m_contentModelId = id;
-    }
-
     public Date getCreateDate() {
         return m_createDate;
     }
@@ -154,45 +137,88 @@ public class BasicDigitalObject
         return copyOfKeysForNonEmptyLists(m_datastreams).iterator();
     }
 
-    private static Set<String> copyOfKeysForNonEmptyLists(HashMap map) {
-        HashSet<String> set = new HashSet<String>();
-        Iterator<String> iter = map.keySet().iterator();
-        while (iter.hasNext()) {
-            String key = iter.next();
-            List list = (List) map.get(key);
-            if (list.size() > 0) {
-                set.add(key);
+    private static <T> Set<String> copyOfKeysForNonEmptyLists(Map<String, List<T>> map) {
+        Set<String> set = new LinkedHashSet<String>();
+
+        for (Map.Entry<String, List<T>> e : map.entrySet()) {
+            if (!e.getValue().isEmpty()) {
+                set.add(e.getKey());
             }
         }
         return set;
     }
 
-    public List<Datastream> datastreams(String id) {
-        ArrayList<Datastream> ret =
-                (ArrayList<Datastream>) m_datastreams.get(id);
-        if (ret == null) {
-            ret = new ArrayList<Datastream>();
-            m_datastreams.put(id, ret);
+    public Iterable<Datastream> datastreams(String id) {
+
+        if (!m_datastreams.containsKey(id)) {
+            return new ArrayList<Datastream>();
         }
-        return ret;
+
+        return Collections
+                .unmodifiableList(new ArrayList<Datastream>(m_datastreams
+                        .get(id)));
+    }
+
+    public void removeDatastreamVersion(Datastream ds) {
+        remove(ds);
     }
 
     public void addDatastreamVersion(Datastream ds, boolean addNewVersion) {
-        List<Datastream> datastreams = datastreams(ds.DatastreamID);
         if (!addNewVersion) {
-            Iterator<Datastream> dsIter = datastreams.iterator();
             Datastream latestCreated = null;
             long latestCreateTime = -1;
-            while (dsIter.hasNext()) {
-                Datastream ds1 = dsIter.next();
-                if (ds1.DSCreateDT.getTime() > latestCreateTime) {
-                    latestCreateTime = ds1.DSCreateDT.getTime();
-                    latestCreated = ds1;
+            for (Datastream d : datastreams(ds.DatastreamID)) {
+                if (d.DSCreateDT.getTime() > latestCreateTime) {
+                    latestCreateTime = d.DSCreateDT.getTime();
+                    latestCreated = d;
                 }
             }
-            datastreams.remove(latestCreated);
+            remove(latestCreated);
         }
-        datastreams.add(ds);
+        add(ds);
+    }
+
+    private void add(Datastream d) {
+
+        /*
+         * We determine the most recent datastream version by its created date.
+         * If a created date has not been supplied, give it one.
+         */
+        if (d.DSCreateDT == null) {
+            d.DSCreateDT = new Date();
+        }
+
+        String id = d.DatastreamID;
+        if (!m_datastreams.containsKey(id)) {
+            m_datastreams.put(id, new ArrayList<Datastream>());
+        }
+
+        m_datastreams.get(id).add(d);
+        m_datastreamProcessor.processAdd(d);
+    }
+
+    private void remove(Datastream d) {
+        if (d == null) return;
+        List<Datastream> datastreams = m_datastreams.get(d.DatastreamID);
+
+        if (datastreams == null) {
+            return;
+        }
+
+        int size = datastreams.size();
+        for (int i = 0; i < size; i++) {
+            Datastream v = datastreams.get(i);
+            if (d.DSVersionID.equals(v.DSVersionID)) {
+                datastreams.remove(i);
+                m_datastreamProcessor.processRemove(v);
+                break;
+            }
+        }
+
+        /* If we've removed the last version, remove the ID from the map */
+        if (datastreams.size() == 0) {
+            m_datastreams.remove(d.DatastreamID);
+        }
     }
 
     @Deprecated
@@ -217,9 +243,9 @@ public class BasicDigitalObject
 
     public String newDatastreamID(String id) {
         List<String> versionIDs = new ArrayList<String>();
-        Iterator iter = ((ArrayList) m_datastreams.get(id)).iterator();
+        Iterator<Datastream> iter = (m_datastreams.get(id)).iterator();
         while (iter.hasNext()) {
-            Datastream ds = (Datastream) iter.next();
+            Datastream ds = iter.next();
             versionIDs.add(ds.DSVersionID);
         }
         return newID(versionIDs.iterator(), id + ".");
@@ -267,16 +293,49 @@ public class BasicDigitalObject
 
     }
 
+    public boolean hasRelationship(PredicateNode predicate, ObjectNode object) {
+        /* Brute force */
+        return getRelationships(predicate, object).size() > 0;
+    }
+
+    public Set<RelationshipTuple> getRelationships(PredicateNode predicate,
+                                                   ObjectNode object) {
+        Set<RelationshipTuple> foundRels = new HashSet<RelationshipTuple>();
+
+        if (m_rels == null) {
+            readRels();
+        }
+
+        /* Brute force */
+        for (RelationshipTuple t : m_rels) {
+            if (predicate != null) {
+                if (!predicate.toString().equals(t.predicate)) {
+                    continue;
+                }
+            }
+
+            if (object != null) {
+                if ((object instanceof Literal) != t.isLiteral
+                        || !(object.toString().equals(t.object.toString()))) {
+                    continue;
+                }
+
+            }
+            foundRels.add(t);
+        }
+        return foundRels;
+    }
+
     /**
      * Given an iterator of existing ids, return a new id that starts with
      * <code>start</code> and is guaranteed to be unique. This algorithm adds
      * one to the highest existing id that starts with <code>start</code>. If
      * no such existing id exists, it will return <i>start</i> + "1".
      */
-    private String newID(Iterator iter, String start) {
+    private String newID(Iterator<String> iter, String start) {
         int highest = 0;
         while (iter.hasNext()) {
-            String id = (String) iter.next();
+            String id = iter.next();
             if (id.startsWith(start) && id.length() > start.length()) {
                 try {
                     int num = Integer.parseInt(id.substring(start.length()));
@@ -291,4 +350,74 @@ public class BasicDigitalObject
         return start + newNum;
     }
 
+    private void readRels() {
+        List<Datastream> relsExtVersions = m_datastreams.get("RELS-EXT");
+
+        if (relsExtVersions == null || relsExtVersions.size() == 0) {
+            m_rels = new HashSet<RelationshipTuple>();
+            return;
+        }
+
+        Datastream latestRels = relsExtVersions.get(0);
+
+        for (Datastream v : relsExtVersions) {
+            if (v.DSCreateDT.getTime() > latestRels.DSCreateDT.getTime()) {
+                latestRels = v;
+            }
+        }
+
+        try {
+            m_rels = RDFRelationshipReader.readRelationships(latestRels);
+        } catch (ServerException e) {
+            throw new RuntimeException("Error reading object relationships", e);
+        }
+    }
+
+    private abstract class DatastreamProcessor {
+
+        abstract void processAdd(Datastream d);
+
+        abstract void processRemove(Datastream d);
+
+        boolean isLatestVersion(Datastream d) {
+
+            List<Datastream> versions = m_datastreams.get(d.DatastreamID);
+
+            if (versions == null || versions.size() == 0) return true;
+
+            long created = d.DSCreateDT.getTime();
+
+            for (Datastream v : versions) {
+                if (v.DSCreateDT.getTime() > created) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
+    /**
+     * If the latest RELS-EXT is added or removed, invalidate the relationship
+     * cache so that it has to be re-read next time it is requested.
+     */
+    private class RelationshipProcessor
+            extends DatastreamProcessor {
+
+        private static final String RELS_EXT = "RELS-EXT";
+
+        void processRemove(Datastream d) {
+            invalidateIfLatestRelsExt(d);
+        }
+
+        void processAdd(Datastream d) {
+            invalidateIfLatestRelsExt(d);
+        }
+
+        private void invalidateIfLatestRelsExt(Datastream d) {
+            if (d.DatastreamID.equals(RELS_EXT) && isLatestVersion(d)) {
+                m_rels = null;
+            }
+        }
+    }
 }

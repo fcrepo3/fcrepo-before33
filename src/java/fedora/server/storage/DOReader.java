@@ -9,10 +9,15 @@ import java.io.InputStream;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+
+import org.jrdf.graph.ObjectNode;
+import org.jrdf.graph.PredicateNode;
 
 import fedora.server.errors.ServerException;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.RelationshipTuple;
 
@@ -24,27 +29,9 @@ import fedora.server.storage.types.RelationshipTuple;
  */
 public interface DOReader {
 
-    /**
-     * Gets the type of fedora object (O=FEDORA_OBJECT, D=FEDORA_BDEF_OBJECT,
-     * M=FEDORA_BMECH_OBJECT) this is a handle on.
-     * 
-     * @return the type of Fedora object.
-     * @throws ServerException
-     *         If any type of error occurred fulfilling the request.
-     */
-    public String getFedoraObjectTypes() throws ServerException;
-
-    public boolean isFedoraObjectType(int type) throws ServerException;
-
-    /**
-     * Gets the content model of the object.
-     * 
-     * @return the content model of the object.
-     * @throws ServerException
-     *         If any type of error occurred fulfilling the request.
-     */
-    public String getContentModelId() throws ServerException;
-
+    /** Gets the underlying digital object this reader is working with. */
+    public DigitalObject getObject();
+    
     /**
      * Gets the date of creation of this object.
      * 
@@ -97,8 +84,8 @@ public interface DOReader {
      * Gets the content of the entire digital object as XML, with public URIs as
      * references to managed content datastreams under the custodianship of the
      * repository.
-     * 
-     * <p>The intent of this method is to return the digital object along with
+     * <p>
+     * The intent of this method is to return the digital object along with
      * valid URI pointers for ALL its datastreams.
      * 
      * @param format
@@ -117,8 +104,8 @@ public interface DOReader {
      */
     @Deprecated
     public InputStream ExportObject(String format, String exportContext)
-            throws ServerException;    
-    
+            throws ServerException;
+
     /**
      * Gets the PID of the digital object.
      * 
@@ -235,8 +222,8 @@ public interface DOReader {
     /**
      * Gets list of ALL method definitions that are available on a particular
      * digital object. This is done by reflecting on EACH Disseminator and
-     * getting the PID of the behavior mechanism object for that disseminator.
-     * The methods are reflected via the behavior mechanism object, which is
+     * getting the PID of the service deployment object for that disseminator.
+     * The methods are reflected via the service deployment object, which is
      * implementing the methods defined in a particular by a behavior
      * definition.
      * 
@@ -264,6 +251,35 @@ public interface DOReader {
      *         If any type of error occurred fulfilling the request.
      */
     public String[] getObjectHistory(String PID) throws ServerException;
+
+    /**
+     * Determine of the object contains the given relationship.
+     * 
+     * @param predicate
+     *        Predicate of the relationship, or null if unspecified (will match
+     *        any).
+     * @param object
+     *        Object (target) of the relationship, or null if unspecified (will
+     *        match any).
+     * @return true if the object
+     */
+    public boolean hasRelationship(PredicateNode predicate, ObjectNode object)
+            throws ServerException;
+
+    /**
+     * Get all matching relationships in the object.
+     * 
+     * @param predicate
+     *        Predicate of the relationship, or null if unspecified (will match
+     *        any).
+     * @param object
+     *        Object (target) of the relationship, or null if unspecified (will
+     *        match any).
+     * @return All matching relationships in the object
+     */
+    public Set<RelationshipTuple> getRelationships(PredicateNode predicate,
+                                                   ObjectNode object)
+            throws ServerException;
 
     public RelationshipTuple[] getRelationships(String relationship)
             throws ServerException;

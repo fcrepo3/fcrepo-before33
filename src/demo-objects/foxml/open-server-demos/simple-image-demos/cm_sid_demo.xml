@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <foxml:digitalObject VERSION="1.1" PID="demo:CMSID" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd">
 	<foxml:objectProperties>
-		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraCModelObject"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Content Model for MrSID Images"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
@@ -39,7 +38,8 @@
       		<foxml:xmlContent>
     			<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
       				<rdf:Description rdf:about="info:fedora/demo:CMSID">
-        				<fedora-model:hasBDef rdf:resource="info:fedora/demo:1"/>
+        				<fedora-model:hasService rdf:resource="info:fedora/demo:1"/>
+        				<fedora-model:hasModel rdf:resource="info:fedora/fedora-system:ContentModel-3.0" />
       				</rdf:Description>
     			</rdf:RDF>
       		</foxml:xmlContent>

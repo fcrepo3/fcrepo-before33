@@ -34,7 +34,6 @@ import fedora.server.Server;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ResourceIndexException;
-import fedora.server.storage.BDefReader;
 import fedora.server.storage.DOReader;
 import fedora.server.utilities.status.ServerState;
 
@@ -101,10 +100,13 @@ public class ResourceIndexModule
             TriplestoreConnector connector =
                     getConnector(getServer()
                             .getDatastoreConfig(getRequired("datastore")));
+
+            TripleGenerator generator = new ModelBasedTripleGenerator();
+            generator.init(connector.getElementFactory());
+
             _ri =
                     new ResourceIndexImpl(connector,
-                                          new BaseTripleGenerator(connector
-                                                  .getElementFactory()),
+                                          generator,
                                           level,
                                           syncUpdates);
             setAliasMap(getAliases());
@@ -241,70 +243,23 @@ public class ResourceIndexModule
     /**
      * {@inheritDoc}
      */
-    public void addBDefObject(BDefReader reader) throws ResourceIndexException {
-        _ri.addBDefObject(reader);
+    public void addObject(DOReader reader) throws ResourceIndexException {
+        _ri.addObject(reader);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void addDataObject(DOReader reader) throws ResourceIndexException {
-        _ri.addDataObject(reader);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void addCModelObject(DOReader reader) throws ResourceIndexException {
-        _ri.addCModelObject(reader);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void modifyBDefObject(BDefReader oldReader, BDefReader newReader)
+    public void modifyObject(DOReader oldReader, DOReader newReader)
             throws ResourceIndexException {
-        _ri.modifyBDefObject(oldReader, newReader);
+        _ri.modifyObject(oldReader, newReader);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void modifyDataObject(DOReader oldReader, DOReader newReader)
-            throws ResourceIndexException {
-        _ri.modifyDataObject(oldReader, newReader);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void modifyCModelObject(DOReader oldReader, DOReader newReader)
-            throws ResourceIndexException {
-        _ri.modifyCModelObject(oldReader, newReader);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void deleteBDefObject(BDefReader oldReader)
-            throws ResourceIndexException {
-        _ri.deleteBDefObject(oldReader);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void deleteDataObject(DOReader oldReader)
-            throws ResourceIndexException {
-        _ri.deleteDataObject(oldReader);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void deleteCModelObject(DOReader oldReader)
-            throws ResourceIndexException {
-        _ri.deleteCModelObject(oldReader);
+    public void deleteObject(DOReader oldReader) throws ResourceIndexException {
+        _ri.deleteObject(oldReader);
     }
 
     /**

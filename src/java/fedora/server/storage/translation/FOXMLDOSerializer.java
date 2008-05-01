@@ -14,6 +14,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
+import fedora.common.rdf.RDFName;
 import fedora.common.xml.format.XMLFormat;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
@@ -25,6 +26,11 @@ import fedora.server.storage.types.Disseminator;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.utilities.StringUtility;
+
+import static fedora.common.Models.CONTENT_MODEL_3_0;
+import static fedora.common.Models.FEDORA_OBJECT_3_0;
+import static fedora.common.Models.SERVICE_DEFINITION_3_0;
+import static fedora.common.Models.SERVICE_DEPLOYMENT_3_0;
 
 /**
  * Serializes objects in the constructor-provided version of FOXML.
@@ -145,7 +151,7 @@ public class FOXMLDOSerializer
                                   String encoding)
             throws ObjectIntegrityException {
 
-        String ftype = DOTranslationUtility.getTypeAttribute(obj, m_format);
+
         String state = DOTranslationUtility.getStateAttribute(obj);
         String ownerId = obj.getOwnerId();
         String label = obj.getLabel();
@@ -154,10 +160,19 @@ public class FOXMLDOSerializer
 
         buf.append("    <" + FOXML.prefix + ":objectProperties>\n");
 
-        if (ftype != null && !ftype.equals("")) {
-            buf.append("        <" + FOXML.prefix + ":property NAME=\""
-                    + RDF.TYPE.uri + "\"" + " VALUE=\"" + ftype + "\"/>\n");
+        /*
+         * fType is eliminated in foxml 1.1+, so choose the best reasonable
+         * value for 1.0 serializations
+         */
+        if (m_format.equals(FOXML1_0)) {
+            RDFName ftype = DOTranslationUtility.getTypeAttribute(obj);
+            if (ftype != null && !ftype.equals("")) {
+                buf.append("        <" + FOXML.prefix + ":property NAME=\""
+                        + RDF.TYPE.uri + "\"" + " VALUE=\"" + ftype.uri
+                        + "\"/>\n");
+            }
         }
+
         if (state != null && !state.equals("")) {
             buf.append("        <" + FOXML.prefix + ":property NAME=\""
                     + MODEL.STATE.uri + "\"" + " VALUE=\"" + state + "\"/>\n");
@@ -183,18 +198,15 @@ public class FOXMLDOSerializer
                     + DateUtility.convertDateToString(mdate) + "\"/>\n");
         }
 
-        if (m_format.equals(FOXML1_0)) {
-            String cmodel = obj.getContentModelId();
-            if (cmodel != null && !cmodel.equals("")) {
-                buf.append("        <" + FOXML.prefix + ":property NAME=\""
-                        + MODEL.CONTENT_MODEL.uri + "\"" + " VALUE=\""
-                        + StreamUtility.enc(cmodel) + "\"/>\n");
-            }
-        }
+        /*
+         * FIXME: Content model properties in foxml 1.0 are now lossy - they
+         * will be simply be ignored by serialization/deserialization. Is that
+         * OK, or should we do something special with them?
+         */
 
-        Iterator iter = obj.getExtProperties().keySet().iterator();
+        Iterator<String> iter = obj.getExtProperties().keySet().iterator();
         while (iter.hasNext()) {
-            String name = (String) iter.next();
+            String name = iter.next();
             buf.append("        <" + FOXML.prefix + ":extproperty NAME=\""
                     + name + "\"" + " VALUE=\"" + obj.getExtProperty(name)
                     + "\"/>\n");
@@ -207,9 +219,11 @@ public class FOXMLDOSerializer
                                    String encoding)
             throws ObjectIntegrityException, UnsupportedEncodingException,
             StreamIOException {
-        Iterator iter = obj.datastreamIdIterator();
+        Iterator<String> iter = obj.datastreamIdIterator();
         while (iter.hasNext()) {
             String dsid = (String) iter.next();
+            boolean haveWrittenCommonAttributes = false;
+
             // AUDIT datastream is rebuilt from the latest in-memory audit trail
             // which is a separate array list in the DigitalObject class.
             // So, ignore it here.
@@ -218,14 +232,12 @@ public class FOXMLDOSerializer
             }
             // Given a datastream ID, get all the datastream versions.
             // Use the first version to pick up the attributes common to all versions.
-            List dsList = obj.datastreams(dsid);
-            for (int i = 0; i < dsList.size(); i++) {
-                Datastream vds =
-                        DOTranslationUtility
-                                .setDatastreamDefaults((Datastream) dsList
-                                        .get(i));
-                // insert the ds attributes common to all versions.
-                if (i == 0) {
+
+            for (Datastream v : obj.datastreams(dsid)) {
+                Datastream vds = DOTranslationUtility.setDatastreamDefaults(v);
+
+                // insert the ds attributes common to all versions, when necessary
+                if (!haveWrittenCommonAttributes) {
                     String dsURIAttr = "";
                     if (m_transContext == DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC) {
                         dsURIAttr =
@@ -238,7 +250,9 @@ public class FOXMLDOSerializer
                             + vds.DSState + "\"" + " CONTROL_GROUP=\""
                             + vds.DSControlGrp + "\"" + " VERSIONABLE=\""
                             + vds.DSVersionable + "\">\n");
+                    haveWrittenCommonAttributes = true;
                 }
+
                 // insert the ds version elements
                 String altIdsAttr = "";
                 String altIds =
@@ -333,11 +347,8 @@ public class FOXMLDOSerializer
 
                 buf.append("        </" + FOXML.prefix
                         + ":datastreamVersion>\n");
-                // if it's the last version, wrap-up with closing datastream element.	
-                if (i == dsList.size() - 1) {
-                    buf.append("    </" + FOXML.prefix + ":datastream>\n");
-                }
             }
+            buf.append("    </" + FOXML.prefix + ":datastream>\n");
         }
     }
 
@@ -383,10 +394,10 @@ public class FOXMLDOSerializer
         buf.append("            <" + FOXML.prefix + ":xmlContent>\n");
 
         // Relative Repository URLs: If it's a WSDL or SERVICE-PROFILE datastream 
-        // in a BMech object search for any embedded URLs that are relative to
+        // in a SDep object search for any embedded URLs that are relative to
         // the local repository (like internal service URLs) and make sure they
         // are converted appropriately for the translation context.
-        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)
+        if (obj.hasRelationship(MODEL.HAS_MODEL, SERVICE_DEPLOYMENT_3_0)
                 && (ds.DatastreamID.equals("SERVICE-PROFILE") || ds.DatastreamID
                         .equals("WSDL"))) {
             // FIXME! We need a more efficient way than to search
@@ -406,11 +417,10 @@ public class FOXMLDOSerializer
     private void appendDisseminators(DigitalObject obj, StringBuffer buf)
             throws ObjectIntegrityException {
 
-        Iterator dissIdIter = obj.disseminatorIdIterator();
+        Iterator<String> dissIdIter = obj.disseminatorIdIterator();
         while (dissIdIter.hasNext()) {
             String did = (String) dissIdIter.next();
-            Iterator dissIter = obj.disseminators(did).iterator();
-            List dissList = obj.disseminators(did);
+            List<Disseminator> dissList = obj.disseminators(did);
 
             for (int i = 0; i < dissList.size(); i++) {
                 Disseminator vdiss =
@@ -443,7 +453,7 @@ public class FOXMLDOSerializer
                 buf.append("        <" + FOXML.prefix
                         + ":disseminatorVersion ID=\"" + vdiss.dissVersionID
                         + "\"" + dissLabelAttr + " BMECH_SERVICE_PID=\""
-                        + vdiss.bMechID + "\"" + dateAttr + ">\n");
+                        + vdiss.sDepID + "\"" + dateAttr + ">\n");
 
                 // datastream bindings...	
                 DSBinding[] bindings = vdiss.dsBindMap.dsBindings;

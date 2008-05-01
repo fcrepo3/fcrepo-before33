@@ -59,9 +59,6 @@ public interface Authorization {
                                      String checksumType,
                                      String checksum) throws AuthzException;
 
-    //	public void enforceAddDisseminator(Context context, String pid, String bDefPid, String bMechPid, String dissState) 
-    //	throws AuthzException;
-
     public void enforceExport(Context context,
                               String pid,
                               String format,
@@ -229,13 +226,13 @@ public interface Authorization {
 
     public void enforceGetDissemination(Context context,
                                         String pid,
-                                        String bDefPID,
+                                        String sDefPID,
                                         String methodName,
                                         Date asOfDate,
                                         String authzAux_objState,
-                                        String authzAux_bdefState,
-                                        String authzAux_bmechPID,
-                                        String authzAux_bmechState,
+                                        String authzAux_sdefState,
+                                        String authzAux_sDepPID,
+                                        String authzAux_sDepState,
                                         String authzAux_dissState)
             throws AuthzException;
 

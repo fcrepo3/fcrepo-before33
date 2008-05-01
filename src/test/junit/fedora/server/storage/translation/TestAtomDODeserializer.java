@@ -14,6 +14,7 @@ import java.util.Date;
 
 import org.junit.Test;
 
+import fedora.common.Models;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
@@ -38,18 +39,18 @@ public class TestAtomDODeserializer
 
     @Test
     public void testDeserializeSimpleCModelObject() {
-        doSimpleTest(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT);
+        doSimpleTest(Models.CONTENT_MODEL_3_0);
     }
-    
+
     @Test
     public void testDeserialize() throws Exception {
         // create a digital object
-        DigitalObject original = createTestObject(DigitalObject.FEDORA_OBJECT);
+        DigitalObject original = createTestObject(Models.FEDORA_OBJECT_3_0);
         original.setLastModDate(new Date());
         DatastreamXMLMetadata ds1 = createXDatastream("DS1");
         ds1.DSCreateDT = new Date();
         original.addDatastreamVersion(ds1, true);
-        
+
         // serialize the object as Atom
         DOSerializer serA = new AtomDOSerializer();
         File f = File.createTempFile("test", null);
@@ -58,7 +59,7 @@ public class TestAtomDODeserializer
                        out,
                        "utf-8",
                        DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE);
-        
+
         // deserialize the object
         DigitalObject candidate = new BasicDigitalObject();
         DODeserializer deserA = new AtomDODeserializer();
@@ -67,16 +68,18 @@ public class TestAtomDODeserializer
                            candidate,
                            "utf-8",
                            DOTranslationUtility.DESERIALIZE_INSTANCE);
-        
+
         // check the deserialization
         assertEquals(original.getLastModDate(), candidate.getLastModDate());
-        DatastreamXMLMetadata candidateDS = (DatastreamXMLMetadata)candidate.datastreams("DS1").get(0);
+        DatastreamXMLMetadata candidateDS =
+                (DatastreamXMLMetadata) candidate.datastreams("DS1").iterator()
+                        .next();
         assertEquals(ds1.DatastreamID, candidateDS.DatastreamID);
         assertEquals(ds1.DSCreateDT, candidateDS.DSCreateDT);
-        
+
         // FIXME dsSize tests omitted for now b/c of handling of closing tags
         //assertEquals(ds1.DSSize, candidateDS.DSSize);
-        
+
         // also make sure we can serialize the object as foxml
         DOSerializer serF = new FOXML1_1DOSerializer();
         serF.serialize(candidate,
@@ -84,15 +87,20 @@ public class TestAtomDODeserializer
                        "utf-8",
                        DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE);
     }
-    
+
     public void testDeserializeFromDemoObjects() throws Exception {
-        String[] sources = {"src/demo-objects/atom/local-server-demos/simple-image-demo/bmech_demo_2.xml",
-                "src/demo-objects/atom/local-server-demos/formatting-objects-demo/obj_demo_26.xml"};
+        String[] sources =
+                {
+                        "src/demo-objects/atom/local-server-demos/simple-image-demo/sdep_demo_2.xml",
+                        "src/demo-objects/atom/local-server-demos/formatting-objects-demo/obj_demo_26.xml"};
         for (String source : sources) {
             InputStream in = new FileInputStream(source);
             DigitalObject candidate = new BasicDigitalObject();
             DODeserializer deserA = new AtomDODeserializer();
-            deserA.deserialize(in, candidate, "utf-8", DOTranslationUtility.DESERIALIZE_INSTANCE);
+            deserA.deserialize(in,
+                               candidate,
+                               "utf-8",
+                               DOTranslationUtility.DESERIALIZE_INSTANCE);
         }
     }
 
@@ -102,4 +110,3 @@ public class TestAtomDODeserializer
     }
 
 }
- 

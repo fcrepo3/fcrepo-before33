@@ -31,14 +31,14 @@ public interface Access {
 
     /**
      * Disseminates the content produced by executing the specified method of
-     * the associated Behavior Mechanism object of the specified digital object.
+     * the associated Service Deployment object of the specified digital object.
      * 
      * @param context
      *        The context of this request.
      * @param PID
      *        The persistent identifier of the digital object.
-     * @param bDefPID
-     *        The persistent identifier of the Behavior Definition object.
+     * @param sDefPID
+     *        The persistent identifier of the Service Definition object.
      * @param methodName
      *        The name of the method to be executed.
      * @param userParms
@@ -52,7 +52,7 @@ public interface Access {
      */
     public MIMETypedStream getDissemination(Context context,
                                             String pid,
-                                            String bDefPID,
+                                            String sDefPID,
                                             String methodName,
                                             Property[] userParms,
                                             Date asOfDateTime)

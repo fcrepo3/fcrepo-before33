@@ -61,10 +61,6 @@ public class Report {
             value = f.getPid();
         } else if ("label".equalsIgnoreCase(name)) {
             value = f.getLabel();
-        } else if ("fType".equalsIgnoreCase(name)) {
-            value = f.getFType();
-        } else if ("cModel".equalsIgnoreCase(name)) {
-            value = f.getCModel();
         } else if ("state".equalsIgnoreCase(name)) {
             value = f.getState();
         } else if ("ownerId".equalsIgnoreCase(name)) {
@@ -81,11 +77,7 @@ public class Report {
 
     private static final List getFieldValues(ObjectFields f, String name) {
         List values = null;
-        if ("bDef".equalsIgnoreCase(name)) {
-            values = f.bDefs();
-        } else if ("bMech".equalsIgnoreCase(name)) {
-            values = f.bMechs();
-        } else if ("title".equalsIgnoreCase(name)) {
+        if ("title".equalsIgnoreCase(name)) {
             values = f.titles();
         } else if ("creator".equalsIgnoreCase(name)) {
             values = f.creators();
@@ -122,7 +114,7 @@ public class Report {
     private static final HashSet<String> multivalued = new HashSet<String>();
     static {
         String[] temp =
-                {"bDef", "bMech", "title", "creator", "subject", "description",
+                {"title", "creator", "subject", "description",
                         "publisher", "contributor", "date", "type", "format",
                         "identifier", "source", "language", "relation",
                         "coverage", "rights"};
@@ -139,8 +131,8 @@ public class Report {
             new HashSet<String>(multivalued);
     static {
         String[] temp =
-                {"pid", "label", "fType", "cModel", "state", "ownerId",
-                        "cDate", "mDate", "dcmDate"};
+                {"pid", "label", "state", "ownerId", "cDate", "mDate",
+                        "dcmDate"};
         for (String element : temp) {
             allFields.add(element);
         }
@@ -194,18 +186,6 @@ public class Report {
 
     private static final String INACTIVEOBJECTS = "inactive objects";
 
-    private static final String BDEFS = "all bdefs";
-
-    private static final String ACTIVEBDEFS = "active bdefs";
-
-    private static final String INACTIVEBDEFS = "inactive bdefs";
-
-    private static final String BMECHS = "all bmechs";
-
-    private static final String ACTIVEBMECHS = "active bmechs";
-
-    private static final String INACTIVEBMECHS = "inactive bmechs";
-
     protected static final String HTMLFORM = "htmlform";
 
     private static final String FORM_TITLE = "Repository Reports";
@@ -217,9 +197,7 @@ public class Report {
     private static final HashSet<String> reportNames = new HashSet<String>();
     static {
         final String[] temp =
-                {HTMLFORM, OBJECTS, ACTIVEOBJECTS, INACTIVEOBJECTS, BDEFS,
-                        ACTIVEBDEFS, INACTIVEBDEFS, BMECHS, ACTIVEBMECHS,
-                        INACTIVEBMECHS};
+                {HTMLFORM, OBJECTS, ACTIVEOBJECTS, INACTIVEOBJECTS};
         for (String element : temp) {
             reportNames.add(element);
         }
@@ -244,35 +222,6 @@ public class Report {
     private static final String[] INACTIVEOBJECTSFIELDSARRAY =
             {"mDate", "pid", "label"};
 
-    private static final String BDEFSQUERY = "fType='D'";
-
-    private static final String[] BDEFSFIELDSARRAY =
-            {"mDate", "pid", "label", "state"};
-
-    private static final String ACTIVEBDEFSQUERY = "fType='D' state='A'";
-
-    private static final String[] ACTIVEBDEFSFIELDSARRAY =
-            {"mDate", "pid", "label"};
-
-    private static final String INACTIVEBDEFSQUERY = "fType='D' state='I'";
-
-    private static final String[] INACTIVEBDEFSFIELDSARRAY =
-            {"mDate", "pid", "label"};
-
-    private static final String BMECHSQUERY = "fType='M'";
-
-    private static final String[] BMECHSFIELDSARRAY =
-            {"mDate", "pid", "label", "state"};
-
-    private static final String ACTIVEBMECHSQUERY = "fType='M' state='A'";
-
-    private static final String[] ACTIVEBMECHSFIELDSARRAY =
-            {"mDate", "pid", "label"};
-
-    private static final String INACTIVEBMECHSQUERY = "fType='M' state='I'";
-
-    private static final String[] INACTIVEBMECHSFIELDSARRAY =
-            {"mDate", "pid", "label"};
 
     private static final Hashtable<String, String> queries =
             new Hashtable<String, String>();
@@ -280,12 +229,6 @@ public class Report {
         queries.put(OBJECTS, OBJECTSQUERY);
         queries.put(ACTIVEOBJECTS, ACTIVEOBJECTSQUERY);
         queries.put(INACTIVEOBJECTS, INACTIVEOBJECTSQUERY);
-        queries.put(BDEFS, BDEFSQUERY);
-        queries.put(ACTIVEBDEFS, ACTIVEBDEFSQUERY);
-        queries.put(INACTIVEBDEFS, INACTIVEBDEFSQUERY);
-        queries.put(BMECHS, BMECHSQUERY);
-        queries.put(ACTIVEBMECHS, ACTIVEBMECHSQUERY);
-        queries.put(INACTIVEBMECHS, INACTIVEBMECHSQUERY);
     }
 
     private static final String getQuery(String name) {
@@ -298,12 +241,6 @@ public class Report {
         fieldArrays.put(OBJECTS, OBJECTSFIELDSARRAY);
         fieldArrays.put(ACTIVEOBJECTS, ACTIVEOBJECTSFIELDSARRAY);
         fieldArrays.put(INACTIVEOBJECTS, INACTIVEOBJECTSFIELDSARRAY);
-        fieldArrays.put(BDEFS, BDEFSFIELDSARRAY);
-        fieldArrays.put(ACTIVEBDEFS, ACTIVEBDEFSFIELDSARRAY);
-        fieldArrays.put(INACTIVEBDEFS, INACTIVEBDEFSFIELDSARRAY);
-        fieldArrays.put(BMECHS, BMECHSFIELDSARRAY);
-        fieldArrays.put(ACTIVEBMECHS, ACTIVEBMECHSFIELDSARRAY);
-        fieldArrays.put(INACTIVEBMECHS, INACTIVEBMECHSFIELDSARRAY);
     }
 
     private static final String[] getFieldsArray(String name) {

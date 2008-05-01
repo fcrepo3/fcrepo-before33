@@ -145,11 +145,11 @@ public class FedoraOAIProvider
         m_setInfos = new ArrayList<SimpleSetInfo>();
         m_setInfos
                 .add(new SimpleSetInfo("Data Objects", "objects", s_emptySet));
-        m_setInfos.add(new SimpleSetInfo("Behavior Mechanism Objects",
-                                         "bmechs",
+        m_setInfos.add(new SimpleSetInfo("Service Deployment Objects",
+                                         "ServiceDeployments",
                                          s_emptySet));
-        m_setInfos.add(new SimpleSetInfo("Behavior Definition Objects",
-                                         "bdefs",
+        m_setInfos.add(new SimpleSetInfo("Service Definition Objects",
+                                         "ServiceDefinitions",
                                          s_emptySet));
     }
 
@@ -257,8 +257,7 @@ public class FedoraOAIProvider
                                          new FieldSearchQuery(Condition
                                                  .getConditions("dcmDate>'2000-01-01'"
                                                          + getDatePart(from,
-                                                                       until)
-                                                         + getFTypePart(set))));
+                                                                       until))));
             l = fsr.objectFieldsList();
         } catch (ServerException se) {
             throw new RepositoryException(se.getClass().getName() + ": "
@@ -285,14 +284,6 @@ public class FedoraOAIProvider
         String identifier = "oai:" + m_repositoryDomainName + ":" + f.getPid();
         Date datestamp = f.getDCMDate();
         HashSet<String> setSpecs = new HashSet<String>();
-        String fType = f.getFType();
-        if (fType.equals("D")) {
-            setSpecs.add("bdefs");
-        } else if (fType.equals("M")) {
-            setSpecs.add("bmechs");
-        } else {
-            setSpecs.add("objects");
-        }
         return new SimpleHeader(identifier, datestamp, setSpecs, true);
     }
 
@@ -418,21 +409,6 @@ public class FedoraOAIProvider
         return ret;
     }
 
-    private String getFTypePart(String set) throws NoRecordsMatchException {
-        if (set == null) {
-            return "";
-        }
-        if (set.equals("objects")) {
-            return " fType=O";
-        } else if (set.equals("bdefs")) {
-            return " fType=D";
-        } else if (set.equals("bmechs")) {
-            return " fType=M";
-        } else {
-            throw new NoRecordsMatchException("No such set: " + set);
-        }
-    }
-
     private String getDatePart(Date from, Date until) {
         if (from == null && until == null) {
             return "";
@@ -479,8 +455,7 @@ public class FedoraOAIProvider
                                          new FieldSearchQuery(Condition
                                                  .getConditions("dcmDate>'2000-01-01'"
                                                          + getDatePart(from,
-                                                                       until)
-                                                         + getFTypePart(set))));
+                                                                       until))));
             l = fsr.objectFieldsList();
         } catch (ServerException se) {
             throw new RepositoryException(se.getClass().getName() + ": "
@@ -496,14 +471,7 @@ public class FedoraOAIProvider
                     "oai:" + m_repositoryDomainName + ":" + f.getPid();
             Date datestamp = f.getDCMDate();
             HashSet<String> setSpecs = new HashSet<String>();
-            String fType = f.getFType();
-            if (fType.equals("D")) {
-                setSpecs.add("bdefs");
-            } else if (fType.equals("M")) {
-                setSpecs.add("bmechs");
-            } else {
-                setSpecs.add("objects");
-            }
+
             ret.add(new SimpleHeader(identifier, datestamp, setSpecs, true));
         }
         if (fsr.getToken() != null) {
@@ -542,14 +510,6 @@ public class FedoraOAIProvider
                     "oai:" + m_repositoryDomainName + ":" + f.getPid();
             Date datestamp = f.getDCMDate();
             HashSet<String> setSpecs = new HashSet<String>();
-            String fType = f.getFType();
-            if (fType.equals("D")) {
-                setSpecs.add("bdefs");
-            } else if (fType.equals("M")) {
-                setSpecs.add("bmechs");
-            } else {
-                setSpecs.add("objects");
-            }
             ret.add(new SimpleHeader(identifier, datestamp, setSpecs, true));
         }
         if (fsr.getToken() != null) {

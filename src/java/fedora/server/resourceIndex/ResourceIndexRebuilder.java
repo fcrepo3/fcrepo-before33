@@ -21,14 +21,12 @@ import fedora.server.config.ModuleConfiguration;
 import fedora.server.config.Parameter;
 import fedora.server.config.ServerConfiguration;
 import fedora.server.errors.ResourceIndexException;
-import fedora.server.storage.SimpleBDefReader;
 import fedora.server.storage.SimpleDOReader;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.utilities.rebuild.Rebuilder;
 
 /**
  * A Rebuilder for the resource index.
- * 
  */
 public class ResourceIndexRebuilder
         implements Rebuilder {
@@ -142,12 +140,11 @@ public class ResourceIndexRebuilder
         System.out.println("Initializing triplestore interface...");
         try {
             m_conn = TriplestoreConnector.init(tsConnector, tsTC);
-            m_ri =
-                    new ResourceIndexImpl(m_conn,
-                                          new BaseTripleGenerator(m_conn
-                                                  .getElementFactory()),
-                                          riLevel,
-                                          false);
+
+            TripleGenerator generator = new ModelBasedTripleGenerator();
+            generator.init(m_conn.getElementFactory());
+
+            m_ri = new ResourceIndexImpl(m_conn, generator, riLevel, false);
             m_ri.setAliasMap(aliasMap);
         } catch (Exception e) {
             throw new ResourceIndexException("Failed to initialize new Resource Index",
@@ -161,30 +158,7 @@ public class ResourceIndexRebuilder
      * @throws ResourceIndexException
      */
     public void addObject(DigitalObject obj) throws ResourceIndexException {
-        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) {
-            m_ri.addBDefObject(new SimpleBDefReader(null,
-                                                    null,
-                                                    null,
-                                                    null,
-                                                    null,
-                                                    obj));
-        }
-        if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) {
-            m_ri.addCModelObject(new SimpleDOReader(null,
-                                                    null,
-                                                    null,
-                                                    null,
-                                                    null,
-                                                    obj));
-        }
-        if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT)) {
-            m_ri.addDataObject(new SimpleDOReader(null,
-                                                  null,
-                                                  null,
-                                                  null,
-                                                  null,
-                                                  obj));
-        }
+        m_ri.addObject(new SimpleDOReader(null, null, null, null, null, obj));
     }
 
     /**

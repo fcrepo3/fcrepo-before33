@@ -12,7 +12,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -27,6 +26,7 @@ import org.apache.abdera.util.MimeTypeHelper;
 import org.apache.commons.io.IOUtils;
 
 import fedora.common.Constants;
+import fedora.common.Models;
 import fedora.common.PID;
 import fedora.common.xml.format.XMLFormat;
 import fedora.server.errors.ObjectIntegrityException;
@@ -39,26 +39,30 @@ import fedora.server.utilities.StreamUtility;
 import fedora.utilities.MimeTypeUtils;
 
 /**
- * <p>Serializes a Fedora Object in Atom with Threading Extensions.</p>
+ * <p>
+ * Serializes a Fedora Object in Atom with Threading Extensions.
+ * </p>
+ * <p>
+ * A Fedora Digital Object is represented as an atom:feed and Datastreams are
+ * represented as an atom:entries.
+ * <p>
+ * <p>
+ * The hierarchy of Datastreams their Datastream Versions is represented via the
+ * Atom Threading Extensions. For convenience, a datastream entry references its
+ * latest datastream version entry with an atom:link element. For example, a DC
+ * datastream entry with a reference to its most recent version: <br/>
+ * <code>&lt;link href="info:fedora/demo:foo/DC/2008-04-01T12:30:15.123" rel="alternate"/&gt</code>
+ * </p>
+ * <p>
+ * Each datastream version refers to its parent datastream via a thr:in-reply-to
+ * element. For example, the entry for a DC datastream version would include:<br/>
+ * <code>&lt;thr:in-reply-to ref="info:fedora/demo:foo/DC"/&gt;</code>
+ * </p>
  * 
- * <p>A Fedora Digital Object is represented as an atom:feed and 
- * Datastreams are represented as an atom:entries.<p>
- * 
- * <p>The hierarchy of Datastreams their Datastream Versions is 
- * represented via the Atom Threading Extensions.
- * For convenience, a datastream entry references its latest datastream 
- * version entry with an atom:link element. For example, a DC datastream 
- * entry with a reference to its most recent version: <br/>
- * <code>&lt;link href="info:fedora/demo:foo/DC/2008-04-01T12:30:15.123" rel="alternate"/&gt</code></p>
- * 
- * <p>Each datastream version refers to its parent datastream via a 
- * thr:in-reply-to element. For example, the entry for a DC datastream 
- * version would include:<br/>
- * <code>&lt;thr:in-reply-to ref="info:fedora/demo:foo/DC"/&gt;</code></p>
- * 
- * @see <a href="http://atomenabled.org/developers/syndication/atom-format-spec.php">The Atom Syndication Format</a>
+ * @see <a
+ *      href="http://atomenabled.org/developers/syndication/atom-format-spec.php">The
+ *      Atom Syndication Format</a>
  * @see <a href="http://www.ietf.org/rfc/rfc4685.txt">Atom Threading Extensions</a>
- * 
  * @author Edwin Shin
  * @version $Id$
  */
@@ -70,7 +74,7 @@ public class AtomDOSerializer
      * This defaults to the latest ATOM format.
      */
     public static final XMLFormat DEFAULT_FORMAT = ATOM1_0;
-    
+
     private final static Abdera abdera = Abdera.getInstance();
 
     private DigitalObject m_obj;
@@ -79,7 +83,7 @@ public class AtomDOSerializer
 
     /** The current translation context. */
     private int m_transContext;
-    
+
     /** The format this serializer writes. */
     private final XMLFormat m_format;
 
@@ -88,11 +92,11 @@ public class AtomDOSerializer
     private Feed m_feed;
 
     private Map<String, InputStream> m_files;
-    
+
     public AtomDOSerializer() {
         this(DEFAULT_FORMAT);
     }
-    
+
     public AtomDOSerializer(XMLFormat format) {
         if (format.equals(ATOM1_0)) {
             m_format = format;
@@ -125,7 +129,8 @@ public class AtomDOSerializer
         m_files = new HashMap<String, InputStream>();
 
         addObjectProperties();
-        m_feed.setIcon("http://www.fedora-commons.org/images/logo_vertical_transparent_200_251.png");
+        m_feed
+                .setIcon("http://www.fedora-commons.org/images/logo_vertical_transparent_200_251.png");
         addDatastreams();
 
         if (false) {// TODO when ZARCHIVE is implemented. m_transContext == DOTranslationUtility.SERIALIZE_EXPORT_ZARCHIVE) {
@@ -158,7 +163,6 @@ public class AtomDOSerializer
     }
 
     private void addObjectProperties() throws ObjectIntegrityException {
-        String ftypes = DOTranslationUtility.getTypeAttribute(m_obj, null);
         String state = DOTranslationUtility.getStateAttribute(m_obj);
         String ownerId = m_obj.getOwnerId();
         String label = m_obj.getLabel();
@@ -169,10 +173,6 @@ public class AtomDOSerializer
         m_feed.setTitle(label == null ? "" : label);
         m_feed.setUpdated(mdate);
         m_feed.addAuthor(ownerId == null ? "" : StreamUtility.enc(ownerId));
-
-        for (String ftype : ftypes.split(";")) {
-            m_feed.addCategory(RDF.TYPE.uri, ftype, null);
-        }
 
         if (state != null && !state.equals("")) {
             m_feed.addCategory(MODEL.STATE.uri, state, null);
@@ -204,17 +204,11 @@ public class AtomDOSerializer
 
             Entry dsEntry = m_feed.addEntry();
 
-            // Given a datastream ID, get all the datastream versions.
-            List<Datastream> dsvList = m_obj.datastreams(dsid);
-
             Datastream latestCreated = null;
             long latestCreateTime = -1;
 
-            for (int i = 0; i < dsvList.size(); i++) {
-                Datastream dsv =
-                        DOTranslationUtility
-                                .setDatastreamDefaults((Datastream) dsvList
-                                        .get(i));
+            for (Datastream v : m_obj.datastreams(dsid)) {
+                Datastream dsv = DOTranslationUtility.setDatastreamDefaults(v);
 
                 // Keep track of the most recent datastream version
                 if (dsv.DSCreateDT.getTime() > latestCreateTime) {
@@ -297,8 +291,12 @@ public class AtomDOSerializer
             return;
         }
         String dsId = m_pid.toURI() + "/AUDIT";
-        String dsvId = dsId + "/" + DateUtility.convertDateToString(m_obj.getCreateDate());
-        
+        String dsvId =
+                dsId
+                        + "/"
+                        + DateUtility
+                                .convertDateToString(m_obj.getCreateDate());
+
         Entry dsEntry = m_feed.addEntry();
         dsEntry.setId(dsId);
         dsEntry.setTitle("AUDIT");
@@ -339,7 +337,8 @@ public class AtomDOSerializer
             throws UnsupportedEncodingException {
         String content;
 
-        if (m_obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)
+        if (m_obj.hasRelationship(MODEL.HAS_MODEL,
+                                  Models.SERVICE_DEPLOYMENT_3_0)
                 && (ds.DatastreamID.equals("SERVICE-PROFILE") || ds.DatastreamID
                         .equals("WSDL"))) {
             content =
@@ -353,17 +352,22 @@ public class AtomDOSerializer
         entry.setContent(content, ds.DSMIME);
     }
 
-    private void setReferencedContent(Entry entry, Datastream vds) throws StreamIOException {
+    private void setReferencedContent(Entry entry, Datastream vds)
+            throws StreamIOException {
         entry.setSummary(vds.DSVersionID);
         String dsLocation;
-        
-        if (vds.DSControlGrp.equalsIgnoreCase("M")
-                && false) {// && m_transContext == DOTranslationUtility.SERIALIZE_EXPORT_ZARCHIVE) {
-            dsLocation = vds.DSVersionID + "." + MimeTypeUtils.fileExtensionForMIMEType(vds.DSMIME);
+
+        if (vds.DSControlGrp.equalsIgnoreCase("M") && false) {// && m_transContext == DOTranslationUtility.SERIALIZE_EXPORT_ZARCHIVE) {
+            dsLocation =
+                    vds.DSVersionID
+                            + "."
+                            + MimeTypeUtils
+                                    .fileExtensionForMIMEType(vds.DSMIME);
             m_files.put(dsLocation, vds.getContentStream());
-            
+
         } else {
-            dsLocation = StreamUtility
+            dsLocation =
+                    StreamUtility
                             .enc(DOTranslationUtility
                                     .normalizeDSLocationURLs(m_obj.getPid(),
                                                              vds,

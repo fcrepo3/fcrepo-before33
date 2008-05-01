@@ -401,16 +401,16 @@ public class ListMethodsServlet
                     pw.write(" " + OBJ_METHODS1_0.xsdLocation + "\">");
 
                     // ObjectMethodsDef SERIALIZATION
-                    String nextBdef = "null";
-                    String currentBdef = "";
+                    String nextSdef = "null";
+                    String currentSdef = "";
                     for (int i = 0; i < methodDefs.length; i++) {
-                        currentBdef = methodDefs[i].bDefPID;
-                        if (!currentBdef.equalsIgnoreCase(nextBdef)) {
+                        currentSdef = methodDefs[i].sDefPID;
+                        if (!currentSdef.equalsIgnoreCase(nextSdef)) {
                             if (i != 0) {
-                                pw.write("</bDef>");
+                                pw.write("</sDef>");
                             }
-                            pw.write("<bDef pid=\""
-                                    + StreamUtility.enc(methodDefs[i].bDefPID)
+                            pw.write("<sDef pid=\""
+                                    + StreamUtility.enc(methodDefs[i].sDefPID)
                                     + "\" >");
                         }
                         pw.write("<method name=\""
@@ -441,9 +441,9 @@ public class ListMethodsServlet
                         }
 
                         pw.write("</method>");
-                        nextBdef = currentBdef;
+                        nextSdef = currentSdef;
                     }
-                    pw.write("</bDef>");
+                    pw.write("</sDef>");
                     pw.write("</objectMethods>");
 
                     pw.flush();

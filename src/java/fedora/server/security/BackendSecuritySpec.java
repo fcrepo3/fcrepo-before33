@@ -27,8 +27,8 @@ public class BackendSecuritySpec {
     /**
      * The Hashtable is as follows: roleKey = the role identifier for the
      * backend service, for example: - "default" (the overall default for
-     * backend services) - "bmech:9" (the role key for a backend service) -
-     * "bmech:9/getThumb" (the role key for a method within a backend service) -
+     * backend services) - "sdep:9" (the role key for a backend service) -
+     * "sdep:9/getThumb" (the role key for a method within a backend service) -
      * "fedoraInternalCall-1" (the role key for fedora calling back to itself)
      * VALUE = a Hashtable of security properties whose keys are defined in
      * BackendSecurityDeserializer.java as: -
@@ -54,7 +54,7 @@ public class BackendSecuritySpec {
      * 
      * @param serviceRoleID -
      *        the role identifier for a service. Valid values for this parameter
-     *        are: - a bmech PID for a backend service - "default" to indicate
+     *        are: - a sDep PID for a backend service - "default" to indicate
      *        the default properties for any service - "fedoraInternalCall-1"
      *        for Fedora calling back to itself as a service
      * @param methodName -
@@ -107,10 +107,10 @@ public class BackendSecuritySpec {
      *        role identifier for a backend service. Valid options: - "default"
      *        (the overall default for backend services) -
      *        "fedoraInternalCall-1" (the role key for fedora calling back to
-     *        itself) - A bmech PID (e.g., "bmech:9") as the identifier for a
+     *        itself) - A sDep PID (e.g., "sDep:9") as the identifier for a
      *        backend service
      * @param methodName -
-     *        a method name that is specified within a bmech service. If values
+     *        a method name that is specified within a sDep service. If values
      *        is null, then this method will return the security properties
      *        defined for the backend service specified by the serviceRoleID
      *        parameter.
@@ -158,8 +158,8 @@ public class BackendSecuritySpec {
      *        the role identifier for the backend service, for example: -
      *        "default" (the overall default for backend services) -
      *        "fedoraInternalCall-1" (the role key for fedora calling back to
-     *        itself) - "bmech:9" (the role key for a backend service) -
-     *        "bmech:9/getThumb" (the role key for a method within a backend
+     *        itself) - "sDep:9" (the role key for a backend service) -
+     *        "sDe:9/getThumb" (the role key for a method within a backend
      *        service)
      * @return a Hashtable containing the backend security properties for the
      *         roleKey. The security property names, defined in

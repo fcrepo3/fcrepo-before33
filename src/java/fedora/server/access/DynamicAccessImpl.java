@@ -38,14 +38,14 @@ import fedora.server.storage.types.Property;
  * <p>The Dynamic Access module will associate dynamic disseminators with a 
  * digital object. It will look to the Fedora repository configuration file 
  * to obtain a list of dynamic disseminators.  Currently, the system supports 
- * two types of dynamic disseminators: - Default (BDefPID=fedora-system:3 and
- * BMechPID=fedora-system:4) - Bootstrap (BDefPID=fedora-system:1 and
- * BMechPID=fedora-system:2). The Default disseminator that is associated with
+ * two types of dynamic disseminators: - Default (SDefPID=fedora-system:3 and
+ * SDepPID=fedora-system:4) - Bootstrap (SDefPID=fedora-system:1 and
+ * SDepPID=fedora-system:2). The Default disseminator that is associated with
  * every object in the repository. The Default Disseminator endows the objects
  * with a set of basic generic behaviors that enable a simplistic view of the
  * object contents (the Item Index) and a list of all disseminations available
  * on the object (the Dissemination Index). The Bootstrap disseminator is
- * associated with every behavior definition and behavior mechanism object. It
+ * associated with every Service Definition and Service Deployment object. It
  * defines methods to get the special metadata datastreams out of them, and some
  * other methods. (NOTE: The Bootstrap Disseminator functionality is NOT YET
  * IMPLEMENTED.
@@ -60,78 +60,78 @@ public class DynamicAccessImpl {
 
     private File reposHomeDir = null;
 
-    private Hashtable dynamicBDefToMech = null;
+    private Hashtable dynamicServiceToDeployment = null;
 
     public DynamicAccessImpl(Access m_access,
                              File reposHomeDir,
-                             Hashtable dynamicBDefToMech) {
+                             Hashtable dynamicSDefToDep) {
         dispatcher = new ServiceMethodDispatcher();
         this.m_access = m_access;
         this.reposHomeDir = reposHomeDir;
-        this.dynamicBDefToMech = dynamicBDefToMech;
+        this.dynamicServiceToDeployment = dynamicSDefToDep;
     }
 
     /**
-     * Get a list of behavior definition identifiers for dynamic disseminators
+     * Get a list of Service Definition identifiers for dynamic disseminators
      * associated with the digital object.
      * 
      * @param context
      * @param PID
      *        identifier of digital object being reflected upon
      * @param asOfDateTime
-     * @return an array of behavior definition PIDs
+     * @return an array of Service Definition PIDs
      * @throws ServerException
      */
-    public String[] getBehaviorDefinitions(Context context,
+    public String[] getServiceDefinitions(Context context,
                                            String PID,
                                            Date asOfDateTime)
             throws ServerException {
         // FIXIT! In FUTURE this method might consult some source that tells
-        // what behavior definitions are appropriate to dynamically associate
+        // what Service Definitions are appropriate to dynamically associate
         // with the object.  The rules for association might be based on the
         // context or based on something about the particular object (PID).
         // There is one rule that is always true - associate the Default
-        // behavior definition with EVERY object. For now we will just take the
-        // dynamic behavior definitions that were loaded by DynamicAccessModule.
+        // Service Definition with EVERY object. For now we will just take the
+        // dynamic Service Definitions that were loaded by DynamicAccessModule.
         // NOTE: AT THIS TIME THERE THERE IS JUST ONE LOADED, NAMELY,
-        // THE DEFAULT DISSEMINATOR BDEF (bDefPID = fedora-system:3)
+        // THE DEFAULT DISSEMINATOR SDEF (sDefPID = fedora-system:3)
 
-        ArrayList bdefs = new ArrayList();
-        Iterator iter = dynamicBDefToMech.keySet().iterator();
+        ArrayList sdefs = new ArrayList();
+        Iterator iter = dynamicServiceToDeployment.keySet().iterator();
         while (iter.hasNext()) {
-            bdefs.add(iter.next());
+            sdefs.add(iter.next());
         }
-        return (String[]) bdefs.toArray(new String[0]);
+        return (String[]) sdefs.toArray(new String[0]);
     }
 
     /**
-     * Get the behavior method defintions for a given dynamic disseminator that
+     * Get the method defintions for a given dynamic disseminator that
      * is associated with the digital object. The dynamic disseminator is
-     * identified by the bDefPID.
+     * identified by the sDefPID.
      * 
      * @param context
      * @param PID
      *        identifier of digital object being reflected upon
-     * @param bDefPID
-     *        identifier of dynamic behavior definition
+     * @param sDefPID
+     *        identifier of dynamic Service Definition
      * @param asOfDateTime
      * @return an array of method definitions
      * @throws ServerException
      */
-    public MethodDef[] getBehaviorMethods(Context context,
+    public MethodDef[] getMethods(Context context,
                                           String PID,
-                                          String bDefPID,
+                                          String sDefPID,
                                           Date asOfDateTime)
             throws ServerException {
-        Class mechClass = (Class) dynamicBDefToMech.get(bDefPID);
-        if (mechClass != null) {
+        Class deploymentClass = (Class) dynamicServiceToDeployment.get(sDefPID);
+        if (deploymentClass != null) {
             try {
                 Method method =
-                        mechClass.getMethod("reflectMethods", (Class[]) null);
+                        deploymentClass.getMethod("reflectMethods", (Class[]) null);
                 return (MethodDef[]) method.invoke(null, (Object[]) null);
             } catch (Exception e) {
                 throw new GeneralException("[DynamicAccessImpl] returned error when "
-                        + "attempting to get dynamic behavior method definitions. "
+                        + "attempting to get dynamic method definitions. "
                         + "The underlying error class was: "
                         + e.getClass().getName()
                         + ". The message "
@@ -140,27 +140,27 @@ public class DynamicAccessImpl {
             }
         }
         throw new MethodNotFoundException("[DynamicAccessImpl] The object, "
-                + PID + " does not have the dynamic behavior definition "
-                + bDefPID);
+                + PID + " does not have the dynamic Service Definition "
+                + sDefPID);
     }
 
     /**
-     * Get an XML encoding of the behavior defintions for a given dynamic
+     * Get an XML encoding of the service defintions for a given dynamic
      * disseminator that is associated with the digital object. The dynamic
-     * disseminator is identified by the bDefPID.
+     * disseminator is identified by the sDefPID.
      * 
      * @param context
      * @param PID
      *        identifier of digital object being reflected upon
-     * @param bDefPID
-     *        identifier of dynamic behavior definition
+     * @param sDefPID
+     *        identifier of dynamic Service Definition
      * @param asOfDateTime
      * @return MIME-typed stream containing XML-encoded method definitions
      * @throws ServerException
      */
-    public MIMETypedStream getBehaviorMethodsXML(Context context,
+    public MIMETypedStream getMethodsXML(Context context,
                                                  String PID,
-                                                 String bDefPID,
+                                                 String sDefPID,
                                                  Date asOfDateTime)
             throws ServerException {
         return null;
@@ -176,17 +176,17 @@ public class DynamicAccessImpl {
     }
 
     /**
-     * Perform a dissemination for a behavior method that belongs to a dynamic
+     * Perform a dissemination for a method that belongs to a dynamic
      * disseminator that is associate with the digital object. The method
-     * belongs to the dynamic behavior definition and is implemented by a
-     * dynamic behavior mechanism (which is an internal service in the
+     * belongs to the dynamic Service Definition and is implemented by a
+     * dynamic Service Deployment (which is an internal service in the
      * repository access subsystem).
      * 
      * @param context
      * @param PID
      *        identifier of the digital object being disseminated
-     * @param bDefPID
-     *        identifier of dynamic behavior definition
+     * @param sDefPID
+     *        identifier of dynamic Service Definition
      * @param methodName
      * @param userParms
      * @param asOfDateTime
@@ -195,14 +195,14 @@ public class DynamicAccessImpl {
      */
     public MIMETypedStream getDissemination(Context context,
                                             String PID,
-                                            String bDefPID,
+                                            String sDefPID,
                                             String methodName,
                                             Property[] userParms,
                                             Date asOfDateTime,
                                             DOReader reader)
             throws ServerException {
-        if (bDefPID.equalsIgnoreCase("fedora-system:3")) {
-            // FIXIT!! Use lookup to dynamicBDefToMech table to get class for
+        if (sDefPID.equalsIgnoreCase("fedora-system:3")) {
+            // FIXIT!! Use lookup to dynamicSDefToDep table to get class for
             // DefaultDisseminatorImpl and construct via Java reflection.
 
             String reposBaseURL =
@@ -235,12 +235,12 @@ public class DynamicAccessImpl {
             }
         } else {
             // FIXIT! (FUTURE) Open up the possibility of there being other
-            // kinds of dynamic behaviors.  Use the bDefPID to locate the
-            // appropriate mechanism for the dynamic behavior.  In future
-            // we want the mechanism for a dynamic behavior defintion to
+            // kinds of dynamic behaviors.  Use the sDefPID to locate the
+            // appropriate deployment for the dynamic behavior.  In future
+            // we want the deployment for a dynamic service defintion to
             // be able to be either an internal services, a local services,
             // or a distributed service.  We'll have to rework some things to
-            // be able to see what kind of mechanism we have, and to do the
+            // be able to see what kind of deployment we have, and to do the
             // request dispatching appropriately.
         }
         return null;
@@ -262,17 +262,17 @@ public class DynamicAccessImpl {
                                           String PID,
                                           Date asOfDateTime)
             throws ServerException {
-        String[] bDefPIDs = getBehaviorDefinitions(context, PID, asOfDateTime);
+        String[] sDefPIDs = getServiceDefinitions(context, PID, asOfDateTime);
         Date versDateTime = asOfDateTime;
         ArrayList objectMethods = new ArrayList();
-        for (String element : bDefPIDs) {
+        for (String element : sDefPIDs) {
             MethodDef[] methodDefs =
-                    getBehaviorMethods(context, PID, element, asOfDateTime);
+                    getMethods(context, PID, element, asOfDateTime);
             for (MethodDef element2 : methodDefs) {
                 ObjectMethodsDef method = new ObjectMethodsDef();
                 method.PID = PID;
                 method.asOfDate = versDateTime;
-                method.bDefPID = element;
+                method.sDefPID = element;
                 method.methodName = element2.methodName;
                 method.methodParmDefs = element2.methodParms;
                 objectMethods.add(method);
@@ -334,11 +334,11 @@ public class DynamicAccessImpl {
         return null;
     }
 
-    public boolean isDynamicBehaviorDefinition(Context context,
+    public boolean isDynamicDeployment(Context context,
                                                String PID,
-                                               String bDefPID)
+                                               String sDefPID)
             throws ServerException {
-        if (dynamicBDefToMech.containsKey(bDefPID)) {
+        if (dynamicServiceToDeployment.containsKey(sDefPID)) {
             return true;
         }
         return false;

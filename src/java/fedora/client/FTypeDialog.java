@@ -21,12 +21,13 @@ import javax.swing.JPanel;
 
 /**
  * Launch a dialog for selecting which object type(s) the user is interested in:
- * bdefs, bmechs, data objects (any combination).
+ * sSefs, sDeps, data objects (any combination).
  * 
  * <p>Result will come back as string consisting of combination of "D", "M", 
  * and "O" characters, respectively, if selected.
  * 
  * @author Chris Wilper
+ * @deprecated.  May replace/refactor with something that selects content models
  */
 public class FTypeDialog
         extends JDialog {
@@ -48,6 +49,10 @@ public class FTypeDialog
               "Select Object Type(s)",
               true);
 
+        if (true) {
+            /* FIXME: find some other way to do this */
+            throw new UnsupportedOperationException("This operation uses obsolete field search semantics");
+        }
         JPanel inputPane = new JPanel();
         inputPane.setBorder(BorderFactory
                 .createCompoundBorder(BorderFactory
@@ -57,9 +62,9 @@ public class FTypeDialog
                         .createEmptyBorder(6, 6, 6, 6)));
 
         inputPane.setLayout(new GridLayout(0, 1));
-        dButton = new JCheckBox("Behavior Definitions");
+        dButton = new JCheckBox("Service Definitions");
         dButton.setMnemonic(KeyEvent.VK_D);
-        mButton = new JCheckBox("Behavior Mechanisms");
+        mButton = new JCheckBox("Service Deployments");
         mButton.setMnemonic(KeyEvent.VK_M);
         cButton = new JCheckBox("Content Models");
         cButton.setMnemonic(KeyEvent.VK_C);

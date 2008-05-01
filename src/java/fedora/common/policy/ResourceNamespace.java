@@ -47,8 +47,8 @@ public class ResourceNamespace
         onlyInstance.addNamespace(ObjectNamespace.getInstance());
         onlyInstance.addNamespace(DatastreamNamespace.getInstance());
         onlyInstance.addNamespace(DisseminatorNamespace.getInstance());
-        onlyInstance.addNamespace(BDefNamespace.getInstance());
-        onlyInstance.addNamespace(BMechNamespace.getInstance());
+        onlyInstance.addNamespace(ServiceDefinitionNamespace.getInstance());
+        onlyInstance.addNamespace(ServiceDeploymentNamespace.getInstance());
     }
 
     public static final ResourceNamespace getInstance() {

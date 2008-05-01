@@ -17,6 +17,7 @@ import org.w3c.dom.Document;
 
 import fedora.client.FedoraClient;
 import fedora.client.search.SearchResultParser;
+import fedora.common.Models;
 import fedora.test.FedoraServerTestCase;
 import fedora.utilities.ExecUtility;
 
@@ -61,9 +62,9 @@ public class TestIngestDemoObjects
                                 + "/client/demo/foxml/open-server-demos")};
         Set<File> demoObjectFiles = new HashSet<File>();
         for (File element : demoDirs) {
-            demoObjectFiles.addAll(getFiles(element, "FedoraBDefObject"));
-            demoObjectFiles.addAll(getFiles(element, "FedoraBMechObject"));
-            demoObjectFiles.addAll(getFiles(element, "FedoraObject"));
+            demoObjectFiles.addAll(getFiles(element, Models.SERVICE_DEFINITION_3_0.uri));
+            demoObjectFiles.addAll(getFiles(element, Models.SERVICE_DEPLOYMENT_3_0.uri));
+            demoObjectFiles.addAll(getFiles(element, Models.FEDORA_OBJECT_3_0.uri));
         }
         Set<String> repositoryDemoObjects = getDemoObjects(null);
 

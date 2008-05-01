@@ -44,7 +44,7 @@ public class TestHTTPStatusCodes
 
     public static final String BOGUS_OBJ = "demo:NonExistingObject";
 
-    public static final String BOGUS_BDEF = "demo:NonExistingBDef";
+    public static final String BOGUS_SDEF = "demo:NonExistingSDef";
 
     public static final String GET_NEXT_PID_PATH =
             "/management/getNextPID?xml=true";
@@ -69,16 +69,16 @@ public class TestHTTPStatusCodes
             "/get/" + BOGUS_OBJ + "/fedora-system:3/viewDublinCore";
 
     public static final String GET_CUSTOM_DISSEM_PATH =
-            "/get/" + TEST_OBJ + "/demo:DualResImage/mediumSize";
+            "/get/" + TEST_OBJ + "/demo:DualResolution/mediumSize";
 
     public static final String GET_CUSTOM_DISSEM_BOGUS_METHOD_PATH =
-            "/get/" + TEST_OBJ + "/demo:DualResImage/" + BOGUS_METHOD;
+            "/get/" + TEST_OBJ + "/demo:DualResolution/" + BOGUS_METHOD;
 
-    public static final String GET_CUSTOM_DISSEM_BOGUS_BDEF_PATH =
-            "/get/" + TEST_OBJ + "/" + BOGUS_BDEF + "/" + BOGUS_METHOD;
+    public static final String GET_CUSTOM_DISSEM_BOGUS_SDEF_PATH =
+            "/get/" + TEST_OBJ + "/" + BOGUS_SDEF + "/" + BOGUS_METHOD;
 
     public static final String GET_CUSTOM_DISSEM_BOGUS_OBJ_PATH =
-            "/get/" + BOGUS_OBJ + "/demo:DualResImage/mediumSize";
+            "/get/" + BOGUS_OBJ + "/demo:DualResolution/mediumSize";
 
     public static final String GET_OBJ_HISTORY_PATH =
             "/getObjectHistory/" + TEST_OBJ + "?xml=true";

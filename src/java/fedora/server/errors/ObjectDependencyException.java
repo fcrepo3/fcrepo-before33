@@ -8,9 +8,9 @@ package fedora.server.errors;
 /**
  * Signals that an object has one or more related objects that depend on it.
  * 
- * <p>For example, a behavior definition or behavior mechanism
+ * <p>For example, a service definition or deployment
  * object can be shared by multiple objects. Any data objects that use a
- * specific behavior definition or behavior mechanism object "depend" on those
+ * specific service definition or deployment object "depend" on those
  * objects. To remove a dependent object, you must first remove all related
  * objects.
  * 

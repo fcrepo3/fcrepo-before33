@@ -46,8 +46,6 @@ public class ObjectEditorFrame
 
     private final String m_pid;
 
-    private final String m_fType;
-
     static ImageIcon objIcon =
             new ImageIcon(Administrator.cl
                     .getResource("images/standard/general/Information16.gif"));
@@ -70,18 +68,13 @@ public class ObjectEditorFrame
         m_pid = pid;
         // query the server for key object fields
         ObjectFields o =
-                Util.getObjectFields(pid,
-                                     new String[] {"pid", "state", "label",
-                                             "cModel", "cDate", "mDate",
-                                             "ownerId", "fType"});
+                Util.getObjectFields(pid, new String[] {"pid", "state",
+                        "label", "cDate", "mDate", "ownerId"});
         String state = o.getState();
         String label = o.getLabel();
-        String cModel = o.getCModel();
         String cDate = o.getCDate();
         String mDate = o.getMDate();
         String ownerId = o.getOwnerId();
-        String fType = o.getFType();
-        m_fType = fType;
 
         doTitle(false);
 
@@ -97,7 +90,6 @@ public class ObjectEditorFrame
                                pid,
                                state,
                                label,
-                               cModel,
                                cDate,
                                mDate,
                                ownerId);
@@ -160,15 +152,8 @@ public class ObjectEditorFrame
         if (dirty) {
             d = "*";
         }
-        if (m_fType.indexOf("D") != -1) {
-            setTitle("Behavior Definition - " + m_pid + d);
-        } else if (m_fType.indexOf("M") != -1) {
-            setTitle("Behavior Mechanism - " + m_pid + d);
-        } else if (m_fType.indexOf("C") != -1) {
-            setTitle("Content Model - " + m_pid + d);
-        } else {
-            setTitle("Object - " + m_pid + d);
-        }
+
+        setTitle("Object - " + m_pid + d);
     }
 
     public boolean isDirty() {

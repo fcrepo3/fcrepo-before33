@@ -22,15 +22,15 @@ import org.xml.sax.helpers.DefaultHandler;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
-import fedora.server.storage.types.BMechDSBindSpec;
+import fedora.server.storage.types.DeploymentDSBindSpec;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodDefOperationBind;
 import fedora.server.storage.types.MethodParmDef;
 
 /**
  * Controller class for parsing the various kinds of inline metadata datastreams
- * found in behavior objects. The intent of this class is to initiate parsing of
- * these datastreams so that information about a behavior service can be
+ * found in service objects. The intent of this class is to initiate parsing of
+ * these datastreams so that information about a service can be
  * instantiated in Fedora.
  * </p>
  * 
@@ -56,7 +56,7 @@ public class ServiceMapper {
                             + "  methodMapLocation: the file path of the method map to be parsed."
                             + "\n"
                             + "  dsInputSpecLocation: the file path of the datastream input spec to be parsed."
-                            + "  pid: the PID of the bdef or bmech object for the above files.");
+                            + "  pid: the PID of the sDef or sDep object for the above files.");
             System.exit(1);
         }
         try {
@@ -70,7 +70,7 @@ public class ServiceMapper {
             MethodDef[] methods = mapper.getMethodDefs(mmap);
             MethodDefOperationBind[] methodBindings =
                     mapper.getMethodDefBindings(wsdl, mmap);
-            BMechDSBindSpec dsInputSpec = mapper.getDSInputSpec(dsSpec);
+            DeploymentDSBindSpec dsInputSpec = mapper.getDSInputSpec(dsSpec);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -124,7 +124,7 @@ public class ServiceMapper {
         return merge(getService(wsdlSource), getMethodMap(methodMapSource));
     }
 
-    public BMechDSBindSpec getDSInputSpec(InputSource dsInputSpecSource)
+    public DeploymentDSBindSpec getDSInputSpec(InputSource dsInputSpecSource)
             throws ObjectIntegrityException, RepositoryConfigurationException,
             GeneralException {
         if (dsInputSpecHandler == null) {

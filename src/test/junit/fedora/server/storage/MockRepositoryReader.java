@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import fedora.common.Constants;
+import fedora.common.Models;
 import fedora.server.Context;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectNotFoundException;
@@ -24,7 +26,8 @@ public class MockRepositoryReader
     /**
      * The <code>DigitalObject</code>s in the "repository", keyed by PID.
      */
-    private final Map _objects = new HashMap();
+    private final Map<String, DigitalObject> _objects =
+            new HashMap<String, DigitalObject>();
 
     /**
      * Construct with an empty "repository".
@@ -72,7 +75,8 @@ public class MockRepositoryReader
                                            Context context,
                                            String pid) throws ServerException {
         DigitalObject obj = getObject(pid);
-        if (!obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT)) {
+        if (!obj.hasRelationship(Constants.MODEL.HAS_MODEL,
+                                 Models.FEDORA_OBJECT_3_0)) {
             throw new GeneralException("Not a data object: " + pid);
         } else {
             return new SimpleDOReader(null, this, null, null, null, obj);
@@ -82,30 +86,43 @@ public class MockRepositoryReader
     /**
      * {@inheritDoc}
      */
-    public synchronized BMechReader getBMechReader(boolean cachedObjectRequired,
-                                                   Context context,
-                                                   String pid)
+    public synchronized ServiceDeploymentReader getServiceDeploymentReader(boolean cachedObjectRequired,
+                                                                           Context context,
+                                                                           String pid)
             throws ServerException {
         DigitalObject obj = getObject(pid);
-        if (!obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)) {
-            throw new GeneralException("Not a bmech object: " + pid);
+        if (!obj.hasRelationship(Constants.MODEL.HAS_MODEL,
+                                 Models.SERVICE_DEPLOYMENT_3_0)) {
+            throw new GeneralException("Not a service deployment: " + pid);
         } else {
-            return new SimpleBMechReader(null, this, null, null, null, obj);
+            return new SimpleServiceDeploymentReader(null,
+                                                     this,
+                                                     null,
+                                                     null,
+                                                     null,
+                                                     obj);
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public synchronized BDefReader getBDefReader(boolean cachedObjectRequired,
-                                                 Context context,
-                                                 String pid)
+    public synchronized ServiceDefinitionReader getServiceDefinitionReader(boolean cachedObjectRequired,
+                                                                           Context context,
+                                                                           String pid)
             throws ServerException {
         DigitalObject obj = getObject(pid);
-        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) {
-            throw new GeneralException("Not a bdef object: " + pid);
+        if (!obj.hasRelationship(Constants.MODEL.HAS_MODEL,
+                                 Models.SERVICE_DEFINITION_3_0)) {
+            throw new GeneralException("Not a service definition object: "
+                    + pid);
         } else {
-            return new SimpleBDefReader(null, this, null, null, null, obj);
+            return new SimpleServiceDefinitionReader(null,
+                                                     this,
+                                                     null,
+                                                     null,
+                                                     null,
+                                                     obj);
         }
     }
 
@@ -115,10 +132,10 @@ public class MockRepositoryReader
     public synchronized String[] listObjectPIDs(Context context)
             throws ServerException {
         String[] pids = new String[_objects.keySet().size()];
-        Iterator iter = _objects.keySet().iterator();
+        Iterator<String> iter = _objects.keySet().iterator();
         int i = 0;
         while (iter.hasNext()) {
-            pids[i++] = (String) iter.next();
+            pids[i++] = iter.next();
         }
         return pids;
     }

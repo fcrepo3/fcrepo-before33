@@ -173,12 +173,6 @@ public class ResultFrame
         if (name.equals("label")) {
             return o.getLabel();
         }
-        if (name.equals("fType")) {
-            return o.getFType();
-        }
-        if (name.equals("cModel")) {
-            return o.getCModel();
-        }
         if (name.equals("state")) {
             return o.getState();
         }
@@ -193,12 +187,6 @@ public class ResultFrame
         }
         if (name.equals("dcmDate")) {
             return o.getDcmDate();
-        }
-        if (name.equals("bDef")) {
-            return getList(o.getBDef());
-        }
-        if (name.equals("bMech")) {
-            return getList(o.getBMech());
         }
         if (name.equals("title")) {
             return getList(o.getTitle());

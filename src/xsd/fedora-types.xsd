@@ -90,7 +90,7 @@
     <complexType>
       <sequence>
         <element name="pid" type="xsd:string"/>
-        <element name="bDefPid" type="xsd:string"/>
+        <element name="serviceDefinitionPid" type="xsd:string"/>
         <element name="methodName" type="xsd:string"/>
         <element name="parameters">
           <complexType>
@@ -695,15 +695,11 @@
     <sequence>
       <element name="pid" nillable="true" type="string" minOccurs="0"/>
       <element name="label" nillable="true" type="string" minOccurs="0"/>
-      <element name="fType" nillable="true" type="string" minOccurs="0"/>
-      <element name="cModel" nillable="true" type="string" minOccurs="0"/>
       <element name="state" nillable="true" type="string" minOccurs="0"/>
       <element name="ownerId" nillable="true" type="string" minOccurs="0"/>
       <element name="cDate" nillable="true" type="string" minOccurs="0"/>
       <element name="mDate" nillable="true" type="string" minOccurs="0"/>
       <element name="dcmDate" nillable="true" type="string" minOccurs="0"/>
-      <element name="bDef" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
-      <element name="bMech" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
       <element name="title" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
       <element name="creator" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
       <element name="subject" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
@@ -725,7 +721,7 @@
   <complexType name="ObjectMethodsDef">
     <sequence>
       <element name="PID" type="xsd:string"/>
-      <element name="bDefPID" type="xsd:string"/>
+      <element name="serviceDefinitionPID" type="xsd:string"/>
       <element name="methodName" type="xsd:string"/>
       <element name="methodParmDefs">
         <complexType>
@@ -737,13 +733,19 @@
       <element name="asOfDate" nillable="true" type="xsd:string"/>
     </sequence>
   </complexType>
+  
 
   <complexType name="ObjectProfile">
     <sequence>
       <element name="pid" nillable="true" type="xsd:string"/>
       <element name="objLabel" nillable="true" type="xsd:string"/>
-      <element name="objContentModel" nillable="true" type="xsd:string"/>
-      <element name="objType" nillable="true" type="xsd:string"/>
+      <element name="objModels" nillable="true">
+      	<complexType>
+      		<sequence>
+      			<element name="model" minOccurs="0" maxOccurs="unbounded" type="xsd:string" />
+      		</sequence>
+      	</complexType>
+      </element>
       <element name="objCreateDate" nillable="true" type="xsd:string"/>
       <element name="objLastModDate" nillable="true" type="xsd:string"/>
       <element name="objDissIndexViewURL" nillable="true" type="xsd:string"/>

@@ -8,7 +8,6 @@
 	<!---*******************************************************************************************************************************************-->
 	<foxml:objectProperties>
 		<!-- OBJECT PROPERTIES DEFINED IN FOXML SCHEMA -->
-		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Sandy's Test Object"/>
 		<!-- ALLOW EXTENSIBLE PROPERTIES (Fedora will retain these, but not operate on them.) -->

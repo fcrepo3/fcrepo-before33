@@ -27,6 +27,7 @@ import fedora.server.config.ModuleConfiguration;
 import fedora.server.config.Parameter;
 import fedora.server.config.ServerConfiguration;
 import fedora.server.config.ServerConfigurationParser;
+import fedora.server.errors.LowlevelStorageException;
 import fedora.server.storage.lowlevel.DefaultLowlevelStorage;
 import fedora.server.storage.lowlevel.FileSystem;
 import fedora.server.storage.translation.DODeserializer;
@@ -123,10 +124,14 @@ public class Rebuild
                     String objStoreBaseStr =
                             param.getValue(param.getIsFilePath());
                     File dir = new File(objStoreBaseStr);
-                    rebuildFromDirectory(rebuilder, dir, "FedoraBDefObject");
-                    rebuildFromDirectory(rebuilder, dir, "FedoraBMechObject");
-                    rebuildFromDirectory(rebuilder, dir, "FedoraObject");
-                    rebuildFromDirectory(rebuilder, dir, "FedoraCModelObject");
+
+                    /*
+                     * Just assume every file under the directory is a digital
+                     * object and try processing. We may need/want to filter if
+                     * non-object files are ever stored alongside objects in the
+                     * specified directory.
+                     */
+                    rebuildFromDirectory(rebuilder, dir, null);
                 } finally {
                     rebuilder.finish();
                 }
@@ -172,51 +177,32 @@ public class Rebuild
             if (fs.isDirectory(f)) {
                 rebuildFromDirectory(rebuilder, f, searchString);
             } else {
-                BufferedReader reader = null;
+                ;
                 InputStream in;
-                try {
-                    in = null;
-                    reader =
-                            new BufferedReader(new InputStreamReader(fs.read(f)));
-                    String line = reader.readLine();
-                    while (line != null) {
-                        if (line.indexOf(searchString) != -1) {
-                            in = fs.read(f);
-                            line = null;
-                        } else {
-                            line = reader.readLine();
-                        }
-                    }
-                    if (in != null) {
+                in = getFile(f, searchString);
+                if (in != null) {
+                    try {
+                        System.out.println(f.getAbsoluteFile());
+                        DigitalObject obj = new BasicDigitalObject();
+                        DODeserializer deser = new FOXML1_1DODeserializer();
+                        deser
+                                .deserialize(in,
+                                             obj,
+                                             "UTF-8",
+                                             DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
+                        rebuilder.addObject(obj);
+                    } catch (Exception e) {
+                        System.out.println("WARNING: Skipped "
+                                + f.getAbsoluteFile()
+                                + " due to following exception:");
+                        e.printStackTrace();
+                    } finally {
                         try {
-                            System.out.println(f.getAbsoluteFile());
-                            DigitalObject obj = new BasicDigitalObject();
-                            DODeserializer deser = new FOXML1_1DODeserializer();
-                            deser
-                                    .deserialize(in,
-                                                 obj,
-                                                 "UTF-8",
-                                                 DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
-                            rebuilder.addObject(obj);
-                        } catch (Exception e) {
-                            System.out.println("WARNING: Skipped "
-                                    + f.getAbsoluteFile()
-                                    + " due to following exception:");
-                            e.printStackTrace();
-                        } finally {
-                            try {
-                                in.close();
-                            } catch (Exception e) {
-                            }
-                        }
-                    }
-                } finally {
-                    if (reader != null) {
-                        try {
-                            reader.close();
+                            in.close();
                         } catch (Exception e) {
                         }
                     }
+
                 }
             }
         }
@@ -301,6 +287,41 @@ public class Rebuild
             }
         }
         return choiceIndex;
+    }
+
+    private InputStream getFile(File f, String searchString)
+            throws IOException, LowlevelStorageException {
+
+        /*
+         * If we don't care about the existence of a search string, don't bother
+         * looking
+         */
+        if (searchString == null) {
+            return fs.read(f);
+        }
+
+        BufferedReader reader = null;
+
+        try {
+            reader = new BufferedReader(new InputStreamReader(fs.read(f)));
+            String line = reader.readLine();
+            while (line != null) {
+                if (line.indexOf(searchString) != -1) {
+                    return fs.read(f);
+                } else {
+                    line = reader.readLine();
+                }
+            }
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (Exception e) {
+                }
+            }
+        }
+
+        return null;
     }
 
     private static ServerConfiguration getServerConfig(File serverDir,

@@ -16,6 +16,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import fedora.common.Constants;
+import fedora.common.Models;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.ObjectIntegrityException;
@@ -25,12 +27,11 @@ import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnrecognizedFieldException;
-import fedora.server.storage.BMechReader;
+import fedora.server.storage.ServiceDeploymentReader;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.RepositoryReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
-import fedora.server.storage.types.DigitalObject;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.MD5Utility;
 
@@ -287,8 +288,7 @@ public class FieldSearchResultSQLImpl
                     }
                 } else {
                     if (op.equals("=")) {
-                        if (isDCProp(prop) || prop.equals("bDef")
-                                || prop.equals("bMech")) {
+                        if (isDCProp(prop)) {
                             throw new QueryParseException("The = operator "
                                     + "can only be used with dates and "
                                     + "non-repeating fields.");
@@ -499,12 +499,6 @@ public class FieldSearchResultSQLImpl
             if (n.equals("label")) {
                 f.setLabel(r.GetObjectLabel());
             }
-            if (n.equals("fType")) {
-                f.setFType(r.getFedoraObjectTypes());
-            }
-            if (n.equals("cModel")) {
-                f.setCModel(r.getContentModelId());
-            }
             if (n.equals("state")) {
                 f.setState(r.GetObjectState());
             }
@@ -517,34 +511,6 @@ public class FieldSearchResultSQLImpl
             if (n.equals("mDate")) {
                 f.setMDate(r.getLastModDate());
             }
-            if (n.equals("bDef")) {
-                //                if (disses==null) {
-                //                    disses=r.GetDisseminators(null, null);
-                //                }
-                //                for (int i2=0; i2<disses.length; i2++) {
-                //                    f.bDefs().add(disses[i2].bDefID);
-                //                }
-                // also, if the object is a bMech, add the bDefs
-                // it implements!
-                if (r.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)) {
-                    BMechReader mechReader =
-                            m_repoReader
-                                    .getBMechReader(Server.USE_DEFINITIVE_STORE,
-                                                    ReadOnlyContext.EMPTY,
-                                                    pid);
-                    f
-                            .bDefs()
-                            .add(mechReader.getServiceDSInputSpec(null).bDefPID);
-                }
-            }
-            //            if (n.equals("bMech")) {
-            //                if (disses==null) {
-            //                    disses=r.GetDisseminators(null, null);
-            //                }
-            //                for (int i2=0; i2<disses.length; i2++) {
-            //                    f.bMechs().add(disses[i2].bMechID);
-            //                }
-            //            }
         }
         return f;
     }
@@ -587,14 +553,11 @@ public class FieldSearchResultSQLImpl
      *         described above
      */
     private static String toSql(String name, String in) {
-        if (!name.endsWith("pid") && !name.endsWith("bDef")
-                && !name.endsWith("bMech")) {
+        if (!name.endsWith("pid")) {
             in = in.toLowerCase(); // if it's not a PID-type field, 
         }
         // it's case insensitive
-        if (name.startsWith("dc") || name.startsWith("doFields.dc")
-                || name.equals("bDef") || name.equals("doFields.bDef")
-                || name.equals("bMech") || name.equals("doFields.bMech")) {
+        if (name.startsWith("dc") || name.startsWith("doFields.dc")) {
             StringBuffer newIn = new StringBuffer();
             if (!in.startsWith("*")) {
                 newIn.append("* ");

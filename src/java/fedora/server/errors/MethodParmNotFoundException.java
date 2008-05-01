@@ -6,7 +6,7 @@
 package fedora.server.errors;
 
 /**
- * Signals that a method parameter associated with a Behavior Mechanism 
+ * Signals that a method parameter associated with a Service Deployment 
  * could not be found.
  * 
  * @author Ross Wayland

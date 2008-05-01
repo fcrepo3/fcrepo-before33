@@ -36,18 +36,17 @@ import fedora.server.errors.ValidationException;
 
 /**
  * Validates the RDF/XML content of the RELS-EXT datastream.
- *
- * <p>The following restrictions are enforced:
- *
+ * <p>
+ * The following restrictions are enforced:
  * <ul>
- *   <li> The RDF must follow a prescribed RDF/XML authoring style where there
- *        is ONE subject encoded as an RDF &lt;Description&gt; with an RDF 
- *        <code>about</code> attribute containing a digital object URI.
- *        The sub-elements are the relationship properties of the subject.
- *        Each relationship may refer to any resource (identified by URI) via
- *        an RDF 'resource' attribute, or a literal.  Relationship assertions
- *        can be from the default Fedora relationship ontology, or from other
- *        namespaces. For example:
+ * <li> The RDF must follow a prescribed RDF/XML authoring style where there is
+ * ONE subject encoded as an RDF &lt;Description&gt; with an RDF
+ * <code>about</code> attribute containing a digital object URI. The
+ * sub-elements are the relationship properties of the subject. Each
+ * relationship may refer to any resource (identified by URI) via an RDF
+ * 'resource' attribute, or a literal. Relationship assertions can be from the
+ * default Fedora relationship ontology, or from other namespaces. For example:
+ * 
  * <pre>
  * &lt;rdf:Description about="info:fedora/demo:5"&gt;
  *   &lt;fedora:isMemberOfCollection resource="info:fedora/demo:100"/&gt;
@@ -75,14 +74,17 @@ import fedora.server.errors.ValidationException;
  *        or from the Fedora object properties namespaces (model and view),
  *        with the following exceptions:
  * <pre>
- * fedora-model:hasBDef (0 or more, target=rdf:resource)
- * fedora-model:hasContentModel (0 or 1, target=rdf:resource)
- * fedora-model:isContractor (0 or more, target=rdf:resource)</pre>
+ * fedora-model:hasService (0 or more, target=rdf:resource)
+ * fedora-model:hasModel (0 or 1, target=rdf:resource)
+ * fedora-model:isDeploymentOf (0 or 1, target=rdf:resource)
+ * fedora-model:isContractorOf (0 or more, target=rdf:resource)</pre>
  *        These assertions are allowed in the RELS-EXT datastream, but all 
  *        others from the <code>fedora-model</code> and <code>fedora-view</code>
  *        namespaces are inferred from values expressed elsewhere in the
  *        digital object, and we do not want duplication.</li>
  * </ul>
+ * 
+ * FIXME: Validation should be model based!  Pre 3.0 objects may fail..
  * 
  * @author Sandy Payette
  * @author Eddie Shin
@@ -190,13 +192,14 @@ public class RelsExtValidator
                 } else {
                     if (nsURI.equals(MODEL.uri)) {
                         // if it's not a resource, the predicate cannot
-                        // be fedora-model:hasBDef, hasContentModel, or
-                        // isContractor
-                        if (localName.equals(MODEL.HAS_BDEF.localName)
+                        // be fedora-model:hasService, hasModel,
+                        // isContractor, or is DeploymentOf
+                        if (localName.equals(MODEL.HAS_SERVICE.localName)
+                                || localName.equals(MODEL.HAS_MODEL.localName)
                                 || localName
-                                        .equals(MODEL.HAS_CONTENT_MODEL.localName)
+                                        .equals(MODEL.IS_CONTRACTOR_OF.localName)
                                 || localName
-                                        .equals(MODEL.IS_CONTRACTOR.localName)) {
+                                        .equals(MODEL.IS_DEPLOYMENT_OF.localName)) {
                             throw new SAXException("RelsExtValidator: "
                                     + "Target of " + qName + " statement "
                                     + "MUST be an rdf:resource");
@@ -299,7 +302,7 @@ public class RelsExtValidator
     /**
      * checkBadAssertion: checks that the DC and fedora-view namespace are not
      * being used in RELS-EXT, and that if fedora-model is used, the localName
-     * is hasBDef, hasContentModel, or isContractor. Also ensures that
+     * is hasService, hasModel, isDeploymentOf, or isContractorOf. Also ensures that
      * fedora-model:hasContentModel is only used once.
      * 
      * @param nsURI
@@ -319,22 +322,17 @@ public class RelsExtValidator
                     + " No Dublin Core assertions allowed"
                     + " in Fedora relationship metadata.");
         } else if (nsURI.equals(MODEL.uri)) {
-            if (localName.equals(MODEL.HAS_CONTENT_MODEL.localName)) {
-                if (!m_hasContentModel) {
-                    m_hasContentModel = true;
-                } else {
-                    throw new SAXException("RelsExtValidator: "
-                            + " Object may only assert ONE content model.");
-                }
-            } else if (!localName.equals(MODEL.HAS_BDEF.localName)
-                    && !localName.equals(MODEL.IS_CONTRACTOR.localName)) {
+            if (!localName.equals(MODEL.HAS_SERVICE.localName)
+                    && !localName.equals(MODEL.IS_CONTRACTOR_OF.localName)
+                    && !localName.equals(MODEL.HAS_MODEL.localName)
+                    && !localName.equals(MODEL.IS_DEPLOYMENT_OF.localName)) {
                 throw new SAXException("RelsExtValidator:"
                         + " Disallowed predicate in RELS-EXT: "
                         + qName
                         + "\n"
                         + " The only predicates from the fedora-model namespace"
-                        + " allowed in RELS-EXT are hasBDef, hasContentModel, and"
-                        + " isContractor.");
+                        + " allowed in RELS-EXT are hasService, hasModel,"
+                        + "  isDeploymentOf, and isContractor.");
             }
         } else if (nsURI.equals(VIEW.uri)) {
             throw new SAXException("RelsExtValidator:"

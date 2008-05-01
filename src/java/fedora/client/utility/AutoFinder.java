@@ -174,31 +174,31 @@ public class AutoFinder {
                     ObjectFields o = result.getResultList()[i];
                     matchNum++;
                     System.out.println("#" + matchNum);
-                    AutoFinder.printValue("pid        ", o.getPid());
-                    AutoFinder.printValue("fType      ", o.getFType());
-                    AutoFinder.printValue("cModel     ", o.getCModel());
-                    AutoFinder.printValue("state      ", o.getState());
-                    AutoFinder.printValue("ownerId     ", o.getOwnerId());
-                    AutoFinder.printValue("cDate      ", o.getCDate());
-                    AutoFinder.printValue("mDate      ", o.getMDate());
-                    AutoFinder.printValue("dcmDate    ", o.getDcmDate());
-                    AutoFinder.printValue("bDef       ", o.getBDef());
-                    AutoFinder.printValue("bMech      ", o.getBMech());
-                    AutoFinder.printValue("title      ", o.getTitle());
-                    AutoFinder.printValue("creator    ", o.getCreator());
-                    AutoFinder.printValue("subject    ", o.getSubject());
-                    AutoFinder.printValue("description", o.getDescription());
-                    AutoFinder.printValue("publisher  ", o.getPublisher());
-                    AutoFinder.printValue("contributor", o.getContributor());
-                    AutoFinder.printValue("date       ", o.getDate());
-                    AutoFinder.printValue("type       ", o.getType());
-                    AutoFinder.printValue("format     ", o.getFormat());
-                    AutoFinder.printValue("identifier ", o.getIdentifier());
-                    AutoFinder.printValue("source     ", o.getSource());
-                    AutoFinder.printValue("language   ", o.getLanguage());
-                    AutoFinder.printValue("relation   ", o.getRelation());
-                    AutoFinder.printValue("coverage   ", o.getCoverage());
-                    AutoFinder.printValue("rights     ", o.getRights());
+                    AutoFinder.printValue("pid              ", o.getPid());
+                    AutoFinder.printValue("state            ", o.getState());
+                    AutoFinder.printValue("ownerId          ", o.getOwnerId());
+                    AutoFinder.printValue("cDate            ", o.getCDate());
+                    AutoFinder.printValue("mDate            ", o.getMDate());
+                    AutoFinder.printValue("dcmDate          ", o.getDcmDate());
+                    AutoFinder.printValue("title            ", o.getTitle());
+                    AutoFinder.printValue("creator          ", o.getCreator());
+                    AutoFinder.printValue("subject          ", o.getSubject());
+                    AutoFinder.printValue("description      ", o
+                            .getDescription());
+                    AutoFinder
+                            .printValue("publisher        ", o.getPublisher());
+                    AutoFinder.printValue("contributor      ", o
+                            .getContributor());
+                    AutoFinder.printValue("date             ", o.getDate());
+                    AutoFinder.printValue("type             ", o.getType());
+                    AutoFinder.printValue("format           ", o.getFormat());
+                    AutoFinder.printValue("identifier       ", o
+                            .getIdentifier());
+                    AutoFinder.printValue("source           ", o.getSource());
+                    AutoFinder.printValue("language         ", o.getLanguage());
+                    AutoFinder.printValue("relation         ", o.getRelation());
+                    AutoFinder.printValue("coverage         ", o.getCoverage());
+                    AutoFinder.printValue("rights           ", o.getRights());
                     System.out.println("");
                 }
                 ListSession sess = result.getListSession();

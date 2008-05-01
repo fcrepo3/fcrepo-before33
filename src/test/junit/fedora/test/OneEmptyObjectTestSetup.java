@@ -32,8 +32,6 @@ public class OneEmptyObjectTestSetup
                 + FOXML1_1.xsdLocation + "\"\n");
         xml.append("\n           PID=\"" + pid + "\">\n");
         xml.append("  <foxml:objectProperties>\n");
-        xml.append("    <foxml:property NAME=\"" + RDF.TYPE.uri
-                + "\" VALUE=\"FedoraObject\"/>\n");
         xml.append("    <foxml:property NAME=\"" + MODEL.LABEL.uri
                 + "\" VALUE=\"label\"/>\n");
         xml.append("  </foxml:objectProperties>\n");

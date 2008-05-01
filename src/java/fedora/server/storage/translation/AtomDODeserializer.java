@@ -61,7 +61,7 @@ import fedora.server.validation.ValidationUtility;
  */
 public class AtomDODeserializer
         implements DODeserializer, Constants {
-    
+
     public static final XMLFormat DEFAULT_FORMAT = ATOM1_0;
 
     /** Logger for this class. */
@@ -72,7 +72,7 @@ public class AtomDODeserializer
     private DigitalObject m_obj;
 
     private String m_encoding;
-    
+
     /** The current translation context. */
     private int m_transContext;
 
@@ -80,15 +80,15 @@ public class AtomDODeserializer
     private final XMLFormat m_format;
 
     private Abdera abdera = Abdera.getInstance();
-    
+
     private Feed m_feed;
 
     private XPath m_xpath;
-    
+
     public AtomDODeserializer() {
         this(DEFAULT_FORMAT);
     }
-    
+
     public AtomDODeserializer(XMLFormat format) {
         if (format.equals(ATOM1_0)) {
             m_format = format;
@@ -116,6 +116,10 @@ public class AtomDODeserializer
         m_transContext = transContext;
         addObjectProperties();
         addDatastreams();
+
+        DOTranslationUtility.normalizeDatastreams(m_obj,
+                                                  m_transContext,
+                                                  m_encoding);
     }
 
     /**
@@ -124,7 +128,7 @@ public class AtomDODeserializer
     public DODeserializer getInstance() {
         return new AtomDODeserializer(m_format);
     }
-    
+
     /**
      * Set the Fedora Object properites from the Feed metadata.
      * 
@@ -147,7 +151,6 @@ public class AtomDODeserializer
                         + MODEL.CREATED_DATE.uri + "']/@term", m_feed);
 
         m_obj.setPid(pid.toString());
-        setObjectTypes();
 
         String stateCode = null;
         if (MODEL.DELETED.looselyMatches(state, true)) {
@@ -204,20 +207,7 @@ public class AtomDODeserializer
         String dsvId = ds.DSVersionID;
         ds.DSLocation = m_obj.getPid() + "+" + dsId + "+" + dsvId;
 
-        // Relative Repository URL processing... 
-        // For selected inline XML datastreams look for relative repository URLs
-        // and make them absolute.
-        if (m_obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)
-                && (dsId.equals("SERVICE-PROFILE") || dsId.equals("WSDL"))) {
-            try {
-                ds.xmlContent =
-                        DOTranslationUtility.normalizeInlineXML(entry.getContent(),
-                                                                m_transContext)
-                                .getBytes(m_encoding);
-            } catch (UnsupportedEncodingException e) {
-                throw new StreamIOException(e.getMessage(), e);
-            }
-        } else if (ds.DSVersionID.equals("AUDIT.0")) {
+        if (ds.DSVersionID.equals("AUDIT.0")) {
             addAuditDatastream(entry);
         } else {
             try {
@@ -230,7 +220,7 @@ public class AtomDODeserializer
         if (ds.xmlContent != null) {
             ds.DSSize = ds.xmlContent.length;
         }
-        
+
         MimeType mimeType = entry.getContentMimeType();
         if (mimeType == null) {
             ds.DSMIME = "text/xml";
@@ -240,7 +230,8 @@ public class AtomDODeserializer
         return ds;
     }
 
-    private Datastream addExternalReferencedDatastreamVersion(Entry entry) throws ObjectIntegrityException {
+    private Datastream addExternalReferencedDatastreamVersion(Entry entry)
+            throws ObjectIntegrityException {
         Datastream ds = new DatastreamReferencedContent();
         setDSCommonProperties(ds, entry);
         ds.DSLocation = entry.getContentSrc().toString();
@@ -278,10 +269,10 @@ public class AtomDODeserializer
                         .validateURL(contentLocation.toString(), false);
             }
             ds.DSLocation = contentLocation.toString();
-            
-            ds.DSLocation = (DOTranslationUtility.normalizeDSLocationURLs(m_obj.getPid(),
-                                                          ds,
-                                                          m_transContext)).DSLocation;
+
+            ds.DSLocation =
+                    (DOTranslationUtility.normalizeDSLocationURLs(m_obj
+                            .getPid(), ds, m_transContext)).DSLocation;
 
             return ds;
         }
@@ -304,11 +295,13 @@ public class AtomDODeserializer
 
         return ds;
     }
-    
-    private void addAuditDatastream(Entry entry) throws ObjectIntegrityException, StreamIOException {
+
+    private void addAuditDatastream(Entry entry)
+            throws ObjectIntegrityException, StreamIOException {
         try {
             Reader auditTrail = new StringReader(entry.getContent());
-            m_obj.getAuditRecords().addAll(DOTranslationUtility.getAuditRecords(auditTrail));
+            m_obj.getAuditRecords().addAll(DOTranslationUtility
+                    .getAuditRecords(auditTrail));
             auditTrail.close();
         } catch (XMLStreamException e) {
             throw new ObjectIntegrityException(e.getMessage(), e);
@@ -316,7 +309,7 @@ public class AtomDODeserializer
             throw new StreamIOException(e.getMessage(), e);
         }
     }
-    
+
     private String getOwnerId() {
         Person owner = m_feed.getAuthor();
         if (owner == null) {
@@ -325,7 +318,7 @@ public class AtomDODeserializer
             return owner.getName();
         }
     }
-    
+
     /**
      * Parses the id to determine a datastreamId.
      * 
@@ -353,7 +346,7 @@ public class AtomDODeserializer
         if (dsvId.matches("^" + dsId + ".*\\.[\\w]")) {
             return dsvId;
         } else {
-            if (m_obj.datastreams(dsId).isEmpty()) {
+            if (!m_obj.datastreams(dsId).iterator().hasNext()) {
                 return dsId + ".0";
             } else {
                 return m_obj.newDatastreamID(dsId);
@@ -361,10 +354,11 @@ public class AtomDODeserializer
         }
     }
 
-    private String getDSControlGroup(Entry entry) throws ObjectIntegrityException {
+    private String getDSControlGroup(Entry entry)
+            throws ObjectIntegrityException {
         List<Category> controlGroups =
                 entry.getCategories(MODEL.CONTROL_GROUP.uri);
-        
+
         // Try to infer the control group if not provided
         if (controlGroups.isEmpty() || controlGroups.size() > 1) {
             if (entry.getContentType() != null) {
@@ -383,7 +377,8 @@ public class AtomDODeserializer
             // link alts, link enclosures
 
             else {
-                throw new ObjectIntegrityException("No control group provided by " + m_obj.getPid());
+                throw new ObjectIntegrityException("No control group provided by "
+                        + m_obj.getPid());
             }
         } else {
             return controlGroups.get(0).getTerm();
@@ -483,8 +478,9 @@ public class AtomDODeserializer
             return digest.get(0).getTerm();
         }
     }
-    
-    private void setDSCommonProperties(Datastream dsVersion, Entry entry) throws ObjectIntegrityException {
+
+    private void setDSCommonProperties(Datastream dsVersion, Entry entry)
+            throws ObjectIntegrityException {
         IRI ref = ThreadHelper.getInReplyTo(entry).getRef();
         Entry parent = m_feed.getEntry(ref.toString());
         dsVersion.DatastreamID = getDatastreamId(parent);
@@ -493,13 +489,14 @@ public class AtomDODeserializer
         dsVersion.DSVersionable = getDSVersionable(parent);
         setDatastreamVersionProperties(dsVersion, entry);
     }
-    
-    private void setDatastreamVersionProperties(Datastream ds, Entry entry) throws ValidationException {
+
+    private void setDatastreamVersionProperties(Datastream ds, Entry entry)
+            throws ValidationException {
         ds.DatastreamAltIDs = getDSAltIds(entry);
         ds.DSCreateDT = entry.getUpdated();
         ds.DSFormatURI = getDSFormatURI(entry);
         ds.DSLabel = getDSLabel(entry);
-        ds.DSVersionID = getDatastreamVersionId(entry);        
+        ds.DSVersionID = getDatastreamVersionId(entry);
         ds.DSChecksumType = getDSChecksumType(entry);
         String checksum = getDSChecksum(entry);
         if (m_obj.isNew()) {
@@ -520,30 +517,6 @@ public class AtomDODeserializer
             ds.DSChecksumType = ds.getChecksumType();
         } else {
             ds.DSChecksum = checksum;
-        }
-    }
-    
-    private void setObjectTypes() {
-        List<Category> typeCategories = m_feed.getCategories(RDF.TYPE.uri);
-        for (Category typeCategory : typeCategories) {
-            String fType = typeCategory.getTerm();
-            if (MODEL.DATA_OBJECT.looselyMatches(fType, false)) {
-                m_obj.addFedoraObjectType(DigitalObject.FEDORA_OBJECT);
-            } else if (MODEL.BDEF_OBJECT.looselyMatches(fType, false)) {
-                m_obj.addFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
-            } else if (MODEL.BMECH_OBJECT.looselyMatches(fType, false)) {
-                m_obj.addFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
-            } else if (MODEL.CMODEL_OBJECT.looselyMatches(fType, false)) {
-                m_obj
-                        .addFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT);
-            }
-        }
-
-        try {
-            DOTranslationUtility.getTypeAttribute(m_obj, null);
-        } catch (ObjectIntegrityException e) {
-            // Set a default object type if none was provided
-            m_obj.addFedoraObjectType(DigitalObject.FEDORA_OBJECT);
         }
     }
 

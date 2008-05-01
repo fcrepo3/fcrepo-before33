@@ -19,7 +19,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -32,6 +31,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import fedora.common.Models;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
@@ -73,11 +73,13 @@ public class TestAtomDOSerializer
 
     @Test
     public void testSerializeFromFOXML() throws Exception {
-        String source = "src/demo-objects/foxml/local-server-demos/image-collection-demo/dataObjects/demo_SmileyBeerGlass.xml";
-        source = "src/demo-objects/foxml/local-server-demos/formatting-objects-demo/obj_demo_26.xml";
+        String source =
+                "src/demo-objects/foxml/local-server-demos/image-collection-demo/dataObjects/demo_SmileyBeerGlass.xml";
+        source =
+                "src/demo-objects/foxml/local-server-demos/formatting-objects-demo/obj_demo_26.xml";
         InputStream in = new FileInputStream(source);
         File f = File.createTempFile("test", null);
-        OutputStream out  = new FileOutputStream(f);
+        OutputStream out = new FileOutputStream(f);
 
         DODeserializer deser = new FOXML1_1DODeserializer();
         DigitalObject obj = new BasicDigitalObject();
@@ -92,7 +94,7 @@ public class TestAtomDOSerializer
 
     @Test
     public void testSerialize() throws Exception {
-        DigitalObject obj = createTestObject(DigitalObject.FEDORA_OBJECT);
+        DigitalObject obj = createTestObject(Models.FEDORA_OBJECT_3_0);
         obj.setLastModDate(new Date());
         DatastreamXMLMetadata ds1 = createXDatastream("DS1");
         ds1.DSCreateDT = new Date();
@@ -144,8 +146,7 @@ public class TestAtomDOSerializer
         Iterator<String> dsIds = obj.datastreamIdIterator();
         while (dsIds.hasNext()) {
             String dsid = dsIds.next();
-            List<Datastream> dsList = obj.datastreams(dsid);
-            for (Datastream ds : dsList) {
+            for (Datastream ds : obj.datastreams(dsid)) {
                 if (ds.DSCreateDT == null) {
                     ds.DSCreateDT = new Date();
                 }

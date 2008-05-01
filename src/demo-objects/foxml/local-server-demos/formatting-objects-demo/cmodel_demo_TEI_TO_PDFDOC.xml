@@ -3,7 +3,6 @@
   xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:foxml="info:fedora/fedora-system:def/foxml#">
   <foxml:objectProperties>
-    <foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraCModelObject"/>
     <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
     <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Generated Content Model"/>
     <foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
@@ -36,8 +35,9 @@
       <foxml:xmlContent>
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
           <rdf:Description rdf:about="info:fedora/demo:TEI_TO_PDFDOC">
-            <fedora-model:hasBDef rdf:resource="info:fedora/demo:19"/>
-            <fedora-model:hasBDef rdf:resource="info:fedora/demo:22"/>
+            <fedora-model:hasService rdf:resource="info:fedora/demo:19"/>
+            <fedora-model:hasService rdf:resource="info:fedora/demo:22"/>
+            <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:ContentModel-3.0" />
           </rdf:Description>
         </rdf:RDF>
       </foxml:xmlContent>

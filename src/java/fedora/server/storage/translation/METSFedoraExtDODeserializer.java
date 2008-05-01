@@ -292,6 +292,10 @@ public class METSFedoraExtDODeserializer
         // datastream, if one does not already exist.
         createRelsInt();
 
+        DOTranslationUtility.normalizeDatastreams(m_obj,
+                                                  m_transContext,
+                                                  m_characterEncoding);
+
         if (m_format.equals(METS_EXT1_0)) {
             // DISSEMINATORS... put disseminators in the instantiated digital
             // object
@@ -301,6 +305,7 @@ public class METSFedoraExtDODeserializer
                 m_obj.disseminators(diss.dissID).add(diss);
             }
         }
+
     }
 
     //---
@@ -347,26 +352,21 @@ public class METSFedoraExtDODeserializer
                 m_obj.setPid(grab(a, METS.uri, "OBJID"));
                 m_obj.setLabel(grab(a, METS.uri, "LABEL"));
                 if (m_format.equals(METS_EXT1_0)) {
-                    m_obj.setContentModelId(grab(a, METS.uri, "PROFILE"));
+                    /*
+                     * FIXME: Since content model properties are dropped, they
+                     * are lossy. Should we bs doing something better?
+                     */
+                    //m_obj.setContentModelId(grab(a, METS.uri, "PROFILE"));
                 }
-                String objType = grab(a, METS.uri, "TYPE");
-                if (objType == null || objType.equals("")) {
-                    objType = "FedoraObject";
-                }
-                if (objType.indexOf("FedoraBDefObject") != -1) {
-                    m_obj.addFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
-                }
-                if (objType.equalsIgnoreCase("FedoraBMechObject")) {
-                    m_obj
-                            .addFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
-                }
-                if (objType.equalsIgnoreCase("FedoraCModelObject")) {
-                    m_obj
-                            .addFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT);
-                }
-                if (objType.equalsIgnoreCase("FedoraObject")) {
-                    m_obj.addFedoraObjectType(DigitalObject.FEDORA_OBJECT);
-                }
+
+                /*
+                 * FIXME: Ignoring types for now
+                 */
+                //String objType = grab(a,
+                // METS.uri, "TYPE"); if (objType == null || objType.equals("")) {
+                // objType = "FedoraObject"; } int objectType =
+                // parseObjectType(objType); if (objectType > 0) {
+                // m_obj.addFedoraObjectType(objectType); }
             } else if (localName.equals("metsHdr")) {
                 m_obj.setCreateDate(DateUtility
                         .convertStringToDate(grab(a, METS.uri, "CREATEDATE")));
@@ -762,6 +762,22 @@ public class METSFedoraExtDODeserializer
     // Instance helpers
     //---
 
+    /* No longer relevant since there is no fType. OK to remove completely? */
+    //int parseObjectType(String objType) {
+    //    if (objType.indexOf(MODEL.SERVICE_DEFINITION_OBJECT.localName) != -1) {
+    //        return DigitalObject.FEDORA_SERVICE_DEFINITION_OBJECT;
+    //    }
+    //    if (objType.equalsIgnoreCase(MODEL.SERVICE_DEPLOYMENT_OBJECT.localName)) {
+    //        return DigitalObject.FEDORA_SERVICE_DEPLOYMENT_OBJECT;
+    //    }
+    //    if (objType.equalsIgnoreCase(MODEL.CMODEL_OBJECT.localName)) {
+    //        return DigitalObject.FEDORA_CONTENT_MODEL_OBJECT;
+    //    }
+    //    if (objType.equalsIgnoreCase(MODEL.DATA_OBJECT.localName)) {
+    //        return DigitalObject.FEDORA_OBJECT;
+    //    }
+    //    return -1;
+    //}
     private void startDisseminators(String localName, Attributes a)
             throws SAXException {
         if (localName.equals("structMap")) {
@@ -856,12 +872,9 @@ public class METSFedoraExtDODeserializer
             dissem.dissLabel = grab(a, METS.uri, "LABEL");
         } else if (localName.equals("interfaceMD")) {
             Disseminator dissem = (Disseminator) m_dissems.get(m_structId);
-            // already have the id from containing element, just need label
-            //dissem.bDefLabel=grab(a,METS.uri,"LABEL");
         } else if (localName.equals("serviceBindMD")) {
             Disseminator dissem = (Disseminator) m_dissems.get(m_structId);
-            //dissem.bMechLabel=grab(a,METS.uri,"LABEL");
-            dissem.bMechID = grab(a, m_xlink.uri, "href");
+            dissem.sDepID = grab(a, m_xlink.uri, "href");
         }
     }
 
@@ -975,20 +988,7 @@ public class METSFedoraExtDODeserializer
         // now set the xml content stream itself...
         try {
             String xmlString = m_dsXMLBuffer.toString();
-
-            // Relative Repository URL processing... 
-            // For selected inline XML datastreams look for relative repository URLs
-            // and make them absolute.
-            if (m_obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)
-                    && (m_dsId.equals("SERVICE-PROFILE") || m_dsId
-                            .equals("WSDL"))) {
-                ds.xmlContent =
-                        DOTranslationUtility.normalizeInlineXML(xmlString,
-                                                                m_transContext)
-                                .getBytes(m_characterEncoding);
-            } else {
-                ds.xmlContent = xmlString.getBytes(m_characterEncoding);
-            }
+            ds.xmlContent = xmlString.getBytes(m_characterEncoding);
             //LOOK! this sets bytes, not characters.  Do we want to set this?
             ds.DSSize = ds.xmlContent.length;
         } catch (Exception uee) {
@@ -1032,10 +1032,7 @@ public class METSFedoraExtDODeserializer
             // did the datastreams.
             Iterator<String> dsIdIter = m_obj.datastreamIdIterator();
             while (dsIdIter.hasNext()) {
-                List<Datastream> datastreams = m_obj.datastreams(dsIdIter.next());
-                // The list is a set of versions of the same datastream...
-                for (int i = 0; i < datastreams.size(); i++) {
-                    Datastream ds = datastreams.get(i);
+                for (Datastream ds : m_obj.datastreams(dsIdIter.next())) {
                     // ADMID processing...
                     // get list of ADMIDs that go with a datastream version
                     List<String> admIdList = m_dsADMIDs.get(ds.DSVersionID);
@@ -1048,8 +1045,10 @@ public class METSFedoraExtDODeserializer
                             // vs. regular admin metadata. Drop audits from
                             // the list. We know we have an audit if the ADMID
                             // is not a regular datatream in the object.
-                            List<Datastream> matchedDatastreams = m_obj.datastreams(admId);
-                            if (matchedDatastreams.size() <= 0) {
+                            Iterator<Datastream> matchedDatastreams =
+                                    m_obj.datastreams(admId).iterator();
+                            if (matchedDatastreams.hasNext()) {
+
                                 // Keep track of audit metadata correlated with the 
                                 // datastream version it's about (for later use).
                                 m_AuditIdToComponentId.put(admId,
@@ -1106,8 +1105,9 @@ public class METSFedoraExtDODeserializer
     private void createRelsInt() {
 
         // create a new RELS-INT datastream only if one does not already exist.
-        List<Datastream> metsrels = m_obj.datastreams("RELS-INT");
-        if (metsrels.size() <= 0) {
+        Iterator<Datastream> metsrels =
+                m_obj.datastreams("RELS-INT").iterator();
+        if (metsrels.hasNext()) {
             m_relsBuffer = new StringBuffer();
             appendRDFStart(m_relsBuffer);
             Iterator<String> dsIds = m_obj.datastreamIdIterator();
@@ -1117,9 +1117,8 @@ public class METSFedoraExtDODeserializer
                 HashSet<String> uniqueDMDIDs = new HashSet<String>();
                 HashSet<String> uniqueADMIDs = new HashSet<String>();
                 // get list of datastream *versions*
-                List<Datastream> dsVersionList = m_obj.datastreams(dsIds.next());
-                for (int i = 0; i < dsVersionList.size(); i++) {
-                    Datastream dsVersion = (Datastream) dsVersionList.get(i);
+                for (Datastream dsVersion : m_obj.datastreams((String) dsIds
+                        .next())) {
                     // DMDID processing...
                     List<String> dmdIdList =
                             m_dsDMDIDs.get(dsVersion.DSVersionID);
@@ -1210,7 +1209,7 @@ public class METSFedoraExtDODeserializer
             LOG.error("Encoding error when creating RELS-INT datastream", uee);
         }
         // FINALLY! add the RDF and an inline xml datastream in the digital object
-        m_obj.datastreams(ds.DatastreamID).add(ds);
+        m_obj.addDatastreamVersion(ds, true);
     }
 
     private StringBuffer appendRDFStart(StringBuffer buf) {

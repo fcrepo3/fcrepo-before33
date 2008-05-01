@@ -1,13 +1,6 @@
 
 package fedora.server.storage.translation;
 
-import javax.xml.transform.TransformerException;
-
-import org.w3c.dom.Document;
-
-import fedora.server.storage.types.DigitalObject;
-import fedora.server.storage.types.Disseminator;
-
 import static fedora.common.Constants.FOXML;
 
 /**
@@ -31,19 +24,22 @@ public class TestFOXML1_0DOSerializer
     // Tests
     //---
 
-    @Override
-    public void testTwoDisseminators() throws TransformerException {
-        DigitalObject obj = createTestObject(DigitalObject.FEDORA_OBJECT);
-        final String dissID1 = "DISS1";
-        Disseminator diss1 = createDisseminator(dissID1, 1);
-        final String dissID2 = "DISS2";
-        Disseminator diss2 = createDisseminator(dissID2, 1);
-        obj.disseminators(dissID1).add(diss1);
-        obj.disseminators(dissID2).add(diss2);
+    /*
+     * FIXME: No content model for pre 3.0 objects, so let's not do this for now
+     * unless we decide we are really supporting pre-3.0 semantics..
+     */
+    //public void testTwoDisseminators() throws TransformerException {
+    //    DigitalObject obj = createTestObject(DigitalObject.FEDORA_OBJECT);
+    //    final String dissID1 = "DISS1";
+    //    Disseminator diss1 = createDisseminator(dissID1, 1);
+    //    final String dissID2 = "DISS2";
+    //    Disseminator diss2 = createDisseminator(dissID2, 1);
+    //    obj.disseminators(dissID1).add(diss1);
+    //    obj.disseminators(dissID2).add(diss2);
 
-        Document xml = doSerializeOrFail(obj);
-        assertXpathEvaluatesTo("2", "count(" + DISSEMINATOR_PATH + ")", xml);
-    }
+    //    Document xml = doSerializeOrFail(obj);
+    //    assertXpathEvaluatesTo("2", "count(" + DISSEMINATOR_PATH + ")", xml);
+    //}
 
     // Supports legacy test runners
     public static junit.framework.Test suite() {

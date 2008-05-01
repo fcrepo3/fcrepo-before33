@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -25,6 +24,8 @@ import fedora.server.storage.types.Disseminator;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.utilities.StringUtility;
+
+import static fedora.common.Models.SERVICE_DEPLOYMENT_3_0;
 
 /**
  * Serializes objects in the constructor-provider version of the METS Fedora
@@ -133,17 +134,25 @@ public class METSFedoraExtDOSerializer
             buf.append(" " + METS_EXT.EXT_VERSION.localName + "=\"1.1\"");
         }
         buf.append(" " + METS.OBJID.localName + "=\"" + obj.getPid() + "\"");
-        buf.append(" " + METS.TYPE.localName + "=\"" + DOTranslationUtility.getTypeAttribute(obj, m_format)
-                + "\"");
 
-        if (m_format.equals(METS_EXT1_0)) {
-            String cid = obj.getContentModelId();
-            if (cid != null && cid.length() > 0) {
-                buf.append(" " + METS.PROFILE.localName + "=\""
-                        + StreamUtility.enc(cid) + "\"");
-            }
+        if (m_format.equals(METS_EXT1_0)
+                && DOTranslationUtility.getTypeAttribute(obj) != null) {
+            buf.append(" " + METS.TYPE.localName + "=\""
+                    + DOTranslationUtility.getTypeAttribute(obj).localName
+                    + "\"");
         }
 
+        /*
+         * FIXME: Not doing content model properties any more. OK to just skip
+         * entirely?
+         */
+        //if (m_format.equals(METS_EXT1_0)) {
+        //    String cid = obj.getContentModelId();
+        //    if (cid != null && cid.length() > 0) {
+        //        buf.append(" " + METS.PROFILE.localName + "=\""
+        //                + StreamUtility.enc(cid) + "\"");
+        //    }
+        //}
         buf.append("\n");
         String label = obj.getLabel();
         if (label != null && label.length() > 0) {
@@ -202,7 +211,7 @@ public class METSFedoraExtDOSerializer
         Iterator<String> iter = obj.datastreamIdIterator();
         while (iter.hasNext()) {
             String id = iter.next();
-            Datastream firstDS = (Datastream) obj.datastreams(id).get(0);
+            Datastream firstDS = obj.datastreams(id).iterator().next();
             if (firstDS.DSControlGrp.equals("X")
                     && ((DatastreamXMLMetadata) firstDS).DSMDClass == DatastreamXMLMetadata.DESCRIPTIVE) {
                 appendMDSec(obj,
@@ -218,22 +227,21 @@ public class METSFedoraExtDOSerializer
     private void appendMDSec(DigitalObject obj,
                              String outerName,
                              String innerName,
-                             List<Datastream> XMLMetadata,
+                             Iterable<Datastream> XMLMetadata,
                              StringBuffer buf,
                              String encoding) throws ObjectIntegrityException,
             UnsupportedEncodingException, StreamIOException {
         DatastreamXMLMetadata first =
                 (DatastreamXMLMetadata) DOTranslationUtility
                         .setDatastreamDefaults((DatastreamXMLMetadata) XMLMetadata
-                                .get(0));
+                                .iterator().next());
         buf.append("  <" + METS.prefix + ":" + outerName + " ID=\""
                 + first.DatastreamID + "\" STATUS=\"" + first.DSState
                 + "\" VERSIONABLE=\"" + first.DSVersionable + "\">\n");
-        for (int i = 0; i < XMLMetadata.size(); i++) {
+        for (Datastream d : XMLMetadata) {
             DatastreamXMLMetadata ds =
                     (DatastreamXMLMetadata) DOTranslationUtility
-                            .setDatastreamDefaults((DatastreamXMLMetadata) XMLMetadata
-                                    .get(i));
+                            .setDatastreamDefaults((DatastreamXMLMetadata) d);
             String dateAttr = "";
             if (ds.DSCreateDT != null) {
                 dateAttr =
@@ -293,7 +301,7 @@ public class METSFedoraExtDOSerializer
             // If WSDL or SERVICE-PROFILE datastream (in BMech) 
             // make sure that any embedded URLs are encoded 
             // appropriately for either EXPORT or STORE.
-            if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)
+            if (obj.hasRelationship(MODEL.HAS_MODEL, SERVICE_DEPLOYMENT_3_0)
                     && ds.DatastreamID.equals("SERVICE-PROFILE")
                     || ds.DatastreamID.equals("WSDL")) {
                 buf.append(DOTranslationUtility
@@ -316,22 +324,19 @@ public class METSFedoraExtDOSerializer
         if (obj.getAuditRecords().size() > 0) {
             buf.append("  <" + METS.prefix + ":amdSec ID=\"AUDIT\""
                     + " STATUS=\"A\" VERSIONABLE=\"false\">\n");
-                buf
-                        .append("    <" + METS.prefix + ":digiprovMD ID=\""
-                                + "AUDIT.0\" CREATED=\""
-                                + DateUtility.convertDateToString(obj.getCreateDate())
-                                + "\">\n");
-                buf
-                        .append("      <"
-                                + METS.prefix
-                                + ":mdWrap MIMETYPE=\"text/xml\" "
-                                + "MDTYPE=\"OTHER\" OTHERMDTYPE=\"FEDORA-AUDIT\""
-                                + " LABEL=\"Fedora Object Audit Trail\">\n");
-                buf.append("        <" + METS.prefix + ":xmlData>\n");
-                buf.append(DOTranslationUtility.getAuditTrail(obj));
-                buf.append("        </" + METS.prefix + ":xmlData>\n");
-                buf.append("      </" + METS.prefix + ":mdWrap>\n");
-                buf.append("    </" + METS.prefix + ":digiprovMD>\n");
+            buf.append("    <" + METS.prefix + ":digiprovMD ID=\""
+                    + "AUDIT.0\" CREATED=\""
+                    + DateUtility.convertDateToString(obj.getCreateDate())
+                    + "\">\n");
+            buf.append("      <" + METS.prefix
+                    + ":mdWrap MIMETYPE=\"text/xml\" "
+                    + "MDTYPE=\"OTHER\" OTHERMDTYPE=\"FEDORA-AUDIT\""
+                    + " LABEL=\"Fedora Object Audit Trail\">\n");
+            buf.append("        <" + METS.prefix + ":xmlData>\n");
+            buf.append(DOTranslationUtility.getAuditTrail(obj));
+            buf.append("        </" + METS.prefix + ":xmlData>\n");
+            buf.append("      </" + METS.prefix + ":mdWrap>\n");
+            buf.append("    </" + METS.prefix + ":digiprovMD>\n");
             buf.append("  </" + METS.prefix + ":amdSec>\n");
         }
     }
@@ -344,7 +349,8 @@ public class METSFedoraExtDOSerializer
         Iterator<String> iter = obj.datastreamIdIterator();
         while (iter.hasNext()) {
             String id = iter.next();
-            Datastream firstDS = (Datastream) obj.datastreams(id).get(0);
+            Datastream firstDS =
+                    (Datastream) obj.datastreams(id).iterator().next();
             // First, work with the first version to get the mdClass set to
             // a proper value required in the METS XML Schema.
             if (firstDS.DSControlGrp.equals("X")
@@ -380,7 +386,7 @@ public class METSFedoraExtDOSerializer
         while (iter.hasNext()) {
             Datastream ds =
                     DOTranslationUtility.setDatastreamDefaults((Datastream) obj
-                            .datastreams(iter.next()).get(0));
+                            .datastreams(iter.next()).iterator().next());
             if (!ds.DSControlGrp.equals("X")) {
                 if (!didFileSec) {
                     didFileSec = true;
@@ -500,9 +506,8 @@ public class METSFedoraExtDOSerializer
             Iterator<Disseminator> dissIter = obj.disseminators(did).iterator();
             while (dissIter.hasNext()) {
                 Disseminator diss =
-                        DOTranslationUtility
-                                .setDisseminatorDefaults(dissIter
-                                        .next());
+                        DOTranslationUtility.setDisseminatorDefaults(dissIter
+                                .next());
                 String labelAttr = "";
                 if (diss.dsBindMap.dsBindMapLabel != null
                         && !diss.dsBindMap.dsBindMapLabel.equals("")) {
@@ -516,7 +521,7 @@ public class METSFedoraExtDOSerializer
                         + diss.dsBindMapID
                         + "\" TYPE=\"fedora:dsBindingMap\">\n");
                 buf.append("    <" + METS.prefix + ":div TYPE=\""
-                        + diss.bMechID + "\"" + labelAttr + ">\n");
+                        + diss.sDepID + "\"" + labelAttr + ">\n");
                 DSBinding[] bindings = diss.dsBindMap.dsBindings;
                 for (int i = 0; i < bindings.length; i++) {
                     if (bindings[i].bindKeyName == null
@@ -557,9 +562,8 @@ public class METSFedoraExtDOSerializer
         while (dissIdIter.hasNext()) {
             String did = dissIdIter.next();
             Disseminator diss =
-                    DOTranslationUtility
-                            .setDisseminatorDefaults(obj
-                                    .disseminators(did).get(0));
+                    DOTranslationUtility.setDisseminatorDefaults(obj
+                            .disseminators(did).get(0));
             buf.append("  <" + METS.prefix + ":behaviorSec ID=\"" + did
                     + "\" STATUS=\"" + diss.dissState + "\">\n");
             for (int i = 0; i < obj.disseminators(did).size(); i++) {
@@ -584,7 +588,7 @@ public class METSFedoraExtDOSerializer
                         + diss.bDefID + "\"/>\n");
                 buf.append("      <" + METS.prefix + ":serviceBindMD"
                         + " LOCTYPE=\"URN\" " + XLINK.prefix + ":href=\""
-                        + diss.bMechID + "\"/>\n");
+                        + diss.sDepID + "\"/>\n");
 
                 buf.append("    </" + METS.prefix + ":serviceBinding>\n");
             }

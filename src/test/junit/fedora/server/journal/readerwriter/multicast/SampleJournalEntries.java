@@ -203,8 +203,6 @@ public class SampleJournalEntries {
                     + "  xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\"\n"
                     + "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd\">\n"
                     + "  <foxml:objectProperties>\n"
-                    + "    <foxml:property\n"
-                    + "      NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"FedoraObject\"/>\n"
                     + "    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"Active\"/>\n"
                     + "    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"MetadataProvider\"/>\n"
                     + "    <foxml:property\n"

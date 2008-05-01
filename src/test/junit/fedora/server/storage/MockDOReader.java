@@ -3,10 +3,15 @@ package fedora.server.storage;
 
 import java.io.InputStream;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+
+import org.jrdf.graph.ObjectNode;
+import org.jrdf.graph.PredicateNode;
 
 import fedora.server.errors.ServerException;
 import fedora.server.storage.types.AuditRecord;
@@ -38,9 +43,17 @@ public class MockDOReader
     // Mocked methods
     // ----------------------------------------------------------------------
 
+    public DigitalObject getObject() {
+        return theObject;
+    }
+    
     public Datastream GetDatastream(String datastreamID, Date versDateTime)
             throws ServerException {
-        List<Datastream> datastreams = theObject.datastreams(datastreamID);
+        List<Datastream> datastreams = new ArrayList<Datastream>();
+        for (Datastream d : theObject.datastreams(datastreamID)) {
+            datastreams.add(d);
+        }
+
         if (datastreams.isEmpty()) {
             // If no datastreams, return null.
             return null;
@@ -82,16 +95,8 @@ public class MockDOReader
         return theObject.getState();
     }
 
-    public String getContentModelId() throws ServerException {
-        return theObject.getContentModelId();
-    }
-
     public Date getCreateDate() throws ServerException {
         return theObject.getCreateDate();
-    }
-
-    public String getFedoraObjectTypes() throws ServerException {
-        return theObject.getFedoraObjectTypes();
     }
 
     public Date getLastModDate() throws ServerException {
@@ -100,6 +105,14 @@ public class MockDOReader
 
     public String getOwnerId() throws ServerException {
         return theObject.getOwnerId();
+    }
+
+    public boolean hasRelationship(PredicateNode p, ObjectNode o) {
+        return theObject.hasRelationship(p, o);
+    }
+
+    public Set<RelationshipTuple> getRelationships(PredicateNode p, ObjectNode o) {
+        return theObject.getRelationships(p, o);
     }
 
     // ----------------------------------------------------------------------

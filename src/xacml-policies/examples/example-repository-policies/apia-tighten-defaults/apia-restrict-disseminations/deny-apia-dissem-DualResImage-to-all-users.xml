@@ -28,13 +28,13 @@ http://www.fedora.info/definitions/1/0/api/cs-xacml-schema-policy-01.xsd">
 		<!-- AND-ed together by the XACML enforcement engine. -->
 		<!-- *********************************************************************************************************************************************************-->
 		<!-- In this example, the ResourceMatch elements say that that this policy is applicable for resources (disseminations) where : -->
-		<!--         attribute named 'resource:bdef:pid" has a value of ' the 'demo:DualResImage'  -->
+		<!--         attribute named 'resource:sdef:pid" has a value of ' the 'demo:DualResImage'  -->
 		<!-- *********************************************************************************************************************************************************-->
 		<Resources>
 			<Resource>
 				<ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">demo:DualResImage</AttributeValue>
-					<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:bdef:pid" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">demo:DualResolution</AttributeValue>
+					<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:sdef:pid" DataType="http://www.w3.org/2001/XMLSchema#string"/>
 				</ResourceMatch>
 			</Resource>
 		</Resources>

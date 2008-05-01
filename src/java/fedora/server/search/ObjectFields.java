@@ -8,9 +8,7 @@ package fedora.server.search;
 import java.io.IOException;
 import java.io.InputStream;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -35,10 +33,6 @@ public class ObjectFields
 
     private String m_label;
 
-    private String m_fType;
-
-    private String m_cModel;
-
     private String m_state;
 
     private String m_ownerId;
@@ -49,10 +43,6 @@ public class ObjectFields
 
     private Date m_dcmDate;
 
-    private final ArrayList m_bDefs = new ArrayList();
-
-    private final ArrayList m_bMechs = new ArrayList();
-
     private StringBuffer m_currentContent;
 
     private final boolean[] m_want = new boolean[26];
@@ -60,10 +50,6 @@ public class ObjectFields
     public final static int PID = 0;
 
     public final static int LABEL = 1;
-
-    public final static int FTYPE = 2;
-
-    public final static int CMODEL = 3;
 
     public final static int STATE = 4;
 
@@ -105,10 +91,6 @@ public class ObjectFields
 
     public final static int DCMDATE = 23;
 
-    public final static int BDEF = 24;
-
-    public final static int BMECH = 25;
-
     public ObjectFields() {
     }
 
@@ -119,10 +101,6 @@ public class ObjectFields
                 m_want[PID] = true;
             } else if (s.equalsIgnoreCase("label")) {
                 m_want[LABEL] = true;
-            } else if (s.equalsIgnoreCase("fType")) {
-                m_want[FTYPE] = true;
-            } else if (s.equalsIgnoreCase("cModel")) {
-                m_want[CMODEL] = true;
             } else if (s.equalsIgnoreCase("state")) {
                 m_want[STATE] = true;
             } else if (s.equalsIgnoreCase("ownerId")) {
@@ -163,10 +141,6 @@ public class ObjectFields
                 m_want[RIGHTS] = true;
             } else if (s.equalsIgnoreCase("dcmDate")) {
                 m_want[DCMDATE] = true;
-            } else if (s.equalsIgnoreCase("bDef")) {
-                m_want[BDEF] = true;
-            } else if (s.equalsIgnoreCase("bMech")) {
-                m_want[BMECH] = true;
             } else {
                 throw new UnrecognizedFieldException("Unrecognized field: '"
                         + s + "'");
@@ -219,10 +193,6 @@ public class ObjectFields
             setPid(m_currentContent.toString());
         } else if (m_want[LABEL] && localName.equals("label")) {
             setLabel(m_currentContent.toString());
-        } else if (m_want[FTYPE] && localName.equals("fType")) {
-            setFType(m_currentContent.toString());
-        } else if (m_want[CMODEL] && localName.equals("cModel")) {
-            setCModel(m_currentContent.toString());
         } else if (m_want[STATE] && localName.equals("state")) {
             setState(m_currentContent.toString());
         } else if (m_want[OWNERID] && localName.equals("ownerId")) {
@@ -266,10 +236,6 @@ public class ObjectFields
             coverages().add(m_currentContent.toString());
         } else if (m_want[RIGHTS] && localName.equals("rights")) {
             rights().add(m_currentContent.toString());
-        } else if (m_want[BDEF] && localName.equals("bDef")) {
-            bDefs().add(m_currentContent.toString());
-        } else if (m_want[BMECH] && localName.equals("bMech")) {
-            bMechs().add(m_currentContent.toString());
         }
     }
 
@@ -287,22 +253,6 @@ public class ObjectFields
 
     public String getLabel() {
         return m_label;
-    }
-
-    public void setFType(String fType) {
-        m_fType = fType;
-    }
-
-    public String getFType() {
-        return m_fType;
-    }
-
-    public void setCModel(String cModel) {
-        m_cModel = cModel;
-    }
-
-    public String getCModel() {
-        return m_cModel;
     }
 
     public void setState(String state) {
@@ -344,13 +294,4 @@ public class ObjectFields
     public Date getDCMDate() {
         return m_dcmDate;
     }
-
-    public List bDefs() {
-        return m_bDefs;
-    }
-
-    public List bMechs() {
-        return m_bMechs;
-    }
-
 }

@@ -1,30 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <METS:mets EXT_VERSION="1.1" LABEL="Pavillion III, IVA Image Collection - University of Virginia" OBJID="demo:36"
-  PROFILE="UVA_MRSID_IMAGE" TYPE="FedoraObject"
-  xsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd"
-  xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <METS:metsHdr CREATEDATE="2007-09-25T19:11:58.255Z" LASTMODDATE="2007-09-25T19:11:58.255Z" RECORDSTATUS="A">
+  xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd">
+  <METS:metsHdr CREATEDATE="2008-04-23T21:02:07.502Z" LASTMODDATE="2008-04-23T21:02:07.502Z" RECORDSTATUS="A">
     <METS:agent ROLE="IPOWNER">
       <METS:name>fedoraAdmin</METS:name>
     </METS:agent>
   </METS:metsHdr>
-  <METS:amdSec ID="RELS-EXT" STATUS="A" VERSIONABLE="true">
-    <METS:techMD CREATED="2007-09-25T19:11:58.255Z" ID="RELS-EXT1.0">
-      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Relationships to other objects" MDTYPE="OTHER"
-        MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
-        <METS:xmlData>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
-            <rdf:Description rdf:about="info:fedora/demo:36">
-              <fedora-model:hasContentModel rdf:resource="info:fedora/demo:CMSID"/>
-            </rdf:Description>
-          </rdf:RDF>
-        </METS:xmlData>
-      </METS:mdWrap>
-    </METS:techMD>
-  </METS:amdSec>
   <METS:amdSec ID="DC" STATUS="A" VERSIONABLE="true">
-    <METS:techMD CREATED="2007-09-25T19:11:58.255Z" ID="DC1.0">
+    <METS:techMD CREATED="2008-04-23T21:02:07.521Z" ID="DC1.0">
       <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="DC record for Pavillion III image object"
         MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
         <METS:xmlData>
@@ -47,11 +31,25 @@
       </METS:mdWrap>
     </METS:techMD>
   </METS:amdSec>
+  <METS:amdSec ID="RELS-EXT" STATUS="A" VERSIONABLE="true">
+    <METS:techMD CREATED="2008-04-23T21:02:07.522Z" ID="RELS-EXT1.0">
+      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Relationships to other objects" MDTYPE="OTHER"
+        MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+        <METS:xmlData>
+          <rdf:RDF xmlns:fedora-model="info:fedora/fedora-system:def/model#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+            <rdf:Description rdf:about="info:fedora/demo:36">
+              <fedora-model:hasModel rdf:resource="info:fedora/demo:CMSID"/>
+              <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"/>
+            </rdf:Description>
+          </rdf:RDF>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
   <METS:fileSec>
     <METS:fileGrp ID="DATASTREAMS">
       <METS:fileGrp ID="MRSID" STATUS="A" VERSIONABLE="true">
-        <METS:file CHECKSUM="none" CHECKSUMTYPE="DISABLED" CREATED="2007-09-25T19:11:58.255Z" ID="MRSID1.0"
-          MIMETYPE="image/x-mrsid-image" OWNERID="E" SIZE="0">
+        <METS:file CREATED="2008-04-23T21:02:07.522Z" ID="MRSID1.0" MIMETYPE="image/x-mrsid-image" OWNERID="E" SIZE="0">
           <METS:FLocat LOCTYPE="URL" xlink:href="http://iris.lib.virginia.edu/mrsid/mrsid_images/iva/archerp01.sid" xlink:title="Pavilion III, University of Virginia"/>
         </METS:file>
       </METS:fileGrp>

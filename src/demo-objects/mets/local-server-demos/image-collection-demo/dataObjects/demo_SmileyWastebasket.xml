@@ -1,32 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<METS:mets EXT_VERSION="1.1" LABEL="Smiley Wastebasket" OBJID="demo:SmileyWastebasket" TYPE="FedoraObject"
-  xsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd"
-  xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <METS:metsHdr CREATEDATE="2007-09-26T19:22:00.656Z" LASTMODDATE="2007-09-26T19:22:00.656Z" RECORDSTATUS="A">
+<METS:mets EXT_VERSION="1.1" LABEL="Smiley Wastebasket" OBJID="demo:SmileyWastebasket"
+  xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd">
+  <METS:metsHdr CREATEDATE="2008-04-23T21:02:00.030Z" LASTMODDATE="2008-04-23T21:02:00.030Z" RECORDSTATUS="A">
     <METS:agent ROLE="IPOWNER">
       <METS:name>fedoraAdmin</METS:name>
     </METS:agent>
   </METS:metsHdr>
-  <METS:amdSec ID="RELS-EXT" STATUS="A" VERSIONABLE="true">
-    <METS:techMD CREATED="2007-09-26T19:22:00.656Z" ID="RELS-EXT.0">
-      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Relationships to other objects" MDTYPE="OTHER"
-        MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
-        <METS:xmlData>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
-          		xmlns:fedora-model="info:fedora/fedora-system:def/model#"
-          		xmlns:rel="info:fedora/fedora-system:def/relations-external#">
-            <rdf:Description rdf:about="info:fedora/demo:SmileyWastebasket">
-              <rel:isMemberOf rdf:resource="info:fedora/demo:SmileyStuff"/>
-              <fedora-model:hasContentModel rdf:resource="info:fedora/demo:CmodelForBMech_DualResImageImpl"/>
-            </rdf:Description>
-          </rdf:RDF>
-        </METS:xmlData>
-      </METS:mdWrap>
-    </METS:techMD>
-  </METS:amdSec>
   <METS:amdSec ID="DC" STATUS="A" VERSIONABLE="true">
-    <METS:techMD CREATED="2007-09-26T19:22:00.656Z" ID="DC.1">
+    <METS:techMD CREATED="2008-04-23T21:02:00.043Z" ID="DC.1">
       <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Dublin Core Metadata" MDTYPE="OTHER"
         MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
         <METS:xmlData>
@@ -39,20 +21,35 @@
       </METS:mdWrap>
     </METS:techMD>
   </METS:amdSec>
+  <METS:amdSec ID="RELS-EXT" STATUS="A" VERSIONABLE="true">
+    <METS:techMD CREATED="2008-04-23T21:02:00.043Z" ID="RELS-EXT.0">
+      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Relationships to other objects" MDTYPE="OTHER"
+        MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+        <METS:xmlData>
+          <rdf:RDF xmlns:fedora-model="info:fedora/fedora-system:def/model#"
+            xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+            <rdf:Description rdf:about="info:fedora/demo:SmileyWastebasket">
+              <rel:isMemberOf rdf:resource="info:fedora/demo:SmileyStuff"/>
+              <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"/>
+              <fedora-model:hasModel rdf:resource="info:fedora/demo:DualResImage"/>
+            </rdf:Description>
+          </rdf:RDF>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
   <METS:fileSec>
     <METS:fileGrp ID="DATASTREAMS">
-      <METS:fileGrp ID="FULL_SIZE" STATUS="A" VERSIONABLE="true">
-        <METS:file CHECKSUM="none" CHECKSUMTYPE="DISABLED" CREATED="2007-09-26T19:22:00.656Z" ID="FullSize.jpg.0"
-          MIMETYPE="image/jpeg" OWNERID="E" SIZE="0">
+      <METS:fileGrp ID="MEDIUM_SIZE" STATUS="A" VERSIONABLE="true">
+        <METS:file CREATED="2008-04-23T21:02:00.043Z" ID="MediumSize.jpg.0" MIMETYPE="image/jpeg" OWNERID="E" SIZE="0">
           <METS:FLocat LOCTYPE="URL"
-            xlink:href="http://localhost:8080/fedora-demo/image-collection-demo/SmileyWastebasket-FullSize.jpg" xlink:title="Full-size image"/>
+            xlink:href="http://local.fedora.server/fedora-demo/image-collection-demo/SmileyWastebasket-MediumSize.jpg" xlink:title="Medium-size image"/>
         </METS:file>
       </METS:fileGrp>
-      <METS:fileGrp ID="MEDIUM_SIZE" STATUS="A" VERSIONABLE="true">
-        <METS:file CHECKSUM="none" CHECKSUMTYPE="DISABLED" CREATED="2007-09-26T19:22:00.656Z" ID="MediumSize.jpg.0"
-          MIMETYPE="image/jpeg" OWNERID="E" SIZE="0">
+      <METS:fileGrp ID="FULL_SIZE" STATUS="A" VERSIONABLE="true">
+        <METS:file CREATED="2008-04-23T21:02:00.044Z" ID="FullSize.jpg.0" MIMETYPE="image/jpeg" OWNERID="E" SIZE="0">
           <METS:FLocat LOCTYPE="URL"
-            xlink:href="http://localhost:8080/fedora-demo/image-collection-demo/SmileyWastebasket-MediumSize.jpg" xlink:title="Medium-size image"/>
+            xlink:href="http://local.fedora.server/fedora-demo/image-collection-demo/SmileyWastebasket-FullSize.jpg" xlink:title="Full-size image"/>
         </METS:file>
       </METS:fileGrp>
     </METS:fileGrp>

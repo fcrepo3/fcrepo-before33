@@ -5,6 +5,11 @@
 
 package fedora.server.storage.translation;
 
+import static fedora.common.Models.CONTENT_MODEL_3_0;
+import static fedora.common.Models.FEDORA_OBJECT_3_0;
+import static fedora.common.Models.SERVICE_DEFINITION_3_0;
+import static fedora.common.Models.SERVICE_DEPLOYMENT_3_0;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +19,7 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -28,7 +34,8 @@ import javax.xml.stream.events.XMLEvent;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
-import fedora.common.xml.format.XMLFormat;
+import fedora.common.Models;
+import fedora.common.rdf.RDFName;
 import fedora.common.xml.namespace.QName;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
@@ -298,9 +305,9 @@ public abstract class DOTranslationUtility
      * "http://local.fedora.server/fedora/get/demo:1/DS1" is converted to
      * "http://myrepo.com:8080/fedora/get/demo:1/DS1" "fedora/get/demo:1/DS1" is
      * converted to "http://myrepo.com:8080/fedora/get/demo:1/DS1"
-     * "http://local.fedora.server/fedora/get/demo:1/bdef:1/getFoo?in="http://local.fedora.server/fedora/get/demo:2/DC"
+     * "http://local.fedora.server/fedora/get/demo:1/sdef:1/getFoo?in="http://local.fedora.server/fedora/get/demo:2/DC"
      * is converted to
-     * "http://myrepo.com:8080/fedora/get/demo:1/bdef:1/getFoo?in="http://myrepo.com:8080/fedora/get/demo:2/DC"
+     * "http://myrepo.com:8080/fedora/get/demo:1/sdef:1/getFoo?in="http://myrepo.com:8080/fedora/get/demo:2/DC"
      * 
      * @param xmlContent
      * @return String with all relative repository URLs and Fedora local URLs
@@ -328,10 +335,10 @@ public abstract class DOTranslationUtility
      * to an absolute URL or a relative URL to the repository. Examples:
      * "http://myrepo.com:8080/fedora/get/demo:1/DS1" is converted to
      * "http://local.fedora.server/fedora/get/demo:1/DS1"
-     * "https://myrepo.com:8443/fedora/get/demo:1/bdef:1/getFoo?in="http://myrepo.com:8080/fedora/get/demo:2/DC"
+     * "https://myrepo.com:8443/fedora/get/demo:1/sdef:1/getFoo?in="http://myrepo.com:8080/fedora/get/demo:2/DC"
      * is converted to
-     * "http://local.fedora.server/fedora/get/demo:1/bdef:1/getFoo?in="http://local.fedora.server/fedora/get/demo:2/DC"
-     * "http://myrepo.com:8080/saxon..." (internal service in bMech WSDL) is
+     * "http://local.fedora.server/fedora/get/demo:1/sdef:1/getFoo?in="http://local.fedora.server/fedora/get/demo:2/DC"
+     * "http://myrepo.com:8080/saxon..." (internal service in sDep WSDL) is
      * converted to "http://local.fedora.server/saxon..."
      * 
      * @param input
@@ -522,7 +529,7 @@ public abstract class DOTranslationUtility
     /**
      * Utility method to normalize a chunk of inline XML depending on the
      * translation context. This is mainly to deal with certain inline XML
-     * datastreams found in Behavior Mechanism objects that may contain a
+     * datastreams found in Service Deployment objects that may contain a
      * service URL that references the host:port of the local Fedora server.
      * This method will usually only ever be called to check WSDL and
      * SERVICE_PROFILE inline XML datastream, but is of general utility for
@@ -727,6 +734,46 @@ public abstract class DOTranslationUtility
         }
     }
 
+    /*
+     * Certain serviceDeployment datastreams require special processing to
+     * fix/complete URLs and do variable substitution (such as replacing
+     * 'local.fedora.server' with fedora's baseURL)
+     */
+    public static void normalizeDatastreams(DigitalObject obj,
+                                     int transContext,
+                                     String characterEncoding)
+            throws UnsupportedEncodingException {
+        if (obj.hasRelationship(MODEL.HAS_MODEL, Models.SERVICE_DEPLOYMENT_3_0)) {
+            Iterator<String> datastreams = obj.datastreamIdIterator();
+            while (datastreams.hasNext()) {
+                String dsid = datastreams.next();
+
+                if (dsid.equals("WSDL") || dsid.equals("SERVICE-PROFILE")) {
+                    for (Datastream d : obj.datastreams(dsid)) {
+                        if (!(d instanceof DatastreamXMLMetadata)) {
+                            LOG
+                                    .warn(obj.getPid()
+                                            + " : Refusing to normalize URLs in datastream "
+                                            + dsid
+                                            + " because it is not inline XML");
+                            continue;
+                        }
+
+                        DatastreamXMLMetadata xd = (DatastreamXMLMetadata) d;
+                        LOG.debug(obj.getPid() + " : normalising URLs in "
+                                + dsid);
+                        xd.xmlContent =
+                                DOTranslationUtility
+                                        .normalizeInlineXML(new String(xd.xmlContent,
+                                                                       "UTF-8"),
+                                                            transContext)
+                                        .getBytes(characterEncoding);
+                    }
+                }
+            }
+        }
+    }
+
     @Deprecated
     public static Disseminator setDisseminatorDefaults(Disseminator diss)
             throws ObjectIntegrityException {
@@ -788,57 +835,23 @@ public abstract class DOTranslationUtility
         }
     }
 
-    /**
-     * @param obj
-     * @param format
-     *        The Serializer format. Defaults to FOXML1_1 if null.
-     * @return
-     * @throws ObjectIntegrityException
-     *         if no type attribute is set
-     */
-    protected static String getTypeAttribute(DigitalObject obj, XMLFormat format)
+    public static RDFName getTypeAttribute(DigitalObject obj)
             throws ObjectIntegrityException {
-        if (format == null) {
-            format = FOXML1_1;
+        if (obj.hasRelationship(MODEL.HAS_MODEL, SERVICE_DEFINITION_3_0)) {
+            return MODEL.BDEF_OBJECT;
         }
-        String retVal = "";
-        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) {
-            if (format.equals(METS_EXT1_0) || format.equals(FOXML1_0)) {
-                return MODEL.BDEF_OBJECT.localName;
-            }
-            retVal =
-                    (retVal.length() == 0 ? "" : retVal + ";")
-                            + MODEL.BDEF_OBJECT.localName;
+        if (obj.hasRelationship(MODEL.HAS_MODEL, SERVICE_DEPLOYMENT_3_0)) {
+            return MODEL.BMECH_OBJECT;
         }
-        if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)) {
-            if (format.equals(METS_EXT1_0) || format.equals(FOXML1_0)) {
-                return MODEL.BMECH_OBJECT.localName;
-            }
-            retVal =
-                    (retVal.length() == 0 ? "" : retVal + ";")
-                            + MODEL.BMECH_OBJECT.localName;
+        if (obj.hasRelationship(MODEL.HAS_MODEL, CONTENT_MODEL_3_0)) {
+
+            // FOXML 1.0 doesn't support this type; down-convert
+            return MODEL.DATA_OBJECT;
         }
-        if (obj.isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) {
-            if (format.equals(METS_EXT1_0) || format.equals(FOXML1_0)) {
-                // METS_EXT & FOXML 1.0 doesn't support this type; down-convert
-                return MODEL.DATA_OBJECT.localName;
-            }
-            retVal =
-                    (retVal.length() == 0 ? "" : retVal + ";")
-                            + MODEL.CMODEL_OBJECT.localName;
+        if (obj.hasRelationship(MODEL.HAS_MODEL, FEDORA_OBJECT_3_0)) {
+            return MODEL.DATA_OBJECT;
         }
-        if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT)) {
-            if (format.equals(METS_EXT1_0) || format.equals(FOXML1_0)) {
-                return MODEL.DATA_OBJECT.localName;
-            }
-            retVal =
-                    (retVal.length() == 0 ? "" : retVal + ";")
-                            + MODEL.DATA_OBJECT.localName;
-        }
-        if (retVal.length() == 0) {
-            throw new ObjectIntegrityException("Object must have a FedoraObjectType.");
-        }
-        return retVal;
+        return null;
     }
 
     /**
@@ -907,11 +920,12 @@ public abstract class DOTranslationUtility
         appendCloseElement(buf, indent0, AUDIT.AUDIT_TRAIL);
         return buf.toString();
     }
-    
-    protected static List<AuditRecord> getAuditRecords(XMLEventReader reader) throws XMLStreamException {
+
+    protected static List<AuditRecord> getAuditRecords(XMLEventReader reader)
+            throws XMLStreamException {
         List<AuditRecord> records = new ArrayList<AuditRecord>();
         String inElement = null;
-        
+
         while (reader.hasNext()) {
             XMLEvent event = reader.nextEvent();
             if (event.isStartElement()) {
@@ -921,8 +935,9 @@ public abstract class DOTranslationUtility
                     AuditRecord record = new AuditRecord();
                     java.util.Iterator<?> it = element.getAttributes();
                     while (it.hasNext()) {
-                        Attribute attr = (Attribute)it.next();
-                        if (attr.getName().getLocalPart().equals(AUDIT.ID.localName)) {
+                        Attribute attr = (Attribute) it.next();
+                        if (attr.getName().getLocalPart()
+                                .equals(AUDIT.ID.localName)) {
                             record.id = attr.getValue();
                         }
                     }
@@ -930,9 +945,11 @@ public abstract class DOTranslationUtility
                 } else if (inElement.equals(AUDIT.PROCESS.localName)) {
                     java.util.Iterator<?> it = element.getAttributes();
                     while (it.hasNext()) {
-                        Attribute attr = (Attribute)it.next();
-                        if (attr.getName().getLocalPart().equals(AUDIT.TYPE.localName)) {
-                            records.get(records.size() - 1).processType = attr.getValue();
+                        Attribute attr = (Attribute) it.next();
+                        if (attr.getName().getLocalPart()
+                                .equals(AUDIT.TYPE.localName)) {
+                            records.get(records.size() - 1).processType =
+                                    attr.getValue();
                         }
                     }
                 }
@@ -945,11 +962,13 @@ public abstract class DOTranslationUtility
                 if (!records.isEmpty()) {
                     AuditRecord record = records.get(records.size() - 1);
                     if (inElement.equals(AUDIT.ACTION.localName)) {
-                        record.action = characters.getData();                        
+                        record.action = characters.getData();
                     } else if (inElement.equals(AUDIT.COMPONENT_ID.localName)) {
                         record.componentID = characters.getData();
                     } else if (inElement.equals(AUDIT.DATE.localName)) {
-                        record.date = DateUtility.convertStringToDate(characters.getData());
+                        record.date =
+                                DateUtility.convertStringToDate(characters
+                                        .getData());
                     } else if (inElement.equals(AUDIT.JUSTIFICATION.localName)) {
                         record.justification = characters.getData();
                     } else if (inElement.equals(AUDIT.RESPONSIBILITY.localName)) {
@@ -960,7 +979,7 @@ public abstract class DOTranslationUtility
         }
         return records;
     }
-    
+
     /**
      * Parse an audit:auditTrail and return a list of AuditRecords.
      * 
@@ -972,14 +991,14 @@ public abstract class DOTranslationUtility
     protected static List<AuditRecord> getAuditRecords(InputStream auditTrail)
             throws XMLStreamException {
         XMLEventReader eventReader;
-        synchronized(m_xmlInputFactory) {
+        synchronized (m_xmlInputFactory) {
             eventReader = m_xmlInputFactory.createXMLEventReader(auditTrail);
         }
         List<AuditRecord> records = getAuditRecords(eventReader);
         eventReader.close();
         return records;
     }
-    
+
     protected static List<AuditRecord> getAuditRecords(Reader auditTrail)
             throws XMLStreamException {
         XMLEventReader eventReader;

@@ -7,10 +7,10 @@ package fedora.server.resourceIndex;
 
 import java.util.Set;
 
+import org.jrdf.graph.GraphElementFactory;
 import org.jrdf.graph.Triple;
 
 import fedora.server.errors.ResourceIndexException;
-import fedora.server.storage.BDefReader;
 import fedora.server.storage.DOReader;
 
 /**
@@ -21,33 +21,15 @@ import fedora.server.storage.DOReader;
 public interface TripleGenerator {
 
     /**
-     * Get the triples for the given Fedora behavior definition object.
+     * Get triples implied by the given object.
      * 
      * @param reader
-     *        the behavior definition object.
-     * @return the set of triples.
+     *        Current object from which to determine triples
+     * @return Set of triples implied by the objects contents.
+     * @throws ResourceIndexException
      */
-    Set<Triple> getTriplesForBDef(BDefReader reader)
+    public Set<Triple> getTriplesForObject(DOReader reader)
             throws ResourceIndexException;
 
-    /**
-     * Get the triples for the given Fedora data object.
-     * 
-     * @param reader
-     *        the data object.
-     * @return the set of triples.
-     */
-    Set<Triple> getTriplesForDataObject(DOReader reader)
-            throws ResourceIndexException;
-
-    /**
-     * Get the triples for the given Fedora content model object.
-     * 
-     * @param reader
-     *        the data object.
-     * @return the set of triples.
-     */
-    Set<Triple> getTriplesForCModelObject(DOReader reader)
-            throws ResourceIndexException;
-
+    public void init(GraphElementFactory elementFactory);
 }

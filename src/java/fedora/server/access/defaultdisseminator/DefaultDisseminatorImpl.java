@@ -21,6 +21,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import fedora.common.Models;
+
 import fedora.server.Context;
 import fedora.server.access.Access;
 import fedora.server.access.ObjectProfile;
@@ -30,24 +32,24 @@ import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
-import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.utilities.XmlTransformUtility;
 
+import static fedora.common.Constants.MODEL;
+
 /**
- * Implements the methods defined in the DefaultDisseminator interface.
- * 
- * This is the default behavior mechanism that implements the
- * "contract" of the default behavior definition that is dynamically associated
- * with every digital object in the repository. This class is considered an
- * "internal service" that is built in to the Fedora system. Its purpose is to
- * endow every digital object with a set of generic behaviors. It is an
- * implementation of what is known as the Default Disseminator. Unlike other
- * behavior definitions and mechanisms, there is no Behavior Definition Object
- * or Behavior Mechanism Object stored in the repository.
+ * Implements the methods defined in the DefaultDisseminator interface. This is
+ * the default Service Deployment that implements the "contract" of the default
+ * Service Definition that is dynamically associated with every digital object
+ * in the repository. This class is considered an "internal service" that is
+ * built in to the Fedora system. Its purpose is to endow every digital object
+ * with a set of generic behaviors. It is an implementation of what is known as
+ * the Default Disseminator. Unlike other Service Definitions and Deployments,
+ * there is no Service Definition Object or Service Deployment Object stored in
+ * the repository.
  * 
  * @author Sandy Payette
  * @version $Id$
@@ -148,9 +150,12 @@ public class DefaultDisseminatorImpl
      * @throws ServerException
      */
     public MIMETypedStream viewMethodIndex() throws ServerException {
-        // sdp: the dissemination index is disabled for bdef and bmech objects
+        // sdp: the dissemination index is disabled for service definition and deployment objects
         // so send back a message saying so.
-        if (!reader.isFedoraObjectType(DigitalObject.FEDORA_OBJECT)) {
+        if (reader.hasRelationship(MODEL.HAS_MODEL,
+                                   Models.SERVICE_DEFINITION_3_0)
+                || reader.hasRelationship(MODEL.HAS_MODEL,
+                                          Models.SERVICE_DEPLOYMENT_3_0)) {
             return noMethodIndexMsg();
         }
 
@@ -300,7 +305,7 @@ public class DefaultDisseminatorImpl
     private MIMETypedStream noMethodIndexMsg() throws GeneralException {
         String msg =
                 new String("The Dissemination Index is not available"
-                        + " for Content Model objects, \n or Behavior Definition objects or Behavior Mechanism objects.\n"
+                        + " for Content Model objects, \n or Service Definition objects or Service Deployment objects.\n"
                         + " The addition of this feature is not currently scheduled.");
         StringBuffer sb = new StringBuffer();
         sb

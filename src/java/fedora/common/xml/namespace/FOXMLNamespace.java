@@ -71,12 +71,6 @@ public class FOXMLNamespace
     /** The <code>ALT_IDS</code> attribute. */
     public final QName ALT_IDS;
 
-    /** The <code>BDEF_CONTRACT_PID</code> attribute. */
-    public final QName BDEF_CONTRACT_PID;
-
-    /** The <code>BMECH_SERVICE_PID</code> attribute. */
-    public final QName BMECH_SERVICE_PID;
-
     /** The <code>CONTROL_GROUP</code> attribute. */
     public final QName CONTROL_GROUP;
 
@@ -125,9 +119,6 @@ public class FOXMLNamespace
     /** The <code>STATE</code> attribute. */
     public final QName STATE;
 
-    /** The <code>TYPE</code> attribute. */
-    public final QName TYPE;
-
     /** The <code>VALUE</code> attribute. */
     public final QName VALUE;
 
@@ -168,8 +159,6 @@ public class FOXMLNamespace
 
         // attributes
         ALT_IDS = new QName(this, "ALT_IDS");
-        BDEF_CONTRACT_PID = new QName(this, "BDEF_CONTRACT_PID");
-        BMECH_SERVICE_PID = new QName(this, "BMECH_SERVICE_PID");
         CONTROL_GROUP = new QName(this, "CONTROL_GROUP");
         CREATED = new QName(this, "CREATED");
         DATASTREAM_ID = new QName(this, "DATASTREAM_ID");
@@ -186,7 +175,6 @@ public class FOXMLNamespace
         REF = new QName(this, "REF");
         SIZE = new QName(this, "SIZE");
         STATE = new QName(this, "STATE");
-        TYPE = new QName(this, "TYPE");
         VALUE = new QName(this, "VALUE");
         VERSION = new QName(this, "VERSION");
         VERSIONABLE = new QName(this, "VERSIONABLE");

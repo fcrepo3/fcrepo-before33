@@ -64,11 +64,11 @@ import fedora.utilities.XmlTransformUtility;
  * <ol>
  * <li>GetDissemination URL syntax:
  * <p>
- * protocol://hostname:port/fedora/get/PID/bDefPID/methodName[/dateTime][?parmArray]
+ * protocol://hostname:port/fedora/get/PID/sDefPID/methodName[/dateTime][?parmArray]
  * </p>
  * <p>
  * This syntax requests a dissemination of the specified object using the
- * specified method of the associated behavior definition object. The result is
+ * specified method of the associated service definition object. The result is
  * returned as a MIME-typed stream.
  * </p>
  * </li>
@@ -79,7 +79,7 @@ import fedora.utilities.XmlTransformUtility;
  * <li>fedora - required path name for the Fedora access service.</li>
  * <li>get - required path name for the Fedora service.</li>
  * <li>PID - required persistent idenitifer of the digital object.</li>
- * <li>bDefPID - required persistent identifier of the behavior definition
+ * <li>sDefPID - required persistent identifier of the service definition
  * object to which the digital object subscribes.</li>
  * <li>methodName - required name of the method to be executed.</li>
  * <li>dateTime - optional dateTime value indicating dissemination of a version
@@ -181,7 +181,7 @@ public class FedoraAccessServlet
 
     /** Configured Fedora server hostname */
     private static String fedoraServerHost = null;
-    
+
     /** 4K Buffer */
     private final static int BUF = 4096;
 
@@ -203,7 +203,7 @@ public class FedoraAccessServlet
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String PID = null;
-        String bDefPID = null;
+        String sDefPID = null;
         String methodName = null;
         String dsID = null;
         Date asOfDateTime = null;
@@ -226,10 +226,10 @@ public class FedoraAccessServlet
         // For the Fedora API-A-LITE "get" syntax, valid entries include:
         //
         // For dissemination requests:
-        // http://host:port/fedora/get/pid/bDefPid/methodName
-        // http://host:port/fedora/get/pid/bDefPid/methodName/timestamp
-        // http://host:port/fedora/get/pid/bDefPid/methodName?parm=value[&parm=value]
-        // http://host:port/fedora/get/pid/bDefPid/methodName/timestamp?parm=value[&parm=value]
+        // http://host:port/fedora/get/pid/sDefPid/methodName
+        // http://host:port/fedora/get/pid/sDefPid/methodName/timestamp
+        // http://host:port/fedora/get/pid/sDefPid/methodName?parm=value[&parm=value]
+        // http://host:port/fedora/get/pid/sDefPid/methodName/timestamp?parm=value[&parm=value]
         //
         // For object profile requests:
         // http://host:port/fedora/get/pid
@@ -358,7 +358,7 @@ public class FedoraAccessServlet
                                     + URIArray[3]
                                     + "/"
                                     + URIArray[4]
-                                    + "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
+                                    + "/PID/sDefPID/methodName[/dateTime][?ParmArray] \"  "
                                     + " <br></br> Submitted request was: \""
                                     + requestURI + "\"  .  ";
                     LOG.warn(message);
@@ -385,7 +385,7 @@ public class FedoraAccessServlet
                                 + URIArray[3]
                                 + "/"
                                 + URIArray[4]
-                                + "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
+                                + "/PID/sDefPID/methodName[/dateTime][?ParmArray] \"  "
                                 + " <br></br> Submitted request was: \""
                                 + requestURI + "\"  .  ";
                 LOG.warn(message);
@@ -449,9 +449,9 @@ public class FedoraAccessServlet
 
                 LOG.debug("Finished servicing getObjectProfile request");
             } else if (isGetDisseminationRequest) {
-                bDefPID = URIArray[6];
+                sDefPID = URIArray[6];
                 LOG.debug("Servicing getDissemination request (PID=" + PID
-                        + ", bDefPID=" + bDefPID + ", methodName=" + methodName
+                        + ", sDefPID=" + sDefPID + ", methodName=" + methodName
                         + ", asOfDate=" + versDateTime + ")");
 
                 Context context =
@@ -459,7 +459,7 @@ public class FedoraAccessServlet
                                                    request);
                 getDissemination(context,
                                  PID,
-                                 bDefPID,
+                                 sDefPID,
                                  methodName,
                                  userParms,
                                  asOfDateTime,
@@ -640,8 +640,8 @@ public class FedoraAccessServlet
                         sb.append((String) headerValues.nextElement());
                     }
                     String value = sb.toString();
-                    LOG.debug("FEDORASERVLET REQUEST HEADER CONTAINED: "
-                            + name + " : " + value);
+                    LOG.debug("FEDORASERVLET REQUEST HEADER CONTAINED: " + name
+                            + " : " + value);
                 }
             }
 
@@ -677,16 +677,16 @@ public class FedoraAccessServlet
                 if (headerArray != null) {
                     for (int i = 0; i < headerArray.length; i++) {
                         if (headerArray[i].name != null
-                                && !headerArray[i].name.
-                                equalsIgnoreCase("transfer-encoding")
-                                && !headerArray[i].name.
-                                equalsIgnoreCase("content-type")) {
+                                && !headerArray[i].name
+                                        .equalsIgnoreCase("transfer-encoding")
+                                && !headerArray[i].name
+                                        .equalsIgnoreCase("content-type")) {
                             response.addHeader(headerArray[i].name,
                                                headerArray[i].value);
                             LOG.debug("THIS WAS ADDED TO FEDORASERVLET "
-                                      + "RESPONSE HEADER FROM ORIGINATING "
-                                      + "PROVIDER " + headerArray[i].name
-                                      + " : " + headerArray[i].value);
+                                    + "RESPONSE HEADER FROM ORIGINATING "
+                                    + "PROVIDER " + headerArray[i].name + " : "
+                                    + headerArray[i].value);
                         }
                     }
                 }
@@ -720,8 +720,8 @@ public class FedoraAccessServlet
      *        The read only context of the request.
      * @param PID
      *        The persistent identifier of the Digital Object.
-     * @param bDefPID
-     *        The persistent identifier of the Behavior Definition object.
+     * @param sDefPID
+     *        The persistent identifier of the Service Definition object.
      * @param methodName
      *        The method name.
      * @param userParms
@@ -739,7 +739,7 @@ public class FedoraAccessServlet
      */
     public void getDissemination(Context context,
                                  String PID,
-                                 String bDefPID,
+                                 String sDefPID,
                                  String methodName,
                                  Property[] userParms,
                                  Date asOfDateTime,
@@ -751,7 +751,7 @@ public class FedoraAccessServlet
         dissemination =
                 s_access.getDissemination(context,
                                           PID,
-                                          bDefPID,
+                                          sDefPID,
                                           methodName,
                                           userParms,
                                           asOfDateTime);
@@ -768,8 +768,8 @@ public class FedoraAccessServlet
                         sb.append((String) headerValues.nextElement());
                     }
                     String value = sb.toString();
-                    LOG.debug("FEDORASERVLET REQUEST HEADER CONTAINED: "
-                            + name + " : " + value);
+                    LOG.debug("FEDORASERVLET REQUEST HEADER CONTAINED: " + name
+                            + " : " + value);
                 }
             }
 
@@ -811,9 +811,9 @@ public class FedoraAccessServlet
                             response.addHeader(headerArray[i].name,
                                                headerArray[i].value);
                             LOG.debug("THIS WAS ADDED TO FEDORASERVLET "
-                                      + "RESPONSE HEADER FROM ORIGINATING "
-                                      + "PROVIDER " + headerArray[i].name
-                                      + " : " + headerArray[i].value);
+                                    + "RESPONSE HEADER FROM ORIGINATING "
+                                    + "PROVIDER " + headerArray[i].name + " : "
+                                    + headerArray[i].value);
                         }
                     }
                 }
@@ -919,9 +919,13 @@ public class FedoraAccessServlet
                     pw.write("<objOwnerId>"
                             + StreamUtility.enc(objProfile.objectOwnerId)
                             + "</objOwnerId>");
-                    pw.write("<objContentModel>"
-                            + StreamUtility.enc(objProfile.objectContentModel)
-                            + "</objContentModel>");
+                    
+                    pw.write("<objModels>\n");
+                    for (String model : objProfile.objectModels) {
+                        pw.write("<model>" + model + "</model>\n");
+                    }
+                    pw.write("</objModels>");
+                    
                     String cDate =
                             DateUtility
                                     .convertDateToString(objProfile.objectCreateDate);
@@ -929,22 +933,8 @@ public class FedoraAccessServlet
                     String mDate =
                             DateUtility
                                     .convertDateToString(objProfile.objectLastModDate);
-                    pw.write("<objLastModDate>" + mDate + "</objLastModDate>");
-                    String objType = objProfile.objectType;
-                    pw.write("<objType>");
-                    if (objType.indexOf("O") != -1) {
-                        pw.write("Fedora Data Object");
-                    }
-                    if (objType.indexOf("D") != -1) {
-                        pw.write("Fedora Behavior Definition Object");
-                    }
-                    if (objType.indexOf("M") != -1) {
-                        pw.write("Fedora Behavior Mechanism Object");
-                    }
-                    if (objType.indexOf("C") != -1) {
-                        pw.write("Fedora Content Model Object");
-                    }
-                    pw.write("</objType>");
+                    pw.write("<objLastModDate>" + mDate + "</objLastModDate>");;
+                    
                     pw.write("<objDissIndexViewURL>"
                             + StreamUtility.enc(objProfile.dissIndexViewURL)
                             + "</objDissIndexViewURL>");

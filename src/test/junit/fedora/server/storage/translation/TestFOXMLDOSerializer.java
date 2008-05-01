@@ -1,24 +1,43 @@
 
 package fedora.server.storage.translation;
 
+import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.xml.transform.TransformerException;
 
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.XMLSerializer;
 import org.custommonkey.xmlunit.SimpleXpathEngine;
 
+import org.jrdf.graph.Literal;
+import org.jrdf.graph.ObjectNode;
+import org.jrdf.graph.PredicateNode;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import fedora.common.rdf.RDFName;
 
+import fedora.server.storage.RDFRelationshipReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
+import fedora.server.storage.types.RelationshipTuple;
 
 import static fedora.common.Constants.FOXML;
 import static fedora.common.Constants.MODEL;
 import static fedora.common.Constants.RDF;
+
+import static fedora.common.Models.CONTENT_MODEL_3_0;
+import static fedora.common.Models.FEDORA_OBJECT_3_0;
+import static fedora.common.Models.SERVICE_DEFINITION_3_0;
+import static fedora.common.Models.SERVICE_DEPLOYMENT_3_0;
 
 /**
  * Common unit tests for FOXML serializers.
@@ -66,7 +85,7 @@ public abstract class TestFOXMLDOSerializer
 
     @Test
     public void testPIDAttribute() throws TransformerException {
-        DigitalObject obj = createTestObject(DigitalObject.FEDORA_OBJECT);
+        DigitalObject obj = createTestObject(FEDORA_OBJECT_3_0);
         Document xml = doSerializeOrFail(obj);
         assertXpathExists(ROOT_PATH + "[@PID='" + TEST_PID + "']", xml);
     }
@@ -76,29 +95,32 @@ public abstract class TestFOXMLDOSerializer
         DigitalObject obj;
         Document xml;
 
-        obj = createTestObject(DigitalObject.FEDORA_OBJECT);
+        obj = createTestObject(FEDORA_OBJECT_3_0);
         xml = doSerializeOrFail(obj);
-        checkProperty(xml, RDF.TYPE, MODEL.DATA_OBJECT.localName);
+        checkRelationships(xml, MODEL.HAS_MODEL, FEDORA_OBJECT_3_0);
 
-        obj = createTestObject(DigitalObject.FEDORA_BMECH_OBJECT);
+        obj = createTestObject(CONTENT_MODEL_3_0);
         xml = doSerializeOrFail(obj);
-        checkProperty(xml, RDF.TYPE, MODEL.BMECH_OBJECT.localName);
+        checkRelationships(xml,
+                           MODEL.HAS_MODEL,
+                           CONTENT_MODEL_3_0);
 
-        obj = createTestObject(DigitalObject.FEDORA_BDEF_OBJECT);
+        obj = createTestObject(SERVICE_DEFINITION_3_0);
         xml = doSerializeOrFail(obj);
-        checkProperty(xml, RDF.TYPE, MODEL.BDEF_OBJECT.localName);
-    }
+        checkRelationships(xml,
+                           MODEL.HAS_MODEL,
+                           SERVICE_DEFINITION_3_0);
 
-    @Test
-    public void testNoDatastreams() throws TransformerException {
-        DigitalObject obj = createTestObject(DigitalObject.FEDORA_OBJECT);
-        Document xml = doSerializeOrFail(obj);
-        assertXpathEvaluatesTo("0", "count(" + DATASTREAM_PATH + ")", xml);
+        obj = createTestObject(SERVICE_DEPLOYMENT_3_0);
+        xml = doSerializeOrFail(obj);
+        checkRelationships(xml,
+                           MODEL.HAS_MODEL,
+                           SERVICE_DEPLOYMENT_3_0);
     }
 
     @Test
     public void testTwoInlineDatastreams() throws TransformerException {
-        DigitalObject obj = createTestObject(DigitalObject.FEDORA_OBJECT);
+        DigitalObject obj = createTestObject(FEDORA_OBJECT_3_0);
 
         final String dsID1 = "DS1";
         DatastreamXMLMetadata ds1 = createXDatastream(dsID1);
@@ -106,15 +128,12 @@ public abstract class TestFOXMLDOSerializer
         final String dsID2 = "DS2";
         DatastreamXMLMetadata ds2 = createXDatastream(dsID2);
 
-        obj.datastreams(dsID1).add(ds1);
-        obj.datastreams(dsID2).add(ds2);
+        obj.addDatastreamVersion(ds1, true);
+        obj.addDatastreamVersion(ds2, true);
         Document xml = doSerializeOrFail(obj);
-        assertXpathEvaluatesTo("2", "count(" + DATASTREAM_PATH + ")", xml);
-    }
 
-    @Test
-    public void testTwoDisseminators() throws TransformerException {
-        DigitalObject obj = createTestObject(DigitalObject.FEDORA_OBJECT);
+        /* 3 datastreams: rels-ext, ds1, and ds2 */
+        assertXpathEvaluatesTo("3", "count(" + DATASTREAM_PATH + ")", xml);
     }
 
     //---
@@ -127,4 +146,74 @@ public abstract class TestFOXMLDOSerializer
                 + " and @VALUE='" + value + "']", xml);
     }
 
+    protected void checkRelationships(Document xml,
+                                      PredicateNode pred,
+                                      ObjectNode... nodes) {
+        NodeList streams =
+                xml.getElementsByTagNameNS(FOXML.DATASTREAM.namespace.uri,
+                                           FOXML.DATASTREAM_VERSION.localName);
+
+        if (streams.getLength() == 0) {
+            fail("No relationships found.  Serializer "
+                    + m_serializer.getClass().getName());
+        }
+
+        /*
+         * Get the latest RELS-EXT, assuming that the latest has the maximal
+         * datastream version ID...
+         */
+        Element lastDS = null;
+        String maxId = "";
+        for (int i = 0; i < streams.getLength(); i++) {
+            Element ds = (Element) streams.item(i);
+            String id = ds.getAttribute("ID");
+            if (id.startsWith("RELS-EXT") && id.compareTo(maxId) > 0) {
+                maxId = id;
+                lastDS = ds;
+            }
+        }
+
+        NodeList rdf = lastDS.getElementsByTagNameNS(RDF.uri, "RDF");
+        if (rdf.getLength() != 1) {
+            fail("Could not locate valid RDF");
+        }
+
+        Element rdfRels = (Element) rdf.item(0);
+
+        Set<RelationshipTuple> rels = new HashSet<RelationshipTuple>();
+
+        try {
+
+            StringWriter sout = new StringWriter();
+
+            OutputFormat formatter = new OutputFormat();
+            formatter.setEncoding("UTF-8"); // is the default
+
+            XMLSerializer serializer = new XMLSerializer(sout, formatter);
+            serializer.serialize(rdfRels);
+            rels =
+                    RDFRelationshipReader
+                            .readRelationships(new ByteArrayInputStream(sout
+                                    .toString().getBytes()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        /* Finally, check the relationships the hard way */
+        for (ObjectNode value : nodes) {
+            boolean found = false;
+            for (RelationshipTuple rel : rels) {
+                if (rel.predicate.equals(pred.toString())
+                        && rel.object.equals(value.toString())) {
+                    if ((value instanceof Literal) == rel.isLiteral)
+                        found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                fail("Failed to find relationship " + pred + " = " + value);
+            }
+        }
+    }
 }

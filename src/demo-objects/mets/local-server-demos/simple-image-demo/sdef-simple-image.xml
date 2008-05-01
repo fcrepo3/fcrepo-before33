@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!---********************************************************************************************-->
+<!-- SAMPLE FEDORA SERVICE DEFINITION OBJECT ENCODED USING METS -->
+<!-- Creator: Sandy Payette -->
+<!-- Custodian: University of Virginia Library -->
+<!-- Note: Demonstration Behavior Definition Object.  This Behavior Definition Object represents the behavior -->
+<!-- contract known as UVA Simple Image.  This Behavior Definition Object contains metadata that defines a -->
+<!-- set of abstract method definitions that constitute behaviors that will be available on any Fedora data -->
+<!-- object that subscribes to the UVA Simple Image Service Definition. It also defines the contract for a -->
+<!-- Behavior Mechanism Object that implements the UVA Simple Image behaviors.  Such Behavior -->
+<!-- Mechanism Objects are surrogates for services that can fulfill the requirements of the UVA Simple Image -->
+<!-- behaviors. -->
+<!---********************************************************************************************-->
+<METS:mets EXT_VERSION="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd" OBJID="demo:1" LABEL="Service Definition Object for UVA Simple Image Contract">
+<METS:metsHdr>
+<METS:agent ROLE="IPOWNER">
+	<METS:name>fedoraAdmin</METS:name>
+</METS:agent>
+</METS:metsHdr>
+	<!---*******************************************************************************************************************************************-->
+	<!---User-Defined XML METADATA DATASTREAMS-->
+	<!-- ****************************************************************************************************************************************** -->
+	<!--  METHOD MAP: Usage pattern for Service Definition Objects.  A Fedora Service Definition contains abstract method -->
+	<!--  names and user input parameters.  The method definitions represent what an end user would see as -->
+	<!--  the set of methods that can be run as disseminations.  The method definitions are stripped of any mechanism-specific -->
+	<!--  information.  The method return type  is always a MIME-typed stream. -->
+	<!--  NOTE:  Some elements in the Method Map schema are not appropriate for usage when encoding a Fedora Service Definition. -->
+	<!--  These are elements that pertain to mapping a concrete service definition (WSDL)  to Fedora (in a Behavior Mechanism Object). -->
+	<!--  The following Method Map schema entities do NOT apply to Service Definitions:  -->
+	<!--  element DefaultInputParm,  element DatastreamInputParm, element MethodReturnType, -->
+	<!--  and attributes wsdlMsgName and wsdlMsgOutput on element Method. -->
+	<!-- ****************************************************************************************************************************************** -->
+	<METS:amdSec ID="METHODMAP">
+		<METS:techMD ID="METHODMAP1.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Method Map for Fedora Service Definition for UVA Simple Image">
+				<METS:xmlData>
+					<fmm:MethodMap name="Fedora MethodMap for Simple Image BDef" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+						<fmm:Method operationName="getThumbnail"/>
+						<fmm:Method operationName="getMedium"/>
+						<fmm:Method operationName="getHigh"/>
+						<fmm:Method operationName="getVeryHigh"/>
+					</fmm:MethodMap>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+		<METS:amdSec ID="RELS-EXT" STATUS="A" VERSIONABLE="false">
+    <METS:techMD CREATED="2008-04-23T21:02:05.522Z" ID="RELS-EXT1.0">
+      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Relationships" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+        <METS:xmlData>
+          <rdf:RDF xmlns:fedora-model="info:fedora/fedora-system:def/model#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+            <rdf:Description rdf:about="info:fedora/demo:1">
+              <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:ServiceDefinition-3.0"/>
+            </rdf:Description>
+          </rdf:RDF>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--- DATASTREAMS:  EXTERNAL-REFERENCED CONTENT and REPOSITORY-MANAGED CONTENT-->
+	<!---*******************************************************************************************************************************************-->
+	<!--  Here we aggregate file(s) that relate to the watermarking Service Definition.-->
+	<!--  These can be documentation or other resources.  -->
+	<!-- ******************************************************************************************************************** -->
+	<METS:fileSec>
+		<METS:fileGrp ID="DATASTREAMS">
+			<METS:fileGrp ID="DS1" STATUS="A">
+				<METS:file ID="DS1.0" SEQ="1" MIMETYPE="text/html" OWNERID="E" STATUS="A">
+					<METS:FLocat LOCTYPE="URL" xlink:href=" http://uva.lib.edu/bdef/image/doc/simpleImage.html" xlink:title="Documentation for UVA Simple Image Behavior Def"/>
+				</METS:file>
+			</METS:fileGrp>
+		</METS:fileGrp>
+	</METS:fileSec>
+</METS:mets>

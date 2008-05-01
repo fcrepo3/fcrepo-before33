@@ -5,7 +5,7 @@
 	<xsl:template match="objectProfile">
 		<html>
 			<head>
-				<title>Object Profile HTML Presentation</title>
+				<title>Object Profile HTML Presentation</title> 
 			</head>
 			<body>
 				<center>
@@ -65,18 +65,18 @@
 					</tr>
 					<tr>
 						<td align="right">
-							<font color="blue">Object Content Model: </font>
+							<font color="blue">Object Content Models: </font>
 						</td>
 						<td align="left">
-							<xsl:value-of select="objContentModel"/>
-						</td>
-					</tr>
-					<tr>
-						<td align="right">
-							<font color="blue">Object Type: </font>
-						</td>
-						<td align="left">
-							<xsl:value-of select="objType"/>
+						    <table border="0">
+							<xsl:for-each select="objModels">
+								<tr>
+								  	<td>
+										<xsl:value-of select="model"/>
+									</td>
+								</tr>
+							</xsl:for-each>
+							</table>
 						</td>
 					</tr>
 					<tr>

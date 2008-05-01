@@ -126,7 +126,7 @@
 	    	characters, and may only contain A-Z, a-z, 0-9, '.', or '-' (dash).
 	    	</comment>
 	    </param>
-	    <param name="retainPIDs" value="demo test changeme fedora-bdef fedora-bmech tutorial">
+	    <param name="retainPIDs" value="demo test changeme tutorial">
 	    	<comment>Namespaces of PIDs to retain during the ingest process. When an 
 	    	object is ingested, Fedora normally allocates a unique PID within 
 	    	pidNamespace for it regardless of what the object says its PID is. This 

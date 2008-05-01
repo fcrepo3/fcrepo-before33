@@ -27,7 +27,7 @@ http://www.fedora.info/definitions/1/0/api/cs-xacml-schema-policy-01.xsd">
 		<!-- AND-ed together by the XACML enforcement engine. -->
 		<!-- *********************************************************************************************************************************************************-->
 		<!-- In this example, the ResourceMatch elements say that that this policy is applicable for resources (disseminations) where : -->
-		<!--         attribute named 'resource:bdef:pid" has a value of 'demo:1'  -->
+		<!--         attribute named 'resource:sdef:pid" has a value of 'demo:1'  -->
 		<!--           AND -->
 		<!--         attribute named 'resource:disseminator:method' has a value of 'getMedium.' =-->
 		<!-- *********************************************************************************************************************************************************-->
@@ -36,7 +36,7 @@ http://www.fedora.info/definitions/1/0/api/cs-xacml-schema-policy-01.xsd">
 				<!-- ResourceMatch elements and logically AND-ed together. -->
 				<ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">demo:1</AttributeValue>
-					<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:bdef:pid" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+					<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:sdef:pid" DataType="http://www.w3.org/2001/XMLSchema#string"/>
 				</ResourceMatch>
 				<ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">getMedium</AttributeValue>

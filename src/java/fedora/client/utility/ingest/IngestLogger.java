@@ -46,90 +46,38 @@ public class IngestLogger {
         log.println("<" + rootName + ">");
     }
 
-    public static void logFromFile(PrintStream log,
-                                   File f,
-                                   String fType,
-                                   String pid) throws Exception {
-        log.println("  <ingested file=\"" + f.getPath() + "\" fType=\"" + fType
-                + "\" targetPID=\"" + pid + "\" />");
+    public static void logFromFile(PrintStream log, File f, String pid)
+            throws Exception {
+        log.println("  <ingested file=\"" + f.getPath() + "\" targetPID=\""
+                + pid + "\" />");
     }
 
-    public static void logFromFile(PrintStream log,
-                                   File f,
-                                   char fType,
-                                   String pid) throws Exception {
-        log.println("  <ingested file=\"" + f.getPath() + "\" fType=\"" + fType
-                + "\" targetPID=\"" + pid + "\" />");
-    }
-
-    public static void logFailedFromFile(PrintStream log,
-                                         File f,
-                                         String fType,
-                                         Exception e) throws Exception {
+    public static void logFailedFromFile(PrintStream log, File f, Exception e)
+            throws Exception {
         String message = e.getMessage();
         if (message == null) {
             message = e.getClass().getName();
         }
-        log.println("  <failed file=\"" + f.getPath() + "\" fType=\"" + fType
-                + "\">");
-        log.println("    " + StreamUtility.enc(message));
-        log.println("  </failed>");
-    }
-
-    public static void logFailedFromFile(PrintStream log,
-                                         File f,
-                                         char fType,
-                                         Exception e) throws Exception {
-        String message = e.getMessage();
-        if (message == null) {
-            message = e.getClass().getName();
-        }
-        log.println("  <failed file=\"" + f.getPath() + "\" fType=\"" + fType
-                + "\">");
+        log.println("  <failed file=\"" + f.getPath() + "\">");
         log.println("    " + StreamUtility.enc(message));
         log.println("  </failed>");
     }
 
     public static void logFromRepos(PrintStream log,
                                     String sourcePID,
-                                    String fType,
-                                    String targetPID) throws Exception {
-        log.println("  <ingested sourcePID=\"" + sourcePID + "\" fType=\""
-                + fType + "\" targetPID=\"" + targetPID + "\"/>");
-    }
-
-    public static void logFromRepos(PrintStream log,
-                                    String sourcePID,
-                                    char fType,
-                                    String targetPID) throws Exception {
-        log.println("  <ingested sourcePID=\"" + sourcePID + "\" fType=\""
-                + fType + "\" targetPID=\"" + targetPID + "\"/>");
+                                    String targetPID) {
+        log.println("  <ingested sourcePID=\"" + sourcePID + "\" targetPID=\""
+                + targetPID + "\"/>");
     }
 
     public static void logFailedFromRepos(PrintStream log,
                                           String sourcePID,
-                                          String fType,
-                                          Exception e) throws Exception {
+                                          Exception e) {
         String message = e.getMessage();
         if (message == null) {
             message = e.getClass().getName();
         }
-        log.println("  <failed sourcePID=\"" + sourcePID + "\" fType=\""
-                + fType + "\">");
-        log.println("    " + StreamUtility.enc(message));
-        log.println("  </failed>");
-    }
-
-    public static void logFailedFromRepos(PrintStream log,
-                                          String sourcePID,
-                                          char fType,
-                                          Exception e) throws Exception {
-        String message = e.getMessage();
-        if (message == null) {
-            message = e.getClass().getName();
-        }
-        log.println("  <failed sourcePID=\"" + sourcePID + "\" fType=\""
-                + fType + "\">");
+        log.println("  <failed sourcePID=\"" + sourcePID + "\">");
         log.println("    " + StreamUtility.enc(message));
         log.println("  </failed>");
     }

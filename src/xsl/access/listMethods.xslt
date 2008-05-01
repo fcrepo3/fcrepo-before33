@@ -40,7 +40,7 @@
 			<hr/>
 			<table border="1" cellpadding="5" bgcolor="silver">
 				<tr>
-					<td><b><font size='+2'>BDEF</font></b></td>
+					<td><b><font size='+2'>Service Definition</font></b></td>
 					<td><b><font size='+2'>Method Name</font></b></td>
 					<td>&#x00A0;</td>
 					<td><b><font size='+2'>Parm Name</font></b></td>
@@ -53,7 +53,7 @@
 	</html>
 </xsl:template>
 
-<xsl:template match="bdef">
+<xsl:template match="sdef">
 <xsl:apply-templates/>
 </xsl:template>
 
@@ -70,7 +70,7 @@
 			</input>
 			<input>
 				<xsl:attribute name="type">hidden</xsl:attribute>
-				<xsl:attribute name="name">bDefPID</xsl:attribute>
+				<xsl:attribute name="name">sDefPID</xsl:attribute>
 				<xsl:attribute name="value"><xsl:value-of select="../@pid"/></xsl:attribute>			
 			</input>
 			<input>

@@ -374,7 +374,7 @@ public class FedoraClient
                     try {
                         throw new IOException("Request failed ["
                                 + in.getStatusCode() + " " + in.getStatusText()
-                                + "]");
+                                + "] : " + urlString);
                     } finally {
                         try {
                             in.close();

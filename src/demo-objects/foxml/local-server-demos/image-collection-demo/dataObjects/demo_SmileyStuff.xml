@@ -2,7 +2,6 @@
 <foxml:digitalObject VERSION="1.1" PID="demo:SmileyStuff" xmlns:audit="info:fedora/fedora-system:def/audit#"
   xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd">
   <foxml:objectProperties>
-    <foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
     <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
     <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Collection of Smiley Stuff"/>
     <foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
@@ -38,7 +37,8 @@
       <foxml:xmlContent>
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
           <rdf:Description rdf:about="info:fedora/demo:SmileyStuff">
-            <fedora-model:hasContentModel rdf:resource="info:fedora/demo:CmodelForBMech_DualResImageCollection"/>
+            <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"/>
+            <fedora-model:hasModel rdf:resource="info:fedora/demo:DualResImageCollection"/>
           </rdf:Description>
         </rdf:RDF>
       </foxml:xmlContent>

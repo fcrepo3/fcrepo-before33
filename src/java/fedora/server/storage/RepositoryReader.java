@@ -31,12 +31,12 @@ public interface RepositoryReader {
                                        Context context,
                                        String pid) throws ServerException;
 
-    public abstract BMechReader getBMechReader(boolean cachedObjectRequired,
+    public abstract ServiceDeploymentReader getServiceDeploymentReader(boolean cachedObjectRequired,
                                                Context context,
                                                String pid)
             throws ServerException;
 
-    public abstract BDefReader getBDefReader(boolean cachedObjectRequired,
+    public abstract ServiceDefinitionReader getServiceDefinitionReader(boolean cachedObjectRequired,
                                              Context context,
                                              String pid) throws ServerException;
 

@@ -12,16 +12,16 @@ import java.util.HashMap;
 import junit.framework.TestCase;
 
 import fedora.common.Constants;
+import fedora.common.Models;
 
 import fedora.server.Server;
-import fedora.server.storage.BDefReader;
-import fedora.server.storage.BMechReader;
+import fedora.server.storage.ServiceDefinitionReader;
+import fedora.server.storage.ServiceDeploymentReader;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.DirectoryBasedRepositoryReader;
 import fedora.server.storage.translation.DOTranslatorImpl;
 import fedora.server.storage.translation.METSFedoraExt1_1DODeserializer;
 import fedora.server.storage.translation.METSFedoraExt1_1DOSerializer;
-import fedora.server.storage.types.DigitalObject;
 
 /**
  * Tests the implementation of the RepositoryReader interface,
@@ -89,7 +89,7 @@ public class RepositoryReaderTest
         }
     }
 
-    public void testGetBDefReader() {
+    public void testGetSDefReader() {
         try {
             String[] pids = m_repoReader.listObjectPIDs(null);
             for (String element : pids) {
@@ -97,14 +97,15 @@ public class RepositoryReaderTest
                         m_repoReader.getReader(Server.USE_DEFINITIVE_STORE,
                                                null,
                                                element);
-                if (r.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) {
-                    BDefReader dr =
+                if (r.hasRelationship(MODEL.HAS_MODEL,
+                                      Models.SERVICE_DEPLOYMENT_3_0)) {
+                    ServiceDefinitionReader dr =
                             m_repoReader
-                                    .getBDefReader(Server.USE_DEFINITIVE_STORE,
-                                                   null,
-                                                   element);
+                                    .getServiceDefinitionReader(Server.USE_DEFINITIVE_STORE,
+                                                                null,
+                                                                element);
                     System.out.println(dr.GetObjectPID()
-                            + " found via getBDefReader.");
+                            + " found via getSDefReader.");
                 }
             }
         } catch (Exception e) {
@@ -113,7 +114,7 @@ public class RepositoryReaderTest
         }
     }
 
-    public void testGetBMechReader() {
+    public void testGetSDepReader() {
         try {
             String[] pids = m_repoReader.listObjectPIDs(null);
             for (String element : pids) {
@@ -121,14 +122,15 @@ public class RepositoryReaderTest
                         m_repoReader.getReader(Server.USE_DEFINITIVE_STORE,
                                                null,
                                                element);
-                if (r.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)) {
-                    BMechReader mr =
+                if (r.hasRelationship(MODEL.HAS_MODEL,
+                                      Models.SERVICE_DEPLOYMENT_3_0)) {
+                    ServiceDeploymentReader mr =
                             m_repoReader
-                                    .getBMechReader(Server.USE_DEFINITIVE_STORE,
-                                                    null,
-                                                    element);
+                                    .getServiceDeploymentReader(Server.USE_DEFINITIVE_STORE,
+                                                                null,
+                                                                element);
                     System.out.println(mr.GetObjectPID()
-                            + " found via getBMechReader.");
+                            + " found via getSDepReader.");
                 }
             }
         } catch (Exception e) {
@@ -144,8 +146,8 @@ public class RepositoryReaderTest
         test.setUp();
         test.testList();
         test.testGetReader();
-        test.testGetBDefReader();
-        test.testGetBMechReader();
+        test.testGetSDefReader();
+        test.testGetSDepReader();
     }
 
 }

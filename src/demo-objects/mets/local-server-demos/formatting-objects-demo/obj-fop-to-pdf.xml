@@ -4,7 +4,7 @@
 <!-- Creator: Chris Wilper -->
 <!-- Custodian: Cornell -->
 <!---************************************************************************-->
-<METS:mets EXT_VERSION="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd" OBJID="demo:21" TYPE="FedoraObject" LABEL="Sample Document Object (FO to PDF)" PROFILE="FO_TO_PDFDOC">
+<METS:mets EXT_VERSION="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd" OBJID="demo:21" LABEL="Sample Document Object (FO to PDF)">
 <METS:metsHdr>
 <METS:agent ROLE="IPOWNER">
 	<METS:name>fedoraAdmin</METS:name>
@@ -412,7 +412,8 @@ This font contains no embedding license restrictions
 				<METS:xmlData>
 					<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
 						<rdf:Description rdf:about="info:fedora/demo:21">
-							<fedora-model:hasContentModel rdf:resource="info:fedora/demo:FO_TO_PDFDOC"/>
+							<fedora-model:hasModel rdf:resource="info:fedora/demo:FO_TO_PDFDOC"/>
+                            <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"/>
 						</rdf:Description>
 					</rdf:RDF>				
 				</METS:xmlData>

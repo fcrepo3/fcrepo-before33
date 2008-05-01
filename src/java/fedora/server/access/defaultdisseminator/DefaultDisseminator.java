@@ -9,7 +9,7 @@ import fedora.server.errors.ServerException;
 import fedora.server.storage.types.MIMETypedStream;
 
 /**
- * Defines the methods of the default behavior definition that is associated
+ * Defines the methods of the default service definition that is associated
  * with every Fedora Object.
  * 
  * @author Sandy Payette

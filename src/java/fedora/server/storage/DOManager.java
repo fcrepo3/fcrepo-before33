@@ -92,14 +92,7 @@ public interface DOManager
     public String[] getNextPID(int numPIDs, String namespace)
             throws ServerException;
 
-    public void initializeCModelBmechHashMap(Context context)
-            throws ServerException;
-
-    public void updateCModelBmechHashMap(Context context,
-                                         String pid,
-                                         boolean addPid) throws ServerException;
-
-    public String lookupBmechForCModel(String cModelPid, String bDefPid);
+    public String lookupDeploymentForCModel(String cModelPid, String sDefPid);
 
     /**
      * Reserve a series of PIDs so that they are never used for subsequent PID

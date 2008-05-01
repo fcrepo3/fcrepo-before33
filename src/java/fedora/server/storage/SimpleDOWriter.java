@@ -118,12 +118,9 @@ public class SimpleDOWriter
             throws ServerException {
         assertNotInvalidated();
         assertNotPendingRemoval();
-        List<Datastream> allVersions = m_obj.datastreams(datastreamID);
-        Iterator<Datastream> dsIter = allVersions.iterator();
 
         // Set all versions of this datastreamID to the specified state
-        while (dsIter.hasNext()) {
-            Datastream ds = dsIter.next();
+        for (Datastream ds : m_obj.datastreams(datastreamID)) {
             ds.DSState = dsState;
         }
     }
@@ -133,13 +130,10 @@ public class SimpleDOWriter
             throws ServerException {
         assertNotInvalidated();
         assertNotPendingRemoval();
-        List<Datastream> allVersions = m_obj.datastreams(datastreamID);
-        Iterator<Datastream> dsIter = allVersions.iterator();
 
         // Set all versions of this datastreamID to the specified versionable
         // status
-        while (dsIter.hasNext()) {
-            Datastream ds = dsIter.next();
+        for (Datastream ds : m_obj.datastreams(datastreamID)) {
             ds.DSVersionable = versionable;
         }
     }
@@ -227,10 +221,8 @@ public class SimpleDOWriter
             throws ServerException {
         assertNotInvalidated();
         assertNotPendingRemoval();
-        List<Datastream> versions = m_obj.datastreams(id);
         ArrayList<Datastream> removeList = new ArrayList<Datastream>();
-        for (int i = 0; i < versions.size(); i++) {
-            Datastream ds = versions.get(i);
+        for (Datastream ds : m_obj.datastreams(id)) {
             boolean doRemove = false;
             if (start != null) {
                 if (end != null) {
@@ -259,7 +251,12 @@ public class SimpleDOWriter
                 removeList.add(ds);
             }
         }
-        versions.removeAll(removeList);
+
+        /* Now that we've identified all ds versions to remove, remove 'em */
+        for (Datastream toRemove : removeList) {
+            m_obj.removeDatastreamVersion(toRemove);
+        }
+
         // finally, return the dates of each deleted item
         Date[] deletedDates = new Date[removeList.size()];
         for (int i = 0; i < removeList.size(); i++) {

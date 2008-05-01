@@ -5,6 +5,10 @@
 
 package fedora.common.rdf;
 
+import fedora.common.Models;
+import fedora.common.rdf.RDFName;
+import fedora.common.rdf.RDFNamespace;
+
 /**
  * The Fedora Model RDF namespace.
  * 
@@ -68,8 +72,8 @@ public class FedoraModelNamespace
 
     /**
      * Deprecated as of Fedora 3.0. No direct replacement. Objects now point to
-     * content models via HAS_CMODEL. Behavior Mechanisms used by an object are
-     * those that point to the content model of the object via IS_CONTRACTOR.
+     * content models via HAS_CMODEL. Service Deployments used by an object are
+     * those that point to the content model of the object via IS_CONTRACTOR_OF.
      */
     @Deprecated
     public final RDFName USES_BMECH;
@@ -83,21 +87,56 @@ public class FedoraModelNamespace
 
     public final RDFName INACTIVE;
 
-    // Types
+    // CMA RDF Relationships
+    public final RDFName HAS_SERVICE;
+
+    public final RDFName IS_CONTRACTOR_OF;
+
+    public final RDFName IS_DEPLOYMENT_OF;
+
+    public final RDFName HAS_MODEL;
+
+    // Pre 3.0 object types
+
+    /**
+     * Behavior Definition Object, in pre-3.0 terminology.
+     * <p>
+     * In 3.0, an objects "typeness" is determined by its content model. What
+     * used to be known as BDef objects in Fedora 2.x are analogous to objects
+     * in the {@link Models#SERVICE_DEFINITION_3_0} model in Fedora 3.0.
+     * </p>
+     * 
+     * @deprecated
+     */
+    @Deprecated
     public final RDFName BDEF_OBJECT;
 
+    /**
+     * Behavior Mechanism Object, in pre-3.0 terminology.
+     * <p>
+     * In 3.0, an objects "typeness" is determined by its content model. What
+     * used to be known as BMech objects in Fedora 2.x are analogous to objects
+     * in the {@link Models#SERVICE_DEPLOYMENT_3_0} model in Fedora 3.0.
+     * </p>
+     * 
+     * @deprecated
+     */
+    @Deprecated
     public final RDFName BMECH_OBJECT;
 
-    public final RDFName CMODEL_OBJECT;
-
+    /**
+     * Data Object, in pre-3.0 terminology.
+     * <p>
+     * In 3.0, an objects "typeness" is determined by its content model. What
+     * used to be known as data objects in Fedora 2.x are analogous to objects
+     * in the {@link Models#FEDORA_OBJECT_3_0} model in Fedora 3.0.
+     * </p>
+     * 
+     * @deprecated
+     */
+    @Deprecated
     public final RDFName DATA_OBJECT;
 
-    // CMDA RDF Relationships
-    public final RDFName HAS_BDEF;
-
-    public final RDFName IS_CONTRACTOR;
-
-    public final RDFName HAS_CONTENT_MODEL;
 
     public FedoraModelNamespace() {
 
@@ -121,7 +160,6 @@ public class FedoraModelNamespace
 
         OWNER = new RDFName(this, "ownerId");
         STATE = new RDFName(this, "state");
-        USES_BMECH = new RDFName(this, "usesBMech");
         VERSIONABLE = new RDFName(this, "versionable");
 
         // Values
@@ -129,16 +167,18 @@ public class FedoraModelNamespace
         DELETED = new RDFName(this, "Deleted");
         INACTIVE = new RDFName(this, "Inactive");
 
+        // CMA RDF Relationships
+        HAS_SERVICE = new RDFName(this, "hasService");
+        IS_DEPLOYMENT_OF = new RDFName(this, "isDeploymentOf");
+        IS_CONTRACTOR_OF = new RDFName(this, "isContractorOf");
+        HAS_MODEL = new RDFName(this, "hasModel");
+
         // Types
         BDEF_OBJECT = new RDFName(this, "FedoraBDefObject");
+
         BMECH_OBJECT = new RDFName(this, "FedoraBMechObject");
-        CMODEL_OBJECT = new RDFName(this, "FedoraCModelObject");
         DATA_OBJECT = new RDFName(this, "FedoraObject");
 
-        // CMDA RDF Relationships
-        HAS_BDEF = new RDFName(this, "hasBDef");
-        IS_CONTRACTOR = new RDFName(this, "isContractor");
-        HAS_CONTENT_MODEL = new RDFName(this, "hasContentModel");
+        USES_BMECH = new RDFName(this, "usesBMech");
     }
-
 }

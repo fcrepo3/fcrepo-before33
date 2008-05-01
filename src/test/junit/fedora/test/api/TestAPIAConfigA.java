@@ -30,7 +30,7 @@ public class TestAPIAConfigA
     }
 
     public void testGetChainedDissemination() throws Exception {
-        // test chained dissemination using local bmech services
+        // test chained dissemination using local services
         // The object contains an E datastream that is a dissemination of the local SAXON service.
         // This datastream is input to another dissemination that uses the local FOP service.
         MIMETypedStream diss =

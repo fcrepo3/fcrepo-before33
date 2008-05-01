@@ -43,12 +43,18 @@ public class TestCommandLineUtilities
         System.out.println("Purging object demo:5");
         System.out.println("FEDORA-HOME = " + FEDORA_HOME);
         purgeUsingScript("demo:5");
+        if (sbErr.size() > 0) {
+            System.err.println(sbErr.toString());
+        }
         assertEquals(0, sbErr.size());
         System.out.println("Re-ingesting object demo:5");
         ingestFoxmlFile(new File(FEDORA_HOME
                 + "/client/demo/foxml/local-server-demos/simple-image-demo/obj_demo_5.xml"));
         String out = sbOut.toString();
         String err = sbErr.toString();
+        if (out.indexOf("Ingested PID: demo:5") == -1) {
+            System.err.println("Saw message: " + out);
+        }
         assertEquals(out.indexOf("Ingested PID: demo:5") != -1, true);
         System.out.println("Purge and ingest test succeeded");
     }
@@ -130,6 +136,11 @@ public class TestCommandLineUtilities
         if (out.indexOf("25 modify directives successfully processed.") == -1) {
             System.out.println(" out = " + out);
             System.out.println(" err = " + err);
+        }
+        
+        if (out
+                .indexOf("25 modify directives successfully processed.") == -1) {
+            System.err.println(out);
         }
         assertEquals(false, out
                 .indexOf("25 modify directives successfully processed.") == -1);

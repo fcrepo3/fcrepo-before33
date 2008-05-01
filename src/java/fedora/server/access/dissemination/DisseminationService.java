@@ -41,11 +41,11 @@ import fedora.server.security.Authorization;
 import fedora.server.security.BackendPolicies;
 import fedora.server.security.BackendSecurity;
 import fedora.server.security.BackendSecuritySpec;
-import fedora.server.storage.BMechReader;
+import fedora.server.storage.ServiceDeploymentReader;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
-import fedora.server.storage.types.BMechDSBindRule;
-import fedora.server.storage.types.BMechDSBindSpec;
+import fedora.server.storage.types.DeploymentDSBindRule;
+import fedora.server.storage.types.DeploymentDSBindSpec;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamMediation;
 import fedora.server.storage.types.DisseminationBindingInfo;
@@ -201,7 +201,7 @@ public class DisseminationService {
      * Assembles a dissemination given an instance of <code>
      * DisseminationBindingInfo</code>
      * which has the dissemination-related information from the digital object
-     * and its associated Behavior Mechanism object.
+     * and its associated Service Deployment object.
      * </p>
      * 
      * @param context
@@ -220,8 +220,8 @@ public class DisseminationService {
                                                  String PID,
                                                  Hashtable h_userParms,
                                                  DisseminationBindingInfo[] dissBindInfoArray,
-                                                 String bMechPid,
-                                                 BMechReader bmReader,
+                                                 String deploymentPID,
+                                                 ServiceDeploymentReader bmReader,
                                                  String methodName)
             throws ServerException {
 
@@ -344,9 +344,9 @@ public class DisseminationService {
                 //                         The specifics of servlet path are obtained from the beSecurity configuration
                 //                         file and determines whether the backedservice-to-fedora callback
                 //                         will use authentication or not.
-                // callbackRole - contains the role of the backend service (the bMechPid of the service).
+                // callbackRole - contains the role of the backend service (the deploymentPID of the service).
 
-                String callbackRole = bMechPid;
+                String callbackRole = deploymentPID;
                 Hashtable beHash =
                         m_beSS.getSecuritySpec(callbackRole, methodName);
                 boolean callbackBasicAuth =
@@ -418,7 +418,7 @@ public class DisseminationService {
                 // file=(PHOTO) becomes
                 // file=dslocation1+dslocation2+dslocation3
                 //
-                // It is the responsibility of the Behavior Mechanism to know how to
+                // It is the responsibility of the Service Deployment to know how to
                 // handle an input parameter with multiple datastream locations.
                 //
                 // In the case of a method containing multiple binding keys,
@@ -545,9 +545,9 @@ public class DisseminationService {
                         + " DissBindingInfo index: " + i);
             }
 
-            BMechDSBindSpec dsBindSpec = bmReader.getServiceDSInputSpec(null);
-            BMechDSBindRule rules[] = dsBindSpec.dsBindRules;
-            for (BMechDSBindRule element : rules) {
+            DeploymentDSBindSpec dsBindSpec = bmReader.getServiceDSInputSpec(null);
+            DeploymentDSBindRule rules[] = dsBindSpec.dsBindRules;
+            for (DeploymentDSBindRule element : rules) {
                 String rulePattern = "(" + element.bindingKeyName + ")";
                 if (dissURL.indexOf(rulePattern) != -1) {
                     throw new DisseminationException(null, "Data Object " + PID
@@ -661,14 +661,14 @@ public class DisseminationService {
                     // See if backend service reference is to fedora server itself or an external location.
                     // We must examine URL to see if this is referencing a remote backend service or is
                     // simply a callback to the fedora server. If the reference is remote, then use
-                    // the role of backend service bMechPid. If the referenc is to the fedora server, 
+                    // the role of backend service deployment PID. If the referenc is to the fedora server, 
                     // use the special role of "fedoraInternalCall-1" to denote that the callback will come from the 
                     // fedora server itself.          
                     String beServiceRole = null;
                     if (ServerUtility.isURLFedoraServer(dissURL)) {
                         beServiceRole = BackendPolicies.FEDORA_INTERNAL_CALL;
                     } else {
-                        beServiceRole = bMechPid;
+                        beServiceRole = deploymentPID;
                     }
 
                     // Get basicAuth and SSL info about the backend service and use this info to configure the

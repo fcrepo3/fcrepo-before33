@@ -17,8 +17,6 @@ import fedora.common.Constants;
 
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
-import fedora.server.types.gen.ComparisonOperator;
-import fedora.server.types.gen.Condition;
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.types.gen.ObjectFields;
@@ -86,55 +84,20 @@ public class Export
 
     public static int multi(FedoraAPIA apia,
                             FedoraAPIM apim,
-                            String fTypes,
-                            String format,
-                            String exportContext,
-                            File dir) throws Exception {
-        int count = 0;
-        if (fTypes.indexOf("D") != -1) {
-            System.out.println("Exporting all FedoraBDefObjects");
-            count += multi(apia, apim, 'D', format, exportContext, dir);
-        }
-        if (fTypes.indexOf("M") != -1) {
-            System.out.println("Exporting all FedoraBMechObjects");
-            count += multi(apia, apim, 'M', format, exportContext, dir);
-        }
-        if (fTypes.indexOf("C") != -1) {
-            System.out.println("Exporting all FedoraCModelObjects");
-            count += multi(apia, apim, 'C', format, exportContext, dir);
-        }
-        if (fTypes.indexOf("O") != -1) {
-            System.out.println("Exporting all FedoraObjects");
-            count += multi(apia, apim, 'O', format, exportContext, dir);
-        }
-        System.out.println("Finished exporting.");
-        return count;
-    }
-
-    public static int multi(FedoraAPIA apia,
-                            FedoraAPIM apim,
-                            char fType,
                             String format,
                             String exportContext,
                             File dir) throws Exception {
         int count = 0;
 
         // prepare the FieldSearch query
-        String fTypeString = "" + fType;
         FieldSearchQuery query = new FieldSearchQuery();
-        Condition cond = new Condition();
-        cond.setProperty("fType");
-        cond.setOperator(ComparisonOperator.fromValue("eq"));
-        cond.setValue(fTypeString);
-        Condition[] conditions = new Condition[1];
-        conditions[0] = cond;
-        query.setConditions(conditions);
         query.setTerms(null);
 
         String[] resultFields = new String[1];
         resultFields[0] = "pid";
 
         // get the first chunk of search results
+        
         FieldSearchResult result =
                 AutoFinder.findObjects(apia, resultFields, 100, query);
 
@@ -186,12 +149,6 @@ public class Export
         System.err.println("  PSS    is the password of repository user.");
         System.err
                 .println("  PID    is the id of the object to export from the source repository.");
-        System.err
-                .println("  FTYPS  is any combination of the characters O, D, and M, specifying");
-        System.err
-                .println("         which Fedora object type(s) should be exported. O=data objects,");
-        System.err
-                .println("         D=behavior definitions, and M=behavior mechanisms.");
         System.err.println("  FORMAT is the XML format to export ");
         System.err.println("         ('" + FOXML1_1.uri + "', '"
                 + METS_EXT1_1.uri + "', or 'default')");
@@ -289,7 +246,7 @@ public class Export
             if (args[3].indexOf(":") == -1) {
                 // assume args[3] is FTYPS... so multi-export
                 int count =
-                        Export.multi(sourceRepoAPIA, sourceRepoAPIM, args[3], // FTYPS
+                        Export.multi(sourceRepoAPIA, sourceRepoAPIM, 
                                      exportFormat,
                                      exportContext,
                                      //args[4], // format

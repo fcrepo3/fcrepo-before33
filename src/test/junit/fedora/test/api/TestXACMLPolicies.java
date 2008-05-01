@@ -781,7 +781,6 @@ public class TestXACMLPolicies
             xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             xml.append("<foxml:digitalObject VERSION=\"1.1\" PID=\"demo:ObjSpecificTest\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\">");
             xml.append("  <foxml:objectProperties>");
-            xml.append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"FedoraObject\"/>");
             xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
             xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"ObjSpecificTest\"/>");
             xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#createdDate\" VALUE=\"2004-12-10T00:21:57Z\"/>");
@@ -842,7 +841,6 @@ public class TestXACMLPolicies
             xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             xml.append("<foxml:digitalObject VERSION=\"1.1\" PID=\"demo:MultiOwnerObject\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\">");
             xml.append("  <foxml:objectProperties>");
-            xml.append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"FedoraObject\"/>");
             xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#ownerId\" VALUE=\"fedoraAdmin,testuser1\"/>");
             xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
             xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"MultiOwnerObject\"/>");

@@ -3,7 +3,7 @@ package fedora.server.storage.translation;
 
 import org.junit.Test;
 
-import fedora.server.storage.types.DigitalObject;
+import fedora.common.Models;
 
 /**
  * Unit tests for METSFedoraExt1_1DODeserializer.
@@ -26,7 +26,7 @@ public class TestMETSFedoraExt1_1DODeserializer
 
     @Test
     public void testDeserializeSimpleCModelObject() {
-        doSimpleTest(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT);
+        doSimpleTest(Models.CONTENT_MODEL_3_0);
     }
 
     // Supports legacy test runners

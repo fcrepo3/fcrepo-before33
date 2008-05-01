@@ -9,6 +9,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import org.jrdf.graph.ObjectNode;
+import org.jrdf.graph.PredicateNode;
 
 /**
  * Java representation of a Fedora digital object.
@@ -30,22 +34,6 @@ import java.util.Map;
  * @author Chris Wilper
  */
 public interface DigitalObject {
-
-    public static int FEDORA_OBJECT = 'O';
-
-    public static int FEDORA_BDEF_OBJECT = 'D';
-
-    public static int FEDORA_BMECH_OBJECT = 'M';
-
-    public static int FEDORA_CONTENT_MODEL_OBJECT = 'C';
-
-    public String getFedoraObjectTypes();
-
-    public boolean isFedoraObjectType(int type);
-
-    public void addFedoraObjectType(int type);
-
-    public void removeFedoraObjectType(int type);
 
     public boolean isNew();
 
@@ -112,29 +100,6 @@ public interface DigitalObject {
     public void setLabel(String label);
 
     /**
-     * Gets the content model id.
-     * 
-     * @return The content model id.
-     * @deprecated As of Fedora 3.0, content model is no longer an object-level
-     *             property and should be asserted in RELS-EXT instead.
-     * @see fedora.common.Constants.MODEL.HAS_CONTENT_MODEL
-     */
-    @Deprecated
-    public String getContentModelId();
-
-    /**
-     * Sets the content model id.
-     * 
-     * @param id
-     *        The content model id.
-     * @deprecated As of Fedora 3.0, content model is no longer an object-level
-     *             property and should be asserted in RELS-EXT instead.
-     * @see fedora.common.Constants.MODEL.HAS_CONTENT_MODEL
-     */
-    @Deprecated
-    public void setContentModelId(String id);
-
-    /**
      * Gets the date the object was created.
      * 
      * @return The date, or null if it hasn't been set.
@@ -184,14 +149,21 @@ public interface DigitalObject {
     public Iterator<String> datastreamIdIterator();
 
     /**
-     * Gets a mutable List of that consists of versions of the same datastream
+     * Gets an interable view that consists of versions of the same datastream
      * that is identified by the requested datastream identifier.
+     * <p>
+     * Datastreams within any iterators produced here are references to the
+     * actual datastreams in this DigitalObject, so modifying their contents is
+     * a persistent change. However, remove() is disabled, so to remove a
+     * datastream from the object, use
+     * {@link #removeDatastreamVersion(Datastream)}
+     * <p>
      * 
      * @param id
      *        The datastream id.
      * @return The list, possibly of zero size but never null.
      */
-    public List<Datastream> datastreams(String id);
+    public Iterable<Datastream> datastreams(String id);
 
     /**
      * Adds a datastream to a digital object, respecting the versionable flag of
@@ -206,6 +178,14 @@ public interface DigitalObject {
      *        version.
      */
     public void addDatastreamVersion(Datastream ds, boolean addNewVersion);
+
+    /**
+     * Removes a datastream from a digital object.
+     * 
+     * @param ds
+     *        Datastream to remove.
+     */
+    public void removeDatastreamVersion(Datastream ds);
 
     /**
      * Gets an Iterator over the disseminator ids in this object.
@@ -268,4 +248,43 @@ public interface DigitalObject {
      * @return The property Map.
      */
     public Map<String, String> getExtProperties();
+
+    /**
+     * Determine of the object contains the given relationship.
+     * <p>
+     * Returns results that are accurate for the current state of the object at
+     * the time of invocation. Thus, if there is some change to the object that
+     * changes the set of relationships contained within, the next call to
+     * hasRelationship will reflect those changes.
+     * </p>
+     * 
+     * @param predicate
+     *        Predicate of the relationship, or null if unspecified (will match
+     *        any).
+     * @param object
+     *        Object (target) of the relationship, or null if unspecified (will
+     *        match any).
+     * @return true if the object
+     */
+    public boolean hasRelationship(PredicateNode predicate, ObjectNode object);
+
+    /**
+     * Get all matching relationships in the object.
+     * <p>
+     * Returns results that are accurate for the current state of the object at
+     * the time of invocation. Thus, if there is some change to the object that
+     * changes the set of relationships contained within, the next call to
+     * getRelationships will reflect those changes.
+     * </p>
+     * 
+     * @param predicate
+     *        Predicate of the relationship, or null if unspecified (will match
+     *        any).
+     * @param object
+     *        Object (target) of the relationship, or null if unspecified (will
+     *        match any).
+     * @return All matching relationships in the object
+     */
+    public Set<RelationshipTuple> getRelationships(PredicateNode predicate,
+                                                   ObjectNode object);
 }

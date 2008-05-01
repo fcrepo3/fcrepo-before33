@@ -46,14 +46,14 @@ public class TestClientAPIA {
             call.setTargetEndpointAddress(new java.net.URL(endpoint));
             // Test GetDissemination
             PID = "1007.lib.dl.test/text_ead/viu00003";
-            String bDefPID = "web_ead";
+            String sDefPID = "web_ead";
             String method = "get_admin";
             call
                     .setOperationName(new javax.xml.namespace.QName(qName1,
                                                                     "GetDissemination"));
             fedora.server.types.gen.MIMETypedStream dissemination =
                     (fedora.server.types.gen.MIMETypedStream) call
-                            .invoke(new Object[] {PID, bDefPID, method,
+                            .invoke(new Object[] {PID, sDefPID, method,
                                     asOfDate});
             if (dissemination != null) {
                 String mime = dissemination.getMIMEType();
@@ -90,8 +90,8 @@ public class TestClientAPIA {
                         new fedora.server.types.gen.ObjectMethodsDef();
                 ov = objectView[i];
                 System.out.println("objDef[" + i + "] " + "\n" + ov.getPID()
-                        + "\n" + ov.getBDefPID() + "\n" + ov.getMethodName()
-                        + "\n" + ov.getAsOfDate());
+                        + "\n" + ov.getServiceDefinitionPID() + "\n"
+                        + ov.getMethodName() + "\n" + ov.getAsOfDate());
             }
         } catch (Exception e) {
             e.printStackTrace();

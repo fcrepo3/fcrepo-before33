@@ -53,8 +53,6 @@ public class TestRelationships
                 .append("<foxml:digitalObject VERSION=\"1.1\" PID=\"demo:888\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd\">");
         sb.append("  <foxml:objectProperties>");
         sb
-                .append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"FedoraObject\"/>");
-        sb
                 .append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
         sb.append("  </foxml:objectProperties>");
         sb
@@ -64,11 +62,13 @@ public class TestRelationships
         sb.append("      <foxml:xmlContent>");
         sb
                 .append("        <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""
-                        + "                 xmlns:rel=\"info:fedora/fedora-system:def/relations-external#\">");
+                        + "                 xmlns:fedora-model=\"info:fedora/fedora-system:def/model#\">");
         sb
                 .append("          <rdf:Description rdf:about=\"info:fedora/demo:888\">");
         sb
-                .append("            <rel:hasFormalContentModel rdf:resource=\"info:fedora/demo:UVA_STD_IMAGE_1\"/>");
+                .append("            <fedora-model:hasModel rdf:resource=\"info:fedora/demo:UVA_STD_IMAGE_1\"/>");
+        sb
+                .append("            <fedora-model:hasModel rdf:resource=\"info:fedora/fedora-system:FedoraObject-3.0\"/>");
         sb.append("          </rdf:Description>");
         sb.append("        </rdf:RDF>");
         sb.append("      </foxml:xmlContent>");
@@ -87,10 +87,25 @@ public class TestRelationships
                 .append("<foxml:digitalObject VERSION=\"1.1\" PID=\"demo:777\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd\">");
         sb.append("  <foxml:objectProperties>");
         sb
-                .append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"FedoraObject\"/>");
-        sb
                 .append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
         sb.append("  </foxml:objectProperties>");
+        sb
+                .append("  <foxml:datastream ID=\"RELS-EXT\" CONTROL_GROUP=\"M\" STATE=\"A\">");
+        sb
+                .append("    <foxml:datastreamVersion ID=\"RELS-EXT.0\" MIMETYPE=\"text/xml\" LABEL=\"Relationships\">");
+        sb.append("      <foxml:xmlContent>");
+        sb
+                .append("        <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""
+                        + "                 xmlns:fedora-model=\"info:fedora/fedora-system:def/model#\">");
+        sb
+                .append("          <rdf:Description rdf:about=\"info:fedora/demo:777\">");
+        sb
+                .append("            <fedora-model:hasModel rdf:resource=\"info:fedora/fedora-system:FedoraObject-3.0\"/>");
+        sb.append("          </rdf:Description>");
+        sb.append("        </rdf:RDF>");
+        sb.append("      </foxml:xmlContent>");
+        sb.append("    </foxml:datastreamVersion>");
+        sb.append("  </foxml:datastream>");
         sb.append("</foxml:digitalObject>");
 
         try {

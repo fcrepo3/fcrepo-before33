@@ -101,18 +101,12 @@ public class TestAPIALite
         assertXpathEvaluatesTo("demo:11",
                                "/objectProfile/attribute::pid",
                                result);
-        assertXpathEvaluatesTo("info:fedora/demo:UVA_MRSID_IMAGE_1",
-                               "/objectProfile/objContentModel",
-                               result);
-        assertXpathEvaluatesTo("Fedora Data Object",
-                               "/objectProfile/objType",
-                               result);
     }
 
     public void testListDatastreams() throws Exception {
         Document result;
         result = getXMLQueryResult("/listDatastreams/demo:11?xml=true");
-        assertXpathEvaluatesTo("9",
+        assertXpathEvaluatesTo("8",
                                "count(/objectDatastreams/datastream)",
                                result);
     }
@@ -120,7 +114,7 @@ public class TestAPIALite
     public void testListMethods() throws Exception {
         Document result;
         result = getXMLQueryResult("/listMethods/demo:11?xml=true");
-        assertXpathEvaluatesTo("6", "count(/objectMethods/bDef/method)", result);
+        assertXpathEvaluatesTo("6", "count(/objectMethods/sDef/method)", result);
     }
 
     public static void main(String[] args) {

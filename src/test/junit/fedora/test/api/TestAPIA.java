@@ -117,16 +117,13 @@ public class TestAPIA
     public void testGetObjectProfile() throws Exception {
         ObjectProfile profile = apia.getObjectProfile("demo:11", null);
         assertEquals("demo:11", profile.getPid());
-        assertEquals("info:fedora/demo:UVA_MRSID_IMAGE_1", profile
-                .getObjContentModel());
-        assertEquals("O", profile.getObjType());
         assertTrue(!profile.getObjDissIndexViewURL().equals(""));
         assertTrue(!profile.getObjItemIndexViewURL().equals(""));
     }
 
     public void testListDatastreams() throws Exception {
         DatastreamDef[] dsDefs = apia.listDatastreams("demo:11", null);
-        assertEquals(9, dsDefs.length);
+        assertEquals(8, dsDefs.length);
         verifyDatastreamDefs(dsDefs, "testListDatastream: ");
     }
 
@@ -162,18 +159,18 @@ public class TestAPIA
 
     private void verifyObjectMethods(ObjectMethodsDef[] methodDefsArray,
                                      String msg) throws Exception {
-        String bDefPID = null;
+        String sDefPID = null;
         String methodName = null;
         MethodParmDef[] parms = null;
         ObjectMethodsDef methodDef = null;
 
         for (int i = 0; i < methodDefsArray.length; i++) {
             methodDef = methodDefsArray[i];
-            bDefPID = methodDef.getBDefPID();
+            sDefPID = methodDef.getServiceDefinitionPID();
             methodName = methodDef.getMethodName();
             parms = methodDef.getMethodParmDefs();
-            System.out.println(msg + " methodDef[" + i + "] " + "bDefPID: "
-                    + bDefPID);
+            System.out.println(msg + " methodDef[" + i + "] " + "sDefPID: "
+                    + sDefPID);
             System.out.println(msg + " methodDef[" + i + "] " + "methodName: '"
                     + methodName + "'");
             for (int j = 0; j < parms.length; j++) {

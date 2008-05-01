@@ -100,7 +100,7 @@ public class MethodParameterResolverServlet
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String PID = null;
-        String bDefPID = null;
+        String sDefPID = null;
         String methodName = null;
         String versDateTime = null;
         StringBuffer methodParms = new StringBuffer();
@@ -113,8 +113,8 @@ public class MethodParameterResolverServlet
             String name = new String((String) parms.nextElement());
             if (name.equals("PID")) {
                 PID = request.getParameter(name);
-            } else if (name.equals("bDefPID")) {
-                bDefPID = request.getParameter(name);
+            } else if (name.equals("sDefPID")) {
+                sDefPID = request.getParameter(name);
             } else if (name.equals("methodName")) {
                 methodName = request.getParameter(name);
             } else if (name.equals("asOfDateTime")) {
@@ -134,14 +134,14 @@ public class MethodParameterResolverServlet
         }
 
         // Check that all required parameters are present.
-        if (PID == null || PID.equalsIgnoreCase("") || bDefPID == null
-                || bDefPID.equalsIgnoreCase("") || methodName == null
+        if (PID == null || PID.equalsIgnoreCase("") || sDefPID == null
+                || sDefPID.equalsIgnoreCase("") || methodName == null
                 || methodName.equalsIgnoreCase("")) {
             String message =
                     "[MethodParameterResolverServlet] Insufficient "
                             + "information to construct dissemination request. Parameters "
                             + "received from web form were: PID: " + PID
-                            + " -- bDefPID: " + bDefPID + " -- methodName: "
+                            + " -- sDefPID: " + sDefPID + " -- methodName: "
                             + methodName + " -- methodParms: "
                             + methodParms.toString() + "\".  ";
             LOG.error(message);
@@ -151,7 +151,7 @@ public class MethodParameterResolverServlet
         } else {
             // Translate web form parameters into dissemination request.
             StringBuffer redirectURL = new StringBuffer();
-            redirectURL.append(API_A_LITE_SERVLET_PATH + PID + "/" + bDefPID
+            redirectURL.append(API_A_LITE_SERVLET_PATH + PID + "/" + sDefPID
                     + "/" + methodName);
 
             // Add method parameters.

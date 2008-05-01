@@ -2,76 +2,26 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <id>info:fedora/demo:14</id>
   <title type="text">Sample Document Object (XML to HTML)</title>
-  <updated>2008-04-18T15:40:04.721Z</updated>
+  <updated>2008-04-30T03:54:30.087Z</updated>
   <author>
     <name>fedoraAdmin</name>
   </author>
-  <category term="FedoraObject" scheme="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"></category>
   <category term="Active" scheme="info:fedora/fedora-system:def/model#state"></category>
-  <category term="2008-04-18T15:40:04.721Z" scheme="info:fedora/fedora-system:def/model#createdDate"></category>
+  <category term="2008-04-30T03:54:30.087Z" scheme="info:fedora/fedora-system:def/model#createdDate"></category>
   <icon>http://www.fedora-commons.org/images/logo_vertical_transparent_200_251.png</icon>
-  <entry>
-    <id>info:fedora/demo:14/XSL_STYLESHEET2</id>
-    <title type="text">XSL_STYLESHEET2</title>
-    <updated>2008-04-18T15:40:04.721Z</updated>
-    <link href="info:fedora/demo:14/XSL_STYLESHEET2/2008-04-18T15:40:04.721Z" rel="alternate"></link>
-    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
-    <category term="M" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
-    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
-  </entry>
-  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
-    <id>info:fedora/demo:14/XSL_STYLESHEET2/2008-04-18T15:40:04.721Z</id>
-    <title type="text">XSL_STYLESHEET2.0</title>
-    <updated>2008-04-18T15:40:04.721Z</updated>
-    <thr:in-reply-to ref="info:fedora/demo:14/XSL_STYLESHEET2"></thr:in-reply-to>
-    <category term="Alt. XSL Stylesheet to transform WSDL to HTML" scheme="info:fedora/fedora-system:def/model#label"></category>
-    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
-    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
-    <category term="0" scheme="info:fedora/fedora-system:def/model#length"></category>
-    <summary type="text">XSL_STYLESHEET2.0</summary>
-    <content type="text/xml" src="http://localhost:8080/fedora-demo/document-transform-demo/wsdlToSummaryTbl.xsl"></content>
-  </entry>
-  <entry>
-    <id>info:fedora/demo:14/RELS-EXT</id>
-    <title type="text">RELS-EXT</title>
-    <updated>2008-04-18T15:40:04.721Z</updated>
-    <link href="info:fedora/demo:14/RELS-EXT/2008-04-18T15:40:04.721Z" rel="alternate"></link>
-    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
-    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
-    <category term="false" scheme="info:fedora/fedora-system:def/model#versionable"></category>
-  </entry>
-  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
-    <id>info:fedora/demo:14/RELS-EXT/2008-04-18T15:40:04.721Z</id>
-    <title type="text">RELS-EXT.0</title>
-    <updated>2008-04-18T15:40:04.721Z</updated>
-    <thr:in-reply-to ref="info:fedora/demo:14/RELS-EXT"></thr:in-reply-to>
-    <category term="Relationships" scheme="info:fedora/fedora-system:def/model#label"></category>
-    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
-    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
-    <category term="365" scheme="info:fedora/fedora-system:def/model#length"></category>
-    <content type="text/xml">
-      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
-      				
-        <rdf:Description rdf:about="info:fedora/demo:14">
-        				
-          <fedora-model:hasContentModel rdf:resource="info:fedora/demo:XML_TO_HTMLDOC"></fedora-model:hasContentModel>
-      				</rdf:Description>
-    			</rdf:RDF>
-    </content>
-  </entry>
   <entry>
     <id>info:fedora/demo:14/DC</id>
     <title type="text">DC</title>
-    <updated>2008-04-18T15:40:04.721Z</updated>
-    <link href="info:fedora/demo:14/DC/2008-04-18T15:40:04.721Z" rel="alternate"></link>
+    <updated>2008-04-30T03:54:30.083Z</updated>
+    <link href="info:fedora/demo:14/DC/2008-04-30T03:54:30.083Z" rel="alternate"></link>
     <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
     <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
     <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
   </entry>
   <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
-    <id>info:fedora/demo:14/DC/2008-04-18T15:40:04.721Z</id>
+    <id>info:fedora/demo:14/DC/2008-04-30T03:54:30.083Z</id>
     <title type="text">DC1.0</title>
-    <updated>2008-04-18T15:40:04.721Z</updated>
+    <updated>2008-04-30T03:54:30.083Z</updated>
     <thr:in-reply-to ref="info:fedora/demo:14/DC"></thr:in-reply-to>
     <category term="Dublin Core for the Document object" scheme="info:fedora/fedora-system:def/model#label"></category>
     <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
@@ -105,16 +55,16 @@
   <entry>
     <id>info:fedora/demo:14/XML_SOURCE</id>
     <title type="text">XML_SOURCE</title>
-    <updated>2008-04-18T15:40:04.721Z</updated>
-    <link href="info:fedora/demo:14/XML_SOURCE/2008-04-18T15:40:04.721Z" rel="alternate"></link>
+    <updated>2008-04-30T03:54:30.083Z</updated>
+    <link href="info:fedora/demo:14/XML_SOURCE/2008-04-30T03:54:30.083Z" rel="alternate"></link>
     <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
     <category term="M" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
     <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
   </entry>
   <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
-    <id>info:fedora/demo:14/XML_SOURCE/2008-04-18T15:40:04.721Z</id>
+    <id>info:fedora/demo:14/XML_SOURCE/2008-04-30T03:54:30.083Z</id>
     <title type="text">XML_SOURCE1.0</title>
-    <updated>2008-04-18T15:40:04.721Z</updated>
+    <updated>2008-04-30T03:54:30.083Z</updated>
     <thr:in-reply-to ref="info:fedora/demo:14/XML_SOURCE"></thr:in-reply-to>
     <category term="XML source for Fedora Access Web Service Definition (WSDL)" scheme="info:fedora/fedora-system:def/model#label"></category>
     <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
@@ -126,16 +76,16 @@
   <entry>
     <id>info:fedora/demo:14/XSL_STYLESHEET1</id>
     <title type="text">XSL_STYLESHEET1</title>
-    <updated>2008-04-18T15:40:04.721Z</updated>
-    <link href="info:fedora/demo:14/XSL_STYLESHEET1/2008-04-18T15:40:04.721Z" rel="alternate"></link>
+    <updated>2008-04-30T03:54:30.084Z</updated>
+    <link href="info:fedora/demo:14/XSL_STYLESHEET1/2008-04-30T03:54:30.084Z" rel="alternate"></link>
     <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
     <category term="M" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
     <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
   </entry>
   <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
-    <id>info:fedora/demo:14/XSL_STYLESHEET1/2008-04-18T15:40:04.721Z</id>
+    <id>info:fedora/demo:14/XSL_STYLESHEET1/2008-04-30T03:54:30.084Z</id>
     <title type="text">XSL_STYLESHEET1.0</title>
-    <updated>2008-04-18T15:40:04.721Z</updated>
+    <updated>2008-04-30T03:54:30.084Z</updated>
     <thr:in-reply-to ref="info:fedora/demo:14/XSL_STYLESHEET1"></thr:in-reply-to>
     <category term="XSL Stylesheet to transform WSDL to HTML" scheme="info:fedora/fedora-system:def/model#label"></category>
     <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
@@ -143,5 +93,56 @@
     <category term="0" scheme="info:fedora/fedora-system:def/model#length"></category>
     <summary type="text">XSL_STYLESHEET1.0</summary>
     <content type="text/xml" src="http://localhost:8080/fedora-demo/document-transform-demo/wsdlToAPIDoc.xsl"></content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:14/XSL_STYLESHEET2</id>
+    <title type="text">XSL_STYLESHEET2</title>
+    <updated>2008-04-30T03:54:30.084Z</updated>
+    <link href="info:fedora/demo:14/XSL_STYLESHEET2/2008-04-30T03:54:30.084Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="M" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:14/XSL_STYLESHEET2/2008-04-30T03:54:30.084Z</id>
+    <title type="text">XSL_STYLESHEET2.0</title>
+    <updated>2008-04-30T03:54:30.084Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:14/XSL_STYLESHEET2"></thr:in-reply-to>
+    <category term="Alt. XSL Stylesheet to transform WSDL to HTML" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="0" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <summary type="text">XSL_STYLESHEET2.0</summary>
+    <content type="text/xml" src="http://localhost:8080/fedora-demo/document-transform-demo/wsdlToSummaryTbl.xsl"></content>
+  </entry>
+  <entry>
+    <id>info:fedora/demo:14/RELS-EXT</id>
+    <title type="text">RELS-EXT</title>
+    <updated>2008-04-30T03:54:30.085Z</updated>
+    <link href="info:fedora/demo:14/RELS-EXT/2008-04-30T03:54:30.085Z" rel="alternate"></link>
+    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
+    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
+    <category term="false" scheme="info:fedora/fedora-system:def/model#versionable"></category>
+  </entry>
+  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
+    <id>info:fedora/demo:14/RELS-EXT/2008-04-30T03:54:30.085Z</id>
+    <title type="text">RELS-EXT.0</title>
+    <updated>2008-04-30T03:54:30.085Z</updated>
+    <thr:in-reply-to ref="info:fedora/demo:14/RELS-EXT"></thr:in-reply-to>
+    <category term="Relationships" scheme="info:fedora/fedora-system:def/model#label"></category>
+    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
+    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
+    <category term="469" scheme="info:fedora/fedora-system:def/model#length"></category>
+    <content type="text/xml">
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
+      				
+        <rdf:Description rdf:about="info:fedora/demo:14">
+        				
+          <fedora-model:hasModel rdf:resource="info:fedora/demo:XML_TO_HTMLDOC"></fedora-model:hasModel>
+        				
+          <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"></fedora-model:hasModel>
+      				</rdf:Description>
+    			</rdf:RDF>
+    </content>
   </entry>
 </feed>

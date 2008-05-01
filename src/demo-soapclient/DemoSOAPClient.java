@@ -287,18 +287,18 @@ public class DemoSOAPClient
 				String ingestPID=null;
 				
 				System.out.println("\nTest ingest......................................................");
-				File ingestFile=new File("TestIngestFiles/bdef_test_27.xml");		
+				File ingestFile=new File("TestIngestFiles/sdef_test_27.xml");		
 				try {
 					inStream=new FileInputStream(ingestFile);
 				} catch (IOException ioe) {
 						System.out.println("Error on ingest file inputstream: " + ioe.getMessage());
 						ioe.printStackTrace();
 				}
-				ingestPID = caller.ingest(inStream, FOXML1_1.uri, "ingest of test bdef");
-				System.out.println("Finished test ingest of bdef object: " + ingestPID);
+				ingestPID = caller.ingest(inStream, FOXML1_1.uri, "ingest of test sdef");
+				System.out.println("Finished test ingest of sdef object: " + ingestPID);
 				
 				System.out.println("\nTest ingest......................................................");
-				ingestFile=new File("TestIngestFiles/bmech_test_28.xml");		
+				ingestFile=new File("TestIngestFiles/sdep_test_28.xml");		
 				inStream=null;
 				try {
 					inStream=new FileInputStream(ingestFile);
@@ -306,8 +306,8 @@ public class DemoSOAPClient
 						System.out.println("Error on ingest file inputstream: " + ioe.getMessage());
 						ioe.printStackTrace();
 				}
-				ingestPID = caller.ingest(inStream, FOXML1_1.uri, "ingest of test bmech");
-				System.out.println("Finished test ingest of bmech object: " + ingestPID);
+				ingestPID = caller.ingest(inStream, FOXML1_1.uri, "ingest of test deployment");
+				System.out.println("Finished test ingest of deployment object: " + ingestPID);
 				
 				System.out.println("\nTest ingest......................................................");
 				ingestFile=new File("TestIngestFiles/obj_test_100.xml");		
@@ -526,11 +526,9 @@ public class DemoSOAPClient
 		ObjectProfile profile = APIA.getObjectProfile("demo:11", null);
 		System.out.println("SOAP Request: getObjectProfile for demo object demo:11...");			
 		System.out.println("SOAP Response: PID: "+profile.getPid());
-		System.out.println("SOAP Response: ObjectType: "+profile.getObjType());
 		System.out.println("SOAP Response: ObjectLabel: "+profile.getObjLabel());
 		System.out.println("SOAP Response: CreateDate: "+profile.getObjCreateDate());
 		System.out.println("SOAP Response: LastModDate: "+profile.getObjLastModDate());
-		System.out.println("SOAP Response: ContentModel: "+profile.getObjContentModel());
 		System.out.println("SOAP Response: DissIndexViewURL: "+profile.getObjDissIndexViewURL());
 		System.out.println("SOAP Response: ItemIndexViewURL: "+profile.getObjItemIndexViewURL());
 
@@ -609,18 +607,18 @@ public class DemoSOAPClient
 
 	public static void verifyObjectMethods(ObjectMethodsDef[] methodDefsArray, String msg) throws Exception {
 	
-		String bDefPID = null;
+		String sDefPID = null;
 		String methodName = null;
 		MethodParmDef[] parms = null;
 		ObjectMethodsDef methodDef = null;
 	        
 		for (int i=0; i<methodDefsArray.length; i++) {
 			methodDef = methodDefsArray[i];
-			bDefPID = methodDef.getBDefPID();
+			sDefPID = methodDef.getServiceDefinitionPID();
 			methodName = methodDef.getMethodName();
 			parms = methodDef.getMethodParmDefs();
 			System.out.println(msg + " methodDef["+i+"] "
-				 + "bDefPID: "+bDefPID);
+				 + "sDefPID: "+sDefPID);
 			System.out.println(msg + " methodDef["+i+"] "
 				 + "methodName: '"+methodName+"'");
 			for (int j=0; j<parms.length; j++) {

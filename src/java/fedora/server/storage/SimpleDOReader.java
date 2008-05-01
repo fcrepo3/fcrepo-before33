@@ -10,38 +10,31 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-import java.net.URI;
-
 import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
-import org.jrdf.graph.Literal;
 import org.jrdf.graph.ObjectNode;
-import org.jrdf.graph.Triple;
-
-import org.trippi.RDFFormat;
-import org.trippi.TripleIterator;
-import org.trippi.TrippiException;
+import org.jrdf.graph.PredicateNode;
 
 import fedora.common.Constants;
+import fedora.common.Models;
 
 import fedora.server.Context;
 import fedora.server.errors.DisseminationException;
-import fedora.server.errors.GeneralException;
 import fedora.server.errors.MethodNotFoundException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnsupportedTranslationException;
-import fedora.server.management.DefaultManagement;
 import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.types.AuditRecord;
@@ -120,44 +113,10 @@ public class SimpleDOReader
         m_obj = obj;
     }
 
-    public String getFedoraObjectTypes() {
-        return m_obj.getFedoraObjectTypes();
+    public DigitalObject getObject() {
+        return m_obj;
     }
-
-    public boolean isFedoraObjectType(int type) {
-        return m_obj.isFedoraObjectType(type);
-    }
-
-    /**
-     * Gets the content model of the object. As of Fedora 3.0, this comes from
-     * the fedora-view:hasContentModel relationship. An appropriate
-     * system-defined content model is assumed if unasserted in RELS-EXT.
-     * 
-     * @return the content model.
-     */
-    public String getContentModelId() {
-        try {
-            RelationshipTuple rels[] =
-                    getRelationships(Constants.MODEL.HAS_CONTENT_MODEL.uri);
-            if (rels != null && rels.length > 0) {
-                return rels[0].object;
-            } else {
-                if (isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) {
-                    return Constants.FEDORA.BDEF_CMODEL.uri;
-                } else if (isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)) {
-                    return Constants.FEDORA.BMECH_CMODEL.uri;
-                } else if (isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) {
-                    return Constants.FEDORA.CMODEL_CMODEL.uri;
-                } else {
-                    return Constants.FEDORA.DEFAULT_CMODEL.uri;
-                }
-            }
-        } catch (ServerException e) {
-            throw new RuntimeException("Unexpected error reading "
-                    + "relationships", e);
-        }
-    }
-
+    
     public Date getCreateDate() {
         return m_obj.getCreateDate();
     }
@@ -249,7 +208,7 @@ public class SimpleDOReader
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         return Export(format, exportContext);
-    }    
+    }
 
     public String GetObjectPID() {
         return m_obj.getPid();
@@ -294,9 +253,7 @@ public class SimpleDOReader
 
     // returns null if can't find
     public Datastream getDatastream(String dsID, String versionID) {
-        List allVersions = m_obj.datastreams(dsID);
-        for (int i = 0; i < allVersions.size(); i++) {
-            Datastream ds = (Datastream) allVersions.get(i);
+        for (Datastream ds : m_obj.datastreams(dsID)) {
             if (ds.DSVersionID.equals(versionID)) {
                 return ds;
             }
@@ -306,13 +263,8 @@ public class SimpleDOReader
 
     // returns null if can't find
     public Datastream GetDatastream(String datastreamID, Date versDateTime) {
-        List allVersions = m_obj.datastreams(datastreamID);
-        if (allVersions.size() == 0) {
-            return null;
-        }
         // get the one with the closest creation date
         // without going over
-        Iterator dsIter = allVersions.iterator();
         Datastream closestWithoutGoingOver = null;
         Datastream latestCreated = null;
         long bestTimeDifference = -1;
@@ -321,8 +273,7 @@ public class SimpleDOReader
         if (versDateTime != null) {
             vTime = versDateTime.getTime();
         }
-        while (dsIter.hasNext()) {
-            Datastream ds = (Datastream) dsIter.next();
+        for (Datastream ds : m_obj.datastreams(datastreamID)) {
             if (versDateTime == null) {
                 if (ds.DSCreateDT.getTime() > latestCreateTime) {
                     latestCreateTime = ds.DSCreateDT.getTime();
@@ -346,12 +297,11 @@ public class SimpleDOReader
     }
 
     public Date[] getDatastreamVersions(String datastreamID) {
-        List l = m_obj.datastreams(datastreamID);
-        Date[] versionDates = new Date[l.size()];
-        for (int i = 0; i < l.size(); i++) {
-            versionDates[i] = ((Datastream) l.get(i)).DSCreateDT;
+        ArrayList<Date> versionDates = new ArrayList<Date>();
+        for (Datastream d : m_obj.datastreams(datastreamID)) {
+            versionDates.add(d.DSCreateDT);
         }
-        return versionDates;
+        return (Date[]) versionDates.toArray(new Date[0]);
     }
 
     public Datastream[] GetDatastreams(Date versDateTime, String state) {
@@ -397,22 +347,22 @@ public class SimpleDOReader
         return modDates.toArray(new String[0]);
     }
 
-    public MethodDef[] listMethods(String bDefPID,
-                                   BMechReader bmechreader,
+    public MethodDef[] listMethods(String sDefPID,
+                                   ServiceDeploymentReader sDepReader,
                                    Date versDateTime)
             throws MethodNotFoundException, ServerException {
-        if (bDefPID.equalsIgnoreCase("fedora-system:1")
-                || bDefPID.equalsIgnoreCase("fedora-system:3")) {
+        if (sDefPID.equalsIgnoreCase("fedora-system:1")
+                || sDefPID.equalsIgnoreCase("fedora-system:3")) {
             throw new MethodNotFoundException("[getObjectMethods] The object, "
                     + m_obj.getPid()
                     + ", will not report on dynamic method definitions "
                     + "at this time (fedora-system:1 and fedora-system:3.");
         }
 
-        if (bmechreader == null) {
+        if (sDepReader == null) {
             return null;
         }
-        MethodDef[] methods = bmechreader.getServiceMethods(versDateTime);
+        MethodDef[] methods = sDepReader.getServiceMethods(versDateTime);
         // Filter out parms that are internal to the mechanism and not part
         // of the abstract method definition. We just want user parms.
         for (int i = 0; i < methods.length; i++) {
@@ -431,14 +381,13 @@ public class SimpleDOReader
      * @return
      */
     public MethodParmDef[] filterParms(MethodDef method) {
-        ArrayList filteredParms = new ArrayList();
-        MethodParmDef[] parms = method.methodParms;
-        for (MethodParmDef element : parms) {
+        ArrayList<MethodParmDef> filteredParms = new ArrayList<MethodParmDef>();
+        for (MethodParmDef element : method.methodParms) {
             if (element.parmType.equalsIgnoreCase(MethodParmDef.USER_INPUT)) {
                 filteredParms.add(element);
             }
         }
-        return (MethodParmDef[]) filteredParms.toArray(new MethodParmDef[0]);
+        return filteredParms.toArray(new MethodParmDef[0]);
     }
 
     protected String getWhenString(Date versDateTime) {
@@ -451,14 +400,26 @@ public class SimpleDOReader
 
     public ObjectMethodsDef[] listMethods(Date versDateTime)
             throws ServerException {
-        ArrayList methodList = new ArrayList();
-        ArrayList bDefIDList = new ArrayList();
+        ArrayList<MethodDef> methodList = new ArrayList<MethodDef>();
+        ArrayList<String> sDefIDList = new ArrayList<String>();
 
-        BMechReader bmechreader = null;
-        RelationshipTuple cmPIDs[] =
-                getRelationships(Constants.MODEL.HAS_CONTENT_MODEL.uri);
-        if (cmPIDs != null && cmPIDs.length > 0) {
-            for (RelationshipTuple element : cmPIDs) {
+        ServiceDeploymentReader sDepreader = null;
+        Set<RelationshipTuple> cmRels = getRelationships(Constants.MODEL.HAS_MODEL, null);
+        
+        if (cmRels != null && !cmRels.isEmpty()) {
+            for (RelationshipTuple element : cmRels) {
+
+                /*
+                 * FIXME: If the we encounter a relation to one of the "system"
+                 * models, then skip it, since its functionality is hardwired
+                 * in. Ideally, we would actually instantiate the system
+                 * objects, and wire in the default system behaviour based upon
+                 * their content (just like everything else)
+                 */
+                if (Models.contains(element.object)) {
+                    continue;
+                }
+
                 DOReader cmReader;
                 String cModelPid = element.getObjectPID();
                 if (cModelPid.equals("self")) {
@@ -480,47 +441,46 @@ public class SimpleDOReader
                                                          e);
                     }
                 }
-                RelationshipTuple bDefPIDs[] =
-                        cmReader.getRelationships(Constants.MODEL.HAS_BDEF.uri);
-                if (bDefPIDs != null && bDefPIDs.length > 0) {
-                    boolean initialized = false;
-                    for (RelationshipTuple element2 : bDefPIDs) {
-                        String bDefPid = element2.getObjectPID();
+                RelationshipTuple sDefPIDs[] =
+                        cmReader
+                                .getRelationships(Constants.MODEL.HAS_SERVICE.uri);
+                if (sDefPIDs != null && sDefPIDs.length > 0) {
+                    for (RelationshipTuple element2 : sDefPIDs) {
+                        String sDefPid = element2.getObjectPID();
                         DOManager manager = null;
                         MethodDef[] methods = null;
                         if (m_repoReader instanceof DOManager) {
                             manager = (DOManager) m_repoReader;
-                            if (!initialized) {
-                                manager.initializeCModelBmechHashMap(m_context);
-                                initialized = true;
-                            }
-                            String bMechPid =
-                                    manager.lookupBmechForCModel(cModelPid,
-                                                                 bDefPid);
-                            if (bMechPid == null) {
-                                throw new DisseminationException("No BMech defined as Contractor for Content Model "
+
+                            String deploymentPid =
+                                    manager
+                                            .lookupDeploymentForCModel(cModelPid,
+                                                                       sDefPid);
+                            if (deploymentPid == null) {
+                                throw new DisseminationException("No service deployment is a Contractor for Content Model "
                                         + cModelPid);
                             }
                             try {
-                                bmechreader =
-                                        m_repoReader.getBMechReader(false,
-                                                                    m_context,
-                                                                    bMechPid);
+                                sDepreader =
+                                        m_repoReader
+                                                .getServiceDeploymentReader(false,
+                                                                            m_context,
+                                                                            deploymentPid);
                             } catch (StorageException se) {
-                                throw new DisseminationException("BMech "
-                                        + bMechPid
+                                throw new DisseminationException("Service deployment "
+                                        + deploymentPid
                                         + " defined as Contractor for Content Model "
                                         + cModelPid + " not found.");
                             }
                             methods =
                                     listMethods(element2.getObjectPID(),
-                                                bmechreader,
+                                                sDepreader,
                                                 versDateTime);
                         }
                         if (methods != null) {
                             for (MethodDef element3 : methods) {
                                 methodList.add(element3);
-                                bDefIDList.add(element2.getObjectPID());
+                                sDefIDList.add(element2.getObjectPID());
                             }
                         }
                     }
@@ -533,7 +493,7 @@ public class SimpleDOReader
             MethodDef def = (MethodDef) methodList.get(i);
             ret[i] = new ObjectMethodsDef();
             ret[i].PID = GetObjectPID();
-            ret[i].bDefPID = (String) bDefIDList.get(i);
+            ret[i].sDefPID = (String) sDefIDList.get(i);
             ret[i].methodName = def.methodName;
             ret[i].methodParmDefs = def.methodParms;
             ret[i].asOfDate = versDateTime;
@@ -541,63 +501,25 @@ public class SimpleDOReader
         return ret;
     }
 
+    public boolean hasRelationship(PredicateNode predicate, ObjectNode object) {
+        return m_obj.hasRelationship(predicate, object);
+    }
+
+    public Set<RelationshipTuple> getRelationships(PredicateNode predicate,
+                                                   ObjectNode object) {
+        return m_obj.getRelationships(predicate, object);
+    }
+
     public RelationshipTuple[] getRelationships(String relationship)
             throws ServerException {
-        String datastreamID = DefaultManagement.s_RelsExt_Datastream; // RELS-EXT
-        Datastream ds = GetDatastream(datastreamID, null);
-        if (ds == null) {
-            return new RelationshipTuple[0];
-        }
-
         ArrayList<RelationshipTuple> tuples =
                 new ArrayList<RelationshipTuple>();
-        InputStream dsContent = ds.getContentStream();
-        TripleIterator iter = null;
-        try {
-            iter = TripleIterator.fromStream(dsContent, RDFFormat.RDF_XML);
-            Triple triple;
-            ObjectNode objectNode;
-            boolean isLiteral;
-            URI datatypeURI;
-            String subject, predicate, object, datatype;
-            while (iter.hasNext()) {
-                triple = iter.next();
-                if (relationship == null
-                        || relationship.length() == 0
-                        || triple.getPredicate().toString()
-                                .equals(relationship)) {
-                    subject = triple.getSubject().toString();
-                    predicate = triple.getPredicate().toString();
-                    objectNode = triple.getObject();
-                    isLiteral = objectNode instanceof Literal;
-                    datatype = null;
-                    if (isLiteral) {
-                        object = ((Literal) objectNode).getLexicalForm();
-                        datatypeURI = ((Literal) objectNode).getDatatypeURI();
-                        if (datatypeURI != null) {
-                            datatype = datatypeURI.toString();
-                        }
-                    } else {
-                        object = triple.getObject().toString();
-                    }
-                    tuples.add(new RelationshipTuple(subject,
-                                                     predicate,
-                                                     object,
-                                                     isLiteral,
-                                                     datatype));
-                }
-            }
-        } catch (TrippiException e) {
-            throw new GeneralException(e.getMessage(), e);
-        } finally {
-            if (iter != null) {
-                try {
-                    iter.close();
-                } catch (TrippiException e) {
-                    throw new GeneralException(e.getMessage(), e);
-                }
+        for (RelationshipTuple t : getRelationships(null, null)) {
+            if (t.predicate.equals(relationship)) {
+                tuples.add(t);
             }
         }
+
         return tuples.toArray(new RelationshipTuple[tuples.size()]);
     }
 }

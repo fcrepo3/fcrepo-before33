@@ -36,16 +36,8 @@ public class ValidateSchematronTest
         inSchematronPPFile = "src/schematron/preprocessor.xslt";
 
         // FOXML
-        //inFile="TestValidation/foxml-reference-example.xml";
-        //inFile="TestIngestFiles/foxml-reference-example.xml";
-        //inFile="TestValidation/foxml-bdef.xml";
-        inFile = "TestIngestFiles/foxml-reference-ingest.xml";
-        //inFile="TestExportFiles/problem.xml";				
+        inFile = "TestIngestFiles/foxml-reference-ingest.xml";			
         inSchematronRulesFile = "src/xml/schematron/foxmlRules1-0.xml";
-
-        // METS
-        //inFile="TestValidation/bdef-simple-image.xml";			
-        //inSchematronRulesFile="src/xml/schematron/metsExtRules1-0.xml";
 
         FileInputStream in = null;
         try {

@@ -29,7 +29,6 @@ import org.trippi.TrippiException;
 import org.trippi.TupleIterator;
 
 import fedora.server.errors.ResourceIndexException;
-import fedora.server.storage.BDefReader;
 import fedora.server.storage.DOReader;
 
 /**
@@ -87,90 +86,23 @@ public class ResourceIndexImpl
     /**
      * {@inheritDoc}
      */
-    public void addBDefObject(BDefReader reader) throws ResourceIndexException {
+    public void addObject(DOReader reader) throws ResourceIndexException {
         if (_indexLevel > INDEX_LEVEL_OFF) {
-            updateTriples(_generator.getTriplesForBDef(reader), false);
+            updateTriples(_generator.getTriplesForObject(reader), false);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void addDataObject(DOReader reader) throws ResourceIndexException {
-        if (_indexLevel > INDEX_LEVEL_OFF) {
-            updateTriples(_generator.getTriplesForDataObject(reader), false);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void addCModelObject(DOReader reader) throws ResourceIndexException {
-        if (_indexLevel > INDEX_LEVEL_OFF) {
-            updateTriples(_generator.getTriplesForCModelObject(reader), false);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void modifyBDefObject(BDefReader oldReader, BDefReader newReader)
+    public void modifyObject(DOReader oldReader, DOReader newReader)
             throws ResourceIndexException {
         if (_indexLevel > INDEX_LEVEL_OFF) {
-            updateTripleDiffs(_generator.getTriplesForBDef(oldReader),
-                              _generator.getTriplesForBDef(newReader));
+            updateTripleDiffs(_generator.getTriplesForObject(oldReader),
+                              _generator.getTriplesForObject(newReader));
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void modifyDataObject(DOReader oldReader, DOReader newReader)
-            throws ResourceIndexException {
+    public void deleteObject(DOReader oldReader) throws ResourceIndexException {
         if (_indexLevel > INDEX_LEVEL_OFF) {
-            updateTripleDiffs(_generator.getTriplesForDataObject(oldReader),
-                              _generator.getTriplesForDataObject(newReader));
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void modifyCModelObject(DOReader oldReader, DOReader newReader)
-            throws ResourceIndexException {
-        if (_indexLevel > INDEX_LEVEL_OFF) {
-            updateTripleDiffs(_generator.getTriplesForCModelObject(oldReader),
-                              _generator.getTriplesForCModelObject(newReader));
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void deleteBDefObject(BDefReader oldReader)
-            throws ResourceIndexException {
-        if (_indexLevel > INDEX_LEVEL_OFF) {
-            updateTriples(_generator.getTriplesForBDef(oldReader), true);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void deleteDataObject(DOReader oldReader)
-            throws ResourceIndexException {
-        if (_indexLevel > INDEX_LEVEL_OFF) {
-            updateTriples(_generator.getTriplesForDataObject(oldReader), true);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void deleteCModelObject(DOReader oldReader)
-            throws ResourceIndexException {
-        if (_indexLevel > INDEX_LEVEL_OFF) {
-            updateTriples(_generator.getTriplesForCModelObject(oldReader), true);
+            updateTriples(_generator.getTriplesForObject(oldReader), true);
         }
     }
 

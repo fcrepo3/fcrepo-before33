@@ -328,13 +328,13 @@ public class DatastreamResolverServlet
                 response.setContentType(HTML_CONTENT_TYPE);
                 out
                         .println("<br><b>[DatastreamResolverServlet] Error:</b>"
-                                + "<font color=\"red\"> Mechanism has failed to respond "
+                                + "<font color=\"red\"> Deployment has failed to respond "
                                 + "to the DatastreamResolverServlet within the specified "
                                 + "time limit of \""
                                 + datastreamMediationLimit
                                 + "\""
                                 + "milliseconds. Datastream access denied.");
-                LOG.error("Mechanism failed to respond to "
+                LOG.error("Deployment failed to respond to "
                         + "DatastreamResolverServlet within time limit of "
                         + datastreamMediationLimit);
                 out.close();

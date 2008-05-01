@@ -680,33 +680,6 @@ public class DefaultAuthorization
         }
     }
 
-    // public final void enforceAddDisseminator(Context context, String pid,
-    // String bDefPid, String bMechPid, String dissState)
-    // throws AuthzException {
-    // try {
-    // LOG.debug("Entered enforceAddDisseminator");
-    // String target = Constants.ACTION.ADD_DISSEMINATOR.uri;
-    // log("enforcing " + target);
-    // context.setActionAttributes(null);
-    // MultiValueMap resourceAttributes = new MultiValueMap();
-    // String name = "";
-    // try {
-    // name = resourceAttributes.setReturn(Constants.BDEF.PID.uri, bDefPid);
-    // name = resourceAttributes.setReturn(Constants.BMECH.PID.uri, bMechPid);
-    // name = resourceAttributes.setReturn(Constants.DISSEMINATOR.STATE.uri,
-    // dissState);
-    // } catch (Exception e) {
-    // context.setResourceAttributes(null);
-    // throw new AuthzOperationalException(target + " couldn't set " + name, e);
-    // }
-    // context.setResourceAttributes(resourceAttributes);
-    // xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
-    // target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-    // } finally {
-    // LOG.debug("Exiting enforceAddDisseminator");
-    // }
-    // }
-
     public final void enforceExport(Context context,
                                     String pid,
                                     String format,
@@ -1302,37 +1275,6 @@ public class DefaultAuthorization
         }
     }
 
-    // public final void enforceModifyDisseminator(Context context, String pid,
-    // String disseminatorId, String bmechNewPid, String disseminatorNewState)
-    // throws AuthzException {
-    // try {
-    // LOG.debug("Entered enforceModifyDisseminator");
-    // String target = Constants.ACTION.MODIFY_DISSEMINATOR.uri;
-    // log("enforcing " + target);
-    // context.setActionAttributes(null);
-    // MultiValueMap resourceAttributes = new MultiValueMap();
-    // String name = "";
-    // try {
-    // name = resourceAttributes.setReturn(Constants.DISSEMINATOR.ID.uri,
-    // disseminatorId);
-    // name = resourceAttributes.setReturn(Constants.BMECH.NEW_PID.uri,
-    // bmechNewPid);
-    // name = resourceAttributes.setReturn(Constants.BMECH.NEW_NAMESPACE.uri,
-    // extractNamespace(bmechNewPid));
-    // name = resourceAttributes.setReturn(Constants.DISSEMINATOR.NEW_STATE.uri,
-    // extractNamespace(disseminatorNewState));
-    // } catch (Exception e) {
-    // context.setResourceAttributes(null);
-    // throw new AuthzOperationalException(target + " couldn't set " + name, e);
-    // }
-    // context.setResourceAttributes(resourceAttributes);
-    // xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
-    // target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-    // } finally {
-    // LOG.debug("Exiting enforceModifyDisseminator");
-    // }
-    // }
-
     public final void enforceModifyObject(Context context,
                                           String pid,
                                           String objectNewState,
@@ -1716,13 +1658,13 @@ public class DefaultAuthorization
 
     public void enforceGetDissemination(Context context,
                                         String pid,
-                                        String bdefPid,
+                                        String sDefPid,
                                         String methodName,
                                         Date asOfDate,
                                         String objectState,
-                                        String bdefState,
-                                        String bmechPid,
-                                        String bmechState,
+                                        String sDefState,
+                                        String sDepPid,
+                                        String sDepState,
                                         String dissState) throws AuthzException {
         try {
             LOG.debug("Entered enforceGetDissemination");
@@ -1733,23 +1675,23 @@ public class DefaultAuthorization
             String name = "";
             try {
                 name =
-                        resourceAttributes.setReturn(Constants.BDEF.PID.uri,
-                                                     bdefPid);
+                        resourceAttributes.setReturn(Constants.SDEF.PID.uri,
+                                                     sDefPid);
                 name =
                         resourceAttributes
-                                .setReturn(Constants.BDEF.NAMESPACE.uri,
-                                           extractNamespace(bdefPid));
+                                .setReturn(Constants.SDEF.NAMESPACE.uri,
+                                           extractNamespace(sDefPid));
                 name =
                         resourceAttributes
                                 .setReturn(Constants.DISSEMINATOR.METHOD.uri,
                                            methodName);
                 name =
-                        resourceAttributes.setReturn(Constants.BMECH.PID.uri,
-                                                     bmechPid);
+                        resourceAttributes.setReturn(Constants.SDEP.PID.uri,
+                                                     sDepPid);
                 name =
                         resourceAttributes
-                                .setReturn(Constants.BMECH.NAMESPACE.uri,
-                                           extractNamespace(bmechPid));
+                                .setReturn(Constants.SDEP.NAMESPACE.uri,
+                                           extractNamespace(sDepPid));
                 name =
                         resourceAttributes
                                 .setReturn(Constants.OBJECT.STATE.uri,
@@ -1759,11 +1701,11 @@ public class DefaultAuthorization
                                 .setReturn(Constants.DISSEMINATOR.STATE.uri,
                                            dissState);
                 name =
-                        resourceAttributes.setReturn(Constants.BDEF.STATE.uri,
-                                                     bdefState);
+                        resourceAttributes.setReturn(Constants.SDEF.STATE.uri,
+                                                     sDefState);
                 name =
-                        resourceAttributes.setReturn(Constants.BMECH.STATE.uri,
-                                                     bmechState);
+                        resourceAttributes.setReturn(Constants.SDEP.STATE.uri,
+                                                     sDepState);
                 name =
                         resourceAttributes
                                 .setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri,

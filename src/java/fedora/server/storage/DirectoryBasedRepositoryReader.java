@@ -138,12 +138,12 @@ public class DirectoryBasedRepositoryReader
                                   getStoredObjectInputStream(pid));
     }
 
-    public BMechReader getBMechReader(boolean UseCachedObject,
+    public ServiceDeploymentReader getServiceDeploymentReader(boolean UseCachedObject,
                                       Context context,
                                       String pid)
             throws ObjectIntegrityException, ObjectNotFoundException,
             StreamIOException, UnsupportedTranslationException, ServerException {
-        return new SimpleBMechReader(null,
+        return new SimpleServiceDeploymentReader(null,
                                      this,
                                      m_translator,
                                      m_exportFormat,
@@ -152,12 +152,12 @@ public class DirectoryBasedRepositoryReader
                                      getStoredObjectInputStream(pid));
     }
 
-    public BDefReader getBDefReader(boolean UseCachedObject,
+    public ServiceDefinitionReader getServiceDefinitionReader(boolean UseCachedObject,
                                     Context context,
                                     String pid)
             throws ObjectIntegrityException, ObjectNotFoundException,
             StreamIOException, UnsupportedTranslationException, ServerException {
-        return new SimpleBDefReader(null,
+        return new SimpleServiceDefinitionReader(null,
                                     this,
                                     m_translator,
                                     m_exportFormat,

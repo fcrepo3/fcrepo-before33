@@ -23,10 +23,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
+import fedora.common.Models;
 
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
@@ -42,8 +44,6 @@ import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.management.PIDGenerator;
 import fedora.server.search.FieldSearch;
-import fedora.server.storage.BDefReader;
-import fedora.server.storage.BMechReader;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.ConnectionPoolManager;
 import fedora.server.storage.DOManager;
@@ -52,12 +52,12 @@ import fedora.server.storage.DOWriter;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
+import fedora.server.storage.types.RelationshipTuple;
 import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.TableSpec;
 
 /**
  * A Rebuilder for the SQL database.
- * 
  */
 public class SQLRebuilder
         implements Rebuilder {
@@ -316,11 +316,9 @@ public class SQLRebuilder
         obj.setLastModDate(nowUTC);
 
         // SET DATASTREAM PROPERTIES...
-        Iterator dsIter = obj.datastreamIdIterator();
+        Iterator<String> dsIter = obj.datastreamIdIterator();
         while (dsIter.hasNext()) {
-            List dsList = obj.datastreams((String) dsIter.next());
-            for (int i = 0; i < dsList.size(); i++) {
-                Datastream ds = (Datastream) dsList.get(i);
+            for (Datastream ds : obj.datastreams(dsIter.next())) {
                 // Set create date to UTC if not already set
                 if (ds.DSCreateDT == null || ds.DSCreateDT.equals("")) {
                     ds.DSCreateDT = nowUTC;
@@ -359,54 +357,19 @@ public class SQLRebuilder
         // at this point the object is valid, so make a record
         // of it in the digital object registry
         try {
-            registerObject(obj.getPid(), obj.getFedoraObjectTypes(), obj
-                    .getOwnerId(), obj.getLabel(), obj.getCreateDate(), obj
-                    .getLastModDate());
+            registerObject(obj);
         } catch (StorageDeviceException e) {
         }
 
         try {
-            if (obj.isFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT)) {
-                LOG.info("COMMIT: Attempting replication as bdef object: "
-                        + obj.getPid());
-                BDefReader reader =
-                        manager.getBDefReader(Server.USE_DEFINITIVE_STORE,
-                                              m_context,
-                                              obj.getPid());
-                LOG.info("COMMIT: Updating FieldSearch indexes...");
-                fieldSearch.update(reader);
-            }
-            if (obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)) {
-                LOG.info("COMMIT: Attempting replication as bmech object: "
-                        + obj.getPid());
-                BMechReader reader =
-                        manager.getBMechReader(Server.USE_DEFINITIVE_STORE,
-                                               m_context,
-                                               obj.getPid());
-                LOG.info("COMMIT: Updating FieldSearch indexes...");
-                fieldSearch.update(reader);
-            }
-            if (obj
-                    .isFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT)) {
-                LOG.info("COMMIT: Attempting replication as bmech object: "
-                        + obj.getPid());
-                DOReader reader =
-                        manager.getReader(Server.USE_DEFINITIVE_STORE,
-                                          m_context,
-                                          obj.getPid());
-                LOG.info("COMMIT: Updating FieldSearch indexes...");
-                fieldSearch.update(reader);
-            }
-            if (obj.isFedoraObjectType(DigitalObject.FEDORA_OBJECT)) {
-                LOG.info("COMMIT: Attempting replication as normal object: "
-                        + obj.getPid());
-                DOReader reader =
-                        manager.getReader(Server.USE_DEFINITIVE_STORE,
-                                          m_context,
-                                          obj.getPid());
-                LOG.info("COMMIT: Updating FieldSearch indexes...");
-                fieldSearch.update(reader);
-            }
+            LOG.info("COMMIT: Attempting replication: " + obj.getPid());
+            DOReader reader =
+                    manager.getReader(Server.USE_DEFINITIVE_STORE,
+                                      m_context,
+                                      obj.getPid());
+            LOG.info("COMMIT: Updating FieldSearch indexes...");
+            fieldSearch.update(reader);
+
         } catch (ServerException se) {
             System.out.println("Error while replicating: "
                     + se.getClass().getName() + ": " + se.getMessage());
@@ -422,12 +385,12 @@ public class SQLRebuilder
     /**
      * Adds a new object.
      */
-    private void registerObject(String pid,
-                                String fedoraObjectType,
-                                String userId,
-                                String label,
-                                Date createDate,
-                                Date lastModDate) throws StorageDeviceException {
+    private void registerObject(DigitalObject obj)
+            throws StorageDeviceException {
+        String pid = obj.getPid();
+        String userId = obj.getOwnerId();
+        String label = obj.getLabel();
+
         // label or contentModelId may be null...set to blank if so
         String theLabel = label;
         if (theLabel == null) {
@@ -435,16 +398,19 @@ public class SQLRebuilder
         }
         Connection conn = null;
         Statement s1 = null;
-        String foType = fedoraObjectType;
         try {
             String query =
-                    "INSERT INTO doRegistry (doPID, foType, "
-                            + "ownerId, label) " + "VALUES ('" + pid + "', '"
-                            + foType + "', '" + userId + "', '"
+                    "INSERT INTO doRegistry (doPID, " + "ownerId, label) "
+                            + "VALUES ('" + pid + "', '" + userId + "', '"
                             + SQLUtility.aposEscape(theLabel) + "')";
             conn = m_connectionPool.getConnection();
             s1 = conn.createStatement();
             s1.executeUpdate(query);
+
+            if (obj.hasRelationship(Constants.MODEL.HAS_MODEL,
+                                    Models.SERVICE_DEPLOYMENT_3_0)) {
+                updateDeploymentMap(obj, conn);
+            }
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Unexpected error from SQL database while registering object: "
                     + sqle.getMessage());
@@ -477,7 +443,6 @@ public class SQLRebuilder
             }
             int systemVersion = results.getInt("systemVersion");
             systemVersion++;
-            Date now = new Date();
             s2.executeUpdate("UPDATE doRegistry SET systemVersion="
                     + systemVersion + " " + "WHERE doPID='" + pid + "'");
         } catch (SQLException sqle) {
@@ -548,6 +513,54 @@ public class SQLRebuilder
             return DriverManager.getConnection(url, username, password);
         } catch (Exception e) {
             throw new RuntimeException("Error getting database connection", e);
+        }
+    }
+
+    /**
+     * Update the registry and deployment cache to reflect the latest state of
+     * reality.
+     * 
+     * @param obj
+     *        DOReader of a service deployment object
+     */
+    private synchronized void updateDeploymentMap(DigitalObject obj,
+                                                  Connection c)
+            throws SQLException {
+
+        Set<RelationshipTuple> sDefs =
+                obj.getRelationships(Constants.MODEL.IS_DEPLOYMENT_OF, null);
+        Set<RelationshipTuple> models =
+                obj.getRelationships(Constants.MODEL.IS_CONTRACTOR_OF, null);
+
+        for (RelationshipTuple sDefTuple : sDefs) {
+            String sDef = sDefTuple.getObjectPID();
+            for (RelationshipTuple cModelTuple : models) {
+                String cModel = cModelTuple.getObjectPID();
+                addDeployment(cModel, sDef, obj, c);
+            }
+        }
+    }
+
+    private void addDeployment(String cModel,
+                               String sDef,
+                               DigitalObject sDep,
+                               Connection c) throws SQLException {
+
+        Statement s = c.createStatement();
+
+        try {
+            s
+                    .executeUpdate("INSERT INTO modelDeploymentMap (cModel, sDef, sDep) VALUES ('"
+                            + cModel
+                            + "' , '"
+                            + sDef
+                            + "', '"
+                            + sDep.getPid()
+                            + "');");
+        } finally {
+            if (s != null) {
+                s.close();
+            }
         }
     }
 }

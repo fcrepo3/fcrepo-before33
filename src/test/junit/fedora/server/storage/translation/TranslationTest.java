@@ -4,8 +4,10 @@ package fedora.server.storage.translation;
 import java.util.Date;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+import org.jrdf.graph.URIReference;
 import org.junit.Before;
 
+import fedora.common.PID;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DSBinding;
 import fedora.server.storage.types.DSBindingMap;
@@ -41,10 +43,29 @@ public abstract class TranslationTest
     // Static helpers
     //---
 
-    protected static DigitalObject createTestObject(int fType) {
+    protected static DigitalObject createTestObject(URIReference... contentModelURIs) {
         DigitalObject obj = new BasicDigitalObject();
-        obj.addFedoraObjectType(fType);
         obj.setPid(TEST_PID);
+        DatastreamXMLMetadata ds = createXDatastream("RELS-EXT");
+
+        StringBuilder rdf = new StringBuilder();
+        rdf
+                .append("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" "
+                        + "xmlns:fedora-model=\"info:fedora/fedora-system:def/model#\">\n"
+                        + "<rdf:Description rdf:about=\"");
+        rdf.append(PID.getInstance(TEST_PID).toURI() + "\">\n");
+
+        for (URIReference model : contentModelURIs) {
+            rdf.append("<fedora-model:hasModel rdf:resource=\""
+                    + model.getURI().toString()
+                    + "\"></fedora-model:hasModel>\n");
+        }
+        rdf.append("</rdf:Description></rdf:RDF>");
+        ds.xmlContent = rdf.toString().getBytes();
+                
+        obj.addDatastreamVersion(ds, false);
+        obj.setCreateDate(new Date());
+        obj.setLastModDate(new Date());
         obj.setCreateDate(new Date());
         obj.setLastModDate(new Date());
         return obj;
@@ -75,7 +96,7 @@ public abstract class TranslationTest
         diss.dissID = id;
         diss.dissVersionID = id + ".0";
         diss.bDefID = TEST_PID + "bdef";
-        diss.bMechID = TEST_PID + "bmech";
+        diss.sDepID = TEST_PID + "bmech";
         diss.dsBindMap = new DSBindingMap();
         // the following is only needed for METS
         diss.dsBindMapID = id + "bindMap";

@@ -11,8 +11,8 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- * Defines the datastreams that a behavior mechanism requires in order to
- * fulfill its behavior definition ("contract"). A behavior mechanism object
+ * Defines the datastreams that a service deployment requires in order to
+ * fulfill its service definition ("contract"). A deployment object
  * specifies this.
  */
 public class DatastreamInputSpec {

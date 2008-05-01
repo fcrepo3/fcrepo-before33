@@ -38,7 +38,7 @@ import fedora.server.types.gen.ObjectFields;
  */
 public abstract class Util {
 
-    public static Map getBDefLabelMap() throws IOException {
+    public static Map getSDefLabelMap() throws IOException {
         try {
             HashMap labelMap = new HashMap();
             FieldSearchQuery query = new FieldSearchQuery();
@@ -49,6 +49,10 @@ public abstract class Util {
             conditions[0].setValue("D");
             query.setConditions(conditions);
             String[] fields = new String[] {"pid", "label"};
+            if (true) {
+                /* FIXME: find some other way to do this */
+                throw new UnsupportedOperationException("This operation uses obsolete field search semantics");
+            }
             FieldSearchResult result =
                     Administrator.APIA
                             .findObjects(fields,
@@ -74,10 +78,10 @@ public abstract class Util {
     }
 
     /**
-     * Get a map of pid-to-label of behavior mechanisms that implement the
-     * behavior defined by the indicated bdef.
+     * Get a map of pid-to-label of service deployments that implement the
+     * service defined by the indicated sDef.
      */
-    public static Map getBMechLabelMap(String bDefPID) throws IOException {
+    public static Map getDeploymentLabelMap(String sDefPID) throws IOException {
         try {
             HashMap labelMap = new HashMap();
             FieldSearchQuery query = new FieldSearchQuery();
@@ -89,9 +93,16 @@ public abstract class Util {
             conditions[1] = new Condition();
             conditions[1].setProperty("bDef");
             conditions[1].setOperator(ComparisonOperator.fromValue("has"));
-            conditions[1].setValue(bDefPID);
+            conditions[1].setValue(sDefPID);
             query.setConditions(conditions);
             String[] fields = new String[] {"pid", "label"};
+            if (true) {
+                /*
+                 * FIXME: find some other way to do this, if we care. it uses
+                 * fType and bDef, which are no longer in field search,
+                 */
+                throw new UnsupportedOperationException("This operation uses obsolete field search semantics");
+            }
             FieldSearchResult result =
                     Administrator.APIA
                             .findObjects(fields,
@@ -116,9 +127,9 @@ public abstract class Util {
         }
     }
 
-    public static Map getInputSpecMap(Set bMechPIDs) throws IOException {
+    public static Map getInputSpecMap(Set deploymentPIDs) throws IOException {
         HashMap specMap = new HashMap();
-        Iterator iter = bMechPIDs.iterator();
+        Iterator iter = deploymentPIDs.iterator();
         while (iter.hasNext()) {
             String pid = (String) iter.next();
             specMap.put(pid, getInputSpec(pid));
@@ -126,35 +137,33 @@ public abstract class Util {
         return specMap;
     }
 
-    public static DatastreamInputSpec getInputSpec(String bMechPID)
+    public static DatastreamInputSpec getInputSpec(String deploymentPID)
             throws IOException {
         HashMap hash = new HashMap();
         hash.put("itemID", "DSINPUTSPEC");
         /*
          * return DatastreamInputSpec.parse(
-         * Administrator.DOWNLOADER.getDissemination( bMechPID,
+         * Administrator.DOWNLOADER.getDissemination( deploymentPID,
          * "fedora-system:3", "getItem", hash, null) );
          */
-        return DatastreamInputSpec.parse(Administrator.DOWNLOADER
-                .getDatastreamDissemination(bMechPID, "DSINPUTSPEC", null));
+        return DatastreamInputSpec
+                .parse(Administrator.DOWNLOADER
+                        .getDatastreamDissemination(deploymentPID,
+                                                    "DSINPUTSPEC",
+                                                    null));
 
     }
 
     /**
-     * Get the list of MethodDefinition objects defined by the indicated
-     * behavior definition.
+     * Get the list of MethodDefinition objects defined by the indicated service
+     * definition.
      */
-    public static java.util.List getMethodDefinitions(String bDefPID)
+    public static java.util.List getMethodDefinitions(String sDefPID)
             throws IOException {
         HashMap parms = new HashMap();
         parms.put("itemID", "METHODMAP");
-        /*
-         * return MethodDefinition.parse(
-         * Administrator.DOWNLOADER.getDissemination(bDefPID, "fedora-system:3",
-         * "getItem", parms, null));
-         */
         return MethodDefinition.parse(Administrator.DOWNLOADER
-                .getDatastreamDissemination(bDefPID, "METHODMAP", null));
+                .getDatastreamDissemination(sDefPID, "METHODMAP", null));
     }
 
     /**

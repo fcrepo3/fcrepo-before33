@@ -3,7 +3,7 @@
 	<xs:element name="objectMethods">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="bdef" maxOccurs="unbounded"/>
+				<xs:element ref="sdef" maxOccurs="unbounded"/>
 			</xs:sequence>
 			<xs:attribute name="pid" use="required">
 				<xs:simpleType>
@@ -17,7 +17,7 @@
 			</xs:attribute>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="bdef">
+	<xs:element name="sdef">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="method" maxOccurs="unbounded"/>

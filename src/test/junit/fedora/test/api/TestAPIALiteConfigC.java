@@ -27,12 +27,12 @@ public class TestAPIALiteConfigC
     }
 
     public void testGetRemoteDissemination() throws Exception {
-        // test dissemination with E datastream as input to a remote bmech service (MrSID)
+        // test dissemination with E datastream as input to a remote service (MrSID)
         HttpInputStream his =
                 client.get("/get/demo:11/demo:8/getThumbnail", true);
         assertEquals(his.getContentType(), "image/jpeg");
 
-        // test dissemination using remote bmech service (MrSID) with user input parms
+        // test dissemination using remote service (MrSID) with user input parms
         his =
                 client.get("/get/demo:11/demo:8/getImage?ZOOM=no&SIZE=small",
                            true);

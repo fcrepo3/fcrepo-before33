@@ -60,7 +60,6 @@ public class ObjectPane
                       String pid,
                       String state,
                       String label,
-                      String cModel,
                       String cDate,
                       String mDate,
                       String ownerId)
@@ -95,7 +94,7 @@ public class ObjectPane
         JLabel ownerIdLabel = new JLabel("Owner");
         ownerIdLabel.setPreferredSize(m_labelDims);
         JLabel[] labels =
-                new JLabel[] {stateLabel, labelLabel, cModelLabel, cDateLabel,
+                new JLabel[] {stateLabel, labelLabel, cDateLabel,
                         mDateLabel, ownerIdLabel};
 
         // RIGHT: Values
@@ -131,9 +130,6 @@ public class ObjectPane
         m_ownerIdTextField.getDocument()
                 .addDocumentListener(dataChangeListener);
         // non-editables:
-        JTextArea cModelValueLabel = new JTextArea(cModel);
-        cModelValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
-        cModelValueLabel.setEditable(false);
         JTextArea cDateValueLabel = new JTextArea(cDate);
         cDateValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
         cDateValueLabel.setEditable(false);
@@ -143,8 +139,7 @@ public class ObjectPane
 
         JComponent[] values =
                 new JComponent[] {m_stateComboBox, m_labelTextField,
-                        cModelValueLabel, cDateValueLabel, mDateValueLabel,
-                        m_ownerIdTextField};
+                        cDateValueLabel, mDateValueLabel, m_ownerIdTextField};
 
         JPanel northValuePane = new JPanel();
         GridBagLayout gridBag = new GridBagLayout();

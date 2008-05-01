@@ -9,8 +9,7 @@ import org.w3c.dom.Document;
 
 import fedora.server.storage.types.DigitalObject;
 
-import static fedora.common.Constants.MODEL;
-import static fedora.common.Constants.RDF;
+import static fedora.common.Models.*;
 
 /**
  * Unit tests for FOXML1_1DOSerializer.
@@ -31,24 +30,14 @@ public class TestFOXML1_1DOSerializer
 
     @Test
     public void testVersionAttribute() throws TransformerException {
-        DigitalObject obj = createTestObject(DigitalObject.FEDORA_OBJECT);
+        DigitalObject obj = createTestObject(FEDORA_OBJECT_3_0);
         Document xml = doSerializeOrFail(obj);
         assertXpathExists(ROOT_PATH + "[@VERSION = '1.1']", xml);
     }
 
     @Test
-    public void testCModelFedoraObjectType() throws TransformerException {
-        DigitalObject obj;
-        Document xml;
-
-        obj = createTestObject(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT);
-        xml = doSerializeOrFail(obj);
-        checkProperty(xml, RDF.TYPE, MODEL.CMODEL_OBJECT.localName);
-    }
-
-    @Test
     public void testSerializeSimpleCModelObject() {
-        doSerializeAllOrFail(createTestObject(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT));
+        doSerializeAllOrFail(createTestObject(CONTENT_MODEL_3_0));
     }
 
     // Supports legacy test runners

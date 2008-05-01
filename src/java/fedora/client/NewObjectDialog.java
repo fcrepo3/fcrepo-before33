@@ -211,11 +211,6 @@ public class NewObjectDialog
                         xml.append(">\n");
                     }
                     xml.append("  <foxml:objectProperties>\n");
-                    xml.append("    <foxml:property NAME=\""
-                            + RDF.TYPE.uri
-                            + "\" VALUE=\""
-                            + (isContentModel ? "FedoraCModelObject"
-                                    : "FedoraObject") + "\"/>\n");
                     xml.append("    <foxml:property NAME=\"" + MODEL.LABEL.uri
                             + "\" VALUE=\"" + StreamUtility.enc(label)
                             + "\"/>\n");

@@ -5,6 +5,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.sun.xacml.EvaluationCtx;
 import com.sun.xacml.attr.AttributeDesignator;
@@ -21,6 +23,7 @@ import fedora.server.errors.ServerException;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.RelationshipTuple;
 import fedora.server.utilities.DateUtility;
 
 /**
@@ -108,8 +111,8 @@ class ResourceAttributeFinderModule
         try {
             datastreamIdUri = new URI(Constants.DATASTREAM.ID.uri);
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
         }
+
         EvaluationResult attribute =
                 context.getResourceAttribute(STRING_ATTRIBUTE_URI,
                                              datastreamIdUri,
@@ -194,48 +197,81 @@ class ResourceAttributeFinderModule
                     LOG.debug("failed getting " + Constants.OBJECT.STATE.uri);
                     return null;
                 }
-            } else if (Constants.OBJECT.OBJECT_TYPE.uri.equals(attributeId)) {
+            }
+
+            /* FIXME: No morre fTypes. Will anything break? */
+            //else if (Constants.OBJECT.OBJECT_TYPE.uri.equals(attributeId)) {
+            //    try {
+            //        values = new String[1];
+            //       values[0] = reader.getFedoraObjectTypes();
+            //        LOG.debug("got " + Constants.OBJECT.OBJECT_TYPE.uri + "="
+            //                + values[0]);
+            //    } catch (ServerException e) {
+            //        LOG.debug("failed getting "
+            //                + Constants.OBJECT.OBJECT_TYPE.uri);
+            //        return null;
+            //    }
+            //} 
+            else if (Constants.OBJECT.OWNER.uri.equals(attributeId)) {
                 try {
-                    values = new String[1];
-                    values[0] = reader.getFedoraObjectTypes();
-                    LOG.debug("got " + Constants.OBJECT.OBJECT_TYPE.uri + "="
-                            + values[0]);
-                } catch (ServerException e) {
-                    LOG.debug("failed getting "
-                            + Constants.OBJECT.OBJECT_TYPE.uri);
-                    return null;
-                }
-            } else if (Constants.OBJECT.OWNER.uri.equals(attributeId)) {
-				try {
-                    LOG.debug("ResourceAttributeFinder.getAttributeLocally using ownerIdSeparator==[" + ownerIdSeparator + "]");
+                    LOG
+                            .debug("ResourceAttributeFinder.getAttributeLocally using ownerIdSeparator==["
+                                    + ownerIdSeparator + "]");
                     String ownerId = reader.getOwnerId();
                     if (ownerId == null) {
                         values = new String[0];
                     } else {
                         values = reader.getOwnerId().split(ownerIdSeparator);
                     }
-					String temp = "got " + Constants.OBJECT.OWNER.uri + "=";						
-					for (int i = 0; i < values.length; i++) {
-						temp += (" [" + values[i] + "]");						
-					}
-					LOG.debug(temp);
-				} catch (ServerException e) {
-					LOG.debug("failed getting " + Constants.OBJECT.OWNER.uri);
-					return null;					
-				}
-            } else if (Constants.OBJECT.CONTENT_MODEL.uri.equals(attributeId)) {
-                try {
-                    values = new String[1];
-                    values[0] = reader.getContentModelId();
-                    LOG.debug("got " + Constants.OBJECT.CONTENT_MODEL.uri + "="
-                            + values[0]);
+                    String temp = "got " + Constants.OBJECT.OWNER.uri + "=";
+                    for (int i = 0; i < values.length; i++) {
+                        temp += (" [" + values[i] + "]");
+                    }
+                    LOG.debug(temp);
                 } catch (ServerException e) {
-                    LOG.debug("failed getting "
-                            + Constants.OBJECT.CONTENT_MODEL.uri);
+                    LOG.debug("failed getting " + Constants.OBJECT.OWNER.uri);
                     return null;
                 }
-            } else if (Constants.OBJECT.CREATED_DATETIME.uri
-                    .equals(attributeId)) {
+            }
+
+            /*
+             * TODO: Document this, it is new. Content model uris are exposed as
+             * attribute IDs. Is this a good thing to do?
+             */
+            else if (Constants.MODEL.HAS_MODEL.uri.equals(attributeId)) {
+                Set<String> models = new HashSet<String>();
+                try {
+                    for (RelationshipTuple r : reader
+                            .getRelationships(Constants.MODEL.HAS_MODEL, null)) {
+                        models.add(r.object);
+                    }
+                } catch (ServerException e) {
+                    LOG
+                            .debug("failed getting "
+                                    + Constants.MODEL.HAS_MODEL.uri);
+                    return null;
+                }
+
+                values = models.toArray(values);
+            }
+
+            /*
+             * FIXME: Content models as object properties are no longer present.
+             * If removed, is everything OK?
+             */
+            //else if (Constants.OBJECT.CONTENT_MODEL.uri.equals(attributeId)) {
+            //    try {
+            //        values = new String[1];
+            //        values[0] = reader.getContentModelId();
+            //        LOG.debug("got " + Constants.OBJECT.CONTENT_MODEL.uri + "="
+            //                + values[0]);
+            //    } catch (ServerException e) {
+            //        LOG.debug("failed getting "
+            //                + Constants.OBJECT.CONTENT_MODEL.uri);
+            //        return null;
+            //    }
+            //} 
+            else if (Constants.OBJECT.CREATED_DATETIME.uri.equals(attributeId)) {
                 try {
                     values = new String[1];
                     values[0] =
@@ -385,5 +421,4 @@ class ResourceAttributeFinderModule
 
         return pid;
     }
-
 }

@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +30,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import fedora.common.Constants;
+import fedora.common.Models;
 import fedora.common.xml.format.XMLFormat;
 
 import fedora.server.errors.ObjectIntegrityException;
@@ -45,6 +45,7 @@ import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
+import fedora.server.storage.types.RelationshipTuple;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.validation.ValidationUtility;
@@ -83,14 +84,11 @@ public class FOXMLDODeserializer
     private SAXParser m_parser;
 
     // Namespace prefix-to-URI mapping info from SAX2 startPrefixMapping events.
-    private HashMap m_prefixMap;
+    private HashMap<String, String> m_prefixMap;
 
-    private HashMap m_localPrefixMap;
+    private HashMap<String, String> m_localPrefixMap;
 
-    private ArrayList m_prefixList;
-
-    // temporary variables and state variables
-    private String m_fType;
+    private ArrayList<String> m_prefixList;
 
     private String m_characterEncoding;
 
@@ -152,13 +150,14 @@ public class FOXMLDODeserializer
 
     private String m_dissID;
 
-    private String m_bDefID;
+    @Deprecated
+    private String m_sDefID;
 
     private String m_dissState;
 
     private boolean m_dissVersionable;
 
-    private ArrayList m_dsBindings;
+    private ArrayList<DSBinding> m_dsBindings;
 
     // temporary variables for processing audit records
     private AuditRecord m_auditRec;
@@ -257,9 +256,8 @@ public class FOXMLDODeserializer
             throw new ObjectIntegrityException("FOXMLDODeserializer: Input stream is not valid FOXML."
                     + " The digitalObject root element was not detected.");
         }
-        if (m_fType == null || m_fType.equals("")) {
-            m_obj.addFedoraObjectType(DigitalObject.FEDORA_OBJECT);
-        }
+
+        DOTranslationUtility.normalizeDatastreams(m_obj, m_transContext, m_characterEncoding);
     }
 
     //---
@@ -327,10 +325,13 @@ public class FOXMLDODeserializer
                         stateCode = "A";
                     }
                     m_obj.setState(stateCode);
-                } else if (m_objPropertyName.equals(MODEL.CONTENT_MODEL.uri)
-                        && m_format.equals(FOXML1_0)) {
-                    m_obj.setContentModelId(grab(a, FOXML.uri, "VALUE"));
-                } else if (m_objPropertyName.equals(MODEL.LABEL.uri)) {
+                }
+                /* FIXME: No longer object cModel properties. OK to remove? */
+                //else if (m_objPropertyName.equals(MODEL.CONTENT_MODEL.uri)
+                //        && m_format.equals(FOXML1_0)) {
+                //    m_obj.setContentModelId(grab(a, FOXML.uri, "VALUE"));
+                //} 
+                else if (m_objPropertyName.equals(MODEL.LABEL.uri)) {
                     m_obj.setLabel(grab(a, FOXML.uri, "VALUE"));
                 } else if (m_objPropertyName.equals(MODEL.OWNER.uri)) {
                     m_obj.setOwnerId(grab(a, FOXML.uri, "VALUE"));
@@ -341,34 +342,18 @@ public class FOXMLDODeserializer
                         .equals(VIEW.LAST_MODIFIED_DATE.uri)) {
                     m_obj.setLastModDate(DateUtility
                             .convertStringToDate(grab(a, FOXML.uri, "VALUE")));
-                } else if (m_objPropertyName.equals(RDF.TYPE.uri)) {
-                    m_fType = grab(a, FOXML.uri, "VALUE");
-                    if (m_fType == null || m_fType.equals("")) {
-                        m_fType = MODEL.DATA_OBJECT.localName;
-                    }
-                    if (MODEL.BDEF_OBJECT.looselyMatches(m_fType, false)) {
-                        m_obj
-                                .addFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
-                    }
-                    if (MODEL.BMECH_OBJECT.looselyMatches(m_fType, false)) {
-                        m_obj
-                                .addFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
-                    }
-                    if (MODEL.CMODEL_OBJECT.looselyMatches(m_fType, false)) {
-                        if (m_format.equals(FOXML1_0)) {
-                            // FOXML 1.0 doesn't support this type; down-convert
-                            m_obj
-                                    .addFedoraObjectType(DigitalObject.FEDORA_OBJECT);
-                        } else {
-                            m_obj
-                                    .addFedoraObjectType(DigitalObject.FEDORA_CONTENT_MODEL_OBJECT);
-                        }
-                    }
-                    if (MODEL.DATA_OBJECT.looselyMatches(m_fType, false)) {
-                        m_obj.addFedoraObjectType(DigitalObject.FEDORA_OBJECT);
-                    }
-                } else {
-                    // add an extensible property in the property map
+                }
+
+                
+                /*
+                 * FOXME: an old foxml 1.0 property (MODEL.v2_0.CONTENT_MODEL) would now
+                 * being treated as an "external" property since if it exists,
+                 * it'll fall through to here. Should it be something different?
+                 * i.e. turned into a relationship? dropped entirely? Also, RDF
+                 * type used to determine fType. That is no longer happening, so
+                 * RDF type too is becoming a plain old object property.
+                 */
+                else {
                     m_obj.setExtProperty(m_objPropertyName, grab(a,
                                                                  FOXML.uri,
                                                                  "VALUE"));
@@ -690,7 +675,7 @@ public class FOXMLDODeserializer
     private void startDisseminators(String localName, Attributes a) {
         if (localName.equals("disseminator")) {
             m_dissID = grab(a, FOXML.uri, "ID");
-            m_bDefID = grab(a, FOXML.uri, "BDEF_CONTRACT_PID");
+            m_sDefID = grab(a, FOXML.uri, "BDEF_CONTRACT_PID");
             m_dissState = grab(a, FOXML.uri, "STATE");
             String versionable = grab(a, FOXML.uri, "VERSIONABLE");
             // disseminator versioning is defaulted to true
@@ -702,7 +687,7 @@ public class FOXMLDODeserializer
         } else if (localName.equals("disseminatorVersion")) {
             m_diss = new Disseminator();
             m_diss.dissID = m_dissID;
-            m_diss.bDefID = m_bDefID;
+            m_diss.bDefID = m_sDefID;
             m_diss.dissState = m_dissState;
             String versionable = grab(a, FOXML.uri, "VERSIONABLE");
             // disseminator versioning is defaulted to true
@@ -713,14 +698,14 @@ public class FOXMLDODeserializer
             }
             m_diss.dissVersionID = grab(a, FOXML.uri, "ID");
             m_diss.dissLabel = grab(a, FOXML.uri, "LABEL");
-            m_diss.bMechID = grab(a, FOXML.uri, "BMECH_SERVICE_PID");
+            m_diss.sDepID = grab(a, FOXML.uri, "BMECH_SERVICE_PID");
             m_diss.dissCreateDT =
                     DateUtility.convertStringToDate(grab(a,
                                                          FOXML.uri,
                                                          "CREATED"));
         } else if (localName.equals("serviceInputMap")) {
             m_diss.dsBindMap = new DSBindingMap();
-            m_dsBindings = new ArrayList();
+            m_dsBindings = new ArrayList<DSBinding>();
             // Note that the dsBindMapID is not really necessary from the
             // FOXML standpoint, but it was necessary in METS since the
             // structMap was outside the disseminator.
@@ -729,7 +714,7 @@ public class FOXMLDODeserializer
             // I just use the values picked up from disseminatorVersion.
             m_diss.dsBindMapID = m_diss.dissVersionID + "b";
             m_diss.dsBindMap.dsBindMapID = m_diss.dsBindMapID;
-            m_diss.dsBindMap.dsBindMechanismPID = m_diss.bMechID;
+            m_diss.dsBindMap.dsBindMechanismPID = m_diss.sDepID;
             m_diss.dsBindMap.dsBindMapLabel = ""; // does not exist in FOXML
             m_diss.dsBindMap.state = m_diss.dissState;
         } else if (localName.equals("datastreamBinding")) {
@@ -753,7 +738,7 @@ public class FOXMLDODeserializer
             m_diss = null;
         } else if (uri.equals(FOXML.uri) && localName.equals("disseminator")) {
             m_dissID = "";
-            m_bDefID = "";
+            m_sDefID = "";
             m_dissState = "";
             m_dissVersionable = true;
         }
@@ -894,23 +879,29 @@ public class FOXMLDODeserializer
         try {
             String xmlString = m_dsXMLBuffer.toString();
 
-            // Relative Repository URL processing... 
-            // For selected inline XML datastreams look for relative repository URLs
-            // and make them absolute.
-            if (m_obj.isFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT)
-                    && (m_dsId.equals("SERVICE-PROFILE") || m_dsId
-                            .equals("WSDL"))) {
-                ds.xmlContent =
-                        DOTranslationUtility.normalizeInlineXML(xmlString,
-                                                                m_transContext)
-                                .getBytes(m_characterEncoding);
-            } else {
-                ds.xmlContent = xmlString.getBytes(m_characterEncoding);
+            StringBuilder streams = new StringBuilder();
+            Iterator<String> ids = m_obj.datastreamIdIterator();
+            while (ids.hasNext()) {
+                streams.append(ids.next() + " ");
+            }
+            ds.xmlContent = xmlString.getBytes(m_characterEncoding);
+
+            StringBuilder rels = new StringBuilder();
+            if (m_dsId.equals("WSDL")) {
+                for (RelationshipTuple rel : m_obj
+                        .getRelationships(MODEL.HAS_MODEL,
+                                          Models.SERVICE_DEPLOYMENT_3_0)) {
+                    rels.append(rel.object + "\n");
+                }
+
+                LOG.debug("Not processing WSDL from " + m_obj.getPid()
+                        + " with models:\n" + rels);
             }
             //LOOK! this sets bytes, not characters.  Do we want to set this?
             ds.DSSize = ds.xmlContent.length;
-        } catch (Exception uee) {
-            LOG.error("Error processing inline xml content in SAX parse", uee);
+        } catch (UnsupportedEncodingException uee) {
+            throw new RuntimeException("Error processing inline xml content in SAX parse",
+                                       uee);
         }
         LOG.debug("instantiate datastream: dsid = " + m_dsId
                 + "checksumType = " + m_dsChecksumType + "checksum = "
@@ -967,24 +958,6 @@ public class FOXMLDODeserializer
         }
     }
 
-    private Datastream getCurrentDS(List allVersions) {
-        if (allVersions.size() == 0) {
-            return null;
-        }
-        Iterator dsIter = allVersions.iterator();
-        Datastream mostRecentDS = null;
-        long mostRecentDSTime = -1;
-        while (dsIter.hasNext()) {
-            Datastream ds = (Datastream) dsIter.next();
-            long dsTime = ds.DSCreateDT.getTime();
-            if (dsTime > mostRecentDSTime) {
-                mostRecentDSTime = dsTime;
-                mostRecentDS = ds;
-            }
-        }
-        return mostRecentDS;
-    }
-
     private void initialize() {
 
         // temporary variables and state variables
@@ -1017,7 +990,7 @@ public class FOXMLDODeserializer
         // temporary variables for processing disseminators
         m_diss = null;
         m_dissID = "";
-        m_bDefID = "";
+        m_sDefID = "";
         m_dissState = "";
         m_dissVersionable = true;
         m_dsBindings = null;

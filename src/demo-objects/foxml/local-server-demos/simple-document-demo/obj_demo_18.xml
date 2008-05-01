@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <foxml:digitalObject VERSION="1.1" PID="demo:18" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd">
 	<foxml:objectProperties>
-		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
@@ -46,4 +45,15 @@
 			<foxml:contentLocation REF="http://localhost:8080/fedora-demo/simple-document-demo/ecdl2002pay.ps" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
+	<foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="true">
+    	<foxml:datastreamVersion ID="RELS-EXT1.0" LABEL="Relationships" MIMETYPE="text/xml">
+      		<foxml:xmlContent>
+        		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
+          			<rdf:Description rdf:about="info:fedora/demo:18">
+            			<fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"/>
+          			</rdf:Description>
+        		</rdf:RDF>
+      		</foxml:xmlContent>
+    	</foxml:datastreamVersion>
+  	</foxml:datastream>
 </foxml:digitalObject>

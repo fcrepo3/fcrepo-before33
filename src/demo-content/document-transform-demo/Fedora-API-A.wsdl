@@ -56,8 +56,8 @@
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
 		</part>
-		<part name="bDefPID" type="xsd:string">
-			<documentation>the PID of the behavior definition.</documentation>
+		<part name="sDefPID" type="xsd:string">
+			<documentation>the PID of the service definition.</documentation>
 		</part>
 		<part name="methodName" type="xsd:string">
 			<documentation>the name of the method to invoke.</documentation>
@@ -97,8 +97,8 @@
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
 		</part>
-		<part name="bDefPID" type="xsd:string">
-			<documentation>the PID of the behavior definition.</documentation>
+		<part name="sDefPID" type="xsd:string">
+			<documentation>the PID of the service definition.</documentation>
 		</part>
 		<part name="asOfDateTime" type="xsd:dateTime">
 			<documentation>the date/time stamp specifying the desired view of the 
@@ -119,8 +119,8 @@
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
 		</part>
-		<part name="bDefPID" type="xsd:string">
-			<documentation>the PID of the behavior definition.</documentation>
+		<part name="sDefPID" type="xsd:string">
+			<documentation>the PID of the service definition.</documentation>
 		</part>
 		<part name="asOfDateTime" type="xsd:dateTime">
 			<documentation>the date/time stamp specifying the desired view of the 

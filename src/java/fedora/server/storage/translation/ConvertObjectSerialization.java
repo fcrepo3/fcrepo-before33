@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
@@ -118,8 +117,7 @@ public class ConvertObjectSerialization {
         Iterator<String> dsIds = obj.datastreamIdIterator();
         while (dsIds.hasNext()) {
             String dsid = dsIds.next();
-            List<Datastream> dsList = obj.datastreams(dsid);
-            for (Datastream ds : dsList) {
+            for (Datastream ds : obj.datastreams(dsid)) {
                 if (ds.DSCreateDT == null) {
                     ds.DSCreateDT = new Date();
                 }

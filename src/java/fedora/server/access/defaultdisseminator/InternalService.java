@@ -18,7 +18,7 @@ import fedora.server.storage.types.MethodDef;
 public abstract class InternalService {
 
     /**
-     * A method to reflect the behavior method definitions implemented by the
+     * A method to reflect the method definitions implemented by the
      * internal service.
      */
     public static MethodDef[] reflectMethods() throws ServerException {
