@@ -54,9 +54,7 @@ public class MessagingModule
 
     public void initModule() throws ModuleInitializationException {
 
-        // Check to see if messaging is enabled
-        String enabled = getParameter("enabled");
-        if (enabled == null || !enabled.equalsIgnoreCase("true")) {
+        if (!enabled()) {
             LOG.info("Messaging Module is disabled.");
             return;
         }
@@ -87,10 +85,12 @@ public class MessagingModule
     }
 
     public void shutdownModule() throws ModuleShutdownException {
-        try {
-            close();
-        } catch (MessagingException e) {
-            throw new ModuleShutdownException(e.getMessage(), getRole(), e);
+        if(enabled()) {
+            try {
+                close();
+            } catch (MessagingException e) {
+                throw new ModuleShutdownException(e.getMessage(), getRole(), e);
+            }
         }
     }
 
@@ -234,6 +234,13 @@ public class MessagingModule
         }
         return dsConfig;
     }
+    
+    // Check to see if messaging is enabled
+    private boolean enabled() {
+        String enabled = getParameter("enabled");
+        return (enabled != null && enabled.equalsIgnoreCase("true"));
+    }
+    
 
     public void close() throws MessagingException {
         msg.close();
