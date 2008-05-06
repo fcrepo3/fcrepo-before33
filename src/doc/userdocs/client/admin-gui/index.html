@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-                      
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
   <head>
     <title>Fedora Administrative GUI Client</title>
@@ -38,16 +38,16 @@
 		<li><a href="#d0e1364">Appendix A: Digital Object Construction</a></li>
       </ol>
     </div>
-    
+
     <ol id="content">
-    
+
       <li>
         <h2 id="intro">Introduction</h2>
         <span class="plaintext">
           Fedora Administrator is the direct link to API-M functionality for repository administrators. Using this tool it is possible to ingest, search for and retrieve, modify and purge data objects and build, search for and retrieve, modify, and purge behavior objects (Behavior Definitions and Behavior Mechanisms).
         </span>
       </li>
-      
+
       <li>
         <h2 id="starting">Starting Fedora Administrator</h2>
         <span class="plaintext">
@@ -66,7 +66,7 @@
           Added in the 2.1 release of Fedora is the authentication dialog. When you start Fedora Administrator, you will be asked to choose the server to which you wish to connect, the protocol you wish to use to connect to your Fedora repository (http or https), your username and password. The server and username fields are pre-populated and the password is validated using values from fedora.fcfg
         </span>
       </li>
-      
+
       <li>
         <h2 id="menus">Menus</h2>
         <span class="plaintext">
@@ -80,7 +80,7 @@
             <li>Help</li>
           </ul>
       </li>
-      
+
       <li>
         <h2 id="filemenu">File Menu</h2>
         <span class="plaintext">
@@ -90,7 +90,7 @@
           Commands on the file menu allow a repository administrator to perform operations on objects in the repository or to log in to a different repository.
         </span>
       </li>
-      
+
       <li>
         <h2 id="newobject">New Object</h2>
         <span class="plaintext">
@@ -103,7 +103,7 @@
           Users may also create behavior definition and behavior mechanism objects by selecting these submenu options. The complex task of building WSDL objects dictated the necessity of onscreen, context sensitive help screens for these builders. Clicking the <em>Help</em> button on any pane in the Behavior Definition Builder or Behavior Mechanism Builder will open a popup help screen defining each field in view.
         </span>
       </li>
-      
+
       <li>
         <h2 id="createobject">Creating a New Data Object</h2>
       <span class="plaintext">
@@ -132,14 +132,14 @@
     <p>Clicking <em>Create</em> causes a Fedora data object to be
     created and ingested into the repository. The new object is
     displayed in a tabbed pane showing the following tabs:
-    <em>Properties, Datastreams, and Disseminators</em>.&nbsp;&nbsp; You will 
-	first be presented with the Object Properties pane.&nbsp; On this pane you 
+    <em>Properties, Datastreams, and Disseminators</em>.&nbsp;&nbsp; You will
+	first be presented with the Object Properties pane.&nbsp; On this pane you
 	can add the following information:</p>
 	<p><b>State:&nbsp; </b>The state of the object, defined as follows:</p>
 
   <blockquote>
 
-    <p><em>Active</em>: the object is available to users conditional upon any 
+    <p><em>Active</em>: the object is available to users conditional upon any
 	access control policy restrictions</p>
 	<p><em>Inactive</em>: the object is only available to
     repository administrators.</p>
@@ -159,10 +159,10 @@
 	<p><b>View and Modify the Default Dublin Core Datastream</b></p>
 	<p>Click on the <i>Datastreams</i> tab labeled as &quot;<b>DC</b>.&quot;&nbsp; The display will show a side tabbed pane displaying all
     datastreams currently in the object.&nbsp;&nbsp; When first created, all Fedora data objects
-    will contain a default Dublin Core metadata datastream.&nbsp;&nbsp; You can 
+    will contain a default Dublin Core metadata datastream.&nbsp;&nbsp; You can
 	edit this metadata datastream, adding fields as
-    appropriate for the data object in question.&nbsp; To add new Dublin Core 
-	elements, edit the XML content for the datastream in the editing window.&nbsp;&nbsp; 
+    appropriate for the data object in question.&nbsp; To add new Dublin Core
+	elements, edit the XML content for the datastream in the editing window.&nbsp;&nbsp;
 	When done editing, click the Save Changes button on the bottom of the pane.</p>
 
     <p>
@@ -170,76 +170,76 @@
 
     <p>&nbsp;</p>
 	<p><b>Creating a New Datastream in the object</b></p>
-	<p>To create a new datastream in the digital object, click on the side tab 
-	labeled &quot;<b>New...</b>&quot;&nbsp; You are presented with a dialog window that 
-	provides data input fields to enter all attributes for a datastream.&nbsp;&nbsp;&nbsp; 
+	<p>To create a new datastream in the digital object, click on the side tab
+	labeled &quot;<b>New...</b>&quot;&nbsp; You are presented with a dialog window that
+	provides data input fields to enter all attributes for a datastream.&nbsp;&nbsp;&nbsp;
 	Enter the following information:</p>
 	<p>&nbsp;</p>
-	<p><b>1.&nbsp; ID:</b>&nbsp; Enter a custom identifier for the datastream.&nbsp; 
+	<p><b>1.&nbsp; ID:</b>&nbsp; Enter a custom identifier for the datastream.&nbsp;
 	If left blank, the system will automatically assign a unique datastream id</p>
 	<p><b>2.&nbsp; Control Group:</b>&nbsp; Clicking through the control group
-    options will show text defining each control group option.&nbsp; The Control 
-	Group lets you decide how you want the datastream content to be associated 
-	with the digital object.&nbsp; Datastream content can be in-lined within the 
-	object XML container file, it can be stored in the repository, or it can be 
-	stored external to the repository (and digital objects point to the external 
+    options will show text defining each control group option.&nbsp; The Control
+	Group lets you decide how you want the datastream content to be associated
+	with the digital object.&nbsp; Datastream content can be in-lined within the
+	object XML container file, it can be stored in the repository, or it can be
+	stored external to the repository (and digital objects point to the external
 	location).</p>
 	<ul>
-		<li><b><em>Internal XML Metadata</em></b>:&nbsp; In this case, the 
-		datastream will be stored as XML that is actually stored inline within 
+		<li><b><em>Internal XML Metadata</em></b>:&nbsp; In this case, the
+		datastream will be stored as XML that is actually stored inline within
 		the digital object XML file.&nbsp; The user may
     enter text directly into the editing window or data may
-    imported from a file by clicking <em>Import</em> and selecting or browsing 
+    imported from a file by clicking <em>Import</em> and selecting or browsing
 		to the location of the XML metadata file. <br>
 &nbsp;</li>
-		<li><b><em>Managed Content</em></b>:&nbsp; In this case, the datastream 
-		content will be stored in the Fedora repository and the digital object 
-		XML file will store an internal identifier to that datastream.&nbsp;&nbsp; 
+		<li><b><em>Managed Content</em></b>:&nbsp; In this case, the datastream
+		content will be stored in the Fedora repository and the digital object
+		XML file will store an internal identifier to that datastream.&nbsp;&nbsp;
 		To get content,&nbsp; click <em>Import</em> and select or browse to the file location of
-    the import file. Once import is complete, you will see the imported file in 
+    the import file. Once import is complete, you will see the imported file in
 		a preview box on the screen.<br>
 &nbsp;</li>
-		<li><em><b>External Referenced Content:</b>&nbsp; </em>In this case, the 
-		datastream content will be stored outside of the Fedora repository, and 
-		the digital object will store a URL to that datastream.&nbsp; The 
-		datastream is &quot;by reference&quot; since it is not actually stored inside the 
-		Fedora repository.&nbsp;&nbsp; While the datastream content is stored 
-		outside of the Fedora repository, at runtime, when an access request for 
-		this type of datastream is made, the Fedora repository will use this URL 
-		to get the content from its remote location, and the Fedora repository 
-		will mediate access to the content.&nbsp; This means that behind the 
-		scenes, Fedora will grab the content and stream in out the the client 
-		requesting the content as if it were served up directly by Fedora.&nbsp;&nbsp; 
-		This is a good way to create digital objects that point to distributed 
-		content, but still have the repository in charge of serving it up.&nbsp;&nbsp; 
-		To create this type of datastream, specify the URL for the datastream 
+		<li><em><b>External Referenced Content:</b>&nbsp; </em>In this case, the
+		datastream content will be stored outside of the Fedora repository, and
+		the digital object will store a URL to that datastream.&nbsp; The
+		datastream is &quot;by reference&quot; since it is not actually stored inside the
+		Fedora repository.&nbsp;&nbsp; While the datastream content is stored
+		outside of the Fedora repository, at runtime, when an access request for
+		this type of datastream is made, the Fedora repository will use this URL
+		to get the content from its remote location, and the Fedora repository
+		will mediate access to the content.&nbsp; This means that behind the
+		scenes, Fedora will grab the content and stream in out the the client
+		requesting the content as if it were served up directly by Fedora.&nbsp;&nbsp;
+		This is a good way to create digital objects that point to distributed
+		content, but still have the repository in charge of serving it up.&nbsp;&nbsp;
+		To create this type of datastream, specify the URL for the datastream
 		content in the Location URL text box.<br>
 &nbsp;</li>
-		<li><b><em>Redirect</em>:</b> In this case, the datastream content is 
-		also stored outside the repository and the digital object points to its 
-		URL (&quot;by-reference&quot;).&nbsp;&nbsp; However, unlike the External 
-		Referenced Content scenario, the Redirect scenario signals the 
-		repository to redirect to the URL when access requests are made for this 
-		datastream.&nbsp; This means that the datastream will not be streamed 
-		through the Fedora repository when it is served up.&nbsp; This is 
-		beneficial when you want a digital object to have a datastream that is 
-		stored and served up by some external service, and you want the 
-		repository to get out of the way when it comes time to serve the content 
-		up.&nbsp; A good example is when you want a datastream to be content 
-		that is stored and served by a streaming media server.&nbsp; In such a 
-		case, you would want to pass control to the media server to actually 
-		stream the content to a client (e.g., video streaming), rather than have 
-		Fedora in the middle re-streaming the content out.&nbsp;&nbsp; To create 
-		a Redirect datastream, specify the URL for the content in the Location 
+		<li><b><em>Redirect</em>:</b> In this case, the datastream content is
+		also stored outside the repository and the digital object points to its
+		URL (&quot;by-reference&quot;).&nbsp;&nbsp; However, unlike the External
+		Referenced Content scenario, the Redirect scenario signals the
+		repository to redirect to the URL when access requests are made for this
+		datastream.&nbsp; This means that the datastream will not be streamed
+		through the Fedora repository when it is served up.&nbsp; This is
+		beneficial when you want a digital object to have a datastream that is
+		stored and served up by some external service, and you want the
+		repository to get out of the way when it comes time to serve the content
+		up.&nbsp; A good example is when you want a datastream to be content
+		that is stored and served by a streaming media server.&nbsp; In such a
+		case, you would want to pass control to the media server to actually
+		stream the content to a client (e.g., video streaming), rather than have
+		Fedora in the middle re-streaming the content out.&nbsp;&nbsp; To create
+		a Redirect datastream, specify the URL for the content in the Location
 		text box.</li>
 	</ul>
-	<p><b>3.&nbsp; State:</b>&nbsp; Set the state for the digital object as 
-	Active, Inactive, or Deleted.&nbsp;&nbsp; The object states are defined as 
+	<p><b>3.&nbsp; State:</b>&nbsp; Set the state for the digital object as
+	Active, Inactive, or Deleted.&nbsp;&nbsp; The object states are defined as
 	follows:</p>
 
   <blockquote>
 
-    <p><em>Active</em>: the datastream is available to users conditional upon 
+    <p><em>Active</em>: the datastream is available to users conditional upon
 	any access control policy restrictions</p>
 
     <p><em>Inactive</em>: the datastream is only available to
@@ -250,104 +250,104 @@
     administrators.</p>
   </blockquote>
 
-  	<p><b>4.&nbsp; Versionable: </b>&nbsp;You can decide on a 
-	datastream-by-datastream basis whether the Fedora repository will version 
-	the datastream when modification are made.&nbsp; By default all datastreams 
-	are versioned, but you can override this with the Versionable drop down 
-	settings.&nbsp;&nbsp; If you select &quot;Updates will create new version,&quot; a new 
-	version of the datastream will be created when any change is made.&nbsp; All 
-	previous versions of the datastream will be maintained.&nbsp; If you select 
-	&quot;Updates will replace most recent version&quot; then any changes will overwrite 
-	the most recent version of the datastream.&nbsp; In the &quot;replace&quot; case, if 
-	there is already a previous version history of the datastream it will be 
-	maintained (it will not be lost if you change to the &quot;replace&quot; option at 
+  	<p><b>4.&nbsp; Versionable: </b>&nbsp;You can decide on a
+	datastream-by-datastream basis whether the Fedora repository will version
+	the datastream when modification are made.&nbsp; By default all datastreams
+	are versioned, but you can override this with the Versionable drop down
+	settings.&nbsp;&nbsp; If you select &quot;Updates will create new version,&quot; a new
+	version of the datastream will be created when any change is made.&nbsp; All
+	previous versions of the datastream will be maintained.&nbsp; If you select
+	&quot;Updates will replace most recent version&quot; then any changes will overwrite
+	the most recent version of the datastream.&nbsp; In the &quot;replace&quot; case, if
+	there is already a previous version history of the datastream it will be
+	maintained (it will not be lost if you change to the &quot;replace&quot; option at
 	some point in the future after you have been versioning a datastream).&nbsp;&nbsp; </p>
-	<p><b>5.&nbsp; MIME Type:</b>&nbsp; Select the MIME type for the datastream 
+	<p><b>5.&nbsp; MIME Type:</b>&nbsp; Select the MIME type for the datastream
 	content.</p>
 	<p><b>6.&nbsp; Label:</b>&nbsp; Give your datastream a descriptive label.&nbsp; </p>
-	<p><b>7.&nbsp; Format URI: </b>&nbsp; Optionally, you can provide a format 
-	identifier for the datastream.&nbsp;&nbsp; Examples of emerging format 
+	<p><b>7.&nbsp; Format URI: </b>&nbsp; Optionally, you can provide a format
+	identifier for the datastream.&nbsp;&nbsp; Examples of emerging format
 	identifier schemes found in
-	<a href="http://www.nationalarchives.gov.uk/PRONOM/default.htm">PRONOM</a> 
-	and the <a href="http://hul.harvard.edu/gdfr/">Global Digital Format 
+	<a href="http://www.nationalarchives.gov.uk/PRONOM/default.htm">PRONOM</a>
+	and the <a href="http://hul.harvard.edu/gdfr/">Global Digital Format
 	Registry</a> (GDRF).</p>
-	<p><b>8.&nbsp; Alternate IDs:</b>&nbsp; Optionally, you can assign one or 
-	more alternate identifiers for you datastream.&nbsp; Such identifiers could 
+	<p><b>8.&nbsp; Alternate IDs:</b>&nbsp; Optionally, you can assign one or
+	more alternate identifiers for you datastream.&nbsp; Such identifiers could
 	be local identifiers or global identifiers such as
 	<a href="http://www.handle.net/">Handles</a> or <a href="http://doi.org/">
 	DOI</a>.</p>
-	<p><b>9.&nbsp; Checksum: </b>&nbsp; The Fedora repository has a global 
-	setting for enabling datastream checksums to be calculated by the repository 
-	when a datastream is created or modified.&nbsp;&nbsp; See the Fedora system 
-	documentation of repository configuration for details.&nbsp; Also, refer to 
-	the system documentation on Checksum Features for a complete discussion of 
-	this functionality.&nbsp; A checksum is calculated on datastream content (it 
-	does not include the various attributes of a datastream such as its 
-	identifier, state, or mime type).&nbsp;&nbsp; In the datastream creation 
-	dialog pane, you will see a drop down list where you can select a checksum 
-	algorithm.&nbsp;&nbsp; This gives you some control for how you would like 
-	the checksum handled for a particular datastream.&nbsp; (Or you can let the 
-	default repository behavior take over.)&nbsp;&nbsp; The following can be 
+	<p><b>9.&nbsp; Checksum: </b>&nbsp; The Fedora repository has a global
+	setting for enabling datastream checksums to be calculated by the repository
+	when a datastream is created or modified.&nbsp;&nbsp; See the Fedora system
+	documentation of repository configuration for details.&nbsp; Also, refer to
+	the system documentation on Checksum Features for a complete discussion of
+	this functionality.&nbsp; A checksum is calculated on datastream content (it
+	does not include the various attributes of a datastream such as its
+	identifier, state, or mime type).&nbsp;&nbsp; In the datastream creation
+	dialog pane, you will see a drop down list where you can select a checksum
+	algorithm.&nbsp;&nbsp; This gives you some control for how you would like
+	the checksum handled for a particular datastream.&nbsp; (Or you can let the
+	default repository behavior take over.)&nbsp;&nbsp; The following can be
 	accomplished using the checksum data entry box:</p>
 	<ul>
-		<li>If you select &quot;Default&quot; in the checksum drop down list, the 
-		repository will handle everything based on how it is configured.&nbsp; 
-		This means that if the repository is configured to automatically 
-		checksum datastreams, it will use a default checksum algorithm 
-		configured for the repository, it will calculate a checksum for the 
+		<li>If you select &quot;Default&quot; in the checksum drop down list, the
+		repository will handle everything based on how it is configured.&nbsp;
+		This means that if the repository is configured to automatically
+		checksum datastreams, it will use a default checksum algorithm
+		configured for the repository, it will calculate a checksum for the
 		datastream, and store it.</li>
-		<li>If you select a particular checksum algorithm from the drop down 
-		list box, you are essentially telling the repository that whatever it 
-		has configured for datastream checksum, you wish to override that 
-		behavior for this particular datastream.&nbsp; By specifying an 
-		algorithm you are telling the repository to calculate a checksum for 
+		<li>If you select a particular checksum algorithm from the drop down
+		list box, you are essentially telling the repository that whatever it
+		has configured for datastream checksum, you wish to override that
+		behavior for this particular datastream.&nbsp; By specifying an
+		algorithm you are telling the repository to calculate a checksum for
 		that datastream using that algorithm that you specify.&nbsp;&nbsp; </li>
-		<li>When you select a checksum algorithm from the drop down box, you 
-		will notice that a text entry box appears next to it.&nbsp;&nbsp; You 
-		can leave the box blank, and the repository will use the specified 
-		algorithm and calculate a checksum values.&nbsp;&nbsp; You have another 
-		option too, that is to provide the repository with a checksum value that 
-		you have already calculated.&nbsp;&nbsp; In this case, the repository 
-		service will still calculate a new checksum when it creates the 
-		datastream, but if you provide a value from the client end, the 
-		repository will use it as an integrity check to ensure that the client 
-		and the server both agree on the checksum value for the datastream 
-		content.&nbsp;&nbsp; The repository will calculate a checksum value, 
-		using the algorithm you specify, and then it will compare its checksum 
-		calculation with the checksum value you provided in the text box.&nbsp;&nbsp; 
-		If they match, that means that the datastream content was not altered in 
-		the transmission from the client to the repository service.&nbsp;&nbsp; 
-		If they don't match, that indicates that something happened to the 
-		datastream during the transaction, and the repository will throw an 
+		<li>When you select a checksum algorithm from the drop down box, you
+		will notice that a text entry box appears next to it.&nbsp;&nbsp; You
+		can leave the box blank, and the repository will use the specified
+		algorithm and calculate a checksum values.&nbsp;&nbsp; You have another
+		option too, that is to provide the repository with a checksum value that
+		you have already calculated.&nbsp;&nbsp; In this case, the repository
+		service will still calculate a new checksum when it creates the
+		datastream, but if you provide a value from the client end, the
+		repository will use it as an integrity check to ensure that the client
+		and the server both agree on the checksum value for the datastream
+		content.&nbsp;&nbsp; The repository will calculate a checksum value,
+		using the algorithm you specify, and then it will compare its checksum
+		calculation with the checksum value you provided in the text box.&nbsp;&nbsp;
+		If they match, that means that the datastream content was not altered in
+		the transmission from the client to the repository service.&nbsp;&nbsp;
+		If they don't match, that indicates that something happened to the
+		datastream during the transaction, and the repository will throw an
 		exception.&nbsp; </li>
 	</ul>
-	<p>10.&nbsp; <b>What about the Datastream Content?</b>&nbsp;&nbsp; Depending 
-	on the datastream control group that you selected, the user interface will 
-	present you with a different way to get the actual content for your 
+	<p>10.&nbsp; <b>What about the Datastream Content?</b>&nbsp;&nbsp; Depending
+	on the datastream control group that you selected, the user interface will
+	present you with a different way to get the actual content for your
 	datastream.&nbsp;&nbsp; </p>
 	<ul>
-		<li>If you selected &quot;Internal XML Metadata&quot; you will see an editing 
-		window at the bottom of the pane for creating XML content.&nbsp;&nbsp; 
-		Alternatively, you can use the &quot;<b>Import</b>&quot; button to insert XML 
+		<li>If you selected &quot;Internal XML Metadata&quot; you will see an editing
+		window at the bottom of the pane for creating XML content.&nbsp;&nbsp;
+		Alternatively, you can use the &quot;<b>Import</b>&quot; button to insert XML
 		content from a file.&nbsp; </li>
-		<li>If you selected &quot;Managed Content&quot; you will see an &quot;<b>Import</b>&quot; 
-		button on the bottom of the pane.&nbsp; Click this button to select a 
-		file whose content will be pulled into the repository and stored as 
-		managed datastream content.&nbsp;&nbsp; The digital object will have an 
+		<li>If you selected &quot;Managed Content&quot; you will see an &quot;<b>Import</b>&quot;
+		button on the bottom of the pane.&nbsp; Click this button to select a
+		file whose content will be pulled into the repository and stored as
+		managed datastream content.&nbsp;&nbsp; The digital object will have an
 		internal pointer to the repository stored content.</li>
-		<li>If you selected &quot;External Referenced Content&quot; a new text entry box 
-		labeled &quot;<b>Location</b>&quot; will appear where you are prompted to enter a 
-		URL for content stored external to the repository.&nbsp; The digital 
-		object will store this URL, and the content will NOT be copied into the 
-		repository.&nbsp;&nbsp; It will remain &quot;by-reference.&quot;&nbsp;&nbsp;&nbsp; 
-		You will notice a &quot;View&quot; button appear at the bottom of the pane that 
+		<li>If you selected &quot;External Referenced Content&quot; a new text entry box
+		labeled &quot;<b>Location</b>&quot; will appear where you are prompted to enter a
+		URL for content stored external to the repository.&nbsp; The digital
+		object will store this URL, and the content will NOT be copied into the
+		repository.&nbsp;&nbsp; It will remain &quot;by-reference.&quot;&nbsp;&nbsp;&nbsp;
+		You will notice a &quot;View&quot; button appear at the bottom of the pane that
 		allows you to preview the content.&nbsp; </li>
-		<li>If you selected &quot;Redirect&quot; you will also enter a URL in the &quot;<b>Location</b>&quot; 
+		<li>If you selected &quot;Redirect&quot; you will also enter a URL in the &quot;<b>Location</b>&quot;
 		text entry box.&nbsp;&nbsp; </li>
 	</ul>
 	<p>When all information is supplies in the add Datastream pane, click the <b>
-	Save Datastream</b> button.&nbsp;&nbsp; This will send an API-M request to 
-	the Fedora repository service to add the new Datastream to the digital 
+	Save Datastream</b> button.&nbsp;&nbsp; This will send an API-M request to
+	the Fedora repository service to add the new Datastream to the digital
 	object.&nbsp;&nbsp; A completed Datastream pane is depicted below.</p>
 	<p>&nbsp;</p>
 
@@ -356,7 +356,7 @@
     <p>&nbsp;</p>
   </blockquote>
   <div>
-    <h2><a name="openobject" id="d0e271"></a>Open Object for Viewing, Editing, 
+    <h2><a name="openobject" id="d0e271"></a>Open Object for Viewing, Editing,
 	Export, and Purge</h2>
   </div>
 
@@ -366,10 +366,10 @@
   <p>&nbsp;</p>
 	<p>The <em>Open</em> menu requires input of an object PID for
   retrieval of the object. Upon retrieval, the object is displayed
-  	on three tabbed panes:&nbsp; Properties, Datastreams, and Disseminators.&nbsp;&nbsp; 
-	You can edit any aspect of a digital object from these panes, in the same 
-	way information was added via the panes (as described earlier).&nbsp;&nbsp; 
-	Some addition functions are available on the Object Properties pane for an 
+  	on three tabbed panes:&nbsp; Properties, Datastreams, and Disseminators.&nbsp;&nbsp;
+	You can edit any aspect of a digital object from these panes, in the same
+	way information was added via the panes (as described earlier).&nbsp;&nbsp;
+	Some addition functions are available on the Object Properties pane for an
 	existing digital object:</p>
 
   <p><em>The Object Properties Pane</em></p>
@@ -394,7 +394,7 @@
 
   <p>On the Datastreams Pane, the state of each datastream in the
   object can be modified, along with the datastream label and
-  location. The MIME type of the datastream is shown, along with the control 
+  location. The MIME type of the datastream is shown, along with the control
 	group, info type, create date, and the Fedora URL of the object</p>
 	<blockquote>
     <p><b>Datastream States</b></p>
@@ -419,28 +419,28 @@
   <em>text/xml</em>, it may be edited in place by clicking the
   <em>Edit</em> button and making the desired changes in the editing window. or to export the data
   contained in the datastream by clicking the <em>Export</em>
-  button.&nbsp; If the datastream is not linked to an active disseminator, it 
-	may be purged from the object.&nbsp;&nbsp; Only datastreams with a <em>text</em> MIME type may be edited 
+  button.&nbsp; If the datastream is not linked to an active disseminator, it
+	may be purged from the object.&nbsp;&nbsp; Only datastreams with a <em>text</em> MIME type may be edited
 	directing from the Datastream pane. Datastreams with other MIME types (e.g., <em>image</em> or
   <em>application</em>, e.g., <em>image/jpeg</em> or
   <em>application/pdf</em> may only be viewed, exported, or purged
   from the object.</p>
 
-  <p><b><i>I</i><em>mport</em></b>: Choose this button to import new data by 
+  <p><b><i>I</i><em>mport</em></b>: Choose this button to import new data by
 	clicking the <em>Import</em> button.&nbsp; You will be prompted for a
   file name or url where the the import file is located.</p>
 
-  <p><em><b>Export</b></em>:&nbsp; Choose this button to export the content of a 
+  <p><em><b>Export</b></em>:&nbsp; Choose this button to export the content of a
 	datastream.&nbsp; You will be prompted for a
   file name and location to which to write the XML file of the datastream content.</p>
 
-  <p><em><b>Purge: </b>&nbsp;</em>Choose this button to remove a datastream from 
+  <p><em><b>Purge: </b>&nbsp;</em>Choose this button to remove a datastream from
 	the object.&nbsp; You will be warned that the
   operation is permanent and must click "Yes" to continue.&nbsp;&nbsp; If "Yes"
   is selected, the datastream is immediately purged from the
   object.&nbsp; Purge is not valid for the DC metadata datastream because it is always
   linked to the default disseminator.&nbsp;&nbsp; <i>Please note that datastreams which are linked to active
-  disseminators may not be purged.&nbsp; You must first purge the disseminator, 
+  disseminators may not be purged.&nbsp; You must first purge the disseminator,
 	then the datasreams.</i></p>
 
   <p>&nbsp;</p>
@@ -491,10 +491,10 @@
 
   <p>Users may also ingest all the files in a directory or all the
   files of a specific object type in a repository by selecting the
-  Ingest Objects by Type submenu item.&nbsp; There are three basic types of 
-	objects in Fedora:&nbsp; Data Objects (your regular objects that you 
-	create), Behavior Definition Objects (control objects that store a service 
-	definition), and Behavior Mechanism Objects (control objects that store 
+  Ingest Objects by Type submenu item.&nbsp; There are three basic types of
+	objects in Fedora:&nbsp; Data Objects (your regular objects that you
+	create), Behavior Definition Objects (control objects that store a service
+	definition), and Behavior Mechanism Objects (control objects that store
 	service binding metadata such as WSDL).&nbsp;&nbsp; </p>
 
   <p><b>Ingest From Directory:&nbsp; </b>Upon selecting Ingest Objects By Type from File, a dialog box
@@ -508,23 +508,23 @@
   <p><img border="0" src="images/selectbytype.jpg" width="187" height="194"></p>
 
   <p>&nbsp;</p>
-	<p>It should be noted that if you have created control objects (Behavior 
-	Definition and Mechanism objects), any regular Data Objects that depend on 
-	them should be ingested <i>after</i> the control objects are ingested.&nbsp;&nbsp; 
-	You don't want to try to ingest Data Objects with dependencies on control 
-	objects that don't exist.&nbsp;&nbsp; However, If you select all three types 
-	of objects together,&nbsp; Fedora will ensure that the control objects get 
-	ingested first.&nbsp;&nbsp; If you are ingesting one kind of object at a 
-	time, Behavior Definition Objects should be ingested before Behavior 
-	Mechanism objects that depend on them.&nbsp; Then, Data Objects can be 
+	<p>It should be noted that if you have created control objects (Behavior
+	Definition and Mechanism objects), any regular Data Objects that depend on
+	them should be ingested <i>after</i> the control objects are ingested.&nbsp;&nbsp;
+	You don't want to try to ingest Data Objects with dependencies on control
+	objects that don't exist.&nbsp;&nbsp; However, If you select all three types
+	of objects together,&nbsp; Fedora will ensure that the control objects get
+	ingested first.&nbsp;&nbsp; If you are ingesting one kind of object at a
+	time, Behavior Definition Objects should be ingested before Behavior
+	Mechanism objects that depend on them.&nbsp; Then, Data Objects can be
 	ingested that depend on the Behavior Definition/Mechanism objects. </p>
 
-  <p>If the repository has been configured to &quot;retain PIDs&quot; on ingest (see the 
-	Fedora repository configuration documentation), then whatever PID is found 
-	in the ingest XML file (also known as the Submission Information Package or 
-	SIP) is what the repository accepts as the PID for the new ingested digital 
-	object.&nbsp;&nbsp; If the &quot;retain PIDs&quot; option is not enabled for the 
-	repository, the ingest function will automatically assign a new PID to the 
+  <p>If the repository has been configured to &quot;retain PIDs&quot; on ingest (see the
+	Fedora repository configuration documentation), then whatever PID is found
+	in the ingest XML file (also known as the Submission Information Package or
+	SIP) is what the repository accepts as the PID for the new ingested digital
+	object.&nbsp;&nbsp; If the &quot;retain PIDs&quot; option is not enabled for the
+	repository, the ingest function will automatically assign a new PID to the
 	digital object, and ignore whatever PID was in the ingest XML file.</p>
 
   <p>&nbsp;</p>
@@ -554,7 +554,7 @@
   </div>
 
   <p>Users have the option of exporting a single object or
-  exporting objects by type.&nbsp; This functionality can be used from the 
+  exporting objects by type.&nbsp; This functionality can be used from the
 	File/Export menu.&nbsp; </p>
 	<p><img border="0" src="images/export-menu.jpg" width="850" height="655"></p>
 
@@ -568,43 +568,45 @@
   <p>When the Export One Object option is selected, the user is
   prompted to select a directory to which the export file will be
   written. Clicking <em>Open</em> causes the user to be prompted
-  for an object PID.&nbsp; The PID will be used as the basis for the export file 
-	(named like <em>[pid].xml)</em>.&nbsp;&nbsp; Before the export is done, you 
-	must first provide a few more pieces of information.&nbsp; First, you must 
-	choose the export serialization format, either FOXML or METS (the Fedora 
-	extension of METS).&nbsp;&nbsp; Next you must provide the &quot;export context&quot; 
-	which will create an appropriate export file for the context in which you 
-	plan to use it.&nbsp;&nbsp; There are three export context types to choose 
+  for an object PID.&nbsp; The PID will be used as the basis for the export file
+	(named like <em>[pid].xml)</em>.&nbsp;&nbsp; Before the export is done, you
+	must first provide a few more pieces of information.&nbsp; First, you must
+	choose the export serialization format: FOXML 1.1 (the most current FOXML format),
+	FOXML 1.0 (the FOXML format used with version 2.x Fedora repositories), METS (the Fedora
+	extension of METS), or ATOM (the Fedora extension of Atom).&nbsp;&nbsp;
+	Next you must choose the &quot;export context&quot;
+	which will create an appropriate export file for the context in which you
+	plan to use it.&nbsp;&nbsp; There are three export context types to choose
 	from:</p>
 	<ul>
-		<li><b>Migrate</b>:&nbsp; an export file will be create that is 
-		appropriate for migrating into another Fedora repository.&nbsp; This 
-		means that any references to the repository's base URL (with its host 
-		and port) will be virtualized, so that if the export object is 
-		subsequently ingested into another Fedora repository, the object will 
-		inherit the base URL of the new repository.&nbsp; The result is that 
-		repository-referential assertions in the exported digital object will 
+		<li><b>Migrate</b>:&nbsp; an export file will be create that is
+		appropriate for migrating into another Fedora repository.&nbsp; This
+		means that any references to the repository's base URL (with its host
+		and port) will be virtualized, so that if the export object is
+		subsequently ingested into another Fedora repository, the object will
+		inherit the base URL of the new repository.&nbsp; The result is that
+		repository-referential assertions in the exported digital object will
 		naturally adapt to the new repository environment. </li>
-		<li><b>Public Access</b>:&nbsp; an export file will be created that is 
-		appropriate for facilitating public access and re-use of the digital 
-		object.&nbsp; All datastream locations will be resolvable URLs, most 
-		notably, the Managed Content datastreams will contain public callback 
-		URLs to the repository from which the object was exported.&nbsp; The 
-		assumption is that the repository will still exist, and that the 
-		original object will continue to be served up by the repository (so the 
+		<li><b>Public Access</b>:&nbsp; an export file will be created that is
+		appropriate for facilitating public access and re-use of the digital
+		object.&nbsp; All datastream locations will be resolvable URLs, most
+		notably, the Managed Content datastreams will contain public callback
+		URLs to the repository from which the object was exported.&nbsp; The
+		assumption is that the repository will still exist, and that the
+		original object will continue to be served up by the repository (so the
 		callback URLs continue to work).&nbsp;&nbsp; </li>
-		<li><b>Archive</b>:&nbsp; an export file will be created with all 
-		managed content contained within it.&nbsp; This means that all Managed 
-		Content datastreams will have the datastream content Base64-encoded 
-		within the digital object export file.&nbsp; For Referenced and 
-		Redirected datastreams, their by-reference URLs will be in the export 
-		file (meaning that the repository will not pull the external content 
-		into the export file, but keep it by-reference).&nbsp;&nbsp; For 
-		datastreams that were of type &quot;Inlined XML&quot; the XML will remain in-lined 
+		<li><b>Archive</b>:&nbsp; an export file will be created with all
+		managed content contained within it.&nbsp; This means that all Managed
+		Content datastreams will have the datastream content Base64-encoded
+		within the digital object export file.&nbsp; For Referenced and
+		Redirected datastreams, their by-reference URLs will be in the export
+		file (meaning that the repository will not pull the external content
+		into the export file, but keep it by-reference).&nbsp;&nbsp; For
+		datastreams that were of type &quot;Inlined XML&quot; the XML will remain in-lined
 		as it normally is the the digital object XML file. </li>
 	</ul>
 	<p>&nbsp;</p>
-	<p><img border="0" src="images/export-options.jpg" width="500" height="300"></p>
+	<p><img border="0" src="images/export-options.jpg"></p>
 	<p>&nbsp;</p>
 
   <div>
@@ -797,12 +799,12 @@
   <p>It's simple to ingest objects created by one-up edit or by
   custom scripting.</p>
 
-  
-<p>The Batch menu also supports building objects. This takes a general template 
-  common to all objects in a batch and makes object-specific substitutions into 
-  the template. The template can be either a Fedora METS XML document or a Fedora 
-  FOXML document and contains data common to the objects of the batch. Separate 
-  XML documents hold the per-object substitution values. The format of the template 
+
+<p>The Batch menu also supports building objects. This takes a general template
+  common to all objects in a batch and makes object-specific substitutions into
+  the template. The template can be either a Fedora METS XML document or a Fedora
+  FOXML document and contains data common to the objects of the batch. Separate
+  XML documents hold the per-object substitution values. The format of the template
   (FOXML or METS) determines the format of the built objects.</p>
 
   <p>The relatedness of objects in a batch is defined by what
@@ -815,7 +817,7 @@
   processing: <b>batch build</b>, <b>batch ingest</b>, and a
   combined <b>batch build and ingest</b>.</p>
 
-  
+
 <p>This phased processing is shown in the following diagram.</p>
 
   <p><img alt="" id="_x0000_i1059" src="images/table.jpg" border="0" height="253" width="583"/></p>
@@ -825,9 +827,9 @@
     batch</h4>
   </div>
 
-  
-<p>Build a set of Fedora METS XML or Fedora FOXML XML files from a common Fedora 
-  METS or Fedora FOXML template and simple (non-METS) XML <em>object-specs</em>. 
+
+<p>Build a set of Fedora METS XML or Fedora FOXML XML files from a common Fedora
+  METS or Fedora FOXML template and simple (non-METS) XML <em>object-specs</em>.
   The resulting objects are then ready for ingesting into Fedora.</p>
 
   <div>
@@ -845,8 +847,8 @@
     Clicking on a <em>browse</em> button opens a standard
     directory/file selection dialog.</p>
 
-    
-  <p>Then click the <em>Build this batch</em> button to build the batch of Fedora 
+
+  <p>Then click the <em>Build this batch</em> button to build the batch of Fedora
     <i>METS</i> or Fedora <i>FOXML</i> XML documents.</p>
 
     <p><img alt="" id="_x0000_i1060" src="images/build.jpg" border="0" height="317" width="700"/></p>
@@ -855,7 +857,7 @@
 
     <p><img alt="" src="images/templatecheck.jpg" border="0" height="98" width="416"/></p>
 
-  <p>A second (output-only) window will open to show progress. You can build multiple 
+  <p>A second (output-only) window will open to show progress. You can build multiple
     different batches before closing the <em>Batch Build</em> window.</p>
 
     <p><img alt="" id="_x0000_i1061" src="images/build-output.jpg" border="0" height="396" width="396"/></p>
@@ -880,20 +882,20 @@
     in the file space of the system on which you are running Fedora
     Administrator or command-line <em>BatchTool</em>.)</p>
 
-    
-  <p>Use file <b>mets-template.xml</b> for <em>METS template</em> (<em>input file</em>) 
+
+  <p>Use file <b>mets-template.xml</b> for <em>METS template</em> (<em>input file</em>)
     if you want to build <i>METS</i> objects.</p>
-  <p>Use file <b>foxml-template.xml</b> for <em>FOXML template</em> (<em>input 
+  <p>Use file <b>foxml-template.xml</b> for <em>FOXML template</em> (<em>input
     file</em>) if you want to build <i>FOXML</i> objects.</p>
 
     <p>Use subdirectory <b>object-specifics</b> for <em>XML
     specs</em> (<em>input directory</em>); this is a directory
     holding (all and only) per-object data.</p>
 
-    
-  <p>Use subdirectory <b>objects</b> for the built objects (<em>output directory</em>); 
-    this is a directory to hold (all and only) Fedora object files built by Fedora 
-    Administrator. The format of the built files will be determined by the type 
+
+  <p>Use subdirectory <b>objects</b> for the built objects (<em>output directory</em>);
+    this is a directory to hold (all and only) Fedora object files built by Fedora
+    Administrator. The format of the built files will be determined by the type
     of template used (<i>METS</i> or <i>FOXML</i>).</p>
 
     <p>Specify a file path of your choice for <em>object processing
@@ -914,8 +916,8 @@
     in Batch</h4>
   </div>
 
-  
-<p>Create a set of Fedora objects in your repository from a corresponding set 
+
+<p>Create a set of Fedora objects in your repository from a corresponding set
   of Fedora <i>METS</i> XML or Fedora <i>FOXML</i> XML files.</p>
 
   <div>
@@ -927,19 +929,19 @@
     <p>Select <em>Tools</em> on the Fedora Administrator menu bar,
     and select item <em>Ingest Batch</em>.</p>
 
-    
-  <p>This will open a <em>Batch Ingest</em> window. You may need to adjust this 
-    window's size to see its controls. Use the <em>browse</em> buttons to enter 
-    the two required settings. Clicking on a <em>browse</em> button opens a standard 
+
+  <p>This will open a <em>Batch Ingest</em> window. You may need to adjust this
+    window's size to see its controls. Use the <em>browse</em> buttons to enter
+    the two required settings. Clicking on a <em>browse</em> button opens a standard
     directory/file selection dialog.</p>
 
     <p><img alt="" id="_x0000_i1062" src="images/ingest.jpg" border="0" height="253" width="701"/></p>
 
-    
-  <p>You must also indicate the format of the objects to be ingested by selecting 
-    either the foxml or mets radio button. Then click the <em>Ingest this batch</em> 
+
+  <p>You must also indicate the format of the objects to be ingested by selecting
+    either the foxml or mets radio button. Then click the <em>Ingest this batch</em>
     button to ingest the batch into your Fedora repository.</p>
-  <p>A second (output-only) window will open to show progress. You can ingest 
+  <p>A second (output-only) window will open to show progress. You can ingest
     multiple different batches before closing the <em>Batch Ingest</em> window.</p>
   <p><img alt="" id="_x0000_i1063" src="images/ingest-output.jpg" border="0" height="301" width="400"/></p>
 
@@ -950,8 +952,8 @@
     does. The batch fails on the first individual object ingest
     failure.</p>
 
-    
-  <p>Fedora will not ingest a <i>METS</i> file whose <b>METS:xmldata</b> elements 
+
+  <p>Fedora will not ingest a <i>METS</i> file whose <b>METS:xmldata</b> elements
     are empty or contain non-tagged character data.</p>
   </blockquote>
 
@@ -977,8 +979,8 @@
     or to remove the corresponding objects from your Fedora
     repository.</p>
 
-    
-  <p>Use subdirectory <b>objects</b> for <em>built objects</em> (<em>input directory</em>); 
+
+  <p>Use subdirectory <b>objects</b> for <em>built objects</em> (<em>input directory</em>);
     this is a directory holding (all and only) Fedora object files to ingest.</p>
 
     <p>Specify a file path of your choice for <em>object processing
@@ -1000,10 +1002,10 @@
     Fedora objects in batch</h4>
   </div>
 
-  
-<p>This process builds a set of Fedora <i>METS</i> XML or Fedora <i>FOXML</i> 
-  XML files from a common Fedora <i>METS</i> or Fedora <i>FOXML</i> template and 
-  simple <i>batchMerge</i> XML <em>object-specs</em>, then ingests the resulting 
+
+<p>This process builds a set of Fedora <i>METS</i> XML or Fedora <i>FOXML</i>
+  XML files from a common Fedora <i>METS</i> or Fedora <i>FOXML</i> template and
+  simple <i>batchMerge</i> XML <em>object-specs</em>, then ingests the resulting
   batch into Fedora.</p>
 
   <div>
@@ -1015,17 +1017,17 @@
     <p>Select <em>Tools</em> on the Fedora Administrator menu bar,
     and select item <em>Build and Ingest Batch</em>.</p>
 
-    
-  <p>This will open a <em>Batch Build</em> and Ingest window. You may need to 
-    adjust this window's size to see its controls. Use the <em>browse</em> buttons 
-    to enter the four required settings. Clicking on a <em>browse</em> button 
+
+  <p>This will open a <em>Batch Build</em> and Ingest window. You may need to
+    adjust this window's size to see its controls. Use the <em>browse</em> buttons
+    to enter the four required settings. Clicking on a <em>browse</em> button
     opens a standard directory/file selection dialog.</p>
 
     <p><img alt="" id="_x0000_i1064" src="images/build-ingest.jpg" border="0" height="317" width="701"/></p>
 
-    
-  <p>Then click the <em>Build and Ingest this batch</em> button to build the batch 
-    of Fedora METS XML documents and then ingest them into Fedora. The format 
+
+  <p>Then click the <em>Build and Ingest this batch</em> button to build the batch
+    of Fedora METS XML documents and then ingest them into Fedora. The format
     of the built objects is determined by the format of the template.</p>
 
    <p>A confirmation dialog will open requesting confirmation of the object template selected. Clicking <em>Yes</em> will continue the batch build. Clicking <em>No</em> or <em>Cancel</em> will return the user to the <em>Batch Build and Ingest</em> window.</p>
@@ -1033,8 +1035,8 @@
     <p><img alt="" src="images/templatecheck.jpg" border="0" height="98" width="416"/></p>
 
 
-    <p>A second (<em>output-only</em>) window will open to show progress. You can 
-    build and ingest multiple different batches before closing the <em>Batch Build 
+    <p>A second (<em>output-only</em>) window will open to show progress. You can
+    build and ingest multiple different batches before closing the <em>Batch Build
     and Ingest</em> window.</p>
 
     <p><img alt="" id="_x0000_i1065" src="images/build-ingest-output.jpg" border="0" height="507" width="398"/></p>
@@ -1050,8 +1052,8 @@
     Build</em>, but batch ingest into Fedora does. The batch fails
     on the first individual object ingest failure.</p>
 
-    
-  <p>Fedora will not ingest a <i>METS</i> file whose <b>METS:xmldata</b> elements 
+
+  <p>Fedora will not ingest a <i>METS</i> file whose <b>METS:xmldata</b> elements
     are empty or contain non-tagged character data.</p>
   </blockquote>
 
@@ -1074,19 +1076,19 @@
     files, or to remove the corresponding objects from your Fedora
     repository.</p>
 
-    
-  <p>Use file <b>mets-template.xml</b> for <em>METS template</em> (<em>input file</em>) 
+
+  <p>Use file <b>mets-template.xml</b> for <em>METS template</em> (<em>input file</em>)
     if you want to create Fedora <i>METS</i> objects.</p>
-  <p>Use file <b>foxml-template.xml</b> for <em>FOXML template</em> (<em>input 
+  <p>Use file <b>foxml-template.xml</b> for <em>FOXML template</em> (<em>input
     file</em>) if you want to create Fedora <i>FOXML</i> objects..</p>
 
     <p>Use subdirectory <b>object-specifics</b> for <em>XML
     specs</em> (<em>input directory</em>); this is a directory
     holding (all and only) per-object data.</p>
 
-    
-  <p>Use subdirectory <b>objects</b> for <em>built objects</em> (<em>output directory</em>); 
-    this is a directory to hold (all and only) Fedora object files built by Fedora 
+
+  <p>Use subdirectory <b>objects</b> for <em>built objects</em> (<em>output directory</em>);
+    this is a directory to hold (all and only) Fedora object files built by Fedora
     Administrator.</p>
 
     <p>Specify a file path of your choice for <em>object processing
@@ -1123,7 +1125,7 @@
   <div>
     <h4><a name="d0e1189" id="d0e1189"></a>XML Format</h4>
   </div>
-  <pre> 
+  <pre>
 </pre>
   <pre>&lt;object-processing-map&gt;
 </pre>
@@ -1139,15 +1141,15 @@
 </pre>
   <pre>        &lt;map
 </pre>
-  <pre>        path2spec="/mellon/dist/client/demo/batch-demo/object-specifics/vaticanlibrary.xml" 
+  <pre>        path2spec="/mellon/dist/client/demo/batch-demo/object-specifics/vaticanlibrary.xml"
 </pre>
-  <pre>        path2object="/mellon/dist/client/demo/batch-demo/objects/vaticanlibrary.xml" 
+  <pre>        path2object="/mellon/dist/client/demo/batch-demo/objects/vaticanlibrary.xml"
 </pre>
   <pre>        pid="demo:3019" /&gt;
 </pre>
   <pre>&lt;/object-processing-map&gt;
 </pre>
-  <pre>                               
+  <pre>
 </pre>
 
   <div>
@@ -1156,7 +1158,7 @@
 
   <p>(field separator is tab; relative paths used for practical
   illustration)</p>
-  <pre> 
+  <pre>
 </pre>
   <pre>object-specifics/americanacademy.xml  objects/americanacademy.xml    demo:3010
 </pre>
@@ -1164,69 +1166,69 @@
 </pre>
   <pre>object-specifics/vaticanlibrary.xml   objects/vaticanlibrary.xml     demo:3019
 </pre>
-  <pre>                               
+  <pre>
 </pre>
 
   <div>
     <h4><a name="d0e1201" id="d0e1201"></a>Object-Specifics</h4>
   </div>
 
-  
-<p><em>Object-specifics</em> are coded in XML files. These data include: object 
-  ID, label, and comment; datastream and object metadata and accompanying label; 
-  datastream URLs, titles, and labels. Prior to Fedora 2.1, there was no formal 
-  <i>batchMerge</i> schema for object-specific files and the schema was implied 
-  based on the example object-specific files. The new <i>batchMerge.xsd</i> schema 
-  provides a more formal definition that conforms to the pre-Fedora 2.1 object-specific 
-  examples and also provides some new extensions for attributes introduced with 
-  <i>FOXML</i>. The new schema can be found at: <a href="http://www.fedora.info/definitions/1/0/api/batchMerge.xsd"> 
+
+<p><em>Object-specifics</em> are coded in XML files. These data include: object
+  ID, label, and comment; datastream and object metadata and accompanying label;
+  datastream URLs, titles, and labels. Prior to Fedora 2.1, there was no formal
+  <i>batchMerge</i> schema for object-specific files and the schema was implied
+  based on the example object-specific files. The new <i>batchMerge.xsd</i> schema
+  provides a more formal definition that conforms to the pre-Fedora 2.1 object-specific
+  examples and also provides some new extensions for attributes introduced with
+  <i>FOXML</i>. The new schema can be found at: <a href="http://www.fedora.info/definitions/1/0/api/batchMerge.xsd">
   http://www.fedora.info/definitions/1/0/api/batchMerge.xsd</a>. </p>
-<p>Where possible, attribute names on elements are the same as in the Fedora <i>METS</i> 
-  or <i>FOXML</i> schema, and so correspond to like-named attributes in the Fedora 
-  <i>METS</i> or <i>FOXML</i> template. How these map is described below and by 
+<p>Where possible, attribute names on elements are the same as in the Fedora <i>METS</i>
+  or <i>FOXML</i> schema, and so correspond to like-named attributes in the Fedora
+  <i>METS</i> or <i>FOXML</i> template. How these map is described below and by
   running the demo and viewing the results for one of the objects.</p>
 
-  
-<p>Any individual substitution is optional. When absent as a substitution, the 
-  value in the template will be used for the resulting Fedora <i>METS</i> or <i>FOXML</i> 
-  object. (Demo template and <em>object-specific</em> contents are chosen instructively 
-  to highlight substitutions made.) Datastream URLs will generally be specific 
+
+<p>Any individual substitution is optional. When absent as a substitution, the
+  value in the template will be used for the resulting Fedora <i>METS</i> or <i>FOXML</i>
+  object. (Demo template and <em>object-specific</em> contents are chosen instructively
+  to highlight substitutions made.) Datastream URLs will generally be specific
   to an object; practice will show which other substitutions are generally made.</p>
 
-  
-<p>All <i>non-METS</i> and <i>non-FOXML</i> namespaces used in your own metadata 
+
+<p>All <i>non-METS</i> and <i>non-FOXML</i> namespaces used in your own metadata
   must be declared, as in <b>xmlns:uvalibadmin</b> in the demo.</p>
 
-  
-<p>The <i>metadata</i> element is for backward compatibility with pre-Fedora 2.1 
-  <i>object-specific</i> file formats where inline XML metadata was treated separately 
-  from other types of datastreams. It is recommended that users use the new extended 
-  <i>datastream</i> element for all types of datastreams. The <i>metadata</i> 
+
+<p>The <i>metadata</i> element is for backward compatibility with pre-Fedora 2.1
+  <i>object-specific</i> file formats where inline XML metadata was treated separately
+  from other types of datastreams. It is recommended that users use the new extended
+  <i>datastream</i> element for all types of datastreams. The <i>metadata</i>
   element may be deprecated in a future release of the batchMerge schema. </p>
 <p>When working with a <i>METS</i> template object:</p>
 <blockquote>
-  <p>Datastream IDs here map to those found in the Fedora <b>METS:fileGrp</b> 
-    element (the nested, not the nesting, one). The associated <b>xlink:href</b> 
-    and <b>xlink:title</b> attributes are substituted into the Fedora <b>METS:Flocat</b> 
+  <p>Datastream IDs here map to those found in the Fedora <b>METS:fileGrp</b>
+    element (the nested, not the nesting, one). The associated <b>xlink:href</b>
+    and <b>xlink:title</b> attributes are substituted into the Fedora <b>METS:Flocat</b>
     element, which is nested within that Fedora <b>METS:fileGrp</b> element.</p>
   <p>Datastream labels substitute instead into <b>METS:structMap.</b></p>
 </blockquote>
 <p>When working with a <i>FOXML</i> template object:.</p>
 <blockquote>
-  <p>Datastream IDs here map to the <b>ID</b> attribute found in the Fedora <b>foxml:datastream 
-    </b>element. The associated <b>xlink:href</b> attribute maps to the <b>REF</b> 
-    attribute found in the Fedora <b>foxml:contentLocation</b> element. The <b>xlink:title</b> 
-    attribute is for backward compatibility. Both datastream <b>LABEL</b> and 
-    <b>xlink:title</b> attributes map to the <b>LABEL</b> attribute found in the 
-    Fedora <b>foxml:datastreamVersion</b> element. It is recommended that you 
-    use the <b>LABEL</b> attribute instead of the <b>xlink:title</b> attribute 
+  <p>Datastream IDs here map to the <b>ID</b> attribute found in the Fedora <b>foxml:datastream
+    </b>element. The associated <b>xlink:href</b> attribute maps to the <b>REF</b>
+    attribute found in the Fedora <b>foxml:contentLocation</b> element. The <b>xlink:title</b>
+    attribute is for backward compatibility. Both datastream <b>LABEL</b> and
+    <b>xlink:title</b> attributes map to the <b>LABEL</b> attribute found in the
+    Fedora <b>foxml:datastreamVersion</b> element. It is recommended that you
+    use the <b>LABEL</b> attribute instead of the <b>xlink:title</b> attribute
     when referring to the label of a datastream.</p>
 </blockquote>
 <p>Case matters in attribute and element names.</p>
 
-  
-<p>Fedora will retain as PIDs only <b>OBJIDs</b> whose prefixes are included in 
-  the fedora.fcfg file retainPids parameter (e.g., test, demo, etc.). Other <b>OBJIDs</b> 
+
+<p>Fedora will retain as PIDs only <b>OBJIDs</b> whose prefixes are included in
+  the fedora.fcfg file retainPids parameter (e.g., test, demo, etc.). Other <b>OBJIDs</b>
   will be replaced by Fedora-generated PIDs.</p>
 
   <p><em>object-specs</em> in a given batch should meet the
@@ -1240,17 +1242,17 @@
   template isn't designed to use it. In either case, the batch goes
   on.</p>
 
-  
-<p>The following <em>object-spec</em> fragment from <i>americanacademy.xml</i> 
+
+<p>The following <em>object-spec</em> fragment from <i>americanacademy.xml</i>
   illustrates some of this.</p>
-  
+
 <pre>&lt;?xml version="1.0" encoding="utf-8"?&gt;
 
-  
-&lt;input <br/>    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xmlns:xlink="http://www.w3.org/TR/xlink" 
-    xsi:schemaLocation="http://www.fedora.info/definitions/ http://www.fedora.info/definitions/1/0/api/batchMerge.xsd" 
-	xmlns="http://www.fedora.info/definitions/" 
+
+&lt;input <br/>    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xlink="http://www.w3.org/TR/xlink"
+    xsi:schemaLocation="http://www.fedora.info/definitions/ http://www.fedora.info/definitions/1/0/api/batchMerge.xsd"
+	xmlns="http://www.fedora.info/definitions/"
 	OBJID="demo:3010" LABEL="American Academy"&gt;
 
     &lt;datastreams&gt;
@@ -1270,12 +1272,12 @@
                 &lt;/uvalibadmin:admin&gt;
             &lt;/xmlContent&gt;
         &lt;/datastream&gt;
-		
+
         . . .
 
         other metadata datastreams
 
-        . . .		
+        . . .
 
 		&lt;datastream ID="DS1" xlink:href="http://www.fedora.info/demo/batch-demo/thumb/americanacademy.jpg" LABEL="*** TESTING:  SUBSTITUTING LABEL FOR DS1 ***"/&gt;
 		&lt;datastream ID="DS2" xlink:href="http://www.fedora.info/demo/batch-demo/medium/americanacademy.jpg" xlink:title="*** TESTING:  SUBSTITUTING XLINK:TITLE FOR DS2 ***"/&gt;
@@ -1286,7 +1288,7 @@
 
 &lt;/input&gt;
 
-                       
+
 </pre>
 <div>
     <h4><a name="d0e1289" id="d0e1289"></a>Progress Report

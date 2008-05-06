@@ -7,8 +7,6 @@ package fedora.client.export;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,15 +14,16 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
-import javax.swing.border.TitledBorder;
 
 import fedora.client.Administrator;
 
@@ -32,7 +31,7 @@ import fedora.common.Constants;
 
 /**
  * Launch a dialog for selecting which XML format to ingest. Valid options are
- * FOXML1_1.uri and METS_EXT1_1.uri.
+ * FOXML1_1.uri, FOXML1_0.uri, METS_EXT1_1.uri, and ATOM1_0.uri.
  * 
  * @author Sandy Payette
  */
@@ -42,7 +41,9 @@ public class ExportOptionsDialog
 
     private static final long serialVersionUID = 1L;
 
-    private JRadioButton foxmlButton;
+    private JRadioButton foxml11Button;
+    
+    private JRadioButton foxml10Button;
 
     private JRadioButton metsfButton;
     
@@ -66,7 +67,7 @@ public class ExportOptionsDialog
         super(JOptionPane.getFrameForComponent(Administrator.getDesktop()),
               title,
               true);
-        setSize(500, 300);
+        setSize(330, 400);
         setModal(true);
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -134,54 +135,68 @@ public class ExportOptionsDialog
 
     private JPanel setFormatPanel() {
         JPanel formatPanel = new JPanel();
-        formatPanel.setLayout(new GridBagLayout());
-        formatPanel
-                .setBorder(new TitledBorder("Select the desired export FORMAT"));
-        // foxml radio button
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.gridy = 0;
-        gbc.gridx = 0;
-        foxmlButton = new JRadioButton("FOXML (Fedora Object XML)", true);
-        foxmlButton.setActionCommand(FOXML1_1.uri);
-        foxmlButton.addActionListener(new ActionListener() {
+        formatPanel.setLayout(new GridLayout(0, 1));
+        formatPanel.setBorder(BorderFactory.createCompoundBorder(
+                                  BorderFactory.createCompoundBorder(
+                                      BorderFactory.createEmptyBorder(12, 12, 0, 12),
+                                      BorderFactory.createEtchedBorder()),
+                                      BorderFactory.createEmptyBorder(12, 12, 12, 12)));
 
+        String text = "Select the desired export FORMAT";
+        JLabel label = new JLabel(text);
+        formatPanel.add(label);       
+
+        // foxml 1.1 radio button
+        foxml11Button = new JRadioButton("FOXML (Fedora Object XML) version 1.1", true);
+        foxml11Button.setActionCommand(FOXML1_1.uri);
+        foxml11Button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (foxmlButton.isSelected()) {
+                if (foxml11Button.isSelected()) {
                     fmt_chosen = FOXML1_1.uri;
                 }
             }
         });
-        formatPanel.add(foxmlButton, gbc);
+        formatPanel.add(foxml11Button);
+        
+        // foxml 1.0 radio button
+        foxml10Button = new JRadioButton("FOXML (Fedora Object XML) version 1.0", true);
+        foxml10Button.setActionCommand(FOXML1_0.uri);
+        foxml10Button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (foxml10Button.isSelected()) {
+                    fmt_chosen = FOXML1_0.uri;
+                }
+            }
+        });
+        formatPanel.add(foxml10Button);
+        
         // metsf radio button
-        gbc.gridx = 1;
         metsfButton = new JRadioButton("METS (Fedora METS Extension)", false);
         metsfButton.setActionCommand(METS_EXT1_1.uri);
         metsfButton.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 if (metsfButton.isSelected()) {
                     fmt_chosen = METS_EXT1_1.uri;
                 }
             }
         });
-        formatPanel.add(metsfButton, gbc);
+        formatPanel.add(metsfButton);
+        
         // atom radio button
-        gbc.gridx = 0;
-        gbc.gridy = 1;
         atomButton = new JRadioButton("ATOM (Fedora Atom)", false);
         atomButton.setActionCommand(ATOM1_0.uri);
         atomButton.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 if (atomButton.isSelected()) {
                     fmt_chosen = ATOM1_0.uri;
                 }
             }
         });
-        formatPanel.add(atomButton, gbc);
+        formatPanel.add(atomButton);
+        
         // button grouping and default value
-        fmt_buttonGroup.add(foxmlButton);
+        fmt_buttonGroup.add(foxml11Button);
+        fmt_buttonGroup.add(foxml10Button);
         fmt_buttonGroup.add(metsfButton);
         fmt_buttonGroup.add(atomButton);
         fmt_chosen = FOXML1_1.uri;
@@ -190,14 +205,18 @@ public class ExportOptionsDialog
 
     private JPanel setContextPanel() {
         JPanel contextPanel = new JPanel();
-        contextPanel.setLayout(new GridBagLayout());
-        contextPanel
-                .setBorder(new TitledBorder("Select the desired export CONTEXT"));
+        contextPanel.setLayout(new GridLayout(0, 1));
+        contextPanel.setBorder(BorderFactory.createCompoundBorder(
+                                   BorderFactory.createCompoundBorder(
+                                       BorderFactory.createEmptyBorder(12, 12, 12, 12),
+                                       BorderFactory.createEtchedBorder()),
+                                       BorderFactory.createEmptyBorder(12, 12, 12, 12)));
+
+        String text = "Select the desired export CONTEXT";
+        JLabel label = new JLabel(text);
+        contextPanel.add(label);       
+        
         // migrate radio button
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.gridy = 0;
-        gbc.gridx = 0;
         migrateButton = new JRadioButton("Migrate", true);
         migrateButton.setActionCommand("migrate");
         migrateButton.addActionListener(new ActionListener() {
@@ -208,9 +227,9 @@ public class ExportOptionsDialog
                 }
             }
         });
-        contextPanel.add(migrateButton, gbc);
+        contextPanel.add(migrateButton);
+
         // public radio button
-        gbc.gridx = 1;
         publicButton = new JRadioButton("Public Access", false);
         publicButton.setActionCommand("public");
         publicButton.addActionListener(new ActionListener() {
@@ -221,9 +240,9 @@ public class ExportOptionsDialog
                 }
             }
         });
-        contextPanel.add(publicButton, gbc);
+        contextPanel.add(publicButton);
+
         // archive radio button
-        gbc.gridx = 2;
         archiveButton = new JRadioButton("Archive", false);
         archiveButton.setActionCommand("archive");
         archiveButton.addActionListener(new ActionListener() {
@@ -235,7 +254,7 @@ public class ExportOptionsDialog
             }
         });
         //archiveButton.setEnabled(false);
-        contextPanel.add(archiveButton, gbc);
+        contextPanel.add(archiveButton);
 
         // button grouping and default value
         ctx_buttonGroup.add(migrateButton);
@@ -264,8 +283,10 @@ public class ExportOptionsDialog
                 .append("There are two sections to the Export option dialog that"
                         + " must be completed:\n\n"
                         + " (1) Select the export FORMAT:\n\n"
-                        + "     FOXML - select this option if you want the export file\n"
-                        + "             to be encoded according to the FOXML XML schema.\n\n"
+                        + "     FOXML 1.1 - select this option if you want the export file\n"
+                        + "             to be encoded according to the FOXML 1.1 XML schema.\n\n"
+                        + "     FOXML 1.0 - select this option if you want the export file\n"
+                        + "             to be encoded according to the FOXML 1.0 XML schema.\n\n"                        
                         + "     METS  - select this option if you want the export file\n"
                         + "             to be encoded according to the Fedora extension of\n"
                         + "             the METS XML schema.\n\n"

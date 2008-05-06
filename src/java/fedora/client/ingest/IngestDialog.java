@@ -128,23 +128,11 @@ public class IngestDialog {
             } else if (kind == ONE_FROM_REPOS) {
                 SourceRepoDialog sdlg = new SourceRepoDialog();
                 if (sdlg.getAPIA() != null) {
-                    // First, determine the default export format of the source repo.
-                    // For backward compatibility with pre-2.0 repositories, 
-                    // assume the "metslikefedora1" format.
                     RepositoryInfo repoinfo =
-                            sdlg.getAPIA().describeRepository();
-                    String sourceExportFormat = null;
-                    StringTokenizer stoken =
-                            new StringTokenizer(repoinfo.getRepositoryVersion(),
-                                                ".");
-                    if (new Integer(stoken.nextToken()).intValue() < 2) {
-                        sourceExportFormat = "metslikefedora1";
-                    } else {
-                        sourceExportFormat = repoinfo.getDefaultExportFormat();
-                    }
-                    String pid =
-                            JOptionPane
-                                    .showInputDialog("Enter the PID of the object to ingest.");
+                        sdlg.getAPIA().describeRepository();
+                    String sourceExportFormat = Ingest.getExportFormat(repoinfo);
+                    String pid = JOptionPane.
+                        showInputDialog("Enter the PID of the object to ingest.");
                     if (pid != null && !pid.equals("")) {
                         pid =
                                 Ingest.oneFromRepository(sdlg.getAPIA(),
@@ -162,20 +150,9 @@ public class IngestDialog {
                 wasMultiple = true;
                 SourceRepoDialog sdlg = new SourceRepoDialog();
                 if (sdlg.getAPIA() != null) {
-                    // First, determine the default export format of the source repo.
-                    // For backward compatibility with pre-2.0 repositories, 
-                    // assume the "metslikefedora1" format.
                     RepositoryInfo repoinfo =
-                            sdlg.getAPIA().describeRepository();
-                    String sourceExportFormat = null;
-                    StringTokenizer stoken =
-                            new StringTokenizer(repoinfo.getRepositoryVersion(),
-                                                ".");
-                    if (new Integer(stoken.nextToken()).intValue() < 2) {
-                        sourceExportFormat = "metslikefedora1";
-                    } else {
-                        sourceExportFormat = repoinfo.getDefaultExportFormat();
-                    }
+                        sdlg.getAPIA().describeRepository();
+                    String sourceExportFormat = Ingest.getExportFormat(repoinfo);
                     // looks ok... do the request
                     long st = System.currentTimeMillis();
                     logRootName = "ingest-from-repos";

@@ -112,12 +112,7 @@ public class AutoExporter
                 }
             } else {
                 if (format != null) {
-                    if (format.equals(FOXML1_0.uri)
-                            || format.equals("foxml1.0")) {
-                        System.out
-                                .println("WARNING: Repository does not support FOXML 1.0; exporting newer format (v1.1) instead");
-                        format = FOXML1_1.uri;
-                    } else if (format.equals(METS_EXT1_0.uri)
+                    if (format.equals(METS_EXT1_0.uri)
                             || format.equals("metslikefedora1")) {
                         System.out
                                 .println("WARNING: Repository does not support METS Fedora Extension 1.0; exporting newer format (v1.1) instead");
@@ -195,11 +190,15 @@ public class AutoExporter
         if (format == null) {
             return;
         }
-        if (!format.equals(FOXML1_1.uri) && !format.equals(METS_EXT1_1.uri)
-                && !format.equals(ATOM1_0.uri) && !format.equals("default")) {
-            throw new IOException("Invalid export format. Valid FORMAT values are: "
-                    + "'"
+        if (!format.equals(FOXML1_1.uri) &&
+            !format.equals(FOXML1_0.uri) &&     
+            !format.equals(METS_EXT1_1.uri) &&
+            !format.equals(ATOM1_0.uri) &&
+            !format.equals("default")) {
+            throw new IOException("Invalid export format. Valid FORMAT values are: '"
                     + FOXML1_1.uri
+                    + "' '"
+                    + FOXML1_0.uri
                     + "' '"
                     + METS_EXT1_1.uri
                     + "' '"

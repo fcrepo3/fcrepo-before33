@@ -168,6 +168,7 @@ public class METSFedoraExtDOSerializer
                     + "\"\n");
         }
         buf.append("        xmlns:" + XSI.prefix + "=\"" + XSI.uri + "\"\n");
+        buf.append("        xmlns:" + AUDIT.prefix + "=\"" + AUDIT.uri + "\"\n");
         buf.append("        " + XSI.SCHEMA_LOCATION.qName + "=\"" + METS.uri
                 + " " + m_format.xsdLocation + "\">\n");
     }

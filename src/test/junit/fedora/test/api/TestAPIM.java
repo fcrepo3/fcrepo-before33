@@ -37,6 +37,8 @@ public class TestAPIM
     public static byte[] demo998FOXMLObjectXML;
 
     public static byte[] demo999METSObjectXML;
+    
+    public static byte[] demo1000ATOMObjectXML;
 
     public static byte[] changeme1FOXMLObjectXML;
 
@@ -481,6 +483,166 @@ public class TestAPIM
             changeme2METSObjectXML = sb.toString().getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee) {
         }
+        
+        sb = new StringBuffer();
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        sb.append("<feed xmlns=\"http://www.w3.org/2005/Atom\">");
+        sb.append("  <id>info:fedora/demo:1000</id>");
+        sb.append("  <title type=\"text\">Image of Coliseum in Rome</title>");
+        sb.append("  <updated>2008-04-30T03:54:31.525Z</updated>");
+        sb.append("  <author>");
+        sb.append("    <name>fedoraAdmin</name>");
+        sb.append("  </author>");
+        sb.append("  <category term=\"Active\" scheme=\"info:fedora/fedora-system:def/model#state\"></category>");
+        sb.append("  <category term=\"2008-04-30T03:54:31.525Z\" scheme=\"info:fedora/fedora-system:def/model#createdDate\"></category>");
+        sb.append("  <icon>http://www.fedora-commons.org/images/logo_vertical_transparent_200_251.png</icon>");
+        sb.append("  <entry>");
+        sb.append("    <id>info:fedora/demo:1000/DC</id>");
+        sb.append("    <title type=\"text\">DC</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <link href=\"info:fedora/demo:1000/DC/2008-04-30T03:54:31.459Z\" rel=\"alternate\"></link>");
+        sb.append("    <category term=\"A\" scheme=\"info:fedora/fedora-system:def/model#state\"></category>");
+        sb.append("    <category term=\"X\" scheme=\"info:fedora/fedora-system:def/model#controlGroup\"></category>");
+        sb.append("    <category term=\"true\" scheme=\"info:fedora/fedora-system:def/model#versionable\"></category>");
+        sb.append("  </entry>");
+        sb.append("  <entry xmlns:thr=\"http://purl.org/syndication/thread/1.0\">");
+        sb.append("    <id>info:fedora/demo:1000/DC/2008-04-30T03:54:31.459Z</id>");
+        sb.append("    <title type=\"text\">DC1.0</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <thr:in-reply-to ref=\"info:fedora/demo:1000/DC\"></thr:in-reply-to>");
+        sb.append("    <category term=\"DC Record for Coliseum image object\" scheme=\"info:fedora/fedora-system:def/model#label\"></category>");
+        sb.append("    <category term=\"DISABLED\" scheme=\"info:fedora/fedora-system:def/model#digestType\"></category>");
+        sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
+        sb.append("    <category term=\"491\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
+        sb.append("    <content type=\"text/xml\">");
+        sb.append("      <oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">");                 
+        sb.append("        <dc:title>Coliseum in Rome</dc:title>");
+        sb.append("        <dc:creator>Thornton Staples</dc:creator>");
+        sb.append("        <dc:subject>Architecture, Roman</dc:subject>");
+        sb.append("        <dc:description>Image of Coliseum in Rome</dc:description>");
+        sb.append("        <dc:publisher>University of Virginia Library</dc:publisher>");
+        sb.append("        <dc:format>image/jpeg</dc:format>");
+        sb.append("        <dc:identifier>demo:1000</dc:identifier>");
+        sb.append("      </oai_dc:dc>");
+        sb.append("    </content>");
+        sb.append("  </entry>");
+        sb.append("  <entry>");
+        sb.append("    <id>info:fedora/demo:1000/THUMBRES_IMG</id>");
+        sb.append("    <title type=\"text\">THUMBRES_IMG</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <link href=\"info:fedora/demo:1000/THUMBRES_IMG/2008-04-30T03:54:31.459Z\" rel=\"alternate\"></link>");
+        sb.append("    <category term=\"A\" scheme=\"info:fedora/fedora-system:def/model#state\"></category>");
+        sb.append("    <category term=\"M\" scheme=\"info:fedora/fedora-system:def/model#controlGroup\"></category>");
+        sb.append("    <category term=\"true\" scheme=\"info:fedora/fedora-system:def/model#versionable\"></category>");
+        sb.append("  </entry>");
+        sb.append("  <entry xmlns:thr=\"http://purl.org/syndication/thread/1.0\">");
+        sb.append("    <id>info:fedora/demo:1000/THUMBRES_IMG/2008-04-30T03:54:31.459Z</id>");
+        sb.append("    <title type=\"text\">THUMBRES_IMG1.0</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <thr:in-reply-to ref=\"info:fedora/demo:1000/THUMBRES_IMG\"></thr:in-reply-to>");
+        sb.append("    <category term=\"Thorny's Coliseum thumbnail jpg image\" scheme=\"info:fedora/fedora-system:def/model#label\"></category>");
+        sb.append("    <category term=\"DISABLED\" scheme=\"info:fedora/fedora-system:def/model#digestType\"></category>");
+        sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
+        sb.append("    <category term=\"0\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
+        sb.append("    <summary type=\"text\">THUMBRES_IMG1.0</summary>");
+        sb.append("    <content type=\"image/jpeg\" src=\"http://" + getHost() + ":8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg\"></content>");
+        sb.append("  </entry>");
+        sb.append("  <entry>");
+        sb.append("    <id>info:fedora/demo:1000/MEDRES_IMG</id>");
+        sb.append("    <title type=\"text\">MEDRES_IMG</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <link href=\"info:fedora/demo:1000/MEDRES_IMG/2008-04-30T03:54:31.459Z\" rel=\"alternate\"></link>");
+        sb.append("    <category term=\"A\" scheme=\"info:fedora/fedora-system:def/model#state\"></category>");
+        sb.append("    <category term=\"M\" scheme=\"info:fedora/fedora-system:def/model#controlGroup\"></category>");
+        sb.append("    <category term=\"true\" scheme=\"info:fedora/fedora-system:def/model#versionable\"></category>");
+        sb.append("  </entry>");
+        sb.append("  <entry xmlns:thr=\"http://purl.org/syndication/thread/1.0\">");
+        sb.append("    <id>info:fedora/demo:1000/MEDRES_IMG/2008-04-30T03:54:31.459Z</id>");
+        sb.append("    <title type=\"text\">MEDRES_IMG1.0</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <thr:in-reply-to ref=\"info:fedora/demo:1000/MEDRES_IMG\"></thr:in-reply-to>");
+        sb.append("    <category term=\"Thorny's Coliseum medium jpg image\" scheme=\"info:fedora/fedora-system:def/model#label\"></category>");
+        sb.append("    <category term=\"DISABLED\" scheme=\"info:fedora/fedora-system:def/model#digestType\"></category>");
+        sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
+        sb.append("    <category term=\"0\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
+        sb.append("    <summary type=\"text\">MEDRES_IMG1.0</summary>");
+        sb.append("    <content type=\"image/jpeg\" src=\"http://" + getHost() + ":8080/fedora-demo/simple-image-demo/coliseum-medium.jpg\"></content>");
+        sb.append("  </entry>");
+        sb.append("  <entry>");
+        sb.append("    <id>info:fedora/demo:1000/HIGHRES_IMG</id>");
+        sb.append("    <title type=\"text\">HIGHRES_IMG</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <link href=\"info:fedora/demo:1000/HIGHRES_IMG/2008-04-30T03:54:31.459Z\" rel=\"alternate\"></link>");
+        sb.append("    <category term=\"A\" scheme=\"info:fedora/fedora-system:def/model#state\"></category>");
+        sb.append("    <category term=\"M\" scheme=\"info:fedora/fedora-system:def/model#controlGroup\"></category>");
+        sb.append("    <category term=\"true\" scheme=\"info:fedora/fedora-system:def/model#versionable\"></category>");
+        sb.append("  </entry>");
+        sb.append("  <entry xmlns:thr=\"http://purl.org/syndication/thread/1.0\">");
+        sb.append("    <id>info:fedora/demo:1000/HIGHRES_IMG/2008-04-30T03:54:31.459Z</id>");
+        sb.append("    <title type=\"text\">HIGHRES_IMG1.0</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <thr:in-reply-to ref=\"info:fedora/demo:1000/HIGHRES_IMG\"></thr:in-reply-to>");
+        sb.append("    <category term=\"Thorny's Coliseum high jpg image\" scheme=\"info:fedora/fedora-system:def/model#label\"></category>");
+        sb.append("    <category term=\"DISABLED\" scheme=\"info:fedora/fedora-system:def/model#digestType\"></category>");
+        sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
+        sb.append("    <category term=\"0\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
+        sb.append("    <summary type=\"text\">HIGHRES_IMG1.0</summary>");
+        sb.append("    <content type=\"image/jpeg\" src=\"http://" + getHost() + ":8080/fedora-demo/simple-image-demo/coliseum-high.jpg\"></content>");
+        sb.append("  </entry>");
+        sb.append("  <entry>");
+        sb.append("    <id>info:fedora/demo:1000/VERYHIGHRES_IMG</id>");
+        sb.append("    <title type=\"text\">VERYHIGHRES_IMG</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <link href=\"info:fedora/demo:1000/VERYHIGHRES_IMG/2008-04-30T03:54:31.459Z\" rel=\"alternate\"></link>");
+        sb.append("    <category term=\"A\" scheme=\"info:fedora/fedora-system:def/model#state\"></category>");
+        sb.append("    <category term=\"M\" scheme=\"info:fedora/fedora-system:def/model#controlGroup\"></category>");
+        sb.append("    <category term=\"true\" scheme=\"info:fedora/fedora-system:def/model#versionable\"></category>");
+        sb.append("  </entry>");
+        sb.append("  <entry xmlns:thr=\"http://purl.org/syndication/thread/1.0\">");
+        sb.append("    <id>info:fedora/demo:1000/VERYHIGHRES_IMG/2008-04-30T03:54:31.459Z</id>");
+        sb.append("    <title type=\"text\">VERYHIGHRES_IMG1.0</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <thr:in-reply-to ref=\"info:fedora/demo:1000/VERYHIGHRES_IMG\"></thr:in-reply-to>");
+        sb.append("    <category term=\"Thorny's Coliseum veryhigh jpg image\" scheme=\"info:fedora/fedora-system:def/model#label\"></category>");
+        sb.append("    <category term=\"DISABLED\" scheme=\"info:fedora/fedora-system:def/model#digestType\"></category>");
+        sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
+        sb.append("    <category term=\"0\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
+        sb.append("    <summary type=\"text\">VERYHIGHRES_IMG1.0</summary>");
+        sb.append("    <content type=\"image/jpeg\" src=\"http://" + getHost() + ":8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\"></content>");
+        sb.append("  </entry>");
+        sb.append("  <entry>");
+        sb.append("    <id>info:fedora/demo:1000/RELS-EXT</id>");
+        sb.append("    <title type=\"text\">RELS-EXT</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <link href=\"info:fedora/demo:1000/RELS-EXT/2008-04-30T03:54:31.459Z\" rel=\"alternate\"></link>");
+        sb.append("    <category term=\"A\" scheme=\"info:fedora/fedora-system:def/model#state\"></category>");
+        sb.append("    <category term=\"X\" scheme=\"info:fedora/fedora-system:def/model#controlGroup\"></category>");
+        sb.append("    <category term=\"false\" scheme=\"info:fedora/fedora-system:def/model#versionable\"></category>");
+        sb.append("  </entry>");
+        sb.append("  <entry xmlns:thr=\"http://purl.org/syndication/thread/1.0\">");
+        sb.append("    <id>info:fedora/demo:1000/RELS-EXT/2008-04-30T03:54:31.459Z</id>");
+        sb.append("    <title type=\"text\">RELS-EXT1.0</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <thr:in-reply-to ref=\"info:fedora/demo:1000/RELS-EXT\"></thr:in-reply-to>");
+        sb.append("    <category term=\"Relationships\" scheme=\"info:fedora/fedora-system:def/model#label\"></category>");
+        sb.append("    <category term=\"DISABLED\" scheme=\"info:fedora/fedora-system:def/model#digestType\"></category>");
+        sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
+        sb.append("    <category term=\"472\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
+        sb.append("    <content type=\"text/xml\">");
+        sb.append("      <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:fedora-model=\"info:fedora/fedora-system:def/model#\">");
+        sb.append("        <rdf:Description rdf:about=\"info:fedora/demo:1000\">");
+        sb.append("          <fedora-model:hasModel rdf:resource=\"info:fedora/demo:UVA_STD_IMAGE_1\"></fedora-model:hasModel>");
+        sb.append("          <fedora-model:hasModel rdf:resource=\"info:fedora/fedora-system:FedoraObject-3.0\"></fedora-model:hasModel>");
+        sb.append("          </rdf:Description>");
+        sb.append("        </rdf:RDF>");
+        sb.append("    </content>");
+        sb.append("  </entry>");
+        sb.append("</feed>");
+        
+        try {
+            demo1000ATOMObjectXML = sb.toString().getBytes("UTF-8");
+        } catch (UnsupportedEncodingException uee) {           
+        }
 
     }
 
@@ -614,6 +776,25 @@ public class TestAPIM
                                "count(//foxml:datastream[@ID!='AUDIT'])",
                                xmlIn);
 
+        pid =
+            apim.ingest(demo1000ATOMObjectXML,
+                        ATOM1_0.uri,
+                        "ingesting new atom object");
+            assertNotNull(pid);
+            serverAssignedPIDs.add(pid);
+
+            objectXML = apim.getObjectXML(pid);
+            assertTrue(objectXML.length > 0);
+            xmlIn = new String(objectXML, "UTF-8");
+            assertXpathExists("foxml:digitalObject[@PID='" + pid + "']", xmlIn);
+            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",
+                      xmlIn);
+            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",
+                      xmlIn);
+            assertXpathEvaluatesTo("6",
+                           "count(//foxml:datastream[@ID!='AUDIT'])",
+                           xmlIn);
+                
         // (2) test modifyObject
         System.out.println("Running TestAPIM.testModifyObject...");
         // test changing object demo:5 by modifying state to Inactive; leave label unchanged

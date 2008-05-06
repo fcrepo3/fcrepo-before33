@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-                      
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
   <head>
     <title>Fedora Client Command-Line Utilities</title>
@@ -34,9 +34,9 @@
         <li><a href="#bbdingest">fedora-batch-buildingest</a></li>
       </ol>
     </div>
-    
+
     <ol id="content">
-    
+
       <li>
         <h2 id="intro">Introduction</h2>
         <span class="plaintext">
@@ -46,7 +46,7 @@
           This guide assumes you have correctly installed the Fedora client distribution as per the install guide, including having set up your PATH and FEDORA_HOME appropriately. The command-line scripts are located in FEDORA_HOME/client/bin/. In Windows, these commands resolve to batch files (.bat); in Unix, they resolve to shell scripts (.sh).
         </span>
       </li>
-      
+
       <li>
         <h2 id="dsinfo">fedora-dsinfo</h2>
         <span class="plaintext">
@@ -72,7 +72,7 @@
           Displays key information about each of an object's datastreams.
         </span>
       </li>
-      
+
       <li>
         <h2 id="export">fedora-export</h2>
         <span class="plaintext">
@@ -86,7 +86,12 @@
             <li><strong>[USR]</strong> - The id of the repository user.</li>
             <li><strong>[PSS]</strong> - The password of the repository user.</li>
             <li><strong>[PID|FTYPS]</strong> - Either the identifier (PID) of the object to export from the repository OR the types of objects to export (FTYPS).  FTYPS can be any combination of the characters O, D,  and M, specifying which Fedora object type(s) should be exported. O=regular data objects, D=behavior definitions,  M=behavior mechanisms.</li>
-            <li><strong>[FORMAT]</strong> - The XML format to export.  Valid options are: <em>foxml1.0</em> (for FOXML), <em>metslikefedora1</em> (for METS), or <em>default</em>.</li>
+            <li><strong>[FORMAT]</strong> - The XML format to export.  Valid options are:
+                <em>info:fedora/fedora-system:FOXML-1.1</em> (for FOXML 1.1),
+                <em>info:fedora/fedora-system:FOXML-1.0</em> (for FOXML 1.0),
+                <em>info:fedora/fedora-system:METSFedoraExt-1.1</em> (for METS),
+                <em>info:fedora/fedora-system:ATOM-1.0</em> (for ATOM),
+                or <em>default</em>.</li>
             <li><strong>[ECONTEXT]</strong> - The export context (which indicates what use case the output should be prepared for.  Valid options are: <em>public</em>, <em>migrate</em>, <em>archive</em>, or <em>default</em>.</li>
             <li><strong>[PATH]</strong> - The directory to export to.</li>
             <li><strong>[PROTOCOL]</strong> - Is how to connect to repository, either http or https.</li>
@@ -95,9 +100,9 @@
           Examples:
           <br />
           <br />
-          <strong>fedora-export example.com:80 fedoraAdmin fedoraAdmin demo:1 foxml1.0 migrate http</strong>
+          <strong>fedora-export example.com:80 fedoraAdmin fedoraAdmin demo:1 info:fedora/fedora-system:FOXML-1.1 migrate . http</strong>
           <br />
-          Exports demo:1 for migration in FOXML format (from example.com:80 to the current directory).
+          Exports demo:1 for migration in FOXML 1.1 format (from example.com:80 to the current directory).
           <br/>
           <br />
           <strong>fedora-export example.com:80 fedoraAdmin fedoraAdmin DMO default default /tmp/fedoradump http</strong>
@@ -105,7 +110,7 @@
           Exports all objects in the default export format and context (from example.com:80 to directory /tmp/fedoradump).
         </span>
       </li>
-      
+
       <li>
         <h2 id="find">fedora-find</h2>
         <span class="plaintext">
@@ -133,7 +138,7 @@
           A simple way to search a repository's indexed fields. More advanced searches can be done with the web-based search interface at http://host:port/fedora/search, or the Admin GUI's search interface.
         </span>
       </li>
-      
+
       <li>
         <h2 id="ingest">fedora-ingest</h2>
         <span class="plaintext">
@@ -151,7 +156,13 @@
           <ul>
             <li>f|[ile] or d[ir] or r[epos] indicates the whether the ingest is from a file, directory, or repository as source.</li>
             <li><strong>PATH</strong> - the local file or directory name.</li>
-            <li><strong>[FORMAT]</strong>  - the XML format of the ingest file(s). Valid options are: <em>foxml1.0</em> (for FOXML), <em>metslikefedora1</em> (for METS).</li>
+            <li><strong>[FORMAT]</strong>  - the XML format of the ingest file(s). Valid options are:
+              <em>info:fedora/fedora-system:FOXML-1.1</em> (for FOXML 1.1),
+              <em>info:fedora/fedora-system:FOXML-1.0</em> (for FOXML 1.0),
+              <em>info:fedora/fedora-system:METSFedoraExt-1.1</em> (for METS),
+              or <em>info:fedora/fedora-system:ATOM-1.0</em> (for ATOM)
+              Objects ingested in a format other than FOXML1.1 format are updated to conform to FOXML 1.1 as part of the ingest process.
+            </li>
             <li><strong>[SHST/THST]</strong> - the source or target repository's hostname.</li>
             <li><strong>[SPRT/TPRT]</strong> - the source or target repository's port number.</li>
             <li><strong>[SUSR/TUSR]</strong> - the id of the source or target repository user.</li>
@@ -165,33 +176,33 @@
           Examples:
           <br />
           <br />
-          <strong>fedora-ingest f obj1.xml foxml1.0 myrepo.com:80 jane jpw http</strong>
+          <strong>fedora-ingest f obj1.xml info:fedora/fedora-system:FOXML-1.1 myrepo.com:80 jane jpw http</strong>
           <br />
-          Ingests obj1.xml (encoded in foxml1.0 format) from the current directory into the repository at myrepo.com:80 as user 'jane' with password 'jpw'. The logmessage will be system-generated, indicating the source path+filename.
+          Ingests obj1.xml (encoded in foxml1.1 format) from the current directory into the repository at myrepo.com:80 as user 'jane' with password 'jpw'. The logmessage will be system-generated, indicating the source path+filename.
           <br />
           <br />
           <strong>
-          fedora-ingest d c:\archive foxml1.0 M myrepo.com:80 jane janepw http ""</strong>
+          fedora-ingest d c:\archive info:fedora/fedora-system:FOXML-1.0 M myrepo.com:80 jane janepw http ""</strong>
           <br />
-          Traverses entire directory structure of c:\archive, and ingests any file that looks like a behavior mechanism object (M). It assumes all files will be in the XML format 'foxml1.0' and will fail on ingests of files that are not of this format. All log messages will be the quoted string.
+          Traverses entire directory structure of c:\archive, and ingests any file that looks like a behavior mechanism object (M). It assumes all files will be in the FOXML 1.0 format and will fail on ingests of files that are not of this format. All log messages will be the quoted string.
           <br />
           <br />
-          <strong>fedora-ingest d c:\archive foxml1.0 ODM myrepo.com:80 jane janepw http "for jane"</strong>
+          <strong>fedora-ingest d c:\archive info:fedora/fedora-system:FOXML-1.0 ODM myrepo.com:80 jane janepw http "for jane"</strong>
           <br />
           Same as above, but ingests all three types of objects (O,D,M).
           <br />
           <br />
-          <strong>fedora-ingest r jrepo.com:8081 mike mpw demo:1 myrepo.com:80 jane jpw http ""</strong>
+          <strong>fedora-ingest r jrepo.com:8081 mike mpw demo:1 myrepo.com:80 jane jpw http http ""</strong>
           <br />
           Ingests the object whose pid is 'demo:1' from the source repository 'srcrepo.com:8081' into the target repository 'myrepo.com:80'. The object will be exported from the source repository in the default export format configured at the source. All log messages will be empty.
           <br />
           <br />
-          <strong>fedora-ingest r jrepo.com:8081 mike mpw O myrepo.com:80 jane jpw http ""</strong>
+          <strong>fedora-ingest r jrepo.com:8081 mike mpw O myrepo.com:80 jane jpw http http ""</strong>
           <br />
           Same as above, but ingests all data objects (type O).
         </span>
       </li>
-      
+
       <li>
         <h2 id="indemo">fedora-ingest-demos</h2>
         <span class="plaintext">
@@ -216,7 +227,7 @@
           A convenient script to ingest all included demo objects for a new Fedora installation. See the Demo guide for descriptions of these objects. Note: This script should not be run until you have ensured that the hostname and port numbers in the demo objects have been corrected (with the fedora-convert-demos script) to use the actual hostname and port of your Fedora server.
         </span>
       </li>
-      
+
       <li>
       <h2 id="cvdemo">fedora-convert-demos</h2>
       <span class="plaintext">
@@ -246,18 +257,18 @@
         <em>Background:</em> The demo objects that come with the Fedora client have embedded URLs inside them that assume the server is running on a machine called localhost on port number 8080. Those URLs must be changed to reflect the actual host and port the server is running on. Rather than search through all the demo files and change the references by hand, you can just run this script. It is not necessary to run this script if you have already run fedora-ingest-demos succcessfully and wish to change the hostname and port of the Fedora server, as the demo objects are already in the repository and the references inside them will automatically be corrected by the server.
       </span>
     </li>
-    
+
     <li>
     <h2 id="purge">fedora-purge</h2>
     <span class="plaintext">
-      <strong>fedora-purge</strong> [hostname] [port-number] [user] [pass] [pid] [protocol] [logMessage]
+      <strong>fedora-purge</strong> [hostname:port] [user] [pass] [pid] [protocol] [logMessage]
       <br />
       <br />
       Where:
     </span>
       <ul>
         <li><strong>[hostname]</strong> - The hostname of the Fedora server; default is localhost.</li>
-        <li><strong>[port-number]</strong> - The port number on which the Fedora server is running; default is 8080.</li>
+        <li><strong>[port]</strong> - The port number on which the Fedora server is running; default is 8080.</li>
         <li><strong>[user]</strong> - The Fedora user (e.g. fedoraAdmin).</li>
         <li><strong>[pass]</strong> - The Fedora user's password.</li>
         <li><strong>[pid]</strong> - The PID of the object to permanently remove.</li>
@@ -273,7 +284,7 @@
       Permanently removes an object from the repository. Note: Behavior Definition objects (BDefs) cannot be removed if there are objects that depend on them. When removing a BDef from the repository, first the dependent object(s) should be removed, then the implementing Behavior Mechanism(s), then the BDef itself.
     </span>
   </li>
-  
+
   <li>
   <h2 id="modify">fedora-modify</h2>
   <span class="plaintext">
@@ -283,7 +294,7 @@
     Where:
   </span>
     <ul>
-      <li><strong>[host:port]</strong> - The hostname and port of the target Fedora server.</li>
+      <li><strong>[hostname:port]</strong> - The hostname and port of the target Fedora server.</li>
       <li><strong>[user]</strong> - The Fedora administrator username (e.g., fedoraAdmin)</li>
       <li><strong>[password]</strong> - The password for the Fedora administrator user.</li>
       <li><strong>[directives-filepath]</strong> - The full path to the file containing the batch modify directives.</li>
@@ -363,7 +374,7 @@ The fedora-batch-buildingest command line utility enables the running of the bat
 </li>
 
     </ol>
-    
+
     <div id="footer">
       <p id="copyright">
         Copyright &copy; 2002-2007 Fedora Project
@@ -379,6 +390,6 @@ The fedora-batch-buildingest command line utility enables the running of the bat
         p.innerHTML = "Last Modified "+modifiedDate;
       </script>
     </div>
-    
+
   </body>
 </html>

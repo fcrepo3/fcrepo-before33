@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -138,7 +138,7 @@ public class Ingest
         // EXPORT from source repository
         // The export context is set to "migrate" since the intent
         // of ingest from repository is to migrate an object from
-        // one repository to another.  The "migrate" option will 
+        // one repository to another.  The "migrate" option will
         // ensure that URLs that were relative to the "exporting"
         // repository are made relative to the "importing" repository.
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -149,7 +149,15 @@ public class Ingest
                             "migrate",
                             out);
 
-        // INGEST into target repository        
+        // Convert old format values to URIs for ingest
+        String ingestFormat = sourceExportFormat;
+        if (sourceExportFormat.equals("metslikefedora1")) {
+            ingestFormat = Constants.METS_EXT1_0.uri;
+        } else if (sourceExportFormat.equals("foxml1.0")) {
+            ingestFormat = Constants.FOXML1_0.uri;
+        }
+
+        // INGEST into target repository
         String realLogMessage = logMessage;
         if (realLogMessage == null) {
             realLogMessage = "Ingested from source repository with pid " + pid;
@@ -158,8 +166,7 @@ public class Ingest
                                             targetRepoAPIM,
                                             new ByteArrayInputStream(out
                                                     .toByteArray()),
-                                            //fixed.toString().getBytes("UTF-8")),
-                                            sourceExportFormat,
+                                            ingestFormat,
                                             realLogMessage);
     }
 
@@ -233,6 +240,25 @@ public class Ingest
 
     }
 
+    /**
+     * Determine the default export format of the source repository.
+     * For backward compatibility:
+     *   with pre-2.0 repositories assume the "metslikefedora1" format
+     */
+    public static String getExportFormat(RepositoryInfo repoinfo) throws Exception {
+        String sourceExportFormat = null;
+        StringTokenizer stoken =
+            new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
+        int majorVersion = new Integer(stoken.nextToken()).intValue();
+        if (majorVersion < 2) {
+            sourceExportFormat = "metslikefedora1";
+        } else {
+            sourceExportFormat = repoinfo.getDefaultExportFormat();
+        }
+
+        return sourceExportFormat;
+    }
+
     private static String getMessage(String logMessage, File file) {
         if (logMessage != null) {
             return logMessage;
@@ -280,88 +306,58 @@ public class Ingest
     public static void badArgs(String msg) {
         System.err.println("Command: fedora-ingest");
         System.err.println();
-        System.err
-                .println("Summary: Ingests one or more objects into a Fedora repository, from either");
-        System.err
-                .println("         the local filesystem or another Fedora repository.");
+        System.err.println("Summary: Ingests one or more objects into a Fedora repository, from either");
+        System.err.println("         the local filesystem or another Fedora repository.");
         System.err.println();
         System.err.println("Syntax:");
-        System.err
-                .println("  fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS TPROTOCOL [LOG]");
-        System.err
-                .println("  fedora-ingest d[ir] INPATH FORMAT THST:TPRT TUSR TPSS TPROTOCOL [LOG]");
-        System.err
-                .println("  fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|* THST:TPRT TUSR TPSS SPROTOCOL TPROTOCOL [LOG]");
+        System.err.println("  fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS TPROTOCOL [LOG]");
+        System.err.println("  fedora-ingest d[ir] INPATH FORMAT THST:TPRT TUSR TPSS TPROTOCOL [LOG]");
+        System.err.println("  fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|* THST:TPRT TUSR TPSS SPROTOCOL TPROTOCOL [LOG]");
         System.err.println();
         System.err.println("Where:");
-        System.err
-                .println("  INPATH     is the local file or directory name that is ingest source.");
-        System.err.println("  FORMAT     is a string value (either '"
-                + FOXML1_1.uri + "' or '" + METS_EXT1_1.uri + "')");
-        System.err
-                .println("             which indicates the XML format of the ingest file(s)");
-        System.err
-                .println("  PID        is the id of the object to ingest from the source repository.");
-        System.err
-                .println("  SHST/THST  is the source or target repository's hostname.");
-        System.err
-                .println("  SPRT/TPRT  is the source or target repository's port number.");
-        System.err
-                .println("  SUSR/TUSR  is the id of the source or target repository user.");
-        System.err
-                .println("  SPSS/TPSS  is the password of the source or target repository user.");
-        System.err
-                .println("  SPROTOCOL  is the protocol to communicate with source repository (http or https)");
-        System.err
-                .println("  TPROTOCOL  is the protocol to communicate with target repository (http or https)");
-        System.err
-                .println("  LOG        is the optional log message.  If unspecified, the log message");
-        System.err
-                .println("             will indicate the source filename or repository of the object(s).");
+        System.err.println("  INPATH     is the local file or directory name that is ingest source.");
+        System.err.println("  FORMAT     is a string value which indicates the XML format of the ingest file(s)");
+        System.err.println("             ('" + FOXML1_1.uri + "',");
+        System.err.println("              '" + FOXML1_0.uri + "',");
+        System.err.println("              '" + ATOM1_0.uri + "',");
+        System.err.println("              or '" + METS_EXT1_1.uri + "')");
+        System.err.println("  PID        is the id of the object to ingest from the source repository.");
+        System.err.println("  SHST/THST  is the source or target repository's hostname.");
+        System.err.println("  SPRT/TPRT  is the source or target repository's port number.");
+        System.err.println("  SUSR/TUSR  is the id of the source or target repository user.");
+        System.err.println("  SPSS/TPSS  is the password of the source or target repository user.");
+        System.err.println("  SPROTOCOL  is the protocol to communicate with source repository (http or https)");
+        System.err.println("  TPROTOCOL  is the protocol to communicate with target repository (http or https)");
+        System.err.println("  LOG        is the optional log message.  If unspecified, the log message");
+        System.err.println("             will indicate the source filename or repository of the object(s).");
         System.err.println();
         System.err.println("Examples:");
-        System.err.println("fedora-ingest f obj1.xml " + FOXML1_1.uri
-                + " myrepo.com:8443 jane jpw https");
+        System.err.println("fedora-ingest f obj1.xml " + FOXML1_1.uri + " myrepo.com:8443 jane jpw https");
         System.err.println();
-        System.err
-                .println("  Ingests obj1.xml (encoded in FOXML 1.1 format) from the");
-        System.err
-                .println("  current directory into the repository at myrepo.com:80");
-        System.err
-                .println("  as user 'jane' with password 'jpw' using the secure https protocol (SSL).");
-        System.err
-                .println("  The logmessage will be system-generated, indicating");
+        System.err.println("  Ingests obj1.xml (encoded in FOXML 1.1 format) from the");
+        System.err.println("  current directory into the repository at myrepo.com:80");
+        System.err.println("  as user 'jane' with password 'jpw' using the secure https protocol (SSL).");
+        System.err.println("  The logmessage will be system-generated, indicating");
         System.err.println("  the source path+filename.");
         System.err.println();
-        System.err.println("fedora-ingest d c:\\archive " + FOXML1_1.uri
-                + " myrepo.com:80 jane janepw http \"\"");
+        System.err.println("fedora-ingest d c:\\archive " + FOXML1_1.uri + " myrepo.com:80 jane janepw http \"\"");
         System.err.println();
-        System.err
-                .println("  Traverses entire directory structure of c:\\archive, and ingests ");
-        System.err
-                .println("  any file. ");
-        System.err
-                .println("  It assumes all files will be in the FOXML 1.1 format");
-        System.err
-                .println("  and will fail on ingests of files that are not of this format.");
+        System.err.println("  Traverses entire directory structure of c:\\archive, and ingests any file.");
+        System.err.println("  It assumes all files will be in the FOXML 1.1 format");
+        System.err.println("  and will fail on ingests of files that are not of this format.");
         System.err.println("  All log messages will be the quoted string.");
-        System.err
-                .println("fedora-ingest r jrepo.com:8081 mike mpw demo:1 myrepo.com:8443 jane jpw http https \"\"");
         System.err.println();
-        System.err
-                .println("  Ingests the object whose pid is 'demo:1' from the source repository");
-        System.err
-                .println("  'srcrepo.com:8081' into the target repository 'myrepo.com:80'.");
-        System.err
-                .println("  The object will be exported from the source repository in the default");
+        System.err.println("fedora-ingest r jrepo.com:8081 mike mpw demo:1 myrepo.com:8443 jane jpw http https \"\"");
+        System.err.println();
+        System.err.println("  Ingests the object whose pid is 'demo:1' from the source repository");
+        System.err.println("  'srcrepo.com:8081' into the target repository 'myrepo.com:80'.");
+        System.err.println("  The object will be exported from the source repository in the default");
         System.err.println("  export format configured at the source.");
         System.err.println("  All log messages will be empty.");
         System.err.println();
-        System.err
-                .println("fedora-ingest r jrepo.com:8081 mike mpw O myrepo.com:8443 jane jpw http https \"\"");
+        System.err.println("fedora-ingest r jrepo.com:8081 mike mpw O myrepo.com:8443 jane jpw http https \"\"");
         System.err.println();
-        System.err
-                .println("  Same as above, but ingests all data objects (type O).");
+        System.err.println("  Same as above, but ingests all data objects (type O).");
         System.err.println();
         System.err.println("ERROR  : " + msg);
         System.exit(1);
@@ -533,27 +529,13 @@ public class Ingest
                 FedoraAPIM targetRepoAPIM = tfc.getAPIM();
                 //*******************************************
 
-                // First, determine the default export format of the source repo.
-                // For backward compatibility with pre-2.0 repositories, 
-                // assume the "metslikefedora1" format.
+                // Determine export format
                 RepositoryInfo repoinfo = sourceRepoAPIA.describeRepository();
-                System.out
-                        .println("Ingest: exporting from a source repo version "
-                                + repoinfo.getRepositoryVersion());
-                String sourceExportFormat = null;
-                StringTokenizer stoken =
-                        new StringTokenizer(repoinfo.getRepositoryVersion(),
-                                            ".");
-                if (new Integer(stoken.nextToken()).intValue() < 2) {
-                    sourceExportFormat = METS_EXT1_0.uri;
-                    System.out.println("Ingest: source repos is using '"
-                            + METS_EXT1_0.uri + "' as export.");
-                } else {
-                    sourceExportFormat = repoinfo.getDefaultExportFormat();
-                    System.out
-                            .println("Ingest: source repos default export format is "
-                                    + sourceExportFormat);
-                }
+                System.out.println("Ingest: exporting from a source repo version "
+                                 + repoinfo.getRepositoryVersion());
+                String sourceExportFormat = getExportFormat(repoinfo);
+                System.out.println("Ingest: source repo is using "
+                        + sourceExportFormat + " export format.");
 
                 if (args[4].indexOf(":") != -1) {
                     // single object

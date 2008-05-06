@@ -135,47 +135,40 @@ public class Export
     public static void badArgs(String msg) {
         System.err.println("Command: fedora-export");
         System.err.println();
-        System.err
-                .println("Summary: Exports one or more objects from a Fedora repository.");
+        System.err.println("Summary: Exports one or more objects from a Fedora repository.");
         System.err.println();
         System.err.println("Syntax:");
-        System.err
-                .println("  fedora-export HST:PRT USR PSS PID|FTYPS FORMAT ECONTEXT PATH PROTOCOL");
+        System.err.println("  fedora-export HST:PRT USR PSS PID|FTYPS FORMAT ECONTEXT PATH PROTOCOL");
         System.err.println();
         System.err.println("Where:");
         System.err.println("  HST    is the repository hostname.");
         System.err.println("  PRT    is the repository port number.");
         System.err.println("  USR    is the id of the repository user.");
         System.err.println("  PSS    is the password of repository user.");
-        System.err
-                .println("  PID    is the id of the object to export from the source repository.");
+        System.err.println("  PID    is the id of the object to export from the source repository.");
         System.err.println("  FORMAT is the XML format to export ");
-        System.err.println("         ('" + FOXML1_1.uri + "', '"
-                + METS_EXT1_1.uri + "', or 'default')");
-        System.err
-                .println("  ECONTEXT is the export context (which indicates what use case");
+        System.err.println("         ('" + FOXML1_1.uri + "',"); 
+        System.err.println("          '" + FOXML1_0.uri + "',");
+        System.err.println("          '" + ATOM1_0.uri + "',");
+        System.err.println("          '" + METS_EXT1_1.uri + "',");
+        System.err.println("          or 'default')");
+        System.err.println("  ECONTEXT is the export context (which indicates what use case");
         System.err.println("         the output should be prepared for.");
-        System.err
-                .println("         ('public', 'migrate', 'archive' or 'default')");
+        System.err.println("         ('public', 'migrate', 'archive' or 'default')");
         System.err.println("  PATH   is the directory to export the object.");
-        System.err
-                .println("  PROTOCOL is the how to connect to repository, either http or https.");
+        System.err.println("  PROTOCOL is the how to connect to repository, either http or https.");
         System.err.println();
         System.err.println("Examples:");
-        System.err.println("fedora-export myrepo.com:8443 user pw demo:1 "
-                + FOXML1_1.uri + " migrate . https");
+        System.err.println("fedora-export myrepo.com:8443 user pw demo:1 " + FOXML1_1.uri + " migrate . https");
         System.err.println();
         System.err.println("  Exports demo:1 for migration in FOXML format ");
         System.err.println("  using the secure https protocol (SSL).");
         System.err.println("  (from myrepo.com:80 to the current directory).");
         System.err.println();
-        System.err
-                .println("fedora-export myrepo.com:80 user pw DMO default default /tmp/fedoradump http");
+        System.err.println("fedora-export myrepo.com:80 user pw DMO default default /tmp/fedoradump http");
         System.err.println();
-        System.err
-                .println("  Exports all objects in the default export format and context ");
-        System.err
-                .println("  (from myrepo.com:80 to directory /tmp/fedoradump).");
+        System.err.println("  Exports all objects in the default export format and context ");
+        System.err.println("  (from myrepo.com:80 to directory /tmp/fedoradump).");
         System.err.println();
         System.err.println("ERROR  : " + msg);
         System.exit(1);
@@ -214,10 +207,16 @@ public class Export
             String exportFormat = args[4];
             String exportContext = args[5];
             if (!exportFormat.equals(METS_EXT1_1.uri)
-                    && !exportFormat.equals(FOXML1_1.uri)
-                    && !exportFormat.equals("default")) {
-                Export.badArgs("FORMAT arg must be '" + METS_EXT1_1.uri
-                        + "', '" + FOXML1_1.uri + "', or 'default'");
+                && !exportFormat.equals(FOXML1_0.uri)
+                && !exportFormat.equals(FOXML1_1.uri)
+                && !exportFormat.equals(ATOM1_0.uri)
+                && !exportFormat.equals("default")) {
+                    Export.badArgs("FORMAT arg must be '"
+                                   + FOXML1_1.uri
+                                   + "', '" + FOXML1_0.uri
+                                   + "', '" + METS_EXT1_1.uri
+                                   + "', '" + ATOM1_0.uri
+                                   + "', or 'default'");
             }
             if (!exportContext.equals("public")
                     && !exportContext.equals("migrate")

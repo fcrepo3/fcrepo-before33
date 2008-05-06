@@ -18,6 +18,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -27,7 +28,7 @@ import fedora.common.Constants;
 
 /**
  * Launch a dialog for selecting which XML format to ingest. Valid options are
- * FOXML1_1.uri and METS_EXT1_1.uri.
+ * FOXML1_1.uri, FOXML1_0.uri and METS_EXT1_1.uri.
  * 
  * @author Sandy Payette
  */
@@ -37,7 +38,9 @@ public class ObjectFormatDialog
 
     private static final long serialVersionUID = 1L;
 
-    private final JRadioButton foxmlButton;
+    private final JRadioButton foxml11Button;
+    
+    private final JRadioButton foxml10Button;
 
     private final JRadioButton metsfButton;
     
@@ -45,13 +48,15 @@ public class ObjectFormatDialog
 
     private final ButtonGroup fmt_buttonGroup = new ButtonGroup();
 
+    private final JLabel warningLabel;
+    
     protected String fmt_chosen;
 
     public ObjectFormatDialog(String title) {
         super(JOptionPane.getFrameForComponent(Administrator.getDesktop()),
               title,
               true);
-        setSize(300, 200);
+        setSize(350, 320);
         setModal(true);
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -62,6 +67,21 @@ public class ObjectFormatDialog
                 dispose();
             }
         });
+        
+        JPanel textPane = new JPanel();
+        textPane.setBorder(BorderFactory.createEmptyBorder(12, 12, 0, 12));
+        String warningText = 
+            "<html>"
+             + "Select the XML format of files to be ingested.<br>"
+             + "Files not in FOXML 1.1 format will be updated<br>"
+             + "to FOXML 1.1 on ingest. This conversion process<br>"
+             + "may not retain all information available in the<br>"
+             + "original format."
+          + "</html>";
+        warningLabel = new JLabel(warningText);
+        warningLabel.setHorizontalTextPosition(JLabel.CENTER);
+        textPane.add(warningLabel);
+        
         JPanel inputPane = new JPanel();
         inputPane
                 .setBorder(BorderFactory
@@ -80,20 +100,27 @@ public class ObjectFormatDialog
                                                                          12)));
 
         inputPane.setLayout(new GridLayout(0, 1));
-        foxmlButton = new JRadioButton("FOXML (Fedora Object XML)", true);
-        foxmlButton.setActionCommand(FOXML1_1.uri);
-        foxmlButton.addActionListener(this);
+        foxml11Button = new JRadioButton("FOXML (Fedora Object XML) version 1.1", true);
+        foxml11Button.setActionCommand(FOXML1_1.uri);
+        foxml11Button.addActionListener(this);
+        foxml10Button = new JRadioButton("FOXML (Fedora Object XML) version 1.0", true);
+        foxml10Button.setActionCommand(FOXML1_0.uri);
+        foxml10Button.addActionListener(this);
         metsfButton = new JRadioButton("METS (Fedora METS Extension)", false);
         metsfButton.setActionCommand(METS_EXT1_1.uri);
         metsfButton.addActionListener(this);
         atomButton = new JRadioButton("Atom (Fedora Atom)", false);
         atomButton.setActionCommand(ATOM1_0.uri);
         atomButton.addActionListener(this);
-        fmt_buttonGroup.add(foxmlButton);
+       
+        fmt_buttonGroup.add(foxml11Button);
+        fmt_buttonGroup.add(foxml10Button);
         fmt_buttonGroup.add(metsfButton);
         fmt_buttonGroup.add(atomButton);
         fmt_chosen = FOXML1_1.uri;
-        inputPane.add(foxmlButton);
+        
+        inputPane.add(foxml11Button);
+        inputPane.add(foxml10Button);
         inputPane.add(metsfButton);
         inputPane.add(atomButton);
 
@@ -122,6 +149,7 @@ public class ObjectFormatDialog
         buttonPane.add(cancelButton);
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
+        contentPane.add(textPane, BorderLayout.NORTH);
         contentPane.add(inputPane, BorderLayout.CENTER);
         contentPane.add(buttonPane, BorderLayout.SOUTH);
 
@@ -138,8 +166,10 @@ public class ObjectFormatDialog
 
     /** Listens to the radio buttons. */
     public void actionPerformed(ActionEvent e) {
-        if (foxmlButton.isSelected()) {
+        if (foxml11Button.isSelected()) {
             fmt_chosen = FOXML1_1.uri;
+        } else if (foxml10Button.isSelected()) {
+            fmt_chosen = FOXML1_0.uri;
         } else if (metsfButton.isSelected()) {
             fmt_chosen = METS_EXT1_1.uri;
         } else if (atomButton.isSelected()) {
