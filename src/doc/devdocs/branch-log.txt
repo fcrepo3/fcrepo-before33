@@ -17,6 +17,18 @@ dev-148364
   Reviewer  : Aaron Birkland
   Merged    :
 
+dev-148363
+  Created   : 2008/05/08 from trunk r7131
+  Developer : Bill Branan
+  Reviewer  : Aaron Birkland
+  Merged    :
+
+dev-148350
+  Created   : 2008/05/07 from trunk r7131
+  Developer : Bill Branan
+  Reviewer  : Eddie Shin
+  Merged    :
+
 dev-148146
   Created   : 2008/04/29 from trunk r7086
   Developer : Eddie Shin
@@ -77,9 +89,10 @@ dev-147179
   Merged    : 2008/03/26 into maintenance-2.2 r6858
 
 dev-142358
-  Created   : 2008/03/05 from genericsearch/trunk
+  Created   : 2008/03/05 from genericsearch/trunk r6699
   Developer : Bill Branan
   Reviewer  : Eddie Shin
+  Merged    :
 
 dev-146877
   Created   : 2008/03/04 from trunk r6681
