@@ -103,11 +103,10 @@
           hostname - required hostname of the Fedora server.
         </li>
         <li>
-          port - required port number on which the Fedora server is running. fedora - required
-          name of the Fedora access service.
+          port - required port number on which the Fedora server is running.
         </li>
         <li>
-          fedora - a required parameter specifying the Fedora servlet path
+          fedora - required name of the Fedora web application.
         </li>
         <li>
           describe - a required parameter specifying the Fedora servlet path for the describe
@@ -135,11 +134,10 @@
       <h3 id="getDatastreamDissemination">getDatastreamDissemination syntax:</h3>
 
       <p>
-        http://hostname:port/fedora/get/PID/DSID<strong>[/dateTime]</strong>
+        http://hostname:port/fedora/get/PID/DSPID<strong>[/dateTime]</strong>
         <br />
-        This syntax requests a dissemination of the specified object using the
-        specified method of the associated behavior definition object. The result
-        is returned as a MIME-typed stream.
+        This syntax requests a dissemination of the specified datastream within
+        the specified object. The result is returned as a MIME-typed stream.
       </p>
 
       <ul>
@@ -147,11 +145,10 @@
           hostname - required hostname of the Fedora server.
         </li>
         <li>
-          port - required port number on which the Fedora server is running. fedora
-          - required name of the Fedora access service.
+          port - required port number on which the Fedora server is running.
         </li>
         <li>
-          fedora - a required parameter specifying the Fedora servlet path.
+          fedora - required name of the Fedora web application.
         </li>
         <li>
           get - a required parameter specifying the Fedora servlet path.
@@ -160,10 +157,10 @@
           PID - required persistent identifier of the digital object.
         </li>
         <li>
-          DSPID - identifier of the datastream.
+          DSPID - required identifier of the datastream.
         </li>
         <li>
-          <strong>dateTime</strong> - value indicating dissemination of a version of
+          <strong>dateTime</strong> - optional value indicating dissemination of a version of
           the digital object at the specified point in time. Proper syntax is
           YYYY-MM-DDTHH:MM:SS.SSSZ where HH is 24-hour clock and SSS is milliseconds.
         </li>
@@ -180,7 +177,7 @@
 
         Get the thumbnail datastream (DS1) of demo object demo:5:
 
-            http://localhost:8080/fedora/get/demo:5/DS1
+            http://localhost:8080/fedora/get/demo:5/THUMBRES_IMG
 </pre>
 
       </code>
@@ -188,11 +185,11 @@
       <h3 id="getDissemination">getDissemination syntax:</h3>
 
       <p>
-        http://hostname:port/fedora/get/PID/bDefPID/methodName<strong>[/dateTime][?parmArray]
+        http://hostname:port/fedora/get/PID/sDefPID/methodName<strong>[/dateTime][?parmArray]
         </strong>
         <br />
         This syntax requests a dissemination of the specified object using the specified
-        method of the associated behavior definition object. The result is returned as a
+        method of the associated service definition object. The result is returned as a
         MIME-typed stream.
       </p>
 
@@ -201,11 +198,10 @@
           hostname - required hostname of the Fedora server.
         </li>
         <li>
-          port - required port number on which the Fedora server is running. fedora -
-          required name of the Fedora access service.
+          port - required port number on which the Fedora server is running.
         </li>
         <li>
-          fedora - a required parameter specifying the Fedora servlet path.
+          fedora - required name of the Fedora web application.
         </li>
         <li>
           get - a required parameter specifying the Fedora servlet path.
@@ -214,14 +210,13 @@
           PID - required persistent identifier of the digital object.
         </li>
         <li>
-          bDefPID - required persistent identifier of the behavior definition object to
-          which the digital object subscribes.
+          sDefPID - required persistent identifier of the service definition object which defines the service.
         </li>
         <li>
           methodName - required name of the method to be executed.
         </li>
         <li>
-          <strong>dateTime</strong> - value indicating dissemination of a version of
+          <strong>dateTime</strong> - optional value indicating dissemination of a version of
           the digital object at the specified point in time. Proper syntax is
           YYYY-MM-DDTHH:MM:SS.SSSZ where HH is 24-hour clock and SSS is milliseconds.
         </li>
@@ -237,7 +232,7 @@
         Example:
 
         Get the Dissemination for a data object with a PID of demo:5 and
-        associated behavior definition object with a PID of demo:1 and
+        associated service definition object with a PID of demo:1 and
         methodName of getThumbnail:
 
             http://localhost:8080/fedora/get/demo:5/demo:1/getThumbnail
@@ -266,11 +261,10 @@
           hostname - required hostname of the Fedora server.
         </li>
         <li>
-          port - required port number on which the Fedora server is running. fedora -
-          required name of the Fedora access service.
+          port - required port number on which the Fedora server is running.
         </li>
         <li>
-          fedora - a required parameter specifying the Fedora servlet path.
+          fedora - required name of the Fedora web application.
         </li>
         <li>
           getObjectHistory - a required parameter specifying the Fedora servlet path.
@@ -318,11 +312,10 @@
           hostname - required hostname of the Fedora server.
         </li>
         <li>
-          port - required port number on which the Fedora server is running. fedora -
-          required name of the Fedora access service.
+          port - required port number on which the Fedora server is running.
         </li>
         <li>
-          fedora - a required parameter specifying the Fedora servlet path.
+          fedora - required name of the Fedora web application.
         </li>
         <li>
           get - a required parameter specifying the Fedora servlet path.
@@ -331,7 +324,7 @@
           PID - required persistent identifier of the digital object.
         </li>
         <li>
-          <strong>dateTime</strong> - value indicating dissemination of a version of
+          <strong>dateTime</strong> - optional value indicating dissemination of a version of
           the digital object at the specified point in time. Proper syntax is
           YYYY-MM-DDTHH:MM:SS.SSSZ where HH is 24-hour clock and SSS is milliseconds.
         </li>
@@ -362,10 +355,9 @@
       <h3 id="findObjects">findObjects syntax:</h3>
 
       <p>
-        http://hostname:port/fedora/search?<strong>{terms=TERMS|query=QUERY
+        http://hostname:port/fedora/search?<strong>[terms=TERMS|query=QUERY]
         [&amp;maxResults=MAXRESULTS][&amp;xml=true][&amp;pid=true][&amp;label=true]
-        [&amp;fType=true][&amp;cModel=true][&amp;state=true][&amp;ownerId=true]
-        [&amp;cDate=true][&amp;mDate=true][&amp;dcmDate=true][&amp;bDef=true][&amp;bMech=true]
+        [&amp;state=true][&amp;ownerId=true][&amp;cDate=true][&amp;mDate=true][&amp;dcmDate=true]
         [&amp;title=true][&amp;creator=true][&amp;subject=true][&amp;description=true]
         [&amp;publisher=true][&amp;contributor=true][&amp;date=true][&amp;type=true]
         [&amp;format=true][&amp;identifier=true][&amp;source=true][&amp;language=true]
@@ -384,11 +376,10 @@
           hostname - required hostname of the Fedora server.
         </li>
         <li>
-          port - required port number on which the Fedora server is running. fedora -
-          required name of the Fedora access service.
+          port - required port number on which the Fedora server is running.
         </li>
         <li>
-          fedora - a required parameter specifying the Fedora servlet path.
+          fedora - required name of the Fedora web application.
         </li>
         <li>
           search - a required parameter specifying the Fedora servlet path for the
@@ -403,10 +394,10 @@
         <li>
           <strong>query</strong> - a sequence of space-separated conditions. A condition
           consists of a metadata element name followed directly by an operator, followed
-          directly be a value. Valid element names are (pid, label, fType, cModel, state,
-          ownerId, cDate, mDate, dcmDate, bDef, bMech, title, creator, subject, description,
-          publisher, contributor, date, type, format, identifier, source, language, relation,
-          coverage, rights). Valid operators are: contains (~), equals (=), greater than
+          directly be a value. Valid element names are (pid, label, state, ownerId, cDate,
+          mDate, dcmDate, title, creator, subject, description, publisher, contributor,
+          date, type, format, identifier, source, language, relation, coverage, rights).
+          Valid operators are: contains (~), equals (=), greater than
           (&gt;), less than (&lt;), greater than or equals (&gt;=), less than or equals
           (&lt;=). The contains (~) operator may be used in combination with the ? and *
           wildcards to query for simple string patterns. Space-separators should be encoded
@@ -434,14 +425,6 @@
         </li>
         <li>
           <strong>label</strong> - if true, the Fedora object label element of matching objects
-          will be included in the response.
-        </li>
-        <li>
-          <strong>fType</strong> - if true, the Fedora object type element of matching objects will
-          be included in the response.
-        </li>
-        <li>
-          <strong>cModel</strong> - if true, the Fedora content model element of matching objects
           will be included in the response.
         </li>
         <li>
@@ -549,6 +532,47 @@
 
       </code>
 
+      <h3 id="resumeFindObjects">resumeFindObjects syntax:</h3>
+
+      <p>
+        http://hostname:port/fedora/search<strong>?sessionToken=SESSIONID[&amp;xml=BOOLEAN]
+        </strong>
+        <br />
+        This syntax requests the next members of a result set from a prior invocation of a
+        findObjects request. If the findObjects request was run and there are more "hits" in
+        the result set than the maxResults setting on the findObjects request, then the
+        resumeFindObjects request is used to obtain the next group of items in the result set.
+        Fields to be included as part of the result set are the same as those available for
+        findObjects, and must be specified as part of the syntax for resumeFindObjects as well
+        (i.e. if the parameters ?pid=true&title=true are part of the findObjects query, those
+        same parameters should be included as part of the resumeFindObjects query.)
+      </p>
+
+      <ul>
+        <li>
+          hostname - required hostname of the Fedora server.
+        </li>
+        <li>
+          port - required port number on which the Fedora server is running.
+        </li>
+        <li>
+          fedora - required name of the Fedora web application.
+        </li>
+        <li>
+          search - a required parameter specifying the Fedora servlet path for the findObjects
+          request.
+        </li>
+        <li>
+          <strong>sessionToken</strong> - the identifier of the session to which the search
+          results are being returned.
+        </li>
+        <li>
+          <strong>xml</strong> - boolean indicating whether to return the search results as xml.
+          If this is given as true, the result will be in xml. Otherwise, the result will be
+          provided in a simple html document.
+        </li>
+      </ul>
+<br>
       <h3 id="listDatastreams">listDatastreams syntax:</h3>
 
       <p>
@@ -559,23 +583,22 @@
 
       <ul>
         <li>
-          <b>hostname</b> - required hostname of the Fedora server.
+          hostname - required hostname of the Fedora server.
         </li>
         <li>
-          <b>port - required port number on which the Fedora server is running. fedora - required name
-          of the Fedora access service.
+          port - required port number on which the Fedora server is running.
         </li>
         <li>
-          <b>fedora</b> - a required parameter specifying the Fedora servlet path.
+          fedora - required name of the Fedora web application.
         </li>
         <li>
-          <b>listDatastreams</b> - a required parameter specifying the Fedora servlet path.
+          listDatastreams - a required parameter specifying the Fedora servlet path.
         </li>
         <li>
-          <b>PID</b> - required persistent identifier of the digital object.
+          PID - required persistent identifier of the digital object.
         </li>
         <li>
-          <b>dateTime</b> - value indicating dissemination of a version of the digital
+          <strong>dateTime</strong> - optional value indicating dissemination of a version of the digital
           object at the specified point in time. Proper syntax is YYYY-MM-DDTHH:MM:SS.SSSZ where
           HH is 24-hour clock and SSS is milliseconds.
         </li>
@@ -615,20 +638,19 @@
           hostname - required hostname of the Fedora server.
         </li>
         <li>
-          port - required port number on which the Fedora server is running. fedora - required
-          name of the Fedora access service.
+          port - required port number on which the Fedora server is running.
         </li>
         <li>
-          fedora - a required parameter specifying the Fedora servlet path.
+          fedora - required name of the Fedora web application.
         </li>
         <li>
-          listMethodss - a required parameter specifying the Fedora servlet path.
+          listMethods - a required parameter specifying the Fedora servlet path.
         </li>
         <li>
           PID - required persistent identifier of the digital object.
         </li>
         <li>
-          <strong>dateTime</strong> - value indicating dissemination of a version of the digital
+          <strong>dateTime</strong> - optional value indicating dissemination of a version of the digital
           object at the specified point in time. Proper syntax is YYYY-MM-DDTHH:MM:SS.SSSZ where
           HH is 24-hour clock and SSS is milliseconds.
         </li>
@@ -654,48 +676,6 @@
 </pre>
 
       </code>
-
-      <h3 id="resumeFindObjects">resumeFindObjects syntax:</h3>
-
-      <p>
-        http://hostname:port/fedora/search<strong>?sessionToken=SESSIONID[&amp;xml=BOOLEAN]
-        </strong>
-        <br />
-        This syntax requests the next members of a result set from a prior invocation of a
-        findObjects request. If the findObjects request was run and there are more "hits" in
-        the result set than the maxResults setting on the findObjects request, then the
-        resumeFindObjects request is used to obtain the next group of items in the result set.
-        Fields to be included as part of the result set are the same as those available for
-        findObjects, and must be specified as part of the syntax for resumeFindObjects as well
-        (i.e. if the parameters ?pid=true&title=true are part of the findObjects query, those
-        same parameters should be included as part of the resumeFindObjects query.)
-      </p>
-
-      <ul>
-        <li>
-          hostname - required hostname of the Fedora server.
-        </li>
-        <li>
-          port - required port number on which the Fedora server is running. fedora - required
-          name of the Fedora access service.
-        </li>
-        <li>
-          fedora - a required parameter specifying the Fedora servlet path.
-        </li>
-        <li>
-          search - a required parameter specifying the Fedora servlet path for the findObjects
-          request.
-        </li>
-        <li>
-          <strong>sessionToken</strong> - the identifier of the session to which the search
-          results are being returned.
-        </li>
-        <li>
-          <strong>xml</strong> - boolean indicating whether to return the search results as xml.
-          If this is given as true, the result will be in xml. Otherwise, the result will be
-          provided in a simple html document.
-        </li>
-      </ul>
 
     <h2 id="wsdl">WSDL</h2>
       <span class="plaintext">
