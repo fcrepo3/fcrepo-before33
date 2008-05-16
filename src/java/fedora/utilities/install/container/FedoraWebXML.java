@@ -8,7 +8,6 @@ package fedora.utilities.install.container;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import fedora.server.config.webxml.ContextParam;
 import fedora.server.config.webxml.FilterMapping;
 import fedora.server.config.webxml.InitParam;
 import fedora.server.config.webxml.SecurityConstraint;
@@ -25,7 +25,6 @@ import fedora.server.config.webxml.ServletMapping;
 import fedora.server.config.webxml.UserDataConstraint;
 import fedora.server.config.webxml.WebResourceCollection;
 import fedora.server.config.webxml.WebXML;
-
 import fedora.utilities.install.InstallOptions;
 
 /**
@@ -320,8 +319,8 @@ public class FedoraWebXML {
     }
 
     /**
-     * Sets the init-param/param-value for all servlet elements with
-     * init-param/param-name=fedora.home
+     * Sets all context-param/param-value and init-param/param-value elements 
+     * where param-name=fedora.home
      */
     private void setFedoraHome() {
         for (Servlet servlet : fedoraWebXML.getServlets()) {
@@ -330,6 +329,13 @@ public class FedoraWebXML {
                     param.setParamValue(options.getFedoraHome()
                             .getAbsolutePath());
                 }
+            }
+        }
+        
+        for (ContextParam contextParam : fedoraWebXML.getContextParams()) {
+            if (contextParam.getParamName().equals("fedora.home")) {
+                contextParam.setParamValue(options.getFedoraHome()
+                        .getAbsolutePath());
             }
         }
     }

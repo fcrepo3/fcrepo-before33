@@ -5,6 +5,10 @@
 			<attribute name="id" property="id" />
 			<attribute name="version" property="version" />
 			<element name="display-name" property="displayName" />
+			
+			<element name="listener" property="listeners" />
+			<element name="context-param" property="contextParams" />
+			
 			<element name="servlet" property="servlets" />
 			<element name="servlet-mapping" property="servletMappings" />
 			<element name="filter" property="filters" />
@@ -17,6 +21,22 @@
 			<addDefaults />
 		</element>
 	</class>
+	
+	<class name="fedora.server.config.webxml.Listener">
+        <element name="listener">
+            <element name="listener-class" property="listenerClass" />
+            <addDefaults/>
+        </element>
+    </class>
+	
+	<class name="fedora.server.config.webxml.ContextParam">
+        <element name="context-param">
+            <element name="description" property="descriptions" />
+            <element name="param-name" property="paramName" />
+            <element name="param-value" property="paramValue" />
+            <addDefaults/>
+        </element>
+    </class>
 	
 	<class name="fedora.server.config.webxml.Servlet">
 		<element name="servlet">

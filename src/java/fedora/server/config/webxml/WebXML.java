@@ -35,6 +35,10 @@ public class WebXML
 
     private String displayName;
 
+    private final List<Listener> listeners;
+    
+    private final List<ContextParam> contextParams;
+    
     private final List<Servlet> servlets;
 
     private final List<ServletMapping> servletMappings;
@@ -54,6 +58,8 @@ public class WebXML
     private final List<SecurityRole> securityRoles;
 
     public WebXML() {
+        listeners = new ArrayList<Listener>();
+        contextParams = new ArrayList<ContextParam>();
         servlets = new ArrayList<Servlet>();
         servletMappings = new ArrayList<ServletMapping>();
         filters = new ArrayList<Filter>();
@@ -120,7 +126,23 @@ public class WebXML
     public void setVersion(String version) {
         this.version = version;
     }
-
+    
+    public List<Listener> getListeners() {
+        return listeners;
+    }
+    
+    public void addListener(Listener listener) {
+        listeners.add(listener);
+    }
+    
+    public List<ContextParam> getContextParams() {
+        return contextParams;
+    }
+    
+    public void addContextParam(ContextParam contextParam) {
+        contextParams.add(contextParam);
+    }
+    
     public List<Servlet> getServlets() {
         return servlets;
     }

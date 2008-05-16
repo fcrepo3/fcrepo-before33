@@ -243,7 +243,9 @@ public class MessagingModule
     
 
     public void close() throws MessagingException {
-        msg.close();
-        msg = null;
+        if (msg != null) {
+            msg.close();
+            msg = null;
+        }
     }
 }

@@ -1,4 +1,0 @@
-<Context path="/fedora" 
-         docBase="fedora.war" 
-         privileged="true">
-</Context>

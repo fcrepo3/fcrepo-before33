@@ -21,7 +21,7 @@ import fedora.utilities.install.InstallationFailedException;
 
 /**
  * The profile for the servlet container bundled with the Fedora installer.
- * History: Release 3.0 bundled Tomcat 5.5.23. Release 2.2 bundled Tomcat
+ * History: Release 3.0 bundled Tomcat 5.5.26. Release 2.2 bundled Tomcat
  * 5.0.28.
  * 
  * @author Edwin Shin

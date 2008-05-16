@@ -537,7 +537,7 @@
         
         <jar jarfile="${dist.dir}/fedora.war" basedir="${fedora.war.build.dir}">
             <manifest>
-                <attribute name="Version" value="${fedora-version}"/>
+                <attribute name="Version" value="${fedora.version}"/>
                 <attribute name="Build" value="${build.tstamp}"/>
                 <attribute name="Built-By" value="${user.name}"/>
             </manifest>
@@ -677,7 +677,7 @@
         <jar destfile="${fedora.home.build.dir}/client/fedora-client.jar" 
              basedir="${client.build.dir}/classes">
             <manifest>
-                <attribute name="Version" value="${fedora-version}"/>
+                <attribute name="Version" value="${fedora.version}"/>
                 <attribute name="Build" value="${build.tstamp}"/>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Main-Class" value="fedora.client.Administrator"/>
@@ -859,7 +859,7 @@
 		<unjar src="${lib.one-jar}" dest="${install.build.dir}/boot"/>
 		<jar jarfile="${dist.dir}/fedora-${fedora.version}-installer.jar">
             <manifest>
-                <attribute name="Version" value="${fedora-version}"/>
+                <attribute name="Version" value="${fedora.version}"/>
                 <attribute name="Build" value="${build.tstamp}"/>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Main-Class" value="com.simontuffs.onejar.Boot"/>
