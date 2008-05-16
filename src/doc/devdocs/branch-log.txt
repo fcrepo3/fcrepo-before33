@@ -20,7 +20,7 @@ dev-148364
 dev-148363
   Created   : 2008/05/08 from trunk r7131
   Developer : Bill Branan
-  Reviewer  : Aaron Birkland
+  Reviewer  : Chris Wilper
   Merged    :
 
 dev-148350
@@ -92,7 +92,7 @@ dev-142358
   Created   : 2008/03/05 from genericsearch/trunk r6699
   Developer : Bill Branan
   Reviewer  : Eddie Shin
-  Merged    :
+  Merged    : 2008/05/16 into genericsearch/trunk r7183
 
 dev-146877
   Created   : 2008/03/04 from trunk r6681
