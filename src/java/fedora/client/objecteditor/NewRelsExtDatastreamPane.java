@@ -49,7 +49,7 @@ class NewRelsExtDatastreamPane
                                null,
                                "Relationships to other objects",
                                true,
-                               "text/xml",
+                               "application/rdf+xml",
                                null,
                                null,
                                0,

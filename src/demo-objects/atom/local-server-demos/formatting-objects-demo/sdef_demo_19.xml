@@ -97,7 +97,7 @@
     <category scheme="info:fedora/fedora-system:def/model#digestType" term="DISABLED"/>
     <category scheme="info:fedora/fedora-system:def/model#digest" term="none"/>
     <category scheme="info:fedora/fedora-system:def/model#length" term="379"/>
-    <content type="text/xml">
+    <content type="application/rdf+xml">
       <rdf:RDF xmlns:fedora-model="info:fedora/fedora-system:def/model#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
         <rdf:Description rdf:about="info:fedora/demo:19">
           <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:ServiceDefinition-3.0"/>

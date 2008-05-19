@@ -56,7 +56,7 @@
     <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
     <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
     <category term="633" scheme="info:fedora/fedora-system:def/model#length"></category>
-    <content type="text/xml">
+    <content type="application/rdf+xml">
       <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
           
         <rdf:Description rdf:about="info:fedora/demo:SmileyEarring">

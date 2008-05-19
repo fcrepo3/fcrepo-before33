@@ -204,7 +204,7 @@ public class TestAPIM
         sb
                 .append("  <foxml:datastream ID=\"RELS-EXT\" CONTROL_GROUP=\"X\" STATE=\"A\">");
         sb
-                .append("    <foxml:datastreamVersion ID=\"RELS-EXT.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum veryhigh jpg image\">");
+                .append("    <foxml:datastreamVersion ID=\"RELS-EXT.0\" MIMETYPE=\"application/rdf+xml\" LABEL=\"Thorny's Coliseum veryhigh jpg image\">");
         sb
                 .append("     <foxml:xmlContent>\n"
                         + "      <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n"
@@ -628,7 +628,7 @@ public class TestAPIM
         sb.append("    <category term=\"DISABLED\" scheme=\"info:fedora/fedora-system:def/model#digestType\"></category>");
         sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
         sb.append("    <category term=\"472\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
-        sb.append("    <content type=\"text/xml\">");
+        sb.append("    <content type=\"application/rdf+xml\">");
         sb.append("      <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:fedora-model=\"info:fedora/fedora-system:def/model#\">");
         sb.append("        <rdf:Description rdf:about=\"info:fedora/demo:1000\">");
         sb.append("          <fedora-model:hasModel rdf:resource=\"info:fedora/demo:UVA_STD_IMAGE_1\"></fedora-model:hasModel>");
@@ -1476,7 +1476,7 @@ public class TestAPIM
                         null,
                         "Relationships",
                         null,
-                        "text/xml",
+                        "application/rdf+xml",
                         "A",
                         "RELS-EXT1.0",
                         true,
@@ -1540,7 +1540,7 @@ public class TestAPIM
                         null,
                         "Relationships",
                         null,
-                        "text/xml",
+                        "application/rdf+xml",
                         "A",
                         "RELS-EXT1.0",
                         true,

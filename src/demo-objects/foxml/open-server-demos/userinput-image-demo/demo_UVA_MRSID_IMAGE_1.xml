@@ -18,7 +18,7 @@
             <form MIME="text/xml"/>
           </dsTypeModel>
           <dsTypeModel ID="RELS-EXT">
-            <form MIME="text/xml"/>
+            <form MIME="application/rdf+xml"/>
           </dsTypeModel>
           <dsTypeModel ID="DESC1">
             <form MIME="text/xml"/>
@@ -30,7 +30,7 @@
             <form MIME="image/x-mrsid-image"/>
           </dsTypeModel>
           <dsTypeModel ID="RELS-INT">
-            <form MIME="text/xml"/>
+            <form MIME="application/rdf+xml"/>
           </dsTypeModel>
           <dsTypeModel ID="RIGHTS1">
             <form MIME="text/xml"/>
@@ -47,7 +47,7 @@
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="false">
     <foxml:datastreamVersion CREATED="2007-08-15T14:36:39.444Z" ID="RELS-EXT1.0" LABEL="Relationships"
-      MIMETYPE="text/xml" SIZE="353">
+      MIMETYPE="application/rdf+xml" SIZE="353">
       <foxml:contentDigest DIGEST="none" TYPE="DISABLED"/>
       <foxml:xmlContent>
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">

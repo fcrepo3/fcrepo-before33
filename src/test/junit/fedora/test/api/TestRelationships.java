@@ -58,7 +58,7 @@ public class TestRelationships
         sb
                 .append("  <foxml:datastream ID=\"RELS-EXT\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb
-                .append("    <foxml:datastreamVersion ID=\"RELS-EXT.0\" MIMETYPE=\"text/xml\" LABEL=\"Relationships\">");
+                .append("    <foxml:datastreamVersion ID=\"RELS-EXT.0\" MIMETYPE=\"application/rdf+xml\" LABEL=\"Relationships\">");
         sb.append("      <foxml:xmlContent>");
         sb
                 .append("        <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""
@@ -92,7 +92,7 @@ public class TestRelationships
         sb
                 .append("  <foxml:datastream ID=\"RELS-EXT\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb
-                .append("    <foxml:datastreamVersion ID=\"RELS-EXT.0\" MIMETYPE=\"text/xml\" LABEL=\"Relationships\">");
+                .append("    <foxml:datastreamVersion ID=\"RELS-EXT.0\" MIMETYPE=\"application/rdf+xml\" LABEL=\"Relationships\">");
         sb.append("      <foxml:xmlContent>");
         sb
                 .append("        <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""

@@ -87,7 +87,7 @@ public class DatastreamsPane
                     "application/x-tar", "application/zip",
                     "application/x-gtar", "application/x-gzip",
                     "application/xml", "application/xhtml+xml",
-                    "application/xslt+xml", "application/xml-dtd", "text/rdf"};
+                    "application/xslt+xml", "application/xml-dtd"};
 
     public String[] XML_MIMETYPE = new String[] {"text/xml"};
 

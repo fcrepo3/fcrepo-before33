@@ -19,7 +19,7 @@
 	</METS:amdSec>
 	<METS:amdSec ID="RELS-EXT" STATUS="A">
 		<METS:techMD ID="RELS-EXT.0">
-			<METS:mdWrap LABEL="Fedora Object-to-Object Relationship Metadata" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+			<METS:mdWrap LABEL="Fedora Object-to-Object Relationship Metadata" MDTYPE="OTHER" MIMETYPE="application/rdf+xml" OTHERMDTYPE="UNSPECIFIED">
 				<METS:xmlData>
 					<rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:fedora="info:fedora/fedora-system:def/relations-external#" xmlns:myns="http://www.nsdl.org/ontologies/relationships#" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
 						<rdf:Description rdf:about="info:fedora/demo:999">

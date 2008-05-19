@@ -1730,7 +1730,7 @@ public class DatastreamPane
     public String getCustomMimeType(Datastream ds) {
         String dsMimetype = ds.getMIMEType();
         if (ds.getID().equals("RELS-EXT")) {
-            dsMimetype = "text/rdf";
+            dsMimetype = "application/rdf+xml";
         }
         return dsMimetype;
     }

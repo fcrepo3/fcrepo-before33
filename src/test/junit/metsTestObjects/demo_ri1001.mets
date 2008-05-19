@@ -6,7 +6,7 @@
   <METS:metsHdr CREATEDATE="2004-05-05T11:22:33Z" LASTMODDATE="2005-01-11T18:51:59Z" RECORDSTATUS="A"/>
   <METS:amdSec ID="RELS-EXT" STATUS="A">
     <METS:techMD CREATED="2004-12-07T19:32:00Z" ID="RELS-EXT1.0">
-      <METS:mdWrap LABEL="Relationships" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+      <METS:mdWrap LABEL="Relationships" MDTYPE="OTHER" MIMETYPE="application/rdf+xml" OTHERMDTYPE="UNSPECIFIED">
         <METS:xmlData>
           <rdf:RDF xmlns:nsdl="http://www.nsdl.org/ontologies/relationships#" xmlns:fedora-model="info:fedora/fedora-system:def/model#"
             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">

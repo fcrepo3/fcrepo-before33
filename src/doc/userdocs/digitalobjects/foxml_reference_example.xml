@@ -73,7 +73,7 @@
 	 	"info:fedora/test:collection1" that represents a specific collection. 
 	*******************************************************************************************************************************************-->
 	<foxml:datastream ID="RELS-EXT" CONTROL_GROUP="X">
-		<foxml:datastreamVersion ID="RELS-EXT.0" MIMETYPE="text/xml" LABEL="Fedora Object-to-Object Relationship Metadata" SIZE="752" CREATED="2004-12-10T00:21:58.000Z">
+		<foxml:datastreamVersion ID="RELS-EXT.0" MIMETYPE="application/rdf+xml" LABEL="Fedora Object-to-Object Relationship Metadata" SIZE="752" CREATED="2004-12-10T00:21:58.000Z">
 			<foxml:xmlContent>
 				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:rel="info:fedora/fedora-system:def/relations-external#" xmlns:myns="http://www.nsdl.org/ontologies/relationships#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
 					<rdf:Description rdf:about="info:fedora/demo:999">
@@ -215,7 +215,7 @@
 		Clients can provide a RELS-INT datastream if they want one, but the Fedora repository will not operate on it at this time.  
 	*******************************************************************************************************************************************-->
 	<foxml:datastream ID="RELS-INT" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
-		<foxml:datastreamVersion ID="RELS-INT.0" MIMETYPE="text/xml" LABEL="Fedora Internal Object Relationship Metadata" CREATED="2004-12-10T00:21:58.000Z">
+		<foxml:datastreamVersion ID="RELS-INT.0" MIMETYPE="application/rdf+xml" LABEL="Fedora Internal Object Relationship Metadata" CREATED="2004-12-10T00:21:58.000Z">
 			<foxml:xmlContent>
 				<!-- Note:  it is up to the object owner to ensure that these relationships are maintained as the object changes.-->
 				<!-- Fedora does not ensure referential integrity of RELS-INT assertions at this time. -->

@@ -36,7 +36,7 @@
 	</METS:amdSec>
    <METS:amdSec ID="RELS-EXT" STATUS="A" VERSIONABLE="false">
     <METS:techMD CREATED="2008-04-23T21:01:53.556Z" ID="RELS-EXT1.0">
-      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Relationships" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Relationships" MDTYPE="OTHER" MIMETYPE="application/rdf+xml" OTHERMDTYPE="UNSPECIFIED">
         <METS:xmlData>
           <rdf:RDF xmlns:fedora-model="info:fedora/fedora-system:def/model#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
             <rdf:Description rdf:about="info:fedora/demo:19">

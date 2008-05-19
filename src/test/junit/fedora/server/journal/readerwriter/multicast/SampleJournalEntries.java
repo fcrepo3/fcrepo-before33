@@ -221,7 +221,7 @@ public class SampleJournalEntries {
                     + "  </foxml:datastream>\n"
                     + "  <foxml:datastream CONTROL_GROUP=\"X\" ID=\"RELS-EXT\" STATE=\"A\">\n"
                     + "    <foxml:datastreamVersion ID=\"RELS-EXT.0\"\n"
-                    + "      LABEL=\"Relationships to other objects\" MIMETYPE=\"text/xml\">\n"
+                    + "      LABEL=\"Relationships to other objects\" MIMETYPE=\"application/rdf+xml\">\n"
                     + "      <foxml:xmlContent>\n"
                     + "        <rdf:RDF xmlns:auth=\"http://ns.nsdl.org/ndr/auth#\"\n"
                     + "          xmlns:crs=\"http://ns.nsdl.org/ndr/collections#\"\n"

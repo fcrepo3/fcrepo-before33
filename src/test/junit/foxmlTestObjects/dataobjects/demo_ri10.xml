@@ -27,7 +27,7 @@
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream  ID="RELS-INT" CONTROL_GROUP="X" STATE="A">
-		<foxml:datastreamVersion ID="RELS-INT.0" MIMETYPE="text/xml" CREATED="2000-08-22T06:32:00Z" LABEL="DO NOT EDIT: System-generated datastream to preserve METS DMDID/ADMID relationships.">
+		<foxml:datastreamVersion ID="RELS-INT.0" MIMETYPE="application/rdf+xml" CREATED="2000-08-22T06:32:00Z" LABEL="DO NOT EDIT: System-generated datastream to preserve METS DMDID/ADMID relationships.">
 			<foxml:xmlContent>
 				<rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-internal#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
 					<rdf:Description rdf:about="info:fedora/demo:ri10/DS1">
@@ -136,7 +136,7 @@
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream ID="RELS-EXT" CONTROL_GROUP="X" STATE="A">
-    <foxml:datastreamVersion CREATED="2004-12-07T19:32:00Z" ID="RELS-EXT1.0" MIMETYPE="text/xml" LABEL="Relationships">
+    <foxml:datastreamVersion CREATED="2004-12-07T19:32:00Z" ID="RELS-EXT1.0" MIMETYPE="application/rdf+xml" LABEL="Relationships">
       <foxml:xmlContent>
         <rdf:RDF 
             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 

@@ -18,7 +18,7 @@
             <form MIME="text/xml"/>
           </dsTypeModel>
           <dsTypeModel ID="RELS-EXT">
-            <form MIME="text/xml"/>
+            <form MIME="application/rdf+xml"/>
           </dsTypeModel>
           <dsTypeModel ID="MRSID">
             <form MIME="image/x-mrsid-image"/>
@@ -29,7 +29,7 @@
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="false">
     <foxml:datastreamVersion ID="RELS-EXT1.0" LABEL="Relationships"
-      MIMETYPE="text/xml" SIZE="351">
+      MIMETYPE="application/rdf+xml" SIZE="351">
       <foxml:xmlContent>
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
           <rdf:Description rdf:about="info:fedora/demo:UVA_MRSID_IMAGE">

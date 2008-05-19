@@ -1191,7 +1191,7 @@ public class METSFedoraExtDODeserializer
         ds.DSLabel =
                 "DO NOT EDIT: System-generated datastream to preserve METS DMDID/ADMID relationships.";
         ds.DSCreateDT = new Date();
-        ds.DSMIME = "text/xml";
+        ds.DSMIME = "application/rdf+xml";
         // set the attrs specific to datastream version
         ds.DSControlGrp = "X";
         ds.DSState = "A";

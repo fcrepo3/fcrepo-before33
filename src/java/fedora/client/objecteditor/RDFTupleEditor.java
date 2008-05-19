@@ -61,14 +61,14 @@ import fedora.server.storage.types.RelationshipTuple;
 import static fedora.common.Constants.MODEL;
 
 /**
- * A general-purpose text editor/viewer with XML pretty-printing.
+ * An RDF editor/viewer.
  */
 public class RDFTupleEditor
         extends ContentEditor
         implements DocumentListener, ActionListener, PropertyChangeListener {
 
-    /** This class handles all the common text MIME types by default. */
-    public static String[] s_types = new String[] {"text/rdf"};
+    /** This class handles the RDF MIME type. */
+    public static String[] s_types = new String[] {"application/rdf+xml"};
 
     protected boolean m_dirty;
 
