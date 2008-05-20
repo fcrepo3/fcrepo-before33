@@ -89,7 +89,10 @@ public class JMSManager {
     
     /**
      * Creates a JMS manager using jndi properties to start a connection
-     * to a JMS provider.
+     * to a JMS provider. If jndi properties are null an attempt will
+     * be made to create a connection based on a <code>java:comp/env</code>
+     * context
+     * 
      * 
      * @param jndiProps
      * @throws MessagingException
@@ -101,7 +104,9 @@ public class JMSManager {
     
     /**
      * Creates a JMS manager using jndi properties to start a connection
-     * to a JMS provider. 
+     * to a JMS provider. If jndi properties are null an attempt will
+     * be made to create a connection based on a <code>java:comp/env</code>
+     * context
      * 
      * A connection must have a clientId in order to create durable 
      * subscriptions. This clientId can either be set administratively 
@@ -114,7 +119,41 @@ public class JMSManager {
      */
     public JMSManager(Properties jndiProps, String clientId)
             throws MessagingException {
+        
         this.jndiProps = jndiProps;
+        
+        // Check properties
+        if (jndiProps == null) {
+            // Attempt a lookup to see if properties are provided by the container
+            String providerUrl = null;
+            try {
+                providerUrl = (String) jndiLookup(Context.PROVIDER_URL);
+            } catch (MessagingException me) {
+                providerUrl = null;
+            }
+            if(providerUrl == null) {
+                throw new MessagingException("JMS connection properties must either be "
+                		+ "provided by the container or by a non-null properties file "
+                		+ "containing, at minimum, a value for "
+                		+ Context.INITIAL_CONTEXT_FACTORY + " and "
+                		+ Context.PROVIDER_URL + ".");
+            }
+        } else {
+            String icf = jndiProps.getProperty(Context.INITIAL_CONTEXT_FACTORY);
+            if (icf == null) {
+                throw new MessagingException("A value for "
+                        + Context.INITIAL_CONTEXT_FACTORY
+                        + " must be included in the JNDI properties.");
+            }
+
+            String pUrl = jndiProps.getProperty(Context.PROVIDER_URL);
+            if (pUrl == null) {
+                throw new MessagingException("A value for "
+                        + Context.PROVIDER_URL
+                        + "must be included in the JNDI properties.");
+            }
+        }
+        
         connectToJMS(clientId);
     }
 

@@ -225,7 +225,7 @@ public class JMSManagerTest extends TestCase implements MessageListener {
             fail("Creating a JMSManager with null properties " +
                  "should throw an exception");
         } catch(MessagingException expected) {
-            assertTrue(expected.getMessage().contains("JNDI properties were not initialized"));
+            assertTrue(expected.getMessage().contains("JMS connection properties"));
         }
         
         // Missing all properties
@@ -235,7 +235,9 @@ public class JMSManagerTest extends TestCase implements MessageListener {
             new JMSManager(properties);
             fail("Creating a JMSManager with no properties " +
                  "should throw an exception");
-        } catch(MessagingException expected) {}
+        } catch(MessagingException expected) {
+            assertTrue(expected.getMessage().contains(Context.INITIAL_CONTEXT_FACTORY));
+        }
         
         // Missing provider url property
         properties = new Properties();        
@@ -248,7 +250,9 @@ public class JMSManagerTest extends TestCase implements MessageListener {
             new JMSManager(properties);
             fail("Creating a JMSManager with no provider url " +
                  "property should throw an exception");
-        } catch(MessagingException expected) {}        
+        } catch(MessagingException expected) {
+            assertTrue(expected.getMessage().contains(Context.PROVIDER_URL));
+        }        
         
         // Missing initial context factory property
         properties = new Properties();        
@@ -261,7 +265,9 @@ public class JMSManagerTest extends TestCase implements MessageListener {
             new JMSManager(properties);
             fail("Creating a JMSManager with no initial context factory " +
                  "property should throw an exception");
-        } catch(MessagingException expected) {}                      
+        } catch(MessagingException expected) {
+            assertTrue(expected.getMessage().contains(Context.INITIAL_CONTEXT_FACTORY));
+        }                      
         
         // Invalid initial context factory
         properties = new Properties();

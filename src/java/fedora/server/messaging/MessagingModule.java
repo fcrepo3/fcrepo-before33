@@ -5,6 +5,8 @@
 
 package fedora.server.messaging;
 
+import java.io.File;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,6 +19,8 @@ import javax.naming.Context;
 import javax.jms.Session;
 
 import org.apache.log4j.Logger;
+
+import fedora.common.Constants;
 
 import fedora.server.DatastoreConfig;
 import fedora.server.Module;
@@ -45,6 +49,9 @@ public class MessagingModule
 
     private JMSManager jmsMgr;
 
+    private static final String ACTIVEMQ_PREFIX = 
+            "org.apache.activemq.default.directory.prefix";
+    
     public MessagingModule(Map<String, String> moduleParameters,
                            Server server,
                            String role)
@@ -58,7 +65,15 @@ public class MessagingModule
             LOG.info("Messaging Module is disabled.");
             return;
         }
-
+        
+        // Sets the location of the activemq-data directory
+        // Property is ignored if the messaging provider is not ActiveMQ
+        if (System.getProperty(ACTIVEMQ_PREFIX) == null) {
+            System.setProperty(ACTIVEMQ_PREFIX, 
+                               new File(Constants.FEDORA_HOME, "data").getPath() 
+                               + File.separator);
+        }
+        
         Properties jndiProps = getJNDISettings();
 
         try {
