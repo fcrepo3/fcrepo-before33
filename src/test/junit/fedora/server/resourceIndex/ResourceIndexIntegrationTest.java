@@ -16,7 +16,6 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
-import org.jrdf.graph.GraphElementFactory;
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
@@ -88,9 +87,6 @@ public abstract class ResourceIndexIntegrationTest {
      */
     private Flusher _flusher;
 
-    private GraphElementFactory _geFactory;
-
-   
     /**
      * Initialize the RI at the given level and return it. If the RI is already
      * initialized, it will be closed and re-initialized at the given level.
@@ -103,9 +99,7 @@ public abstract class ResourceIndexIntegrationTest {
             }
         }
         TriplestoreConnector connector = getConnector();
-        _geFactory = connector.getElementFactory();
         TripleGenerator generator = new ModelBasedTripleGenerator();
-        generator.init(_geFactory);
 
         _ri = new ResourceIndexImpl(connector, generator, indexLevel, false);
     }
@@ -384,7 +378,6 @@ public abstract class ResourceIndexIntegrationTest {
 
         // prepare appropriate MethodInfoStore and TripleGenerator
         TripleGenerator generator = new ModelBasedTripleGenerator();
-        generator.init(_geFactory);
 
         Set<Triple> expected = new HashSet<Triple>();
 

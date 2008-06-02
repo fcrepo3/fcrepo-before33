@@ -11,7 +11,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import fedora.client.Administrator;
-import fedora.client.FTypeDialog;
 import fedora.client.utility.export.Export;
 
 /**

@@ -92,6 +92,9 @@ public class ResourceIndexImpl
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void modifyObject(DOReader oldReader, DOReader newReader)
             throws ResourceIndexException {
         if (_indexLevel > INDEX_LEVEL_OFF) {
@@ -100,6 +103,9 @@ public class ResourceIndexImpl
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void deleteObject(DOReader oldReader) throws ResourceIndexException {
         if (_indexLevel > INDEX_LEVEL_OFF) {
             updateTriples(_generator.getTriplesForObject(oldReader), true);

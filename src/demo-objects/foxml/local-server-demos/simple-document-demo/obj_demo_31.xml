@@ -40,15 +40,4 @@
 			<foxml:contentLocation REF="http://xml.apache.org/batik/" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="true">
-    	<foxml:datastreamVersion ID="RELS-EXT1.0" LABEL="Relationships" MIMETYPE="application/rdf+xml">
-      		<foxml:xmlContent>
-        		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
-          			<rdf:Description rdf:about="info:fedora/demo:31">
-            			<fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"/>
-          			</rdf:Description>
-        		</rdf:RDF>
-      		</foxml:xmlContent>
-    	</foxml:datastreamVersion>
-  	</foxml:datastream>
 </foxml:digitalObject>

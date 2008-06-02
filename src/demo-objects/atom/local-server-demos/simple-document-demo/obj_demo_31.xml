@@ -119,32 +119,4 @@
     <summary type="text">DS3.0</summary>
     <content type="text/html" src="http://xml.apache.org/batik/"></content>
   </entry>
-  <entry>
-    <id>info:fedora/demo:31/RELS-EXT</id>
-    <title type="text">RELS-EXT</title>
-    <updated>2008-04-30T03:54:30.203Z</updated>
-    <link href="info:fedora/demo:31/RELS-EXT/2008-04-30T03:54:30.203Z" rel="alternate"></link>
-    <category term="A" scheme="info:fedora/fedora-system:def/model#state"></category>
-    <category term="X" scheme="info:fedora/fedora-system:def/model#controlGroup"></category>
-    <category term="true" scheme="info:fedora/fedora-system:def/model#versionable"></category>
-  </entry>
-  <entry xmlns:thr="http://purl.org/syndication/thread/1.0">
-    <id>info:fedora/demo:31/RELS-EXT/2008-04-30T03:54:30.203Z</id>
-    <title type="text">RELS-EXT1.0</title>
-    <updated>2008-04-30T03:54:30.203Z</updated>
-    <thr:in-reply-to ref="info:fedora/demo:31/RELS-EXT"></thr:in-reply-to>
-    <category term="Relationships" scheme="info:fedora/fedora-system:def/model#label"></category>
-    <category term="DISABLED" scheme="info:fedora/fedora-system:def/model#digestType"></category>
-    <category term="none" scheme="info:fedora/fedora-system:def/model#digest"></category>
-    <category term="380" scheme="info:fedora/fedora-system:def/model#length"></category>
-    <content type="application/rdf+xml">
-      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
-          			
-        <rdf:Description rdf:about="info:fedora/demo:31">
-            			
-          <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"></fedora-model:hasModel>
-          			</rdf:Description>
-        		</rdf:RDF>
-    </content>
-  </entry>
 </feed>

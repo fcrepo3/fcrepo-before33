@@ -70,9 +70,11 @@ Then enter:
 
 By default, each test will run using the demo objects in
 FOXML format.  To run the same tests using the demo objects
-in METS format, add the following to the line above:
+in METS or Atom format, add one of the following to the line
+above:
 
   -Ddemo.format=mets
+  -Ddemo.format=atom
 
 [*] Normally, no additional setup is required when testing a
     Fedora server instance at localhost:8080.  However, if

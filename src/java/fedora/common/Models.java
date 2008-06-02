@@ -11,39 +11,47 @@ import org.mulgara.query.Model;
 import fedora.common.rdf.RDFName;
 
 /**
- * Identities of the "core" fedora object content models.
+ * Identities of the "core" content models.
  * 
  * @author Aaron Birkland
+ * @author Chris Wilper
  */
-public class Models {
+public abstract class Models {
 
     /**
-     * The content model for Service Definition objects;
+     * The content model for Service Definition objects as of Fedora 3.0;
      * <code>info:fedora/fedora-system:ServiceDefinition-3.0</code>
      */
     public static final RDFName SERVICE_DEFINITION_3_0 =
             getSystemURI("ServiceDefinition-3.0");
 
     /**
-     * The content model for Service Deployment objects;
+     * The content model for Service Deployment objects as of Fedora 3.0;
      * <code>info:fedora/fedora-system:ServiceDeployment-3.0</code>
      */
     public static final RDFName SERVICE_DEPLOYMENT_3_0 =
             getSystemURI("ServiceDeployment-3.0");
 
     /**
-     * The content model for Content Model objects;
+     * The content model for Content Model objects as of Fedora 3.0;
      * <code>info:fedora/fedora-system:ContentModel-3.0</code>
      */
     public static final RDFName CONTENT_MODEL_3_0 =
             getSystemURI("ContentModel-3.0");
 
     /**
-     * The base content model for Fedora objects;
+     * The basic content model for Fedora objects as of Fedora 3.0;
      * <code>info:fedora/fedora-system:FedoraObject-3.0</code>
      */
     public static final RDFName FEDORA_OBJECT_3_0 =
             getSystemURI("FedoraObject-3.0");
+
+    /**
+     * The basic content model for Fedora objects as the current release;
+     * <code>info:fedora/fedora-system:FedoraObject-3.0</code>
+     */
+    public static final RDFName FEDORA_OBJECT_CURRENT =
+            FEDORA_OBJECT_3_0;
 
     private static Set<String> m_values = new HashSet<String>();
 
@@ -78,5 +86,17 @@ public class Models {
      */
     public static boolean contains(String model) {
         return m_values.contains(model);
+    }
+
+    /**
+     * Determine if the given model URI is a basic content model (current
+     * or otherwise).
+     *
+     * @param model
+     *        URI of a content model;
+     * @return true if the given model URI denotes a basic content model.
+     */ 
+    public static boolean isBasicModel(String model) {
+        return FEDORA_OBJECT_3_0.uri.equals(model);
     }
 }

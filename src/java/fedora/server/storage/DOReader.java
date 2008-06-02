@@ -87,14 +87,22 @@ public interface DOReader {
      * <p>
      * The intent of this method is to return the digital object along with
      * valid URI pointers for ALL its datastreams.
-     * 
+     *
      * @param format
-     *        The XML format to export.
+     *        The format to export the object in. If null or "default", will use
+     *        the repository's configured default export format.
+     * @param exportContext
+     *        The use case for export (public, migrate, archive) which results
+     *        in different ways of representing datastream URLs or datastream
+     *        content in the output.
      * @return the content of the entire digital object as XML, with public URIs
      *         for managed content datastreams.
      * @throws ServerException
      *         If there object could not be found or there was was a failure in
      *         accessing the object for any reason.
+     * @see fedora.server.storage.translation.DOTranslationUtility#SERIALIZE_EXPORT_PUBLIC
+     * @see fedora.server.storage.translation.DOTranslationUtility#SERIALIZE_EXPORT_MIGRATE
+     * @see fedora.server.storage.translation.DOTranslationUtility#SERIALIZE_EXPORT_ARCHIVE
      */
     public InputStream Export(String format, String exportContext)
             throws ServerException;
@@ -262,6 +270,8 @@ public interface DOReader {
      *        Object (target) of the relationship, or null if unspecified (will
      *        match any).
      * @return true if the object
+     * @throws ServerException
+     *         If any type of error occurred fulfilling the request.
      */
     public boolean hasRelationship(PredicateNode predicate, ObjectNode object)
             throws ServerException;
@@ -276,11 +286,11 @@ public interface DOReader {
      *        Object (target) of the relationship, or null if unspecified (will
      *        match any).
      * @return All matching relationships in the object
+     * @throws ServerException
+     *         If any type of error occurred fulfilling the request.
      */
     public Set<RelationshipTuple> getRelationships(PredicateNode predicate,
                                                    ObjectNode object)
             throws ServerException;
 
-    public RelationshipTuple[] getRelationships(String relationship)
-            throws ServerException;
 }

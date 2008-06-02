@@ -142,7 +142,6 @@ public class ResourceIndexRebuilder
             m_conn = TriplestoreConnector.init(tsConnector, tsTC);
 
             TripleGenerator generator = new ModelBasedTripleGenerator();
-            generator.init(m_conn.getElementFactory());
 
             m_ri = new ResourceIndexImpl(m_conn, generator, riLevel, false);
             m_ri.setAliasMap(aliasMap);

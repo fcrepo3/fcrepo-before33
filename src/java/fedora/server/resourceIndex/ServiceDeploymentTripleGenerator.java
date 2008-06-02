@@ -1,9 +1,9 @@
 
 package fedora.server.resourceIndex;
 
+import java.util.HashSet;
 import java.util.Set;
 
-import org.jrdf.graph.GraphElementFactory;
 import org.jrdf.graph.Triple;
 
 import fedora.server.errors.ResourceIndexException;
@@ -17,16 +17,13 @@ import fedora.server.storage.DOReader;
 public class ServiceDeploymentTripleGenerator
         implements TripleGenerator {
 
-    FedoraObjectTripleGenerator_3_0 common =
-            new FedoraObjectTripleGenerator_3_0();
-
+    /**
+     * {@inheritDoc}
+     */
     public Set<Triple> getTriplesForObject(DOReader reader)
             throws ResourceIndexException {
-        return common.getTriplesForObject(reader);
-    }
-
-    public void init(GraphElementFactory elementFactory) {
-        common.init(elementFactory);
+        // no special triples for this content model
+        return new HashSet<Triple>();
     }
 
 }

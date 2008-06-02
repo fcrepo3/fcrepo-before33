@@ -59,7 +59,7 @@ public class SimpleDOReader
     private static final Logger LOG =
             Logger.getLogger(SimpleDOReader.class.getName());
 
-    protected DigitalObject m_obj;
+    protected final DigitalObject m_obj;
 
     private final Context m_context;
 
@@ -113,22 +113,37 @@ public class SimpleDOReader
         m_obj = obj;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public DigitalObject getObject() {
         return m_obj;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public Date getCreateDate() {
         return m_obj.getCreateDate();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Date getLastModDate() {
         return m_obj.getLastModDate();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getOwnerId() {
         return m_obj.getOwnerId();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public List<AuditRecord> getAuditRecords() {
         return m_obj.getAuditRecords();
     }
@@ -149,17 +164,7 @@ public class SimpleDOReader
     }
 
     /**
-     * Return the object as an XML input stream in the specified XML format and
-     * in the specified export context. See DOTranslationUtility.class for
-     * description of export contexts (translation contexts).
-     * 
-     * @param format
-     *        The format to export the object in. If null or "default", will use
-     *        the repository's configured default export format.
-     * @param exportContext
-     *        The use case for export (public, migrate, archive) which results
-     *        in different ways of representing datastream URLs or datastream
-     *        content in the output.
+     * {@inheritDoc}
      */
     public InputStream Export(String format, String exportContext)
             throws ObjectIntegrityException, StreamIOException,
@@ -210,14 +215,23 @@ public class SimpleDOReader
         return Export(format, exportContext);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String GetObjectPID() {
         return m_obj.getPid();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String GetObjectLabel() {
         return m_obj.getLabel();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String GetObjectState() {
         if (m_obj.getState() == null) {
             return "A"; // shouldn't happen, but if it does don't die
@@ -225,6 +239,9 @@ public class SimpleDOReader
         return m_obj.getState();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String[] ListDatastreamIDs(String state) {
         Iterator<String> iter = m_obj.datastreamIdIterator();
         ArrayList<String> al = new ArrayList<String>();
@@ -251,7 +268,9 @@ public class SimpleDOReader
         return out;
     }
 
-    // returns null if can't find
+    /**
+     * {@inheritDoc}
+     */
     public Datastream getDatastream(String dsID, String versionID) {
         for (Datastream ds : m_obj.datastreams(dsID)) {
             if (ds.DSVersionID.equals(versionID)) {
@@ -261,7 +280,9 @@ public class SimpleDOReader
         return null;
     }
 
-    // returns null if can't find
+    /**
+     * {@inheritDoc}
+     */
     public Datastream GetDatastream(String datastreamID, Date versDateTime) {
         // get the one with the closest creation date
         // without going over
@@ -296,6 +317,9 @@ public class SimpleDOReader
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Date[] getDatastreamVersions(String datastreamID) {
         ArrayList<Date> versionDates = new ArrayList<Date>();
         for (Datastream d : m_obj.datastreams(datastreamID)) {
@@ -304,6 +328,9 @@ public class SimpleDOReader
         return (Date[]) versionDates.toArray(new Date[0]);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Datastream[] GetDatastreams(Date versDateTime, String state) {
         String[] ids = ListDatastreamIDs(null);
         ArrayList<Datastream> al = new ArrayList<Datastream>();
@@ -324,16 +351,7 @@ public class SimpleDOReader
     }
 
     /**
-     * <p>
-     * Gets the change history of an object by returning a list of timestamps
-     * that correspond to modification dates of components. This currently
-     * includes changes to datastreams and disseminators.
-     * </p>
-     * 
-     * @param PID
-     *        The persistent identifier of the digitla object.
-     * @return An Array containing the list of timestamps indicating when
-     *         changes were made to the object.
+     * {@inheritDoc}
      */
     public String[] getObjectHistory(String PID) {
         String[] dsIDs = ListDatastreamIDs("A");
@@ -347,6 +365,9 @@ public class SimpleDOReader
         return modDates.toArray(new String[0]);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public MethodDef[] listMethods(String sDefPID,
                                    ServiceDeploymentReader sDepReader,
                                    Date versDateTime)
@@ -372,7 +393,7 @@ public class SimpleDOReader
     }
 
     /**
-     * Filter out mechanism-specific parms (system default parms and datastream
+     * Filters out mechanism-specific parms (system default parms and datastream
      * input parms) so that what is returned is only method parms that reflect
      * abstract method definitions. Abstract method definitions only expose
      * user-supplied parms.
@@ -380,7 +401,7 @@ public class SimpleDOReader
      * @param method
      * @return
      */
-    public MethodParmDef[] filterParms(MethodDef method) {
+    private MethodParmDef[] filterParms(MethodDef method) {
         ArrayList<MethodParmDef> filteredParms = new ArrayList<MethodParmDef>();
         for (MethodParmDef element : method.methodParms) {
             if (element.parmType.equalsIgnoreCase(MethodParmDef.USER_INPUT)) {
@@ -398,91 +419,91 @@ public class SimpleDOReader
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ObjectMethodsDef[] listMethods(Date versDateTime)
             throws ServerException {
         ArrayList<MethodDef> methodList = new ArrayList<MethodDef>();
         ArrayList<String> sDefIDList = new ArrayList<String>();
 
         ServiceDeploymentReader sDepreader = null;
-        Set<RelationshipTuple> cmRels = getRelationships(Constants.MODEL.HAS_MODEL, null);
-        
-        if (cmRels != null && !cmRels.isEmpty()) {
-            for (RelationshipTuple element : cmRels) {
+        Set<RelationshipTuple> cmRels = 
+                getRelationships(Constants.MODEL.HAS_MODEL, null);
 
-                /*
-                 * FIXME: If the we encounter a relation to one of the "system"
-                 * models, then skip it, since its functionality is hardwired
-                 * in. Ideally, we would actually instantiate the system
-                 * objects, and wire in the default system behaviour based upon
-                 * their content (just like everything else)
-                 */
-                if (Models.contains(element.object)) {
-                    continue;
+        for (RelationshipTuple element : cmRels) {
+
+            /*
+             * FIXME: If the we encounter a relation to one of the "system"
+             * models, then skip it, since its functionality is hardwired
+             * in. Ideally, we would actually instantiate the system
+             * objects, and wire in the default system behaviour based upon
+             * their content (just like everything else)
+             */
+            if (Models.contains(element.object)) {
+                continue;
+            }
+
+            DOReader cmReader;
+            String cModelPid = element.getObjectPID();
+            if (cModelPid.equals("self")) {
+                cmReader = this;
+                cModelPid = GetObjectPID();
+            } else {
+                try {
+                    cmReader =
+                        m_repoReader.getReader(false,
+                                               m_context,
+                                               cModelPid);
+                } catch (StorageException e) {
+                    throw new DisseminationException(null,
+                                                     "Content Model Object "
+                                                     + cModelPid
+                                                     + " does not exist.",
+                                                     null,
+                                                     null,
+                                                     e);
                 }
+            }
+            Set<RelationshipTuple> hasServiceRels =
+                cmReader.getRelationships(Constants.MODEL.HAS_SERVICE,
+                                          null);
+            for (RelationshipTuple element2 : hasServiceRels) {
+                String sDefPid = element2.getObjectPID();
+                DOManager manager = null;
+                MethodDef[] methods = null;
+                if (m_repoReader instanceof DOManager) {
+                    manager = (DOManager) m_repoReader;
 
-                DOReader cmReader;
-                String cModelPid = element.getObjectPID();
-                if (cModelPid.equals("self")) {
-                    cmReader = this;
-                    cModelPid = GetObjectPID();
-                } else {
-                    try {
-                        cmReader =
-                                m_repoReader.getReader(false,
-                                                       m_context,
-                                                       cModelPid);
-                    } catch (StorageException e) {
-                        throw new DisseminationException(null,
-                                                         "Content Model Object "
-                                                                 + cModelPid
-                                                                 + " does not exist.",
-                                                         null,
-                                                         null,
-                                                         e);
+                    String deploymentPid =
+                        manager
+                        .lookupDeploymentForCModel(cModelPid,
+                                                   sDefPid);
+                    if (deploymentPid == null) {
+                        throw new DisseminationException("No service deployment is a Contractor for Content Model "
+                                                         + cModelPid);
                     }
+                    try {
+                        sDepreader =
+                            m_repoReader
+                            .getServiceDeploymentReader(false,
+                                                        m_context,
+                                                        deploymentPid);
+                    } catch (StorageException se) {
+                        throw new DisseminationException("Service deployment "
+                                                         + deploymentPid
+                                                         + " defined as Contractor for Content Model "
+                                                         + cModelPid + " not found.");
+                    }
+                    methods =
+                        listMethods(element2.getObjectPID(),
+                                    sDepreader,
+                                    versDateTime);
                 }
-                RelationshipTuple sDefPIDs[] =
-                        cmReader
-                                .getRelationships(Constants.MODEL.HAS_SERVICE.uri);
-                if (sDefPIDs != null && sDefPIDs.length > 0) {
-                    for (RelationshipTuple element2 : sDefPIDs) {
-                        String sDefPid = element2.getObjectPID();
-                        DOManager manager = null;
-                        MethodDef[] methods = null;
-                        if (m_repoReader instanceof DOManager) {
-                            manager = (DOManager) m_repoReader;
-
-                            String deploymentPid =
-                                    manager
-                                            .lookupDeploymentForCModel(cModelPid,
-                                                                       sDefPid);
-                            if (deploymentPid == null) {
-                                throw new DisseminationException("No service deployment is a Contractor for Content Model "
-                                        + cModelPid);
-                            }
-                            try {
-                                sDepreader =
-                                        m_repoReader
-                                                .getServiceDeploymentReader(false,
-                                                                            m_context,
-                                                                            deploymentPid);
-                            } catch (StorageException se) {
-                                throw new DisseminationException("Service deployment "
-                                        + deploymentPid
-                                        + " defined as Contractor for Content Model "
-                                        + cModelPid + " not found.");
-                            }
-                            methods =
-                                    listMethods(element2.getObjectPID(),
-                                                sDepreader,
-                                                versDateTime);
-                        }
-                        if (methods != null) {
-                            for (MethodDef element3 : methods) {
-                                methodList.add(element3);
-                                sDefIDList.add(element2.getObjectPID());
-                            }
-                        }
+                if (methods != null) {
+                    for (MethodDef element3 : methods) {
+                        methodList.add(element3);
+                        sDefIDList.add(element2.getObjectPID());
                     }
                 }
             }
@@ -501,25 +522,19 @@ public class SimpleDOReader
         return ret;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean hasRelationship(PredicateNode predicate, ObjectNode object) {
         return m_obj.hasRelationship(predicate, object);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Set<RelationshipTuple> getRelationships(PredicateNode predicate,
                                                    ObjectNode object) {
         return m_obj.getRelationships(predicate, object);
     }
 
-    public RelationshipTuple[] getRelationships(String relationship)
-            throws ServerException {
-        ArrayList<RelationshipTuple> tuples =
-                new ArrayList<RelationshipTuple>();
-        for (RelationshipTuple t : getRelationships(null, null)) {
-            if (t.predicate.equals(relationship)) {
-                tuples.add(t);
-            }
-        }
-
-        return tuples.toArray(new RelationshipTuple[tuples.size()]);
-    }
 }

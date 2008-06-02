@@ -51,6 +51,7 @@ public interface ResourceIndex
      * @param reader
      *        The given object to index.
      * @throws ResourceIndexException
+     *         If the triples can't be added for any reason.
      */
     void addObject(DOReader reader) throws ResourceIndexException;
 
@@ -62,6 +63,7 @@ public interface ResourceIndex
      * @param newReader
      *        Post-modification version of the object.
      * @throws ResourceIndexException
+     *         If the triples can't be updated for any reason.
      */
     void modifyObject(DOReader oldReader, DOReader newReader)
             throws ResourceIndexException;
@@ -72,6 +74,7 @@ public interface ResourceIndex
      * @param oldReader
      *        Object whose triples shall be removed from the index.
      * @throws ResourceIndexException
+     *         If the triples can't be removed for any reason.
      */
     void deleteObject(DOReader oldReader) throws ResourceIndexException;
 

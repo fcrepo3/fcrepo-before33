@@ -8,6 +8,9 @@ import java.io.InputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.custommonkey.xmlunit.SimpleXpathEngine;
 
 import org.w3c.dom.Document;
@@ -17,6 +20,7 @@ import fedora.client.FedoraClient;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.utilities.StreamUtility;
 
+import fedora.test.DemoObjectTestSetup;
 import fedora.test.FedoraServerTestCase;
 
 /**
@@ -30,6 +34,12 @@ public class TestOAIService
     private DocumentBuilder builder;
 
     private FedoraClient client;
+    
+    public static Test suite() {
+        TestSuite suite = new TestSuite("Test OAI Service");
+        suite.addTestSuite(TestOAIService.class);
+        return suite;
+    }
 
     @Override
     public void setUp() throws Exception {
@@ -93,12 +103,3 @@ public class TestOAIService
     }
 
 }
-/*
- * 2.Run OAI request to list metadata formats
- * a.http://localhost:8080/fedora/oai?verb=ListMetadataFormats 3.Run OAI request
- * for all DC records a.http://localhost:8080/fedora/oai?verb=ListRecords&
- * metadataPrefix=oai_dc 4.Run OAI request for DC records updated as of
- * particular date
- * a.http://localhost:8080/fedora/oai?verb=ListMetadataFormats&from2002-05-21&
- * metadataPrefix=oai_dc
- */

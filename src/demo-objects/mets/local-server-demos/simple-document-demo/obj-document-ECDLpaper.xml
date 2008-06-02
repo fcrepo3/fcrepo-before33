@@ -49,19 +49,6 @@
 			</METS:mdWrap>
 		</METS:descMD>
 	</METS:dmdSecFedora>
-		<METS:amdSec ID="RELS-EXT" STATUS="A" VERSIONABLE="true">
-    <METS:techMD CREATED="2008-04-23T21:02:03.317Z" ID="RELS-EXT1.0">
-      <METS:mdWrap CHECKSUM="none" CHECKSUMTYPE="DISABLED" LABEL="Relationships" MDTYPE="OTHER" MIMETYPE="application/rdf+xml" OTHERMDTYPE="UNSPECIFIED">
-        <METS:xmlData>
-          <rdf:RDF xmlns:fedora-model="info:fedora/fedora-system:def/model#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-            <rdf:Description rdf:about="info:fedora/demo:18">
-              <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"/>
-            </rdf:Description>
-          </rdf:RDF>
-        </METS:xmlData>
-      </METS:mdWrap>
-    </METS:techMD>
-  </METS:amdSec>
 	<!---*******************************************************************************************************************************************-->
 	<!--- DATASTREAMS:  EXTERNAL-REFERENCED CONTENT and REPOSITORY-MANAGED CONTENT-->
 	<!---*******************************************************************************************************************************************-->

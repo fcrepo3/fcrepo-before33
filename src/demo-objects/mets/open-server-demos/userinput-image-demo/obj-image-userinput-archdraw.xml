@@ -146,7 +146,6 @@
 				<METS:xmlData>
 					<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
 						<rdf:Description rdf:about="info:fedora/demo:11">
-							<fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"/>
                             <fedora-model:hasModel rdf:resource="info:fedora/demo:UVA_MRSID_IMAGE_1"/>
 						</rdf:Description>
 					</rdf:RDF>			

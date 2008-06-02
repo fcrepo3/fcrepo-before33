@@ -762,22 +762,6 @@ public class METSFedoraExtDODeserializer
     // Instance helpers
     //---
 
-    /* No longer relevant since there is no fType. OK to remove completely? */
-    //int parseObjectType(String objType) {
-    //    if (objType.indexOf(MODEL.SERVICE_DEFINITION_OBJECT.localName) != -1) {
-    //        return DigitalObject.FEDORA_SERVICE_DEFINITION_OBJECT;
-    //    }
-    //    if (objType.equalsIgnoreCase(MODEL.SERVICE_DEPLOYMENT_OBJECT.localName)) {
-    //        return DigitalObject.FEDORA_SERVICE_DEPLOYMENT_OBJECT;
-    //    }
-    //    if (objType.equalsIgnoreCase(MODEL.CMODEL_OBJECT.localName)) {
-    //        return DigitalObject.FEDORA_CONTENT_MODEL_OBJECT;
-    //    }
-    //    if (objType.equalsIgnoreCase(MODEL.DATA_OBJECT.localName)) {
-    //        return DigitalObject.FEDORA_OBJECT;
-    //    }
-    //    return -1;
-    //}
     private void startDisseminators(String localName, Attributes a)
             throws SAXException {
         if (localName.equals("structMap")) {

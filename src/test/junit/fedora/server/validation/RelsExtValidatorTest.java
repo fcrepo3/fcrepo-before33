@@ -29,7 +29,12 @@ import org.trippi.TripleIterator;
 
 import fedora.common.Constants;
 import fedora.common.PID;
+import fedora.common.rdf.SimpleLiteral;
+import fedora.common.rdf.SimpleTriple;
+import fedora.common.rdf.SimpleURIReference;
 
+import fedora.server.errors.GeneralException;
+import fedora.server.errors.ServerException;
 import fedora.server.errors.ValidationException;
 
 /**
@@ -41,8 +46,6 @@ public class RelsExtValidatorTest
         extends TestCase {
 
     private Collection<Triple> triples;
-
-    private GraphElementFactory geFactory;
 
     private static byte[] RELS_EXT;
 
@@ -67,7 +70,6 @@ public class RelsExtValidatorTest
     @Override
     public void setUp() {
         triples = new HashSet<Triple>();
-        geFactory = new RDFUtil();
     }
 
     public void testConstructor() throws Exception {
@@ -278,26 +280,30 @@ public class RelsExtValidatorTest
             triples.clear();
         }
     }
-
-    private Triple createTriple(PID pid,
-                                String predicate,
-                                String object,
-                                boolean isLiteral,
-                                String datatype)
-            throws GraphElementFactoryException, URISyntaxException {
-        ObjectNode oNode = null;
-        if (isLiteral) {
-            if (datatype == null || datatype.length() == 0) {
-                oNode = geFactory.createLiteral(object);
+    
+    private static Triple createTriple(PID pid,
+                                       String predicate,
+                                       String object,
+                                       boolean isLiteral,
+                                       String datatype)
+            throws ServerException {
+        ObjectNode o = null;
+        try {
+            if (isLiteral) {
+                if (datatype == null || datatype.length() == 0) {
+                    o = new SimpleLiteral(object);
+                } else {
+                    o = new SimpleLiteral(object, new URI(datatype));
+                }
             } else {
-                oNode = geFactory.createLiteral(object, new URI(datatype));
+                o = new SimpleURIReference(new URI(object));
             }
-        } else {
-            oNode = geFactory.createResource(new URI(object));
+            return new SimpleTriple(new SimpleURIReference(new URI(pid.toURI())),
+                                    new SimpleURIReference(new URI(predicate)),
+                                    o);
+        } catch (URISyntaxException e) {
+            throw new GeneralException(e.getMessage(), e);
         }
-        return geFactory
-                .createTriple(geFactory.createResource(new URI(pid.toURI())),
-                              geFactory.createResource(new URI(predicate)),
-                              oNode);
     }
+
 }

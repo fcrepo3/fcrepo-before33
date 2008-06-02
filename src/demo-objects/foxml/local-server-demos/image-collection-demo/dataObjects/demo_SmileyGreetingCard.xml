@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject VERSION="1.1" PID="demo:SmileyGreetingCard" xmlns:foxml="info:fedora/fedora-system:def/foxml#"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd">
+  <foxml:objectProperties>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Smiley Greeting Card"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
+  </foxml:objectProperties>
+  <foxml:datastream CONTROL_GROUP="X" ID="DC"> 
+    <foxml:datastreamVersion ID="DC.1" MIMETYPE="text/xml" LABEL="Dublin Core Metadata">
+      <foxml:xmlContent>
+        <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+          <dc:title>Smiley Greeting Card</dc:title>
+          <dc:description>Great for people who still use snail mail.</dc:description>
+          <dc:identifier>demo:SmileyGreetingCard</dc:identifier>
+        </oai_dc:dc>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT"> 
+    <foxml:datastreamVersion ID="RELS-EXT.0" MIMETYPE="application/rdf+xml" LABEL="Relationships to other objects">
+      <foxml:xmlContent>
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+        		xmlns:fedora-model="info:fedora/fedora-system:def/model#" 
+        		xmlns:rel="info:fedora/fedora-system:def/relations-external#">
+          <rdf:Description rdf:about="info:fedora/demo:SmileyGreetingCard">
+            <rel:isMemberOf rdf:resource="info:fedora/demo:SmileyStuff"/>
+            <fedora-model:hasModel rdf:resource="info:fedora/demo:DualResImage"/>
+            <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"/>
+          </rdf:Description>
+        </rdf:RDF>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="E" ID="MEDIUM_SIZE"> 
+    <foxml:datastreamVersion ID="MediumSize.jpg.0" MIMETYPE="image/jpeg" LABEL="Medium-size image">
+      <foxml:contentLocation REF="http://localhost:8080/fedora-demo/image-collection-demo/SmileyGreetingCard-MediumSize.jpg" TYPE="URL"/>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="E" ID="FULL_SIZE"> 
+    <foxml:datastreamVersion ID="FullSize.jpg.0" MIMETYPE="image/jpeg" LABEL="Full-size image">
+      <foxml:contentLocation REF="http://localhost:8080/fedora-demo/image-collection-demo/SmileyGreetingCard-FullSize.jpg" TYPE="URL"/>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+</foxml:digitalObject>

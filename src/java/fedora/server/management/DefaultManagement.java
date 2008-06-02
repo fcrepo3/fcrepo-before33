@@ -12,24 +12,37 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.betwixt.XMLUtils;
+
 import org.apache.log4j.Logger;
+
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
+
+import org.jrdf.graph.URIReference;
+
 import org.w3c.dom.Document;
 
 import fedora.common.Constants;
+import fedora.common.rdf.SimpleURIReference;
+
 import fedora.server.Context;
 import fedora.server.RecoveryContext;
 import fedora.server.Server;
@@ -1647,14 +1660,18 @@ public class DefaultManagement
                                                         pid,
                                                         relationship);
 
-            LOG.debug("Getting Reader");
             r = m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);
             LOG.debug("Getting Relationships:  pid = " + pid + " predicate = "
                     + relationship);
-            RelationshipTuple rels[] = r.getRelationships(relationship);
-            LOG.debug("Got Relationships");
-
-            return rels;
+            try {
+                URIReference pred = new SimpleURIReference(
+                        new URI(relationship));
+                Set<RelationshipTuple> tuples =
+                        r.getRelationships(pred, null);
+                return tuples.toArray(new RelationshipTuple[tuples.size()]);
+            } catch (URISyntaxException e) {
+                throw new GeneralException("Relationship must be a URI", e);
+            }
         } finally {
             // Log completion
             if (LOG.isInfoEnabled()) {

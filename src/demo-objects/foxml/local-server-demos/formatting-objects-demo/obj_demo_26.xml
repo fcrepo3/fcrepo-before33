@@ -68,7 +68,6 @@
         		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
           			<rdf:Description rdf:about="info:fedora/demo:26">
             			<fedora-model:hasModel rdf:resource="info:fedora/demo:TEI_TO_PDFDOC"/>
-            			<fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"/>
           			</rdf:Description>
         		</rdf:RDF>
       		</foxml:xmlContent>

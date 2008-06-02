@@ -20,6 +20,7 @@ import org.trippi.TupleIterator;
 import fedora.client.FedoraClient;
 
 import fedora.common.Constants;
+import fedora.common.Models;
 import fedora.common.PID;
 
 import fedora.server.management.FedoraAPIM;
@@ -49,26 +50,18 @@ public class TestRelationships
         // Test FOXML object with RELS-EXT datastream
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        sb
-                .append("<foxml:digitalObject VERSION=\"1.1\" PID=\"demo:888\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd\">");
+        sb.append("<foxml:digitalObject VERSION=\"1.1\" PID=\"demo:888\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd\">");
         sb.append("  <foxml:objectProperties>");
-        sb
-                .append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
+        sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
         sb.append("  </foxml:objectProperties>");
-        sb
-                .append("  <foxml:datastream ID=\"RELS-EXT\" CONTROL_GROUP=\"M\" STATE=\"A\">");
-        sb
-                .append("    <foxml:datastreamVersion ID=\"RELS-EXT.0\" MIMETYPE=\"application/rdf+xml\" LABEL=\"Relationships\">");
+        sb.append("  <foxml:datastream ID=\"RELS-EXT\" CONTROL_GROUP=\"M\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion ID=\"RELS-EXT.0\" MIMETYPE=\"application/rdf+xml\" LABEL=\"Relationships\">");
         sb.append("      <foxml:xmlContent>");
-        sb
-                .append("        <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""
-                        + "                 xmlns:fedora-model=\"info:fedora/fedora-system:def/model#\">");
-        sb
-                .append("          <rdf:Description rdf:about=\"info:fedora/demo:888\">");
-        sb
-                .append("            <fedora-model:hasModel rdf:resource=\"info:fedora/demo:UVA_STD_IMAGE_1\"/>");
-        sb
-                .append("            <fedora-model:hasModel rdf:resource=\"info:fedora/fedora-system:FedoraObject-3.0\"/>");
+        sb.append("        <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""
+                + "                 xmlns:fedora-model=\"info:fedora/fedora-system:def/model#\">");
+        sb.append("          <rdf:Description rdf:about=\"info:fedora/demo:888\">");
+        sb.append("            <fedora-model:hasModel rdf:resource=\"info:fedora/demo:UVA_STD_IMAGE_1\"/>");
+        sb.append("            <fedora-model:hasModel rdf:resource=\"" + Models.FEDORA_OBJECT_CURRENT.uri + "\"/>");
         sb.append("          </rdf:Description>");
         sb.append("        </rdf:RDF>");
         sb.append("      </foxml:xmlContent>");
@@ -83,29 +76,10 @@ public class TestRelationships
 
         sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        sb
-                .append("<foxml:digitalObject VERSION=\"1.1\" PID=\"demo:777\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd\">");
+        sb.append("<foxml:digitalObject VERSION=\"1.1\" PID=\"demo:777\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd\">");
         sb.append("  <foxml:objectProperties>");
-        sb
-                .append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
+        sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
         sb.append("  </foxml:objectProperties>");
-        sb
-                .append("  <foxml:datastream ID=\"RELS-EXT\" CONTROL_GROUP=\"M\" STATE=\"A\">");
-        sb
-                .append("    <foxml:datastreamVersion ID=\"RELS-EXT.0\" MIMETYPE=\"application/rdf+xml\" LABEL=\"Relationships\">");
-        sb.append("      <foxml:xmlContent>");
-        sb
-                .append("        <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""
-                        + "                 xmlns:fedora-model=\"info:fedora/fedora-system:def/model#\">");
-        sb
-                .append("          <rdf:Description rdf:about=\"info:fedora/demo:777\">");
-        sb
-                .append("            <fedora-model:hasModel rdf:resource=\"info:fedora/fedora-system:FedoraObject-3.0\"/>");
-        sb.append("          </rdf:Description>");
-        sb.append("        </rdf:RDF>");
-        sb.append("      </foxml:xmlContent>");
-        sb.append("    </foxml:datastreamVersion>");
-        sb.append("  </foxml:datastream>");
         sb.append("</foxml:digitalObject>");
 
         try {
@@ -193,6 +167,29 @@ public class TestRelationships
         p = "urn:temperature";
         o = "98.6";
         getRelationship(pid, p, o, true, Constants.RDF_XSD.FLOAT.uri);
+    }
+    
+    public void testBasicCModelRelationships() throws Exception {
+        for (String pid : new String[] { "demo:777", "demo:888" }) {
+            checkExistsViaGetRelationships(pid,
+                                           Constants.MODEL.HAS_MODEL.uri,
+                                           Models.FEDORA_OBJECT_CURRENT.uri);
+        }
+    }
+    
+    private void checkExistsViaGetRelationships(String pid,
+                                                String predicate,
+                                                String object) throws Exception {
+        boolean found = false;
+        for (RelationshipTuple tuple : apim.getRelationships(pid, predicate)) {
+            if (tuple.getSubject().equals(PID.toURI(pid))
+                    && tuple.getPredicate().equals(predicate)
+                    && tuple.getObject().equals(object)) {
+                found = true;
+            }
+        }
+        assertTrue("Relationship not found via getRelationships (pid=" + pid
+                   + ", predicate=" + predicate + ", object=" + object, found);
     }
 
     public void testPurgeRelationships() throws Exception {

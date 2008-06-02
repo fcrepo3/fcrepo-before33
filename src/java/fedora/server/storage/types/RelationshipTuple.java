@@ -1,29 +1,29 @@
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also 
+ * available online at http://www.fedora.info/license/).
+ */
 
 package fedora.server.storage.types;
 
 import fedora.common.Constants;
 
 /**
- * A data structure for holding relationships consisting of predicate and
- * subject.
+ * A data structure for holding relationships.
  * 
  * @author Robert Haschart
  */
 public class RelationshipTuple
         implements Constants {
 
-    public String subject;
+    public final String subject;
 
-    public String predicate;
+    public final String predicate;
 
-    public String object;
+    public final String object;
 
-    public boolean isLiteral;
+    public final boolean isLiteral;
 
-    public String datatype;
-
-    public RelationshipTuple() {
-    }
+    public final String datatype;
 
     public RelationshipTuple(String subject,
                              String predicate,
@@ -37,6 +37,7 @@ public class RelationshipTuple
         this.datatype = datatype;
     }
 
+    // TODO: Consider getting rid of this method
     public String getObjectPID() {
         if (object != null && !isLiteral && object.startsWith("info:fedora/")) {
             String PID = object.substring(12);
@@ -45,14 +46,7 @@ public class RelationshipTuple
         return null;
     }
 
-    public String getSubjectPID() {
-        if (subject != null && subject.startsWith("info:fedora/")) {
-            String PID = subject.substring(12);
-            return PID;
-        }
-        return null;
-    }
-
+    // TODO: Consider getting rid of this method
     public String getRelationship() {
         String prefixRel = RELS_EXT.uri;
         if (predicate != null && predicate.startsWith(prefixRel)) {
@@ -74,5 +68,45 @@ public class RelationshipTuple
                 "Sub: " + subject + "  Pred: " + predicate + "  Obj: ["
                         + object + ", " + isLiteral + ", " + datatype + "]";
         return retVal;
+    }
+    
+    @Override
+    public int hashCode() {
+        return hc(subject)
+                + hc(predicate)
+                + hc(object)
+                + hc(datatype);
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof RelationshipTuple) {
+            RelationshipTuple t = (RelationshipTuple) o;
+            return eq(subject, t.subject)
+                    && eq(predicate, t.predicate)
+                    && eq(object, t.object)
+                    && eq(datatype, t.datatype)
+                    && isLiteral == t.isLiteral;
+        } else {
+            return false;
+        }
+    }
+   
+    // test for equality, accounting for null values
+    private static boolean eq(Object a, Object b) {
+        if (a == null) {
+            return b == null;
+        } else {
+            return b != null && a.equals(b);
+        }
+    }
+    
+    // return the hashCode or 0 if null
+    private static int hc(Object o) {
+        if (o == null) {
+            return 0;
+        } else {
+            return o.hashCode();
+        }
     }
 }

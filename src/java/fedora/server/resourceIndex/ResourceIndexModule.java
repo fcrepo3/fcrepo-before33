@@ -102,13 +102,11 @@ public class ResourceIndexModule
                             .getDatastoreConfig(getRequired("datastore")));
 
             TripleGenerator generator = new ModelBasedTripleGenerator();
-            generator.init(connector.getElementFactory());
 
-            _ri =
-                    new ResourceIndexImpl(connector,
-                                          generator,
-                                          level,
-                                          syncUpdates);
+            _ri = new ResourceIndexImpl(connector,
+                                        generator,
+                                        level,
+                                        syncUpdates);
             setAliasMap(getAliases());
         } catch (Exception e) {
             throw new ModuleInitializationException("Error initializing RI",

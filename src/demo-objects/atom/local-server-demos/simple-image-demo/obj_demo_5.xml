@@ -154,8 +154,6 @@
         <rdf:Description rdf:about="info:fedora/demo:5">
             
           <fedora-model:hasModel rdf:resource="info:fedora/demo:UVA_STD_IMAGE_1"></fedora-model:hasModel>
-            
-          <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"></fedora-model:hasModel>
           </rdf:Description>
         </rdf:RDF>
     </content>

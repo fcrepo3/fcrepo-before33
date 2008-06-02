@@ -47,7 +47,6 @@
 						<fedora-model:hasModel rdf:resource="info:fedora/test:UVA_STD_IMAGE"/>
 						<fedora-model:hasModel rdf:resource="info:fedora/demo:UVA_MRSID_IMAGE_1"/>
 						<fedora-model:hasModel rdf:resource="info:fedora/demo:UVA_STD_IMAGE_1"/>
-						<fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"/>
 					</rdf:Description>
 				</rdf:RDF>
 			</foxml:xmlContent>

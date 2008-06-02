@@ -69,7 +69,7 @@ public class AutoFinder {
     }
 
     // fieldQuery is the syntax used by API-A-Lite,
-    // such as "fType=O pid~demo*".  Leave blank to match all.
+    // such as "pid~demo*".  Leave blank to match all.
     public static String[] getPIDs(String protocol,
                                    String host,
                                    int port,

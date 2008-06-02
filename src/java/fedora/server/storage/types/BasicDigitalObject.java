@@ -22,6 +22,10 @@ import org.jrdf.graph.Literal;
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
 
+import fedora.common.Constants;
+import fedora.common.Models;
+import fedora.common.rdf.JRDF;
+
 import fedora.server.errors.ServerException;
 import fedora.server.storage.RDFRelationshipReader;
 
@@ -306,23 +310,51 @@ public class BasicDigitalObject
             readRels();
         }
 
-        /* Brute force */
+        boolean basicExplicit = false;
+        
+        // Iterate explicit relationships, finding matches and
+        // determining whether the object has an explicit basic cmodel.
         for (RelationshipTuple t : m_rels) {
+            
+            // Do any hasModel rels point to a basic cmodel?
+            if (Constants.MODEL.HAS_MODEL.uri.equals(t.predicate)
+                    && Models.isBasicModel(t.object)) {
+                basicExplicit = true;
+            }
+            
+            // Find matching relationships from those that are explicit
             if (predicate != null) {
-                if (!predicate.toString().equals(t.predicate)) {
+                if (!JRDF.samePredicate(predicate, t.predicate)) {
                     continue;
                 }
             }
-
             if (object != null) {
-                if ((object instanceof Literal) != t.isLiteral
-                        || !(object.toString().equals(t.object.toString()))) {
+                if (!JRDF.sameObject(object,
+                                     t.object,
+                                     t.isLiteral,
+                                     t.datatype,
+                                     null)) {
                     continue;
                 }
 
             }
             foundRels.add(t);
         }
+       
+        // If necessary, add the current basic cmodel to the set of matches
+        if (!basicExplicit 
+                && (predicate == null ||
+                    JRDF.samePredicate(predicate, Constants.MODEL.HAS_MODEL))
+                && (object == null ||
+                    JRDF.sameObject(object, Models.FEDORA_OBJECT_CURRENT))) {
+            foundRels.add(
+                    new RelationshipTuple(Constants.FEDORA.uri + m_pid,
+                                          Constants.MODEL.HAS_MODEL.uri,
+                                          Models.FEDORA_OBJECT_CURRENT.uri,
+                                          false,
+                                          null));
+        }
+        
         return foundRels;
     }
 

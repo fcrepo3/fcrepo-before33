@@ -25,7 +25,6 @@
         		xmlns:rel="info:fedora/fedora-system:def/relations-external#">
           <rdf:Description rdf:about="info:fedora/demo:SmileyShortRoundCup">
             <rel:isMemberOf rdf:resource="info:fedora/demo:SmileyStuff"/>
-            <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"/>
             <fedora-model:hasModel rdf:resource="info:fedora/demo:DualResImage"/>
           </rdf:Description>
         </rdf:RDF>

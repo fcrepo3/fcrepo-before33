@@ -101,8 +101,6 @@
         <rdf:Description rdf:about="info:fedora/demo:6">
             			
           <fedora-model:hasModel rdf:resource="info:fedora/demo:UVA_MRSID_IMAGE"></fedora-model:hasModel>
-            			
-          <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"></fedora-model:hasModel>
           			</rdf:Description>
         		</rdf:RDF>
     </content>

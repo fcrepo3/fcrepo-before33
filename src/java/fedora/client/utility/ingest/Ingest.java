@@ -75,29 +75,31 @@ public class Ingest
         File[] files = dir.listFiles();
         Arrays.sort(files, _FILE_COMPARATOR);
         for (File element : files) {
-            if (element.isDirectory()) {
-                multiFromDirectory(element,
-                                   ingestFormat,
-                                   targetRepoAPIA,
-                                   targetRepoAPIM,
-                                   logMessage,
-                                   log,
-                                   c);
-            } else {
-
-                try {
-                    String pid =
-                            oneFromFile(element,
-                                        ingestFormat,
-                                        targetRepoAPIA,
-                                        targetRepoAPIM,
-                                        logMessage);
-                    c.successes++;
-                    IngestLogger.logFromFile(log, element, pid);
-                } catch (Exception e) {
-                    // failed... just log it and continue
-                    c.failures++;
-                    IngestLogger.logFailedFromFile(log, element, e);
+            if (!element.isHidden() && !element.getName().startsWith(".")) {
+                if (element.isDirectory()) {
+                    multiFromDirectory(element,
+                                       ingestFormat,
+                                       targetRepoAPIA,
+                                       targetRepoAPIM,
+                                       logMessage,
+                                       log,
+                                       c);
+                } else {
+    
+                    try {
+                        String pid =
+                                oneFromFile(element,
+                                            ingestFormat,
+                                            targetRepoAPIA,
+                                            targetRepoAPIM,
+                                            logMessage);
+                        c.successes++;
+                        IngestLogger.logFromFile(log, element, pid);
+                    } catch (Exception e) {
+                        // failed... just log it and continue
+                        c.failures++;
+                        IngestLogger.logFailedFromFile(log, element, e);
+                    }
                 }
             }
         }

@@ -51,7 +51,6 @@
 					<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
 						<rdf:Description rdf:about="info:fedora/demo:7">
 							<fedora-model:hasModel rdf:resource="info:fedora/demo:UVA_STD_IMAGE_2"/>
-                            <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"/>
 						</rdf:Description>
 					</rdf:RDF>				
 				</METS:xmlData>

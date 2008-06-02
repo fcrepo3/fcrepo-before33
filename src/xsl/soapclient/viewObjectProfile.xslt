@@ -64,13 +64,13 @@
 							<xsl:value-of select="objLabel"/>
 						</td>
 					</tr>
-					<<tr>
-						<td align="right">
-							<font color="blue">Object Content Models: </font>
+					<tr>
+						<td align="right" valign="top">
+							<font color="blue">Object Content Model(s): </font>
 						</td>
 						<td align="left">
 						    <table border="0">
-							<xsl:for-each select="objModels">
+							<xsl:for-each select="objModels/model">
 								<tr>
 								  	<td>
 										<xsl:value-of select="model"/>

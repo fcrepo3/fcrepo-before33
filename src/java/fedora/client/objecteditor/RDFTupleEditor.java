@@ -1,3 +1,8 @@
+/*
+ * The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://www.fedora.info/license/).
+ */
 
 package fedora.client.objecteditor;
 
@@ -598,11 +603,6 @@ public class RDFTupleEditor
                                                          getIsLiteral(),
                                                          getLiteralType());
                 } catch (URISyntaxException e) {
-                    JOptionPane.showMessageDialog(this,
-                                                  "Error: Invalid URI in "
-                                                          + msg);
-                    return;
-                } catch (GraphElementFactoryException e) {
                     JOptionPane.showMessageDialog(this,
                                                   "Error: Invalid URI in "
                                                           + msg);

@@ -222,9 +222,6 @@ public class TestFieldSearchSQLImpl {
 		theObject.setPid(objectData.getPid());
 		theObject.setLabel(objectData.getLabel());
 		
-		/* FIXME: Ignoing obsolete properties, remove if OK */
-		//theObject.addFedoraObjectType(objectData.getFType());
-		//theObject.setContentModelId(objectData.getCModel());
 		theObject.setState(objectData.getState());
 		theObject.setOwnerId(objectData.getOwnerId());
 		theObject.setCreateDate(objectData.getCreateDate());

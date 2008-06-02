@@ -929,63 +929,16 @@ public class DefaultDOManager
                 // ensure no one else can modify the object now
                 getWriteLock(obj.getPid());
 
-                // DEFAULT DUBLIN CORE DATASTREAM:
-                LOG.debug("Adding/Checking default DC record");
-                // DC System Reserved Datastream...
-                // if there's no DC datastream, add one using PID for identifier
-                // and Label for dc:title
-                //
-                // if there IS a DC record, make sure one of the dc:identifiers
-                // is the PID
-                DatastreamXMLMetadata dc =
-                        (DatastreamXMLMetadata) w.GetDatastream("DC", null);
-                DCFields dcf;
-                if (dc == null) {
-                    dc = new DatastreamXMLMetadata("UTF-8");
-                    dc.DSMDClass = 0;
-                    //dc.DSMDClass=DatastreamXMLMetadata.DESCRIPTIVE;
-                    dc.DatastreamID = "DC";
-                    dc.DSVersionID = "DC1.0";
-                    dc.DSControlGrp = "X";
-                    dc.DSCreateDT = nowUTC;
-                    dc.DSLabel = "Dublin Core Metadata";
-                    dc.DSMIME = "text/xml";
-                    dc.DSSize = 0;
-                    dc.DSState = "A";
-                    dc.DSVersionable = true;
-                    dcf = new DCFields();
-                    if (obj.getLabel() != null && !obj.getLabel().equals("")) {
-                        dcf.titles().add(obj.getLabel());
-                    }
-                    w.addDatastream(dc, dc.DSVersionable);
-                } else {
-                    dcf = new DCFields(new ByteArrayInputStream(dc.xmlContent));
-                }
-                // ensure one of the dc:identifiers is the pid
-                boolean sawPid = false;
-                for (int i = 0; i < dcf.identifiers().size(); i++) {
-                    if (((String) dcf.identifiers().get(i))
-                            .equals(obj.getPid())) {
-                        sawPid = true;
-                    }
-                }
-                if (!sawPid) {
-                    dcf.identifiers().add(obj.getPid());
-                }
-                // set the value of the dc datastream according to what's in the DCFields object
-                try {
-                    dc.xmlContent = dcf.getAsXML().getBytes("UTF-8");
-                } catch (UnsupportedEncodingException uee) {
-                    // safely ignore... we know UTF-8 works
-                }
+                // DEFAULT DATASTREAMS:
+                populateDC(obj, w, nowUTC);
 
-                // RELATIONSHIP METADATA VALIDATION:
-                // if a RELS-EXT datastream exists do validation on it
-                RelsExtValidator deser = new RelsExtValidator("UTF-8", false);
+                // RELS-EXT VALIDATION
                 DatastreamXMLMetadata relsext =
                         (DatastreamXMLMetadata) w.GetDatastream("RELS-EXT",
-                                                                null);
+                        null);
                 if (relsext != null) {
+                    RelsExtValidator deser = new RelsExtValidator("UTF-8",
+                                                                  false);
                     InputStream in2 =
                             new ByteArrayInputStream(relsext.xmlContent);
                     LOG.debug("Validating RELS-EXT datastream");
@@ -1029,6 +982,60 @@ public class DefaultDOManager
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Adds a minimal DC datastream if one isn't already present.
+     *
+     * If there is already a DC datastream, ensure one of the
+     * dc:identifier values is the PID of the object.
+     */
+    private static void populateDC(DigitalObject obj,
+                                   DOWriter w, 
+                                   Date nowUTC)
+            throws IOException, ServerException {
+        LOG.debug("Adding/Checking default DC datastream");
+        DatastreamXMLMetadata dc =
+                (DatastreamXMLMetadata) w.GetDatastream("DC", null);
+        DCFields dcf;
+        if (dc == null) {
+            dc = new DatastreamXMLMetadata("UTF-8");
+            dc.DSMDClass = 0;
+            //dc.DSMDClass=DatastreamXMLMetadata.DESCRIPTIVE;
+            dc.DatastreamID = "DC";
+            dc.DSVersionID = "DC1.0";
+            dc.DSControlGrp = "X";
+            dc.DSCreateDT = nowUTC;
+            dc.DSLabel = "Dublin Core Metadata";
+            dc.DSMIME = "text/xml";
+            dc.DSSize = 0;
+            dc.DSState = "A";
+            dc.DSVersionable = true;
+            dcf = new DCFields();
+            if (obj.getLabel() != null && !obj.getLabel().equals("")) {
+                dcf.titles().add(obj.getLabel());
+            }
+            w.addDatastream(dc, dc.DSVersionable);
+        } else {
+            dcf = new DCFields(new ByteArrayInputStream(dc.xmlContent));
+        }
+        // ensure one of the dc:identifiers is the pid
+        boolean sawPid = false;
+        for (int i = 0; i < dcf.identifiers().size(); i++) {
+            if (((String) dcf.identifiers().get(i))
+                    .equals(obj.getPid())) {
+                sawPid = true;
+            }
+        }
+        if (!sawPid) {
+            dcf.identifiers().add(obj.getPid());
+        }
+        // set the value of the dc datastream according to what's in the DCFields object
+        try {
+            dc.xmlContent = dcf.getAsXML().getBytes("UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            // safely ignore... we know UTF-8 works
         }
     }
 
@@ -1432,25 +1439,25 @@ public class DefaultDOManager
                     LOG.error(msg, th);
                     throw new GeneralException(msg, th);
                 }
-            } catch (ServerException se) {
-                if (obj.isNew()) {
-                    doCommit(cachedObjectRequired,
-                             context,
-                             obj,
-                             logMessage,
-                             true);
-                }
-                throw se;
             } catch (Throwable th) {
                 if (obj.isNew()) {
-                    doCommit(cachedObjectRequired,
-                             context,
-                             obj,
-                             logMessage,
-                             true);
+                    // Clean up after a failed attempt to add
+                    try {
+                        doCommit(cachedObjectRequired,
+                                 context,
+                                 obj,
+                                 logMessage,
+                                 true);
+                    } catch (Exception e) {
+                        LOG.warn("Error while cleaning up after failed add", e);
+                    }
                 }
-                throw new GeneralException("Unable to add or modify object (commit canceled)",
-                                           th);
+                if (th instanceof ServerException) {
+                    throw (ServerException) th;
+                } else {
+                    throw new GeneralException("Unable to add or modify object"
+                                               + " (commit canceled)", th);
+                }
             }
         }
     }

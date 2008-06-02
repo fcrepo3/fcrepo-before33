@@ -27,7 +27,6 @@
         <METS:xmlData>
           <rdf:RDF xmlns:fedora-model="info:fedora/fedora-system:def/model#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
             <rdf:Description rdf:about="info:fedora/demo:SmileyStuff">
-              <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"/>
               <fedora-model:hasModel rdf:resource="info:fedora/demo:DualResImageCollection"/>
             </rdf:Description>
           </rdf:RDF>

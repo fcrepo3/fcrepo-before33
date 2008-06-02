@@ -630,8 +630,6 @@ This font contains no embedding license restrictions
         <rdf:Description rdf:about="info:fedora/demo:21">
              			
           <fedora-model:hasModel rdf:resource="info:fedora/demo:FO_TO_PDFDOC"></fedora-model:hasModel>
-             			
-          <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"></fedora-model:hasModel>
           			</rdf:Description>
         		</rdf:RDF>
     </content>

@@ -110,35 +110,35 @@ public class DCFields
     @Override
     public void endElement(String uri, String localName, String qName) {
         if (localName.equals("title")) {
-            titles().add(m_currentContent.toString());
+            titles().add(m_currentContent.toString().trim());
         } else if (localName.equals("creator")) {
-            creators().add(m_currentContent.toString());
+            creators().add(m_currentContent.toString().trim());
         } else if (localName.equals("subject")) {
-            subjects().add(m_currentContent.toString());
+            subjects().add(m_currentContent.toString().trim());
         } else if (localName.equals("description")) {
-            descriptions().add(m_currentContent.toString());
+            descriptions().add(m_currentContent.toString().trim());
         } else if (localName.equals("publisher")) {
-            publishers().add(m_currentContent.toString());
+            publishers().add(m_currentContent.toString().trim());
         } else if (localName.equals("contributor")) {
-            contributors().add(m_currentContent.toString());
+            contributors().add(m_currentContent.toString().trim());
         } else if (localName.equals("date")) {
-            dates().add(m_currentContent.toString());
+            dates().add(m_currentContent.toString().trim());
         } else if (localName.equals("type")) {
-            types().add(m_currentContent.toString());
+            types().add(m_currentContent.toString().trim());
         } else if (localName.equals("format")) {
-            formats().add(m_currentContent.toString());
+            formats().add(m_currentContent.toString().trim());
         } else if (localName.equals("identifier")) {
-            identifiers().add(m_currentContent.toString());
+            identifiers().add(m_currentContent.toString().trim());
         } else if (localName.equals("source")) {
-            sources().add(m_currentContent.toString());
+            sources().add(m_currentContent.toString().trim());
         } else if (localName.equals("language")) {
-            languages().add(m_currentContent.toString());
+            languages().add(m_currentContent.toString().trim());
         } else if (localName.equals("relation")) {
-            relations().add(m_currentContent.toString());
+            relations().add(m_currentContent.toString().trim());
         } else if (localName.equals("coverage")) {
-            coverages().add(m_currentContent.toString());
+            coverages().add(m_currentContent.toString().trim());
         } else if (localName.equals("rights")) {
-            rights().add(m_currentContent.toString());
+            rights().add(m_currentContent.toString().trim());
         }
     }
 

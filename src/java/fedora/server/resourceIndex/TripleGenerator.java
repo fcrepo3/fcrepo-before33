@@ -7,7 +7,6 @@ package fedora.server.resourceIndex;
 
 import java.util.Set;
 
-import org.jrdf.graph.GraphElementFactory;
 import org.jrdf.graph.Triple;
 
 import fedora.server.errors.ResourceIndexException;
@@ -31,5 +30,4 @@ public interface TripleGenerator {
     public Set<Triple> getTriplesForObject(DOReader reader)
             throws ResourceIndexException;
 
-    public void init(GraphElementFactory elementFactory);
 }

@@ -9,6 +9,7 @@ import org.junit.runners.Suite;
         fedora.test.api.TestAPIALite.class, fedora.test.api.TestAPIM.class,
         fedora.test.api.TestAPIMLite.class,
         fedora.test.api.TestHTTPStatusCodes.class,
+        fedora.test.integration.TestOAIService.class,
         fedora.test.integration.TestCommandLineUtilities.class,
         fedora.test.integration.TestCommandLineFormats.class})
 public class AllCommonSystemTests {
@@ -25,6 +26,7 @@ public class AllCommonSystemTests {
         suite.addTest(fedora.test.api.TestAPIM.suite());
         suite.addTest(fedora.test.api.TestAPIMLite.suite());
         suite.addTest(fedora.test.api.TestHTTPStatusCodes.suite());
+        suite.addTest(fedora.test.integration.TestOAIService.suite());
         suite.addTest(fedora.test.integration.TestCommandLineUtilities.suite());
         suite.addTest(fedora.test.integration.TestCommandLineFormats.suite());
 

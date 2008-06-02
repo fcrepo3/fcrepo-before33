@@ -198,20 +198,6 @@ class ResourceAttributeFinderModule
                     return null;
                 }
             }
-
-            /* FIXME: No morre fTypes. Will anything break? */
-            //else if (Constants.OBJECT.OBJECT_TYPE.uri.equals(attributeId)) {
-            //    try {
-            //        values = new String[1];
-            //       values[0] = reader.getFedoraObjectTypes();
-            //        LOG.debug("got " + Constants.OBJECT.OBJECT_TYPE.uri + "="
-            //                + values[0]);
-            //    } catch (ServerException e) {
-            //        LOG.debug("failed getting "
-            //                + Constants.OBJECT.OBJECT_TYPE.uri);
-            //        return null;
-            //    }
-            //} 
             else if (Constants.OBJECT.OWNER.uri.equals(attributeId)) {
                 try {
                     LOG

@@ -102,13 +102,6 @@ public class ObjectEditorFrame
         m_tabbedPane.addTab("Datastreams", m_datastreamsPane);
         m_tabbedPane.setBackgroundAt(1, Administrator.DEFAULT_COLOR);
         m_tabbedPane.setIconAt(1, dsIcon);
-        //            if (fType.equals("O")) {
-        //                // only do the disseminators tab if it's a data object
-        //                m_disseminatorsPane=new DisseminatorsPane(this, pid);
-        //                m_tabbedPane.addTab("Disseminators", m_disseminatorsPane);
-        //                m_tabbedPane.setBackgroundAt(2, Administrator.DEFAULT_COLOR);
-        //                m_tabbedPane.setIconAt(2, dissIcon);
-        //            }
         m_tabbedPane.setSelectedIndex(startTab);
 
         JPanel outerPane = new JPanel();

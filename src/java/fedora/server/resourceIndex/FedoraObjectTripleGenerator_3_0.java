@@ -5,29 +5,33 @@
 
 package fedora.server.resourceIndex;
 
+import java.net.URI;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.Triple;
 import org.jrdf.graph.URIReference;
-
-import org.trippi.RDFFormat;
-import org.trippi.TripleIterator;
 
 import fedora.common.Constants;
 import fedora.common.PID;
 import fedora.common.rdf.RDFName;
+import fedora.common.rdf.SimpleLiteral;
+import fedora.common.rdf.SimpleTriple;
+import fedora.common.rdf.SimpleURIReference;
 
 import fedora.server.errors.ResourceIndexException;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
+import fedora.server.storage.types.RelationshipTuple;
 import fedora.server.utilities.DCFields;
 
 /**
- * Generates base RDF triples for Fedora 3.0 objects.
+ * Generates basic RDF triples for Fedora 3.0 objects.
  * 
  * @author Chris Wilper
  */
@@ -56,17 +60,22 @@ public class FedoraObjectTripleGenerator_3_0
 
         try {
 
-            URIReference objURI =
-                    createResource(PID.toURI(reader.GetObjectPID()));
+            URIReference objURI = new SimpleURIReference(
+                    new URI(PID.toURI(reader.GetObjectPID())));
 
             addCoreObjectTriples(reader, objURI, set);
-
-            addAllDatastreamTriples(reader.GetDatastreams(null, null),
-                                    objURI,
-                                    set);
-
+           
+            Datastream[] datastreams = reader.GetDatastreams(null, null);
+            for (Datastream ds : datastreams) {
+                addCoreDatastreamTriples(ds, objURI, set);
+                if (ds.DatastreamID.equals("DC")) {
+                    addDCTriples((DatastreamXMLMetadata) ds, objURI, set);
+                }
+            }
+            
+            addRelationshipTriples(reader, objURI, set);
+            
             return objURI;
-
         } catch (ResourceIndexException e) {
             throw e;
         } catch (Exception e) {
@@ -78,7 +87,6 @@ public class FedoraObjectTripleGenerator_3_0
      * For the given object, add the common core system metadata triples. This
      * will include:
      * <ul>
-     * <li> object <i>model:hasContentModel</i></li>
      * <li> object <i>model:createdDate</i></li>
      * <li> object <i>model:label</i></li>
      * <li> object <i>model:owner</i></li>
@@ -113,14 +121,13 @@ public class FedoraObjectTripleGenerator_3_0
                                           URIReference objURI,
                                           Set<Triple> set) throws Exception {
 
-        URIReference dsURI =
-                createResource(objURI.getURI().toString() + "/"
-                        + ds.DatastreamID);
+        URIReference dsURI = new SimpleURIReference(
+                new URI(objURI.getURI().toString() + "/" + ds.DatastreamID));
 
         add(objURI, VIEW.DISSEMINATES, dsURI, set);
 
-        URIReference dsDissType =
-                createResource(FEDORA.uri + "*/" + ds.DatastreamID);
+        URIReference dsDissType = new SimpleURIReference(
+                new URI(FEDORA.uri + "*/" + ds.DatastreamID));
 
         add(dsURI, VIEW.DISSEMINATION_TYPE, dsDissType, set);
 
@@ -151,49 +158,33 @@ public class FedoraObjectTripleGenerator_3_0
     }
 
     /**
-     * Add all triples found in the RELS-EXT datastream, skipping any with
-     * predicate fedora-model:hasContentModel (this is indexed as a "core"
-     * triple).
+     * Adds all triples given by reader.getRelationships(null, null).
+     * <p>
+     * This includes everything in RELS-EXT as well as the implicit
+     * basic content model assertion, if any.
      */
-    private void addRELSEXTTriples(DatastreamXMLMetadata ds, Set<Triple> set)
+    private void addRelationshipTriples(DOReader reader,
+                                        URIReference objURI,
+                                        Set<Triple> set)
             throws Exception {
-        TripleIterator iter =
-                TripleIterator.fromStream(ds.getContentStream(),
-                                          RDFFormat.RDF_XML);
-        try {
-            while (iter.hasNext()) {
-                Triple triple = iter.next();
-                URIReference u = (URIReference) triple.getPredicate();
-                if (!u.getURI().toString().equals(MODEL.HAS_MODEL)) {
-                    set.add(triple);
+        for (RelationshipTuple tuple : reader.getRelationships(null, null)) {
+            ObjectNode oNode;
+            if (tuple.isLiteral) {
+                if (tuple.datatype != null) {
+                    oNode = new SimpleLiteral(tuple.object,
+                                              new URI(tuple.datatype));
+                } else {
+                    oNode = new SimpleLiteral(tuple.object);
                 }
+            } else {
+                oNode = new SimpleURIReference(new URI(tuple.object));
             }
-        } finally {
-            iter.close();
-        }
-
-    }
-
-    /**
-     * Add all triples whose values are determined by datastream metadata or
-     * content.
-     */
-    private void addAllDatastreamTriples(Datastream[] datastreams,
-                                         URIReference objURI,
-                                         Set<Triple> set) throws Exception {
-
-        for (Datastream ds : datastreams) {
-
-            // triples determined by datastream's metadata
-            addCoreDatastreamTriples(ds, objURI, set);
-
-            // triples determined by parsing the datastream's content
-            if (ds.DatastreamID.equals("DC")) {
-                addDCTriples((DatastreamXMLMetadata) ds, objURI, set);
-            } else if (ds.DatastreamID.equals("RELS-EXT")) {
-                addRELSEXTTriples((DatastreamXMLMetadata) ds, set);
-            }
-
+            set.add(new SimpleTriple(new SimpleURIReference(
+                                             new URI(tuple.subject)),
+                                     new SimpleURIReference(
+                                             new URI(tuple.predicate)),
+                                     oNode));
         }
     }
+
 }

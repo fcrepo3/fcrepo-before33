@@ -1,18 +1,16 @@
 package fedora.server.resourceIndex;
 
-import java.net.URI;
-
 import java.util.Date;
 import java.util.Set;
 
 import org.jrdf.graph.GraphElementFactory;
-import org.jrdf.graph.GraphElementFactoryException;
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.Triple;
-import org.jrdf.graph.URIReference;
 
 import fedora.common.rdf.RDFName;
+import fedora.common.rdf.SimpleLiteral;
+import fedora.common.rdf.SimpleTriple;
 
 import fedora.server.errors.ResourceIndexException;
 import fedora.server.utilities.DateUtility;
@@ -23,16 +21,6 @@ import static fedora.common.Constants.RDF_XSD;
 public abstract class TripleGeneratorBase {
     // Helper methods for creating RDF components
     
-    private GraphElementFactory _geFactory;
-    
-    public void init(GraphElementFactory geFactory) {
-        _geFactory = geFactory;
-    }
-
-    protected URIReference createResource(String uri) throws Exception {
-        return _geFactory.createResource(new URI(uri));
-    }
-
     protected RDFName getStateResource(String state)
             throws ResourceIndexException {
         if (state == null) {
@@ -52,28 +40,9 @@ public abstract class TripleGeneratorBase {
 
     protected void add(SubjectNode subject,
                        RDFName predicate,
-                       RDFName object,
-                       Set<Triple> set) throws ResourceIndexException {
-        try {
-            add(subject,
-                predicate,
-                _geFactory.createResource(object.getURI()),
-                set);
-        } catch (GraphElementFactoryException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
-        }
-    }
-
-    protected void add(SubjectNode subject,
-                       RDFName predicate,
                        ObjectNode object,
                        Set<Triple> set) throws ResourceIndexException {
-        try {
-            set.add(_geFactory.createTriple(subject, _geFactory
-                    .createResource(predicate.getURI()), object));
-        } catch (GraphElementFactoryException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
-        }
+        set.add(new SimpleTriple(subject, predicate, object));
     }
 
     protected void add(SubjectNode subject,
@@ -81,9 +50,7 @@ public abstract class TripleGeneratorBase {
                        String lexicalValue,
                        Set<Triple> set) throws Exception {
         if (lexicalValue != null) {
-            set.add(_geFactory.createTriple(subject, _geFactory
-                    .createResource(predicate.getURI()), _geFactory
-                    .createLiteral(lexicalValue)));
+            set.add(new SimpleTriple(subject, predicate, new SimpleLiteral(lexicalValue)));
         }
     }
 
@@ -93,11 +60,9 @@ public abstract class TripleGeneratorBase {
                        Set<Triple> set) throws Exception {
         if (dateValue != null) {
             String lexicalValue = DateUtility.convertDateToXSDString(dateValue);
-            ObjectNode object =
-                    _geFactory.createLiteral(lexicalValue, RDF_XSD.DATE_TIME
-                            .getURI());
-            set.add(_geFactory.createTriple(subject, _geFactory
-                    .createResource(predicate.getURI()), object));
+            ObjectNode object = new SimpleLiteral(lexicalValue,
+                                                  RDF_XSD.DATE_TIME.getURI());
+            set.add(new SimpleTriple(subject, predicate, object));
         }
     }
 

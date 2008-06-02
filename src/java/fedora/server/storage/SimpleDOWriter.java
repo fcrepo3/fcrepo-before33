@@ -16,22 +16,20 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
-import org.jrdf.graph.GraphElementFactory;
-import org.jrdf.graph.GraphElementFactoryException;
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.Triple;
 
 import org.trippi.RDFFormat;
-import org.trippi.RDFUtil;
 import org.trippi.TripleIterator;
 import org.trippi.TrippiException;
 
 import fedora.common.Constants;
 import fedora.common.PID;
+import fedora.common.rdf.SimpleLiteral;
+import fedora.common.rdf.SimpleTriple;
+import fedora.common.rdf.SimpleURIReference;
 
 import fedora.server.Context;
 import fedora.server.Server;
@@ -265,66 +263,6 @@ public class SimpleDOWriter
         return deletedDates;
     }
 
-    /**
-     * Removes a disseminator from the object.
-     * 
-     * @param id
-     *        The id of the datastream.
-     * @param start
-     *        The start date (inclusive) of versions to remove. If
-     *        <code>null</code>, this is taken to be the smallest possible
-     *        value.
-     * @param end
-     *        The end date (inclusive) of versions to remove. If
-     *        <code>null</code>, this is taken to be the greatest possible
-     *        value.
-     * @throws ServerException
-     *         If any type of error occurred fulfilling the request.
-     */
-    // public Date[] removeDisseminator(String id, Date start, Date end)
-    // throws ServerException {
-    // assertNotInvalidated();
-    // assertNotPendingRemoval();
-    // List versions=m_obj.disseminators(id);
-    // ArrayList removeList=new ArrayList();
-    // for (int i=0; i<versions.size(); i++) {
-    // Disseminator diss=(Disseminator) versions.get(i);
-    // boolean doRemove=false;
-    // if (start!=null) {
-    // if (end!=null) {
-    // if ( (diss.dissCreateDT.compareTo(start)>=0)
-    // && (diss.dissCreateDT.compareTo(end)<=0) ) {
-    // doRemove=true;
-    // }
-    // } else {
-    // if (diss.dissCreateDT.compareTo(start)>=0) {
-    // doRemove=true;
-    // }
-    // }
-    // } else {
-    // if (end!=null) {
-    // if (diss.dissCreateDT.compareTo(end)<=0) {
-    // doRemove=true;
-    // }
-    // } else {
-    // doRemove=true;
-    // }
-    // }
-    // if (doRemove) {
-    // // Note: We don't remove old audit records by design.
-    //
-    // // add this disseminator to the disseminator to-be-removed list.
-    // removeList.add(diss);
-    // }
-    // }
-    // versions.removeAll(removeList);
-    // // finally, return the dates of each deleted item
-    // Date[] deletedDates=new Date[removeList.size()];
-    // for (int i=0; i<removeList.size(); i++) {
-    // deletedDates[i]=((Disseminator) removeList.get(i)).dissCreateDT;
-    // }
-    // return deletedDates;
-    // }
     public boolean addRelationship(String relationship,
                                    String object,
                                    boolean isLiteral,
@@ -493,28 +431,26 @@ public class SimpleDOWriter
         return true;
     }
 
-    private Triple createTriple(String subject,
-                                String predicate,
-                                String object,
-                                boolean isLiteral,
-                                String datatype) throws ServerException {
-        GraphElementFactory geFactory = new RDFUtil();
+    private static Triple createTriple(String subject,
+                                       String predicate,
+                                       String object,
+                                       boolean isLiteral,
+                                       String datatype)
+            throws ServerException {
         ObjectNode o = null;
         try {
             if (isLiteral) {
                 if (datatype == null || datatype.length() == 0) {
-                    o = geFactory.createLiteral(object);
+                    o = new SimpleLiteral(object);
                 } else {
-                    o = geFactory.createLiteral(object, new URI(datatype));
+                    o = new SimpleLiteral(object, new URI(datatype));
                 }
             } else {
-                o = geFactory.createResource(new URI(object));
+                o = new SimpleURIReference(new URI(object));
             }
-            return geFactory.createTriple(geFactory
-                    .createResource(new URI(subject)), geFactory
-                    .createResource(new URI(predicate)), o);
-        } catch (GraphElementFactoryException e) {
-            throw new GeneralException(e.getMessage(), e);
+            return new SimpleTriple(new SimpleURIReference(new URI(subject)),
+                                    new SimpleURIReference(new URI(predicate)),
+                                    o);
         } catch (URISyntaxException e) {
             throw new GeneralException(e.getMessage(), e);
         }

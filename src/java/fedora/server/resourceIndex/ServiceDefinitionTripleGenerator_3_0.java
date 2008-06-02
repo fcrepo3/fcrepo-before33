@@ -4,6 +4,8 @@ package fedora.server.resourceIndex;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.net.URI;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,7 +15,9 @@ import org.jrdf.graph.URIReference;
 
 import org.xml.sax.InputSource;
 
+import fedora.common.FaultException;
 import fedora.common.PID;
+import fedora.common.rdf.SimpleURIReference;
 
 import fedora.server.errors.ResourceIndexException;
 import fedora.server.errors.ServerException;
@@ -35,22 +39,16 @@ public class ServiceDefinitionTripleGenerator_3_0
 
     private static final String METHODMAP_DS = "METHODMAP";
 
-    private FedoraObjectTripleGenerator_3_0 common =
-            new FedoraObjectTripleGenerator_3_0();
-
+    /**
+     * {@inheritDoc}
+     */
     public Set<Triple> getTriplesForObject(DOReader reader)
             throws ResourceIndexException {
         Set<Triple> set = new HashSet<Triple>();
 
         try {
-            URIReference objURI =
-                    createResource(PID.toURI(reader.GetObjectPID()));
-
-            /*
-             * Everything in a data object is also indexed for SDefs
-             * (datastreams, properties, etc)
-             */
-            set.addAll(common.getTriplesForObject(reader));
+            URIReference objURI = new SimpleURIReference(
+                    new URI(PID.toURI(reader.GetObjectPID())));
 
             /* Now add the SDef operation-specific triples */
             addMethodDefTriples(objURI, reader, set);
@@ -58,11 +56,6 @@ public class ServiceDefinitionTripleGenerator_3_0
             throw new ResourceIndexException("Could not generate triples", e);
         }
         return set;
-    }
-
-    public void init(GraphElementFactory g) {
-        super.init(g);
-        common.init(g);
     }
 
     /**
@@ -97,7 +90,7 @@ public class ServiceDefinitionTripleGenerator_3_0
                 try {
                     contentStream.close();
                 } catch (IOException e) {
-                    /* Probably will never happen */
+                    throw new FaultException(e);
                 }
             }
         } else {

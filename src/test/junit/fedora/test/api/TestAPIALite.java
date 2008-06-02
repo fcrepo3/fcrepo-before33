@@ -10,6 +10,8 @@ import org.w3c.dom.Document;
 import fedora.client.FedoraClient;
 import fedora.client.HttpInputStream;
 
+import fedora.common.Models;
+
 import fedora.test.DemoObjectTestSetup;
 import fedora.test.FedoraServerTestCase;
 
@@ -101,6 +103,17 @@ public class TestAPIALite
         assertXpathEvaluatesTo("demo:11",
                                "/objectProfile/attribute::pid",
                                result);
+    }
+    
+    public void testGetObjectProfileBasicCModel() throws Exception {
+        String testExpression = "count("
+                + "/objectProfile/objModels/model[normalize-space()='" 
+                + Models.FEDORA_OBJECT_CURRENT.uri + "'])";
+        for (String pid : new String[] { "demo:SmileyPens",
+                                         "demo:SmileyGreetingCard" }) {
+            Document result = getXMLQueryResult("/get/" + pid + "?xml=true");
+            assertXpathEvaluatesTo("1", testExpression, result);
+        }
     }
 
     public void testListDatastreams() throws Exception {

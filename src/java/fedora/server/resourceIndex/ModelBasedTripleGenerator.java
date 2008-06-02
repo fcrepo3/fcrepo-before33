@@ -1,3 +1,7 @@
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also 
+ * available online at http://www.fedora.info/license/).
+ */
 
 package fedora.server.resourceIndex;
 
@@ -6,7 +10,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.jrdf.graph.GraphElementFactory;
 import org.jrdf.graph.Triple;
 
 import fedora.server.errors.ResourceIndexException;
@@ -57,26 +60,15 @@ public class ModelBasedTripleGenerator
             new HashMap<String, TripleGenerator>();
 
     /**
-     * Create an uninitialized ModelBasedTripleGenerator.
-     * <p>
-     * Until initialized with {@link #init(GraphElementFactory)}, will not
-     * produce any triples.
-     * </p>
+     * Create a ModelBasedTripleGenerator.
      */
     public ModelBasedTripleGenerator() {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void init(GraphElementFactory factory) {
         for (String modelID : m_generatorClasses.keySet()) {
             Class<? extends TripleGenerator> genClass =
                     m_generatorClasses.get(modelID);
 
             try {
                 TripleGenerator generator = genClass.newInstance();
-                generator.init(factory);
                 m_generators.put(modelID, generator);
             } catch (Exception e) {
                 throw new RuntimeException("Could not instantiate triple generator "

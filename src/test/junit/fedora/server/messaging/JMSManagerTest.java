@@ -225,7 +225,7 @@ public class JMSManagerTest extends TestCase implements MessageListener {
             fail("Creating a JMSManager with null properties " +
                  "should throw an exception");
         } catch(MessagingException expected) {
-            assertTrue(expected.getMessage().contains("JMS connection properties"));
+            assertTrue(expected.getMessage().contains("properties"));
         }
         
         // Missing all properties

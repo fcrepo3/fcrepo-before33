@@ -79,10 +79,10 @@ public class FedoraOAIProvider
     private static Set s_emptySet = new HashSet();
 
     private static String[] s_headerFields =
-            new String[] {"pid", "dcmDate", "fType"};
+            new String[] {"pid", "dcmDate"};
 
     private static String[] s_headerAndDCFields =
-            new String[] {"pid", "dcmDate", "fType", "title", "creator",
+            new String[] {"pid", "dcmDate", "title", "creator",
                     "subject", "description", "publisher", "contributor",
                     "date", "type", "format", "identifier", "source",
                     "language", "relation", "coverage", "rights"};
@@ -143,14 +143,6 @@ public class FedoraOAIProvider
                                                OAI_DC2_0.xsdLocation,
                                                OAI_DC.uri));
         m_setInfos = new ArrayList<SimpleSetInfo>();
-        m_setInfos
-                .add(new SimpleSetInfo("Data Objects", "objects", s_emptySet));
-        m_setInfos.add(new SimpleSetInfo("Service Deployment Objects",
-                                         "ServiceDeployments",
-                                         s_emptySet));
-        m_setInfos.add(new SimpleSetInfo("Service Definition Objects",
-                                         "ServiceDefinitions",
-                                         s_emptySet));
     }
 
     public String getRepositoryName() {

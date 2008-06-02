@@ -10,6 +10,8 @@ import org.custommonkey.xmlunit.SimpleXpathEngine;
 
 import fedora.client.FedoraClient;
 
+import fedora.common.Models;
+
 import fedora.server.access.FedoraAPIA;
 import fedora.server.types.gen.ComparisonOperator;
 import fedora.server.types.gen.Condition;
@@ -52,16 +54,17 @@ public class TestAPIA
     }
 
     public void testFindObjects() throws Exception {
-        //TODO
+        // Test that a search for pid=demo:5 returns one result; demo:5
         String[] resultFields = {"pid"};
         NonNegativeInteger maxResults = new NonNegativeInteger("" + 100);
         Condition[] condition =
-                {new Condition("pid", ComparisonOperator.eq, "true")};
-        FieldSearchQuery query = new FieldSearchQuery(condition, "demo:5");
+                {new Condition("pid", ComparisonOperator.eq, "demo:5")};
+        FieldSearchQuery query = new FieldSearchQuery(condition, null);
         FieldSearchResult result =
                 apia.findObjects(resultFields, maxResults, query);
         ObjectFields[] fields = result.getResultList();
-        assertEquals(fields[0].getPid(), "demo:5");
+        assertEquals(1, fields.length);
+        assertEquals("demo:5", fields[0].getPid());
     }
 
     public void testGetDatastreamDissemination() throws Exception {
@@ -119,6 +122,20 @@ public class TestAPIA
         assertEquals("demo:11", profile.getPid());
         assertTrue(!profile.getObjDissIndexViewURL().equals(""));
         assertTrue(!profile.getObjItemIndexViewURL().equals(""));
+    }
+    
+    public void testGetObjectProfileBasicCModel() throws Exception {
+        for (String pid : new String[] { "demo:SmileyPens",
+                                         "demo:SmileyGreetingCard" }) {
+            ObjectProfile profile = apia.getObjectProfile(pid, null);
+            boolean found = false;
+            for (String objModel : profile.getObjModels()) {
+                if (objModel.equals(Models.FEDORA_OBJECT_CURRENT.uri)) {
+                    found = true;
+                }
+            }
+            assertTrue(found);
+        }
     }
 
     public void testListDatastreams() throws Exception {
