@@ -59,11 +59,10 @@ import fedora.client.batch.BatchModify;
 import fedora.client.batch.BatchModifyValidate;
 import fedora.client.console.access.AccessConsole;
 import fedora.client.console.management.ManagementConsole;
-import fedora.client.deployment.ServiceDefinitionBuilder;
-import fedora.client.deployment.ServiceDeploymentBuilder;
 import fedora.client.export.ExportDialog;
 import fedora.client.ingest.IngestDialog;
 import fedora.client.search.Search;
+import fedora.client.utility.ingest.XMLBuilder.OBJECT_TYPE;
 
 import fedora.common.Constants;
 
@@ -75,7 +74,7 @@ import fedora.swing.mdi.WindowMenu;
 
 /**
  * Fedora Administrator GUI.
- * 
+ *
  * @author Chris Wilper
  */
 public class Administrator
@@ -358,51 +357,58 @@ public class Administrator
     protected JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-       
+
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
         //   [N]ew
         JMenu fileNew = new JMenu("New");
         fileNew.setMnemonic(KeyEvent.VK_N);
+
         JMenuItem fileNewObject = new JMenuItem("Data Object", KeyEvent.VK_O);
         fileNewObject.setAccelerator(KeyStroke
                 .getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
         fileNewObject.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                new NewObjectDialog(false);
+                new NewObjectDialog(OBJECT_TYPE.dataObject,
+                                    "New Object");
             }
         });
+
         JMenuItem fileNewCModel = new JMenuItem("Content Model", KeyEvent.VK_C);
         fileNewCModel.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                new NewObjectDialog(true);
+                new NewObjectDialog(OBJECT_TYPE.contentModel,
+                                    "New Content Model");
             }
         });
+
+        JMenuItem fileNewSDef =
+            new JMenuItem("Service Definition", KeyEvent.VK_D);
+        fileNewSDef.addActionListener(new ActionListener() {
+
+        public void actionPerformed(ActionEvent e) {
+            new NewObjectDialog(OBJECT_TYPE.serviceDefinition,
+                                "New Service Definition");
+        }
+        });
+
         JMenuItem fileNewSDep =
                 new JMenuItem("Service Deployment", KeyEvent.VK_M);
         fileNewSDep.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                createSDepBuilder();
-            }
-        });
-
-        JMenuItem fileNewSDef =
-                new JMenuItem("Service Definition", KeyEvent.VK_D);
-        fileNewSDef.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                createSDefBuilder();
+                new NewObjectDialog(OBJECT_TYPE.serviceDeployment,
+                                    "New Service Deployment");
             }
         });
 
         fileNew.add(fileNewObject);
         fileNew.add(fileNewCModel);
-        fileNew.add(fileNewSDep);
         fileNew.add(fileNewSDef);
+        fileNew.add(fileNewSDep);
 
         //   [O]pen
         JMenuItem fileOpen = new JMenuItem(new ViewObject());
@@ -648,34 +654,6 @@ public class Administrator
 
         menuBar.add(toolsMenu);
 
-        // [B]uilders
-        JMenu buildersMenu = new JMenu("Builders");
-        buildersMenu.setMnemonic(KeyEvent.VK_B);
-        buildersMenu.setToolTipText("Tools to build objects");
-
-        JMenuItem buildersSDef =
-                new JMenuItem("Service Definition Builder", KeyEvent.VK_D);
-        buildersSDef.setToolTipText("Create a new Service Definition Object");
-        buildersSDef.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                createSDefBuilder();
-            }
-        });
-        buildersMenu.add(buildersSDef);
-
-        JMenuItem buildersSDep =
-                new JMenuItem("Service Deployment Builder", KeyEvent.VK_M);
-        buildersSDep.setToolTipText("Create a new Service Deployment Object");
-        buildersSDep.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                createSDepBuilder();
-            }
-        });
-        buildersMenu.add(buildersSDep);
-        menuBar.add(buildersMenu);
-
         WindowMenu windowMenu = new WindowMenu(s_desktop, "Window");
         windowMenu.setMnemonic(KeyEvent.VK_W);
         menuBar.add(windowMenu);
@@ -763,38 +741,6 @@ public class Administrator
 
     public static void setLastDir(File f) {
         s_lastDir = f;
-    }
-
-    protected void createSDefBuilder() {
-        ServiceDefinitionBuilder frame =
-                new ServiceDefinitionBuilder(s_protocol,
-                                s_host,
-                                s_port,
-                                s_user,
-                                s_pass,
-                                s_lastDir);
-        frame.setVisible(true);
-        s_desktop.add(frame);
-        try {
-            frame.setSelected(true);
-        } catch (java.beans.PropertyVetoException e) {
-        }
-    }
-
-    protected void createSDepBuilder() {
-        ServiceDeploymentBuilder frame =
-                new ServiceDeploymentBuilder(s_protocol,
-                                 s_host,
-                                 s_port,
-                                 s_user,
-                                 s_pass,
-                                 s_lastDir);
-        frame.setVisible(true);
-        s_desktop.add(frame);
-        try {
-            frame.setSelected(true);
-        } catch (java.beans.PropertyVetoException e) {
-        }
     }
 
     protected void createSearchRepository() {
@@ -931,5 +877,4 @@ public class Administrator
         Administrator administrator =
                 new Administrator(protocol, host, port, user, pass);
     }
-
 }

@@ -33,16 +33,16 @@ import javax.swing.KeyStroke;
 
 import fedora.client.actions.ViewObject;
 import fedora.client.utility.ingest.AutoIngestor;
+import fedora.client.utility.ingest.XMLBuilder;
+import fedora.client.utility.ingest.XMLBuilder.OBJECT_TYPE;
 
 import fedora.common.Constants;
-
-import fedora.server.utilities.StreamUtility;
 
 /**
  * Launch a dialog for entering information for a new object (title, content
  * model, and possibly a specified pid), then create the object on the server
  * and launch an editor on it.
- * 
+ *
  * @author Chris Wilper
  */
 public class NewObjectDialog
@@ -57,7 +57,7 @@ public class NewObjectDialog
 
     private final JTextField m_customPIDField;
 
-    private final boolean isContentModel;
+    private final OBJECT_TYPE objectType;
 
     // for the checkbox
     public void itemStateChanged(ItemEvent e) {
@@ -70,12 +70,12 @@ public class NewObjectDialog
         }
     }
 
-    public NewObjectDialog(boolean isContentModel) {
-        super(JOptionPane.getFrameForComponent(Administrator.getDesktop()),
-              isContentModel ? "New Content Model" : "New Object",
-              true);
+    public NewObjectDialog(OBJECT_TYPE objectType, String dialogLabel) {
 
-        this.isContentModel = isContentModel;
+        super(JOptionPane.getFrameForComponent(Administrator.getDesktop()),
+              dialogLabel, true);
+
+        this.objectType = objectType;
         JPanel inputPane = new JPanel();
         inputPane.setBorder(BorderFactory
                 .createCompoundBorder(BorderFactory
@@ -193,32 +193,8 @@ public class NewObjectDialog
 
                 if (ok) {
                     dispose();
-                    // Serialize the most basic
-                    StringBuffer xml = new StringBuffer();
-                    xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-                    xml.append("<foxml:digitalObject xmlns:xsi=\"" + XSI.uri
-                            + "\"\n");
-                    xml
-                            .append("           xmlns:foxml=\"" + FOXML.uri
-                                    + "\"\n");
-                    xml.append("           xsi:schemaLocation=\"" + FOXML.uri
-                            + " " + FOXML1_1.xsdLocation + "\"");
-                    xml.append("\n           VERSION=\"1.1\"\n");
-                    if (pid != null) {
-                        xml.append("\n           PID=\""
-                                + StreamUtility.enc(pid) + "\">\n");
-                    } else {
-                        xml.append(">\n");
-                    }
-                    xml.append("  <foxml:objectProperties>\n");
-                    xml.append("    <foxml:property NAME=\"" + MODEL.LABEL.uri
-                            + "\" VALUE=\"" + StreamUtility.enc(label)
-                            + "\"/>\n");
-                    xml.append("    <foxml:property NAME=\"" + MODEL.OWNER.uri
-                            + "\" VALUE=\"" + Administrator.getUser() + "\"/>");
-                    xml.append("  </foxml:objectProperties>\n");
-                    xml.append("</foxml:digitalObject>");
-                    String objXML = xml.toString();
+                    XMLBuilder xmlBuilder = new XMLBuilder(Administrator.APIM);
+                    String objXML = xmlBuilder.createObjectXML(objectType, pid, label);
 
                     ByteArrayInputStream in =
                             new ByteArrayInputStream(objXML.getBytes("UTF-8"));
@@ -242,7 +218,6 @@ public class NewObjectDialog
                                               e);
             }
         }
-
     }
 
     public class CreateListener
