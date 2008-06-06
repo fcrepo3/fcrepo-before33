@@ -28,7 +28,8 @@ dev-148193
   Created   : 2008/05/22 from trunk r7197
   Developer : Bill Branan
   Reviewer  : Eddie Shin
-  Merged    : 
+  Merged    : 2008/06/06 into fedora-rest/trunk r7261
+  Merged    : 2008/06/06 into trunk r7260
 
 dev-148364
   Created   : 2008/05/08 from trunk r7131
