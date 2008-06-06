@@ -222,3 +222,13 @@ textarea.code {
   border: solid 1px #999;
   overflow: hidden;
 }
+dl {
+  margin-left: 1.5em;
+  margin-top: 15px;
+  font-style: italic;
+}
+dd {
+  margin-left: 1.5em;
+  font-style: normal;
+  font-size: 1.3em;
+}

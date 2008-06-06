@@ -1,16 +1,17 @@
 
 package fedora.test.api;
 
-import static org.apache.commons.httpclient.HttpStatus.SC_CREATED;
-import static org.apache.commons.httpclient.HttpStatus.SC_NOT_FOUND;
-import static org.apache.commons.httpclient.HttpStatus.SC_OK;
-import static org.apache.commons.httpclient.HttpStatus.SC_TEMPORARY_REDIRECT;
-
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+
+import java.text.SimpleDateFormat;
+
+import java.util.Date;
+
+import junit.framework.TestSuite;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
@@ -27,11 +28,21 @@ import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.StringPart;
+
 import org.junit.Test;
 
 import fedora.common.PID;
+
 import fedora.server.management.FedoraAPIM;
+
+import fedora.test.DemoObjectTestSetup;
 import fedora.test.FedoraServerTestCase;
+
+import static org.apache.commons.httpclient.HttpStatus.SC_CREATED;
+import static org.apache.commons.httpclient.HttpStatus.SC_NOT_FOUND;
+import static org.apache.commons.httpclient.HttpStatus.SC_NO_CONTENT;
+import static org.apache.commons.httpclient.HttpStatus.SC_OK;
+import static org.apache.commons.httpclient.HttpStatus.SC_TEMPORARY_REDIRECT;
 
 /**
  * Tests of the REST API. Tests assume a running instance of Fedora with the
@@ -53,6 +64,9 @@ public class TestRESTAPI
     private final PID pid = PID.getInstance("demo:REST");
 
     private String url;
+    
+    private String datetime =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date());
 
     static {
         // Test FOXML object with RELS-EXT datastream
@@ -61,54 +75,40 @@ public class TestRESTAPI
         sb.append("<foxml:digitalObject VERSION=\"1.1\" PID=\"demo:REST\" ");
         sb.append("  xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" ");
         sb.append("  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ");
-        sb
-                .append("  xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# ");
+        sb.append("  xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# ");
         sb.append("  http://www.fedora.info/definitions/1/0/foxml1-1.xsd\">");
         sb.append("  <foxml:objectProperties>");
-        sb
-                .append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
+        sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
         sb.append("  </foxml:objectProperties>");
-        sb
-                .append("  <foxml:datastream ID=\"DC\" CONTROL_GROUP=\"X\" STATE=\"A\">");
-        sb
-                .append("    <foxml:datastreamVersion ID=\"DC1.0\" MIMETYPE=\"text/xml\" LABEL=\"DC Record for Coliseum image object\">");
+        sb.append("  <foxml:datastream ID=\"DC\" CONTROL_GROUP=\"X\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion ID=\"DC1.0\" MIMETYPE=\"text/xml\" LABEL=\"DC Record for Coliseum image object\">");
         sb.append("      <foxml:xmlContent>");
-        sb
-                .append("        <oai_dc:dc xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\">");
+        sb.append("        <oai_dc:dc xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\">");
         sb.append("          <dc:title>Coliseum in Rome</dc:title>");
         sb.append("          <dc:creator>Thornton Staples</dc:creator>");
         sb.append("          <dc:subject>Architecture, Roman</dc:subject>");
-        sb
-                .append("          <dc:description>Image of Coliseum in Rome</dc:description>");
-        sb
-                .append("          <dc:publisher>University of Virginia Library</dc:publisher>");
+        sb.append("          <dc:description>Image of Coliseum in Rome</dc:description>");
+        sb.append("          <dc:publisher>University of Virginia Library</dc:publisher>");
         sb.append("          <dc:format>image/jpeg</dc:format>");
         sb.append("          <dc:identifier>demo:REST</dc:identifier>");
         sb.append("        </oai_dc:dc>");
         sb.append("      </foxml:xmlContent>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
-        sb
-                .append("  <foxml:datastream ID=\"RELS-EXT\" CONTROL_GROUP=\"M\" STATE=\"A\">");
-        sb
-                .append("    <foxml:datastreamVersion ID=\"RELS-EXT.0\" MIMETYPE=\"application/rdf+xml\" LABEL=\"Relationships\">");
+        sb.append("  <foxml:datastream ID=\"RELS-EXT\" CONTROL_GROUP=\"M\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion ID=\"RELS-EXT.0\" MIMETYPE=\"application/rdf+xml\" LABEL=\"Relationships\">");
         sb.append("      <foxml:xmlContent>");
-        sb
-                .append("        <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""
+        sb.append("        <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""
                         + "                 xmlns:rel=\"info:fedora/fedora-system:def/relations-external#\">");
-        sb
-                .append("          <rdf:Description rdf:about=\"info:fedora/demo:REST\">");
-        sb
-                .append("            <rel:hasFormalContentModel rdf:resource=\"info:fedora/demo:UVA_STD_IMAGE_1\"/>");
+        sb.append("          <rdf:Description rdf:about=\"info:fedora/demo:REST\">");
+        sb.append("            <rel:hasFormalContentModel rdf:resource=\"info:fedora/demo:UVA_STD_IMAGE_1\"/>");
         sb.append("          </rdf:Description>");
         sb.append("        </rdf:RDF>");
         sb.append("      </foxml:xmlContent>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
-        sb
-                .append("  <foxml:datastream ID=\"DS1\" CONTROL_GROUP=\"X\" STATE=\"A\">");
-        sb
-                .append("    <foxml:datastreamVersion ID=\"DS1.0\" MIMETYPE=\"text/xml\" LABEL=\"DC Record for Coliseum image object\">");
+        sb.append("  <foxml:datastream ID=\"DS1\" CONTROL_GROUP=\"X\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion ID=\"DS1.0\" MIMETYPE=\"text/xml\" LABEL=\"DC Record for Coliseum image object\">");
         sb.append("      <foxml:xmlContent>");
         sb.append("        <foo>");
         sb.append("          <bar>baz</bar>");
@@ -126,10 +126,9 @@ public class TestRESTAPI
 
     public void setUp() throws Exception {
         apim = getFedoraClient().getAPIM();
-        apim
-                .ingest(DEMO_REST_FOXML,
-                        FOXML1_1.uri,
-                        "ingesting new foxml object");
+        apim.ingest(DEMO_REST_FOXML,
+                    FOXML1_1.uri,
+                    "ingesting new foxml object");
     }
 
     public void tearDown() throws Exception {
@@ -157,6 +156,16 @@ public class TestRESTAPI
         assertEquals(SC_OK, get(false).getStatusCode());
         assertEquals(SC_OK, get(true).getStatusCode());
 
+        url = String.format("/objects/%s.xml", pid.toString());
+        assertEquals(SC_OK, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
+        
+        url = String.format("/objects/%s?asOfDateTime=%s", 
+                            pid.toString(), 
+                            datetime);
+        assertEquals(SC_OK, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
+        
         // sanity check
         url = String.format("/objects/%s", "demo:BOGUS_PID");
         assertEquals(SC_NOT_FOUND, get(false).getStatusCode());
@@ -171,6 +180,16 @@ public class TestRESTAPI
         url = String.format("/objects/%s/methods?format=xml", pid.toString());
         assertEquals(SC_OK, get(false).getStatusCode());
         assertEquals(SC_OK, get(true).getStatusCode());
+        
+        url = String.format("/objects/%s/methods.xml", pid.toString());
+        assertEquals(SC_OK, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
+        
+        url = String.format("/objects/%s/methods?asOfDateTime=%s", 
+                            pid.toString(), 
+                            datetime);
+        assertEquals(SC_OK, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());        
     }
 
     public void testListDatastreams() throws Exception {
@@ -178,11 +197,19 @@ public class TestRESTAPI
         assertEquals(SC_OK, get(false).getStatusCode());
         assertEquals(SC_OK, get(true).getStatusCode());
 
-        url =
-                String.format("/objects/%s/datastreams?format=xml", pid
-                        .toString());
+        url = String.format("/objects/%s/datastreams?format=xml", pid.toString());
         assertEquals(SC_OK, get(false).getStatusCode());
         assertEquals(SC_OK, get(true).getStatusCode());
+        
+        url = String.format("/objects/%s/datastreams/xml", pid.toString());
+        assertEquals(SC_OK, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
+        
+        url = String.format("/objects/%s/datastreams?asOfDateTime=%s", 
+                            pid.toString(), 
+                            datetime);
+        assertEquals(SC_OK, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());        
     }
 
     public void testGetDatastreamDissemination() throws Exception {
@@ -190,10 +217,14 @@ public class TestRESTAPI
         assertEquals(SC_OK, get(false).getStatusCode());
         assertEquals(SC_OK, get(true).getStatusCode());
 
+        url = String.format("/objects/%s/datastreams/RELS-EXT?asOfDateTime=%s", 
+                            pid.toString(), 
+                            datetime);
+        assertEquals(SC_OK, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());        
+        
         // sanity check
-        url =
-                String.format("/objects/%s/datastreams/BOGUS_DSID", pid
-                        .toString());
+        url = String.format("/objects/%s/datastreams/BOGUS_DSID", pid.toString());
         assertEquals(SC_NOT_FOUND, get(false).getStatusCode());
         assertEquals(SC_NOT_FOUND, get(true).getStatusCode());
     }
@@ -201,35 +232,48 @@ public class TestRESTAPI
     //public void testGetDissemination() throws Exception {}
 
     public void testFindObjects() throws Exception {
-        url =
-                String.format("/objects?pid=true&terms=%s&query=&format=xml",
-                              pid.toString());
+        url = String.format("/objects?pid=true&terms=%s&query=&format=xml", 
+                            pid.toString());
         assertEquals(SC_OK, get(false).getStatusCode());
     }
 
     public void testResumeFindObjects() throws Exception {
-        // TODO parse responseBody for token
         url = "/objects?pid=true&query=&format=xml";
+        HttpResponse response = get(false);
+        assertEquals(SC_OK, response.getStatusCode());
+        
+        String responseXML = new String(response.responseBody, "UTF-8");       
+        String sessionToken = responseXML.substring(responseXML.indexOf("<token>")+7, 
+                                                    responseXML.indexOf("</token>"));
+        
+        url = String.format("/objects?pid=true&query=&format=xml&sessionToken=%s", sessionToken);
         assertEquals(SC_OK, get(false).getStatusCode());
-
-        //url = String.format("/objects?sessionToken=%s", "");
-        //assertEquals(SC_OK, get(false));
     }
 
     public void testGetObjectHistory() throws Exception {
         url = String.format("/objects/%s/versions", pid.toString());
         assertEquals(SC_OK, get(false).getStatusCode());
         assertEquals(SC_OK, get(true).getStatusCode());
+
+        url = String.format("/objects/%s/versions?format=xml", pid.toString());
+        assertEquals(SC_OK, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
+
+        url = String.format("/objects/%s/versions.xml", pid.toString());
+        assertEquals(SC_OK, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());    
     }
 
     // API-M
     public void testIngest() throws Exception {
         url = String.format("/objects/new");
-        assertEquals(SC_CREATED, post("", true).getStatusCode());
-    }
+        HttpResponse response = post("", true);
+        assertEquals(SC_CREATED, response.getStatusCode());
 
-    public void testIngestObject() throws Exception {
-        //TODO
+        String responseHeaders = response.responseHeaders[1].toString();
+        String pid = responseHeaders.substring(responseHeaders.indexOf("/fedora/objects/")+16);
+        url = String.format("/objects/%s", pid);
+        assertEquals(SC_NO_CONTENT, delete(true).getStatusCode());
     }
 
     public void testModifyObject() throws Exception {
@@ -250,9 +294,8 @@ public class TestRESTAPI
         url = String.format("/objects/%s/export", pid.toString());
         assertEquals(SC_OK, get(true).getStatusCode());
 
-        url =
-                String.format("/objects/%s/export?context=public", pid
-                        .toString());
+        url = String.format("/objects/%s/export?context=public",
+                            pid.toString());
         assertEquals(SC_OK, get(true).getStatusCode());
     }
 
@@ -260,23 +303,19 @@ public class TestRESTAPI
         url = String.format("/objects/%s", "demo:TEST_PURGE");
         assertEquals(SC_CREATED, post("", true).getStatusCode());
         url = String.format("/objects/demo:TEST_PURGE");
-        assertEquals(SC_OK, delete(true).getStatusCode());
+        assertEquals(SC_NO_CONTENT, delete(true).getStatusCode());
     }
 
     public void testAddDatastream() throws Exception {
         // inline (X) datastream
         String xmlData = "<foo>bar</foo>";
-        url =
-                String
-                        .format("/objects/%s/datastreams/FOO?controlGroup=X&dsLabel=bar",
-                                pid.toString());
+        url = String.format("/objects/%s/datastreams/FOO?controlGroup=X&dsLabel=bar",
+                            pid.toString());
         assertEquals(SC_CREATED, post(xmlData, true).getStatusCode());
 
         // managed (M) datastream
-        url =
-                String
-                        .format("/objects/%s/datastreams/BAR?controlGroup=M&dsLabel=bar",
-                                pid.toString());
+        url = String.format("/objects/%s/datastreams/BAR?controlGroup=M&dsLabel=bar",
+                            pid.toString());
         File temp = File.createTempFile("test", null);
         DataOutputStream os = new DataOutputStream(new FileOutputStream(temp));
         os.write(42);
@@ -285,21 +324,16 @@ public class TestRESTAPI
     }
 
     public void testModifyDatastreamByReference() throws Exception {
-        url =
-                String
-                        .format("/objects/%s/datastreams/BAR?controlGroup=M&dsLabel=bar",
-                                pid.toString());
+        url = String.format("/objects/%s/datastreams/BAR?controlGroup=M&dsLabel=bar",
+                            pid.toString());
         File temp = File.createTempFile("test", null);
         DataOutputStream os = new DataOutputStream(new FileOutputStream(temp));
         os.write(42);
         os.close();
         assertEquals(SC_CREATED, post(temp, true).getStatusCode());
 
-        url =
-                String
-                        .format("/objects/%s/datastreams/BAR?controlGroup=M",
-                                pid.toString());
-        
+        url = String.format("/objects/%s/datastreams/BAR?controlGroup=M",
+                            pid.toString());        
         temp = File.createTempFile("test2", null);
         os = new DataOutputStream(new FileOutputStream(temp));
         os.write(42);
@@ -309,9 +343,8 @@ public class TestRESTAPI
 
     public void testModifyDatastreamByValue() throws Exception {
         String xmlData = "<baz>quux</baz>";
-        url =
-                String.format("/objects/%s/datastreams/DS1?controlGroup=X", pid
-                        .toString());
+        url = String.format("/objects/%s/datastreams/DS1?controlGroup=X",
+                            pid.toString());
 
         assertEquals(SC_CREATED, put(xmlData, true).getStatusCode());
     }
@@ -330,7 +363,7 @@ public class TestRESTAPI
 
     public void testPurgeDatastream() throws Exception {
         url = String.format("/objects/%s/datastreams/RELS-EXT", pid.toString());
-        assertEquals(SC_OK, delete(true).getStatusCode());
+        assertEquals(SC_NO_CONTENT, delete(true).getStatusCode());
     }
 
     public void testGetNextPID() throws Exception {
@@ -347,17 +380,76 @@ public class TestRESTAPI
 
     //public void testPurgeRelationship() throws Exception {}
 
+    public void testLifecycle() throws Exception {
+        HttpResponse response = null;
+
+        // Get next PID
+        url = "/objects/nextPID.xml";
+        response = get(true);
+        assertEquals(SC_OK, response.getStatusCode());
+        
+        String responseXML = new String(response.responseBody, "UTF-8");       
+        String pid = responseXML.substring(responseXML.indexOf("<pid>")+5, 
+                                           responseXML.indexOf("</pid>"));
+
+        // Ingest object
+        String label = "Lifecycle-Test-Label";
+        url = String.format("/objects/%s?label=%s", pid, label);        
+        assertEquals(SC_CREATED, post("", true).getStatusCode());
+        
+        // Add datastream
+        String datastreamData = "<test>Test Datastream</test>";
+        url = String.format("/objects/%s/datastreams/TESTDS?controlGroup=X&dsLabel=Test",
+                            pid.toString());
+        assertEquals(SC_CREATED, post(datastreamData, true).getStatusCode());
+
+        // Get object XML
+        url = String.format("/objects/%s/objectXML", pid);
+        response = get(true);
+        assertEquals(SC_OK, response.getStatusCode());
+        responseXML = new String(response.responseBody, "UTF-8");
+        assertTrue(responseXML.indexOf(label) > 0);
+        assertTrue(responseXML.indexOf(datastreamData) > 0);        
+        
+        // Modify object
+        label = "Updated-Label";
+        url = String.format("/objects/%s?label=%s", pid.toString(), label);
+        assertEquals(SC_TEMPORARY_REDIRECT, put("", true).getStatusCode());       
+        
+        // Modify datastream
+        datastreamData = "<test>Update Test</test>";
+        url = String.format("/objects/%s/datastreams/TESTDS?controlGroup=X",
+                            pid.toString());
+        assertEquals(SC_CREATED, put(datastreamData, true).getStatusCode());
+
+        // Export
+        url = String.format("/objects/%s/export", pid.toString());
+        response = get(true);
+        assertEquals(SC_OK, response.getStatusCode());
+        responseXML = new String(response.responseBody, "UTF-8");
+        assertTrue(responseXML.indexOf(label) > 0);
+        assertTrue(responseXML.indexOf(datastreamData) > 0);
+        
+        // Purge datastream
+        url = String.format("/objects/%s/datastreams/TESTDS", pid);
+        assertEquals(SC_NO_CONTENT, delete(true).getStatusCode());
+        
+        // Purge object
+        url = String.format("/objects/%s", pid);
+        assertEquals(SC_NO_CONTENT, delete(true).getStatusCode());
+    }
+    
     // helper methods
     private HttpClient getClient(boolean auth) {
         HttpClient client = new HttpClient();
         client.getParams().setAuthenticationPreemptive(true);
         if (auth) {
-            client
-                    .getState()
-                    .setCredentials(new AuthScope(getHost(), Integer
-                                            .valueOf(getPort()), "realm"),
-                                    new UsernamePasswordCredentials(getUsername(),
-                                                                    getPassword()));
+            client.getState().
+                setCredentials(new AuthScope(getHost(), 
+                                             Integer.valueOf(getPort()), 
+                                             "realm"),
+                               new UsernamePasswordCredentials(getUsername(),
+                                                               getPassword()));
         }
         return client;
     }
@@ -463,15 +555,11 @@ public class TestRESTAPI
                                                                   "text/xml",
                                                                   "utf-8"));
             } else if (requestContent instanceof File) {
-                Part[] parts =
-                        {
-                                new StringPart("param_name", "value"),
-                                new FilePart(((File) requestContent).getName(),
-                                             (File) requestContent)};
-                httpMethod
-                        .setRequestEntity(new MultipartRequestEntity(parts,
-                                                                     httpMethod
-                                                                             .getParams()));
+                Part[] parts = { new StringPart("param_name", "value"),
+                                 new FilePart(((File) requestContent).getName(),
+                                             (File) requestContent) };
+                httpMethod.setRequestEntity(
+                    new MultipartRequestEntity(parts, httpMethod.getParams()));
             } else {
                 throw new IllegalArgumentException("requestContent must be a String or File");
             }
@@ -486,7 +574,9 @@ public class TestRESTAPI
 
     // Supports legacy test runners
     public static junit.framework.Test suite() {
-        return new junit.framework.JUnit4TestAdapter(TestRESTAPI.class);
+        TestSuite suite = new TestSuite("REST API TestSuite");
+        suite.addTestSuite(TestRESTAPI.class);
+        return new DemoObjectTestSetup(suite);
     }
 
     class HttpResponse {

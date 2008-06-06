@@ -1,268 +1,303 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <application xmlns="http://research.sun.com/wadl/2006/10">
-    <resources base="http://localhost:8080/fedora/objects//objects">
-        <resource path="/objects">
-            <method name="GET">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="terms"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="query"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:int" style="query" repeating="false" name="maxResults" default="25"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="sessionToken"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="format" default="text/html"/>
-                </request>
-                <response>
-                    <representation mediaType="text/html,text/xml"/>
-                </response>
-            </method>
-            <method name="GET">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:int" style="query" repeating="false" name="numPIDs" default="1"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="namespace"/>
-                </request>
-                <response>
-                    <representation/>
-                </response>
-            </method>
-            <method name="GET">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:int" style="query" repeating="false" name="numPIDs" default="1"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="namespace"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="format" default="text/html"/>
-                </request>
-                <response>
-                    <representation/>
-                </response>
-            </method>
-        </resource>
-        <resource path="/{pid}/datastreams">
-            <method name="GET">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="asOfDateTime"/>
-                </request>
-                <response>
-                    <representation/>
-                </response>
-            </method>
-            <method name="GET">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="asOfDateTime"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="format" default="text/html"/>
-                </request>
-                <response>
-                    <representation/>
-                </response>
-            </method>
-            <method name="GET">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="dsID"/>
-                </request>
-                <response>
-                    <representation/>
-                </response>
-            </method>
-            <method name="GET">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="dsID"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="asOfDateTime"/>
-                </request>
-                <response>
-                    <representation/>
-                </response>
-            </method>
-            <method name="DELETE">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="dsID"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="startDT"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="endDT"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="logMessage"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:boolean" style="query" repeating="false" name="force"/>
-                </request>
-                <response>
-                    <representation/>
-                </response>
-            </method>
-            <method name="PUT">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="dsID"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="controlGroup" default="X"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="format"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="dsLocation"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="altIDs"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="dsLabel"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:boolean" style="query" repeating="false" name="versionable" default="true"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="dsState" default="A"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="formatURI"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="checksumType"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="checksum"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="logMessage"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:boolean" style="query" repeating="false" name="force" default="false"/>
-                    <representation/>
-                </request>
-                <response>
-                    <representation/>
-                </response>
-            </method>
-            <method name="POST">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="dsID"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="controlGroup" default="X"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="format"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="dsLocation"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="altIDs"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="dsLabel"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:boolean" style="query" repeating="false" name="versionable" default="true"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="dsState" default="A"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="formatURI"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="checksumType"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="checksum"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="logMessage"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:boolean" style="query" repeating="false" name="force" default="false"/>
-                    <representation/>
-                </request>
-                <response>
-                    <representation/>
-                </response>
-            </method>
-        </resource>
-        <resource path="/">
-            <method name="GET">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="format" default="foxml1.0"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="context"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="encoding" default="UTF-8"/>
-                </request>
-                <response>
-                    <representation mediaType="text/xml"/>
-                </response>
-            </method>
-            <method name="GET">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="format" default="text/html"/>
-                </request>
-                <response>
-                    <representation/>
-                </response>
-            </method>
-            <method name="GET">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                </request>
-                <response>
-                    <representation/>
-                </response>
-            </method>
-            <method name="GET">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="format" default="text/html"/>
-                </request>
-                <response>
-                    <representation/>
-                </response>
-            </method>
-            <method name="GET">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="asOfDateTime"/>
-                </request>
-                <response>
-                    <representation/>
-                </response>
-            </method>
-            <method name="GET">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="asOfDateTime"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="format" default="text/html"/>
-                </request>
-                <response>
-                    <representation/>
-                </response>
-            </method>
-            <method name="GET">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                </request>
-                <response>
-                    <representation mediaType="text/xml"/>
-                </response>
-            </method>
-            <method name="GET">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="format" default="text/html"/>
-                </request>
-                <response>
-                    <representation mediaType="text/html,text/xml"/>
-                </response>
-            </method>
-            <method name="GET">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="asOfDateTime"/>
-                </request>
-                <response>
-                    <representation mediaType="text/xml"/>
-                </response>
-            </method>
-            <method name="GET">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="asOfDateTime"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="format" default="text/html"/>
-                </request>
-                <response>
-                    <representation mediaType="text/html,text/xml"/>
-                </response>
-            </method>
-            <method name="DELETE">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="logMessage"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:boolean" style="query" repeating="false" name="force" default="false"/>
-                </request>
-                <response>
-                    <representation/>
-                </response>
-            </method>
-            <method name="POST">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="label"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="logMessage"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="contentModel"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="format" default="foxml1.0"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="encoding" default="UTF-8"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="namespace"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="ownerId"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="state" default="A"/>
-                    <representation mediaType="text/xml"/>
-                </request>
-                <response>
-                    <representation/>
-                </response>
-            </method>
-            <method name="PUT">
-                <request>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="template" repeating="false" name="pid"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="label"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="logMessage"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="ownerId"/>
-                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string" style="query" repeating="false" name="state" default="A"/>
-                </request>
-                <response>
-                    <representation/>
-                </response>
-            </method>
-        </resource>
-    </resources>
+	<resources base="http://localhost:8080/fedora/objects">
+		<resource path="/{pid}/datastreams">
+			<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+				style="template" name="pid" />
+			<method name="GET">
+				<request>
+					<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+						style="query" name="asOfDateTime" />
+					<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="text/html"
+						type="xs:string" style="query" name="format" />
+				</request>
+				<response>
+					<representation mediaType="*/*" />
+				</response>
+			</method>
+			<resource path="xml">
+				<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+					style="template" name="pid" />
+				<method name="GET">
+					<request>
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="asOfDateTime" />
+					</request>
+					<response>
+						<representation mediaType="*/*" />
+					</response>
+				</method>
+			</resource>
+			<resource path="/{dsID}">
+				<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+					style="template" name="dsID" />
+				<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+					style="template" name="pid" />
+				<method name="GET">
+					<request>
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="asOfDateTime" />
+					</request>
+					<response>
+						<representation mediaType="*/*" />
+					</response>
+				</method>
+				<method name="DELETE">
+					<request>
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="startDT" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="endDT" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="logMessage" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="false"
+							type="xs:boolean" style="query" name="force" />
+					</request>
+					<response>
+						<representation mediaType="*/*" />
+					</response>
+				</method>
+				<method name="PUT">
+					<request>
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="dsLocation" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="altIDs" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="dsLabel" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="formatURI" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="checksumType" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="checksum" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="logMessage" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="false"
+							type="xs:boolean" style="query" name="force" />
+					</request>
+					<response>
+						<representation mediaType="*/*" />
+					</response>
+				</method>
+				<method name="POST">
+					<request>
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="X"
+							type="xs:string" style="query" name="controlGroup" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="dsLocation" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="altIDs" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="dsLabel" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="true"
+							type="xs:boolean" style="query" name="versionable" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="A"
+							type="xs:string" style="query" name="dsState" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="formatURI" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="checksumType" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="checksum" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="logMessage" />
+					</request>
+					<response>
+						<representation mediaType="*/*" />
+					</response>
+				</method>
+			</resource>
+		</resource>
+		<resource path="/">
+			<resource path="{pid}">
+				<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+					style="template" name="pid" />
+				<method name="POST">
+					<request>
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="label" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="logMessage" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="info:fedora/fedora-system:FOXML-1.1"
+							type="xs:string" style="query" name="format" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="UTF-8"
+							type="xs:string" style="query" name="encoding" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="namespace" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="ownerId" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="A"
+							type="xs:string" style="query" name="state" />
+					</request>
+					<response>
+						<representation mediaType="*/*" />
+					</response>
+				</method>
+				<method name="GET">
+					<request>
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="asOfDateTime" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="text/html"
+							type="xs:string" style="query" name="format" />
+					</request>
+					<response>
+						<representation mediaType="text/html" />
+						<representation mediaType="text/xml" />
+					</response>
+				</method>
+				<method name="DELETE">
+					<request>
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="logMessage" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="false"
+							type="xs:boolean" style="query" name="force" />
+					</request>
+					<response>
+						<representation mediaType="*/*" />
+					</response>
+				</method>
+				<method name="PUT">
+					<request>
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="label" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="logMessage" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="ownerId" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="A"
+							type="xs:string" style="query" name="state" />
+					</request>
+					<response>
+						<representation mediaType="*/*" />
+					</response>
+				</method>
+			</resource>
+			<resource path="{pid}/export">
+				<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+					style="template" name="pid" />
+				<method name="GET">
+					<request>
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="info:fedora/fedora-system:FOXML-1.1"
+							type="xs:string" style="query" name="format" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="context" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="UTF-8"
+							type="xs:string" style="query" name="encoding" />
+					</request>
+					<response>
+						<representation mediaType="text/xml" />
+					</response>
+				</method>
+			</resource>
+			<resource path="{pid}/versions">
+				<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+					style="template" name="pid" />
+				<method name="GET">
+					<request>
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="text/html"
+							type="xs:string" style="query" name="format" />
+					</request>
+					<response>
+						<representation mediaType="*/*" />
+					</response>
+				</method>
+			</resource>
+			<resource path="{pid}/versions.xml">
+				<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+					style="template" name="pid" />
+				<method name="GET">
+					<response>
+						<representation mediaType="*/*" />
+					</response>
+				</method>
+			</resource>
+			<resource path="{pid}/methods.xml">
+				<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+					style="template" name="pid" />
+				<method name="GET">
+					<request>
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="asOfDateTime" />
+					</request>
+					<response>
+						<representation mediaType="text/xml" />
+					</response>
+				</method>
+			</resource>
+			<resource path="{pid}/methods">
+				<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+					style="template" name="pid" />
+				<method name="GET">
+					<request>
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="asOfDateTime" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="text/html"
+							type="xs:string" style="query" name="format" />
+					</request>
+					<response>
+						<representation mediaType="text/html" />
+						<representation mediaType="text/xml" />
+					</response>
+				</method>
+			</resource>
+			<resource path="{pid}/objectXML">
+				<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+					style="template" name="pid" />
+				<method name="GET">
+					<response>
+						<representation mediaType="text/xml" />
+					</response>
+				</method>
+			</resource>
+		</resource>
+		<resource path="/objects">
+			<method name="GET">
+				<request>
+					<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+						style="query" name="terms" />
+					<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+						style="query" name="query" />
+					<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="25"
+						type="xs:int" style="query" name="maxResults" />
+					<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+						style="query" name="sessionToken" />
+					<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="text/html"
+						type="xs:string" style="query" name="format" />
+				</request>
+				<response>
+					<representation mediaType="text/html" />
+					<representation mediaType="text/xml" />
+				</response>
+			</method>
+			<resource path="nextPID">
+				<method name="GET">
+					<request>
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="1"
+							type="xs:int" style="query" name="numPIDs" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="namespace" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="text/html"
+							type="xs:string" style="query" name="format" />
+					</request>
+					<response>
+						<representation mediaType="*/*" />
+					</response>
+				</method>
+			</resource>
+			<resource path="nextPID.xml">
+				<method name="GET">
+					<request>
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" default="1"
+							type="xs:int" style="query" name="numPIDs" />
+						<param xmlns:xs="http://www.w3.org/2001/XMLSchema" type="xs:string"
+							style="query" name="namespace" />
+					</request>
+					<response>
+						<representation mediaType="*/*" />
+					</response>
+				</method>
+			</resource>
+		</resource>
+	</resources>
 </application>

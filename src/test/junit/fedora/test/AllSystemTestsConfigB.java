@@ -11,7 +11,8 @@ import org.junit.runners.Suite;
         fedora.test.api.TestXACMLPolicies.class,
         fedora.test.api.TestRelationships.class,
         fedora.test.api.TestRISearch.class,
-        fedora.test.api.TestManagementNotifications.class})
+        fedora.test.api.TestManagementNotifications.class,
+        fedora.test.api.TestRESTAPI.class})
 public class AllSystemTestsConfigB {
 
     // Supports legacy tests runners
@@ -28,6 +29,7 @@ public class AllSystemTestsConfigB {
         suite.addTest(fedora.test.api.TestRelationships.suite());
         suite.addTest(fedora.test.api.TestRISearch.suite());
         suite.addTest(fedora.test.api.TestManagementNotifications.suite());
+        suite.addTest(fedora.test.api.TestRESTAPI.suite());
 
         return suite;
     }
