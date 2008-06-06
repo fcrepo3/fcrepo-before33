@@ -243,6 +243,22 @@ public class PID {
     public String getObjectId() {
         return m_objectId;
     }
+   
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof PID && m_normalized.equals(((PID) o).toString());
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return m_normalized.hashCode();
+    }
 
     /**
      * Command-line interactive tester. If one arg given, prints normalized form

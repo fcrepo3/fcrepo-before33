@@ -126,17 +126,6 @@ public class FedoraClient
      */
     private String m_uploadURL;
 
-    static {
-        // If commons-logging has not been explicitly configured yet,
-        // set it to use Log4J.  This is necessary because FedoraClient
-        // uses commons-httpclient, which uses commons-logging.
-        final String pfx = "org.apache.commons.logging.";
-        if (System.getProperty(pfx + "LogFactory") == null) {
-            System.setProperty(pfx + "LogFactory", pfx + "impl.Log4jFactory");
-            System.setProperty(pfx + "Log", pfx + "impl.Log4JLogger");
-        }
-    }
-
     public FedoraClient(String baseURL, String user, String pass)
             throws MalformedURLException {
         m_baseURL = baseURL;

@@ -6,6 +6,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses( {fedora.client.AllUnitTests.class,
+                      fedora.common.AllUnitTests.class,
                       fedora.server.AllUnitTests.class,
                       fedora.utilities.AllUnitTests.class})
 public class AllUnitTests {
@@ -17,6 +18,7 @@ public class AllUnitTests {
                 new junit.framework.TestSuite(AllUnitTests.class.getName());
 
         suite.addTest(fedora.client.AllUnitTests.suite());
+        suite.addTest(fedora.common.AllUnitTests.suite());
         suite.addTest(fedora.server.AllUnitTests.suite());
         suite.addTest(fedora.utilities.AllUnitTests.suite());
 

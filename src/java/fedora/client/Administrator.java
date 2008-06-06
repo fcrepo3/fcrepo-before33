@@ -72,6 +72,8 @@ import fedora.server.management.FedoraAPIM;
 import fedora.swing.mdi.MDIDesktopPane;
 import fedora.swing.mdi.WindowMenu;
 
+import fedora.utilities.Log4J;
+
 /**
  * Fedora Administrator GUI.
  *
@@ -859,6 +861,7 @@ public class Administrator
     }
 
     public static void main(String[] args) {
+        Log4J.force();
         if (args.length == 1) {
             int socketTimeoutSeconds = 120;
             try {

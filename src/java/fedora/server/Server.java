@@ -6,7 +6,6 @@
 package fedora.server;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -21,10 +20,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Properties;
+import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,7 +29,6 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -56,6 +52,8 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.status.ServerState;
 import fedora.server.utilities.status.ServerStatusFile;
 
+import fedora.utilities.Log4J;
+
 /**
  * The starting point for working with a Fedora repository. This class handles
  * loading, starting, and stopping modules (the module lifecycle), and provides
@@ -74,9 +72,6 @@ public abstract class Server
 
     /** Logger for this class. */
     private static Logger LOG;
-
-    private static final String LOG4J_PATTERN =
-            "log4j\\.appender\\.(\\w+)\\.File";
 
     /**
      * The ResourceBundle that provides access to constants from
@@ -103,13 +98,6 @@ public abstract class Server
 
     /** The directory where server configuration is stored, relative to home. */
     public static String CONFIG_DIR = s_const.getString("config.dir");
-
-    /**
-     * The default directory where the server logs are stored. This directory
-     * should always exist because the startup log is written here, even if logs
-     * are written elsewhere by a <code>Server</code> subclass.
-     */
-    public static String LOG_DIR = s_const.getString("log.dir");
 
     /**
      * The startup log file. This file will include all log messages regardless
@@ -487,7 +475,7 @@ public abstract class Server
 
             m_statusFile = new ServerStatusFile(m_homeDir);
 
-            File logDir = new File(m_homeDir, LOG_DIR);
+            File logDir = new File(m_homeDir, "logs");
             if (!logDir.exists()) {
                 logDir.mkdir(); // try to create dir if doesn't exist
             }
@@ -706,36 +694,22 @@ public abstract class Server
             throws ServerInitializationException {
 
         File fedoraHome = new File(Constants.FEDORA_HOME);
-        File homeDir = new File(fedoraHome, "server");
-        File logDir = new File(homeDir, LOG_DIR);
+        File serverDir = new File(fedoraHome, "server");
+        File logDir = new File(serverDir, "logs");
         logDir.mkdirs();
-        Pattern pattern = Pattern.compile(LOG4J_PATTERN);
+        
+        Map<String, String> options = new HashMap<String, String>();
+        options.put("logDir", logDir.getPath());
+        options.put("extension", extension);
 
-        Properties loadedProps = new Properties();
-        File propFile = new File(homeDir, "config/log4j.properties");
+        File propFile = new File(serverDir, "config/log4j.properties");
+        
         try {
-            loadedProps.load(new FileInputStream(propFile));
+            Log4J.initFromPropFile(propFile, options);
         } catch (Exception e) {
-            throw new ServerInitializationException("Error reading log4j "
-                    + "configuration file: " + propFile.getPath(), e);
+            throw new ServerInitializationException("Error initializing from "
+                    + "log4j configuration file: " + propFile.getPath(), e);
         }
-
-        Properties props = new Properties();
-        Iterator names = loadedProps.keySet().iterator();
-        while (names.hasNext()) {
-            String name = (String) names.next();
-            String value = loadedProps.getProperty(name);
-            Matcher matcher = pattern.matcher(name);
-            // if File appender location is empty, save to $FEDORA_HOME/logs/
-            if (matcher.matches() && (value == null || value.equals(""))) {
-                value =
-                        new File(logDir, matcher.group(1).toLowerCase()
-                                + extension).getAbsolutePath();
-            }
-            props.put(name, value);
-        }
-
-        PropertyConfigurator.configure(props);
 
         LOG = Logger.getLogger(Server.class.getName());
     }
