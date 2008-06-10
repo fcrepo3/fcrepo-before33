@@ -102,9 +102,6 @@ public interface Authorization {
                                   String namespace,
                                   int nNewPids) throws AuthzException;
 
-    public void enforceGetObjectProperties(Context context, String pid)
-            throws AuthzException;
-
     public void enforceGetObjectXML(Context context,
                                     String pid,
                                     String objectXmlEncoding)

@@ -42,8 +42,6 @@ public class ActionNamespace
 
     public final XacmlName GET_NEXT_PID;
 
-    public final XacmlName GET_OBJECT_PROPERTIES;
-
     public final XacmlName GET_OBJECT_XML;
 
     public final XacmlName INGEST;
@@ -121,8 +119,6 @@ public class ActionNamespace
                 addName(new XacmlName(this, "id-getDatastreamHistory"));
         GET_DATASTREAMS = addName(new XacmlName(this, "id-getDatastreams"));
         GET_NEXT_PID = addName(new XacmlName(this, "id-getNextPid"));
-        GET_OBJECT_PROPERTIES =
-                addName(new XacmlName(this, "id-getObjectProperties"));
         GET_OBJECT_XML = addName(new XacmlName(this, "id-getObjectXML"));
         INGEST = addName(new XacmlName(this, "id-ingest"));
         MODIFY_DATASTREAM_BY_REFERENCE =

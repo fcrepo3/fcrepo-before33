@@ -992,27 +992,6 @@ public class DefaultAuthorization
     // }
     // }
 
-    public final void enforceGetObjectProperties(Context context, String pid)
-            throws AuthzException {
-        try {
-            LOG.debug("Entered enforceGetObjectProperties");
-            String target = Constants.ACTION.GET_OBJECT_PROPERTIES.uri;
-            log("enforcing " + target);
-            context.setActionAttributes(null);
-            context.setResourceAttributes(null);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
-                             target,
-                             Constants.ACTION.APIM.uri,
-                             pid,
-                             extractNamespace(pid),
-                             context);
-        } finally {
-            LOG.debug("Exiting enforceGetObjectProperties");
-        }
-    }
-
     public final void enforceGetObjectXML(Context context,
                                           String pid,
                                           String objectXmlEncoding)

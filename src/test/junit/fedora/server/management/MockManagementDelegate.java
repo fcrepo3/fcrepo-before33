@@ -254,12 +254,6 @@ public class MockManagementDelegate
         return result;
     }
 
-    public Property[] getObjectProperties(Context context, String pid)
-            throws ServerException {
-        calls.add(new Call("getObjectProperties", context, pid));
-        return new Property[0];
-    }
-
     public InputStream getObjectXML(Context context, String pid, String encoding) {
         calls.add(new Call("getObjectXML", context, pid, encoding));
         return new ByteArrayInputStream(new byte[0]);
