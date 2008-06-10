@@ -314,14 +314,6 @@ public class JournalConsumer
     /**
      * Read-only method: pass the call to the {@link ManagementDelegate}.
      */
-    public Property[] getObjectProperties(Context context, String pid)
-            throws ServerException {
-        return delegate.getObjectProperties(context, pid);
-    }
-
-    /**
-     * Read-only method: pass the call to the {@link ManagementDelegate}.
-     */
     public InputStream getObjectXML(Context context, String pid, String encoding)
             throws ServerException {
         return delegate.getObjectXML(context, pid, encoding);

@@ -37,9 +37,6 @@ public interface Management {
                              @PName("ownerID")String ownerID,
                              @PName("logMessage")String logMessage) throws ServerException;
     
-    public Property[] getObjectProperties(@PName("context")Context context, @PName("pid")String pid)
-            throws ServerException;
-
     public InputStream getObjectXML(@PName("context")Context context, @PName("pid")String pid, @PName("encoding")String encoding)
             throws ServerException;
 
