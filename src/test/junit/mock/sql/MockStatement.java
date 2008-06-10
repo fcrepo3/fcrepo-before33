@@ -192,5 +192,30 @@ public class MockStatement
     public void setQueryTimeout(int arg0) throws SQLException {
         throw new RuntimeException("MockStatement.setQueryTimeout not implemented");
     }
+    
+    /* JDBC_4_ANT_TOKEN_BEGIN -
+    @Override
+    public boolean isPoolable() throws SQLException {
+        throw new UnsupportedOperationException(
+            "Java 1.6 JDBC methods are not supported");
+    }
 
+    @Override
+    public void setPoolable(boolean arg0) throws SQLException {
+        throw new UnsupportedOperationException(
+            "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public boolean isWrapperFor(Class<?> arg0) throws SQLException {
+        throw new UnsupportedOperationException(
+            "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public <T> T unwrap(Class<T> arg0) throws SQLException {
+        throw new UnsupportedOperationException(
+            "Java 1.6 JDBC methods are not supported");
+    }
+    - JDBC_4_ANT_TOKEN_END */
 }
