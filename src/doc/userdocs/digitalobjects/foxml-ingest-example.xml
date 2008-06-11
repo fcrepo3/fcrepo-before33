@@ -3,8 +3,7 @@
 <!-- FOXML INGEST EXAMPLE:  -->
 <!-- This is an example of a FOXML object as it should be encoded for ingest in the repository.  Note that attributes -->
 <!-- that are automatically assigned by the Fedora repository are omitted.  Notable ommissions are the created and last -->
-<!-- modified dates in the object properties, the created date, size, and versionable attributes on datastreams and -->
-<!-- the created date and versionable attributes on disseminators.   -->
+<!-- modified dates in the object properties, the created date, size, and versionable attributes on datastreams. -->
 <!--*******************************************************************************************************************************************-->
 <!-- NOTE!!  Please see the FOXML Reference Example object in the section named "Fedora Digital Objects" in the  -->
 <!-- Fedora System Documentation.  This will give an element-by-element explanation of a FOXML instance document.  -->
@@ -86,11 +85,4 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="demo:8" STATE="A">
-		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="demo:9" LABEL="Disseminator to provide dynamic views of a MRSID image">
-			<foxml:serviceInputMap>
-				<foxml:datastreamBinding DATASTREAM_ID="IMAGE" KEY="MRSID" LABEL="The IMAGE datastream serves as input to the MRSID service" ORDER="0"/>
-			</foxml:serviceInputMap>
-		</foxml:disseminatorVersion>
-	</foxml:disseminator>
 </foxml:digitalObject>
