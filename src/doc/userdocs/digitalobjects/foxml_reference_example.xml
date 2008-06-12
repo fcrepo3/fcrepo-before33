@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--*******************************************************************************************************************************************-->
-<!-- FOXML REFERENCE EXAMPLE OBJECT:  -->
+<!-- FOXML 1.1 REFERENCE EXAMPLE OBJECT:  -->
 <!-- This is an example of a FOXML encoded digital object as it would appear in the Fedora persistent storage area. -->
 <!--*******************************************************************************************************************************************-->
 <!-- The digitalObject root element contains the object PID, which uniquely identifies the Fedora object  -->
