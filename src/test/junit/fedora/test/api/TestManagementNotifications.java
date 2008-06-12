@@ -366,6 +366,12 @@ public class TestManagementNotifications
                     fail("Timeout reached waiting for notification " +
                          "on message regarding: " + includedText);
                     break;
+                } else {
+                    try {
+                        Thread.sleep(100);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }
