@@ -24,12 +24,12 @@
         <li><a href="#model">The Fedora Digital Object Model</a></li>
         <li><a href="#data">Datastreams</a></li>
         <li><a href="#access">Digital Object Model - Access Perspective</a></li>
-        <li><a href="introRelsExt.html">Digital Object Relationships and Graphs</a></li>
+        <li><a href="introRelsExt.html">Digital Object Relationships and Graphs (linked document)</a></li>
         <li><a href="#types">Four Types of Fedora Objects</a>
           <ol class="alpha">
             <li><a href="#DATA">Data Object</a></li>
-            <li><a href="#BDEF">Behavior Definition Object</a></li>
-            <li><a href="#BMECH">Behavior Mechanism Object</a></li>
+            <li><a href="#SDEF">Service Definition Object</a></li>
+            <li><a href="#SDEP">Service Deployment Object</a></li>
             <li><a href="#CMODEL">Content Model Object</a></li>
           </ol>
         </li>
@@ -151,87 +151,209 @@
 <li>
 <h2 id="types">Four Types of Fedora Digital Objects</h2>
 <span class="plaintext">
-Although every Fedora digital object conforms to the Fedora object model, as described above, there are four distinct types of Fedora digital objects that can be stored in a Fedora repository. The distinction between these four types is fundamental to how the Fedora repository system works. In Fedora, there are objects that store digital content entities, objects that store service descriptions, objects used to deploy services, and objects used to organize other objects.
+Although every Fedora digital object conforms to the Fedora object model, as described above, there are four distinct 
+types of Fedora digital objects that can be stored in a Fedora repository. The distinction between these four types 
+is fundamental to how the Fedora repository system works. In Fedora, there are objects that store digital content 
+entities, objects that store service descriptions, objects used to deploy services, and objects used to organize 
+other objects.
 </span>
 <ol class="alpha">
 <li><h3 id="DATA">Data Object</h3>
 <br />
 <span class="plaintext">
-In Fedora, a Data object is the type of object used to represent a digital content entity. Data objects are what we normally think of when we imagine a repository storing digital collections. Data objects can represent such varied entities as images, books, electronic texts, learning objects, publications, datasets, and many other entities. One or more Datastreams are used to represent the parts of the digital content. A Datastream is an XML element that describes the raw content (a bitstream or external content). In the CMA, Disseminators, a metadata construct used to represent services, are eliminated though their functionality is still provided in other ways.
+In Fedora, a Data object is the type of object used to represent a digital content entity. Data objects are what we 
+normally think of when we imagine a repository storing digital collections. Data objects can represent such varied 
+entities as images, books, electronic texts, learning objects, publications, datasets, and many other entities. One 
+or more Datastreams are used to represent the parts of the digital content. A Datastream is an XML element that 
+describes the raw content (a bitstream or external content). In the CMA, Disseminators, a metadata construct used to 
+represent services, are eliminated though their functionality is still provided in other ways.
 <br />
 <br />
-The Data object, indeed all Fedora digital objects, now consists of the FOXML digital object encapsulation (foxml:digitalObject) and two fundamental XML elements: Object Properties (foxml:objectProperties) and Datastreams (foxml:datastream).  The Data object is the simplest of all the specialized object types and is identical to the digital object described in the Fedora Digital Object Model section above.
+The Data object, indeed all Fedora digital objects, now consists of the FOXML digital object encapsulation 
+(foxml:digitalObject) and two fundamental XML elements: Object Properties (foxml:objectProperties) and 
+Datastreams (foxml:datastream).  The Data object is the simplest of all the specialized object types and is 
+identical to the digital object described in the Fedora Digital Object Model section above.
 <br />
 <br />
-Data objects can now be freely shared between Fedora repositories.  If a federated identifier-resolver system, such as the Handle System&#8482;, or any authoritative name registry system is used, the Data object will have the same identifier for each copy of itself in each participating repository.  Sharing Data objects while keeping the same identifier in each copy greatly simplifies replication, and enables many business processes and services that are needed for large scale repository installations integrated within the Fedora Framework.  Data objects can still be shared between repositories by including both the original identifier and alternate identifiers as part of the object's metadata.
+Data objects can now be freely shared between Fedora repositories.  If a federated identifier-resolver system, 
+such as the Handle System&#8482;, or any authoritative name registry system is used, the Data object will have 
+the same identifier for each copy of itself in each participating repository.  Sharing Data objects while keeping 
+the same identifier in each copy greatly simplifies replication, and enables many business processes and services 
+that are needed for large scale repository installations integrated within the Fedora Framework.  Data objects 
+can still be shared between repositories by including both the original identifier and alternate identifiers as 
+part of the object's metadata.
 </span></li>
-<li><h3 id="BDEF">Behavior Definition Object</h3>
+<li><h3 id="SDEF">Service Definition Object</h3>
 <br />
 <span class="plaintext">
-In Fedora, a Behavior Definition object or BDef (<em>Service Definition object or SDef</em>) is a special type of <em>control object</em> used to store a model of a Service.  A Service contains an integrated set of Operations that a Data object supports.  In object-oriented programming terms, the BDEF (<em>SDef</em>) defines an "interface" which lists the operations that are supported but does not define exactly how each operation is performed.  This is also similar to approaches used in Web (REST) programming and in SOAP Web services.  In order to execute an operation you need to identify the Data object, the BDef (<em>SDef</em>), and the name of the Operation.  Some Operations use content from Datastreams (supplied by the Data object) and, possibly, additional parameters supplied by the client program or browser requesting the execution.
+In Fedora, a Service Definition object or SDef is a special type of <em>control object</em> used to store a model 
+of a Service.  A Service contains an integrated set of Operations that a Data object supports.  In object-oriented 
+programming terms, the SDef defines an "interface" which lists the operations that are supported but does not define 
+exactly how each operation is performed.  This is also similar to approaches used in Web (REST) programming and in 
+SOAP Web services.  In order to execute an operation you need to identify the Data object, the SDef, and the name 
+of the Operation.  Some Operations use content from Datastreams (supplied by the Data object) and, possibly, 
+additional parameters supplied by the client program or browser requesting the execution.
 <br />
 <br />
 <img src="images/bdef.png" width="383" height="295" alt="BDEF" />
 <br />
 <br />
-Conceptually an Operation is called using the following form (the specifics vary with the actual Fedora interface being used but all will contain some form of this information):
+Conceptually an Operation is called using the following form (the specifics vary with the actual Fedora interface 
+being used but all will contain some form of this information):
 <br />
 <br />
-<strong>Repository : Get : Data object PID : BDef PID : Operation Name : Optional Parameters</strong>
+<strong>Repository : Get : Data object PID : SDef PID : Operation Name : Optional Parameters</strong>
 <br />
 <br />
-A BDef (<em>SDef</em>) is a building block in the CMA that enables adding customized functionality for Data objects.  Using a BDEF (<em>SDef</em>) is a way of saying "this Data object supports these operations."  Essentially, a BDef (<em>SDef</em>) defines a "behavior contract" to which one or more Data objects may "subscribe."  In repositories, we usually create a large number of similar Data objects and want them all to have the same functionality.  To make this approach flexible and easier to use, the CMA uses the Content Model (CModel) object (described below) to contain the model for similar Data objects.  Instead of associating the BDef (<em>SDef</em>) directly with each Data object, the relation fedora-model:hasBDef (<em>providesService</em>) is asserted to the CModel object.  By following the relation between the Data object to the CModel object, and then from the CModel object to the BDef (<em>SDef</em>) object, we can determine what Operations the Data object can perform.  Also note that a Data object (through its CModel object) may support more than one Service (by having multiple BDef (<em>SDef</em>) relations).
+A SDef is a building block in the CMA that enables adding customized functionality for Data objects.  Using a 
+SDef is a way of saying "this Data object supports these operations."  Essentially, a SDef defines a "behavior contract" 
+to which one or more Data objects may "subscribe."  In repositories, we usually create a large number of similar 
+Data objects and want them all to have the same functionality.  To make this approach flexible and easier to use, 
+the CMA uses the Content Model (CModel) object (described below) to contain the model for similar Data objects.  
+Instead of associating the SDef directly with each Data object, the relation <em>hasService</em> is asserted 
+to the CModel object.  By following the relation between the Data object to the CModel object, and then from the 
+CModel object to the SDef object, we can determine what Operations the Data object can perform.  Also note that a 
+Data object (through its CModel object) may support more than one Service (by having multiple SDef relations).
 <br />
 <br />
-BDef (<em>SDef</em>) objects can now be freely shared between Fedora repositories.  If a federated identifier-resolver system, such as the Handle System&#8482;, or any authoritative name registry system is used the BDef (<em>SDef</em>) object will have the same identifier for each copy of itself in each participating repository.  Sharing BDef (<em>SDef</em>) objects while keeping the same identifier in each copy greatly simplifies replication, and enables many business processes and services that are needed for large scale repository installations integrated within the Fedora Framework.  BDef (<em>SDef</em>) objects can still be shared between repositories by including both the original identifier and alternate identifiers as part of the object's metadata.  The best results will be gained by sharing the Data object, BDef (<em>SDef</em>) objects, and Content Model object as a group maintaining the same original identifies.  By using the CMA in this fashion, you transfer a significant unit of the data and metadata that documents the expression pattern for your intellectual work.  While this is, by itself, not everything needed, it is a big step forward for creating a durable content repository.
+SDef objects can now be freely shared between Fedora repositories.  If a federated identifier-resolver 
+system, such as the Handle System&#8482;, or any authoritative name registry system is used the SDef object will 
+have the same identifier for each copy of itself in each participating repository.  Sharing SDef objects while 
+keeping the same identifier in each copy greatly simplifies replication, and enables many business processes 
+and services that are needed for large scale repository installations integrated within the Fedora Framework. 
+SDef objects can still be shared between repositories by including both the original identifier and alternate 
+identifiers as part of the object's metadata.  The best results will be gained by sharing the Data object, SDef 
+objects, and Content Model object as a group maintaining the same original identifies.  By using the CMA in this 
+fashion, you transfer a significant unit of the data and metadata that documents the expression pattern for your 
+intellectual work.  While this is, by itself, not everything needed, it is a big step forward for creating a 
+durable content repository.
 <br />
 <br />
-It is worth noting that Behavior Definition objects (<em>Service Definition objects</em>) conform to the basic Fedora object model. Also, they are stored in a Fedora repository just like other Fedora objects. As such, a collection of BDef (<em>SDef</em>) objects in a repository constitutes a "registry" of Service Definitions.
+It is worth noting that Service Definition objects conform to the basic Fedora object model. Also, they are stored 
+in a Fedora repository just like other Fedora objects. As such, a collection of SDef objects in a repository 
+constitutes a "registry" of Service Definitions.
 </span>
 </li>
-<li><h3 id="BMECH">Behavior Mechanism Object</h3>
+<li><h3 id="SDEP">Service Deployment Object</h3>
 <br />
 <span class="plaintext">
-The Behavior Mechanism object (<em>Service Deployment Mechanism</em>) is a special type of control object that describes how a specific repository will deliver the Service Operations described in a BDef (<em>SDef</em>) for a class of Data objects described in a CModel.   In the CMA, the BMech (<em>SMech</em>) acts as a deployment object only for the specific repository in which it is ingested; each repository is free to provide functionality in a different way.  For example, one Fedora repository may choose to use a Servlet and another may use a SOAP Web service to perform the same function.  As another example, individual repository implementations may need to provide the functionality at different end points.  Or perhaps, a specific installation may use a dynamic end point resolution mechanism to permit failover to different service providers.
+The Service Deployment object is a special type of control object that describes how a specific repository will 
+deliver the Service Operations described in a SDef for a class of Data objects described in a CModel. The SDep
+does not contain executable code but instead it contains information that tells the Fedora repository how and
+where to execute the function that the SDep represents. In the CMA, 
+the SDep acts as a deployment object only for the specific repository in which it is ingested; each repository is 
+free to provide functionality in a different way.  For example, one Fedora repository may choose to use a Servlet 
+and another may use a SOAP Web service to perform the same function.  As another example, individual repository 
+implementations may need to provide the functionality at different end points.  Or perhaps, a specific installation 
+may use a dynamic end point resolution mechanism to permit failover to different service providers.
 <br />
 <br />
 <img src="images/bmech.png" width="376" height="415" alt="DMECH" />
 <br />
 <br />
-Since the BMech (<em>SMech</em>) operates only within the scope of an individual repository, the operators of that repository are free to make changes to the BMech (<em>SMech</em>) or the functionality it represents at any time (except for temporarily making the object's services unavailable while the change is being made).  This approach permits the system operators to control access to services called by the Fedora repository to institute security or policies as their organization determines.  It enables Fedora-called services to be managed using the same principles and tools for the deployment of any distributed system.  It also enables the system operators to reconfigure their systems quickly without having to change any part of their content except the BMech (<em>SMech</em>) deployment object.
+Since the SDep operates only within the scope of an individual repository, the operators of that repository are free 
+to make changes to the SDep or the functionality it represents at any time (except for temporarily 
+making the object's services unavailable while the change is being made).  This approach permits the system operators 
+to control access to services called by the Fedora repository to institute security or policies as their organization 
+determines.  It enables Fedora-called services to be managed using the same principles and tools for the deployment 
+of any distributed system.  It also enables the system operators to reconfigure their systems quickly without having to 
+change any part of their content except the SDep object.
 <br />
 <br />
-The BMech (<em>SMech</em>) stores concrete service binding metadata.  A BMech (<em>SMech</em>) uses a fedora-model:hasBDef (deploysService) relation to a BDef (<em>SDef</em>) as its way of saying "I am able to perform the service methods described by that BDef (<em>SDef</em>)."  A BMech (<em>SMech</em>) object is related to a BDef (<em>SDef</em>) in the sense that it defines a particular concrete implementation of the abstract operations defined in a BDef (<em>SDef</em>) object. The BMech (<em>SMech</em>) also uses a fedora-model:isContractor (deploysServiceFor) relation to a CModel as a way of saying "Use me to do the service operations for any Data objects conforming to that CModel."
+The SDep stores concrete service binding metadata. A SDep uses a <em>isDeploymentOf</em> relation to a SDef as 
+its way of saying "I am able to perform the service methods described by that SDef."  A SDep object is related 
+to a SDef in the sense that it defines a particular concrete implementation of the abstract operations defined 
+in a SDef object. The SDef also uses a <em>isContractorOf</em> relation to a CModel as a way of saying "Use me 
+to do the service operations for any Data objects conforming to that CModel."
 <br />
 <br />
-A BMech (<em>SMech</em>) Object stores several forms of metadata that describe the runtime bindings for invoking service methods. The most significant of these metadata formats is service binding information encoded in the Web Services Description Language (WSDL). The Fedora repository system uses the WSDL at runtime to dispatch service method requests in fulfilling client requests for "virtual representations" of a Data object (i.e., via its Operations). This enables Fedora to talk to a variety of different services in a predictable and standard manner. A BMech (<em>SMech</em>) also contains metadata that defines a "data contract" between the service and a class of Fedora Data objects as defined in the CModel. For the initial deployment of the CMA a simple data contract mechanism was chosen.  Since the Datastream IDs are specified in the CModel and the BMech (<em>SMech</em>) is now a deployment control object only for a specific repository, the BMech (<em>SMech</em>) is able to uniformly bind directly to these IDs.  In the future a more abstract binding mechanism may be used but this approach is simple and clear, though it may require the creation of a small number of additional BMech (<em>SMech</em>) objects.
+A SDep object stores several forms of metadata that describe the runtime bindings for invoking service methods. 
+The most significant of these metadata formats is service binding information encoded in the Web Services 
+Description Language (WSDL). The Fedora repository system uses the WSDL at runtime to dispatch service method 
+requests in fulfilling client requests for "virtual representations" of a Data object (i.e., via its Operations). 
+This enables Fedora to talk to a variety of different services in a predictable and standard manner. A SDep also 
+contains metadata that defines a "data contract" between the service and a class of Fedora Data objects as defined 
+in the CModel. For the initial deployment of the CMA a simple data contract mechanism was chosen.  Since the 
+Datastream IDs are specified in the CModel and the SDep is now a deployment control object only for a specific 
+repository, the SDep is able to uniformly bind directly to these IDs.  In the future a more abstract binding 
+mechanism may be used but this approach is simple and clear, though it may require the creation of a small 
+number of additional SDep objects.
 <br />
 <br /> 
-A major aspect of the CMA redesign is that there is no requirement that conformance to a Content Model or that referential integrity between objects be checked at ingest time.  This may result in a runtime error if the repository cannot find referenced objects, interpret the Content Model or if there are any conformance problems.
+A major aspect of the CMA redesign is that there is no requirement that conformance to a Content Model or that 
+referential integrity between objects be checked at ingest time.  This may result in a runtime error if the 
+repository cannot find referenced objects, interpret the Content Model or if there are any conformance problems.
 <br />
 <br />
-It is worth noting that BMech (<em>SMech</em>) objects conform to the basic Fedora object model. Also, they are stored in a Fedora repository just like other Fedora objects. As such, a collection of BMech (<em>SMech</em>) objects in a repository constitutes a "registry" of service deployments that can be used with Fedora objects.  In the CMA, BMech (<em>SMech</em>) objects are not freely sharable across repositories.  They represent how a specific repository implements a service.  However, BMech (<em>SMech</em>) objects can be shared if the operator of the system modifies them for local deployment.  Because of this, BMech (<em>SMech</em>) objects should not be automatically replicated between repositories without considering the affect.
+It is worth noting that SDep objects conform to the basic Fedora object model. Also, they are stored in a Fedora 
+repository just like other Fedora objects. As such, a collection of SDep objects in a repository constitutes a 
+"registry" of service deployments that can be used with Fedora objects.  In the CMA, SDep objects are not freely 
+sharable across repositories.  They represent how a specific repository implements a service.  However, SDep 
+objects can be shared if the operator of the system modifies them for local deployment.  Because of this, SDep 
+objects should not be automatically replicated between repositories without considering the affect.
 </span>
 </li>
 <li><h3 id="CMODEL">Content Model Object</h3>
 <br />
 <span class="plaintext">
-The Content Model object or CModel is a new specialized control object introduced as part of the CMA.  It acts as a container for the Content Model document which is a formal model that characterizes a class of digital objects.  It can also provide a model of the relationships which are permitted, excluded, or required between groups of digital objects.  All digital objects in Fedora including Data, BDef (<em>SDef</em>), BMech (<em>SMech</em>), and CModel objects are organized into classes by the CModel object.  In this section, we will primarily discuss the relationship between the Data and CModel objects.
+The Content Model object or CModel is a new specialized control object introduced as part of the CMA.  It acts 
+as a container for the Content Model document which is a formal model that characterizes a class of digital 
+objects.  It can also provide a model of the relationships which are permitted, excluded, or required between 
+groups of digital objects.  All digital objects in Fedora including Data, SDef, SDep, and CModel objects are 
+organized into classes by the CModel object.  In this section, we will primarily discuss the relationship between 
+the Data and CModel objects.
 <br />
 <br />
-To create a class of Data objects, create a CModel object.  Each Data object belonging to the class asserts the relation fedora-model:hasContentModel (conformsTo) using the identifier of the CModel as the object of the assertion. The current CModel object contains a structural model of the Data object.  Over time there will be additional elements to the Content Model document but this initial implementation is sufficient to describe the Datastreams which are required to be present in each Data object in the class.  The other key relation is to the BDef (<em>SDef</em>) objects.  You can assert zero or more fedora-model:hasBDef (providesService) relations in the CModel to BDef (<em>SDef</em>) objects.  Regardless of whether any relations are asserted to BDef (<em>SDef</em>) objects, the repository provides access to the Datastreams using a "Default Datastream Service."  In effect the default service is inherited from the CModel's parent CModel (remember all digital objects have a CModel even if it is not explicitly declared as a relation).  This is the only kind of inheritance permitted in the initial implementation of the CMA.
+To create a class of Data objects, create a CModel object.  Each Data object belonging to the class asserts 
+the relation <em>hasModel</em> using the identifier of the CModel as the object of the assertion. The current 
+CModel object contains a structural model of the Data object.  Over time there will be additional elements to 
+the Content Model document but this initial implementation is sufficient to describe the Datastreams which are 
+required to be present in each Data object in the class.  The other key relation is to the SDef objects.  You 
+can assert zero or more <em>hasService</em> relations in the CModel to SDef objects.
 <br />
 <br />
-You do not have to explicitly assert a relation from a Data object to a CModel object if all you want to do is access the Datastreams.  Fedora will use its implicit default Content Model and its Default Datastream Service for these Data objects.  However, without an explicit Content Model you cannot validate whether the Data object is correctly formed.  In the CMA, if the repository cannot find and interpret all the control objects related to a Data object, or cannot interpret the Content Model, it will issue a runtime error when the Data object is accessed.  Other than basic conformance to the rules for a properly formed digital object, there is no warning or error issued on ingest or modification of an object in the CMA.
+A Data object may assert a hasModel relationship to multiple CModel objects. Such a Data object should conform to
+all of its Content Models, containing an aggregation of all the Datastreams defined by the Content Models. If
+two or more Content Models define Datastreams which have the same name but different characteristics, no 
+well-formed Data object can be constructed and likely the repository will be unable to deliver its content or
+services. Fedora automatically assumes that all objects conform to a system-defined "Basic Content Model." 
+There is no need to assert a relation to this content model explicitly but, if the Data object asserts other
+relations, it is a good practice to make the assertion to the Basic Content Model explicit.  Regardless, the
+repository will behave the same whether the relation is asserted or not.  Along with the Basic Content Model, 
+the repository defines a "Basic Service Definition" which supplies Operations common to all objects.  One
+such service provides direct access to the Datastreams.
+<br />
+<br />
+Because of the Basic Content Model and the Basic Service 
+Definition, nothing needs to be added to a Data object if the user only wants to store and disseminate Datastreams
+by name. However, without an explicit Content Model you cannot validate whether the Data object 
+is correctly formed.  In the CMA, if the repository cannot find and interpret all the control objects related to 
+a Data object, or cannot interpret the Content Model, it will issue a runtime error when the Data object is 
+accessed. Note that the repository will always be able to able to perform basic Datastream operations because
+they are a part of the Basic Content Model and Basic Service Definition.  Other than conformance to the rules for
+a properly formed digital object, there is no warning or error issued on ingest or modification of an object in the CMA.
 <br />
 <br />
 <img src="images/cmodel.png" width="402" height="298" alt="CMODEL" />
 <br />
 <br />
-CModel objects can now be freely shared between Fedora repositories.  If a federated identifier-resolver system, such as the Handle System&#8482;, or any authoritative name registry system is used the CModel object will have the same identifier for each copy of itself in each participating repository.  Sharing CModel objects while keeping the same identifier in each copy greatly simplifies replication, and enables many business processes and services that are needed for large scale repository installations integrated within the Fedora Framework.  CModel objects can still be shared between repositories by including both the original identifier and alternate identifiers as part of the object's metadata.  The best results will be gained by sharing the Data object, BDef (<em>SDef</em>) objects, and CModel object as a group maintaining the same original identifiers.  By using the CMA in this fashion, you transfer a significant unit of the data and metadata that documents the expression pattern for your intellectual work.  While this is, by itself, not everything needed, it is a big step forward for creating a durable content repository.  Over time, Content Model languages can be developed that permit describing an ever larger portion of the essential characteristics of the content and its behaviors.
+CModel objects can now be freely shared between Fedora repositories.  If a federated identifier-resolver system, 
+such as the Handle System&#8482;, or any authoritative name registry system is used the CModel object will have 
+the same identifier for each copy of itself in each participating repository.  Sharing CModel objects while 
+keeping the same identifier in each copy greatly simplifies replication, and enables many business processes and 
+services that are needed for large scale repository installations integrated within the Fedora Framework.  CModel 
+objects can still be shared between repositories by including both the original identifier and alternate 
+identifiers as part of the object's metadata.  The best results will be gained by sharing the Data object, SDef 
+objects, and CModel objects as a group maintaining the same original identifiers.  By using the CMA in this fashion, 
+you transfer a significant unit of the data and metadata that documents the expression pattern for your intellectual 
+work.  While this is, by itself, not everything needed, it is a big step forward for creating a durable content 
+repository.  Over time, Content Model languages can be developed that permit describing an ever larger portion of the 
+essential characteristics of the content and its behaviors.
 <br />
 <br />
-It is worth noting that Content Model Objects conform to the basic Fedora object model. Also, they are stored in a Fedora repository just like other Fedora objects. As such, a collection of Content Model objects in a repository constitutes a "registry" of Content Models.
+It is worth noting that Content Model objects conform to the basic Fedora object model. Also, they are stored in a 
+Fedora repository just like other Fedora objects. As such, a collection of Content Model objects in a repository 
+constitutes a "registry" of Content Models.
 </span>
 </li>
 </ol>
@@ -242,7 +364,7 @@ It is worth noting that Content Model Objects conform to the basic Fedora object
 
 <div id="footer">
     <div id="copyright">
-        Copyright &#xA9; 2002-2007 Fedora Project
+        Copyright &#xA9; 2002-2008 Fedora Commons
     </div>
     <div id="lastModified">
         Last Modified
