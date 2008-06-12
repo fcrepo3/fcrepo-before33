@@ -72,14 +72,25 @@
           <li> Object XML (FOXML)
             <span class="plaintext">
               Determine where your old object XML is stored.  If you're unsure,
-              consult <code>OLD_FEDORA_HOME/server/config/fedora.fcfg</code>
-              and find the value of <code>object_store_base</code>.
+              consult <span style="font-family: monospace">OLD_FEDORA_HOME/server/config/fedora.fcfg</span>
+              and find the value of <span style="font-family: monospace">object_store_base</span>.
               <br/>
               <br/>
-              Edit <code>NEW_FEDORA_HOME/server/fedora.fcfg</code> and change
-              the value of <code>object_store_base</code> the <em>full path</em>
-              of your old objects directory.
+              Edit <span style="font-family: monospace">NEW_FEDORA_HOME/server/fedora.fcfg</span> 
+              and change the value of <span style="font-family: monospace">object_store_base</span> 
+              the <em>full path</em> of your old objects directory.  
               <br/>
+              <br/>
+              NOTE: The upgrade process will transform the objects in
+              <span style="font-family: monospace">object_store_base</span> of 
+              <span style="font-family: monospace">NEW_FEDORA_HOME/server/fedora.fcfg</span> 
+              in place.  Thus, by following the above instructions, the new 
+              upgraded files will exist in their old location.  If that is not 
+              what is desired, then you could copy the old files (both objects 
+              and datastreams) to their final location, point the 
+              <span style="font-family: monospace">NEW_FEDORA_HOME/server/fedora.fcfg</span>  
+              to that new location, and then 
+              continue the update process.  
               <div class="notice">
                 <strong>IMPORTANT:</strong> If you haven't already done so, 
                 make a backup of all original object XML files.  These will be
@@ -92,14 +103,14 @@
           <li> Managed Datastreams
             <span class="plaintext">
               Determine where your old Fedora instance stored managed
-              datastreams.  Again, you can check your old <code>fedora.fcfg
-              </code> file.  Look for the value of 
-              <code>datastream_store_base</code>.
+              datastreams.  Again, you can check your old 
+              <span style="font-family: monospace">fedora.fcfg</span> file.  
+              Look for the value of <span style="font-family: monospace">datastream_store_base</span>.
               <br/>
               <br/>
-              Edit <code>NEW_FEDORA_HOME/server/fedora.fcfg</code> and change
-              the value of <code>datastream_store_base</code> the 
-              <em>full path</em> of your old datastreams directory.
+              Edit <span style="font-family: monospace">NEW_FEDORA_HOME/server/fedora.fcfg</span> 
+              and change the value of <span style="font-family: monospace">datastream_store_base</span> 
+              the <em>full path</em> of your old datastreams directory.
               <br/>
               <br/>
               NOTE: The migration process will not make any changes to these
@@ -130,7 +141,8 @@
         <ul>
           <li> A set of generated content models.</li>
           <li> A list of PIDs for each content model.</li> 
-          <li> Behavior Mechanism information for each content model.</li>
+          <li> Service Deployment (formerly known as Behavior Mechanism) 
+          information for each content model.</li>
         </ul>
         <span class="plaintext">
           The analyzer does not make changes to any source objects.
@@ -143,11 +155,12 @@
               <div class="notice"> 
                 <strong>NOTE:</strong> In properties files, the "\" 
                 character must be escaped.  When using Windows, this means
-                paths like <code>c:\work\abc</code> must be written as 
-                <code>c:\\work\\abc</code>.
+                paths like <span style="font-family: monospace">c:\work\abc</span> 
+                must be written as 
+                <span style="font-family: monospace">c:\\work\\abc</span>.
               </div>
-              Create a file (e.g. <code>migration.properties</code>) with the
-              following content, filling in values appropriate to your
+              Create a file (e.g. <span style="font-family: monospace">migration.properties</span>) 
+              with the following content, filling in values appropriate to your
               environment:
               <br/>
               <code class="block">
@@ -193,7 +206,6 @@ jdbcJar=c:\\fedora-3.0\\tomcat\\webapps\\fedora\\WEB-INF\\lib\\postgresql-8.2-50
 #  the FORMAT_URI of candidate datastreams.
 #ignoreAspects=OrigContentModel DatastreamIDs MIMETypes FormatURIs
 </pre>
-              </code> 
             </span>
           </li>
  
@@ -202,13 +214,13 @@ jdbcJar=c:\\fedora-3.0\\tomcat\\webapps\\fedora\\WEB-INF\\lib\\postgresql-8.2-50
               The analyzer utility is an executable jar and takes the 
               configuration file as a parameter.  For example, if your 
               configuration is in the current directory and is named 
-              <code>migration.properties</code>, enter the following:
+              <span style="font-family: monospace">migration.properties</span>, 
+              enter the following:
               <br/>
               <code class="block">
 <pre>
 java -jar analyzer.jar migration.properties
 </pre>
-              </code>
               <br/>
               Analysis of small repositories will finish very quickly.
               For repositories with millions of objects, analysis will take
@@ -254,32 +266,35 @@ java -jar analyzer.jar migration.properties
             <ul>
               <li> You will notice that the generated content model also has
                    a RELS-EXT datastream.  This RDF datastream points to the
-                   original Behavior Definition objects via a Fedora-defined
-                   hasBDef relationship.  This relationship means that 
-                   members of this content model should have the behaviors
-                   defined within the target BDef(s).</li>
-              <li> There will also be an associated cmodel-n-bmechs.txt file
+                   original Behavior Definition (now known as Service Definition) 
+                   objects via a Fedora-defined 
+                   <span style="font-family: monospace">fedora-model:hasService</span> 
+                   relationship.  This relationship means that members of this 
+                   content model should have the behaviors defined within the 
+                   target SDef(s).</li>
+              <li> There will also be an associated cmodel-n-deployments.txt file
                    in the output directory.  For each Behavior Mechanism
                    formerly used by the objects' disseminators, this file
                    identifies the original BMech, specifies a PID for a new,
-                   similar BMech, and specifies a set of datastream input
-                   name changes that the copy should have.  This information
+                   similar Service Deployment, and specifies a set of datastream 
+                   input name changes that the copy should have.  This information
                    is used by the generator to create new 
-                   content-model-specific Behavior Mechanism objects.</li>
+                   content-model-specific Service Deployment objects.</li>
             </ul>
             <span class="plaintext">
               Three additional files will be created in the output directory:
             </span>
             <ul>
-              <li> <strong>bdefs.txt</strong> - this lists all original Behavior
-                   Definition objects.  The generator will create a 
-                   stylesheet to upgrade these objects to FOXML 1.1.</li>
-              <li> <strong>bmechs.txt</strong> - this lists all original Behavior
+              <li> <strong>sdefs.txt</strong> - this lists all original Behavior
+                   Definition (now onown as Service Definition) objects.  The 
+                   generator will create a stylesheet to upgrade these objects 
+                   to FOXML 1.1.</li>
+              <li> <strong>sdeps.txt</strong> - this lists all original Behavior
                    Mechanism objects.  Although these objects will be made
-                   obsolete by the new, generated Behavior Mechanisms,
+                   obsolete by the new generated Service Deployments,
                    the generator will create a stylesheet to upgrade them
-                   to FOXML 1.1 so that you can view them in the 
-                   Fedora 3.0 repository before deciding to purge them.</li>
+                   to Service Deployments in FOXML 1.1 so that you can view them
+                   in the Fedora 3.0 repository before deciding to purge them.</li>
               <li> <strong>nocmodel.txt</strong> - this lists objects that should 
                    NOT be assigned a content model.  Initially, the file is
                    empty but it can be customized, if desired (see 
@@ -292,9 +307,9 @@ java -jar analyzer.jar migration.properties
           <li> Customizing Content Model PIDs
             <span class="plaintext">
               By default, the PIDs assigned to the generated content models 
-              are of the form, <code>changeme:CModelN</code>.  You should
-              change these to use your own repository's namespace.  You may
-              also want to change the identifier part of the PID 
+              are of the form, <span style="font-family: monospace">changeme:CModelN</span>.  
+              You should change these to use your own repository's namespace.  
+              You may also want to change the identifier part of the PID 
               (e.g. myns:Journal).
               <br/>
               <br/>
@@ -305,26 +320,26 @@ java -jar analyzer.jar migration.properties
               <li> The value of the PID attribute at the root of the
                    document.</li>
               <li> If there is a RELS-EXT datastream, change the part after
-                   <code>info:fedora/</code> in the <code>rdf:about</code>
+                   <span style="font-family: monospace">info:fedora/</span> in the <span style="font-family: monospace">rdf:about</span>
                    attribute.  For example, change 
-                   <code>rdf:about="info:fedora/changeme:CModel1"</code> to 
-                   <code>rdf:about="info:fedora/myorg:Journal"</code>.</li>
+                   <span style="font-family: monospace">rdf:about="info:fedora/changeme:CModel1"</span> to 
+                   <span style="font-family: monospace">rdf:about="info:fedora/myorg:Journal"</span>.</li>
             </ul>
             <span class="plaintext">
             </span>
           </li>
 
-          <li> Customizing Behavior Mechanism PIDs
+          <li> Customizing Service Deployment PIDs
             <span class="plaintext">
-              If any cmodel-n-bmechs.txt files were created by the 
-              analyzer, you should also change any NEW_BMECH pid values
+              If any cmodel-n-deployments.txt files were created by the 
+              analyzer, you should also change any NEW_DEPLOYMENT pid values
               specified within each before continuing. These PIDs will default
-              to values like <code>changeme:CModel1-BMech1</code>, but 
+              to values like <span style="font-family: monospace">changeme:CModel1-BMech1</span>, but 
               again, you should specify your own (e.g. 
-              <code>myns:Journal-BMech1</code>).
+              <span style="font-family: monospace">myns:Journal-DefaultImpl</span>).
               <div class="notice">
                 <strong>WARNING</strong>: DO NOT specify the same PID for 
-                NEW_BMECH as OLD_BMECH, as this will cause ingest
+                NEW_DEPLOYMENT as OLD_BMECH, as this will cause ingest
                 problems later.
               </div>
             </span>
@@ -356,8 +371,8 @@ java -jar analyzer.jar migration.properties
           following to the same directory:
         </span>
         <ul>
-          <li> New Behavior Mechanism objects (as specified in each
-               cmodel-n-bmechs.txt file)</li>
+          <li> New Service Deployment objects (as specified in each
+               cmodel-n-deployments.txt file)</li>
           <li> Stylesheets for transforming existing objects as necessary</li>
         </ul>
         <span class="plaintext">
@@ -374,9 +389,9 @@ java -jar analyzer.jar migration.properties
               The configuration file should have the following content,
               with values filled in appropriate to your environment.
               NOTE: Since you already entered fedoraHome and jdbcJar in 
-              <code>migration.properties</code>, you can minimize typing 
-              by just using that file, and adding the necessary sourceDir
-              parameter as shown below.
+              <span style="font-family: monospace">migration.properties</span>, 
+              you can minimize typing by just using that file, and adding the 
+              necessary sourceDir parameter as shown below.
               <br/>
               <code class="block">
 <pre>
@@ -390,7 +405,6 @@ fedoraHome=c:\\fedora-3.0
 # The full path to the JDBC driver Fedora is configured to use
 jdbcJar=c:\\fedora-3.0\\tomcat\\webapps\\fedora\\WEB-INF\\lib\\postgresql-8.2-506.jdbc3.jar
 </pre>
-              </code>
             </span>
           </li>
           <li> Generator Usage
@@ -402,7 +416,6 @@ jdbcJar=c:\\fedora-3.0\\tomcat\\webapps\\fedora\\WEB-INF\\lib\\postgresql-8.2-50
 <pre>
 java -jar generator.jar migration.properties
 </pre>
-              </code>
               <br/>
               The generator should finish very quickly, regardless 
               of the size of the repository.
@@ -416,21 +429,22 @@ java -jar generator.jar migration.properties
               process.
               <br/>
               <br/>
-              One stylesheet will be written for each PID list: bmechs.xslt,
-              bdefs.xslt, nocmodel.xslt, and each cmodel-n.members.xslt
+              One stylesheet will be written for each PID list: sdeps.xslt,
+              sdefs.xslt, nocmodel.xslt, and each cmodel-n.members.xslt
               file.  Each of these stylesheets will include transformation 
               rules for upgrading
               the objects to FOXML1.1 and adding the necessary 
-              hasContentModel relationship via RELS-EXT, if necessary.
+              <span style="font-family: monospace">fedora-model:hasModel</span> 
+              relationship via RELS-EXT, if necessary.
               NOTE: The generated stylesheet will cause a new RELS-EXT
               datastream to be created, or will amend the content of the
               latest revision of the RELS-EXT datastream, if it already exists.
               <br/>
               <br/>
-              The output will also include a new, generated Behavior 
-              Mechanism object (cmodel-n.bmechx.txt) for each one listed 
-              in the input's cmodel-n.bmechs.txt files.  This BMech will
-              match the content of the source BMech in the repository, 
+              The output will also include a new, generated Service 
+              Deployment object (cmodel-n.deploymentN.xml) for each one listed 
+              in the input's cmodel-n.deployments.txt files.  This SDep will
+              match the content of the source SDep in the repository, 
               but it will have a different PID, will be in FOXML 1.1 format,
               and will use input part names consistent with the datastream 
               IDs specified in the associated content model's 
@@ -477,7 +491,6 @@ java -jar generator.jar migration.properties
 # In dry run mode, transformation will be tested but no changes will be written
 dryRun=true
 </pre>
-              </code>
               <br/>
               Although not required, it is strongly recommended that you 
               run the transformer with dryRun=true the first time, to ensure
@@ -493,7 +506,6 @@ dryRun=true
 <pre>
 java -jar transformer.jar migration.properties
 </pre>
-              </code>
               <br/>
               Transformation will take roughly double the time that analysis
               took, since it must read and write each file in the repository.
@@ -511,7 +523,7 @@ java -jar transformer.jar migration.properties
           <a href="../server/cmd-line/index.html#rebuild">Rebuilder 
           Documentation</a> for further details.  NOTE: You MUST
           rebuild the SQL database.  Rebuilding the Resource Index is
-          optional, and should be done only if your Fedora 3.0 instance
+          required only if your Fedora 3.0 instance
           has been configured to enable the Resource Index.
           <br/>
           <br/>
@@ -532,7 +544,7 @@ java -jar transformer.jar migration.properties
           <br/>
           <br/>
           Now you'll need to ingest all the new Content Model 
-          and Behavior Mechanism objects created during the 
+          and Service Deployment objects created during the 
           analyzer and generator steps.  To do this:
         </span>
         <ul>
@@ -540,9 +552,15 @@ java -jar transformer.jar migration.properties
                new repository from the local machine.</li>
           <li> Go to File -&gt; Ingest &gt; Objects from Directory, 
                and choose directory where these files were 
-               written (e.g. <code>C:\fedora-migration</code>)</li>
+               written (e.g. <span style="font-family: monospace">C:\fedora-migration</span>)</li>
           <li> Choose FOXML as the format, and OK.</li>
         </ul>
+        <span class="plaintext">
+          NOTE: The admin client may try to ingest all files in the directory,
+          includidng the non-foxml files.  While harmless, you may wish to 
+          copy all foxml files (all files in that firectory that end in .xml)
+          to a separate directory, and ingest from there.
+        </span>
       </li>
       
       <li>
@@ -565,30 +583,20 @@ java -jar transformer.jar migration.properties
         </ul>
         <span class="plaintext">
           If you had disseminators in your original repository, you are
-          now making use of a NEW set of Behavior Mechanism objects.
+          now making use of a NEW set of Service Deployment objects.
           You may now want to purge the original BMechs, since they are
           no longer in use.  The simplest way to do this is with the 
-          fedora-admin GUI:
-        </span>
-        <ul>
-          <li> Run fedora-admin.bat or fedora-admin.sh and login to your
-               new repository from the local machine.</li>
-          <li> Go to Tools -&gt; Search, go into the advanced tab and add
-               a condition that "fType" "equals" "M".</li>
-          <li> Click OK and find your old Behavior Mechanism objects in
-               the list.</li>
-          <li> Select all the old ones (ctrl-click to select multiple),
-               right-click and select "Purge Objects".</li>
-        </ul>
+          fedora-admin GUI.  The PIDs of the old former BMechs are enumerated
+          in the file sdeps.txt.
       </li>
     </ol>
     
     <div id="footer">
       <p id="copyright">
-        Copyright &copy; 2002-2007 Fedora Project
+        Copyright &copy; 2002-2008 Fedora Project
       </p>
       <script type="text/javascript">
-        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
+        var cvsDate = "$Date: 2008-06-12 11:18:07 -0400 (Thy, 12 Jun 2008) $";
         var parts = cvsDate.split(" ");
         var modifiedDate = parts[1];
         var p = document.createElement("p");
