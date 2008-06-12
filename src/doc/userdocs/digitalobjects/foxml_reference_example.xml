@@ -22,7 +22,6 @@
         - lastModifiedDate:(system assigned) The object creation date is assigned to the millisecond. 
 ******************************************************************************************************************************************-->
 	<foxml:objectProperties>
-		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="FOXML Reference Example"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2004-12-10T00:21:58.000Z"/>
