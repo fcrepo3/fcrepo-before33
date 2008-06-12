@@ -126,21 +126,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public fedora.server.types.gen.Property[] getObjectProperties(String PID)
-            throws RemoteException {
-        assertInitialized();
-        try {
-            fedora.server.storage.types.Property[] properties =
-                    s_management.getObjectProperties(ReadOnlyContext
-                            .getSoapContext(), PID);
-            return TypeUtility
-                    .convertPropertyArrayToGenPropertyArray(properties);
-        } catch (Throwable th) {
-            LOG.error("Error getting object properties", th);
-            throw AxisUtility.getFault(th);
-        }
-    }
-
     public byte[] getObjectXML(String PID) throws RemoteException {
         assertInitialized();
         try {

@@ -437,14 +437,6 @@ public class JournalCreator
     /**
      * Let the delegate do it.
      */
-    public Property[] getObjectProperties(Context context, String pid)
-            throws ServerException {
-        return delegate.getObjectProperties(context, pid);
-    }
-
-    /**
-     * Let the delegate do it.
-     */
     public RelationshipTuple[] getRelationships(Context context,
                                                 String pid,
                                                 String relationship)

@@ -239,11 +239,6 @@ public class TestJournalRoundTrip {
     }
 
     @Test
-    public void getObjectProperties() throws ServerException {
-        testNonJournalledMethod("getObjectProperties", leadingContext, "yaPID");
-    }
-
-    @Test
     public void getObjectXML() throws ServerException {
         testNonJournalledMethod("getObjectXML",
                                 leadingContext,

@@ -289,14 +289,6 @@ public class ManagementModule
     /**
      * {@inheritDoc}
      */
-    public Property[] getObjectProperties(Context context, String pid)
-            throws ServerException {
-        return mgmt.getObjectProperties(context, pid);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public InputStream getObjectXML(Context context, String pid, String encoding)
             throws ServerException {
         return mgmt.getObjectXML(context, pid, encoding);

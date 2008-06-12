@@ -182,14 +182,6 @@ public class Journaller
     /**
      * Delegate to the JournalWorker.
      */
-    public Property[] getObjectProperties(Context context, String pid)
-            throws ServerException {
-        return worker.getObjectProperties(context, pid);
-    }
-
-    /**
-     * Delegate to the JournalWorker.
-     */
     public InputStream getObjectXML(Context context, String pid, String encoding)
             throws ServerException {
         return worker.getObjectXML(context, pid, encoding);

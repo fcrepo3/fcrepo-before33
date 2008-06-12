@@ -231,53 +231,6 @@ public class DefaultManagement
         }
     }
 
-    public Property[] getObjectProperties(Context context, String pid)
-            throws ServerException {
-        try {
-            LOG.debug("Entered getObjectProperties");
-
-            m_fedoraXACMLModule.enforceGetObjectProperties(context, pid);
-
-            ArrayList<Property> props = new ArrayList<Property>();
-            DOReader reader =
-                    m_manager.getReader(Server.USE_DEFINITIVE_STORE,
-                                        context,
-                                        pid);
-
-            /*
-             * FIXME: Content models are no longer object properties, so they
-             * are no longer exposed here. Is that OK?
-             */
-
-            props.add(new Property(MODEL.LABEL.uri, reader.GetObjectLabel()));
-
-            props.add(new Property(MODEL.STATE.uri, reader.GetObjectState()));
-
-            props.add(new Property(MODEL.OWNER.uri, reader.getOwnerId()));
-
-            props.add(new Property(MODEL.CREATED_DATE.uri, DateUtility
-                    .convertDateToString(reader.getCreateDate())));
-
-            props.add(new Property(VIEW.LAST_MODIFIED_DATE.uri, DateUtility
-                    .convertDateToString(reader.getLastModDate())));
-
-            //Property[] extProps=reader.getExtProperties();
-
-            return (Property[]) props.toArray(new Property[0]);
-        } finally {
-            // Log completion
-            if (LOG.isInfoEnabled()) {
-                StringBuilder logMsg =
-                        new StringBuilder("Completed getObjectProperties(");
-                logMsg.append("pid: ").append(pid);
-                logMsg.append(")");
-                LOG.info(logMsg.toString());
-            }
-
-            LOG.debug("Exiting getObjectProperties");
-        }
-    }
-
     public InputStream getObjectXML(Context context, String pid, String encoding)
             throws ServerException {
         try {
