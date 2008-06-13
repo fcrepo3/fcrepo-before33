@@ -69,11 +69,11 @@
               <br/>
               <br/>
               Data objects assert their membership to a content
-              model by adding a "fedora-model:hasContentModel" 
+              model by adding a "fedora-model:hasModel" 
               statement to the RELS-EXT datastream.  This replaces the old
               system object property "fedora-model:contentModel".
               The demo objects have been updated to reflect this new
-              way of attaching behaviors.
+              way of asserting type (and optionally, attaching behaviors).
               <br/>
               <br/>
               See the <a href="../digitalobjects/cmda.html">Content Model
@@ -195,7 +195,56 @@
               <li> <a href="http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd">Fedora METS Extension 1.1 XSD Schema</a></li>
               <li> <a href="http://www.fedora.info/definitions/1/0/metsExtRules1-1.xml">Fedora METS Extension 1.1 Schematron Rules</a></li>
             </ul>
+            <span class="plaintext"></span>
+          </li>
+
+          <li> Atom Serializer and Deserializer
             <span class="plaintext">
+            [*] Fedora objects can now be imported an exported in the Atom
+            format.  For more information, see xxxx...
+            </span>
+          </li>
+
+          <li> Messaging Support
+            <span class="plaintext">
+            [*] Fedora can now be configured to produce JMS messages for API-M
+            events.  See the <a href="../server/messaging/index.html">Fedora Messaging Guide</a>
+            for more information.
+            </span>
+          </li>
+
+          <li> Saxon 8 &amp; XSLT2 Support
+            <span class="plaintext">
+            [*] The Saxon library in Fedora has been upgraded to version 8.
+            so the bundled <a href="../server/localservices/saxon/index.html">Saxon service</a>
+            can now make use of more advanced stylesheets.
+            </span>
+          </li>
+
+          <li> Bundled Tomcat Updated to 5.5.26
+            <span class="plaintext">
+            [*] When choosing to use the bundled Tomcat for deployment, the
+            Fedora installer now uses version 5.5.26.  This was formerly
+            version 5.5.23.
+            </span>
+          </li>
+
+          <li> RELS-EXT MIME Type Changed to application/rdf+xml
+            <span class="plaintext">
+            [*] Where appropriate, Fedora now uses the <code>application/rdf+xml</code>
+            MIME type for the RELS-EXT datastream.  Formerly, Fedora used
+            text/xml.
+            </span>
+          </li>
+
+          <li> Admin GUI Using Templates for CMA Objects
+            <span class="plaintext">
+            [*] The out-of-date "Builders" menu in the admin client has been 
+            replaced with a simple templating approach when creating new Content 
+            Model objects, Service Definition objects, or Service Deployment 
+            objects.  When creating these special objects, the Admin GUI now
+            fills them in with the basic required datastreams, which the
+            user can then fill out using the object editor interface.
             </span>
           </li>
 
@@ -206,30 +255,30 @@
             </span>
             <ul>
               <li>
-                JMS Messaging - Integrates JMS messaging for sending notification of important events
+                Basic Validation Testing - 
+                A feature that provides system operators a way to validate the
+                integrity of part or all of their repository, based on
+                content models.
               </li>
               <li>
-                Message Update for GSearch - Provides a reference implementation for using JMS notifications to update search engines
+                Final 3.0 Documentation Updates - 
+                Much of the documentation has now been updated
+                updated to be current with the 3.0 features.  The remaining
+                set of updates will be completed for 3.0.
               </li>
               <li>
-                On-line Validation Testing - Hooks into the runtime error system to provide more meaningful error reports include conformance to content models and referential integrity checks
-              </li>
-              <li>
-                Off-line Validation Testing - Provides system operators a way to validate the integrity of part or all of their repository
-              </li>
-              <li>
-                Updated Administrative Client - Revises to support Content Model Architecture enhancements
-              </li>
-              <li>
-                Updated OAI Provider - Revises the OAI Provider to take advantage of the Content Model Architecture
-              </li>
-              <li>
-                Updated Utilities - Revises all the Fedora-provided utilities for integrate properly with the Content Model Architecture
+                3.0-Compatible Service Releases -
+                Shortly after the Beta 2 release, we will be releasing new
+                versions of the OAI Provider and GSearch services that are
+                compatible with Fedora 3.0.
               </li>
             </ul>
           </li>
 
         </ol>
+        <span class="plaintext">
+          [*] - This feature was introduced after the Beta 1 release.
+        </span>
       </li>
       
       <li>
@@ -267,6 +316,7 @@
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1878847">Bug #1878847</a>: [*] Problem with UTF-8 chars in datastream</li>
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1921874">Bug #1921874</a>: [*] Log4J errors on startup and shutdown</li>
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1927861">Bug #1927861</a>: [*] ExecUtility calls can fail if command has a space</li>
+
         </ul>
         <span class="plaintext">
           [*] - This bug was fixed after the Beta 1 release.
@@ -279,14 +329,6 @@
           The following outstanding issues are present with this Beta release:
         </span>
         <ul>
-          <li> System documentation has not been fully updated to reflect 3.0
-               changes.</li>
-          <li> Services (including OAI Provider) do not work with Fedora
-               3.0 Beta 2.  This will be done for 3.0 Final.</li>
-          <li> Fedora Administrative GUI does not automatically populate
-               RELS-EXT for BMech objects.  It should create a relationship,
-               fedora-model:hasBDef in order for behaviors to work.
-               For now, this must be done manually.</li>
           <li> Fedora Administrative GUI has button / tab overlaying
                problem after creating a new datastream.  When this occurs,
                you can click the "New Datastream" tab, then the "RELS-EXT"
@@ -310,7 +352,8 @@
       <li>
         <h2 id="history">Historic Release Notes</h2>
         <span class="plaintext">
-          Release notes for previous versions of Fedora:
+          Release notes for previous versions of Fedora:<br/>
+          [<a href="http://www.fedora-commons.org/documentation/2.2.2/userdocs/distribution/release-notes.html">2.2.2</a>], 
           [<a href="http://fedora.info/download/2.2.1/userdocs/distribution/release-notes.html">2.2.1</a>], 
           [<a href="http://fedora.info/download/2.2/userdocs/distribution/release-notes.html">2.2</a>], 
 	      [<a href="http://fedora.info/download/2.1.1/userdocs/distribution/release-notes.html">2.1.1</a>], 
