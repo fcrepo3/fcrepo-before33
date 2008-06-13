@@ -168,6 +168,11 @@ public class TestRelationships
         o = "98.6";
         getRelationship(pid, p, o, true, Constants.RDF_XSD.FLOAT.uri);
     }
+
+    public void testGetAllRelationships() throws Exception {
+        RelationshipTuple[] tuples = apim.getRelationships("demo:777", null);
+        assertEquals(1, tuples.length);
+    }
     
     public void testBasicCModelRelationships() throws Exception {
         for (String pid : new String[] { "demo:777", "demo:888" }) {

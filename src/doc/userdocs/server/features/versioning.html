@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-                      
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
   <head>
     <title>Fedora Content Versioning</title>
@@ -30,9 +30,9 @@
         <li><a href="#apialite">API-A-Lite Web Interface</a></li>
       </ol>
     </div>
-    
+
     <ol id="content">
-    
+
       <li>
         <h2 id="intro">Introduction</h2>
         <span class="plaintext">
@@ -45,14 +45,14 @@
           Additionally, there are now API functions that allow the user greater control of which modifications of datastreams stored for a digital object are important enough to merit maintaining the version in perpetuity, and which are less important administrative changes which need not be preserved.
         </span>
       </li>
-      
+
       <li>
         <h2 id="preservation">Preservation</h2>
         <span class="plaintext">
           The ability to version content of Fedora data objects provides repositories with the ability to preserve not only the data for any given data object over time, but also to preserve the look and feel of the dissemination of that data object, since the original content is linked to the original delivery mechanisms used to disseminate that content.
         </span>
       </li>
-      
+
       <li>
         <h2 id="how">How It Works by Default</h2>
         <span class="plaintext">
@@ -65,14 +65,14 @@
           While the components of data objects are versioned in Fedora v2.0 through 2.2, versioning of behavior objects (Behavior Definitions and Behavior Mechanisms) is in scope for future releases of the software.
         </span>
       </li>
-      
+
       <li>
         <h2 id="disabling">Disabling Versioning</h2>
         <span class="plaintext">
           As of v2.2, the Fedora versioning system allows a user to selectively <em>disable</em> versioning for a given Datastream of a digital object (via the new API function setDatastreamVersionable). Subsequently, any modifications made to that specific Datastream will <em>replace</em> the most recent stored version with the result of the modification. This replacement only applies to the most recent version of that Datastream, any versions that were in existance before versioning was disabled will remain unchanged. Thereafter if the user decides that new modifications ought to cause new versions to be stored, versioning can be turned back on (again through the API function set DatastreamVersionable).
         </span>
       </li>
-      
+
       <li>
         <h2 id="purging">Purging Old Versions</h2>
         <span class="plaintext">
@@ -82,7 +82,7 @@
           Now rather that specifying single date, and deleting all versions older than that date, the purgeDatastream function allows a start date and end date to be specified which will allow any single previous version (or any contiguous range of versions) to be deleted.
         </span>
       </li>
-      
+
       <li>
         <h2 id="admin">Fedora Administrator</h2>
         <span class="plaintext">
@@ -101,7 +101,7 @@
           <img src="../images/version2.jpg" width="852" height="805" alt="version 2" />
         </span>
       </li>
-      
+
       <li>
         <h2 id="search">Search and Retrieval in Fedora Administrator</h2>
         <span class="plaintext">
@@ -122,7 +122,7 @@ mDate<=2003-08-28T23:59:59
           In the case of Dublin Core Metadata datastreams, the modified date is stored in the dcmDate parameter. To retrieve data objects with modified Dublin Core metadata datastreams, the user must search using this parameter name.
         </span>
       </li>
-      
+
       <li>
         <h2 id="apialite">API-A-Lite Web Interface</h2>
         <span class="plaintext">
@@ -134,7 +134,7 @@ mDate<=2003-08-28T23:59:59
           <br />
           <strong>getDissemination syntax:</strong>
           <br />
-          http://hostname:port/fedora/get/PID/bDefPID/methodName<strong>[/dateTime][?parmArray]</strong>
+          http://hostname:port/fedora/get/PID/sDefPID/methodName<strong>[/dateTime][?parmArray]</strong>
           <br />
           <br />
           This syntax requests a dissemination of the specified object using the specified method of the associated behavior definition object. The result is returned as a MIME-typed stream.
@@ -145,7 +145,7 @@ mDate<=2003-08-28T23:59:59
             <li>fedora - a required parameter specifying the Fedora servlet path.</li>
             <li>get - a required parameter specifying the Fedora servlet path.</li>
             <li>PID - required persistent identifier of the digital object.</li>
-            <li>bDefPID - required persistent identifier of the behavior definition object to which the digital object subscribes.</li>
+            <li>sDefPID - required persistent identifier of the service definition object to which the digital object subscribes.</li>
             <li>methodName - required name of the method to be executed.</li>
             <li><strong>dateTime</strong> - value indicating dissemination of a version of the digital object at the specified point in time. Proper syntax is YYYY-MM-DDTHH:MM:SS where HH is 24-hour clock.</li>
             <li><strong>parmArray</strong> - optional array of method parameters consisting of name/value pairs in the form parm1=value1&parm2=value2...</li>
@@ -175,13 +175,13 @@ mDate<=2003-08-28T23:59:59
         <span class="plaintext">
           For example:
           <br />
-          http://localhost:8080/fedora/get/ronda:2/2003-08-28T00:01:01                
+          http://localhost:8080/fedora/get/ronda:2/2003-08-28T00:01:01
       </li>
     </ol>
 
     <div id="footer">
       <p id="copyright">
-        Copyright &copy; 2002-2007 Fedora Project
+        Copyright &copy; 2002-2008 Fedora Project
       </p>
       <script type="text/javascript">
         var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
@@ -194,6 +194,6 @@ mDate<=2003-08-28T23:59:59
         p.innerHTML = "Last Modified "+modifiedDate;
       </script>
     </div>
-    
+
   </body>
 </html>

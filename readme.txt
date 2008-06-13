@@ -1,5 +1,5 @@
 -------------------------------------------------------------------
-             Fedora Release 3.0b2 - June 12, 2008
+             Fedora Release 3.0b2 - June 13, 2008
 -------------------------------------------------------------------
 This is a full source code release of Fedora.  Before using this
 software, you must read and agree to the license, found under

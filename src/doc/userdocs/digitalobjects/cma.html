@@ -276,62 +276,32 @@
           <table>
             <tr>
               <td><strong>Object Type</strong></td>
+              <td><strong>Code</strong></td>
               <td><strong>Description</strong></td>
             </tr>
             <tr>
+              <td>Data</td>
               <td>Data</td>
               <td>A container for content</td>
             </tr>
             <tr>
               <td>Service Definition</td>
+              <td>SDef</td>
               <td>A container for service definitions, an element of a content model</td>
             </tr>
             <tr>
-              <td>Service Deployment Mechanism</td>
-              <td>A container for service deployment mechanisms</td>
+              <td>Service Deployment</td>
+              <td>SDep</td>
+              <td>A container for the service deployment bindings</td>
             </tr>
             <tr>
               <td>Content Model</td>
+              <td>CModel</td>
               <td>A container for content models</td>
             </tr>
           </table>
           <br />
           Table 1 - Fundamental Fedora Object Types
-          <br />
-          <br />
-          <em>Note: In Fedora 3.0 Beta 2 proposed internal name changes have not yet been completed. Please refer to 
-          Table 2 below for the Beta 2 name correspondence.</em>
-          <br />
-          <br />
-          <table>
-            <tr>
-              <td><strong>Object Type</strong></td>
-              <td><strong>Beta 1 Code</strong></td>
-              <td><strong>Final Code</strong></td>
-            </tr>
-            <tr>
-              <td>Data</td>
-              <td>Data</td>
-              <td>Data</td>
-            </tr>
-            <tr>
-              <td>Service Definition</td>
-              <td>BDef</td>
-              <td>SDef</td>
-            </tr>
-            <tr>
-              <td>Service Deployment Mechanism</td>
-              <td>BMech</td>
-              <td>SMech</td>
-            </tr>
-            <tr>
-              <td>Content Model</td>
-              <td>CModel</td>
-              <td>CModel</td>
-            </tr>
-          </table>
-          <br />
-          Table 2 - Fedora 3.0 Beta 2 Name Correspondence
           <br />
           <br />
           Each of these specialized digital objects will be described in much greater detail below.  The BDef and BMech 
@@ -343,12 +313,12 @@
           logical and reusable fashion among the "control" objects.
           <br />
           <br />
-          We have re-used some of the names in the Fedora 3.0 Beta 2 from the prior (Release 2 and earlier) Fedora 
-          architecture because these names are familiar and there are some similarities to roles played by these objects 
+          Care should be taken in equating the names of object types in the Fedora 3.0 from the prior (Release 2 
+          and earlier) Fedora architecture because there are some similarities to roles played by these objects 
           in both the old and new architecture.  However, the CMA is a major redesign so care should be taken not to 
           automatically equate the roles of the control objects in the old and new implementations.  In pre-release 
-          reviews with community members, we discovered that there were concerns about the potential of confusion so we 
-          will use a new naming scheme for the final delivery of Fedora 3.0.
+          reviews with community members, we discovered that there were concerns about the potential of confusion so 
+          we have used a new naming scheme for Fedora 3.0.
           <br />
           <br />
           Also, care should be taken not to equate the digital object as a container and any data (or metadata) it 
@@ -357,8 +327,7 @@
           the architectural elements across views.  We will try to make the distinctions clear where needed.
           <br />
           <br />
-          Table 3 lists the supported relationships between fundamental object types in the CMA.  <em>Note: The proposed 
-          final Fedora 3.0 names are italicized and contained by parentheses.</em>
+          Table 2 lists the supported relationships between fundamental object types in the CMA.
           <br />
           <br />
           <table>
@@ -371,31 +340,31 @@
             <tr>
               <td>Data</td>
               <td>CModel</td>
-              <td>hasContentModel<br />(<em>conformsTo</em>)</td>
+              <td>hasModel</td>
               <td>Identifies the class and, optionally, the object containing a model of the essential characteristics 
               of the class</td>
             </tr>
             <tr>
               <td>CModel</td>
-              <td>BDef<br />(<em>SDef</em>)</td>
-              <td>hasBDef<br />(<em>providesService</em>)</td>
+              <td>SDef</td>
+              <td>hasService</td>
               <td>Identifies the object containing a model of the functional characteristics of class members</td>
             </tr>
             <tr>
-              <td>BMech<br />(<em>SMech</em>)</td>
-              <td>BDef<br />(<em>SDef</em>)</td>
-              <td>hasBDef<br />(<em>deploysService</em>)</td>
-              <td>Identifies the object containing a model of functional characteristics of class members</td>
+              <td>SDep</td>
+              <td>SDef</td>
+              <td>isDeploymentOf</td>
+              <td>Identifies the object containing a model of the functions being deployed</td>
             </tr>
             <tr>
-              <td>BMech<br />(<em>SMech</em>)</td>
+              <td>SDep</td>
               <td>CModel</td>
-              <td>isContractor<br />(<em>deploysServiceFor</em>)
-              <td>Identifies the object containing a model of the information characteristics of class members</td>
+              <td>isContractorOf
+              <td>Identifies the object containing a model of the information being deployed</td>
             </tr>
           </table>
           <br />
-          Table 3 - Relationships Between the Fedora Object Types
+          Table 2 - Relationships Between the Fedora Object Types
           <br />
           <br />
           <img src="images/cmarel.png" width="524" height="310" alt="Fundamental CMA Relationships" />
@@ -410,32 +379,30 @@
           query over them, or into caches which permit rapid access to their functionality.
           <br />
           <br />
-          The "fedora-model:hasContentModel (conformsTo)" relation identifies the class of the Data object. There may or 
+          The "hasModel" relation identifies the class of the Data object. There may or 
           may not be a Fedora digital object that corresponds to the identifier.  If the identifier refers to an object 
           it must be a CModel object and contain the base content model document.  It is expected that many Data objects 
           conform to a single Content Model (and have a relation asserted to the same CModel object).  The Content Model 
           characterizes the Data objects that conform to it.
           <br />
           <br />
-          The BDef (<em>SDef</em>) object describes a Service and the Operations it performs.  Defining a Service is the 
+          The SDef object describes a Service and the Operations it performs.  Defining a Service is the 
           means by which content developers provide customized functionality for their Data objects.  A Service consists 
           of one or more Operations, each of which is an endpoint that may be called to execute the Operation. This 
           approach is similar to techniques found in both object-oriented programming and in Web services.  The CModel 
-          object uses the "fedora-model:hasBDef (providesService)" relation to assert that its' class members provides 
+          object uses the "hasService" relation to assert that its' class members provides 
           a Service (and its associated Operations).  A CModel is free to assert relations to more than one Service.  A 
           Service may be related to many CModels.
           <br />
           <br />
-          Deployment of a Service in a repository is accomplished by using the "fedora-model:hasBDef (deploysService)" 
-          relation to the BDef (<em>SDef</em>) object.  The BMech (<em>SMech</em>) object is local to a Fedora repository 
-          and represents how a Service is implemented by the repository.  Only one BMech (<em>SMech</em>) object may be 
-          created within a repository to deploy the services characterized by the corresponding BDef (<em>SDef</em>) 
-          object.
+          Deployment of a Service in a repository is accomplished by using the "isDeploymentOf" 
+          relation to the SDef object.  The Service Deployment (SDep) object is local to a Fedora repository 
+          and represents how a Service is implemented by the repository.
           <br />
           <br />
-          Finally, the BMech (<em>SMech</em>) object asserts the "fedora-model:isContractor (deploysServiceFor)" to 
+          Finally, the SDep object asserts the "isContractorOf" to 
           indicate the CModel (effectively the class of Data objects) for which it deploys Services.  This permits the 
-          BMech (<em>SMech</em>) to access the Datastreams in the Data object and user parameters when an Operation is 
+          SDep to access the Datastreams in the Data object and user parameters when an Operation is 
           called for a Data object.
           <br />
           <br />
@@ -447,7 +414,7 @@
 
 <div id="footer">
     <div id="copyright">
-        Copyright &#xA9; 2002-2007 Fedora Project
+        Copyright &#xA9; 2002-2008 Fedora Project
     </div>
     <div id="lastModified">
         Last Modified

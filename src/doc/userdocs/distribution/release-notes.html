@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-                      
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
   <head>
     <title>Fedora 3.0 Beta 2 Release Notes</title>
@@ -28,13 +28,13 @@
 		<li><a href="#history">Historic Release Notes (prior releases)</a></li>
       </ol>
     </div>
-    
+
     <ol id="content">
-    
+
       <li>
         <h2 id="intro">Introduction</h2>
         <span class="plaintext">
-          Fedora 3.0 is a major release of Fedora that 
+          Fedora 3.0 is a major release of Fedora that
           introduces the Content Model Architecture among several
           other significant features, listed below.  Several bugs
           have also been addressed with this release.
@@ -43,16 +43,16 @@
             feedback from the
             Fedora user community, and is not suitable for production.
             For the latest production-quality release, please
-            see <a href="http://www.fedora-commons.org/developers">the Developers Section of the 
+            see <a href="http://www.fedora-commons.org/developers">the Developers Section of the
             Fedora Commons website</a>.
           </div>
         </span>
       </li>
-      
+
       <li>
         <h2 id="features">New Features and Enhancements</h2>
         <span class="plaintext">
-          The following features and enhancements have been 
+          The following features and enhancements have been
           included in this release.
         </span>
         <ol class="alpha">
@@ -63,20 +63,20 @@
               a new system-recognized Fedora Object type, the
               Content Model Object.  Among the improvements this
               architectural change provides is that operations
-              or behaviors are now attached to objects at the 
+              or behaviors are now attached to objects at the
               content model level.  The traditional "disseminator"
               has been replaced by the CMA functionality.
               <br/>
               <br/>
               Data objects assert their membership to a content
-              model by adding a "fedora-model:hasContentModel" 
+              model by adding a "fedora-model:hasModel"
               statement to the RELS-EXT datastream.  This replaces the old
               system object property "fedora-model:contentModel".
               The demo objects have been updated to reflect this new
-              way of attaching behaviors.
+              way of asserting type (and optionally, attaching behaviors).
               <br/>
               <br/>
-              See the <a href="../digitalobjects/cmda.html">Content Model
+              See the <a href="../digitalobjects/cma.html">Content Model
               Architecture</a> document for more extensive information on
               the purpose and design of the CMA.
             </span>
@@ -85,8 +85,8 @@
           <li> Fedora REST API
             <span class="plaintext">
               The new <a href="../server/webservices/rest/index.html">REST
-              API</a> exposes a subset of the Access and Management 
-              interfaces as a RESTful (Representational State Transfer) 
+              API</a> exposes a subset of the Access and Management
+              interfaces as a RESTful (Representational State Transfer)
               Web Service. Fedora Commons would like to thank
               <a href="http://www.yourmediashelf.com/">MediaShelf</a>
               for contributing this feature.
@@ -95,9 +95,9 @@
 
           <li> Mulgara Support
             <span class="plaintext">
-              The <a href="../server/resourceindex/index.html">Resource 
-              Index</a> has been updated to support 
-              <a href="http://www.mulgara.org/">Mulgara</a> 1.1.1 as its 
+              The <a href="../server/resourceindex/index.html">Resource
+              Index</a> has been updated to support
+              <a href="http://www.mulgara.org/">Mulgara</a> 1.1.1 as its
               default triplestore. Additionally, the Resource Index now
               supports the use of Mulgara as a remote server.
             </span>
@@ -109,14 +109,14 @@
               from prior versions of Fedora.  The utilities support
               converting old disseminators to use the CMA and upgrading
               objects to FOXML 1.1.  For more information on these
-              utilities, see the <a href="migration.html">Fedora 
+              utilities, see the <a href="migration.html">Fedora
               Migration Guide</a>.
             </span>
           </li>
 
           <li> Relational Index Simplification
             <span class="plaintext">
-              With the CMA, the most complex of Fedora's Database tables
+              With the CMA, the most complex of Fedora's database tables
               are no longer necessary.  This reduces the complexity
               of the code while also reducing the amount of time Fedora
               needs to add, change, and remove information in the database.
@@ -127,14 +127,15 @@
 
           <li> Dynamic Behaviors
             <span class="plaintext">
-              Objects may added or removed dynamically from the system, moving 
-              system checks into runtime errors.
+              Objects may now be added or removed from the system dynamically
+              due to the transition to allowing system checks to produce runtime errors.
               With previous releases of Fedora, Behavior Definitions
               had to be ingested first, followed by Behavior Mechanisms,
               followed by Data Objects.  Now, Fedora allows the ingest
               (and purge) of objects in any order, regardless of type.
-              In addition, system-recognized datastreams for Behavior
-              Mechanisms and Behavior Defintions can now be edited in-place.
+              In addition, system-recognized datastreams for the new Service Definitions (previously
+              Behavior Definitions) and Service Deployments (previously Behavior Mechanisms)
+              can now be edited in-place.
             </span>
           </li>
 
@@ -144,7 +145,7 @@
               user-friendly messages when API-A-LITE, API-M-LITE, and
               search-related errors occur.  With the introduction of the
               CMA, these error messages also provide better detail
-              on the reason a request failed 
+              on the reason a request failed
               (missing object, datastream, etc.).
             </span>
           </li>
@@ -170,11 +171,11 @@
           <li> Relationships API
             <span class="plaintext">
               The <a href="../server/webservices/apim/index.html">Fedora
-              Management interface</a> has been extended to support 
+              Management interface</a> has been extended to support
               the per-object assertion and retrieval of
               user-defined relationships in the RELS-EXT datastream.
               The new relationships API methods are <a href="../server/webservices/apim/index.html#method.addRelationship">addRelationship</a>,
-              <a href="../server/webservices/apim/index.html#method.getRelationships">getRelationships</a>, 
+              <a href="../server/webservices/apim/index.html#method.getRelationships">getRelationships</a>,
               and <a href="../server/webservices/apim/index.html#method.purgeRelationship">purgeRelationship</a>.
               The Resource Index does not need to be enabled in order
               to use these methods.
@@ -195,7 +196,57 @@
               <li> <a href="http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd">Fedora METS Extension 1.1 XSD Schema</a></li>
               <li> <a href="http://www.fedora.info/definitions/1/0/metsExtRules1-1.xml">Fedora METS Extension 1.1 Schematron Rules</a></li>
             </ul>
+            <span class="plaintext"></span>
+          </li>
+
+          <li> Atom Support
             <span class="plaintext">
+            [*] Fedora objects can now be imported and exported in the Atom
+            format.  For examples, see the <code>demo/atom</code> directory
+            of the client.
+            </span>
+          </li>
+
+          <li> Messaging Support
+            <span class="plaintext">
+            [*] Fedora can now be configured to produce JMS messages for API-M
+            events.  See the <a href="../server/messaging/index.html">Fedora Messaging Guide</a>
+            for more information.
+            </span>
+          </li>
+
+          <li> Saxon 8 &amp; XSLT2 Support
+            <span class="plaintext">
+            [*] The Saxon library in Fedora has been upgraded to version 8.
+            so the bundled <a href="../server/localservices/saxon/index.html">Saxon service</a>
+            can now make use of more advanced stylesheets.
+            </span>
+          </li>
+
+          <li> Bundled Tomcat Updated to 5.5.26
+            <span class="plaintext">
+            [*] When choosing to use the bundled Tomcat for deployment, the
+            Fedora installer now uses version 5.5.26.  This was formerly
+            version 5.0.28.
+            </span>
+          </li>
+
+          <li> RELS-EXT MIME Type Changed to application/rdf+xml
+            <span class="plaintext">
+            [*] Where appropriate, Fedora now uses the <code>application/rdf+xml</code>
+            MIME type for the RELS-EXT datastream.  Formerly, Fedora used
+            text/xml.
+            </span>
+          </li>
+
+          <li> Admin GUI Using Templates for CMA Objects
+            <span class="plaintext">
+            [*] The out-of-date "Builders" menu in the admin client has been
+            replaced with a simple templating approach when creating new Content
+            Model objects, Service Definition objects, or Service Deployment
+            objects.  When creating these special objects, the Admin GUI now
+            pre-populates them with the basic required datastreams, which the
+            user can then fill out using the object editor interface.
             </span>
           </li>
 
@@ -206,48 +257,54 @@
             </span>
             <ul>
               <li>
-                JMS Messaging - Integrates JMS messaging for sending notification of important events
+                Basic Validation Testing -
+                A feature that provides system operators a way to validate the
+                integrity of part or all of their repository, based on
+                content models.
               </li>
               <li>
-                Message Update for GSearch - Provides a reference implementation for using JMS notifications to update search engines
+                Final 3.0 Documentation Updates -
+                Much of the documentation has now been
+                updated to be current with the 3.0 features.  The remaining
+                set of updates will be completed for 3.0.
               </li>
               <li>
-                On-line Validation Testing - Hooks into the runtime error system to provide more meaningful error reports include conformance to content models and referential integrity checks
-              </li>
-              <li>
-                Off-line Validation Testing - Provides system operators a way to validate the integrity of part or all of their repository
-              </li>
-              <li>
-                Updated Administrative Client - Revises to support Content Model Architecture enhancements
-              </li>
-              <li>
-                Updated OAI Provider - Revises the OAI Provider to take advantage of the Content Model Architecture
-              </li>
-              <li>
-                Updated Utilities - Revises all the Fedora-provided utilities for integrate properly with the Content Model Architecture
+                3.0-Compatible Service Releases -
+                Shortly after the Beta 2 release, we will be releasing new
+                versions of the OAI Provider and GSearch services that are
+                compatible with Fedora 3.0.
               </li>
             </ul>
           </li>
 
         </ol>
+        <span class="plaintext">
+          [*] - This feature was introduced after the Beta 1 release.
+        </span>
       </li>
-      
+
       <li>
         <h2 id="bugs">Bug Fixes</h2>
         <span class="plaintext">
           The following bugs have been addressed for this release.
         </span>
         <ul>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1663737">Bug #1663737</a>: [*] Log messages not being printed</li>
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1697137">Bug #1697137</a>: fedora.war deployment fails in JBoss AS with OnlyOnceError</li>
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1701766">Bug #1701766</a>: Clean up prompts/messages for "other" servlet container</li>
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1710801">Bug #1710801</a>: HTTP Requests include bad HTTP basic Auth</li>
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1714089">Bug #1714089</a>: HTTP Error Codes are not being returned correctly.</li>
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1716106">Bug #1716106</a>: demo soapclient fails to compile/run</li>
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1716636">Bug #1716636</a>: addDatastream allows invalid values for checksumType</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1720485">Bug #1720485</a>: [*] Null pointer while running installer</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1747186">Bug #1747186</a>: [*] FedoraAccessServlet hardcodes tiny buffer for datastreams</li>
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1773195">Bug #1773195</a>: Incorrect XACML demo policies involving state</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1740417">Bug #1740417</a>: [*] dcDates table not updated when DC modified</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1771136">Bug #1771136</a>: [*] Whitespace added when modifying inline XML</li>
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1775374">Bug #1775374</a>: object editor dirty flag being set when no changes have been</li>
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1785608">Bug #1785608</a>: SQL rebuild sometimes fails to populate pidGen correctly</li>
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1791683">Bug #1791683</a>: Installer creates one-jar doc directory</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1816735">Bug #1816735</a>: [*] Flush and close missing in FieldSearchServlet</li>
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1832548">Bug #1832548</a>: XSD dateTime inconsistency</li>
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1832564">Bug #1832564</a>: XSD dateTimes can have incorrect fractional seconds</li>
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1835449">Bug #1835449</a>: Object-specific POLICY datastream ignored when using Oracle</li>
@@ -255,23 +312,25 @@
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1844803">Bug #1844803</a>: bug in DefaultExternalContentManager</li>
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1848092">Bug #1848092</a>: Incorrect handling of dates before 1CE</li>
           <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1848095">Bug #1848095</a>: RelsExtValidator rejects valid UTC dateTimes</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1853905">Bug #1853905</a>: [*] Installer fails if FEDORA_HOME contains space</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1863382">Bug #1863382</a>: [*] Lockup after frequent dissemination requests</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1877022">Bug #1877022</a>: [*] Mail.jar missing from 3.0b1</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1878847">Bug #1878847</a>: [*] Problem with UTF-8 chars in datastream</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1921874">Bug #1921874</a>: [*] Log4J errors on startup and shutdown</li>
+          <li><a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=177054&atid=879703&aid=1927861">Bug #1927861</a>: [*] ExecUtility calls can fail if command has a space</li>
+
         </ul>
+        <span class="plaintext">
+          [*] - This bug was fixed after the Beta 1 release.
+        </span>
       </li>
-      
+
       <li>
         <h2 id="issues">Known Issues</h2>
         <span class="plaintext">
           The following outstanding issues are present with this Beta release:
         </span>
         <ul>
-          <li> System documentation has not been fully updated to reflect 3.0
-               changes.</li>
-          <li> Services (including OAI Provider) do not work with Fedora
-               3.0 Beta 2.  This will be done for 3.0 Final.</li>
-          <li> Fedora Administrative GUI does not automatically populate
-               RELS-EXT for BMech objects.  It should create a relationship,
-               fedora-model:hasBDef in order for behaviors to work.
-               For now, this must be done manually.</li>
           <li> Fedora Administrative GUI has button / tab overlaying
                problem after creating a new datastream.  When this occurs,
                you can click the "New Datastream" tab, then the "RELS-EXT"
@@ -280,35 +339,36 @@
         <span class="plaintext">
           Please see the
           <a href="http://sourceforge.net/tracker/?group_id=177054&atid=879703">
-          Fedora Commons Bug Tracker</a> for an up-to-date list of 
+          Fedora Commons Bug Tracker</a> for an up-to-date list of
           outstanding bugs.
         </span>
       </li>
-      
+
       <li>
         <h2 id="install">Installation</h2>
         <span class="plaintext">
           For instructions on installing and upgrading Fedora, please consult the <a href="installation.html">Installation Guide</a> and the <a href="migration.html">Fedora Upgrade and Migration Guide</a>.
         </span>
       </li>
-      
+
       <li>
         <h2 id="history">Historic Release Notes</h2>
         <span class="plaintext">
-          Release notes for previous versions of Fedora:
-          [<a href="http://fedora.info/download/2.2.1/userdocs/distribution/release-notes.html">2.2.1</a>], 
-          [<a href="http://fedora.info/download/2.2/userdocs/distribution/release-notes.html">2.2</a>], 
-	      [<a href="http://fedora.info/download/2.1.1/userdocs/distribution/release-notes.html">2.1.1</a>], 
-	      [<a href="http://fedora.info/download/2.1/userdocs/distribution/release-notes.html">2.1</a>], 
-	      [<a href="http://fedora.info/download/2.1b/userdocs/distribution/release-notes.html">2.1b</a>], 
-	      [<a href="http://fedora.info/download/2.0/userdocs/distribution/release-notes.html">2.0</a>], 
-          [<a href="http://fedora.info/download/1.2.1/userdocs/distribution/release-notes.html">1.2.1</a>], 
-          [<a href="http://fedora.info/download/1.2/userdocs/distribution/release-notes.html">1.2</a>], 
-	      [<a href="http://fedora.info/download/1.1.1/userdocs/distribution/release-notes.html">1.1.1</a>], 
-	      [<a href="http://fedora.info/download/1.1/userdocs/distribution/release-notes.html">1.1</a>], 
-	      [<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html">1.0</a>], 
-	      [<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e102">0.9</a>], 
-	      [<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e197">Beta 1</a>], 
+          Release notes for previous versions of Fedora:<br/>
+          [<a href="http://www.fedora-commons.org/documentation/2.2.2/userdocs/distribution/release-notes.html">2.2.2</a>],
+          [<a href="http://fedora.info/download/2.2.1/userdocs/distribution/release-notes.html">2.2.1</a>],
+          [<a href="http://fedora.info/download/2.2/userdocs/distribution/release-notes.html">2.2</a>],
+	      [<a href="http://fedora.info/download/2.1.1/userdocs/distribution/release-notes.html">2.1.1</a>],
+	      [<a href="http://fedora.info/download/2.1/userdocs/distribution/release-notes.html">2.1</a>],
+	      [<a href="http://fedora.info/download/2.1b/userdocs/distribution/release-notes.html">2.1b</a>],
+	      [<a href="http://fedora.info/download/2.0/userdocs/distribution/release-notes.html">2.0</a>],
+          [<a href="http://fedora.info/download/1.2.1/userdocs/distribution/release-notes.html">1.2.1</a>],
+          [<a href="http://fedora.info/download/1.2/userdocs/distribution/release-notes.html">1.2</a>],
+	      [<a href="http://fedora.info/download/1.1.1/userdocs/distribution/release-notes.html">1.1.1</a>],
+	      [<a href="http://fedora.info/download/1.1/userdocs/distribution/release-notes.html">1.1</a>],
+	      [<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html">1.0</a>],
+	      [<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e102">0.9</a>],
+	      [<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e197">Beta 2</a>],
 	      [<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e279">Alpha 1</a>]
 	    </span>
 	  </li>
@@ -316,7 +376,7 @@
 
     <div id="footer">
       <p id="copyright">
-        Copyright &copy; 2002-2007 Fedora Project
+        Copyright &copy; 2002-2008 Fedora Project
       </p>
       <script type="text/javascript">
         var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
@@ -329,7 +389,7 @@
         p.innerHTML = "Last Modified "+modifiedDate;
       </script>
     </div>
-    
+
   </body>
 </html>
-	  
+

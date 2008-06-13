@@ -44,7 +44,7 @@
       <li>
         <h2 id="intro">Introduction</h2>
         <span class="plaintext">
-          Fedora Administrator is the direct link to API-M functionality for repository administrators. Using this tool it is possible to ingest, search for and retrieve, modify and purge data objects and build, search for and retrieve, modify, and purge behavior objects (Behavior Definitions and Behavior Mechanisms).
+          Fedora Administrator is the direct link to API-M functionality for repository administrators. Using this tool it is possible to ingest, search for and retrieve, modify and purge objects.
         </span>
       </li>
 
@@ -75,7 +75,6 @@
           <ul>
             <li>File</li>
             <li>Tools</li>
-            <li>Builders</li>
             <li>Window</li>
             <li>Help</li>
           </ul>
@@ -84,7 +83,7 @@
       <li>
         <h2 id="filemenu">File Menu</h2>
         <span class="plaintext">
-          <img src="images/menu-1.jpg" width="850" height="655" alt="file menu" />
+          <img src="images/menu-1.jpg" alt="file menu" />
           <br />
           <br />
           Commands on the file menu allow a repository administrator to perform operations on objects in the repository or to log in to a different repository.
@@ -94,27 +93,23 @@
       <li>
         <h2 id="newobject">New Object</h2>
         <span class="plaintext">
-          <img src="images/menu-3.jpg" width="850" height="655" alt="new object" />
+          <img src="images/menu-3.jpg" alt="new object" />
           <br />
           <br />
-          The <em>New</em> menu option allows users to build new Fedora objects from pre-existing component parts. When the <em>New...Data Object</em> option is selected a skeletal Fedora data object is ingested into the repository and the repository administrator/object owner then completes the object by defining a Behavior Definition and Behavior Mechanism for the object, adding datastreams, and finally binding disseminators and datastreams together.
-          <br />
-          <br />
-          Users may also create behavior definition and behavior mechanism objects by selecting these submenu options. The complex task of building WSDL objects dictated the necessity of onscreen, context sensitive help screens for these builders. Clicking the <em>Help</em> button on any pane in the Behavior Definition Builder or Behavior Mechanism Builder will open a popup help screen defining each field in view.
+          The <em>New</em> menu option allows users to build new Fedora objects from pre-existing component parts. When any of the object types (Data Object, Content Model, Service Definition, or Service Deployment) are created using the <em>New</em> option a skeletal Fedora object specific to that type is ingested into the repository and the repository administrator/object owner then completes the object by defining metadata, asserting relationships, updating the provided datastreams, and adding new datastreams.
         </span>
       </li>
 
       <li>
-        <h2 id="createobject">Creating a New Data Object</h2>
+        <h2 id="createobject">Creating a New Object</h2>
       <span class="plaintext">
 
   <div>
-    <h4><a name="createobject" id="d0e119"></a>Creating a New Data
-    Object</h4>
+    <h4><a name="createobject" id="d0e119"></a>Creating a New Data Object</h4>
   </div>
 
-  <p>This section provides instructions for building a new data
-  object using Fedora Administrator.</p>
+  <p>This section provides instructions for building a new data object using the Fedora Administrator.</p>
+  <br/>
 
   <blockquote>
     <p>On the File Menu, select <em>New</em>.</p>
@@ -125,14 +120,13 @@
 
     <p><img border="0" src="images/newobj_dialog.jpg" width="403" height="154"></p>
 
-    <p>Fill in the label data for the object and the identifier for a content model
-    to which the data object subscribes. If a custom PID is
-    desired, click the check box and fill in the PID value.&nbsp;&nbsp; </p>
+    <p>Fill in the label for the object. If a custom PID is
+    desired, click the check box and fill in the PID value.</p>
 
     <p>Clicking <em>Create</em> causes a Fedora data object to be
     created and ingested into the repository. The new object is
-    displayed in a tabbed pane showing the following tabs:
-    <em>Properties, Datastreams, and Disseminators</em>.&nbsp;&nbsp; You will
+    displayed in a tabbed pane showing two tabs:
+    <em>Properties and Datastreams</em>.&nbsp;&nbsp; You will
 	first be presented with the Object Properties pane.&nbsp; On this pane you
 	can add the following information:</p>
 	<p><b>State:&nbsp; </b>The state of the object, defined as follows:</p>
@@ -154,7 +148,7 @@
 	<p>&nbsp;</p>
 
     <p>
-	<img border="0" src="images/create-object-1.jpg" width="850" height="655"></p>
+	<img border="0" src="images/create-object-1.jpg"></p>
 	<p>&nbsp;</p>
 	<p><b>View and Modify the Default Dublin Core Datastream</b></p>
 	<p>Click on the <i>Datastreams</i> tab labeled as &quot;<b>DC</b>.&quot;&nbsp; The display will show a side tabbed pane displaying all
@@ -166,7 +160,7 @@
 	When done editing, click the Save Changes button on the bottom of the pane.</p>
 
     <p>
-	<img border="0" src="images/create-object-dc.jpg" width="850" height="655"></p>
+	<img border="0" src="images/create-object-dc.jpg"></p>
 
     <p>&nbsp;</p>
 	<p><b>Creating a New Datastream in the object</b></p>
@@ -345,13 +339,13 @@
 		<li>If you selected &quot;Redirect&quot; you will also enter a URL in the &quot;<b>Location</b>&quot;
 		text entry box.&nbsp;&nbsp; </li>
 	</ul>
-	<p>When all information is supplies in the add Datastream pane, click the <b>
+	<p>When all information is supplied in the add Datastream pane, click the <b>
 	Save Datastream</b> button.&nbsp;&nbsp; This will send an API-M request to
 	the Fedora repository service to add the new Datastream to the digital
 	object.&nbsp;&nbsp; A completed Datastream pane is depicted below.</p>
 	<p>&nbsp;</p>
 
-    <p><img border="0" src="images/create-ds-1.jpg" width="850" height="723"></p>
+    <p><img border="0" src="images/create-ds-1.jpg"></p>
 
     <p>&nbsp;</p>
   </blockquote>
@@ -361,17 +355,18 @@
   </div>
 
   <p>
-	<img border="0" src="images/open-object-dialog.jpg" width="297" height="128"></p>
+	<img border="0" src="images/open-object-dialog.jpg"></p>
 
   <p>&nbsp;</p>
 	<p>The <em>Open</em> menu requires input of an object PID for
   retrieval of the object. Upon retrieval, the object is displayed
-  	on three tabbed panes:&nbsp; Properties, Datastreams, and Disseminators.&nbsp;&nbsp;
+  	on two tabbed panes:&nbsp; Properties, Datastreams.&nbsp;&nbsp;
 	You can edit any aspect of a digital object from these panes, in the same
 	way information was added via the panes (as described earlier).&nbsp;&nbsp;
-	Some addition functions are available on the Object Properties pane for an
+	Some additional functions are available on the Object Properties pane for an
 	existing digital object:</p>
 
+  <br/>
   <p><em>The Object Properties Pane</em></p>
 
   <blockquote>
@@ -390,6 +385,7 @@
     with this option and the purge cannot be undone</b>.</p>
   </blockquote>
 
+  <br/>
   <p><em>The Datastreams Pane</em></p>
 
   <p>On the Datastreams Pane, the state of each datastream in the
@@ -417,11 +413,9 @@
 
   <p><i><b>Editing Datastream Content</b></i>:&nbsp; If a datastream has a <em>text</em> MIME type (e.g.,
   <em>text/xml</em>, it may be edited in place by clicking the
-  <em>Edit</em> button and making the desired changes in the editing window. or to export the data
+  <em>Edit</em> button and making the desired changes in the editing window. Export the data
   contained in the datastream by clicking the <em>Export</em>
-  button.&nbsp; If the datastream is not linked to an active disseminator, it
-	may be purged from the object.&nbsp;&nbsp; Only datastreams with a <em>text</em> MIME type may be edited
-	directing from the Datastream pane. Datastreams with other MIME types (e.g., <em>image</em> or
+  button. Datastreams with non-text MIME types (e.g., <em>image</em> or
   <em>application</em>, e.g., <em>image/jpeg</em> or
   <em>application/pdf</em> may only be viewed, exported, or purged
   from the object.</p>
@@ -438,10 +432,7 @@
 	the object.&nbsp; You will be warned that the
   operation is permanent and must click "Yes" to continue.&nbsp;&nbsp; If "Yes"
   is selected, the datastream is immediately purged from the
-  object.&nbsp; Purge is not valid for the DC metadata datastream because it is always
-  linked to the default disseminator.&nbsp;&nbsp; <i>Please note that datastreams which are linked to active
-  disseminators may not be purged.&nbsp; You must first purge the disseminator,
-	then the datasreams.</i></p>
+  object.&nbsp; Purge cannot be performed on the DC metadata datastream.</p>
 
   <p>&nbsp;</p>
 
@@ -453,15 +444,16 @@
   have the option of ingesting a single object or multiple
   objects.</p>
 
-  <p>Objects may be ingested from a file or from another
+  <p>Objects may be ingested from a file, directory, or from another
   repository.</p>
 
+  <br/>
   <div>
     <h4><a name="d0e425" id="d0e425"></a>Ingest One Object</h4>
   </div>
 
   <p>
-	<img border="0" src="images/ingest-one-object.jpg" width="850" height="655"></p>
+	<img border="0" src="images/ingest-one-object.jpg"></p>
 
   <p>&nbsp;</p>
 	<p><b>Ingest From File:</b>&nbsp; Choosing Ingest One Object from File, the user is prompted to
@@ -472,8 +464,8 @@
   the PID in the object XML will be maintained. Otherwise, the PID
   will be overwritten.</p>
 
-  <p>
-	<img border="0" src="images/ingest-file-dialog.jpg" width="508" height="360"></p>
+  <p>&nbsp;</p>
+  <p><img border="0" src="images/ingest-file-dialog.jpg"></p>
 
   <p>&nbsp;</p>
 	<p><b>Ingest From Repository:</b>&nbsp; Choosing Ingest One Object from Repository causes the Source
@@ -484,41 +476,17 @@
   Input dialog completes the object ingestion.</p>
 
   <p>&nbsp;</p>
-
-  <div>
-    <h4><a name="d0e450" id="d0e450"></a>Ingest Objects by Type</h4>
-  </div>
-
-  <p>Users may also ingest all the files in a directory or all the
-  files of a specific object type in a repository by selecting the
-  Ingest Objects by Type submenu item.&nbsp; There are three basic types of
-	objects in Fedora:&nbsp; Data Objects (your regular objects that you
-	create), Behavior Definition Objects (control objects that store a service
-	definition), and Behavior Mechanism Objects (control objects that store
-	service binding metadata such as WSDL).&nbsp;&nbsp; </p>
-
-  <p><b>Ingest From Directory:&nbsp; </b>Upon selecting Ingest Objects By Type from File, a dialog box
+  <p><b>Ingest From Directory:&nbsp; </b>Upon selecting Ingest Multiple Objects From Directory, a dialog box
   prompts the user to select or browse to the directory containing
   the objects to be selected. Once the directory has been
   identified, clicking <em>Open</em> will activate a second dialog
-  box which prompts the user to select the type of object to be
-  ingested behavior definition, behavior mechanism, and/or data
-  object.</p>
-
-  <p><img border="0" src="images/selectbytype.jpg" width="187" height="194"></p>
+  box which prompts the user to select the format of the objects to be
+  ingested. All objects in the directory must be in the same format.</p>
 
   <p>&nbsp;</p>
-	<p>It should be noted that if you have created control objects (Behavior
-	Definition and Mechanism objects), any regular Data Objects that depend on
-	them should be ingested <i>after</i> the control objects are ingested.&nbsp;&nbsp;
-	You don't want to try to ingest Data Objects with dependencies on control
-	objects that don't exist.&nbsp;&nbsp; However, If you select all three types
-	of objects together,&nbsp; Fedora will ensure that the control objects get
-	ingested first.&nbsp;&nbsp; If you are ingesting one kind of object at a
-	time, Behavior Definition Objects should be ingested before Behavior
-	Mechanism objects that depend on them.&nbsp; Then, Data Objects can be
-	ingested that depend on the Behavior Definition/Mechanism objects. </p>
+  <p><img border="0" src="images/selectbytype.jpg"></p>
 
+  <p>&nbsp;</p>
   <p>If the repository has been configured to &quot;retain PIDs&quot; on ingest (see the
 	Fedora repository configuration documentation), then whatever PID is found
 	in the ingest XML file (also known as the Submission Information Package or
@@ -528,16 +496,6 @@
 	digital object, and ignore whatever PID was in the ingest XML file.</p>
 
   <p>&nbsp;</p>
-	<p><b>Ingest From Repository:&nbsp; </b>Choosing Ingest Objects by Type from Repository causes the
-  Source Repository dialog box to appear. The user must fill in the
-  hostname: port of the source repository, and enter a username and
-  password. Clicking <em>OK</em> causes the Select Object Type
-  dialog to appear. Selecting the types of objects to be ingested
-  from the source repository--behavior definitions, behavior
-  mechanisms, or data objects--and clicking <em>OK</em> initiates
-  ingestion of <b>all</b> objects of that type from the source
-  repository.</p>
-
   <p>During ingest, the status bar at the bottom of the Fedora
   Administrator window shows the activities of the server. Once
   ingest is complete, a summary pane will appear giving counts of
@@ -547,25 +505,29 @@
   the detailed log file or <em>No</em> to view the file at a later
   time. The log file is created in the $FEDORA_HOME/client/logs/
   directory.</p>
-	<p>&nbsp;</p>
 
+  <p>&nbsp;</p>
   <div>
     <h3><a name="export" id="d0e510"></a>Export Object</h3>
   </div>
 
   <p>Users have the option of exporting a single object or
-  exporting objects by type.&nbsp; This functionality can be used from the
-	File/Export menu.&nbsp; </p>
-	<p><img border="0" src="images/export-menu.jpg" width="850" height="655"></p>
+  exporting multiple objects. This functionality can be accessed through the
+	File/Export menu.</p>
 
+  <p>&nbsp;</p>
+  <p><img border="0" src="images/export-menu.jpg"></p>
+
+  <p>&nbsp;</p>
   <div>
     <h4><a name="d0e515" id="d0e515"></a>Export One Object</h4>
   </div>
 
-  <p><img border="0" src="images/exportdirdialog.jpg" width="508" height="360"></p>
-	<p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p><img border="0" src="images/exportdirdialog.jpg"></p>
 
-  <p>When the Export One Object option is selected, the user is
+  <p>&nbsp;</p>
+  <p>When the <em>Export One Object</em> option is selected, the user is
   prompted to select a directory to which the export file will be
   written. Clicking <em>Open</em> causes the user to be prompted
   for an object PID.&nbsp; The PID will be used as the basis for the export file
@@ -610,20 +572,18 @@
 	<p>&nbsp;</p>
 
   <div>
-    <h4><a name="d0e532" id="d0e532"></a>Export Object by Type</h4>
+    <h4><a name="d0e532" id="d0e532"></a>Export Multiple Objects</h4>
   </div>
 
-  <p>When the Export Object by Type option is selected, the user is
+  <p>When the <em>Export Multiple Objects</em> option is selected, the user is
   prompted to select a directory to which the export files will be
   written. Clicking <em>Open</em> causes the user to be prompted
-  for which type of object is to be exported--behavior definitions,
-  behavior mechanisms, or data objects. The default selection is
-  data objects. When the file types are selected and <em>OK</em> is
-  clicked, the system searches for and retrieves <b>all</b> objects
-  of that type, which are then exported to individual files in the
-  destination directory. The files are named
-  <em>pidvalue.xml</em>.</p>
+  for the export serialization format, as described above. When the
+  format has been selected and <em>OK</em> is  clicked, <b>all</b> objects
+  are exported into the selected directory in the selected format type.
+  The files are named based on their pid values.</p>
 
+  <p>&nbsp;</p>
   <div>
     <h3><a name="purge" id="d0e555"></a>Purge Object</h3>
   </div>
@@ -633,10 +593,10 @@
   <p>Purging an object completely and permanently removes it from
   the repository. Upon selecting the Purge option, the user will be
   prompted to enter an object PID and a reason for the object's
-  removal. Please note that objects with dependencies in the
-  repository cannot be purged. <b>WARNING: There is no "Are you
+  removal. <b>WARNING: There is no "Are you
   sure" dialog with this option.</b></p>
 
+  <p>&nbsp;</p>
   <div>
     <h3><a name="view" id="d0e566"></a>View Object XML</h3>
   </div>
@@ -648,6 +608,7 @@
   keyboard commands of the host operating system, (e.g. CTL-C,
   CTL-V in Windows) if desired.</p>
 
+  <p>&nbsp;</p>
   <div>
     <h3><a name="changerepo" id="d0e574"></a>Change Repository</h3>
   </div>
@@ -661,6 +622,7 @@
   server with which to connect, entering the appropriate login name
   and password.</p>
 
+  <p>&nbsp;</p>
   <div>
     <h3><a name="exit" id="d0e582"></a>Exit</h3>
   </div>
@@ -668,11 +630,12 @@
   <p>The Exit menu option closes all connections with the Fedora
   server instance and logs the user out of the repository.</p>
 
+  <p>&nbsp;</p>
   <div>
     <h2><a name="toolsmenu" id="d0e587"></a>Tools Menu</h2>
   </div>
 
-  <p><img alt="" id="_x0000_i1052" src="images/menu-2.jpg" border="0" height="653" width="848"/></p>
+  <p><img alt="" id="_x0000_i1052" src="images/menu-2.jpg"/></p>
 
   <p>Commands on the Tools menu provide the user with the ability
   to search and retrieve objects from the repository, build and
@@ -715,7 +678,7 @@
     <h4><a name="d0e608" id="d0e608"></a>Simple Search Tab</h4>
   </div>
 
-  <p><img alt="" id="_x0000_i1053" src="images/simplesearch.jpg" border="0" height="673" width="848"/></p>
+  <p><img alt="" id="_x0000_i1053" src="images/simplesearch.jpg"/></p>
 
   <p>The Simple Search tab is the default selection in the Search
   Repository window. The Simple Search query searches both the
@@ -725,7 +688,7 @@
   be displayed by clicking the <em>Change</em> button and
   selecting/deselecting field names from the dialog.</p>
 
-  <p><img alt="" id="_x0000_i1054" src="images/searchfieldsdialog.jpg" border="0" height="326" width="397"/></p>
+  <p><img alt="" id="_x0000_i1054" src="images/searchfieldsdialog.jpg"/></p>
 
   <p>The Simple Search searches all indexed metadata fields for the
   text entered into the text box. All searches are case
@@ -739,7 +702,7 @@
     <h4><a name="d0e629" id="d0e629"></a>Advanced Search Tab</h4>
   </div>
 
-  <p><img alt="" id="_x0000_i1055" src="images/searchadvanced.jpg" border="0" height="650" width="848"/></p>
+  <p><img alt="" id="_x0000_i1055" src="images/searchadvanced.jpg"/></p>
 
   <p>The Advanced Search query enables users to refine their
   repository search by searching specific fields for specific
@@ -772,7 +735,7 @@
   selected, a submenu will provide the user with valid states from
   which to select.</p>
 
-  <p><img alt="" id="_x0000_i1057" src="images/searchpopupmenu.jpg" border="0" height="650" width="848"/></p>
+  <p><img alt="" id="_x0000_i1057" src="images/searchpopupmenu.jpg"/></p>
 
   <p>The <em>Purge</em> and <em>Set Object State To</em> submenu
   options can be used on multiple objects by using mouse clicks or
@@ -785,7 +748,7 @@
     <h3><a name="d0e685" id="d0e685"></a>Batch Processing</h3>
   </div>
 
-  <p><img alt="" id="_x0000_i1058" src="images/tools_batch.jpg" border="0" height="650" width="848"/></p>
+  <p><img alt="" id="_x0000_i1058" src="images/tools_batch.jpg"/></p>
 
   <p>The Batch menu item includes tools to create and ingest
   multiple Fedora objects, which are FOXML documents or
@@ -1364,7 +1327,7 @@
   the Administrator GUI client under the submenu heading of
   Batch/Modify Batch.</p>
 
-  <p><img alt="" src="images/tools_batch.jpg" border="0" height="650" width="848"/></p>
+  <p><img alt="" src="images/tools_batch.jpg"/></p>
 
   <p>The Modify Batch menu contains two sub-items named Process
   Directives and Validate Directives File. The Process Directives
@@ -1453,7 +1416,7 @@
   <p class="MsoNormal" style="">
   <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
   &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  modfications on the datastreams and disseminators of two new
+  modfications on the datastreams of two new
   demo</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
   --&gt;</span></p>
 
@@ -1513,41 +1476,6 @@
   <p class="MsoNormal" style="">
   <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
   &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  This file uses behavior definition and behavior mechanism objects
-  that</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  are included in the set of demo objects. The set of demo objects
-  MUST</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  be ingested into the repository PRIOR to processing this
-  directives</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  file. If the demo objects are not loaded, the last several
-  directives</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  involving disseminators that use the demo objects will
-  fail.</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
   **********************************************************************</span>
   <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
   --&gt;</span></p>
@@ -1588,7 +1516,7 @@
   <p class="MsoNormal" style="">
   <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
   &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  or disseminators with PID of demo:32.</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
+  with PID of demo:32.</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
   --&gt;</span></p>
 
   <p class="MsoNormal" style="">
@@ -1753,7 +1681,7 @@
   <p class="MsoNormal" style="">
   <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
   &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  datastreams or disseminators with a PID of demo:33.</span>
+  datastreams with a PID of demo:33.</span>
   <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
   --&gt;</span></p>
 
@@ -3873,748 +3801,12 @@
 
   <p class="MsoNormal" style="">
   <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ******************************************************************</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  Add a new disseminator for object demo:32 using the UVA
-  Simple</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  Image Behavior Definition (demo:1) and Fedora HTTP Getter
-  Service</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  (demo:2). Binding Key names defined for this mechanism
-  include:</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  THUMBRES_IMAG, MEDRES_IMG, HIGHRES_IMG, and
-  VERYHIGHRES_IMG.</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  Required attributes on directive:</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  pid - PID of the object</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  bDefPid - PID of the associated behavior definition object</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  bMechPid - PID of the associated behavior mechanism object</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dissLabel - label of the disseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  logMessage - message to be written in audit trail record</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dissState - state of the disseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  Sub-elements on directive:</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  addDatastreamBinding - specifies datastream binding for
-  the</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  disseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ******************************************************************</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  fbm:addDisseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  pid</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  demo:32</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  bDefPid</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  demo:1</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  bMechPid</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  demo:2</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dissLabel</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  HTTP Getter Image Disseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dissState</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  A</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  logMessage</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  BatchModify - addDisseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  fbm:addDatastreamBinding</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsBindKeyName</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  THUMBRES_IMG</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsID</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  DS1</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsBindLabel</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  =""/&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  fbm:addDatastreamBinding</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsBindKeyName</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  MEDRES_IMG</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsID</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  DS2</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsBindLabel</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  =""/&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  fbm:addDatastreamBinding</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsBindKeyName</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  HIGHRES_IMG</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsID</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  DS3</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsBindLabel</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  =""/&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  fbm:addDatastreamBinding</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsBindKeyName</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  VERYHIGHRES_IMG</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsID</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  DS4</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsBindLabel</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  =""/&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;/</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  fbm:addDisseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ******************************************************************</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  Add a second disseminator to the object demo:32 using the
-  Image</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  Manipulation Behavior Definition (demo:27) and the Image</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  Manipulation service (demo:28). The mechanism specifies a
-  single</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  Binding Key name of url.</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ******************************************************************</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  fbm:addDisseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  pid</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  demo:32</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  bDefPid</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  demo:27</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  bMechPid</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  demo:28</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dissLabel</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  Image Manipulation Disseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dissState</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  A</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  logMessage</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  BatchModify - addDisseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  fbm:addDatastreamBinding</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsBindKeyName</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  url</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsID</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  SCREEN</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsBindLabel</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  =""/&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;/</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  fbm:addDisseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ******************************************************************</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  Modify the first disseminator by changing its label and also
-  the</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  label for its associated behavior definition label. Also
-  remove</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  the datastream binding for DS3 and replace it with a new
-  binding</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  that maps to dsID SCREEN for the high resolution image.</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  NOTE: Optional attributes that are omitted indicate that
-  that</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  attribute is to remain uncahnged and the original value of of
-  the</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  datastream attribute in the object will be preserved.
-  Optional</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  attributes that are set to the empty string indicate that
-  the</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  atrribute value will be blanked out in the datastream.</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  Required attributes on directive:</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  pid - PID of the object</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dissID - disseminator ID</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  bMechPid - PID of the associated behavior mechanism object</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  logMessage - message to be written in audit trail record</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  Optional attributes on directive:</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dissLabel - label of the disseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dissState - state of the disseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  force - boolean indicating whether to purge the object if
-  any</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  critical dependencies exist. A value of true will purge</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  the object regardless of any dependencies. A value of</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  false will allow the purge only if no dependencies exist.</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  Sub-elements on directive:</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  addDatastreamBinding - specifies datastream binding for
-  the</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  disseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  removeDatastreamBinding - specifies datastream binding for
-  the</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  disseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ******************************************************************</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  fbm:modifyDisseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  pid</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  demo:32</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dissID</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  DISS1</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  bMechPid</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  demo:2</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dissLabel</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  changed DISS label</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dissState</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  A</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  logMessage</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  BatchModify - modifyDisseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  fbm:removeDatastreamBinding</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsID</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  DS3</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "/&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  fbm:addDatastreamBinding</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsBindKeyName</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  HIGHRES_IMG</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsID</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  SCREEN</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsBindLabel</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  Label for New Binding</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "/&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;/</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  fbm:modifyDisseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ******************************************************************</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  Modify the second disseminator by changing the label of
-  its</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  associated behavior mechanism. Also remove the datastream
-  binding</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  for SCREEN and replace it back with DS3.</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ******************************************************************</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  fbm:modifyDisseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  pid</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  demo:32</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dissID</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  DISS2</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  bMechPid</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  demo:28</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dissState</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  A</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  logMessage</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  BatchModify - modifyDisseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  fbm:removeDatastreamBinding</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsID</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  SCREEN</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "/&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  fbm:addDatastreamBinding</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsBindKeyName</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  url</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsID</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  DS3</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dsBindLabel</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  Label for New Binding</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "/&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;/</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  fbm:modifyDisseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ******************************************************************</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  Change the state of disseminator DISS2 to deleted</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  Required attributes on directive:</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  pid - PID of the object</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dissID - ID of disseminator</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dissState - new value for state of the disseminator</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;!--</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: gray; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ******************************************************************</span>
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  --&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  &lt;</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  fbm:setDisseminatorState</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  pid</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  demo:32</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dissID</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  DISS2</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  dissState</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  D</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: red; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  logMessage</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  ="</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: black; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  BatchModify - setDisseminatorState</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
-  "/&gt;</span></p>
-
-  <p class="MsoNormal" style="">
-  <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
   &lt;/</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: maroon; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
   fbm:batchModify</span> <span style="background: white none repeat scroll 0%; font-size: 11pt; font-family: Courier; color: blue; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;">
   &gt;</span></p>
 
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
   <h4>Using Command Line with Modify Batch</h4>
 
   <p>The Modify Batch utility can also be run from the command line
@@ -4659,11 +3851,12 @@
   </ul>
 
   <div>
+    <p>&nbsp;</p>
     <div>
       <h3><a name="d0e1308" id="d0e1308"></a>Console</h3>
     </div>
 
-    <p><img alt="" id="_x0000_i1066" src="images/tools_console.jpg" border="0" height="650" width="848"/></p>
+    <p><img alt="" id="_x0000_i1066" src="images/tools_console.jpg"/></p>
 
     <p>The options under the Console submenu give developers direct
     access to the methods in the Fedora APIs and to the
@@ -4676,30 +3869,12 @@
     carefully read the Fedora Technical Specification to understand
     the parameters required for each method in the Fedora APIs.</p>
 
-    <div>
-      <h2><a name="d0e1318" id="d0e1318"></a>Builders</h2>
-    </div>
-
-    <p><img alt="" id="_x0000_i1067" src="images/builders_menu.jpg" border="0" height="650" width="848"/></p>
-
-    <p>The Builders submenu gives users access to the Behavior
-    Definition Builder and the Behavior Definition Builder. These
-    WSDL objects are of such complex structure that it was
-    necessary to create a wizard-like tool to enable users to
-    construct custom Behavior Definitions and Behavior
-    Mechanisms.</p>
-
-    <p>The complexity of the task requires that extensive help be
-    available within the Fedora Administrator interface, so on
-    every pane of these builders, users will find a Help button.
-    Clicking this button, opens a help screen that guides the user
-    through the data on that pane.</p>
-
+    <p>&nbsp;</p>
     <div>
       <h2><a name="d0e1328" id="d0e1328"></a>Window Menu</h2>
     </div>
 
-    <p><img alt="" id="_x0000_i1068" src="images/window_menu.jpg" border="0" height="650" width="848"/></p>
+    <p><img alt="" id="_x0000_i1068" src="images/window_menu.jpg"/></p>
 
     <p>The Window menu contains standard commands for managing
     multiple panes open in the Fedora Administrator window. These
@@ -4715,11 +3890,12 @@
       <p>Restore All</p>
     </blockquote>
 
+    <p>&nbsp;</p>
     <div>
       <h2><a name="d0e1349" id="d0e1349"></a>Help Menu</h2>
     </div>
 
-    <p><img alt="" id="_x0000_i1069" src="images/help_menu.jpg" border="0" height="650" width="848"/></p>
+    <p><img alt="" id="_x0000_i1069" src="images/help_menu.jpg"/></p>
 
     <p>The help menu has two options:</p>
 
@@ -4743,7 +3919,7 @@
 
   <div id="footer">
     <div id="copyright">
-      Copyright © 2002-2007 Fedora Project
+      Copyright &copy; 2002-2008 Fedora Project
     </div>
 
     <div id="lastModified">

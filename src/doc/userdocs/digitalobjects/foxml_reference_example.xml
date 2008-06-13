@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--*******************************************************************************************************************************************-->
-<!-- FOXML REFERENCE EXAMPLE OBJECT:  -->
+<!-- FOXML 1.1 REFERENCE EXAMPLE OBJECT:  -->
 <!-- This is an example of a FOXML encoded digital object as it would appear in the Fedora persistent storage area. -->
 <!--*******************************************************************************************************************************************-->
 <!-- The digitalObject root element contains the object PID, which uniquely identifies the Fedora object  -->
@@ -22,7 +22,6 @@
         - lastModifiedDate:(system assigned) The object creation date is assigned to the millisecond. 
 ******************************************************************************************************************************************-->
 	<foxml:objectProperties>
-		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="FOXML Reference Example"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2004-12-10T00:21:58.000Z"/>

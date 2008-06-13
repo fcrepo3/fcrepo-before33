@@ -312,6 +312,12 @@ public class TestMessagingClient
                 if (currentTime > (startTime + messageTimeout)) {
                     fail("Timeout reached waiting for message.");
                     break;
+                } else {
+                    try {
+                        Thread.sleep(100);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }

@@ -518,7 +518,7 @@ public class DefaultDOManager
                             + "' , '"
                             + context.sDef
                             + "', '"
-                            + sDep.getPid() + "');");
+                            + sDep.getPid() + "')");
         } finally {
             if (s != null) {
                 s.close();
@@ -538,7 +538,7 @@ public class DefaultDOManager
         try {
             s.executeUpdate("DELETE FROM modelDeploymentMap "
                     + "WHERE cModel = '" + context.cModel + "' AND sDef ='"
-                    + context.sDef + "' AND sDep = '" + sDep.getPid() + "';");
+                    + context.sDef + "' AND sDep = '" + sDep.getPid() + "'");
         } finally {
             if (s != null) {
                 s.close();

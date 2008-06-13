@@ -1617,8 +1617,10 @@ public class DefaultManagement
             LOG.debug("Getting Relationships:  pid = " + pid + " predicate = "
                     + relationship);
             try {
-                URIReference pred = new SimpleURIReference(
-                        new URI(relationship));
+                URIReference pred = null;
+                if (relationship != null) {
+                    pred = new SimpleURIReference(new URI(relationship));
+                }
                 Set<RelationshipTuple> tuples =
                         r.getRelationships(pred, null);
                 return tuples.toArray(new RelationshipTuple[tuples.size()]);

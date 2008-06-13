@@ -6,6 +6,12 @@ import java.io.Reader;
 
 import java.net.URL;
 
+/* JDBC_4_ANT_TOKEN_BEGIN -
+import java.sql.NClob;
+import java.sql.RowId;
+import java.sql.SQLXML;
+- JDBC_4_ANT_TOKEN_END */
+
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
@@ -417,5 +423,149 @@ public class MockPreparedStatement
     public void setQueryTimeout(int arg0) throws SQLException {
         throw new RuntimeException("MockPreparedStatement.setQueryTimeout not implemented");
     }
+    
+    /* JDBC_4_ANT_TOKEN_BEGIN -
+    @Override
+    public void setAsciiStream(int arg0, InputStream arg1) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
 
+    @Override
+    public void setAsciiStream(int arg0, InputStream arg1, long arg2)
+            throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setBinaryStream(int arg0, InputStream arg1) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setBinaryStream(int arg0, InputStream arg1, long arg2)
+            throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setBlob(int arg0, InputStream arg1) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setBlob(int arg0, InputStream arg1, long arg2)
+            throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setCharacterStream(int arg0, Reader arg1) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setCharacterStream(int arg0, Reader arg1, long arg2)
+            throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setClob(int arg0, Reader arg1) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setClob(int arg0, Reader arg1, long arg2) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setNCharacterStream(int arg0, Reader arg1) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setNCharacterStream(int arg0, Reader arg1, long arg2)
+            throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setNClob(int arg0, NClob arg1) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setNClob(int arg0, Reader arg1) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setNClob(int arg0, Reader arg1, long arg2) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setNString(int arg0, String arg1) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setRowId(int arg0, RowId arg1) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setSQLXML(int arg0, SQLXML arg1) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public boolean isClosed() throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public boolean isPoolable() throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setPoolable(boolean poolable) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+    - JDBC_4_ANT_TOKEN_END */
 }
