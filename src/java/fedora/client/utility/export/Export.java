@@ -71,7 +71,13 @@ public class Export
                            String format,
                            String exportContext,
                            File dir) throws Exception {
-        String fName = pid.replaceAll(":", "_") + ".xml";
+        String suffix;
+        if (format.equals(ATOM_ZIP1_1.uri)) {
+            suffix = ".zip";
+        } else {
+            suffix = ".xml";
+        }
+        String fName = pid.replaceAll(":", "_") + suffix;
         File file = new File(dir, fName);
         System.out.println("Exporting " + pid + " to " + file.getPath());
         AutoExporter.export(apia,
@@ -149,7 +155,8 @@ public class Export
         System.err.println("  FORMAT is the XML format to export ");
         System.err.println("         ('" + FOXML1_1.uri + "',"); 
         System.err.println("          '" + FOXML1_0.uri + "',");
-        System.err.println("          '" + ATOM1_0.uri + "',");
+        System.err.println("          '" + ATOM1_1.uri + "',");
+        System.err.println("          '" + ATOM_ZIP1_1.uri + "',");
         System.err.println("          '" + METS_EXT1_1.uri + "',");
         System.err.println("          or 'default')");
         System.err.println("  ECONTEXT is the export context (which indicates what use case");
@@ -209,13 +216,15 @@ public class Export
             if (!exportFormat.equals(METS_EXT1_1.uri)
                 && !exportFormat.equals(FOXML1_0.uri)
                 && !exportFormat.equals(FOXML1_1.uri)
-                && !exportFormat.equals(ATOM1_0.uri)
+                && !exportFormat.equals(ATOM1_1.uri)
+                && !exportFormat.equals(ATOM_ZIP1_1.uri)
                 && !exportFormat.equals("default")) {
                     Export.badArgs("FORMAT arg must be '"
                                    + FOXML1_1.uri
                                    + "', '" + FOXML1_0.uri
                                    + "', '" + METS_EXT1_1.uri
-                                   + "', '" + ATOM1_0.uri
+                                   + "', '" + ATOM1_1.uri
+                                   + "', '" + ATOM_ZIP1_1.uri
                                    + "', or 'default'");
             }
             if (!exportContext.equals("public")

@@ -11,8 +11,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.XMLConstants;
-
 import org.apache.log4j.Logger;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -45,7 +43,7 @@ public class FedoraTypes
     }
     public FedoraTypes(InputStream in) throws DocumentException {
         super(in);
-        ns2prefix.put("xsd", XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        ns2prefix.put("xsd", Constants.XML_XSD.uri);
     }
     
     public String getDatatype(String method, String param) {

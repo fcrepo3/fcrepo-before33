@@ -184,11 +184,11 @@ public class ExportOptionsDialog
         
         // atom radio button
         atomButton = new JRadioButton("ATOM (Fedora Atom)", false);
-        atomButton.setActionCommand(ATOM1_0.uri);
+        atomButton.setActionCommand(ATOM1_1.uri);
         atomButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (atomButton.isSelected()) {
-                    fmt_chosen = ATOM1_0.uri;
+                    fmt_chosen = ATOM1_1.uri;
                 }
             }
         });

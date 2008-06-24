@@ -14,6 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 
+import fedora.common.xml.namespace.XMLNamespace;
+
 
 /**
  * An implementation of {@link NamespaceContext NamespaceContext} that provides
@@ -61,7 +63,7 @@ public class NamespaceContextImpl
         if (prefix2ns.containsKey(prefix)) {
             return prefix2ns.get(prefix);
         }
-        return XMLConstants.NULL_NS_URI;
+        return XMLNamespace.NULL_NS_URI;
     }
 
     /**

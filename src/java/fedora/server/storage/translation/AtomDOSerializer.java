@@ -5,14 +5,15 @@
 
 package fedora.server.storage.translation;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -39,31 +40,28 @@ import fedora.server.utilities.StreamUtility;
 import fedora.utilities.MimeTypeUtils;
 
 /**
- * <p>
- * Serializes a Fedora Object in Atom with Threading Extensions.
- * </p>
- * <p>
- * A Fedora Digital Object is represented as an atom:feed and Datastreams are
- * represented as an atom:entries.
- * <p>
- * <p>
- * The hierarchy of Datastreams their Datastream Versions is represented via the
- * Atom Threading Extensions. For convenience, a datastream entry references its
- * latest datastream version entry with an atom:link element. For example, a DC
- * datastream entry with a reference to its most recent version: <br/>
- * <code>&lt;link href="info:fedora/demo:foo/DC/2008-04-01T12:30:15.123" rel="alternate"/&gt</code>
- * </p>
- * <p>
- * Each datastream version refers to its parent datastream via a thr:in-reply-to
- * element. For example, the entry for a DC datastream version would include:<br/>
- * <code>&lt;thr:in-reply-to ref="info:fedora/demo:foo/DC"/&gt;</code>
- * </p>
+ * <p>Serializes a Fedora Object in Atom with Threading Extensions.</p>
  * 
- * @see <a
- *      href="http://atomenabled.org/developers/syndication/atom-format-spec.php">The
- *      Atom Syndication Format</a>
+ * <p>A Fedora Digital Object is represented as an atom:feed and 
+ * Datastreams are represented as an atom:entries.</p>
+ * 
+ * <p>The hierarchy of Datastreams their Datastream Versions is 
+ * represented via the Atom Threading Extensions.
+ * For convenience, a datastream entry references its latest datastream 
+ * version entry with an atom:link element. For example, a DC datastream 
+ * entry with a reference to its most recent version: <br/>
+ * <code>&lt;link href="info:fedora/demo:foo/DC/2008-04-01T12:30:15.123" rel="alternate"/&gt</code></p>
+ * 
+ * <p>Each datastream version refers to its parent datastream via a 
+ * thr:in-reply-to element. For example, the entry for a DC datastream 
+ * version would include:<br/>
+ * <code>&lt;thr:in-reply-to ref="info:fedora/demo:foo/DC"/&gt;</code></p>
+ * 
+ * @see <a href="http://atomenabled.org/developers/syndication/atom-format-spec.php">The Atom Syndication Format</a>
  * @see <a href="http://www.ietf.org/rfc/rfc4685.txt">Atom Threading Extensions</a>
+ * 
  * @author Edwin Shin
+ * @since 3.0
  * @version $Id$
  */
 public class AtomDOSerializer
@@ -73,7 +71,7 @@ public class AtomDOSerializer
      * The format this serializer will write if unspecified at construction.
      * This defaults to the latest ATOM format.
      */
-    public static final XMLFormat DEFAULT_FORMAT = ATOM1_0;
+    public static final XMLFormat DEFAULT_FORMAT = ATOM1_1;
 
     private final static Abdera abdera = Abdera.getInstance();
 
@@ -89,16 +87,16 @@ public class AtomDOSerializer
 
     private PID m_pid;
 
-    private Feed m_feed;
-
-    private Map<String, InputStream> m_files;
-
+    protected Feed m_feed;
+    
+    private ZipOutputStream m_zout;
+    
     public AtomDOSerializer() {
         this(DEFAULT_FORMAT);
     }
 
     public AtomDOSerializer(XMLFormat format) {
-        if (format.equals(ATOM1_0)) {
+        if (format.equals(ATOM1_1) || format.equals(ATOM_ZIP1_1)) {
             m_format = format;
         } else {
             throw new IllegalArgumentException("Not an ATOM format: "
@@ -126,30 +124,22 @@ public class AtomDOSerializer
         m_transContext = transContext;
         m_pid = PID.getInstance(m_obj.getPid());
         m_feed = abdera.newFeed();
-        m_files = new HashMap<String, InputStream>();
+        
+        if (m_format.equals(ATOM_ZIP1_1)) {
+            m_zout = new ZipOutputStream(out);
+        }
 
         addObjectProperties();
         m_feed
                 .setIcon("http://www.fedora-commons.org/images/logo_vertical_transparent_200_251.png");
         addDatastreams();
 
-        if (false) {// TODO when ZARCHIVE is implemented. m_transContext == DOTranslationUtility.SERIALIZE_EXPORT_ZARCHIVE) {
+        if (m_format.equals(ATOM_ZIP1_1)) {
             try {
-                ZipOutputStream zout = new ZipOutputStream(out);
-
-                zout.putNextEntry(new ZipEntry(m_pid.toString() + ".atom"));
-                m_feed.writeTo("prettyxml", zout);
-                zout.closeEntry();
-
-                for (String name : m_files.keySet()) {
-                    zout.putNextEntry(new ZipEntry(name));
-                    InputStream is = m_files.get(name);
-                    IOUtils.copy(m_files.get(name), zout);
-
-                    zout.closeEntry();
-                    is.close();
-                }
-                zout.close();
+                m_zout.putNextEntry(new ZipEntry("atommanifest.xml"));
+                m_feed.writeTo("prettyxml", m_zout);
+                m_zout.closeEntry();
+                m_zout.close();
             } catch (IOException e) {
                 throw new StreamIOException(e.getMessage(), e);
             }
@@ -285,8 +275,9 @@ public class AtomDOSerializer
      * the audit trail datastream
      * 
      * @throws ObjectIntegrityException
+     * @throws StreamIOException 
      */
-    private void addAuditDatastream() throws ObjectIntegrityException {
+    private void addAuditDatastream() throws ObjectIntegrityException, StreamIOException {
         if (m_obj.getAuditRecords().size() == 0) {
             return;
         }
@@ -316,9 +307,24 @@ public class AtomDOSerializer
         dsvEntry.addCategory(MODEL.FORMAT_URI.uri, AUDIT1_0.uri, null);
         dsvEntry
                 .addCategory(MODEL.LABEL.uri, "Fedora Object Audit Trail", null);
-
-        dsvEntry.setContent(DOTranslationUtility.getAuditTrail(m_obj),
+        if (m_format.equals(ATOM_ZIP1_1)) {
+            String name = "AUDIT.0.xml";
+            try {
+                m_zout.putNextEntry(new ZipEntry(name));
+                Reader r = new StringReader(DOTranslationUtility.getAuditTrail(m_obj));
+                IOUtils.copy(r, m_zout, m_encoding);
+                m_zout.closeEntry();
+                r.close();
+            } catch(IOException e) {
+                throw new StreamIOException(e.getMessage(), e);
+            }
+            IRI iri = new IRI(name);
+            dsvEntry.setSummary("AUDIT.0");
+            dsvEntry.setContent(iri, "text/xml");
+        } else {
+            dsvEntry.setContent(DOTranslationUtility.getAuditTrail(m_obj),
                             "text/xml");
+        }
     }
 
     private void setContent(Entry entry, Datastream vds)
@@ -334,7 +340,7 @@ public class AtomDOSerializer
     }
 
     private void setInlineXML(Entry entry, DatastreamXMLMetadata ds)
-            throws UnsupportedEncodingException {
+            throws UnsupportedEncodingException, StreamIOException {
         String content;
 
         if (m_obj.hasRelationship(MODEL.HAS_MODEL,
@@ -349,30 +355,34 @@ public class AtomDOSerializer
         } else {
             content = new String(ds.xmlContent, m_encoding);
         }
-        entry.setContent(content, ds.DSMIME);
+        
+        if (m_format.equals(ATOM_ZIP1_1)) {
+            String name = ds.DSVersionID + ".xml";
+            try {
+                m_zout.putNextEntry(new ZipEntry(name));
+                InputStream is = new ByteArrayInputStream(content.getBytes(m_encoding));
+                IOUtils.copy(is, m_zout);
+                m_zout.closeEntry();
+                is.close();
+            } catch(IOException e) {
+                throw new StreamIOException(e.getMessage(), e);
+            }
+            IRI iri = new IRI(name);
+            entry.setSummary(ds.DSVersionID);
+            entry.setContent(iri, ds.DSMIME);
+        } else {
+            entry.setContent(content, ds.DSMIME);
+        }
     }
 
     private void setReferencedContent(Entry entry, Datastream vds)
             throws StreamIOException {
         entry.setSummary(vds.DSVersionID);
-        String dsLocation;
-
-        if (vds.DSControlGrp.equalsIgnoreCase("M") && false) {// && m_transContext == DOTranslationUtility.SERIALIZE_EXPORT_ZARCHIVE) {
-            dsLocation =
-                    vds.DSVersionID
-                            + "."
-                            + MimeTypeUtils
-                                    .fileExtensionForMIMEType(vds.DSMIME);
-            m_files.put(dsLocation, vds.getContentStream());
-
-        } else {
-            dsLocation =
-                    StreamUtility
-                            .enc(DOTranslationUtility
-                                    .normalizeDSLocationURLs(m_obj.getPid(),
-                                                             vds,
-                                                             m_transContext).DSLocation);
-        }
+        String dsLocation =
+                StreamUtility.enc(DOTranslationUtility
+                        .normalizeDSLocationURLs(m_obj.getPid(),
+                                                 vds,
+                                                 m_transContext).DSLocation);
         IRI iri = new IRI(dsLocation);
         entry.setContent(iri, vds.DSMIME);
     }
@@ -393,7 +403,28 @@ public class AtomDOSerializer
                 entry.setContent(vds.getContentStream(), mimeType);
             }
         } else {
-            setReferencedContent(entry, vds);
+            String dsLocation;
+            IRI iri;
+            if (m_format.equals(ATOM_ZIP1_1)) {
+                dsLocation = vds.DSVersionID + "." + MimeTypeUtils.fileExtensionForMIMEType(vds.DSMIME);
+                try {
+                    m_zout.putNextEntry(new ZipEntry(dsLocation));
+                    IOUtils.copy(vds.getContentStream(), m_zout);
+                    m_zout.closeEntry();
+                } catch(IOException e) {
+                    throw new StreamIOException(e.getMessage(), e);
+                }
+            } else {
+                dsLocation =
+                    StreamUtility.enc(DOTranslationUtility
+                            .normalizeDSLocationURLs(m_obj.getPid(),
+                                                     vds,
+                                                     m_transContext).DSLocation);
+                
+            }
+            iri = new IRI(dsLocation);
+            entry.setSummary(vds.DSVersionID);
+            entry.setContent(iri, vds.DSMIME);
         }
     }
 }

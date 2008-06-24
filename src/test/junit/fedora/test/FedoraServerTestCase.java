@@ -86,7 +86,7 @@ public abstract class FedoraServerTestCase
         } else if (testingATOM()) {
             System.out.println("Ingesting all demo objects in Atom format");
             dir = new File(FEDORA_HOME, "client/demo/atom");
-            ingestFormat = ATOM1_0.uri;
+            ingestFormat = ATOM1_1.uri;
         } else {
             System.out.println("Ingesting all demo objects in FOXML format");
             dir = new File(FEDORA_HOME, "client/demo/foxml");

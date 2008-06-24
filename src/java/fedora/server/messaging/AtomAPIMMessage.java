@@ -20,8 +20,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import javax.xml.XMLConstants;
-
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Category;
 import org.apache.abdera.model.Document;
@@ -147,7 +145,7 @@ public class AtomAPIMMessage
         }
 
         entry = abdera.getFactory().newEntry();
-        entry.declareNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, "xsd");
+        entry.declareNS(Constants.XML_XSD.uri, "xsd");
         entry.declareNS(TYPES_NS, TYPES_PREFIX);
 
         setEntryId();

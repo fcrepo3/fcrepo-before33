@@ -741,7 +741,7 @@ public class TestAPIM
 
         pid =
             apim.ingest(demo1000ATOMObjectXML,
-                        ATOM1_0.uri,
+                        ATOM1_1.uri,
                         "ingesting new atom object");
             assertNotNull(pid);
             serverAssignedPIDs.add(pid);

@@ -321,7 +321,7 @@ public class Ingest
         System.err.println("  FORMAT     is a string value which indicates the XML format of the ingest file(s)");
         System.err.println("             ('" + FOXML1_1.uri + "',");
         System.err.println("              '" + FOXML1_0.uri + "',");
-        System.err.println("              '" + ATOM1_0.uri + "',");
+        System.err.println("              '" + ATOM1_1.uri + "',");
         System.err.println("              or '" + METS_EXT1_1.uri + "')");
         System.err.println("  PID        is the id of the object to ingest from the source repository.");
         System.err.println("  SHST/THST  is the source or target repository's hostname.");

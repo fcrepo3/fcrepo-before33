@@ -24,8 +24,9 @@ import fedora.common.rdf.MulgaraNamespace;
 import fedora.common.rdf.RDFSyntaxNamespace;
 import fedora.common.rdf.RDFXSDNamespace;
 import fedora.common.rdf.RecoveryNamespace;
+import fedora.common.xml.format.Atom1_1Format;
 import fedora.common.xml.format.AtomApiM1_0Format;
-import fedora.common.xml.format.ATOM1_0Format;
+import fedora.common.xml.format.AtomZip1_1Format;
 import fedora.common.xml.format.FOXML1_0Format;
 import fedora.common.xml.format.FOXML1_1Format;
 import fedora.common.xml.format.FedoraAudit1_0Format;
@@ -536,12 +537,17 @@ public interface Constants {
             METSFedoraExt1_1Format.getInstance();
     
     /**
-     * The ATOM 1.0 XML format;
-     * <code>info:fedora/fedora-system:ATOM-1.0</code>
+     * The ATOM 1.1 XML format;
+     * <code>info:fedora/fedora-system:ATOM-1.1</code>
      */
-    public static final ATOM1_0Format ATOM1_0 = ATOM1_0Format.getInstance();
+    public static final Atom1_1Format ATOM1_1 = Atom1_1Format.getInstance();
 
-
+    /**
+     * The ATOM ZIP 1.1 XML format;
+     * <code>info:fedora/fedora-system:ATOMZip-1.1</code>
+     */
+    public static final AtomZip1_1Format ATOM_ZIP1_1 = AtomZip1_1Format.getInstance();
+    
     /**
      * The OAI DC 2.0 XML format;
      * <code>http://www.openarchives.org/OAI/2.0/oai_dc/</code>

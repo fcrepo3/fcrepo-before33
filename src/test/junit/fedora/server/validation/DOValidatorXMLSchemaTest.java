@@ -9,8 +9,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import javax.xml.XMLConstants;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
@@ -20,6 +18,8 @@ import junit.framework.JUnit4TestAdapter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import fedora.common.Constants;
 
 /**
  * @author Edwin Shin
@@ -67,7 +67,7 @@ public class DOValidatorXMLSchemaTest {
         dov.validate(in);
 
         SchemaFactory sf =
-                SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+                SchemaFactory.newInstance(Constants.XML_XSD.uri);
         Schema schema = sf.newSchema(new File("src/xsd/atom.xsd"));
         Validator validator = schema.newValidator();
         //validator.validate(new StreamSource(in));

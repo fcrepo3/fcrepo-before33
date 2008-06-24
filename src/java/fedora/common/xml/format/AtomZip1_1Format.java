@@ -5,31 +5,31 @@
 
 package fedora.common.xml.format;
 
-import fedora.common.xml.namespace.FOXMLNamespace;
+import fedora.common.xml.namespace.AtomNamespace;
 
 /**
- * The Atom 1.0 XML format.
+ * The Atom 1.1 XML format.
  * 
  * <pre>
- * Format URI        : info:fedora/fedora-system:ATOM-1.0
+ * Format URI        : info:fedora/fedora-system:ATOMZip-1.1
  * Primary Namespace : http://www.w3.org/2005/Atom
  * XSD Schema URL    : http://www.kbcafe.com/rss/atom.xsd.xml
  * </pre>
  * 
  * @author Edwin Shin
  */
-public class ATOM1_0Format
+public class AtomZip1_1Format
         extends XMLFormat {
 
     /** The only instance of this class. */
-    private static final ATOM1_0Format ONLY_INSTANCE = new ATOM1_0Format();
+    private static final AtomZip1_1Format ONLY_INSTANCE = new AtomZip1_1Format();
 
     /**
      * Constructs the instance.
      */
-    private ATOM1_0Format() {
-        super("info:fedora/fedora-system:ATOM-1.0",
-              FOXMLNamespace.getInstance(),
+    private AtomZip1_1Format() {
+        super("info:fedora/fedora-system:ATOMZip-1.1",
+              AtomNamespace.getInstance(),
               "http://www.kbcafe.com/rss/atom.xsd.xml");
     }
 
@@ -38,7 +38,7 @@ public class ATOM1_0Format
      * 
      * @return the instance.
      */
-    public static ATOM1_0Format getInstance() {
+    public static AtomZip1_1Format getInstance() {
         return ONLY_INSTANCE;
     }
 

@@ -5,6 +5,7 @@
 
 package fedora.server.storage.translation;
 
+import static fedora.common.Models.FEDORA_OBJECT_3_0;
 import static fedora.server.storage.translation.DOTranslationUtility.DESERIALIZE_INSTANCE;
 import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE;
 
@@ -19,6 +20,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -26,16 +29,23 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.abdera.Abdera;
+import org.apache.abdera.model.Document;
+import org.apache.abdera.model.Feed;
+import org.apache.abdera.parser.Parser;
 import org.custommonkey.xmlunit.SimpleXpathEngine;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import fedora.common.Constants;
 import fedora.common.Models;
+import fedora.common.PID;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
+import fedora.utilities.FileUtils;
 
 /**
  * @author Edwin Shin
@@ -106,6 +116,44 @@ public class TestAtomDOSerializer
         serializer.serialize(obj, out, "UTF-8", SERIALIZE_EXPORT_ARCHIVE);
         // TODO
         //validateWithISOSchematron(out.toString());
+    }
+
+    @Test
+    public void testAtomZip() throws Exception {
+        DigitalObject obj = createTestObject(FEDORA_OBJECT_3_0);
+        obj.setLastModDate(new Date());
+        DatastreamXMLMetadata ds1 = createXDatastream("DS1");
+        ds1.DSCreateDT = new Date();
+        obj.addDatastreamVersion(ds1, true);
+
+        File f = File.createTempFile("atom", ".zip");
+        OutputStream out = new FileOutputStream(f);
+
+        DOSerializer serializer = new AtomDOSerializer(Constants.ATOM_ZIP1_1);
+        serializer.serialize(obj, out, "UTF-8", SERIALIZE_EXPORT_ARCHIVE);
+        out.close();
+
+        ZipInputStream zip = new ZipInputStream(new FileInputStream(f));
+        ZipEntry entry;
+        int count = 0;
+        while ((entry = zip.getNextEntry()) != null) {
+            if (entry.getName().equals("atommanifest.xml")) {
+                count++;
+                ByteArrayOutputStream manifest = new ByteArrayOutputStream();
+                FileUtils.copy(zip, manifest);
+
+                Abdera abdera = Abdera.getInstance();
+                Parser parser = abdera.getParser();
+                Document<Feed> feedDoc = parser.parse(new StringReader(manifest.toString("UTF-8")));
+                Feed feed = feedDoc.getRoot();
+                assertEquals(PID.getInstance(TEST_PID).toURI(), feed.getId().toString());
+                // TODO other tests?
+            }
+        }
+        assertEquals("Expected exactly 1 manifest file", 1, count);
+        zip.close();
+
+        f.delete();
     }
 
     // TODO

@@ -9,9 +9,16 @@ package fedora.common.xml.namespace;
  * An XML namespace.
  * 
  * @author Chris Wilper
+ * @version $Id$
  */
 public class XMLNamespace {
-
+    
+    /**
+     * Namespace URI to use to represent that there is no Namespace. 
+     * Defined by the Namespace specification to be "".
+     */
+    public static final String NULL_NS_URI = "";
+    
     /** The URI of this namespace. */
     public final String uri;
 

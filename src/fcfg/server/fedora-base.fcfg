@@ -357,8 +357,9 @@
 		<param name="deserializer_info:fedora/fedora-system:FOXML-1.1" value="fedora.server.storage.translation.FOXML1_1DODeserializer"/>
 		<param name="serializer_info:fedora/fedora-system:FOXML-1.0" value="fedora.server.storage.translation.FOXML1_0DOSerializer"/>
 		<param name="deserializer_info:fedora/fedora-system:FOXML-1.0" value="fedora.server.storage.translation.FOXML1_0DODeserializer"/>
-	    <param name="serializer_info:fedora/fedora-system:ATOM-1.0" value="fedora.server.storage.translation.AtomDOSerializer"/>
-	    <param name="deserializer_info:fedora/fedora-system:ATOM-1.0" value="fedora.server.storage.translation.AtomDODeserializer"/>
+	    <param name="serializer_info:fedora/fedora-system:ATOM-1.1" value="fedora.server.storage.translation.Atom1_1DOSerializer"/>
+        <param name="deserializer_info:fedora/fedora-system:ATOM-1.1" value="fedora.server.storage.translation.Atom1_1DODeserializer"/>
+	    <param name="serializer_info:fedora/fedora-system:ATOMZip-1.1" value="fedora.server.storage.translation.AtomZip1_1DOSerializer"/>
 	</module>
 	<module role="fedora.server.management.PIDGenerator" class="fedora.server.management.BasicPIDGenerator">
 		<comment>The pid generator.</comment>
@@ -399,7 +400,7 @@
       <comment>this is local path for the Fedora FOXML 1.0 XML schema
              used to do XML schema validation of digital objects</comment>
     </param>
-		<param name="xsd_info:fedora/fedora-system:ATOM-1.0" value="xsd/atom.xsd">
+		<param name="xsd_info:fedora/fedora-system:ATOM-1.1" value="xsd/atom.xsd">
       <comment>this is local path for the Fedora FOXML XML schema
              used to do XML schema validation of digital objects</comment>
     </param>
@@ -424,7 +425,7 @@
             schtron_preprocessor: this is the local path to the &quot;skeleton&quot; style
             sheet for schematron processing</comment>
 		</param>	
-		<param name="rules_info:fedora/fedora-system:ATOM-1.0" value="schematron/atom-bogus.xml">
+		<param name="rules_info:fedora/fedora-system:ATOM-1.1" value="schematron/atom-bogus.xml">
             <comment>this is the local path to the Fedora
              Schematron Rules used to do Fedora-specific on Fedora-METS XML
              files.</comment>

@@ -20,6 +20,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import fedora.common.xml.namespace.XMLNamespace;
 
 /**
  *
@@ -48,7 +49,7 @@ public class NamespaceContextImplTest {
     @Test
     public void testNamespaceContextImpl() {
         NamespaceContextImpl nsCtx = new NamespaceContextImpl();
-        assertEquals(XMLConstants.NULL_NS_URI, nsCtx.getNamespaceURI(XMLConstants.DEFAULT_NS_PREFIX));
+        assertEquals(XMLNamespace.NULL_NS_URI, nsCtx.getNamespaceURI(XMLConstants.DEFAULT_NS_PREFIX));
         assertEquals(XMLConstants.XML_NS_URI, nsCtx.getNamespaceURI(XMLConstants.XML_NS_PREFIX));
         assertEquals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, nsCtx.getNamespaceURI(XMLConstants.XMLNS_ATTRIBUTE));
     }
@@ -76,7 +77,7 @@ public class NamespaceContextImplTest {
     @Test
     public void testGetNamespaceURI() {
         NamespaceContextImpl nsCtx = new NamespaceContextImpl();
-        assertEquals(XMLConstants.NULL_NS_URI, nsCtx.getNamespaceURI(XMLConstants.DEFAULT_NS_PREFIX));
+        assertEquals(XMLNamespace.NULL_NS_URI, nsCtx.getNamespaceURI(XMLConstants.DEFAULT_NS_PREFIX));
         assertEquals(XMLConstants.XML_NS_URI, nsCtx.getNamespaceURI(XMLConstants.XML_NS_PREFIX));
         assertEquals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, nsCtx.getNamespaceURI(XMLConstants.XMLNS_ATTRIBUTE));
     }

@@ -110,7 +110,7 @@ public class ObjectFormatDialog
         metsfButton.setActionCommand(METS_EXT1_1.uri);
         metsfButton.addActionListener(this);
         atomButton = new JRadioButton("Atom (Fedora Atom)", false);
-        atomButton.setActionCommand(ATOM1_0.uri);
+        atomButton.setActionCommand(ATOM1_1.uri);
         atomButton.addActionListener(this);
        
         fmt_buttonGroup.add(foxml11Button);
@@ -173,7 +173,7 @@ public class ObjectFormatDialog
         } else if (metsfButton.isSelected()) {
             fmt_chosen = METS_EXT1_1.uri;
         } else if (atomButton.isSelected()) {
-            fmt_chosen = ATOM1_0.uri;
+            fmt_chosen = ATOM1_1.uri;
         }
     }
 }

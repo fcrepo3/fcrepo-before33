@@ -8,11 +8,8 @@ package fedora.client.utility.export;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
 import java.net.MalformedURLException;
-
 import java.rmi.RemoteException;
-
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
@@ -22,14 +19,13 @@ import javax.xml.rpc.ServiceException;
 
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
-
 import org.w3c.dom.Document;
 
 import fedora.common.Constants;
-
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.RepositoryInfo;
+import fedora.utilities.FileUtils;
 
 /**
  * Utility class for exporting objects from a Fedora repository.
@@ -124,18 +120,26 @@ public class AutoExporter
             bytes = apim.export(pid, format, exportContext);
         }
         try {
-            // use xerces to pretty print the xml, assuming it's well formed
-            OutputFormat fmt = new OutputFormat("XML", "UTF-8", true);
-            fmt.setIndent(2);
-            fmt.setLineWidth(120);
-            fmt.setPreserveSpace(false);
-            XMLSerializer ser = new XMLSerializer(outStream, fmt);
-            DocumentBuilderFactory factory =
-                    DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(new ByteArrayInputStream(bytes));
-            ser.serialize(doc);
+            // TODO This export method has assumed the output is always XML,
+            // but with ATOM_ZIP (and in the future, IMS CP/SCORM) this is no 
+            // longer the case. Perhaps we move pretty printing into the 
+            // serializers themselves.
+            if (format.equals(ATOM_ZIP1_1.uri)) {
+                FileUtils.copy(new ByteArrayInputStream(bytes), outStream);
+            } else {
+                // use xerces to pretty print the xml, assuming it's well formed
+                OutputFormat fmt = new OutputFormat("XML", "UTF-8", true);
+                fmt.setIndent(2);
+                fmt.setLineWidth(120);
+                fmt.setPreserveSpace(false);
+                XMLSerializer ser = new XMLSerializer(outStream, fmt);
+                DocumentBuilderFactory factory =
+                        DocumentBuilderFactory.newInstance();
+                factory.setNamespaceAware(true);
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                Document doc = builder.parse(new ByteArrayInputStream(bytes));
+                ser.serialize(doc);
+            }
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getClass().getName() + " : "
                     + e.getMessage());
@@ -193,7 +197,8 @@ public class AutoExporter
         if (!format.equals(FOXML1_1.uri) &&
             !format.equals(FOXML1_0.uri) &&     
             !format.equals(METS_EXT1_1.uri) &&
-            !format.equals(ATOM1_0.uri) &&
+            !format.equals(ATOM1_1.uri) &&
+            !format.equals(ATOM_ZIP1_1.uri) &&
             !format.equals("default")) {
             throw new IOException("Invalid export format. Valid FORMAT values are: '"
                     + FOXML1_1.uri
@@ -202,7 +207,9 @@ public class AutoExporter
                     + "' '"
                     + METS_EXT1_1.uri
                     + "' '"
-                    + ATOM1_0.uri
+                    + ATOM1_1.uri
+                    + "' '"
+                    + ATOM_ZIP1_1.uri
                     + "' and 'default'");
         }
     }

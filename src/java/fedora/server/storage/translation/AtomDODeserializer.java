@@ -62,7 +62,7 @@ import fedora.server.validation.ValidationUtility;
 public class AtomDODeserializer
         implements DODeserializer, Constants {
 
-    public static final XMLFormat DEFAULT_FORMAT = ATOM1_0;
+    public static final XMLFormat DEFAULT_FORMAT = ATOM1_1;
 
     /** Logger for this class. */
     private static final Logger LOG =
@@ -90,7 +90,7 @@ public class AtomDODeserializer
     }
 
     public AtomDODeserializer(XMLFormat format) {
-        if (format.equals(ATOM1_0)) {
+        if (format.equals(ATOM1_1)) {
             m_format = format;
         } else {
             throw new IllegalArgumentException("Not an Atom format: "

@@ -1,23 +1,33 @@
 
 package fedora.test.integration;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.StringReader;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import junit.framework.JUnit4TestAdapter;
 
+import org.apache.abdera.Abdera;
+import org.apache.abdera.model.Document;
+import org.apache.abdera.model.Feed;
+import org.apache.abdera.parser.Parser;
 import org.custommonkey.xmlunit.SimpleXpathEngine;
 
 import org.junit.Test;
 
 import fedora.client.utility.export.Export;
 import fedora.client.utility.ingest.Ingest;
+import fedora.common.PID;
 
 import fedora.server.management.FedoraAPIM;
 
 import fedora.test.FedoraTestCase;
 import fedora.test.api.TestAPIM;
+import fedora.utilities.FileUtils;
 
 /**
  * Tests the command-line Ingest and Export interfaces with varied formats.
@@ -136,7 +146,7 @@ public class TestCommandLineFormats
         fileWriter.close();
         
         String[] parameters = {"f ", atom.getAbsolutePath(), 
-                ATOM1_0.uri, getHost() + ":" + getPort(), 
+                ATOM1_1.uri, getHost() + ":" + getPort(), 
                 getUsername(), getPassword(), getProtocol(), 
                 "\"Ingest\""};
         
@@ -256,7 +266,7 @@ public class TestCommandLineFormats
         try {
             File temp = File.createTempFile("temp", "");
             String[] parameters = {getHost() + ":" + getPort(),
-                    getUsername(), getPassword(), "demo:998", ATOM1_0.uri,  
+                    getUsername(), getPassword(), "demo:998", ATOM1_1.uri,  
                     "public", temp.getParent(), "http"};
             
             Export.main(parameters);
@@ -271,6 +281,46 @@ public class TestCommandLineFormats
             // assertXpathEvaluatesTo("info:fedora/demo:998", "feed/id", xmlIn);
             // assertXpathEvaluatesTo("Image of Coliseum in Rome", "feed/title[@type='text']", xmlIn);
             // assertXpathEvaluatesTo("6", "count(feed/entry)", xmlIn);
+            
+            temp.delete();
+            atom.delete();
+        } finally {
+            apim.purgeObject("demo:998", "Purge test object", false);
+        }
+    }
+    
+    public void testExportATOM_ZIP() throws Exception {
+        System.out.println("Testing Export in ATOM_ZIP format");
+        apim.ingest(TestAPIM.demo998FOXMLObjectXML, FOXML1_1.uri, "Ingest for test");
+
+        try {
+            File temp = File.createTempFile("temp", "");
+            String[] parameters = {getHost() + ":" + getPort(),
+                    getUsername(), getPassword(), "demo:998", ATOM_ZIP1_1.uri,  
+                    "archive", temp.getParent(), "http"};
+            
+            Export.main(parameters);
+            File atom = new File(temp.getParent() + "/demo_998.zip");
+            
+            ZipInputStream zip = new ZipInputStream(new FileInputStream(atom));
+            ZipEntry entry;
+            int count = 0;
+            while ((entry = zip.getNextEntry()) != null) {
+                if (entry.getName().equals("atommanifest.xml")) {
+                    count++;
+                    ByteArrayOutputStream manifest = new ByteArrayOutputStream();
+                    FileUtils.copy(zip, manifest);
+
+                    Abdera abdera = Abdera.getInstance();
+                    Parser parser = abdera.getParser();
+                    Document<Feed> feedDoc = parser.parse(new StringReader(manifest.toString("UTF-8")));
+                    Feed feed = feedDoc.getRoot();
+                    assertEquals(PID.getInstance("demo:998").toURI(), feed.getId().toString());
+                    // TODO other tests?
+                }
+            }
+            assertEquals("Expected exactly 1 manifest file", 1, count);
+            zip.close();
             
             temp.delete();
             atom.delete();
