@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface FieldSearchResult {
 
-    public List objectFieldsList();
+    public List<ObjectFields> objectFieldsList();
 
     public String getToken();
 

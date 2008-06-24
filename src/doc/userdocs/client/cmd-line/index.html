@@ -32,6 +32,7 @@
         <li><a href="#bbuild">fedora-batch-build</a></li>
         <li><a href="#bingest">fedora-batch-ingest</a></li>
         <li><a href="#bbdingest">fedora-batch-buildingest</a></li>
+        <li><a href="#validator">fedora-validate-objects</a></li>
       </ol>
     </div>
 
@@ -370,6 +371,58 @@ Where:
 </ul>
 <span class="plaintext">
 The fedora-batch-buildingest command line utility enables the running of the batch build &amp; ingest utility of the Administrator GUI client from the command line. The batch build &amp; ingest utility creates a "batch" of Fedora objects based on the specified template file and the corresponding directory of object-specific files and then ingests them into the repository. Refer to the documentation on the Batch Utility for more details on how to use the batch build &amp; ingest utility.
+</span>
+</li>
+
+<li>
+<h2 id="validator">fedora-validate-objects</h2>
+<span class="plaintext">
+<strong>fedora-validate-objects</strong> -serverurl [server-base-url] -username [user] -password [password] 
+{-terms [terms] | -query [query]} -logConfig [log4j-properties-file]
+<br />
+<br />
+Where:
+</span>
+<ul>
+  <li><strong>[server-base-url]</strong> - 
+         The full URL used to connect with the Fedora server: e.g. http://localhost:8080/fedora</li>
+  <li><strong>[user]</strong> - The Fedora administrator username (e.g., fedoraAdmin).</li>
+  <li><strong>[password]</strong> - The password for the Fedora administrator user.</li>
+  <li><strong>[terms]</strong> - A "terms" string, as for the "FindObjects" method of API-A</li>
+  <li><strong>[query]</strong> - A "query" string, as for the "FindObjects" method of API-A</li>
+  <li><strong>[log4j-properties-file]</strong> - The full path to a Log4J properties file. Optional.</li>
+</ul>
+<span class="plaintext">
+The fedora-validate-objects command line utility runs a validation task against a set of objects
+  in the specified repository.
+Access to the repository is provided via the "-serverurl", "-username" and "-password" parameters.
+The set of objects is specified using either a "terms" phrase or a "query" sequence 
+  (one or the other is required, but not both). 
+These correspond to the "terms" and "query" strings used by the FindObjects method of  
+  <a href="../../server/webservices/apialite/index.html#findObjects">API-A</a>.
+The output of the validator can be controlled with the Log4J properties file. This can be used to 
+  suppress certain categories of messages or to restrict output by severity level.
+<pre><code># In this example, messages regarding objects with no content model are disabled.
+ 
+# An appender for non-validator logging.
+log4j.appender.STDOUT=org.apache.log4j.ConsoleAppender
+log4j.appender.STDOUT.layout=org.apache.log4j.PatternLayout
+log4j.appender.STDOUT.layout.ConversionPattern=%d{yyyy-MM-dd' 'HH:mm:ss.SSS} %p (%c) %m%n
+log4j.rootLogger=INFO, STDOUT
+
+# An appender for validator logging.
+log4j.appender.VALIDATOR=org.apache.log4j.ConsoleAppender
+log4j.appender.VALIDATOR.layout=org.apache.log4j.PatternLayout
+log4j.appender.VALIDATOR.layout.ConversionPattern=%p [%c] %m%n
+
+# The "root" of the Validator logging categories.
+log4j.logger.Validator=INFO, VALIDATOR
+log4j.additivity.Validator=false
+
+# Set some categories for special treatment.
+log4j.logger.Validator.NoContentModel=OFF
+</code></pre>
+
 </span>
 </li>
 

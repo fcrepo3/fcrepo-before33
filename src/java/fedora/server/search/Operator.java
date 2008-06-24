@@ -5,23 +5,50 @@
 
 package fedora.server.search;
 
+import fedora.server.errors.InvalidOperatorException;
+
 /**
- * @author Chris Wilper
+ * The {@link Operator}s that can be used in a {@link FieldSearchQuery}.
+ * 
+ * @author Jim Blake
  */
-public class Operator {
+public enum Operator {
+    EQUALS("=", "eq"), CONTAINS("~", "has"), GREATER_THAN(">", "gt"),
+    GREATER_OR_EQUAL(">=", "ge"), LESS_THAN("<", "lt"), LESS_OR_EQUAL("<=",
+            "le");
 
-    private final String m_symbol;
+    private final String symbol;
 
-    protected Operator(String symbol, String abbreviation) {
-        m_symbol = symbol;
+    private final String abbreviation;
+
+    private Operator(String symbol, String abbreviation) {
+        this.symbol = symbol;
+        this.abbreviation = abbreviation;
     }
 
     public String getSymbol() {
-        return m_symbol;
+        return symbol;
     }
 
     public String getAbbreviation() {
-        return m_symbol;
+        return abbreviation;
+    }
+
+    public static Operator fromAbbreviation(String abbreviation)
+            throws InvalidOperatorException {
+        for (Operator operator : Operator.values()) {
+            if (operator.abbreviation.equals(abbreviation)) {
+                return operator;
+            }
+        }
+        throw new InvalidOperatorException("Operator, '" + abbreviation
+                + "' does not match one of eq, has, gt, ge, lt, or le.");
+
+    }
+
+    @Override
+    public String toString() {
+        return name() + "[" + symbol + ", " + abbreviation + "]";
     }
 
 }

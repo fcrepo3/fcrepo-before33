@@ -16,13 +16,13 @@ public class FieldSearchQuery {
 
     public final static int TERMS_TYPE = 2;
 
-    private List m_conditions;
+    private List<Condition> m_conditions;
 
     private String m_terms;
 
     private final int m_type;
 
-    public FieldSearchQuery(List conditions) {
+    public FieldSearchQuery(List<Condition> conditions) {
         m_conditions = conditions;
         m_type = CONDITIONS_TYPE;
     }
@@ -36,7 +36,7 @@ public class FieldSearchQuery {
         return m_type;
     }
 
-    public List getConditions() {
+    public List<Condition> getConditions() {
         return m_conditions;
     }
 

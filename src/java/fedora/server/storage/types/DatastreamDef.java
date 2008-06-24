@@ -10,12 +10,22 @@ package fedora.server.storage.types;
  */
 public class DatastreamDef {
 
-    public String dsID = null;
+    public final String dsID;
 
-    public String dsLabel = null;
+    public final String dsLabel;
 
-    public String dsMIME = null;
+    public final String dsMIME;
 
-    public DatastreamDef() {
+    public DatastreamDef(String dsID, String dsLabel, String dsMIME) {
+        this.dsID = dsID;
+        this.dsLabel = dsLabel;
+        this.dsMIME = dsMIME;
     }
+
+    @Override
+    public String toString() {
+        return "DatastreamDef[dsID=" + dsID + ", dsLabel=" + dsLabel
+                + ", dsMIME=" + dsMIME + "]";
+    }
+
 }

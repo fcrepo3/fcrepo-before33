@@ -12,6 +12,9 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 import org.apache.log4j.Logger;
 
 import fedora.server.storage.types.MethodDef;
@@ -855,16 +858,18 @@ public abstract class TypeUtility {
     }
 
     public static fedora.server.storage.types.DatastreamDef convertGenDatastreamDefToDatastreamDef(fedora.server.types.gen.DatastreamDef genDatastreamDef) {
-
-        fedora.server.storage.types.DatastreamDef datastreamDef =
-                new fedora.server.storage.types.DatastreamDef();
-        if (genDatastreamDef != null) {
-            datastreamDef.dsID = genDatastreamDef.getID();
-            datastreamDef.dsLabel = genDatastreamDef.getLabel();
-            datastreamDef.dsMIME = genDatastreamDef.getMIMEType();
-
+        if (genDatastreamDef == null) {
+            return new fedora.server.storage.types.DatastreamDef(null,
+                                                                 null,
+                                                                 null);
+        } else {
+            return new fedora.server.storage.types.DatastreamDef(genDatastreamDef
+                                                                         .getID(),
+                                                                 genDatastreamDef
+                                                                         .getLabel(),
+                                                                 genDatastreamDef
+                                                                         .getMIMEType());
         }
-        return datastreamDef;
     }
 
     //    public static fedora.server.types.gen.DatastreamBindingMap
@@ -1004,11 +1009,8 @@ public abstract class TypeUtility {
             fedora.server.storage.types.DatastreamDef[] dsDefs =
                     new fedora.server.storage.types.DatastreamDef[genDatastreamDefs.length];
             for (int i = 0; i < genDatastreamDefs.length; i++) {
-                fedora.server.storage.types.DatastreamDef dsDef =
-                        new fedora.server.storage.types.DatastreamDef();
-                dsDef =
+                dsDefs[i] =
                         convertGenDatastreamDefToDatastreamDef(genDatastreamDefs[i]);
-                dsDefs[i] = dsDef;
             }
             return dsDefs;
 

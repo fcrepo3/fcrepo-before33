@@ -18,7 +18,7 @@ public class Condition {
 
     private final String m_property;
 
-    private Operator m_operator;
+    private final Operator m_operator;
 
     private final String m_value;
 
@@ -35,23 +35,7 @@ public class Condition {
     public Condition(String property, String operator, String value)
             throws InvalidOperatorException, QueryParseException {
         m_property = property;
-        if (operator.equals("eq")) {
-            m_operator = new Operator("=", "eq");
-        } else if (operator.equals("has")) {
-            m_operator = new Operator("~", "has");
-        } else if (operator.equals("gt")) {
-            m_operator = new Operator(">", "gt");
-        } else if (operator.equals("ge")) {
-            m_operator = new Operator(">=", "ge");
-        } else if (operator.equals("lt")) {
-            m_operator = new Operator("<", "lt");
-        } else if (operator.equals("le")) {
-            m_operator = new Operator("<=", "le");
-        } else {
-            throw new InvalidOperatorException("Operator, '" + operator
-                    + "' does "
-                    + "not match one of eq, has, gt, ge, lt, or le.");
-        }
+        m_operator = Operator.fromAbbreviation(operator);
         if (value.indexOf("'") != -1) {
             throw new QueryParseException("Query cannot contain the ' character.");
         }
@@ -65,13 +49,8 @@ public class Condition {
      *        The query string.
      * @return The Conditions.
      */
-    public static List getConditions(String query) throws QueryParseException {
-        Operator EQUALS = new Operator("=", "eq");
-        Operator CONTAINS = new Operator("~", "has");
-        Operator GREATER_THAN = new Operator(">", "gt");
-        Operator GREATER_OR_EQUAL = new Operator(">=", "ge");
-        Operator LESS_THAN = new Operator("<", "lt");
-        Operator LESS_OR_EQUAL = new Operator("<=", "le");
+    public static List<Condition> getConditions(String query)
+            throws QueryParseException {
         StringBuffer prop = new StringBuffer();
         Operator oper = null;
         StringBuffer val = new StringBuffer();
@@ -87,12 +66,12 @@ public class Condition {
                     throw new QueryParseException("Found <space> at character "
                             + i + " but expected <operator> or <alphanum>");
                 } else if (c == '=') {
-                    oper = EQUALS;
+                    oper = Operator.EQUALS;
                     inProp = false;
                     inValue = true;
                     firstValueChar = true;
                 } else if (c == '~') {
-                    oper = CONTAINS;
+                    oper = Operator.CONTAINS;
                     inProp = false;
                     inValue = true;
                     firstValueChar = true;
@@ -101,9 +80,9 @@ public class Condition {
                         char d = query.charAt(i + 1);
                         if (d == '=') {
                             i++;
-                            oper = GREATER_OR_EQUAL;
+                            oper = Operator.GREATER_OR_EQUAL;
                         } else {
-                            oper = GREATER_THAN;
+                            oper = Operator.GREATER_THAN;
                         }
                         inProp = false;
                         inValue = true;
@@ -118,9 +97,9 @@ public class Condition {
                         char d = query.charAt(i + 1);
                         if (d == '=') {
                             i++;
-                            oper = LESS_OR_EQUAL;
+                            oper = Operator.LESS_OR_EQUAL;
                         } else {
-                            oper = LESS_THAN;
+                            oper = Operator.LESS_THAN;
                         }
                         inProp = false;
                         inValue = true;
@@ -244,6 +223,39 @@ public class Condition {
 
     public String getValue() {
         return m_value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (o == null) {
+            return false;
+        }
+        if (!o.getClass().equals(this.getClass())) {
+            return false;
+        }
+
+        Condition that = (Condition) o;
+        return equivalent(m_property, that.m_property)
+                && equivalent(m_value, that.m_value)
+                && equivalent(m_operator, that.m_operator);
+    }
+
+    @Override
+    public int hashCode() {
+        return m_property.hashCode() ^ m_operator.hashCode()
+                ^ m_value.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Condition[" + m_property + m_operator + m_value + "]";
+    }
+
+    private boolean equivalent(Object one, Object two) {
+        return one == null ? two == null : one.equals(two);
     }
 
 }

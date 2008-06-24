@@ -29,6 +29,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
+import javax.xml.rpc.ServiceException;
+
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -453,7 +455,7 @@ public class FedoraClient
      * instead, the redirect will be followed and SSL will be used
      * automatically.
      */
-    public FedoraAPIA getAPIA() throws Exception {
+    public FedoraAPIA getAPIA() throws ServiceException, IOException {
         return (FedoraAPIA) getSOAPStub(m_accessEndpoint);
     }
 
@@ -468,7 +470,7 @@ public class FedoraClient
      * instead, the redirect will be followed and SSL will be used
      * automatically.
      */
-    public FedoraAPIM getAPIM() throws Exception {
+    public FedoraAPIM getAPIM() throws ServiceException, IOException {
         return (FedoraAPIM) getSOAPStub(m_managementEndpoint);
     }
 
@@ -479,7 +481,8 @@ public class FedoraClient
     /**
      * Get the appropriate API-A/M stub, given a SOAPEndpoint.
      */
-    private Object getSOAPStub(SOAPEndpoint endpoint) throws Exception {
+    private Object getSOAPStub(SOAPEndpoint endpoint) throws ServiceException,
+            IOException {
 
         URL url = endpoint.getURL();
 
@@ -500,7 +503,8 @@ public class FedoraClient
             return APIMStubFactory.getStubAltPath(protocol, host, port, url
                     .getPath(), m_user, m_pass);
         } else {
-            throw new Exception("Unrecognized endpoint: " + endpoint.getName());
+            throw new IllegalArgumentException("Unrecognized endpoint: "
+                    + endpoint.getName());
         }
     }
 

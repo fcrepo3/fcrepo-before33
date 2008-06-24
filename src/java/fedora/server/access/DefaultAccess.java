@@ -44,11 +44,11 @@ import fedora.server.errors.ServerException;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.security.Authorization;
-import fedora.server.storage.ServiceDefinitionReader;
-import fedora.server.storage.ServiceDeploymentReader;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.ExternalContentManager;
+import fedora.server.storage.ServiceDefinitionReader;
+import fedora.server.storage.ServiceDeploymentReader;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamDef;
 import fedora.server.storage.types.DatastreamManagedContent;
@@ -318,10 +318,12 @@ public class DefaultAccess
             models: for (RelationshipTuple rel : reader
                     .getRelationships(MODEL.HAS_MODEL, null)) {
                 cModelPID = rel.getObjectPID();
-                
+
                 /* Skip over system models */
-                if (Models.contains("info:fedora/" + cModelPID)) continue;
-                
+                if (Models.contains("info:fedora/" + cModelPID)) {
+                    continue;
+                }
+
                 /* Open up each model and peek at its sDefs for a match */
                 for (RelationshipTuple r : m_manager.getReader(false,
                                                                context,
@@ -590,11 +592,10 @@ public class DefaultAccess
         Datastream[] datastreams = reader.GetDatastreams(asOfDateTime, null);
         DatastreamDef[] dsDefs = new DatastreamDef[datastreams.length];
         for (int i = 0; i < datastreams.length; i++) {
-            DatastreamDef dsDef = new DatastreamDef();
-            dsDef.dsID = datastreams[i].DatastreamID;
-            dsDef.dsLabel = datastreams[i].DSLabel;
-            dsDef.dsMIME = datastreams[i].DSMIME;
-            dsDefs[i] = dsDef;
+            dsDefs[i] =
+                    new DatastreamDef(datastreams[i].DatastreamID,
+                                      datastreams[i].DSLabel,
+                                      datastreams[i].DSMIME);
         }
 
         long stopTime = new Date().getTime();
@@ -623,8 +624,8 @@ public class DefaultAccess
         profile.objectCreateDate = reader.getCreateDate();
         profile.objectLastModDate = reader.getLastModDate();
 
-        
-        for (RelationshipTuple rel : reader.getRelationships(Constants.MODEL.HAS_MODEL, null)) {
+        for (RelationshipTuple rel : reader
+                .getRelationships(Constants.MODEL.HAS_MODEL, null)) {
             profile.objectModels.add(rel.object);
         }
 
@@ -1064,7 +1065,7 @@ public class DefaultAccess
             } catch (UnknownHostException e) {
                 LOG.error("Unable to resolve host of Fedora server", e);
                 fedoraServerHost = "localhost";
-            }  
+            }
         }
         reposBaseURL = protocol + "://" + fedoraServerHost + ":" + port;
         return reposBaseURL;
