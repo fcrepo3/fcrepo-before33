@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -49,7 +49,7 @@ import fedora.server.types.gen.Datastream;
 /**
  * Shows a tabbed pane, one for each datastream in the object, and one special
  * tab for "New...", which handles the creation of new datastreams.
- * 
+ *
  * @author Chris Wilper
  */
 public class DatastreamsPane
@@ -178,7 +178,7 @@ public class DatastreamsPane
     /**
      * Set the content of the "New Rels-Ext..." JPanel to a fresh new datastream
      * entry panel, and switch to it, if needed.
-     * 
+     *
      * @throws Exception
      */
     public void updateNewRelsExt(String pid) throws Exception {
@@ -203,6 +203,23 @@ public class DatastreamsPane
             return i;
         }
         return m_tabbedPane.indexOfTab(id + "*");
+    }
+
+    /**
+     * Gets the index of the pane containing the
+     * datastream with the given id.
+     * @return index, or -1 if index is not found
+     */
+    private int getDatastreamPaneIndex(String id) {
+        int index = -1;
+        for (int i=0; i < m_datastreamPanes.length; i++)
+        {
+            if(m_datastreamPanes[i].getItemId().equals(id)){
+                index = i;
+                break;
+            }
+        }
+        return index;
     }
 
     public void setDirty(String id, boolean isDirty) {
@@ -281,14 +298,16 @@ public class DatastreamsPane
         int i = getTabIndex(dsID);
         m_tabbedPane.remove(i);
         m_currentVersionMap.remove(dsID);
+
         // also remove it from the array
+        i = getDatastreamPaneIndex(dsID);
         DatastreamPane[] newArray =
                 new DatastreamPane[m_datastreamPanes.length - 1];
         for (int x = 0; x < m_datastreamPanes.length; x++) {
             if (x < i) {
                 newArray[x] = m_datastreamPanes[x];
             } else if (x > i) {
-                newArray[x - 1] = m_datastreamPanes[x - 1];
+                newArray[x - 1] = m_datastreamPanes[x];
             }
         }
         m_datastreamPanes = newArray;

@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -80,7 +80,7 @@ import fedora.common.xml.namespace.XSINamespace;
 
 /**
  * Constants of general utility.
- * 
+ *
  * @version $Id$
  */
 @SuppressWarnings("deprecation")
@@ -425,7 +425,7 @@ public interface Constants {
     //---
     // XML Formats
     //---
-    
+
     /**
      * The Atom APIM 1.0 XML format;
      * <code>info:fedora/fedora-system:format/ATOM-APIM-1.0</code>
@@ -511,6 +511,12 @@ public interface Constants {
             FedoraRepositoryDesc1_0Format.getInstance();
 
     /**
+     * Legacy FOXML 1.0 format string
+     * Available only for backwards compatibility with old repository versions
+     */
+    public static final String FOXML1_0_LEGACY = "foxml1.0";
+
+    /**
      * The FOXML 1.0 XML format;
      * <code>info:fedora/fedora-system:FOXML-1.0</code>
      */
@@ -521,6 +527,13 @@ public interface Constants {
      * <code>info:fedora/fedora-system:FOXML-1.1</code>
      */
     public static final FOXML1_1Format FOXML1_1 = FOXML1_1Format.getInstance();
+
+    /**
+     * Legacy METS Extention 1.0 format string
+     * Available only for backwards compatibility with old repository versions
+     */
+    public static final String METS_EXT1_0_LEGACY = "metslikefedora1";
+
 
     /**
      * The METS Fedora Extension 1.0 XML format;
@@ -535,7 +548,7 @@ public interface Constants {
      */
     public static final METSFedoraExt1_1Format METS_EXT1_1 =
             METSFedoraExt1_1Format.getInstance();
-    
+
     /**
      * The ATOM 1.1 XML format;
      * <code>info:fedora/fedora-system:ATOM-1.1</code>
@@ -596,7 +609,7 @@ public interface Constants {
          * Determines the value of "Fedora Home" based on the
          * <code>fedora.home</code> system property (checked first) or the
          * <code>FEDORA_HOME</code> environment variable.
-         * 
+         *
          * @returns the value, or <code>null</code> if undefined in both
          *          places.
          */

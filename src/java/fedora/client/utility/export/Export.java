@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -103,7 +103,7 @@ public class Export
         resultFields[0] = "pid";
 
         // get the first chunk of search results
-        
+
         FieldSearchResult result =
                 AutoFinder.findObjects(apia, resultFields, 100, query);
 
@@ -153,11 +153,12 @@ public class Export
         System.err.println("  PSS    is the password of repository user.");
         System.err.println("  PID    is the id of the object to export from the source repository.");
         System.err.println("  FORMAT is the XML format to export ");
-        System.err.println("         ('" + FOXML1_1.uri + "',"); 
+        System.err.println("         ('" + FOXML1_1.uri + "',");
         System.err.println("          '" + FOXML1_0.uri + "',");
+        System.err.println("          '" + METS_EXT1_1.uri + "',");
+        System.err.println("          '" + METS_EXT1_0.uri + "',");
         System.err.println("          '" + ATOM1_1.uri + "',");
         System.err.println("          '" + ATOM_ZIP1_1.uri + "',");
-        System.err.println("          '" + METS_EXT1_1.uri + "',");
         System.err.println("          or 'default')");
         System.err.println("  ECONTEXT is the export context (which indicates what use case");
         System.err.println("         the output should be prepared for.");
@@ -213,34 +214,29 @@ public class Export
 
             String exportFormat = args[4];
             String exportContext = args[5];
-            if (!exportFormat.equals(METS_EXT1_1.uri)
+            if (!exportFormat.equals(FOXML1_1.uri)
                 && !exportFormat.equals(FOXML1_0.uri)
-                && !exportFormat.equals(FOXML1_1.uri)
+                && !exportFormat.equals(METS_EXT1_1.uri)
+                && !exportFormat.equals(METS_EXT1_0.uri)
                 && !exportFormat.equals(ATOM1_1.uri)
                 && !exportFormat.equals(ATOM_ZIP1_1.uri)
                 && !exportFormat.equals("default")) {
-                    Export.badArgs("FORMAT arg must be '"
-                                   + FOXML1_1.uri
-                                   + "', '" + FOXML1_0.uri
-                                   + "', '" + METS_EXT1_1.uri
-                                   + "', '" + ATOM1_1.uri
-                                   + "', '" + ATOM_ZIP1_1.uri
-                                   + "', or 'default'");
+                    Export.badArgs(exportFormat +" is not a valid export format.");
             }
             if (!exportContext.equals("public")
                     && !exportContext.equals("migrate")
                     && !exportContext.equals("archive")
                     && !exportContext.equals("default")) {
-                Export
-                        .badArgs("ECONTEXT arg must be 'public', 'migrate', 'archive', or 'default'");
+                Export.badArgs("ECONTEXT arg must be 'public', 'migrate', 'archive', or 'default'");
             }
 
             RepositoryInfo repoinfo = sourceRepoAPIA.describeRepository();
             StringTokenizer stoken =
                     new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
-            if (new Integer(stoken.nextToken()).intValue() < 2 // pre-2.0 repo
-                    && !exportFormat.equals(METS_EXT1_1.uri)
-                    && !exportFormat.equals("default")) {
+            int majorVersion = new Integer(stoken.nextToken()).intValue();
+            if (majorVersion < 2 // pre-2.0 repo
+                && !exportFormat.equals(METS_EXT1_0.uri)
+                && !exportFormat.equals("default")) {
                 Export.badArgs("FORMAT arg must be '" + METS_EXT1_0.uri
                         + "' or 'default' for pre-2.0 repository.");
             }
@@ -254,7 +250,7 @@ public class Export
             if (args[3].indexOf(":") == -1) {
                 // assume args[3] is FTYPS... so multi-export
                 int count =
-                        Export.multi(sourceRepoAPIA, sourceRepoAPIM, 
+                        Export.multi(sourceRepoAPIA, sourceRepoAPIM,
                                      exportFormat,
                                      exportContext,
                                      //args[4], // format

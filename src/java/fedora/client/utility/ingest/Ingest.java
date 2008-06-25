@@ -85,7 +85,7 @@ public class Ingest
                                        log,
                                        c);
                 } else {
-    
+
                     try {
                         String pid =
                                 oneFromFile(element,
@@ -153,10 +153,10 @@ public class Ingest
 
         // Convert old format values to URIs for ingest
         String ingestFormat = sourceExportFormat;
-        if (sourceExportFormat.equals("metslikefedora1")) {
-            ingestFormat = Constants.METS_EXT1_0.uri;
-        } else if (sourceExportFormat.equals("foxml1.0")) {
-            ingestFormat = Constants.FOXML1_0.uri;
+        if (sourceExportFormat.equals(METS_EXT1_0_LEGACY)) {
+            ingestFormat = METS_EXT1_0.uri;
+        } else if (sourceExportFormat.equals(FOXML1_0_LEGACY)) {
+            ingestFormat = FOXML1_0.uri;
         }
 
         // INGEST into target repository
@@ -253,7 +253,7 @@ public class Ingest
             new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
         int majorVersion = new Integer(stoken.nextToken()).intValue();
         if (majorVersion < 2) {
-            sourceExportFormat = "metslikefedora1";
+            sourceExportFormat = METS_EXT1_0_LEGACY;
         } else {
             sourceExportFormat = repoinfo.getDefaultExportFormat();
         }
@@ -321,8 +321,10 @@ public class Ingest
         System.err.println("  FORMAT     is a string value which indicates the XML format of the ingest file(s)");
         System.err.println("             ('" + FOXML1_1.uri + "',");
         System.err.println("              '" + FOXML1_0.uri + "',");
+        System.err.println("              '" + METS_EXT1_1.uri + "',");
+        System.err.println("              '" + METS_EXT1_0.uri + "',");
         System.err.println("              '" + ATOM1_1.uri + "',");
-        System.err.println("              or '" + METS_EXT1_1.uri + "')");
+        System.err.println("              or '" + ATOM_ZIP1_1.uri + "')");
         System.err.println("  PID        is the id of the object to ingest from the source repository.");
         System.err.println("  SHST/THST  is the source or target repository's hostname.");
         System.err.println("  SPRT/TPRT  is the source or target repository's port number.");

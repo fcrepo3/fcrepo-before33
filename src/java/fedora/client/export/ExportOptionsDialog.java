@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -31,8 +31,9 @@ import fedora.common.Constants;
 
 /**
  * Launch a dialog for selecting which XML format to ingest. Valid options are
- * FOXML1_1.uri, FOXML1_0.uri, METS_EXT1_1.uri, and ATOM1_0.uri.
- * 
+ * FOXML1_1.uri, FOXML1_0.uri, METS_EXT1_1.uri, METS_EXT1_0, ATOM1_1.uri, and
+ * ATOM_ZIP1_1.uri.
+ *
  * @author Sandy Payette
  */
 public class ExportOptionsDialog
@@ -42,12 +43,16 @@ public class ExportOptionsDialog
     private static final long serialVersionUID = 1L;
 
     private JRadioButton foxml11Button;
-    
+
     private JRadioButton foxml10Button;
 
-    private JRadioButton metsfButton;
-    
+    private JRadioButton mets11Button;
+
+    private JRadioButton mets10Button;
+
     private JRadioButton atomButton;
+
+    private JRadioButton atomZipButton;
 
     private final ButtonGroup fmt_buttonGroup = new ButtonGroup();
 
@@ -67,7 +72,7 @@ public class ExportOptionsDialog
         super(JOptionPane.getFrameForComponent(Administrator.getDesktop()),
               title,
               true);
-        setSize(330, 400);
+        setSize(350, 450);
         setModal(true);
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -144,7 +149,7 @@ public class ExportOptionsDialog
 
         String text = "Select the desired export FORMAT";
         JLabel label = new JLabel(text);
-        formatPanel.add(label);       
+        formatPanel.add(label);
 
         // foxml 1.1 radio button
         foxml11Button = new JRadioButton("FOXML (Fedora Object XML) version 1.1", true);
@@ -157,7 +162,7 @@ public class ExportOptionsDialog
             }
         });
         formatPanel.add(foxml11Button);
-        
+
         // foxml 1.0 radio button
         foxml10Button = new JRadioButton("FOXML (Fedora Object XML) version 1.0", true);
         foxml10Button.setActionCommand(FOXML1_0.uri);
@@ -169,19 +174,31 @@ public class ExportOptionsDialog
             }
         });
         formatPanel.add(foxml10Button);
-        
-        // metsf radio button
-        metsfButton = new JRadioButton("METS (Fedora METS Extension)", false);
-        metsfButton.setActionCommand(METS_EXT1_1.uri);
-        metsfButton.addActionListener(new ActionListener() {
+
+        // mets 1.1 radio button
+        mets11Button = new JRadioButton("METS (Fedora METS Extension) version 1.1", false);
+        mets11Button.setActionCommand(METS_EXT1_1.uri);
+        mets11Button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (metsfButton.isSelected()) {
+                if (mets11Button.isSelected()) {
                     fmt_chosen = METS_EXT1_1.uri;
                 }
             }
         });
-        formatPanel.add(metsfButton);
-        
+        formatPanel.add(mets11Button);
+
+        // mets 1.0 radio button
+        mets10Button = new JRadioButton("METS (Fedora METS Extension) version 1.0", false);
+        mets10Button.setActionCommand(METS_EXT1_0.uri);
+        mets10Button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (mets10Button.isSelected()) {
+                    fmt_chosen = METS_EXT1_0.uri;
+                }
+            }
+        });
+        formatPanel.add(mets10Button);
+
         // atom radio button
         atomButton = new JRadioButton("ATOM (Fedora Atom)", false);
         atomButton.setActionCommand(ATOM1_1.uri);
@@ -193,12 +210,26 @@ public class ExportOptionsDialog
             }
         });
         formatPanel.add(atomButton);
-        
+
+        // atom zip radio button
+        atomZipButton = new JRadioButton("ATOM Zip", false);
+        atomZipButton.setActionCommand(ATOM_ZIP1_1.uri);
+        atomZipButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (atomZipButton.isSelected()) {
+                    fmt_chosen = ATOM_ZIP1_1.uri;
+                }
+            }
+        });
+        formatPanel.add(atomZipButton);
+
         // button grouping and default value
         fmt_buttonGroup.add(foxml11Button);
         fmt_buttonGroup.add(foxml10Button);
-        fmt_buttonGroup.add(metsfButton);
+        fmt_buttonGroup.add(mets11Button);
+        fmt_buttonGroup.add(mets10Button);
         fmt_buttonGroup.add(atomButton);
+        fmt_buttonGroup.add(atomZipButton);
         fmt_chosen = FOXML1_1.uri;
         return formatPanel;
     }
@@ -214,8 +245,8 @@ public class ExportOptionsDialog
 
         String text = "Select the desired export CONTEXT";
         JLabel label = new JLabel(text);
-        contextPanel.add(label);       
-        
+        contextPanel.add(label);
+
         // migrate radio button
         migrateButton = new JRadioButton("Migrate", true);
         migrateButton.setActionCommand("migrate");
@@ -286,12 +317,17 @@ public class ExportOptionsDialog
                         + "     FOXML 1.1 - select this option if you want the export file\n"
                         + "             to be encoded according to the FOXML 1.1 XML schema.\n\n"
                         + "     FOXML 1.0 - select this option if you want the export file\n"
-                        + "             to be encoded according to the FOXML 1.0 XML schema.\n\n"                        
-                        + "     METS  - select this option if you want the export file\n"
-                        + "             to be encoded according to the Fedora extension of\n"
-                        + "             the METS XML schema.\n\n"
+                        + "             to be encoded according to the FOXML 1.0 XML schema.\n\n"
+                        + "     METS 1.1 - select this option if you want the export file\n"
+                        + "             to be encoded according to version 1.1 of the Fedora\n"
+                        + "		        extension of the METS XML schema.\n\n"
+                        + "     METS 1.0 - select this option if you want the export file\n"
+                        + "             to be encoded according to version 1.0 of the Fedora\n"
+                        + "             extension of the METS XML schema.\n\n"
                         + "     ATOM  - select this option if you want the export file\n"
                         + "             to be encoded according to the ATOM XML schema.\n\n"
+                        + "     ATOM ZIP - select this option if you want the export file\n"
+                        + "             to be encoded according to the ATOM ZIP XML schema.\n\n"
                         + " *************************************************************************\n"
                         + " (2) Select the export CONTEXT:\n\n"
                         + "     Migrate - (Default) select this option if you want the export file\n"

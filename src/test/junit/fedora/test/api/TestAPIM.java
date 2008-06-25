@@ -33,11 +33,13 @@ public class TestAPIM
     public static byte[] dsXML;
 
     public static byte[] demo997FOXML10ObjectXML;
-    
+
     public static byte[] demo998FOXMLObjectXML;
 
     public static byte[] demo999METSObjectXML;
-    
+
+    public static byte[] demo999bMETS10ObjectXML;
+
     public static byte[] demo1000ATOMObjectXML;
 
     public static byte[] changeme1FOXMLObjectXML;
@@ -120,12 +122,12 @@ public class TestAPIM
         sb.append("</foxml:disseminatorVersion>");
         sb.append("</foxml:disseminator>");
         sb.append("</foxml:digitalObject>");
-        
+
         try {
             demo997FOXML10ObjectXML = sb.toString().getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee) {
-        }        
-        
+        }
+
         // create test FOXML object specifying pid=demo:998
         sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -268,7 +270,7 @@ public class TestAPIM
         } catch (UnsupportedEncodingException uee) {
         }
 
-        // create test METS object specifying pid=demo:999        
+        // create test METS object specifying pid=demo:999
         sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         sb
@@ -358,7 +360,74 @@ public class TestAPIM
         } catch (UnsupportedEncodingException uee) {
         }
 
-        // create test METS object not specifying pid (allowing server to assign)        
+        // create test METS 1.0 object specifying pid=demo:999b
+        sb = new StringBuffer();
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        sb.append("<METS:mets xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:METS=\"http://www.loc.gov/METS/\" xmlns:xlink=\"http://www.w3.org/TR/xlink\" xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-0.xsd\" OBJID=\"demo:999b\" TYPE=\"FedoraObject\" LABEL=\"Image of Coliseum in Rome\" >");
+        sb.append("  <!---*******************************************************************************************************************************************-->");
+        sb.append("  <!---User-Defined XML METADATA DATASTREAMS-->");
+        sb.append("  <!---*******************************************************************************************************************************************-->");
+        sb.append("  <METS:dmdSecFedora ID=\"DC\" STATUS=\"A\">");
+        sb.append("    <METS:descMD ID=\"DC1.0\">");
+        sb.append("      <METS:mdWrap MIMETYPE=\"text/xml\" MDTYPE=\"OTHER\" LABEL=\"DC Record for Coliseum image object\">");
+        sb.append("        <METS:xmlData>");
+        sb.append("          <!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->");
+        sb.append("          <oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">");
+        sb.append("            <dc:title>Coliseum in Rome</dc:title>");
+        sb.append("            <dc:creator>Thornton Staples</dc:creator>");
+        sb.append("            <dc:subject>Architecture, Roman</dc:subject>");
+        sb.append("            <dc:description>Image of Coliseum in Rome</dc:description>");
+        sb.append("            <dc:publisher>University of Virginia Library</dc:publisher>");
+        sb.append("            <dc:format>image/jpeg</dc:format>");
+        sb.append("            <dc:identifier>demo:5</dc:identifier>");
+        sb.append("          </oai_dc:dc>");
+        sb.append("        </METS:xmlData>");
+        sb.append("      </METS:mdWrap>");
+        sb.append("    </METS:descMD>");
+        sb.append("  </METS:dmdSecFedora>");
+        sb.append("  <!---*******************************************************************************************************************************************-->");
+        sb.append("  <!--- DATASTREAMS:  EXTERNAL-REFERENCED CONTENT and REPOSITORY-MANAGED CONTENT-->");
+        sb.append("  <!---*******************************************************************************************************************************************-->");
+        sb.append("  <METS:fileSec>");
+        sb.append("    <METS:fileGrp ID=\"DATASTREAMS\">");
+        sb.append("      <METS:fileGrp ID=\"DS1\" STATUS=\"A\">");
+        sb.append("        <!--This is the thumbnail resolution image -->");
+        sb.append("        <METS:file ID=\"DS1.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
+        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://" + getHost() +
+                              ":8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg\" xlink:title=\"Thorny's Coliseum thumbnail jpg image\"/>");
+        sb.append("        </METS:file>");
+        sb.append("      </METS:fileGrp>");
+        sb.append("      <METS:fileGrp ID=\"DS2\" STATUS=\"A\">");
+        sb.append("        <!-- This is the medium resoluion image -->");
+        sb.append("        <METS:file ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
+        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://" + getHost() +
+                              ":8080/fedora-demo/simple-image-demo/coliseum-medium.jpg\" xlink:title=\"Thorny's Coliseum medium jpg image\"/>");
+        sb.append("        </METS:file>");
+        sb.append("      </METS:fileGrp>");
+        sb.append("      <METS:fileGrp ID=\"DS3\">");
+        sb.append("        <!--This is the high resolution image -->");
+        sb.append("          <METS:file ID=\"DS3.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
+        sb.append("            <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://" + getHost() +
+                                ":8080/fedora-demo/simple-image-demo/coliseum-high.jpg\" xlink:title=\"Thorny's Coliseum high jpg image\"/>");
+        sb.append("          </METS:file>");
+        sb.append("      </METS:fileGrp>");
+        sb.append("      <METS:fileGrp ID=\"DS4\">");
+        sb.append("        <!--This is the very high resolution image -->");
+        sb.append("        <METS:file ID=\"DS4.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
+        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://" + getHost() +
+                              ":8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\" xlink:title=\"Thorny's Coliseum veryhigh jpg image\"/>");
+        sb.append("        </METS:file>");
+        sb.append("      </METS:fileGrp>");
+        sb.append("    </METS:fileGrp>");
+        sb.append("  </METS:fileSec>");
+        sb.append("</METS:mets>");
+
+        try {
+            demo999bMETS10ObjectXML = sb.toString().getBytes("UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+        }
+
+        // create test METS object not specifying pid (allowing server to assign)
         sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         sb
@@ -447,7 +516,7 @@ public class TestAPIM
             changeme2METSObjectXML = sb.toString().getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee) {
         }
-        
+
         sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         sb.append("<feed xmlns=\"http://www.w3.org/2005/Atom\">");
@@ -479,7 +548,7 @@ public class TestAPIM
         sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
         sb.append("    <category term=\"491\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
         sb.append("    <content type=\"text/xml\">");
-        sb.append("      <oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">");                 
+        sb.append("      <oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">");
         sb.append("        <dc:title>Coliseum in Rome</dc:title>");
         sb.append("        <dc:creator>Thornton Staples</dc:creator>");
         sb.append("        <dc:subject>Architecture, Roman</dc:subject>");
@@ -601,10 +670,10 @@ public class TestAPIM
         sb.append("    </content>");
         sb.append("  </entry>");
         sb.append("</feed>");
-        
+
         try {
             demo1000ATOMObjectXML = sb.toString().getBytes("UTF-8");
-        } catch (UnsupportedEncodingException uee) {           
+        } catch (UnsupportedEncodingException uee) {
         }
 
     }
@@ -620,14 +689,18 @@ public class TestAPIM
         SimpleXpathEngine
                 .registerNamespace("oai_dc",
                                    "http://www.openarchives.org/OAI/2.0/oai_dc/");
-        SimpleXpathEngine.registerNamespace("dc",
-                                            "http://purl.org/dc/elements/1.1/");
+        SimpleXpathEngine
+                .registerNamespace("dc",
+                                   "http://purl.org/dc/elements/1.1/");
         SimpleXpathEngine
                 .registerNamespace("foxml",
                                    "info:fedora/fedora-system:def/foxml#");
         SimpleXpathEngine
                 .registerNamespace("audit",
                                    "info:fedora/fedora-system:def/audit#");
+        SimpleXpathEngine
+                .registerNamespace("METS",
+                                   "http://www.loc.gov/METS/");
     }
 
     public void tearDown() throws Exception {
@@ -683,7 +756,7 @@ public class TestAPIM
         assertXpathEvaluatesTo("5",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
                                xmlIn);
-        
+
         pid = apim.ingest(changeme1FOXMLObjectXML, FOXML1_1.uri, null);
         assertNotNull(pid);
         serverAssignedPIDs.add(pid);
@@ -696,7 +769,7 @@ public class TestAPIM
                           xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",
                           xmlIn);
-        assertXpathNotExists("//foxml:datastream[@ID='AUDIT']", xmlIn); // No audit trail should be created      
+        assertXpathNotExists("//foxml:datastream[@ID='AUDIT']", xmlIn); // No audit trail should be created
         assertXpathEvaluatesTo("5",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
                                xmlIn);
@@ -757,7 +830,7 @@ public class TestAPIM
             assertXpathEvaluatesTo("6",
                            "count(//foxml:datastream[@ID!='AUDIT'])",
                            xmlIn);
-                
+
         // (2) test modifyObject
         System.out.println("Running TestAPIM.testModifyObject...");
         // test changing object demo:5 by modifying state to Inactive; leave label unchanged
@@ -1320,7 +1393,7 @@ public class TestAPIM
         }
         assertTrue(results.length > 0);
 
-        // test purgeDatastream audit 
+        // test purgeDatastream audit
         objectXML = apim.getObjectXML("demo:14");
         assertTrue(objectXML.length > 0);
         xmlIn = new String(objectXML, "UTF-8");
@@ -1592,7 +1665,7 @@ public class TestAPIM
         assertEquals("I", ds.getState());
         //System.out.println("***** Testcase: TestAPIM.testSetDatastreamState new state: "+ds.getState());
 
-        // test setDatastreamState audit        
+        // test setDatastreamState audit
         byte[] objectXML = apim.getObjectXML("demo:5");
         assertTrue(objectXML.length > 0);
         String xmlIn = new String(objectXML, "UTF-8");
@@ -1626,7 +1699,7 @@ public class TestAPIM
         Datastream ds = apim.getDatastream("demo:5", "DC", null);
         assertEquals(false, ds.isVersionable());
 
-        // test setDatastreamVersionable audit        
+        // test setDatastreamVersionable audit
         byte[] objectXML = apim.getObjectXML("demo:5");
         assertTrue(objectXML.length > 0);
         String xmlIn = new String(objectXML, "UTF-8");
@@ -1644,31 +1717,31 @@ public class TestAPIM
         assertNotNull(result);
         ds = apim.getDatastream("demo:5", "DC", null);
         assertEquals(true, ds.isVersionable());
-        
-        
-    }    
-    
+
+
+    }
+
     public void testGetNextPID() throws Exception {
 
         // test null for both arguments
         System.out.println("Running TestAPIM.testGetNextPID...");
         String[] pids = apim.getNextPID(null, null);
         assertTrue(pids.length > 0);
-        //System.out.println("***** Testcase: TestAPIM.testGetNextPID  nextPid(null, null): "+pids[0]);       
+        //System.out.println("***** Testcase: TestAPIM.testGetNextPID  nextPid(null, null): "+pids[0]);
         assertEquals(pids.length, 1);
         assertTrue(pids[0].startsWith("changeme"));
 
         // test null for numPids argument
         pids = apim.getNextPID(null, "dummy");
         assertTrue(pids.length > 0);
-        //System.out.println("***** Testcase: TestAPIM.testGetNextPID  nextPid(null, \"dummy\"): "+pids[0]);     
+        //System.out.println("***** Testcase: TestAPIM.testGetNextPID  nextPid(null, \"dummy\"): "+pids[0]);
         assertEquals(pids.length, 1);
         assertTrue(pids[0].startsWith("dummy:"));
 
         // test null for namespace argument
         pids = apim.getNextPID(new NonNegativeInteger("1"), null);
         assertTrue(pids.length > 0);
-        //System.out.println("***** Testcase: TestAPIM.testGetNextPID  nextPid(1, null): "+pids[0]);      
+        //System.out.println("***** Testcase: TestAPIM.testGetNextPID  nextPid(1, null): "+pids[0]);
         assertEquals(pids.length, 1);
         assertTrue(pids[0].startsWith("changeme"));
 
@@ -1681,9 +1754,9 @@ public class TestAPIM
         assertTrue(pids[1].startsWith("namespace:"));
     }
 
-    public void testLegacyDOFormat() throws Exception {
+    public void testLegacyDOFormats() throws Exception {
         System.out.println("Running TestAPIM.testDigitalObjectFormat...");
-        
+
         // test ingesting foxml 1.0 Object
         String pid = apim.ingest(demo997FOXML10ObjectXML,
                                  FOXML1_0.uri,
@@ -1707,7 +1780,7 @@ public class TestAPIM
                              xmlIn);
         assertXpathNotExists("//foxml:disseminator", xmlIn);
         assertXpathExists("//foxml:datastream[@ID='AUDIT']", xmlIn);
-        assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])", xmlIn);        
+        assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])", xmlIn);
 
 
         // test exporting foxml 1.0 object
@@ -1728,12 +1801,43 @@ public class TestAPIM
                              xmlIn);
         assertXpathNotExists("//foxml:disseminator", xmlIn);
         assertXpathExists("//foxml:datastream[@ID='AUDIT']", xmlIn);
-        assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])", xmlIn);        
-        
+        assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])", xmlIn);
+
         // purge foxml 1.0 object
         apim.purgeObject(pid, "purging object demo:997", false);
+
+
+        // test ingesting mets 1.0 object
+        pid =  apim.ingest(demo999bMETS10ObjectXML,
+                           METS_EXT1_0.uri,
+                           "ingesting new mets 1.0 object");
+        assertNotNull(pid);
+
+        objectXML = apim.getObjectXML(pid);
+        assertTrue(objectXML.length > 0);
+        xmlIn = new String(objectXML, "UTF-8");
+        assertXpathExists("foxml:digitalObject[@PID='" + pid + "']", xmlIn);
+        assertXpathExists("//foxml:objectProperties/foxml:property" +
+        		          "[@NAME='info:fedora/fedora-system:def/model#state' " +
+        		          "and @VALUE='Active']",
+                          xmlIn);
+        assertXpathExists("//foxml:objectProperties/foxml:property" +
+        		          "[@NAME='info:fedora/fedora-system:def/model#label' " +
+        		          "and @VALUE='Image of Coliseum in Rome']",
+                          xmlIn);
+        assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])", xmlIn);
+
+        // test exporting mets 1.0 object
+        objectXML = apim.export("demo:999b", METS_EXT1_0.uri, "migrate");
+        assertTrue(objectXML.length > 0);
+        xmlIn = new String(objectXML, "UTF-8");
+        assertXpathExists("METS:mets[@OBJID='demo:999b']", xmlIn);
+        assertXpathExists("METS:mets[@LABEL='Image of Coliseum in Rome']", xmlIn);
+
+        // purge mets 1.0 object
+        apim.purgeObject(pid, "purging object demo:999b", false);
     }
-    
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(TestAPIM.class);
     }

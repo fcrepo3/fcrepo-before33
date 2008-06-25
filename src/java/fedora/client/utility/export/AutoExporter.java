@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -29,7 +29,7 @@ import fedora.utilities.FileUtils;
 
 /**
  * Utility class for exporting objects from a Fedora repository.
- * 
+ *
  * @author Chris Wilper
  */
 public class AutoExporter
@@ -75,20 +75,21 @@ public class AutoExporter
         byte[] bytes;
         // For backward compatibility:
         // Pre-2.0 repositories will only export "metslikefedora1" format.
-        // For 2.0+ repositories the format arg is sent to "export" method.
+        // 2.x repositories will only export "metslikefedora1" and "foxml1.0" formats.
+        // For 3.0+ repositories the format arg is sent to "export" method.
         StringTokenizer stoken =
                 new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
         int majorVersion = new Integer(stoken.nextToken()).intValue();
         if (majorVersion < 2) {
             if (format == null || format.equals(METS_EXT1_1.uri)
                     || format.equals(METS_EXT1_0.uri)
-                    || format.equals("metslikefedora1")
+                    || format.equals("METS_EXT1_0_LEGACY")
                     || format.equals("default")) {
                 if (format.equals(METS_EXT1_1.uri)) {
-                    System.out
-                            .println("WARNING: Repository does not support METS Fedora Extension 1.1; exporting older format (v1.0) instead");
+                    System.out.println("WARNING: Repository does not support METS Fedora " +
+                    		           "Extension 1.1; exporting older format (v1.0) instead");
                 }
-                bytes = apim.export(pid, METS_EXT1_0.uri, exportContext);
+                bytes = apim.export(pid, METS_EXT1_0_LEGACY, exportContext);
             } else {
                 throw new IOException("You are connected to a pre-2.0 Fedora repository "
                         + "which will only export the XML format \"metslikefedora1\".");
@@ -97,22 +98,28 @@ public class AutoExporter
             if (majorVersion < 3) {
                 if (format != null) {
                     if (format.equals(FOXML1_1.uri)) {
-                        System.out
-                                .println("WARNING: Repository does not support FOXML 1.1; exporting older format (v1.0) instead");
-                        format = "foxml1.0";
+                        System.out.println("WARNING: Repository does not support FOXML 1.1; " +
+                        		           "exporting older format (v1.0) instead");
+                        format = FOXML1_0_LEGACY;
+                    } else if (format.equals(FOXML1_0.uri)) {
+                        format = FOXML1_0_LEGACY;
                     } else if (format.equals(METS_EXT1_1.uri)) {
-                        System.out
-                                .println("WARNING: Repository does not support METS Fedora Extension 1.1; exporting older format (v1.0) instead");
-                        format = "metslikefedora1";
+                        System.out.println("WARNING: Repository does not support METS Fedora " +
+                        		           "Extension 1.1; exporting older format (v1.0) instead");
+                        format = METS_EXT1_0_LEGACY;
+                    } else if (format.equals(METS_EXT1_0.uri)) {
+                        format = METS_EXT1_0_LEGACY;
+                    } else {
+                        throw new IOException("You are connected to a 2.x Fedora repository " +
+                                              "which will only export FOXML and METS XML formats.");
                     }
                 }
-            } else {
+            } else { // majorVersion >= 3
                 if (format != null) {
-                    if (format.equals(METS_EXT1_0.uri)
-                            || format.equals("metslikefedora1")) {
-                        System.out
-                                .println("WARNING: Repository does not support METS Fedora Extension 1.0; exporting newer format (v1.1) instead");
-                        format = METS_EXT1_1.uri;
+                    if (format.equals(FOXML1_0_LEGACY)) {
+                        format = FOXML1_0.uri;
+                    } else if (format.equals(METS_EXT1_0_LEGACY)) {
+                        format = METS_EXT1_0.uri;
                     }
                 }
                 validateFormat(format);
@@ -166,8 +173,8 @@ public class AutoExporter
             repoinfo = apia.describeRepository();
             s_repoInfo.put(apia, repoinfo);
         }
-        // get the object XML as it exists in the repository's 
-        // persitent storage area.		
+        // get the object XML as it exists in the repository's
+        // persitent storage area.
         byte[] bytes = apim.getObjectXML(pid);
         try {
             // use xerces to pretty print the xml, assuming it's well formed
@@ -195,8 +202,9 @@ public class AutoExporter
             return;
         }
         if (!format.equals(FOXML1_1.uri) &&
-            !format.equals(FOXML1_0.uri) &&     
+            !format.equals(FOXML1_0.uri) &&
             !format.equals(METS_EXT1_1.uri) &&
+            !format.equals(METS_EXT1_0.uri) &&
             !format.equals(ATOM1_1.uri) &&
             !format.equals(ATOM_ZIP1_1.uri) &&
             !format.equals("default")) {
@@ -206,6 +214,8 @@ public class AutoExporter
                     + FOXML1_0.uri
                     + "' '"
                     + METS_EXT1_1.uri
+                    + "' '"
+                    + METS_EXT1_0.uri
                     + "' '"
                     + ATOM1_1.uri
                     + "' '"

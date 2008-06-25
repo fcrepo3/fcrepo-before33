@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -31,7 +31,7 @@ import fedora.client.Administrator;
  * An abstract JPanel for panes that support Save and Undo operations, which
  * also includes some utility methods to make constructing the UI easier for
  * implementers.
- * 
+ *
  * @author Chris Wilper
  */
 public abstract class EditingPane
@@ -254,6 +254,10 @@ public abstract class EditingPane
         public void dataChanged() {
             m_editingPane.updateButtonVisibility();
         }
+    }
+
+    public String getItemId() {
+        return m_itemId;
     }
 
 }

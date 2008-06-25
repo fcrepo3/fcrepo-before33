@@ -129,7 +129,7 @@ public class RDFTupleEditor
         m_editor = new JTable() {
 
             /**
-             * 
+             *
              */
             private static final long serialVersionUID = 1L;
 
@@ -251,7 +251,7 @@ public class RDFTupleEditor
             extends AbstractTableModel {
 
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 1L;
 
@@ -468,7 +468,7 @@ public class RDFTupleEditor
             implements ActionListener, DocumentListener {
 
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 1L;
 
@@ -505,11 +505,12 @@ public class RDFTupleEditor
             mainPanel
                     .add(lab2 = new JLabel("Predicate:", SwingConstants.RIGHT));
             String rels[] =
-                    {"", "fedora-model:" + MODEL.HAS_MODEL,
-                            "fedora-model:" + MODEL.HAS_SERVICE,
-                            "fedora-model:" + MODEL.IS_CONTRACTOR_OF,
-                            "fedora-model:" + MODEL.IS_DEPLOYMENT_OF,
-                            "rel:" + Constants.RELS_EXT.IS_MEMBER_OF};
+                    {"",
+                     MODEL.HAS_MODEL.toString(),
+                     MODEL.HAS_SERVICE.toString(),
+                     MODEL.IS_CONTRACTOR_OF.toString(),
+                     MODEL.IS_DEPLOYMENT_OF.toString(),
+                     Constants.RELS_EXT.IS_MEMBER_OF.toString()};
             m_predicate = new JComboBox(rels);
             m_predicate.setEditable(true);
             Administrator.constrainHeight(m_predicate);

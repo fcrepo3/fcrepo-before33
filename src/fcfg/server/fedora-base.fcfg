@@ -353,6 +353,8 @@
 		         classes must implement the DOSerializer/DODeserializer interfaces.</comment>
 		<param name="serializer_info:fedora/fedora-system:METSFedoraExt-1.1" value="fedora.server.storage.translation.METSFedoraExt1_1DOSerializer"/>
 		<param name="deserializer_info:fedora/fedora-system:METSFedoraExt-1.1" value="fedora.server.storage.translation.METSFedoraExt1_1DODeserializer"/>
+		<param name="serializer_info:fedora/fedora-system:METSFedoraExt-1.0" value="fedora.server.storage.translation.METSFedoraExt1_0DOSerializer"/>
+		<param name="deserializer_info:fedora/fedora-system:METSFedoraExt-1.0" value="fedora.server.storage.translation.METSFedoraExt1_0DODeserializer"/>
 		<param name="serializer_info:fedora/fedora-system:FOXML-1.1" value="fedora.server.storage.translation.FOXML1_1DOSerializer"/>
 		<param name="deserializer_info:fedora/fedora-system:FOXML-1.1" value="fedora.server.storage.translation.FOXML1_1DODeserializer"/>
 		<param name="serializer_info:fedora/fedora-system:FOXML-1.0" value="fedora.server.storage.translation.FOXML1_0DOSerializer"/>
@@ -389,7 +391,11 @@
              including referential integrity checking of existence and
              availability of distributed data and/or services. </comment>
 		<param name="xsd_info:fedora/fedora-system:METSFedoraExt-1.1" value="xsd/mets-fedora-ext1-1.xsd">
-			<comment>this is local path for the Fedora-METS XML
+			<comment>this is local path for the Fedora-METS 1.1 XML
+             schema used to do XML schema validation of digital objects.</comment>
+		</param>
+		<param name="xsd_info:fedora/fedora-system:METSFedoraExt-1.0" value="xsd/mets-fedora-ext.xsd">
+			<comment>this is local path for the Fedora-METS 1.0 XML
              schema used to do XML schema validation of digital objects.</comment>
 		</param>
 		<param name="xsd_info:fedora/fedora-system:FOXML-1.1" value="xsd/foxml1-1.xsd">
@@ -407,12 +413,17 @@
 		<param name="xsd_xacml_policy1.0" value="xsd/cs-xacml-schema-policy-1.0.xsd">
 			<comment>this is local path for the OASIS XACML XML
              policy schema used to do XML schema validation of XACML policies.</comment>
-        </param>
+    </param>
 		<param name="rules_info:fedora/fedora-system:METSFedoraExt-1.1" value="schematron/metsExtRules1-1.xml">
 			<comment>this is the local path to the Fedora
-             Schematron Rules used to do Fedora-specific on Fedora-METS XML
+             Schematron Rules used to do Fedora-specific on Fedora-METS 1.1 XML
              files.</comment>
-        </param>
+    </param>
+		<param name="rules_info:fedora/fedora-system:METSFedoraExt-1.0" value="schematron/metsExtRules1-0.xml">
+			<comment>this is the local path to the Fedora
+             Schematron Rules used to do Fedora-specific on Fedora-METS 1.0 XML
+             files.</comment>
+    </param>    
 		<param name="rules_info:fedora/fedora-system:FOXML-1.1" value="schematron/foxmlRules1-1.xml">
 			<comment>This is the local path to the Fedora
             Schematron Rules used to do Fedora-specific on FOXML 1.1 XML files. -
