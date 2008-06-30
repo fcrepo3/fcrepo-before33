@@ -11,6 +11,18 @@ Jim Blake      (j2blake)
 
 Branch History
 --------------
+dev-149476
+  Created   : 2008/06/27 from trunk r7366
+  Developer : Bill Branan
+  Reviewer  : Eddie Shin
+  Merged    : 
+
+dev-149441
+  Created   : 2008/06/25 from fedora-rest/trunk r7261
+  Developer : Bill Branan
+  Reviewer  : Eddie Shin
+  Merged    : 2008/06/30 into fedora-rest/trunk r7386
+
 dev-149395
  Created   : 2008/06/24 from trunk r7357
   Developer : Eddie Shin
