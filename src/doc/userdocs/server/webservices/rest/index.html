@@ -811,7 +811,7 @@
       </dl>
       <dl>
         <dt>HTTP Method</dt>
-        <dd>GET</dd>
+        <dd>POST</dd>
       </dl>
       <dl>
         <dt>Parameters</dt><br/>
@@ -846,8 +846,8 @@
       </dl>
       <dl>
         <dt>Examples</dt>
-        <dd>/objects/nextPID</dd>
-        <dd>/objects/nextPID?numPIDs=5&namespace=test</dd>
+        <dd>POST: /objects/nextPID</dd>
+        <dd>POST: /objects/nextPID?numPIDs=5&namespace=test</dd>
       </dl>
 
       <br/><br/>
@@ -981,7 +981,7 @@
       <h3 id="modifyDatastream">modifyDatastream</h3>
       <dl>
         <dt>URL Syntax</dt>
-        <dd>/objects/{pid}/datastreams/{dsID} ? [dsLocation] [altIDs] [dsLabel] [formatURI] [checksumType] [checksum] [logMessage] [force]</dd>
+        <dd>/objects/{pid}/datastreams/{dsID} ? [dsLocation] [altIDs] [dsLabel] [versionable] [dsState] [formatURI] [checksumType] [checksum] [logMessage] [force]</dd>
       </dl>
       <dl>
         <dt>HTTP Method</dt>
@@ -1026,6 +1026,18 @@
               <td>the label for the datastream</td>
               <td></td>
               <td></td>
+            </tr>
+            <tr>
+              <td>versionable</td>
+              <td>enable versioning of the datastream</td>
+              <td>true</td>
+              <td>true, false</td>
+            </tr>
+            <tr>
+              <td>dsState</td>
+              <td>one of "A", "I", "D" (<strong>A</strong>ctive, <strong>I</strong>nactive, <strong>D</strong>eleted)</td>
+              <td>A</td>
+              <td>A, I, D</td>
             </tr>
             <tr>
               <td>formatURI</td>
@@ -1255,14 +1267,94 @@
 
       <h3 id="setDatastreamState">setDatastreamState</h3>
       <dl>
-        <dt>Not implemented</dt>
+        <dt>URL Syntax</dt>
+        <dd>/objects/{pid}/datastreams/{dsID} ? [dsState]</dd>
+      </dl>
+      <dl>
+        <dt>HTTP Method</dt>
+        <dd>PUT</dd>
+      </dl>
+      <dl>
+        <dt>Parameters</dt><br/>
+        <dd>
+          <table>
+            <tr>
+              <th><strong>Name</strong></th>
+              <th><strong>Description</strong></th>
+              <th><strong>Default</strong></th>
+              <th><strong>Options</strong></th>
+            </tr>
+            <tr>
+              <td>{pid}</td>
+              <td>persistent identifier of the digital object</td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>{dsID}</td>
+              <td>datastream identifier</td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>dsState</td>
+              <td>one of "A", "I", "D" (<strong>A</strong>ctive, <strong>I</strong>nactive, <strong>D</strong>eleted)</td>
+              <td>A</td>
+              <td>A, I, D</td>
+            </tr>
+          </table>
+        </dd>
+      </dl>
+      <dl>
+        <dt>Examples</dt>
+        <dd>PUT: /objects/demo:35/datastreams/HIGH?dsState=D</dd>
       </dl>
 
       <br/><br/>
 
       <h3 id="setDatastreamVersionable">setDatastreamVersionable</h3>
       <dl>
-        <dt>Not implemented</dt>
+        <dt>URL Syntax</dt>
+        <dd>/objects/{pid}/datastreams/{dsID} ? [versionable]</dd>
+      </dl>
+      <dl>
+        <dt>HTTP Method</dt>
+        <dd>PUT</dd>
+      </dl>
+      <dl>
+        <dt>Parameters</dt><br/>
+        <dd>
+          <table>
+            <tr>
+              <th><strong>Name</strong></th>
+              <th><strong>Description</strong></th>
+              <th><strong>Default</strong></th>
+              <th><strong>Options</strong></th>
+            </tr>
+            <tr>
+              <td>{pid}</td>
+              <td>persistent identifier of the digital object</td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>{dsID}</td>
+              <td>datastream identifier</td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>versionable</td>
+              <td>enable versioning of the datastream</td>
+              <td>true</td>
+              <td>true, false</td>
+            </tr>
+          </table>
+        </dd>
+      </dl>
+      <dl>
+        <dt>Examples</dt>
+        <dd>PUT: /objects/demo:35/datastreams/HIGH?versionable=false</dd>
       </dl>
 
       <br/>
