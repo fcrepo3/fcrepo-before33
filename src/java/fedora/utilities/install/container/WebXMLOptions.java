@@ -4,6 +4,11 @@ import java.io.File;
 
 import fedora.utilities.install.InstallOptions;
 
+/**
+ * Options for the Fedora web.xml file.
+ * 
+ * @author Edwin Shin
+ */
 public class WebXMLOptions {
 	public boolean apiaAuth;
 	public boolean apiaSSL;
