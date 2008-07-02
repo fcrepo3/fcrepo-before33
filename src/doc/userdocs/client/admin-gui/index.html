@@ -532,10 +532,16 @@
   written. Clicking <em>Open</em> causes the user to be prompted
   for an object PID.&nbsp; The PID will be used as the basis for the export file
 	(named like <em>[pid].xml)</em>.&nbsp;&nbsp; Before the export is done, you
-	must first provide a few more pieces of information.&nbsp; First, you must
-	choose the export serialization format: FOXML 1.1 (the most current FOXML format),
-	FOXML 1.0 (the FOXML format used with version 2.x Fedora repositories), METS (the Fedora
-	extension of METS), or ATOM (the Fedora extension of Atom).&nbsp;&nbsp;
+	must first provide a few more pieces of information. First, you must choose
+	the export serialization format:
+	<ul>
+	  <li>FOXML 1.1 (the most current FOXML format)</li>
+	  <li>FOXML 1.0 (the FOXML format used with pre-3.0 Fedora repositories)</li>
+	  <li>METS 1.1 (the most current Fedora extension of METS)</li>
+	  <li>METS 1.0 (the METS format used with	pre-3.0 Fedora repositories)</li>
+	  <li>ATOM (the Fedora extension of Atom)</li>
+	  <li>ATOM ZIP (an ATOM based format which packages all datastreams along with the object XML in a ZIP file)</li>
+	</ul>
 	Next you must choose the &quot;export context&quot;
 	which will create an appropriate export file for the context in which you
 	plan to use it.&nbsp;&nbsp; There are three export context types to choose
