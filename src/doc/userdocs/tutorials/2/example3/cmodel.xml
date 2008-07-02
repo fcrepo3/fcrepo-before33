@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<foxml:digitalObject VERSION="1.1" PID="demo:ex3cModel" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd">
+<foxml:digitalObject VERSION="1.1" PID="demo:ex3CModel" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd">
 	<foxml:objectProperties>
-		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraCModelObject"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="CModel Definition for Document Transform"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
@@ -11,7 +10,7 @@
 			<foxml:xmlContent>
 				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
 					<dc:title>CModel Definition for Document Transform</dc:title>
-					<dc:identifier>demo:ex3cModel</dc:identifier>
+					<dc:identifier>demo:ex3CModel</dc:identifier>
 				</oai_dc:dc>
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
@@ -34,8 +33,9 @@
     		<foxml:datastreamVersion ID="RELS-EXT1.0" MIMETYPE="application/rdf+xml" LABEL="Relationships to other objects">
       		<foxml:xmlContent>
         			<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
-          				<rdf:Description rdf:about="info:fedora/demo:ex3cModel">
-            				<fedora-model:hasBDef rdf:resource="info:fedora/demo:ex3bDef"/>
+          				<rdf:Description rdf:about="info:fedora/demo:ex3CModel">
+                    <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:ContentModel-3.0"/>          				
+            				<fedora-model:hasService rdf:resource="info:fedora/demo:ex3SDef"/>
           				</rdf:Description>
         			</rdf:RDF>
       		</foxml:xmlContent>

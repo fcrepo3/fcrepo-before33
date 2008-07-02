@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<foxml:digitalObject VERSION="1.1" PID="demo:ex3bMech" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd">
+<foxml:digitalObject VERSION="1.1" PID="demo:ex3SDep" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd">
 	<foxml:objectProperties>
-		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraBMechObject"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
-		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Behavior Mechanism Object implementing the Document Transform BDEF contract using the Fedora Local Saxon Transformation Service"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Service Deployment Object implementing the Document Transform SDEF contract using the Fedora Local Saxon Transformation Service"/>
 	</foxml:objectProperties>
 	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
 		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="Dublin Core Metadata">
 			<foxml:xmlContent>
 				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
-					<dc:title>Behavior Mechanism Object implementing the Document Transform BDEF contract using the Fedora Local Saxon Transformation Service</dc:title>
-					<dc:identifier>demo:ex3bMech</dc:identifier>
+					<dc:title>Service Deployment Object implementing the Document Transform contract using the Fedora Local Saxon Transformation Service</dc:title>
+					<dc:identifier>demo:ex3SDep</dc:identifier>
 				</oai_dc:dc>
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
@@ -67,33 +66,6 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream ID="SERVICE-PROFILE" CONTROL_GROUP="X" STATE="A">
-		<foxml:datastreamVersion ID="SERVICE-PROFILE1.0" MIMETYPE="text/xml" LABEL="Service Profile - Technical description of the service">
-			<foxml:xmlContent>
-				<fsvp:serviceProfile bDefPID="demo:ex3bDef" name="Saxon Service" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
-					<fsvp:serviceDescription>Document transformation via Fedora Local Saxon Service</fsvp:serviceDescription>
-					<fsvp:serviceImplementation>
-						<fsvp:serviceLiveTestURL>http://localhost:8080/saxon/</fsvp:serviceLiveTestURL>
-						<fsvp:serviceMessagingProtocol>HTTP GET</fsvp:serviceMessagingProtocol>
-						<fsvp:serviceInputFormats>
-							<fsvp:MIMEType>text/xml</fsvp:MIMEType>
-						</fsvp:serviceInputFormats>
-						<fsvp:serviceOutputFormats>
-							<fsvp:MIMEType>text/html</fsvp:MIMEType>
-							<fsvp:MIMEType>text/xml</fsvp:MIMEType>
-							<fsvp:MIMEType>text/xhtml</fsvp:MIMEType>
-							<fsvp:MIMEType>text/plain</fsvp:MIMEType>
-						</fsvp:serviceOutputFormats>
-						<fsvp:serviceImplDependencies>
-							<fsvp:software license="Mozilla_Public_License" name="saxon" opensource="true" type="Utility_Application" version="6.5"/>
-							<fsvp:software license="Apache_Software_License" name="tomcat" opensource="true" type="Server_Application" version="4.1"/>
-							<fsvp:software license="Mozilla_Public_License" name="fedora" opensource="true" type="Server_Application" version="1.2"/>
-						</fsvp:serviceImplDependencies>
-					</fsvp:serviceImplementation>
-				</fsvp:serviceProfile>
-			</foxml:xmlContent>
-		</foxml:datastreamVersion>
-	</foxml:datastream>
 	<foxml:datastream ID="DSINPUTSPEC" CONTROL_GROUP="X" STATE="A">
 		<foxml:datastreamVersion ID="DSINPUTSPEC1.0" MIMETYPE="text/xml" LABEL="Datastream Input Specification Mapping to the Fedora Local Saxon Service">
 			<foxml:xmlContent>
@@ -115,7 +87,7 @@
 	<foxml:datastream ID="METHODMAP" CONTROL_GROUP="X" STATE="A">
 		<foxml:datastreamVersion ID="METHODMAP1.0" MIMETYPE="text/xml" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
 			<foxml:xmlContent>
-				<fmm:MethodMap bDefPID="demo:ex3bDef" name="MethodMap - Document Transform BDEF Methods" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+				<fmm:MethodMap bDefPID="demo:ex3SDef" name="MethodMap - Document Transform SDEF Methods" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
 					<fmm:Method operationName="getContent" wsdlMsgName="getContentRequest" wsdlMsgOutput="xslt_response">
 						<fmm:DatastreamInputParm parmName="source" passBy="URL_REF" required="true"/>
 						<fmm:DatastreamInputParm parmName="xsl" passBy="URL_REF" required="true"/>
@@ -135,9 +107,10 @@
 		<foxml:datastreamVersion ID="RELS-EXT1.0" MIMETYPE="application/rdf+xml" LABEL="Relationships to other objects">
   			<foxml:xmlContent>
     			<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
-      				<rdf:Description rdf:about="info:fedora/demo:ex3bMech">
- 	       				<fedora-model:hasBDef rdf:resource="info:fedora/demo:ex3bDef"/>
-   	         			<fedora-model:isContractor rdf:resource="info:fedora/demo:ex3cModel"/>
+      				<rdf:Description rdf:about="info:fedora/demo:ex3SDep">
+          				<fedora-model:hasModel rdf:resource="info:fedora/fedora-system:ServiceDeployment-3.0"/>      				
+ 	       				  <fedora-model:isDeploymentOf rdf:resource="info:fedora/demo:ex3SDef"/>
+   	         			<fedora-model:isContractorOf rdf:resource="info:fedora/demo:ex3CModel"/>
       				</rdf:Description>
     			</rdf:RDF>
   			</foxml:xmlContent>
