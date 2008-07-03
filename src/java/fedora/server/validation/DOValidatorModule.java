@@ -55,7 +55,7 @@ public class DOValidatorModule
      *         some other reason.
      * @throws ServerException
      */
-    public DOValidatorModule(Map moduleParameters, Server server, String role)
+    public DOValidatorModule(Map<String, String> moduleParameters, Server server, String role)
             throws ModuleInitializationException, ServerException {
         super(moduleParameters, server, role);
     }
@@ -63,13 +63,13 @@ public class DOValidatorModule
     @Override
     public void postInitModule() throws ModuleInitializationException {
         try {
-            HashMap xmlSchemaMap = new HashMap();
-            HashMap ruleSchemaMap = new HashMap();
+            HashMap<String, String> xmlSchemaMap = new HashMap<String, String>();
+            HashMap<String, String> ruleSchemaMap = new HashMap<String, String>();
             String tempDir = null;
             String schematronPreprocessorPath = null;
-            Iterator nameIter = parameterNames();
+            Iterator<String> nameIter = parameterNames();
             while (nameIter.hasNext()) {
-                String paramName = (String) nameIter.next();
+                String paramName = nameIter.next();
                 if (paramName.startsWith("xsd_")) {
                     String xmlSchemaName = paramName.substring(4);
                     try {

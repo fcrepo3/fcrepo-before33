@@ -87,7 +87,24 @@ public class FileUtils {
             }
         }
     }
-
+    
+    /**
+     * Create a temporary directory.
+     * 
+     * @param prefix
+     * @param directory
+     * @return
+     * @throws IOException
+     */
+    public static File createTempDir(String prefix, File directory) throws IOException {
+    	File tempFile = File.createTempFile(prefix, "", directory);
+        if (!tempFile.delete())
+            throw new IOException();
+        if (!tempFile.mkdir())
+            throw new IOException();
+        return tempFile;
+    }
+    
     /**
      * Delete a File.
      * 

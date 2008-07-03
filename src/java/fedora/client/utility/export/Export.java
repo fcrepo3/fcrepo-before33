@@ -25,13 +25,15 @@ import fedora.server.types.gen.RepositoryInfo;
 /**
  * Utility to initiate an export of one or more objects. This class provides
  * static utility methods, and it is also called by command line utilities. This
- * class calls AutoExporter.class which is reponsible for making the API-M SOAP
+ * class calls AutoExporter.class which is responsible for making the API-M SOAP
  * calls for the export.
+ * 
+ * @version $Id$
  */
 public class Export
         implements Constants {
 
-    // fixme: this isn't export-specific... it doesn't belong here
+    // FIXME: this isn't export-specific... it doesn't belong here
     public static String getDuration(long millis) {
         long tsec = millis / 1000;
         long h = tsec / 60 / 60;

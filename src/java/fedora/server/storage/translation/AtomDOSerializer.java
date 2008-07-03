@@ -389,7 +389,10 @@ public class AtomDOSerializer
 
     private void setManagedContent(Entry entry, Datastream vds)
             throws StreamIOException {
-        if (m_transContext == DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE) {
+    	// If the ARCHIVE context is selected, inline & base64 encode the content,
+    	// unless the format is ZIP.
+        if (m_transContext == DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE &&
+        		!m_format.equals(ATOM_ZIP1_1)) {
             String mimeType = vds.DSMIME;
             if (MimeTypeHelper.isText(mimeType)
                     || MimeTypeHelper.isXml(mimeType)) {

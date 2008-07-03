@@ -362,6 +362,7 @@
 	    <param name="serializer_info:fedora/fedora-system:ATOM-1.1" value="fedora.server.storage.translation.Atom1_1DOSerializer"/>
         <param name="deserializer_info:fedora/fedora-system:ATOM-1.1" value="fedora.server.storage.translation.Atom1_1DODeserializer"/>
 	    <param name="serializer_info:fedora/fedora-system:ATOMZip-1.1" value="fedora.server.storage.translation.AtomZip1_1DOSerializer"/>
+	    <param name="deserializer_info:fedora/fedora-system:ATOMZip-1.1" value="fedora.server.storage.translation.AtomZip1_1DODeserializer"/>
 	</module>
 	<module role="fedora.server.management.PIDGenerator" class="fedora.server.management.BasicPIDGenerator">
 		<comment>The pid generator.</comment>
@@ -391,55 +392,56 @@
              including referential integrity checking of existence and
              availability of distributed data and/or services. </comment>
 		<param name="xsd_info:fedora/fedora-system:METSFedoraExt-1.1" value="xsd/mets-fedora-ext1-1.xsd">
-			<comment>this is local path for the Fedora-METS 1.1 XML
-             schema used to do XML schema validation of digital objects.</comment>
+			<comment>The local path for the Fedora-METS XML
+			schema used to do XML schema validation of digital objects.</comment>
 		</param>
 		<param name="xsd_info:fedora/fedora-system:METSFedoraExt-1.0" value="xsd/mets-fedora-ext.xsd">
-			<comment>this is local path for the Fedora-METS 1.0 XML
-             schema used to do XML schema validation of digital objects.</comment>
+			<comment>The local path for the Fedora-METS 1.0 XML
+            schema used to do XML schema validation of digital objects.</comment>
 		</param>
 		<param name="xsd_info:fedora/fedora-system:FOXML-1.1" value="xsd/foxml1-1.xsd">
-			<comment>this is local path for the Fedora FOXML 1.1 XML schema
+			<comment>The local path for the Fedora FOXML 1.1 XML schema
              used to do XML schema validation of digital objects</comment>
 		</param>
 		<param name="xsd_info:fedora/fedora-system:FOXML-1.0" value="xsd/foxml1-0.xsd">
-      <comment>this is local path for the Fedora FOXML 1.0 XML schema
+			<comment>The local path for the Fedora FOXML 1.0 XML schema
              used to do XML schema validation of digital objects</comment>
-    </param>
+		</param>
 		<param name="xsd_info:fedora/fedora-system:ATOM-1.1" value="xsd/atom.xsd">
-      <comment>this is local path for the Fedora FOXML XML schema
-             used to do XML schema validation of digital objects</comment>
-    </param>
+			<comment>The local path for the Atom XML schema used to do XML 
+			schema validation of digital objects</comment>
+		</param>
+		<param name="xsd_info:fedora/fedora-system:ATOMZip-1.1" value="xsd/atom.xsd">
+			<comment>The local path for the Atom XML schema used to do XML 
+			schema validation of digital objects</comment>
+		</param>
 		<param name="xsd_xacml_policy1.0" value="xsd/cs-xacml-schema-policy-1.0.xsd">
-			<comment>this is local path for the OASIS XACML XML
-             policy schema used to do XML schema validation of XACML policies.</comment>
-    </param>
+			<comment>The local path for the OASIS XACML XML policy schema 
+			used to do XML schema validation of XACML policies.</comment>
+        </param>
 		<param name="rules_info:fedora/fedora-system:METSFedoraExt-1.1" value="schematron/metsExtRules1-1.xml">
-			<comment>this is the local path to the Fedora
-             Schematron Rules used to do Fedora-specific on Fedora-METS 1.1 XML
-             files.</comment>
-    </param>
-		<param name="rules_info:fedora/fedora-system:METSFedoraExt-1.0" value="schematron/metsExtRules1-0.xml">
-			<comment>this is the local path to the Fedora
-             Schematron Rules used to do Fedora-specific on Fedora-METS 1.0 XML
-             files.</comment>
-    </param>    
+			<comment>The local path to the Schematron Rules used for 
+			Fedora-specific validation on Fedora-METS XML files.</comment>
+        </param>
+        <param name="rules_info:fedora/fedora-system:METSFedoraExt-1.0" value="schematron/metsExtRules1-0.xml">
+			<comment>The local path to the Schematron Rules used for 
+			Fedora-specific validation on Fedora-METS 1.0 XML files.</comment>
+		</param>
 		<param name="rules_info:fedora/fedora-system:FOXML-1.1" value="schematron/foxmlRules1-1.xml">
-			<comment>This is the local path to the Fedora
-            Schematron Rules used to do Fedora-specific on FOXML 1.1 XML files. -
-            schtron_preprocessor: this is the local path to the "skeleton" style
-            sheet for schematron processing</comment>
+			<comment>The local path to the Schematron Rules used for 
+			Fedora-specific validation on FOXML 1.1 XML files.</comment>
 		</param>	
 		<param name="rules_info:fedora/fedora-system:FOXML-1.0" value="schematron/foxmlRules1-0.xml">
-    	<comment>This is the local path to the Fedora
-            Schematron Rules used to do Fedora-specific on FOXML 1.0 XML files. -
-            schtron_preprocessor: this is the local path to the &quot;skeleton&quot; style
-            sheet for schematron processing</comment>
+    		<comment>The local path to the Schematron Rules used for 
+    		Fedora-specific validation on FOXML 1.0 XML files.</comment>
 		</param>	
 		<param name="rules_info:fedora/fedora-system:ATOM-1.1" value="schematron/atom-bogus.xml">
-            <comment>this is the local path to the Fedora
-             Schematron Rules used to do Fedora-specific on Fedora-METS XML
-             files.</comment>
+            <comment>The local path to the Schematron Rules used for 
+            Fedora-specific on Atom XML files.</comment>
+		</param>
+		<param name="rules_info:fedora/fedora-system:ATOMZip-1.1" value="schematron/atom-bogus.xml">
+            <comment>The local path to the Schematron Rules used for 
+            Fedora-specific on Atom Zip files.</comment>
 		</param>
 		<param name="schtron_preprocessor" value="schematron/preprocessor.xslt"/>
 		<param name="tempDir" value="work">

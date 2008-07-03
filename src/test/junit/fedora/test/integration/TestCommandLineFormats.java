@@ -198,6 +198,36 @@ public class TestCommandLineFormats
     }
 
     @Test
+    public void testIngestATOM_ZIP() throws Exception {
+        System.out.println("Testing Ingest with ATOM_ZIP format");
+        File atom = File.createTempFile("demo_1001", ".zip");
+        FileOutputStream fileWriter = new FileOutputStream(atom);
+        fileWriter.write(TestAPIM.demo1001ATOMZip);
+        fileWriter.close();
+        
+        String[] parameters = {"f ", atom.getAbsolutePath(), 
+                ATOM_ZIP1_1.uri, getHost() + ":" + getPort(), 
+                getUsername(), getPassword(), getProtocol(), 
+                "\"Ingest\""};
+        
+        Ingest.main(parameters);
+        atom.delete();
+
+        try {
+            byte[] objectXML = apim.getObjectXML("demo:1001");
+            assertTrue(objectXML.length > 0);
+            String xmlIn = new String(objectXML, "UTF-8");            
+            assertXpathExists("foxml:digitalObject[@PID='demo:1001']", xmlIn);
+            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']", xmlIn);
+            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']", xmlIn);
+            assertXpathEvaluatesTo("4", "count(//foxml:datastream)", xmlIn);
+            assertXpathNotExists("//foxml:disseminator", xmlIn);
+        } finally {
+            apim.purgeObject("demo:1001", "", false);
+        }
+    }
+        
+    @Test    
     public void testExportFOXML10() throws Exception {
         System.out.println("Testing Export in FOXML 1.0 format");
         apim.ingest(TestAPIM.demo998FOXMLObjectXML, FOXML1_1.uri, "Ingest for test");

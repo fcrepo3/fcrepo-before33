@@ -37,6 +37,8 @@ import fedora.utilities.FileComparator;
 /**
  * Initiates ingest of one or more objects. This class provides static utility
  * methods, and it is also called by command line utilities.
+ * 
+ * @version $Id$
  */
 public class Ingest
         implements Constants {
@@ -268,7 +270,7 @@ public class Ingest
         return "Ingested from local file " + file.getPath();
     }
 
-    // fixme: this isn't ingest-specific... it doesn't belong here
+    // FIXME: this isn't ingest-specific... it doesn't belong here
     public static String getDuration(long millis) {
         long tsec = millis / 1000;
         long h = tsec / 60 / 60;

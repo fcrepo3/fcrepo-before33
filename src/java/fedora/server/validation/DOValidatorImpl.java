@@ -6,18 +6,21 @@
 package fedora.server.validation;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.apache.log4j.Logger;
 
+import fedora.common.Constants;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectValidityException;
 import fedora.server.errors.ServerException;
+import fedora.utilities.FileUtils;
 
 /**
  * The implementation of the digital object validation module (see
@@ -47,6 +50,7 @@ import fedora.server.errors.ServerException;
  * </pre>
  * 
  * @author Sandy Payette
+ * @version $Id$
  */
 public class DOValidatorImpl
         implements DOValidator {
@@ -89,13 +93,13 @@ public class DOValidatorImpl
      * Map of XML Schemas configured with the Fedora Repository. key = format
      * uri value = schema file path
      */
-    private final Map m_xmlSchemaMap;
+    private final Map<String, String> m_xmlSchemaMap;
 
     /**
      * Map of Schematron rule schemas configured with the Fedora Repository. key =
      * format uri value = schema file path
      */
-    private final Map m_ruleSchemaMap;
+    private final Map<String, String> m_ruleSchemaMap;
 
     /**
      * <p>
@@ -125,9 +129,9 @@ public class DOValidatorImpl
      *         If construction fails for any reason.
      */
     public DOValidatorImpl(String tempDir,
-                           Map xmlSchemaMap,
+                           Map<String, String> xmlSchemaMap,
                            String schematronPreprocessorPath,
-                           Map ruleSchemaMap)
+                           Map<String, String> ruleSchemaMap)
             throws ServerException {
         LOG.debug("VALIDATE: Initializing object validation...");
         m_xmlSchemaMap = xmlSchemaMap;
@@ -151,6 +155,8 @@ public class DOValidatorImpl
      * 
      * @param objectAsStream
      *        The digital object provided as a stream.
+     * @param format 
+     * 		  The format URI of the object serialization.
      * @param validationType
      *        The level of validation to perform on the digital object. This is
      *        an integer from 0-2 with the following meanings: 0 = VALIDATE_ALL
@@ -173,13 +179,13 @@ public class DOValidatorImpl
                          int validationType,
                          String phase) throws ObjectValidityException {
         checkFormat(format);
-        // LOOK!: We need to use the object Inputstream twice, once for XML
+        // FIXME We need to use the object Inputstream twice, once for XML
         // Schema validation and once for Schematron validation.
         // We may want to consider implementing some form of a rewindable
         // InputStream. For now, I will just write the object InputStream to
         // disk so I can read it multiple times.
         try {
-            File objectAsFile = streamtoFile(tempDir, objectAsStream);
+        	File objectAsFile = streamtoFile(tempDir, objectAsStream);
             validate(objectAsFile, format, validationType, phase);
         } catch (ObjectValidityException e) {
             throw e;
@@ -221,17 +227,38 @@ public class DOValidatorImpl
         LOG.debug("VALIDATE: Initiating validation: " + " phase=" + phase
                 + " format=" + format);
         checkFormat(format);
+        
+        if (format.equals(Constants.ATOM_ZIP1_1.uri)) {
+    		// If the object serialization is a Zip file with an atom
+    		// manifest, extract the manifest for validation.
+        	try {
+        		File manifest = null;
+	    		ZipInputStream zip = new ZipInputStream(new FileInputStream(objectAsFile));
+	            ZipEntry entry;
+	            while ((entry = zip.getNextEntry()) != null) {
+	                if (entry.getName().equals("atommanifest.xml")) {
+	                    manifest = streamtoFile(tempDir, zip);
+	                    break;
+	                }
+	            }
+	            zip.close();
+	            objectAsFile = manifest;
+        	} catch(IOException e) {
+        		throw new GeneralException(e.getMessage(), e);
+        	}
+    	}
+        
         if (validationType == VALIDATE_ALL) {
             validateByRules(objectAsFile,
-                            (String) m_ruleSchemaMap.get(format),
+                            m_ruleSchemaMap.get(format),
                             schematronPreprocessorPath,
                             phase);
-            validateXMLSchema(objectAsFile, (String) m_xmlSchemaMap.get(format));
+            validateXMLSchema(objectAsFile, m_xmlSchemaMap.get(format));
         } else if (validationType == VALIDATE_XML_SCHEMA) {
-            validateXMLSchema(objectAsFile, (String) m_xmlSchemaMap.get(format));
+            validateXMLSchema(objectAsFile, m_xmlSchemaMap.get(format));
         } else if (validationType == VALIDATE_SCHEMATRON) {
             validateByRules(objectAsFile,
-                            (String) m_ruleSchemaMap.get(format),
+                            m_ruleSchemaMap.get(format),
                             schematronPreprocessorPath,
                             phase);
         } else {
@@ -325,19 +352,6 @@ public class DOValidatorImpl
         LOG.debug("VALIDATE: SUCCESS - passed Schematron rules validation.");
     }
 
-    private void streamCopy(InputStream in, OutputStream out)
-            throws IOException {
-
-        int bufferSize = 512;
-        byte[] buffer = new byte[bufferSize];
-        int bytesRead = 0;
-        while ((bytesRead = in.read(buffer, 0, bufferSize)) != -1) {
-            out.write(buffer, 0, bytesRead);
-        }
-        in.close();
-        out.close();
-    }
-
     private File streamtoFile(String dirname, InputStream objectAsStream)
             throws IOException {
 
@@ -350,7 +364,7 @@ public class DOValidatorImpl
                         tempDir.toString() + File.separator
                                 + System.currentTimeMillis() + ".tmp";
                 FileOutputStream fos = new FileOutputStream(fileLocation);
-                streamCopy(objectAsStream, fos);
+                FileUtils.copy(objectAsStream, fos);
                 objectAsFile = new File(fileLocation);
             }
         } catch (IOException e) {

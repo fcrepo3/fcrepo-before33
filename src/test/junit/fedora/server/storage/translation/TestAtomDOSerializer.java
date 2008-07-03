@@ -153,7 +153,7 @@ public class TestAtomDOSerializer
         assertEquals("Expected exactly 1 manifest file", 1, count);
         zip.close();
 
-        f.delete();
+        //f.delete();
     }
 
     // TODO

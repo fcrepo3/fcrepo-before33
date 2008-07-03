@@ -31,6 +31,7 @@ import fedora.utilities.FileUtils;
  * Utility class for exporting objects from a Fedora repository.
  *
  * @author Chris Wilper
+ * @version $Id$
  */
 public class AutoExporter
         implements Constants {

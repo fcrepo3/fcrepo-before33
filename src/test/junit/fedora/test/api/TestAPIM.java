@@ -1,11 +1,14 @@
 
 package fedora.test.api;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import junit.framework.Assert;
 import junit.framework.Test;
@@ -13,14 +16,11 @@ import junit.framework.TestSuite;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.types.NonNegativeInteger;
-
 import org.custommonkey.xmlunit.SimpleXpathEngine;
 
 import fedora.common.Constants;
-
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.Datastream;
-
 import fedora.test.DemoObjectTestSetup;
 import fedora.test.FedoraServerTestCase;
 
@@ -41,6 +41,8 @@ public class TestAPIM
     public static byte[] demo999bMETS10ObjectXML;
 
     public static byte[] demo1000ATOMObjectXML;
+    
+    public static byte[] demo1001ATOMZip;
 
     public static byte[] changeme1FOXMLObjectXML;
 
@@ -675,7 +677,134 @@ public class TestAPIM
             demo1000ATOMObjectXML = sb.toString().getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee) {
         }
-
+        
+        sb = new StringBuffer();
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        sb.append("<feed xmlns=\"http://www.w3.org/2005/Atom\">");
+        sb.append("  <id>info:fedora/demo:1001</id>");
+        sb.append("  <title type=\"text\">Image of Coliseum in Rome</title>");
+        sb.append("  <updated>2008-04-30T03:54:31.525Z</updated>");
+        sb.append("  <author>");
+        sb.append("    <name>fedoraAdmin</name>");
+        sb.append("  </author>");
+        sb.append("  <category term=\"Active\" scheme=\"info:fedora/fedora-system:def/model#state\"></category>");
+        sb.append("  <category term=\"2008-04-30T03:54:31.525Z\" scheme=\"info:fedora/fedora-system:def/model#createdDate\"></category>");
+        sb.append("  <icon>http://www.fedora-commons.org/images/logo_vertical_transparent_200_251.png</icon>");
+        sb.append("  <entry>");
+        sb.append("    <id>info:fedora/demo:1001/DC</id>");
+        sb.append("    <title type=\"text\">DC</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <link href=\"info:fedora/demo:1001/DC/2008-04-30T03:54:31.459Z\" rel=\"alternate\"></link>");
+        sb.append("    <category term=\"A\" scheme=\"info:fedora/fedora-system:def/model#state\"></category>");
+        sb.append("    <category term=\"X\" scheme=\"info:fedora/fedora-system:def/model#controlGroup\"></category>");
+        sb.append("    <category term=\"true\" scheme=\"info:fedora/fedora-system:def/model#versionable\"></category>");
+        sb.append("  </entry>");
+        sb.append("  <entry xmlns:thr=\"http://purl.org/syndication/thread/1.0\">");
+        sb.append("    <id>info:fedora/demo:1001/DC/2008-04-30T03:54:31.459Z</id>");
+        sb.append("    <title type=\"text\">DC1.0</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <thr:in-reply-to ref=\"info:fedora/demo:1001/DC\"></thr:in-reply-to>");
+        sb.append("    <category term=\"DC Record for Coliseum image object\" scheme=\"info:fedora/fedora-system:def/model#label\"></category>");
+        sb.append("    <category term=\"DISABLED\" scheme=\"info:fedora/fedora-system:def/model#digestType\"></category>");
+        sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
+        sb.append("    <category term=\"491\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
+        sb.append("	   <summary type=\"text\">DC1.0</summary>");
+        sb.append("    <content type=\"text/xml\" src=\"DC1.0.xml\"/>");
+        sb.append("  </entry>");
+        sb.append("  <entry>");
+        sb.append("    <id>info:fedora/demo:1001/VERYHIGHRES_IMG</id>");
+        sb.append("    <title type=\"text\">VERYHIGHRES_IMG</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <link href=\"info:fedora/demo:1001/VERYHIGHRES_IMG/2008-04-30T03:54:31.459Z\" rel=\"alternate\"></link>");
+        sb.append("    <category term=\"A\" scheme=\"info:fedora/fedora-system:def/model#state\"></category>");
+        sb.append("    <category term=\"M\" scheme=\"info:fedora/fedora-system:def/model#controlGroup\"></category>");
+        sb.append("    <category term=\"true\" scheme=\"info:fedora/fedora-system:def/model#versionable\"></category>");
+        sb.append("  </entry>");
+        sb.append("  <entry xmlns:thr=\"http://purl.org/syndication/thread/1.0\">");
+        sb.append("    <id>info:fedora/demo:1001/VERYHIGHRES_IMG/2008-04-30T03:54:31.459Z</id>");
+        sb.append("    <title type=\"text\">VERYHIGHRES_IMG1.0</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <thr:in-reply-to ref=\"info:fedora/demo:1001/VERYHIGHRES_IMG\"></thr:in-reply-to>");
+        sb.append("    <category term=\"Thorny's Coliseum veryhigh jpg image\" scheme=\"info:fedora/fedora-system:def/model#label\"></category>");
+        sb.append("    <category term=\"DISABLED\" scheme=\"info:fedora/fedora-system:def/model#digestType\"></category>");
+        sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
+        sb.append("    <category term=\"0\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
+        sb.append("    <summary type=\"text\">VERYHIGHRES_IMG1.0</summary>");
+        sb.append("    <content type=\"image/jpeg\" src=\"http://" + getHost() + ":8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\"></content>");
+        sb.append("  </entry>");
+        sb.append("  <entry>");
+        sb.append("    <id>info:fedora/demo:1001/RELS-EXT</id>");
+        sb.append("    <title type=\"text\">RELS-EXT</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <link href=\"info:fedora/demo:1001/RELS-EXT/2008-04-30T03:54:31.459Z\" rel=\"alternate\"></link>");
+        sb.append("    <category term=\"A\" scheme=\"info:fedora/fedora-system:def/model#state\"></category>");
+        sb.append("    <category term=\"X\" scheme=\"info:fedora/fedora-system:def/model#controlGroup\"></category>");
+        sb.append("    <category term=\"false\" scheme=\"info:fedora/fedora-system:def/model#versionable\"></category>");
+        sb.append("  </entry>");
+        sb.append("  <entry xmlns:thr=\"http://purl.org/syndication/thread/1.0\">");
+        sb.append("    <id>info:fedora/demo:1001/RELS-EXT/2008-04-30T03:54:31.459Z</id>");
+        sb.append("    <title type=\"text\">RELS-EXT1.0</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <thr:in-reply-to ref=\"info:fedora/demo:1001/RELS-EXT\"></thr:in-reply-to>");
+        sb.append("    <category term=\"Relationships\" scheme=\"info:fedora/fedora-system:def/model#label\"></category>");
+        sb.append("    <category term=\"DISABLED\" scheme=\"info:fedora/fedora-system:def/model#digestType\"></category>");
+        sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
+        sb.append("    <category term=\"472\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
+        sb.append("    <content type=\"application/rdf+xml\" src=\"RELS-EXT1.0.xml\"/>");
+        sb.append("    <summary type=\"text\">RELS-EXT1.0</summary>");
+        sb.append("  </entry>");
+        sb.append("</feed>");
+        
+        byte[] demo1001_manifest = null;
+        try {
+        	demo1001_manifest = sb.toString().getBytes("UTF-8");
+        } catch (UnsupportedEncodingException uee) {}
+        
+        sb = new StringBuffer();
+        sb.append("      <oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">");                 
+        sb.append("        <dc:title>Coliseum in Rome</dc:title>");
+        sb.append("        <dc:creator>Thornton Staples</dc:creator>");
+        sb.append("        <dc:subject>Architecture, Roman</dc:subject>");
+        sb.append("        <dc:description>Image of Coliseum in Rome</dc:description>");
+        sb.append("        <dc:publisher>University of Virginia Library</dc:publisher>");
+        sb.append("        <dc:format>image/jpeg</dc:format>");
+        sb.append("        <dc:identifier>demo:1001</dc:identifier>");
+        sb.append("      </oai_dc:dc>");
+        byte[] demo1001_dc = null;
+        try {
+            demo1001_dc = sb.toString().getBytes("UTF-8");
+        } catch (UnsupportedEncodingException uee) {}
+        
+        sb = new StringBuffer();
+        sb.append("      <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:fedora-model=\"info:fedora/fedora-system:def/model#\">");
+        sb.append("        <rdf:Description rdf:about=\"info:fedora/demo:1001\">");
+        sb.append("          <fedora-model:hasModel rdf:resource=\"info:fedora/demo:UVA_STD_IMAGE_1\"></fedora-model:hasModel>");
+        sb.append("        </rdf:Description>");
+        sb.append("      </rdf:RDF>");
+        byte[] demo1001_relsext = null;
+        try {
+        	demo1001_relsext = sb.toString().getBytes("UTF-8");
+        } catch (UnsupportedEncodingException uee) {}
+        
+        ZipEntry manifest = new ZipEntry("atommanifest.xml");
+        ZipEntry dc = new ZipEntry("DC1.0.xml");
+        ZipEntry relsext = new ZipEntry("RELS-EXT1.0.xml");
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        ZipOutputStream zip = new ZipOutputStream(bout);
+        try {
+        	zip.putNextEntry(manifest);
+        	zip.write(demo1001_manifest);
+        	zip.putNextEntry(dc);
+        	zip.write(demo1001_dc);
+        	zip.putNextEntry(relsext);
+        	zip.write(demo1001_relsext);
+        	zip.flush();
+        	zip.close();
+        	demo1001ATOMZip = bout.toByteArray();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     public static Test suite() {
@@ -980,9 +1109,9 @@ public class TestAPIM
 
         // (4) test purgeObject
         System.out.println("Running TestAPIM.testPurgeObject...");
-        Iterator it = serverAssignedPIDs.iterator();
+        Iterator<String> it = serverAssignedPIDs.iterator();
         while (it.hasNext()) {
-            pid = (String) it.next();
+            pid = it.next();
             result = apim.purgeObject(pid, "purging object " + pid, false);
             assertNotNull(result);
         }
@@ -1003,21 +1132,19 @@ public class TestAPIM
         System.out.println("Running TestAPIM.testAddDatastream...");
         // test adding M type datastream with unknown checksum type and no altIDs, should fail throwing exception
         try {
-            String datastreamId =
-                    apim
-                            .addDatastream("demo:14",
-                                           "NEWDS1",
-                                           null,
-                                           "A New M-type Datastream",
-                                           true,
-                                           "text/xml",
-                                           "info:myFormatURI/Mtype/stuff#junk",
-                                           "http://www.fedora.info/junit/datastream1.xml",
-                                           "M",
-                                           "A",
-                                           "MD6",
-                                           null,
-                                           "adding new datastream");
+            apim.addDatastream("demo:14",
+                               "NEWDS1",
+                               null,
+                               "A New M-type Datastream",
+                               true,
+                               "text/xml",
+                               "info:myFormatURI/Mtype/stuff#junk",
+                               "http://www.fedora.info/junit/datastream1.xml",
+                               "M",
+                               "A",
+                               "MD6",
+                               null,
+                               "adding new datastream");
             // fail if datastream was added
             Assert.fail();
         } catch (AxisFault af) {
@@ -1026,21 +1153,19 @@ public class TestAPIM
         }
         // test adding M type datastream with unimplemented checksum type and no altIDs, should fail throwing exception
         try {
-            String datastreamId =
-                    apim
-                            .addDatastream("demo:14",
-                                           "NEWDS1",
-                                           null,
-                                           "A New M-type Datastream",
-                                           true,
-                                           "text/xml",
-                                           "info:myFormatURI/Mtype/stuff#junk",
-                                           "http://www.fedora.info/junit/datastream1.xml",
-                                           "M",
-                                           "A",
-                                           "TIGER",
-                                           null,
-                                           "adding new datastream");
+            apim.addDatastream("demo:14",
+                               "NEWDS1",
+                               null,
+                               "A New M-type Datastream",
+                               true,
+                               "text/xml",
+                               "info:myFormatURI/Mtype/stuff#junk",
+                               "http://www.fedora.info/junit/datastream1.xml",
+                               "M",
+                               "A",
+                               "TIGER",
+                               null,
+                               "adding new datastream");
             // fail if datastream was added
             Assert.fail();
         } catch (AxisFault af) {
