@@ -24,10 +24,10 @@ dev-149441
   Merged    : 2008/06/30 into fedora-rest/trunk r7386
 
 dev-149395
- Created   : 2008/06/24 from trunk r7357
+  Created   : 2008/06/24 from trunk r7357
   Developer : Eddie Shin
   Reviewer  : Aaron Birkland
-  Merged    : 
+  Merged    : 2008/07/03 into trunk r7410
 
 dev-149292
   Created   : 2008/06/17 from trunk r7328
