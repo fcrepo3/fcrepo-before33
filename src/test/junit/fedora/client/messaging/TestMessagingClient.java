@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -24,7 +24,7 @@ import fedora.server.messaging.JMSManager;
 
 /**
  * Tests the messaging client
- * 
+ *
  * @author Bill Branan
  */
 public class TestMessagingClient
@@ -35,32 +35,32 @@ public class TestMessagingClient
     private static final String TOPIC = "fedora.test.topic";
     private static final String QUEUE_NAME = "messageQueue";
     private static final String QUEUE = "fedora.test.queue";
-    
+
     private int messageCount = 0;
     private int messageTimeout = 5000; // Maximum number of milliseconds to wait for a message
     private Message currentMessage = null;
     private String currentClientId = null;
     private Properties properties = null;
-    
+
     private String messageText =
             "This is a message sent as part of a junit test";
     private String propertyName = "testProperty";
     private String propertyValue = "testProperty value";
-    
+
     public void setUp() throws Exception {
         properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY,
                                "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
-        properties.setProperty(Context.PROVIDER_URL, 
+        properties.setProperty(Context.PROVIDER_URL,
                                "vm://localhost?broker.useShutdownHook=false&broker.persistent=true");
-        properties.setProperty(JMSManager.CONNECTION_FACTORY_NAME, 
+        properties.setProperty(JMSManager.CONNECTION_FACTORY_NAME,
                                "ConnectionFactory");
         properties.setProperty("topic." + TOPIC_NAME, TOPIC);
         properties.setProperty("queue." + QUEUE_NAME, QUEUE);
     }
 
     public void testMessagingClientTopic() throws Exception {
-        
+
         String clientId = "0";
         MessagingClient messagingClient =
                 new JmsMessagingClient(clientId, this, properties, false);
@@ -69,35 +69,35 @@ public class TestMessagingClient
         sendMessage(TOPIC_NAME);
         checkMessage(clientId, TOPIC);
         messagingClient.stop(true);
-    }  
-    
+    }
+
     public void testMessagingClientDurableTopic() throws Exception {
-        
+
         String clientId = "1";
         MessagingClient messagingClient =
                 new JmsMessagingClient(clientId, this, properties, true);
-        
+
         // Establish that the client can start and receive messages
         messagingClient.start();
         sendMessage(TOPIC_NAME);
         checkMessage(clientId, TOPIC);
-        messagingClient.stop(false);        
+        messagingClient.stop(false);
 
         // Check to see if messages are received in a durable fashion
-        sendMessage(TOPIC_NAME);        
+        sendMessage(TOPIC_NAME);
         messagingClient.start();
         checkMessage(clientId, TOPIC);
         messagingClient.stop(true);
-        
+
         // Make sure durable subscriptions were closed
-        sendMessage(TOPIC_NAME);        
+        sendMessage(TOPIC_NAME);
         messagingClient.start();
         checkNoMessages();
         messagingClient.stop(true);
     }
-    
+
     public void testMessagingClientMultipleTopics() throws Exception {
-        
+
         String clientId = "2";
         String topicName = "additionalTopic";
         String topic = "fedora.test.additional";
@@ -109,12 +109,12 @@ public class TestMessagingClient
         sendMessage(TOPIC_NAME);
         checkMessage(clientId, TOPIC);
         sendMessage(topicName);
-        checkMessage(clientId, topic);        
+        checkMessage(clientId, topic);
         messagingClient.stop(true);
-    }    
-    
+    }
+
     public void testMessagingClientQueue() throws Exception {
-        
+
         String clientId = "3";
         MessagingClient messagingClient =
                 new JmsMessagingClient(clientId, this, properties, false);
@@ -123,8 +123,8 @@ public class TestMessagingClient
         sendMessage(QUEUE_NAME);
         checkMessage(clientId, QUEUE);
         messagingClient.stop(true);
-    }    
-    
+    }
+
     public void testInvalidProperties() throws Exception {
         // Null properties
         try {
@@ -134,10 +134,10 @@ public class TestMessagingClient
         } catch(MessagingException me) {
             assertTrue(me.getMessage().contains("Connection properties may not be null"));
         }
-        
+
         // Missing all properties
         properties = new Properties();
-        
+
         try {
             new JmsMessagingClient("5", this, properties, false);
             fail("Creating a Messaging Client with no properties " +
@@ -146,14 +146,14 @@ public class TestMessagingClient
             assertTrue(me.getMessage().contains("Propery values"));
             assertTrue(me.getMessage().contains("must be provided"));
         }
-        
+
         // Missing connection factory property
-        properties = new Properties();        
+        properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY,
                                "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
-        properties.setProperty(Context.PROVIDER_URL, 
-                               "vm://localhost?broker.useShutdownHook=false&broker.persistent=false");        
-        
+        properties.setProperty(Context.PROVIDER_URL,
+                               "vm://localhost?broker.useShutdownHook=false&broker.persistent=false");
+
         try {
             new JmsMessagingClient("6", this, properties, false);
             fail("Creating a Messaging Client with no connection factory " +
@@ -162,14 +162,14 @@ public class TestMessagingClient
             assertTrue(me.getMessage().contains("Propery values"));
             assertTrue(me.getMessage().contains("must be provided"));
         }
-        
+
         // Missing provider url property
-        properties = new Properties();        
+        properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY,
                                "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
-        properties.setProperty(JMSManager.CONNECTION_FACTORY_NAME, 
-                               "ConnectionFactory");        
-        
+        properties.setProperty(JMSManager.CONNECTION_FACTORY_NAME,
+                               "ConnectionFactory");
+
         try {
             new JmsMessagingClient("7", this, properties, false);
             fail("Creating a Messaging Client with no provider url " +
@@ -177,15 +177,15 @@ public class TestMessagingClient
         } catch(MessagingException me) {
             assertTrue(me.getMessage().contains("Propery values"));
             assertTrue(me.getMessage().contains("must be provided"));
-        }        
-        
+        }
+
         // Missing initial context factory property
-        properties = new Properties();        
-        properties.setProperty(Context.PROVIDER_URL, 
+        properties = new Properties();
+        properties.setProperty(Context.PROVIDER_URL,
                                "vm://localhost?broker.useShutdownHook=false&broker.persistent=false");
-        properties.setProperty(JMSManager.CONNECTION_FACTORY_NAME, 
+        properties.setProperty(JMSManager.CONNECTION_FACTORY_NAME,
                                "ConnectionFactory");
-        
+
         try {
             new JmsMessagingClient("8", this, properties, false);
             fail("Creating a Messaging Client with no initial context factory " +
@@ -193,81 +193,106 @@ public class TestMessagingClient
         } catch(MessagingException me) {
             assertTrue(me.getMessage().contains("Propery values"));
             assertTrue(me.getMessage().contains("must be provided"));
-        }        
-        
+        }
+
         // Missing destination properties
         properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY,
                                "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
-        properties.setProperty(Context.PROVIDER_URL, 
+        properties.setProperty(Context.PROVIDER_URL,
                                "vm://localhost?broker.useShutdownHook=false&broker.persistent=false");
-        properties.setProperty(JMSManager.CONNECTION_FACTORY_NAME, 
+        properties.setProperty(JMSManager.CONNECTION_FACTORY_NAME,
                                "ConnectionFactory");
         try {
-            MessagingClient messagingClient = 
+            MessagingClient messagingClient =
                 new JmsMessagingClient("9", this, properties, false);
             messagingClient.start();
             fail("Starting a Messaging Client with no destination " +
                  "properties should throw an exception");
         } catch(MessagingException me) {
             assertTrue(me.getMessage().contains("No destinations available"));
-        }        
-        
+        }
+
         // Invalid initial context factory
         properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY,
                                "test.InvalidInitialContextFactory");
-        properties.setProperty(Context.PROVIDER_URL, 
+        properties.setProperty(Context.PROVIDER_URL,
                                "vm://localhost?broker.useShutdownHook=false&broker.persistent=false");
-        properties.setProperty(JMSManager.CONNECTION_FACTORY_NAME, 
+        properties.setProperty(JMSManager.CONNECTION_FACTORY_NAME,
                                "ConnectionFactory");
         try {
-            MessagingClient messagingClient = 
+            MessagingClient messagingClient =
                 new JmsMessagingClient("10", this, properties, false);
             messagingClient.start();
             fail("Starting a Messaging Client with an invalid initial " +
                  "context factory should throw an exception");
         } catch(MessagingException me) {
             assertTrue(me.getMessage().contains("Cannot instantiate"));
-        }        
-        
+        }
+
         // Invalid provider url
         properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY,
                                "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
-        properties.setProperty(Context.PROVIDER_URL, 
+        properties.setProperty(Context.PROVIDER_URL,
                                "tcp://localhost:00000");
-        properties.setProperty(JMSManager.CONNECTION_FACTORY_NAME, 
+        properties.setProperty(JMSManager.CONNECTION_FACTORY_NAME,
                                "ConnectionFactory");
         try {
-            MessagingClient messagingClient = 
+            MessagingClient messagingClient =
                 new JmsMessagingClient("11", this, properties, false);
             messagingClient.start();
             fail("Starting a Messaging Client with an invalid " +
                  "provider url should throw an exception");
         } catch(MessagingException me) {
             assertTrue(me.getMessage().contains("Could not connect to broker URL"));
-        }        
-        
+        }
+
         // Invalid connection factory
         properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY,
                                "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
-        properties.setProperty(Context.PROVIDER_URL, 
+        properties.setProperty(Context.PROVIDER_URL,
                                "vm://localhost?broker.useShutdownHook=false&broker.persistent=false");
-        properties.setProperty(JMSManager.CONNECTION_FACTORY_NAME, 
+        properties.setProperty(JMSManager.CONNECTION_FACTORY_NAME,
                                "InvalidValue");
         try {
-            MessagingClient messagingClient = 
+            MessagingClient messagingClient =
                 new JmsMessagingClient("12", this, properties, false);
             messagingClient.start();
             fail("Starting a Messaging Client with an invalid connection " +
                  "factory name should throw an exception");
         } catch(MessagingException me) {
             assertTrue(me.getMessage().contains("jndiLookup(InvalidValue) failed"));
-        }         
+        }
     }
-    
+
+    public void testMessageSelectors() throws Exception {
+
+        String clientId = "13";
+        // Selector to include test message
+        String messageSelector = propertyName + " LIKE 'test%'";
+        MessagingClient messagingClient =
+                new JmsMessagingClient(clientId, this, properties,
+                                       messageSelector, false);
+        messagingClient.start();
+        sendMessage(TOPIC_NAME);
+        checkMessage(clientId, TOPIC);
+        messagingClient.stop(true);
+
+        clientId = "14";
+        // Selector to omit test message
+        messageSelector = propertyName + " LIKE 'testing%'";
+        messagingClient =
+                new JmsMessagingClient(clientId, this, properties,
+                                       messageSelector, false);
+        messagingClient.start();
+        sendMessage(TOPIC_NAME);
+        checkNoMessages();
+        messagingClient.stop(true);
+    }
+
     private void sendMessage(String jndiName) throws Exception {
         JMSManager jmsManager = new JMSManager(properties);
         TextMessage message = jmsManager.createTextMessage(jndiName, messageText);
@@ -276,7 +301,7 @@ public class TestMessagingClient
         jmsManager.stop(jndiName);
         jmsManager.close();
     }
-    
+
     /**
      * Waits for a message and checks to see if it is valid.
      */
@@ -291,9 +316,9 @@ public class TestMessagingClient
                 } else {
                     fail("Text Message expected.");
                 }
-                
+
                 assertEquals(clientId, currentClientId);
-                
+
                 Destination messageDestination = currentMessage.getJMSDestination();
                 if (messageDestination instanceof Topic) {
                     String topic = ((Topic) messageDestination).getTopicName();
@@ -302,8 +327,8 @@ public class TestMessagingClient
                     String queue = ((Queue) messageDestination).getQueueName();
                     assertEquals(queue, destination);
                 }
-                
-                String propertyTest = 
+
+                String propertyTest =
                     currentMessage.getStringProperty(propertyName);
                 assertEquals(propertyValue, propertyTest);
                 break;
@@ -321,12 +346,12 @@ public class TestMessagingClient
                 }
             }
         }
-        
+
         messageCount = 0;
         currentMessage = null;
         currentClientId = null;
     }
-    
+
     /**
      * Waits for a message to make sure none come through.
      */
@@ -341,10 +366,16 @@ public class TestMessagingClient
                 long currentTime = System.currentTimeMillis();
                 if (currentTime > (startTime + messageTimeout)) {
                     break;
+                } else {
+                    try {
+                        Thread.sleep(100);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }
-        
+
         messageCount = 0;
         currentMessage = null;
         currentClientId = null;
@@ -355,7 +386,7 @@ public class TestMessagingClient
         currentMessage = message;
         currentClientId = clientId;
     }
-    
+
     public static junit.framework.Test suite() {
         return new JUnit4TestAdapter(TestMessagingClient.class);
     }

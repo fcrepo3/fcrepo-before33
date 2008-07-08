@@ -164,10 +164,11 @@
       </p>
 
       <p>
-        The code below is a simple example of how to use the Messaging Client. The JmsMessagingClient constructor requires
-        three parameters besides the properties. These parameters include the client ID, the MessagingListener instance, and a
-        flag which determines whether durable subscribers should be used to listen over the topics listed in the properties.
-        More information about each of these parameters can be found in the JmsMessagingClient javadocs.
+        The code below is a simple example of how to use the Messaging Client. The JmsMessagingClient constructor includes three
+        required parameters and two optional parameters. The required parameters include the client ID, the MessagingListener instance,
+        and the connection properties mentioned above. The optional parameters include a message selector and flag which determines
+        whether durable subscribers should be used to listen over the topics listed in the properties.
+        More information about each of the available parameters can be found in the JmsMessagingClient javadocs.
       </p>
 
       <p>
@@ -203,7 +204,7 @@
       <h2 id="messages">Messages</h2>
 
       <p>
-        The messages sent by Fedora take the form of feed entries based on the
+        The content of messages sent by Fedora takes the form of feed entries based on the
         <a href="http://www.atomenabled.org/developers/syndication/">Atom Syndication Format</a>. These messages
         correspond to API-M method calls, indicating the name of the method, its parameters, return value, and
         other information about the method. Each message will be similar to the following example:
@@ -269,6 +270,14 @@
             </ul>
           </li>
         </ul>
+      </p>
+
+      <p>
+        Two properties are included as part of each JMS message produced by Fedora, primarily for use by message selectors.
+        These two properties are: <strong>methodName</strong> and <strong>pid</strong>. A message selector, which can be
+        specified using the Messaging Client, is used to limit the messages that will be delievered based on selection criteria.
+        An example of a message selector is: "methodName LIKE 'purge%'". This selector would limit the messages received by
+        the client to only those messages for which the method is a purge (purgeObject and purgeDatastream.)
       </p>
 
     </div>

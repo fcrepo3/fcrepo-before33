@@ -37,13 +37,15 @@ public class TestManagementNotifications
         implements MessageListener{
 
     private FedoraAPIM apim;
-    private String currentMessageText;
+    private TextMessage currentMessage;
     private int messageCount = 0; // The number of messages that have been received
-    private int messageNumber = 0; // The number of the next message to be processed 
+    private int messageNumber = 0; // The number of the next message to be processed
     private int messageTimeout = 5000; // Maximum number of milliseconds to wait for a message
     private Connection jmsConnection;
     private Session jmsSession;
-    
+    private Destination destination;
+    private MessageConsumer messageConsumer;
+
     public static byte[] dsXML;
     public static byte[] demo998FOXMLObjectXML;
 
@@ -92,26 +94,26 @@ public class TestManagementNotifications
 
     public void setUp() throws Exception {
         apim = getFedoraClient().getAPIM();
-        
+
         // Create and start a subscriber
         Properties props = new Properties();
-        props.setProperty(Context.INITIAL_CONTEXT_FACTORY, 
+        props.setProperty(Context.INITIAL_CONTEXT_FACTORY,
                           "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
         props.setProperty(Context.PROVIDER_URL, "tcp://localhost:61616");
         props.setProperty("topic.notificationTopic", "fedora.apim.update");
-        
-        Context jndi = new InitialContext(props);               
-        ConnectionFactory jmsConnectionFactory = 
-            (ConnectionFactory)jndi.lookup("ConnectionFactory");        
+
+        Context jndi = new InitialContext(props);
+        ConnectionFactory jmsConnectionFactory =
+            (ConnectionFactory)jndi.lookup("ConnectionFactory");
         jmsConnection = jmsConnectionFactory.createConnection();
         jmsSession = jmsConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-           
-        Destination destination = (Topic)jndi.lookup("notificationTopic");  
 
-        MessageConsumer messageConsumer = jmsSession.createConsumer(destination);       
+        destination = (Topic)jndi.lookup("notificationTopic");
+
+        messageConsumer = jmsSession.createConsumer(destination);
         messageConsumer.setMessageListener(this);
 
-        jmsConnection.start();        
+        jmsConnection.start();
     }
 
     public void tearDown() throws Exception {
@@ -127,7 +129,7 @@ public class TestManagementNotifications
      * 3) addRelationship
      * 4) purgeRelationship
      * 5) purgeObject
-     * 
+     *
      * @throws Exception
      */
     public void testObjectMethodNotifications() throws Exception {
@@ -138,69 +140,69 @@ public class TestManagementNotifications
                 apim.ingest(demo998FOXMLObjectXML,
                             FOXML1_1.uri,
                             "ingesting new foxml object");
-        assertNotNull(pid);       
+        assertNotNull(pid);
 
-        // Check on the notification produced by ingest 
-        checkNotification("ingest");               
-        
+        // Check on the notification produced by ingest
+        checkNotification(pid, "ingest");
+
         // (2) test modifyObject
         System.out.println("Running TestManagementNotifications.testModifyObject...");
         String modifyResult =
-                apim.modifyObject("demo:998",
+                apim.modifyObject(pid,
                                   "I",
                                   "Updated Object Label",
                                   null,
                                   "Changed state to inactive and updated label");
         assertNotNull(modifyResult);
 
-        // Check on the notification produced by modifyObject 
-        checkNotification("modifyObject");                               
-        
+        // Check on the notification produced by modifyObject
+        checkNotification(pid, "modifyObject");
+
         // (3) test addRelationship
         System.out.println("Running TestManagementNotifications.testAddRelationship...");
         boolean addRelResult =
-                apim.addRelationship("demo:998",
+                apim.addRelationship(pid,
                                      "rel:isRelatedTo",
                                      "demo:5",
                                      false,
                                      null);
-        assertTrue(addRelResult);        
-        
-        // Check on the notification produced by addRelationship 
-        checkNotification("addRelationship");         
+        assertTrue(addRelResult);
+
+        // Check on the notification produced by addRelationship
+        checkNotification(pid, "addRelationship");
 
         // (4) test purgeRelationship
         System.out.println("Running TestManagementNotifications.testPurgeRelationship...");
         boolean purgeRelResult =
-                apim.purgeRelationship("demo:998",
+                apim.purgeRelationship(pid,
                                        "rel:isRelatedTo",
                                        "demo:5",
                                        false,
                                        null);
-        assertTrue(purgeRelResult);        
-        
-        // Check on the notification produced by purgeRelationship 
-        checkNotification("purgeRelationship");      
-        
+        assertTrue(purgeRelResult);
+
+        // Check on the notification produced by purgeRelationship
+        checkNotification(pid, "purgeRelationship");
+
         // (5) test purgeObject
         System.out.println("Running TestManagementNotifications.testPurgeObject...");
         String purgeResult = apim.purgeObject(pid, "Purging object " + pid, false);
         assertNotNull(purgeResult);
-        
-        // Check on the notification produced by purgeObject 
-        checkNotification("purgeObject");          
+
+        // Check on the notification produced by purgeObject
+        checkNotification(pid, "purgeObject");
 
     }
 
     /**
-     *  Test notifications on 
+     *  Test notifications on
      *  1) addDatastream
      *  2) modifyDatastreamByReference
      *  3) modifyDatastreamByValue
      *  4) setDatastreamState
-     *  5) setDatastreamVersionable  
+     *  5) setDatastreamVersionable
      *  6) purgeDatastream
-     * 
+     *
      * @throws Exception
      */
     public void testDatastreamMethodNotifications() throws Exception {
@@ -210,9 +212,11 @@ public class TestManagementNotifications
 
         String[] altIds = new String[1];
         altIds[0] = "Datastream Alternate ID";
-        
+
+        String pid = "demo:14";
+
         String datastreamId =
-                    apim.addDatastream("demo:14",
+                    apim.addDatastream(pid,
                                        "NEWDS1",
                                        altIds,
                                        "A New M-type Datastream",
@@ -228,12 +232,12 @@ public class TestManagementNotifications
 
         // test that datastream was added
         assertEquals(datastreamId, "NEWDS1");
-        
-        // Check on the notification produced by addDatastream 
-        checkNotification("addDatastream");        
+
+        // Check on the notification produced by addDatastream
+        checkNotification(pid, "addDatastream");
 
         datastreamId =
-                    apim.addDatastream("demo:14",
+                    apim.addDatastream(pid,
                                        "NEWDS2",
                                        altIds,
                                        "A New X-type Datastream",
@@ -249,14 +253,14 @@ public class TestManagementNotifications
 
         // test that datastream was added
         assertEquals(datastreamId, "NEWDS2");
-        
-        // Check on the notification produced by addDatastream 
-        checkNotification("addDatastream"); 
-        
+
+        // Check on the notification produced by addDatastream
+        checkNotification(pid, "addDatastream");
+
         // (2) test modifyDatastreamByReference
-        System.out.println("Running TestManagementNotifications.testModifyDatastreamByReference...");       
+        System.out.println("Running TestManagementNotifications.testModifyDatastreamByReference...");
         String updateTimestamp =
-                apim.modifyDatastreamByReference("demo:14",
+                apim.modifyDatastreamByReference(pid,
                                                  "NEWDS1",
                                                  altIds,
                                                  "Modified Datastream by Reference",
@@ -268,15 +272,15 @@ public class TestManagementNotifications
                                                  "modified datastream",
                                                  false);
         // test that method returned properly
-        assertNotNull(updateTimestamp);       
+        assertNotNull(updateTimestamp);
 
-        // Check on the notification produced by modifyDatastreamByReference 
-        checkNotification("modifyDatastreamByReference");         
-        
+        // Check on the notification produced by modifyDatastreamByReference
+        checkNotification(pid, "modifyDatastreamByReference");
+
         // (3) test modifyDatastreamByValue
         System.out.println("Running TestManagementNotifications.testModifyDatastreamByValue...");
         updateTimestamp =
-                apim.modifyDatastreamByValue("demo:14",
+                apim.modifyDatastreamByValue(pid,
                                              "NEWDS2",
                                              altIds,
                                              "Modified Datastream by Value",
@@ -289,82 +293,114 @@ public class TestManagementNotifications
                                              false);
         // test that method returned properly
         assertNotNull(updateTimestamp);
-       
-        // Check on the notification produced by modifyDatastreamByValue 
-        checkNotification("modifyDatastreamByValue");        
-        
+
+        // Check on the notification produced by modifyDatastreamByValue
+        checkNotification(pid, "modifyDatastreamByValue");
+
         // (4) test setDatastreamState
         System.out.println("Running TestManagementNotifications.testSetDatastreamState...");
         String setStateresult =
-                apim.setDatastreamState("demo:14",
+                apim.setDatastreamState(pid,
                                         "NEWDS1",
                                         "I",
                                         "Changed state of datstream DC to Inactive");
-        assertNotNull(setStateresult);        
+        assertNotNull(setStateresult);
 
-        // Check on the notification produced by setDatastreamState 
-        checkNotification("setDatastreamState");          
-        
+        // Check on the notification produced by setDatastreamState
+        checkNotification(pid, "setDatastreamState");
+
         // (5) test setDatastreamVersionable
         System.out.println("Running TestManagementNotifications.testSetDatastreamVersionable...");
         String setVersionableResult =
-                apim.setDatastreamVersionable("demo:14",
+                apim.setDatastreamVersionable(pid,
                                               "NEWDS2",
                                               false,
                                               "Changed versionable on datastream NEWDS1 to false");
-        assertNotNull(setVersionableResult);   
-        
-        // Check on the notification produced by setDatastreamVersionable 
-        checkNotification("setDatastreamVersionable");          
-        
+        assertNotNull(setVersionableResult);
+
+        // Check on the notification produced by setDatastreamVersionable
+        checkNotification(pid, "setDatastreamVersionable");
+
         // (5) test purgeDatastream
         System.out.println("Running TestManagementNotifications.testPurgeDatastream...");
-        
+
         String[] results =
-                apim.purgeDatastream("demo:14",
+                apim.purgeDatastream(pid,
                                      "NEWDS1",
                                      null,
                                      null,
                                      "purging datastream NEWDS1",
                                      false);
         assertTrue(results.length > 0);
-        
-        // Check on the notification produced by purgeDatastream 
-        checkNotification("purgeDatastream");        
-        
+
+        // Check on the notification produced by purgeDatastream
+        checkNotification(pid, "purgeDatastream");
+
         results =
-            apim.purgeDatastream("demo:14",
+            apim.purgeDatastream(pid,
                                  "NEWDS2",
                                  null,
                                  null,
                                  "purging datastream NEWDS2",
                                  false);
-        assertTrue(results.length > 0); 
-        
-        // Check on the notification produced by purgeDatastream 
-        checkNotification("purgeDatastream");           
+        assertTrue(results.length > 0);
+
+        // Check on the notification produced by purgeDatastream
+        checkNotification(pid, "purgeDatastream");
      }
+
+    public void testSelectors() throws Exception {
+        System.out.println("Running TestManagementNotifications.testSelectors...");
+        messageConsumer.close();
+
+        String messageSelector = "methodName LIKE 'ingest%'";
+        messageConsumer = jmsSession.createConsumer(destination, messageSelector);
+        messageConsumer.setMessageListener(this);
+
+        // Ingest - message should be delivered
+        String pid =
+                apim.ingest(demo998FOXMLObjectXML,
+                            FOXML1_1.uri,
+                            "ingesting new foxml object");
+        assertNotNull(pid);
+        checkNotification(pid, "ingest");
+
+        // Purge - message selector should prevent message from being delivered
+        String purgeResult = apim.purgeObject(pid, "Purging object " + pid, false);
+        assertNotNull(purgeResult);
+        checkNoNotifications();
+    }
 
     /**
      * Waits for a notification message and checks to see if the message
-     * body includes the includedText. 
-     *  
-     * @param includedText - the text that should be found in the message body
+     * body includes the includedText.
+     *
+     * @param methodName - the text that should be found in the message body
      */
-    private void checkNotification(String includedText) {
+    private void checkNotification(String pid, String methodName) throws Exception {
         long startTime = System.currentTimeMillis();
         messageNumber++;
-        
+
         while(true) { // Wait for the notification message
             if(messageCount >= messageNumber) {
-                String failureText = "Notification did not include text: " + includedText; 
-                assertTrue(failureText, currentMessageText.contains(includedText));
+                String failureText = "Notification did not include text: " + methodName;
+                assertTrue(failureText, currentMessage.getText().contains(methodName));
+
+                failureText = "Notification did not include methodName property with " +
+                              "value: " + methodName;
+                assertTrue(failureText,
+                           methodName.equals(currentMessage.getStringProperty("methodName")));
+
+                failureText = "Notification did not include pid property with " +
+                              "value: " + pid;
+                assertTrue(failureText,
+                           pid.equals(currentMessage.getStringProperty("pid")));
                 break;
             } else { // Check for timeout
                 long currentTime = System.currentTimeMillis();
                 if(currentTime > (startTime + messageTimeout)) {
                     fail("Timeout reached waiting for notification " +
-                         "on message regarding: " + includedText);
+                         "on message regarding: " + methodName);
                     break;
                 } else {
                     try {
@@ -375,27 +411,49 @@ public class TestManagementNotifications
                 }
             }
         }
+
+        currentMessage = null;
     }
-    
+
+    /**
+     * Waits for a notification to make sure none come through.
+     */
+    private void checkNoNotifications() {
+        long startTime = System.currentTimeMillis();
+
+        while (true) { // Wait for the notification message
+            if(messageCount > messageNumber) {
+                fail("No messages should be received during this test.");
+                break;
+            } else { // Check for timeout
+                long currentTime = System.currentTimeMillis();
+                if(currentTime > (startTime + messageTimeout)) {
+                    break;
+                } else {
+                    try {
+                        Thread.sleep(100);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+
+        currentMessage = null;
+    }
+
     /**
      * Handles messages sent as notifications.
-     * 
+     *
      * {@inheritDoc}
      */
     public void onMessage(Message msg) {
        if(msg instanceof TextMessage) {
-           TextMessage currentMessage = (TextMessage) msg;
-
-           try {
-               currentMessageText = currentMessage.getText();                     
-           } catch(Exception e) {
-               System.out.println("Message received, exception attempting to read: " + e.getMessage());
-           }
-           
+           currentMessage = (TextMessage) msg;
            messageCount++;
        }
     }
-    
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(TestManagementNotifications.class);
     }

@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -43,9 +43,9 @@ import fedora.server.errors.MessagingException;
   * The JMSManager class is a facade in that it provides a very simple interface
   * for using JMS. Whether a destination is a topic or queue is hidden as an
   * implementation detail.
-  * 
+  *
   * Adapted from code originally written by Eric J. Bruno.
-  * 
+  *
   * @author Eric J. Bruno
   * @author Edwin Shin
   * @author Bill Branan
@@ -59,10 +59,10 @@ public class JMSManager {
 
     /** Connection Factory Lookup Name */
     public static final String CONNECTION_FACTORY_NAME = "connection.factory.name";
-    
+
     // Default connection factory name, used if no connection factory name is specified
-    private String defaultConnectionFactoryName = "ConnectionFactory";    
-    
+    private String defaultConnectionFactoryName = "ConnectionFactory";
+
     // JNDI related data
     protected Context jndi = null;
 
@@ -77,7 +77,7 @@ public class JMSManager {
     // Durable topic consumers
     protected Map<String, MessageConsumer> durableSubscriptions =
             new HashMap<String, MessageConsumer>();
-    
+
     private Properties jndiProps;
 
     // Destination type determines the method by which messages are transferred
@@ -86,14 +86,14 @@ public class JMSManager {
     }
 
     private DestinationType defaultDestinationType = DestinationType.Topic;
-    
+
     /**
      * Creates a JMS manager using jndi properties to start a connection
      * to a JMS provider. If jndi properties are null an attempt will
      * be made to create a connection based on a <code>java:comp/env</code>
      * context
-     * 
-     * 
+     *
+     *
      * @param jndiProps
      * @throws MessagingException
      */
@@ -101,27 +101,27 @@ public class JMSManager {
             throws MessagingException {
         this(jndiProps, null);
     }
-    
+
     /**
      * Creates a JMS manager using jndi properties to start a connection
      * to a JMS provider. If jndi properties are null an attempt will
      * be made to create a connection based on a <code>java:comp/env</code>
      * context
-     * 
-     * A connection must have a clientId in order to create durable 
-     * subscriptions. This clientId can either be set administratively 
-     * on the Connection object created in the JNDI store or by providing 
+     *
+     * A connection must have a clientId in order to create durable
+     * subscriptions. This clientId can either be set administratively
+     * on the Connection object created in the JNDI store or by providing
      * a non-null value for the clientId parameter of this method.
-     * 
+     *
      * @param jndiProps
      * @param clientId
      * @throws MessagingException
      */
     public JMSManager(Properties jndiProps, String clientId)
             throws MessagingException {
-        
+
         this.jndiProps = jndiProps;
-        
+
         // Check properties
         if (jndiProps == null) {
             // Attempt a lookup to see if properties are provided by the container
@@ -153,7 +153,7 @@ public class JMSManager {
                         + "must be included in the JNDI properties.");
             }
         }
-        
+
         connectToJMS(clientId);
     }
 
@@ -162,14 +162,14 @@ public class JMSManager {
 
     /**
      * Creates a Destination. This is a convenience method which is the
-     * same as calling: 
+     * same as calling:
      * <code>createDestination(name, type, false, Session.AUTO_ACKNOWLEDGE)</code>
      */
-    public void createDestination(String name, DestinationType type)
+    public Destination createDestination(String name, DestinationType type)
             throws MessagingException {
-        this.createDestination(name, type, false, Session.AUTO_ACKNOWLEDGE);
+        return this.createDestination(name, type, false, Session.AUTO_ACKNOWLEDGE);
     }
-    
+
     /**
      * Creates a Destination if the Destination has not already been created.
      *
@@ -179,13 +179,14 @@ public class JMSManager {
      * @param ackMode - determines the session acknowledgment mode
      * @throws MessagingException
      */
-    public void createDestination(String name,
+    public Destination createDestination(String name,
                                   DestinationType type,
                                   boolean fTransacted,
                                   int ackMode) throws MessagingException {
-        // If the destination already exists, just return
-        if (jmsDestinations.get(name) != null) {
-            return;
+        // If the destination already exists, just return it
+        JMSDestination jmsDest = jmsDestinations.get(name);
+        if (jmsDest != null) {
+            return jmsDest.destination;
         }
 
         // Create the new destination and store it
@@ -220,22 +221,34 @@ public class JMSManager {
             }
         }
 
-        JMSDestination jmsDest =
-                new JMSDestination(destination, session, null, null);
+        jmsDest = new JMSDestination(destination, session, null, null);
 
         jmsDestinations.put(name, jmsDest);
+
+        return destination;
+    }
+
+    /**
+     * Convenience method for synchronous listen with no message selector
+     * @see JMSManager#listen(String, String)
+     */
+    public Message listen(String destName) throws MessagingException {
+        return listen(destName, "");
     }
 
     /**
      * This is a synchronous listen. The caller will block until a message is
-     * received for the given destination
-     * 
+     * received for the given destination.
+     * Messages will be filtered based on the provided message selector.
+     *
      * @param destName
      *        the Destination to listen on
+     * @param messageSelector
+     *        selection criteria for filtering messages
      * @return the Message received for the given Destination
      * @throws Exception
      */
-    public Message listen(String destName) throws MessagingException {
+    public Message listen(String destName, String messageSelector) throws MessagingException {
         if(LOG.isDebugEnabled()) {
             LOG.debug("listen() - Synchronous listen on destination " + destName);
         }
@@ -245,50 +258,73 @@ public class JMSManager {
         // Setup the consumer and block until a
         // message arrives for this destination
         //
-        return setupSynchConsumer(jmsDest, 0);
+        return setupSynchConsumer(jmsDest, messageSelector, 0);
+    }
+
+    /**
+     * Convenience method for synchronous listen with no message selector
+     * @see JMSManager#listen(Destination, String)
+     */
+    public Message listen(Destination dest) throws MessagingException {
+        return listen(dest, "");
     }
 
     /**
      * This is a synchronous listen. The caller will block until a message is
-     * received for the given destination
-     * 
+     * received for the given destination.
+     * Messages will be filtered based on the provided message selector.
+     *
      * @param dest
      *        the Destination to listen on
+     * @param messageSelector
+     *        selection criteria for filtering messages
      * @return the Message received for the given Destination
      * @throws Exception
      */
-    public Message listen(Destination dest) throws MessagingException {
+    public Message listen(Destination dest, String messageSelector) throws MessagingException {
         if(LOG.isDebugEnabled()) {
             LOG.debug("listen() - Synchronous listen on destination " + dest);
         }
         try {
             Session s =
                     connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            MessageConsumer c = s.createConsumer(dest);
+            MessageConsumer c = s.createConsumer(dest, messageSelector);
             Message msg = c.receive();
             s.close();
             return msg;
         } catch (JMSException e) {
             throw new MessagingException(e.getMessage(), e);
         }
-    }    
-    
+    }
+
+    /**
+     * Convenience method for synchronous listen with no message selector
+     * @see JMSManager#listen(String, String, int)
+     */
+    public Message listen(String destName, int timeout)
+    throws MessagingException {
+        return listen(destName, "", timeout);
+    }
+
     /**
      * This is a synchronous listen. The caller will block until a message is
      * received for the given destination OR the timeout value (in milliseconds)
      * has been reached.
-     * 
+     * Messages will be filtered based on the provided message selector.
+     *
      * @param destName
      *        the Destination to listen on
+     * @param messageSelector
+     *        selection criteria for filtering messages
      * @param timeout
      *        time in milliseconds before timing out
      * @return the Message received for the given Destination
      * @throws Exception
      */
-    public Message listen(String destName, int timeout)
+    public Message listen(String destName, String messageSelector, int timeout)
             throws MessagingException {
         if(LOG.isDebugEnabled()) {
-            LOG.debug("listen() - Synchronous listen on destination " 
+            LOG.debug("listen() - Synchronous listen on destination "
                       + destName + " with timeout " + timeout);
         }
 
@@ -297,42 +333,63 @@ public class JMSManager {
         // Setup the consumer and block until a
         // message arrives for this destination
         //
-        return setupSynchConsumer(jmsDest, timeout);
+        return setupSynchConsumer(jmsDest, messageSelector, timeout);
     }
-        
+
+    /**
+     * Convenience method for asynchronous listen with no message selector
+     * @see JMSManager#listen(String, String, MessageListener)
+     */
+    public void listen(String destName, MessageListener callback)
+            throws MessagingException {
+        listen(destName, "", callback);
+    }
+
     /**
      * This is an asynchronous listen. The caller provides a JMS callback
      * interface reference, and any messages received for the given destination
      * are provided through the onMessage() callback method
+     * Messages will be filtered based on the provided message selector.
      */
-    public void listen(String destName, MessageListener callback)
+    public void listen(String destName, String messageSelector, MessageListener callback)
             throws MessagingException {
         JMSDestination jmsDest = getJMSDestination(destName);
 
         // Set the caller as a topic subscriber or queue receiver as appropriate
-        setupAsynchConsumer(jmsDest, callback);
+        setupAsynchConsumer(jmsDest, messageSelector, callback);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("listen() - Asynchronous listen on destination " + destName);
         }
-    }    
-    
+    }
+
     /**
      * This is an asynchronous listen. The caller provides a JMS callback
      * interface reference, and any messages received for the given destination
-     * are provided through the onMessage() callback method
-     */    
+     * are provided through the onMessage() callback method.
+     */
     public void listen(Destination dest, MessageListener callback)
+            throws MessagingException {
+        listen(dest, "", callback);
+    }
+
+    /**
+     * This is an asynchronous listen. The caller provides a JMS callback
+     * interface reference, and any messages received for the given destination
+     * are provided through the onMessage() callback method.
+     * Messages will be filtered based on the provided message selector.
+     */
+    public void listen(Destination dest, String messageSelector, MessageListener callback)
             throws MessagingException {
         try {
             Session s =
                     connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            MessageConsumer c = s.createConsumer(dest);
+            MessageConsumer c = s.createConsumer(dest, messageSelector);
             c.setMessageListener(callback);
         } catch (JMSException e) {
             throw new MessagingException(e.getMessage(), e);
         }
-        
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("listen() - Asynchronous listen on destination " + dest);
         }
@@ -355,22 +412,22 @@ public class JMSManager {
             throws MessagingException {
         createDestination(topicName, DestinationType.Topic);
         Topic topic = (Topic) getDestination(topicName);
-        return listenDurable(topic, callback, subscriptionName);
+        return listenDurable(topic, "", callback, subscriptionName);
     }
-    
+
     /**
      * This is a convenience method to allow a durable subscription to be
-     * created using the topic as the subscription name. Calling this 
-     * method is the same as calling 
-     * <code>listenDurable(topic, callback, null)</code>
-     * 
+     * created using the topic as the subscription name. Calling this
+     * method is the same as calling
+     * <code>listenDurable(topic, "", callback, null)</code>
+     *
      * @see JMSManager#listenDurable(Topic, MessageListener, String)
      */
     public String listenDurable(Topic topic, MessageListener callback)
             throws MessagingException {
-        return listenDurable(topic, callback, null);
+        return listenDurable(topic, "", callback, null);
     }
-    
+
     /**
      * This is an asynchronous and durable listen. The caller provides a JMS
      * callback interface reference, and any messages received for the given
@@ -378,9 +435,12 @@ public class JMSManager {
      * listener becomes unavailable the JMS provider will store messages
      * received on the given topic until the listener reestablishes a connection
      * and will then deliver those messages.
-     * 
+     * Messages will be filtered based on the provided message selector.
+     *
      * @param topic
      *        the topic on which to listen
+     * @param messageSelector
+     *        selection criteria for filtering messages
      * @param callback
      *        the listener to call when a message is received
      * @param subscriptionName
@@ -390,6 +450,7 @@ public class JMSManager {
      * @throws MessagingException
      */
     public String listenDurable(Topic topic,
+                                String messageSelector,
                                 MessageListener callback,
                                 String subscriptionName)
             throws MessagingException {
@@ -407,20 +468,20 @@ public class JMSManager {
             Session s =
                     connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             MessageConsumer c =
-                    s.createDurableSubscriber(topic, subscriptionName);
+                    s.createDurableSubscriber(topic, subscriptionName, messageSelector, false);
             c.setMessageListener(callback);
             durableSubscriptions.put(subscriptionName, c);
         } catch (JMSException e) {
             throw new MessagingException(e.getMessage(), e);
         }
-        
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("listen() - Asynchronous durable listen on topic " + topic);
         }
-        
+
         return subscriptionName;
-    }    
-    
+    }
+
     /**
      * Allows the caller to send a Message object to a named destination
      */
@@ -436,7 +497,7 @@ public class JMSManager {
         } catch (JMSException e) {
             throw new MessagingException(e.getMessage(), e);
         }
-        
+
         if(LOG.isDebugEnabled()) {
             LOG.debug("send() - message sent to destination " + destName);
         }
@@ -455,7 +516,7 @@ public class JMSManager {
         } catch (JMSException e) {
             throw new MessagingException(e.getMessage(), e);
         }
-        
+
         if(LOG.isDebugEnabled()) {
             LOG.debug("send() - message sent to destination " + dest);
         }
@@ -478,13 +539,13 @@ public class JMSManager {
         } catch (JMSException e) {
             throw new MessagingException(e.getMessage(), e);
         }
-        
+
         if(LOG.isDebugEnabled()) {
             LOG.debug("send() - message sent to destination " + destName);
         }
     }
 
-    /** 
+    /**
      * Allows the caller to send text to a destination
      */
     public void send(String destName, String messageText)
@@ -495,7 +556,7 @@ public class JMSManager {
     /**
      * Stops producers and consumers on a given destination.
      * This has no effect on durable subscriptions.
-     * 
+     *
      * @param destName
      * @throws MessagingException
      */
@@ -530,7 +591,7 @@ public class JMSManager {
                 //
                 jmsDestinations.remove(destName);
                 jmsDest = null;
-            }                        
+            }
         } catch (JMSException e) {
             throw new MessagingException(e.getMessage(), e);
         }
@@ -538,10 +599,10 @@ public class JMSManager {
 
     /**
      * Stops a durable message consumer. Note that this is not
-     * the same as unsubscribing. When a durable message consumer is 
-     * restarted all messages received since it was stopped will be 
+     * the same as unsubscribing. When a durable message consumer is
+     * restarted all messages received since it was stopped will be
      * delivered.
-     * 
+     *
      * @param subscriptionName - the name of the subscription
      * @throws MessagingException
      */
@@ -559,10 +620,10 @@ public class JMSManager {
                     + jmse.getMessage(), jmse);
         }
     }
-    
+
     /**
      * Removes the durable subscription with the given name.
-     * 
+     *
      * @param subscriptionName - name of the durable subscription
      * @throws MessagingException
      */
@@ -579,16 +640,16 @@ public class JMSManager {
         } catch (JMSException jmse) {
             String errMsg = "Unable to unsubscribe from subscription with name: "
                           + subscriptionName + " due to exception: "
-                          + jmse.getMessage(); 
+                          + jmse.getMessage();
             LOG.debug(errMsg, jmse);
             throw new MessagingException(errMsg, jmse);
-        }        
+        }
     }
-    
+
     /**
-     * Removes all durable topic subscriptions created using 
+     * Removes all durable topic subscriptions created using
      * this JMSManager instance
-     * 
+     *
      * @throws MessagingException
      */
     public void unsubscribeAllDurable() throws MessagingException {
@@ -596,11 +657,11 @@ public class JMSManager {
             unsubscribeDurable(name);
         }
     }
-    
+
     public void close() throws MessagingException {
         try {
-            // Closing a connection also closes all sessions, producers, 
-            // and consumers established over that connection 
+            // Closing a connection also closes all sessions, producers,
+            // and consumers established over that connection
             connection.stop();
             connection.close();
             connected = false;
@@ -668,10 +729,10 @@ public class JMSManager {
 
     /**
      * Gets the named Destination if it has been created.
-     * 
+     *
      * @param destName
-     * @return the Destination object for the specified destination 
-     *         name or null if the destination does not exist 
+     * @return the Destination object for the specified destination
+     *         name or null if the destination does not exist
      * @throws Exception
      */
     public Destination getDestination(String destName)
@@ -679,7 +740,7 @@ public class JMSManager {
         Destination destination = null;
         JMSDestination jmsDest = getJMSDestination(destName);
         if(jmsDest != null) {
-            destination = jmsDest.destination;    
+            destination = jmsDest.destination;
         }
         return destination;
     }
@@ -690,14 +751,14 @@ public class JMSManager {
      */
     public List<Destination> getDestinations() {
         List<Destination> destinations = new ArrayList<Destination>();
-        Iterator<JMSDestination> destinationIterator = 
+        Iterator<JMSDestination> destinationIterator =
             jmsDestinations.values().iterator();
         while(destinationIterator.hasNext()) {
             destinations.add(destinationIterator.next().destination);
         }
         return destinations;
     }
-    
+
     /**
      * @param destName
      * @return the MessageProducer object for the specified destination name
@@ -726,16 +787,16 @@ public class JMSManager {
     public DestinationType getDefaultDestinationType() {
         return defaultDestinationType;
     }
-    
+
     /**
      * Sets the default DestinationType
-     * 
+     *
      * @param defaultDestinationType
      */
     public void setDefaultDestinationType(DestinationType defaultDestinationType) {
         this.defaultDestinationType = defaultDestinationType;
     }
-    
+
     // /////////////////////////////////////////////////////////////////////////
     // Internal worker methods
 
@@ -789,12 +850,14 @@ public class JMSManager {
     }
 
     protected void setupAsynchConsumer(JMSDestination jmsDest,
+                                       String messageSelector,
                                        MessageListener callback)
             throws MessagingException {
         try {
             if (jmsDest.consumer == null) {
                 jmsDest.consumer =
-                        jmsDest.session.createConsumer(jmsDest.destination);
+                        jmsDest.session.createConsumer(jmsDest.destination,
+                                                       messageSelector);
             }
 
             jmsDest.consumer.setMessageListener(callback);
@@ -803,12 +866,15 @@ public class JMSManager {
         }
     }
 
-    protected Message setupSynchConsumer(JMSDestination jmsDest, int timeout)
+    protected Message setupSynchConsumer(JMSDestination jmsDest,
+                                         String messageSelector,
+                                         int timeout)
             throws MessagingException {
         try {
             if (jmsDest.consumer == null) {
                 jmsDest.consumer =
-                        jmsDest.session.createConsumer(jmsDest.destination);
+                        jmsDest.session.createConsumer(jmsDest.destination,
+                                                       messageSelector);
             }
 
             if (timeout > 0)
@@ -847,7 +913,7 @@ public class JMSManager {
             throw new MessagingException("Unable to create JMS connection "
                     + "because JNDI properties were not initialized.");
         }
-        
+
         try {
             connection = connectionFactory.createConnection();
         } catch (JMSException e) {

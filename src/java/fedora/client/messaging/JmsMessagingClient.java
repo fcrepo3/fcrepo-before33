@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 package fedora.client.messaging;
@@ -31,12 +31,36 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
     private String m_clientId;
     private MessagingListener m_listener;
     private Properties m_connectionProperties;
+    private String m_messageSelector;
     private boolean m_durable;
-    
+
     private JMSManager m_jmsManager;
-    
+
     private Logger LOG = Logger.getLogger(JmsMessagingClient.class.getName());
-    
+
+    /**
+     * Creates a messaging client
+     * @see JmsMessagingClient#JmsMessagingClient(String, MessagingListener, Properties, String, boolean)
+     */
+    public JmsMessagingClient(String clientId,
+                              MessagingListener listener,
+                              Properties connectionProperties)
+            throws MessagingException {
+        this(clientId, listener, connectionProperties, "", false);
+    }
+
+    /**
+     * Creates a messaging client
+     * @see JmsMessagingClient#JmsMessagingClient(String, MessagingListener, Properties, String, boolean)
+     */
+    public JmsMessagingClient(String clientId,
+                              MessagingListener listener,
+                              Properties connectionProperties,
+                              boolean durable)
+            throws MessagingException {
+        this(clientId, listener, connectionProperties, "", durable);
+    }
+
     /**
      * Creates a messaging client
      *
@@ -47,14 +71,14 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
      * The clientId is used within the MessagingClient when creating a
      * connection for durable subscriptions.
      * </p>
-     * 
+     *
      * <h4>Message Listener</h4>
      * <p>
      * A listener, the onMessage() method of which will be called when a
      * message arrives from the messaging provider. See the documentation
      * for javax.jms.MessageListener for more information.
      * </p>
-     * 
+     *
      * <h4>Connection Properties</h4>
      *
      * <p>All of the following properties must be included:</p>
@@ -94,7 +118,7 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
      *     <td>fedora.apim.update</td>
      *   </tr>
      * </table>
-     * 
+     *
      * <h4>Durable</h4>
      * <p>
      * Specifies whether the topics included in the connection properties should
@@ -104,25 +128,35 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
      * queue listeners.
      * </p>
      * <p>
-     * If there is a need for multiple topics, some of which are durable and some 
+     * If there is a need for multiple topics, some of which are durable and some
      * of which are not, then two MessagingClients should be created.
      * One client would include topics needing durable subscribers and the other
-     * client would include topics not needing durable subscribers. 
-     * A single MessageListener can be registered as the listener for both clients. 
+     * client would include topics not needing durable subscribers.
+     * A single MessageListener can be registered as the listener for both clients.
      * </p>
      *
-     * @param clientId - identification value for this messaging client
-     * @param listener - the listener which will be called when messages arrive
-     * @param connectionProperties - set of properties necessary to connect to JMS provider
-     * @param durable - determines if the underlying JMS subscribers are durable
-     * @throws MessagingException - if listener is null or required properties are not set  
+     * <h4>Message Selector</h4>
+     * <p>
+     * A JMS message selector allows a client to specify, by header field references
+     * and property references, the messages it is interested in. Only messages
+     * whose header and property values match the selector are delivered.
+     * See the javadoc for javax.jms.Message for more information about message selectors.
+     * </p>
+     *
+     * @param clientId identification value for this messaging client
+     * @param listener the listener which will be called when messages arrive
+     * @param connectionProperties set of properties necessary to connect to JMS provider
+     * @param messageSelector a selection which determines the messages to deliver
+     * @param durable determines if the underlying JMS subscribers are durable
+     * @throws MessagingException if listener is null or required properties are not set
      */
     public JmsMessagingClient(String clientId,
                               MessagingListener listener,
                               Properties connectionProperties,
+                              String messageSelector,
                               boolean durable)
             throws MessagingException {
-        
+
         // Check for a null listener
         if (listener == null) {
             throw new MessagingException("MessageListener may not be null");
@@ -132,7 +166,7 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
         if (connectionProperties == null) {
             throw new MessagingException("Connection properties may not be null");
         }
-        
+
         // Check for required property values
         String initialContextFactory =
             connectionProperties.getProperty(Context.INITIAL_CONTEXT_FACTORY);
@@ -141,7 +175,7 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
         String connectionFactoryName =
             connectionProperties.getProperty(JMSManager.CONNECTION_FACTORY_NAME);
 
-        if (initialContextFactory == null 
+        if (initialContextFactory == null
             || providerUrl == null
             || connectionFactoryName == null) {
             throw new MessagingException("Propery values for "
@@ -162,9 +196,10 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
         m_clientId = clientId;
         m_listener = listener;
         m_connectionProperties = connectionProperties;
+        m_messageSelector = messageSelector;
         m_durable = durable;
     }
-    
+
     /**
      * Starts the MessagingClient. This method must be called
      * in order to receive messages.
@@ -172,7 +207,7 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
     public void start() throws MessagingException {
         try {
             m_jmsManager = new JMSManager(m_connectionProperties, m_clientId);
-    
+
             // Create Destinations based on properties
             Enumeration<?> propertyNames = m_connectionProperties.keys();
             while (propertyNames.hasMoreElements()) {
@@ -189,23 +224,26 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
                                                    DestinationType.Queue);
                 }
             }
-    
+
             // Get destination list
             List<Destination> destinations = m_jmsManager.getDestinations();
-    
+
             // If there are no Destinations, throw an exception
             if (destinations.size() == 0) {
                 throw new MessagingException("No destinations available for "
                         + "subscription, make sure that there is at least one topic "
                         + "or queue specified in the connection properties.");
             }
-    
+
             // Subscribe
             for (Destination destination : destinations) {
                 if (m_durable && (destination instanceof Topic)) {
-                    m_jmsManager.listenDurable((Topic) destination, this);
+                    m_jmsManager.listenDurable((Topic) destination,
+                                               m_messageSelector,
+                                               this,
+                                               null);
                 } else {
-                    m_jmsManager.listen(destination, this);
+                    m_jmsManager.listen(destination, m_messageSelector, this);
                 }
             }
         } catch (MessagingException me) {
@@ -219,7 +257,7 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
     /**
      * Stops the MessagingClient, shuts down connections. If the unsubscribe
      * parameter is set to true, all durable subscriptions will be removed.
-     * 
+     *
      * @param unsubscribe
      */
     public void stop(boolean unsubscribe) throws MessagingException {
@@ -227,7 +265,7 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
             if (unsubscribe) {
                 m_jmsManager.unsubscribeAllDurable();
             }
-            m_jmsManager.close(); 
+            m_jmsManager.close();
         } catch (MessagingException me) {
             LOG.error("Messaging Exception encountered attempting to stop "
                     + "Messaging Client: " + m_clientId
@@ -239,11 +277,11 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
     /**
      * Receives messages and passes them to the MessagingListener
      * along with the client id.
-     * 
+     *
      * {@inheritDoc}
      */
     public void onMessage(Message message) {
         m_listener.onMessage(m_clientId, message);
     }
-        
+
 }
