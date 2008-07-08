@@ -24,7 +24,7 @@ public interface DDLConverter {
 
     public abstract boolean supportsTableType();
 
-    public abstract List getDDL(TableSpec tableSpec);
+    public abstract List<String> getDDL(TableSpec tableSpec);
 
     public String getDropDDL(String command);
 

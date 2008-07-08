@@ -34,21 +34,21 @@ public class PostgresDDLConverter
         return "DROP " + objectType + " " + objectName;
     }
 
-    public List getDDL(TableSpec spec) {
+    public List<String> getDDL(TableSpec spec) {
 
-        ArrayList l = new ArrayList();
+        ArrayList<String> l = new ArrayList<String>();
 
         StringBuffer out = new StringBuffer();
         StringBuffer end = new StringBuffer();
         out.append("CREATE TABLE " + spec.getName() + " (\n");
-        Iterator csi = spec.columnSpecIterator();
+        Iterator<ColumnSpec> csi = spec.columnSpecIterator();
         int csNum = 0;
         while (csi.hasNext()) {
             if (csNum > 0) {
                 out.append(",\n");
             }
             csNum++;
-            ColumnSpec cs = (ColumnSpec) csi.next();
+            ColumnSpec cs = csi.next();
             out.append("  ");
             out.append(cs.getName());
             out.append(' ');

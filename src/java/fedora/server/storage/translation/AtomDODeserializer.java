@@ -18,8 +18,9 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
+
 import java.net.URISyntaxException;
+
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -28,8 +29,13 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import javax.activation.MimeType;
 import javax.xml.stream.XMLStreamException;
+
+import javax.activation.MimeType;
+
+import org.apache.commons.io.IOUtils;
+
+import org.apache.log4j.Logger;
 
 import org.apache.abdera.Abdera;
 import org.apache.abdera.ext.thread.ThreadHelper;
@@ -43,13 +49,12 @@ import org.apache.abdera.model.Person;
 import org.apache.abdera.parser.Parser;
 import org.apache.abdera.util.MimeTypeHelper;
 import org.apache.abdera.xpath.XPath;
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
 import fedora.common.MalformedPIDException;
 import fedora.common.PID;
 import fedora.common.xml.format.XMLFormat;
+
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.ValidationException;
@@ -60,7 +65,9 @@ import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.utilities.DateUtility;
 import fedora.server.validation.ValidationUtility;
+
 import fedora.utilities.FileUtils;
+import fedora.utilities.NormalizedURI;
 
 /**
  * Deserializer for Fedora Objects in Atom format.
@@ -97,6 +104,9 @@ public class AtomDODeserializer
     
     private ZipInputStream m_zin;
     
+    /**
+     * Temporary directory for the unpacked contents of an Atom Zip archive.
+     */
     private File m_tempDir;
 
     public AtomDODeserializer() {
@@ -300,28 +310,28 @@ public class AtomDODeserializer
         // 3) referenced content
         IRI contentLocation = entry.getContentSrc();
         if (contentLocation != null) {
-        	
-        	if (m_format.equals(ATOM_ZIP1_1)) {
-        		if (!contentLocation.isAbsolute() && !contentLocation.isPathAbsolute()) {
-	        		File f = getContentSrcAsFile(contentLocation);
-	        		contentLocation = new IRI("temp://" + f.getAbsolutePath());
-        		}
-        	}
-        	
             // URL FORMAT VALIDATION for dsLocation:
             // For Managed Content the URL is only checked when we are parsing a
             // a NEW ingest file because the URL is replaced with an internal identifier
             // once the repository has sucked in the content for storage.
+            
             if (m_obj.isNew()) {
                 ValidationUtility
-                        .validateURL(contentLocation.toString(), false);
+                        .validateURL(contentLocation.toString());
             }
+            
+            if (m_format.equals(ATOM_ZIP1_1)) {
+                if (!contentLocation.isAbsolute() && !contentLocation.isPathAbsolute()) {
+                    File f = getContentSrcAsFile(contentLocation);
+                    contentLocation = new IRI(DatastreamManagedContent.TEMP_SCHEME + 
+                                              f.getAbsolutePath());
+                }
+            }
+            
             ds.DSLocation = contentLocation.toString();
-
             ds.DSLocation =
                     (DOTranslationUtility.normalizeDSLocationURLs(m_obj
                             .getPid(), ds, m_transContext)).DSLocation;
-
             return ds;
         }
 
@@ -336,7 +346,7 @@ public class AtomDODeserializer
             } else {
                 IOUtils.copy(entry.getContentStream(), out);
             }
-            ds.DSLocation = "temp://" + temp.getAbsolutePath();
+            ds.DSLocation = DatastreamManagedContent.TEMP_SCHEME + temp.getAbsolutePath();
         } catch (IOException e) {
             throw new StreamIOException(e.getMessage(), e);
         }
@@ -582,25 +592,29 @@ public class AtomDODeserializer
         }
     }
 
-    private File getContentSrcAsFile(IRI contentSrc) throws ObjectIntegrityException {
+    /**
+     * Returns the an Entry's contentSrc as a File relative to {@link #m_tempDir}.
+     * 
+     * @param contentSrc
+     * @return the contentSrc as a File relative to m_tempDir.
+     * @throws ObjectIntegrityException
+     */
+    protected File getContentSrcAsFile(IRI contentSrc) throws ObjectIntegrityException {
     	if (contentSrc.isAbsolute() || contentSrc.isPathAbsolute()) {
     		throw new ObjectIntegrityException("contentSrc must not be absolute");
     	}
 		try {
-			URI uri = new URI(m_tempDir.toURI().toString() + contentSrc.toString());
-			
-			File f = new File(uri);
-			
-			// This is to prevent attempts to rewrite the path outside of the 
-			// temporary directory that contains the the unzipped files 
-			// (e.g. if contentSrc == "../../etc/passwd"
-			try {
-				if (!f.getCanonicalPath().startsWith(m_tempDir.getCanonicalPath())) {
-					throw new ObjectIntegrityException("Invalid path: " + contentSrc.toString());
-				}
-				return f;
-			} catch (IOException e) {
-				throw new ObjectIntegrityException(e.getMessage(), e);
+		    // Normalize the IRI to resolve percent-encoding and 
+		    // backtracking (e.g. "../")
+		    NormalizedURI nUri = new NormalizedURI(m_tempDir.toURI().toString() + contentSrc.toString());
+		    nUri.normalize();
+
+		    File f = new File(nUri.toURI());
+			if (f.getParentFile().equals(m_tempDir)) {
+			    return f;
+			} else {
+			    throw new ObjectIntegrityException(contentSrc.toString() 
+			                                       + " is not a valid path.");
 			}
 		} catch (URISyntaxException e) {
 			throw new ObjectIntegrityException(e.getMessage(), e);

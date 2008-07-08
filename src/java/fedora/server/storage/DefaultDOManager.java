@@ -27,8 +27,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -65,6 +63,7 @@ import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.MIMETypedStream;
@@ -149,7 +148,7 @@ public class DefaultDOManager
     /**
      * Creates a new DefaultDOManager.
      */
-    public DefaultDOManager(Map moduleParameters, Server server, String role)
+    public DefaultDOManager(Map<String, String> moduleParameters, Server server, String role)
             throws ModuleInitializationException {
         super(moduleParameters, server, role);
         m_lockedPIDs = new HashSet<String>();
@@ -1189,7 +1188,7 @@ public class DefaultDOManager
                             if (dmc.DSLocation.indexOf("//") != -1) {
                                 // if it's a url, we need to grab content for this version
                                 MIMETypedStream mimeTypedStream;
-                                if (dmc.DSLocation.startsWith("uploaded://")) {
+                                if (dmc.DSLocation.startsWith(DatastreamManagedContent.UPLOADED_SCHEME)) {
                                     mimeTypedStream =
                                             new MIMETypedStream(null,
                                                                 m_management
@@ -1199,7 +1198,7 @@ public class DefaultDOManager
                                             .info("Getting managed datastream from internal uploaded "
                                                     + "location: "
                                                     + dmc.DSLocation);
-                                } else if (dmc.DSLocation.startsWith("copy://")) {
+                                } else if (dmc.DSLocation.startsWith(DatastreamManagedContent.COPY_SCHEME)) {
                                     // make a copy of the pre-existing content
                                     mimeTypedStream =
                                             new MIMETypedStream(null,
@@ -1207,7 +1206,7 @@ public class DefaultDOManager
                                                                         .retrieveDatastream(dmc.DSLocation
                                                                                 .substring(7)),
                                                                 null);
-                                } else if (dmc.DSLocation.startsWith("temp://")) {
+                                } else if (dmc.DSLocation.startsWith(DatastreamManagedContent.TEMP_SCHEME)) {
                                     File file =
                                             new File(dmc.DSLocation
                                                     .substring(7));
@@ -1259,7 +1258,7 @@ public class DefaultDOManager
                                                                            .getStream());
                                     }
                                 }
-                                if (dmc.DSLocation.startsWith("temp://")) {
+                                if (dmc.DSLocation.startsWith(DatastreamManagedContent.TEMP_SCHEME)) {
                                     // delete the temp file created to store the binary content from archive
                                     File file =
                                             new File(dmc.DSLocation

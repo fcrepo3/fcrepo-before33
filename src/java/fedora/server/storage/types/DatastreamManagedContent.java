@@ -17,11 +17,21 @@ import fedora.server.storage.lowlevel.ILowlevelStorage;
 
 /**
  * @author Chris Wilper
+ * @version $Id$
  */
 public class DatastreamManagedContent
         extends Datastream {
-
-    private static ILowlevelStorage s_llstore;
+	
+	/**
+	 * Internal scheme to indicating that a copy should made of the resource.
+	 */
+	public static final String COPY_SCHEME = "copy://";
+	
+	public static final String TEMP_SCHEME = "temp://";
+	
+	public static final String UPLOADED_SCHEME = "uploaded://";
+	
+    private static ILowlevelStorage s_llstore;    
 
     public DatastreamManagedContent() {
     }

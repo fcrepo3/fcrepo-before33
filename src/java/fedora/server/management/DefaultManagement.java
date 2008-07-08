@@ -64,9 +64,7 @@ import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
-import fedora.server.storage.types.Property;
 import fedora.server.storage.types.RelationshipTuple;
-import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.validation.RelsExtValidator;
 import fedora.server.validation.ValidationConstants;
@@ -411,7 +409,7 @@ public class DefaultManagement
                 ds.DSInfoType = ""; // field is now deprecated
                 try {
                     InputStream in;
-                    if (dsLocation.startsWith("uploaded://")) {
+                    if (dsLocation.startsWith(DatastreamManagedContent.UPLOADED_SCHEME)) {
                         in = getTempStream(dsLocation);
                     } else {
                         in =
@@ -483,7 +481,7 @@ public class DefaultManagement
             ds.DSLabel = dsLabel;
             ds.DSLocation = dsLocation;
             if (dsLocation != null) {
-                ValidationUtility.validateURL(dsLocation, false);
+                ValidationUtility.validateURL(dsLocation);
             }
             ds.DSFormatURI = formatURI;
             ds.DatastreamAltIDs = altIDs;
@@ -570,10 +568,6 @@ public class DefaultManagement
         DOWriter w = null;
         try {
             LOG.debug("Entered modifyDatastreamByReference");
-
-            // FIXME: enforceModifyDatastreamByReference expects a parameter
-            // of dsState, we no longer have. I'm passing in a value
-            // of "" but this could cause a problem.
             m_fedoraXACMLModule
                     .enforceModifyDatastreamByReference(context,
                                                         pid,
@@ -627,12 +621,12 @@ public class DefaultManagement
                     // if managed content location is unspecified,
                     // cause a copy of the prior content to be made at
                     // commit-time
-                    dsLocation = "copy://" + orig.DSLocation;
+                    dsLocation = DatastreamManagedContent.COPY_SCHEME + orig.DSLocation;
                 } else {
                     dsLocation = orig.DSLocation;
                 }
             } else {
-                ValidationUtility.validateURL(dsLocation, false);
+                ValidationUtility.validateURL(dsLocation);
             }
 
             // if "force" is false and the mime type changed, validate the
@@ -673,9 +667,6 @@ public class DefaultManagement
             nowUTC = Server.getCurrentDate(context);
             newds.DSCreateDT = nowUTC;
             // newds.DSSize will be computed later
-            if (dsLocation != null) {
-                ValidationUtility.validateURL(dsLocation, false);
-            }
             newds.DSLocation = dsLocation;
             newds.DSChecksumType = checksumType;
 
@@ -767,13 +758,8 @@ public class DefaultManagement
                     + " datastream is not permitted.");
         }
         DOWriter w = null;
-        boolean mimeChanged = false;
         try {
             LOG.debug("Entered modifyDatastreamByValue");
-
-            // FIXME: enforceModifyDatastreamByReference expects a parameter
-            // of dsState, we no longer have. I'm passing in a value
-            // of "" but this could cause a problem.
             m_fedoraXACMLModule.enforceModifyDatastreamByValue(context,
                                                                pid,
                                                                datastreamId,
@@ -954,32 +940,10 @@ public class DefaultManagement
                 // this datastream.
                 // to do this, we must look through all versions of every
                 // disseminator, regardless of state
-                SimpleDateFormat formatter =
-                        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                 ArrayList<String> usedList = new ArrayList<String>();
                 if (datastreamID.equals("DC")) {
                     usedList.add("The default disseminator");
                 }
-                // // ...for each disseminator
-                // Disseminator[] disses=w.GetDisseminators(null, null);
-                // for (int i=0; i<disses.length; i++) {
-                // Date[] dates=w.getDisseminatorVersions(disses[i].dissID);
-                // // ...for each of its versions
-                // for (int j=0; j<dates.length; j++) {
-                // Disseminator diss=w.GetDisseminator(disses[i].dissID,
-                // dates[j]);
-                // DSBinding[] dsBindings=diss.dsBindMap.dsBindings;
-                // // ...for each of its datastream bindings
-                // for (int k=0; k<dsBindings.length; k++) {
-                // // ...is the datastream id referenced?
-                // if (dsBindings[k].datastreamID.equals(datastreamID)) {
-                // usedList.add(diss.dissID + " ("
-                // + formatter.format(diss.dissCreateDT)
-                // + ")");
-                // }
-                // }
-                // }
-                // }
                 if (usedList.size() > 0) {
                     StringBuffer msg = new StringBuffer();
                     msg.append("Cannot purge entire datastream because it\n");
@@ -1179,7 +1143,7 @@ public class DefaultManagement
     }
 
     public class DatastreamDateComparator
-            implements Comparator {
+            implements Comparator<Object> {
 
         public int compare(Object o1, Object o2) {
             long ms1 = ((Datastream) o1).DSCreateDT.getTime();
@@ -1244,9 +1208,9 @@ public class DefaultManagement
         long minStartTime =
                 System.currentTimeMillis() - 60 * 1000 * m_uploadStorageMinutes;
         ArrayList<String> removeList = new ArrayList<String>();
-        Iterator iter = m_uploadStartTime.keySet().iterator();
+        Iterator<String> iter = m_uploadStartTime.keySet().iterator();
         while (iter.hasNext()) {
-            String id = (String) iter.next();
+            String id = iter.next();
             Long startTime = (Long) m_uploadStartTime.get(id);
             if (startTime.longValue() < minStartTime) {
                 // remove from filesystem and hash
@@ -1321,7 +1285,7 @@ public class DefaultManagement
 
     public InputStream getTempStream(String id) throws StreamReadException {
         // it should come in starting with "uploaded://"
-        if (id.startsWith("uploaded://") || id.length() < 12) {
+        if (id.startsWith(DatastreamManagedContent.UPLOADED_SCHEME) || id.length() < 12) {
             String internalId = id.substring(11);
             if (m_uploadStartTime.get(internalId) != null) {
                 // found... return inputstream
@@ -1361,8 +1325,6 @@ public class DefaultManagement
                         + "\" is invalid. The allowed values for state are: "
                         + " A (active), D (deleted), and I (inactive).");
             }
-            fedora.server.storage.types.Datastream ds =
-                    w.GetDatastream(datastreamID, null);
             w.setDatastreamState(datastreamID, dsState);
 
             // Update audit trail
@@ -1410,8 +1372,6 @@ public class DefaultManagement
                                                                 versionable);
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
-            fedora.server.storage.types.Datastream ds =
-                    w.GetDatastream(datastreamID, null);
             w.setDatastreamVersionable(datastreamID, versionable);
 
             // Update audit trail
@@ -1556,21 +1516,6 @@ public class DefaultManagement
         checkString(label,
                     "Datastream label",
                     ValidationConstants.DATASTREAM_LABEL_MAXLEN,
-                    null);
-    }
-
-    private void checkDisseminatorID(String id) throws ValidationException {
-        checkString(id,
-                    "Disseminator id",
-                    ValidationConstants.DISSEMINATOR_ID_MAXLEN,
-                    ValidationConstants.DISSEMINATOR_ID_BADCHARS);
-    }
-
-    private void checkDisseminatorLabel(String label)
-            throws ValidationException {
-        checkString(label,
-                    "Disseminator label",
-                    ValidationConstants.DISSEMINATOR_LABEL_MAXLEN,
                     null);
     }
 

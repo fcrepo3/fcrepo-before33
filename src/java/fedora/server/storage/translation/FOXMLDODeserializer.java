@@ -441,7 +441,7 @@ public class FOXMLDODeserializer
                     // URL FORMAT VALIDATION for dsLocation:
                     // make sure we have a properly formed URL
                     try {
-                        ValidationUtility.validateURL(dsLocation, false);
+                        ValidationUtility.validateURL(dsLocation);
                     } catch (ValidationException ve) {
                         throw new SAXException(ve.getMessage());
                     }
@@ -457,7 +457,7 @@ public class FOXMLDODeserializer
                     // once the repository has sucked in the content for storage.
                     if (m_obj.isNew()) {
                         try {
-                            ValidationUtility.validateURL(dsLocation, false);
+                            ValidationUtility.validateURL(dsLocation);
                         } catch (ValidationException ve) {
                             throw new SAXException(ve.getMessage());
                         }
@@ -632,7 +632,7 @@ public class FOXMLDODeserializer
                     os.close();
                     m_dsLocationType = "INTERNAL_ID";
                     m_dsLocation =
-                            "temp://"
+                        DatastreamManagedContent.TEMP_SCHEME
                                     + m_binaryContentTempFile.getAbsolutePath();
                     instantiateDatastream(new DatastreamManagedContent());
                 } catch (FileNotFoundException fnfe) {

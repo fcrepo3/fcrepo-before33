@@ -30,7 +30,7 @@ public class TableSpec {
 
     private final String m_name;
 
-    private final List m_columnSpecs;
+    private final List<ColumnSpec> m_columnSpecs;
 
     private final String m_primaryColumnName;
 
@@ -49,7 +49,7 @@ public class TableSpec {
      * @throws InconsistentTableSpecException
      *         if inconsistencies are detected in table specifications.
      */
-    public TableSpec(String name, List columnSpecs, String primaryColumnName)
+    public TableSpec(String name, List<ColumnSpec> columnSpecs, String primaryColumnName)
             throws InconsistentTableSpecException {
         m_name = name;
         m_columnSpecs = columnSpecs;
@@ -76,7 +76,7 @@ public class TableSpec {
      *         if inconsistencies are detected in table specifications.
      */
     public TableSpec(String name,
-                     List columnSpecs,
+                     List<ColumnSpec> columnSpecs,
                      String primaryColumnName,
                      String type)
             throws InconsistentTableSpecException {
@@ -215,7 +215,7 @@ public class TableSpec {
      * 
      * @return An Iterator over ColumnSpec objects.
      */
-    public Iterator columnSpecIterator() {
+    public Iterator<ColumnSpec> columnSpecIterator() {
         return m_columnSpecs.iterator();
     }
 

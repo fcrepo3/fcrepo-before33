@@ -129,7 +129,7 @@ public class StringUtility {
     }
 
     public static void main(String[] args) {
-        StringUtility su = new StringUtility();
+        new StringUtility();
         String pid = "demo:1";
         String in =
                 "org.apache.axis.AxisFault: The digital object \""

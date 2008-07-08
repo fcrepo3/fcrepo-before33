@@ -7,6 +7,7 @@ package fedora.server.storage.translation;
 
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.apache.log4j.Logger;
 import fedora.common.Constants;
 import fedora.common.rdf.RDFName;
 import fedora.common.xml.format.XMLFormat;
+
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.storage.types.DSBinding;
@@ -27,9 +29,6 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.utilities.StringUtility;
 
-import static fedora.common.Models.CONTENT_MODEL_3_0;
-import static fedora.common.Models.FEDORA_OBJECT_3_0;
-import static fedora.common.Models.SERVICE_DEFINITION_3_0;
 import static fedora.common.Models.SERVICE_DEPLOYMENT_3_0;
 
 /**

@@ -30,7 +30,7 @@ public class ThreadMonitorModule
 
     private boolean m_active = false;
 
-    public ThreadMonitorModule(Map params, Server server, String role)
+    public ThreadMonitorModule(Map<String, String> params, Server server, String role)
             throws ModuleInitializationException {
         super(params, server, role);
     }

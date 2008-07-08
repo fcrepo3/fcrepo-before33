@@ -20,7 +20,6 @@ import fedora.client.FedoraClient;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.utilities.StreamUtility;
 
-import fedora.test.DemoObjectTestSetup;
 import fedora.test.FedoraServerTestCase;
 
 /**

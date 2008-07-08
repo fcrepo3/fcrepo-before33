@@ -57,9 +57,9 @@ public class TableCreatingConnection
      */
     public void createTable(TableSpec spec) throws SQLException {
         Statement s = createStatement();
-        Iterator iter = m_converter.getDDL(spec).iterator();
+        Iterator<String> iter = m_converter.getDDL(spec).iterator();
         while (iter.hasNext()) {
-            String updateSQL = (String) iter.next();
+            String updateSQL = iter.next();
             s.executeUpdate(updateSQL);
         }
     }
