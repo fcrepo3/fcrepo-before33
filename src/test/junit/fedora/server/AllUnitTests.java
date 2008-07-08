@@ -6,7 +6,8 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses( {fedora.server.journal.AllUnitTests.class,
-        fedora.server.search.AllUnitTests.class})
+        fedora.server.search.AllUnitTests.class,
+        fedora.server.validation.AllUnitTests.class})
 public class AllUnitTests {
 
     // Supports legacy tests runners
@@ -17,6 +18,7 @@ public class AllUnitTests {
 
         suite.addTest(fedora.server.journal.AllUnitTests.suite());
         suite.addTest(fedora.server.search.AllUnitTests.suite());
+        suite.addTest(fedora.server.validation.AllUnitTests.suite());
 
         return suite;
     }

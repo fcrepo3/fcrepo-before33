@@ -133,7 +133,7 @@ public class ExecUtility {
         String osName = System.getProperty("os.name");
         if (osName.startsWith("Windows")) {
             String[] temp = new String[cmd.length + 2];
-            System.arraycopy(cmd, 0, temp, 2, temp.length);
+            System.arraycopy(cmd, 0, temp, 2, cmd.length);
             temp[0] = "cmd.exe";
             temp[1] = "/C";
             cmd = temp;

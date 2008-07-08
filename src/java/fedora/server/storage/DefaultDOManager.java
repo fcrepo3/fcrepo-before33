@@ -9,10 +9,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -24,6 +26,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.RecoveryContext;
@@ -55,6 +58,7 @@ import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
@@ -990,16 +994,16 @@ public class DefaultDOManager
                       if (dmc.DSLocation.indexOf("//")!=-1) {
                         // if it's a url, we need to grab content for this version
                         MIMETypedStream mimeTypedStream;
-						if (dmc.DSLocation.startsWith("uploaded://")) {
+						if (dmc.DSLocation.startsWith(DatastreamManagedContent.UPLOADED_SCHEME)) {
 						    mimeTypedStream=new MIMETypedStream(null, m_management.getTempStream(dmc.DSLocation), null);
                             LOG.info("Getting managed datastream from internal uploaded "
                                 + "location: " + dmc.DSLocation);
-						} else if (dmc.DSLocation.startsWith("copy://"))  {
+						} else if (dmc.DSLocation.startsWith(DatastreamManagedContent.COPY_SCHEME))  {
                             // make a copy of the pre-existing content
                             mimeTypedStream=new MIMETypedStream(null,
                             		m_permanentStore.retrieveDatastream(
                                             dmc.DSLocation.substring(7)), null);
-						} else if (dmc.DSLocation.startsWith("temp://"))  {
+						} else if (dmc.DSLocation.startsWith(DatastreamManagedContent.TEMP_SCHEME))  {
 							File file = new File(dmc.DSLocation.substring(7));
 				            LOG.info("Getting base64 decoded datastream spooled from archive");
 							try {
@@ -1030,7 +1034,7 @@ public class DefaultDOManager
                             	m_permanentStore.replaceDatastream(id, mimeTypedStream.getStream());
                             }
                         }
-						if (dmc.DSLocation.startsWith("temp://"))  
+						if (dmc.DSLocation.startsWith(DatastreamManagedContent.TEMP_SCHEME))  
 						{
 							// delete the temp file created to store the binary content from archive
 							File file = new File(dmc.DSLocation.substring(7));

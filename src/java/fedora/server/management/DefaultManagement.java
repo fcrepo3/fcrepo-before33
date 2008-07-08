@@ -418,7 +418,7 @@ public class DefaultManagement
                 ds.DSInfoType="";  // field is now deprecated
                 try {
                     InputStream in;
-                    if (dsLocation.startsWith("uploaded://")) {
+                    if (dsLocation.startsWith(DatastreamManagedContent.UPLOADED_SCHEME)) {
                         in=getTempStream(dsLocation);
                     } else {
                         in=m_contentManager.getExternalContent(dsLocation, context).getStream();
@@ -653,7 +653,7 @@ public class DefaultManagement
                 if (orig.DSControlGrp.equals("M")) {
                     // if managed content location is unspecified, 
                     // cause a copy of the prior content to be made at commit-time
-                    dsLocation="copy://" + orig.DSLocation;
+                    dsLocation=DatastreamManagedContent.COPY_SCHEME + orig.DSLocation;
                 } else {
                     dsLocation=orig.DSLocation;
                 }
@@ -699,9 +699,6 @@ public class DefaultManagement
             nowUTC = Server.getCurrentDate(context);
             newds.DSCreateDT=nowUTC;
             //newds.DSSize will be computed later
-            if (dsLocation != null) {
-                ValidationUtility.validateURL(dsLocation, false);
-            }
             newds.DSLocation=dsLocation;
             newds.DSChecksumType = checksumType;
             
@@ -1429,7 +1426,7 @@ public class DefaultManagement
         // and return the identifier-that-looks-like-a-url
         long now=System.currentTimeMillis();
         m_uploadStartTime.put("" + id, new Long(now));
-        return "uploaded://" + id;
+        return DatastreamManagedContent.UPLOADED_SCHEME + id;
     }
 
     private synchronized int getNextTempId(Context context) {
@@ -1462,7 +1459,7 @@ public class DefaultManagement
     public InputStream getTempStream(String id)
             throws StreamReadException {
         // it should come in starting with "uploaded://"
-        if (id.startsWith("uploaded://") || id.length()<12) {
+        if (id.startsWith(DatastreamManagedContent.UPLOADED_SCHEME) || id.length()<12) {
             String internalId=id.substring(11);
             if (m_uploadStartTime.get(internalId)!=null) {
                 // found... return inputstream

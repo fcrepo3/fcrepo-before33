@@ -3,6 +3,7 @@ package fedora.server.validation;
 import java.net.*;
 
 import fedora.server.errors.*;
+import fedora.server.storage.types.DatastreamManagedContent;
 
 /**
  * Misc validation-related functions.
@@ -12,14 +13,26 @@ import fedora.server.errors.*;
  */
 public abstract class ValidationUtility {
 
-    public static void validateURL(String url, boolean canBeRelative) 
+    /**
+     * Validates the candidate URL. File URLs (e.g. file:///bar/baz) are
+     * rejected as malformed.
+     * 
+     * @param url The URL to validate.
+     * @param canBeRelative No effect. All URLs must be absolute.
+     * @throws ValidationException if the URL is malformed.
+     */
+    public static void validateURL(String url, boolean canBeRelative)
             throws ValidationException {
         try {
-            URL goodURL = new URL(url);
-        } catch (MalformedURLException murle) {
-            if (url.startsWith("copy://") || url.startsWith("uploaded://") || url.startsWith("temp://")) return;
-            throw new ValidationException("Malformed URL: " + url, murle);
+            URL candidate = new URL(url);
+            if (candidate.getProtocol().equals("file")) {
+                throw new ValidationException("Malformed URL: invalid protocol: " + url);
+            }
+        } catch (MalformedURLException e) {
+            if (url.startsWith(DatastreamManagedContent.UPLOADED_SCHEME)) {
+                return;
+            }
+            throw new ValidationException("Malformed URL: " + url, e);
         }
     }
-
 }

@@ -649,7 +649,7 @@ public class FOXMLDODeserializer
 	        		os.write(elementBytes);
 	        		os.close();
 	            	m_dsLocationType="INTERNAL_ID";
-					m_dsLocation="temp://"+m_binaryContentTempFile.getAbsolutePath();
+					m_dsLocation = DatastreamManagedContent.TEMP_SCHEME + m_binaryContentTempFile.getAbsolutePath();
 					instantiateDatastream(new DatastreamManagedContent());
 				}
 				catch (FileNotFoundException fnfe)
