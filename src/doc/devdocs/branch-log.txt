@@ -29,6 +29,12 @@ dev-149441
   Reviewer  : Eddie Shin
   Merged    : 2008/06/30 into fedora-rest/trunk r7386
 
+dev-149417
+  Created   : 2008/06/24 from trunk r7361
+  Developer : Jim Blake
+  Reviewer  : Chris Wilper
+  Merged    : 2008/07/11 into trunk r7469
+
 dev-149395
   Created   : 2008/06/24 from trunk r7357
   Developer : Eddie Shin
