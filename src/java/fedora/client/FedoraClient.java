@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -64,7 +64,7 @@ import fedora.server.utilities.DateUtility;
  * SOAP stubs for Fedora APIs. Also serves as one-stop-shopping for issuing HTTP
  * requests using Apache's HttpClient. Provides option for client to handle HTTP
  * redirects (notably 302 status that occurs with SSL auto-redirects at server.)
- * 
+ *
  * @author Chris Wilper
  * @author Sandy Payette
  */
@@ -88,7 +88,7 @@ public class FedoraClient
     public int TIMEOUT_SECONDS = 20;
 
     /** Seconds to wait while waiting for data over the socket (SO_TIMEOUT). */
-    public int SOCKET_TIMEOUT_SECONDS = 150;
+    public int SOCKET_TIMEOUT_SECONDS = 1800; // 30 minutes
 
     /** Maxiumum http connections per host (for REST calls only). */
     public int MAX_CONNECTIONS_PER_HOST = 15;
@@ -159,7 +159,7 @@ public class FedoraClient
 
     /**
      * Upload the given file to Fedora's upload interface via HTTP POST.
-     * 
+     *
      * @return the temporary id which can then be passed to API-M requests as a
      *         URL. It will look like uploaded://123
      */
@@ -239,7 +239,7 @@ public class FedoraClient
      * success of a request can be checked with getResponseCode(). Usually
      * you'll want to see a 200. See
      * http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for other codes.
-     * 
+     *
      * @param locator
      *        A URL, relative Fedora URL, or Fedora URI that we want to do an
      *        HTTP GET upon
@@ -261,7 +261,7 @@ public class FedoraClient
      * success of a request can be checked with getResponseCode(). Usually
      * you'll want to see a 200. See
      * http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for other codes.
-     * 
+     *
      * @param url
      *        A URL that we want to do an HTTP GET upon
      * @param failIfNotOK
@@ -281,7 +281,7 @@ public class FedoraClient
      * empty. The success of a request can be checked with getResponseCode().
      * Usually you'll want to see a 200. See
      * http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for other codes.
-     * 
+     *
      * @param locator
      *        A URL, relative Fedora URL, or Fedora URI that we want to do an
      *        HTTP GET upon
@@ -310,7 +310,7 @@ public class FedoraClient
      * empty. The success of a request can be checked with getResponseCode().
      * Usually you'll want to see a 200. See
      * http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for other codes.
-     * 
+     *
      * @param url
      *        A URL that we want to do an HTTP GET upon
      * @param failIfNotOK
@@ -346,7 +346,7 @@ public class FedoraClient
                     if (hLoc != null) {
                         LOG.debug("FedoraClient is trying redirect location: "
                                 + hLoc.getValue());
-                        // Try the redirect location, but don't try to handle another level of redirection.						
+                        // Try the redirect location, but don't try to handle another level of redirection.
                         return get(hLoc.getValue(), true, false);
                     } else {
                         try {
@@ -384,7 +384,7 @@ public class FedoraClient
      * Get an HTTP resource with the response as a String instead of an
      * InputStream, given a resource locator that either begins with
      * 'info:fedora/' , 'http://', or '/'.
-     * 
+     *
      * @param locator
      *        A URL, relative Fedora URL, or Fedora URI that we want to do an
      *        HTTP GET upon
@@ -562,7 +562,7 @@ public class FedoraClient
 
     /**
      * Return the current date as reported by the Fedora server.
-     * 
+     *
      * @throws IOException
      *         if the HTTP Date header is not provided by the server for any
      *         reason, or it is in the wrong format.

@@ -36,6 +36,12 @@ to run all unit tests in the fedora.server.journal package:
 
   ant junit -Dtest=fedora.server.journal.AllUnitTests
 
+There are some offline tests that are not included in the 
+offline test suites due to the time required to execute 
+the test. These tests can be run by entering the following:
+
+  ant junit -Dtest=fedora.client.messaging.TestMessagingClient
+
 Running System Tests
 ====================
 The system tests consist of functional "black box" tests to be
@@ -75,6 +81,23 @@ above:
 
   -Ddemo.format=mets
   -Ddemo.format=atom
+
+There are some system tests that are not included in the system
+test suites due to the time required to execute the test,
+the following tests fall into that category:
+
+  [fedora.test.integration.TestLargeDatastreams]
+    This test adds a 5GB datastream through API-M, then 
+    retrieves it via API-A and API-A-Lite. When running 
+    this test, the server should be configured to allow
+    non-SSL access to API-M and API-A. This test has no
+    dependencies on external hosts and can therefore be 
+    run without external internet access.
+  
+  To run this test, make sure the server has been started[*] 
+  Then enter:
+    
+    ant junit -Dtest=fedora.test.integration.TestLargeDatastreams 
 
 [*] Normally, no additional setup is required when testing a
     Fedora server instance at localhost:8080.  However, if

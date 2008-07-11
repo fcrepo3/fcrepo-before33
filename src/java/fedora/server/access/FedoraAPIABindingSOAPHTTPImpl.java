@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -9,6 +9,7 @@ import java.io.File;
 
 import java.rmi.RemoteException;
 
+import org.apache.axis.AxisFault;
 import org.apache.axis.types.NonNegativeInteger;
 
 import org.apache.log4j.Logger;
@@ -28,7 +29,7 @@ import fedora.server.utilities.TypeUtility;
 
 /**
  * Implements the Fedora Access SOAP service.
- * 
+ *
  * @author Ross Wayland
  */
 public class FedoraAPIABindingSOAPHTTPImpl
@@ -102,7 +103,7 @@ public class FedoraAPIABindingSOAPHTTPImpl
      * <p>
      * Gets a MIME-typed bytestream containing the result of a dissemination.
      * </p>
-     * 
+     *
      * @param PID
      *        The persistent identifier of the Digital Object.
      * @param sDefPID
@@ -166,6 +167,16 @@ public class FedoraAPIABindingSOAPHTTPImpl
                     TypeUtility
                             .convertMIMETypedStreamToGenMIMETypedStream(mimeTypedStream);
             return genMIMETypedStream;
+        } catch (OutOfMemoryError oome) {
+            LOG.error("Out of memory error getting "+ dsID +
+                      " datastream dissemination for " + PID);
+            String exceptionText = "The datastream you are attempting to retrieve is too large " +
+                                   "to transfer via getDatastreamDissemination (as determined " +
+                                   "by the server memory allocation.) Consider retrieving this " +
+                                   "datastream via REST at: ";
+            String restURL = describeRepository().getRepositoryBaseURL() +
+                             "/get/" + PID + "/" + dsID;
+            throw AxisFault.makeFault(new Exception(exceptionText + restURL));
         } catch (Throwable th) {
             LOG.error("Error getting datastream dissemination", th);
             throw AxisUtility.getFault(th);
@@ -252,7 +263,7 @@ public class FedoraAPIABindingSOAPHTTPImpl
      * Gets the object profile which included key metadata about the object and
      * URLs for the Dissemination Index and Item Index of the object.
      * </p>
-     * 
+     *
      * @param PID
      *        The persistent identifier for the digital object.
      * @param asOfDateTime
@@ -283,7 +294,7 @@ public class FedoraAPIABindingSOAPHTTPImpl
      * <p>
      * Gets key information about the repository.
      * </p>
-     * 
+     *
      * @return The repository info data structure.
      * @throws java.rmi.RemoteException
      */
