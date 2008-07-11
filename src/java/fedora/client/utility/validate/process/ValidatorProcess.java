@@ -11,12 +11,12 @@ import java.util.Iterator;
 
 import javax.xml.rpc.ServiceException;
 
-import fedora.client.utility.validate.ObjectSource;
 import fedora.client.utility.validate.ObjectSourceException;
 import fedora.client.utility.validate.ObjectValidator;
-import fedora.client.utility.validate.ValidationObject;
 import fedora.client.utility.validate.ValidationResults;
+import fedora.client.utility.validate.process.ValidatorProcessParameters.IteratorType;
 import fedora.client.utility.validate.remote.RemoteObjectSource;
+import fedora.client.utility.validate.remote.ServiceInfo;
 
 /**
  * A command-line utility that validates objects in a remote repository,
@@ -27,43 +27,61 @@ import fedora.client.utility.validate.remote.RemoteObjectSource;
  */
 public class ValidatorProcess {
 
-    public static void main(String[] args) throws ObjectSourceException {
-        // Parse the parameters.
-        ValidatorProcessParameters parms = new ValidatorProcessParameters(args);
-
-        // Create the tools from we will need.
-        ObjectSource objectSource = null;
-        ValidationResults results;
-
+    /**
+     * Open the connection to the Fedora server.
+     */
+    private static RemoteObjectSource openObjectSource(ServiceInfo serviceInfo) {
         try {
-            objectSource = new RemoteObjectSource(parms.getServiceInfo());
-            results =
+            return new RemoteObjectSource(serviceInfo);
+        } catch (ServiceException e) {
+            throw new IllegalStateException("Failed to initialize "
+                    + "the ValidatorProcess: ", e);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to initialize "
+                    + "the ValidatorProcess: ", e);
+        }
+    }
+
+    /**
+     * The list of PIDs may come from a file, or from a query against the object
+     * source.
+     */
+    private static Iterator<String> getPidIterator(ValidatorProcessParameters parms,
+                                                   RemoteObjectSource objectSource)
+            throws ObjectSourceException {
+        if (parms.getIteratorType() == IteratorType.FS_QUERY) {
+            return objectSource.findObjectPids(parms.getQuery());
+        } else {
+            return new PidfileIterator(parms.getPidfile());
+        }
+    }
+
+    public static void main(String[] args) throws ObjectSourceException {
+        try {
+            // Parse the parameters.
+            ValidatorProcessParameters parms =
+                    new ValidatorProcessParameters(args);
+
+            // Create the tools we will need.
+            RemoteObjectSource objectSource =
+                    openObjectSource(parms.getServiceInfo());
+            ValidationResults results =
                     new Log4jValidationResults(parms.getLogConfigProperties());
 
-        } catch (ServiceException e) {
-            throw new IllegalStateException("Failed to initialize the ValidatorProcess: ",
-                                            e);
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to initialize the ValidatorProcess: ",
-                                            e);
+            // Get the list of PIDs.
+            Iterator<String> pids = getPidIterator(parms, objectSource);
+
+            // Go through the list, validating.
+            ObjectValidator validator = new ObjectValidator(objectSource);
+            while (pids.hasNext()) {
+                results.record(validator.validate(pids.next()));
+            }
+
+            // Display the results.
+            results.closeResults();
+        } catch (ValidatorProcessUsageException e) {
+            System.err.println(e.getMessage());
         }
-
-        /*
-         * Get the list of PIDs for the objects that we will be validating,
-         * based on the query parameters.
-         */
-        Iterator<String> pids = objectSource.findObjectPids(parms.getQuery());
-
-        // Go through the list, validating.
-        ObjectValidator validator = new ObjectValidator(objectSource);
-        while (pids.hasNext()) {
-            ValidationObject object =
-                    objectSource.getValidationObject(pids.next());
-            results.record(validator.validate(object));
-        }
-
-        // Display the results.
-        results.closeResults();
     }
 
 }

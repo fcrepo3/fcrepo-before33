@@ -38,7 +38,8 @@ public class ValidatorProcessParameters {
      */
     public static final String USAGE =
             "usage: ValidatorProcess -serverurl <url> -username <username> "
-                    + "-password <password> {-terms <terms> | -query <query>} "
+                    + "-password <password> "
+                    + "{-terms <terms> | -query <query> | -pidfile <path>} "
                     + "[-logConfig <filename>]";
 
     /**
@@ -61,17 +62,26 @@ public class ValidatorProcessParameters {
 
     /**
      * Optional parameter: a "terms" string that can be passed to the
-     * <code>findObjects</code> method in API-A. Supply either -terms or
-     * -query, but not both. E.g. <code></code>
+     * <code>findObjects</code> method in API-A. Supply any of -terms, -query,
+     * or -pidfile, but not more than one. E.g. <code>demo*</code>
      */
     public static final String PARAMETER_TERMS = "-terms";
 
     /**
      * Optional parameter: a "query" string that can be passed to the
-     * <code>findObjects</code> method in API-A. Supply either -terms or
-     * -query, but not both. E.g. <code>state~A</code>
+     * <code>findObjects</code> method in API-A. Supply any of -terms, -query,
+     * or -pidfile, but not more than one. E.g. <code>state~A</code>
      */
     public static final String PARAMETER_QUERY = "-query";
+
+    /**
+     * Optional parameter: the path to a file containing a list of PIDs - these
+     * are the objects to be validated - one PID per line, blank lines are
+     * ignored, lines beginning with octothorpe ('#'), are comments. Supply any
+     * of -terms, -query, or -pidfile, but not more than one. E.g.
+     * <code>/usr/local/junk/pidfile.txt</code>
+     */
+    public static final String PARAMETER_PIDFILE = "-pidfile";
 
     /**
      * Optional parameter: the name of a Log4J properties-style configuration
@@ -81,6 +91,10 @@ public class ValidatorProcessParameters {
      */
     public static final String PARAMETER_LOG_CONFIG = "-logConfig";
 
+    public enum IteratorType {
+        FS_QUERY, PIDFILE
+    }
+
     private static final Set<String> ALL_PARAMETERS =
             Collections.unmodifiableSet(new HashSet<String>(Arrays
                     .asList(PARAMETER_SERVER_URL,
@@ -88,6 +102,7 @@ public class ValidatorProcessParameters {
                             PARAMETER_PASSWORD,
                             PARAMETER_TERMS,
                             PARAMETER_QUERY,
+                            PARAMETER_PIDFILE,
                             PARAMETER_LOG_CONFIG)));
 
     /**
@@ -103,9 +118,21 @@ public class ValidatorProcessParameters {
     private final Properties logConfigProperties;
 
     /**
+     * If the command-line arguments contain -terms or -query, this is set to
+     * {@link IteratorType#FS_QUERY}. If we have a -pidfile instead, this is
+     * set to {@link IteratorType#PIDFILE}.
+     */
+    private final IteratorType iteratorType;
+
+    /**
      * An API-A query object, built from either the -terms or -query parameter.
      */
     private final FieldSearchQuery fieldSearchQuery;
+
+    /**
+     * A pidfile, from the -pidfile parameter.
+     */
+    private final File pidfile;
 
     /**
      * Parse the command line arguments and check for validity.
@@ -120,7 +147,16 @@ public class ValidatorProcessParameters {
 
         String query = getOptionalParameter(PARAMETER_QUERY, parms);
         String terms = getOptionalParameter(PARAMETER_TERMS, parms);
-        fieldSearchQuery = assembleFieldSearchQuery(query, terms);
+        String pidfileParm = getOptionalParameter(PARAMETER_PIDFILE, parms);
+
+        iteratorType = figureOutIteratorType(query, terms, pidfileParm);
+        if (iteratorType == IteratorType.FS_QUERY) {
+            fieldSearchQuery = assembleFieldSearchQuery(query, terms);
+            pidfile = null;
+        } else {
+            fieldSearchQuery = null;
+            pidfile = assemblePidfile(pidfileParm);
+        }
 
         String logConfigFile =
                 getOptionalParameter(PARAMETER_LOG_CONFIG, parms);
@@ -137,10 +173,12 @@ public class ValidatorProcessParameters {
         for (int i = 0; i < args.length; i++) {
             String key = args[i];
             if (!isKeyword(key)) {
-                throw trouble("'" + key + "' is not a keyword.");
+                throw new ValidatorProcessUsageException("'" + key
+                        + "' is not a keyword.");
             }
             if (!ALL_PARAMETERS.contains(key)) {
-                throw trouble("'" + key + "' is not a recognized keyword.");
+                throw new ValidatorProcessUsageException("'" + key
+                        + "' is not a recognized keyword.");
             }
             if (i >= args.length - 1) {
                 parms.put(key, null);
@@ -169,12 +207,14 @@ public class ValidatorProcessParameters {
     private String getRequiredParameter(String keyword,
                                         Map<String, String> parms) {
         if (!parms.containsKey(keyword)) {
-            throw trouble("Parameter '" + keyword + "' is required.");
+            throw new ValidatorProcessUsageException("Parameter '" + keyword
+                    + "' is required.");
         }
 
         String value = parms.get(keyword);
         if (value == null) {
-            throw trouble("Parameter '" + keyword + "' requires a value.");
+            throw new ValidatorProcessUsageException("Parameter '" + keyword
+                    + "' requires a value.");
         } else {
             return value;
         }
@@ -190,8 +230,9 @@ public class ValidatorProcessParameters {
         try {
             return new URL(urlString);
         } catch (MalformedURLException e) {
-            throw trouble("Value '" + urlString + "' for parameter '" + keyword
-                    + "' is not a valid URL: " + e.getMessage());
+            throw new ValidatorProcessUsageException("Value '" + urlString
+                    + "' for parameter '" + keyword + "' is not a valid URL: "
+                    + e.getMessage());
         }
     }
 
@@ -207,7 +248,7 @@ public class ValidatorProcessParameters {
 
         String value = parms.get(keyword);
         if (value == null) {
-            throw trouble("If parameter '" + keyword
+            throw new ValidatorProcessUsageException("If parameter '" + keyword
                     + "' is provided, it must have a value.");
         } else {
             return value;
@@ -215,31 +256,63 @@ public class ValidatorProcessParameters {
     }
 
     /**
+     * Look at the parameters. Is this a query-based request or a pidfile-based
+     * request? If we put in too many parms, or not enough, that's a problem.
+     */
+    private IteratorType figureOutIteratorType(String query,
+                                               String terms,
+                                               String pidfileParm) {
+        int howMany =
+                (query == null ? 0 : 1) + (terms == null ? 0 : 1)
+                        + (pidfileParm == null ? 0 : 1);
+        if (howMany == 0) {
+            throw new ValidatorProcessUsageException("You must provide "
+                    + "either '" + PARAMETER_QUERY + "', '" + PARAMETER_TERMS
+                    + "' or '" + PARAMETER_PIDFILE + "'.");
+        }
+        if (howMany > 1) {
+            throw new ValidatorProcessUsageException("You must provide only "
+                    + "one of these parameters: '" + PARAMETER_QUERY + "', '"
+                    + PARAMETER_TERMS + "' or '" + PARAMETER_PIDFILE + "'.");
+        }
+
+        return pidfileParm == null ? IteratorType.FS_QUERY
+                : IteratorType.PIDFILE;
+    }
+
+    /**
      * A {@link FieldSearchQuery} may be made from a terms string or a query
      * string, but not both.
      */
     private FieldSearchQuery assembleFieldSearchQuery(String query, String terms) {
-        if (query == null) {
-            if (terms == null) {
-                throw trouble("You must provide either '" + PARAMETER_QUERY
-                        + "' or '" + PARAMETER_TERMS + "'.");
-            } else {
-                return new FieldSearchQuery(terms);
-            }
+        if (terms != null) {
+            return new FieldSearchQuery(terms);
         } else {
-            if (terms == null) {
-                try {
-                    return new FieldSearchQuery(Condition.getConditions(query));
-                } catch (QueryParseException e) {
-                    throw trouble("Value '" + query + "' of parameter '"
-                            + PARAMETER_QUERY
-                            + "' is not a valid query string.");
-                }
-            } else {
-                throw trouble("You must provide either '" + PARAMETER_QUERY
-                        + "' or '" + PARAMETER_TERMS + "', but not both.");
+            try {
+                return new FieldSearchQuery(Condition.getConditions(query));
+            } catch (QueryParseException e) {
+                throw new ValidatorProcessUsageException("Value '" + query
+                        + "' of parameter '" + PARAMETER_QUERY
+                        + "' is not a valid query string.");
             }
         }
+    }
+
+    /**
+     * Is there a valid file out there for this parm? We already know that the
+     * parms is not null.
+     */
+    private File assemblePidfile(String pidfileParm) {
+        File pidfile = new File(pidfileParm);
+        if (!pidfile.exists()) {
+            throw new ValidatorProcessUsageException("-pidfile does not exist: '"
+                    + pidfileParm + "'");
+        }
+        if (!pidfile.canRead()) {
+            throw new ValidatorProcessUsageException("-pidfile is not readable: '"
+                    + pidfileParm + "'");
+        }
+        return pidfile;
     }
 
     /**
@@ -253,31 +326,24 @@ public class ValidatorProcessParameters {
             File propertiesFile = new File(logConfigFilename);
 
             if (!propertiesFile.exists()) {
-                throw trouble(PARAMETER_LOG_CONFIG + " file '"
-                        + logConfigFilename + "' does not exist.");
+                throw new ValidatorProcessUsageException(PARAMETER_LOG_CONFIG
+                        + " file '" + logConfigFilename + "' does not exist.");
             }
             if (!propertiesFile.isFile() || !propertiesFile.canRead()) {
-                throw trouble(PARAMETER_LOG_CONFIG + " file '"
-                        + logConfigFilename + "' is not a readable file.");
+                throw new ValidatorProcessUsageException(PARAMETER_LOG_CONFIG
+                        + " file '" + logConfigFilename
+                        + "' is not a readable file.");
             }
 
             try {
                 props.load(new FileInputStream(propertiesFile));
             } catch (IOException e) {
-                throw trouble("Failed to load properties from "
-                        + PARAMETER_LOG_CONFIG + " file '" + logConfigFilename
-                        + "'");
+                throw new ValidatorProcessUsageException("Failed to load "
+                        + "properties from " + PARAMETER_LOG_CONFIG + " file '"
+                        + logConfigFilename + "'");
             }
         }
         return props;
-    }
-
-    /**
-     * Found something wrong with the command-line arguments? Prepare an
-     * exception to be thrown.
-     */
-    private IllegalArgumentException trouble(String message) {
-        return new IllegalArgumentException(message + "\n" + USAGE);
     }
 
     public ServiceInfo getServiceInfo() {
@@ -294,8 +360,15 @@ public class ValidatorProcessParameters {
         return props;
     }
 
+    public IteratorType getIteratorType() {
+        return iteratorType;
+    }
+
     public FieldSearchQuery getQuery() {
         return fieldSearchQuery;
     }
 
+    public File getPidfile() {
+        return pidfile;
+    }
 }

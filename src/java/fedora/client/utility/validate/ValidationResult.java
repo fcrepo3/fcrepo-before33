@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import fedora.client.utility.validate.types.ObjectInfo;
+
 /**
  * <p>
  * The accumulated result of validating on a digital object. This result
@@ -17,8 +19,8 @@ import java.util.List;
  * </p>
  * <p>
  * Each notation has a {@link Level} associated with it, and if any of these
- * levels are {@link Level#ERROR ERROR}, the entire result is considered to be
- * a "failure".
+ * levels are {@link Level#ERROR ERROR}, the validation is considered to have
+ * failed.
  * </p>
  * 
  * @author Jim Blake
@@ -26,15 +28,20 @@ import java.util.List;
 public class ValidationResult {
 
     public enum Level {
-        INFO, WARN, ERROR
+        /** Information of interest - not a problem. */
+        INFO,
+        /** May be a problem - subject to interpretation. */
+        WARN,
+        /** Validation failed - object is not valid. */
+        ERROR
     };
 
-    private final ValidationObject object;
+    private final ObjectInfo object;
 
     private final List<ValidationResultNotation> notes =
             new ArrayList<ValidationResultNotation>();
 
-    public ValidationResult(ValidationObject object) {
+    public ValidationResult(ObjectInfo object) {
         if (object == null) {
             throw new IllegalArgumentException("object may not be null.");
         }
@@ -45,7 +52,7 @@ public class ValidationResult {
         notes.add(note);
     }
 
-    public ValidationObject getObject() {
+    public ObjectInfo getObject() {
         return object;
     }
 
@@ -65,6 +72,26 @@ public class ValidationResult {
             }
         }
         return severity;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!this.getClass().equals(obj.getClass())) {
+            return false;
+        }
+        ValidationResult that = (ValidationResult) obj;
+        return object.equals(that.object) && notes.equals(that.notes);
+    }
+
+    @Override
+    public int hashCode() {
+        return object.hashCode() ^ notes.hashCode();
     }
 
     @Override

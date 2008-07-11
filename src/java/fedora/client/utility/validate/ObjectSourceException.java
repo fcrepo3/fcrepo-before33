@@ -13,6 +13,9 @@ package fedora.client.utility.validate;
 public class ObjectSourceException
         extends Exception {
 
+    /** It's serializable, so give it a version ID. */
+    private static final long serialVersionUID = 1L;
+
     public ObjectSourceException() {
         super();
     }

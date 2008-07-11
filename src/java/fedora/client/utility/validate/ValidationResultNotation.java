@@ -15,6 +15,13 @@ import fedora.client.utility.validate.ValidationResult.Level;
  */
 public class ValidationResultNotation {
 
+    public static ValidationResultNotation objectNotFound(String pid) {
+        return new ValidationResultNotation(Level.ERROR,
+                                            "ObjectNotFound",
+                                            "Object not found for pid '" + pid
+                                                    + "'");
+    }
+
     public static ValidationResultNotation noContentModel() {
         return new ValidationResultNotation(Level.INFO,
                                             "NoContentModel",
@@ -46,22 +53,60 @@ public class ValidationResultNotation {
                                                     + e + "'"));
     }
 
-    public static ValidationResultNotation contentModelIsMissingDs(String pid,
-                                                                   String dsId) {
+    public static ValidationResultNotation contentModelNotValid(InvalidContentModelException e) {
         return new ValidationResultNotation(Level.ERROR,
-                                            "ContentModelIsMissingDs",
-                                            ("Content model '"
-                                                    + pid
-                                                    + "' has no datastream named '"
-                                                    + dsId + "'"));
+                                            "ContentModelNotValid",
+                                            "Attempt to build Content Model '"
+                                                    + e.getContentModelPid()
+                                                    + "' produced this error '"
+                                                    + e + "'");
     }
 
+    public static ValidationResultNotation noMatchingDatastreamId(String contentModelPid,
+                                                                  String dsId) {
+        return new ValidationResultNotation(Level.ERROR,
+                                            "NoMatchingDatastreamId",
+                                            "Object has no datastream '"
+                                                    + dsId
+                                                    + "', required by content model '"
+                                                    + contentModelPid + "'");
+    }
+
+    public static ValidationResultNotation datastreamDoesNotMatchForms(String contentModelPid,
+                                                                       String dsId) {
+        return new ValidationResultNotation(Level.ERROR,
+                                            "DatastreamDoesNotMatchForms",
+                                            "Datastream '"
+                                                    + dsId
+                                                    + "' doesn't match any form "
+                                                    + "in the corresponding type "
+                                                    + "model of content model '"
+                                                    + contentModelPid + "'.");
+    }
+
+    /**
+     * The severity of the notation. Generally {@link Level#INFO} is not a
+     * problem, {@link Level#ERROR} means that the object is invalid, and
+     * {@link Level#WARN} is subject to interpretation.
+     */
     private final Level level;
 
+    /**
+     * The "type" of the notation. Even though this is not an enumeration, it
+     * should be chosen from a small number of values. This encourages the
+     * ability to mask unwanted errors by category.
+     */
     private final String category;
 
+    /**
+     * The text of the notation.
+     */
     private final String message;
 
+    /**
+     * By restricting instance creation to the various factory methods, we know
+     * that there are a limited number of categories.
+     */
     private ValidationResultNotation(Level level,
                                      String category,
                                      String message) {
@@ -84,6 +129,37 @@ public class ValidationResultNotation {
 
     public String getMessage() {
         return message;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!this.getClass().equals(obj.getClass())) {
+            return false;
+        }
+        ValidationResultNotation that = (ValidationResultNotation) obj;
+
+        return equivalent(level, that.level)
+                && equivalent(category, that.category)
+                && equivalent(message, that.message);
+    }
+
+    private boolean equivalent(Object o1, Object o2) {
+        return o1 == null ? o2 == null : o1.equals(o2);
+    }
+
+    @Override
+    public int hashCode() {
+        return hashIt(level) ^ hashIt(category) ^ hashIt(message);
+    }
+
+    private int hashIt(Object o) {
+        return o == null ? 0 : o.hashCode();
     }
 
     @Override

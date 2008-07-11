@@ -378,7 +378,7 @@ The fedora-batch-buildingest command line utility enables the running of the bat
 <h2 id="validator">fedora-validate-objects</h2>
 <span class="plaintext">
 <strong>fedora-validate-objects</strong> -serverurl [server-base-url] -username [user] -password [password] 
-{-terms [terms] | -query [query]} -logConfig [log4j-properties-file]
+{-terms [terms] | -query [query] | -pidfile [path]} -logConfig [log4j-properties-file]
 <br />
 <br />
 Where:
@@ -390,18 +390,26 @@ Where:
   <li><strong>[password]</strong> - The password for the Fedora administrator user.</li>
   <li><strong>[terms]</strong> - A "terms" string, as for the "FindObjects" method of API-A</li>
   <li><strong>[query]</strong> - A "query" string, as for the "FindObjects" method of API-A</li>
+  <li><strong>[pidfile]</strong> - The path to a text file containing the PIDs of the 
+  									objects to be validated, one PID per line.</li>
   <li><strong>[log4j-properties-file]</strong> - The full path to a Log4J properties file. Optional.</li>
 </ul>
 <span class="plaintext">
+<p>
 The fedora-validate-objects command line utility runs a validation task against a set of objects
   in the specified repository.
 Access to the repository is provided via the "-serverurl", "-username" and "-password" parameters.
-The set of objects is specified using either a "terms" phrase or a "query" sequence 
-  (one or the other is required, but not both). 
-These correspond to the "terms" and "query" strings used by the FindObjects method of  
+The set of objects is specified using either a "terms" phrase, a "query" sequence, or a "pidfile" 
+  (one of these is required, but more than one is not allowed). 
+The "terms" and "query" parameters correspond to the strings used by the FindObjects method of  
   <a href="../../server/webservices/apialite/index.html#findObjects">API-A</a>.
+The PID file is a plain text file containing one PID per line, 
+  ignoring blank lines and comment lines (lines that start with '#').
+</p>
+<p>
 The output of the validator can be controlled with the Log4J properties file. This can be used to 
   suppress certain categories of messages or to restrict output by severity level.
+</p>
 <pre><code># In this example, messages regarding objects with no content model are disabled.
  
 # An appender for non-validator logging.

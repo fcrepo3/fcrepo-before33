@@ -1,5 +1,5 @@
 
-package fedora.client.utility.validate.process;
+package fedora.client.utility.validate.types;
 
 import junit.framework.JUnit4TestAdapter;
 
@@ -7,8 +7,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses( {TestPidfileIterator.class,
-        TestValidatorProcessParameters.class})
+@Suite.SuiteClasses( {TestDsCompositeModelDoc.class})
 public class AllUnitTests {
 
     // Supports legacy tests runners

@@ -5,6 +5,9 @@
 
 package fedora.client.utility.validate.process;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.Level;
@@ -63,7 +66,26 @@ public class Log4jValidationResults
         return props;
     }
 
-    private int numberOfResults;
+    /** How many notations were at error level? */
+    private int numberOfErrors;
+
+    /** How many notations were at error level and printed to the log? */
+    private int numberOfFilteredErrors;
+
+    /** How many notations were at warning level? */
+    private int numberOfWarnings;
+
+    /** How many notations were at warning level and printed to the log? */
+    private int numberOfFilteredWarnings;
+
+    /** How many object had no errors and no warnings? */
+    private int numberOfValidObjects;
+
+    /** How many objects had errors? */
+    private int numberOfInvalidObjects;
+
+    /** How many objects had warnings but no errors? */
+    private int numberOfIndeterminateObjects;
 
     public Log4jValidationResults(Properties configProperties) {
         LogManager.resetConfiguration();
@@ -79,16 +101,19 @@ public class Log4jValidationResults
      * This class does not maintain a collection of the {@link ValidationResult}
      * objects. Instead, it logs each as it arrives, if it is severe enough.
      */
-    public void record(ValidationResult result) {
-        numberOfResults++;
+    public void record(ValidationResult rawResult) {
+        // If the overall log level is set to debug, dump the result to the log.
+        getBaseLogger().debug(rawResult.toString());
 
-        getBaseLogger().debug(result.toString());
-        
-        for (ValidationResultNotation note : result.getNotes()) {
-            Logger logger = getNoteLogger(note);
-            Level level = getNoteLevel(note);
-            String message = assembleMessage(result, note);
-            logger.log(level, message);
+        // Process the result to get the info we will need.
+        Log4jValidationResult result = new Log4jValidationResult(rawResult);
+
+        // Analyze this result and update the statistics accordingly.
+        incrementTallys(result);
+
+        // Any notes that are not filtered out get written to the log.
+        for (Log4jNote note : result.getNotes()) {
+            note.log();
         }
     }
 
@@ -98,29 +123,158 @@ public class Log4jValidationResults
      */
     public void closeResults() {
         Logger logger = getBaseLogger();
-        logger.info("Validated " + numberOfResults + " objects.");
+
+        logger.info("Validated " + numberOfObjects() + " objects: "
+                + numberOfValidObjects + " valid, " + numberOfInvalidObjects
+                + " invalid, " + numberOfIndeterminateObjects
+                + " indeterminate.");
+
+        if (numberOfErrors == numberOfFilteredErrors
+                && numberOfWarnings == numberOfFilteredWarnings) {
+            logger.info(numberOfErrors + " errors, " + numberOfWarnings
+                    + " warnings.");
+        } else {
+            logger.info(numberOfFilteredErrors + " filtered errors ("
+                    + numberOfErrors + " unfiltered), "
+                    + numberOfFilteredWarnings + " filtered warnings ("
+                    + numberOfWarnings + " unfiltered)");
+        }
     }
 
     /**
-     * The log message contains both the object PID and the content of the
-     * notation.
+     * How many object were validated?
      */
-    private String assembleMessage(ValidationResult result,
-                                   ValidationResultNotation note) {
-        String pid = result.getObject().getPid();
-        return "pid='" + pid + "'  " + note.getMessage();
+    private int numberOfObjects() {
+        return numberOfValidObjects + numberOfIndeterminateObjects
+                + numberOfInvalidObjects;
     }
 
-    private Level getNoteLevel(ValidationResultNotation note) {
-        return Level.toLevel(note.getLevel().toString());
-    }
+    /**
+     * Adjust the running tallys to include this result.
+     */
+    private void incrementTallys(Log4jValidationResult result) {
+        // For the whole record: valid? invalid? indeterminate?
+        switch (result.getSeverityLevel()) {
+            case ERROR:
+                numberOfInvalidObjects++;
+                break;
+            case WARN:
+                numberOfIndeterminateObjects++;
+                break;
+            default:
+                numberOfValidObjects++;
+                break;
+        }
 
-    private Logger getNoteLogger(ValidationResultNotation note) {
-        String category = LOGGING_CATEGORY_PREFIX + "." + note.getCategory();
-        return Logger.getLogger(category);
+        for (Log4jNote note : result.getNotes()) {
+            // For each note: error? warning?
+            switch (note.getLevel()) {
+                case ERROR:
+                    numberOfErrors++;
+                    break;
+                case WARN:
+                    numberOfWarnings++;
+                    break;
+                default:
+                    break;
+            }
+            if (note.isLoggable()) {
+                // For each loggable note: error? warning?
+                switch (note.getLevel()) {
+                    case ERROR:
+                        numberOfFilteredErrors++;
+                        break;
+                    case WARN:
+                        numberOfFilteredWarnings++;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
     }
 
     private Logger getBaseLogger() {
         return Logger.getLogger(LOGGING_CATEGORY_PREFIX);
+    }
+
+    /**
+     * Extracts information from a {@link ValidationResult} and then serves it
+     * up when we need it.
+     */
+    private static class Log4jValidationResult {
+
+        private final String pid;
+
+        private final ValidationResult.Level severityLevel;
+
+        private final List<Log4jNote> notes;
+
+        public Log4jValidationResult(ValidationResult rawResult) {
+            pid = rawResult.getObject().getPid();
+            severityLevel = rawResult.getSeverityLevel();
+            List<Log4jNote> notes = new ArrayList<Log4jNote>();
+            for (ValidationResultNotation rawNote : rawResult.getNotes()) {
+                notes.add(new Log4jNote(rawNote, pid));
+            }
+            this.notes = Collections.unmodifiableList(notes);
+        }
+
+        public String getPid() {
+            return pid;
+        }
+
+        public ValidationResult.Level getSeverityLevel() {
+            return severityLevel;
+        }
+
+        public List<Log4jNote> getNotes() {
+            return notes;
+        }
+    }
+
+    /**
+     * Extracts information from a {@link ValidationResultNotation} and then
+     * serves it up when we need it.
+     */
+    private static class Log4jNote {
+
+        private final ValidationResult.Level level;
+
+        private final Level loggingLevel;
+
+        private final Logger logger;
+
+        private final boolean loggable;
+
+        private final String message;
+
+        public Log4jNote(ValidationResultNotation rawNote, String objectPid) {
+            level = rawNote.getLevel();
+            loggingLevel = Level.toLevel(rawNote.getLevel().toString());
+
+            String category =
+                    LOGGING_CATEGORY_PREFIX + "." + rawNote.getCategory();
+            logger = Logger.getLogger(category);
+
+            loggable =
+                    loggingLevel.isGreaterOrEqual(logger.getEffectiveLevel());
+
+            message = "pid='" + objectPid + "'  " + rawNote.getMessage();
+        }
+
+        public ValidationResult.Level getLevel() {
+            return level;
+        }
+
+        public boolean isLoggable() {
+            return loggable;
+        }
+
+        public void log() {
+            if (loggable) {
+                logger.log(loggingLevel, message);
+            }
+        }
     }
 }

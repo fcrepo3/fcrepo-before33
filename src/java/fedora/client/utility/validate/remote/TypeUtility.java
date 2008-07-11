@@ -9,16 +9,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import fedora.client.utility.validate.types.DatastreamInfo;
+import fedora.client.utility.validate.types.RelationshipInfo;
 
 import fedora.server.search.Condition;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.search.ObjectFields;
-import fedora.server.storage.types.DatastreamDef;
-import fedora.server.storage.types.RelationshipTuple;
 import fedora.server.types.gen.ComparisonOperator;
+import fedora.server.types.gen.Datastream;
 import fedora.server.types.gen.ListSession;
+import fedora.server.types.gen.RelationshipTuple;
 import fedora.server.utilities.DateUtility;
 
 /**
@@ -163,57 +168,50 @@ public class TypeUtility {
     }
 
     /**
-     * Convert an array of WSDL-style
-     * {@link fedora.server.types.gen.RelationshipTuple RelationshipTuple}s
-     * into a list of local {@link RelationshipTuple}s.
+     * Convert an array of WSDL-style {@link RelationshipTuple}s into a list of
+     * local {@link RelationshipInfo} objects.
      */
-    public static List<RelationshipTuple> convertGenRelsTupleArrayToRelsTupleList(fedora.server.types.gen.RelationshipTuple[] array) {
+    public static List<RelationshipInfo> convertGenRelsTupleArrayToRelationshipInfoList(RelationshipTuple[] array) {
         if (array == null) {
             return Collections.emptyList();
         }
 
-        List<RelationshipTuple> list =
-                new ArrayList<RelationshipTuple>(array.length);
-        for (fedora.server.types.gen.RelationshipTuple genTuple : array) {
-            list.add(convertGenRelsTupleToRelsTuple(genTuple));
+        List<RelationshipInfo> list =
+                new ArrayList<RelationshipInfo>(array.length);
+        for (RelationshipTuple genTuple : array) {
+            list.add(convertGenRelsTupleToRelationshipInfo(genTuple));
         }
         return list;
     }
 
     /**
-     * Convert a WSDL-style
-     * {@link fedora.server.types.gen.RelationshipTuple RelationshipTyple} into
-     * a local {@link RelationshipTuple}.
+     * Convert a WSDL-style {@link RelationshipTuple RelationshipTuple} into a
+     * local {@link RelationshipInfo}.
      */
-    public static RelationshipTuple convertGenRelsTupleToRelsTuple(fedora.server.types.gen.RelationshipTuple genTuple) {
-        return new RelationshipTuple(genTuple.getSubject(),
-                                     genTuple.getPredicate(),
-                                     genTuple.getObject(),
-                                     genTuple.isIsLiteral(),
-                                     genTuple.getDatatype());
+    public static RelationshipInfo convertGenRelsTupleToRelationshipInfo(RelationshipTuple genTuple) {
+        return new RelationshipInfo(genTuple.getPredicate(), genTuple
+                .getObject());
     }
 
     /**
-     * Convert an array of WSDL-style
-     * {@link fedora.server.types.gen.DatastreamDef DatastreamDef}s into a list
-     * of local {@link DatastreamDef}s.
+     * Convert an array of WSDL-style {@link Datastream}s into a {@link Set} of
+     * local {@link DatastreamInfo} objects.
      */
-    public static List<DatastreamDef> convertGenDatastreamDefArrayToDatastreamDefList(fedora.server.types.gen.DatastreamDef[] genDefs) {
-        List<DatastreamDef> list = new ArrayList<DatastreamDef>(genDefs.length);
-        for (fedora.server.types.gen.DatastreamDef def : genDefs) {
-            list.add(convertGenDatastreamDefToDatastreamDef(def));
+    public static Set<DatastreamInfo> convertGenDatastreamArrayToDatastreamInfoSet(Datastream[] genDss) {
+        Set<DatastreamInfo> set = new HashSet<DatastreamInfo>(genDss.length);
+        for (Datastream ds : genDss) {
+            set.add(convertGenDatastreamDefToDatastreamInfo(ds));
         }
-        return list;
+        return set;
     }
 
     /**
-     * Convert a WSDL-style
-     * {@link fedora.server.types.gen.DatastreamDef DatastreamDef} into a local
-     * {@link DatastreamDef}.
+     * Convert a WSDL-style {@link Datastream} into a local
+     * {@link DatastreamInfo}.
      */
-    public static DatastreamDef convertGenDatastreamDefToDatastreamDef(fedora.server.types.gen.DatastreamDef genDef) {
-        return new DatastreamDef(genDef.getID(), genDef.getLabel(), genDef
-                .getMIMEType());
+    private static DatastreamInfo convertGenDatastreamDefToDatastreamInfo(Datastream ds) {
+        return new DatastreamInfo(ds.getID(), ds.getMIMEType(), ds
+                .getFormatURI());
     }
 
     /**
@@ -222,4 +220,5 @@ public class TypeUtility {
     private TypeUtility() {
         // Nothing to instantiate.
     }
+
 }

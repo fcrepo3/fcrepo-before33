@@ -5,9 +5,8 @@
 
 package fedora.client.utility.validate;
 
-import java.util.Iterator;
-
-import fedora.server.search.FieldSearchQuery;
+import fedora.client.utility.validate.types.ContentModelInfo;
+import fedora.client.utility.validate.types.ObjectInfo;
 
 /**
  * Provides an abstract wrapper around the repository of digital objects.
@@ -17,16 +16,15 @@ import fedora.server.search.FieldSearchQuery;
 public interface ObjectSource {
 
     /**
-     * Get a series of PIDs, representing all digital objects in the repository
-     * that satisfy the specified query.
-     */
-    Iterator<String> findObjectPids(FieldSearchQuery query)
-            throws ObjectSourceException;
-
-    /**
      * Get the object that has this PID, or <code>null</code> if there is no
      * such object.
      */
-    ValidationObject getValidationObject(String pid)
-            throws ObjectSourceException;
+    ObjectInfo getValidationObject(String pid) throws ObjectSourceException;
+
+    /**
+     * Get the object that has this PID (or <code>null</code>) and confirm
+     * that it is a valid content model.
+     */
+    ContentModelInfo getContentModelInfo(String pid)
+            throws ObjectSourceException, InvalidContentModelException;
 }
