@@ -162,6 +162,10 @@ ol{
 ol h2{
   display: inline;
 }
+ol ol{
+  list-style: decimal inside;
+  margin-left: 1em;
+}
 ol#content{
   margin-left: 1.285em;
 }
