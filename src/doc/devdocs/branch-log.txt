@@ -11,6 +11,12 @@ Jim Blake      (j2blake)
 
 Branch History
 --------------
+dev-149786
+  Created   : 2008/07/10 from trunk r7458
+  Developer : Aaaron Birkland
+  Reviewer  : Chris Wilper
+  Merged    : 2008/07/16 into trunk 7527
+
 dev-149799
   Created   : 2008/07/10 from trunk r7449
   Developer : Bill Branan
@@ -51,7 +57,7 @@ dev-149377
   Created   : 2008/06/22 from trunk r7328
   Developer : Chris Wilper
   Reviewer  : Bill Branan
-  Merged    : 
+  Merged    : 2008/07/16 into trunk r7522
 
 dev-149292
   Created   : 2008/06/17 from trunk r7328
