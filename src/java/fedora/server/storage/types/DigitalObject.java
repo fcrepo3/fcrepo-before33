@@ -248,7 +248,7 @@ public interface DigitalObject {
      * @return The property Map.
      */
     public Map<String, String> getExtProperties();
-
+    
     /**
      * Determine of the object contains the given relationship.
      * <p>

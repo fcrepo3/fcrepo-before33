@@ -6,14 +6,14 @@
 package fedora.common;
 
 import fedora.common.policy.ActionNamespace;
-import fedora.common.policy.ServiceDefinitionNamespace;
-import fedora.common.policy.ServiceDeploymentNamespace;
 import fedora.common.policy.DatastreamNamespace;
 import fedora.common.policy.DisseminatorNamespace;
 import fedora.common.policy.EnvironmentNamespace;
 import fedora.common.policy.HttpRequestNamespace;
 import fedora.common.policy.ObjectNamespace;
 import fedora.common.policy.ResourceNamespace;
+import fedora.common.policy.ServiceDefinitionNamespace;
+import fedora.common.policy.ServiceDeploymentNamespace;
 import fedora.common.policy.SubjectNamespace;
 import fedora.common.rdf.DublinCoreNamespace;
 import fedora.common.rdf.FedoraModelNamespace;
@@ -33,13 +33,18 @@ import fedora.common.xml.format.FedoraAudit1_0Format;
 import fedora.common.xml.format.FedoraBESecurity1_0Format;
 import fedora.common.xml.format.FedoraBatchModify1_1Format;
 import fedora.common.xml.format.FedoraDSCompositeModel1_0Format;
+import fedora.common.xml.format.FedoraDSInputSpec1_0Format;
 import fedora.common.xml.format.FedoraObjectDatastreams1_0Format;
 import fedora.common.xml.format.FedoraObjectHistory1_0Format;
 import fedora.common.xml.format.FedoraObjectItems1_0Format;
 import fedora.common.xml.format.FedoraObjectMethods1_0Format;
 import fedora.common.xml.format.FedoraObjectProfile1_0Format;
 import fedora.common.xml.format.FedoraPIDList1_0Format;
+import fedora.common.xml.format.FedoraRELSExt1_0Format;
+import fedora.common.xml.format.FedoraRELSInt1_0Format;
 import fedora.common.xml.format.FedoraRepositoryDesc1_0Format;
+import fedora.common.xml.format.FedoraSDefMethodMap1_0Format;
+import fedora.common.xml.format.FedoraSDepMethodMap1_0Format;
 import fedora.common.xml.format.METSFedoraExt1_0Format;
 import fedora.common.xml.format.METSFedoraExt1_1Format;
 import fedora.common.xml.format.OAIDC2_0Format;
@@ -47,6 +52,7 @@ import fedora.common.xml.format.OAIFriends2_0Format;
 import fedora.common.xml.format.OAIIdentifier2_0Format;
 import fedora.common.xml.format.OAIPMH2_0Format;
 import fedora.common.xml.format.OAIProvenance2_0Format;
+import fedora.common.xml.format.XACMLPolicy1_0Format;
 import fedora.common.xml.namespace.FOXMLNamespace;
 import fedora.common.xml.namespace.FedoraAPINamespace;
 import fedora.common.xml.namespace.FedoraAccessNamespace;
@@ -73,6 +79,7 @@ import fedora.common.xml.namespace.SOAPNamespace;
 import fedora.common.xml.namespace.WSDLHTTPNamespace;
 import fedora.common.xml.namespace.WSDLMIMENamespace;
 import fedora.common.xml.namespace.WSDLNamespace;
+import fedora.common.xml.namespace.XACMLPolicyNamespace;
 import fedora.common.xml.namespace.XLinkNamespace;
 import fedora.common.xml.namespace.XMLNSNamespace;
 import fedora.common.xml.namespace.XMLXSDNamespace;
@@ -402,6 +409,13 @@ public interface Constants {
             WSDLMIMENamespace.getInstance();
 
     /**
+     * The XACML Policy XML namespace;
+     * <code>urn:oasis:names:tc:xacml:1.0:policy</code>
+     */
+    public static final XACMLPolicyNamespace XACML_POLICY =
+            XACMLPolicyNamespace.getInstance();
+
+    /**
      * The XLink XML namespace; <code>http://www.w3.org/1999/xlink</code>
      */
     public static final XLinkNamespace XLINK = XLinkNamespace.getInstance();
@@ -455,6 +469,13 @@ public interface Constants {
             FedoraBESecurity1_0Format.getInstance();
 
     /**
+     * The Fedora Datastream Input Spec 1.0 XML format;
+     * <code>info:fedora/fedora-system:FedoraDSInputSpec-1.0</code>
+     */
+    public static final FedoraDSInputSpec1_0Format DS_INPUT_SPEC1_0 =
+            FedoraDSInputSpec1_0Format.getInstance();
+
+    /**
      * The Fedora DS Composite Model 1.0 XML format;
      * <code>info:fedora/fedora-system:FedoraDSCompositeModel-1.0</code>
      */
@@ -504,11 +525,39 @@ public interface Constants {
             FedoraPIDList1_0Format.getInstance();
 
     /**
+     * The Fedora RELS-EXT 1.0 XML format;
+     * <code>info:fedora/fedora-system:FedoraRELSExt-1.0</code>
+     */
+    public static final FedoraRELSExt1_0Format RELS_EXT1_0 =
+            FedoraRELSExt1_0Format.getInstance();
+
+    /**
+     * The Fedora RELS-INT 1.0 XML format;
+     * <code>info:fedora/fedora-system:FedoraRELSInt-1.0</code>
+     */
+    public static final FedoraRELSExt1_0Format RELS_INT1_0 =
+            FedoraRELSExt1_0Format.getInstance();
+
+    /**
      * The Fedora Repsitory Description 1.0 XML format;
      * <code>info:fedora/fedora-system:FedoraRepositoryDesc-1.0</code>
      */
     public static final FedoraRepositoryDesc1_0Format REPO_DESC1_0 =
             FedoraRepositoryDesc1_0Format.getInstance();
+
+    /**
+     * The Fedora Service Definition Method Map 1.0 XML format;
+     * <code>info:fedora/fedora-system:FedoraSDefMethodMap-1.0</code>
+     */
+    public static final FedoraSDefMethodMap1_0Format SDEF_METHOD_MAP1_0 =
+            FedoraSDefMethodMap1_0Format.getInstance();
+
+    /**
+     * The Fedora Service Deployment Method Map 1.0 XML format;
+     * <code>info:fedora/fedora-system:FedoraSDepMethodMap-1.0</code>
+     */
+    public static final FedoraSDepMethodMap1_0Format SDEP_METHOD_MAP1_0 =
+            FedoraSDepMethodMap1_0Format.getInstance();
 
     /**
      * Legacy FOXML 1.0 format string
@@ -594,6 +643,13 @@ public interface Constants {
      */
     public static final OAIProvenance2_0Format OAI_PROV2_0 =
             OAIProvenance2_0Format.getInstance();
+
+    /**
+     * The XACML Policy 1.0 XML format;
+     * <code>urn:oasis:names:tc:xacml:1.0:policy</code>
+     */
+    public static final XACMLPolicy1_0Format XACML_POLICY1_0 =
+            XACMLPolicy1_0Format.getInstance();
 
     //---
     // Static helpers

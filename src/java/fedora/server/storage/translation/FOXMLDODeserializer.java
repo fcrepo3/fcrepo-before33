@@ -325,13 +325,7 @@ public class FOXMLDODeserializer
                         stateCode = "A";
                     }
                     m_obj.setState(stateCode);
-                }
-                /* FIXME: No longer object cModel properties. OK to remove? */
-                //else if (m_objPropertyName.equals(MODEL.CONTENT_MODEL.uri)
-                //        && m_format.equals(FOXML1_0)) {
-                //    m_obj.setContentModelId(grab(a, FOXML.uri, "VALUE"));
-                //} 
-                else if (m_objPropertyName.equals(MODEL.LABEL.uri)) {
+                } else if (m_objPropertyName.equals(MODEL.LABEL.uri)) {
                     m_obj.setLabel(grab(a, FOXML.uri, "VALUE"));
                 } else if (m_objPropertyName.equals(MODEL.OWNER.uri)) {
                     m_obj.setOwnerId(grab(a, FOXML.uri, "VALUE"));
@@ -342,18 +336,11 @@ public class FOXMLDODeserializer
                         .equals(VIEW.LAST_MODIFIED_DATE.uri)) {
                     m_obj.setLastModDate(DateUtility
                             .convertStringToDate(grab(a, FOXML.uri, "VALUE")));
-                }
-
-                
-                /*
-                 * FOXME: an old foxml 1.0 property (MODEL.v2_0.CONTENT_MODEL) would now
-                 * being treated as an "external" property since if it exists,
-                 * it'll fall through to here. Should it be something different?
-                 * i.e. turned into a relationship? dropped entirely? Also, RDF
-                 * type used to determine fType. That is no longer happening, so
-                 * RDF type too is becoming a plain old object property.
-                 */
-                else {
+                } else {
+                    // Legacy object properties from FOXML 1.0, if present,
+                    // will be retained here as external properties in the 
+                    // DigitalObject.  This includes fedora-model:contentModel
+                    // and rdf:type.
                     m_obj.setExtProperty(m_objPropertyName, grab(a,
                                                                  FOXML.uri,
                                                                  "VALUE"));
@@ -414,8 +401,8 @@ public class FOXMLDODeserializer
                 if (m_dsVersId.equals("AUDIT.0")) {
                     m_gotAudit = true;
                 }
-                m_dsChecksumType = "none";
-                m_dsChecksum = "none";
+                m_dsChecksumType = Datastream.CHECKSUMTYPE_DISABLED;
+                m_dsChecksum = Datastream.CHECKSUM_NONE;
             } else if (localName.equals("contentDigest")) {
                 m_dsChecksumType = grab(a, FOXML.uri, "TYPE");
                 m_dsChecksum = grab(a, FOXML.uri, "DIGEST");
@@ -617,8 +604,6 @@ public class FOXMLDODeserializer
             // ALL OTHER ELEMENTS (NOT INLINE XML)...
             //========================================
         } else if (uri.equals(FOXML.uri) && localName.equals("binaryContent")) {
-            // FIXME: Implement functionality for inline base64 datastreams
-            // in a future version (post 2.0)
             if (m_binaryContentTempFile != null) {
                 try {
                     FileOutputStream os =
@@ -819,7 +804,7 @@ public class FOXMLDODeserializer
         if (m_obj.isNew()) {
             LOG.debug("New Object: checking supplied checksum");
             if (m_dsChecksum != null && !m_dsChecksum.equals("")
-                    && !m_dsChecksum.equals("none")) {
+                    && !m_dsChecksum.equals(Datastream.CHECKSUM_NONE)) {
                 String tmpChecksum = ds.getChecksum();
                 LOG.debug("checksum = " + tmpChecksum);
                 if (!m_dsChecksum.equals(tmpChecksum)) {
@@ -909,7 +894,7 @@ public class FOXMLDODeserializer
         ds.DSChecksumType = m_dsChecksumType;
         if (m_obj.isNew()) {
             if (m_dsChecksum != null && !m_dsChecksum.equals("")
-                    && !m_dsChecksum.equals("none")) {
+                    && !m_dsChecksum.equals(Datastream.CHECKSUM_NONE)) {
                 String tmpChecksum = ds.getChecksum();
                 LOG.debug("checksum = " + tmpChecksum);
                 if (!m_dsChecksum.equals(tmpChecksum)) {

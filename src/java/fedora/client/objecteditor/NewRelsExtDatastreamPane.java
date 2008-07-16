@@ -7,6 +7,8 @@ import java.io.InputStream;
 
 import fedora.client.Administrator;
 
+import fedora.common.Constants;
+
 import fedora.server.types.gen.Datastream;
 import fedora.server.types.gen.DatastreamControlGroup;
 
@@ -47,10 +49,10 @@ class NewRelsExtDatastreamPane
                                s_dsid,
                                "RELS-EXT.0",
                                null,
-                               "Relationships to other objects",
+                               "RDF Statements about this object",
                                true,
                                "application/rdf+xml",
-                               null,
+                               Constants.RELS_EXT1_0.uri,
                                null,
                                0,
                                "A",

@@ -13,6 +13,7 @@ import junit.framework.TestSuite;
 
 import fedora.client.FedoraClient;
 
+import fedora.common.Constants;
 import fedora.common.Models;
 import fedora.common.PID;
 
@@ -186,7 +187,11 @@ public class TestManyDisseminations
                     .getInstance(Models.CONTENT_MODEL_3_0.uri).toString());
             appendRel(rdf, MODEL.HAS_SERVICE.localName, SDEF_OBJECT_PID);
             closeRDF(rdf);
-            appendInlineDatastream(buf, "RELS-EXT", rdf.toString());
+            appendInlineDatastream(buf,
+                                   "RELS-EXT",
+                                   "application/rdf+xml",
+                                   Constants.RELS_EXT1_0.uri,
+                                   rdf.toString());
 
             closeFOXML(buf);
             return buf.toString().getBytes("UTF-8");
@@ -200,8 +205,16 @@ public class TestManyDisseminations
             appendRel(rdf, MODEL.HAS_MODEL.localName, PID
                     .getInstance(Models.SERVICE_DEFINITION_3_0.uri).toString());
             closeRDF(rdf);
-            appendInlineDatastream(buf, "RELS-EXT", rdf.toString());
-            appendInlineDatastream(buf, "METHODMAP", getSDefMethodMap());
+            appendInlineDatastream(buf,
+                                   "RELS-EXT",
+                                   "application/rdf+xml",
+                                   Constants.RELS_EXT1_0.uri,
+                                   rdf.toString());
+            appendInlineDatastream(buf,
+                                   "METHODMAP",
+                                   "text/xml",
+                                   Constants.SDEF_METHOD_MAP1_0.uri,
+                                   getSDefMethodMap());
             closeFOXML(buf);
             return buf.toString().getBytes("UTF-8");
         }
@@ -209,9 +222,21 @@ public class TestManyDisseminations
         private static byte[] getSDepObject() throws Exception {
             StringBuilder buf = new StringBuilder();
             openFOXML(buf, SDEP_OBJECT_PID);
-            appendInlineDatastream(buf, "METHODMAP", getSDepMethodMap());
-            appendInlineDatastream(buf, "DSINPUTSPEC", getDSInputSpec());
-            appendInlineDatastream(buf, "WSDL", getWSDL());
+            appendInlineDatastream(buf,
+                                   "METHODMAP",
+                                   "text/xml",
+                                   Constants.SDEP_METHOD_MAP1_0.uri,
+                                   getSDepMethodMap());
+            appendInlineDatastream(buf,
+                                   "DSINPUTSPEC",
+                                   "text/xml",
+                                   Constants.DS_INPUT_SPEC1_0.uri,
+                                   getDSInputSpec());
+            appendInlineDatastream(buf,
+                                   "WSDL",
+                                   "text/xml",
+                                   Constants.WSDL.uri,
+                                   getWSDL());
 
             StringBuilder rdf = new StringBuilder();
             openRDF(rdf, SDEP_OBJECT_PID);
@@ -220,7 +245,11 @@ public class TestManyDisseminations
             appendRel(rdf, MODEL.IS_DEPLOYMENT_OF.localName, SDEF_OBJECT_PID);
             appendRel(rdf, MODEL.IS_CONTRACTOR_OF.localName, CMODEL_OBJECT_PID);
             closeRDF(rdf);
-            appendInlineDatastream(buf, "RELS-EXT", rdf.toString());
+            appendInlineDatastream(buf,
+                                   "RELS-EXT",
+                                   "application/rdf+xml",
+                                   Constants.RELS_EXT1_0.uri,
+                                   rdf.toString());
 
             closeFOXML(buf);
             return buf.toString().getBytes("UTF-8");
@@ -513,8 +542,12 @@ public class TestManyDisseminations
                     "http://" + addr.getHostAddress() + ":"
                             + FedoraServerTestCase.getPort() + "/fedora/get/"
                             + DATA_OBJECT_PID + "/" + X_DS;
-            appendInlineDatastream(buf, X_DS, getDC());
-            appendInlineDatastream(buf, "XSLT", getXSLT());
+            appendInlineDatastream(buf,
+                                   X_DS,
+                                   "text/xml",
+                                   Constants.OAI_DC2_0.uri,
+                                   getDC());
+            appendInlineDatastream(buf, "XSLT", "text/xml", null, getXSLT());
             appendRemoteDatastream(buf, E_DS, "E", mimeType, url);
             appendRemoteDatastream(buf, R_DS, "R", mimeType, url);
 
@@ -524,7 +557,11 @@ public class TestManyDisseminations
                     .getInstance(Models.FEDORA_OBJECT_3_0.uri).toString());
             appendRel(rdf, MODEL.HAS_MODEL.localName, CMODEL_OBJECT_PID);
             closeRDF(rdf);
-            appendInlineDatastream(buf, "RELS-EXT", rdf.toString());
+            appendInlineDatastream(buf,
+                                   "RELS-EXT",
+                                   "application/rdf+xml",
+                                   Constants.RELS_EXT1_0.uri,
+                                   rdf.toString());
 
             closeFOXML(buf);
             return buf.toString().getBytes("UTF-8");
@@ -567,9 +604,14 @@ public class TestManyDisseminations
 
         private static void appendInlineDatastream(StringBuilder buf,
                                                    String dsID,
+                                                   String mimeType,
+                                                   String formatURI,
                                                    String xml) {
             openDatastream(buf, dsID, "X");
-            openDatastreamVersion(buf, dsID + ".0", "text/xml");
+            openDatastreamVersion(buf,
+                                  dsID + ".0",
+                                  mimeType,
+                                  formatURI);
             buf.append("      <foxml:xmlContent>" + CR);
             buf.append(xml);
             buf.append(CR + "      </foxml:xmlContent>" + CR);
@@ -583,7 +625,7 @@ public class TestManyDisseminations
                                                    String mimeType,
                                                    String location) {
             openDatastream(buf, dsID, controlGroup);
-            openDatastreamVersion(buf, dsID + ".0", mimeType);
+            openDatastreamVersion(buf, dsID + ".0", mimeType, null);
             buf.append("      <foxml:contentLocation REF=\"" + location
                     + "\" TYPE=\"URL\"/>" + CR);
             closeDatastreamVersion(buf);
@@ -601,10 +643,14 @@ public class TestManyDisseminations
 
         private static void openDatastreamVersion(StringBuilder buf,
                                                   String versionID,
-                                                  String mimeType) {
+                                                  String mimeType,
+                                                  String formatURI) {
             buf.append("    <foxml:datastreamVersion");
             buf.append(" ID=\"" + versionID + "\"");
             buf.append(" MIMETYPE=\"" + mimeType + "\"");
+            if (formatURI != null) {
+                buf.append(" FORMAT_URI=\"" + formatURI + "\"");
+            }
             buf.append(">" + CR);
         }
 

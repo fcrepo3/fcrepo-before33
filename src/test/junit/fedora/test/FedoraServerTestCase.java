@@ -71,9 +71,14 @@ public abstract class FedoraServerTestCase
         return format != null && format.equalsIgnoreCase("mets");
     }
     
-    public static boolean testingATOM() {
+    public static boolean testingAtom() {
         String format = System.getProperty("demo.format");
         return format != null && format.equalsIgnoreCase("atom");
+    }
+
+    public static boolean testingAtomZip() {
+        String format = System.getProperty("demo.format");
+        return format != null && format.equalsIgnoreCase("atom-zip");
     }
 
     public static void ingestDemoObjects() throws Exception {
@@ -83,10 +88,14 @@ public abstract class FedoraServerTestCase
             System.out.println("Ingesting all demo objects in METS format");
             dir = new File(FEDORA_HOME, "client/demo/mets");
             ingestFormat = METS_EXT1_1.uri;
-        } else if (testingATOM()) {
+        } else if (testingAtom()) {
             System.out.println("Ingesting all demo objects in Atom format");
             dir = new File(FEDORA_HOME, "client/demo/atom");
             ingestFormat = ATOM1_1.uri;
+        } else if (testingAtomZip()) {
+            System.out.println("Ingesting all demo objects in Atom Zip format");
+            dir = new File(FEDORA_HOME, "client/demo/atom-zip");
+            ingestFormat = ATOM_ZIP1_1.uri;
         } else {
             System.out.println("Ingesting all demo objects in FOXML format");
             dir = new File(FEDORA_HOME, "client/demo/foxml");

@@ -786,7 +786,7 @@ public class TestXACMLPolicies
             xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/view#lastModifiedDate\" VALUE=\"2004-12-10T00:21:57Z\"/>");
             xml.append("  </foxml:objectProperties>");
             xml.append("  <foxml:datastream ID=\"POLICY\" CONTROL_GROUP=\"X\" STATE=\"A\">");
-            xml.append("    <foxml:datastreamVersion ID=\"POLICY1.0\" MIMETYPE=\"text/xml\" LABEL=\"Policy\">");
+            xml.append("    <foxml:datastreamVersion FORMAT_URI=\"" + XACML_POLICY1_0.uri + "\" ID=\"POLICY1.0\" MIMETYPE=\"text/xml\" LABEL=\"Policy\">");
             xml.append("         <foxml:xmlContent>");
             xml.append("<Policy PolicyId=\"POLICY\" RuleCombiningAlgId=\"urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable\"");
             xml.append("  xmlns=\"urn:oasis:names:tc:xacml:1.0:policy\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");

@@ -66,6 +66,7 @@ import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
+import fedora.server.storage.types.DigitalObjectUtil;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.RelationshipTuple;
 import fedora.server.utilities.DCFields;
@@ -269,10 +270,8 @@ public class DefaultDOManager
 
     protected void initRetainPID() {
         // retainPIDs (optional, default=demo,test)
-        String retainPIDs = null;
-        retainPIDs = getParameter("retainPIDs");
         m_retainPIDs = new HashSet<String>();
-        retainPIDs = getParameter("retainPIDs");
+        String retainPIDs = getParameter("retainPIDs");
         if (retainPIDs == null) {
             m_retainPIDs.add("demo");
             m_retainPIDs.add("test");
@@ -291,6 +290,10 @@ public class DefaultDOManager
                     }
                 }
             }
+        }
+        if (m_retainPIDs != null) {
+            // fedora-system PIDs must be ingestable as-is
+            m_retainPIDs.add("fedora-system");
         }
     }
 
@@ -721,6 +724,9 @@ public class DefaultDOManager
             ObjectLockedException {
         if (cachedObjectRequired) {
             throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
+        } else if (Models.contains("info:fedora/" + pid)) {
+            throw new ObjectLockedException("System object " + pid
+                                            + " is read-only");
         } else {
             BasicDigitalObject obj = new BasicDigitalObject();
             m_translator.deserialize(m_permanentStore.retrieveObject(pid),
@@ -802,14 +808,13 @@ public class DefaultDOManager
                 obj = new BasicDigitalObject();
                 obj.setNew(true);
                 LOG.debug("Deserializing from format: " + format);
-                LOG.debug("Deserializing from format: " + format);
                 m_translator
                         .deserialize(new FileInputStream(tempFile),
                                      obj,
                                      format,
                                      encoding,
                                      DOTranslationUtility.DESERIALIZE_INSTANCE);
-
+                
                 // SET OBJECT PROPERTIES:
                 LOG
                         .debug("Setting object/component states and create dates if unset");
@@ -841,6 +846,14 @@ public class DefaultDOManager
                                 Datastream
                                         .validateChecksumType(ds.DSChecksumType);
                     }
+                }
+
+                // SET MIMETYPE AND FORMAT_URIS FOR LEGACY OBJECTS' DATASTREAMS
+                if (FOXML1_0.uri.equals(format)
+                        || FOXML1_0_LEGACY.equals(format)
+                        || METS_EXT1_0.uri.equals(format)
+                        || METS_EXT1_0_LEGACY.equals(format)) {
+                    DigitalObjectUtil.updateLegacyDatastreams(obj);
                 }
 
                 // PID VALIDATION:
@@ -916,13 +929,12 @@ public class DefaultDOManager
                 LOG.debug("Getting new writer with default export format: "
                         + m_defaultExportFormat);
                 LOG.debug("Instantiating a SimpleDOWriter");
-                w =
-                        new SimpleDOWriter(context,
-                                           this,
-                                           m_translator,
-                                           m_defaultExportFormat,
-                                           m_storageCharacterEncoding,
-                                           obj);
+                w = new SimpleDOWriter(context,
+                                       this,
+                                       m_translator,
+                                       m_defaultExportFormat,
+                                       m_storageCharacterEncoding,
+                                       obj);
 
                 // WRITE LOCK:
                 // ensure no one else can modify the object now
@@ -983,7 +995,7 @@ public class DefaultDOManager
             }
         }
     }
-
+   
     /**
      * Adds a minimal DC datastream if one isn't already present.
      *
@@ -1006,8 +1018,9 @@ public class DefaultDOManager
             dc.DSVersionID = "DC1.0";
             dc.DSControlGrp = "X";
             dc.DSCreateDT = nowUTC;
-            dc.DSLabel = "Dublin Core Metadata";
+            dc.DSLabel = "Dublin Core Record for this object";
             dc.DSMIME = "text/xml";
+            dc.DSFormatURI = OAI_DC2_0.uri;
             dc.DSSize = 0;
             dc.DSState = "A";
             dc.DSVersionable = true;

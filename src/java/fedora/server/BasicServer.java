@@ -6,13 +6,22 @@
 package fedora.server;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.log4j.Logger;
 
 import org.w3c.dom.Element;
 
+import fedora.common.Constants;
+import fedora.common.Models;
+import fedora.common.PID;
+import fedora.common.rdf.RDFName;
+
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ServerInitializationException;
+import fedora.server.storage.DOManager;
+import fedora.server.storage.DOWriter;
 import fedora.server.utilities.status.ServerState;
 import fedora.server.utilities.status.ServerStatusFile;
 
@@ -58,9 +67,8 @@ public class BasicServer
         try {
             status.append(ServerState.STARTING, "Fedora Version: "
                     + VERSION_MAJOR + "." + VERSION_MINOR);
-            status
-                    .append(ServerState.STARTING, "Fedora Build: "
-                            + BUILD_NUMBER);
+            status.append(ServerState.STARTING, "Fedora Build: "
+                    + BUILD_NUMBER);
             status.append(ServerState.STARTING, "Server Host Name: "
                     + fedoraServerHost);
             status.append(ServerState.STARTING, "Server Port: "
@@ -80,7 +88,58 @@ public class BasicServer
      */
     @Override
     public String[] getRequiredModuleRoles() {
-        return new String[] {"fedora.server.storage.DOManager"};
+        return new String[] {DOManager.class.getName()};
     }
+    
+    @Override
+    public void postInitServer() throws ServerInitializationException {
+        // check for system objects and pre-ingest them if necessary
+        DOManager doManager = (DOManager) getModule(DOManager.class.getName());
+        try {
+            preIngestIfNeeded(doManager, Models.CONTENT_MODEL_3_0);
+            preIngestIfNeeded(doManager, Models.FEDORA_OBJECT_3_0);
+            preIngestIfNeeded(doManager, Models.SERVICE_DEFINITION_3_0);
+            preIngestIfNeeded(doManager, Models.SERVICE_DEPLOYMENT_3_0);
+        } catch (Exception e) {
+            throw new ServerInitializationException("Failed to ingest "
+                                                    + "system object(s)", e);
+        }
+    }
+    
+    private void preIngestIfNeeded(DOManager doManager,
+                                   RDFName objectName) throws Exception {
+        PID pid = new PID(objectName.uri.substring("info:fedora/".length()));
+        if (!doManager.objectExists(pid.toString())) {
+            LOG.info("Pre-ingesting system object: " + pid.toString());
+            InputStream xml = getStream("fedora/server/resources/"
+                                        + pid.toFilename() + ".xml");
+            Context context = ReadOnlyContext.getContext(null,
+                                                         null,
+                                                         null,
+                                                         false);
+            DOWriter w = doManager.getIngestWriter(USE_DEFINITIVE_STORE,
+                                                   context,
+                                                   xml,
+                                                   Constants.FOXML1_1.uri,
+                                                   "UTF-8",
+                                                   false);
+            try {
+                w.commit("Pre-ingested by Fedora at startup");
+            } finally {
+                doManager.releaseWriter(w);
+            }
+        }
+    }
+    
+    private InputStream getStream(String path) throws IOException {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream(
+                    path);
+        if (stream == null) {
+            throw new IOException("Classloader cannot find resource: " + path);
+        } else {
+            return stream;
+        }
+    }
+    
 
 }

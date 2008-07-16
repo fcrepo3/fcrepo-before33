@@ -142,17 +142,6 @@ public class METSFedoraExtDOSerializer
                     + "\"");
         }
 
-        /*
-         * FIXME: Not doing content model properties any more. OK to just skip
-         * entirely?
-         */
-        //if (m_format.equals(METS_EXT1_0)) {
-        //    String cid = obj.getContentModelId();
-        //    if (cid != null && cid.length() > 0) {
-        //        buf.append(" " + METS.PROFILE.localName + "=\""
-        //                + StreamUtility.enc(cid) + "\"");
-        //    }
-        //}
         buf.append("\n");
         String label = obj.getLabel();
         if (label != null && label.length() > 0) {
@@ -168,7 +157,6 @@ public class METSFedoraExtDOSerializer
                     + "\"\n");
         }
         buf.append("        xmlns:" + XSI.prefix + "=\"" + XSI.uri + "\"\n");
-        buf.append("        xmlns:" + AUDIT.prefix + "=\"" + AUDIT.uri + "\"\n");
         buf.append("        " + XSI.SCHEMA_LOCATION.qName + "=\"" + METS.uri
                 + " " + m_format.xsdLocation + "\">\n");
     }
@@ -286,7 +274,9 @@ public class METSFedoraExtDOSerializer
             String checksumTypeAttr = "";
             String checksumAttr = "";
             String csType = ds.DSChecksumType;
-            if (csType != null && csType.length() > 0 && !csType.equals("none")) {
+            if (csType != null
+                    && csType.length() > 0 
+                    && !csType.equals(Datastream.CHECKSUMTYPE_DISABLED)) {
                 checksumTypeAttr =
                         " CHECKSUMTYPE=\"" + StreamUtility.enc(csType) + "\"";
                 checksumAttr =
@@ -332,7 +322,8 @@ public class METSFedoraExtDOSerializer
             buf.append("      <" + METS.prefix
                     + ":mdWrap MIMETYPE=\"text/xml\" "
                     + "MDTYPE=\"OTHER\" OTHERMDTYPE=\"FEDORA-AUDIT\""
-                    + " LABEL=\"Fedora Object Audit Trail\">\n");
+                    + " LABEL=\"Audit Trail for this object\""
+                    + " FORMAT_URI=\"" + AUDIT1_0.uri + "\">\n");
             buf.append("        <" + METS.prefix + ":xmlData>\n");
             buf.append(DOTranslationUtility.getAuditTrail(obj));
             buf.append("        </" + METS.prefix + ":xmlData>\n");
@@ -418,7 +409,11 @@ public class METSFedoraExtDOSerializer
                                                 .convertDateToString(dsc.DSCreateDT)
                                         + "\"";
                     }
-                    String sizeAttr = " SIZE=\"" + dsc.DSSize + "\"";
+                    // SIZE attribute is optional so check if non-zero
+                    String sizeAttr = "";
+                    if (dsc.DSSize != 0) {
+                        sizeAttr = " SIZE=\"" + dsc.DSSize + "\"";
+                    }
                     // FORMAT_URI attribute is optional so check if non-empty
                     String formatURIAttr = "";
                     if (dsc.DSFormatURI != null && !dsc.DSFormatURI.equals("")) {
@@ -441,8 +436,9 @@ public class METSFedoraExtDOSerializer
                     String checksumTypeAttr = "";
                     String checksumAttr = "";
                     String csType = ds.DSChecksumType;
-                    if (csType != null && csType.length() > 0
-                            && !csType.equals("DISABLED")) {
+                    if (csType != null 
+                            && csType.length() > 0
+                            && !csType.equals(Datastream.CHECKSUMTYPE_DISABLED)) {
                         checksumTypeAttr =
                                 " CHECKSUMTYPE=\"" + StreamUtility.enc(csType)
                                         + "\"";

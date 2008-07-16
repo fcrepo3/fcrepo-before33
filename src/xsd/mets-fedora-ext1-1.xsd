@@ -11,7 +11,7 @@
 <!--               o Added a required EXT_VERSION attribute to the root    -->
 <!--                 element, which must have a value of "1.1".            -->
 <!--               o Removed disseminator-related elements (structMap,     -->
-<!--                 div, behaviorSec) due to the CMDA.                    -->
+<!--                 div, behaviorSec) due to the CMA.                     -->
 <!--               o Changed xlink namespace to published 1999 version,    -->
 <!--                 as this was done with METS after version 1.3.         -->
 <!--***********************************************************************-->

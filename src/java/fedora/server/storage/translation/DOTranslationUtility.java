@@ -5,19 +5,15 @@
 
 package fedora.server.storage.translation;
 
-import static fedora.common.Models.CONTENT_MODEL_3_0;
-import static fedora.common.Models.FEDORA_OBJECT_3_0;
-import static fedora.common.Models.SERVICE_DEFINITION_3_0;
-import static fedora.common.Models.SERVICE_DEPLOYMENT_3_0;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+
 import java.nio.charset.Charset;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,8 +33,9 @@ import fedora.common.Constants;
 import fedora.common.Models;
 import fedora.common.rdf.RDFName;
 import fedora.common.xml.namespace.QName;
+
 import fedora.server.Server;
-import fedora.server.errors.InitializationException;
+import fedora.server.config.ServerConfiguration;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.StreamWriteException;
@@ -49,6 +46,11 @@ import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
+
+import static fedora.common.Models.CONTENT_MODEL_3_0;
+import static fedora.common.Models.FEDORA_OBJECT_3_0;
+import static fedora.common.Models.SERVICE_DEFINITION_3_0;
+import static fedora.common.Models.SERVICE_DEPLOYMENT_3_0;
 
 /**
  * Utility methods for usage by digital object serializers and deserializers.
@@ -169,6 +171,12 @@ public abstract class DOTranslationUtility
      * local URL syntax.
      */
     public static final int SERIALIZE_EXPORT_ARCHIVE = 4;
+   
+    /**
+     * Deserialize or Serialize as is.  This context doesn't attempt to do 
+     * any conversion of URLs.
+     */
+    public static final int AS_IS = 5;
 
     // Fedora URL LOCALIZATION Pattern:
     // Pattern that is used as the internal replacement syntax for URLs that
@@ -221,7 +229,6 @@ public abstract class DOTranslationUtility
     // initialize static class with stuff that's used by all DO Serializerers
     static {
         // get host port from system properties (for testing without server instance)
-        String fedoraHome = Constants.FEDORA_HOME;
         String fedoraServerHost = System.getProperty("fedoraServerHost");
         String fedoraServerPort = System.getProperty("fedoraServerPort");
         String fedoraServerPortSSL = System.getProperty("fedoraRedirectPort");
@@ -239,28 +246,19 @@ public abstract class DOTranslationUtility
         // otherwise, get host port from the server instance if they are null			
         if (fedoraServerHost == null || fedoraServerPort == null) {
             // if fedoraServerHost or fedoraServerPort system properties
-            // are not defined, assume we need to use the running Server
-            // instance to determine these values.
-            // FIXME: Use fedora.server.config.ServerConfiguration instead,
-            //        because it doesn't require a running server instance.
-            //        See ServerUtility for an example.
-            try {
-                Server s = Server.getInstance(new File(fedoraHome), false);
-                fedoraServerHost = s.getParameter("fedoraServerHost");
-                fedoraServerPort = s.getParameter("fedoraServerPort");
-                fedoraServerPortSSL = s.getParameter("fedoraRedirectPort");
-
-                if (fedoraServerPort.equals("80")) {
-                    m_serverOnPort80 = true;
-                }
-                if (fedoraServerPortSSL.equals("443")) {
-                    m_serverOnRedirectPort443 = true;
-                }
-            } catch (InitializationException ie) {
-                // can only possibly happen during failed testing, in which
-                // case it's ok to do a System.exit
-                LOG.error("STARTUP ERROR", ie);
-                System.exit(1);
+            // are not defined, read them from server configuration
+            ServerConfiguration config = Server.getConfig();
+            fedoraServerHost = config.getParameter("fedoraServerHost")
+                    .getValue();
+            fedoraServerPort = config.getParameter("fedoraServerPort")
+                    .getValue();
+            fedoraServerPortSSL = config.getParameter("fedoraRedirectPort")
+                    .getValue();
+            if (fedoraServerPort.equals("80")) {
+                m_serverOnPort80 = true;
+            }
+            if (fedoraServerPortSSL.equals("443")) {
+                m_serverOnRedirectPort443 = true;
             }
         }
         // set the currently configured host:port of the repository
@@ -435,8 +433,10 @@ public abstract class DOTranslationUtility
     public static Datastream normalizeDSLocationURLs(String PID,
                                                      Datastream origDS,
                                                      int transContext) {
-
         Datastream ds = origDS.copy();
+        if (transContext == AS_IS) {
+            return ds;
+        }
         if (transContext == DOTranslationUtility.DESERIALIZE_INSTANCE) {
             if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")) {
                 // MAKE ABSOLUTE REPO URLs
@@ -552,6 +552,9 @@ public abstract class DOTranslationUtility
      * @return the inline XML contents with appropriate conversions.
      */
     public static String normalizeInlineXML(String xml, int transContext) {
+        if (transContext == AS_IS) {
+            return xml;
+        }
         if (transContext == DOTranslationUtility.DESERIALIZE_INSTANCE) {
             // MAKE ABSOLUTE REPO URLs
             return makeAbsoluteURLs(xml);
@@ -603,13 +606,15 @@ public abstract class DOTranslationUtility
         }
 
         // LOOK! For METS backward compatibility:
-        // If we have a METS MDClass value, preserve MDClass and MDType in a DSFormatURI.
+        // If we have a METS MDClass value, and DSFormatURI isn't already
+        // assigned, preserve MDClass and MDType in a DSFormatURI.
         // Note that the system is taking over the DSFormatURI in this case.
         // Therefore, if a client subsequently modifies the DSFormatURI
         // this METS legacy informatin will be lost, in which case the inline
         // datastream will default to amdSec/techMD in a subsequent METS export.
         if (ds.DSControlGrp.equalsIgnoreCase("X")) {
-            if (((DatastreamXMLMetadata) ds).DSMDClass != 0) {
+            if (((DatastreamXMLMetadata) ds).DSMDClass != 0
+                    && ds.DSFormatURI == null) {
                 String mdClassName = "";
                 String mdType = ds.DSInfoType;
                 String otherType = "";
@@ -634,7 +639,7 @@ public abstract class DOTranslationUtility
                 }
                 ds.DSFormatURI =
                         "info:fedora/fedora-system:format/xml.mets."
-                                + mdClassName + "." + mdType + "." + otherType;
+                        + mdClassName + "." + mdType + "." + otherType;
             }
         }
         return ds;
@@ -743,6 +748,9 @@ public abstract class DOTranslationUtility
                                      int transContext,
                                      String characterEncoding)
             throws UnsupportedEncodingException {
+        if (transContext == AS_IS) {
+            return;
+        }
         if (obj.hasRelationship(MODEL.HAS_MODEL, Models.SERVICE_DEPLOYMENT_3_0)) {
             Iterator<String> datastreams = obj.datastreamIdIterator();
             while (datastreams.hasNext()) {

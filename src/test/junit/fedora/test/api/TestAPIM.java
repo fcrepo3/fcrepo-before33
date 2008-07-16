@@ -74,12 +74,12 @@ public class TestAPIM
         sb.append("<foxml:objectProperties>");
         sb.append("<foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"FedoraObject\"/>");
         sb.append("<foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
-        sb.append("<foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"Image of Coliseum in Rome\"/>");
+        sb.append("<foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"Data Object (Coliseum) for Local Simple Image Demo\"/>");
         sb.append("<foxml:property NAME=\"info:fedora/fedora-system:def/model#contentModel\" VALUE=\"UVA_STD_IMAGE\"/>");
         sb.append("<foxml:property NAME=\"info:fedora/fedora-system:def/model#ownerId\" VALUE=\"fedoraAdmin\"/>");
         sb.append("</foxml:objectProperties>");
         sb.append("<foxml:datastream ID=\"DC\" CONTROL_GROUP=\"X\" STATE=\"A\">");
-        sb.append("<foxml:datastreamVersion ID=\"DC1.0\" MIMETYPE=\"text/xml\" LABEL=\"DC Record for Coliseum image object\">");
+        sb.append("<foxml:datastreamVersion ID=\"DC1.0\" MIMETYPE=\"text/xml\" LABEL=\"Dublin Core Record for this object\">");
         sb.append("<foxml:xmlContent>");
         sb.append("<oai_dc:dc xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\">");
         sb.append("<dc:title>Coliseum in Rome</dc:title>");
@@ -136,12 +136,12 @@ public class TestAPIM
         sb.append("<foxml:digitalObject VERSION=\"1.1\" PID=\"demo:998\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd\">");
         sb.append("  <foxml:objectProperties>");
         sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
-        sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"Image of Coliseum in Rome\"/>");
+        sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"Data Object (Coliseum) for Local Simple Image Demo\"/>");
         sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#createdDate\" VALUE=\"2004-12-10T00:21:57Z\"/>");
         sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/view#lastModifiedDate\" VALUE=\"2004-12-10T00:21:57Z\"/>");
         sb.append("  </foxml:objectProperties>");
         sb.append("  <foxml:datastream ID=\"DC\" CONTROL_GROUP=\"X\" STATE=\"A\">");
-        sb.append("    <foxml:datastreamVersion ID=\"DC1.0\" MIMETYPE=\"text/xml\" LABEL=\"DC Record for Coliseum image object\">");
+        sb.append("    <foxml:datastreamVersion FORMAT_URI=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" ID=\"DC1.0\" MIMETYPE=\"text/xml\" LABEL=\"Dublin Core Record for this object\">");
         sb.append("	     <foxml:xmlContent>");
         sb.append("        <oai_dc:dc xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\">");
         sb.append("          <dc:title>Coliseum in Rome</dc:title>");
@@ -193,74 +193,52 @@ public class TestAPIM
         // create test FOXML object not specifying pid (allow server to assign)
         sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        sb
-                .append("<foxml:digitalObject VERSION=\"1.1\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd\">");
+        sb.append("<foxml:digitalObject VERSION=\"1.1\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd\">");
         sb.append("  <foxml:objectProperties>");
-        sb
-                .append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
-        sb
-                .append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"Image of Coliseum in Rome\"/>");
-        sb
-                .append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#createdDate\" VALUE=\"2004-12-10T00:21:57Z\"/>");
-        sb
-                .append("    <foxml:property NAME=\"info:fedora/fedora-system:def/view#lastModifiedDate\" VALUE=\"2004-12-10T00:21:57Z\"/>");
+        sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
+        sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"Data Object (Coliseum) for Local Simple Image Demo\"/>");
+        sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#createdDate\" VALUE=\"2004-12-10T00:21:57Z\"/>");
+        sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/view#lastModifiedDate\" VALUE=\"2004-12-10T00:21:57Z\"/>");
         sb.append("  </foxml:objectProperties>");
-        sb
-                .append("  <foxml:datastream ID=\"DC\" CONTROL_GROUP=\"X\" STATE=\"A\">");
-        sb
-                .append("    <foxml:datastreamVersion ID=\"DC1.0\" MIMETYPE=\"text/xml\" LABEL=\"DC Record for Coliseum image object\">");
+        sb.append("  <foxml:datastream ID=\"DC\" CONTROL_GROUP=\"X\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion FORMAT_URI=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" ID=\"DC1.0\" MIMETYPE=\"text/xml\" LABEL=\"Dublin Core Record for this object\">");
         sb.append("	     <foxml:xmlContent>");
-        sb
-                .append("        <oai_dc:dc xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\">");
+        sb.append("        <oai_dc:dc xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\">");
         sb.append("          <dc:title>Coliseum in Rome</dc:title>");
         sb.append("          <dc:creator>Thornton Staples</dc:creator>");
         sb.append("          <dc:subject>Architecture, Roman</dc:subject>");
-        sb
-                .append("          <dc:description>Image of Coliseum in Rome</dc:description>");
-        sb
-                .append("          <dc:publisher>University of Virginia Library</dc:publisher>");
+        sb.append("          <dc:description>Image of Coliseum in Rome</dc:description>");
+        sb.append("          <dc:publisher>University of Virginia Library</dc:publisher>");
         sb.append("          <dc:format>image/jpeg</dc:format>");
         sb.append("          <dc:identifier>demo:5</dc:identifier>");
         sb.append("        </oai_dc:dc>");
         sb.append("      </foxml:xmlContent>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
-        sb
-                .append("  <foxml:datastream ID=\"DS1\" CONTROL_GROUP=\"M\" STATE=\"A\">");
-        sb
-                .append("    <foxml:datastreamVersion ID=\"DS1.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum thumbnail jpg image\">");
-        sb
-                .append("      <foxml:contentLocation REF=\"http://"
+        sb.append("  <foxml:datastream ID=\"DS1\" CONTROL_GROUP=\"M\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion ID=\"DS1.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum thumbnail jpg image\">");
+        sb.append("      <foxml:contentLocation REF=\"http://"
                         + getHost()
                         + ":8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
-        sb
-                .append("  <foxml:datastream ID=\"DS2\" CONTROL_GROUP=\"M\" STATE=\"A\">");
-        sb
-                .append("    <foxml:datastreamVersion ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum medium jpg image\">");
-        sb
-                .append("      <foxml:contentLocation REF=\"http://"
+        sb.append("  <foxml:datastream ID=\"DS2\" CONTROL_GROUP=\"M\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum medium jpg image\">");
+        sb.append("      <foxml:contentLocation REF=\"http://"
                         + getHost()
                         + ":8080/fedora-demo/simple-image-demo/coliseum-medium.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
-        sb
-                .append("  <foxml:datastream ID=\"DS3\" CONTROL_GROUP=\"M\" STATE=\"A\">");
-        sb
-                .append("    <foxml:datastreamVersion ID=\"DS3.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum high jpg image\">");
-        sb
-                .append("      <foxml:contentLocation REF=\"http://"
+        sb.append("  <foxml:datastream ID=\"DS3\" CONTROL_GROUP=\"M\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion ID=\"DS3.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum high jpg image\">");
+        sb.append("      <foxml:contentLocation REF=\"http://"
                         + getHost()
                         + ":8080/fedora-demo/simple-image-demo/coliseum-high.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
-        sb
-                .append("  <foxml:datastream ID=\"DS4\" CONTROL_GROUP=\"M\" STATE=\"A\">");
-        sb
-                .append("    <foxml:datastreamVersion ID=\"DS4.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum veryhigh jpg image\">");
-        sb
-                .append("      <foxml:contentLocation REF=\"http://"
+        sb.append("  <foxml:datastream ID=\"DS4\" CONTROL_GROUP=\"M\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion ID=\"DS4.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum veryhigh jpg image\">");
+        sb.append("      <foxml:contentLocation REF=\"http://"
                         + getHost()
                         + ":8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
@@ -275,29 +253,17 @@ public class TestAPIM
         // create test METS object specifying pid=demo:999
         sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        sb
-                .append("<METS:mets EXT_VERSION=\"1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:METS=\"http://www.loc.gov/METS/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd\" OBJID=\"demo:999\" LABEL=\"Image of Coliseum in Rome\" >");
-        sb
-                .append("  <!---*******************************************************************************************************************************************-->");
-        sb.append("  <!---User-Defined XML METADATA DATASTREAMS-->");
-        sb
-                .append("  <!---*******************************************************************************************************************************************-->");
+        sb.append("<METS:mets EXT_VERSION=\"1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:METS=\"http://www.loc.gov/METS/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd\" OBJID=\"demo:999\" LABEL=\"Data Object (Coliseum) for Local Simple Image Demo\" >");
         sb.append("  <METS:dmdSecFedora ID=\"DC\" STATUS=\"A\">");
         sb.append("    <METS:descMD ID=\"DC1.0\">");
-        sb
-                .append("      <METS:mdWrap MIMETYPE=\"text/xml\" MDTYPE=\"OTHER\" LABEL=\"DC Record for Coliseum image object\">");
+        sb.append("      <METS:mdWrap FORMAT_URI=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" MIMETYPE=\"text/xml\" MDTYPE=\"OTHER\" LABEL=\"Dublin Core Record for this object\">");
         sb.append("        <METS:xmlData>");
-        sb
-                .append("          <!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->");
-        sb
-                .append("          <oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">");
+        sb.append("          <oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">");
         sb.append("            <dc:title>Coliseum in Rome</dc:title>");
         sb.append("            <dc:creator>Thornton Staples</dc:creator>");
         sb.append("            <dc:subject>Architecture, Roman</dc:subject>");
-        sb
-                .append("            <dc:description>Image of Coliseum in Rome</dc:description>");
-        sb
-                .append("            <dc:publisher>University of Virginia Library</dc:publisher>");
+        sb.append("            <dc:description>Image of Coliseum in Rome</dc:description>");
+        sb.append("            <dc:publisher>University of Virginia Library</dc:publisher>");
         sb.append("            <dc:format>image/jpeg</dc:format>");
         sb.append("            <dc:identifier>demo:5</dc:identifier>");
         sb.append("          </oai_dc:dc>");
@@ -305,50 +271,32 @@ public class TestAPIM
         sb.append("      </METS:mdWrap>");
         sb.append("    </METS:descMD>");
         sb.append("  </METS:dmdSecFedora>");
-        sb
-                .append("  <!---*******************************************************************************************************************************************-->");
-        sb
-                .append("  <!--- DATASTREAMS:  EXTERNAL-REFERENCED CONTENT and REPOSITORY-MANAGED CONTENT-->");
-        sb
-                .append("  <!---*******************************************************************************************************************************************-->");
         sb.append("  <METS:fileSec>");
         sb.append("    <METS:fileGrp ID=\"DATASTREAMS\">");
         sb.append("      <METS:fileGrp ID=\"DS1\" STATUS=\"A\">");
-        sb.append("        <!--This is the thumbnail resolution image -->");
-        sb
-                .append("        <METS:file ID=\"DS1.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb
-                .append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
+        sb.append("        <METS:file ID=\"DS1.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
+        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
                         + getHost()
                         + ":8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg\" xlink:title=\"Thorny's Coliseum thumbnail jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS2\" STATUS=\"A\">");
-        sb.append("        <!-- This is the medium resoluion image -->");
-        sb
-                .append("        <METS:file ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb
-                .append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
+        sb.append("        <METS:file ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
+        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
                         + getHost()
                         + ":8080/fedora-demo/simple-image-demo/coliseum-medium.jpg\" xlink:title=\"Thorny's Coliseum medium jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS3\">");
-        sb.append("        <!--This is the high resolution image -->");
-        sb
-                .append("          <METS:file ID=\"DS3.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb
-                .append("            <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
+        sb.append("          <METS:file ID=\"DS3.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
+        sb.append("            <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
                         + getHost()
                         + ":8080/fedora-demo/simple-image-demo/coliseum-high.jpg\" xlink:title=\"Thorny's Coliseum high jpg image\"/>");
         sb.append("          </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS4\">");
-        sb.append("        <!--This is the very high resolution image -->");
-        sb
-                .append("        <METS:file ID=\"DS4.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb
-                .append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
+        sb.append("        <METS:file ID=\"DS4.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
+        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
                         + getHost()
                         + ":8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\" xlink:title=\"Thorny's Coliseum veryhigh jpg image\"/>");
         sb.append("        </METS:file>");
@@ -365,15 +313,11 @@ public class TestAPIM
         // create test METS 1.0 object specifying pid=demo:999b
         sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        sb.append("<METS:mets xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:METS=\"http://www.loc.gov/METS/\" xmlns:xlink=\"http://www.w3.org/TR/xlink\" xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-0.xsd\" OBJID=\"demo:999b\" TYPE=\"FedoraObject\" LABEL=\"Image of Coliseum in Rome\" >");
-        sb.append("  <!---*******************************************************************************************************************************************-->");
-        sb.append("  <!---User-Defined XML METADATA DATASTREAMS-->");
-        sb.append("  <!---*******************************************************************************************************************************************-->");
+        sb.append("<METS:mets xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:METS=\"http://www.loc.gov/METS/\" xmlns:xlink=\"http://www.w3.org/TR/xlink\" xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-0.xsd\" OBJID=\"demo:999b\" TYPE=\"FedoraObject\" LABEL=\"Data Object (Coliseum) for Local Simple Image Demo\" >");
         sb.append("  <METS:dmdSecFedora ID=\"DC\" STATUS=\"A\">");
         sb.append("    <METS:descMD ID=\"DC1.0\">");
-        sb.append("      <METS:mdWrap MIMETYPE=\"text/xml\" MDTYPE=\"OTHER\" LABEL=\"DC Record for Coliseum image object\">");
+        sb.append("      <METS:mdWrap MIMETYPE=\"text/xml\" MDTYPE=\"OTHER\" LABEL=\"Dublin Core Record for this object\">");
         sb.append("        <METS:xmlData>");
-        sb.append("          <!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->");
         sb.append("          <oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">");
         sb.append("            <dc:title>Coliseum in Rome</dc:title>");
         sb.append("            <dc:creator>Thornton Staples</dc:creator>");
@@ -387,34 +331,27 @@ public class TestAPIM
         sb.append("      </METS:mdWrap>");
         sb.append("    </METS:descMD>");
         sb.append("  </METS:dmdSecFedora>");
-        sb.append("  <!---*******************************************************************************************************************************************-->");
-        sb.append("  <!--- DATASTREAMS:  EXTERNAL-REFERENCED CONTENT and REPOSITORY-MANAGED CONTENT-->");
-        sb.append("  <!---*******************************************************************************************************************************************-->");
         sb.append("  <METS:fileSec>");
         sb.append("    <METS:fileGrp ID=\"DATASTREAMS\">");
         sb.append("      <METS:fileGrp ID=\"DS1\" STATUS=\"A\">");
-        sb.append("        <!--This is the thumbnail resolution image -->");
         sb.append("        <METS:file ID=\"DS1.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
         sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://" + getHost() +
                               ":8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg\" xlink:title=\"Thorny's Coliseum thumbnail jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS2\" STATUS=\"A\">");
-        sb.append("        <!-- This is the medium resoluion image -->");
         sb.append("        <METS:file ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
         sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://" + getHost() +
                               ":8080/fedora-demo/simple-image-demo/coliseum-medium.jpg\" xlink:title=\"Thorny's Coliseum medium jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS3\">");
-        sb.append("        <!--This is the high resolution image -->");
         sb.append("          <METS:file ID=\"DS3.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
         sb.append("            <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://" + getHost() +
                                 ":8080/fedora-demo/simple-image-demo/coliseum-high.jpg\" xlink:title=\"Thorny's Coliseum high jpg image\"/>");
         sb.append("          </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS4\">");
-        sb.append("        <!--This is the very high resolution image -->");
         sb.append("        <METS:file ID=\"DS4.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
         sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://" + getHost() +
                               ":8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\" xlink:title=\"Thorny's Coliseum veryhigh jpg image\"/>");
@@ -432,29 +369,17 @@ public class TestAPIM
         // create test METS object not specifying pid (allowing server to assign)
         sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        sb
-                .append("<METS:mets EXT_VERSION=\"1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:METS=\"http://www.loc.gov/METS/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd\" LABEL=\"Image of Coliseum in Rome\" >");
-        sb
-                .append("  <!---*******************************************************************************************************************************************-->");
-        sb.append("  <!---User-Defined XML METADATA DATASTREAMS-->");
-        sb
-                .append("  <!---*******************************************************************************************************************************************-->");
+        sb.append("<METS:mets EXT_VERSION=\"1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:METS=\"http://www.loc.gov/METS/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd\" LABEL=\"Data Object (Coliseum) for Local Simple Image Demo\" >");
         sb.append("  <METS:dmdSecFedora ID=\"DC\" STATUS=\"A\">");
         sb.append("    <METS:descMD ID=\"DC1.0\">");
-        sb
-                .append("      <METS:mdWrap MIMETYPE=\"text/xml\" MDTYPE=\"OTHER\" LABEL=\"DC Record for Coliseum image object\">");
+        sb.append("      <METS:mdWrap FORMAT_URI=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" MIMETYPE=\"text/xml\" MDTYPE=\"OTHER\" LABEL=\"Dublin Core Record for this object\">");
         sb.append("        <METS:xmlData>");
-        sb
-                .append("          <!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->");
-        sb
-                .append("          <oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">");
+        sb.append("          <oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">");
         sb.append("            <dc:title>Coliseum in Rome</dc:title>");
         sb.append("            <dc:creator>Thornton Staples</dc:creator>");
         sb.append("            <dc:subject>Architecture, Roman</dc:subject>");
-        sb
-                .append("            <dc:description>Image of Coliseum in Rome</dc:description>");
-        sb
-                .append("            <dc:publisher>University of Virginia Library</dc:publisher>");
+        sb.append("            <dc:description>Image of Coliseum in Rome</dc:description>");
+        sb.append("            <dc:publisher>University of Virginia Library</dc:publisher>");
         sb.append("            <dc:format>image/jpeg</dc:format>");
         sb.append("            <dc:identifier>demo:5</dc:identifier>");
         sb.append("          </oai_dc:dc>");
@@ -462,50 +387,32 @@ public class TestAPIM
         sb.append("      </METS:mdWrap>");
         sb.append("    </METS:descMD>");
         sb.append("  </METS:dmdSecFedora>");
-        sb
-                .append("  <!---*******************************************************************************************************************************************-->");
-        sb
-                .append("  <!--- DATASTREAMS:  EXTERNAL-REFERENCED CONTENT and REPOSITORY-MANAGED CONTENT-->");
-        sb
-                .append("  <!---*******************************************************************************************************************************************-->");
         sb.append("  <METS:fileSec>");
         sb.append("    <METS:fileGrp ID=\"DATASTREAMS\">");
         sb.append("      <METS:fileGrp ID=\"DS1\" STATUS=\"A\">");
-        sb.append("        <!--This is the thumbnail resolution image -->");
-        sb
-                .append("        <METS:file ID=\"DS1.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb
-                .append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
+        sb.append("        <METS:file ID=\"DS1.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
+        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
                         + getHost()
                         + ":8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg\" xlink:title=\"Thorny's Coliseum thumbnail jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS2\" STATUS=\"A\">");
-        sb.append("        <!-- This is the medium resoluion image -->");
-        sb
-                .append("        <METS:file ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb
-                .append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
+        sb.append("        <METS:file ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
+        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
                         + getHost()
                         + ":8080/fedora-demo/simple-image-demo/coliseum-medium.jpg\" xlink:title=\"Thorny's Coliseum medium jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS3\">");
-        sb.append("        <!--This is the high resolution image -->");
-        sb
-                .append("          <METS:file ID=\"DS3.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb
-                .append("            <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
+        sb.append("          <METS:file ID=\"DS3.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
+        sb.append("            <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
                         + getHost()
                         + ":8080/fedora-demo/simple-image-demo/coliseum-high.jpg\" xlink:title=\"Thorny's Coliseum high jpg image\"/>");
         sb.append("          </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS4\">");
-        sb.append("        <!--This is the very high resolution image -->");
-        sb
-                .append("        <METS:file ID=\"DS4.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb
-                .append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
+        sb.append("        <METS:file ID=\"DS4.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
+        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
                         + getHost()
                         + ":8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\" xlink:title=\"Thorny's Coliseum veryhigh jpg image\"/>");
         sb.append("        </METS:file>");
@@ -523,7 +430,7 @@ public class TestAPIM
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         sb.append("<feed xmlns=\"http://www.w3.org/2005/Atom\">");
         sb.append("  <id>info:fedora/demo:1000</id>");
-        sb.append("  <title type=\"text\">Image of Coliseum in Rome</title>");
+        sb.append("  <title type=\"text\">Data Object (Coliseum) for Local Simple Image Demo</title>");
         sb.append("  <updated>2008-04-30T03:54:31.525Z</updated>");
         sb.append("  <author>");
         sb.append("    <name>fedoraAdmin</name>");
@@ -545,10 +452,11 @@ public class TestAPIM
         sb.append("    <title type=\"text\">DC1.0</title>");
         sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
         sb.append("    <thr:in-reply-to ref=\"info:fedora/demo:1000/DC\"></thr:in-reply-to>");
-        sb.append("    <category term=\"DC Record for Coliseum image object\" scheme=\"info:fedora/fedora-system:def/model#label\"></category>");
+        sb.append("    <category term=\"Dublin Core Record for this object\" scheme=\"info:fedora/fedora-system:def/model#label\"></category>");
         sb.append("    <category term=\"DISABLED\" scheme=\"info:fedora/fedora-system:def/model#digestType\"></category>");
         sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
         sb.append("    <category term=\"491\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
+        sb.append("    <category term=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" scheme=\"info:fedora/fedora-system:def/model#formatURI\"></category>");
         sb.append("    <content type=\"text/xml\">");
         sb.append("      <oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">");
         sb.append("        <dc:title>Coliseum in Rome</dc:title>");
@@ -559,6 +467,33 @@ public class TestAPIM
         sb.append("        <dc:format>image/jpeg</dc:format>");
         sb.append("        <dc:identifier>demo:1000</dc:identifier>");
         sb.append("      </oai_dc:dc>");
+        sb.append("    </content>");
+        sb.append("  </entry>");
+        sb.append("  <entry>");
+        sb.append("    <id>info:fedora/demo:1000/RELS-EXT</id>");
+        sb.append("    <title type=\"text\">RELS-EXT</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <link href=\"info:fedora/demo:1000/RELS-EXT/2008-04-30T03:54:31.459Z\" rel=\"alternate\"></link>");
+        sb.append("    <category term=\"A\" scheme=\"info:fedora/fedora-system:def/model#state\"></category>");
+        sb.append("    <category term=\"X\" scheme=\"info:fedora/fedora-system:def/model#controlGroup\"></category>");
+        sb.append("    <category term=\"false\" scheme=\"info:fedora/fedora-system:def/model#versionable\"></category>");
+        sb.append("  </entry>");
+        sb.append("  <entry xmlns:thr=\"http://purl.org/syndication/thread/1.0\">");
+        sb.append("    <id>info:fedora/demo:1000/RELS-EXT/2008-04-30T03:54:31.459Z</id>");
+        sb.append("    <title type=\"text\">RELS-EXT1.0</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <thr:in-reply-to ref=\"info:fedora/demo:1000/RELS-EXT\"></thr:in-reply-to>");
+        sb.append("    <category term=\"Relationships\" scheme=\"info:fedora/fedora-system:def/model#label\"></category>");
+        sb.append("    <category term=\"DISABLED\" scheme=\"info:fedora/fedora-system:def/model#digestType\"></category>");
+        sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
+        sb.append("    <category term=\"472\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
+        sb.append("    <category term=\"info:fedora/fedora-system:FedoraRELSExt-1.0\" scheme=\"info:fedora/fedora-system:def/model#formatURI\"></category>");
+        sb.append("    <content type=\"application/rdf+xml\">");
+        sb.append("      <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:fedora-model=\"info:fedora/fedora-system:def/model#\">");
+        sb.append("        <rdf:Description rdf:about=\"info:fedora/demo:1000\">");
+        sb.append("          <fedora-model:hasModel rdf:resource=\"info:fedora/demo:UVA_STD_IMAGE_1\"></fedora-model:hasModel>");
+        sb.append("          </rdf:Description>");
+        sb.append("        </rdf:RDF>");
         sb.append("    </content>");
         sb.append("  </entry>");
         sb.append("  <entry>");
@@ -645,32 +580,6 @@ public class TestAPIM
         sb.append("    <summary type=\"text\">VERYHIGHRES_IMG1.0</summary>");
         sb.append("    <content type=\"image/jpeg\" src=\"http://" + getHost() + ":8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\"></content>");
         sb.append("  </entry>");
-        sb.append("  <entry>");
-        sb.append("    <id>info:fedora/demo:1000/RELS-EXT</id>");
-        sb.append("    <title type=\"text\">RELS-EXT</title>");
-        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
-        sb.append("    <link href=\"info:fedora/demo:1000/RELS-EXT/2008-04-30T03:54:31.459Z\" rel=\"alternate\"></link>");
-        sb.append("    <category term=\"A\" scheme=\"info:fedora/fedora-system:def/model#state\"></category>");
-        sb.append("    <category term=\"X\" scheme=\"info:fedora/fedora-system:def/model#controlGroup\"></category>");
-        sb.append("    <category term=\"false\" scheme=\"info:fedora/fedora-system:def/model#versionable\"></category>");
-        sb.append("  </entry>");
-        sb.append("  <entry xmlns:thr=\"http://purl.org/syndication/thread/1.0\">");
-        sb.append("    <id>info:fedora/demo:1000/RELS-EXT/2008-04-30T03:54:31.459Z</id>");
-        sb.append("    <title type=\"text\">RELS-EXT1.0</title>");
-        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
-        sb.append("    <thr:in-reply-to ref=\"info:fedora/demo:1000/RELS-EXT\"></thr:in-reply-to>");
-        sb.append("    <category term=\"Relationships\" scheme=\"info:fedora/fedora-system:def/model#label\"></category>");
-        sb.append("    <category term=\"DISABLED\" scheme=\"info:fedora/fedora-system:def/model#digestType\"></category>");
-        sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
-        sb.append("    <category term=\"472\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
-        sb.append("    <content type=\"application/rdf+xml\">");
-        sb.append("      <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:fedora-model=\"info:fedora/fedora-system:def/model#\">");
-        sb.append("        <rdf:Description rdf:about=\"info:fedora/demo:1000\">");
-        sb.append("          <fedora-model:hasModel rdf:resource=\"info:fedora/demo:UVA_STD_IMAGE_1\"></fedora-model:hasModel>");
-        sb.append("          </rdf:Description>");
-        sb.append("        </rdf:RDF>");
-        sb.append("    </content>");
-        sb.append("  </entry>");
         sb.append("</feed>");
 
         try {
@@ -682,7 +591,7 @@ public class TestAPIM
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         sb.append("<feed xmlns=\"http://www.w3.org/2005/Atom\">");
         sb.append("  <id>info:fedora/demo:1001</id>");
-        sb.append("  <title type=\"text\">Image of Coliseum in Rome</title>");
+        sb.append("  <title type=\"text\">Data Object (Coliseum) for Local Simple Image Demo</title>");
         sb.append("  <updated>2008-04-30T03:54:31.525Z</updated>");
         sb.append("  <author>");
         sb.append("    <name>fedoraAdmin</name>");
@@ -708,8 +617,31 @@ public class TestAPIM
         sb.append("    <category term=\"DISABLED\" scheme=\"info:fedora/fedora-system:def/model#digestType\"></category>");
         sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
         sb.append("    <category term=\"491\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
+        sb.append("    <category term=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" scheme=\"info:fedora/fedora-system:def/model#formatURI\"></category>");
         sb.append("	   <summary type=\"text\">DC1.0</summary>");
         sb.append("    <content type=\"text/xml\" src=\"DC1.0.xml\"/>");
+        sb.append("  </entry>");
+        sb.append("  <entry>");
+        sb.append("    <id>info:fedora/demo:1001/RELS-EXT</id>");
+        sb.append("    <title type=\"text\">RELS-EXT</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <link href=\"info:fedora/demo:1001/RELS-EXT/2008-04-30T03:54:31.459Z\" rel=\"alternate\"></link>");
+        sb.append("    <category term=\"A\" scheme=\"info:fedora/fedora-system:def/model#state\"></category>");
+        sb.append("    <category term=\"X\" scheme=\"info:fedora/fedora-system:def/model#controlGroup\"></category>");
+        sb.append("    <category term=\"false\" scheme=\"info:fedora/fedora-system:def/model#versionable\"></category>");
+        sb.append("  </entry>");
+        sb.append("  <entry xmlns:thr=\"http://purl.org/syndication/thread/1.0\">");
+        sb.append("    <id>info:fedora/demo:1001/RELS-EXT/2008-04-30T03:54:31.459Z</id>");
+        sb.append("    <title type=\"text\">RELS-EXT1.0</title>");
+        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
+        sb.append("    <thr:in-reply-to ref=\"info:fedora/demo:1001/RELS-EXT\"></thr:in-reply-to>");
+        sb.append("    <category term=\"Relationships\" scheme=\"info:fedora/fedora-system:def/model#label\"></category>");
+        sb.append("    <category term=\"DISABLED\" scheme=\"info:fedora/fedora-system:def/model#digestType\"></category>");
+        sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
+        sb.append("    <category term=\"472\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
+        sb.append("    <category term=\"info:fedora/fedora-system:FedoraRELSExt-1.0\" scheme=\"info:fedora/fedora-system:def/model#formatURI\"></category>");
+        sb.append("    <content type=\"application/rdf+xml\" src=\"RELS-EXT1.0.xml\"/>");
+        sb.append("    <summary type=\"text\">RELS-EXT1.0</summary>");
         sb.append("  </entry>");
         sb.append("  <entry>");
         sb.append("    <id>info:fedora/demo:1001/VERYHIGHRES_IMG</id>");
@@ -731,27 +663,6 @@ public class TestAPIM
         sb.append("    <category term=\"0\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
         sb.append("    <summary type=\"text\">VERYHIGHRES_IMG1.0</summary>");
         sb.append("    <content type=\"image/jpeg\" src=\"http://" + getHost() + ":8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\"></content>");
-        sb.append("  </entry>");
-        sb.append("  <entry>");
-        sb.append("    <id>info:fedora/demo:1001/RELS-EXT</id>");
-        sb.append("    <title type=\"text\">RELS-EXT</title>");
-        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
-        sb.append("    <link href=\"info:fedora/demo:1001/RELS-EXT/2008-04-30T03:54:31.459Z\" rel=\"alternate\"></link>");
-        sb.append("    <category term=\"A\" scheme=\"info:fedora/fedora-system:def/model#state\"></category>");
-        sb.append("    <category term=\"X\" scheme=\"info:fedora/fedora-system:def/model#controlGroup\"></category>");
-        sb.append("    <category term=\"false\" scheme=\"info:fedora/fedora-system:def/model#versionable\"></category>");
-        sb.append("  </entry>");
-        sb.append("  <entry xmlns:thr=\"http://purl.org/syndication/thread/1.0\">");
-        sb.append("    <id>info:fedora/demo:1001/RELS-EXT/2008-04-30T03:54:31.459Z</id>");
-        sb.append("    <title type=\"text\">RELS-EXT1.0</title>");
-        sb.append("    <updated>2008-04-30T03:54:31.459Z</updated>");
-        sb.append("    <thr:in-reply-to ref=\"info:fedora/demo:1001/RELS-EXT\"></thr:in-reply-to>");
-        sb.append("    <category term=\"Relationships\" scheme=\"info:fedora/fedora-system:def/model#label\"></category>");
-        sb.append("    <category term=\"DISABLED\" scheme=\"info:fedora/fedora-system:def/model#digestType\"></category>");
-        sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
-        sb.append("    <category term=\"472\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
-        sb.append("    <content type=\"application/rdf+xml\" src=\"RELS-EXT1.0.xml\"/>");
-        sb.append("    <summary type=\"text\">RELS-EXT1.0</summary>");
         sb.append("  </entry>");
         sb.append("</feed>");
         
@@ -847,7 +758,7 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='demo:5']", xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",
                           xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",
+        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
                           xmlIn);
         assertXpathEvaluatesTo("6",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
@@ -879,7 +790,7 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='" + pid + "']", xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",
                           xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",
+        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
                           xmlIn);
         assertXpathExists("//foxml:datastream[@ID='AUDIT']", xmlIn);
         assertXpathEvaluatesTo("5",
@@ -896,7 +807,7 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='" + pid + "']", xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",
                           xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",
+        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
                           xmlIn);
         assertXpathNotExists("//foxml:datastream[@ID='AUDIT']", xmlIn); // No audit trail should be created
         assertXpathEvaluatesTo("5",
@@ -916,7 +827,7 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='" + pid + "']", xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",
                           xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",
+        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
                           xmlIn);
         assertXpathEvaluatesTo("5",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
@@ -935,7 +846,7 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='" + pid + "']", xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",
                           xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",
+        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
                           xmlIn);
         assertXpathEvaluatesTo("5",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
@@ -954,7 +865,7 @@ public class TestAPIM
             assertXpathExists("foxml:digitalObject[@PID='" + pid + "']", xmlIn);
             assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",
                       xmlIn);
-            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",
+            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
                       xmlIn);
             assertXpathEvaluatesTo("6",
                            "count(//foxml:datastream[@ID!='AUDIT'])",
@@ -975,7 +886,7 @@ public class TestAPIM
         xmlIn = new String(objectXML, "UTF-8");
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state'and @VALUE='Inactive']",
                           xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label'and @VALUE='Image of Coliseum in Rome']",
+        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label'and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
                           xmlIn);
         assertXpathExists("//audit:auditTrail/audit:record[last()]/audit:action['modifyObject']",
                           xmlIn);
@@ -1014,14 +925,14 @@ public class TestAPIM
         result =
                 apim.modifyObject("demo:5",
                                   "A",
-                                  "Image of Coliseum in Rome",
+                                  "Data Object (Coliseum) for Local Simple Image Demo",
                                   null,
                                   "reset label and state");
         objectXML = apim.getObjectXML("demo:5");
         xmlIn = new String(objectXML, "UTF-8");
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",
                           xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",
+        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
                           xmlIn);
 
         // (3) test export
@@ -1033,7 +944,7 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='demo:998']", xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",
                           xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",
+        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
                           xmlIn);
         assertXpathEvaluatesTo("5",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
@@ -1046,7 +957,7 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='demo:998']", xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",
                           xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",
+        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
                           xmlIn);
         assertXpathEvaluatesTo("5",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
@@ -1059,7 +970,7 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='demo:998']", xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",
                           xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",
+        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
                           xmlIn);
         assertXpathEvaluatesTo("5",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
@@ -1073,7 +984,7 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='demo:999']", xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",
                           xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",
+        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
                           xmlIn);
         assertXpathEvaluatesTo("5",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
@@ -1087,7 +998,7 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='demo:999']", xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",
                           xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",
+        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
                           xmlIn);
         assertXpathEvaluatesTo("5",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
@@ -1101,7 +1012,7 @@ public class TestAPIM
         assertXpathExists("foxml:digitalObject[@PID='demo:999']", xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",
                           xmlIn);
-        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",
+        assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
                           xmlIn);
         assertXpathEvaluatesTo("5",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
@@ -1584,15 +1495,15 @@ public class TestAPIM
 
         checkDatastream(dsArray,
                         "DC",
-                        null,
-                        "Dublin Core for the Document object",
+                        OAI_DC2_0.uri,
+                        "Dublin Core Record for this object",
                         null,
                         "text/xml",
                         "A",
                         "DC1.0",
                         true,
                         "X",
-                        550,
+                        306,
                         new String[] {});
 
         checkDatastream(dsArray,
@@ -1609,11 +1520,11 @@ public class TestAPIM
                         0,
                         new String[] {});
 
-        int expectedTEISize = 902;
+        int expectedTEISize = 1098;
         if (testingMETS()) {
-            expectedTEISize = 921;
-        } else if (testingATOM()) {
-            expectedTEISize = 1211;
+            expectedTEISize = 1154;
+        } else if (testingAtom()) {
+            expectedTEISize = 1101;
         }
 
         checkDatastream(dsArray,
@@ -1629,17 +1540,17 @@ public class TestAPIM
                         expectedTEISize,
                         new String[] {});
 
-        int expectedRELSSize = 362;
+        int expectedRELSSize = 351;
         if (testingMETS()) {
-            expectedRELSSize = 335;
-        } else if (testingATOM()) {
-            expectedRELSSize = 382;
+            expectedRELSSize = 359;
+        } else if (testingAtom()) {
+            expectedRELSSize = 343;
         }
 
         checkDatastream(dsArray,
                         "RELS-EXT",
-                        null,
-                        "Relationships",
+                        RELS_EXT1_0.uri,
+                        "RDF Statements about this object",
                         null,
                         "application/rdf+xml",
                         "A",
@@ -1662,15 +1573,15 @@ public class TestAPIM
 
         checkDatastream(dsArray,
                         "DC",
-                        null,
-                        "Dublin Core for the Document object",
+                        OAI_DC2_0.uri,
+                        "Dublin Core Record for this object",
                         null,
                         "text/xml",
                         "A",
                         "DC1.0",
                         true,
                         "X",
-                        550,
+                        306,
                         new String[] {});
 
         checkDatastream(dsArray,
@@ -1702,8 +1613,8 @@ public class TestAPIM
 
         checkDatastream(dsArray,
                         "RELS-EXT",
-                        null,
-                        "Relationships",
+                        RELS_EXT1_0.uri,
+                        "RDF Statements about this object",
                         null,
                         "application/rdf+xml",
                         "A",
@@ -1898,7 +1809,7 @@ public class TestAPIM
                           xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property" +
                           "[@NAME='info:fedora/fedora-system:def/model#label'" +
-                          " and @VALUE='Image of Coliseum in Rome']",
+                          " and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
                           xmlIn);
         assertXpathNotExists("//foxml:objectProperties/foxml:property" +
                              "[@NAME='info:fedora/fedora-system:def/model#contentModel']",
@@ -1919,7 +1830,7 @@ public class TestAPIM
                           xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property" +
                           "[@NAME='info:fedora/fedora-system:def/model#label'" +
-                          " and @VALUE='Image of Coliseum in Rome']",
+                          " and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
                           xmlIn);
         assertXpathNotExists("//foxml:objectProperties/foxml:property" +
                              "[@NAME='info:fedora/fedora-system:def/model#contentModel']",
@@ -1948,7 +1859,7 @@ public class TestAPIM
                           xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property" +
         		          "[@NAME='info:fedora/fedora-system:def/model#label' " +
-        		          "and @VALUE='Image of Coliseum in Rome']",
+        		          "and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
                           xmlIn);
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])", xmlIn);
 
@@ -1957,7 +1868,7 @@ public class TestAPIM
         assertTrue(objectXML.length > 0);
         xmlIn = new String(objectXML, "UTF-8");
         assertXpathExists("METS:mets[@OBJID='demo:999b']", xmlIn);
-        assertXpathExists("METS:mets[@LABEL='Image of Coliseum in Rome']", xmlIn);
+        assertXpathExists("METS:mets[@LABEL='Data Object (Coliseum) for Local Simple Image Demo']", xmlIn);
 
         // purge mets 1.0 object
         apim.purgeObject(pid, "purging object demo:999b", false);

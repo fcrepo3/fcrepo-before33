@@ -11,7 +11,7 @@ import org.mulgara.query.Model;
 import fedora.common.rdf.RDFName;
 
 /**
- * Identities of the "core" content models.
+ * Identities of the system content models.
  * 
  * @author Aaron Birkland
  * @author Chris Wilper

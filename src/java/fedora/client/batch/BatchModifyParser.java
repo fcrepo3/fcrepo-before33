@@ -421,18 +421,6 @@ public class BatchModifyParser
                         && !attrs.getValue("checksum").equals("")) {
                     m_ds.checksum = attrs.getValue("checksum");
                 }
-                // Check that MIME type is text/xml if datastream is XMLMetadata datastream
-                if (m_ds.dsControlGrp.equalsIgnoreCase("X")
-                        && !m_ds.dsMIME.equalsIgnoreCase("text/xml")) {
-                    failedCount++;
-                    logFailedDirective(m_ds.objectPID,
-                                       localName,
-                                       null,
-                                       "Datastream dsMIME attribute must be \"text/xml\" when"
-                                               + " adding datastreams of type \"X\". dsMIME type is: "
-                                               + " \"" + m_ds.dsMIME + "\".");
-                    return;
-                }
 
                 addDatastream = true;
 

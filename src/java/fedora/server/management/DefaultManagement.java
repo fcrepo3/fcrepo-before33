@@ -120,13 +120,12 @@ public class DefaultManagement
         DOWriter w = null;
         try {
             LOG.debug("Entered ingest");
-            w =
-                    m_manager.getIngestWriter(Server.USE_DEFINITIVE_STORE,
-                                              context,
-                                              serialization,
-                                              format,
-                                              encoding,
-                                              newPid);
+            w = m_manager.getIngestWriter(Server.USE_DEFINITIVE_STORE,
+                                          context,
+                                          serialization,
+                                          format,
+                                          encoding,
+                                          newPid);
             String pid = w.GetObjectPID();
 
             m_fedoraXACMLModule.enforceIngest(context, pid, format, encoding);

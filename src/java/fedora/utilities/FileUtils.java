@@ -20,12 +20,17 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import fedora.common.FaultException;
+
 public class FileUtils {
 
     public static final int BUFFER = 2048;
 
     /**
      * Copy an InputStream to an OutputStream.
+     * <p>
+     * Both streams will be closed automatically, whether copying ultimately
+     * succeeds or fails.
      * 
      * @param source
      * @param destination
@@ -37,16 +42,22 @@ public class FileUtils {
         byte data[] = new byte[BUFFER];
         BufferedOutputStream dest =
                 new BufferedOutputStream(destination, BUFFER);
-
         try {
             while ((count = source.read(data, 0, BUFFER)) != -1) {
                 dest.write(data, 0, count);
             }
             dest.flush();
-            dest.close();
             return true;
         } catch (IOException e) {
             return false;
+        } finally {
+            try {
+                source.close();
+                dest.close();
+            } catch (IOException e) {
+                throw new FaultException("Failed to close stream after copy",
+                                         e);
+            }
         }
     }
 
@@ -79,8 +90,6 @@ public class FileUtils {
                 InputStream in = new FileInputStream(source);
                 OutputStream out = new FileOutputStream(destination);
                 result = result && copy(in, out);
-                out.close();
-                in.close();
                 return result;
             } catch (IOException e) {
                 return false;

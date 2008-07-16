@@ -197,12 +197,6 @@ public class FOXMLDOSerializer
                     + DateUtility.convertDateToString(mdate) + "\"/>\n");
         }
 
-        /*
-         * FIXME: Content model properties in foxml 1.0 are now lossy - they
-         * will be simply be ignored by serialization/deserialization. Is that
-         * OK, or should we do something special with them?
-         */
-
         Iterator<String> iter = obj.getExtProperties().keySet().iterator();
         while (iter.hasNext()) {
             String name = iter.next();
@@ -278,13 +272,17 @@ public class FOXMLDOSerializer
                         + ":datastreamVersion ID=\"" + vds.DSVersionID + "\""
                         + " LABEL=\"" + StreamUtility.enc(vds.DSLabel) + "\""
                         + dateAttr + altIdsAttr + " MIMETYPE=\""
-                        + StreamUtility.enc(vds.DSMIME) + "\"" + formatURIAttr
-                        + " SIZE=\"" + vds.DSSize + "\">\n");
+                        + StreamUtility.enc(vds.DSMIME) + "\"" + formatURIAttr);
+                // include size if it's non-zero
+                if (vds.DSSize != 0) {
+                    buf.append(" SIZE=\"" + vds.DSSize + "\"");
+                }
+                buf.append(">\n");
 
                 // include checksum if it has a value
                 String csType = vds.getChecksumType();
                 if (csType != null && csType.length() > 0
-                        && !csType.equals("none")) {
+                        && !csType.equals(Datastream.CHECKSUMTYPE_DISABLED)) {
                     buf.append("            <" + FOXML.prefix
                             + ":contentDigest TYPE=\"" + csType + "\""
                             + " DIGEST=\"" + vds.getChecksum() + "\"/>\n");
@@ -371,7 +369,7 @@ public class FOXMLDOSerializer
             // insert the ds version-level elements
             buf.append("        <" + FOXML.prefix + ":datastreamVersion ID=\""
                     + "AUDIT.0" + "\"" + " LABEL=\""
-                    + "Fedora Object Audit Trail" + "\"" + " CREATED=\""
+                    + "Audit Trail for this object" + "\"" + " CREATED=\""
                     + DateUtility.convertDateToString(obj.getCreateDate())
                     + "\"" + " MIMETYPE=\"" + "text/xml" + "\""
                     + " FORMAT_URI=\"" + AUDIT1_0.uri + "\">\n");

@@ -7,7 +7,7 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/model#ownerId" VALUE="fedoraAdmin"/>
 	</foxml:objectProperties>
 	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
-		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="Dublin Core Metadata">
+		<foxml:datastreamVersion FORMAT_URI="http://www.openarchives.org/OAI/2.0/oai_dc/" ID="DC1.0" MIMETYPE="text/xml" LABEL="Dublin Core Record for this object">
 			<foxml:xmlContent>
 				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
 					<dc:title>Behavior Definition Object for Image Manipulation Servlet</dc:title>
@@ -16,8 +16,19 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
+	<foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion FORMAT_URI="info:fedora/fedora-system:FedoraRELSExt-1.0" ID="RELS-EXT1.0" LABEL="RDF Statements about this object" MIMETYPE="application/rdf+xml">
+			<foxml:xmlContent>
+				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
+					<rdf:Description rdf:about="info:fedora/test:27">
+						<fedora-model:hasModel rdf:resource="info:fedora/fedora-system:ServiceDefinition-3.0"/>
+					</rdf:Description>
+				</rdf:RDF>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>	
 	<foxml:datastream ID="METHODMAP" CONTROL_GROUP="X" STATE="A">
-		<foxml:datastreamVersion ID="METHODMAP1.0" MIMETYPE="text/xml" LABEL="Method Map for Fedora Behavior Definition for Image Manipulation Servlet">
+		<foxml:datastreamVersion FORMAT_URI="info:fedora/fedora-system:FedoraSDefMethodMap-1.0" ID="METHODMAP1.0" MIMETYPE="text/xml" LABEL="Abstract Method Map">
 			<foxml:xmlContent>
 				<fmm:MethodMap bDefPID="test:27" name="Fedora MethodMap for Image Manipulation Servlet" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
 					<fmm:Method operationName="resizeImage">
@@ -54,15 +65,4 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-		<foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT" STATE="A" VERSIONABLE="false">
-		<foxml:datastreamVersion ID="RELS-EXT1.0" LABEL="Relationships" MIMETYPE="application/rdf+xml">
-			<foxml:xmlContent>
-				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:fedora-model="info:fedora/fedora-system:def/model#">
-					<rdf:Description rdf:about="info:fedora/test:27">
-						<fedora-model:hasModel rdf:resource="info:fedora/fedora-system:ServiceDefinition-3.0"/>
-					</rdf:Description>
-				</rdf:RDF>
-			</foxml:xmlContent>
-		</foxml:datastreamVersion>
-	</foxml:datastream>	
 </foxml:digitalObject>

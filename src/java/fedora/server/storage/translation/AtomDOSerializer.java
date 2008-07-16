@@ -232,15 +232,18 @@ public class AtomDOSerializer
                 // include checksum if it has a value
                 String csType = dsv.getChecksumType();
                 if (csType != null && csType.length() > 0
-                        && !csType.equals(Datastream.CHECKSUM_NONE)) {
+                        && !csType.equals(Datastream.CHECKSUMTYPE_DISABLED)) {
                     dsvEntry.addCategory(MODEL.DIGEST_TYPE.uri, csType, null);
                     dsvEntry.addCategory(MODEL.DIGEST.uri,
                                          dsv.getChecksum(),
                                          null);
                 }
 
-                dsvEntry.addCategory(MODEL.LENGTH.uri, Long
-                        .toString(dsv.DSSize), null);
+                // include size if it's non-zero
+                if (dsv.DSSize != 0) {
+                    dsvEntry.addCategory(MODEL.LENGTH.uri, Long
+                            .toString(dsv.DSSize), null);
+                }
                 setContent(dsvEntry, dsv);
 
             }
@@ -306,7 +309,7 @@ public class AtomDOSerializer
         ThreadHelper.addInReplyTo(dsvEntry, m_pid.toURI() + "/AUDIT");
         dsvEntry.addCategory(MODEL.FORMAT_URI.uri, AUDIT1_0.uri, null);
         dsvEntry
-                .addCategory(MODEL.LABEL.uri, "Fedora Object Audit Trail", null);
+                .addCategory(MODEL.LABEL.uri, "Audit Trail for this object", null);
         if (m_format.equals(ATOM_ZIP1_1)) {
             String name = "AUDIT.0.xml";
             try {
@@ -408,7 +411,8 @@ public class AtomDOSerializer
         } else {
             String dsLocation;
             IRI iri;
-            if (m_format.equals(ATOM_ZIP1_1)) {
+            if (m_format.equals(ATOM_ZIP1_1)
+                    && m_transContext != DOTranslationUtility.AS_IS) {
                 dsLocation = vds.DSVersionID + "." + MimeTypeUtils.fileExtensionForMIMEType(vds.DSMIME);
                 try {
                     m_zout.putNextEntry(new ZipEntry(dsLocation));

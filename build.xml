@@ -280,6 +280,52 @@
         </sequential>
     </macrodef>
 
+    <macrodef name="md-convert-objects">
+        <attribute name="inputDir"
+                   default="${src.dir}/demo-objects/foxml"/>
+        <attribute name="outputDir"/>
+        <attribute name="deserializer"
+                   default="fedora.server.storage.translation.FOXML1_1DODeserializer"/>
+        <attribute name="serializer"/>
+        <attribute name="pretty" default="false"/>
+        <attribute name="inExt" default="xml"/>
+        <attribute name="outExt" default="xml"/>
+        <sequential>
+            <java classname="fedora.server.storage.translation.ConvertObjectSerialization">
+                <classpath>
+                    <pathelement path="${server.build.dir}/classes"/>
+                    <pathelement path="${lib.abdera.core}"/>
+                    <pathelement path="${lib.abdera-il8n}"/>
+                    <pathelement path="${lib.abdera.parser}"/>
+                    <pathelement path="${lib.abdera.extensions}"/>
+                    <pathelement location="${lib.axiom-api}"/>
+                    <pathelement location="${lib.axiom-impl}"/>
+                    <pathelement location="${lib.jaxen}"/>
+                    <pathelement location="${lib.activation}"/>
+                    <pathelement path="${lib.jrdf}"/>
+                    <pathelement path="${lib.log4j}"/>
+                    <pathelement path="${lib.xerces}"/>
+                    <pathelement path="${lib.staxapi}"/>
+                    <pathelement path="${lib.sjsxp}"/>
+                    <pathelement path="${lib.trippi-core}"/>
+                    <pathelement path="${lib.rio}"/>
+                    <pathelement path="${lib.openrdf-model}"/>
+                    <pathelement path="${lib.openrdf-util}"/>
+                    <pathelement path="${lib.commons-httpclient}"/>
+                    <pathelement path="${lib.commons-logging}"/>
+                    <pathelement path="${lib.commons-io}"/>
+                </classpath>
+                <arg path="@{inputDir}"/>
+                <arg path="@{outputDir}"/>
+                <arg value="@{deserializer}"/>
+                <arg value="@{serializer}"/>
+                <arg value="@{pretty}"/>
+                <arg value="@{inExt}"/>
+                <arg value="@{outExt}"/>
+            </java>
+        </sequential>
+    </macrodef>
+    
     <!-- targets -->
     <target name="init">
         <tstamp>
@@ -361,6 +407,18 @@
                       fedora/server/management/FedoraAPIMServiceLocator.java,
                       fedora/server/access/FedoraAPIABindingSOAPHTTPImpl.java,
                       fedora/server/access/FedoraAPIAServiceLocator.java"/>            
+        <copy todir="${server.build.dir}/classes">
+            <fileset dir="${src.dir}/properties/server"/>
+            <fileset dir="${src.dir}/dbspec/server"/>
+        	<fileset dir="${java.src.dir}">
+        		<include name="**/*.betwixt"/>
+        		<include name="**/*.xml"/>
+            </fileset>
+        	<filterset>
+                <filter token="buildNumber" value="${build.tstamp}"/>
+            </filterset>
+        </copy>
+        
     </target>
     
     <target name="compile-util" depends="init"
@@ -386,18 +444,6 @@
         <mkdir dir="${fedora.home.build.dir}/server/fedora-internal-use/deploy"/>
         <mkdir dir="${fedora.home.build.dir}/server/fedora-internal-use/fedora-internal-use-backend-service-policies"/>
         <mkdir dir="${fedora.home.build.dir}/server/fedora-internal-use/fedora-internal-use-repository-policies-approximating-2.0"/>
-        
-        <copy todir="${server.build.dir}/classes">
-            <fileset dir="${src.dir}/properties/server"/>
-            <fileset dir="${src.dir}/dbspec/server"/>
-        	<fileset dir="${java.src.dir}">
-        		<include name="**/*.betwixt"/>
-        		<include name="**/*.xml"/>
-            </fileset>
-        	<filterset>
-                <filter token="buildNumber" value="${build.tstamp}"/>
-            </filterset>
-        </copy>
         
         <copy file="inc/truststore" todir="${fedora.home.build.dir}/server"/>
         
@@ -601,7 +647,23 @@
         </axis-wsdl2java>
     </target>
     
-    <target name="client" depends="compile-client, client-jar, messaging-client"
+    <target name="demo-objects" depends="compile-server">
+        <md-convert-objects
+                outputDir="${fedora.home.build.dir}/client/demo/mets"
+                serializer="fedora.server.storage.translation.METSFedoraExt1_1DOSerializer"
+                pretty="true"/>
+        <md-convert-objects
+                outputDir="${fedora.home.build.dir}/client/demo/atom"
+                serializer="fedora.server.storage.translation.Atom1_1DOSerializer"
+                pretty="true"/>
+        <md-convert-objects
+                outputDir="${fedora.home.build.dir}/client/demo/atom-zip"
+                serializer="fedora.server.storage.translation.AtomZip1_1DOSerializer"
+                pretty="false"
+                outExt="zip"/>
+    </target>
+    
+    <target name="client" depends="compile-client, client-jar, demo-objects, messaging-client"
         description="">
         <mkdir dir="${fedora.home.build.dir}/client/bin"/>
         <mkdir dir="${fedora.home.build.dir}/client/demo/batch-demo/object-specifics"/>
@@ -633,14 +695,6 @@
         <copy todir="${fedora.home.build.dir}/client/demo/foxml">
             <fileset dir="${src.dir}/demo-objects/foxml"/>
         </copy>
-        <copy todir="${fedora.home.build.dir}/client/demo/mets">
-            <fileset dir="${src.dir}/demo-objects/mets">
-            	<exclude name="**/batch-demo/**" />
-        	</fileset>
-        </copy>
-        <copy todir="${fedora.home.build.dir}/client/demo/atom">
-            <fileset dir="${src.dir}/demo-objects/atom"/>
-        </copy>
         <!-- SOAP demo client (simple java reference client) -->
         <copy todir="${fedora.home.build.dir}/client/demo/soapclient">
             <fileset dir="${src.dir}/demo-soapclient"/>
@@ -652,7 +706,7 @@
         <copy file="${src.dir}/xsl/batchtool/foxml-merge.xsl" todir="${fedora.home.build.dir}/client/lib"/>
         
         <copy todir="${fedora.home.build.dir}/client/demo/batch-demo">
-            <fileset dir="${src.dir}/demo-objects/mets/batch-demo"/>
+            <fileset dir="${src.dir}/demo-objects/batch-demo"/>
         </copy>
         <copy todir="${fedora.home.build.dir}/client/demo/batch-demo/object-specifics">
             <fileset dir="${src.dir}/xml/batch-demo/object-specifics"/>
@@ -877,7 +931,7 @@
 		</jar>
 	</target>
 	
-	<target name="junit" depends="compile-junit">
+	<target name="junit" depends="compile-junit,demo-objects">
 		<property name="fedora.home" value="${env.FEDORA_HOME}"/>
 		<property name="fedora.username" value="fedoraAdmin" />
 		<property name="fedora.password" value="fedoraAdmin" />

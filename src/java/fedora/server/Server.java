@@ -6,7 +6,9 @@
 package fedora.server;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -37,9 +39,12 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import fedora.common.Constants;
+import fedora.common.FaultException;
 import fedora.common.MalformedPIDException;
 import fedora.common.PID;
 
+import fedora.server.config.ServerConfiguration;
+import fedora.server.config.ServerConfigurationParser;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.MalformedPidException;
 import fedora.server.errors.ModuleInitializationException;
@@ -1409,6 +1414,25 @@ public abstract class Server
                     + dateTimeValue + "'");
         } else {
             return currentDate;
+        }
+    }
+   
+    /**
+     * Gets the server configuration.
+     * 
+     * @return the server configuration.
+     */
+    public static ServerConfiguration getConfig() {
+        try {
+            InputStream fcfg = new FileInputStream(
+                    new File(Constants.FEDORA_HOME,
+                             "server/config/fedora.fcfg"));
+            ServerConfigurationParser parser =
+                new ServerConfigurationParser(fcfg);
+            return parser.parse(); 
+        } catch (IOException e) {
+            throw new FaultException("Error loading server configuration",
+                                     e);
         }
     }
 

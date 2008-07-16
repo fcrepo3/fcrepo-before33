@@ -76,11 +76,12 @@ Then enter:
 
 By default, each test will run using the demo objects in
 FOXML format.  To run the same tests using the demo objects
-in METS or Atom format, add one of the following to the line
-above:
+in METS, Atom, or Atom Zip format, add one of the following to 
+the line above:
 
   -Ddemo.format=mets
   -Ddemo.format=atom
+  -Ddemo.format=atom-zip
 
 There are some system tests that are not included in the system
 test suites due to the time required to execute the test,

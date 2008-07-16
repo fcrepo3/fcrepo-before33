@@ -352,21 +352,16 @@ public class METSFedoraExtDODeserializer
                 m_obj.setPid(grab(a, METS.uri, "OBJID"));
                 m_obj.setLabel(grab(a, METS.uri, "LABEL"));
                 if (m_format.equals(METS_EXT1_0)) {
-                    /*
-                     * FIXME: Since content model properties are dropped, they
-                     * are lossy. Should we bs doing something better?
-                     */
-                    //m_obj.setContentModelId(grab(a, METS.uri, "PROFILE"));
+                    // In METS_EXT 1.0, the PROFILE attribute mapped to an 
+                    // object property, fedora-model:contentModel.  This will be
+                    // retained as an extended property in the DigitalObject.
+                    m_obj.setExtProperty(MODEL.CONTENT_MODEL.uri,
+                                         grab(a, METS.uri, "PROFILE"));
+                    // Similarly, the TYPE attribute mapped to rdf:type, and
+                    // will also be retained as an external property.
+                    m_obj.setExtProperty(RDF.TYPE.uri,
+                                         grab(a, METS.uri, "TYPE"));
                 }
-
-                /*
-                 * FIXME: Ignoring types for now
-                 */
-                //String objType = grab(a,
-                // METS.uri, "TYPE"); if (objType == null || objType.equals("")) {
-                // objType = "FedoraObject"; } int objectType =
-                // parseObjectType(objType); if (objectType > 0) {
-                // m_obj.addFedoraObjectType(objectType); }
             } else if (localName.equals("metsHdr")) {
                 m_obj.setCreateDate(DateUtility
                         .convertStringToDate(grab(a, METS.uri, "CREATEDATE")));
@@ -563,8 +558,8 @@ public class METSFedoraExtDODeserializer
                     instantiateDatastream(new DatastreamManagedContent());
                 }
             } else if (localName.equals("FContent")) {
-                // In the version of METS that Fedora supports, the FContent element
-                // contains base64 encoded data.
+                // In METS_EXT, the FContent element contains base64-encoded
+                // data.
                 m_readingContent = true;
                 m_elementContent = new StringBuffer();
                 if (m_dsControlGrp.equalsIgnoreCase("M")) {
@@ -921,7 +916,7 @@ public class METSFedoraExtDODeserializer
                 + m_dsChecksum);
         if (m_obj.isNew()) {
             if (m_dsChecksum != null && !m_dsChecksum.equals("")
-                    && !m_dsChecksum.equals("none")) {
+                    && !m_dsChecksum.equals(Datastream.CHECKSUM_NONE)) {
                 String tmpChecksum = ds.getChecksum();
                 LOG.debug("checksum = " + tmpChecksum);
                 if (!m_dsChecksum.equals(tmpChecksum)) {
@@ -985,7 +980,7 @@ public class METSFedoraExtDODeserializer
                 + m_dsChecksum);
         if (m_obj.isNew()) {
             if (m_dsChecksum != null && !m_dsChecksum.equals("")
-                    && !m_dsChecksum.equals("none")) {
+                    && !m_dsChecksum.equals(Datastream.CHECKSUM_NONE)) {
                 String tmpChecksum = ds.getChecksum();
                 LOG.debug("checksum = " + tmpChecksum);
                 if (!m_dsChecksum.equals(tmpChecksum)) {

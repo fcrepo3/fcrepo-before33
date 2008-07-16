@@ -9,6 +9,7 @@ import java.io.InputStream;
 
 import fedora.server.Context;
 import fedora.server.errors.ServerException;
+import fedora.server.errors.StorageDeviceException;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 
@@ -78,6 +79,9 @@ public interface DOManager
                                              String encoding,
                                              boolean newPid)
             throws ServerException;
+    
+    public boolean objectExists(String pid)
+            throws StorageDeviceException;
 
     public FieldSearchResult findObjects(Context context,
                                          String[] resultFields,

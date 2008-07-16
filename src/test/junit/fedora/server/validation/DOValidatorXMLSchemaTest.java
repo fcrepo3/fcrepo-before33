@@ -40,11 +40,16 @@ public class DOValidatorXMLSchemaTest {
     @After
     public void tearDown() throws Exception {
     }
+    
+    private static File getDemoFile(String path) {
+        return new File(Constants.FEDORA_HOME, "client/demo/" + path);
+                        
+    }
 
     @Test
     public void testFoxmlValidation() throws Exception {
         InputStream in =
-                new FileInputStream("src/demo-objects/foxml/local-server-demos/simple-image-demo/obj_demo_5.xml");
+                new FileInputStream(getDemoFile("foxml/local-server-demos/simple-image-demo/obj_demo_5.xml"));
         DOValidatorXMLSchema dov =
                 new DOValidatorXMLSchema("src/xsd/foxml1-1.xsd");
         dov.validate(in);
@@ -53,7 +58,7 @@ public class DOValidatorXMLSchemaTest {
     @Test
     public void testMetsValidation() throws Exception {
         InputStream in =
-                new FileInputStream("src/demo-objects/mets/local-server-demos/simple-image-demo/demo_35.xml");
+                new FileInputStream(getDemoFile("mets/local-server-demos/simple-image-demo/obj_demo_35.xml"));
         DOValidatorXMLSchema dov =
                 new DOValidatorXMLSchema("src/xsd/mets-fedora-ext1-1.xsd");
         dov.validate(in);
@@ -62,7 +67,7 @@ public class DOValidatorXMLSchemaTest {
     @Test
     public void testAtomValidation() throws Exception {
         InputStream in =
-                new FileInputStream("src/demo-objects/atom/local-server-demos/simple-image-demo/obj_demo_5.xml");
+                new FileInputStream(getDemoFile("atom/local-server-demos/simple-image-demo/obj_demo_5.xml"));
         DOValidatorXMLSchema dov = new DOValidatorXMLSchema("src/xsd/atom.xsd");
         dov.validate(in);
 

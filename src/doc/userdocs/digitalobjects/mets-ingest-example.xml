@@ -10,7 +10,7 @@
 	<METS:metsHdr RECORDSTATUS="A"/>
 	<METS:amdSec ID="DC" STATUS="A">
 		<METS:techMD ID="DC.0">
-			<METS:mdWrap LABEL="Default Dublin Core Record" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+			<METS:mdWrap LABEL="Dublin Core Record for this object" MDTYPE="OTHER" FORMAT_URI="http://www.openarchives.org/OAI/2.0/oai_dc/" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
 				<METS:xmlData>
 					<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
 						<dc:title>METS 1.1 Reference Object</dc:title>
@@ -26,7 +26,7 @@
 	</METS:amdSec>
 	<METS:amdSec ID="RELS-EXT" STATUS="A">
 		<METS:techMD ID="RELS-EXT.0">
-			<METS:mdWrap LABEL="Fedora Object-to-Object Relationship Metadata" MDTYPE="OTHER" MIMETYPE="application/rdf+xml" OTHERMDTYPE="UNSPECIFIED">
+			<METS:mdWrap LABEL="RDF Statements about this object" MDTYPE="OTHER" FORMAT_URI="info:fedora/fedora-system:FedoraRELSExt-1.0" MIMETYPE="application/rdf+xml" OTHERMDTYPE="UNSPECIFIED">
 				<METS:xmlData>
 					<rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:fedora="info:fedora/fedora-system:def/relations-external#" xmlns:myns="http://www.nsdl.org/ontologies/relationships#" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
 						<rdf:Description rdf:about="info:fedora/demo:999">

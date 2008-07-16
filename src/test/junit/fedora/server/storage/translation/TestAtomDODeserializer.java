@@ -31,7 +31,7 @@ import fedora.server.storage.types.DigitalObject;
  * @version $Id$
  */
 public class TestAtomDODeserializer
-        extends TestFOXMLDODeserializer {
+        extends TestXMLDODeserializer {
 
     public TestAtomDODeserializer() {
         super(new AtomDODeserializer(), new AtomDOSerializer());
@@ -94,12 +94,13 @@ public class TestAtomDODeserializer
     }
 
     public void testDeserializeFromDemoObjects() throws Exception {
-        String[] sources =
-                {
-                        "src/demo-objects/atom/local-server-demos/simple-image-demo/sdep_demo_2.xml",
-                        "src/demo-objects/atom/local-server-demos/formatting-objects-demo/obj_demo_26.xml"};
-        for (String source : sources) {
-            InputStream in = new FileInputStream(source);
+        String[] demoSources =
+                {"atom/local-server-demos/simple-image-demo/sdep_demo_2.xml",
+                 "atom/local-server-demos/formatting-objects-demo/obj_demo_26.xml"};
+        for (String source : demoSources) {
+            File sourceFile = new File(Constants.FEDORA_HOME,
+                                       "client/demo/" + source);
+            InputStream in = new FileInputStream(sourceFile);
             DigitalObject candidate = new BasicDigitalObject();
             DODeserializer deserA = new AtomDODeserializer();
             deserA.deserialize(in,

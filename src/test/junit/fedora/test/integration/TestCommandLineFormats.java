@@ -69,7 +69,7 @@ public class TestCommandLineFormats
             String xmlIn = new String(objectXML, "UTF-8");
             assertXpathExists("foxml:digitalObject[@PID='demo:997']", xmlIn);
             assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']", xmlIn);
-            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']", xmlIn);
+            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']", xmlIn);
             assertXpathEvaluatesTo("6", "count(//foxml:datastream)", xmlIn);
             assertXpathNotExists("//foxml:disseminator", xmlIn);
         } finally {
@@ -99,7 +99,7 @@ public class TestCommandLineFormats
             String xmlIn = new String(objectXML, "UTF-8");
             assertXpathExists("foxml:digitalObject[@PID='demo:998']", xmlIn);
             assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']", xmlIn);
-            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']", xmlIn);
+            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']", xmlIn);
             assertXpathEvaluatesTo("6", "count(//foxml:datastream)", xmlIn);
             assertXpathNotExists("//foxml:disseminator", xmlIn);
         } finally {
@@ -129,7 +129,7 @@ public class TestCommandLineFormats
             String xmlIn = new String(objectXML, "UTF-8");
             assertXpathExists("foxml:digitalObject[@PID='demo:999']", xmlIn);
             assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']", xmlIn);
-            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']", xmlIn);
+            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']", xmlIn);
             assertXpathEvaluatesTo("6", "count(//foxml:datastream)", xmlIn);
             assertXpathNotExists("//foxml:disseminator", xmlIn);
         } finally {
@@ -159,7 +159,7 @@ public class TestCommandLineFormats
             String xmlIn = new String(objectXML, "UTF-8");
             assertXpathExists("foxml:digitalObject[@PID='demo:999b']", xmlIn);
             assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']", xmlIn);
-            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']", xmlIn);
+            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']", xmlIn);
             assertXpathEvaluatesTo("6", "count(//foxml:datastream)", xmlIn);
             assertXpathNotExists("//foxml:disseminator", xmlIn);
         } finally {
@@ -189,7 +189,7 @@ public class TestCommandLineFormats
             String xmlIn = new String(objectXML, "UTF-8");
             assertXpathExists("foxml:digitalObject[@PID='demo:1000']", xmlIn);
             assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']", xmlIn);
-            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']", xmlIn);
+            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']", xmlIn);
             assertXpathEvaluatesTo("7", "count(//foxml:datastream)", xmlIn);
             assertXpathNotExists("//foxml:disseminator", xmlIn);
         } finally {
@@ -219,7 +219,7 @@ public class TestCommandLineFormats
             String xmlIn = new String(objectXML, "UTF-8");            
             assertXpathExists("foxml:digitalObject[@PID='demo:1001']", xmlIn);
             assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']", xmlIn);
-            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']", xmlIn);
+            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']", xmlIn);
             assertXpathEvaluatesTo("4", "count(//foxml:datastream)", xmlIn);
             assertXpathNotExists("//foxml:disseminator", xmlIn);
         } finally {
@@ -246,7 +246,7 @@ public class TestCommandLineFormats
             String xmlIn = new String(objectXML, "UTF-8");
             assertXpathExists("foxml:digitalObject[@PID='demo:998']", xmlIn);
             assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']", xmlIn);
-            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']", xmlIn);
+            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']", xmlIn);
             assertXpathEvaluatesTo("6", "count(//foxml:datastream)", xmlIn);
             assertXpathNotExists("//foxml:disseminator", xmlIn);
             assertXpathNotExists("foxml:digitalObject[@VERSION='1.1']", xmlIn);
@@ -277,7 +277,7 @@ public class TestCommandLineFormats
             String xmlIn = new String(objectXML, "UTF-8");
             assertXpathExists("foxml:digitalObject[@PID='demo:998']", xmlIn);
             assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']", xmlIn);
-            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']", xmlIn);
+            assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']", xmlIn);
             assertXpathEvaluatesTo("6", "count(//foxml:datastream)", xmlIn);
             assertXpathNotExists("//foxml:disseminator", xmlIn);
             assertXpathExists("foxml:digitalObject[@VERSION='1.1']", xmlIn);
@@ -307,7 +307,7 @@ public class TestCommandLineFormats
             fileReader.read(objectXML);
             String xmlIn = new String(objectXML, "UTF-8");
             assertXpathExists("METS:mets[@OBJID='demo:998']", xmlIn);
-            assertXpathExists("METS:mets[@LABEL='Image of Coliseum in Rome']", xmlIn);
+            assertXpathExists("METS:mets[@LABEL='Data Object (Coliseum) for Local Simple Image Demo']", xmlIn);
             assertXpathExists("METS:mets[@EXT_VERSION='1.1']", xmlIn);
             assertXpathEvaluatesTo("4", "count(//METS:fileGrp[@STATUS='A'])", xmlIn);
 
@@ -336,7 +336,7 @@ public class TestCommandLineFormats
             fileReader.read(objectXML);
             String xmlIn = new String(objectXML, "UTF-8");
             assertXpathExists("METS:mets[@OBJID='demo:998']", xmlIn);
-            assertXpathExists("METS:mets[@LABEL='Image of Coliseum in Rome']", xmlIn);
+            assertXpathExists("METS:mets[@LABEL='Data Object (Coliseum) for Local Simple Image Demo']", xmlIn);
             assertXpathNotExists("METS:mets[@EXT_VERSION='1.1']", xmlIn);
             assertXpathEvaluatesTo("4", "count(//METS:fileGrp[@STATUS='A'])", xmlIn);
 
@@ -366,9 +366,9 @@ public class TestCommandLineFormats
             String xmlIn = new String(objectXML, "UTF-8");
             // FIXME: Determine how to perform xpath tests with default namespace
             assertTrue(xmlIn.indexOf("<id>info:fedora/demo:998</id>") > -1);
-            assertTrue(xmlIn.indexOf("<title type=\"text\">Image of Coliseum in Rome</title>") > -1);
+            assertTrue(xmlIn.indexOf("<title type=\"text\">Data Object (Coliseum) for Local Simple Image Demo</title>") > -1);
             // assertXpathEvaluatesTo("info:fedora/demo:998", "feed/id", xmlIn);
-            // assertXpathEvaluatesTo("Image of Coliseum in Rome", "feed/title[@type='text']", xmlIn);
+            // assertXpathEvaluatesTo("Data Object (Coliseum) for Local Simple Image Demo", "feed/title[@type='text']", xmlIn);
             // assertXpathEvaluatesTo("6", "count(feed/entry)", xmlIn);
 
             temp.delete();

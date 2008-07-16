@@ -150,8 +150,8 @@ public class RelsExtValidatorTest
 
         try {
             validateAndClear();
-            fail("Self-referential assertions not allowed.");
         } catch (ValidationException e) {
+            fail("Self-referential assertions should be allowed.");
         }
     }
 

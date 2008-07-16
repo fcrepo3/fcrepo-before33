@@ -66,18 +66,14 @@ import fedora.server.errors.ValidationException;
  *   <li> If the target of the statement is a resource (identified by a URI),
  *        the RDF <code>resource</code> attribute must specify a syntactically
  *        valid, absolute URI.</li>
- *   <li> The RDF <code>resource</code> attribute of a relationship assertion 
- *        must NOT be the URI of the digital object that is the subject of 
- *        the relationships. In other words, NO SELF-REFERENTIAL 
- *        relationships.</li>
  *   <li> There must NOT be any assertion of properties from the DC namespace
  *        or from the Fedora object properties namespaces (model and view),
  *        with the following exceptions:
  * <pre>
- * fedora-model:hasService (0 or more, target=rdf:resource)
- * fedora-model:hasModel (0 or 1, target=rdf:resource)
- * fedora-model:isDeploymentOf (0 or 1, target=rdf:resource)
- * fedora-model:isContractorOf (0 or more, target=rdf:resource)</pre>
+ * fedora-model:hasService
+ * fedora-model:hasModel
+ * fedora-model:isDeploymentOf
+ * fedora-model:isContractorOf
  *        These assertions are allowed in the RELS-EXT datastream, but all 
  *        others from the <code>fedora-model</code> and <code>fedora-view</code>
  *        namespaces are inferred from values expressed elsewhere in the
@@ -112,8 +108,6 @@ public class RelsExtValidator
     private String m_literalType;
 
     private StringBuffer m_literalValue;
-
-    private boolean m_hasContentModel;
 
     // SAX parser
     private final SAXParser m_parser;
@@ -365,8 +359,7 @@ public class RelsExtValidator
     }
 
     /**
-     * checkResourceURI: ensure that the target resource is a proper URI and is
-     * not self-referential.
+     * checkResourceURI: ensure that the target resource is a proper URI.
      * 
      * @param resourceURI
      *        the URI value of the RDF 'resource' attribute
@@ -391,19 +384,6 @@ public class RelsExtValidator
                     + "Error in relationship '" + relName + "'."
                     + " The specified RDF 'resource' is not an absolute URI.");
         }
-
-        if (resourceURI.equals(m_doURI)) {
-            throw new SAXException("RelsExtValidator:"
-                    + " Error in relationship '" + relName + "'."
-                    + " The RELS-EXT datastream asserts a self-referential"
-                    + " relationship.\n"
-                    + " The RDF 'resource' attribute cannot contain the"
-                    + " URI of the digital object that the relationships"
-                    + " are about.\n"
-                    + " Relationships within one object must point"
-                    + " to the URIs of OTHER digital objects.");
-        }
-
     }
 
     /**
