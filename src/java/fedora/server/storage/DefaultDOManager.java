@@ -503,6 +503,8 @@ public class DefaultDOManager
         for (ServiceContext n : newContext) {
             if (!oldContext.contains(n)) {
                 addDeployment(n, obj, c);
+            } else {
+                updateDeployment(n, obj, c);
             }
         }
     }
@@ -526,6 +528,15 @@ public class DefaultDOManager
                 s.close();
             }
         }
+
+        m_cModelDeploymentMap.putDeployment(context, sDep.getPid(), sDep
+                .getLastModDate().getTime());
+
+    }
+    
+    private void updateDeployment(ServiceContext context,
+                               DigitalObject sDep,
+                               Connection c) throws SQLException {
 
         m_cModelDeploymentMap.putDeployment(context, sDep.getPid(), sDep
                 .getLastModDate().getTime());

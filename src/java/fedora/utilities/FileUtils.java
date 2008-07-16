@@ -28,9 +28,6 @@ public class FileUtils {
 
     /**
      * Copy an InputStream to an OutputStream.
-     * <p>
-     * Both streams will be closed automatically, whether copying ultimately
-     * succeeds or fails.
      * 
      * @param source
      * @param destination
@@ -47,17 +44,10 @@ public class FileUtils {
                 dest.write(data, 0, count);
             }
             dest.flush();
+            dest.close();
             return true;
         } catch (IOException e) {
             return false;
-        } finally {
-            try {
-                source.close();
-                dest.close();
-            } catch (IOException e) {
-                throw new FaultException("Failed to close stream after copy",
-                                         e);
-            }
         }
     }
 
@@ -90,6 +80,8 @@ public class FileUtils {
                 InputStream in = new FileInputStream(source);
                 OutputStream out = new FileOutputStream(destination);
                 result = result && copy(in, out);
+                in.close();
+                out.close();
                 return result;
             } catch (IOException e) {
                 return false;

@@ -75,6 +75,10 @@ public class Ingest
                                            PrintStream log,
                                            IngestCounter c) throws Exception {
         File[] files = dir.listFiles();
+        if (files == null) {
+            throw new RuntimeException("Could not read files from directory " + dir.getPath());
+        }
+        
         Arrays.sort(files, _FILE_COMPARATOR);
         for (File element : files) {
             if (!element.isHidden() && !element.getName().startsWith(".")) {
@@ -87,7 +91,6 @@ public class Ingest
                                        log,
                                        c);
                 } else {
-
                     try {
                         String pid =
                                 oneFromFile(element,

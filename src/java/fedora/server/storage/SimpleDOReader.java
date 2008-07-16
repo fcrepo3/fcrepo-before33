@@ -119,7 +119,7 @@ public class SimpleDOReader
     public DigitalObject getObject() {
         return m_obj;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -368,9 +368,9 @@ public class SimpleDOReader
     /**
      * {@inheritDoc}
      */
-    public MethodDef[] listMethods(String sDefPID,
-                                   ServiceDeploymentReader sDepReader,
-                                   Date versDateTime)
+    private MethodDef[] listMethods(String sDefPID,
+                                    ServiceDefinitionReader sDefReader,
+                                    Date versDateTime)
             throws MethodNotFoundException, ServerException {
         if (sDefPID.equalsIgnoreCase("fedora-system:1")
                 || sDefPID.equalsIgnoreCase("fedora-system:3")) {
@@ -380,10 +380,10 @@ public class SimpleDOReader
                     + "at this time (fedora-system:1 and fedora-system:3.");
         }
 
-        if (sDepReader == null) {
+        if (sDefReader == null) {
             return null;
         }
-        MethodDef[] methods = sDepReader.getServiceMethods(versDateTime);
+        MethodDef[] methods = sDefReader.getAbstractMethods(versDateTime);
         // Filter out parms that are internal to the mechanism and not part
         // of the abstract method definition. We just want user parms.
         for (int i = 0; i < methods.length; i++) {
@@ -427,18 +427,18 @@ public class SimpleDOReader
         ArrayList<MethodDef> methodList = new ArrayList<MethodDef>();
         ArrayList<String> sDefIDList = new ArrayList<String>();
 
-        ServiceDeploymentReader sDepreader = null;
-        Set<RelationshipTuple> cmRels = 
+        ServiceDefinitionReader sDefReader = null;
+        Set<RelationshipTuple> cmRels =
                 getRelationships(Constants.MODEL.HAS_MODEL, null);
 
         for (RelationshipTuple element : cmRels) {
 
             /*
              * FIXME: If the we encounter a relation to one of the "system"
-             * models, then skip it, since its functionality is hardwired
-             * in. Ideally, we would actually instantiate the system
-             * objects, and wire in the default system behaviour based upon
-             * their content (just like everything else)
+             * models, then skip it, since its functionality is hardwired in.
+             * Ideally, we would actually instantiate the system objects, and
+             * wire in the default system behaviour based upon their content
+             * (just like everything else)
              */
             if (Models.contains(element.object)) {
                 continue;
@@ -446,60 +446,41 @@ public class SimpleDOReader
 
             DOReader cmReader;
             String cModelPid = element.getObjectPID();
-            if (cModelPid.equals("self")) {
+            if ("self".equals(cModelPid)) {
                 cmReader = this;
                 cModelPid = GetObjectPID();
             } else {
                 try {
                     cmReader =
-                        m_repoReader.getReader(false,
-                                               m_context,
-                                               cModelPid);
+                            m_repoReader.getReader(false, m_context, cModelPid);
                 } catch (StorageException e) {
                     throw new DisseminationException(null,
                                                      "Content Model Object "
-                                                     + cModelPid
-                                                     + " does not exist.",
+                                                             + cModelPid
+                                                             + " does not exist.",
                                                      null,
                                                      null,
                                                      e);
                 }
             }
             Set<RelationshipTuple> hasServiceRels =
-                cmReader.getRelationships(Constants.MODEL.HAS_SERVICE,
-                                          null);
+                    cmReader
+                            .getRelationships(Constants.MODEL.HAS_SERVICE, null);
             for (RelationshipTuple element2 : hasServiceRels) {
                 String sDefPid = element2.getObjectPID();
-                DOManager manager = null;
-                MethodDef[] methods = null;
-                if (m_repoReader instanceof DOManager) {
-                    manager = (DOManager) m_repoReader;
 
-                    String deploymentPid =
-                        manager
-                        .lookupDeploymentForCModel(cModelPid,
-                                                   sDefPid);
-                    if (deploymentPid == null) {
-                        throw new DisseminationException("No service deployment is a Contractor for Content Model "
-                                                         + cModelPid);
-                    }
-                    try {
-                        sDepreader =
-                            m_repoReader
-                            .getServiceDeploymentReader(false,
-                                                        m_context,
-                                                        deploymentPid);
-                    } catch (StorageException se) {
-                        throw new DisseminationException("Service deployment "
-                                                         + deploymentPid
-                                                         + " defined as Contractor for Content Model "
-                                                         + cModelPid + " not found.");
-                    }
-                    methods =
-                        listMethods(element2.getObjectPID(),
-                                    sDepreader,
-                                    versDateTime);
+                try {
+                    sDefReader =
+                            m_repoReader.getServiceDefinitionReader(false,
+                                                                    m_context,
+                                                                    sDefPid);
+                } catch (StorageException se) {
+                    throw new DisseminationException("Service definition "
+                            + sDefPid + " required by Content Model "
+                            + cModelPid + " not found.");
                 }
+                MethodDef[] methods =
+                        listMethods(sDefPid, sDefReader, versDateTime);
                 if (methods != null) {
                     for (MethodDef element3 : methods) {
                         methodList.add(element3);
