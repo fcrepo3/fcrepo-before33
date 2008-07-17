@@ -23,7 +23,6 @@ import fedora.server.errors.ServerException;
 import fedora.server.management.Management;
 import fedora.server.management.ManagementDelegate;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.Property;
 import fedora.server.storage.types.RelationshipTuple;
 
 /**
@@ -33,13 +32,13 @@ import fedora.server.storage.types.RelationshipTuple;
  * 
  * @author Jim Blake
  */
-public class Journaller
+public class Journaler
         extends Module
         implements Management, JournalConstants {
 
     /** Logger for this class. */
     private static final Logger LOG =
-            Logger.getLogger(Journaller.class.getName());
+            Logger.getLogger(Journaler.class.getName());
 
     private JournalWorker worker;
 
@@ -47,9 +46,9 @@ public class Journaller
 
     private ServerInterface serverInterface;
 
-    public Journaller(Map<String, String> moduleParameters,
-                      Server server,
-                      String role)
+    public Journaler(Map<String, String> moduleParameters,
+                     Server server,
+                     String role)
             throws ModuleInitializationException {
         super(moduleParameters, server, role);
     }
@@ -64,7 +63,7 @@ public class Journaller
         Map<String, String> parameters = getParameters();
         copyPropertiesOverParameters(parameters);
         serverInterface = new ServerWrapper(getServer());
-        LOG.info("Journalling parameters: " + parameters);
+        LOG.info("Journaling parameters: " + parameters);
         parseParameters(parameters);
 
         if (inRecoveryMode) {
