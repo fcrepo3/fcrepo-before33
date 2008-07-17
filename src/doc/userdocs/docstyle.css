@@ -20,7 +20,6 @@ body #content li.square{
   margin-bottom: 1.286em;
   margin-top: 1.286em;
 }
-
 body #content ul li,
 body #content ol li,
 body #content span.plaintext{
@@ -197,7 +196,7 @@ div.notice{
   border: solid .143em #999;
   margin: 1.286em;
   padding: 1.143em;
-  width: 30em;
+  /* width: 60em; */
 }
 #toc h2{
   font-size: 1.426em;
@@ -231,4 +230,13 @@ dd {
   margin-left: 1.5em;
   font-style: normal;
   font-size: 1.3em;
+}
+#logo {
+  background-image: url('images/docs.png');
+  background-repeat: no-repeat;
+  background-position: top left;
+  float: left;
+  height: 60px;
+  width: 44px;
+  visibility: visible;
 }
