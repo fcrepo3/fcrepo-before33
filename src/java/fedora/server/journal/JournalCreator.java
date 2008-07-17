@@ -21,11 +21,10 @@ import fedora.server.errors.ServerException;
 import fedora.server.journal.entry.CreatorJournalEntry;
 import fedora.server.management.ManagementDelegate;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.Property;
 import fedora.server.storage.types.RelationshipTuple;
 
 /**
- * This is the worker class to use in Journalling mode (normal mode).
+ * This is the worker class to use in Journaling mode (normal mode).
  * <p>
  * Each time a "writing" Management method is called, create a
  * CreatorJournalEntry and ask it to invoke the method on the

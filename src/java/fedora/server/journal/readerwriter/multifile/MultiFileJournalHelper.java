@@ -18,7 +18,7 @@ import fedora.server.journal.JournalConstants;
 import fedora.server.journal.JournalException;
 
 /**
- * Utility methods for use by the Multi-file Journalling classes.
+ * Utility methods for use by the Multi-file Journaling classes.
  * 
  * @author Jim Blake
  */
@@ -108,7 +108,7 @@ public class MultiFileJournalHelper
             implements Comparator<File> {
 
         public int compare(File first, File second) {
-            return (first).getName().compareTo((second).getName());
+            return first.getName().compareTo(second.getName());
         }
     }
 

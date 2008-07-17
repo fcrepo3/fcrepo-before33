@@ -57,7 +57,7 @@ public enum JournalOperatingMode {
     public static void enforceCurrentMode() throws ServerException {
         switch (currentMode) {
             case READ_ONLY:
-                throw new InvalidStateException("Server is in Read-Only mode, pursuant to a Journalling error.");
+                throw new InvalidStateException("Server is in Read-Only mode, pursuant to a Journaling error.");
             default:
         }
     }

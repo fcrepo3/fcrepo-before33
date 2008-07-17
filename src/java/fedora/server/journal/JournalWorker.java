@@ -13,7 +13,7 @@ import fedora.server.management.ManagementDelegate;
 /**
  * A common interface for the <code>JournalConsumer</code> and
  * <code>JournalCreator</code> classes. These classes form the implementation
- * layer between the <code>Journaller</code> and the
+ * layer between the <code>Journaler</code> and the
  * <code>ManagementDelegate</code>.
  * 
  * @author Jim Blake
@@ -22,14 +22,14 @@ public interface JournalWorker
         extends Management {
 
     /**
-     * Called by the Journaller during post-initialization, with a reference to
+     * Called by the Journaler during post-initialization, with a reference to
      * the ManagementDelegate module.
      */
     public void setManagementDelegate(ManagementDelegate delegate)
             throws ModuleInitializationException;
 
     /**
-     * Called when the Journaller module receives a shutdown() from the server.
+     * Called when the Journaler module receives a shutdown() from the server.
      */
     public void shutdown() throws ModuleShutdownException;
 }

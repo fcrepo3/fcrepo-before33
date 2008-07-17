@@ -6,7 +6,7 @@
 package fedora.server.journal.readerwriter.multifile;
 
 /**
- * Parameters, formats and default values for use by the Multi-file journalling
+ * Parameters, formats and default values for use by the Multi-file journaling
  * classes.
  * 
  * @author Jim Blake

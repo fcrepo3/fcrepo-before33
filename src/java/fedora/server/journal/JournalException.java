@@ -6,7 +6,7 @@
 package fedora.server.journal;
 
 /**
- * An Exception type for use by the Journaller and its associated classes.
+ * An Exception type for use by the Journaler and its associated classes.
  * 
  * @author Jim Blake
  */

@@ -8,7 +8,7 @@ package fedora.server.journal;
 import javax.xml.namespace.QName;
 
 /**
- * A collection of String constants and QName constants used by the Journaller
+ * A collection of String constants and QName constants used by the Journaler
  * and its associated classes.
  * 
  * @author Jim Blake
