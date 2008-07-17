@@ -4,7 +4,7 @@
                       
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
   <head>
-    <title>Journalling Guide</title>
+    <title>Journaling Guide</title>
     <link rel="stylesheet" type="text/css" href="../../docstyle.css" />
   </head>
 
@@ -13,7 +13,7 @@
     <div id="header">
       <a href="../../../index.html">
       </a>
-      <h1>Journalling Guide</h1>
+      <h1>Journaling Guide</h1>
       <h2>Fedora Release 3.0 Beta 2</h2>
     </div>
 
@@ -60,16 +60,16 @@
       <li>
 	    <h2 id="intro">Introduction</h2>
 	      <span class="plaintext">
-	        The Fedora configuration now includes an optional Journalling module. This module creates Journal files which capture all calls against the Fedora Management API, or rather, all calls that have changed the state of the repository. The Journal files can be replayed against another Fedora instance with the same initial state, resulting in a repository which is a mirror of the original.
+	        The Fedora configuration now includes an optional Journaling module. This module creates Journal files which capture all calls against the Fedora Management API, or rather, all calls that have changed the state of the repository. The Journal files can be replayed against another Fedora instance with the same initial state, resulting in a repository which is a mirror of the original.
 	      </span>
 	      <ol class="alpha">
             <li>
               <h3 id="intro.goals">Goals</h3>
 		        <span class="plaintext">
-		          The Journalling module can increase Fedora availability in one of two ways: server recovery to the level of the most recent action, or the creation of a standby server for fast failover.
+		          The Journaling module can increase Fedora availability in one of two ways: server recovery to the level of the most recent action, or the creation of a standby server for fast failover.
 		          <br />
 		          <br />
-     		      Without Journalling, a Fedora environment which fails for any reason can only be recovered to the most recent backup. Actions which have occurred since the backup are lost. With Journalling, the environment can be reconstructed to the point of the failure. All successful actions will be recovered, and the server can then resume normal operation.
+     		      Without Journaling, a Fedora environment which fails for any reason can only be recovered to the most recent backup. Actions which have occurred since the backup are lost. With Journaling, the environment can be reconstructed to the point of the failure. All successful actions will be recovered, and the server can then resume normal operation.
     		      <br />
     		      <br />
     		      It is also possible to have two Fedora servers operating in a &quot;leader/follower&quot; configuration. The leading server handles requests from users, and creates Journal files to reflect those requests. The following server processes each Journal file as it is completed. If the leading server should fail, the following server will very quickly be ready to take over the handling of user requests.
@@ -81,7 +81,7 @@
     	          When recovering from a failure, the recovered repository must match the original in all significant ways. PIDs must match those that were initially generated. Timestamps in &quot;create date&quot; or &quot;last modified&quot; fields must reflect the date of the original API call, not the date of the recovery. Generation of PIDs must resume with the same sequence as the original server would have used.
     	          <br />
       	          <br />
-      	          The need for deterministic Journalling places limits on Fedora's ability to conduct simultaneous multi-threaded operations. When the Journal module is installed, it synchronizes the calls to the Management module in order to insure that those calls can be replayed in the correct sequence.
+      	          The need for deterministic Journaling places limits on Fedora's ability to conduct simultaneous multi-threaded operations. When the Journal module is installed, it synchronizes the calls to the Management module in order to insure that those calls can be replayed in the correct sequence.
     	        </span>
             </li>
             <li>
@@ -93,10 +93,10 @@
             <li>
 		      <h3 id="intro.status">Status</h3>
 		        <span class="plaintext">
-		          The Journalling module currently writes Journal files to a disk directory, and recovers from that same directory. If a &quot;leader/follower&quot; configuration exists with Fedora instances on different servers, those servers must somehow share the directory where the Journal files are written.
+		          The Journaling module currently writes Journal files to a disk directory, and recovers from that same directory. If a &quot;leader/follower&quot; configuration exists with Fedora instances on different servers, those servers must somehow share the directory where the Journal files are written.
 		          <br />
 		          <br />
-	    	      The Journalling module is designed to permit additional transport mechanisms for Journal data, and current plans call for a transport that uses JMS (Java Message Service) instead of file-based transport. No date has been set for this enhancement.
+	    	      The Journaling module is designed to permit additional transport mechanisms for Journal data, and current plans call for a transport that uses JMS (Java Message Service) instead of file-based transport. No date has been set for this enhancement.
                 </span>
             </li>
 	      </ol>
@@ -107,13 +107,13 @@
             <li>
               <h3 id="design.decorator">A decorator on the Management module</h3>
                 <span class="plaintext">
-                  The Journalling module uses the Decorator design pattern. The Journaller module implements the Management interface, and adds functionality to each of the methods of that interface before delegating the calls to another Management instance.
+                  The Journaling module uses the Decorator design pattern. The <code>Journaler</code> class implements the <code>Management</code> interface, and adds functionality to each of the methods of that interface before delegating the calls to another Management instance.
                   <br />
                   <br />
-                  The design pattern is slightly modified, since the convention in Fedora is that each module will implement its own interface. A new interface was created, called ManagementDelegate, and the Journaller requires a module that implements that interface to use as its delegate.
+                  The design pattern is slightly modified, since the convention in Fedora is that each module will implement its own interface. A new interface was created, called <code>ManagementDelegate</code>, and the <code>Journaler</code> requires a module that implements that interface to use as its delegate.
                   <br />
                   <br />
-                  Here is a class diagram for the Management interface, and its implementing class, followed by an excerpt from fedora.fcfg, showing how the module is configured (without Journalling).
+                  Here is a class diagram for the <code>Management</code> interface, and its implementing class, followed by an excerpt from fedora.fcfg, showing how the module is configured (without Journaling).
                   <br />
                   <br />
                   <em>Class diagram for Management module:</em>
@@ -131,19 +131,19 @@
                   </code>
                   <br />
                   <br />
-                  The next class diagram shows the addition of the Journaller module, followed by another excerpt from fedora.fcfg with both Journaller and Management modules. Notice how the Journaller class implements the Management module interface, while the DefaultManagement class has moved to implement ManagementDelegate.
+                  The next class diagram shows the addition of the <code>Journaler</code> module, followed by another excerpt from fedora.fcfg with both <code>Journaler</code> and <code>Management</code> modules. Notice how the <code>Journaler</code> class implements the <code>Management</code> module interface, while the <code>DefaultManagement</code> class has moved to implement <code>ManagementDelegate</code>.
                   <br />
                   <br />
-                  <em>Class diagram for the Journaller and Management modules:</em>
+                  <em>Class diagram for the Journaler and Management modules:</em>
                   <br />
-		          <img src="images/ClassDiagramJournalManagement.png" width="517" height="374" alt="Class diagram for the Journaller and Management modules" />
+		          <img src="images/ClassDiagramJournalManagement.png" width="517" height="374" alt="Class diagram for the Journaler and Management modules" />
 		          <br />
 		          <br />
-		          <em>Configuring the Journaller and Management modules within fedora.fcfg:</em>
+		          <em>Configuring the Journaler and Management modules within fedora.fcfg:</em>
 		          <br />
                   <code class="block">
 <pre>&lt;module role=&quot;fedora.server.management.Management&quot;
-     class=&quot;fedora.server.journal.Journaller&quot;&gt;
+     class=&quot;fedora.server.journal.Journaler&quot;&gt;
 &lt;/module&gt;
 &lt;module role=&quot;fedora.server.management.ManagementDelegate&quot;
      class=&quot;fedora.server.management.DefaultManagement&quot;&gt;
@@ -170,16 +170,16 @@
             <li>
               <h3 id="design.context">Extended Context interface</h3>
                 <span class="plaintext">
-                  The behavior of the Management module changes slightly when it is acting as a delegate for the Journaller module. This is accomplished by adding a &quot;recovery&quot; namespace to the Context object that is passed to the methods of the Management module.
+                  The behavior of the <code>Management</code> module changes slightly when it is acting as a delegate for the <code>Journaler</code> module. This is accomplished by adding a &quot;recovery&quot; namespace to the <code>Context</code> object that is passed to the methods of the <code>Management</code> module.
                   <br />
                   <br />
-                  In normal mode, the Journaller stores information in the recovery namespace of the Context. This information is needed in addition to the arguments and return value of the API method called, in order to fully capture the state of the repository for recovery.
+                  In normal mode, the <code>Journaler</code> stores information in the recovery namespace of the <code>Context</code>. This information is needed in addition to the arguments and return value of the API method called, in order to fully capture the state of the repository for recovery.
                   <br />
                   <br />
-                  When recovering, the Management module will look for this additional information, and use it when executing the API method.
+                  When recovering, the <code>Management</code> module will look for this additional information, and use it when executing the API method.
                   <br />
                   <br />
-                  For example, if the Ingest method is called and the ingested FOXML does not supply a PID for the object, Fedora will generate one. However, to insure that the same PID is assigned during recovery, the Journaller records the PID, and on recovery the Management module will assign the recorded PID to the new object, instead of generating a new PID which might be different.
+                  For example, if the Ingest method is called and the ingested FOXML does not supply a PID for the object, Fedora will generate one. However, to insure that the same PID is assigned during recovery, the <code>Journaler</code> records the PID, and on recovery the <code>Management</code> module will assign the recorded PID to the new object, instead of generating a new PID which might be different.
                 </span>
             </li>
             <li>
@@ -194,7 +194,7 @@
             <li>
               <h3 id="design.repeat">Repeatability</h3>
                 <span class="plaintext">
-                  A basic concept of Journalling is the repeatability of actions. If a series of actions is executed on two Fedora servers, the result must be two equivalent Fedora repositories.
+                  A basic concept of Journaling is the repeatability of actions. If a series of actions is executed on two Fedora servers, the result must be two equivalent Fedora repositories.
                   <br />
                   <br />
                   The need for repeatability limits Fedora's ability to use multi-threading in API calls. Multi-threaded operation is non-deterministic by nature, but a Journal file must record a series of events must occur in a particular order, and that order must reflect the actual execution of the events. Otherwise, it would be possible to execute two actions successfully, and to have those same two actions fail on another server, because they were executed in a different order.
@@ -206,10 +206,10 @@
             <li>
               <h3 id="design.extend">Extensibility</h3>
                 <span class="plaintext">
-                  Some components of the Journaller module are dynamically loaded at server startup time, based on parameter values. The storage and transport mechanisms for the Journals are controlled by these components. It is fairly simple to implement an alternative file structure for the Journal files, or to use a message-based transport instead of simple flat files.
+                  Some components of the <code>Journaler</code> module are dynamically loaded at server startup time, based on parameter values. The storage and transport mechanisms for the Journals are controlled by these components. It is fairly simple to implement an alternative file structure for the Journal files, or to use a message-based transport instead of simple flat files.
                   <br />
                   <br />
-                  The recovery log that is generated by the Journaller is controlled by a similar set of parameters, and can be extended or replaced in the same manner.
+                  The recovery log that is generated by the <code>Journaler</code> is controlled by a similar set of parameters, and can be extended or replaced in the same manner.
                 </span>
             </li>
         </ol>
@@ -217,18 +217,18 @@
       <li>
 	    <h2 id="options">Options</h2>
 	      <span class="plaintext">
-	        These options are recognized by the Journaller module, or by its configurable components. See the section &quot;<a href="#impl.fcfg">Configurations in fedora.fcfg</a>&quot; for examples of how the options are used in fedora.fcfg
+	        These options are recognized by the <code>Journaler</code> module, or by its configurable components. See the section &quot;<a href="#impl.fcfg">Configurations in fedora.fcfg</a>&quot; for examples of how the options are used in fedora.fcfg
 	      </span>
           <ol class="alpha">
             <li>
               <h3 id="options.general">General options</h3>
                 <span class="plaintext">
-                  These options are recognized by the Journaller module, and can be used with any configurable components.
+                  These options are recognized by the <code>Journaler</code> module, and can be used with any configurable components.
                 </span>
                    <ul>
                      <li>journalMode
                      <br />
-                     Sets the operating mode of the Journaller module. Optional. Default is &quot;normal&quot;.
+                     Sets the operating mode of the <code>Journaler</code> module. Optional. Default is &quot;normal&quot;.
                        <ul>
                          <li>normal
                          <br />
@@ -409,7 +409,7 @@ The following excerpt from <code>fedora.fcfg</code> shows a server that
 writes Journal files to a local file system, and to two follower systems via 
 RMI.
 <code class="block"><pre>
-&lt;module role="fedora.server.management.Management" class="fedora.server.journal.Journaller"&gt;
+&lt;module role="fedora.server.management.Management" class="fedora.server.journal.Journaler"&gt;
   &lt;param name="journalFileSizeLimit" value="100M"/&gt;
   &lt;param name="journalFileAgeLimit" value="1H"/&gt;
   &lt;param name="journalWriterClassname"
@@ -471,20 +471,20 @@ RMI.
       <li>
 	    <h2 id="impl">Implementation</h2>
 	      <span class="plaintext">
-	        This section contains some details of the Journaller implementation, including how to configure it, what it produces, and how it operates.
+	        This section contains some details of the <code>Journaler</code> implementation, including how to configure it, what it produces, and how it operates.
 	      </span>
           <ol class="alpha">
             <li>
               <h3 id="impl.fcfg">Configurations in fedora.fcfg</h3>
                 <span class="plaintext">
-                  These excerpts from fedora.fcfg show three different examples of how to configure the Journaller module.
+                  These excerpts from fedora.fcfg show three different examples of how to configure the <code>Journaler</code> module.
                 <br />
                 <br />
                 <em>Configuring for normal mode:</em>
                 <br />
                 <code class="block">
 <pre>&lt;module role=&quot;fedora.server.management.Management&quot;
-     class=&quot;fedora.server.journal.Journaller&quot;&gt;
+     class=&quot;fedora.server.journal.Journaler&quot;&gt;
   &lt;param name=&quot;journalDirectory&quot; 
      value=&quot;/usr/local/ndr-content/journals/journalFiles&quot;/&gt;
   &lt;param name=&quot;journalWriterClassname&quot; 
@@ -503,7 +503,7 @@ RMI.
                 <br />
                 <code class="block">
 <pre>&lt;module role=&quot;fedora.server.management.Management&quot; 
-     class=&quot;fedora.server.journal.Journaller&quot;&gt;
+     class=&quot;fedora.server.journal.Journaler&quot;&gt;
   &lt;param name=&quot;journalMode&quot; value=&quot;recover&quot;/&gt;
   &lt;param name=&quot;journalDirectory&quot; 
      value=&quot;/usr/local/ndr-content/journals/journalFiles&quot;/&gt;
@@ -527,7 +527,7 @@ RMI.
                 <br />
                 <code class="block">
 <pre>&lt;module role=&quot;fedora.server.management.Management&quot;
-     class=&quot;fedora.server.journal.Journaller&quot;&gt;
+     class=&quot;fedora.server.journal.Journaler&quot;&gt;
   &lt;param name=&quot;journalMode&quot; value=&quot;recover&quot; /&gt;
   &lt;param name=&quot;journalDirectory&quot; 
      value=&quot;/usr/local/ndr-content/journals/journalFiles&quot;/&gt;
