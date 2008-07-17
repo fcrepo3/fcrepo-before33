@@ -232,7 +232,7 @@ public class TestLargeDatastreams
         public int read() throws IOException {
             if(bytesRead < fileSize) {
                 ++bytesRead;
-                return generator.nextInt();
+                return generator.nextInt(100);
             } else {
                 return -1;
             }
