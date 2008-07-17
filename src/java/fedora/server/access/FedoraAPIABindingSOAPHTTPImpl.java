@@ -3,6 +3,7 @@ package fedora.server.access;
 import java.io.File;
 import java.rmi.RemoteException;
 
+import org.apache.axis.AxisFault;
 import org.apache.axis.types.NonNegativeInteger;
 
 import org.apache.log4j.Logger;
@@ -168,6 +169,16 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(
           mimeTypedStream);
       return genMIMETypedStream;
+    } catch (OutOfMemoryError oome) {
+        LOG.error("Out of memory error getting "+ dsID +
+                  " datastream dissemination for " + PID);
+        String exceptionText = "The datastream you are attempting to retrieve is too large " +
+                               "to transfer via getDatastreamDissemination (as determined " +
+                               "by the server memory allocation.) Consider retrieving this " +
+                               "datastream via REST at: ";
+        String restURL = describeRepository().getRepositoryBaseURL() +
+                         "/get/" + PID + "/" + dsID;
+        throw AxisFault.makeFault(new Exception(exceptionText + restURL));      
     } catch (Throwable th) {
       LOG.error("Error getting datastream dissemination", th);
       throw AxisUtility.getFault(th);

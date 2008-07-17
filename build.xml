@@ -888,4 +888,21 @@
             </fileset>
         </checksum>
 	</target>
+	
+  <target name="performance-tests" depends="client">
+    <java classname="fedora.client.test.PerformanceTests">
+      <classpath>
+        <pathelement path="${build.dir}/client/classes" />
+        <path refid="compile.classpath"/>
+      </classpath>
+      <arg value="${host}"/>
+      <arg value="${port}"/>
+      <arg value="${username}"/>
+      <arg value="${password}"/>
+      <arg value="${iterations}"/>
+      <arg value="${threads}"/>
+      <arg value="${file}"/>
+      <arg value="${name}"/>
+    </java>
+  </target>
 </project>
