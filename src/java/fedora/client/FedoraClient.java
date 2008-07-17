@@ -90,7 +90,7 @@ public class FedoraClient implements Constants {
     public int TIMEOUT_SECONDS = 20;
 
     /** Seconds to wait while waiting for data over the socket (SO_TIMEOUT). */
-    public int SOCKET_TIMEOUT_SECONDS = 150;
+    public int SOCKET_TIMEOUT_SECONDS = 1800; // 30 minutes
 
     /** Maxiumum http connections per host (for REST calls only). */
     public int MAX_CONNECTIONS_PER_HOST = 15;
