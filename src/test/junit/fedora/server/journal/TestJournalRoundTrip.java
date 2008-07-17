@@ -40,13 +40,13 @@ import static junit.framework.Assert.fail;
 /**
  * Check every management method to be sure:
  * <ul>
- * <li>that we know whether it is journalled or not</li>
+ * <li>that we know whether it is journaled or not</li>
  * <li>that we know what items are stored in the context for recovery</li>
- * <li>that a journalled method is played back the same as it was recorded</li>
- * <li>that a journalled method WILL NOT be accepted from an outside source by
- * a JournalConsumer</li>
- * <li>that a non-journalled method WILL be accepted from an outside source by
- * a JournalConsumer</li>
+ * <li>that a journaled method is played back the same as it was recorded</li>
+ * <li>that a journaled method WILL NOT be accepted from an outside source by a
+ * JournalConsumer</li>
+ * <li>that a non-journaled method WILL be accepted from an outside source by a
+ * JournalConsumer</li>
  * </ul>
  * 
  * @author Jim Blake
@@ -154,77 +154,77 @@ public class TestJournalRoundTrip {
     @Test
     public void addDatastream() throws ServerException {
         expectInContext(Constants.RECOVERY.DATASTREAM_ID, "theDsId");
-        testJournalledMethod(JournalConstants.METHOD_ADD_DATASTREAM,
-                             leadingContext,
-                             "thePid",
-                             "theDsId",
-                             new String[0],
-                             "theDsLabel",
-                             false,
-                             "theMIMEType",
-                             "theFormatURI",
-                             "theLocation",
-                             "theControlGroup",
-                             "theDsState",
-                             "theChecksumType",
-                             "theChecksum",
-                             "theLogMessage");
+        testJournaledMethod(JournalConstants.METHOD_ADD_DATASTREAM,
+                            leadingContext,
+                            "thePid",
+                            "theDsId",
+                            new String[0],
+                            "theDsLabel",
+                            false,
+                            "theMIMEType",
+                            "theFormatURI",
+                            "theLocation",
+                            "theControlGroup",
+                            "theDsState",
+                            "theChecksumType",
+                            "theChecksum",
+                            "theLogMessage");
     }
 
     @Test
     public void addRelationship() throws ServerException {
-        testJournalledMethod(JournalConstants.METHOD_ADD_RELATIONSHIP,
-                             leadingContext,
-                             "thePid",
-                             "relationship",
-                             "anObject",
-                             false,
-                             "");
+        testJournaledMethod(JournalConstants.METHOD_ADD_RELATIONSHIP,
+                            leadingContext,
+                            "thePid",
+                            "relationship",
+                            "anObject",
+                            false,
+                            "");
     }
 
     @Test
     public void compareDatastreamChecksum() throws ServerException {
-        testNonJournalledMethod("compareDatastreamChecksum",
-                                leadingContext,
-                                "thePid",
-                                "theDsId",
-                                new Date(12345L));
+        testNonJournaledMethod("compareDatastreamChecksum",
+                               leadingContext,
+                               "thePid",
+                               "theDsId",
+                               new Date(12345L));
     }
 
     @Test
     public void export() throws ServerException {
-        testNonJournalledMethod("export",
-                                leadingContext,
-                                "PID",
-                                "format",
-                                "SomeExportContext",
-                                "encoding");
+        testNonJournaledMethod("export",
+                               leadingContext,
+                               "PID",
+                               "format",
+                               "SomeExportContext",
+                               "encoding");
     }
 
     @Test
     public void getDatastream() throws ServerException {
-        testNonJournalledMethod("getDatastream",
-                                leadingContext,
-                                "PID",
-                                "aDatastreamID",
-                                new Date());
+        testNonJournaledMethod("getDatastream",
+                               leadingContext,
+                               "PID",
+                               "aDatastreamID",
+                               new Date());
     }
 
     @Test
     public void getDatastreamHistory() throws ServerException {
-        testNonJournalledMethod("getDatastreamHistory",
-                                leadingContext,
-                                "PID",
-                                "anotherDatastreamID");
+        testNonJournaledMethod("getDatastreamHistory",
+                               leadingContext,
+                               "PID",
+                               "anotherDatastreamID");
     }
 
     @Test
     public void getDatastreams() throws ServerException {
-        testNonJournalledMethod("getDatastreams",
-                                leadingContext,
-                                "sonOfPID",
-                                new Date(111111L),
-                                "someStateString");
+        testNonJournaledMethod("getDatastreams",
+                               leadingContext,
+                               "sonOfPID",
+                               new Date(111111L),
+                               "someStateString");
     }
 
     @Test
@@ -232,152 +232,152 @@ public class TestJournalRoundTrip {
         expectInContext(Constants.RECOVERY.PID_LIST, new String[] {
                 "sillyPID_0", "sillyPID_1", "sillyPID_2", "sillyPID_3",
                 "sillyPID_4"});
-        testJournalledMethod(JournalConstants.METHOD_GET_NEXT_PID,
-                             leadingContext,
-                             5,
-                             "myFavoriteNamespace");
+        testJournaledMethod(JournalConstants.METHOD_GET_NEXT_PID,
+                            leadingContext,
+                            5,
+                            "myFavoriteNamespace");
     }
 
     @Test
     public void getObjectXML() throws ServerException {
-        testNonJournalledMethod("getObjectXML",
-                                leadingContext,
-                                "myPID",
-                                "encodingScheme");
+        testNonJournaledMethod("getObjectXML",
+                               leadingContext,
+                               "myPID",
+                               "encodingScheme");
     }
 
     @Test
     public void getRelationships() throws ServerException {
-        testNonJournalledMethod("getRelationships",
-                                leadingContext,
-                                "myPID",
-                                "someRelationship");
+        testNonJournaledMethod("getRelationships",
+                               leadingContext,
+                               "myPID",
+                               "someRelationship");
     }
 
     /**
      * This one will always be special, in that it doesn't use a context as its
-     * first argument. If it were a Journalled method, that would be a problem.
+     * first argument. If it were a Journaled method, that would be a problem.
      */
     @Test
     public void getTempStream() throws ServerException {
-        testNonJournalledMethod(METHOD_GET_TEMP_STREAM, "streamID");
+        testNonJournaledMethod(METHOD_GET_TEMP_STREAM, "streamID");
     }
 
     @Test
     public void ingest() throws ServerException {
         expectInContext(Constants.RECOVERY.PID, "Ingest:1");
-        testJournalledMethod(JournalConstants.METHOD_INGEST,
-                             leadingContext,
-                             new ByteArrayInputStream(new byte[0]),
-                             "theLogMessage",
-                             "aFormat",
-                             "someEncoding",
-                             true);
+        testJournaledMethod(JournalConstants.METHOD_INGEST,
+                            leadingContext,
+                            new ByteArrayInputStream(new byte[0]),
+                            "theLogMessage",
+                            "aFormat",
+                            "someEncoding",
+                            true);
     }
 
     @Test
     public void modifyDatastreamByReference() throws ServerException {
-        testJournalledMethod(JournalConstants.METHOD_MODIFY_DATASTREAM_BY_REFERENCE,
-                             leadingContext,
-                             "myPid",
-                             "datastreamIdentifier",
-                             new String[] {"altID"},
-                             "datastreamLabel",
-                             "mime/type",
-                             "formatUri",
-                             "dsLocation",
-                             "checksumType",
-                             "checksum",
-                             "logMessage",
-                             false);
+        testJournaledMethod(JournalConstants.METHOD_MODIFY_DATASTREAM_BY_REFERENCE,
+                            leadingContext,
+                            "myPid",
+                            "datastreamIdentifier",
+                            new String[] {"altID"},
+                            "datastreamLabel",
+                            "mime/type",
+                            "formatUri",
+                            "dsLocation",
+                            "checksumType",
+                            "checksum",
+                            "logMessage",
+                            false);
     }
 
     @Test
     public void modifyDatastreamByValue() throws ServerException {
-        testJournalledMethod(JournalConstants.METHOD_MODIFY_DATASTREAM_BY_VALUE,
-                             leadingContext,
-                             "myPid",
-                             "datastreamIdentifier",
-                             new String[] {"altID"},
-                             "datastreamLabel",
-                             "mime/type",
-                             "formatUri",
-                             new ByteArrayInputStream(new byte[0]),
-                             "checksumType",
-                             "checksum",
-                             "logMessage",
-                             false);
+        testJournaledMethod(JournalConstants.METHOD_MODIFY_DATASTREAM_BY_VALUE,
+                            leadingContext,
+                            "myPid",
+                            "datastreamIdentifier",
+                            new String[] {"altID"},
+                            "datastreamLabel",
+                            "mime/type",
+                            "formatUri",
+                            new ByteArrayInputStream(new byte[0]),
+                            "checksumType",
+                            "checksum",
+                            "logMessage",
+                            false);
     }
 
     @Test
     public void modifyObject() throws ServerException {
-        testJournalledMethod(JournalConstants.METHOD_MODIFY_OBJECT,
-                             leadingContext,
-                             "myPid",
-                             "state",
-                             "objectLabel",
-                             "owner",
-                             "logMessage");
+        testJournaledMethod(JournalConstants.METHOD_MODIFY_OBJECT,
+                            leadingContext,
+                            "myPid",
+                            "state",
+                            "objectLabel",
+                            "owner",
+                            "logMessage");
     }
 
     @Test
     public void purgeDatastream() throws ServerException {
-        testJournalledMethod(JournalConstants.METHOD_PURGE_DATASTREAM,
-                             leadingContext,
-                             "myPid",
-                             "dsID",
-                             new Date(123),
-                             new Date(456),
-                             "logMessage",
-                             true);
+        testJournaledMethod(JournalConstants.METHOD_PURGE_DATASTREAM,
+                            leadingContext,
+                            "myPid",
+                            "dsID",
+                            new Date(123),
+                            new Date(456),
+                            "logMessage",
+                            true);
     }
 
     @Test
     public void purgeObject() throws ServerException {
-        testJournalledMethod(JournalConstants.METHOD_PURGE_OBJECT,
-                             leadingContext,
-                             "aPID",
-                             "PurgeLogMessage",
-                             true);
+        testJournaledMethod(JournalConstants.METHOD_PURGE_OBJECT,
+                            leadingContext,
+                            "aPID",
+                            "PurgeLogMessage",
+                            true);
     }
 
     @Test
     public void purgeRelationship() throws ServerException {
-        testJournalledMethod(JournalConstants.METHOD_PURGE_RELATIONSHIP,
-                             leadingContext,
-                             "aPID",
-                             "theRelationship",
-                             "someObject",
-                             false,
-                             "datatype");
+        testJournaledMethod(JournalConstants.METHOD_PURGE_RELATIONSHIP,
+                            leadingContext,
+                            "aPID",
+                            "theRelationship",
+                            "someObject",
+                            false,
+                            "datatype");
     }
 
     @Test
     public void putTempStream() throws ServerException {
         expectInContext(Constants.RECOVERY.UPLOAD_ID, "tempStreamId");
-        testJournalledMethod(JournalConstants.METHOD_PUT_TEMP_STREAM,
-                             leadingContext,
-                             new ByteArrayInputStream(new byte[0]));
+        testJournaledMethod(JournalConstants.METHOD_PUT_TEMP_STREAM,
+                            leadingContext,
+                            new ByteArrayInputStream(new byte[0]));
     }
 
     @Test
     public void setDatastreamState() throws ServerException {
-        testJournalledMethod(JournalConstants.METHOD_SET_DATASTREAM_STATE,
-                             leadingContext,
-                             "pid",
-                             "dsID",
-                             "dsState",
-                             "dsLogMessage");
+        testJournaledMethod(JournalConstants.METHOD_SET_DATASTREAM_STATE,
+                            leadingContext,
+                            "pid",
+                            "dsID",
+                            "dsState",
+                            "dsLogMessage");
     }
 
     @Test
     public void setDatastreamVersionable() throws ServerException {
-        testJournalledMethod(JournalConstants.METHOD_SET_DATASTREAM_VERSIONABLE,
-                             leadingContext,
-                             "lastPID",
-                             "lastDsID",
-                             true,
-                             "the Log!");
+        testJournaledMethod(JournalConstants.METHOD_SET_DATASTREAM_VERSIONABLE,
+                            leadingContext,
+                            "lastPID",
+                            "lastDsID",
+                            true,
+                            "the Log!");
     }
 
     /*
@@ -396,7 +396,7 @@ public class TestJournalRoundTrip {
 
     /**
      * <p>
-     * Test a Journalled method.
+     * Test a Journaled method.
      * </p>
      * <p>
      * Call the selected method on the JournalCreator. Then tell the
@@ -411,7 +411,7 @@ public class TestJournalRoundTrip {
      * @throws ModuleInitializationException
      * @throws ModuleShutdownException
      */
-    private void testJournalledMethod(String methodName, Object... arguments)
+    private void testJournaledMethod(String methodName, Object... arguments)
             throws ServerException {
         buildExpectedCall(methodName, arguments);
 
@@ -435,7 +435,7 @@ public class TestJournalRoundTrip {
 
     /**
      * <p>
-     * Test a non-Journalled method.
+     * Test a non-Journaled method.
      * </p>
      * <p>
      * Call the selected method on the JournalCreator. Check that the Journal is
@@ -447,7 +447,7 @@ public class TestJournalRoundTrip {
      * to the one that we expected.
      * </p>
      */
-    private void testNonJournalledMethod(String methodName, Object... arguments)
+    private void testNonJournaledMethod(String methodName, Object... arguments)
             throws ServerException {
         buildExpectedCall(methodName, arguments);
 

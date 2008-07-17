@@ -21,7 +21,7 @@ import static org.junit.Assert.fail;
  * </p>
  * <p>
  * <b>Description:</b> A base class that holds some useful methods for
- * Journalling test.
+ * Journaling test.
  * </p>
  * 
  * @author jblake
