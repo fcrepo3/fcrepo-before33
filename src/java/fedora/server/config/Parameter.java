@@ -25,13 +25,13 @@ public class Parameter
 
     private String m_comment;
 
-    private final Map m_profileValues;
+    private final Map<String, String> m_profileValues;
 
     public Parameter(String name,
                      String value,
                      boolean isFilePath,
                      String comment,
-                     Map profileValues) {
+                     Map<String, String> profileValues) {
         m_name = name;
         m_value = value;
         m_isFilePath = isFilePath;
@@ -79,7 +79,7 @@ public class Parameter
         m_value = newValue;
     }
 
-    public Map getProfileValues() {
+    public Map<String, String> getProfileValues() {
         return m_profileValues;
     }
 

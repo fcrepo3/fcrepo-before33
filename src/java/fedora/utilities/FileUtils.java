@@ -20,8 +20,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import fedora.common.FaultException;
-
 public class FileUtils {
 
     public static final int BUFFER = 2048;

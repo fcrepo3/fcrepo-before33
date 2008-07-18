@@ -59,91 +59,65 @@ public class Rebuild
             new String[] {"fedora.server.resourceIndex.ResourceIndexRebuilder",
                     "fedora.server.utilities.rebuild.SQLRebuilder"};
 
-    public Rebuild(File serverDir, String profile)
+    public Rebuild(Rebuilder rebuilder,
+                   Map<String, String> options,
+                   ServerConfiguration serverConfig)
             throws Exception {
-        ServerConfiguration serverConfig = getServerConfig(serverDir, profile);
         // set these here so DOTranslationUtility doesn't try to get a Server
         // instance
         System.setProperty("fedoraServerHost", serverConfig
                 .getParameter("fedoraServerHost").getValue());
         System.setProperty("fedoraServerPort", serverConfig
                 .getParameter("fedoraServerPort").getValue());
-
-        System.err.println();
-        System.err.println("                       Fedora Rebuild Utility");
-        System.err.println("                     ..........................");
-        System.err.println();
-        System.err
-                .println("WARNING: Live rebuilds are not currently supported.");
-        System.err
-                .println("         Make sure your server is stopped before continuing.");
-        System.err.println();
-        System.err.println("Server directory is " + serverDir.toString());
-        if (profile != null) {
-            System.err.print("Server profile is " + profile);
+        boolean serverIsRunning = ServerUtility.pingServer("http", null, null);
+        if (serverIsRunning && rebuilder.shouldStopServer()) {
+            throw new Exception("The Fedora server appears to be running."
+                    + "  It must be stopped before the rebuilder can run.");
         }
-        System.err.println();
-        System.err
-                .println("---------------------------------------------------------------------");
-        System.err.println();
-        Rebuilder rebuilder = getRebuilder(serverDir, serverConfig);
-        if (rebuilder != null) {
+        if (options != null) {
             System.err.println();
-            System.err.println(rebuilder.getAction());
-            System.err.println();
-            Map options = getOptions(rebuilder.init(serverDir, serverConfig));
-            boolean serverIsRunning =
-                    ServerUtility.pingServer("http", null, null);
-            if (serverIsRunning && rebuilder.shouldStopServer()) {
-                throw new Exception("The Fedora server appears to be running."
-                        + "  It must be stopped before the rebuilder can run.");
-            }
-            if (options != null) {
-                System.err.println();
-                System.err.println("Rebuilding...");
-                try {
-                    rebuilder.start(options);
-                    // fedora.server.storage.lowlevel.Configuration conf =
-                    // fedora.server.storage.lowlevel.Configuration.getInstance();
-                    // String objStoreBaseStr = conf.getObjectStoreBase();
-                    String role =
-                            "fedora.server.storage.lowlevel.ILowlevelStorage";
-                    ModuleConfiguration mcfg =
-                            serverConfig.getModuleConfiguration(role);
-                    Iterator parameters = mcfg.getParameters().iterator();
-                    Map config = new HashMap();
-                    while (parameters.hasNext()) {
-                        Parameter p = (Parameter) parameters.next();
-                        config.put(p.getName(), p.getValue(p.getIsFilePath()));
-                    }
-                    getFilesystem(config);
-
-                    Parameter param =
-                            mcfg
-                                    .getParameter(DefaultLowlevelStorage.OBJECT_STORE_BASE);
-                    String objStoreBaseStr =
-                            param.getValue(param.getIsFilePath());
-                    File dir = new File(objStoreBaseStr);
-
-                    /*
-                     * Just assume every file under the directory is a digital
-                     * object and try processing. We may need/want to filter if
-                     * non-object files are ever stored alongside objects in the
-                     * specified directory.
-                     */
-                    rebuildFromDirectory(rebuilder, dir, null);
-                } finally {
-                    rebuilder.finish();
+            System.err.println("Rebuilding...");
+            try {
+                rebuilder.start(options);
+                // fedora.server.storage.lowlevel.Configuration conf =
+                // fedora.server.storage.lowlevel.Configuration.getInstance();
+                // String objStoreBaseStr = conf.getObjectStoreBase();
+                String role = "fedora.server.storage.lowlevel.ILowlevelStorage";
+                ModuleConfiguration mcfg =
+                        serverConfig.getModuleConfiguration(role);
+                Iterator<Parameter> parameters =
+                        mcfg.getParameters().iterator();
+                Map<String, String> config = new HashMap<String, String>();
+                while (parameters.hasNext()) {
+                    Parameter p = parameters.next();
+                    config.put(p.getName(), p.getValue(p.getIsFilePath()));
                 }
-                System.err.println("Finished.");
-                System.err.println();
+                getFilesystem(config);
+
+                Parameter param =
+                        mcfg
+                                .getParameter(DefaultLowlevelStorage.OBJECT_STORE_BASE);
+                String objStoreBaseStr = param.getValue(param.getIsFilePath());
+                File dir = new File(objStoreBaseStr);
+
+                /*
+                 * Just assume every file under the directory is a digital
+                 * object and try processing. We may need/want to filter if
+                 * non-object files are ever stored alongside objects in the
+                 * specified directory.
+                 */
+                rebuildFromDirectory(rebuilder, dir, null);
+            } finally {
+                rebuilder.finish();
             }
+            System.err.println("Finished.");
+            System.err.println();
         }
     }
 
-    private void getFilesystem(Map configuration) {
+    private void getFilesystem(Map<String, String> configuration) {
         String filesystemClassName =
-                (String) configuration.get(DefaultLowlevelStorage.FILESYSTEM);
+                configuration.get(DefaultLowlevelStorage.FILESYSTEM);
         Object[] parameters = new Object[] {configuration};
         Class[] parameterTypes = new Class[] {Map.class};
         ClassLoader loader = getClass().getClassLoader();
@@ -157,7 +131,6 @@ public class Rebuild
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -208,12 +181,13 @@ public class Rebuild
         }
     }
 
-    private Map getOptions(Map descs) throws IOException {
-        Map options = new HashMap();
-        Iterator iter = descs.keySet().iterator();
+    private static Map<String, String> getOptions(Map<String, String> descs)
+            throws IOException {
+        Map<String, String> options = new HashMap<String, String>();
+        Iterator<String> iter = descs.keySet().iterator();
         while (iter.hasNext()) {
-            String name = (String) iter.next();
-            String desc = (String) descs.get(name);
+            String name = iter.next();
+            String desc = descs.get(name);
             options.put(name, getOptionValue(name, desc));
         }
         int c =
@@ -231,7 +205,8 @@ public class Rebuild
         return null;
     }
 
-    private String getOptionValue(String name, String desc) throws IOException {
+    private static String getOptionValue(String name, String desc)
+            throws IOException {
         System.err.println("[" + name + "]");
         System.err.println(desc);
         System.err.println();
@@ -242,9 +217,7 @@ public class Rebuild
         return val;
     }
 
-    private Rebuilder getRebuilder(File serverDir,
-                                   ServerConfiguration serverConfig)
-            throws Exception {
+    private static Rebuilder getRebuilder() throws Exception {
         String[] labels = new String[REBUILDERS.length + 1];
         Rebuilder[] rebuilders = new Rebuilder[REBUILDERS.length];
         int i = 0;
@@ -263,7 +236,8 @@ public class Rebuild
         }
     }
 
-    private int getChoice(String title, String[] labels) throws IOException {
+    private static int getChoice(String title, String[] labels)
+            throws IOException {
         boolean validChoice = false;
         int choiceIndex = -1;
         System.err.println(title);
@@ -349,11 +323,10 @@ public class Rebuild
 
     private static int setValuesForProfile(Configuration config, String profile) {
         int c = 0;
-        Iterator iter = config.getParameters().iterator();
+        Iterator<Parameter> iter = config.getParameters().iterator();
         while (iter.hasNext()) {
-            Parameter param = (Parameter) iter.next();
-            String profileValue =
-                    (String) param.getProfileValues().get(profile);
+            Parameter param = iter.next();
+            String profileValue = param.getProfileValues().get(profile);
             if (profileValue != null) {
                 param.setValue(profileValue);
                 c++;
@@ -369,6 +342,22 @@ public class Rebuild
             c += setValuesForProfile((Configuration) iter.next(), profile);
         }
         return c;
+    }
+
+    private static Map<String, String> getUserInput(Rebuilder rebuilder,
+                                                    File serverDir,
+                                                    ServerConfiguration serverConfig)
+            throws Exception {
+        if (rebuilder != null) {
+            System.err.println();
+            System.err.println(rebuilder.getAction());
+            System.err.println();
+            Map<String, String> options =
+                    getOptions(rebuilder.init(serverDir, serverConfig));
+            return options;
+        } else {
+            return new HashMap<String, String>();
+        }
     }
 
     public static void fail(String message, boolean showUsage, boolean exit) {
@@ -400,7 +389,7 @@ public class Rebuild
         // File log4jConfig = new File(new File(homeDir), "config/log4j.xml");
         // DOMConfigurator.configure(log4jConfig.getPath());
         String profile = null;
-        if (args.length == 1) {
+        if (args.length > 0) {
             profile = args[0];
         }
         if (args.length > 1) {
@@ -409,10 +398,30 @@ public class Rebuild
         try {
             File serverDir =
                     new File(new File(Constants.FEDORA_HOME), "server");
-            if (args.length > 0) {
-                profile = args[0];
+            ServerConfiguration serverConfig =
+                    getServerConfig(serverDir, profile);
+            System.err.println();
+            System.err.println("                       Fedora Rebuild Utility");
+            System.err
+                    .println("                     ..........................");
+            System.err.println();
+            System.err
+                    .println("WARNING: Live rebuilds are not currently supported.");
+            System.err
+                    .println("         Make sure your server is stopped before continuing.");
+            System.err.println();
+            System.err.println("Server directory is " + serverDir.toString());
+            if (profile != null) {
+                System.err.print("Server profile is " + profile);
             }
-            new Rebuild(serverDir, profile);
+            System.err.println();
+            System.err
+                    .println("---------------------------------------------------------------------");
+            System.err.println();
+            Rebuilder rebuilder = getRebuilder();
+            Map<String, String> options =
+                    getUserInput(rebuilder, serverDir, serverConfig);
+            new Rebuild(rebuilder, options, serverConfig);
         } catch (Throwable th) {
             String msg = th.getMessage();
             if (msg == null) {

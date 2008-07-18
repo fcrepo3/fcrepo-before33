@@ -106,11 +106,14 @@
         	<pathelement location="${lib.activation}"/>
         	<pathelement location="${lib.beep}"/>
         	<pathelement location="${lib.castor}"/>
-        	<pathelement location="${lib.dateutils}"/>
+        	<pathelement location="${lib.castor-xml}"/>
+    		<pathelement location="${lib.castor-schema}"/>
         	<pathelement location="${lib.emory-util}"/>
         	<pathelement location="${lib.jca}"/>
+        	<pathelement location="${lib.joda-time}"/>
         	<pathelement location="${lib.jotm}"/>
-    		<pathelement location="${lib.jotm-carol}"/>
+        	<pathelement location="${lib.jotm-carol}"/>
+        	<pathelement location="${lib.jotm-howl}"/>
         	<pathelement location="${lib.jotm-iiop}"/>
         	<pathelement location="${lib.jrdf}"/>
         	<pathelement location="${lib.jta}"/>

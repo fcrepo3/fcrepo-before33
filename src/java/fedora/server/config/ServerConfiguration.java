@@ -263,7 +263,7 @@ public class ServerConfiguration
         return m_className;
     }
 
-    public List getModuleConfigurations() {
+    public List<ModuleConfiguration> getModuleConfigurations() {
         return m_moduleConfigurations;
     }
 
@@ -277,7 +277,7 @@ public class ServerConfiguration
         return null;
     }
 
-    public List getDatastoreConfigurations() {
+    public List<DatastoreConfiguration> getDatastoreConfigurations() {
         return m_datastoreConfigurations;
     }
 

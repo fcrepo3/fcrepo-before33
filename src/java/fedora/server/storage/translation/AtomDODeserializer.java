@@ -160,6 +160,7 @@ public class AtomDODeserializer
         DOTranslationUtility.normalizeDatastreams(m_obj,
                                                   m_transContext,
                                                   m_encoding);
+        FileUtils.delete(m_tempDir);
     }
 
     /**
