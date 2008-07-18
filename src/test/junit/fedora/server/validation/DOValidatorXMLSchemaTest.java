@@ -20,12 +20,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fedora.common.Constants;
+import fedora.test.FedoraTestConstants;
 
 /**
  * @author Edwin Shin
  * @version $Id$
  */
-public class DOValidatorXMLSchemaTest {
+public class DOValidatorXMLSchemaTest
+        implements FedoraTestConstants {
 
     /**
      * @throws java.lang.Exception
@@ -42,8 +44,7 @@ public class DOValidatorXMLSchemaTest {
     }
     
     private static File getDemoFile(String path) {
-        return new File(Constants.FEDORA_HOME, "client/demo/" + path);
-                        
+        return new File(DEMO_DIR_PREFIX + path);
     }
 
     @Test

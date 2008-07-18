@@ -213,7 +213,7 @@ public class ConvertObjectSerialization {
         // So DOTranslationUtility works...
         System.setProperty("fedoraServerHost", "localhost");
         System.setProperty("fedoraServerPort", "8080");
-        
+
         boolean pretty = args.length > 4 && args[4].equals("true");
         
         String inExt = "xml";

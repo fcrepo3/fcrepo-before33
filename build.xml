@@ -650,7 +650,18 @@
         </axis-wsdl2java>
     </target>
     
-    <target name="demo-objects" depends="compile-server">
+    <target name="check-demo-objects">
+        <uptodate property="demo-objects.uptodate"
+                  targetfile="${fedora.home.build.dir}/client/demo/mets/local-server-demos/simple-image-demo/cm_image_demo.xml">
+            <srcfiles dir="${src.dir}/demo-objects" includes="**/*.xml"/>
+        </uptodate>
+    </target>
+    
+    <target name="demo-objects" depends="compile-server,check-demo-objects"
+        unless="demo-objects.uptodate">
+        <copy todir="${fedora.home.build.dir}/client/demo/foxml">
+            <fileset dir="${src.dir}/demo-objects/foxml"/>
+        </copy>
         <md-convert-objects
                 outputDir="${fedora.home.build.dir}/client/demo/mets"
                 serializer="fedora.server.storage.translation.METSFedoraExt1_1DOSerializer"
@@ -695,9 +706,6 @@
             </fileset>
         </chmod>
         
-        <copy todir="${fedora.home.build.dir}/client/demo/foxml">
-            <fileset dir="${src.dir}/demo-objects/foxml"/>
-        </copy>
         <!-- SOAP demo client (simple java reference client) -->
         <copy todir="${fedora.home.build.dir}/client/demo/soapclient">
             <fileset dir="${src.dir}/demo-soapclient"/>

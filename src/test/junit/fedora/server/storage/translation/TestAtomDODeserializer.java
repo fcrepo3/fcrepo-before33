@@ -23,15 +23,15 @@ import fedora.common.Models;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
+import fedora.test.FedoraTestConstants;
 
 /**
- * 
- *
  * @author Edwin Shin
  * @version $Id$
  */
 public class TestAtomDODeserializer
-        extends TestXMLDODeserializer {
+        extends TestXMLDODeserializer
+        implements FedoraTestConstants {
 
     public TestAtomDODeserializer() {
         super(new AtomDODeserializer(), new AtomDOSerializer());
@@ -98,8 +98,7 @@ public class TestAtomDODeserializer
                 {"atom/local-server-demos/simple-image-demo/sdep_demo_2.xml",
                  "atom/local-server-demos/formatting-objects-demo/obj_demo_26.xml"};
         for (String source : demoSources) {
-            File sourceFile = new File(Constants.FEDORA_HOME,
-                                       "client/demo/" + source);
+            File sourceFile = new File(DEMO_DIR_PREFIX + source);
             InputStream in = new FileInputStream(sourceFile);
             DigitalObject candidate = new BasicDigitalObject();
             DODeserializer deserA = new AtomDODeserializer();
