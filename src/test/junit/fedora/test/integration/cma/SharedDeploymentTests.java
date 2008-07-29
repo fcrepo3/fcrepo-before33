@@ -49,7 +49,7 @@ import static junit.framework.Assert.fail;
 public class SharedDeploymentTests {
 
     private static final String SHARED_DEPLOYMENT_BASE =
-            "local-server-demos/cma-examples/shared-deployments";
+            "cma-examples/shared-deployments";
 
     private static final String OBJECT_1_PID =
             "demo:shared-deployments.object.1";
@@ -91,7 +91,7 @@ public class SharedDeploymentTests {
                 new FedoraClient(FedoraServerTestCase.getBaseURL(),
                                  FedoraServerTestCase.getUsername(),
                                  FedoraServerTestCase.getPassword());
-        FedoraServerTestCase.ingestDemoObjects(SHARED_DEPLOYMENT_BASE);
+        Util.ingestTestObjects(SHARED_DEPLOYMENT_BASE);
     }
 
     @Test

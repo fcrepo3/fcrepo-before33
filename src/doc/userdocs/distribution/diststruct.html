@@ -12,7 +12,7 @@
 
 <div id="header"><a href="../../../index.html"> </a>
 <h1>Fedora Distribution Structure Documentation</h1>
-<h2>Fedora Release 3.0 Beta 2</h2>
+<h2>Fedora Repository Release 3.0</h2>
 </div>
 
 <div id="toc">
@@ -51,8 +51,9 @@
     <li>
     <h2 id="server">Server</h2>
     <span class="plaintext"> <strong>server/access</strong> - Stylesheets
-    for the default disseminator. All objects in the repository automatically
-    subscribe to this disseminator, which provides methods for listing and
+    for the default dissemination service. All objects in the repository automatically
+    subscribe to this service through the system default content model. This service
+    provides operations for listing and
     retrieving the components of the object. <br />
     <strong>server/bin</strong> - Contains server command-line utilities,
     including fedora-rebuild, fedora-reload-policies, and validate-policy. <br />
@@ -96,17 +97,11 @@
     <strong>docs/userdocs</strong> - End-user documentation and tutorials. </span></li>
     <ol>
 
-        <div id="footer">
-        <p id="copyright">Copyright &copy; 2002-2008 Fedora Project</p>
-        <script type="text/javascript">
-        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
-        var parts = cvsDate.split(" ");
-        var modifiedDate = parts[1];
-        var p = document.createElement("p");
-        p.setAttribute("id", "lastModified");
-        var footer = document.getElementById("footer");
-        footer.appendChild(p);
-        p.innerHTML = "Last Modified "+modifiedDate;
-      </script></div>
+    <div id="footer">
+      <div id="copyright">
+        Copyright &copy; 2006-2007 Fedora Project; 2008 Fedora Commons, Inc.
+      </div>
+    </div>
+      
 </body>
 </html>

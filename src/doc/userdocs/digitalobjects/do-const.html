@@ -14,38 +14,45 @@
       <a href="../../../index.html">
       </a>
       <h1>Fedora Digital Object Construction Guide</h1>
-      <h2>Fedora Release 3.0 Beta 2</h2>
+      <h2>Being Rewritten for Fedora Repository Release 3.0</h2>
     </div>
 
     <div id="toc">
       <h2>Table of Contents</h2>
       <ol>
         <li><a href="#digital">The Fedora Digital Object Model</a></li>
-        <li><a href="#types">Three Types of Fedora Digital Objects</a></li>
+        <!-- <li><a href="#types">Three Types of Fedora Digital Objects</a></li> -->
         <li><a href="#interface">Application Programming Interface for Object Creation (API-M)</a></li>
         <li><a href="#creation">Creation of Data Objects (3 ways)</a></li>
-        <li><a href="#objects">Creation of Behavior Definition and Mechanism Objects (2 ways)</a></li>
-        <li><a href="#encoding">Rules for Encoding a Fedora Object XML Submission Package</a></li>
+        <!-- <li><a href="#objects">Creation of Behavior Definition and Mechanism Objects (2 ways)</a></li>  -->
+        <!-- <li><a href="#encoding">Rules for Encoding a Fedora Object XML Submission Package</a></li>  -->
       </ol>
     </div>
     
     <ol id="content">
     
-      <h2>Notice: This document is obsolete in Fedora 3.0 and is being rewritten.</h2>
+      <h2>Notice: This document is obsolete in Fedora 3.0 and is in the process of being rewritten.</h2>
 
       <li>
         <h2 id="digital">The Fedora Digital Object Model</h2>
         <span class="plaintext">
-          All Fedora objects conform to the Fedora digital object model which is described in detail elsewhere (<a href="http://www.fedora.info/publications/">Fedora publications</a>). Briefly, the Fedora object model consists of:
+        All Fedora objects conform to the <a href="objectModel.html/">Fedora Digital Object Model</a>. Release 3.0 introduces the
+        <a href="cma.html/">Content Model Architecture (CMA)</a> which provides an overarching structure to Fedora digital 
+        objects and relationships between them. It will help if you are familiar with both of these documents in understanding this
+        one.<br /><br />
+        Briefly, the Fedora object model consists of:
         </span>
             <ul>
               <li><strong>PID</strong> - a persistent, unique identifier for the object</li>
-              <li><strong>Datastream(s)</strong> - the component in a Fedora object that represents MIME-typed content. An object can have one or more Datastreams. The content of a Datastream can be either data or metadata, and this content can either be stored internally in the Fedora repository, or stored remotely (in which case Fedora holds a pointer to the content in the form of a URL).</li>
               <li><strong>System Metadata</strong> - a set of system-defined attributes that are necessary to manage and track the object in the repository.</li>
-              <li><strong>Disseminator(s)</strong> - the component in a Fedora object that associates a service with the object for the purpose of transforming or presenting the content represented by Datastreams. An object can have zero or more Disseminators. Each Disseminator points to a <em>Behavior Definition</em> and a <em>Behavior Mechanism</em>.  A <em>Behavior Definition</em> defines an abstract set of methods to which the object is said to &#8220;subscribe.&#8221; A <em>Behavior Mechanism</em> defines the concrete bindings to a service that implements the abstract methods of the <em>Behavior Definition</em>.</li>
+              <li><strong>Datastream(s)</strong> - the component in a Fedora object that represents content bitstreams. An object can have one or more Datastreams. The content of a Datastream is treated as a stream, and can stored and managed by the Fedora repository, or stored remotely and only referenced by the Fedora repository.</li>
             </ul>
+        <span class="plaintext">
+        This document describes the interfaces which may be used to create digital objects in the Fedora Repository.
+        </span>
       </li>
       
+      <!--
       <li>
         <h2 id="types">Three Types of Fedora Digital Objects</h2>
         <span class="plaintext">
@@ -81,6 +88,7 @@
           Behavior Mechanism Objects are stored in the repository just like other Fedora objects. Although the Fedora repository system is able to identify Behavior Mechanism Objects as special &#8220;utility&#8221; objects, it stores and manages them just like Fedora Data Objects. Also, clients can access these objects in the same manner they access Data Objects.
         </span>
       </li>
+      -->
       
       <li>
         <h2 id="interface">Application Programming Interface for Object Creation (API-M)</h2>
@@ -90,13 +98,13 @@
       </li>
       
       <li>
-        <h2 id="creation">Creation of Data Objects (3 ways)</h2>
+        <h2 id="creation">Creation of Digital Objects (3 ways)</h2>
         <span class="plaintext">
           <strong><em>XML Submission (Ingest)</em></strong>
         </span>
             <ul>
               <li>Process summary: An XML submission package is prepared outside of Fedora. This can be done manually with an XML editor, or programmatically. The submission package is sent to the Fedora repository for &#8220;Ingest&#8221; via one of the Fedora clients that support the ingest function.</li>
-              <li>XML submission format: A Fedora-specific extension of METS 1.0. See rules for encoding Fedora objects in METS below.</li>
+              <li>XML submission format: A FOXML-encoded digital object in a pre-ingest format. Optionally, a digital object encoded in the Fedora-specific extension of METS 1.0. See rules for encoding Fedora objects in METS below.</li>
               <li>Clients for ingest:
                 <ul>
                   <li><em>Admin GUI</em> - From the menu select File/Ingest. You will be prompted to select a file from the file system so make sure your submission package XML file is on a drive that is visible from the machine on which the Admin GUI is running. For more details, see the guide entitled &#8220;Java Application: Admin GUI&#8211; Object Creation and Repository Management via API-M&#8221; in the Client Documentation.</li>
@@ -128,7 +136,8 @@
               </li>
             </ul>
       </li>
-                  
+          
+      <!--       
       <li>
         <h2 id="objects">Creation of Behavior Definition and Mechanism Objects (2 ways)</h2>
         <span class="plaintext">
@@ -157,23 +166,13 @@
                 </ul>
               </li>
             </ul>
-      </li>
+      </li> -->
     </ol>
     
     <div id="footer">
-      <p id="copyright">
-        Copyright &copy; 2002-2008 Fedora Project
-      </p>
-      <script type="text/javascript">
-        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
-        var parts = cvsDate.split(" ");
-        var modifiedDate = parts[1];
-        var p = document.createElement("p");
-        p.setAttribute("id", "lastModified");
-        var footer = document.getElementById("footer");
-        footer.appendChild(p);
-        p.innerHTML = "Last Modified "+modifiedDate;
-      </script>
+      <div id="copyright">
+        Copyright &copy; 2006-2007 Fedora Project; 2008 Fedora Commons, Inc.
+      </div>
     </div>
     
   </body>

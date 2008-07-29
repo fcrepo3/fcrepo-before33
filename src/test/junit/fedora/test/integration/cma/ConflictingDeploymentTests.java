@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import fedora.client.FedoraClient;
 import fedora.test.FedoraServerTestCase;
+import static fedora.test.integration.cma.Util.ingestTestObjects;
 
 /**
  * Tests for reasonable/predictable behaviour when sDeps conflict.
@@ -35,11 +36,10 @@ import fedora.test.FedoraServerTestCase;
  * 
  * @author birkland
  */
-public class ConflictingDeploymentTests
-        extends FedoraServerTestCase {
+public class ConflictingDeploymentTests {
 
     private static final String DEMO_OBJECT_BASE =
-            "local-server-demos/cma-examples/conflicting-deployments";
+            "cma-examples/conflicting-deployments";
 
     private static final String PUBLIC_OBJECT_BASE =
             DEMO_OBJECT_BASE + "/public-objects";
@@ -69,13 +69,16 @@ public class ConflictingDeploymentTests
     @Before
     public void setUp() throws Exception {
 
-        m_client = new FedoraClient(getBaseURL(), getUsername(), getPassword());
-        ingestDemoObjects(PUBLIC_OBJECT_BASE);
+        m_client =
+                new FedoraClient(FedoraServerTestCase.getBaseURL(),
+                                 FedoraServerTestCase.getUsername(),
+                                 FedoraServerTestCase.getPassword());
+        ingestTestObjects(PUBLIC_OBJECT_BASE);
     }
 
     @After
     public void tearDown() throws Exception {
-        purgeDemoObjects();
+        FedoraServerTestCase.purgeDemoObjects();
     }
 
     /**
@@ -85,8 +88,8 @@ public class ConflictingDeploymentTests
     @Test
     public void testDeployFirstIngested12() throws Exception {
 
-        ingestDemoObjects(DEPLOYMENT_1_BASE);
-        ingestDemoObjects(DEPLOYMENT_2_BASE);
+        ingestTestObjects(DEPLOYMENT_1_BASE);
+        ingestTestObjects(DEPLOYMENT_2_BASE);
 
         String content = getDisseminatedContent();
 
@@ -104,8 +107,8 @@ public class ConflictingDeploymentTests
     @Test
     public void testDeployFirstIngested21() throws Exception {
 
-        ingestDemoObjects(DEPLOYMENT_2_BASE);
-        ingestDemoObjects(DEPLOYMENT_1_BASE);
+        ingestTestObjects(DEPLOYMENT_2_BASE);
+        ingestTestObjects(DEPLOYMENT_1_BASE);
 
         String content = getDisseminatedContent();
 
@@ -122,8 +125,8 @@ public class ConflictingDeploymentTests
      */
     @Test
     public void testModifyOldestSdep() throws Exception {
-        ingestDemoObjects(DEPLOYMENT_1_BASE);
-        ingestDemoObjects(DEPLOYMENT_2_BASE);
+        ingestTestObjects(DEPLOYMENT_1_BASE);
+        ingestTestObjects(DEPLOYMENT_2_BASE);
 
         modify(SDEP_1_PID);
 
@@ -139,8 +142,8 @@ public class ConflictingDeploymentTests
     /** Modifying the newest SDep should have no effect */
     @Test
     public void testModifyNewestSdep() throws Exception {
-        ingestDemoObjects(DEPLOYMENT_1_BASE);
-        ingestDemoObjects(DEPLOYMENT_2_BASE);
+        ingestTestObjects(DEPLOYMENT_1_BASE);
+        ingestTestObjects(DEPLOYMENT_2_BASE);
 
         modify(SDEP_2_PID);
 
@@ -156,8 +159,8 @@ public class ConflictingDeploymentTests
     /** Represents the most likely case. Should pass with flying colours. */
     @Test
     public void testPurgeReplace() throws Exception {
-        ingestDemoObjects(DEPLOYMENT_1_BASE);
-        ingestDemoObjects(DEPLOYMENT_2_BASE);
+        ingestTestObjects(DEPLOYMENT_1_BASE);
+        ingestTestObjects(DEPLOYMENT_2_BASE);
 
         m_client.getAPIM()
                 .purgeObject(SDEP_1_PID, "removing first sDep", false);

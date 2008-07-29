@@ -556,7 +556,7 @@ public class SQLRebuilder
                             + sDef
                             + "', '"
                             + sDep.getPid()
-                            + "');");
+                            + "')");
         } finally {
             if (s != null) {
                 s.close();

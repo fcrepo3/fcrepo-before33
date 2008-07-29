@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+  <head>
+    <title>Fedora 3.0 Performance Report</title>
+    <link rel="stylesheet" type="text/css" href="../../docstyle.css" />
+  </head>
+
+  <body>
+
+    <div id="header">
+      <h1>Fedora 3.0 Performance Report</h1>
+      <h2>Fedora Release 3.0</h2>
+    </div>
+
+    <div id="toc">
+      <h2>Table of Contents</h2>
+      <ol>
+        <li><a href="#intro">Introduction</a></li>
+        <li><a href="#environ">Test Environment</a></li>
+        <li><a href="#configs">Test Configuration</a></li>
+        <li><a href="#running">Running the Tests</a></li>
+        <li><a href="#results">Test Results</a></li>
+        <li><a href="#prev">Previous Reports</a></li>
+      </ol>
+    </div>
+
+    <ol id="content">
+
+      <li>
+        <h2 id="intro">Introduction</h2>
+        <span class="plaintext">
+          Fedora 3.0 represents several significant updates to the Fedora codebase,
+          primarily the addition of the content model architecture. In order to
+          determine the performance impacts of these changes as well as to discover
+          how configuration changes impact performance, a suite of tests were added
+          to the source distribution. These tests are available to aid in understanding
+          how the Fedora system works as well as to provide a starting point for
+          performance tuning.
+          <br/><br/>
+          The following test results are available to allow for comparisons with your
+          Fedora installation. These results currently represent only a limited number
+          of configuration choices and will be updated in the future to provide a more
+          complete picture, including both the results of more configuration choices on a
+          Fedora 3.0 server, as well as comparisons between a 3.0 and a 2.2.x server.
+        </span>
+      </li>
+
+      <li>
+        <h2 id="environ">Test Environment</h2>
+        <span class="plaintext">
+          Hardware (Desktop PC):
+        </span>
+          <ul>
+            <li>CPU: (1) Athlon 64 3400+</li>
+            <li>Physical Memory: 1.8GB</li>
+            <li>Disk: (1) 7200rpm IDE</li>
+          </ul>
+        <span class="plaintext">
+          Software:
+        </span>
+          <ul>
+            <li>OS: Ubuntu 8.0.4 (64-bit)</li>
+            <li>PostgreSQL 8.3 (local instance, fsync=off)</li>
+            <li>Java: 1.5.0_15-b04 (64-bit)</li>
+          </ul>
+        <span class="plaintext">
+          All tests were performed on an empty Fedora server. The objects used for testing include:
+        </span>
+        <ul>
+          <li>4 "X" (inline XML) datastreams</li>
+          <li>2 "M" (managed) datastreams</li>
+          <li>Basic Content Model</li>
+          <li>An average FOXML size of 5kb</li>
+          <li>Minimal datastream size</li>
+        </ul>
+      </li>
+
+      <li>
+        <h2 id="configs">Test Configuration</h2>
+        <span class="plaintext">
+          Three tests are performed during each run:
+        </span>
+        <ul>
+          <li>
+            <strong>Round-Trip:</strong> Each operation is called and the time required to receive a response
+            (indicating that the call has completed) is recorded. Each call in the round-trip
+            test is performed in a consistent repository state, meaning that for each ingest
+            operation a delete is performed before the next ingest. All calls are made using
+            the same object and parameters. Only the time to perform the operation in question
+            is recorded. Times for all iterations are averaged as the result.
+          </li>
+          <li>
+            <strong>Throughput:</strong> Each operation is called back-to-back with each call being performed
+            on a different object. A timer is started at the beginning of the test and is stopped
+            after all calls have been made and returned. The time to perform all operations is
+            recorded as the result.
+          </li>
+          <li>
+            <strong>Threaded:</strong> Tests are conducted in the same manner as throughput tests except that
+            a thread pool is utilized to perform the calls.
+          </li>
+        </ul>
+        <span class="plaintext">
+          Tests were run for each of the following Fedora configurations. These configurations are shown in
+          the same order and color in the result graphs.
+        </span>
+        <ul>
+          <li>Using a McKoi database, with the Resource Index OFF, Messaging OFF, and XACML policy enforcement disabled</li>
+          <li>Using a <strong>PostgreSQL database</strong>, with the Resource Index OFF, Messaging OFF, and XACML policy enforcement disabled</li>
+          <li>Using a PostgreSQL database, with the Resource Index OFF, Messaging OFF, and <strong>XACML policy enforcement enabled</strong></li>
+        </ul>
+        <span class="plaintext">
+          All tests were executed:
+        </span>
+          <ul>
+            <li>...using the bundled Tomcat software as the servlet container.</li>
+            <li>...over regular HTTP (not SSL).</li>
+            <li>...with the REST API off.</li>
+            <li>...for 1000 iterations.</li>
+            <li>...using a thread pool size of 10.</li>
+          </ul>
+      </li>
+
+      <li>
+        <h2 id="running">Running the Tests</h2>
+        <span class="plaintext">
+          The tests are executed by downloading and extracting the source distribution, changing to the newly
+          extracted directory, and running the following command:
+        </span>
+        <span class="plaintext">
+            ant performance-tests -Dhost=[HOST] -Dport=[PORT] -Dusername=[USERNAME]
+                                  -Dpassword=[PASSWORD] -Diterations=[NUM-ITERATIONS]
+                                  -Dthreads=[NUM-THREADS] -Dfile=[OUTPUT-FILE]
+                                  -Dname=[TEST-NAME]
+        </span>
+        <span class="plaintext">
+          where
+        </span>
+		<ul>
+		  <li>HOST = Host on which the Fedora server is running.</li>
+          <li>PORT = Port on which the Fedora server APIs can be accessed.</li>
+          <li>USERNAME = A fedora user with administrative privileges.</li>
+          <li>PASSWORD = The fedora user's password.</li>
+          <li>NUM-ITERATIONS = The number of times to perform each operation.</li>
+          <li>NUM-THREADS = The number of threads to use in the thread pool when running threaded tests.</li>
+          <li>OUTPUT-FILE = The file to which the test results will be written.
+					        If the file does not exist, it will be created. If the
+                            file does exist the new results will be appended.</li>
+          <li>TEST-NAME = A name for this test run.</li>
+        </ul>
+      </li>
+
+      <li>
+        <h2 id="results">Test Results</h2>
+        <span class="plaintext">
+          For raw test results, see <a href="performance-results.txt">Performance Results</a>
+          which includes the results for all tests in CSV format.
+        </span>
+        <span class="plaintext">
+          This graph shows the results of the Round-Trip tests, the average time required to perform
+          each operation, in each configuration (lower is better):
+          <br />
+          <br />
+          <img src="performance-results-item1.png" alt="Round-Trip Time per Operation" />
+          <br />
+          <br />
+          This graph also shows the Round-Trip test results, but in terms of operations per second
+          (higher is better):
+          <br />
+          <br />
+          <img src="performance-results-item2.png" alt="Round-Trip Operations per Second" />
+        </span>
+        <span class="plaintext">
+          This graph shows the results of the Throughput tests in terms of operations per second
+          (higher is better):
+          <br />
+          <br />
+          <img src="performance-results-item4.png" alt="Throughput Operations per Second" />
+        </span>
+        <span class="plaintext">
+          This graph shows the results of the Threaded tests in terms of operations per second
+          (higher is better):
+          <br />
+          <br />
+          <img src="performance-results-item6.png" alt="Threaded Operations per Second" />
+        </span>
+      </li>
+
+      <li>
+        <h2 id="prev">Previous Reports</h2>
+        <span class="plaintext">
+          For reference, here are the performance test results from the Fedora 2.2 release:
+        </span>
+          <ul>
+            <li><a href="../fedora22-performance/index.html">Fedora 2.2</a> - API-M tests</li>
+          </ul>
+      </li>
+
+    </ol>
+
+    <div id="footer">
+      <p id="copyright">
+        Copyright &copy; 2002-2008 Fedora Project
+      </p>
+      <script type="text/javascript">
+        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
+        var parts = cvsDate.split(" ");
+        var modifiedDate = parts[1];
+        var p = document.createElement("p");
+        p.setAttribute("id", "lastModified");
+        var footer = document.getElementById("footer");
+        footer.appendChild(p);
+        p.innerHTML = "Last Modified "+modifiedDate;
+      </script>
+    </div>
+
+  </body>
+</html>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+  <head>
+    <title>Fedora Atom</title>
+    <link rel="stylesheet" type="text/css" href="../docstyle.css" />
+  </head>
+
+  <body>
+
+    <div id="header">
+      <a href="../../../index.html">
+      </a>
+      <h1>Fedora Atom</h1>
+      <h2>Fedora Repository Release 3.0</h2>
+    </div>
+
+    <div id="toc">
+      <h2>Table of Contents</h2>
+        <ol>
+          <li><a href="#intro">Introduction</a></li>
+          <li><a href="#formats">Serialization Formats</a>
+            <ol class="alpha">
+              <li><a href="#formats.fatom">Fedora Atom</a></li>
+              <li><a href="#formats.fatomz">Fedora Atom Zip</a></li>
+              <li><a href="#formats.uris">Format URIs</a></li>
+            </ol>
+          </li>
+          <li><a href="#examples">Examples</a></li>
+          <li><a href="#references">References</a></li>
+        </ol>
+    </div>
+
+    <ol id="content">
+
+      <li>
+        <h2 id="intro">Introduction</h2>
+        <span class="plaintext">
+        Fedora Atom is a serialization of a Fedora Digital Object using the Atom 
+        Syndication Format [<a href="#ref.rfc4287">RFC 4287</a>] in conjunction 
+        with the Atom Threading Extensions [<a href="#ref.rfc4685">RFC 4685</a>]. 
+        <br /><br />
+        Many of the programming languages and platforms used with Fedora already 
+        provide libraries and tools for working with Atom feeds. By offering an 
+        Atom serialization of Fedora objects, these now become tools and 
+        libraries for authoring, browsing and validating Fedora digital objects 
+        as well.
+        </span>
+      </li>
+      <li>
+        <h2 id="formats">Serialization Formats</h2>
+        <span class="plaintext">
+        </span>
+        <ol class="alpha">
+          <li>
+            <h3 id="formats.fatom">Fedora Atom</h3>
+            <span class="plaintext">
+            A Fedora Digital Object is represented as an <code>atom:feed</code> 
+            element and datastreams are represented as an atom:entry elements.
+            
+            <code class="block">            
+<pre>
+&lt;feed xmlns="http://www.w3.org/2005/Atom"&gt;
+  &lt;id&gt;info:fedora/demo:5&lt;/id&gt;
+  &lt;title type="text"&gt;Simple Image Demo&lt;/title&gt;
+  &lt;updated&gt;2008-07-02T05:09:42.015Z&lt;/updated&gt;
+  &lt;author&gt;&lt;name&gt;fedoraAdmin&lt;/name&gt;&lt;/author&gt;
+  &lt;category scheme="info:fedora/fedora-system:def/model#state" 
+                 term="Active"/&gt;
+  &lt;category scheme="info:fedora/fedora-system:def/model#createdDate" 
+                 term="2008-07-02T05:09:42.015Z"/&gt;
+</pre>
+            </code>
+            <br />
+            Object properties are represented using various atom:feed elements. 
+            In the abbreviated example above, the object's pid, label, ownerId 
+            and lastModifiedDate are represented using the feed's id, title, 
+            author, and updated elements respectively. atom:category elements
+            are used to represent object properties such as state and 
+            createdDate.
+            <br />
+            
+            <code class="block">            
+<pre>
+  &lt;entry&gt;
+    &lt;id&gt;info:fedora/demo:5/DC&lt;/id&gt;
+    &lt;title type="text"&gt;DC&lt;/title&gt;
+    &lt;updated&gt;2008-07-02T05:09:43.375Z&lt;/updated&gt;
+    &lt;link href="info:fedora/demo:5/DC/2008-07-02T05:09:43.375Z" rel="alternate"/&gt;
+    &lt;category scheme="info:fedora/fedora-system:def/model#state" 
+                   term="A"/&gt;
+    &lt;category scheme="info:fedora/fedora-system:def/model#controlGroup"
+                   term="X"/&gt;
+    &lt;category scheme="info:fedora/fedora-system:def/model#versionable"
+                   term="true"/&gt;
+  &lt;/entry&gt;
+  &lt;entry xmlns:thr="http://purl.org/syndication/thread/1.0"&gt;
+    &lt;id&gt;info:fedora/demo:5/DC/2008-07-02T05:09:43.375Z&lt;/id&gt;
+    &lt;title type="text"&gt;DC1.0&lt;/title&gt;
+    &lt;updated&gt;2008-07-02T05:09:43.375Z&lt;/updated&gt;
+    &lt;thr:in-reply-to ref="info:fedora/demo:5/DC"/&gt;
+    &lt;category scheme="info:fedora/fedora-system:def/model#formatURI" 
+                   term="http://www.openarchives.org/OAI/2.0/oai_dc/"/&gt;
+    &lt;category scheme="info:fedora/fedora-system:def/model#label" 
+                   term="Dublin Core Record for this object"/&gt;
+    &lt;content type="text/xml"&gt;
+      &lt;oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" 
+                      xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"&gt;
+        &lt;dc:title&gt;Coliseum in Rome&lt;/dc:title&gt;
+      &lt;/oai_dc:dc&gt;
+    &lt;/content&gt;
+  &lt;/entry&gt;
+</pre>
+            </code>
+            
+            <br />
+            The hierarchy of datastreams and their datastream versions is 
+            represented via the Atom Threading Extensions. For convenience, a 
+            datastream entry references its latest datastream version entry with 
+            an atom:link element. In the example above, the DC datastream entry 
+            refers to its most recent version as follows: <br/>
+            <code>&lt;link href="info:fedora/demo:5/DC/2008-07-02T05:09:43.375Z" rel="alternate"/&gt</code>
+            
+            <br /><br />
+            Each datastream version refers to its parent datastream via a 
+            thr:in-reply-to element. In the example above, the entry for the DC 
+            datastream version refers to its parent as follows:<br/>
+            <code>&lt;thr:in-reply-to ref="info:fedora/demo:5/DC"/&gt;</code>
+            <br />
+            
+
+            </span>
+          </li>
+          <li>
+            <h3 id="formats.fatomz">Fedora Atom Zip</h3>
+            <span class="plaintext">
+            Fedora Atom Zip is a serialization of a Fedora digital object using
+            the ZIP file format and a Fedora Atom manifest document. Inline and
+            managed datastream content are packaged in the ZIP archive as 
+            individual files.
+            
+            <br /><br />
+            The manifest must be a Fedora Atom document named "atommanifest.xml".
+            </span>
+          </li>
+          <li>
+            <h3 id="formats.uris">Format URIs</h3>
+            <span class="plaintext">
+            Fedora Atom and Fedora Atom Zip are identified respectively with the 
+            following URIs: </span>
+                <ul>
+                    <li class="asdf">info:fedora/fedora-system:ATOM-1.1</li>
+                    <li class="asdf">info:fedora/fedora-system:ATOMZip-1.1</li>
+                </ul>
+          </li>
+        </ol>
+      </li>
+      <li>
+        <h2 id="examples">Examples</h2>
+        <span class="plaintext">
+        A complete set of demonstration objects in both Fedora Atom and Fedora 
+        Atom Zip are included in the Fedora distribution. Please see the 
+        <a href="../distribution/demos.html">Demo documentation</a> 
+        for more information.
+        </span>
+      </li>
+      <li>
+        <h2 id="references">References</h2>
+        <span class="plaintext">
+        <dl>
+          <dt id="ref.rfc4287">[RFC 4287]</dt>
+          <dd>
+            <a href="http://www.atompub.org/rfc4287.html">The Atom Syndication 
+            Format</a>, Mark Nottingham, Robert Sayre, 2005.
+          </dd>
+          <dt id="ref.rfc4685">[RFC 4685]</dt>
+          <dd>
+            <a href="http://www.ietf.org/rfc/rfc4685.txt">Atom Threading 
+            Extensions</a>, James Snell, 2006.
+          </dd>
+        </dl>
+        </span>
+      </li>
+    </ol>
+    
+    <div id="footer">
+      <div id="copyright">
+        Copyright &copy; 2008 Fedora Commons, Inc.
+      </div>
+    </div>
+    
+  </body>
+</html>

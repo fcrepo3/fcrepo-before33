@@ -14,7 +14,7 @@
       <a href="../../../index.html">
       </a>
       <h1>Resource Index Guide</h1>
-      <h2>Fedora Release 3.0 Beta 2</h2>
+      <h2>Fedora Repository Release 3.0</h2>
     </div>
 
     <div id="toc">
@@ -251,7 +251,10 @@
                     true - If remote is true, the host parameter must be specified.
                     <ul>
                       <li>
-                        host - The hostname where Mulgara is running.
+                        host - The hostname where Mulgara is running. The 
+                        hostname can be specified as an argument when starting 
+                        Mulgara, e.g. <code>java -jar mulgara-2.0.0.jar -k 
+                        localhost</code>
                       </li>
                       <li>
                         port - The rmi port Mulgara is running on (default is 1099).
@@ -269,7 +272,10 @@
                 </ul>
               </li>
               <li>
-                <strong>serverName</strong> - The server name for rmi binding.
+                <strong>serverName</strong> - The server name for rmi binding. 
+                When configuring a remote instance of Mulgara, the server name 
+                defaults to "server1". To change this default, use the "-s"
+                argument, e.g. <code>java -jar mulgara-2.0.0.jar -s fedora</code>
               </li>
               <li>
                 <strong>modelName</strong> - The name of the model to use.
@@ -509,19 +515,9 @@
     </ol>
     
     <div id="footer">
-      <p id="copyright">
-        Copyright &copy; 2002-2008 Fedora Project
-      </p>
-      <script type="text/javascript">
-        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
-        var parts = cvsDate.split(" ");
-        var modifiedDate = parts[1];
-        var p = document.createElement("p");
-        p.setAttribute("id", "lastModified");
-        var footer = document.getElementById("footer");
-        footer.appendChild(p);
-        p.innerHTML = "Last Modified "+modifiedDate;
-      </script>
+      <div id="copyright">
+        Copyright &copy; 2006-2007 Fedora Project; 2008 Fedora Commons, Inc.
+      </div>
     </div>
     
   </body>

@@ -14,7 +14,7 @@
       <a href="../../../index.html">
       </a>
       <h1>Ingest and Export of Digital Objects</h1>
-      <h2>Fedora Release 3.0 Beta 2</h2>
+      <h2>Fedora Repository Release 3.0</h2>
     </div>
 
     <div id="toc">
@@ -34,7 +34,7 @@
       <li>
         <h2 id="formats">A Brief Note on Ingest/Export XML Formats</h2>
         <span class="plaintext">
-          Fedora digital objects can be encoded in several XML formats for ingest and export. Those formats are FOXML 1.1, FOXML 1.0, METS 1.1, and ATOM.
+          Fedora digital objects can be encoded in several XML formats for ingest and export. Those formats are FOXML 1.1, FOXML 1.0, METS 1.1, and ATOM 1.1.
           <br />
           <br />
           For encoding ingest files in FOXML 1.1, please refer to the <a href="http://www.fedora.info/definitions/1/0/foxml1-1.xsd">FOXML 1.1 XML schema</a> and the <a href="introFOXML.html">Introduction to FOXML</a> guide in the Fedora System Documentation.  Also look at the <a href="foxml-ingest-example.xml">sample FOXML ingest file</a> for a model of a typical ingest file using FOXML.
@@ -44,6 +44,9 @@
           <br />
           <br />
           For encoding ingest files in METS 1.1, please refer to the <a href="http://www.fedora.info/definitions/1/0/mets-fedora-ext1-1.xsd">METS XML schema</a> (Fedora extension) and also <a href="rulesForMETS.html">rules for encoding Fedora objects in METS</a>.
+          <br />
+          <br />
+          For encoding ingest files in ATOM 1.1, please refer to <a href="atom.html">Fedora Atom</a> documentation.
         </span>
       </li>
 
@@ -128,25 +131,15 @@
       <li>
         <h2 id="custom">Ingest/Export via Your Own SOAP Client</h2>
         <span class="plaintext">
-          Of course, you can write your own client to perform ingest and export operations on a Fedora repository.  To do this, you must familiarize yourself with the operation syntax as expressed in the WSDL for <a href="http://www.fedora.info/definitions/1/0/api/#apim">API-M.</a>.
+          Of course, you can write your own client to perform ingest and export operations on a Fedora repository.  To do this, you must familiarize yourself with the operation syntax as expressed in the WSDL for <a href="http://www.fedora.info/definitions/1/0/api/#apim">API-M</a>.
         </span>
       </li>
     </ol>
 
     <div id="footer">
-      <p id="copyright">
-        Copyright &copy; 2002-2008 Fedora Project
-      </p>
-      <script type="text/javascript">
-        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
-        var parts = cvsDate.split(" ");
-        var modifiedDate = parts[1];
-        var p = document.createElement("p");
-        p.setAttribute("id", "lastModified");
-        var footer = document.getElementById("footer");
-        footer.appendChild(p);
-        p.innerHTML = "Last Modified "+modifiedDate;
-      </script>
+      <div id="copyright">
+        Copyright &copy; 2006-2007 Fedora Project; 2008 Fedora Commons, Inc.
+      </div>
     </div>
 
   </body>

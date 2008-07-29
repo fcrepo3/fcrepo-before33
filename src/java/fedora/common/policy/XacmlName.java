@@ -87,4 +87,16 @@ public class XacmlName
         return uri + "\t" + datatype;
     }
 
+    public String stringValue() {
+        return toString();
+    }
+
+    public String getLocalName() {
+        return localName;
+    }
+
+    public String getNamespace() {
+        return parent.toString();
+    }
+
 }

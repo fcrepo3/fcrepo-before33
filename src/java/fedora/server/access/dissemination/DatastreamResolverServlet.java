@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -46,22 +46,22 @@ import fedora.server.utilities.ServerUtility;
 
 /**
  * This servlet acts as a proxy to resolve the physical location of datastreams.
- * 
+ *
  * <p>It requires a single parameter named <code>id</code> that denotes the
- * temporary id of the requested datastresm. This id is in the form of a 
- * DateTime stamp. The servlet will perform an in-memory hashtable lookup 
+ * temporary id of the requested datastresm. This id is in the form of a
+ * DateTime stamp. The servlet will perform an in-memory hashtable lookup
  * using the temporary id to obtain the actual physical location of the
  * datastream and then return the contents of the datastream as a MIME-typed
  * stream. This servlet is invoked primarily by external mechanisms needing to
  * retrieve the contents of a datastream.
- * 
+ *
  * <p>The servlet also requires that an external mechanism request a datastream
  * within a finite time interval of the tempID's creation. This is to lessen the
  * risk of unauthorized access. The time interval within which a mechanism must
  * repond is set by the Fedora configuration parameter named
  * datastreamMediationLimit and is speci207fied in milliseconds. If this
  * parameter is not supplied it defaults to 5000 miliseconds.
- * 
+ *
  * @author Ross Wayland
  */
 public class DatastreamResolverServlet
@@ -91,7 +91,7 @@ public class DatastreamResolverServlet
 
     /**
      * Initialize servlet.
-     * 
+     *
      * @throws ServletException
      *         If the servet cannot be initialized.
      */
@@ -141,7 +141,7 @@ public class DatastreamResolverServlet
     /**
      * Processes the servlet request and resolves the physical location of the
      * specified datastream.
-     * 
+     *
      * @param request
      *        The servlet request.
      * @param response
@@ -344,7 +344,7 @@ public class DatastreamResolverServlet
             if (dm.callbackRole == null) {
                 throw new AuthzOperationalException("no callbackRole for this ticket");
             }
-            String targetRole = //Authorization.FEDORA_ROLE_KEY + "=" + 
+            String targetRole = //Authorization.FEDORA_ROLE_KEY + "=" +
                     dm.callbackRole; // restrict access to role of this
             // ticket
             String[] targetRoles = {targetRole};
@@ -487,6 +487,7 @@ public class DatastreamResolverServlet
                 }
                 buffer = null;
                 outStream.flush();
+                mimeTypedStream.close();
             } else if (dsControlGroupType.equalsIgnoreCase("M")
                     || dsControlGroupType.equalsIgnoreCase("X")) {
                 // Datastream is either XMLMetadata or ManagedContent so

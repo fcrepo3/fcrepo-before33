@@ -9,7 +9,6 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jrdf.graph.GraphElementFactory;
 import org.jrdf.graph.Triple;
 import org.jrdf.graph.URIReference;
 

@@ -165,6 +165,7 @@ public class ResourceIndexRebuilder
      */
     public void finish() throws Exception {
         if (m_ri != null) {
+            m_ri.flushBuffer();
             m_ri.close();
         }
     }

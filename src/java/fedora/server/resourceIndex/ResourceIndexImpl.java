@@ -14,10 +14,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.jrdf.graph.GraphElementFactory;
+import org.jrdf.graph.GraphElementFactoryException;
+import org.jrdf.graph.Literal;
+import org.jrdf.graph.Node;
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.Triple;
+import org.jrdf.graph.URIReference;
 
 import org.trippi.FlushErrorHandler;
 import org.trippi.RDFFormat;
@@ -171,7 +176,7 @@ public class ResourceIndexImpl
     /**
      * Gets a Trippi TripleIterator for the given set.
      */
-    private static TripleIterator getTripleIterator(final Set<Triple> set) {
+    private TripleIterator getTripleIterator(final Set<Triple> set) {
         return new TripleIterator() {
 
             private final Iterator<Triple> _iter = set.iterator();
@@ -183,13 +188,67 @@ public class ResourceIndexImpl
 
             @Override
             public Triple next() {
-                return _iter.next();
+                return getLocalizedTriple(_iter.next());
             }
 
             @Override
             public void close() {
             }
         };
+    }
+    
+    /**
+     * Gets a Triple appropriate for writing to the store.
+     */
+    private Triple getLocalizedTriple(Triple triple) {
+        try {
+            return _connector.getElementFactory().createTriple(
+                    getLocalizedResource(triple.getSubject()),
+                    getLocalizedResource(triple.getPredicate()),
+                    getLocalizedObject(triple.getObject()));
+        } catch (GraphElementFactoryException e) {
+            throw new RuntimeException("Error localizing triple", e);
+        }
+    }
+
+    /**
+     * Gets a localized URIReference based on the given Node.
+     */
+    private URIReference getLocalizedResource(Node n)
+            throws GraphElementFactoryException {
+        if (n instanceof URIReference) {
+            URIReference u = (URIReference) n;
+            return _connector.getElementFactory().createResource(u.getURI());
+        } else {
+            throw new RuntimeException("Error localizing triple; "
+                    + n.getClass().getName() + " is not a URIReference");
+        }
+    }
+
+    /**
+     * Gets a localized URIReference or Literal based on the given Node.
+     */
+    private ObjectNode getLocalizedObject(Node n)
+            throws GraphElementFactoryException {
+        if (n instanceof URIReference) {
+            return getLocalizedResource(n);
+        } else if (n instanceof Literal) {
+            Literal l = (Literal) n;
+            GraphElementFactory elementFactory = _connector.getElementFactory();
+            if (l.getDatatypeURI() != null) {
+                return elementFactory.createLiteral(l.getLexicalForm(),
+                                                    l.getDatatypeURI());
+            } else if (l.getLanguage() != null) {
+                return elementFactory.createLiteral(l.getLexicalForm(),
+                                                    l.getLanguage());
+            } else {
+                return elementFactory.createLiteral(l.getLexicalForm());
+            }
+        } else {
+            throw new RuntimeException("Error localizing triple; "
+                    + n.getClass().getName() + " is not a URIReference "
+                    + "or a Literal");
+        }
     }
 
     ///////////////////////////////

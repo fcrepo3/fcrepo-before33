@@ -1,10 +1,17 @@
 
 package fedora.test.integration.cma;
 
+import java.io.File;
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 import fedora.client.FedoraClient;
+import fedora.client.utility.ingest.Ingest;
+import fedora.client.utility.ingest.IngestCounter;
 import fedora.server.types.gen.ObjectMethodsDef;
+import fedora.test.FedoraTestCase;
+
+import static fedora.common.Constants.FOXML1_1;
 
 public abstract class Util {
 
@@ -35,5 +42,26 @@ public abstract class Util {
                                                             null).getStream(),
                           "UTF-8");
 
+    }
+
+    public static void ingestTestObjects(String path) throws Exception {
+        File dir = null;
+
+        String specificPath = File.separator + path;
+
+        System.out.println("Ingesting test objects in FOXML format from "
+                + specificPath);
+        dir = new File("src/test-objects/foxml" + specificPath);
+
+        FedoraClient client = FedoraTestCase.getFedoraClient();
+
+        Ingest.multiFromDirectory(dir,
+                                  FOXML1_1.uri,
+                                  client.getAPIA(),
+                                  client.getAPIM(),
+                                  null,
+                                  new PrintStream(File.createTempFile("demo",
+                                                                      null)),
+                                  new IngestCounter());
     }
 }

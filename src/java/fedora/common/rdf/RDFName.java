@@ -86,4 +86,16 @@ public class RDFName
         return uri;
     }
 
+    public String stringValue() {
+        return toString();
+    }
+
+    public String getLocalName() {
+        return localName;
+    }
+
+    public String getNamespace() {
+        return namespace.toString();
+    }
+
 }

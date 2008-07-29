@@ -14,7 +14,7 @@
       <a href="../../../index.html">
       </a>
       <h1>Introduction to Fedora Object XML (FOXML)</h1>
-      <h2>Fedora Release 3.0 Beta 2</h2>
+      <h2>Fedora Repository Release 3.0</h2>
     </div>
 
     <div id="toc">
@@ -33,7 +33,7 @@
       <li>
         <h2 id="what">What is FOXML?</h2>
         <span class="plaintext">
-          FOXML is a simple XML format that directly expresses the <strong>Fedora digital object model</strong>.  As of Fedora 2.0, digital objects will be <em>stored</em> internally in a Fedora repository in the FOXML format.  In addition, FOXML can be used for ingesting and exporting objects to/from Fedora repositories.  The Fedora extension of METS will continue to be supported as an ingest and export format.  In upcoming releases, Fedora will also support other formats for ingest and export such as METS 1.4 and MPEG21/DIDL.
+          FOXML is a simple XML format that directly expresses the <strong>Fedora Digital Object Model</strong>.  As of Fedora 2.0, digital objects are <em>stored</em> internally in a Fedora repository in the FOXML format.  In addition, FOXML can be used for ingesting and exporting objects to/from Fedora repositories.  The Fedora extension of METS will continue to be supported as an ingest and export format.  In upcoming releases, Fedora will also support other formats for ingest and export such as METS 1.4 and MPEG21/DIDL.
           <br />
           <br />
           At the highest level, the FOXML XML schema defines elements that correspond directly to the fundamental Fedora digital object components (see recent <a href="http://www.arxiv.org/abs/cs.DL/0501012">paper</a> on Fedora).  Below is a brief sketch of these elements.
@@ -95,7 +95,8 @@
             <li style="font-size: 1em;">FOXML 1.1 (info:fedora/fedora-system:FOXML-1.1)</li>
             <li style="font-size: 1em;">FOXML 1.0 (info:fedora/fedora-system:FOXML-1.0)</li>
             <li style="font-size: 1em;">METS 1.1  (info:fedora/fedora-system:METSFedoraExt-1.1)</li>
-            <li style="font-size: 1em;">ATOM 1.0 (info:fedora/fedora-system:ATOM-1.0)</li>
+            <li style="font-size: 1em;">ATOM 1.1 (info:fedora/fedora-system:ATOM-1.1)</li>
+            <li style="font-size: 1em;">ATOM Zip 1.1 (info:fedora/fedora-system:ATOMZip-1.1)</li>
           </ul>
           <br />
        </span>
@@ -103,19 +104,9 @@
    </ol>
 
     <div id="footer">
-      <p id="copyright">
-        Copyright &copy; 2002-2008 Fedora Commons
-      </p>
-      <script type="text/javascript">
-        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
-        var parts = cvsDate.split(" ");
-        var modifiedDate = parts[1];
-        var p = document.createElement("p");
-        p.setAttribute("id", "lastModified");
-        var footer = document.getElementById("footer");
-        footer.appendChild(p);
-        p.innerHTML = "Last Modified "+modifiedDate;
-      </script>
+      <div id="copyright">
+        Copyright &copy; 2006-2007 Fedora Project; 2008 Fedora Commons, Inc.
+      </div>
     </div>
 
   </body>

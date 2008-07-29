@@ -34,13 +34,13 @@ public class SimpleDeploymentTests {
     private static final String SDEF_2_METHOD = "content2";
 
     private static final String SIMPLE_DEPLOYMENT_BASE =
-            "local-server-demos/cma-examples/simple-deployment";
+            "cma-examples/simple-deployment";
 
     private static final String SIMPLE_DEPLOYMENT_PUBLIC_OBJECTS =
-            "local-server-demos/cma-examples/simple-deployment/public-objects";
+            "cma-examples/simple-deployment/public-objects";
 
     private static final String SIMPLE_DEPLOYMENT_DEPLOYMENTS =
-            "local-server-demos/cma-examples/simple-deployment/deployments";
+            "cma-examples/simple-deployment/deployments";
 
     public static junit.framework.Test suite() {
         return new junit.framework.JUnit4TestAdapter(SharedDeploymentTests.class);
@@ -53,7 +53,7 @@ public class SimpleDeploymentTests {
                 new FedoraClient(FedoraServerTestCase.getBaseURL(),
                                  FedoraServerTestCase.getUsername(),
                                  FedoraServerTestCase.getPassword());
-        FedoraServerTestCase.ingestDemoObjects(SIMPLE_DEPLOYMENT_BASE);
+        Util.ingestTestObjects(SIMPLE_DEPLOYMENT_BASE);
     }
 
     /* Assure that listMethods works as advertised */
@@ -88,13 +88,13 @@ public class SimpleDeploymentTests {
     @Test
     public void testListMethodsWithoutSDeps() throws Exception {
         FedoraServerTestCase.purgeDemoObjects();
-        FedoraServerTestCase
-                .ingestDemoObjects(SIMPLE_DEPLOYMENT_PUBLIC_OBJECTS);
+        Util
+                .ingestTestObjects(SIMPLE_DEPLOYMENT_PUBLIC_OBJECTS);
         try {
             testListMethods();
         } finally {
-            FedoraServerTestCase
-                    .ingestDemoObjects(SIMPLE_DEPLOYMENT_DEPLOYMENTS);
+            Util
+                    .ingestTestObjects(SIMPLE_DEPLOYMENT_DEPLOYMENTS);
         }
     }
 

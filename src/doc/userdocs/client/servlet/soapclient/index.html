@@ -4,7 +4,7 @@
                       
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
   <head>
-    <title>Fedora SOAP Client Documentation</title>
+    <title>Example SOAP Client</title>
     <link rel="stylesheet" type="text/css" href="../../../docstyle.css" />
   </head>
 
@@ -13,8 +13,8 @@
     <div id="header">
       <a href="../../../index.html">
       </a>
-      <h1>Fedora SOAP Client Documentation</h1>
-      <h2>Fedora Release 3.0 Beta 2</h2>
+      <h1>Example SOAP Client</h1>
+      <h2>Fedora Repository Release 3.0</h2>
     </div>
 
     <div id="toc">
@@ -46,7 +46,7 @@
             <li><strong>ResumeFindObjects</strong> - gets the next list of results from a truncated findObjects response.</li>
           </ul>
         <span class="plaintext">
-          For more information on the method definitions, refer to the API descriptions located at <a href="http://www.fedora.info/definitions/1/0/api/">http://www.fedora.info/definitions/1/0/api/</a>.
+          For more information on the method definitions, refer to the API descriptions located at <a href="../../../index.html">Fedora System Documentation</a>.
           <br /><br />
           The Fedora API-A sample SOAP client is an example of a java servlet-based client that provides a front end to the Fedora Access API-A SOAP service. The sample client is designed to provide a <em>browser centric</em> view of the Fedora Access interface. Return types from the Fedora Access SOAP service are translated into a form suitable for viewing with a web browser; i.e., MIME-typed streams. Applications that can readily handle SOAP requests and responses would most likely communicate directly with the Fedora Access SOAP service rather than use a java servlet as an intermediary. <em>This servlet is provided as an example of how to construct a client that uses the Fedora Access API via SOAP and currently does not implement all methods found in API-A. As noted below, the sample Soap Client does not provide implementations for the methods FindObjects and ResumeFindObjects.</em>
         </span>
@@ -176,19 +176,9 @@ List the methods for data object with PID of demo:5
     </ol>
     
     <div id="footer">
-      <p id="copyright">
-        Copyright &copy; 2002-2008 Fedora Project
-      </p>
-      <script type="text/javascript">
-        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
-        var parts = cvsDate.split(" ");
-        var modifiedDate = parts[1];
-        var p = document.createElement("p");
-        p.setAttribute("id", "lastModified");
-        var footer = document.getElementById("footer");
-        footer.appendChild(p);
-        p.innerHTML = "Last Modified "+modifiedDate;
-      </script>
+      <div id="copyright">
+        Copyright &copy; 2006-2007 Fedora Project; 2008 Fedora Commons, Inc.
+      </div>
     </div>
     
   </body>

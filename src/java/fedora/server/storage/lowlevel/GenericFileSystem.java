@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -15,13 +15,14 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import fedora.server.errors.LowlevelStorageException;
+
+import fedora.utilities.FileUtils;
 
 /**
  * @author Bill Niebel
@@ -84,17 +85,6 @@ public class GenericFileSystem
         }
     }
 
-    private static final int bufferLength = 512;
-
-    private static final void stream2streamCopy(InputStream in, OutputStream out)
-            throws IOException {
-        byte[] buffer = new byte[bufferLength];
-        int bytesRead = 0;
-        while ((bytesRead = in.read(buffer, 0, bufferLength)) != -1) {
-            out.write(buffer, 0, bytesRead);
-        }
-    }
-
     private final void writeIntoExistingDirectory(File file, InputStream content)
             throws LowlevelStorageException {
         //buffered writer?
@@ -106,10 +96,11 @@ public class GenericFileSystem
                     + getPath(file), eCaughtFileNotCreated);
         }
         try {
-            stream2streamCopy(content, fileOutputStream);
-        } catch (IOException eCaughtFileNotWritten) {
-            throw new LowlevelStorageException(true, "couldn't write new file "
-                    + getPath(file), eCaughtFileNotWritten);
+            boolean fileCopySuccessful = FileUtils.copy(content, fileOutputStream);
+            if(!fileCopySuccessful) {
+                throw new LowlevelStorageException(true, "couldn't write new file "
+                        + getPath(file));
+            }
         } finally {
             try {
                 fileOutputStream.close();
@@ -117,7 +108,7 @@ public class GenericFileSystem
             } catch (Exception eCaughtFileNotClosed) {
                 throw new LowlevelStorageException(true,
                                                    "couldn't close new file "
-                                                           + getPath(file),
+                                                     + getPath(file),
                                                    eCaughtFileNotClosed);
             }
         }
@@ -144,7 +135,11 @@ public class GenericFileSystem
 
         try {
             out = new FileOutputStream(file);
-            stream2streamCopy(content, out);
+            boolean fileCopySuccessful = FileUtils.copy(content, out);
+            if(!fileCopySuccessful) {
+                needToRevert = true;
+                err = "failed to write content to file " + file.getPath();
+            }
         } catch (IOException e) {
             needToRevert = true;
             err = "failed to write content to file " + file.getPath();

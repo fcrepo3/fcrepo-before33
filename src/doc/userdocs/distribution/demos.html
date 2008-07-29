@@ -14,7 +14,7 @@
       <a href="../../../index.html">
       </a>
       <h1>The Fedora Demo Documentation</h1>
-      <h2>Fedora Release 3.0 Beta 2</h2>
+      <h2>Fedora Repository Release 3.0</h2>
     </div>
 
     <div id="toc">
@@ -84,46 +84,45 @@
               demo:18) demonstrates the simplest Fedora digital object scenario.
               It is the case where we aggregate content in the Fedora object, and
               let Fedora's default object behaviors provide access to the content.
-              This is an example of a Fedora digital object that has NO
-              DISSEMINATORS.  In this case, there are 3 datastreams in the object,
+              This is an example of a Fedora digital object that only has default
+              dissemination services.  In this case, there are 3 datastreams in the object,
               one for each format of a particular document (in this case the
-              recent Fedora paper presented at ECDL2002).  Since there are no
-              disseminators on the object, we can use the default Fedora object
-              behaviors (the "Default Disseminator" which is identifiable by the
-              behavior definition PID of "fedora-system:3").  The Default
-              Disseminator is dynamically associated with every object in the
-              repository.  Its behavior methods are on every object and include
+              Fedora paper presented at ECDL2002).  We can use the basic Fedora
+              object dissemination service (also called "datastream disseminations")
+              which are part of the basic content model shared by all objects.  The basic
+              content model is dynamically associated with every object in the
+              repository (though it may optionally be statically associated).
+              It has a default service definition (sDep) which provides basic operations
+              for every object which includes
               the ability to list items in the object, get an item, get the
-              dissemination index, get Dublin Core record, and other information
-              about the object.  The results of these methods can be returned as
+              dissemination index, get the Dublin Core record, and retrieve other information
+              about the object.  The results of these operations can be returned as
               either HTML (method names begin with "view...") or XML (method names
-              begin with "get...").   The end result in that the object is simply
+              begin with "get...").   The end result is that the object is simply
               a container for content and metadata.  The user can view the
               contents and get any item from the object.  While this scenario may
               be easy to implement and useful, it does not take advantage of
-              Fedora's extensible behavior model where custom behaviors can be
-              associated with the object.
+              Fedora's extensible service features where custom operations can be
+              associated with an object.
               </li>
               <br />
               <li><strong>Simple Image Demo</strong> - The Fedora data object (objectPID is
               demo:5) demonstrates the UVA Simple Image behaviors by associating a
-              simple disseminator with the object. There are 4 datastreams in the
-              object, one for each of four different image resolutions.  The
-              object has one disseminator that is subscribes to the "UVA Simple
-              Image" behavior definition and uses the Fedora HTTP Image Getter
-              service (behavior mechanism).  Four behavior methods are available
-              (getVeryHigh, getHigh, getMedium, and getThumbnail).  The
-              fulfillment of the behavior contract entails the Fedora HTTP Image
-              Getter resolving the URL of the appropriate datastream for each of
-              the UVA Simple Image behaviors.  There are no transformations
-              performed on the datastreams.  This object shows how a behavior
+              simple dissemination with the object through its content model.
+              There are 4 Datastreams in the object, one for each of four different
+              image resolutions.  The object is linked to one dissemination service which
+              provides four behavior methods: getVeryHigh, getHigh, getMedium,
+              and getThumbnail.  The fulfillment of the service contract entails the
+              Fedora HTTP Image Getter resolving the URL of the appropriate datastream for
+              each of the UVA Simple Image behaviors.  There are no transformations
+              performed on the datastreams.  This object shows how a service
               definition can be used to create a normalized set of methods for a
-              particular type of object, in this case image objects.  The idea
-              here, is that the Simple Image behavior definition provides a
-              standard set of dissemination methods that can be used on any image
-              object that subscribes to the Simple Image behavior definition.  As
+              particular type of object, an image object in this case, which is defined by a
+              content model. The idea here is that the Simple Image service definition
+              provides a standard set of dissemination services that can be used on any image
+              object that conforms to the standard image content model.  As
               we will see later, different variants of image objects can subscribe
-              to the same behavior definition, and is some cases the datastreams
+              to the same service definition, and in some cases the datastreams
               will be dynamically transformed by a service to provide the
               appropriate image disseminations.  This demo shows a simple
               one-to-one mapping of the datastreams in the object to the behavior
@@ -133,18 +132,19 @@
               <li><strong>Document Transformation Demo</strong> - The Fedora data object
               (objectPID is demo:14) demonstrates the Document Transformation
               behaviors.  There are 3 datastreams in the object, one XML source
-              document, and two XSLT stylesheets.  The object has one disseminator
-              that is associated with the "Document Transform" behavior definition
-              and the Fedora Local Saxon Service (behavior mechanism).  Two
-              behaviors are available (getDocumentStyle1 and getDocumentStyle2).
-              When these methods are run as disseminations, the repository
+              document, and two XSLT stylesheets.  The object's content model provides
+              one dissemination service which is associated with the "Document Transform" service
+              definition and the Fedora Local Saxon Service (service deployment).  Two
+              services are available: getDocumentStyle1 and getDocumentStyle2.
+              When these methods are run the repository
               mediates access to the Fedora Local Saxon Service to produce the
               appropriate transformation on the XML source in the object.  The
               dissemination result will be one of two document styles.
               </li>
               <br />
-              <li><strong>Image Collection Demo</strong> - This demo illustrates the use of the Resource Index search service
-              to fulfill collection behaviors. <em>For this demo to work, the
+              <li><strong>Image Collection Demo</strong> - This demo illustrates the use of
+              the Resource Index search service to fulfill collection behaviors.
+              <em>For this demo to work, the
               <a href="../server/resourceIndex/index.html">Resource Index
               module</a> must be enabled prior to ingesting these objects.</em>
               <br />
@@ -163,9 +163,11 @@
               you can view http://hostname/fedora/get/demo:SmileyStuff/demo:Collection/view
               <br />
               <br />
-              This dissemination first requests the list of members of the demo:SmileyStuff collection using the local
-              <a href="../server/webservices/risearch/index.html">risearch
-              service</a>.  Then it uses the local <a href="../server/localservices/saxon/index.html">saxon service</a> to transform
+              This dissemination first requests the list of members of the demo:SmileyStuff
+              collection using the local
+              <a href="../server/webservices/risearch/index.html">risearch service</a>.
+              Then it uses the local
+              <a href="../server/localservices/saxon/index.html">saxon service</a> to transform
               the XML results into a human-readable HTML page.  The query text and
               the stylesheet are both datastreams of the SmileyStuff collection
               and act as inputs to the list and view behaviors, respectively.
@@ -174,7 +176,11 @@
             <span class="plaintext">
           <h3 id="local">Open Server Demos</h3>
             <br />
-            These can be run in two ways.  The xml source files can be "ingested" into the repository via the Fedora Admin GUI client (from the command prompt, run: fedora-admin).  Otherwise, they can be loaded with all other demos by running the demo load script (from the command prompt, run: fedora-ingest-demos [hostname] [port] [username] [password]).
+            These can be run in two ways.  The xml source files can be "ingested" into
+            the repository via the Fedora Admin GUI client (from the command prompt, run:
+            fedora-admin).  Otherwise, they can be loaded with all other demos by running
+            the demo load script (from the command prompt, run:
+            fedora-ingest-demos [hostname] [port] [username] [password]).
             </span>
             <ul>
               <li><strong>Simple Image Demos</strong> - These Fedora data objects (objectPIDs
@@ -183,46 +189,46 @@
               also demonstrate how two objects with different kinds of
               datastreams can be made to fulfill the UVA Simple Image behavior
               contract.  The key thing to note here is that both the demo:6 and
-              demo:7 objects have a disseminator that subscribes to the UVA
-              Simple Image behavior definition.  However, they each use a
-              different service (behavior mechanism) to fulfill the behavior
-              contract.   In the case of demo:7, we have an object with 4 image
+              demo:7 objects provide disseminations which subscribe to the UVA
+              Simple Image service definition.  However, they each use a
+              different service deployment to fulfill the behavior
+              contract. In the case of demo:7, we have an object with 4 image
               datastreams, one for each of four different image resolutions.
               In this object the  UVA ImageZoomer service is used to add value
               to the image datastreams at runtime.  When a behavior method is
-              run, the UVA ImageZoomer service will be called upon the wrap the
+              run, the UVA ImageZoomer service will be called upon to wrap the
               image in a Java applet that provides a standardized, zoomable
               viewer for the images.  No matter which UVA Simple Image behavior
               is run (getVeryHigh, getHigh, getMedium, getThumbnail), the
               applet is provided.  In the case of demo:6, we have an object
-              with one image datastream, a wavelet-encoded MrSID file.  The
-              object has one disseminator that is subscribes to the "UVA Simple
-              Image" behavior definition and uses the UVA MrSID Service
-              (behavior mechanism).  Again, the same four behavior methods are
+              with one image datastream, a wavelet-encoded MrSID file, which is
+              passed through the UVA MrSID Service to produce results similar to
+              those provided by the UVA ImageZoomer service.
+              Each object's content model subscribes to the "UVA Simple
+              Image" service definition but the services are provided by seperate
+              service deployments such that the same four behavior methods are
               available (getVeryHigh, getHigh, getMedium, and getThumbnail).
-              This time, fulfillment of the behavior contract entails the use
-              of the MrSID service to derive the appropriate image resolution
-              out of the MrSID file.  Another notable feature of the demo:6
+              Another notable feature of the demo:6
               object is that it shows how XML metadata can be put in the object
               as datastreams too.  The XML metadata datastreams can be viewed
               via the Default Disseminator (run getItemIndex or viewItemIndex).
-              A final important point about these demos is that the behavior
-              mechanism services run remote from the repository.  Both the UVA
-              ImageZoomer service and the UVA MrSID Service run as web services
-              at University of Virginia.  These demonstrations show how Fedora
-              objects can leverage distributed web services, and most
+              A final important point about these demos is that the services
+              contracted by the service deployment run remote from the repository.
+              Both the UVA ImageZoomer service and the UVA MrSID Service run as web
+              services at the University of Virginia.  These demonstrations show how
+              Fedora objects can leverage distributed web services, and most
               importantly, now the Fedora repository system handles the
               mediation and binding to these services in a manner that is
               transparent to the user.
               <br/>
               <br />
-              The Fedora data object (objectPID is demo:30) demonstrates the
-              UVA Simple Image behaviors by associating a simple disseminator
-              with the object.   There are 4 datastreams in the object, one for
-              each of four different image resolutions.  The object has one
-              disseminator that is subscribes to the "UVA Simple Image"
-              behavior definition and uses the Fedora HTTP Image Getter service
-              (behavior mechanism).  Four behavior methods are available
+              The Fedora object with objectPID demo:30 demonstrates the
+              UVA Simple Image behaviors with yet another twist.
+              There are 4 datastreams in the object, one for
+              each of four different image resolutions.  The object is mapped
+              to a single dissemination service using the "UVA Simple Image"
+              service definition and uses the Fedora HTTP Image Getter service
+              (service deployment). As on other objects, four behavior methods are available
               (getVeryHigh, getHigh, getMedium, and getThumbnail).  The
               fulfillment of the behavior contract entails the Fedora HTTP
               Image Getter resolving the URL of the appropriate datastream for
@@ -246,7 +252,7 @@
               access restrictions. In the interim, the redirected datastream
               type can be used to access external datastreams that are
               protected with Basic authentication. In the Fedora object in this
-              example, all 4 datastreams are protected on  the external web
+              example, all 4 datastreams are protected on the external web
               server using HTTP Basic authentication which requires a username
               and password in order to access the datastreams. When attempting
               to execute the disseminations for these datastreams, you will be
@@ -256,16 +262,16 @@
               <br />
               <li><strong>Userinput Image Demos</strong> - These Fedora data objects
               (objectPIDs are demo:10 and demo:11) demonstrate the UVA
-              Userinput Image behaviors by associating a more complex
-              disseminator with the objects.  The UVA Userinput Image behavior
+              Userinput Image behaviors by associating more complex
+              services with the objects.  The UVA Userinput Image service
               definition was constructed as a demonstration to show how a
-              behavior definition can allow for user input parameters at run
-              time.  In this case, the behavior definition has two methods
+              service definition can allow for user input parameters at run
+              time.  In this case, the service definition has two methods
               (getThumbnail and getImage).  The getImage method takes two user
               input parameters:  the size of the image (e.g., small, medium1,
               medium2) and whether to wrap the image in a zoomable applet (yes,
-              no).   Both objects share this behavior definition and both use
-              the same the UVA MrSID service.  Depending on what the user
+              no). The content models of both objects share this service definition
+              and both use the same the UVA MrSID service.  Depending on what the user
               enters, the MrSID Service will derive the proper size of the
               image, and wrap it with a zoomable applet if the user requested.
               The UVA MrSID Service runs as web services at University of
@@ -278,19 +284,9 @@
     </ol>
 
     <div id="footer">
-      <p id="copyright">
-        Copyright &copy; 2002-2008 Fedora Project
-      </p>
-      <script type="text/javascript">
-        var cvsDate = "$Date: 2007-08-01 15:42:14 -0400 (Wed, 01 Aug 2007) $";
-        var parts = cvsDate.split(" ");
-        var modifiedDate = parts[1];
-        var p = document.createElement("p");
-        p.setAttribute("id", "lastModified");
-        var footer = document.getElementById("footer");
-        footer.appendChild(p);
-        p.innerHTML = "Last Modified "+modifiedDate;
-      </script>
+      <div id="copyright">
+        Copyright &copy; 2006-2007 Fedora Project; 2008 Fedora Commons, Inc.
+      </div>
     </div>
 
   </body>

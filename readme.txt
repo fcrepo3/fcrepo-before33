@@ -1,5 +1,5 @@
 -------------------------------------------------------------------
-             Fedora Release 3.0b2 - June 13, 2008
+              Fedora Release 3.0 - July 29, 2008
 -------------------------------------------------------------------
 This is a full source code release of Fedora.  Before using this
 software, you must read and agree to the license, found under
@@ -58,7 +58,7 @@ be run with the Fedora server configured in a specific way:
   [fedora.test.AllSystemTestsConfigB]
     When running this suite, the server should be configured
     with API-A authentication turned ON, with the
-    Resource Index and Messaging modules enabled.  
+    Resource Index, REST api, and Messaging modules enabled.  
     This suite can also be run without external internet access.
 
   [fedora.test.AllSystemTestsConfigC]

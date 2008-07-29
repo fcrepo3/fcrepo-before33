@@ -64,6 +64,7 @@ import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
+import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.RelationshipTuple;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.validation.RelsExtValidator;
@@ -72,7 +73,7 @@ import fedora.server.validation.ValidationUtility;
 
 /**
  * Implements API-M without regard to the transport/messaging protocol.
- * 
+ *
  * @author Chris Wilper
  * @version $Id$
  */
@@ -82,13 +83,13 @@ public class DefaultManagement
     /** Logger for this class. */
     private static Logger LOG =
             Logger.getLogger(DefaultManagement.class.getName());
-    
+
     public final static String s_RelsExt_Datastream = "RELS-EXT";
 
     private Authorization m_fedoraXACMLModule;
-    
+
     private DOManager m_manager;
-    
+
     private ExternalContentManager m_contentManager;
 
     private int m_uploadStorageMinutes;
@@ -98,9 +99,9 @@ public class DefaultManagement
     private File m_tempDir;
 
     private Hashtable<String, Long> m_uploadStartTime;
-    
-    public DefaultManagement(Authorization auth, DOManager doMgr, 
-                             ExternalContentManager ecMgr, int uploadMinutes, 
+
+    public DefaultManagement(Authorization auth, DOManager doMgr,
+                             ExternalContentManager ecMgr, int uploadMinutes,
                              int lastId, File tempDir, Hashtable<String, Long> uploadStartTime) {
         m_fedoraXACMLModule = auth;
         m_manager = doMgr;
@@ -408,13 +409,13 @@ public class DefaultManagement
                 ds.DSInfoType = ""; // field is now deprecated
                 try {
                     InputStream in;
+                    MIMETypedStream mimeTypedStream = null;
                     if (dsLocation.startsWith(DatastreamManagedContent.UPLOADED_SCHEME)) {
                         in = getTempStream(dsLocation);
                     } else {
-                        in =
-                                m_contentManager.getExternalContent(dsLocation,
-                                                                    context)
-                                        .getStream();
+                        mimeTypedStream = m_contentManager.getExternalContent(dsLocation,
+                                                                              context);
+                        in = mimeTypedStream.getStream();
                     }
                     ((DatastreamXMLMetadata) ds).xmlContent =
                             getEmbeddableXML(in);
@@ -422,6 +423,9 @@ public class DefaultManagement
                     if (dsID != null && dsID.equals("RELS-EXT")) {
                         validateRelsExt(pid,
                                         new ByteArrayInputStream(((DatastreamXMLMetadata) ds).xmlContent));
+                    }
+                    if(mimeTypedStream != null) {
+                        mimeTypedStream.close();
                     }
                 } catch (Exception e) {
                     String extraInfo;
@@ -494,7 +498,7 @@ public class DefaultManagement
                 }
             }
 
-            // Update audit trail 
+            // Update audit trail
             Date nowUTC = Server.getCurrentDate(context);
             addAuditRecord(context,
                            w,
@@ -685,7 +689,7 @@ public class DefaultManagement
                 }
             }
 
-            // Update audit trail           
+            // Update audit trail
             addAuditRecord(context,
                            w,
                            "modifyDatastreamByReference",

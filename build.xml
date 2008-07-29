@@ -98,7 +98,6 @@
             <pathelement location="${lib.log4j}"/>
             <pathelement location="${lib.md5}"/>
             <pathelement location="${lib.oro}"/>
-            <pathelement location="${lib.rio}"/>
             <pathelement location="${lib.sunxacml}"/>
             <pathelement location="${lib.xmlpull}"/>
             <pathelement location="${lib.xpp3}"/>
@@ -120,8 +119,9 @@
         	<pathelement location="${lib.lucene}"/>
             <pathelement location="${lib.mptstore}"/>
         	<pathelement location="${lib.mulgara}"/>
-        	<pathelement location="${lib.openrdf-util}"/>
             <pathelement location="${lib.openrdf-model}"/>
+        	<pathelement location="${lib.slf4j-api}"/>
+        	<pathelement location="${lib.slf4j-jdk14}"/>
         	<pathelement location="${lib.trippi-core}"/>
             <pathelement location="${lib.trippi-mulgara}"/>
             <pathelement location="${lib.trippi-mptstore}"/>
@@ -206,11 +206,11 @@
             <pathelement location="${lib.jaxrpc}"/>
             <pathelement location="${lib.jhbasic}"/>
             <pathelement location="${lib.jrdf}"/>
-            <pathelement location="${lib.openrdf-util}"/>
             <pathelement location="${lib.openrdf-model}"/>
-            <pathelement location="${lib.rio}"/>
             <pathelement location="${lib.saaj}"/>
             <pathelement location="${lib.saxon}"/>
+        	<pathelement location="${lib.slf4j-api}"/>
+        	<pathelement location="${lib.slf4j-jdk14}"/>
             <pathelement location="${lib.sunxacml}"/>
             <pathelement location="${lib.trippi-core}"/>
             <pathelement location="${lib.wsdl4j}"/>
@@ -311,9 +311,9 @@
                     <pathelement path="${lib.staxapi}"/>
                     <pathelement path="${lib.sjsxp}"/>
                     <pathelement path="${lib.trippi-core}"/>
-                    <pathelement path="${lib.rio}"/>
                     <pathelement path="${lib.openrdf-model}"/>
-                    <pathelement path="${lib.openrdf-util}"/>
+                	<pathelement location="${lib.slf4j-api}"/>
+                	<pathelement location="${lib.slf4j-jdk14}"/>
                     <pathelement path="${lib.commons-httpclient}"/>
                     <pathelement path="${lib.commons-logging}"/>
                     <pathelement path="${lib.commons-io}"/>
@@ -518,7 +518,7 @@
         </copy>
         
         <java classname="fedora.common.policy.Release2_1Namespace" 
-            classpath="${server.build.dir}/classes;${lib.jrdf}" 
+            classpath="${server.build.dir}/classes;${lib.jrdf};${lib.openrdf-model}" 
             output="${fedora.home.build.dir}/server/fedora-internal-use/vocabulary.txt"/>
             
         <copy file="${xsl.src.dir}/security/build-backend-policy.xsl" 
@@ -927,6 +927,7 @@
 		<copy file="${lib.commons-collections}" todir="${install.build.dir}/lib"/>
 		<copy file="${lib.commons-digester}" todir="${install.build.dir}/lib"/>
 		<copy file="${lib.commons-logging}" todir="${install.build.dir}/lib"/>
+		<copy file="${lib.openrdf-model}" todir="${install.build.dir}/lib"/>
 		<move file="${install.build.dir}/main.jar" todir="${install.build.dir}/main"/>
 		<unjar src="${lib.one-jar}" dest="${install.build.dir}/boot"/>
 		<jar jarfile="${dist.dir}/fedora-${fedora.version}-installer.jar">

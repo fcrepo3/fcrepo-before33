@@ -30,7 +30,6 @@
           <rdf:Description rdf:about="info:fedora/demo:2">
             <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:ServiceDeployment-3.0"/>
             <fedora-model:isDeploymentOf rdf:resource="info:fedora/demo:1"/>
-            <fedora-model:isContractorOf rdf:resource="info:fedora/demo:CMImage"/>
             <fedora-model:isContractorOf rdf:resource="info:fedora/demo:UVA_STD_IMAGE_1"/>
           </rdf:Description>
         </rdf:RDF>

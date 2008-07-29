@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -80,7 +80,7 @@ import fedora.server.validation.RelsExtValidator;
  * Manages the reading and writing of digital objects by instantiating an
  * appropriate object reader or writer. Also, manages the object ingest process
  * and the object replication process.
- * 
+ *
  * @author Chris Wilper
  */
 public class DefaultDOManager
@@ -203,7 +203,7 @@ public class DefaultDOManager
                     + "not given, will defer to ConnectionPoolManager's "
                     + "default pool.");
         }
-        // internal storage format (required)		
+        // internal storage format (required)
         LOG.debug("Server property format.storage= " + Server.STORAGE_FORMAT);
         m_defaultStorageFormat = Server.STORAGE_FORMAT;
         if (m_defaultStorageFormat == null) {
@@ -460,7 +460,7 @@ public class DefaultDOManager
     /**
      * Update the registry and deployment cache to reflect the latest state of
      * reality.
-     * 
+     *
      * @param obj
      *        DOReader of a service deployment object
      */
@@ -533,7 +533,7 @@ public class DefaultDOManager
                 .getLastModDate().getTime());
 
     }
-    
+
     private void updateDeployment(ServiceContext context,
                                DigitalObject sDep,
                                Connection c) throws SQLException {
@@ -764,7 +764,7 @@ public class DefaultDOManager
      * validation or generation, object registry functions, getting a writer for
      * the digital object, and ultimately writing the object to persistent
      * storage via the writer.
-     * 
+     *
      * @param context
      * @param in
      *        the input stream that is the XML ingest file for a digital object
@@ -806,7 +806,7 @@ public class DefaultDOManager
                                          new FileOutputStream(tempFile),
                                          4096);
 
-                // VALIDATION: 
+                // VALIDATION:
                 // perform initial validation of the ingest submission file
                 LOG.debug("Validation (ingest phase)");
                 m_validator.validate(tempFile,
@@ -825,7 +825,7 @@ public class DefaultDOManager
                                      format,
                                      encoding,
                                      DOTranslationUtility.DESERIALIZE_INSTANCE);
-                
+
                 // SET OBJECT PROPERTIES:
                 LOG
                         .debug("Setting object/component states and create dates if unset");
@@ -969,7 +969,7 @@ public class DefaultDOManager
                 }
 
                 // REGISTRY:
-                // at this point the object is valid, so make a record 
+                // at this point the object is valid, so make a record
                 // of it in the digital object registry
                 registerObject(obj, getUserId(context), obj.getLabel(), obj
                         .getCreateDate(), obj.getLastModDate());
@@ -1006,7 +1006,7 @@ public class DefaultDOManager
             }
         }
     }
-   
+
     /**
      * Adds a minimal DC datastream if one isn't already present.
      *
@@ -1014,7 +1014,7 @@ public class DefaultDOManager
      * dc:identifier values is the PID of the object.
      */
     private static void populateDC(DigitalObject obj,
-                                   DOWriter w, 
+                                   DOWriter w,
                                    Date nowUTC)
             throws IOException, ServerException {
         LOG.debug("Adding/Checking default DC datastream");
@@ -1294,6 +1294,9 @@ public class DefaultDOManager
                                 LOG
                                         .info("Replaced managed datastream location with "
                                                 + "internal id: " + id);
+                                if(mimeTypedStream != null) {
+                                    mimeTypedStream.close();
+                                }
                             }
                         }
                     }
@@ -1302,9 +1305,9 @@ public class DefaultDOManager
                 // MANAGED DATASTREAM PURGE:
                 // find out which, if any, managed datastreams were purged,
                 // then remove them from low level datastream storage
-                // this was moved because in the case of modifying a datastream 
+                // this was moved because in the case of modifying a datastream
                 // with versioning turned off, if a modification didn't involve new
-                // content a special url of the form copy:... would be used to 
+                // content a special url of the form copy:... would be used to
                 // indicate the content for the new datastream version, which would
                 // point to the content of the most recent version.  Which (if this code
                 // had been executed earlier) would no longer exist in the low-level store.
@@ -1319,7 +1322,7 @@ public class DefaultDOManager
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
 
                 // FINAL XML SERIALIZATION:
-                // serialize the object in its final form for persistent storage                                      
+                // serialize the object in its final form for persistent storage
                 LOG.debug("Serializing digital object for persistent storage");
                 m_translator
                         .serialize(obj,
@@ -1332,7 +1335,7 @@ public class DefaultDOManager
                 // As of version 2.0, final validation is only performed in DEBUG mode.
                 // This is to help performance during the ingest process since validation
                 // is a large amount of the overhead of ingest.  Instead of a second run
-                // of the validation module, we depend on the integrity of our code to 
+                // of the validation module, we depend on the integrity of our code to
                 // create valid XML files for persistent storage of digital objects.
                 if (LOG.isDebugEnabled()) {
                     ByteArrayInputStream inV =
@@ -1368,7 +1371,7 @@ public class DefaultDOManager
                     LOG.debug("Finished adding to ResourceIndex.");
                 }
 
-                // STORAGE: 
+                // STORAGE:
                 // write XML serialization of object to persistent storage
                 LOG.debug("Storing digital object");
                 if (obj.isNew()) {
@@ -1381,7 +1384,7 @@ public class DefaultDOManager
                                                            .toByteArray()));
                 }
 
-                // INVALIDATE DOREADER CACHE:  
+                // INVALIDATE DOREADER CACHE:
                 // now that the object xml is stored, make sure future DOReaders
                 // will get the latest copy
                 if (m_readerCache != null) {
@@ -1910,7 +1913,7 @@ public class DefaultDOManager
      * <p>
      * Gets a list of the requested next available PIDs. the number of PIDs.
      * </p>
-     * 
+     *
      * @param numPIDs
      *        The number of PIDs to generate. Defaults to 1 if the number is not
      *        a positive integer.
@@ -1957,7 +1960,7 @@ public class DefaultDOManager
 
     public String getRepositoryHash() throws ServerException {
 
-        // This implementation returns a string containing the 
+        // This implementation returns a string containing the
         // total number of objects in the repository, followed by the
         // latest object's modification date (utc millis)
         // in the format: "10|194861293462"

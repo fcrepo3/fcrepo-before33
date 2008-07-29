@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -23,7 +23,7 @@ import fedora.server.types.gen.Condition;
  * A utility class for converting back and forth from the internal Fedora type
  * classes in fedora.server.storage.types and the generated type classes
  * produced by the wsdl2java emitter in fedora.server.types.gen.
- * 
+ *
  * @author Ross Wayland
  */
 public abstract class TypeUtility {
@@ -203,7 +203,7 @@ public abstract class TypeUtility {
      * Converts an array of fedora.server.storage.types.MethodDef into an array
      * of fedora.server.types.gen.MethodDef.
      * </p>
-     * 
+     *
      * @param methodDefs
      *        An array of fedora.server.storage.types.MethodDef.
      * @return An array of fedora.server.types.gen.MethodDef.
@@ -234,7 +234,7 @@ public abstract class TypeUtility {
      * Converts an instance of fedora.server.storage.types.MethodDef into an
      * instance of fedora.server.types.gen.MethodDef.
      * </p>
-     * 
+     *
      * @param methodDef
      *        An instance of fedora.server.storage.types.MethodDef.
      * @return An instance of fedora.server.types.gen.MethodDef.
@@ -265,7 +265,7 @@ public abstract class TypeUtility {
      * Converts an array of fedora.server.types.gen.MethodDef into an array of
      * fedora.server.storage.types.MethodDef.
      * </p>
-     * 
+     *
      * @param genMethodDefs
      *        An array of fedora.server.types.gen.MethodDef.
      * @return An array of fedora.server.storage.types.MethodDef.
@@ -296,7 +296,7 @@ public abstract class TypeUtility {
      * Converts an instance of fedora.server.types.gen.MethodDef into an
      * instance of fedora.server.storage.types.MethodDef.
      * </p>
-     * 
+     *
      * @param genMethodDef
      *        An instance of fedora.server.types.gen.MethodDef.
      * @return An instance of fedora.server.storage.types.MethodDef.
@@ -323,7 +323,7 @@ public abstract class TypeUtility {
      * Converts an array of fedora.server.storage.types.MethodParmDef into an
      * array of fedora.server.types.gen.MethodParmDef.
      * </p>
-     * 
+     *
      * @param methodParmDefs
      *        An array of fedora.server.storage.types.MethodParmDef.
      * @return An array of fedora.server.types.gen.MethodParmDef.
@@ -351,7 +351,7 @@ public abstract class TypeUtility {
      * Converts an instance of fedora.server.storage.types.MethodParmDef into an
      * instance of fedora.server.types.gen.MethodParmDef.
      * </p>
-     * 
+     *
      * @param methodParmDef
      *        An instance of fedora.server.storage.types.MethodParmDef.
      * @return An instance of fedora.server.types.gen.MethodParmDef.
@@ -381,7 +381,7 @@ public abstract class TypeUtility {
      * Converts an array of fedora.server.types.gen.MethodParmDef into an array
      * of fedora.server.storage.types.MethodParmDef.
      * </p>
-     * 
+     *
      * @param genMethodParmDefs
      *        An array of fedora.server.types.gen.MethodParmDef.
      * @return An array of fedora.server.storage.types.MethodParmDef.
@@ -409,7 +409,7 @@ public abstract class TypeUtility {
      * Converts an instance of fedora.server.storage.types.MethodParmDef into an
      * instance of fedora.server.types.gen.MethodParmDef.
      * </p>
-     * 
+     *
      * @param genMethodParmDef
      *        An instance of fedora.server.storage.types.MethodParmDef.
      * @return An instance of fedora.server.types.gen.MethodParmDef.
@@ -439,7 +439,7 @@ public abstract class TypeUtility {
      * Converts an instance of fedora.server.storage.types.MIMETypedStream into
      * an instance of fedora.server.types.gen.MIMETypedStream.
      * </p>
-     * 
+     *
      * @param mimeTypedStream
      *        An instance of fedora.server.storage.types.MIMETypedStream.
      * @return An instance of fedora.server.types.gen.MIMETypedStream.
@@ -465,6 +465,7 @@ public abstract class TypeUtility {
                 LOG.error("Error converting types", ioe);
             }
             genMIMETypedStream.setStream(baos.toByteArray());
+            mimeTypedStream.close();
             mimeTypedStream.setStream(new ByteArrayInputStream(baos
                     .toByteArray()));
             return genMIMETypedStream;
@@ -479,7 +480,7 @@ public abstract class TypeUtility {
      * Converts an instance of fedora.server.types.gen.MIMETypedStream into an
      * instance of fedora.server.storage.types.MIMETypedStream.
      * </p>
-     * 
+     *
      * @param genMIMETypedStream
      *        An instance of fedora.server.types.gen.MIMETypedStream.
      * @return an instance of fedora.server.storage.types.MIMETypedStream.
@@ -507,7 +508,7 @@ public abstract class TypeUtility {
      * Converts an array of fedora.server.types.gen.ObjectMethodsDef into an
      * array of fedora.server.storage.types.ObjectMethodsDef.
      * </p>
-     * 
+     *
      * @param genObjectMethodDefs
      *        An array of fedora.server.types.gen.ObjectMethodsDef.
      * @return An array of fedora.server.storage.types.ObjectMethodsDef.
@@ -552,7 +553,7 @@ public abstract class TypeUtility {
      * Converts an instance of fedora.server.types.gen.ObjectMethodsDef into an
      * instance of fedora.server.storage.types.ObjectMethodsDef.
      * </p>
-     * 
+     *
      * @param genObjectMethodDef
      *        An instance of fedora.server.types.gen.ObjectMethodsDef.
      * @return An instance of fedora.server.storage.types.ObjectMethodsDef.
@@ -586,7 +587,7 @@ public abstract class TypeUtility {
      * Converts an array of fedora.server.storage.types.ObjectMethodsDef into an
      * array of fedora.server.types.gen.ObjectMethodsDef.
      * </p>
-     * 
+     *
      * @param objectMethodDefs
      *        An array of fedora.server.storage.types.ObjectMethodsDef.
      * @return An array of fedora.server.types.gen.ObjectMethodsDef.
@@ -630,7 +631,7 @@ public abstract class TypeUtility {
      * Converts an instance of fedora.server.storage.types.ObjectMethodsDef into
      * an instance of fedora.server.types.gen.ObjectMethodsDef.
      * </p>
-     * 
+     *
      * @param objectMethodDef
      *        An instance of fedora.server.storage.types.ObjectMethodsDef.
      * @return An instance of fedora.server.types.gen.ObjectMethodsDef.
@@ -654,7 +655,7 @@ public abstract class TypeUtility {
      * Converts an instance of fedora.server.types.gen.ObjectProfile into an
      * instance of fedora.server.access.ObjectProfile.
      * </p>
-     * 
+     *
      * @param genObjectProfile
      *        An instance of fedora.server.types.gen.ObjectProfile.
      * @return An instance of fedora.server.access.ObjectProfile.
@@ -742,7 +743,7 @@ public abstract class TypeUtility {
      * Converts an array of fedora.server.types.gen.Property into an array of
      * fedora.server.storage.types.Property.
      * </p>
-     * 
+     *
      * @param genProperties
      *        An array of fedora.server.types.gen.Property.
      * @return An array of fedora.server.storage.types.Property.
@@ -769,7 +770,7 @@ public abstract class TypeUtility {
      * Converts an instance of fedora.server.types.gen.Property into an instance
      * of fedora.server.storage.types.Property.
      * </p>
-     * 
+     *
      * @param genProperty
      *        An instance of fedora.server.types.gen.Property.
      * @return An instance of fedora.server.storage.types.Property.
@@ -789,7 +790,7 @@ public abstract class TypeUtility {
      * Converts an array of fedora.server.storage.types.Property into an array
      * of fedora.server.types.gen.Property.
      * </p>
-     * 
+     *
      * @param properties
      *        An array of fedora.server.storage.typesProperty.
      * @return An array of fedora.server.types.gen.Property.
@@ -816,7 +817,7 @@ public abstract class TypeUtility {
      * Converts an instance of fedora.server.storage.types.Property into an
      * instance of fedora.server.types.gen.Property.
      * </p>
-     * 
+     *
      * @param property
      *        An instance of fedora.server.storage.types.Property.
      * @return An instance of fedora.server.types.gen.Property.
@@ -1152,6 +1153,7 @@ public abstract class TypeUtility {
             while ((byteStream = is.read(buffer)) >= -1) {
                 System.out.write(buffer, 0, byteStream);
             }
+            mimeTypedStream.close();
 
             System.out.println("\n----- Converting ObjectMethodsDefArray to "
                     + "GenObjectMethodsDefArray");

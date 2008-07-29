@@ -59,7 +59,7 @@ public class DOValidatorXMLSchemaTest
     @Test
     public void testMetsValidation() throws Exception {
         InputStream in =
-                new FileInputStream(getDemoFile("mets/local-server-demos/simple-image-demo/obj_demo_35.xml"));
+                new FileInputStream(getDemoFile("mets/local-server-demos/simple-image-demo/obj_demo_5.xml"));
         DOValidatorXMLSchema dov =
                 new DOValidatorXMLSchema("src/xsd/mets-fedora-ext1-1.xsd");
         dov.validate(in);

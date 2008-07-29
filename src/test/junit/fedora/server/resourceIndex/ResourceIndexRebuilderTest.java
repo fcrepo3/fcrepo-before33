@@ -38,6 +38,9 @@ import fedora.utilities.Foxml11Document.Property;
 import fedora.utilities.Foxml11Document.State;
 
 /**
+ * Test of the ResourceIndexRebuilder. Requires that Fedora already be installed.
+ * Note that this is a long-running test because of the ingest & purge cycle.
+ * 
  * @author Edwin Shin
  * @since 3.0
  * @version $Id: ResourceIndexRebuilderTest.java 7508 2008-07-15 04:00:43Z pangloss $
@@ -69,9 +72,9 @@ public class ResourceIndexRebuilderTest {
     }
 
     @Test
-    public void testFoo() throws Exception {
-        int count = 4000;
-
+    public void testRebuild() throws Exception {
+        int count = 10;
+        rebuild();
         try {
             ingestObjects(count);
 
@@ -84,6 +87,9 @@ public class ResourceIndexRebuilderTest {
             // start tomcat
             startTomcat();
         } finally {
+            if (!isTomcatRunning()) {
+                startTomcat();
+            }
             purgeObjects(count);
         }
     }
@@ -179,7 +185,7 @@ public class ResourceIndexRebuilderTest {
         for (int i = 0; i < count; i++) {
             String pid = String.format("demo:ri%s", i);
             apim.ingest(getFoxmlObject(pid, url), Constants.FOXML1_1.uri, null);
-            if (count % 100 == 0) {
+            if (i % 100 == 0) {
                 System.out.print("\n\t");
             }
             System.out.print(".");

@@ -229,13 +229,15 @@ public class Administrator
                 new JLabel(new ImageIcon(cl
                         .getResource("images/fedora/aboutadmin.gif")));
         m_aboutText =
-                new JLabel("<html><p>Copyright 2002-2007, The Rector and Visitors of the</p>"
-                        + "<p>University of Virginia and Cornell University. All rights reserved.</p><p></p>"
-                        + "<p><b>License and Copyright: </b>This software is subject to the</p>"
-                        + "<p>Educational Community License (the \"License\"); you may not use</p>"
+                new JLabel("<html>"
+                        + "<p>Copyright 2008, Fedora Commons, Inc.</p>"
+                        + "<p>Copyright 2002-2007, The Rector and Visitors of the</p>"
+                        + "<p>University of Virginia and Cornell University.</p><p></p>"
+                        + "<p><b>License: </b>This software is subject to the terms of the</p>"
+                        + "<p>Apache License, Version 2.0 (the \"License\"); you may not use</p>"
                         + "<p>this software except in compliance with the License. You may</p>"
                         + "<p>obtain a copy of the License at:</p>"
-                        + "<blockquote>http://www.opensource.org/licenses/ecl1.txt.</blockquote><p></p>"
+                        + "<blockquote>http://www.apache.org/licenses/</blockquote><p></p>"
                         + "<p>Software distributed under the License is distributed on an \"AS IS\"</p>"
                         + "<p>basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.</p>"
                         + "<p>See the License for the specific language governing rights and</p>"
@@ -246,7 +248,7 @@ public class Administrator
                         + "<p>Release Date: "
                         + RELEASE_DATE
                         + "</p>"
-                        + "<p>See http://www.fedora.info/ for more information.</p></html>");
+                        + "<p>See http://www.fedora-commons.org/ for more information.</p></html>");
 
         m_aboutText.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         JPanel splashPicAndText = new JPanel();

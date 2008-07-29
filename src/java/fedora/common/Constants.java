@@ -535,8 +535,8 @@ public interface Constants {
      * The Fedora RELS-INT 1.0 XML format;
      * <code>info:fedora/fedora-system:FedoraRELSInt-1.0</code>
      */
-    public static final FedoraRELSExt1_0Format RELS_INT1_0 =
-            FedoraRELSExt1_0Format.getInstance();
+    public static final FedoraRELSInt1_0Format RELS_INT1_0 =
+            FedoraRELSInt1_0Format.getInstance();
 
     /**
      * The Fedora Repsitory Description 1.0 XML format;

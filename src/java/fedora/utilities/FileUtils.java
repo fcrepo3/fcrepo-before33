@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -22,11 +22,11 @@ import java.util.Map.Entry;
 
 public class FileUtils {
 
-    public static final int BUFFER = 2048;
+    public static final int BUFFER = 8192;
 
     /**
      * Copy an InputStream to an OutputStream.
-     * 
+     *
      * @param source
      * @param destination
      * @return <code>true</code> if the operation was successful;
@@ -51,7 +51,7 @@ public class FileUtils {
 
     /**
      * Copy a file or directory.
-     * 
+     *
      * @param source
      * @param destination
      * @return <code>true</code> if the operation was successful;
@@ -86,10 +86,10 @@ public class FileUtils {
             }
         }
     }
-    
+
     /**
      * Create a temporary directory.
-     * 
+     *
      * @param prefix
      * @param directory
      * @return
@@ -103,10 +103,10 @@ public class FileUtils {
             throw new IOException();
         return tempFile;
     }
-    
+
     /**
      * Delete a File.
-     * 
+     *
      * @param file
      *        the File to delete.
      * @return <code>true</code> if the operation was successful;
@@ -133,7 +133,7 @@ public class FileUtils {
 
     /**
      * Delete the specified file or directory.
-     * 
+     *
      * @param file
      *        File or directory to delete
      * @return <code>true</code> if the operation was successful;
@@ -148,7 +148,7 @@ public class FileUtils {
      * java.io.File.renameTo(). However, should this operation fail (e.g. when
      * source and destination are across different filesystems), will attempt to
      * copy and then delete the source.
-     * 
+     *
      * @param source
      * @param destination
      * @return <code>true</code> if the operation was successful;
@@ -184,7 +184,7 @@ public class FileUtils {
 
     /**
      * Loads a Map from the given Properties file.
-     * 
+     *
      * @param f
      *        the Properties file to parse.
      * @return a Map<String, String> representing the given Properties file.
