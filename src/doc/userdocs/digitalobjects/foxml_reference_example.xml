@@ -9,9 +9,6 @@
 <!---***************************************************************************************************************************************
     FEDORA OBJECT PROPERTIES : non-versionable properties of the digital object
     At ingest, the object MUST have these attributes:
-        - type:(required) The object is classified as one of three primitive Fedora object types, 
-          namely FedoraObject, FedoraBDefObject, FedoraBMechObject,
-          or FedoraCModelObject.
         - state:(required) The object state can be Active (A), Inactive (I), or Deleted (D)
     And at ingest, it may have these optional attributes:       
         - label: (optional) The object is given a user-defined descriptive label.      
