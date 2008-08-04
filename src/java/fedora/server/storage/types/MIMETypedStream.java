@@ -16,10 +16,11 @@ import org.apache.log4j.Logger;
 public class MIMETypedStream
 {
     private static final Logger LOG = Logger.getLogger(MIMETypedStream.class);
-    
+
     public String MIMEType;
     private InputStream stream;
     public Property[] header;
+    private boolean gotStream = false;
 
     /**
      * <p>Constructs a MIMETypedStream.</p>
@@ -34,8 +35,17 @@ public class MIMETypedStream
         this.setStream(stream);
     }
 
+    /**
+     * Retrieves the underlying stream.
+     * Caller is responsible to close the stream,
+     * either by calling MIMETypedStream.close()
+     * or by calling close() on the stream.
+     *
+     * @return The byte stream
+     */
     public InputStream getStream()
     {
+      gotStream = true;
       return stream;
     }
 
@@ -43,10 +53,10 @@ public class MIMETypedStream
     {
       this.stream = stream;
     }
-   
+
     /**
      * Closes the underlying stream if it's not already closed.
-     * 
+     *
      * In the event of an error, a warning will be logged.
      */
     public void close() {
@@ -59,14 +69,18 @@ public class MIMETypedStream
             }
         }
     }
-   
+
     /**
-     * Ensures the underlying stream is closed at garbage-collection time.
-     * 
+     * Ensures the underlying stream is closed at garbage-collection time
+     * if the stream has not been retrieved. If getStream() has been called
+     * the caller is responsible to close the stream.
+     *
      * {@inheritDoc}
      */
     @Override
     public void finalize() {
-        close();
+        if (!gotStream) {
+            close();
+        }
     }
 }

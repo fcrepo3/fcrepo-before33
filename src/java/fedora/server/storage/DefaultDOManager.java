@@ -71,8 +71,8 @@ import fedora.server.validation.DOValidatorImpl;
 import fedora.server.validation.RelsExtValidator;
 
 /**
- * Manages the reading and writing of digital objects by instantiating an 
- * appropriate object reader or writer.  Also, manages the object ingest 
+ * Manages the reading and writing of digital objects by instantiating an
+ * appropriate object reader or writer.  Also, manages the object ingest
  * process and the object replication process.
  *
  * @author cwilper@cs.cornell.edu
@@ -180,7 +180,7 @@ public class DefaultDOManager
                 + "not given, will defer to ConnectionPoolManager's "
                 + "default pool.");
         }
-        // internal storage format (required)		
+        // internal storage format (required)
         LOG.debug("Server property format.storage= " + Server.STORAGE_FORMAT);
 		m_defaultStorageFormat = Server.STORAGE_FORMAT;
         if (m_defaultStorageFormat==null) {
@@ -234,7 +234,7 @@ public class DefaultDOManager
             m_readerCache = new DOReaderCache(readerCacheSize, readerCacheSeconds);
         }
     }
-    
+
     protected void initRetainPID()
     {
         // retainPIDs (optional, default=demo,test)
@@ -260,7 +260,7 @@ public class DefaultDOManager
             }
         }
     }
-    
+
     public void postInitModule()
             throws ModuleInitializationException {
 		// get ref to management module
@@ -269,7 +269,7 @@ public class DefaultDOManager
             throw new ModuleInitializationException(
                     "Management module not loaded.", getRole());
 		}
-		
+
         // get ref to contentmanager module
         m_contentManager = (ExternalContentManager)
           getServer().getModule("fedora.server.storage.ExternalContentManager");
@@ -306,7 +306,7 @@ public class DefaultDOManager
             throw new ModuleInitializationException(
                     "ResourceIndex not loaded", getRole());
         }
-        
+
         // now get the connectionpool
         ConnectionPoolManager cpm=(ConnectionPoolManager) getServer().
                 getModule("fedora.server.storage.ConnectionPoolManager");
@@ -338,7 +338,7 @@ public class DefaultDOManager
                     + "check for and create non-existing table(s): "
                     + e.getClass().getName() + ": " + e.getMessage(), getRole());
         }
-        
+
         // get ref to lowlevelstorage module
         m_permanentStore=(ILowlevelStorage) getServer().
         		getModule("fedora.server.storage.lowlevel.ILowlevelStorage");
@@ -357,7 +357,7 @@ public class DefaultDOManager
     }
 
     public void releaseWriter(DOWriter writer) {
-        
+
         // If this is a new object, but object was not successfully committed
         // need to backout object registration.
         if (writer.isNew() && !writer.isCommitted()) {
@@ -378,15 +378,15 @@ public class DefaultDOManager
             releaseWriteLock(writer.GetObjectPID());
         } catch (ServerException e) {
             LOG.warn("Error releasing object lock; Unable to obtain pid from writer.");
-        }       
-    }   
-        
+        }
+    }
+
     private void releaseWriteLock(String pid) {
         synchronized (m_lockedPIDs) {
             m_lockedPIDs.remove(pid);
         }
-    }       
-                
+    }
+
     private void getWriteLock(String pid) throws ObjectLockedException {
         synchronized (m_lockedPIDs) {
             if (m_lockedPIDs.contains(pid)) {
@@ -459,7 +459,7 @@ public class DefaultDOManager
                 if (reader == null) {
                     reader = new SimpleDOReader(context, this, m_translator,
                             m_defaultExportFormat, m_defaultStorageFormat,
-                            m_storageCharacterEncoding, 
+                            m_storageCharacterEncoding,
                             m_permanentStore.retrieveObject(pid));
                     source = "filesystem";
                     if (m_readerCache != null) {
@@ -506,7 +506,7 @@ public class DefaultDOManager
                     m_permanentStore.retrieveObject(pid));
         }
     }
-    
+
 	/**
 	 * Gets a writer on an an existing object.
 	 */
@@ -517,7 +517,7 @@ public class DefaultDOManager
 		} else {
 			BasicDigitalObject obj=new BasicDigitalObject();
 			m_translator.deserialize(m_permanentStore.retrieveObject(pid), obj,
-					m_defaultStorageFormat, m_storageCharacterEncoding, 
+					m_defaultStorageFormat, m_storageCharacterEncoding,
 					DOTranslationUtility.DESERIALIZE_INSTANCE);
 			DOWriter w=new SimpleDOWriter(context, this, m_translator,
 					m_defaultStorageFormat, m_storageCharacterEncoding, obj);
@@ -533,15 +533,15 @@ public class DefaultDOManager
 	 * PID validation or generation, object registry functions, getting a
 	 * writer for the digital object, and ultimately writing the object to
 	 * persistent storage via the writer.
-	 * 
-	 * @param context 
+	 *
+	 * @param context
 	 * @param in  the input stream that is the XML ingest file for a digital object
 	 * @param format  the format of the XML ingest file (e.g., FOXML, Fedora METS)
 	 * @param encoding  the character encoding of the XML ingest file (e.g., UTF-8)
 	 * @param newPid  true if the system should generate a new PID for the object
 	 *
 	 */
-	public synchronized DOWriter getIngestWriter(boolean cachedObjectRequired, Context context, InputStream in, String format, 
+	public synchronized DOWriter getIngestWriter(boolean cachedObjectRequired, Context context, InputStream in, String format,
 		String encoding, boolean newPid)
 			throws ServerException {
 		LOG.debug("Entered getIngestWriter");
@@ -558,14 +558,14 @@ public class DefaultDOManager
 				// Get the current time to use for created dates on object
 				// and object components (if they are not already there).
 				Date nowUTC = Server.getCurrentDate(context);
-				
+
 				// TEMP STORAGE:
 				// write ingest input stream to a temporary file
 				tempFile = File.createTempFile("fedora-ingest-temp", ".xml");
 				LOG.debug("Creating temporary file for ingest: " + tempFile.toString());
 				StreamUtility.pipeStream(in, new FileOutputStream(tempFile), 4096);
 
-				// VALIDATION: 
+				// VALIDATION:
 				// perform initial validation of the ingest submission file
 				LOG.debug("Validation (ingest phase)");
 				m_validator.validate(tempFile, format, DOValidatorImpl.VALIDATE_ALL, "ingest");
@@ -576,9 +576,9 @@ public class DefaultDOManager
 				obj.setNew(true);
 				LOG.debug("Deserializing from format: " + format);
 				LOG.debug("Deserializing from format: " + format);
-				m_translator.deserialize(new FileInputStream(tempFile), obj, format, encoding, 
+				m_translator.deserialize(new FileInputStream(tempFile), obj, format, encoding,
 					DOTranslationUtility.DESERIALIZE_INSTANCE);
-                	
+
 				// SET OBJECT PROPERTIES:
 				LOG.debug("Setting object/component states and create dates if unset");
 				// set object state to "A" (Active) if not already set
@@ -591,7 +591,7 @@ public class DefaultDOManager
 				}
 				// set object last modified date to UTC
 				obj.setLastModDate(nowUTC);
-				
+
 				// SET DATASTREAM PROPERTIES...
 				Iterator dsIter=obj.datastreamIdIterator();
 				while (dsIter.hasNext()) {
@@ -676,7 +676,7 @@ public class DefaultDOManager
 				}
 
                 LOG.info("New object PID is " + obj.getPid());
-                
+
 				// CHECK REGISTRY:
 				// ensure the object doesn't already exist
 				if (objectExists(obj.getPid())) {
@@ -693,7 +693,7 @@ public class DefaultDOManager
                 // WRITE LOCK:
                 // ensure no one else can modify the object now
                 getWriteLock(obj.getPid());
-                
+
 				// DEFAULT DUBLIN CORE DATASTREAM:
 				LOG.debug("Adding/Checking default DC record");
 				// DC System Reserved Datastream...
@@ -741,7 +741,7 @@ public class DefaultDOManager
 				} catch (UnsupportedEncodingException uee) {
 					// safely ignore... we know UTF-8 works
 				}
-                
+
 				// RELATIONSHIP METADATA VALIDATION:
 				// if a RELS-EXT datastream exists do validation on it
 				RelsExtValidator deser=new RelsExtValidator("UTF-8", false);
@@ -754,10 +754,10 @@ public class DefaultDOManager
 				}
 
 				// REGISTRY:
-				// at this point the object is valid, so make a record 
+				// at this point the object is valid, so make a record
 				// of it in the digital object registry
-				registerObject(obj.getPid(), obj.getFedoraObjectType(), 
-					getUserId(context), obj.getLabel(), obj.getContentModelId(), 
+				registerObject(obj.getPid(), obj.getFedoraObjectType(),
+					getUserId(context), obj.getLabel(), obj.getContentModelId(),
 					obj.getCreateDate(), obj.getLastModDate());
 				return w;
 			} catch (IOException e) {
@@ -778,7 +778,7 @@ public class DefaultDOManager
 					ServerException se = (ServerException) e;
 					throw se;
 				}
-				throw new GeneralException("Ingest failed: " 
+				throw new GeneralException("Ingest failed: "
 				    + e.getClass().getName(), e);
 			} finally {
 				if (tempFile != null) {
@@ -794,10 +794,10 @@ public class DefaultDOManager
 	}
 
     /**
-     * The doCommit method finalizes an ingest/update/remove of a digital object. 
-     * The process makes updates the object modified date, stores managed content 
-     * datastreams, creates the final XML serialization of the digital object, 
-     * saves the object to persistent storage, updates the object registry, 
+     * The doCommit method finalizes an ingest/update/remove of a digital object.
+     * The process makes updates the object modified date, stores managed content
+     * datastreams, creates the final XML serialization of the digital object,
+     * saves the object to persistent storage, updates the object registry,
      * and replicates the object's current version information to the relational db.
      *
      * In the case where it is not a deletion, the session lock (TODO) is released, too.
@@ -888,9 +888,9 @@ public class DefaultDOManager
                 try {
                     origStream = m_permanentStore.retrieveObject(obj.getPid());
                     origObj = new BasicDigitalObject();
-                    m_translator.deserialize(origStream, origObj, 
-                            m_defaultStorageFormat, 
-                            m_storageCharacterEncoding, 
+                    m_translator.deserialize(origStream, origObj,
+                            m_defaultStorageFormat,
+                            m_storageCharacterEncoding,
                             DOTranslationUtility.DESERIALIZE_INSTANCE);
                 } finally {
                     if (origStream != null) {
@@ -936,25 +936,25 @@ public class DefaultDOManager
             } catch (ServerException se) {
                 LOG.warn("Object couldn't be removed from FieldSearch index (" + se.getMessage() + "), but that might be ok; continuing with purge");
             }
-            
+
             // RESOURCE INDEX:
             // remove digital object from the resourceIndex
             if (m_resourceIndex.getIndexLevel() != ResourceIndex.INDEX_LEVEL_OFF) {
                 try {
                     LOG.info("Deleting from ResourceIndex");
-                    if (obj.getFedoraObjectType() == 
+                    if (obj.getFedoraObjectType() ==
                             DigitalObject.FEDORA_BDEF_OBJECT) {
                         m_resourceIndex.deleteBDefObject(
-                                new SimpleBDefReader(null, null, null, null, 
+                                new SimpleBDefReader(null, null, null, null,
                                 null, origObj));
-                    } else if (obj.getFedoraObjectType() == 
+                    } else if (obj.getFedoraObjectType() ==
                             DigitalObject.FEDORA_BMECH_OBJECT) {
                         m_resourceIndex.deleteBMechObject(
-                                new SimpleBMechReader(null, null, null, null, 
+                                new SimpleBMechReader(null, null, null, null,
                                 null, origObj));
                     } else {
                         m_resourceIndex.deleteDataObject(
-                                new SimpleDOReader(null, null, null, null, 
+                                new SimpleDOReader(null, null, null, null,
                                 null, origObj));
                     }
                     LOG.debug("Finished deleting from ResourceIndex");
@@ -962,7 +962,7 @@ public class DefaultDOManager
                     LOG.warn("Object couldn't be removed from ResourceIndex (" + se.getMessage() + "), but that might be ok; continuing with purge");
                 }
             }
-            
+
 		// OBJECT INGEST (ADD) OR MODIFY...
         } else {
             if (obj.isNew()) {
@@ -1034,7 +1034,7 @@ public class DefaultDOManager
                             	m_permanentStore.replaceDatastream(id, mimeTypedStream.getStream());
                             }
                         }
-						if (dmc.DSLocation.startsWith(DatastreamManagedContent.TEMP_SCHEME))  
+						if (dmc.DSLocation.startsWith(DatastreamManagedContent.TEMP_SCHEME))
 						{
 							// delete the temp file created to store the binary content from archive
 							File file = new File(dmc.DSLocation.substring(7));
@@ -1044,21 +1044,24 @@ public class DefaultDOManager
 						dmc.DSLocation = id;
                         LOG.info("Replaced managed datastream location with "
                             + "internal id: " + id);
+                        if (mimeTypedStream != null) {
+                            mimeTypedStream.close();
+                        }
                       }
                     }
                   }
                 }
-                
+
                 // MANAGED DATASTREAM PURGE:
                 // find out which, if any, managed datastreams were purged,
                 // then remove them from low level datastream storage
-                // this was moved because in the case of modifying a datastream 
+                // this was moved because in the case of modifying a datastream
                 // with versioning turned off, if a modification didn't involve new
-                // content a special url of the form copy:... would be used to 
+                // content a special url of the form copy:... would be used to
                 // indicate the content for the new datastream version, which would
                 // point to the content of the most recent version.  Which (if this code
                 // had been executed earlier) would no longer exist in the low-level store.
-                
+
                 if (!obj.isNew()) deletePurgedDatastreams(obj, context);
 
                 // MODIFIED DATE:
@@ -1067,24 +1070,24 @@ public class DefaultDOManager
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 				// FINAL XML SERIALIZATION:
-				// serialize the object in its final form for persistent storage                                      
+				// serialize the object in its final form for persistent storage
                 LOG.debug("Serializing digital object for persistent storage");
-                m_translator.serialize(obj, out, m_defaultStorageFormat, 
+                m_translator.serialize(obj, out, m_defaultStorageFormat,
                 	m_storageCharacterEncoding, DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
 
 				// FINAL VALIDATION:
 				// As of version 2.0, final validation is only performed in DEBUG mode.
 				// This is to help performance during the ingest process since validation
 				// is a large amount of the overhead of ingest.  Instead of a second run
-				// of the validation module, we depend on the integrity of our code to 
+				// of the validation module, we depend on the integrity of our code to
 				// create valid XML files for persistent storage of digital objects.
 				if (LOG.isDebugEnabled()) {
 					ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
 					LOG.debug("Final Validation (storage phase)");
 					m_validator.validate(inV, m_defaultStorageFormat,
 						DOValidatorImpl.VALIDATE_ALL, "store");
-				}                     	
-                    
+				}
+
                 // RESOURCE INDEX:
                 if (m_resourceIndex != null && m_resourceIndex.getIndexLevel() != ResourceIndex.INDEX_LEVEL_OFF) {
                     LOG.info("Adding to ResourceIndex");
@@ -1126,8 +1129,8 @@ public class DefaultDOManager
                     }
                     LOG.debug("Finished adding to ResourceIndex.");
                 }
-                
-                // STORAGE: 
+
+                // STORAGE:
                 // write XML serialization of object to persistent storage
                 LOG.debug("Storing digital object");
                 if (obj.isNew()) {
@@ -1135,8 +1138,8 @@ public class DefaultDOManager
                 } else {
                 	m_permanentStore.replaceObject(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
                 }
-                
-                // INVALIDATE DOREADER CACHE:  
+
+                // INVALIDATE DOREADER CACHE:
                 // now that the object xml is stored, make sure future DOReaders
                 // will get the latest copy
                 if (m_readerCache != null) {
@@ -1254,13 +1257,13 @@ public class DefaultDOManager
                         Date dt = dates[j];
                         if (!hasVersionWithDate(newVersions, dt.getTime())) {
                             // ... and delete them from low level storage
-                            String token = obj.getPid() + "+" + dsID + "+" + 
+                            String token = obj.getPid() + "+" + dsID + "+" +
                                     reader.GetDatastream(dsID, dt).DSVersionID;
                             try {
                             	m_permanentStore.removeDatastream(token);
                                 LOG.info("Removed purged datastream version "
-                                    + "from low level storage (token = " 
-                                    + token + ")"); 
+                                    + "from low level storage (token = "
+                                    + token + ")");
                             } catch (Exception e) {
                                 LOG.warn("Error removing purged datastream "
                                         + "version from low level storage "
@@ -1709,7 +1712,7 @@ public class DefaultDOManager
 
     public String getRepositoryHash() throws ServerException {
 
-        // This implementation returns a string containing the 
+        // This implementation returns a string containing the
         // total number of objects in the repository, followed by the
         // latest object's modification date (utc millis)
         // in the format: "10|194861293462"
@@ -1734,7 +1737,7 @@ public class DefaultDOManager
         }
     }
 
-    /**             
+    /**
      * Get the number of objects in the registry whose system version
      * is equal to the given value.
      *

@@ -63,7 +63,7 @@ import fedora.server.utilities.ServerUtility;
  * datastreamMediationLimit and is speci207fied in milliseconds. If this
  * parameter is not supplied it defaults to 5000 miliseconds.
  * </p>
- * 
+ *
  * @author rlw@virginia.edu
  * @version $Id: DatastreamResolverServlet.java,v 1.50 2006/09/29 20:29:12 wdn5e
  *          Exp $
@@ -96,7 +96,7 @@ public class DatastreamResolverServlet extends HttpServlet {
 	 * <p>
 	 * Initialize servlet.
 	 * </p>
-	 * 
+	 *
 	 * @throws ServletException
 	 *             If the servet cannot be initialized.
 	 */
@@ -118,7 +118,7 @@ public class DatastreamResolverServlet extends HttpServlet {
 				datastreamMediationLimit = 5000;
 			} else {
 				datastreamMediationLimit = new Integer(expireLimit).intValue();
-                LOG.info("datastreamMediationLimit: " 
+                LOG.info("datastreamMediationLimit: "
                         + datastreamMediationLimit);
 			}
 		} catch (InitializationException ie) {
@@ -148,7 +148,7 @@ public class DatastreamResolverServlet extends HttpServlet {
 	 * Processes the servlet request and resolves the physical location of the
 	 * specified datastream.
 	 * </p>
-	 * 
+	 *
 	 * @param request
 	 *            The servlet request.
 	 * @param response
@@ -177,7 +177,7 @@ public class DatastreamResolverServlet extends HttpServlet {
 
 		id = request.getParameter("id").replaceAll("T", " ");
         LOG.debug("Datastream tempID=" + id);
-        
+
         LOG.debug("DRS doGet()");
 
 		try {
@@ -312,7 +312,7 @@ public class DatastreamResolverServlet extends HttpServlet {
 			// parameter
 			// named "datastreamMediationLimit" which is in milliseconds.
             long diff = currentTimestamp.getTime() - keyTimestamp.getTime();
-            LOG.debug("Timestamp diff for mechanism's reponse: " 
+            LOG.debug("Timestamp diff for mechanism's reponse: "
                         + diff + " ms.");
 			if (diff > (long) datastreamMediationLimit) {
 				out = response.getWriter();
@@ -336,7 +336,7 @@ public class DatastreamResolverServlet extends HttpServlet {
 				throw new AuthzOperationalException(
 						"no callbackRole for this ticket");
 			}
-			String targetRole = //Authorization.FEDORA_ROLE_KEY + "=" + 
+			String targetRole = //Authorization.FEDORA_ROLE_KEY + "=" +
 					dm.callbackRole; // restrict access to role of this
 										// ticket
 			String[] targetRoles = { targetRole };
@@ -364,7 +364,7 @@ public class DatastreamResolverServlet extends HttpServlet {
 				}
 				*/
 				//XXXXXXXXXXXXXXXXXXXXXXxif (contains(roles, targetRole)) {
-				LOG.debug("DatastreamResolverServlet: user==" + request.getRemoteUser());	
+				LOG.debug("DatastreamResolverServlet: user==" + request.getRemoteUser());
 				/*
 				if (((ExtendedHttpServletRequest)request).isUserInRole(targetRole)) {
 					LOG.debug("DatastreamResolverServlet: user has required role");
@@ -405,7 +405,7 @@ public class DatastreamResolverServlet extends HttpServlet {
 							String[] values = context.getSubjectValues(name);
 							for (int i=0; i<values.length; i++) {
 								LOG.debug("another subject attribute from context "
-										+ name + "=" + values[i]);								
+										+ name + "=" + values[i]);
 							}
 					}
 				}
@@ -449,7 +449,7 @@ public class DatastreamResolverServlet extends HttpServlet {
 				// URL string
 				ExternalContentManager externalContentManager = (ExternalContentManager) s_server
 						.getModule("fedora.server.storage.ExternalContentManager");
-				mimeTypedStream = externalContentManager.getExternalContent(
+		         mimeTypedStream = externalContentManager.getExternalContent(
 						dsPhysicalLocation, context);
 				// had substituted context:
 				// ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri,
@@ -477,6 +477,7 @@ public class DatastreamResolverServlet extends HttpServlet {
 				}
 				buffer = null;
 				outStream.flush();
+                mimeTypedStream.close();
 			} else if (dsControlGroupType.equalsIgnoreCase("M")
 					|| dsControlGroupType.equalsIgnoreCase("X")) {
 				// Datastream is either XMLMetadata or ManagedContent so
