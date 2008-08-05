@@ -63,7 +63,7 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
  * as an intermediary. This servlet serves as an example of how to construct a
  * client that uses the Fedora Access API via SOAP.
  * </p>
- * 
+ *
  * <p>
  * Input parameters for the servlet include:
  * </p>
@@ -260,7 +260,7 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
  * parameter or a value of "false" indicates format is to be text/html.</li>
  * </ul>
  * </ol>
- * 
+ *
  * @author rlw@virginia.edu
  * @version $Id$
  */
@@ -337,7 +337,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 	 * parameters and then execute the specified request by calling the
 	 * appropriate Fedora Access SOAP service.
 	 * </p>
-	 * 
+	 *
 	 * @param request
 	 *            The servlet request.
 	 * @param response
@@ -498,6 +498,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 							while ((line = br.readLine()) != null) {
 								sb.append(line);
 							}
+							br.close();
 							response.sendRedirect(sb.toString());
 						} else {
 							response
@@ -1187,7 +1188,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 	 * <p>
 	 * A Thread to serialize a DatastreamDef object into XML.
 	 * </p>
-	 * 
+	 *
 	 */
 	public class DatastreamDefSerializerThread extends Thread {
 		private PipedWriter pw = null;
@@ -1202,7 +1203,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 		 * <p>
 		 * Constructor for ProfileSerializeThread.
 		 * </p>
-		 * 
+		 *
 		 * @param PID
 		 *            The persistent identifier of the specified digital object.
 		 * @param dsDefs
@@ -1304,7 +1305,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 	 * <p>
 	 * A Thread to serialize an ObjectMethodDef object into XML.
 	 * </p>
-	 * 
+	 *
 	 */
 	public class ObjectMethodDefSerializerThread extends Thread {
 		private PipedWriter pw = null;
@@ -1319,7 +1320,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 		 * <p>
 		 * Constructor for ProfileSerializeThread.
 		 * </p>
-		 * 
+		 *
 		 * @param PID
 		 *            The persistent identifier of the specified digital object.
 		 * @param methodDefs
@@ -1458,7 +1459,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 	 * <p>
 	 * A Thread to serialize an ObjectProfile object into XML.
 	 * </p>
-	 * 
+	 *
 	 */
 	public class ProfileSerializerThread extends Thread {
 		private PipedWriter pw = null;
@@ -1473,7 +1474,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 		 * <p>
 		 * Constructor for ProfileSerializeThread.
 		 * </p>
-		 * 
+		 *
 		 * @param PID
 		 *            The persistent identifier of the specified digital object.
 		 * @param objProfile
@@ -1583,7 +1584,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 	 * <p>
 	 * A Thread to serialize a RepositoryInfo object into XML.
 	 * </p>
-	 * 
+	 *
 	 */
 	public class ReposInfoSerializerThread extends Thread {
 		private PipedWriter pw = null;
@@ -1594,7 +1595,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 		 * <p>
 		 * Constructor for ReposInfoSerializeThread.
 		 * </p>
-		 * 
+		 *
 		 * @param repositoryInfo
 		 *            A repository info data structure.
 		 * @param pw
@@ -1692,7 +1693,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 	 * <p>
 	 * A Thread to serialize an ObjectHistory object into XML.
 	 * </p>
-	 * 
+	 *
 	 */
 	public class ObjectHistorySerializerThread extends Thread {
 		private PipedWriter pw = null;
@@ -1705,7 +1706,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 		 * <p>
 		 * Constructor for SerializeThread.
 		 * </p>
-		 * 
+		 *
 		 * @param PID
 		 *            The persistent identifier of the specified digital object.
 		 * @param objectHistoryArray
@@ -1767,7 +1768,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 	 * <p>
 	 * For now, treat a HTTP POST request just like a GET request.
 	 * </p>
-	 * 
+	 *
 	 * @param request
 	 *            The servet request.
 	 * @param response
@@ -1790,7 +1791,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 	 * Gets a list of Behavior Definition object PIDs for the specified digital
 	 * object by invoking the appropriate Fedora Access SOAP service.
 	 * </p>
-	 * 
+	 *
 	 * @param PID
 	 *            The persistent identifier of the digital object.
 	 * @return An array of timestamps indicating when an object component
@@ -1814,7 +1815,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 	 * <p>
 	 * Gets a MIME-typed bytestream containing the result of a dissemination by
 	 * invoking the appropriate Fedora Access SOAP service.
-	 * 
+	 *
 	 * @param PID
 	 *            The persistent identifier of the digital object.
 	 * @param bDefPID
@@ -1891,7 +1892,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 	 * Gets a list of all method definitions for the specified object by
 	 * invoking the appropriate Fedora Access SOAP service.
 	 * </p>
-	 * 
+	 *
 	 * @param PID
 	 *            The persistent identifier for the digital object.
 	 * @param asOfDateTime
@@ -1933,7 +1934,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 	 * Gets a list of all datastream for the specified object by invoking the
 	 * appropriate Fedora Access SOAP service.
 	 * </p>
-	 * 
+	 *
 	 * @param PID
 	 *            The persistent identifier of the digital object.
 	 * @param asOfDateTime
@@ -1971,7 +1972,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 	 * Gets a object profile for the specified object by invoking the
 	 * appropriate Fedora Access SOAP service.
 	 * </p>
-	 * 
+	 *
 	 * @param PID
 	 *            The persistent identifier for the digital object.
 	 * @param asOfDateTime
@@ -2009,7 +2010,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 	 * Gets repository information for the server by invoking the appropriate
 	 * Fedora Access SOAP service.
 	 * </p>
-	 * 
+	 *
 	 * @return A repository information data structure.
 	 * @throws Exception
 	 *             If an error occurs in communicating with the Fedora Access
@@ -2040,7 +2041,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 	 * <p>
 	 * Lists the specified fields of each object matching the given criteria.
 	 * </p>
-	 * 
+	 *
 	 * @param resultFields
 	 *            the names of the fields to return
 	 * @param maxResults
@@ -2083,7 +2084,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 	 * <p>
 	 * Resumes an in-progress listing of object fields.
 	 * </p>
-	 * 
+	 *
 	 * @param sessionToken
 	 *            the token of the session in which the remaining results can be
 	 *            obtained
@@ -2120,7 +2121,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 	 * <p>
 	 * Initialize servlet.
 	 * </p>
-	 * 
+	 *
 	 * @throws ServletException
 	 *             If the servet cannot be initialized.
 	 */
@@ -2183,7 +2184,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 	 * Validates required servlet URL parameters. Different parameters are
 	 * required based on the requested action.
 	 * </p>
-	 * 
+	 *
 	 * @param action
 	 *            The Fedora service to be executed
 	 * @param PID
@@ -2537,7 +2538,7 @@ public class FedoraAccessSoapServlet extends HttpServlet {
 	 * help verify the URL parameters sent to the servlet and hopefully fix the
 	 * problem.
 	 * </p>
-	 * 
+	 *
 	 * @param action
 	 *            The Fedora service requested.
 	 * @param PID

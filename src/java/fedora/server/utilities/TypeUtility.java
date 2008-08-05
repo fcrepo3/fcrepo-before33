@@ -478,10 +478,11 @@ public abstract class TypeUtility
       try
       {
         byte[] buffer = new byte[255];
-      while ((byteStream = is.read(buffer)) != -1)
-      {
-        baos.write(buffer, 0, byteStream);
-      }
+        while ((byteStream = is.read(buffer)) != -1)
+        {
+            baos.write(buffer, 0, byteStream);
+        }
+        is.close();
       } catch (IOException ioe)
       {
         LOG.error("Error converting types", ioe);

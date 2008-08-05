@@ -127,7 +127,7 @@ import fedora.server.utilities.StreamUtility;
  * of the digital object at the specified point in time.
  * </ul>
  * </ol>
- * 
+ *
  * @author rlw@virginia.edu
  * @version $Id$
  */
@@ -177,7 +177,7 @@ public class FedoraAccessServlet extends HttpServlet {
 
 	/** Configured Fedora server hostname */
 	private static String fedoraServerHost = null;
-	
+
 	/** 4K Buffer */
     private final static int BUF = 4096;
 
@@ -186,7 +186,7 @@ public class FedoraAccessServlet extends HttpServlet {
 	 * Process Fedora Access Request. Parse and validate the servlet input
 	 * parameters and then execute the specified request.
 	 * </p>
-	 * 
+	 *
 	 * @param request
 	 *            The servlet request.
 	 * @param response
@@ -438,7 +438,7 @@ public class FedoraAccessServlet extends HttpServlet {
 			} else if (isGetDisseminationRequest) {
 				bDefPID = URIArray[6];
                 LOG.debug("Servicing getDissemination request (PID=" + PID
-                        + ", bDefPID=" + bDefPID + ", methodName=" 
+                        + ", bDefPID=" + bDefPID + ", methodName="
                         + methodName + ", asOfDate=" + versDateTime + ")");
 
 				Context context = ReadOnlyContext.getContext(
@@ -594,15 +594,15 @@ public class FedoraAccessServlet extends HttpServlet {
             // Return MIMETypedStream back to browser client
             if (dissemination.MIMEType
                     .equalsIgnoreCase("application/fedora-redirect")) {
-                // A MIME type of application/fedora-redirect signals that 
-                // the MIMETypedStream returned from the dissemination is 
+                // A MIME type of application/fedora-redirect signals that
+                // the MIMETypedStream returned from the dissemination is
                 // a special Fedora-specific MIME type. In this case, the
-                // Fedora server will not proxy the datastream, but 
-                // instead perform a simple redirect to the URL contained 
-                // within the body of the MIMETypedStream. This special 
+                // Fedora server will not proxy the datastream, but
+                // instead perform a simple redirect to the URL contained
+                // within the body of the MIMETypedStream. This special
                 // MIME type is used primarily for streaming media where
                 // it is more efficient to stream the data directly between
-                // the streaming server and the browser client rather 
+                // the streaming server and the browser client rather
                 // than proxy it through the Fedora server.
 
                 BufferedReader br =
@@ -613,7 +613,7 @@ public class FedoraAccessServlet extends HttpServlet {
                 while ((line = br.readLine()) != null) {
                     sb.append(line);
                 }
-
+                br.close();
                 response.sendRedirect(sb.toString());
             } else {
 
@@ -661,7 +661,7 @@ public class FedoraAccessServlet extends HttpServlet {
 	 * This method calls the Fedora Access Subsystem to retrieve a MIME-typed
 	 * stream corresponding to the dissemination request.
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            The read only context of the request.
 	 * @param PID
@@ -713,14 +713,14 @@ public class FedoraAccessServlet extends HttpServlet {
             // Return MIMETypedStream back to browser client
             if (dissemination.MIMEType
                     .equalsIgnoreCase("application/fedora-redirect")) {
-                // A MIME type of application/fedora-redirect signals that 
-                // the MIMETypedStream returned from the dissemination is 
-                // a special Fedora-specific MIME type. In this case, the 
+                // A MIME type of application/fedora-redirect signals that
+                // the MIMETypedStream returned from the dissemination is
+                // a special Fedora-specific MIME type. In this case, the
                 // Fedora server will not proxy the datastream, but instead
-                // perform a simple redirect to the URL contained within 
+                // perform a simple redirect to the URL contained within
                 // the body of the MIMETypedStream.
                 // This special MIME type is used primarily for streaming
-                // media where it is more efficient to stream the data 
+                // media where it is more efficient to stream the data
                 // directly between the streaming server and the browser
                 // client rather than proxy it through the Fedora server.
 
@@ -732,7 +732,7 @@ public class FedoraAccessServlet extends HttpServlet {
                 while ((line = br.readLine()) != null) {
                     sb.append(line);
                 }
-
+                br.close();
                 response.sendRedirect(sb.toString());
             } else {
 
@@ -778,7 +778,7 @@ public class FedoraAccessServlet extends HttpServlet {
 	 * <p>
 	 * A Thread to serialize an ObjectProfile object into XML.
 	 * </p>
-	 * 
+	 *
 	 */
 	public class ProfileSerializerThread extends Thread {
 		private PipedWriter pw = null;
@@ -797,7 +797,7 @@ public class FedoraAccessServlet extends HttpServlet {
 		 * <p>
 		 * Constructor for ProfileSerializeThread.
 		 * </p>
-		 * 
+		 *
 		 * @param PID
 		 *            The persistent identifier of the specified digital object.
 		 * @param objProfile
@@ -924,7 +924,7 @@ public class FedoraAccessServlet extends HttpServlet {
 	 * <p>
 	 * For now, treat a HTTP POST request just like a GET request.
 	 * </p>
-	 * 
+	 *
 	 * @param request
 	 *            The servet request.
 	 * @param response
@@ -943,7 +943,7 @@ public class FedoraAccessServlet extends HttpServlet {
 	 * <p>
 	 * Initialize servlet.
 	 * </p>
-	 * 
+	 *
 	 * @throws ServletException
 	 *             If the servet cannot be initialized.
 	 */
