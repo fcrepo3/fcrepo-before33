@@ -1,6 +1,17 @@
 
 package mock.sql;
 
+/* JDBC_4_ANT_TOKEN_BEGIN -
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.NClob;
+import java.sql.SQLClientInfoException;
+import java.sql.SQLXML;
+import java.sql.Struct;
+import java.util.Properties;
+- JDBC_4_ANT_TOKEN_END */
+
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -226,4 +237,84 @@ public class MockConnection
         throw new RuntimeException("MockConnection.setTypeMap not implemented");
     }
 
+    /* JDBC_4_ANT_TOKEN_BEGIN -
+    @Override
+    public Array createArrayOf(String arg0, Object[] arg1) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public Blob createBlob() throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public Clob createClob() throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public NClob createNClob() throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public SQLXML createSQLXML() throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public Struct createStruct(String arg0, Object[] arg1) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public Properties getClientInfo() throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public String getClientInfo(String arg0) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public boolean isValid(int arg0) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setClientInfo(Properties arg0) throws SQLClientInfoException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public void setClientInfo(String arg0, String arg1)
+            throws SQLClientInfoException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+
+    @Override
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        throw new UnsupportedOperationException(
+        "Java 1.6 JDBC methods are not supported");
+    }
+    - JDBC_4_ANT_TOKEN_END */
 }

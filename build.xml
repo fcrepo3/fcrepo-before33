@@ -296,12 +296,16 @@
 		<echo message="Commenting out jdbc4 additional methods."/>
 		<replace dir="${java.src.dir}" token="/* JDBC_4_ANT_TOKEN_BEGIN */" value="/* JDBC_4_ANT_TOKEN_BEGIN -"/>
 		<replace dir="${java.src.dir}" token="/* JDBC_4_ANT_TOKEN_END */" value="- JDBC_4_ANT_TOKEN_END */"/>
+		<replace dir="${junit.src.dir}" token="/* JDBC_4_ANT_TOKEN_BEGIN */" value="/* JDBC_4_ANT_TOKEN_BEGIN -"/>
+		<replace dir="${junit.src.dir}" token="/* JDBC_4_ANT_TOKEN_END */" value="- JDBC_4_ANT_TOKEN_END */"/>
 	</target>
 	
 	<target name="prepare-jdbc4" unless="jdbc3">
 		<echo message="Uncommenting jdbc4 additional methods."/>
 		<replace dir="${java.src.dir}" token="/* JDBC_4_ANT_TOKEN_BEGIN -" value="/* JDBC_4_ANT_TOKEN_BEGIN */"/>
 		<replace dir="${java.src.dir}" token="- JDBC_4_ANT_TOKEN_END */" value="/* JDBC_4_ANT_TOKEN_END */"/>
+		<replace dir="${junit.src.dir}" token="/* JDBC_4_ANT_TOKEN_BEGIN -" value="/* JDBC_4_ANT_TOKEN_BEGIN */"/>
+		<replace dir="${junit.src.dir}" token="- JDBC_4_ANT_TOKEN_END */" value="/* JDBC_4_ANT_TOKEN_END */"/>
 	</target>
     
     <target name="compile-server" depends="init, prepare-jdbc3, prepare-jdbc4, wsdl2java">
