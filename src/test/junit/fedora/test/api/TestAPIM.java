@@ -1196,111 +1196,132 @@ public class TestAPIM extends FedoraServerTestCase {
         //System.out.println("***** Testcase: TestAPIM.testGetDisseminators getDisseminators(\"demo:26\", null, null) number of Disseminators: "+dissArray.length);
         assertEquals(dissArray.length, 2);
 
-        // assert DISS1 matches
-        assertEquals(dissArray[0].getBDefPID(),"demo:19");
-        assertEquals(dissArray[0].getBMechPID(),"demo:20");
-        assertEquals(dissArray[0].getID(),"DISS1");
-        assertEquals(dissArray[0].getLabel(),"PDF Disseminator");
-        assertEquals(dissArray[0].getState(),"A");
-        assertEquals(dissArray[0].getVersionID(),"DISS1.0");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindMapID(),"DISS1.0b");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindMapLabel(),"");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindMechanismPID(),"demo:20");
-        assertEquals(dissArray[0].getDsBindMap().getState(),"A");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindKeyName(),"XML_SOURCE");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindLabel(),"FOP Source file to be transformed");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getDatastreamID(),"FOPDISSEM");
-        assertEquals(unspecifiedSeqNo, dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo());
-        
-        // assert DISS2 matches
-        assertEquals(dissArray[1].getBDefPID(),"demo:22");
-        assertEquals(dissArray[1].getBMechPID(),"demo:25");
-        assertEquals(dissArray[1].getID(),"DISS2");
-        assertEquals(dissArray[1].getLabel(),"FO Disseminator");
-        assertEquals(dissArray[1].getState(),"A");
-        assertEquals(dissArray[1].getVersionID(),"DISS2.0");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindMapID(),"DISS2.0b");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindMapLabel(),"");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindMechanismPID(),"demo:25");
-        assertEquals(dissArray[1].getDsBindMap().getState(),"A");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindKeyName(),"TEI_SOURCE");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindLabel(),"TEI Source file to be transformed to FO");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getDatastreamID(),"TEISOURCE");
-        assertEquals(unspecifiedSeqNo, dissArray[1].getDsBindMap().getDsBindings()[0].getSeqNo());
+        for(int i=0; i<dissArray.length; i++) {
+            Disseminator disseminator = dissArray[i];
+            if(disseminator.getID().equals("DISS1")) {
+                // assert DISS1 matches
+                assertEquals(disseminator.getBDefPID(),"demo:19");
+                assertEquals(disseminator.getBMechPID(),"demo:20");
+                assertEquals(disseminator.getID(),"DISS1");
+                assertEquals(disseminator.getLabel(),"PDF Disseminator");
+                assertEquals(disseminator.getState(),"A");
+                assertEquals(disseminator.getVersionID(),"DISS1.0");
+                assertEquals(disseminator.getDsBindMap().getDsBindMapID(),"DISS1.0b");
+                assertEquals(disseminator.getDsBindMap().getDsBindMapLabel(),"");
+                assertEquals(disseminator.getDsBindMap().getDsBindMechanismPID(),"demo:20");
+                assertEquals(disseminator.getDsBindMap().getState(),"A");
+                assertEquals(disseminator.getDsBindMap().getDsBindings()[0].getBindKeyName(),"XML_SOURCE");
+                assertEquals(disseminator.getDsBindMap().getDsBindings()[0].getBindLabel(),"FOP Source file to be transformed");
+                assertEquals(disseminator.getDsBindMap().getDsBindings()[0].getDatastreamID(),"FOPDISSEM");
+                assertEquals(unspecifiedSeqNo, disseminator.getDsBindMap().getDsBindings()[0].getSeqNo());
+            } else if(disseminator.getID().equals("DISS2")) {       
+                // assert DISS2 matches
+                assertEquals(disseminator.getBDefPID(),"demo:22");
+                assertEquals(disseminator.getBMechPID(),"demo:25");
+                assertEquals(disseminator.getID(),"DISS2");
+                assertEquals(disseminator.getLabel(),"FO Disseminator");
+                assertEquals(disseminator.getState(),"A");
+                assertEquals(disseminator.getVersionID(),"DISS2.0");
+                assertEquals(disseminator.getDsBindMap().getDsBindMapID(),"DISS2.0b");
+                assertEquals(disseminator.getDsBindMap().getDsBindMapLabel(),"");
+                assertEquals(disseminator.getDsBindMap().getDsBindMechanismPID(),"demo:25");
+                assertEquals(disseminator.getDsBindMap().getState(),"A");
+                assertEquals(disseminator.getDsBindMap().getDsBindings()[0].getBindKeyName(),"TEI_SOURCE");
+                assertEquals(disseminator.getDsBindMap().getDsBindings()[0].getBindLabel(),"TEI Source file to be transformed to FO");
+                assertEquals(disseminator.getDsBindMap().getDsBindings()[0].getDatastreamID(),"TEISOURCE");
+                assertEquals(unspecifiedSeqNo, disseminator.getDsBindMap().getDsBindings()[0].getSeqNo());
+            } else {
+                fail("Disseminator id should be either DISS1 or DISS2, but it is: " + disseminator.getID());
+            }
+        }
         
         // test getting all disseminators for object demo:26 specifying null for state
         dissArray = apim.getDisseminators("demo:26", "9999-01-01T00:00:00.000Z", null);
         //System.out.println("***** Testcase: TestAPIM.testGetDissemintors getDisseminators(\"demo:26\", \"9999-01-01T00:00:00.000Z\", null) number of Disseminators: "+dissArray.length);
         assertEquals(dissArray.length, 2);
 
-        // assert DISS1 matches
-        assertEquals(dissArray[0].getBDefPID(),"demo:19");
-        assertEquals(dissArray[0].getBMechPID(),"demo:20");
-        assertEquals(dissArray[0].getID(),"DISS1");
-        assertEquals(dissArray[0].getLabel(),"PDF Disseminator");
-        assertEquals(dissArray[0].getState(),"A");
-        assertEquals(dissArray[0].getVersionID(),"DISS1.0");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindMapID(),"DISS1.0b");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindMapLabel(),"");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindMechanismPID(),"demo:20");
-        assertEquals(dissArray[0].getDsBindMap().getState(),"A");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindKeyName(),"XML_SOURCE");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindLabel(),"FOP Source file to be transformed");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getDatastreamID(),"FOPDISSEM");
-        assertEquals(unspecifiedSeqNo, dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo());
-        
-        // assert DISS2 matches
-        assertEquals(dissArray[1].getBDefPID(),"demo:22");
-        assertEquals(dissArray[1].getBMechPID(),"demo:25");
-        assertEquals(dissArray[1].getID(),"DISS2");
-        assertEquals(dissArray[1].getLabel(),"FO Disseminator");
-        assertEquals(dissArray[1].getState(),"A");
-        assertEquals(dissArray[1].getVersionID(),"DISS2.0");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindMapID(),"DISS2.0b");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindMapLabel(),"");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindMechanismPID(),"demo:25");
-        assertEquals(dissArray[1].getDsBindMap().getState(),"A");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindKeyName(),"TEI_SOURCE");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindLabel(),"TEI Source file to be transformed to FO");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getDatastreamID(),"TEISOURCE");
-        assertEquals(unspecifiedSeqNo, dissArray[1].getDsBindMap().getDsBindings()[0].getSeqNo());                    
+        for(int i=0; i<dissArray.length; i++) {
+            Disseminator disseminator = dissArray[i];
+            if(disseminator.getID().equals("DISS1")) {
+                // assert DISS1 matches
+                assertEquals(disseminator.getBDefPID(),"demo:19");
+                assertEquals(disseminator.getBMechPID(),"demo:20");
+                assertEquals(disseminator.getID(),"DISS1");
+                assertEquals(disseminator.getLabel(),"PDF Disseminator");
+                assertEquals(disseminator.getState(),"A");
+                assertEquals(disseminator.getVersionID(),"DISS1.0");
+                assertEquals(disseminator.getDsBindMap().getDsBindMapID(),"DISS1.0b");
+                assertEquals(disseminator.getDsBindMap().getDsBindMapLabel(),"");
+                assertEquals(disseminator.getDsBindMap().getDsBindMechanismPID(),"demo:20");
+                assertEquals(disseminator.getDsBindMap().getState(),"A");
+                assertEquals(disseminator.getDsBindMap().getDsBindings()[0].getBindKeyName(),"XML_SOURCE");
+                assertEquals(disseminator.getDsBindMap().getDsBindings()[0].getBindLabel(),"FOP Source file to be transformed");
+                assertEquals(disseminator.getDsBindMap().getDsBindings()[0].getDatastreamID(),"FOPDISSEM");
+                assertEquals(unspecifiedSeqNo, disseminator.getDsBindMap().getDsBindings()[0].getSeqNo());
+            } else if(disseminator.getID().equals("DISS2")) {       
+                // assert DISS2 matches
+                assertEquals(disseminator.getBDefPID(),"demo:22");
+                assertEquals(disseminator.getBMechPID(),"demo:25");
+                assertEquals(disseminator.getID(),"DISS2");
+                assertEquals(disseminator.getLabel(),"FO Disseminator");
+                assertEquals(disseminator.getState(),"A");
+                assertEquals(disseminator.getVersionID(),"DISS2.0");
+                assertEquals(disseminator.getDsBindMap().getDsBindMapID(),"DISS2.0b");
+                assertEquals(disseminator.getDsBindMap().getDsBindMapLabel(),"");
+                assertEquals(disseminator.getDsBindMap().getDsBindMechanismPID(),"demo:25");
+                assertEquals(disseminator.getDsBindMap().getState(),"A");
+                assertEquals(disseminator.getDsBindMap().getDsBindings()[0].getBindKeyName(),"TEI_SOURCE");
+                assertEquals(disseminator.getDsBindMap().getDsBindings()[0].getBindLabel(),"TEI Source file to be transformed to FO");
+                assertEquals(disseminator.getDsBindMap().getDsBindings()[0].getDatastreamID(),"TEISOURCE");
+                assertEquals(unspecifiedSeqNo, disseminator.getDsBindMap().getDsBindings()[0].getSeqNo());
+            } else {
+                fail("Disseminator id should be either DISS1 or DISS2, but it is: " + disseminator.getID());
+            }
+        }                    
 
         // test getting all disseminators for object demo:26 specifying both datetime and state
         dissArray = apim.getDisseminators("demo:26", "9999-01-01T00:00:00.000Z", "A");
         //System.out.println("***** Testcase: TestAPIM.testGetDissemintors getDisseminators(\"demo:26\", \"9999-01-01T00:00:00.000Z\", \"A\") number of Disseminators: "+dissArray.length);
         assertEquals(dissArray.length, 2);
 
-        // assert DISS1 matches
-        assertEquals(dissArray[0].getBDefPID(),"demo:19");
-        assertEquals(dissArray[0].getBMechPID(),"demo:20");
-        assertEquals(dissArray[0].getID(),"DISS1");
-        assertEquals(dissArray[0].getLabel(),"PDF Disseminator");
-        assertEquals(dissArray[0].getState(),"A");
-        assertEquals(dissArray[0].getVersionID(),"DISS1.0");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindMapID(),"DISS1.0b");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindMapLabel(),"");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindMechanismPID(),"demo:20");
-        assertEquals(dissArray[0].getDsBindMap().getState(),"A");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindKeyName(),"XML_SOURCE");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getBindLabel(),"FOP Source file to be transformed");
-        assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getDatastreamID(),"FOPDISSEM");
-        assertEquals(unspecifiedSeqNo, dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo());
-        
-        // assert DISS2 matches
-        assertEquals(dissArray[1].getBDefPID(),"demo:22");
-        assertEquals(dissArray[1].getBMechPID(),"demo:25");
-        assertEquals(dissArray[1].getID(),"DISS2");
-        assertEquals(dissArray[1].getLabel(),"FO Disseminator");
-        assertEquals(dissArray[1].getState(),"A");
-        assertEquals(dissArray[1].getVersionID(),"DISS2.0");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindMapID(),"DISS2.0b");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindMapLabel(),"");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindMechanismPID(),"demo:25");
-        assertEquals(dissArray[1].getDsBindMap().getState(),"A");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindKeyName(),"TEI_SOURCE");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindLabel(),"TEI Source file to be transformed to FO");
-        assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getDatastreamID(),"TEISOURCE");
-        assertEquals(unspecifiedSeqNo, dissArray[1].getDsBindMap().getDsBindings()[0].getSeqNo());            
+        for(int i=0; i<dissArray.length; i++) {
+            Disseminator disseminator = dissArray[i];
+            if(disseminator.getID().equals("DISS1")) {
+                // assert DISS1 matches
+                assertEquals(disseminator.getBDefPID(),"demo:19");
+                assertEquals(disseminator.getBMechPID(),"demo:20");
+                assertEquals(disseminator.getID(),"DISS1");
+                assertEquals(disseminator.getLabel(),"PDF Disseminator");
+                assertEquals(disseminator.getState(),"A");
+                assertEquals(disseminator.getVersionID(),"DISS1.0");
+                assertEquals(disseminator.getDsBindMap().getDsBindMapID(),"DISS1.0b");
+                assertEquals(disseminator.getDsBindMap().getDsBindMapLabel(),"");
+                assertEquals(disseminator.getDsBindMap().getDsBindMechanismPID(),"demo:20");
+                assertEquals(disseminator.getDsBindMap().getState(),"A");
+                assertEquals(disseminator.getDsBindMap().getDsBindings()[0].getBindKeyName(),"XML_SOURCE");
+                assertEquals(disseminator.getDsBindMap().getDsBindings()[0].getBindLabel(),"FOP Source file to be transformed");
+                assertEquals(disseminator.getDsBindMap().getDsBindings()[0].getDatastreamID(),"FOPDISSEM");
+                assertEquals(unspecifiedSeqNo, disseminator.getDsBindMap().getDsBindings()[0].getSeqNo());
+            } else if(disseminator.getID().equals("DISS2")) {       
+                // assert DISS2 matches
+                assertEquals(disseminator.getBDefPID(),"demo:22");
+                assertEquals(disseminator.getBMechPID(),"demo:25");
+                assertEquals(disseminator.getID(),"DISS2");
+                assertEquals(disseminator.getLabel(),"FO Disseminator");
+                assertEquals(disseminator.getState(),"A");
+                assertEquals(disseminator.getVersionID(),"DISS2.0");
+                assertEquals(disseminator.getDsBindMap().getDsBindMapID(),"DISS2.0b");
+                assertEquals(disseminator.getDsBindMap().getDsBindMapLabel(),"");
+                assertEquals(disseminator.getDsBindMap().getDsBindMechanismPID(),"demo:25");
+                assertEquals(disseminator.getDsBindMap().getState(),"A");
+                assertEquals(disseminator.getDsBindMap().getDsBindings()[0].getBindKeyName(),"TEI_SOURCE");
+                assertEquals(disseminator.getDsBindMap().getDsBindings()[0].getBindLabel(),"TEI Source file to be transformed to FO");
+                assertEquals(disseminator.getDsBindMap().getDsBindings()[0].getDatastreamID(),"TEISOURCE");
+                assertEquals(unspecifiedSeqNo, disseminator.getDsBindMap().getDsBindings()[0].getSeqNo());
+            } else {
+                fail("Disseminator id should be either DISS1 or DISS2, but it is: " + disseminator.getID());
+            }
+        }           
 
         // (6) test getDisseminatorHistory
         System.out.println("Running TestAPIM.testGetDisseminatorHistory...");
