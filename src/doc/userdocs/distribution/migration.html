@@ -22,69 +22,61 @@
     <h2>Table of Contents</h2>
     <div id="tocbox">
         <ol>
-      		<li><a href="#migrate222">Upgrading from Fedora 2.2.2 to Fedora 2.2.3</a></li>
-      		<li><a href="#migrate221">Upgrading from Fedora 2.2.1 to Fedora 2.2.3</a></li>
-      		<li><a href="#migrate22">Upgrading from Fedora 2.2 to Fedora 2.2.3</a></li>
-      		<li><a href="#migrate211">Upgrading from Fedora 2.1.1 to Fedora 2.2.3</a></li>
-      		<li><a href="#migrate21">Upgrading from Fedora 2.1 to Fedora 2.2.3</a></li>
-      		<li><a href="#migrate20">Upgrading from Fedora 2.0 to Fedora 2.2.3</a></li>
+      		<li><a href="#migrate222">Upgrading from Fedora 2.2.2</a></li>
+      		<li><a href="#migrate221">Upgrading from Fedora 2.2.1</a></li>
+      		<li><a href="#migrate22">Upgrading from Fedora 2.2</a></li>
+      		<li><a href="#migrate211">Upgrading from Fedora 2.1.1</a></li>
+      		<li><a href="#migrate21">Upgrading from Fedora 2.1</a></li>
+      		<li><a href="#migrate20">Upgrading from Fedora 2.0</a></li>
       		<li><a href="#migratepre20">Upgrading from versions prior to 2.0</a></li>
         </ol>
     </div>
 </div>
 
 <div class="sect">
-	<h2><a name="migrate221">1. Upgrading from Fedora 2.2.1 to Fedora 2.2.2</a></h2>
+	<h2><a name="migrate222">1. Upgrading from Fedora 2.2.2</a></h2>
     We have developed a utility to make this process as quick as possible.  
     <ol>
-      <li> <a href="http://downloads.sourceforge.net/fedora-commons/fedora-2.2.2-upgrade.jar">Download fedora-2.2.2-upgrade.jar</a> from Sourceforge.</li>
       <li> Stop the webapp container in which Fedora is running.</li>
-      <li> Run the upgrade utility: <code>java -jar fedora-2.2.2-upgrade.jar</code> and
-           follow the prompts.</li>
+      <li> Download <a href="http://downloads.sourceforge.net/fedora-commons/fedora-2.2.3-upgrade.jar">fedora-2.2.3-upgrade.jar</a>
+           and run it with the command: <code>java -jar fedora-2.2.3-upgrade.jar</code></li>
       <li> Restart the webapp container.</li>
     </ol>
-	<p>
-    NOTE: Although the <i>Fedora Administrator</i> Java application will be upgraded as part
-    of this process, existing tools and services that use <code>fedora-client.jar</code>
-    version 2.2.1 <i>do not need the updated version of this library</i>
-    in order to continue working properly with your upgraded server.
-    <p>
 </div>
 
 <div class="sect">
-	<h2><a name="migrate22">1. Upgrading from Fedora 2.2 to Fedora 2.2.2</a></h2>
-    For this upgrade, you will need to download and run two separate upgrade
-    utilities, as follows:
-    <ol>
-      <li> <a href="http://downloads.sourceforge.net/fedora-commons/fedora-2.2.1-upgrade.jar">Download fedora-2.2.1-upgrade.jar</a> from Sourceforge.</li>
-      <li> <a href="http://downloads.sourceforge.net/fedora-commons/fedora-2.2.2-upgrade.jar">Download fedora-2.2.2-upgrade.jar</a> from Sourceforge.</li>
-      <li> Stop the webapp container in which Fedora is running.</li>
-      <li> Run the first upgrade utility: <code>java -jar fedora-2.2.1-upgrade.jar</code> and
-           follow the prompts.</li>
-      <li> Run the second upgrade utility: <code>java -jar fedora-2.2.2-upgrade.jar</code> and
-           follow the prompts.</li>
-      <li> Restart the webapp container.</li>
-    </ol>
-	<p>
-    NOTE: Although the <i>Fedora Administrator</i> Java application will be upgraded as part
-    of this process, existing tools and services that use <code>fedora-client.jar</code>
-    version 2.2 or 2.2.1 <i>do not need the updated version of this library</i>
-    in order to continue working properly with your upgraded server.
-    <p>
+	<h2><a name="migrate221">2. Upgrading from Fedora 2.2.1</a></h2>
+    Follow the instructions for upgrading from 2.2.2 above, 
+    but prior to step 2:
+    <ul>
+      <li> Download <a href="http://downloads.sourceforge.net/fedora-commons/fedora-2.2.2-upgrade.jar">fedora-2.2.2-upgrade.jar</a>
+           and run it with the command: <code>java -jar fedora-2.2.2-upgrade.jar</code></li>
+    </ul>
 </div>
 
 <div class="sect">
-	<h2><a name="migrate211">2. Upgrading from Fedora 2.1.1 to Fedora 2.2.2</a></h2>
-	<p>Upgrading from Fedora 2.1.1 to Fedora 2.2.2 does not require 
-	migration of objects or rebuilding of the Resource Index.
-	However, there are important changes to the packaging and configuration 
-	between 2.1.1 and 2.2.2. Notably, neither the Fedora Configuration File 
-	(fedora.fcfg) nor Fedora Web Deployment Descriptor (web.xml) are
-	compatible with Fedora 2.2.2.</p>
+	<h2><a name="migrate22">3. Upgrading from Fedora 2.2</a></h2>
+    Follow the instructions for upgrading from 2.2.2 above, 
+    but prior to step 2:
+    <ul>
+      <li> Download <a href="http://downloads.sourceforge.net/fedora-commons/fedora-2.2.1-upgrade.jar">fedora-2.2.1-upgrade.jar</a>
+           and run it with the command: <code>java -jar fedora-2.2.1-upgrade.jar</code></li>
+      <li> Download <a href="http://downloads.sourceforge.net/fedora-commons/fedora-2.2.2-upgrade.jar">fedora-2.2.2-upgrade.jar</a>
+           and run it with the command: <code>java -jar fedora-2.2.2-upgrade.jar</code></li>
+    </ul>
+</div>
+
+<div class="sect">
+	<h2><a name="migrate211">2. Upgrading from Fedora 2.1.1</a></h2>
+	<p>Upgrading from Fedora 2.1.1 does not require 
+	a rebuild.  However, there are important changes to the packaging and 
+	configuration between 2.1.1 and 2.2.3.  Notably, the Fedora Configuration
+	File (fedora.fcfg) and the Fedora Web Deployment Descriptor (web.xml) have
+    changed.</p>
 	
 	<ol type="A">
 		<li>Backup
-			<p>It is highly recommended you backup your existing Fedora 
+			<p>It is highly recommended that you backup your existing Fedora 
 			repository.</p>
 		</li>
         <li>
@@ -95,7 +87,7 @@
             ALTER TABLE do RENAME TO dobj
           </code>
         </li>
-		<li>Install Fedora 2.2.1
+		<li>Install Fedora 2.2.3
 			<p>Review the <a href="installation.html">Installation and 
 			Configuration Guide</a>. Note the following critical steps of the 
 			installation process:</p>
@@ -140,24 +132,16 @@
 
 
 <div class="sect">
-	<h2><a name="migrate21">3. Upgrading From Fedora 2.1 to Fedora 2.2.2</a></h2>
+	<h2><a name="migrate21">3. Upgrading From Fedora 2.1</a></h2>
 	<p>Follow the same steps as above for upgrading from 2.1.1.</p>
 </div>
 
 <div class="sect">
-	<h2><a name="migrate20">4. Upgrading From Fedora 2.0 to Fedora 2.2.2</a></h2>
-	<p>When moving from Fedora 2.0 to Fedora 2.2.1, you will be able to do a simple 
-    software <i><b>upgrade</b></i> without having to migrate digital objects via 
-    a mass export and ingest. After installing Fedora 2.2.2, you can 
-    configure it to point to your existing repository datastores (both the existing 
-    repository directory storage locations and the existing relational database).
-    This involves changing parameters in the Fedora 2.2.2 server configuration file 
-    (fedora.fcfg) that define the storage directory paths and database location.</p>
-    
-    <p>Note that the Resource Index model changed between 2.0 and 2.1, hence a 
-    rebuild of the Resource Index is necessary if upgrading from 2.0 to 2.2.2. 
-    See the instructions for 
-    <a href="../server/cmd-line/index.html#rebuild">rebuilding the Resource Index</a>.</p>
+	<h2><a name="migrate20">4. Upgrading From Fedora 2.0</a></h2>
+    <p>Follow the same steps as above for upgrading from 2.1.1.</p>
+    <p>If you use the Resource Index, you will need to run a rebuild
+       when finished.  For instructions, see <a href="../server/cmd-line/index.html#rebuild">
+       Rebuilding the Resource Index</a>.</p>
 </div>
 
 <div class="sect">
