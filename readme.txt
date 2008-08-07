@@ -1,5 +1,5 @@
 -------------------------------------------------------------------
-            Fedora Release 2.2.3 - August 6th, 2008
+            Fedora Release 2.2.3 - August 7th, 2008
 -------------------------------------------------------------------
 This is a full source code release of Fedora.  Before using this
 software, you must read and agree to the license, found under
