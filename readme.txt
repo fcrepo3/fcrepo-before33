@@ -91,6 +91,29 @@ the following tests fall into that category:
     
     ant junit -Dtest=fedora.test.integration.TestLargeDatastreams  
 
+Running Performance Tests
+=========================
+The performance tests provide information about the time required to
+perform a variety of repository functions. This information can be used 
+to determine the performance impact of various configuration choices.
+To run these tests, make sure the server has been started[*]
+Then enter: 
+
+    ant performance-tests -Dhost=[HOST] -Dport=[PORT] 
+                          -Dusername=[USERNAME] -Dpassword=[PASSWORD] 
+                          -Diterations=[NUM-ITERATIONS] -Dthreads=[NUM-THREADS] 
+                          -Dfile=[OUTPUT-FILE] -Dname=[TEST-NAME]   
+    where
+
+    [HOST] = Host on which the Fedora server is running
+    [PORT] = Port on which the Fedora server APIs can be accessed
+    [USERNAME] = A fedora user with administrative privileges
+    [PASSWORD] = The fedora user's password
+    [NUM-ITERATIONS] = The number of times to perform each operation
+    [NUM-THREADS] = The number of threads to use in the thread pool
+    [OUTPUT-FILE] = The full path to the file where test results will be written
+    [TEST-NAME] = A name for this test run
+
 [*] Normally, no additional setup is required when testing a
     Fedora server instance at localhost:8080.  However, if
     your test host is on a public IP, you *may* need to manually
