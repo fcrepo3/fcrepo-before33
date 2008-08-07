@@ -42,6 +42,14 @@
            and run it with the command: <code>java -jar fedora-2.2.3-upgrade.jar</code></li>
       <li> Restart the webapp container.</li>
     </ol>
+    <p>
+      <strong>NOTE:</strong> One of the changes with Fedora 2.2.3 was to update the bundled
+      Tomcat instance to version 5.5.26, due to <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=29521">a 
+      shutdown bug with Tomcat</a>.  The simple process above will not
+      automatically make this change to your existing installation.  It is
+      not required, but if you would like to upgrade to Tomcat 5.5.26, we 
+      recommend performing a full install of Fedora 2.2.3 instead.
+    </p>
 </div>
 
 <div class="sect">
