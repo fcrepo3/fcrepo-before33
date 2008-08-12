@@ -66,6 +66,8 @@ public class TestRESTAPI
     private static String DEMO_REST;
     private static byte[] DEMO_REST_FOXML;
 
+    private static String DEMO_MIN;
+
     private final PID pid = PID.getInstance("demo:REST");
 
     private String url;
@@ -130,6 +132,30 @@ public class TestRESTAPI
             DEMO_REST_FOXML = DEMO_REST.getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee) {
         }
+
+        // Test minimal FOXML object:  No PID, one managed datastream
+        sb = new StringBuilder();
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        sb.append("<foxml:digitalObject VERSION=\"1.1\" ");
+        sb.append("  xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" ");
+        sb.append("  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ");
+        sb.append("  xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# ");
+        sb.append("  http://www.fedora.info/definitions/1/0/foxml1-1.xsd\">");
+        sb.append("  <foxml:objectProperties>");
+        sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
+        sb.append("  </foxml:objectProperties>");
+        sb.append("  <foxml:datastream ID=\"DS1\" CONTROL_GROUP=\"M\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion ID=\"DS1.0\" MIMETYPE=\"text/xml\" LABEL=\"Datastream 1\">");
+        sb.append("      <foxml:xmlContent>");
+        sb.append("        <foo>");
+        sb.append("          <bar>baz</bar>");
+        sb.append("        </foo>");
+        sb.append("      </foxml:xmlContent>");
+        sb.append("    </foxml:datastreamVersion>");
+        sb.append("  </foxml:datastream>");
+        sb.append("</foxml:digitalObject>");
+
+        DEMO_MIN = sb.toString();
     }
 
     public void setUp() throws Exception {
@@ -275,21 +301,48 @@ public class TestRESTAPI
 
     // API-M
     public void testIngest() throws Exception {
+        // Create new empty object
         url = String.format("/objects/new");
         HttpResponse response = post("", true);
         assertEquals(SC_CREATED, response.getStatusCode());
 
+        // Delete empty object
         String responseHeaders = response.responseHeaders[1].toString();
         String pid = responseHeaders.substring(responseHeaders.indexOf("/fedora/objects/")+16);
         url = String.format("/objects/%s", pid);
         assertEquals(SC_NO_CONTENT, delete(true).getStatusCode());
 
+        // Create new empty object with a PID namespace specified
+        url = String.format("/objects/new?namespace=test");
+        response = post("", true);
+        assertEquals(SC_CREATED, response.getStatusCode());
+        responseHeaders = response.responseHeaders[1].toString();
+        pid = responseHeaders.substring(responseHeaders.indexOf("/fedora/objects/")+16);
+        assertTrue(pid.startsWith("test"));
+
+        // Delete empty "test" object
+        url = String.format("/objects/%s", pid);
+        assertEquals(SC_NO_CONTENT, delete(true).getStatusCode());
+
+        // Delete the demo:REST object (ingested as part of setup)
         url = String.format("/objects/%s", "demo:REST");
         assertEquals(SC_NO_CONTENT, delete(true).getStatusCode());
 
+        // Ingest the demo:REST object
         url = String.format("/objects/demo:REST");
         response = post(DEMO_REST, true);
         assertEquals(SC_CREATED, response.getStatusCode());
+
+        // Ingest minimal object with no PID
+        url = String.format("/objects/new");
+        response = post(DEMO_MIN, true);
+        assertEquals(SC_CREATED, response.getStatusCode());
+
+        // Delete minimal object
+        responseHeaders = response.responseHeaders[1].toString();
+        pid = responseHeaders.substring(responseHeaders.indexOf("/fedora/objects/")+16);
+        url = String.format("/objects/%s", pid);
+        assertEquals(SC_NO_CONTENT, delete(true).getStatusCode());
     }
 
     public void testModifyObject() throws Exception {
