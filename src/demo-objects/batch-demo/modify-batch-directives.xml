@@ -218,7 +218,7 @@
 	<!-- ****************************************************************** -->
 	<fbm:addDatastream pid="demo:32" dsID="RECORD-XML" dsLabel="test inline datastream using default namespace" dsMIME="text/xml" dsControlGroupType="X" dsState="A" logMessage="BatchModify - addDatastream">
 		<fbm:xmlData>
-			<election_record xmlns="http://dca.tufts.edu/aas"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" label="Missouri 1824 Election Returns for Congress" type="General" iteration="First Ballot" date="1824" election_id="MS115.002.MO.1824.00002" xsi:schemaLocation="http://dca.tufts.edu/aas http://dca.tufts.edu/schema/aas/electionRecord.xsd">
+			<election_record xmlns="http://dca.tufts.edu/aas"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" label="Missouri 1824 Election Returns for Congress" type="General" iteration="First Ballot" date="1824" election_id="MS115.002.MO.1824.00002">
 				<office name="U.S. House of Representatives" office_id="ON111" scope="Federal"/>
 			</election_record>
 		</fbm:xmlData>
@@ -324,7 +324,7 @@
 	<!-- ****************************************************************** -->
 	<fbm:modifyDatastream pid="demo:32" dsID="RECORD-XML" dsControlGroupType="X" dsLabel="New label for RECORD-XML datastream" logMessage="BatchModify - modifyDatastream">
 		<fbm:xmlData>
-			<election_record xmlns="http://dca.tufts.edu/aas"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" label="Missouri 1824 Election Returns for Congress" type="General" iteration="First Ballot" date="1824" election_id="MS115.002.MO.1824.00002" xsi:schemaLocation="http://dca.tufts.edu/aas http://dca.tufts.edu/schema/aas/electionRecord.xsd">
+			<election_record xmlns="http://dca.tufts.edu/aas"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" label="Missouri 1824 Election Returns for Congress" type="General" iteration="First Ballot" date="1824" election_id="MS115.002.MO.1824.00002">
 				<office name="U.S. House of Representatives" office_id="ON111" scope="Federal">
 					<role title="U.S. Congressman" scope="State">
 						<ballot>
