@@ -735,6 +735,7 @@
         
         <copy todir="${client.build.dir}/classes">
             <fileset dir="${src.dir}/properties/client"/>
+            <fileset dir="${src.dir}/properties/server"/>
             <filterset>
                 <filter token="version" value="${fedora.version}"/>
                 <filter token="releaseDate" value="${fedora.releaseDate}"/>
@@ -1065,7 +1066,12 @@
             destdir="${client.build.dir}/messaging/classes" 
             includes="fedora/client/messaging/**,
         	          fedora/server/messaging/APIMMessage.java,
-        	          fedora/server/messaging/AtomAPIMMessage.java"/>        
+        	          fedora/server/messaging/AtomAPIMMessage.java"/>
+
+        <copy todir="${client.build.dir}/messaging/classes">
+            <fileset dir="${src.dir}/properties/server"/>
+        </copy>
+                	                  
         <jar destfile="${client.build.dir}/messaging/fedora-${fedora.version}-messaging-client.jar" 
              basedir="${client.build.dir}/messaging/classes">
             <manifest>
@@ -1074,6 +1080,7 @@
                 <attribute name="Built-By" value="${user.name}"/>
             </manifest>
         </jar>  	
+
         <zip destfile="${dist.dir}/fedora-messaging-client.zip">
             <fileset file="${client.build.dir}/messaging/fedora-${fedora.version}-messaging-client.jar" />
             <fileset file="${lib.abdera-il8n}"/>
@@ -1091,7 +1098,7 @@
         </zip>
     </target>
 	
-	<target name="performance-tests" depends="client">
+    <target name="performance-tests" depends="client">
         <java classname="fedora.client.test.PerformanceTests">
             <classpath>
                 <pathelement path="${build.dir}/client/classes" />
