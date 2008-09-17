@@ -699,6 +699,10 @@
             <fileset dir="${src.dir}/bat/client"/>
             <fileset dir="${src.dir}/sh/client"/>
         </copy>
+        
+        <replace dir="${fedora.home.build.dir}/client/bin" 
+                 token="fedora-client.jar" 
+                 value="fedora-${fedora.version}-client.jar"/>                               
 
         <chmod perm="ugo+x" type="file">
             <fileset dir="${fedora.home.build.dir}/client/bin">
@@ -710,6 +714,10 @@
         <copy todir="${fedora.home.build.dir}/client/demo/soapclient">
             <fileset dir="${src.dir}/demo-soapclient"/>
         </copy>
+
+        <replace dir="${fedora.home.build.dir}/client/demo/soapclient" 
+                 token="fedora-client.jar" 
+                 value="fedora-${fedora.version}-client.jar"/> 
         
         <!-- Prepare batch demo-->
         <!-- Why are these being copied to lib? -->
@@ -747,7 +755,7 @@
             <map from="${lib.dir}${file.separator}" to="lib/"/>
         </pathconvert>
         
-        <jar destfile="${fedora.home.build.dir}/client/fedora-client.jar" 
+        <jar destfile="${fedora.home.build.dir}/client/fedora-${fedora.version}-client.jar" 
              basedir="${client.build.dir}/classes">
             <manifest>
                 <attribute name="Version" value="${fedora.version}"/>
