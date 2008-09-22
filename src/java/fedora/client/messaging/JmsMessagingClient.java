@@ -38,6 +38,7 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
     private boolean m_durable;
 
     private JMSManager m_jmsManager = null;
+    private boolean m_connected = false;
 
     private Logger LOG = Logger.getLogger(JmsMessagingClient.class.getName());
 
@@ -205,11 +206,45 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
 
     /**
      * Starts the MessagingClient. This method must be called
-     * in order to receive messages.
+     * in order to receive messages. Waits for completed connection.
      */
     public void start() throws MessagingException {
+        start(true);
+    }
+
+    /**
+     * Starts the MessagingClient. This method must be called
+     * in order to receive messages.
+     *
+     * @param wait Set to true to wait until the startup process
+     *             is complete before returning. Set to false to
+     *             allow for asynchronous startup.
+     */
+    public void start(boolean wait) throws MessagingException {
         Thread connector = new JMSBrokerConnector();
         connector.start();
+
+        if(wait) {
+            int maxWait = RETRY_INTERVAL * MAX_RETRIES;
+            int waitTime = 0;
+            while(!isConnected()) {
+                if(waitTime < maxWait) {
+                    try {
+                        Thread.sleep(100);
+                        waitTime += 100;
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                    }
+                } else {
+                    throw new MessagingException("Timeout reached waiting " +
+                    		               "for messaging client to start.");
+                }
+            }
+        }
+    }
+
+    public boolean isConnected() {
+        return m_connected;
     }
 
     /**
@@ -275,6 +310,8 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
                 m_jmsManager.unsubscribeAllDurable();
             }
             m_jmsManager.close();
+            m_jmsManager = null;
+            m_connected = false;
         } catch (MessagingException me) {
             LOG.error("Messaging Exception encountered attempting to stop "
                     + "Messaging Client: " + m_clientId
@@ -302,6 +339,7 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
             try {
                 connect();
                 createDestinations();
+                m_connected = true;
             } catch (MessagingException me) {
                 throw new RuntimeException(me);
             }
