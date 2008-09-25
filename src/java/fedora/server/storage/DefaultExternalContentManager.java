@@ -64,7 +64,7 @@ public class DefaultExternalContentManager
      *         If initialization values are invalid or initialization fails for
      *         some other reason.
      */
-    public DefaultExternalContentManager(Map moduleParameters,
+    public DefaultExternalContentManager(Map<String, String> moduleParameters,
                                          Server server,
                                          String role)
             throws ModuleInitializationException {
@@ -175,7 +175,7 @@ public class DefaultExternalContentManager
                     throw new ModuleInitializationException("Can't intitialize BackendSecurity module (in default access) from Server.getModule",
                                                             getRole());
                 }
-                Hashtable beHash =
+                Hashtable<String, String> beHash =
                         m_beSS
                                 .getSecuritySpec(BackendPolicies.FEDORA_INTERNAL_CALL);
                 backendUsername = (String) beHash.get("callUsername");

@@ -1,10 +1,17 @@
 
 package fedora.server.storage.translation;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.transform.TransformerException;
 
-import org.custommonkey.xmlunit.SimpleXpathEngine;
+import org.custommonkey.xmlunit.NamespaceContext;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.custommonkey.xmlunit.exceptions.XpathException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,12 +27,6 @@ import static fedora.common.Constants.OLD_XLINK;
 public class TestMETSFedoraExt1_0DOSerializer
         extends TestMETSFedoraExtDOSerializer {
 
-    private static final String STRUCTMAP_PATH =
-            ROOT_PATH + "/" + METS.STRUCT_MAP.qName;
-
-    private static final String BEHAVIORSEC_PATH =
-            ROOT_PATH + "/" + METS.BEHAVIOR_SEC.qName;
-
     public TestMETSFedoraExt1_0DOSerializer() {
         // superclass sets protected field m_serializer as given below
         super(new METSFedoraExt1_0DOSerializer());
@@ -39,7 +40,17 @@ public class TestMETSFedoraExt1_0DOSerializer
     @Override
     public void setUp() {
         super.setUp();
-        SimpleXpathEngine.registerNamespace(OLD_XLINK.prefix, OLD_XLINK.uri);
+        Map<String, String> nsMap = new HashMap<String, String>();
+        nsMap.put(METS.prefix, METS.uri);
+        nsMap.put(OLD_XLINK.prefix, OLD_XLINK.uri);
+        NamespaceContext ctx = new SimpleNamespaceContext(nsMap);
+        XMLUnit.setXpathNamespaceContext(ctx);
+    }
+    
+    @After
+    @Override
+    public void tearDown() {
+        XMLUnit.setXpathNamespaceContext(SimpleNamespaceContext.EMPTY_CONTEXT);
     }
 
     //---
@@ -47,7 +58,7 @@ public class TestMETSFedoraExt1_0DOSerializer
     //---
 
     @Test
-    public void testOldXLinkNamespace() throws TransformerException {
+    public void testOldXLinkNamespace() throws TransformerException, XpathException {
         doTestXLinkNamespace();
     }
 

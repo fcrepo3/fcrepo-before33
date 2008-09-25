@@ -7,14 +7,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import org.custommonkey.xmlunit.XMLUnit;
 
 import org.junit.Test;
 
 import org.w3c.dom.Document;
 
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import fedora.server.errors.ObjectIntegrityException;
@@ -22,14 +21,14 @@ import fedora.server.errors.StreamIOException;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 
+import static fedora.common.Models.FEDORA_OBJECT_3_0;
+import static fedora.common.Models.SERVICE_DEFINITION_3_0;
+import static fedora.common.Models.SERVICE_DEPLOYMENT_3_0;
+
 import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE;
 import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_EXPORT_MIGRATE;
 import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC;
 import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL;
-
-import static fedora.common.Models.FEDORA_OBJECT_3_0;
-import static fedora.common.Models.SERVICE_DEFINITION_3_0;
-import static fedora.common.Models.SERVICE_DEPLOYMENT_3_0;
 
 /**
  * Common unit tests and utility methods for XML-based serializers.
@@ -152,18 +151,10 @@ public abstract class TestXMLDOSerializer
         } catch (UnsupportedEncodingException e) {
             fail("Serializer doesn't support UTF-8!?");
         }
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        DocumentBuilder builder = null;
-        try {
-            builder = factory.newDocumentBuilder();
-        } catch (ParserConfigurationException wontHappen) {
-            throw new Error(wontHappen);
-        }
-
+        
         InputStream in = new ByteArrayInputStream(out.toByteArray());
         try {
-            return builder.parse(in);
+            return XMLUnit.buildControlDocument(new InputSource(in));
         } catch (SAXException notWellFormed) {
             throw notWellFormed;
         } catch (IOException wontHappen) {

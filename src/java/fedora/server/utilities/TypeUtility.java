@@ -190,10 +190,10 @@ public abstract class TypeUtility {
         return genFields;
     }
 
-    public static String[] toStringArray(java.util.List l) {
+    public static String[] toStringArray(java.util.List<DCField> l) {
         String[] ret = new String[l.size()];
         for (int i = 0; i < l.size(); i++) {
-            ret[i] = (String) l.get(i);
+            ret[i] = l.get(i).getValue();
         }
         return ret;
     }

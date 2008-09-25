@@ -24,9 +24,9 @@ class SimplePathRegistry
     private static final Logger LOG =
             Logger.getLogger(PathRegistry.class.getName());
 
-    private Hashtable hashtable = null;
+    private Hashtable<String, String> hashtable = null;
 
-    public SimplePathRegistry(Map configuration)
+    public SimplePathRegistry(Map<String, ?> configuration)
             throws LowlevelStorageException {
         super(configuration);
         rebuild();
@@ -39,7 +39,7 @@ class SimplePathRegistry
             result = (String) hashtable.get(pid);
         } catch (Exception e) {
             throw new LowlevelStorageException(true, "SimplePathRegistry.get("
-                    + pid + ")", e); //<<========
+                    + pid + ")", e);
         }
         if (null == result || 0 == result.length()) {
             throw new ObjectNotInLowlevelStorageException("SimplePathRegistry.get("
@@ -80,8 +80,8 @@ class SimplePathRegistry
     @Override
     public void rebuild() throws LowlevelStorageException {
         int report = FULL_REPORT;
-        Hashtable temp = hashtable;
-        hashtable = new Hashtable();
+        Hashtable<String, String> temp = hashtable;
+        hashtable = new Hashtable<String, String>();
         try {
             LOG.info("begin rebuilding registry from files");
             traverseFiles(storeBases, REBUILD, false, report); // allows bad files
@@ -98,7 +98,7 @@ class SimplePathRegistry
     }
 
     @Override
-    protected Enumeration keys() throws LowlevelStorageException {
+    protected Enumeration<String> keys() throws LowlevelStorageException {
         return hashtable.keys();
     }
 }

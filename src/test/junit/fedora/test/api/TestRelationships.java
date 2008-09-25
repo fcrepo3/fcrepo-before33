@@ -11,7 +11,9 @@ import java.util.Map;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.custommonkey.xmlunit.SimpleXpathEngine;
+import org.custommonkey.xmlunit.NamespaceContext;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
 
 import org.jrdf.graph.Node;
 
@@ -97,14 +99,13 @@ public class TestRelationships
     @Override
     public void setUp() throws Exception {
         apim = getFedoraClient().getAPIM();
-        SimpleXpathEngine
-                .registerNamespace("oai_dc",
-                                   "http://www.openarchives.org/OAI/2.0/oai_dc/");
-        SimpleXpathEngine.registerNamespace("dc",
-                                            "http://purl.org/dc/elements/1.1/");
-        SimpleXpathEngine
-                .registerNamespace("foxml",
-                                   "info:fedora/fedora-system:def/foxml#");
+        Map<String, String> nsMap = new HashMap<String, String>();
+        nsMap.put("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
+        nsMap.put("dc", "http://purl.org/dc/elements/1.1/");
+        nsMap.put("foxml", "info:fedora/fedora-system:def/foxml#");
+        NamespaceContext ctx = new SimpleNamespaceContext(nsMap);
+        XMLUnit.setXpathNamespaceContext(ctx);
+        
         apim.ingest(DEMO_888_FOXML, FOXML1_1.uri, "ingesting new foxml object");
         apim.ingest(DEMO_777_FOXML, FOXML1_1.uri, "ingesting new foxml object");
         pid = "demo:888";
@@ -114,7 +115,7 @@ public class TestRelationships
     public void tearDown() throws Exception {
         apim.purgeObject("demo:777", "", false);
         apim.purgeObject("demo:888", "", false);
-        SimpleXpathEngine.clearNamespaces();
+        XMLUnit.setXpathNamespaceContext(SimpleNamespaceContext.EMPTY_CONTEXT);
     }
 
     public void testAddRelationship() throws Exception {

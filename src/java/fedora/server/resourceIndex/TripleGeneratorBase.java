@@ -52,6 +52,16 @@ public abstract class TripleGeneratorBase {
             set.add(new SimpleTriple(subject, predicate, new SimpleLiteral(lexicalValue)));
         }
     }
+    
+    protected void add(SubjectNode subject,
+                       RDFName predicate,
+                       String lexicalValue,
+                       String lang,
+                       Set<Triple> set) throws Exception {
+        if (lexicalValue != null) {
+            set.add(new SimpleTriple(subject, predicate, new SimpleLiteral(lexicalValue, lang)));
+        }
+    }
 
     protected void add(SubjectNode subject,
                        RDFName predicate,

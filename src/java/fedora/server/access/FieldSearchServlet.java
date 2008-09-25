@@ -38,6 +38,7 @@ import fedora.server.search.Condition;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.search.ObjectFields;
+import fedora.server.utilities.DCField;
 import fedora.server.utilities.StreamUtility;
 
 /**
@@ -666,9 +667,9 @@ public class FieldSearchServlet
         }
     }
 
-    private void appendXML(String name, List values, StringBuffer out) {
+    private void appendXML(String name, List<DCField> values, StringBuffer out) {
         for (int i = 0; i < values.size(); i++) {
-            appendXML(name, (String) values.get(i), out);
+            appendXML(name, (String) values.get(i).getValue(), out);
         }
     }
 
@@ -681,13 +682,13 @@ public class FieldSearchServlet
         }
     }
 
-    private String getList(List l) {
+    private String getList(List<DCField> l) {
         StringBuffer ret = new StringBuffer();
         for (int i = 0; i < l.size(); i++) {
             if (i > 0) {
                 ret.append(", ");
             }
-            ret.append(StreamUtility.enc((String) l.get(i)));
+            ret.append(StreamUtility.enc((String) l.get(i).getValue()));
         }
         return ret.toString();
     }

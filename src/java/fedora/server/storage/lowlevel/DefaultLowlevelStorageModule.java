@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.ConnectionPoolNotFoundException;
@@ -22,18 +20,19 @@ import fedora.server.storage.ConnectionPoolManager;
 
 /**
  * @author Edwin Shin
+ * @version $Id$
  */
 public class DefaultLowlevelStorageModule
         extends Module
         implements ILowlevelStorage {
 
     /** Logger for this class. */
-    private static final Logger LOG =
-            Logger.getLogger(DefaultLowlevelStorageModule.class.getName());
+    //private static final Logger LOG =
+    //        Logger.getLogger(DefaultLowlevelStorageModule.class.getName());
 
     private ILowlevelStorage m_llstore;
 
-    public DefaultLowlevelStorageModule(Map moduleParameters,
+    public DefaultLowlevelStorageModule(Map<String, String> moduleParameters,
                                         Server server,
                                         String role)
             throws ModuleInitializationException {
@@ -49,7 +48,7 @@ public class DefaultLowlevelStorageModule
         }
     }
 
-    protected Map getModuleParameters() throws ModuleInitializationException {
+    protected Map<String, Object> getModuleParameters() throws ModuleInitializationException {
         // Parameter validation
         String objectStoreBase =
                 getModuleParameter(DefaultLowlevelStorage.OBJECT_STORE_BASE,

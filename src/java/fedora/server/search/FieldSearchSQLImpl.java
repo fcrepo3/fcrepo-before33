@@ -19,10 +19,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import fedora.common.Constants;
-import fedora.common.Models;
-import fedora.server.ReadOnlyContext;
-import fedora.server.Server;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.ServerException;
@@ -30,12 +26,11 @@ import fedora.server.errors.StorageDeviceException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnknownSessionTokenException;
 import fedora.server.errors.UnrecognizedFieldException;
-
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.RepositoryReader;
-import fedora.server.storage.ServiceDeploymentReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
+import fedora.server.utilities.DCField;
 import fedora.server.utilities.DCFields;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.SQLUtility;
@@ -219,7 +214,7 @@ public class FieldSearchSQLImpl
                         if (i == 0) {
                             wellFormedDates = new ArrayList<Date>();
                         }
-                        Date p = DateUtility.parseDateAsUTC(dc.dates().get(i));
+                        Date p = DateUtility.parseDateAsUTC(dc.dates().get(i).getValue());
                         if (p != null) {
                             wellFormedDates.add(p);
                         }
@@ -391,19 +386,19 @@ public class FieldSearchSQLImpl
      * given a list of values. Turn each value to lowercase and separate them
      * all by space characters. If the list is empty, return null.
      * 
-     * @param dcItem
+     * @param dcFields
      *        a list of dublin core values
      * @return String the string to insert
      */
-    private static String getDbValue(List<String> dcItem) {
-        if (dcItem.size() == 0) {
+    private static String getDbValue(List<DCField> dcFields) {
+        if (dcFields.size() == 0) {
             return null;
         }
-        StringBuffer out = new StringBuffer();
-        for (int i = 0; i < dcItem.size(); i++) {
-            String val = dcItem.get(i);
+        StringBuilder out = new StringBuilder();
+        
+        for (DCField dcField : dcFields) {
             out.append(" ");
-            out.append(val.toLowerCase());
+            out.append(dcField.getValue().toLowerCase());
         }
         out.append(" .");
         return out.toString();

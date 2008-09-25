@@ -13,8 +13,6 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.ObjectAlreadyInLowlevelStorageException;
 import fedora.server.errors.ObjectNotInLowlevelStorageException;
@@ -26,8 +24,8 @@ public class DefaultLowlevelStorage
         implements ILowlevelStorage {
 
     /** Logger for this class. */
-    private static final Logger LOG =
-            Logger.getLogger(DefaultLowlevelStorage.class.getName());
+    //private static final Logger LOG =
+    //        Logger.getLogger(DefaultLowlevelStorage.class.getName());
 
     public static final String REGISTRY_NAME = "registryName";
 
@@ -134,7 +132,7 @@ public class DefaultLowlevelStorage
 
         //private final String storeBase;
 
-        public Store(Map configuration)
+        public Store(Map<String, Object> configuration)
                 throws LowlevelStorageException {
             String registryName = (String) configuration.get(REGISTRY_NAME);
             String filesystem = (String) configuration.get(FILESYSTEM);

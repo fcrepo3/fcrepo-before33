@@ -69,6 +69,7 @@ import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.DigitalObjectUtil;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.RelationshipTuple;
+import fedora.server.utilities.DCField;
 import fedora.server.utilities.DCFields;
 import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.StreamUtility;
@@ -82,6 +83,7 @@ import fedora.server.validation.RelsExtValidator;
  * and the object replication process.
  *
  * @author Chris Wilper
+ * @version $Id$
  */
 public class DefaultDOManager
         extends Module
@@ -115,7 +117,7 @@ public class DefaultDOManager
 
     protected Management m_management;
 
-    protected HashSet<String> m_retainPIDs;
+    protected Set<String> m_retainPIDs;
 
     protected ResourceIndex m_resourceIndex;
 
@@ -269,29 +271,22 @@ public class DefaultDOManager
     }
 
     protected void initRetainPID() {
-        // retainPIDs (optional, default=demo,test)
         m_retainPIDs = new HashSet<String>();
         String retainPIDs = getParameter("retainPIDs");
-        if (retainPIDs == null) {
-            m_retainPIDs.add("demo");
-            m_retainPIDs.add("test");
+        if (retainPIDs == null || retainPIDs.equals("*")) {
+            // when m_retainPIDS is set to null, that means "all"
+            m_retainPIDs = null;
         } else {
-            if (retainPIDs.equals("*")) {
-                // when m_retainPIDS is set to null, that means "all"
-                m_retainPIDs = null;
-            } else {
-                // add to list (accept space and/or comma-separated)
-                String[] ns =
-                        retainPIDs.trim().replaceAll(" +", ",")
-                                .replaceAll(",+", ",").split(",");
-                for (String element : ns) {
-                    if (element.length() > 0) {
-                        m_retainPIDs.add(element);
-                    }
+            // add to list (accept space and/or comma-separated)
+            String[] ns =
+                    retainPIDs.trim().replaceAll(" +", ",")
+                            .replaceAll(",+", ",").split(",");
+            for (String element : ns) {
+                if (element.length() > 0) {
+                    m_retainPIDs.add(element);
                 }
             }
-        }
-        if (m_retainPIDs != null) {
+            
             // fedora-system PIDs must be ingestable as-is
             m_retainPIDs.add("fedora-system");
         }
@@ -1037,7 +1032,7 @@ public class DefaultDOManager
             dc.DSVersionable = true;
             dcf = new DCFields();
             if (obj.getLabel() != null && !obj.getLabel().equals("")) {
-                dcf.titles().add(obj.getLabel());
+                dcf.titles().add(new DCField(obj.getLabel()));
             }
             w.addDatastream(dc, dc.DSVersionable);
         } else {
@@ -1045,14 +1040,13 @@ public class DefaultDOManager
         }
         // ensure one of the dc:identifiers is the pid
         boolean sawPid = false;
-        for (int i = 0; i < dcf.identifiers().size(); i++) {
-            if (((String) dcf.identifiers().get(i))
-                    .equals(obj.getPid())) {
+        for (DCField dcField : dcf.identifiers()) {
+            if (dcField.getValue().equals(obj.getPid())) {
                 sawPid = true;
             }
         }
         if (!sawPid) {
-            dcf.identifiers().add(obj.getPid());
+            dcf.identifiers().add(new DCField(obj.getPid()));
         }
         // set the value of the dc datastream according to what's in the DCFields object
         try {

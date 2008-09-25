@@ -117,7 +117,7 @@ public class Foxml11Document {
         xpath = factory.newXPath();
         xpath.setNamespaceContext(nsCtx);
         
-        xformFactory = TransformerFactory.newInstance();
+        xformFactory = XmlTransformUtility.getTransformerFactory();
     }
 
     public void addObjectProperties() {

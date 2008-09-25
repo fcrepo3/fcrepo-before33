@@ -81,7 +81,7 @@ public class BackendSecuritySpec {
             // otherwise set properties at the method level, but only if
             // parent service-level properties already exist.
         } else {
-            Hashtable serviceProps = rolePropertiesTable.get(serviceRoleID);
+            Hashtable<String, String> serviceProps = rolePropertiesTable.get(serviceRoleID);
             if (serviceProps == null) {
                 throw new GeneralException("Cannot add method-level security properties"
                         + " if there are no properties defined for the backend service that the "
@@ -95,7 +95,7 @@ public class BackendSecuritySpec {
     /**
      * Get the default backend security properties.
      */
-    public Hashtable getDefaultSecuritySpec() {
+    public Hashtable<String, String> getDefaultSecuritySpec() {
         return rolePropertiesTable.get("default");
     }
 
@@ -125,7 +125,7 @@ public class BackendSecuritySpec {
      *         BackendSecurityDeserializer.CALLBACK_SSL -
      *         BackendSecurityDeserializer.IPLIST
      */
-    public Hashtable getSecuritySpec(String serviceRoleID, String methodName) {
+    public Hashtable<String, String> getSecuritySpec(String serviceRoleID, String methodName) {
         if (serviceRoleID == null || serviceRoleID.equals("")) {
             return getDefaultSecuritySpec();
         } else if (methodName == null || methodName.equals("")) {
@@ -133,7 +133,7 @@ public class BackendSecuritySpec {
         } else {
             String roleKey = serviceRoleID + "/" + methodName;
             // First see if there is already a role key at the method level
-            Hashtable properties = rolePropertiesTable.get(roleKey);
+            Hashtable<String, String> properties = rolePropertiesTable.get(roleKey);
 
             // if we did not find security properties for the method level,
             // roll up to the parent service level and get properties.
@@ -172,12 +172,12 @@ public class BackendSecuritySpec {
      *         BackendSecurityDeserializer.CALLBACK_SSL -
      *         BackendSecurityDeserializer.IPLIST
      */
-    public Hashtable getSecuritySpec(String roleKey) {
+    public Hashtable<String, String> getSecuritySpec(String roleKey) {
         return rolePropertiesTable.get(roleKey);
 
     }
 
-    public Set listRoleKeys() {
+    public Set<String> listRoleKeys() {
         return rolePropertiesTable.keySet();
     }
 }

@@ -1,10 +1,17 @@
 
 package fedora.test.api;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.custommonkey.xmlunit.SimpleXpathEngine;
+import org.custommonkey.xmlunit.NamespaceContext;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+
+import org.junit.After;
 
 import org.w3c.dom.Document;
 
@@ -198,9 +205,16 @@ public class TestAuthentication
 
     @Override
     public void setUp() throws Exception {
-        SimpleXpathEngine
-                .registerNamespace("oai_dc",
-                                   "http://www.openarchives.org/OAI/2.0/oai_dc/");
+        Map<String, String> nsMap = new HashMap<String, String>();
+        nsMap.put("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
+        NamespaceContext ctx = new SimpleNamespaceContext(nsMap);
+        XMLUnit.setXpathNamespaceContext(ctx);
+    }
+    
+    @Override
+    @After
+    public void tearDown() {
+        XMLUnit.setXpathNamespaceContext(SimpleNamespaceContext.EMPTY_CONTEXT);
     }
 
     private static FedoraClient getClient(boolean validUser, boolean validPass)

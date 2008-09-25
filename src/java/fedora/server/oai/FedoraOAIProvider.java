@@ -42,7 +42,6 @@ import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.search.ObjectFields;
 import fedora.server.utilities.DCFields;
-import fedora.server.utilities.StreamUtility;
 
 /**
  * Simple FieldSearch-based OAI provider.
@@ -280,91 +279,7 @@ public class FedoraOAIProvider
     }
 
     private String getDCXML(DCFields dc) {
-        StringBuffer out = new StringBuffer();
-        out.append("        <oai_dc:dc\n");
-        out.append("            xmlns:oai_dc=\"" + OAI_DC.uri + "\"\n");
-        out.append("            xmlns:dc=\"" + DC.uri + "\"\n");
-        out.append("            xmlns:xsi=\"" + XSI.uri + "\"\n");
-        out.append("            xsi:schemaLocation=\"" + OAI_DC.uri + "\n");
-        out.append("            " + OAI_DC2_0.xsdLocation + "\">\n");
-        for (int i = 0; i < dc.titles().size(); i++) {
-            out.append("          <dc:title>");
-            out.append(StreamUtility.enc((String) dc.titles().get(i)));
-            out.append("          </dc:title>\n");
-        }
-        for (int i = 0; i < dc.creators().size(); i++) {
-            out.append("          <dc:creator>");
-            out.append(StreamUtility.enc((String) dc.creators().get(i)));
-            out.append("          </dc:creator>\n");
-        }
-        for (int i = 0; i < dc.subjects().size(); i++) {
-            out.append("          <dc:subject>");
-            out.append(StreamUtility.enc((String) dc.subjects().get(i)));
-            out.append("          </dc:subject>\n");
-        }
-        for (int i = 0; i < dc.descriptions().size(); i++) {
-            out.append("          <dc:description>");
-            out.append(StreamUtility.enc((String) dc.descriptions().get(i)));
-            out.append("          </dc:description>\n");
-        }
-        for (int i = 0; i < dc.publishers().size(); i++) {
-            out.append("          <dc:publisher>");
-            out.append(StreamUtility.enc((String) dc.publishers().get(i)));
-            out.append("          </dc:publisher>\n");
-        }
-        for (int i = 0; i < dc.contributors().size(); i++) {
-            out.append("          <dc:contributor>");
-            out.append(StreamUtility.enc((String) dc.contributors().get(i)));
-            out.append("          </dc:contributor>\n");
-        }
-        for (int i = 0; i < dc.dates().size(); i++) {
-            String dateString = StreamUtility.enc((String) dc.dates().get(i));
-            out.append("          <dc:date>");
-            out.append(dateString);
-            out.append("          </dc:date>\n");
-        }
-        for (int i = 0; i < dc.types().size(); i++) {
-            out.append("          <dc:type>");
-            out.append(StreamUtility.enc((String) dc.types().get(i)));
-            out.append("          </dc:type>\n");
-        }
-        for (int i = 0; i < dc.formats().size(); i++) {
-            out.append("          <dc:format>");
-            out.append(StreamUtility.enc((String) dc.formats().get(i)));
-            out.append("          </dc:format>\n");
-        }
-        for (int i = 0; i < dc.identifiers().size(); i++) {
-            out.append("          <dc:identifier>");
-            out.append(StreamUtility.enc((String) dc.identifiers().get(i)));
-            out.append("          </dc:identifier>\n");
-        }
-        for (int i = 0; i < dc.sources().size(); i++) {
-            out.append("          <dc:source>");
-            out.append(StreamUtility.enc((String) dc.sources().get(i)));
-            out.append("          </dc:source>\n");
-        }
-        for (int i = 0; i < dc.languages().size(); i++) {
-            out.append("          <dc:language>");
-            out.append(StreamUtility.enc((String) dc.languages().get(i)));
-            out.append("          </dc:language>\n");
-        }
-        for (int i = 0; i < dc.relations().size(); i++) {
-            out.append("          <dc:relation>");
-            out.append(StreamUtility.enc((String) dc.relations().get(i)));
-            out.append("          </dc:relation>\n");
-        }
-        for (int i = 0; i < dc.coverages().size(); i++) {
-            out.append("          <dc:coverage>");
-            out.append(StreamUtility.enc((String) dc.coverages().get(i)));
-            out.append("          </dc:coverage>\n");
-        }
-        for (int i = 0; i < dc.rights().size(); i++) {
-            out.append("          <dc:rights>");
-            out.append(StreamUtility.enc((String) dc.rights().get(i)));
-            out.append("          </dc:rights>\n");
-        }
-        out.append("        </oai_dc:dc>");
-        return out.toString();
+        return dc.getAsXML();
     }
 
     public List getRecords(String resumptionToken)

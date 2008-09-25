@@ -3,6 +3,8 @@ package fedora.server.storage.translation;
 
 import javax.xml.transform.TransformerException;
 
+import org.custommonkey.xmlunit.exceptions.XpathException;
+
 import org.junit.Test;
 
 import org.w3c.dom.Document;
@@ -29,7 +31,7 @@ public class TestFOXML1_1DOSerializer
     //---
 
     @Test
-    public void testVersionAttribute() throws TransformerException {
+    public void testVersionAttribute() throws TransformerException, XpathException {
         DigitalObject obj = createTestObject(FEDORA_OBJECT_3_0);
         Document xml = doSerializeOrFail(obj);
         assertXpathExists(ROOT_PATH + "[@VERSION = '1.1']", xml);

@@ -28,6 +28,7 @@ import fedora.server.storage.DOReader;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.RelationshipTuple;
+import fedora.server.utilities.DCField;
 import fedora.server.utilities.DCFields;
 
 /**
@@ -149,10 +150,15 @@ public class FedoraObjectTripleGenerator_3_0
                               URIReference objURI,
                               Set<Triple> set) throws Exception {
         DCFields dc = new DCFields(ds.getContentStream());
-        Map<RDFName, List<String>> map = dc.getMap();
+        Map<RDFName, List<DCField>> map = dc.getMap();
         for (RDFName predicate : map.keySet()) {
-            for (String value : map.get(predicate)) {
-                add(objURI, predicate, value, set);
+            for (DCField dcField : map.get(predicate)) {
+                String lang = dcField.getLang();
+                if (lang == null) {
+                    add(objURI, predicate, dcField.getValue(), set);
+                } else {
+                    add(objURI, predicate, dcField.getValue(), lang, set);
+                }
             }
         }
     }

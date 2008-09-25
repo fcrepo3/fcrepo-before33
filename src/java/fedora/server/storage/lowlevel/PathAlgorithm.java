@@ -16,7 +16,7 @@ import fedora.server.errors.MalformedPidException;
  */
 public abstract class PathAlgorithm {
 
-    public PathAlgorithm(Map configuration) {
+    public PathAlgorithm(Map<String, ?> configuration) {
     };
 
     public abstract String get(String pid) throws LowlevelStorageException;

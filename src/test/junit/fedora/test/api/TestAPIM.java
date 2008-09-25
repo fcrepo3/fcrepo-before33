@@ -4,8 +4,11 @@ package fedora.test.api;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -16,11 +19,18 @@ import junit.framework.TestSuite;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.types.NonNegativeInteger;
-import org.custommonkey.xmlunit.SimpleXpathEngine;
+
+import org.custommonkey.xmlunit.NamespaceContext;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+
+import org.junit.After;
 
 import fedora.common.Constants;
+
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.Datastream;
+
 import fedora.test.DemoObjectTestSetup;
 import fedora.test.FedoraServerTestCase;
 
@@ -726,25 +736,20 @@ public class TestAPIM
 
     public void setUp() throws Exception {
         apim = getFedoraClient().getAPIM();
-        SimpleXpathEngine
-                .registerNamespace("oai_dc",
-                                   "http://www.openarchives.org/OAI/2.0/oai_dc/");
-        SimpleXpathEngine
-                .registerNamespace("dc",
-                                   "http://purl.org/dc/elements/1.1/");
-        SimpleXpathEngine
-                .registerNamespace("foxml",
-                                   "info:fedora/fedora-system:def/foxml#");
-        SimpleXpathEngine
-                .registerNamespace("audit",
-                                   "info:fedora/fedora-system:def/audit#");
-        SimpleXpathEngine
-                .registerNamespace("METS",
-                                   "http://www.loc.gov/METS/");
+        Map<String, String> nsMap = new HashMap<String, String>();
+        nsMap.put("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
+        nsMap.put("dc", "http://purl.org/dc/elements/1.1/");
+        nsMap.put("foxml", "info:fedora/fedora-system:def/foxml#");
+        nsMap.put("audit", "info:fedora/fedora-system:def/audit#");
+        nsMap.put("METS", "http://www.loc.gov/METS/");
+        NamespaceContext ctx = new SimpleNamespaceContext(nsMap);
+        XMLUnit.setXpathNamespaceContext(ctx);
     }
 
-    public void tearDown() throws Exception {
-        SimpleXpathEngine.clearNamespaces();
+    @Override
+    @After
+    public void tearDown() {
+        XMLUnit.setXpathNamespaceContext(SimpleNamespaceContext.EMPTY_CONTEXT);
     }
 
     public void testGetObjectXML() throws Exception {

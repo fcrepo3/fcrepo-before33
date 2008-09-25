@@ -795,6 +795,9 @@ public class DefaultAccess
 
     private String convertToCSV(String list) {
         // make sure values in the list are comma delimited
+        if (list == null) {
+            return "*";
+        }
         String original = list.trim();
         Pattern spaces = Pattern.compile(" ++");
         Matcher m = spaces.matcher(original);

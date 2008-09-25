@@ -1,12 +1,19 @@
 
 package fedora.test.api;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.apache.axis.types.NonNegativeInteger;
 
-import org.custommonkey.xmlunit.SimpleXpathEngine;
+import org.custommonkey.xmlunit.NamespaceContext;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+
+import org.junit.After;
 
 import fedora.client.FedoraClient;
 
@@ -202,17 +209,17 @@ public class TestAPIA
     public void setUp() throws Exception {
         FedoraClient client = getFedoraClient();
         apia = client.getAPIA();
-        SimpleXpathEngine
-                .registerNamespace("oai_dc",
-                                   "http://www.openarchives.org/OAI/2.0/oai_dc/");
-        SimpleXpathEngine
-                .registerNamespace("uvalibadmin",
-                                   "http://dl.lib.virginia.edu/bin/admin/admin.dtd/");
+        Map<String, String> nsMap = new HashMap<String, String>();
+        nsMap.put("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
+        nsMap.put("uvalibadmin", "http://dl.lib.virginia.edu/bin/admin/admin.dtd/");
+        NamespaceContext ctx = new SimpleNamespaceContext(nsMap);
+        XMLUnit.setXpathNamespaceContext(ctx);
     }
 
     @Override
+    @After
     public void tearDown() {
-        SimpleXpathEngine.clearNamespaces();
+        XMLUnit.setXpathNamespaceContext(SimpleNamespaceContext.EMPTY_CONTEXT);
     }
 
     public static void main(String[] args) {

@@ -20,6 +20,7 @@ import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnrecognizedFieldException;
+import fedora.server.utilities.DCField;
 import fedora.server.utilities.DCFields;
 import fedora.server.utilities.DateUtility;
 
@@ -207,35 +208,35 @@ public class ObjectFields
             setDCMDate(DateUtility.convertStringToDate(m_currentContent
                     .toString()));
         } else if (m_want[TITLE] && localName.equals("title")) {
-            titles().add(m_currentContent.toString());
+            titles().add(new DCField(m_currentContent.toString()));
         } else if (m_want[CREATOR] && localName.equals("creator")) {
-            creators().add(m_currentContent.toString());
+            creators().add(new DCField(m_currentContent.toString()));
         } else if (m_want[SUBJECT] && localName.equals("subject")) {
-            subjects().add(m_currentContent.toString());
+            subjects().add(new DCField(m_currentContent.toString()));
         } else if (m_want[DESCRIPTION] && localName.equals("description")) {
-            descriptions().add(m_currentContent.toString());
+            descriptions().add(new DCField(m_currentContent.toString()));
         } else if (m_want[PUBLISHER] && localName.equals("publisher")) {
-            publishers().add(m_currentContent.toString());
+            publishers().add(new DCField(m_currentContent.toString()));
         } else if (m_want[CONTRIBUTOR] && localName.equals("contributor")) {
-            contributors().add(m_currentContent.toString());
+            contributors().add(new DCField(m_currentContent.toString()));
         } else if (m_want[DATE] && localName.equals("date")) {
-            dates().add(m_currentContent.toString());
+            dates().add(new DCField(m_currentContent.toString()));
         } else if (m_want[TYPE] && localName.equals("type")) {
-            types().add(m_currentContent.toString());
+            types().add(new DCField(m_currentContent.toString()));
         } else if (m_want[FORMAT] && localName.equals("format")) {
-            formats().add(m_currentContent.toString());
+            formats().add(new DCField(m_currentContent.toString()));
         } else if (m_want[IDENTIFIER] && localName.equals("identifier")) {
-            identifiers().add(m_currentContent.toString());
+            identifiers().add(new DCField(m_currentContent.toString()));
         } else if (m_want[SOURCE] && localName.equals("source")) {
-            sources().add(m_currentContent.toString());
+            sources().add(new DCField(m_currentContent.toString()));
         } else if (m_want[LANGUAGE] && localName.equals("language")) {
-            languages().add(m_currentContent.toString());
+            languages().add(new DCField(m_currentContent.toString()));
         } else if (m_want[RELATION] && localName.equals("relation")) {
-            relations().add(m_currentContent.toString());
+            relations().add(new DCField(m_currentContent.toString()));
         } else if (m_want[COVERAGE] && localName.equals("coverage")) {
-            coverages().add(m_currentContent.toString());
+            coverages().add(new DCField(m_currentContent.toString()));
         } else if (m_want[RIGHTS] && localName.equals("rights")) {
-            rights().add(m_currentContent.toString());
+            rights().add(new DCField(m_currentContent.toString()));
         }
     }
 

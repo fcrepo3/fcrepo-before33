@@ -214,7 +214,7 @@ public class DefaultManagement
                 }
                 w.setState(state);
             }
-            // if (label!=null && !label.equals(""))
+            
             if (label != null) {
                 w.setLabel(label);
             }

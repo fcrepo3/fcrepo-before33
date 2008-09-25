@@ -6,12 +6,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.custommonkey.xmlunit.SimpleXpathEngine;
+import org.custommonkey.xmlunit.NamespaceContext;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
 
 import org.w3c.dom.Document;
@@ -43,16 +46,16 @@ public class TestServerConfiguration
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         builder = factory.newDocumentBuilder();
 
-        // Namespace support is enabled by a patch to XMLUnit
-        // see:
-        // http://sourceforge.net/tracker/index.php?func=detail&aid=953445&group_id=23187&atid=377770
-        SimpleXpathEngine.registerNamespace(NS_FCFG_PREFIX, NS_FCFG);
+        Map<String, String> nsMap = new HashMap<String, String>();
+        nsMap.put(NS_FCFG_PREFIX, NS_FCFG);
+        NamespaceContext ctx = new SimpleNamespaceContext(nsMap);
+        XMLUnit.setXpathNamespaceContext(ctx);
         XMLUnit.setIgnoreWhitespace(false);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        SimpleXpathEngine.clearNamespaces();
+        XMLUnit.setXpathNamespaceContext(SimpleNamespaceContext.EMPTY_CONTEXT);
         XMLUnit.setIgnoreWhitespace(false);
         out.close();
     }
@@ -103,6 +106,6 @@ public class TestServerConfiguration
     }
 
     private Document getDocument(ByteArrayOutputStream out) throws Exception {
-        return builder.parse(new ByteArrayInputStream(out.toByteArray()));
+        return XMLUnit.buildControlDocument(new String(out.toByteArray()));
     }
 }

@@ -5,10 +5,6 @@
 
 package fedora.server.storage.translation;
 
-import static fedora.common.Models.FEDORA_OBJECT_3_0;
-import static fedora.server.storage.translation.DOTranslationUtility.DESERIALIZE_INSTANCE;
-import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,8 +14,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -33,7 +32,11 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.parser.Parser;
-import org.custommonkey.xmlunit.SimpleXpathEngine;
+
+import org.custommonkey.xmlunit.NamespaceContext;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,11 +44,19 @@ import org.junit.Test;
 import fedora.common.Constants;
 import fedora.common.Models;
 import fedora.common.PID;
+
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
+
 import fedora.utilities.FileUtils;
+import fedora.utilities.XmlTransformUtility;
+
+import static fedora.common.Models.FEDORA_OBJECT_3_0;
+
+import static fedora.server.storage.translation.DOTranslationUtility.DESERIALIZE_INSTANCE;
+import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE;
 
 /**
  * @author Edwin Shin
@@ -69,7 +80,10 @@ public class TestAtomDOSerializer
     @Override
     public void setUp() {
         super.setUp();
-        SimpleXpathEngine.registerNamespace("fedora", "http://www.example.org");
+        Map<String, String> nsMap = new HashMap<String, String>();
+        nsMap.put("fedora", "http://www.example.org");
+        NamespaceContext ctx = new SimpleNamespaceContext(nsMap);
+        XMLUnit.setXpathNamespaceContext(ctx);
     }
 
     /**
@@ -78,7 +92,7 @@ public class TestAtomDOSerializer
     @After
     @Override
     public void tearDown() throws Exception {
-        SimpleXpathEngine.clearNamespaces();
+        XMLUnit.setXpathNamespaceContext(SimpleNamespaceContext.EMPTY_CONTEXT);
     }
 
     @Test
@@ -165,7 +179,7 @@ public class TestAtomDOSerializer
         StreamResult result = new StreamResult(temp);
 
         // generate the stylesheet
-        TransformerFactory factory = TransformerFactory.newInstance();
+        TransformerFactory factory = XmlTransformUtility.getTransformerFactory();
         Transformer xform = factory.newTransformer(skeleton);
         xform.transform(schema, result);
         temp.flush();

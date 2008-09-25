@@ -36,7 +36,7 @@ public class DBPathRegistry
 
     private final boolean backslashIsEscape;
 
-    public DBPathRegistry(Map configuration) {
+    public DBPathRegistry(Map<String, ?> configuration) {
         super(configuration);
         connectionPool = (ConnectionPool) configuration.get("connectionPool");
         backslashIsEscape =
@@ -218,9 +218,9 @@ public class DBPathRegistry
     }
 
     @Override
-    protected Enumeration keys() throws LowlevelStorageException,
+    protected Enumeration<String> keys() throws LowlevelStorageException,
             LowlevelStorageInconsistencyException {
-        Hashtable hashtable = new Hashtable();
+        Hashtable<String, String> hashtable = new Hashtable<String, String>();
         {
             ResultSet rs = null;
             Connection connection = null;

@@ -25,7 +25,7 @@ class TimestampPathAlgorithm
 
     private static final String SEP = File.separator;
 
-    public TimestampPathAlgorithm(Map configuration) {
+    public TimestampPathAlgorithm(Map<String, ?> configuration) {
         super(configuration);
         storeBase = (String) configuration.get("storeBase");
     }

@@ -6,10 +6,16 @@
 package fedora.test.api;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 
 import java.rmi.RemoteException;
+
+import java.security.MessageDigest;
 
 import java.util.Date;
 
@@ -29,6 +35,7 @@ import org.junit.Test;
 import fedora.common.PID;
 
 import fedora.server.management.FedoraAPIM;
+import fedora.server.utilities.StringUtility;
 
 import fedora.test.FedoraServerTestCase;
 
@@ -180,6 +187,73 @@ public class TestManagedDatastreams
             apim.purgeObject(pid, "test", false);
         }
     }
+    
+    @Test
+    public void testAddDatastreamWithChecksum() throws Exception {
+        String pid = "demo:m_ds_test_add";
+        String checksumType = "MD5";
+        apim.ingest(getAtomObject(pid, null), ATOM1_1.uri, null);
+        File temp = null;
+        
+        try {
+            temp = File.createTempFile("foo", "bar");
+            String contentLocation = getFedoraClient().uploadFile(temp);
+            String checksum = computeChecksum(checksumType, new FileInputStream(temp));
+            String dsId = addDatastream(pid, contentLocation, checksumType, checksum);
+            assertEquals("DS", dsId);
+            
+            // Now ensure that bogus checksums do indeed fail
+            apim.purgeDatastream(pid, dsId, null, null, null, false);
+            checksum = "bogus";
+            try {
+                addDatastream(pid, contentLocation, checksumType, checksum);
+                fail("Adding datastream with bogus checksum should have failed.");
+            } catch(RemoteException e) {
+                assertTrue(e.getMessage().contains("Checksum Mismatch"));
+            }
+        } finally {
+            apim.purgeObject(pid, "test", false);
+            if (temp != null) {
+                temp.delete();
+            }
+        }
+    }
+    
+    @Test
+    public void testModifyDatastreamByReferenceWithChecksum() throws Exception {
+        String pid = "demo:m_ds_test_add";
+        String checksumType = "MD5";
+        apim.ingest(getAtomObject(pid, null), ATOM1_1.uri, null);
+        File temp = null;
+        try {
+            temp = File.createTempFile("foo", "bar");
+            String contentLocation = getFedoraClient().uploadFile(temp);
+            String checksum = computeChecksum(checksumType, new FileInputStream(temp));
+            String dsId = addDatastream(pid, contentLocation, checksumType, checksum);
+            assertEquals("DS", dsId);
+            
+            FileOutputStream os = new FileOutputStream(temp);
+            os.write("testModifyDatastreamByReferenceWithChecksum".getBytes());
+            os.close();
+            contentLocation = getFedoraClient().uploadFile(temp);
+            checksum = computeChecksum(checksumType, new FileInputStream(temp));
+            modifyDatastreamByReference(pid, contentLocation, checksumType, checksum);
+            
+            // Now ensure that bogus checksums do indeed fail
+            checksum = "bogus";
+            try {
+                modifyDatastreamByReference(pid, contentLocation, checksumType, checksum);
+                fail("Modifying datastream with bogus checksum should have failed.");
+            } catch(RemoteException e) {
+                assertTrue(e.getMessage().contains("Checksum Mismatch"));
+            }
+        } finally {
+            apim.purgeObject(pid, "test", false);
+            if (temp != null) {
+                temp.delete();
+            }
+        }
+    }
 
     private byte[] getAtomObject(String pid, String contentLocation) throws Exception {
         Feed feed = createAtomObject(pid, contentLocation);
@@ -198,6 +272,11 @@ public class TestManagedDatastreams
 	
     private String addDatastream(String pid, String contentLocation)
             throws Exception {
+        return addDatastream(pid, contentLocation, null, null);
+    }
+    
+    private String addDatastream(String pid, String contentLocation, String checksumType, String checksum)
+            throws Exception {
         return apim.addDatastream(pid,
                                   "DS",
                                   null,
@@ -208,13 +287,21 @@ public class TestManagedDatastreams
                                   contentLocation,
                                   "M",
                                   "A",
-                                  null,
-                                  null,
+                                  checksumType,
+                                  checksum,
                                   "testManagedDatastreams");
     }
 
     private String modifyDatastreamByReference(String pid,
                                                String contentLocation)
+            throws Exception {
+        return modifyDatastreamByReference(pid, contentLocation, null, null);
+    }
+    
+    private String modifyDatastreamByReference(String pid,
+                                               String contentLocation,
+                                               String checksumType,
+                                               String checksum)
             throws Exception {
         return apim.modifyDatastreamByReference(pid,
                                                 "DS",
@@ -223,8 +310,8 @@ public class TestManagedDatastreams
                                                 "text/plain",
                                                 "",
                                                 contentLocation,
-                                                null,
-                                                null,
+                                                checksumType,
+                                                checksum,
                                                 "testManagedDatastreams",
                                                 false);
     }
@@ -286,6 +373,19 @@ public class TestManagedDatastreams
             doc.setContentLocation(dsv, contentLocation, "URL");
         }
         return doc;
+    }
+    
+    private String computeChecksum(String csType, InputStream is) throws Exception {
+        MessageDigest md = MessageDigest.getInstance(csType);
+        if (is == null) {
+            throw new IllegalArgumentException("InputStream cannot be null");
+        }
+        byte buffer[] = new byte[5000];
+        int numread;
+        while ((numread = is.read(buffer, 0, 5000)) > 0) {
+            md.update(buffer, 0, numread);
+        }
+        return StringUtility.byteArraytoHexString(md.digest());
     }
     
     public static junit.framework.Test suite() {

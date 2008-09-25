@@ -113,27 +113,13 @@
     	<comment>The interface to the storage subsystem.  This provides 
     	context-appropriate DOReaders and DOWriters for reflecting on and 
     	writing to the objects stored in the repository. It also provides 
-    	methods for reflecting on the contents of the repository as a whole. 
-        NOTE: If you are using the Fedora Generic Search service, you can
-        enable automatic signaling to the service by changing the class
-        of this module to "fedora.server.storage.GSearchDOManager", then
-        populating the gSearchRESTURL, gSearchUsername, and gSearchPassword
-        parameters as needed.
+    	methods for reflecting on the contents of the repository as a whole..
     	</comment>
 		<param name="pidNamespace" value="changeme">
 	    	<comment>This is the namespace id for pids of newly-created objects. 
 	    	This should be unique for a repository. It can be from 1 to 17 
 	    	characters, and may only contain A-Z, a-z, 0-9, '.', or '-' (dash).
 	    	</comment>
-	    </param>
-	    <param name="retainPIDs" value="demo test changeme tutorial">
-	    	<comment>Namespaces of PIDs to retain during the ingest process. When an 
-	    	object is ingested, Fedora normally allocates a unique PID within 
-	    	pidNamespace for it regardless of what the object says its PID is. This 
-	    	option provides a way to override that behavior on a per-pid-namespace 
-	    	basis. If specified, this should be a space-delimited list of pid 
-	    	namespaces that will be accepted in the object as-is. Default value is 
-	    	"demo test".</comment>
 	    </param>
 	    <param name="storagePool" value="localMySQLPool">
 	    	<comment>The named connection pool from which read/write database 

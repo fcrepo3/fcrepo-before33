@@ -41,7 +41,7 @@ public abstract class PathRegistry {
 
     protected final String[] storeBases;
 
-    public PathRegistry(Map configuration) {
+    public PathRegistry(Map<String, ?> configuration) {
         registryName = (String) configuration.get("registryName");
         storeBases = (String[]) configuration.get("storeBases");
     }
@@ -59,9 +59,9 @@ public abstract class PathRegistry {
 
     public void auditRegistry() throws LowlevelStorageException {
         LOG.info("begin audit:  registry-against-files");
-        Enumeration keys = keys();
+        Enumeration<String> keys = keys();
         while (keys.hasMoreElements()) {
-            String pid = (String) keys.nextElement();
+            String pid = keys.nextElement();
             try {
                 String path = get(pid);
                 File file = new File(path);
@@ -192,6 +192,6 @@ public abstract class PathRegistry {
         traverseFiles(files, operation, stopOnError, report);
     }
 
-    protected abstract Enumeration keys() throws LowlevelStorageException,
+    protected abstract Enumeration<String> keys() throws LowlevelStorageException,
             LowlevelStorageInconsistencyException;
 }

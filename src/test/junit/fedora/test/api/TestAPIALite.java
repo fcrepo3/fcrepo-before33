@@ -1,9 +1,17 @@
 package fedora.test.api;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.custommonkey.xmlunit.SimpleXpathEngine;
+import org.custommonkey.xmlunit.NamespaceContext;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+
+import org.junit.After;
+import org.junit.Before;
 
 import org.w3c.dom.Document;
 
@@ -30,21 +38,21 @@ public class TestAPIALite
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         client = getFedoraClient();
-        SimpleXpathEngine.registerNamespace(NS_FEDORA_TYPES_PREFIX,
-                                            NS_FEDORA_TYPES);
-        SimpleXpathEngine
-                .registerNamespace("oai_dc",
-                                   "http://www.openarchives.org/OAI/2.0/oai_dc/");
-        SimpleXpathEngine
-                .registerNamespace("uvalibadmin",
-                                   "http://dl.lib.virginia.edu/bin/admin/admin.dtd/");
+        Map<String, String> nsMap = new HashMap<String, String>();
+        nsMap.put(NS_FEDORA_TYPES_PREFIX, NS_FEDORA_TYPES);
+        nsMap.put(OAI_DC.prefix, OAI_DC.uri);
+        nsMap.put("uvalibadmin", "http://dl.lib.virginia.edu/bin/admin/admin.dtd/");
+        NamespaceContext ctx = new SimpleNamespaceContext(nsMap);
+        XMLUnit.setXpathNamespaceContext(ctx);
     }
 
     @Override
+    @After
     public void tearDown() {
-        SimpleXpathEngine.clearNamespaces();
+        XMLUnit.setXpathNamespaceContext(SimpleNamespaceContext.EMPTY_CONTEXT);
     }
 
     public void testDescribeRepository() throws Exception {
@@ -57,7 +65,7 @@ public class TestAPIALite
         Document result;
 
         // test for DC datastream
-        result = getXMLQueryResult("/get/demo:11/DC");
+        result = getXMLQueryResult("/get/demo:11/DC"); 
         assertXpathExists("/oai_dc:dc", result);
 
         // test for type X datastream

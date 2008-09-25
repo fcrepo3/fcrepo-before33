@@ -26,6 +26,7 @@ import fedora.utilities.FileUtils;
 
 /**
  * @author Bill Niebel
+ * @version $Id$
  */
 public class GenericFileSystem
         extends FileSystem {
@@ -34,7 +35,7 @@ public class GenericFileSystem
     private static Logger LOG =
             Logger.getLogger(GenericFileSystem.class.getName());
 
-    public GenericFileSystem(Map configuration) {
+    public GenericFileSystem(Map<String, ?> configuration) {
         super(configuration);
     }
 
@@ -54,7 +55,7 @@ public class GenericFileSystem
         return temp;
     }
 
-    private final String getPath(File file) { //<===================
+    private final String getPath(File file) {
         String temp;
         try {
             temp = file.getCanonicalPath();
@@ -87,7 +88,6 @@ public class GenericFileSystem
 
     private final void writeIntoExistingDirectory(File file, InputStream content)
             throws LowlevelStorageException {
-        //buffered writer?
         FileOutputStream fileOutputStream = null;
         try {
             fileOutputStream = new FileOutputStream(file);
@@ -97,6 +97,7 @@ public class GenericFileSystem
         }
         try {
             boolean fileCopySuccessful = FileUtils.copy(content, fileOutputStream);
+            
             if(!fileCopySuccessful) {
                 throw new LowlevelStorageException(true, "couldn't write new file "
                         + getPath(file));

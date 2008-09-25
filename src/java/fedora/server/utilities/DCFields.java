@@ -27,46 +27,51 @@ import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.StreamIOException;
 
+import javax.xml.XMLConstants;
+
 /**
  * Dublin Core Fields.
  * 
  * @author Chris Wilper
+ * @version $Id$
  */
 public class DCFields
         extends DefaultHandler
         implements Constants {
 
-    private final ArrayList<String> m_titles = new ArrayList<String>();
+    private final ArrayList<DCField> m_titles = new ArrayList<DCField>();
 
-    private final ArrayList<String> m_creators = new ArrayList<String>();
+    private final ArrayList<DCField> m_creators = new ArrayList<DCField>();
 
-    private final ArrayList<String> m_subjects = new ArrayList<String>();
+    private final ArrayList<DCField> m_subjects = new ArrayList<DCField>();
 
-    private final ArrayList<String> m_descriptions = new ArrayList<String>();
+    private final ArrayList<DCField> m_descriptions = new ArrayList<DCField>();
 
-    private final ArrayList<String> m_publishers = new ArrayList<String>();
+    private final ArrayList<DCField> m_publishers = new ArrayList<DCField>();
 
-    private final ArrayList<String> m_contributors = new ArrayList<String>();
+    private final ArrayList<DCField> m_contributors = new ArrayList<DCField>();
 
-    private final ArrayList<String> m_dates = new ArrayList<String>();
+    private final ArrayList<DCField> m_dates = new ArrayList<DCField>();
 
-    private final ArrayList<String> m_types = new ArrayList<String>();
+    private final ArrayList<DCField> m_types = new ArrayList<DCField>();
 
-    private final ArrayList<String> m_formats = new ArrayList<String>();
+    private final ArrayList<DCField> m_formats = new ArrayList<DCField>();
 
-    private final ArrayList<String> m_identifiers = new ArrayList<String>();
+    private final ArrayList<DCField> m_identifiers = new ArrayList<DCField>();
 
-    private final ArrayList<String> m_sources = new ArrayList<String>();
+    private final ArrayList<DCField> m_sources = new ArrayList<DCField>();
 
-    private final ArrayList<String> m_languages = new ArrayList<String>();
+    private final ArrayList<DCField> m_languages = new ArrayList<DCField>();
 
-    private final ArrayList<String> m_relations = new ArrayList<String>();
+    private final ArrayList<DCField> m_relations = new ArrayList<DCField>();
 
-    private final ArrayList<String> m_coverages = new ArrayList<String>();
+    private final ArrayList<DCField> m_coverages = new ArrayList<DCField>();
 
-    private final ArrayList<String> m_rights = new ArrayList<String>();
+    private final ArrayList<DCField> m_rights = new ArrayList<DCField>();
 
     private StringBuffer m_currentContent;
+    
+    private String m_lang;
 
     public DCFields() {}
 
@@ -100,6 +105,7 @@ public class DCFields
                              String qName,
                              Attributes attrs) {
         m_currentContent = new StringBuffer();
+        m_lang = attrs.getValue(XMLConstants.XML_NS_URI, "lang");
     }
 
     @Override
@@ -110,35 +116,35 @@ public class DCFields
     @Override
     public void endElement(String uri, String localName, String qName) {
         if (localName.equals("title")) {
-            titles().add(m_currentContent.toString().trim());
+            titles().add(new DCField(m_currentContent.toString().trim(), m_lang));
         } else if (localName.equals("creator")) {
-            creators().add(m_currentContent.toString().trim());
+            creators().add(new DCField(m_currentContent.toString().trim(), m_lang));
         } else if (localName.equals("subject")) {
-            subjects().add(m_currentContent.toString().trim());
+            subjects().add(new DCField(m_currentContent.toString().trim(), m_lang));
         } else if (localName.equals("description")) {
-            descriptions().add(m_currentContent.toString().trim());
+            descriptions().add(new DCField(m_currentContent.toString().trim(), m_lang));
         } else if (localName.equals("publisher")) {
-            publishers().add(m_currentContent.toString().trim());
+            publishers().add(new DCField(m_currentContent.toString().trim(), m_lang));
         } else if (localName.equals("contributor")) {
-            contributors().add(m_currentContent.toString().trim());
+            contributors().add(new DCField(m_currentContent.toString().trim(), m_lang));
         } else if (localName.equals("date")) {
-            dates().add(m_currentContent.toString().trim());
+            dates().add(new DCField(m_currentContent.toString().trim(), m_lang));
         } else if (localName.equals("type")) {
-            types().add(m_currentContent.toString().trim());
+            types().add(new DCField(m_currentContent.toString().trim(), m_lang));
         } else if (localName.equals("format")) {
-            formats().add(m_currentContent.toString().trim());
+            formats().add(new DCField(m_currentContent.toString().trim(), m_lang));
         } else if (localName.equals("identifier")) {
-            identifiers().add(m_currentContent.toString().trim());
+            identifiers().add(new DCField(m_currentContent.toString().trim(), m_lang));
         } else if (localName.equals("source")) {
-            sources().add(m_currentContent.toString().trim());
+            sources().add(new DCField(m_currentContent.toString().trim(), m_lang));
         } else if (localName.equals("language")) {
-            languages().add(m_currentContent.toString().trim());
+            languages().add(new DCField(m_currentContent.toString().trim(), m_lang));
         } else if (localName.equals("relation")) {
-            relations().add(m_currentContent.toString().trim());
+            relations().add(new DCField(m_currentContent.toString().trim(), m_lang));
         } else if (localName.equals("coverage")) {
-            coverages().add(m_currentContent.toString().trim());
+            coverages().add(new DCField(m_currentContent.toString().trim(), m_lang));
         } else if (localName.equals("rights")) {
-            rights().add(m_currentContent.toString().trim());
+            rights().add(new DCField(m_currentContent.toString().trim(), m_lang));
         }
     }
 
@@ -146,8 +152,8 @@ public class DCFields
      * Returns a Map with RDFName keys, each value containing List of String
      * values for that field.
      */
-    public Map<RDFName, List<String>> getMap() {
-        Map<RDFName, List<String>> map = new HashMap<RDFName, List<String>>();
+    public Map<RDFName, List<DCField>> getMap() {
+        Map<RDFName, List<DCField>> map = new HashMap<RDFName, List<DCField>>();
 
         map.put(DC.TITLE, m_titles);
         map.put(DC.CREATOR, m_creators);
@@ -168,63 +174,63 @@ public class DCFields
         return map;
     }
 
-    public List<String> titles() {
+    public List<DCField> titles() {
         return m_titles;
     }
 
-    public List<String> creators() {
+    public List<DCField> creators() {
         return m_creators;
     }
 
-    public List<String> subjects() {
+    public List<DCField> subjects() {
         return m_subjects;
     }
 
-    public List<String> descriptions() {
+    public List<DCField> descriptions() {
         return m_descriptions;
     }
 
-    public List<String> publishers() {
+    public List<DCField> publishers() {
         return m_publishers;
     }
 
-    public List<String> contributors() {
+    public List<DCField> contributors() {
         return m_contributors;
     }
 
-    public List<String> dates() {
+    public List<DCField> dates() {
         return m_dates;
     }
 
-    public List<String> types() {
+    public List<DCField> types() {
         return m_types;
     }
 
-    public List<String> formats() {
+    public List<DCField> formats() {
         return m_formats;
     }
 
-    public List<String> identifiers() {
+    public List<DCField> identifiers() {
         return m_identifiers;
     }
 
-    public List<String> sources() {
+    public List<DCField> sources() {
         return m_sources;
     }
 
-    public List<String> languages() {
+    public List<DCField> languages() {
         return m_languages;
     }
 
-    public List<String> relations() {
+    public List<DCField> relations() {
         return m_relations;
     }
 
-    public List<String> coverages() {
+    public List<DCField> coverages() {
         return m_coverages;
     }
 
-    public List<String> rights() {
+    public List<DCField> rights() {
         return m_rights;
     }
 
@@ -235,8 +241,10 @@ public class DCFields
     public String getAsXML() {
         StringBuffer out = new StringBuffer();
         out.append("<" + OAI_DC.prefix + ":dc" + " xmlns:" + OAI_DC.prefix
-                + "=\"" + OAI_DC.uri + "\"" + " xmlns:" + DC.prefix + "=\""
-                + DC.uri + "\">\n");
+                + "=\"" + OAI_DC.uri + "\"" + "\nxmlns:" + DC.prefix + "=\""
+                + DC.uri + "\"\nxmlns:xsi=\"" + XSI.uri
+                + "\"\nxsi:schemaLocation=\"" + OAI_DC.uri + " "
+                + OAI_DC2_0.xsdLocation + "\">\n");
         appendXML(titles(), "title", out);
         appendXML(creators(), "creator", out);
         appendXML(subjects(), "subject", out);
@@ -256,12 +264,15 @@ public class DCFields
         return out.toString();
     }
 
-    private void appendXML(List<String> values, String name, StringBuffer out) {
-        for (int i = 0; i < values.size(); i++) {
-            out.append("  <dc:" + name + ">");
-            out.append(StreamUtility.enc(values.get(i)));
+    private void appendXML(List<DCField> values, String name, StringBuffer out) {
+        for (DCField field : values) {
+            out.append("  <dc:" + name);
+            if (field.getLang() != null) {
+                out.append(" xml:lang=\"" + field.getLang() + "\"");
+            }
+            out.append(">");
+            out.append(StreamUtility.enc(field.getValue()));
             out.append("</dc:" + name + ">\n");
         }
     }
-
 }

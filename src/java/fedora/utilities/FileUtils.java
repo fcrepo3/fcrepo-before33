@@ -5,7 +5,6 @@
 
 package fedora.utilities;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -21,28 +20,38 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 public class FileUtils {
-
-    public static final int BUFFER = 8192;
+    
+    private static final int BUFF_SIZE = 100000;
+    
+    /**
+     * A static 100K buffer used by the copy operation.
+     */
+    private static final byte[] buffer = new byte[BUFF_SIZE];
 
     /**
-     * Copy an InputStream to an OutputStream.
-     *
+     * Copy an InputStream to an OutputStream. 
+     * While this method will automatically close the destination OutputStream,
+     * the caller is responsible for closing the source InputStream.
+     * 
      * @param source
      * @param destination
      * @return <code>true</code> if the operation was successful;
      *         <code>false</code> otherwise (which includes a null input).
+     * @see http://java.sun.com/docs/books/performance/1st_edition/html/JPIOPerformance.fm.html#22980
      */
     public static boolean copy(InputStream source, OutputStream destination) {
-        int count;
-        byte data[] = new byte[BUFFER];
-        BufferedOutputStream dest =
-                new BufferedOutputStream(destination, BUFFER);
         try {
-            while ((count = source.read(data, 0, BUFFER)) != -1) {
-                dest.write(data, 0, count);
+            while (true) {
+                synchronized (buffer) {
+                    int amountRead = source.read(buffer);
+                    if (amountRead == -1) {
+                        break;
+                    }
+                    destination.write(buffer, 0, amountRead);
+                }
             }
-            dest.flush();
-            dest.close();
+            destination.flush();
+            destination.close();
             return true;
         } catch (IOException e) {
             return false;

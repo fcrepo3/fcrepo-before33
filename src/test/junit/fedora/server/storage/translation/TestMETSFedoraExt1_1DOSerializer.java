@@ -1,20 +1,28 @@
 
 package fedora.server.storage.translation;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.transform.TransformerException;
 
-import org.custommonkey.xmlunit.SimpleXpathEngine;
+import org.custommonkey.xmlunit.NamespaceContext;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.custommonkey.xmlunit.exceptions.XpathException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import org.w3c.dom.Document;
 
 import fedora.common.Models;
+
 import fedora.server.storage.types.DigitalObject;
 
+import static fedora.common.Constants.METS;
 import static fedora.common.Constants.XLINK;
-
 import static fedora.common.Models.FEDORA_OBJECT_3_0;
 
 /**
@@ -38,7 +46,17 @@ public class TestMETSFedoraExt1_1DOSerializer
     @Override
     public void setUp() {
         super.setUp();
-        SimpleXpathEngine.registerNamespace(XLINK.prefix, XLINK.uri);
+        Map<String, String> nsMap = new HashMap<String, String>();
+        nsMap.put(METS.prefix, METS.uri);
+        nsMap.put(XLINK.prefix, XLINK.uri);
+        NamespaceContext ctx = new SimpleNamespaceContext(nsMap);
+        XMLUnit.setXpathNamespaceContext(ctx);
+    }
+    
+    @Override
+    @After
+    public void tearDown() {
+        XMLUnit.setXpathNamespaceContext(SimpleNamespaceContext.EMPTY_CONTEXT);
     }
 
     //---
@@ -46,12 +64,12 @@ public class TestMETSFedoraExt1_1DOSerializer
     //---
 
     @Test
-    public void testXLinkNamespace() throws TransformerException {
+    public void testXLinkNamespace() throws TransformerException, XpathException {
         doTestXLinkNamespace();
     }
 
     @Test
-    public void testVersionAttribute() throws TransformerException {
+    public void testVersionAttribute() throws TransformerException, XpathException {
         DigitalObject obj = createTestObject(FEDORA_OBJECT_3_0);
         Document xml = doSerializeOrFail(obj);
         assertXpathExists(ROOT_PATH + "[@EXT_VERSION = '1.1']", xml);

@@ -17,8 +17,6 @@ import java.lang.reflect.Method;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.custommonkey.xmlunit.SimpleXpathEngine;
-
 import fedora.client.FedoraClient;
 
 import fedora.server.access.FedoraAPIA;
@@ -864,7 +862,6 @@ public class TestXACMLPolicies
     }
 
     public void tearDown() {
-        SimpleXpathEngine.clearNamespaces();
         restoreFedoraUsersFile();
         deleteJunitPolicies();
         reloadPolicies();

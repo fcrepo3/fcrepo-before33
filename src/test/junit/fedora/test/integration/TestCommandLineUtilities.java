@@ -7,8 +7,6 @@ import java.io.File;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.custommonkey.xmlunit.SimpleXpathEngine;
-
 import fedora.client.FedoraClient;
 
 import fedora.common.Constants;
@@ -327,10 +325,6 @@ public class TestCommandLineUtilities
     public void setUp() throws Exception {
         sbOut = new ByteArrayOutputStream();
         sbErr = new ByteArrayOutputStream();
-    }
-
-    public void tearDown() {
-        SimpleXpathEngine.clearNamespaces();
     }
 
     public static void main(String[] args) {

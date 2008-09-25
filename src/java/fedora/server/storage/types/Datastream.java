@@ -243,7 +243,7 @@ public class Datastream {
                     + checksumType);
         }
         try {
-            MessageDigest md = MessageDigest.getInstance(csType);
+            MessageDigest.getInstance(csType);
         } catch (NoSuchAlgorithmException e) {
             throw new GeneralException("Checksum algorithm not yet implemented: "
                     + csType);

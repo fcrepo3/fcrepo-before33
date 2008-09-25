@@ -4,19 +4,23 @@ package fedora.test;
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
+
 import java.util.Set;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import org.custommonkey.xmlunit.XMLUnit;
 
 import org.w3c.dom.Document;
+
+import org.xml.sax.InputSource;
 
 import fedora.client.FedoraClient;
 import fedora.client.search.SearchResultParser;
 import fedora.client.utility.AutoPurger;
 import fedora.client.utility.ingest.Ingest;
 import fedora.client.utility.ingest.IngestCounter;
+
 import fedora.common.Constants;
+
 import fedora.server.management.FedoraAPIM;
 
 /**
@@ -27,10 +31,6 @@ import fedora.server.management.FedoraAPIM;
 public abstract class FedoraServerTestCase
         extends FedoraTestCase
         implements Constants {
-
-    private static DocumentBuilderFactory factory;
-
-    private static DocumentBuilder builder;
 
     public FedoraServerTestCase() {
         super();
@@ -54,14 +54,8 @@ public abstract class FedoraServerTestCase
 
     public Document getXMLQueryResult(FedoraClient client, String location)
             throws Exception {
-        if (factory == null) {
-            factory = DocumentBuilderFactory.newInstance();
-        }
-        if (builder == null) {
-            builder = factory.newDocumentBuilder();
-        }
         InputStream is = client.get(getBaseURL() + location, true, true);
-        Document result = builder.parse(is);
+        Document result = XMLUnit.buildControlDocument(new InputSource(is));
         is.close();
         return result;
     }

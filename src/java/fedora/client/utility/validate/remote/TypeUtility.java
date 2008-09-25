@@ -6,7 +6,6 @@
 package fedora.client.utility.validate.remote;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -24,6 +23,7 @@ import fedora.server.types.gen.ComparisonOperator;
 import fedora.server.types.gen.Datastream;
 import fedora.server.types.gen.ListSession;
 import fedora.server.types.gen.RelationshipTuple;
+import fedora.server.utilities.DCField;
 import fedora.server.utilities.DateUtility;
 
 /**
@@ -159,11 +159,15 @@ public class TypeUtility {
         return result;
     }
 
-    private static List<String> convertStringArray(String[] strings) {
+    private static List<DCField> convertStringArray(String[] strings) {
         if (strings == null) {
             return Collections.emptyList();
         } else {
-            return Arrays.asList(strings);
+            ArrayList<DCField> dcFields = new ArrayList<DCField>();
+            for (String field : strings) {
+                dcFields.add(new DCField(field));
+            }
+            return dcFields;
         }
     }
 

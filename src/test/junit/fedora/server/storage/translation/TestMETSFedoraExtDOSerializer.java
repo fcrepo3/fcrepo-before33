@@ -1,9 +1,15 @@
 
 package fedora.server.storage.translation;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.transform.TransformerException;
 
-import org.custommonkey.xmlunit.SimpleXpathEngine;
+import org.custommonkey.xmlunit.NamespaceContext;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.custommonkey.xmlunit.exceptions.XpathException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -17,7 +23,6 @@ import fedora.server.storage.types.DigitalObject;
 
 import static fedora.common.Constants.METS;
 import static fedora.common.Constants.XLINK;
-
 import static fedora.common.Models.FEDORA_OBJECT_3_0;
 
 /**
@@ -45,13 +50,16 @@ public abstract class TestMETSFedoraExtDOSerializer
     @Override
     public void setUp() {
         super.setUp();
-        SimpleXpathEngine.registerNamespace(METS.prefix, METS.uri);
+        Map<String, String> nsMap = new HashMap<String, String>();
+        nsMap.put(METS.prefix, METS.uri);
+        NamespaceContext ctx = new SimpleNamespaceContext(nsMap);
+        XMLUnit.setXpathNamespaceContext(ctx);
     }
 
     @Override
     @After
     public void tearDown() {
-        SimpleXpathEngine.clearNamespaces();
+        XMLUnit.setXpathNamespaceContext(SimpleNamespaceContext.EMPTY_CONTEXT);
     }
 
     //---
@@ -59,7 +67,7 @@ public abstract class TestMETSFedoraExtDOSerializer
     //---
 
     @Test
-    public void testOBJIDAttribute() throws TransformerException {
+    public void testOBJIDAttribute() throws TransformerException, XpathException {
         DigitalObject obj = createTestObject(FEDORA_OBJECT_3_0);
         Document xml = doSerializeOrFail(obj);
         assertXpathExists(ROOT_PATH + "[@OBJID='" + TEST_PID + "']", xml);
@@ -84,7 +92,7 @@ public abstract class TestMETSFedoraExtDOSerializer
     //            + MODEL.SERVICE_DEFINITION_OBJECT.localName + "']", xml);
     //}
     @Test
-    public void testNoDatastreams() throws TransformerException {
+    public void testNoDatastreams() throws TransformerException, XpathException {
         DigitalObject obj = createTestObject(FEDORA_OBJECT_3_0);
         Document xml = doSerializeOrFail(obj);
 
@@ -93,7 +101,7 @@ public abstract class TestMETSFedoraExtDOSerializer
     }
 
     @Test
-    public void testTwoInlineDatastreams() throws TransformerException {
+    public void testTwoInlineDatastreams() throws TransformerException, XpathException {
         DigitalObject obj = createTestObject(FEDORA_OBJECT_3_0);
 
         final String dsID1 = "DS1";
@@ -113,7 +121,7 @@ public abstract class TestMETSFedoraExtDOSerializer
     // Instance Helpers
     //---
 
-    protected void doTestXLinkNamespace() throws TransformerException {
+    protected void doTestXLinkNamespace() throws TransformerException, XpathException {
         DigitalObject obj = createTestObject(FEDORA_OBJECT_3_0);
         final String url = "http://example.org/DS1";
         DatastreamReferencedContent ds = createRDatastream("DS1", url);

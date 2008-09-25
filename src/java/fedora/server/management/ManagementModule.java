@@ -7,6 +7,7 @@ package fedora.server.management;
 
 import java.io.File;
 import java.io.InputStream;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -23,14 +24,13 @@ import fedora.server.Server;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
+import fedora.server.proxy.AbstractInvocationHandler;
 import fedora.server.proxy.ProxyFactory;
 import fedora.server.security.Authorization;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.ExternalContentManager;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.Property;
 import fedora.server.storage.types.RelationshipTuple;
-import fedora.server.proxy.AbstractInvocationHandler;
 
 /**
  * @author Edwin Shin

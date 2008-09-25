@@ -5,13 +5,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.custommonkey.xmlunit.SimpleXpathEngine;
+import org.custommonkey.xmlunit.NamespaceContext;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
 
 import org.w3c.dom.Document;
 
@@ -48,23 +53,23 @@ public class TestOAIService
 
         factory = DocumentBuilderFactory.newInstance();
         builder = factory.newDocumentBuilder();
-
-        SimpleXpathEngine.registerNamespace(NS_FEDORA_TYPES_PREFIX,
-                                            NS_FEDORA_TYPES);
-        SimpleXpathEngine
-                .registerNamespace("oai",
-                                   "http://www.openarchives.org/OAI/2.0/");
+        
+        Map<String, String> nsMap = new HashMap<String, String>();
+        nsMap.put(NS_FEDORA_TYPES_PREFIX, NS_FEDORA_TYPES);
+        nsMap.put("oai", "http://www.openarchives.org/OAI/2.0/");
+        NamespaceContext ctx = new SimpleNamespaceContext(nsMap);
+        XMLUnit.setXpathNamespaceContext(ctx);
     }
 
     @Override
     public void tearDown() throws Exception {
-        SimpleXpathEngine.clearNamespaces();
+        XMLUnit.setXpathNamespaceContext(SimpleNamespaceContext.EMPTY_CONTEXT);
         super.tearDown();
     }
 
     public void testListMetadataFormats() throws Exception {
         String request = "/oai?verb=ListMetadataFormats";
-        Document result = getQueryResult(request);
+        Document result = getXMLQueryResult(request);
         assertXpathEvaluatesTo("oai_dc",
                                "/oai:OAI-PMH/oai:ListMetadataFormats/oai:metadataFormat/oai:metadataPrefix",
                                result);
@@ -82,19 +87,14 @@ public class TestOAIService
         apim.ingest(out.toByteArray(), FOXML1_1.uri, "for testing");
 
         String request = "/oai?verb=ListRecords&metadataPrefix=oai_dc";
-        Document result = getQueryResult(request);
+        Document result = getXMLQueryResult(request);
         assertXpathExists("/oai:OAI-PMH/oai:ListRecords/oai:record", result);
 
         request = "/oai?verb=ListRecords&metadataPrefix=oai_dc&from=2000-01-01";
-        result = getQueryResult(request);
+        result = getXMLQueryResult(request);
         assertXpathExists("/oai:OAI-PMH/oai:ListRecords/oai:record", result);
 
         apim.purgeObject("demo:31", "for testing", false);
-    }
-
-    private Document getQueryResult(String location) throws Exception {
-        InputStream is = client.get(getBaseURL() + location, true, true);
-        return builder.parse(is);
     }
 
     public static void main(String[] args) {

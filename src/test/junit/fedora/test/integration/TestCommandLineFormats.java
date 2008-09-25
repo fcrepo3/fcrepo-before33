@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.StringReader;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -15,18 +18,24 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.parser.Parser;
-import org.custommonkey.xmlunit.SimpleXpathEngine;
 
+import org.custommonkey.xmlunit.NamespaceContext;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+
+import org.junit.After;
 import org.junit.Test;
 
 import fedora.client.utility.export.Export;
 import fedora.client.utility.ingest.Ingest;
+
 import fedora.common.PID;
 
 import fedora.server.management.FedoraAPIM;
 
 import fedora.test.FedoraTestCase;
 import fedora.test.api.TestAPIM;
+
 import fedora.utilities.FileUtils;
 
 /**
@@ -42,9 +51,18 @@ public class TestCommandLineFormats
     @Override
     public void setUp() throws Exception {
         apim = getFedoraClient(getBaseURL(), getUsername(), getPassword()).getAPIM();
-        SimpleXpathEngine.registerNamespace("foxml", "info:fedora/fedora-system:def/foxml#");
-        SimpleXpathEngine.registerNamespace("METS", "http://www.loc.gov/METS/");
-        SimpleXpathEngine.registerNamespace("", "http://www.w3.org/2005/Atom");
+        Map<String, String> nsMap = new HashMap<String, String>();
+        nsMap.put("foxml", "info:fedora/fedora-system:def/foxml#");
+        nsMap.put("METS", "http://www.loc.gov/METS/");
+        nsMap.put("", "http://www.w3.org/2005/Atom");
+        NamespaceContext ctx = new SimpleNamespaceContext(nsMap);
+        XMLUnit.setXpathNamespaceContext(ctx);
+    }
+    
+    @Override
+    @After
+    public void tearDown() {
+        XMLUnit.setXpathNamespaceContext(SimpleNamespaceContext.EMPTY_CONTEXT);
     }
 
     @Test

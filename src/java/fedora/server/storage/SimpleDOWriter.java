@@ -154,6 +154,9 @@ public class SimpleDOWriter
     public void setLabel(String label) throws ObjectIntegrityException {
         assertNotInvalidated();
         assertNotPendingRemoval();
+        if (label != null && label.equals("")) {
+            label = null;
+        }
         m_obj.setLabel(label);
     }
 

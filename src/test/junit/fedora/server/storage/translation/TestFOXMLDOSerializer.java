@@ -3,18 +3,26 @@ package fedora.server.storage.translation;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
+
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.transform.TransformerException;
 
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
-import org.custommonkey.xmlunit.SimpleXpathEngine;
+
+import org.custommonkey.xmlunit.NamespaceContext;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.custommonkey.xmlunit.exceptions.XpathException;
 
 import org.jrdf.graph.Literal;
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +41,6 @@ import fedora.server.storage.types.RelationshipTuple;
 import static fedora.common.Constants.FOXML;
 import static fedora.common.Constants.MODEL;
 import static fedora.common.Constants.RDF;
-
 import static fedora.common.Models.CONTENT_MODEL_3_0;
 import static fedora.common.Models.FEDORA_OBJECT_3_0;
 import static fedora.common.Models.SERVICE_DEFINITION_3_0;
@@ -70,13 +77,16 @@ public abstract class TestFOXMLDOSerializer
     @Override
     public void setUp() {
         super.setUp();
-        SimpleXpathEngine.registerNamespace(FOXML.prefix, FOXML.uri);
+        Map<String, String> nsMap = new HashMap<String, String>();
+        nsMap.put(FOXML.prefix, FOXML.uri);
+        NamespaceContext ctx = new SimpleNamespaceContext(nsMap);
+        XMLUnit.setXpathNamespaceContext(ctx);
     }
 
     @Override
     @After
     public void tearDown() {
-        SimpleXpathEngine.clearNamespaces();
+        XMLUnit.setXpathNamespaceContext(SimpleNamespaceContext.EMPTY_CONTEXT);
     }
 
     //---
@@ -84,7 +94,7 @@ public abstract class TestFOXMLDOSerializer
     //---
 
     @Test
-    public void testPIDAttribute() throws TransformerException {
+    public void testPIDAttribute() throws TransformerException, XpathException {
         DigitalObject obj = createTestObject(FEDORA_OBJECT_3_0);
         Document xml = doSerializeOrFail(obj);
         assertXpathExists(ROOT_PATH + "[@PID='" + TEST_PID + "']", xml);
@@ -119,7 +129,7 @@ public abstract class TestFOXMLDOSerializer
     }
 
     @Test
-    public void testTwoInlineDatastreams() throws TransformerException {
+    public void testTwoInlineDatastreams() throws TransformerException, XpathException {
         DigitalObject obj = createTestObject(FEDORA_OBJECT_3_0);
 
         final String dsID1 = "DS1";
@@ -141,7 +151,7 @@ public abstract class TestFOXMLDOSerializer
     //---
 
     protected void checkProperty(Document xml, RDFName name, String value)
-            throws TransformerException {
+            throws TransformerException, XpathException {
         assertXpathExists(PROPERTY_PATH + "[@NAME='" + name.uri + "'"
                 + " and @VALUE='" + value + "']", xml);
     }
