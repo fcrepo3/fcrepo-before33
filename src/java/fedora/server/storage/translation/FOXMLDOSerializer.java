@@ -5,7 +5,10 @@
 
 package fedora.server.storage.translation;
 
+import java.io.BufferedWriter;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
 import java.util.Date;
@@ -102,17 +105,21 @@ public class FOXMLDOSerializer
         LOG.debug("Serializing " + m_format.uri + " for transContext: "
                 + transContext);
         m_transContext = transContext;
-        StringBuffer buf = new StringBuffer();
-        appendXMLDeclaration(obj, encoding, buf);
-        appendRootElementStart(obj, buf);
-        appendProperties(obj, buf, encoding);
-        appendAudit(obj, buf, encoding);
-        appendDatastreams(obj, buf, encoding);
-        if (m_format.equals(FOXML1_0)) {
-            appendDisseminators(obj, buf);
+        OutputStreamWriter osWriter = new OutputStreamWriter(out, encoding);
+        PrintWriter writer = new PrintWriter(new BufferedWriter(osWriter));
+        try {
+            appendXMLDeclaration(obj, encoding, writer);
+            appendRootElementStart(obj, writer);
+            appendProperties(obj, writer, encoding);
+            appendAudit(obj, writer, encoding);
+            appendDatastreams(obj, writer, encoding);
+            if (m_format.equals(FOXML1_0)) {
+                appendDisseminators(obj, writer);
+            }
+            appendRootElementEnd(writer);
+        } finally {
+            writer.close();
         }
-        appendRootElementEnd(buf);
-        DOTranslationUtility.writeToStream(buf, out, encoding, true);
     }
 
     //---
@@ -121,43 +128,58 @@ public class FOXMLDOSerializer
 
     private void appendXMLDeclaration(DigitalObject obj,
                                       String encoding,
-                                      StringBuffer buf) {
-        buf.append("<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>\n");
+                                      PrintWriter writer) {
+        writer.print("<?xml version=\"1.0\" encoding=\"");
+        writer.print(encoding);
+        writer.print("\"?>\n");
     }
 
-    private void appendRootElementStart(DigitalObject obj, StringBuffer buf)
+    private void appendRootElementStart(DigitalObject obj, PrintWriter writer)
             throws ObjectIntegrityException {
-        buf.append("<" + FOXML.DIGITAL_OBJECT.qName);
+        writer.print("<");
+        writer.print(FOXML.DIGITAL_OBJECT.qName);
         if (m_format.equals(FOXML1_1)) {
-            buf.append(" " + FOXML.VERSION.localName + "=\"1.1\"");
+            writer.print(" ");
+            writer.print(FOXML.VERSION.localName);
+            writer.print("=\"1.1\"");
         }
-        buf.append(" " + FOXML.PID.localName + "=\"" + obj.getPid() + "\"");
+        writer.print(" ");
+        writer.print(FOXML.PID.localName);
+        writer.print("=\"");
+        writer.print(obj.getPid());
+        writer.print("\"");
         if (m_transContext == DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC) {
-            buf.append(" " + FOXML.FEDORA_URI.localName + "=\"info:fedora/"
-                    + obj.getPid() + "\"");
+            writer.print(" ");
+            writer.print(FOXML.FEDORA_URI.localName);
+            writer.print("=\"info:fedora/");
+            writer.print(obj.getPid());
+            writer.print("\"");
         }
-        buf.append("\n");
-        buf
-                .append("        xmlns:" + FOXML.prefix + "=\"" + FOXML.uri
-                        + "\"\n");
-        buf.append("        xmlns:" + XSI.prefix + "=\"" + XSI.uri + "\"\n");
-        buf.append("        " + XSI.SCHEMA_LOCATION.qName + "=\"" + FOXML.uri
-                + " " + m_format.xsdLocation + "\">\n");
+        writer.print("\nxmlns:");
+        writer.print(FOXML.prefix);
+        writer.print("=\"");
+        writer.print(FOXML.uri);
+        writer.print("\"\nxmlns:");
+        writer.print(XSI.prefix);
+        writer.print("=\"");
+        writer.print(XSI.uri);
+        writer.print("\"\n");
+        writer.print(XSI.SCHEMA_LOCATION.qName);
+        writer.print("=\"");
+        writer.print(FOXML.uri);
+        writer.print(" ");
+        writer.print(m_format.xsdLocation);
+        writer.print("\">\n");
     }
 
     private void appendProperties(DigitalObject obj,
-                                  StringBuffer buf,
+                                  PrintWriter writer,
                                   String encoding)
             throws ObjectIntegrityException {
 
-
-        String state = DOTranslationUtility.getStateAttribute(obj);
-        String ownerId = obj.getOwnerId();
-        String label = obj.getLabel();
-        Date cdate = obj.getCreateDate();
-        Date mdate = obj.getLastModDate();
-
-        buf.append("    <" + FOXML.prefix + ":objectProperties>\n");
+        writer.print("<");
+        writer.print(FOXML.prefix);
+        writer.print(":objectProperties>\n");
 
         /*
          * fType is eliminated in foxml 1.1+, so choose the best reasonable
@@ -165,50 +187,64 @@ public class FOXMLDOSerializer
          */
         if (m_format.equals(FOXML1_0)) {
             RDFName ftype = DOTranslationUtility.getTypeAttribute(obj);
-            if (ftype != null && !ftype.equals("")) {
-                buf.append("        <" + FOXML.prefix + ":property NAME=\""
-                        + RDF.TYPE.uri + "\"" + " VALUE=\"" + ftype.uri
-                        + "\"/>\n");
+            if (ftype != null) {
+                appendProperty(RDF.TYPE.uri, ftype.uri, writer, false);
             }
         }
-
-        if (state != null && !state.equals("")) {
-            buf.append("        <" + FOXML.prefix + ":property NAME=\""
-                    + MODEL.STATE.uri + "\"" + " VALUE=\"" + state + "\"/>\n");
-        }
-        if (label != null && !label.equals("")) {
-            buf.append("        <" + FOXML.prefix + ":property NAME=\""
-                    + MODEL.LABEL.uri + "\"" + " VALUE=\""
-                    + StreamUtility.enc(label) + "\"/>\n");
-        }
-        if (ownerId != null && !ownerId.equals("")) {
-            buf.append("        <" + FOXML.prefix + ":property NAME=\""
-                    + MODEL.OWNER.uri + "\"" + " VALUE=\""
-                    + StreamUtility.enc(ownerId) + "\"/>\n");
-        }
-        if (cdate != null) {
-            buf.append("        <" + FOXML.prefix + ":property NAME=\""
-                    + MODEL.CREATED_DATE.uri + "\"" + " VALUE=\""
-                    + DateUtility.convertDateToString(cdate) + "\"/>\n");
-        }
-        if (mdate != null) {
-            buf.append("        <" + FOXML.prefix + ":property NAME=\""
-                    + VIEW.LAST_MODIFIED_DATE.uri + "\"" + " VALUE=\""
-                    + DateUtility.convertDateToString(mdate) + "\"/>\n");
-        }
-
+        
+        appendProperty(MODEL.STATE.uri,
+                       DOTranslationUtility.getStateAttribute(obj),
+                       writer,
+                       false);
+        appendProperty(MODEL.LABEL.uri, obj.getLabel(), writer, false);
+        appendProperty(MODEL.OWNER.uri, obj.getOwnerId(), writer, false);
+        appendProperty(MODEL.CREATED_DATE.uri, obj.getCreateDate(), writer);
+        appendProperty(VIEW.LAST_MODIFIED_DATE.uri,
+                       obj.getLastModDate(),
+                       writer);
+                       
         Iterator<String> iter = obj.getExtProperties().keySet().iterator();
         while (iter.hasNext()) {
             String name = iter.next();
-            buf.append("        <" + FOXML.prefix + ":extproperty NAME=\""
-                    + name + "\"" + " VALUE=\"" + obj.getExtProperty(name)
-                    + "\"/>\n");
+            appendProperty(name, obj.getExtProperty(name), writer, true);
         }
-        buf.append("    </" + FOXML.prefix + ":objectProperties>\n");
+        writer.print("</");
+        writer.print(FOXML.prefix);
+        writer.print(":objectProperties>\n");
+    }
+    
+    private static void appendProperty(String uri,
+                                       String value,
+                                       PrintWriter writer,
+                                       boolean extProperty) {
+        if (value != null && value.length() > 0) {
+            writer.print("<");
+            writer.print(FOXML.prefix);
+            writer.print(':');
+            if (extProperty) {
+                writer.print("ext");
+            }
+            writer.print("property NAME=\"");
+            writer.print(uri);
+            writer.print("\" VALUE=\"");
+            writer.print(StreamUtility.enc(value));
+            writer.print("\"/>\n");
+        }
+    }
+    
+    private static void appendProperty(String uri,
+                                       Date value,
+                                       PrintWriter writer) {
+        if (value != null) {
+            appendProperty(uri,
+                           DateUtility.convertDateToString(value),
+                           writer,
+                           false);
+        }
     }
 
     private void appendDatastreams(DigitalObject obj,
-                                   StringBuffer buf,
+                                   PrintWriter writer,
                                    String encoding)
             throws ObjectIntegrityException, UnsupportedEncodingException,
             StreamIOException {
@@ -231,164 +267,192 @@ public class FOXMLDOSerializer
 
                 // insert the ds attributes common to all versions, when necessary
                 if (!haveWrittenCommonAttributes) {
-                    String dsURIAttr = "";
+                    writer.print("<");
+                    writer.print(FOXML.prefix);
+                    writer.print(":datastream ID=\"");
+                    writer.print(vds.DatastreamID);
+                    writer.print("\"");
                     if (m_transContext == DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC) {
-                        dsURIAttr =
-                                " FEDORA_URI=\"" + "info:fedora/"
-                                        + obj.getPid() + "/" + vds.DatastreamID
-                                        + "\"";
+                        writer.print(" FEDORA_URI=\"");
+                        writer.print("info:fedora/");
+                        writer.print(obj.getPid());
+                        writer.print("/");
+                        writer.print(vds.DatastreamID);
+                        writer.print("\"");
                     }
-                    buf.append("    <" + FOXML.prefix + ":datastream ID=\""
-                            + vds.DatastreamID + "\"" + dsURIAttr + " STATE=\""
-                            + vds.DSState + "\"" + " CONTROL_GROUP=\""
-                            + vds.DSControlGrp + "\"" + " VERSIONABLE=\""
-                            + vds.DSVersionable + "\">\n");
+                    writer.print(" STATE=\"");
+                    writer.print(vds.DSState);
+                    writer.print("\"");
+                    writer.print(" CONTROL_GROUP=\"");
+                    writer.print(vds.DSControlGrp);
+                    writer.print("\"");
+                    writer.print(" VERSIONABLE=\"");
+                    writer.print(vds.DSVersionable);
+                    writer.print("\">\n");
                     haveWrittenCommonAttributes = true;
                 }
 
                 // insert the ds version elements
-                String altIdsAttr = "";
+                writer.print("<");
+                writer.print(FOXML.prefix);
+                writer.print(":datastreamVersion ID=\"");
+                writer.print(vds.DSVersionID);
+                writer.print("\"");
+                writer.print(" LABEL=\"");
+                writer.print(StreamUtility.enc(vds.DSLabel));
+                writer.print("\"");
+                if (vds.DSCreateDT != null) {
+                    writer.print(" CREATED=\"");
+                    writer.print(DateUtility.convertDateToString(vds.DSCreateDT));
+                    writer.print("\"");
+                }
                 String altIds =
                         DOTranslationUtility.oneString(vds.DatastreamAltIDs);
                 if (altIds != null && !altIds.equals("")) {
-                    altIdsAttr =
-                            " ALT_IDS=\"" + StreamUtility.enc(altIds) + "\"";
+                    writer.print(" ALT_IDS=\"");
+                    writer.print(StreamUtility.enc(altIds));
+                    writer.print("\"");
                 }
-                String formatURIAttr = "";
+                writer.print(" MIMETYPE=\"");
+                writer.print(StreamUtility.enc(vds.DSMIME));
+                writer.print("\"");
                 if (vds.DSFormatURI != null && !vds.DSFormatURI.equals("")) {
-                    formatURIAttr =
-                            " FORMAT_URI=\""
-                                    + StreamUtility.enc(vds.DSFormatURI) + "\"";
+                    writer.print(" FORMAT_URI=\"");
+                    writer.print(StreamUtility.enc(vds.DSFormatURI));
+                    writer.print("\"");
                 }
-                String dateAttr = "";
-                if (vds.DSCreateDT != null) {
-                    dateAttr =
-                            " CREATED=\""
-                                    + DateUtility
-                                            .convertDateToString(vds.DSCreateDT)
-                                    + "\"";
-                }
-                buf.append("        <" + FOXML.prefix
-                        + ":datastreamVersion ID=\"" + vds.DSVersionID + "\""
-                        + " LABEL=\"" + StreamUtility.enc(vds.DSLabel) + "\""
-                        + dateAttr + altIdsAttr + " MIMETYPE=\""
-                        + StreamUtility.enc(vds.DSMIME) + "\"" + formatURIAttr);
                 // include size if it's non-zero
                 if (vds.DSSize != 0) {
-                    buf.append(" SIZE=\"" + vds.DSSize + "\"");
+                    writer.print(" SIZE=\"");
+                    writer.print(vds.DSSize);
+                    writer.print("\"");
                 }
-                buf.append(">\n");
+                writer.print(">\n");
 
                 // include checksum if it has a value
                 String csType = vds.getChecksumType();
                 if (csType != null && csType.length() > 0
                         && !csType.equals(Datastream.CHECKSUMTYPE_DISABLED)) {
-                    buf.append("            <" + FOXML.prefix
-                            + ":contentDigest TYPE=\"" + csType + "\""
-                            + " DIGEST=\"" + vds.getChecksum() + "\"/>\n");
+                    writer.print("<");
+                    writer.print(FOXML.prefix);
+                    writer.print(":contentDigest TYPE=\"");
+                    writer.print(csType);
+                    writer.print("\"");
+                    writer.print(" DIGEST=\"");
+                    writer.print(vds.getChecksum());
+                    writer.print("\"/>\n");
                 }
 
                 // if E or R insert ds content location as URL
                 if (vds.DSControlGrp.equalsIgnoreCase("E")
                         || vds.DSControlGrp.equalsIgnoreCase("R")) {
-                    buf
-                            .append("            <"
-                                    + FOXML.prefix
-                                    + ":contentLocation TYPE=\""
-                                    + "URL\""
-                                    + " REF=\""
-                                    + StreamUtility
-                                            .enc(DOTranslationUtility
-                                                    .normalizeDSLocationURLs(obj
-                                                                                     .getPid(),
-                                                                             vds,
-                                                                             m_transContext).DSLocation)
-                                    + "\"/>\n");
+                    writer.print("<");
+                    writer.print(FOXML.prefix);
+                    writer.print(":contentLocation TYPE=\"");
+                    writer.print("URL\"");
+                    writer.print(" REF=\"");
+                    String urls = DOTranslationUtility.normalizeDSLocationURLs(
+                            obj.getPid(),
+                            vds,
+                            m_transContext).DSLocation;
+                    writer.print(StreamUtility.enc(urls));
+                    writer.print("\"/>\n");
                     // if M insert ds content location as an internal identifier				
                 } else if (vds.DSControlGrp.equalsIgnoreCase("M")) {
                     if (m_transContext == DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE) {
-                        buf
-                                .append("            <"
-                                        + FOXML.prefix
-                                        + ":binaryContent> \n"
-                                        + StringUtility
+                        
+                        writer.print(FOXML.prefix);
+                        writer.print(":binaryContent> \n");
+                        writer.print(StringUtility
                                                 .splitAndIndent(StreamUtility
                                                                         .encodeBase64(vds
                                                                                 .getContentStream()),
                                                                 14,
-                                                                80)
-                                        + "            </" + FOXML.prefix
-                                        + ":binaryContent> \n");
+                                                                80));
+                        writer.print("</");
+                        writer.print(FOXML.prefix);
+                        writer.print(":binaryContent> \n");
                     } else {
-                        buf
-                                .append("            <"
-                                        + FOXML.prefix
-                                        + ":contentLocation TYPE=\""
-                                        + "INTERNAL_ID\""
-                                        + " REF=\""
-                                        + StreamUtility
-                                                .enc(DOTranslationUtility
-                                                        .normalizeDSLocationURLs(obj
-                                                                                         .getPid(),
-                                                                                 vds,
-                                                                                 m_transContext).DSLocation)
-                                        + "\"/>\n");
+                        writer.print("<");
+                        writer.print(FOXML.prefix);
+                        writer.print(":contentLocation TYPE=\"");
+                        writer.print("INTERNAL_ID\" REF=\"");
+                        String urls = DOTranslationUtility.normalizeDSLocationURLs(
+                                obj.getPid(),
+                                vds,
+                                m_transContext).DSLocation;
+                        writer.print(StreamUtility.enc(urls));
+                        writer.print("\"/>\n");
                     }
                     // if X insert inline XML
                 } else if (vds.DSControlGrp.equalsIgnoreCase("X")) {
                     appendInlineXML(obj,
                                     (DatastreamXMLMetadata) vds,
-                                    buf,
+                                    writer,
                                     encoding);
                 }
-
-                buf.append("        </" + FOXML.prefix
-                        + ":datastreamVersion>\n");
+                writer.print("</");
+                writer.print(FOXML.prefix);
+                writer.print(":datastreamVersion>\n");
             }
-            buf.append("    </" + FOXML.prefix + ":datastream>\n");
+            writer.print("</");
+            writer.print(FOXML.prefix);
+            writer.print(":datastream>\n");
         }
     }
 
     private void appendAudit(DigitalObject obj,
-                             StringBuffer buf,
+                             PrintWriter writer,
                              String encoding) throws ObjectIntegrityException {
 
         if (obj.getAuditRecords().size() > 0) {
             // Audit trail datastream re-created from audit records.
             // There is only ONE version of the audit trail datastream!
-            String dsURIAttr = "";
+            writer.print("<");
+            writer.print(FOXML.prefix);
+            writer.print(":datastream ID=\"");
+            writer.print("AUDIT\"");
             if (m_transContext == DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC) {
-                dsURIAttr =
-                        " FEDORA_URI=\"" + "info:fedora/" + obj.getPid()
-                                + "/AUDIT" + "\"";
+                writer.print(" FEDORA_URI=\"info:fedora/");
+                writer.print(obj.getPid());
+                writer.print("/AUDIT\"");
             }
-            buf.append("    <" + FOXML.prefix + ":datastream ID=\"" + "AUDIT"
-                    + "\"" + dsURIAttr + " STATE=\"" + "A" + "\""
-                    + " CONTROL_GROUP=\"" + "X" + "\"" + " VERSIONABLE=\""
-                    + "false" + "\">\n");
+            writer.print(" STATE=\"A\" CONTROL_GROUP=\"X\" VERSIONABLE=\"false\">\n");
             // insert the ds version-level elements
-            buf.append("        <" + FOXML.prefix + ":datastreamVersion ID=\""
-                    + "AUDIT.0" + "\"" + " LABEL=\""
-                    + "Audit Trail for this object" + "\"" + " CREATED=\""
-                    + DateUtility.convertDateToString(obj.getCreateDate())
-                    + "\"" + " MIMETYPE=\"" + "text/xml" + "\""
-                    + " FORMAT_URI=\"" + AUDIT1_0.uri + "\">\n");
-            buf.append("            <" + FOXML.prefix + ":xmlContent>\n");
-            buf.append(DOTranslationUtility.getAuditTrail(obj));
-            buf.append("            </" + FOXML.prefix + ":xmlContent>\n");
-            buf.append("        </" + FOXML.prefix + ":datastreamVersion>\n");
-            buf.append("    </" + FOXML.prefix + ":datastream>\n");
+            writer.print("<");
+            writer.print(FOXML.prefix);
+            writer.print(":datastreamVersion ID=\"AUDIT.0\" LABEL=\"");
+            writer.print("Audit Trail for this object\" CREATED=\"");
+            writer.print(DateUtility.convertDateToString(obj.getCreateDate()));
+            writer.print("\" MIMETYPE=\"text/xml\" FORMAT_URI=\"");
+            writer.print(AUDIT1_0.uri);
+            writer.print("\">\n");
+            writer.print("<");
+            writer.print(FOXML.prefix);
+            writer.print(":xmlContent>\n");
+            DOTranslationUtility.appendAuditTrail(obj, writer);
+            writer.print("</");
+            writer.print(FOXML.prefix);
+            writer.print(":xmlContent>\n");
+            writer.print("</");
+            writer.print(FOXML.prefix);
+            writer.print(":datastreamVersion>\n");
+            writer.print("</");
+            writer.print(FOXML.prefix);
+            writer.print(":datastream>\n");
         }
     }
 
     private void appendInlineXML(DigitalObject obj,
                                  DatastreamXMLMetadata ds,
-                                 StringBuffer buf,
+                                 PrintWriter writer,
                                  String encoding)
             throws ObjectIntegrityException, UnsupportedEncodingException,
             StreamIOException {
 
-        buf.append("            <" + FOXML.prefix + ":xmlContent>\n");
+        writer.print("<");
+        writer.print(FOXML.prefix);
+        writer.print(":xmlContent>\n");
 
         // Relative Repository URLs: If it's a WSDL or SERVICE-PROFILE datastream 
         // in a SDep object search for any embedded URLs that are relative to
@@ -400,18 +464,20 @@ public class FOXMLDOSerializer
             // FIXME! We need a more efficient way than to search
             // the whole block of inline XML. We really only want to 
             // look at service URLs in the XML.
-            buf.append(DOTranslationUtility
+            writer.print(DOTranslationUtility
                     .normalizeInlineXML(new String(ds.xmlContent, "UTF-8")
                             .trim(), m_transContext));
         } else {
             DOTranslationUtility.appendXMLStream(ds.getContentStream(),
-                                                 buf,
+                                                 writer,
                                                  encoding);
         }
-        buf.append("\n            </" + FOXML.prefix + ":xmlContent>\n");
+        writer.print("\n</");
+        writer.print(FOXML.prefix);
+        writer.print(":xmlContent>\n");
     }
 
-    private void appendDisseminators(DigitalObject obj, StringBuffer buf)
+    private void appendDisseminators(DigitalObject obj, PrintWriter writer)
             throws ObjectIntegrityException {
 
         Iterator<String> dissIdIter = obj.disseminatorIdIterator();
@@ -426,70 +492,85 @@ public class FOXMLDOSerializer
                                         .disseminators(did).get(i));
                 // insert the disseminator elements common to all versions.
                 if (i == 0) {
-                    buf.append("    <" + FOXML.prefix + ":disseminator ID=\""
-                            + did + "\" BDEF_CONTRACT_PID=\"" + vdiss.bDefID
-                            + "\" STATE=\"" + vdiss.dissState
-                            + "\" VERSIONABLE=\"" + vdiss.dissVersionable
-                            + "\">\n");
+                    writer.print("<");
+                    writer.print(FOXML.prefix);
+                    writer.print(":disseminator ID=\"");
+                    writer.print(did);
+                    writer.print("\" BDEF_CONTRACT_PID=\"");
+                    writer.print(vdiss.bDefID);
+                    writer.print("\" STATE=\"");
+                    writer.print(vdiss.dissState);
+                    writer.print("\" VERSIONABLE=\"");
+                    writer.print(vdiss.dissVersionable);
+                    writer.print("\">\n");
                 }
                 // insert the disseminator version-level elements
-                String dissLabelAttr = "";
+                writer.print("<");
+                writer.print(FOXML.prefix);
+                writer.print(":disseminatorVersion ID=\"");
+                writer.print(vdiss.dissVersionID);
+                writer.print("\"");
                 if (vdiss.dissLabel != null && !vdiss.dissLabel.equals("")) {
-                    dissLabelAttr =
-                            " LABEL=\"" + StreamUtility.enc(vdiss.dissLabel)
-                                    + "\"";
+                    writer.print(" LABEL=\"");
+                    writer.print(StreamUtility.enc(vdiss.dissLabel));
+                    writer.print("\"");
                 }
-                String dateAttr = "";
+                writer.print(" BMECH_SERVICE_PID=\"");
+                writer.print(vdiss.sDepID);
+                writer.print("\"");
                 if (vdiss.dissCreateDT != null) {
-                    dateAttr =
-                            " CREATED=\""
-                                    + DateUtility
-                                            .convertDateToString(vdiss.dissCreateDT)
-                                    + "\"";
+                    writer.print(" CREATED=\"");
+                    writer.print(DateUtility.convertDateToString(vdiss.dissCreateDT));
+                    writer.print("\"");
                 }
-                buf.append("        <" + FOXML.prefix
-                        + ":disseminatorVersion ID=\"" + vdiss.dissVersionID
-                        + "\"" + dissLabelAttr + " BMECH_SERVICE_PID=\""
-                        + vdiss.sDepID + "\"" + dateAttr + ">\n");
+                writer.print(">\n");
 
                 // datastream bindings...	
                 DSBinding[] bindings = vdiss.dsBindMap.dsBindings;
-                buf.append("            <" + FOXML.prefix
-                        + ":serviceInputMap>\n");
+                writer.print("<");
+                writer.print(FOXML.prefix);
+                writer.print(":serviceInputMap>\n");
                 for (int j = 0; j < bindings.length; j++) {
                     if (bindings[j].seqNo == null) {
                         bindings[j].seqNo = "";
                     }
-                    String labelAttr = "";
+                    writer.print("<");
+                    writer.print(FOXML.prefix);
+                    writer.print(":datastreamBinding KEY=\"");
+                    writer.print(bindings[j].bindKeyName);
+                    writer.print("\" DATASTREAM_ID=\"");
+                    writer.print(bindings[j].datastreamID);
+                    writer.print("\"");
                     if (bindings[j].bindLabel != null
                             && !bindings[j].bindLabel.equals("")) {
-                        labelAttr =
-                                " LABEL=\""
-                                        + StreamUtility
-                                                .enc(bindings[j].bindLabel)
-                                        + "\"";
+                        writer.print(" LABEL=\"");
+                        writer.print(StreamUtility.enc(bindings[j].bindLabel));
+                        writer.print("\"");
                     }
-                    String orderAttr = "";
                     if (bindings[j].seqNo != null
                             && !bindings[j].seqNo.equals("")) {
-                        orderAttr = " ORDER=\"" + bindings[j].seqNo + "\"";
+                        writer.print(" ORDER=\"");
+                        writer.print(bindings[j].seqNo);
+                        writer.print("\"");
                     }
-                    buf.append("                <" + FOXML.prefix
-                            + ":datastreamBinding KEY=\""
-                            + bindings[j].bindKeyName + "\""
-                            + " DATASTREAM_ID=\"" + bindings[j].datastreamID
-                            + "\"" + labelAttr + orderAttr + "/>\n");
+                    writer.print("/>\n");
                 }
-                buf.append("            </" + FOXML.prefix
-                        + ":serviceInputMap>\n");
-                buf.append("        </" + FOXML.prefix
-                        + ":disseminatorVersion>\n");
+                writer.print("</");
+                writer.print(FOXML.prefix);
+                writer.print(":serviceInputMap>\n");
+                writer.print("</");
+                writer.print(FOXML.prefix);
+                writer.print(":disseminatorVersion>\n");
             }
-            buf.append("    </" + FOXML.prefix + ":disseminator>\n");
+            writer.print("</");
+            writer.print(FOXML.prefix);
+            writer.print(":disseminator>\n");
         }
     }
 
-    private void appendRootElementEnd(StringBuffer buf) {
-        buf.append("</" + FOXML.prefix + ":digitalObject>");
+    private void appendRootElementEnd(PrintWriter writer) {
+        writer.print("</");
+        writer.print(FOXML.prefix);
+        writer.print(":digitalObject>");
     }
 }

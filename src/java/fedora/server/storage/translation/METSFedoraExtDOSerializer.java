@@ -6,6 +6,8 @@
 package fedora.server.storage.translation;
 
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Iterator;
@@ -101,20 +103,24 @@ public class METSFedoraExtDOSerializer
         LOG.debug("Serializing " + m_format.uri + " for transContext: "
                 + transContext);
         m_transContext = transContext;
-        StringBuffer buf = new StringBuffer();
-        appendXMLDeclaration(obj, encoding, buf);
-        appendRootElementStart(obj, buf);
-        appendHdr(obj, buf);
-        appendDescriptiveMD(obj, buf, encoding);
-        appendAuditRecordAdminMD(obj, buf);
-        appendOtherAdminMD(obj, buf, encoding);
-        appendFileSecs(obj, buf);
-        if (m_format.equals(METS_EXT1_0)) {
-            appendStructMaps(obj, buf);
-            appendDisseminators(obj, buf);
+        OutputStreamWriter osWriter = new OutputStreamWriter(out, encoding);
+        PrintWriter writer = new PrintWriter(osWriter);
+        try {
+            appendXMLDeclaration(obj, encoding, writer);
+            appendRootElementStart(obj, writer);
+            appendHdr(obj, writer);
+            appendDescriptiveMD(obj, writer, encoding);
+            appendAuditRecordAdminMD(obj, writer);
+            appendOtherAdminMD(obj, writer, encoding);
+            appendFileSecs(obj, writer);
+            if (m_format.equals(METS_EXT1_0)) {
+                appendStructMaps(obj, writer);
+                appendDisseminators(obj, writer);
+            }
+            appendRootElementEnd(writer);
+        } finally {
+            writer.close();
         }
-        appendRootElementEnd(buf);
-        DOTranslationUtility.writeToStream(buf, out, encoding, true);
     }
 
     //---
@@ -123,77 +129,123 @@ public class METSFedoraExtDOSerializer
 
     private void appendXMLDeclaration(DigitalObject obj,
                                       String encoding,
-                                      StringBuffer buf) {
-        buf.append("<?xml version=\"1.0\" encoding=\"" + encoding + "\" ?>\n");
+                                      PrintWriter writer) {
+        writer.print("<?xml version=\"1.0\" encoding=\"");
+        writer.print(encoding);
+        writer.print("\" ?>\n");
     }
 
-    private void appendRootElementStart(DigitalObject obj, StringBuffer buf)
+    private void appendRootElementStart(DigitalObject obj, PrintWriter writer)
             throws ObjectIntegrityException {
-        buf.append("<" + METS.METS.qName);
+        writer.print("<");
+        writer.print(METS.METS.qName);
         if (m_format.equals(METS_EXT1_1)) {
-            buf.append(" " + METS_EXT.EXT_VERSION.localName + "=\"1.1\"");
+            writer.print(" ");
+            writer.print(METS_EXT.EXT_VERSION.localName);
+            writer.print("=\"1.1\"");
         }
-        buf.append(" " + METS.OBJID.localName + "=\"" + obj.getPid() + "\"");
+        writer.print(" ");
+        writer.print(METS.OBJID.localName);
+        writer.print("=\"");
+        writer.print(obj.getPid());
+        writer.print("\"");
 
         if (m_format.equals(METS_EXT1_0)
                 && DOTranslationUtility.getTypeAttribute(obj) != null) {
-            buf.append(" " + METS.TYPE.localName + "=\""
-                    + DOTranslationUtility.getTypeAttribute(obj).localName
-                    + "\"");
+            writer.print(" ");
+            writer.print(METS.TYPE.localName);
+            writer.print("=\"");
+            writer.print(DOTranslationUtility.getTypeAttribute(obj).localName);
+            writer.print("\"");
         }
 
-        buf.append("\n");
+        writer.print("\n");
         String label = obj.getLabel();
         if (label != null && label.length() > 0) {
-            buf.append("        " + METS.LABEL.localName + "=\""
-                    + StreamUtility.enc(label) + "\"\n");
+            writer.print(METS.LABEL.localName);
+            writer.print("=\"");
+            writer.print(StreamUtility.enc(label));
+            writer.print("\"\n");
         }
-        buf.append("        xmlns:" + METS.prefix + "=\"" + METS.uri + "\"\n");
+        writer.print("xmlns:");
+        writer.print(METS.prefix);
+        writer.print("=\"");
+        writer.print(METS.uri);
+        writer.print("\"\n");
         if (m_format.equals(METS_EXT1_0)) {
-            buf.append("        xmlns:" + XLINK.prefix + "=\"" + OLD_XLINK.uri
-                    + "\"\n");
+            writer.print("xmlns:");
+            writer.print(XLINK.prefix);
+            writer.print("=\"");
+            writer.print(OLD_XLINK.uri);
+            writer.print("\"\n");
         } else {
-            buf.append("        xmlns:" + XLINK.prefix + "=\"" + XLINK.uri
-                    + "\"\n");
+            writer.print("xmlns:");
+            writer.print(XLINK.prefix);
+            writer.print("=\"");
+            writer.print(XLINK.uri);
+            writer.print("\"\n");
         }
-        buf.append("        xmlns:" + XSI.prefix + "=\"" + XSI.uri + "\"\n");
-        buf.append("        " + XSI.SCHEMA_LOCATION.qName + "=\"" + METS.uri
-                + " " + m_format.xsdLocation + "\">\n");
+        writer.print("xmlns:");
+        writer.print(XSI.prefix);
+        writer.print("=\"");
+        writer.print(XSI.uri);
+        writer.print("\"\n");
+        writer.print(XSI.SCHEMA_LOCATION.qName);
+        writer.print("=\"");
+        writer.print(METS.uri);
+        writer.print(" ");
+        writer.print(m_format.xsdLocation);
+        writer.print("\">\n");
     }
 
-    private void appendHdr(DigitalObject obj, StringBuffer buf) {
-        buf.append("  <" + METS.prefix + ":metsHdr");
+    private void appendHdr(DigitalObject obj, PrintWriter writer) {
+        writer.print("<");
+        writer.print(METS.prefix);
+        writer.print(":metsHdr");
         Date cDate = obj.getCreateDate();
         if (cDate != null) {
-            buf.append(" CREATEDATE=\"");
-            buf.append(DateUtility.convertDateToString(cDate));
-            buf.append("\"");
+            writer.print(" CREATEDATE=\"");
+            writer.print(DateUtility.convertDateToString(cDate));
+            writer.print("\"");
         }
         Date mDate = obj.getLastModDate();
         if (mDate != null) {
-            buf.append(" LASTMODDATE=\"");
-            buf.append(DateUtility.convertDateToString(mDate) + "\"");
+            writer.print(" LASTMODDATE=\"");
+            writer.print(DateUtility.convertDateToString(mDate));
+            writer.print("\"");
         }
         String state = obj.getState();
         if (state != null && !state.equals("")) {
-            buf.append(" RECORDSTATUS=\"");
-            buf.append(state + "\"");
+            writer.print(" RECORDSTATUS=\"");
+            writer.print(state);
+            writer.print("\"");
         }
-        buf.append(">\n");
+        writer.print(">\n");
         // use agent to identify the owner of the digital object
         String ownerId = obj.getOwnerId();
         if (ownerId != null && !ownerId.equals("")) {
-            buf.append("  <" + METS.prefix + ":agent");
-            buf.append(" ROLE=\"IPOWNER\">\n");
-            buf.append("    <" + METS.prefix + ":name>" + ownerId + "</"
-                    + METS.prefix + ":name>\n");
-            buf.append("  </" + METS.prefix + ":agent>\n");
+            writer.print("<");
+            writer.print(METS.prefix);
+            writer.print(":agent");
+            writer.print(" ROLE=\"IPOWNER\">\n");
+            writer.print("<");
+            writer.print(METS.prefix);
+            writer.print(":name>");
+            writer.print(ownerId);
+            writer.print("</");
+            writer.print(METS.prefix);
+            writer.print(":name>\n");
+            writer.print("</");
+            writer.print(METS.prefix);
+            writer.print(":agent>\n");
         }
-        buf.append("  </" + METS.prefix + ":metsHdr>\n");
+        writer.print("</");
+        writer.print(METS.prefix);
+        writer.print(":metsHdr>\n");
     }
 
     private void appendDescriptiveMD(DigitalObject obj,
-                                     StringBuffer buf,
+                                     PrintWriter writer,
                                      String encoding)
             throws ObjectIntegrityException, UnsupportedEncodingException,
             StreamIOException {
@@ -207,7 +259,7 @@ public class METSFedoraExtDOSerializer
                             "dmdSecFedora",
                             "descMD",
                             obj.datastreams(id),
-                            buf,
+                            writer,
                             encoding);
             }
         }
@@ -217,77 +269,99 @@ public class METSFedoraExtDOSerializer
                              String outerName,
                              String innerName,
                              Iterable<Datastream> XMLMetadata,
-                             StringBuffer buf,
+                             PrintWriter writer,
                              String encoding) throws ObjectIntegrityException,
             UnsupportedEncodingException, StreamIOException {
         DatastreamXMLMetadata first =
                 (DatastreamXMLMetadata) DOTranslationUtility
                         .setDatastreamDefaults((DatastreamXMLMetadata) XMLMetadata
                                 .iterator().next());
-        buf.append("  <" + METS.prefix + ":" + outerName + " ID=\""
-                + first.DatastreamID + "\" STATUS=\"" + first.DSState
-                + "\" VERSIONABLE=\"" + first.DSVersionable + "\">\n");
+        writer.print("<");
+        writer.print(METS.prefix);
+        writer.print(":");
+        writer.print(outerName);
+        writer.print(" ID=\"");
+        writer.print(first.DatastreamID);
+        writer.print("\" STATUS=\"");
+        writer.print(first.DSState);
+        writer.print("\" VERSIONABLE=\"");
+        writer.print(first.DSVersionable);
+        writer.print("\">\n");
         for (Datastream d : XMLMetadata) {
             DatastreamXMLMetadata ds =
                     (DatastreamXMLMetadata) DOTranslationUtility
                             .setDatastreamDefaults((DatastreamXMLMetadata) d);
-            String dateAttr = "";
+            
+            writer.print("<");
+            writer.print(METS.prefix);
+            writer.print(":");
+            writer.print(innerName);
+            writer.print(" ID=\"");
+            writer.print(ds.DSVersionID);
+            writer.print("\"");
             if (ds.DSCreateDT != null) {
-                dateAttr =
-                        " CREATED=\""
-                                + DateUtility
-                                        .convertDateToString(ds.DSCreateDT)
-                                + "\"";
+                writer.print(" CREATED=\"");
+                writer.print(DateUtility.convertDateToString(ds.DSCreateDT));
+                writer.print("\"");
             }
-            buf.append("    <" + METS.prefix + ":" + innerName + " ID=\""
-                    + ds.DSVersionID + "\"" + dateAttr + ">\n");
+            writer.print(">\n");
+            
+            
+            
+            
+            writer.print("<");
+            writer.print(METS.prefix);
+            writer.print(":mdWrap MIMETYPE=\"");
+            writer.print(StreamUtility.enc(ds.DSMIME));
+            writer.print("\" MDTYPE=\"");
             String mdType = ds.DSInfoType;
-            String otherAttr = "";
             if (!mdType.equals("MARC") && !mdType.equals("EAD")
                     && !mdType.equals("DC") && !mdType.equals("NISOIMG")
                     && !mdType.equals("LC-AV") && !mdType.equals("VRA")
                     && !mdType.equals("TEIHDR") && !mdType.equals("DDI")
                     && !mdType.equals("FGDC")) {
-                mdType = "OTHER";
-                otherAttr =
-                        " OTHERMDTYPE=\"" + StreamUtility.enc(ds.DSInfoType)
-                                + "\" ";
+                writer.print("OTHER\" OTHERMDTYPE=\"");
+                writer.print(StreamUtility.enc(mdType));
+            } else {
+                writer.print(mdType);
             }
-            String labelAttr = "";
+            writer.print("\" ");
+            
             if (ds.DSLabel != null && !ds.DSLabel.equals("")) {
-                labelAttr = " LABEL=\"" + StreamUtility.enc(ds.DSLabel) + "\"";
+                writer.print(" LABEL=\"");
+                writer.print(StreamUtility.enc(ds.DSLabel));
+                writer.print("\"");
             }
-            // FORMAT_URI attribute is optional so check if non-empty
-            String formatURIAttr = "";
+            
             if (ds.DSFormatURI != null && !ds.DSFormatURI.equals("")) {
-                formatURIAttr =
-                        " FORMAT_URI=\"" + StreamUtility.enc(ds.DSFormatURI)
-                                + "\"";
+                writer.print(" FORMAT_URI=\"");
+                writer.print(StreamUtility.enc(ds.DSFormatURI));
+                writer.print("\"");
             }
-            // ALT_IDS attribute is optional so check if non-empty
-            String altIdsAttr = "";
+            
             String altIds = DOTranslationUtility.oneString(ds.DatastreamAltIDs);
             if (altIds != null && !altIds.equals("")) {
-                altIdsAttr = " ALT_IDS=\"" + StreamUtility.enc(altIds) + "\"";
+                writer.print(" ALT_IDS=\"");
+                writer.print(StreamUtility.enc(altIds));
+                writer.print("\"");
             }
+            
             // CHECKSUM and CHECKSUMTYPE are also optional
-            String checksumTypeAttr = "";
-            String checksumAttr = "";
             String csType = ds.DSChecksumType;
             if (csType != null
                     && csType.length() > 0 
                     && !csType.equals(Datastream.CHECKSUMTYPE_DISABLED)) {
-                checksumTypeAttr =
-                        " CHECKSUMTYPE=\"" + StreamUtility.enc(csType) + "\"";
-                checksumAttr =
-                        " CHECKSUM=\"" + StreamUtility.enc(ds.DSChecksum)
-                                + "\"";
+                writer.print(" CHECKSUM=\"");
+                writer.print(StreamUtility.enc(ds.DSChecksum));
+                writer.print("\" CHECKSUMTYPE=\"");
+                writer.print(StreamUtility.enc(csType));
+                writer.print("\"");
             }
-            buf.append("      <" + METS.prefix + ":mdWrap MIMETYPE=\""
-                    + StreamUtility.enc(ds.DSMIME) + "\"" + " MDTYPE=\""
-                    + mdType + "\"" + otherAttr + labelAttr + formatURIAttr
-                    + altIdsAttr + checksumAttr + checksumTypeAttr + ">\n");
-            buf.append("        <" + METS.prefix + ":xmlData>\n");
+            
+            writer.print(">\n");
+            writer.print("<");
+            writer.print(METS.prefix);
+            writer.print(":xmlData>\n");
 
             // If WSDL or SERVICE-PROFILE datastream (in BMech) 
             // make sure that any embedded URLs are encoded 
@@ -295,46 +369,73 @@ public class METSFedoraExtDOSerializer
             if (obj.hasRelationship(MODEL.HAS_MODEL, SERVICE_DEPLOYMENT_3_0)
                     && ds.DatastreamID.equals("SERVICE-PROFILE")
                     || ds.DatastreamID.equals("WSDL")) {
-                buf.append(DOTranslationUtility
+                writer.print(DOTranslationUtility
                         .normalizeInlineXML(new String(ds.xmlContent, "UTF-8")
                                 .trim(), m_transContext));
             } else {
                 DOTranslationUtility.appendXMLStream(ds.getContentStream(),
-                                                     buf,
+                                                     writer,
                                                      encoding);
             }
-            buf.append("\n        </" + METS.prefix + ":xmlData>");
-            buf.append("      </" + METS.prefix + ":mdWrap>\n");
-            buf.append("    </" + METS.prefix + ":" + innerName + ">\n");
+            writer.print("\n</");
+            writer.print(METS.prefix);
+            writer.print(":xmlData>");
+            writer.print("</");
+            writer.print(METS.prefix);
+            writer.print(":mdWrap>\n");
+            writer.print("</");
+            writer.print(METS.prefix);
+            writer.print(":");
+            writer.print(innerName);
+            writer.print(">\n");
         }
-        buf.append("  </" + METS.prefix + ":" + outerName + ">\n");
+        writer.print("</");
+        writer.print(METS.prefix);
+        writer.print(":");
+        writer.print(outerName);
+        writer.print(">\n");
     }
 
-    private void appendAuditRecordAdminMD(DigitalObject obj, StringBuffer buf)
+    private void appendAuditRecordAdminMD(DigitalObject obj, PrintWriter writer) 
             throws ObjectIntegrityException {
         if (obj.getAuditRecords().size() > 0) {
-            buf.append("  <" + METS.prefix + ":amdSec ID=\"AUDIT\""
-                    + " STATUS=\"A\" VERSIONABLE=\"false\">\n");
-            buf.append("    <" + METS.prefix + ":digiprovMD ID=\""
-                    + "AUDIT.0\" CREATED=\""
-                    + DateUtility.convertDateToString(obj.getCreateDate())
-                    + "\">\n");
-            buf.append("      <" + METS.prefix
-                    + ":mdWrap MIMETYPE=\"text/xml\" "
-                    + "MDTYPE=\"OTHER\" OTHERMDTYPE=\"FEDORA-AUDIT\""
-                    + " LABEL=\"Audit Trail for this object\""
-                    + " FORMAT_URI=\"" + AUDIT1_0.uri + "\">\n");
-            buf.append("        <" + METS.prefix + ":xmlData>\n");
-            buf.append(DOTranslationUtility.getAuditTrail(obj));
-            buf.append("        </" + METS.prefix + ":xmlData>\n");
-            buf.append("      </" + METS.prefix + ":mdWrap>\n");
-            buf.append("    </" + METS.prefix + ":digiprovMD>\n");
-            buf.append("  </" + METS.prefix + ":amdSec>\n");
+            writer.print("<");
+            writer.print(METS.prefix);
+            writer.print(":amdSec ID=\"AUDIT\" STATUS=\"A\" VERSIONABLE=\"false\">\n");
+            writer.print("<");
+            writer.print(METS.prefix);
+            writer.print(":digiprovMD ID=\"AUDIT.0\" CREATED=\"");
+            writer.print(DateUtility.convertDateToString(obj.getCreateDate()));
+            writer.print("\">\n");
+            writer.print("<");
+            writer.print(METS.prefix);
+            writer.print(":mdWrap MIMETYPE=\"text/xml\" MDTYPE=\"OTHER\"");
+            writer.print(" OTHERMDTYPE=\"FEDORA-AUDIT\"");
+            writer.print(" LABEL=\"Audit Trail for this object\"");
+            writer.print(" FORMAT_URI=\"");
+            writer.print(AUDIT1_0.uri);
+            writer.print("\">\n");
+            writer.print("<");
+            writer.print(METS.prefix);
+            writer.print(":xmlData>\n");
+            DOTranslationUtility.appendAuditTrail(obj, writer);
+            writer.print("</");
+            writer.print(METS.prefix);
+            writer.print(":xmlData>\n");
+            writer.print("</");
+            writer.print(METS.prefix);
+            writer.print(":mdWrap>\n");
+            writer.print("</");
+            writer.print(METS.prefix);
+            writer.print(":digiprovMD>\n");
+            writer.print("</");
+            writer.print(METS.prefix);
+            writer.print(":amdSec>\n");
         }
     }
 
     private void appendOtherAdminMD(DigitalObject obj,
-                                    StringBuffer buf,
+                                    PrintWriter writer,
                                     String encoding)
             throws ObjectIntegrityException, UnsupportedEncodingException,
             StreamIOException {
@@ -365,13 +466,13 @@ public class METSFedoraExtDOSerializer
                             "amdSec",
                             mdClass,
                             obj.datastreams(id),
-                            buf,
+                            writer,
                             encoding);
             }
         }
     }
 
-    private void appendFileSecs(DigitalObject obj, StringBuffer buf)
+    private void appendFileSecs(DigitalObject obj, PrintWriter writer)
             throws ObjectIntegrityException, StreamIOException {
         Iterator<String> iter = obj.datastreamIdIterator();
         boolean didFileSec = false;
@@ -382,120 +483,128 @@ public class METSFedoraExtDOSerializer
             if (!ds.DSControlGrp.equals("X")) {
                 if (!didFileSec) {
                     didFileSec = true;
-                    buf.append("  <" + METS.prefix + ":fileSec>\n");
-                    buf.append("    <" + METS.prefix
-                            + ":fileGrp ID=\"DATASTREAMS\">\n");
+                    writer.print("<");
+                    writer.print(METS.prefix);
+                    writer.print(":fileSec>\n");
+                    writer.print("<");
+                    writer.print(METS.prefix);
+                    writer.print(":fileGrp ID=\"DATASTREAMS\">\n");
                 }
-                buf.append("      <" + METS.prefix + ":fileGrp ID=\""
-                        + ds.DatastreamID + "\" STATUS=\"" + ds.DSState
-                        + "\" VERSIONABLE=\"" + ds.DSVersionable + "\">\n");
+                writer.print("<");
+                writer.print(METS.prefix);
+                writer.print(":fileGrp ID=\"");
+                writer.print(ds.DatastreamID);
+                writer.print("\" STATUS=\"");
+                writer.print(ds.DSState);
+                writer.print("\" VERSIONABLE=\"");
+                writer.print(ds.DSVersionable);
+                writer.print("\">\n");
                 Iterator<Datastream> contentIter =
                         obj.datastreams(ds.DatastreamID).iterator();
                 while (contentIter.hasNext()) {
                     Datastream dsc =
                             DOTranslationUtility
                                     .setDatastreamDefaults(contentIter.next());
-                    String labelAttr = "";
-                    if (dsc.DSLabel != null && !dsc.DSLabel.equals("")) {
-                        labelAttr =
-                                " " + XLINK.prefix + ":title=\""
-                                        + StreamUtility.enc(dsc.DSLabel) + "\"";
-                    }
-                    String dateAttr = "";
+                    
+                    
+                    writer.print("<");
+                    writer.print(METS.prefix);
+                    writer.print(":file ID=\"");
+                    writer.print(dsc.DSVersionID);
+                    writer.print("\"");
                     if (dsc.DSCreateDT != null) {
-                        dateAttr =
-                                " CREATED=\""
-                                        + DateUtility
-                                                .convertDateToString(dsc.DSCreateDT)
-                                        + "\"";
+                        writer.print(" CREATED=\"");
+                        writer.print(DateUtility.convertDateToString(dsc.DSCreateDT));
+                        writer.print("\"");
                     }
-                    // SIZE attribute is optional so check if non-zero
-                    String sizeAttr = "";
+                    writer.print(" MIMETYPE=\"");
+                    writer.print(StreamUtility.enc(dsc.DSMIME));
+                    writer.print("\"");
                     if (dsc.DSSize != 0) {
-                        sizeAttr = " SIZE=\"" + dsc.DSSize + "\"";
+                        writer.print(" SIZE=\"" + dsc.DSSize + "\"");
                     }
-                    // FORMAT_URI attribute is optional so check if non-empty
-                    String formatURIAttr = "";
                     if (dsc.DSFormatURI != null && !dsc.DSFormatURI.equals("")) {
-                        formatURIAttr =
-                                " FORMAT_URI=\""
-                                        + StreamUtility.enc(dsc.DSFormatURI)
-                                        + "\"";
+                        writer.print(" FORMAT_URI=\"");
+                        writer.print(StreamUtility.enc(dsc.DSFormatURI));
+                        writer.print("\"");
                     }
-                    // ALT_IDS attribute is optional so check if non-empty
-                    String altIdsAttr = "";
                     String altIds =
                             DOTranslationUtility
                                     .oneString(dsc.DatastreamAltIDs);
                     if (altIds != null && !altIds.equals("")) {
-                        altIdsAttr =
-                                " ALT_IDS=\"" + StreamUtility.enc(altIds)
-                                        + "\"";
+                        writer.print(" ALT_IDS=\"");
+                        writer.print(StreamUtility.enc(altIds));
+                        writer.print("\"");
                     }
-                    // CHECKSUM and CHECKSUMTYPE are also optional
-                    String checksumTypeAttr = "";
-                    String checksumAttr = "";
                     String csType = ds.DSChecksumType;
                     if (csType != null 
                             && csType.length() > 0
                             && !csType.equals(Datastream.CHECKSUMTYPE_DISABLED)) {
-                        checksumTypeAttr =
-                                " CHECKSUMTYPE=\"" + StreamUtility.enc(csType)
-                                        + "\"";
-                        checksumAttr =
-                                " CHECKSUM=\""
-                                        + StreamUtility.enc(ds.DSChecksum)
-                                        + "\"";
+                        writer.print(" CHECKSUM=\"");
+                        writer.print(StreamUtility.enc(ds.DSChecksum));
+                        writer.print("\"");
+                        writer.print(" CHECKSUMTYPE=\"");
+                        writer.print(StreamUtility.enc(csType));
+                        writer.print("\"");
                     }
-                    buf.append("        <" + METS.prefix + ":file ID=\""
-                            + dsc.DSVersionID + "\"" + dateAttr
-                            + " MIMETYPE=\"" + StreamUtility.enc(dsc.DSMIME)
-                            + "\"" + sizeAttr + formatURIAttr + altIdsAttr
-                            + checksumAttr + checksumTypeAttr + " OWNERID=\""
-                            + dsc.DSControlGrp + "\">\n");
+                    writer.print(" OWNERID=\"");
+                    writer.print(dsc.DSControlGrp);
+                    writer.print("\">\n");
                     if (m_transContext == DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE
                             && dsc.DSControlGrp.equalsIgnoreCase("M")) {
-                        buf
-                                .append("          <"
-                                        + METS.prefix
-                                        + ":FContent> \n"
-                                        + StringUtility
-                                                .splitAndIndent(StreamUtility
-                                                                        .encodeBase64(dsc
-                                                                                .getContentStream()),
-                                                                14,
-                                                                80)
-                                        + "          </" + METS.prefix
-                                        + ":FContent> \n");
+                        writer.print("<");
+                        writer.print(METS.prefix);
+                        writer.print(":FContent> \n");
+                        writer.print(
+                                StringUtility.splitAndIndent(
+                                        StreamUtility.encodeBase64(
+                                                dsc.getContentStream()),
+                                14,
+                                80));
+                        writer.print("</");
+                        writer.print(METS.prefix);
+                        writer.print(":FContent>\n");
                     } else {
-                        buf
-                                .append("          <"
-                                        + METS.prefix
-                                        + ":FLocat"
-                                        + labelAttr
-                                        + " LOCTYPE=\"URL\" "
-                                        + XLINK.prefix
-                                        + ":href=\""
-                                        + StreamUtility
-                                                .enc(DOTranslationUtility
-                                                        .normalizeDSLocationURLs(obj
-                                                                                         .getPid(),
-                                                                                 dsc,
-                                                                                 m_transContext).DSLocation)
-                                        + "\"/>\n");
+                        writer.print("<");
+                        writer.print(METS.prefix);
+                        writer.print(":FLocat");
+                        if (dsc.DSLabel != null && !dsc.DSLabel.equals("")) {
+                            writer.print(" ");
+                            writer.print(XLINK.prefix);
+                            writer.print(":title=\"");
+                            writer.print(StreamUtility.enc(dsc.DSLabel));
+                            writer.print("\"");
+                        }
+                        writer.print(" LOCTYPE=\"URL\" ");
+                        writer.print(XLINK.prefix);
+                        writer.print(":href=\"");
+                        writer.print(StreamUtility.enc(
+                                DOTranslationUtility.normalizeDSLocationURLs(
+                                        obj.getPid(),
+                                        dsc,
+                                        m_transContext).DSLocation));
+                        writer.print("\"/>\n");
                     }
-                    buf.append("        </" + METS.prefix + ":file>\n");
+                    writer.print("</");
+                    writer.print(METS.prefix);
+                    writer.print(":file>\n");
                 }
-                buf.append("      </" + METS.prefix + ":fileGrp>\n");
+                writer.print("</");
+                writer.print(METS.prefix);
+                writer.print(":fileGrp>\n");
             }
         }
         if (didFileSec) {
-            buf.append("    </" + METS.prefix + ":fileGrp>\n");
-            buf.append("  </" + METS.prefix + ":fileSec>\n");
+            writer.print("</");
+            writer.print(METS.prefix);
+            writer.print(":fileGrp>\n");
+            writer.print("</");
+            writer.print(METS.prefix);
+            writer.print(":fileSec>\n");
         }
     }
 
-    private void appendStructMaps(DigitalObject obj, StringBuffer buf)
+    private void appendStructMaps(DigitalObject obj, PrintWriter writer)
             throws ObjectIntegrityException {
         Iterator<String> dissIdIter = obj.disseminatorIdIterator();
         while (dissIdIter.hasNext()) {
@@ -505,20 +614,23 @@ public class METSFedoraExtDOSerializer
                 Disseminator diss =
                         DOTranslationUtility.setDisseminatorDefaults(dissIter
                                 .next());
-                String labelAttr = "";
+                writer.print("<");
+                writer.print(METS.prefix);
+                writer.print(":structMap ID=\"");
+                writer.print(diss.dsBindMapID);
+                writer.print("\" TYPE=\"fedora:dsBindingMap\">\n");
+                writer.print("<");
+                writer.print(METS.prefix);
+                writer.print(":div TYPE=\"");
+                writer.print(diss.sDepID);
+                writer.print("\"");
                 if (diss.dsBindMap.dsBindMapLabel != null
                         && !diss.dsBindMap.dsBindMapLabel.equals("")) {
-                    labelAttr =
-                            " LABEL=\""
-                                    + StreamUtility
-                                            .enc(diss.dsBindMap.dsBindMapLabel)
-                                    + "\"";
+                    writer.print(" LABEL=\"");
+                    writer.print(StreamUtility.enc(diss.dsBindMap.dsBindMapLabel));
+                    writer.print("\"");
                 }
-                buf.append("  <" + METS.prefix + ":structMap ID=\""
-                        + diss.dsBindMapID
-                        + "\" TYPE=\"fedora:dsBindingMap\">\n");
-                buf.append("    <" + METS.prefix + ":div TYPE=\""
-                        + diss.sDepID + "\"" + labelAttr + ">\n");
+                writer.print(">\n");
                 DSBinding[] bindings = diss.dsBindMap.dsBindings;
                 for (int i = 0; i < bindings.length; i++) {
                     if (bindings[i].bindKeyName == null
@@ -526,34 +638,45 @@ public class METSFedoraExtDOSerializer
                         throw new ObjectIntegrityException("Object's disseminator"
                                 + " binding map binding must have a binding key name.");
                     }
-                    buf.append("      <" + METS.prefix + ":div TYPE=\"");
-                    buf.append(bindings[i].bindKeyName);
+                    writer.print("<");
+                    writer.print(METS.prefix);
+                    writer.print(":div TYPE=\"");
+                    writer.print(bindings[i].bindKeyName);
                     if (bindings[i].bindLabel != null
                             && !bindings[i].bindLabel.equals("")) {
-                        buf.append("\" LABEL=\"");
-                        buf.append(StreamUtility.enc(bindings[i].bindLabel));
+                        writer.print("\" LABEL=\"");
+                        writer.print(StreamUtility.enc(bindings[i].bindLabel));
                     }
                     if (bindings[i].seqNo != null
                             && !bindings[i].seqNo.equals("")) {
-                        buf.append("\" ORDER=\"");
-                        buf.append(bindings[i].seqNo);
+                        writer.print("\" ORDER=\"");
+                        writer.print(bindings[i].seqNo);
                     }
                     if (bindings[i].datastreamID == null
                             || bindings[i].datastreamID.equals("")) {
                         throw new ObjectIntegrityException("Object's disseminator"
                                 + " binding map binding must point to a datastream.");
                     }
-                    buf.append("\">\n        <" + METS.prefix
-                            + ":fptr FILEID=\"" + bindings[i].datastreamID
-                            + "\"/>\n" + "      </" + METS.prefix + ":div>\n");
+                    writer.print("\">\n<");
+                    writer.print(METS.prefix);
+                    writer.print(":fptr FILEID=\"");
+                    writer.print(bindings[i].datastreamID);
+                    writer.print("\"/>\n");
+                    writer.print("</");
+                    writer.print(METS.prefix);
+                    writer.print(":div>\n");
                 }
-                buf.append("    </" + METS.prefix + ":div>\n");
-                buf.append("  </" + METS.prefix + ":structMap>\n");
+                writer.print("</");
+                writer.print(METS.prefix);
+                writer.print(":div>\n");
+                writer.print("</");
+                writer.print(METS.prefix);
+                writer.print(":structMap>\n");
             }
         }
     }
 
-    private void appendDisseminators(DigitalObject obj, StringBuffer buf)
+    private void appendDisseminators(DigitalObject obj, PrintWriter writer)
             throws ObjectIntegrityException {
         Iterator<String> dissIdIter = obj.disseminatorIdIterator();
         while (dissIdIter.hasNext()) {
@@ -561,40 +684,64 @@ public class METSFedoraExtDOSerializer
             Disseminator diss =
                     DOTranslationUtility.setDisseminatorDefaults(obj
                             .disseminators(did).get(0));
-            buf.append("  <" + METS.prefix + ":behaviorSec ID=\"" + did
-                    + "\" STATUS=\"" + diss.dissState + "\">\n");
+            writer.print("<");
+            writer.print(METS.prefix);
+            writer.print(":behaviorSec ID=\"");
+            writer.print(did);
+            writer.print("\" STATUS=\"");
+            writer.print(diss.dissState);
+            writer.print("\">\n");
             for (int i = 0; i < obj.disseminators(did).size(); i++) {
                 diss =
                         DOTranslationUtility
                                 .setDisseminatorDefaults((Disseminator) obj
                                         .disseminators(did).get(i));
-                String dissLabelAttr = "";
+                writer.print("<");
+                writer.print(METS.prefix);
+                writer.print(":serviceBinding ID=\"");
+                writer.print(diss.dissVersionID);
+                writer.print("\" STRUCTID=\"");
+                writer.print(diss.dsBindMapID);
+                writer.print("\" BTYPE=\"");
+                writer.print(diss.bDefID);
+                writer.print("\" CREATED=\"");
+                writer.print(DateUtility.convertDateToString(diss.dissCreateDT));
+                writer.print("\"");
                 if (diss.dissLabel != null && !diss.dissLabel.equals("")) {
-                    dissLabelAttr =
-                            " LABEL=\"" + StreamUtility.enc(diss.dissLabel)
-                                    + "\"";
+                    writer.print(" LABEL=\"");
+                    writer.print(StreamUtility.enc(diss.dissLabel));
+                    writer.print("\"");
                 }
-                buf.append("    <" + METS.prefix + ":serviceBinding ID=\""
-                        + diss.dissVersionID + "\" STRUCTID=\""
-                        + diss.dsBindMapID + "\" BTYPE=\"" + diss.bDefID
-                        + "\" CREATED=\""
-                        + DateUtility.convertDateToString(diss.dissCreateDT)
-                        + "\"" + dissLabelAttr + ">\n");
-                buf.append("      <" + METS.prefix + ":interfaceMD"
-                        + " LOCTYPE=\"URN\" " + XLINK.prefix + ":href=\""
-                        + diss.bDefID + "\"/>\n");
-                buf.append("      <" + METS.prefix + ":serviceBindMD"
-                        + " LOCTYPE=\"URN\" " + XLINK.prefix + ":href=\""
-                        + diss.sDepID + "\"/>\n");
+                writer.print(">\n");
+                writer.print("<");
+                writer.print(METS.prefix);
+                writer.print(":interfaceMD LOCTYPE=\"URN\" ");
+                writer.print(XLINK.prefix);
+                writer.print(":href=\"");
+                writer.print(diss.bDefID);
+                writer.print("\"/>\n");
+                writer.print("<");
+                writer.print(METS.prefix);
+                writer.print(":serviceBindMD LOCTYPE=\"URN\" ");
+                writer.print(XLINK.prefix);
+                writer.print(":href=\"");
+                writer.print(diss.sDepID);
+                writer.print("\"/>\n");
 
-                buf.append("    </" + METS.prefix + ":serviceBinding>\n");
+                writer.print("</");
+                writer.print(METS.prefix);
+                writer.print(":serviceBinding>\n");
             }
-            buf.append("  </" + METS.prefix + ":behaviorSec>\n");
+            writer.print("</");
+            writer.print(METS.prefix);
+            writer.print(":behaviorSec>\n");
         }
     }
 
-    private void appendRootElementEnd(StringBuffer buf) {
-        buf.append("</" + METS.prefix + ":mets>");
+    private void appendRootElementEnd(PrintWriter writer) {
+        writer.print("</");
+        writer.print(METS.prefix);
+        writer.print(":mets>");
     }
 
 }

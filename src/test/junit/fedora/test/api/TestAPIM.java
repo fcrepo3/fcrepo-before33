@@ -1458,7 +1458,7 @@ public class TestAPIM
                         "XML_SOURCE1.0",
                         true,
                         "E",
-                        0,
+                        -1,
                         new String[] {});
 
         // test getting datastream id XML_SOURCE for object demo:26 specifying datetime
@@ -1481,7 +1481,7 @@ public class TestAPIM
                         "XML_SOURCE1.0",
                         true,
                         "E",
-                        0,
+                        -1,
                         new String[] {});
 
         // (7) test getDatastreams
@@ -1503,7 +1503,7 @@ public class TestAPIM
                         "DC1.0",
                         true,
                         "X",
-                        306,
+                        -1,
                         new String[] {});
 
         checkDatastream(dsArray,
@@ -1517,15 +1517,8 @@ public class TestAPIM
                         "XML_SOURCE1.0",
                         true,
                         "E",
-                        0,
+                        -1,
                         new String[] {});
-
-        int expectedTEISize = 1098;
-        if (testingMETS()) {
-            expectedTEISize = 1154;
-        } else if (testingAtom()) {
-            expectedTEISize = 1101;
-        }
 
         checkDatastream(dsArray,
                         "TEI_SOURCE",
@@ -1537,15 +1530,8 @@ public class TestAPIM
                         "TEI_SOURCE1.0",
                         true,
                         "X",
-                        expectedTEISize,
+                        -1,
                         new String[] {});
-
-        int expectedRELSSize = 351;
-        if (testingMETS()) {
-            expectedRELSSize = 359;
-        } else if (testingAtom()) {
-            expectedRELSSize = 343;
-        }
 
         checkDatastream(dsArray,
                         "RELS-EXT",
@@ -1557,7 +1543,7 @@ public class TestAPIM
                         "RELS-EXT1.0",
                         true,
                         "X",
-                        expectedRELSSize,
+                        -1,
                         new String[] {});
 
         // test getting all datastreams for object demo:26 specifying null for state
@@ -1581,7 +1567,7 @@ public class TestAPIM
                         "DC1.0",
                         true,
                         "X",
-                        306,
+                        -1,
                         new String[] {});
 
         checkDatastream(dsArray,
@@ -1595,7 +1581,7 @@ public class TestAPIM
                         "XML_SOURCE1.0",
                         true,
                         "E",
-                        0,
+                        -1,
                         new String[] {});
 
         checkDatastream(dsArray,
@@ -1608,7 +1594,7 @@ public class TestAPIM
                         "TEI_SOURCE1.0",
                         true,
                         "X",
-                        expectedTEISize,
+                        -1,
                         new String[] {});
 
         checkDatastream(dsArray,
@@ -1621,7 +1607,7 @@ public class TestAPIM
                         "RELS-EXT1.0",
                         true,
                         "X",
-                        expectedRELSSize,
+                        -1,
                         new String[] {});
 
         // (8) test getDatastreamHistory
@@ -1637,6 +1623,10 @@ public class TestAPIM
         }
     }
 
+    /**
+     * @param size If non-negative, the size of the datastream must match
+     *             this size.
+     */
     private void checkDatastream(Datastream[] dsArray,
                                  String id,
                                  String formatURI,
@@ -1668,7 +1658,9 @@ public class TestAPIM
             assertEquals(versionID, ds.getVersionID());
             assertEquals(isVersionable, ds.isVersionable());
             assertEquals(controlGroup, ds.getControlGroup().getValue());
-            assertEquals(size, ds.getSize());
+            if (size > -1) {
+                assertEquals(size, ds.getSize());
+            }
             if (altIDs == null) {
                 assertEquals(null, ds.getAltIDs());
             } else {

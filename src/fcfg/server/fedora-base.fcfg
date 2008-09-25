@@ -183,6 +183,20 @@
 			parameter. Valid values are: MD5  SHA-1  SHA-256  SHA-384  SHA-512.
 			</comment>
 		</param>
+        <param name="purgeDelayInMillis" value="60000">
+            <comment>Optional, default is 60000 (1 minute).
+            This specifies the amount of time between checks to remove
+            temporary files uploaded via the API-M upload interface.  During
+            each check, old files whose age exceeds uploadStorageMinutes
+            will be removed.
+            </comment>
+        </param>
+        <param name="uploadStorageMinutes" value="5">
+            <comment>Optional, default is 5.
+            This specifies the minimum amount of time that each uploaded
+            file should be kept in temporary storage.
+            </comment>
+        </param>
 	</module>
 	<module role="fedora.server.access.Access" class="fedora.server.access.DefaultAccess">
     	<comment>Description: The access subsystem. This implements the methods 

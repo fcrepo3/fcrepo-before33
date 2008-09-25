@@ -23,7 +23,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -99,10 +100,25 @@ public class DefaultManagement
     private File m_tempDir;
 
     private Hashtable<String, Long> m_uploadStartTime;
+    
+    private long m_lastPurgeInMillis = System.currentTimeMillis();
+    
+    private final long m_purgeDelayInMillis;
 
-    public DefaultManagement(Authorization auth, DOManager doMgr,
-                             ExternalContentManager ecMgr, int uploadMinutes,
-                             int lastId, File tempDir, Hashtable<String, Long> uploadStartTime) {
+    /**
+     * @param purgeDelayInMillis milliseconds to delay before removing
+     *                           old uploaded files
+     * @author Frederic Buffet & Tommy Bourdin (Atos Worldline)
+     * @date   August 1, 2008
+     */
+    public DefaultManagement(Authorization auth,
+                             DOManager doMgr, 
+                             ExternalContentManager ecMgr,
+                             int uploadMinutes, 
+                             int lastId,
+                             File tempDir,
+                             Hashtable<String, Long> uploadStartTime,
+                             long purgeDelayInMillis) {
         m_fedoraXACMLModule = auth;
         m_manager = doMgr;
         m_contentManager = ecMgr;
@@ -110,6 +126,7 @@ public class DefaultManagement
         m_lastId = lastId;
         m_tempDir = tempDir;
         m_uploadStartTime = uploadStartTime;
+        m_purgeDelayInMillis = purgeDelayInMillis;
     }
 
     public String ingest(Context context,
@@ -1208,32 +1225,7 @@ public class DefaultManagement
             throws StreamWriteException, AuthzException {
         m_fedoraXACMLModule.enforceUpload(context);
         // first clean up after old stuff
-        long minStartTime =
-                System.currentTimeMillis() - 60 * 1000 * m_uploadStorageMinutes;
-        ArrayList<String> removeList = new ArrayList<String>();
-        Iterator<String> iter = m_uploadStartTime.keySet().iterator();
-        while (iter.hasNext()) {
-            String id = iter.next();
-            Long startTime = (Long) m_uploadStartTime.get(id);
-            if (startTime.longValue() < minStartTime) {
-                // remove from filesystem and hash
-                File f = new File(m_tempDir, id);
-                if (f.delete()) {
-                    LOG.info("Removed uploaded file '" + id
-                            + "' because it expired.");
-                } else {
-                    LOG
-                            .warn("Could not remove expired uploaded file '"
-                                    + id
-                                    + "'.  Check existence/permissions in management/upload/ directory.");
-                }
-                removeList.add(id);
-            }
-        }
-        for (int i = 0; i < removeList.size(); i++) {
-            String id = (String) removeList.get(i);
-            m_uploadStartTime.remove(id);
-        }
+        purgeUploadedFiles();
         // then generate an id
         int id = getNextTempId(context);
         // and attempt to save the stream
@@ -1718,4 +1710,64 @@ public class DefaultManagement
             }
         }
     }
+
+    /**
+     * Deletes expired uploaded files.
+     * <p>
+     * This method is called for each upload. But we respect a minimim delay
+     * between two purges. This delay is given by m_purgeDelayInMillis. 
+     */
+    private void purgeUploadedFiles() {
+        long currentTimeMillis = System.currentTimeMillis();
+
+        // Do purge if purge delay is past before last purge
+        // -------------------------------------------------
+        long nextPurgeInMillis =
+          this.m_lastPurgeInMillis + this.m_purgeDelayInMillis;
+        if (nextPurgeInMillis < currentTimeMillis) {
+            this.m_lastPurgeInMillis = currentTimeMillis;
+
+            // Compute limit file time to purged
+            // ---------------------------------
+            long minStartTime =
+                currentTimeMillis - (this.m_uploadStorageMinutes * 60000);
+
+            // List files to purge and remove filename to map
+            // This operation is synchronized to be thread-safe
+            // ------------------------------------------------
+            List<String> removeList = new ArrayList<String>();
+            synchronized (this.m_uploadStartTime) {
+                for (Entry<String, Long> entry :
+                  m_uploadStartTime.entrySet()) {
+                    String filename = entry.getKey();
+                    long startTime = entry.getValue().longValue();
+                    if (startTime < minStartTime) {
+                        removeList.add(filename);
+                    }
+                }
+                for (String filename : removeList) {
+                    this.m_uploadStartTime.remove(filename);
+                }
+            }
+
+            // Delete file to purged
+            // This operation is out of synchronised block for performances
+            // ------------------------------------------------------------
+            for (int i = 0; i < removeList.size(); i++) {
+                String id = removeList.get(i);
+              
+                File file = new File(this.m_tempDir, id);
+                if (file.exists()) {
+                    if (file.delete()) {
+                        LOG.info("Removed uploaded file '" + id
+                            + "' because it expired.");
+                    } else {
+                        LOG.warn("Could not remove expired uploaded file '"
+                            + id + "'. Check permissions in management/upload/ directory.");
+                    }
+                }
+            }
+        }
+    }
+
 }

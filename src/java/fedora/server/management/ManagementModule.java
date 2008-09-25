@@ -61,6 +61,9 @@ public class ManagementModule
     private Management mgmt;
     
     private AbstractInvocationHandler[] invocationHandlers;
+    
+    /** Delay between purge of two uploaded files. */
+    private long m_purgeDelayInMillis;
 
     public ManagementModule(Map<String, String> moduleParameters,
                             Server server,
@@ -127,7 +130,19 @@ public class ManagementModule
         }
         LOG.debug("autoChecksum is " + auto);
         LOG.debug("defaultChecksumType is " + Datastream.defaultChecksumType);
-
+       
+        // get delay between purge of two uploaded files (default 1 minute)
+        String purgeDelayInMillis = getParameter("purgeDelayInMillis");
+        if (purgeDelayInMillis == null) {
+          purgeDelayInMillis = "60000";
+        }
+        try {
+            this.m_purgeDelayInMillis = Integer.parseInt(purgeDelayInMillis);
+        } catch (NumberFormatException nfe) {
+            throw new ModuleInitializationException(
+                "purgeDelayInMillis must be an integer, if specified.",
+                getRole());
+        }
     }
     
     @Override
@@ -164,7 +179,8 @@ public class ManagementModule
                                       m_uploadStorageMinutes,
                                       m_lastId,
                                       m_tempDir,
-                                      m_uploadStartTime);
+                                      m_uploadStartTime,
+                                      m_purgeDelayInMillis);
 
         mgmt = getProxyChain(m);
     }

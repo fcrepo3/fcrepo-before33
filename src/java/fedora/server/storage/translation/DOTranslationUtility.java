@@ -8,8 +8,9 @@ package fedora.server.storage.translation;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 
 import java.nio.charset.Charset;
@@ -38,7 +39,6 @@ import fedora.server.Server;
 import fedora.server.config.ServerConfiguration;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
-import fedora.server.errors.StreamWriteException;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
@@ -646,27 +646,21 @@ public abstract class DOTranslationUtility
     }
 
     /**
-     * Appends XML to a StringBuffer. Essentially, just appends all text content
+     * Appends XML to a PrintWriter. Essentially, just appends all text content
      * of the inputStream, trimming any leading and trailing whitespace. It does
      * his in a streaming fashion, with resource consumption entirely comprised
      * of fixed internal buffers.
      * 
      * @param in
      *        InputStreaming containing serialized XML.
-     * @param buf
-     *        StringBuffer to write XML content to.
+     * @param writer
+     *        PrintWriter to write XML content to.
      * @param encoding
      *        Character set encoding.
      */
-
-    /*
-     * XXX: May want to change StringBuffer to StringBuilder or even Appendable
-     * at some point, but that involves a very minor refactoring of the existing
-     * serializers.
-     */
-    public static void appendXMLStream(InputStream in,
-                                       StringBuffer buf,
-                                       String encoding)
+    protected static void appendXMLStream(InputStream in,
+                                          PrintWriter writer,
+                                          String encoding)
             throws ObjectIntegrityException, UnsupportedEncodingException,
             StreamIOException {
         if (in == null) {
@@ -710,7 +704,7 @@ public abstract class DOTranslationUtility
 
                 if (wsLen > 0) {
                     /* Commit previous ending whitespace */
-                    buf.append(wsBuf, 0, wsLen);
+                    writer.write(wsBuf, 0, wsLen);
                     wsLen = 0;
                 }
 
@@ -723,7 +717,7 @@ public abstract class DOTranslationUtility
                 }
 
                 if (start < len) {
-                    buf.append(charBuf, start, end + 1 - start);
+                    writer.write(charBuf, start, end + 1 - start);
                 }
             }
         } catch (UnsupportedEncodingException uee) {
@@ -807,27 +801,6 @@ public abstract class DOTranslationUtility
         return out.toString();
     }
 
-    protected static void writeToStream(StringBuffer buf,
-                                        OutputStream out,
-                                        String encoding,
-                                        boolean closeWhenFinished)
-            throws StreamIOException, UnsupportedEncodingException {
-        try {
-            out.write(buf.toString().getBytes(encoding));
-            out.flush();
-        } catch (IOException e) {
-            throw new StreamWriteException("Error serializing object", e);
-        } finally {
-            if (closeWhenFinished) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    LOG.warn("Unable to close serializer stream", e);
-                }
-            }
-        }
-    }
-
     protected static String getStateAttribute(DigitalObject obj) {
         try {
             char s = obj.getState().toUpperCase().charAt(0);
@@ -895,38 +868,37 @@ public abstract class DOTranslationUtility
 
     protected static String getAuditTrail(DigitalObject obj)
             throws ObjectIntegrityException {
-        StringBuffer buf = new StringBuffer();
-        final String indent0 = "            ";
-        final String indent1 = indent0 + "    ";
-        final String indent2 = indent1 + "    ";
-        appendOpenElement(buf, indent0, AUDIT.AUDIT_TRAIL, true);
+        StringWriter buf = new StringWriter();
+        appendAuditTrail(obj, new PrintWriter(buf));
+        return buf.toString();
+    }
+
+    protected static void appendAuditTrail(DigitalObject obj,
+                                           PrintWriter writer)
+            throws ObjectIntegrityException {
+        appendOpenElement(writer, AUDIT.AUDIT_TRAIL, true);
         for (AuditRecord audit : obj.getAuditRecords()) {
             DOTranslationUtility.validateAudit(audit);
-            appendOpenElement(buf, indent1, AUDIT.RECORD, AUDIT.ID, audit.id);
-            appendFullElement(buf,
-                              indent2,
+            appendOpenElement(writer, AUDIT.RECORD, AUDIT.ID, audit.id);
+            appendFullElement(writer,
                               AUDIT.PROCESS,
                               AUDIT.TYPE,
                               audit.processType);
-            appendFullElement(buf, indent2, AUDIT.ACTION, audit.action);
-            appendFullElement(buf,
-                              indent2,
+            appendFullElement(writer, AUDIT.ACTION, audit.action);
+            appendFullElement(writer,
                               AUDIT.COMPONENT_ID,
                               audit.componentID);
-            appendFullElement(buf,
-                              indent2,
+            appendFullElement(writer,
                               AUDIT.RESPONSIBILITY,
                               audit.responsibility);
-            appendFullElement(buf, indent2, AUDIT.DATE, DateUtility
+            appendFullElement(writer, AUDIT.DATE, DateUtility
                     .convertDateToString(audit.date));
-            appendFullElement(buf,
-                              indent2,
+            appendFullElement(writer,
                               AUDIT.JUSTIFICATION,
                               audit.justification);
-            appendCloseElement(buf, indent1, AUDIT.RECORD);
+            appendCloseElement(writer, AUDIT.RECORD);
         }
-        appendCloseElement(buf, indent0, AUDIT.AUDIT_TRAIL);
-        return buf.toString();
+        appendCloseElement(writer, AUDIT.AUDIT_TRAIL);
     }
 
     protected static List<AuditRecord> getAuditRecords(XMLEventReader reader)
@@ -1018,50 +990,64 @@ public abstract class DOTranslationUtility
         return records;
     }
 
-    private static void appendOpenElement(StringBuffer buf,
-                                          String indent,
+    private static void appendOpenElement(PrintWriter writer,
                                           QName element,
                                           boolean declareNamespace) {
-        buf.append(indent + "<" + element.qName);
+        writer.print("<");
+        writer.print(element.qName);
         if (declareNamespace) {
-            buf.append(" xmlns:" + element.namespace.prefix);
-            buf.append("=\"" + element.namespace.uri + "\"");
+            writer.print(" xmlns:");
+            writer.print(element.namespace.prefix);
+            writer.print("=\"");
+            writer.print(element.namespace.uri);
+            writer.print("\"");
         }
-        buf.append(">\n");
+        writer.print(">\n");
     }
 
-    private static void appendOpenElement(StringBuffer buf,
-                                          String indent,
+    private static void appendOpenElement(PrintWriter writer,
                                           QName element,
                                           QName attribute,
                                           String attributeContent) {
-        buf.append(indent + "<" + element.qName + " ");
-        buf.append(attribute.localName + "=\"");
-        buf.append(StreamUtility.enc(attributeContent) + "\">\n");
+        writer.print("<");
+        writer.print(element.qName);
+        writer.print(" ");
+        writer.print(attribute.localName);
+        writer.print("=\"");
+        writer.print(StreamUtility.enc(attributeContent));
+        writer.print("\">\n");
     }
 
-    private static void appendCloseElement(StringBuffer buf,
-                                           String indent,
+    private static void appendCloseElement(PrintWriter writer,
                                            QName element) {
-        buf.append(indent + "</" + element.qName + ">\n");
+        writer.print("</");
+        writer.print(element.qName);
+        writer.print(">\n");
     }
-
-    private static void appendFullElement(StringBuffer buf,
-                                          String indent,
+    
+    private static void appendFullElement(PrintWriter writer,
                                           QName element,
                                           QName attribute,
                                           String attributeContent) {
-        buf.append(indent + "<" + element.qName + " ");
-        buf.append(attribute.localName + "=\"");
-        buf.append(StreamUtility.enc(attributeContent) + "\"/>\n");
+        writer.print("<");
+        writer.print(element.qName);
+        writer.print(" ");
+        writer.print(attribute.localName);
+        writer.print("=\"");
+        writer.print(StreamUtility.enc(attributeContent));
+        writer.print("\"/>\n");
     }
 
-    private static void appendFullElement(StringBuffer buf,
-                                          String indent,
+    private static void appendFullElement(PrintWriter writer,
                                           QName element,
                                           String elementContent) {
-        buf.append(indent + "<" + element.qName + ">");
-        buf.append(StreamUtility.enc(elementContent));
-        buf.append("</" + element.qName + ">\n");
+        writer.print("<");
+        writer.print(element.qName);
+        writer.print(">");
+        writer.print(StreamUtility.enc(elementContent));
+        writer.print("</");
+        writer.print(element.qName);
+        writer.print(">\n");
     }
+    
 }

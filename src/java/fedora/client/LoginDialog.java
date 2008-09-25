@@ -298,7 +298,7 @@ public class LoginDialog
     }
 
     // sets Administrator.APIA/M if success, throws Exception if fails.
-    public static void tryLogin(String protocol,
+    public void tryLogin(String protocol,
                                 String host,
                                 int port,
                                 String user,
@@ -313,7 +313,7 @@ public class LoginDialog
             // attempt to connect via REST
             String serverVersion = fc.getServerVersion();
 
-            // ensure client is compatible with server
+            // ensure client is compatible with server, warn if not
             List compatibleVersions =
                     FedoraClient.getCompatibleServerVersions();
             if (!compatibleVersions.contains(serverVersion)) {
@@ -340,9 +340,10 @@ public class LoginDialog
                         endText.append((String) compatibleVersions.get(i));
                     }
                 }
-                throw new IOException("Server is version " + serverVersion
-                        + ", but this client only works with "
-                        + endText.toString());
+                System.err.println("WARNING: Server version is "
+                                   + serverVersion + ".  This client is "
+                                   + "only designed to work with "
+                                   + endText.toString());
             }
 
             // set SOAP stubs for Administrator
