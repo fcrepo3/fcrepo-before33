@@ -26,16 +26,20 @@ public class FilterRestApiAuthn
             log.debug(enter("doThisSubclass()"));
         }
 
-        boolean enforceAuthN = true;
+        boolean enforceAuthN = false;
 
-        // Since API-A AuthN is off, turn off AuthN for all GET requests
+        // Since API-A AuthN is off, leave AuthN off for all GET requests
         // except those which are known to be part of API-M
         if(request.getMethod().equals("GET")) {
             String requestPath = request.getPathInfo();
-            if(!requestPath.endsWith("/export") &&
-               !requestPath.endsWith("/objectXML")) {
-                enforceAuthN = false;
+            if(requestPath != null) {
+                if (requestPath.endsWith("/export") ||
+                    requestPath.endsWith("/objectXML")) {
+                    enforceAuthN = true;
+                }
             }
+        } else {
+            enforceAuthN = true;
         }
 
         if(enforceAuthN) {
