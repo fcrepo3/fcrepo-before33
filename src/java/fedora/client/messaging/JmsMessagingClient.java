@@ -28,13 +28,17 @@ import fedora.server.messaging.JMSManager.DestinationType;
  */
 public class JmsMessagingClient implements MessagingClient, MessageListener {
 
+    private static final int MAX_RETRIES = 5;
+    private static final int RETRY_INTERVAL = 20000;
+
     private String m_clientId;
     private MessagingListener m_listener;
     private Properties m_connectionProperties;
     private String m_messageSelector;
     private boolean m_durable;
 
-    private JMSManager m_jmsManager;
+    private JMSManager m_jmsManager = null;
+    private boolean m_connected = false;
 
     private Logger LOG = Logger.getLogger(JmsMessagingClient.class.getName());
 
@@ -202,12 +206,52 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
 
     /**
      * Starts the MessagingClient. This method must be called
-     * in order to receive messages.
+     * in order to receive messages. Waits for completed connection.
      */
     public void start() throws MessagingException {
-        try {
-            m_jmsManager = new JMSManager(m_connectionProperties, m_clientId);
+        start(true);
+    }
 
+    /**
+     * Starts the MessagingClient. This method must be called
+     * in order to receive messages.
+     *
+     * @param wait Set to true to wait until the startup process
+     *             is complete before returning. Set to false to
+     *             allow for asynchronous startup.
+     */
+    public void start(boolean wait) throws MessagingException {
+        Thread connector = new JMSBrokerConnector();
+        connector.start();
+
+        if(wait) {
+            int maxWait = RETRY_INTERVAL * MAX_RETRIES;
+            int waitTime = 0;
+            while(!isConnected()) {
+                if(waitTime < maxWait) {
+                    try {
+                        Thread.sleep(100);
+                        waitTime += 100;
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                    }
+                } else {
+                    throw new MessagingException("Timeout reached waiting " +
+                    		               "for messaging client to start.");
+                }
+            }
+        }
+    }
+
+    public boolean isConnected() {
+        return m_connected;
+    }
+
+    /**
+     * Creates topics and queues and starts listeners
+     */
+    private void createDestinations() throws MessagingException {
+        try {
             // Create Destinations based on properties
             Enumeration<?> propertyNames = m_connectionProperties.keys();
             while (propertyNames.hasMoreElements()) {
@@ -266,6 +310,8 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
                 m_jmsManager.unsubscribeAllDurable();
             }
             m_jmsManager.close();
+            m_jmsManager = null;
+            m_connected = false;
         } catch (MessagingException me) {
             LOG.error("Messaging Exception encountered attempting to stop "
                     + "Messaging Client: " + m_clientId
@@ -282,6 +328,58 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
      */
     public void onMessage(Message message) {
         m_listener.onMessage(m_clientId, message);
+    }
+
+    /**
+     * Starts the connection to the JMS Broker. Retries on failure.
+     */
+    private class JMSBrokerConnector extends Thread {
+
+        public void run() {
+            try {
+                connect();
+                createDestinations();
+                m_connected = true;
+            } catch (MessagingException me) {
+                throw new RuntimeException(me);
+            }
+        }
+
+        private void connect() throws MessagingException {
+            int retries = 0;
+
+            while(m_jmsManager == null && retries < MAX_RETRIES) {
+                try {
+                    m_jmsManager = new JMSManager(m_connectionProperties, m_clientId);
+                } catch(MessagingException me) {
+                    Throwable rootCause = me.getCause();
+                    while(rootCause.getCause() != null) {
+                        rootCause = rootCause.getCause();
+                    }
+
+                    if(rootCause instanceof java.net.ConnectException) {
+                        try {
+                            sleep(RETRY_INTERVAL);
+                        } catch (InterruptedException ie) {
+                            Thread.currentThread().interrupt();
+                        }
+                        retries++;
+                    } else {
+                        throw me;
+                    }
+                }
+            }
+
+            if(m_jmsManager == null) {
+                String errorMessage =
+                    "Unable to start JMS Messaging Client, " + MAX_RETRIES +
+                    " attempts were made, each attempt resulted in a " +
+                    "java.net.ConnectException. The messaging broker at " +
+                    m_connectionProperties.getProperty(Context.PROVIDER_URL) +
+                    " is not available";
+                throw new RuntimeException(errorMessage);
+            }
+        }
     }
 
 }

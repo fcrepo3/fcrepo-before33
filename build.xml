@@ -697,6 +697,10 @@
             <fileset dir="${src.dir}/bat/client"/>
             <fileset dir="${src.dir}/sh/client"/>
         </copy>
+        
+        <replace dir="${fedora.home.build.dir}/client/bin" 
+                 token="fedora-client.jar" 
+                 value="fedora-${fedora.version}-client.jar"/>                               
 
         <chmod perm="ugo+x" type="file">
             <fileset dir="${fedora.home.build.dir}/client/bin">
@@ -708,6 +712,10 @@
         <copy todir="${fedora.home.build.dir}/client/demo/soapclient">
             <fileset dir="${src.dir}/demo-soapclient"/>
         </copy>
+
+        <replace dir="${fedora.home.build.dir}/client/demo/soapclient" 
+                 token="fedora-client.jar" 
+                 value="fedora-${fedora.version}-client.jar"/> 
         
         <!-- Prepare batch demo-->
         <!-- Why are these being copied to lib? -->
@@ -733,6 +741,7 @@
         
         <copy todir="${client.build.dir}/classes">
             <fileset dir="${src.dir}/properties/client"/>
+            <fileset dir="${src.dir}/properties/server"/>
             <filterset>
                 <filter token="version" value="${fedora.version}"/>
                 <filter token="releaseDate" value="${fedora.releaseDate}"/>
@@ -744,7 +753,7 @@
             <map from="${lib.dir}${file.separator}" to="lib/"/>
         </pathconvert>
         
-        <jar destfile="${fedora.home.build.dir}/client/fedora-client.jar" 
+        <jar destfile="${fedora.home.build.dir}/client/fedora-${fedora.version}-client.jar" 
              basedir="${client.build.dir}/classes">
             <manifest>
                 <attribute name="Version" value="${fedora.version}"/>
@@ -1063,7 +1072,12 @@
             destdir="${client.build.dir}/messaging/classes" 
             includes="fedora/client/messaging/**,
         	          fedora/server/messaging/APIMMessage.java,
-        	          fedora/server/messaging/AtomAPIMMessage.java"/>        
+        	          fedora/server/messaging/AtomAPIMMessage.java"/>
+
+        <copy todir="${client.build.dir}/messaging/classes">
+            <fileset dir="${src.dir}/properties/server"/>
+        </copy>
+                	                  
         <jar destfile="${client.build.dir}/messaging/fedora-${fedora.version}-messaging-client.jar" 
              basedir="${client.build.dir}/messaging/classes">
             <manifest>
@@ -1072,6 +1086,7 @@
                 <attribute name="Built-By" value="${user.name}"/>
             </manifest>
         </jar>  	
+
         <zip destfile="${dist.dir}/fedora-messaging-client.zip">
             <fileset file="${client.build.dir}/messaging/fedora-${fedora.version}-messaging-client.jar" />
             <fileset file="${lib.abdera-il8n}"/>
@@ -1089,7 +1104,7 @@
         </zip>
     </target>
 	
-	<target name="performance-tests" depends="client">
+    <target name="performance-tests" depends="client">
         <java classname="fedora.client.test.PerformanceTests">
             <classpath>
                 <pathelement path="${build.dir}/client/classes" />
