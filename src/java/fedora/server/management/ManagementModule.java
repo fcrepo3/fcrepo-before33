@@ -38,7 +38,7 @@ import fedora.server.storage.types.RelationshipTuple;
  */
 public class ManagementModule
         extends Module
-        implements Management {
+        implements Management, ManagementDelegate {
 
     /** Logger for this class. */
     private static Logger LOG =
