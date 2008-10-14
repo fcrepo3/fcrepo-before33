@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -32,7 +32,7 @@ import fedora.utilities.install.InstallOptions;
  * web.xml document from scratch. It assumes that the constructor-provided
  * webXML file has already defined the base set of servlets, servlet-mapping,
  * etc (specifically, the web.xml located in src/war/fedora/WEB-INF/web.xml).
- * 
+ *
  * @author Edwin Shin
  */
 public class FedoraWebXML {
@@ -43,6 +43,7 @@ public class FedoraWebXML {
     private static final String CONFIDENTIAL = "CONFIDENTIAL";
 
     private static final String FILTER_AUTHN = "EnforceAuthnFilter";
+    private static final String FILTER_RESTAPI = "RestApiAuthnFilter";
 
     private static final String[] FILTER_APIA_SERVLET_NAMES =
             new String[] {"AccessServlet", "DescribeRepositoryServlet",
@@ -94,14 +95,32 @@ public class FedoraWebXML {
     }
 
     private void setServletMappings() {
+        // AuthN filter for all REST API methods
+        FilterMapping fmAll = new FilterMapping();
+        fmAll.setFilterName(FILTER_AUTHN);
+        fmAll.addServletName("RestServlet");
+
+        // AuthN filter for REST API methods corresponding to API-M
+        FilterMapping fmAPIM = new FilterMapping();
+        fmAPIM.setFilterName(FILTER_RESTAPI);
+        fmAPIM.addServletName("RestServlet");
+
         if (options.enableRestAPI()) {
             addServletMapping("RestServlet", "/objects/*");
             addServletMapping("RestServlet", "/objects/nextPID");
             addServletMapping("RestServlet", "/objects/nextPID.xml");
+
+            if(options.requireApiaAuth()) {
+                fedoraWebXML.addFilterMapping(fmAll);
+            } else {
+                fedoraWebXML.addFilterMapping(fmAPIM);
+            }
         } else {
             removeServletMapping("RestServlet", "/objects/*");
             removeServletMapping("RestServlet", "/objects/nextPID");
             removeServletMapping("RestServlet", "/objects/nextPID.xml");
+            fedoraWebXML.removeFilterMapping(fmAll);
+            fedoraWebXML.removeFilterMapping(fmAPIM);
         }
     }
 
@@ -152,7 +171,7 @@ public class FedoraWebXML {
 
     /**
      * Removes the servlet-mapping with the given servlet-name and url-pattern.
-     * 
+     *
      * @param servletName
      *        the servlet-name to match
      * @param urlPattern
@@ -182,7 +201,7 @@ public class FedoraWebXML {
      * and a new security-constraint containing urlPatterns will be created. If
      * no security-constraint contains <code>urlPatterns</code>, a new
      * security-constraint block will be created.
-     * 
+     *
      * @param urlPatterns
      */
     private void addUserDataConstraint(String[] urlPatterns) {
@@ -243,7 +262,7 @@ public class FedoraWebXML {
     /**
      * Removes the user-data-constraint if the security-constraint contains
      * <code>urlPatterns</code>.
-     * 
+     *
      * @param urlPatterns
      *        The array of url-patterns to match.
      */
@@ -319,7 +338,7 @@ public class FedoraWebXML {
     }
 
     /**
-     * Sets all context-param/param-value and init-param/param-value elements 
+     * Sets all context-param/param-value and init-param/param-value elements
      * where param-name=fedora.home
      */
     private void setFedoraHome() {
@@ -331,7 +350,7 @@ public class FedoraWebXML {
                 }
             }
         }
-        
+
         for (ContextParam contextParam : fedoraWebXML.getContextParams()) {
             if (contextParam.getParamName().equals("fedora.home")) {
                 contextParam.setParamValue(options.getFedoraHome()
@@ -347,7 +366,7 @@ public class FedoraWebXML {
     /**
      * Ensures that SETUP_FILTER is first, followed by XMLUSERFILE_FILTER, and
      * FINALIZE_FILTER is last.
-     * 
+     *
      * @author Edwin Shin
      */
     class FilterMappingComparator
@@ -425,7 +444,7 @@ public class FedoraWebXML {
             if (c != 0) {
                 return c;
             } else {
-                // i.e., we put filter-mappings with servlet-names ahead of 
+                // i.e., we put filter-mappings with servlet-names ahead of
                 // filter-mappings with url-patterns
                 if (!sn1.isEmpty() && sn2.isEmpty()) {
                     return -1;
