@@ -10,15 +10,17 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
+
 import java.net.URLDecoder;
+
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -28,6 +30,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -42,6 +45,7 @@ import fedora.server.errors.servletExceptionExtensions.BadRequest400Exception;
 import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
 import fedora.server.errors.servletExceptionExtensions.NotFound404Exception;
 import fedora.server.errors.servletExceptionExtensions.RootException;
+
 import fedora.utilities.XmlTransformUtility;
 
 /**
@@ -94,13 +98,7 @@ public class GetObjectHistoryServlet
     /** Instance of the access subsystem. */
     private static Access s_access = null;
 
-    /** Instance of URLDecoder */
-    private final URLDecoder decoder = new URLDecoder();
-
     public static final String ACTION_LABEL = "Get Object History";
-
-    /** Configured Fedora server hostname */
-    private static String fedoraServerHost = null;
 
     /**
      * <p>
@@ -136,8 +134,8 @@ public class GetObjectHistoryServlet
         LOG.debug("Servicing getObjectHistory request (PID=" + PID + ")");
 
         // Check for xml encoding parameter; ignore any other parameters
-        Hashtable h_userParms = new Hashtable();
-        for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
+        Hashtable<String, String> h_userParms = new Hashtable<String, String>();
+        for (Enumeration<?> e = request.getParameterNames(); e.hasMoreElements();) {
             String name = URLDecoder.decode((String) e.nextElement(), "UTF-8");
             String value =
                     URLDecoder.decode(request.getParameter(name), "UTF-8");
@@ -236,7 +234,6 @@ public class GetObjectHistoryServlet
                     Templates template =
                             factory.newTemplates(new StreamSource(xslFile));
                     Transformer transformer = template.newTransformer();
-                    Properties details = template.getOutputProperties();
                     transformer.transform(new StreamSource(pr),
                                           new StreamResult(out));
                 }
@@ -283,8 +280,6 @@ public class GetObjectHistoryServlet
 
         private String PID = null;
 
-        private String fedoraServerPort = null;
-
         /**
          * <p>
          * Constructor for ObjectHistorySerializerThread.
@@ -304,8 +299,6 @@ public class GetObjectHistoryServlet
             this.pw = pw;
             this.objectHistory = objectHistory;
             this.PID = PID;
-            fedoraServerPort =
-                    context.getEnvironmentValue(HTTP_REQUEST.SERVER_PORT.uri);
             if (HTTP_REQUEST.SECURE.uri.equals(context
                     .getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
             } else if (HTTP_REQUEST.INSECURE.uri.equals(context
@@ -383,7 +376,6 @@ public class GetObjectHistoryServlet
     public void init() throws ServletException {
         try {
             s_server = Server.getInstance(new File(FEDORA_HOME), false);
-            fedoraServerHost = s_server.getParameter("fedoraServerHost");
             s_access =
                     (Access) s_server.getModule("fedora.server.access.Access");
         } catch (InitializationException ie) {

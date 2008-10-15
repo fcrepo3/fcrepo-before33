@@ -144,7 +144,7 @@ public class BatchModifyValidator
                     new PrintStream(new FileOutputStream("c:\\zlogfile.txt"));
             InputStream file =
                     new FileInputStream("c:\\fedora\\mellon\\dist\\client\\demo\\batch-demo\\modify-batch-directives.xml");
-            BatchModifyValidator bmv = new BatchModifyValidator(file, log);
+            new BatchModifyValidator(file, log);
             file.close();
         } catch (Exception e) {
             System.out.println("ERROR: "

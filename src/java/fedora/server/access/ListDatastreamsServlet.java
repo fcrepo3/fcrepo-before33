@@ -10,14 +10,14 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
-import java.net.URLDecoder;
+
 import java.util.Date;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -27,6 +27,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -44,6 +45,7 @@ import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.storage.types.DatastreamDef;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
+
 import fedora.utilities.XmlTransformUtility;
 
 /**
@@ -106,9 +108,6 @@ public class ListDatastreamsServlet
 
     /** Portion of initial request URL from protocol up to query string */
     private String requestURI = null;
-
-    /** Instance of URLDecoder */
-    private final URLDecoder decoder = new URLDecoder();
 
     /** HTTP protocol * */
     private static String HTTP = "http";
@@ -281,7 +280,6 @@ public class ListDatastreamsServlet
                 Templates template =
                         factory.newTemplates(new StreamSource(xslFile));
                 Transformer transformer = template.newTransformer();
-                Properties details = template.getOutputProperties();
                 transformer.transform(new StreamSource(pr),
                                       new StreamResult(out));
             }

@@ -9,8 +9,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+
 import java.net.URL;
+
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -23,6 +26,7 @@ import org.apache.log4j.Logger;
 
 import fedora.server.errors.ObjectValidityException;
 import fedora.server.errors.ServerException;
+
 import fedora.utilities.XmlTransformUtility;
 
 /**
@@ -48,9 +52,8 @@ public class DOValidatorSchematron {
 
     private final StreamSource validatingStyleSheet;
 
-    private final StringBuffer string = new StringBuffer();
-
-    private static HashMap generatedStyleSheets = new HashMap();
+    private static Map<String, ByteArrayOutputStream> generatedStyleSheets = 
+        new HashMap<String, ByteArrayOutputStream>();
 
     /**
      * Constructs a DOValidatorSchematron instance with a Schematron

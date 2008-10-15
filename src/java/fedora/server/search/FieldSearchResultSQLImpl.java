@@ -16,8 +16,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import fedora.common.Constants;
-import fedora.common.Models;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.ObjectIntegrityException;
@@ -27,7 +25,6 @@ import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnrecognizedFieldException;
-import fedora.server.storage.ServiceDeploymentReader;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.RepositoryReader;

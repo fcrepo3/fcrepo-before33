@@ -132,7 +132,7 @@ public class XMLBuilder {
             xml.append("    </foxml:datastreamVersion>");
             xml.append("  </foxml:datastream>");
             xml.append("  <foxml:datastream ID=\"METHODMAP\" CONTROL_GROUP=\"X\" STATE=\"A\" VERSIONABLE=\"true\">");
-            xml.append("    <foxml:datastreamVersion ID=\"METHODMAP1.0\" MIMETYPE=\"text/xml\" FORMAT_URI=\"" + Constants.SDEP_METHOD_MAP1_0.uri + "\" LABEL=\"Deployment Method Map\">");
+            xml.append("    <foxml:datastreamVersion ID=\"METHODMAP1.0\" MIMETYPE=\"text/xml\" FORMAT_URI=\"" + Constants.SDEP_METHOD_MAP1_1.uri + "\" LABEL=\"Deployment Method Map\">");
             xml.append("      <foxml:xmlContent>");
             xml.append("        <comment xmlns=\"info:fedora/fedora-system:def/comment#\">\n");
             xml.append("          This METHODMAP datastream is included as a starting point to\n");
@@ -143,7 +143,7 @@ public class XMLBuilder {
             xml.append("    </foxml:datastreamVersion>");
             xml.append("  </foxml:datastream>");
             xml.append("  <foxml:datastream ID=\"DSINPUTSPEC\" CONTROL_GROUP=\"X\" STATE=\"A\" VERSIONABLE=\"true\">");
-            xml.append("    <foxml:datastreamVersion ID=\"DSINPUTSPEC1.0\" MIMETYPE=\"text/xml\" FORMAT_URI=\"" + Constants.DS_INPUT_SPEC1_0.uri + "\" LABEL=\"Datastream Input Specification\">");
+            xml.append("    <foxml:datastreamVersion ID=\"DSINPUTSPEC1.0\" MIMETYPE=\"text/xml\" FORMAT_URI=\"" + Constants.DS_INPUT_SPEC1_1.uri + "\" LABEL=\"Datastream Input Specification\">");
             xml.append("      <foxml:xmlContent>");
             xml.append("        <comment xmlns=\"info:fedora/fedora-system:def/comment#\">\n");
             xml.append("          This DSINPUTSPEC datastream is included as a starting point to\n");

@@ -535,8 +535,7 @@ public abstract class ResourceIndexIntegrationTest {
                                          Map<String, Set<String>> inputTypes) {
         StringBuffer xml = new StringBuffer();
         xml.append("<DSInputSpec xmlns=\"http://fedora.comm.nsdlib.org/"
-                + "service/bindspec\" bDefPID=\"" + sDefPID
-                + "\" label=\"InputSpec\">\n");
+                + "service/bindspec\" label=\"InputSpec\">\n");
         for (String key : inputTypes.keySet()) {
             xml.append("  <DSInput DSMin=\"1\" DSMax=\"1\" DSOrdinality=\""
                     + "false\" wsdlMsgPartName=\"" + key + "\">\n");

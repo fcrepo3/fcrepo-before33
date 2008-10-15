@@ -19,6 +19,8 @@ import fedora.server.storage.ServiceDefinitionReader;
 import fedora.server.storage.ServiceDeploymentReader;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.DirectoryBasedRepositoryReader;
+import fedora.server.storage.translation.DODeserializer;
+import fedora.server.storage.translation.DOSerializer;
 import fedora.server.storage.translation.DOTranslatorImpl;
 import fedora.server.storage.translation.METSFedoraExt1_1DODeserializer;
 import fedora.server.storage.translation.METSFedoraExt1_1DOSerializer;
@@ -46,9 +48,9 @@ public class RepositoryReaderTest
     public void setUp() {
         try {
             String mets = METS_EXT1_1.uri;
-            HashMap sers = new HashMap();
+            HashMap<String, DOSerializer> sers = new HashMap<String, DOSerializer>();
             sers.put(mets, new METSFedoraExt1_1DOSerializer());
-            HashMap desers = new HashMap();
+            HashMap<String, DODeserializer> desers = new HashMap<String, DODeserializer>();
             desers.put(mets, new METSFedoraExt1_1DODeserializer());
             DOTranslatorImpl translator = new DOTranslatorImpl(sers, desers);
             m_repoReader =

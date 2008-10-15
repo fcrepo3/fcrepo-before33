@@ -5,6 +5,8 @@
 
 package fedora.server.storage.types;
 
+import java.util.Date;
+
 /**
  * Data struture for holding information necessary to complete a 
  * dissemination request.
@@ -12,7 +14,7 @@ package fedora.server.storage.types;
  * @author Ross Wayland
  */
 public class DisseminationBindingInfo {
-
+    
     public String DSBindKey = null;
 
     public MethodParmDef[] methodParms = null;
@@ -32,4 +34,6 @@ public class DisseminationBindingInfo {
     public String ProtocolType = null;
 
     public String dsState = null;
+    
+    public Date dsCreateDT = null;
 }

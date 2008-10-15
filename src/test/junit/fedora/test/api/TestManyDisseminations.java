@@ -225,12 +225,12 @@ public class TestManyDisseminations
             appendInlineDatastream(buf,
                                    "METHODMAP",
                                    "text/xml",
-                                   Constants.SDEP_METHOD_MAP1_0.uri,
+                                   Constants.SDEP_METHOD_MAP1_1.uri,
                                    getSDepMethodMap());
             appendInlineDatastream(buf,
                                    "DSINPUTSPEC",
                                    "text/xml",
-                                   Constants.DS_INPUT_SPEC1_0.uri,
+                                   Constants.DS_INPUT_SPEC1_1.uri,
                                    getDSInputSpec());
             appendInlineDatastream(buf,
                                    "WSDL",
@@ -445,9 +445,8 @@ public class TestManyDisseminations
         }
 
         private static String getDSInputSpec() {
-            return "<fbs:DSInputSpec bDefPID=\""
-                    + SDEF_OBJECT_PID
-                    + "\" label=\"label\" xmlns:fbs=\"http://fedora.comm.nsdlib.org/service/bindspec\">"
+            return "<fbs:DSInputSpec "
+                    + "  label=\"label\" xmlns:fbs=\"http://fedora.comm.nsdlib.org/service/bindspec\">"
                     + CR
                     + "  <fbs:DSInput DSMax=\"1\" DSMin=\"1\" DSOrdinality=\"false\" wsdlMsgPartName=\"XSLT\">"
                     + CR

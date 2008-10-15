@@ -60,6 +60,7 @@ import fedora.server.utilities.StreamUtility;
  * working with the content of the datastream, depending on its type.
  * 
  * @author Chris Wilper
+ * @version $Id$
  */
 public class DatastreamPane
         extends EditingPane
@@ -1259,8 +1260,6 @@ public class DatastreamPane
 
         private boolean R;
 
-        private ContentViewer v;
-
         private final Datastream m_ds;
 
         private String m_priorLabel;
@@ -1516,12 +1515,12 @@ public class DatastreamPane
 
         Object[] m_dateStrings;
 
-        HashMap m_dsIndex;
+        HashMap<String, Integer> m_dsIndex;
 
         public PurgeButtonListener(Datastream[] versions) {
             m_versions = versions;
             m_dateStrings = new Object[versions.length];
-            m_dsIndex = new HashMap();
+            m_dsIndex = new HashMap<String, Integer>();
             for (int i = 0; i < versions.length; i++) {
                 m_dateStrings[i] = versions[i].getCreateDate();
                 m_dsIndex.put(versions[i].getCreateDate(), new Integer(i));

@@ -14,8 +14,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
+
 import java.net.URL;
 import java.net.URLDecoder;
+
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -26,6 +28,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import javax.xml.namespace.QName;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
@@ -41,6 +44,7 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 
 import fedora.common.Constants;
+
 import fedora.server.types.gen.DatastreamDef;
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
@@ -52,6 +56,7 @@ import fedora.server.types.gen.Property;
 import fedora.server.types.gen.RepositoryInfo;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
+
 import fedora.utilities.XmlTransformUtility;
 
 /**
@@ -312,7 +317,7 @@ public class FedoraAccessSoapServlet
     private static String METHOD_PARM_RESOLVER_SERVLET_PATH = null;
 
     /** User-supplied method parameters from servlet URL. */
-    private Hashtable h_userParms = null;
+    private Hashtable<String, String> h_userParms = null;
 
     /** Host name of the Fedora server * */
     private static String fedoraServerHost = null;
@@ -356,11 +361,8 @@ public class FedoraAccessSoapServlet
         String dsID = null;
         Property[] userParms = null;
         boolean xml = false;
-        long servletStartTime = new Date().getTime();
-        h_userParms = new Hashtable();
+        h_userParms = new Hashtable<String, String>();
         String requestURL = request.getRequestURL().toString();
-        String requestProtocol =
-                requestURL.substring(0, requestURL.indexOf(":"));
         if (!fedoraServerProtocol.equals(request.getRequestURL().toString()
                 .substring(0, requestURL.indexOf(":")))) {
             response
@@ -383,7 +385,7 @@ public class FedoraAccessSoapServlet
         }
 
         // Get servlet input parameters.
-        Enumeration URLParms = request.getParameterNames();
+        Enumeration<?> URLParms = request.getParameterNames();
         while (URLParms.hasMoreElements()) {
             String parm =
                     URLDecoder.decode((String) URLParms.nextElement(), "UTF-8");
@@ -419,10 +421,10 @@ public class FedoraAccessSoapServlet
         int userParmCounter = 0;
         if (!h_userParms.isEmpty()) {
             userParms = new Property[h_userParms.size()];
-            for (Enumeration e = h_userParms.keys(); e.hasMoreElements();) {
+            for (Enumeration<String> e = h_userParms.keys(); e.hasMoreElements();) {
                 Property userParm = new Property();
-                userParm.setName((String) e.nextElement());
-                userParm.setValue((String) h_userParms.get(userParm.getName()));
+                userParm.setName(e.nextElement());
+                userParm.setValue(h_userParms.get(userParm.getName()));
                 userParms[userParmCounter] = userParm;
                 userParmCounter++;
             }
@@ -454,20 +456,6 @@ public class FedoraAccessSoapServlet
                                              userParms,
                                              asOfDateTime);
                     if (dissemination != null) {
-                        // testing to see what's in request header that might be
-                        // of interest
-                        for (Enumeration e = request.getHeaderNames(); e
-                                .hasMoreElements();) {
-                            String name = (String) e.nextElement();
-                            Enumeration headerValues = request.getHeaders(name);
-                            StringBuffer sb = new StringBuffer();
-                            while (headerValues.hasMoreElements()) {
-                                sb.append((String) headerValues.nextElement());
-                            }
-                            String value = sb.toString();
-                            // System.out.println("FEDORASOAPSERVLET REQUEST
-                            // HEADER CONTAINED: "+name+" : "+value);
-                        }
                         // Dissemination found. Output the mime-typed stream.
                         //
                         // Note that what is returned by the Fedora Access SOAP
@@ -587,10 +575,6 @@ public class FedoraAccessSoapServlet
                         throw new ServletException(message);
                     }
                 }
-                long stopTime = new Date().getTime();
-                long interval = stopTime - servletStartTime;
-                // System.out.println("[FedoraAccessSoapServlet] Roundtrip "
-                // + "GetDissemination: " + interval + " milliseconds.");
             } else if (action.equals(GET_DATASTREAM_DISSEMINATION)) {
                 ServletOutputStream out = response.getOutputStream();
                 ByteArrayInputStream dissemResult = null;
@@ -600,20 +584,6 @@ public class FedoraAccessSoapServlet
                     dsDissemination =
                             getDatastreamDissemination(PID, dsID, asOfDateTime);
                     if (dsDissemination != null) {
-                        // testing to see what's in request header that might be
-                        // of interest
-                        for (Enumeration e = request.getHeaderNames(); e
-                                .hasMoreElements();) {
-                            String name = (String) e.nextElement();
-                            Enumeration headerValues = request.getHeaders(name);
-                            StringBuffer sb = new StringBuffer();
-                            while (headerValues.hasMoreElements()) {
-                                sb.append((String) headerValues.nextElement());
-                            }
-                            String value = sb.toString();
-                            // System.out.println("FEDORASOAPSERVLET REQUEST
-                            // HEADER CONTAINED: "+name+" : "+value);
-                        }
                         // Dissemination found. Output the mime-typed stream.
                         //
                         // Note that what is returned by the Fedora Access SOAP
@@ -704,10 +674,6 @@ public class FedoraAccessSoapServlet
                         throw new ServletException(message);
                     }
                 }
-                long stopTime = new Date().getTime();
-                long interval = stopTime - servletStartTime;
-                // System.out.println("[FedoraAccessSoapServlet] Roundtrip "
-                // + "GetDissemination: " + interval + " milliseconds.");
             } else if (action.equals(LIST_METHODS)) {
                 ObjectMethodsDef[] objMethDefArray = null;
                 PipedWriter pw = new PipedWriter();
@@ -757,7 +723,6 @@ public class FedoraAccessSoapServlet
                                             .newTemplates(new StreamSource(getServletContext()
                                                     .getRealPath("WEB-INF/xsl/listMethods.xslt")));
                             Transformer transformer = template.newTransformer();
-                            Properties details = template.getOutputProperties();
                             transformer
                                     .setParameter("title_",
                                                   new StringValue("Fedora Digital Object"));
@@ -828,10 +793,6 @@ public class FedoraAccessSoapServlet
                         throw new ServletException(message);
                     }
                 }
-                long stopTime = new Date().getTime();
-                long interval = stopTime - servletStartTime;
-                // System.out.println("[FedoraAccessSoapServlet] Roundtrip "
-                // + "GetObjectMethods: " + interval + " milliseconds.");
             } else if (action.equals(LIST_DATASTREAMS)) {
                 DatastreamDef[] datastreamDefArray = null;
                 PipedWriter pw = new PipedWriter();
@@ -881,7 +842,6 @@ public class FedoraAccessSoapServlet
                                             .newTemplates(new StreamSource(getServletContext()
                                                     .getRealPath("WEB-INF/xsl/listDatastreams.xslt")));
                             Transformer transformer = template.newTransformer();
-                            Properties details = template.getOutputProperties();
                             transformer
                                     .setParameter("title_",
                                                   new StringValue("Fedora Digital Object"));
@@ -952,10 +912,6 @@ public class FedoraAccessSoapServlet
                         throw new ServletException(message);
                     }
                 }
-                long stopTime = new Date().getTime();
-                long interval = stopTime - servletStartTime;
-                // System.out.println("[FedoraAccessSoapServlet] Roundtrip "
-                // + "ListDatastreams: " + interval + " milliseconds.");
             } else if (action.equals(GET_OBJECT_PROFILE)) {
                 ObjectProfile objProfile = null;
                 PipedWriter pw = new PipedWriter();
@@ -1008,7 +964,6 @@ public class FedoraAccessSoapServlet
                                     factory
                                             .newTemplates(new StreamSource(xslFile));
                             Transformer transformer = template.newTransformer();
-                            Properties details = template.getOutputProperties();
                             transformer
                                     .setParameter("title_",
                                                   new StringValue("Fedora Digital Object"));
@@ -1077,11 +1032,6 @@ public class FedoraAccessSoapServlet
                         throw new ServletException(message);
                     }
                 }
-                long stopTime = new Date().getTime();
-                long interval = stopTime - servletStartTime;
-                // System.out.println("[FedoraAccessSoapServlet] Roundtrip "
-                // + "GetObjectProfile: " + interval + " milliseconds.");
-                // end Object Profile processing
             } else if (action.equals(DESCRIBE_REPOSITORY)) {
                 RepositoryInfo repositoryInfo = null;
                 PipedWriter pw = new PipedWriter();
@@ -1124,7 +1074,6 @@ public class FedoraAccessSoapServlet
                                     factory
                                             .newTemplates(new StreamSource(xslFile));
                             Transformer transformer = template.newTransformer();
-                            Properties details = template.getOutputProperties();
                             transformer.setParameter("title_",
                                                      new StringValue("Fedora"));
                             transformer
@@ -1192,8 +1141,6 @@ public class FedoraAccessSoapServlet
                         throw new ServletException(message);
                     }
                 }
-                long stopTime = new Date().getTime();
-                long interval = stopTime - servletStartTime;
             } else if (action.equals(GET_OBJECT_HISTORY)) {
                 String[] objectHistory = null;
                 PipedWriter pw = new PipedWriter();
@@ -1238,7 +1185,6 @@ public class FedoraAccessSoapServlet
                                     factory
                                             .newTemplates(new StreamSource(xslFile));
                             Transformer transformer = template.newTransformer();
-                            Properties details = template.getOutputProperties();
                             transformer.setParameter("title_",
                                                      new StringValue("Fedora"));
                             transformer
@@ -1303,8 +1249,6 @@ public class FedoraAccessSoapServlet
                         throw new ServletException(message);
                     }
                 }
-                long stopTime = new Date().getTime();
-                long interval = stopTime - servletStartTime;
             } else {
                 // Action not recognized
                 String message =
@@ -2323,7 +2267,7 @@ public class FedoraAccessSoapServlet
                                     String dsID,
                                     String methodName,
                                     Date versDateTime,
-                                    Hashtable h_userParms,
+                                    Hashtable<String, String> h_userParms,
                                     HttpServletResponse response)
             throws IOException {
         // Check for missing parameters required either by the servlet or the
@@ -2383,8 +2327,8 @@ public class FedoraAccessSoapServlet
                 html.append("</tr>");
                 html.append("<tr>");
                 html.append("</tr>");
-                for (Enumeration e = h_userParms.keys(); e.hasMoreElements();) {
-                    String name = (String) e.nextElement();
+                for (Enumeration<String> e = h_userParms.keys(); e.hasMoreElements();) {
+                    String name = e.nextElement();
                     html.append("<tr>");
                     html.append("<td><font color='red'>" + name
                             + "</font></td>");
@@ -2446,8 +2390,8 @@ public class FedoraAccessSoapServlet
                 html.append("</tr>");
                 html.append("<tr>");
                 html.append("</tr>");
-                for (Enumeration e = h_userParms.keys(); e.hasMoreElements();) {
-                    String name = (String) e.nextElement();
+                for (Enumeration<String> e = h_userParms.keys(); e.hasMoreElements();) {
+                    String name = e.nextElement();
                     html.append("<tr>");
                     html.append("<td><font color='red'>" + name
                             + "</font></td>");
@@ -2503,8 +2447,8 @@ public class FedoraAccessSoapServlet
                 html.append("</tr>");
                 html.append("<tr>");
                 html.append("</tr>");
-                for (Enumeration e = h_userParms.keys(); e.hasMoreElements();) {
-                    String name = (String) e.nextElement();
+                for (Enumeration<String> e = h_userParms.keys(); e.hasMoreElements();) {
+                    String name = e.nextElement();
                     html.append("<tr>");
                     html.append("<td><font color='red'>" + name
                             + "</font></td>");
@@ -2560,8 +2504,8 @@ public class FedoraAccessSoapServlet
                 html.append("</tr>");
                 html.append("<tr>");
                 html.append("</tr>");
-                for (Enumeration e = h_userParms.keys(); e.hasMoreElements();) {
-                    String name = (String) e.nextElement();
+                for (Enumeration<String> e = h_userParms.keys(); e.hasMoreElements();) {
+                    String name = e.nextElement();
                     html.append("<tr>");
                     html.append("<td><font color='red'>" + name
                             + "</font></td>");
@@ -2630,7 +2574,7 @@ public class FedoraAccessSoapServlet
             html.append("</tr>");
             html.append("<tr>");
             html.append("</tr>");
-            for (Enumeration e = h_userParms.keys(); e.hasMoreElements();) {
+            for (Enumeration<String> e = h_userParms.keys(); e.hasMoreElements();) {
                 String name = (String) e.nextElement();
                 html.append("<tr>");
                 html.append("<td><font color='red'>" + name + "</font></td>");

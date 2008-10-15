@@ -35,6 +35,7 @@ import fedora.server.storage.types.MethodParmDef;
  * </p>
  * 
  * @author Sandy Payette
+ * @version $Id$
  */
 public class ServiceMapper {
 
@@ -67,10 +68,9 @@ public class ServiceMapper {
                     new InputSource(new FileInputStream(new File(args[1])));
             InputSource dsSpec =
                     new InputSource(new FileInputStream(new File(args[2])));
-            MethodDef[] methods = mapper.getMethodDefs(mmap);
-            MethodDefOperationBind[] methodBindings =
-                    mapper.getMethodDefBindings(wsdl, mmap);
-            DeploymentDSBindSpec dsInputSpec = mapper.getDSInputSpec(dsSpec);
+            mapper.getMethodDefs(mmap);
+            mapper.getMethodDefBindings(wsdl, mmap);
+            mapper.getDSInputSpec(dsSpec);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -248,7 +248,7 @@ public class ServiceMapper {
                 // datastream inputs to the operation.
 
                 MmapMethodParmDef[] parms = methodDef.wsdlMsgParts;
-                Vector tmp_dsInputKeys = new Vector();
+                Vector<String> tmp_dsInputKeys = new Vector<String>();
                 for (MmapMethodParmDef element : parms) {
                     if (element.parmType
                             .equalsIgnoreCase(MethodParmDef.DATASTREAM_INPUT)) {
@@ -262,7 +262,7 @@ public class ServiceMapper {
                 HTTPOperationInOut oBind =
                         ((HTTPBinding) binding).operations[i].outputBinding;
                 if (oBind != null) {
-                    Vector tmp_outputMIMETypes = new Vector();
+                    Vector<String> tmp_outputMIMETypes = new Vector<String>();
                     for (MIMEContent element : oBind.ioMIMEContent) {
                         tmp_outputMIMETypes.add(element.mimeType);
                     }

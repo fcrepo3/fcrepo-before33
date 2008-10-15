@@ -35,7 +35,7 @@
     <foxml:datastreamVersion CREATED="2008-07-02T05:09:43.328Z" ID="DS1.0"
       LABEL="Local copy of batikBatik.svg" MIMETYPE="image/svg+xml">
       <foxml:contentLocation
-        REF="http://www.fedora.info/demo/misc/batikBatik.svg" TYPE="URL"/>
+        REF="http://www.fedora-commons.org/demo/misc/batikBatik.svg" TYPE="URL"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="E" ID="DS2" STATE="A" VERSIONABLE="true">

@@ -37,10 +37,10 @@
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" ID="METHODMAP" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2008-07-09T13:59:56.375Z"
-      FORMAT_URI="info:fedora/fedora-system:FedoraSDepMethodMap-1.0"
+      FORMAT_URI="info:fedora/fedora-system:FedoraSDepMethodMap-1.1"
       ID="METHODMAP1.0" LABEL="Deployment Method Map" MIMETYPE="text/xml">
       <foxml:xmlContent>
-        <fmm:MethodMap bDefPID="demo:ex3SDef"
+        <fmm:MethodMap
           name="MethodMap - Document Transform SDEF Methods" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
           <fmm:Method operationName="getContent" wsdlMsgName="getContentRequest" wsdlMsgOutput="xslt_response">
             <fmm:DatastreamInputParm parmName="source" passBy="URL_REF" required="true"/>
@@ -55,10 +55,10 @@
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" ID="DSINPUTSPEC" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2008-07-09T13:59:56.375Z"
-      FORMAT_URI="info:fedora/fedora-system:FedoraDSInputSpec-1.0"
+      FORMAT_URI="info:fedora/fedora-system:FedoraDSInputSpec-1.1"
       ID="DSINPUTSPEC1.0" LABEL="Datastream Input Specification" MIMETYPE="text/xml">
       <foxml:xmlContent>
-        <fbs:DSInputSpec bDefPID="demo:ex3bDef"
+        <fbs:DSInputSpec
           label="Data profile mapping to the Fedora Local Saxon Service" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
           <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="source">
             <fbs:DSInputLabel>XML source file</fbs:DSInputLabel>

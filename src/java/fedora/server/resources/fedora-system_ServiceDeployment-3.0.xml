@@ -45,9 +45,11 @@
           </dsTypeModel>
           <dsTypeModel ID="METHODMAP">
             <form FORMAT_URI="info:fedora/fedora-system:FedoraSDepMethodMap-1.0" MIME="text/xml"/>
+            <form FORMAT_URI="info:fedora/fedora-system:FedoraSDepMethodMap-1.1" MIME="text/xml"/>
           </dsTypeModel>
           <dsTypeModel ID="DSINPUTSPEC">
             <form FORMAT_URI="info:fedora/fedora-system:FedoraDSInputSpec-1.0" MIME="text/xml"/>
+            <form FORMAT_URI="info:fedora/fedora-system:FedoraDSInputSpec-1.1" MIME="text/xml"/>
           </dsTypeModel>
           <dsTypeModel ID="WSDL">
             <form FORMAT_URI="http://schemas.xmlsoap.org/wsdl/" MIME="text/xml"/>

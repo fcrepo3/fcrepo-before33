@@ -38,10 +38,10 @@
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" ID="METHODMAP" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2008-07-02T05:09:43.171Z"
-      FORMAT_URI="info:fedora/fedora-system:FedoraSDepMethodMap-1.0"
+      FORMAT_URI="info:fedora/fedora-system:FedoraSDepMethodMap-1.1"
       ID="METHODMAP1.0" LABEL="Deployment Method Map" MIMETYPE="text/xml">
       <foxml:xmlContent>
-        <fmm:MethodMap bDefPID="demo:Collection"
+        <fmm:MethodMap
           name="MethodMap - Image Collection" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
           <fmm:Method operationLabel="An html representation of the collection"
             operationName="view" wsdlMsgName="viewRequest" wsdlMsgOutput="dissemResponse">
@@ -74,10 +74,10 @@
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" ID="DSINPUTSPEC" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2004-12-17T15:32:11.000Z"
-      FORMAT_URI="info:fedora/fedora-system:FedoraDSInputSpec-1.0"
+      FORMAT_URI="info:fedora/fedora-system:FedoraDSInputSpec-1.1"
       ID="DSINPUTSPEC1.0" LABEL="Datastream Input Specification" MIMETYPE="text/xml">
       <foxml:xmlContent>
-        <fbs:DSInputSpec bDefPID="demo:Collection"
+        <fbs:DSInputSpec
           label="Datastream Input Specification for Image Collection" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
           <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="XSLT">
             <fbs:DSInputLabel>XSLT Binding</fbs:DSInputLabel>

@@ -38,11 +38,11 @@ public abstract class DigitalObjectUtil
             updateLegacyDatastream(obj,
                                    "METHODMAP",
                                    xml,
-                                   SDEP_METHOD_MAP1_0.uri);
+                                   SDEP_METHOD_MAP1_1.uri);
             updateLegacyDatastream(obj,
                                    "DSINPUTSPEC",
                                    xml,
-                                   DS_INPUT_SPEC1_0.uri);
+                                   DS_INPUT_SPEC1_1.uri);
             updateLegacyDatastream(obj,
                                    "WSDL",
                                    xml,

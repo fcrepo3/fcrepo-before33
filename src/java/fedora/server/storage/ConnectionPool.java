@@ -149,9 +149,9 @@ public class ConnectionPool {
         }
     }
 
-    protected void setConnectionProperties(Map props) {
+    protected void setConnectionProperties(Map<String, String> props) {
         for (String name : (Set<String>) props.keySet()) {
-            dataSource.addConnectionProperty(name, (String) props.get(name));
+            dataSource.addConnectionProperty(name, props.get(name));
         }
     }
 

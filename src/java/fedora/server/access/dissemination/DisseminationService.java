@@ -42,12 +42,9 @@ import fedora.server.security.BackendPolicies;
 import fedora.server.security.BackendSecurity;
 import fedora.server.security.BackendSecuritySpec;
 import fedora.server.storage.ServiceDeploymentReader;
-import fedora.server.storage.DOManager;
-import fedora.server.storage.DOReader;
+import fedora.server.storage.types.DatastreamMediation;
 import fedora.server.storage.types.DeploymentDSBindRule;
 import fedora.server.storage.types.DeploymentDSBindSpec;
-import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.DatastreamMediation;
 import fedora.server.storage.types.DisseminationBindingInfo;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.MethodParmDef;
@@ -68,9 +65,6 @@ public class DisseminationService {
 
     /** The Fedora Server instance */
     private static Server s_server;
-
-    /** An instance of DO manager */
-    private static DOManager m_manager;
 
     /**
      * Signifies the special type of address location known as LOCAL. An address
@@ -122,9 +116,6 @@ public class DisseminationService {
                 fedoraServerPort = s_server.getParameter("fedoraServerPort");
                 fedoraServerRedirectPort =
                         s_server.getParameter("fedoraRedirectPort");
-                m_manager =
-                        (DOManager) s_server
-                                .getModule("fedora.server.storage.DOManager");
                 m_beSecurity =
                         (BackendSecurity) s_server
                                 .getModule("fedora.server.security.BackendSecurity");
@@ -163,9 +154,7 @@ public class DisseminationService {
     }
 
     /** The hashtable containing information required for datastream mediation. */
-    protected static Hashtable dsRegistry = new Hashtable(1000);
-
-    protected static Hashtable beSecurityHash = new Hashtable();
+    protected static Hashtable<String, DatastreamMediation> dsRegistry = new Hashtable<String, DatastreamMediation>(1000);
 
     /**
      * <p>
@@ -218,7 +207,7 @@ public class DisseminationService {
      */
     public MIMETypedStream assembleDissemination(Context context,
                                                  String PID,
-                                                 Hashtable h_userParms,
+                                                 Hashtable<String, String> h_userParms,
                                                  DisseminationBindingInfo[] dissBindInfoArray,
                                                  String deploymentPID,
                                                  ServiceDeploymentReader bmReader,
@@ -231,7 +220,6 @@ public class DisseminationService {
         String protocolType = null;
         DisseminationBindingInfo dissBindInfo = null;
         MIMETypedStream dissemination = null;
-        long initStartTime = new Date().getTime();
         boolean isRedirect = false;
 
         if (LOG.isDebugEnabled()) {
@@ -347,13 +335,13 @@ public class DisseminationService {
                 // callbackRole - contains the role of the backend service (the deploymentPID of the service).
 
                 String callbackRole = deploymentPID;
-                Hashtable beHash =
+                Hashtable<String, String> beHash =
                         m_beSS.getSecuritySpec(callbackRole, methodName);
                 boolean callbackBasicAuth =
-                        new Boolean((String) beHash.get("callbackBasicAuth"))
+                        new Boolean(beHash.get("callbackBasicAuth"))
                                 .booleanValue();
                 boolean callbackSSL =
-                        new Boolean((String) beHash.get("callbackSSL"))
+                        new Boolean(beHash.get("callbackSSL"))
                                 .booleanValue();
                 String dsMediatedServletPath = null;
                 if (callbackBasicAuth) {
@@ -405,7 +393,7 @@ public class DisseminationService {
                         + nextKey + "'");
                 // In most cases, there is only a single datastream that matches a
                 // given DSBindingKey so the substitution process is to just replace
-                // the occurence of (BINDING_KEY) with the value of the datastream
+                // the occurrence of (BINDING_KEY) with the value of the datastream
                 // location. However, when multiple datastreams match the same
                 // DSBindingKey, the occurrence of (BINDING_KEY) is replaced with the
                 // value of the datastream location and the value +(BINDING_KEY) is
@@ -429,7 +417,7 @@ public class DisseminationService {
                 // image=(PHOTO)&watermark=(WATERMARK) becomes
                 // image=dslocation1&watermark=dslocation2
                 //
-                // In the case with mutliple binding keys and multiple datastreams,
+                // In the case with multiple binding keys and multiple datastreams,
                 // the substitution might appear like the following:
                 //
                 // image=(PHOTO)&watermark=(WATERMARK) becomes
@@ -460,7 +448,7 @@ public class DisseminationService {
                             replaceString =
                                     resolveInternalDSLocation(context,
                                                               dissBindInfo.dsLocation,
-                                                              PID,
+                                                              dissBindInfo.dsCreateDT,
                                                               dsMediatedCallbackHost)
                                             + "+("
                                             + dissBindInfo.DSBindKey
@@ -500,7 +488,7 @@ public class DisseminationService {
                             replaceString =
                                     resolveInternalDSLocation(context,
                                                               dissBindInfo.dsLocation,
-                                                              PID,
+                                                              dissBindInfo.dsCreateDT,
                                                               dsMediatedCallbackHost);
                         } else {
                             replaceString = dissBindInfo.dsLocation;
@@ -557,14 +545,14 @@ public class DisseminationService {
             }
 
             // Substitute method parameter values in dissemination URL
-            Enumeration e = h_userParms.keys();
+            Enumeration<String> e = h_userParms.keys();
             while (e.hasMoreElements()) {
                 String name = null;
                 String value = null;
                 try {
-                    name = URLEncoder.encode((String) e.nextElement(), "UTF-8");
+                    name = URLEncoder.encode(e.nextElement(), "UTF-8");
                     value =
-                            URLEncoder.encode((String) h_userParms.get(name),
+                            URLEncoder.encode(h_userParms.get(name),
                                               "UTF-8");
                 } catch (UnsupportedEncodingException uee) {
                     String message =
@@ -673,21 +661,19 @@ public class DisseminationService {
 
                     // Get basicAuth and SSL info about the backend service and use this info to configure the
                     // "call" to the backend service.
-                    Hashtable beHash =
+                    Hashtable<String, String> beHash =
                             m_beSS.getSecuritySpec(beServiceRole, methodName);
                     boolean beServiceCallSSL =
-                            new Boolean((String) beHash.get("callSSL"))
+                            new Boolean(beHash.get("callSSL"))
                                     .booleanValue();
                     String beServiceCallUsername = "";
                     String beServiceCallPassword = "";
                     boolean beServiceCallBasicAuth =
-                            new Boolean((String) beHash.get("callBasicAuth"))
+                            new Boolean(beHash.get("callBasicAuth"))
                                     .booleanValue();
                     if (beServiceCallBasicAuth) {
-                        beServiceCallUsername =
-                                (String) beHash.get("callUsername");
-                        beServiceCallPassword =
-                                (String) beHash.get("callPassword");
+                        beServiceCallUsername = beHash.get("callUsername");
+                        beServiceCallPassword = beHash.get("callPassword");
                     }
 
                     /*
@@ -825,16 +811,14 @@ public class DisseminationService {
         long currentTime = new Timestamp(new Date().getTime()).getTime();
         long expireLimit =
                 currentTime - (long) datastreamExpirationLimit * 1000;
-        String dsMediatedServletPath = null;
-        String dsMediatedCallbackHost = null;
 
         try {
 
             // Remove any datastream registrations that have expired.
             // The expiration limit can be adjusted using the Fedora config parameter
             // named "datastreamExpirationLimit" which is in seconds.
-            for (Enumeration e = dsRegistry.keys(); e.hasMoreElements();) {
-                String key = (String) e.nextElement();
+            for (Enumeration<String> e = dsRegistry.keys(); e.hasMoreElements();) {
+                String key = e.nextElement();
                 timeStamp = Timestamp.valueOf(extractTimestamp(key));
                 if (expireLimit > timeStamp.getTime()) {
                     dsRegistry.remove(key);
@@ -870,24 +854,24 @@ public class DisseminationService {
                 }
 
                 // Store beSecurity info in hash 
-                Hashtable beHash =
+                Hashtable<String, String> beHash =
                         m_beSS.getSecuritySpec(beServiceRole, methodName);
                 boolean beServiceCallbackBasicAuth =
-                        new Boolean((String) beHash.get("callbackBasicAuth"))
+                        new Boolean(beHash.get("callbackBasicAuth"))
                                 .booleanValue();
                 boolean beServiceCallBasicAuth =
-                        new Boolean((String) beHash.get("callBasicAuth"))
+                        new Boolean(beHash.get("callBasicAuth"))
                                 .booleanValue();
                 boolean beServiceCallbackSSL =
-                        new Boolean((String) beHash.get("callbackSSL"))
+                        new Boolean(beHash.get("callbackSSL"))
                                 .booleanValue();
                 boolean beServiceCallSSL =
-                        new Boolean((String) beHash.get("callSSL"))
+                        new Boolean(beHash.get("callSSL"))
                                 .booleanValue();
                 String beServiceCallUsername =
-                        (String) beHash.get("callUsername");
+                        beHash.get("callUsername");
                 String beServiceCallPassword =
-                        (String) beHash.get("callPassword");
+                        beHash.get("callPassword");
                 if (LOG.isDebugEnabled()) {
                     LOG
                             .debug("******************Registering datastream dsLocation: "
@@ -1037,7 +1021,7 @@ public class DisseminationService {
      */
     private String resolveInternalDSLocation(Context context,
                                              String internalDSLocation,
-                                             String PID,
+                                             Date dsCreateDT,
                                              String callbackHost)
             throws ServerException {
 
@@ -1051,12 +1035,9 @@ public class DisseminationService {
         String[] s = internalDSLocation.split("\\+");
         String dsLocation = null;
         if (s.length == 3) {
-            DOReader doReader =
-                    m_manager.getReader(Server.GLOBAL_CHOICE, context, PID);
-            Datastream d = (Datastream) doReader.getDatastream(s[1], s[2]);
             dsLocation =
                     callbackHost + "/fedora/get/" + s[0] + "/" + s[1] + "/"
-                            + DateUtility.convertDateToString(d.DSCreateDT);
+                            + DateUtility.convertDateToString(dsCreateDT);
 
         } else {
             String message =
@@ -1085,6 +1066,7 @@ public class DisseminationService {
             LOG.debug("  OperationLocation  : " + info[i].OperationLocation);
             LOG.debug("  ProtocolType       : " + info[i].ProtocolType);
             LOG.debug("  dsState            : " + info[i].dsState);
+            LOG.debug("  dsCreateDT         : " + info[i].dsCreateDT);
             for (int j = 0; j < info[i].methodParms.length; j++) {
                 MethodParmDef def = info[i].methodParms[j];
                 LOG.debug("  MethodParamDef[" + j + "]:");

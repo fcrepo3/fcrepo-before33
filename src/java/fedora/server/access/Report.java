@@ -154,10 +154,6 @@ public class Report {
         }
     }
 
-    private static final boolean needsEnc(String name) {
-        return needsEnc.contains(name);
-    }
-
     private static final int MAXRESULTS = Integer.MAX_VALUE;
 
     private String[] fieldsArray = null;
@@ -291,7 +287,7 @@ public class Report {
 
     private static final String MODIFIED_GT_1_YR_AGO = "mgty";
 
-    private static final Hashtable dateRangeLabels;
+    private static final Hashtable<String, String> dateRangeLabels;
     static {
         Hashtable<String, String> t = new Hashtable<String, String>();
         t.put(NONE, "(regardless of when created or last modified)");
@@ -683,7 +679,7 @@ public class Report {
                 if ("text/html".equals(getContentType())) {
                     //header fields
                 }
-                List searchResults = fsr.objectFieldsList();
+                List<ObjectFields> searchResults = fsr.objectFieldsList();
                 for (int i = 0; i < searchResults.size(); i++) {
                     ObjectFields f = (ObjectFields) searchResults.get(i);
                     outBuf.append("\t\t<objectFields>\n");
@@ -716,12 +712,8 @@ public class Report {
 
     private static void appendXML(String name, List values, StringBuffer out) {
         for (int i = 0; i < values.size(); i++) {
-            appendXML(name, (String) values.get(i), out);
+            appendXML(name, (String)values.get(i), out);
         }
-    }
-
-    private Server getServer() {
-        return s_server;
     }
 
     abstract class Writer {
@@ -751,7 +743,7 @@ public class Report {
 
         Transformer transformer = null;
 
-        Hashtable params = null;
+        Hashtable<String, String> params = null;
 
         protected void xform(Source source) throws TransformerException {
             TransformerFactory factory = XmlTransformUtility.getTransformerFactory();
@@ -759,10 +751,10 @@ public class Report {
                     factory.newTransformer(new StreamSource(s_server
                             .getHomeDir()
                             + "/" + XSLT_DIR + "/" + xslt));
-            Enumeration keys = params.keys();
+            Enumeration<String> keys = params.keys();
             while (keys.hasMoreElements()) {
-                String key = (String) keys.nextElement();
-                String value = (String) params.get(key);
+                String key = keys.nextElement();
+                String value = params.get(key);
                 transformer.setParameter(key, value);
             }
             transformer.transform(source, new StreamResult(out));
@@ -790,7 +782,7 @@ public class Report {
     class InMemoryWriter
             extends TransformerWriter {
 
-        InMemoryWriter(PrintWriter out, String xslt, Hashtable params) {
+        InMemoryWriter(PrintWriter out, String xslt, Hashtable<String, String> params) {
             this.out = out;
             this.xslt = xslt;
             this.params = params;

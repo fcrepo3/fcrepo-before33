@@ -50,7 +50,7 @@ import java.util.StringTokenizer;
  * @author Chris Wilper
  */
 public class FileComparator
-        implements Comparator {
+        implements Comparator<Object> {
 
     private int m_multiplier = 1;
 
@@ -153,7 +153,7 @@ public class FileComparator
      */
     public static void main(String[] args) {
 
-        List list = new ArrayList();
+        List<File> list = new ArrayList<File>();
         getFilesAndDirs(new File(args[0]), list);
 
         File[] files = new File[list.size()];
@@ -183,7 +183,7 @@ public class FileComparator
     }
 
     // for testing via main
-    private static void getFilesAndDirs(File dir, List list) {
+    private static void getFilesAndDirs(File dir, List<File> list) {
         File[] files = dir.listFiles();
         for (File element : files) {
             list.add(element);

@@ -19,7 +19,6 @@ import fedora.server.errors.ServerException;
 import fedora.server.journal.recoverylog.JournalRecoveryLog;
 import fedora.server.management.ManagementDelegate;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.Property;
 import fedora.server.storage.types.RelationshipTuple;
 
 /**

@@ -15,6 +15,8 @@ import java.util.HashMap;
 
 import fedora.common.Constants;
 
+import fedora.server.storage.translation.DODeserializer;
+import fedora.server.storage.translation.DOSerializer;
 import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.storage.translation.DOTranslatorImpl;
 import fedora.server.storage.translation.METSFedoraExt1_1DODeserializer;
@@ -55,8 +57,8 @@ public class METSInOutTest
                     new METSFedoraExt1_1DODeserializer();
             METSFedoraExt1_1DOSerializer ser =
                     new METSFedoraExt1_1DOSerializer();
-            HashMap desers = new HashMap();
-            HashMap sers = new HashMap();
+            HashMap<String, DODeserializer> desers = new HashMap<String, DODeserializer>();
+            HashMap<String, DOSerializer> sers = new HashMap<String, DOSerializer>();
             desers.put(METS_EXT1_1.uri, deser);
             sers.put(METS_EXT1_1.uri, ser);
             DOTranslatorImpl trans = new DOTranslatorImpl(sers, desers);
@@ -79,12 +81,12 @@ public class METSInOutTest
             if (args.length > 1) {
                 ByteArrayInputStream newIn =
                         new ByteArrayInputStream(out.toByteArray());
-                HashMap xmlSchemaMap = new HashMap();
+                HashMap<String, String> xmlSchemaMap = new HashMap<String, String>();
                 // LOOK!  These path values should work if test is run from
                 // the FEDORA HOME directory.  Adjust accordingly for test environment.
                 xmlSchemaMap.put(METS_EXT1_1.uri,
                                  "dist/server/xsd/mets-fedora-ext1-1.xsd");
-                HashMap ruleSchemaMap = new HashMap();
+                HashMap<String, String> ruleSchemaMap = new HashMap<String, String>();
                 ruleSchemaMap.put(METS_EXT1_1.uri,
                                   "dist/server/schematron/metsExtRules1-0.xml");
                 DOValidatorImpl v =

@@ -25,9 +25,6 @@ import org.apache.xml.serialize.XMLSerializer;
 
 import org.w3c.dom.Document;
 
-import fedora.common.Constants;
-import fedora.common.Models;
-
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;

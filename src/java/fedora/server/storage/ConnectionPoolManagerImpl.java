@@ -37,7 +37,7 @@ public class ConnectionPoolManagerImpl
     private static final Logger LOG =
             Logger.getLogger(ConnectionPoolManagerImpl.class.getName());
 
-    private static Hashtable h_ConnectionPools = new Hashtable();
+    private static Hashtable<String, ConnectionPool> h_ConnectionPools = new Hashtable<String, ConnectionPool>();
 
     private static String defaultPoolName = null;
 
@@ -86,7 +86,7 @@ public class ConnectionPoolManagerImpl
      *         If initialization values are invalid or initialization fails for
      *         some other reason.
      */
-    public ConnectionPoolManagerImpl(Map moduleParameters,
+    public ConnectionPoolManagerImpl(Map<String, String> moduleParameters,
                                      Server server,
                                      String role)
             throws ModuleInitializationException {

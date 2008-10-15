@@ -18,7 +18,7 @@ import static fedora.test.integration.cma.Util.ingestTestObjects;
  * service on the same content model creates a conflict. In general, this is a
  * problem - don't do it. However, there are a few legitimate reasons for
  * wanting to do so, primarily when replacing one SDep with another. Faced with
- * a choice of first removing the old SDep, then replacicng it vs. first
+ * a choice of first removing the old SDep, then replacing it vs. first
  * ingesting/activating a new one, then subsequently removing the old one, we
  * notice that the former situation guarantees a period of time in which there
  * is no SDep for a given service - which may be problematic in situations where
@@ -32,7 +32,7 @@ import static fedora.test.integration.cma.Util.ingestTestObjects;
  * recent last modified date, and will be ignored until the existing SDep is
  * purged or modified.
  * </p>
- * These tests verify the above behaviour.
+ * These tests verify the above behavior.
  * 
  * @author birkland
  */

@@ -7,12 +7,11 @@ package fedora.server.storage.types;
 
 /**
  * @author Sandy Payette
+ * @version $Id$
  */
 public class DeploymentDSBindSpec {
 
     public String serviceDeploymentPID;
-
-    public String serviceDefinitionPID;
 
     public String bindSpecLabel;
 
@@ -22,5 +21,4 @@ public class DeploymentDSBindSpec {
 
     public DeploymentDSBindSpec() {
     }
-
 }

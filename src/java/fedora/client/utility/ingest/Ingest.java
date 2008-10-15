@@ -5,13 +5,11 @@
 
 package fedora.client.utility.ingest;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.PrintStream;
 
 import java.util.Arrays;
@@ -108,25 +106,6 @@ public class Ingest
                 }
             }
         }
-    }
-
-    private static boolean matches(File file, String searchString)
-            throws Exception {
-        BufferedReader in = new BufferedReader(new FileReader(file));
-        try {
-            String line;
-            while ((line = in.readLine()) != null) {
-                if (line.indexOf(searchString) != -1) {
-                    return true;
-                }
-            }
-        } finally {
-            try {
-                in.close();
-            } catch (Exception e) {
-            }
-        }
-        return false;
     }
 
     /***************************************************************************

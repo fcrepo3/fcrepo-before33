@@ -34,6 +34,7 @@ import fedora.server.storage.types.DeploymentDSBindSpec;
  * represented by the deployment and a data object.
  * 
  * @author Sandy Payette
+ * @version $Id$
  */
 public class DSInputSpecParser
         extends DefaultHandler
@@ -42,7 +43,7 @@ public class DSInputSpecParser
     /**
      * URI-to-namespace prefix mapping info from SAX2 startPrefixMapping events.
      */
-    private HashMap nsPrefixMap;
+    private HashMap<String, String> nsPrefixMap;
 
     private boolean inDSInputLabel = false;
 
@@ -58,7 +59,7 @@ public class DSInputSpecParser
     private final String sDepPID;
 
     // Working variables...
-    private Vector tmp_InputRules;
+    private Vector<DeploymentDSBindRule> tmp_InputRules;
 
     /**
      * Constructor to enable another class to initiate the parsing
@@ -104,8 +105,8 @@ public class DSInputSpecParser
 
     @Override
     public void startDocument() throws SAXException {
-        nsPrefixMap = new HashMap();
-        tmp_InputRules = new Vector();
+        nsPrefixMap = new HashMap<String, String>();
+        tmp_InputRules = new Vector<DeploymentDSBindRule>();
         dsInputSpec = new DeploymentDSBindSpec();
     }
 
@@ -160,13 +161,16 @@ public class DSInputSpecParser
                              Attributes attrs) throws SAXException {
         if (namespaceURI.equalsIgnoreCase(BINDING_SPEC.uri)
                 && localName.equalsIgnoreCase("DSInputSpec")) {
-            //FIXME: bDefPid attribute may be removed?
-            dsInputSpec.serviceDefinitionPID = attrs.getValue("bDefPID");
             dsInputSpec.serviceDeploymentPID = sDepPID;
             dsInputSpec.bindSpecLabel = attrs.getValue("label");
         } else if (namespaceURI.equalsIgnoreCase(BINDING_SPEC.uri)
                 && localName.equalsIgnoreCase("DSInput")) {
             dsInputRule = new DeploymentDSBindRule();
+            
+            if (attrs.getValue("pid") != null) {
+                dsInputRule.pid = attrs.getValue("pid");
+            }
+            
             dsInputRule.bindingKeyName = attrs.getValue("wsdlMsgPartName");
             dsInputRule.maxNumBindings =
                     new Integer(attrs.getValue("DSMax")).intValue();

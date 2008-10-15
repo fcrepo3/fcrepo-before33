@@ -13,17 +13,19 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
+
 import java.net.URLDecoder;
+
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -33,6 +35,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -49,11 +52,11 @@ import fedora.server.errors.authorization.AuthzException;
 import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
 import fedora.server.errors.servletExceptionExtensions.NotFound404Exception;
 import fedora.server.errors.servletExceptionExtensions.RootException;
-import fedora.server.storage.DOManager;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Property;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
+
 import fedora.utilities.XmlTransformUtility;
 
 /**
@@ -158,29 +161,8 @@ public class FedoraAccessServlet
     /** Instance of the access subsystem. */
     private static Access s_access = null;
 
-    /** Instance of DOManager. */
-    private static DOManager m_manager = null;
-
-    /** userInputParm hashtable */
-    private final Hashtable h_userParms = new Hashtable();
-
     /** Portion of initial request URL from protocol up to query string */
     private String requestURI = null;
-
-    /** Instance of URLDecoder */
-    private final URLDecoder decoder = new URLDecoder();
-
-    /** Fedora server protocol * */
-    private String fedoraServerProtocol = null;
-
-    /** HTTP protocol * */
-    private static String HTTP = "http";
-
-    /** HTTPS protocol * */
-    private static String HTTPS = "https";
-
-    /** Configured Fedora server hostname */
-    private static String fedoraServerHost = null;
 
     /** 4K Buffer */
     private final static int BUF = 4096;
@@ -208,7 +190,6 @@ public class FedoraAccessServlet
         String dsID = null;
         Date asOfDateTime = null;
         Date versDateTime = null;
-        String action = null;
         Property[] userParms = null;
         boolean isGetObjectProfileRequest = false;
         boolean isGetDisseminationRequest = false;
@@ -220,7 +201,6 @@ public class FedoraAccessServlet
                         + (request.getQueryString() != null ? "?"
                                 + request.getQueryString() : "");
         LOG.info("Got request: " + requestURI);
-        fedoraServerProtocol = requestURI.substring(0, requestURI.indexOf(":"));
 
         // Parse servlet URL.
         // For the Fedora API-A-LITE "get" syntax, valid entries include:
@@ -405,8 +385,8 @@ public class FedoraAccessServlet
         }
 
         // Separate out servlet parameters from method parameters
-        Hashtable h_userParms = new Hashtable();
-        for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
+        Hashtable<String, String> h_userParms = new Hashtable<String, String>();
+        for (Enumeration<?> e = request.getParameterNames(); e.hasMoreElements();) {
             String name = URLDecoder.decode((String) e.nextElement(), "UTF-8");
             if (isGetObjectProfileRequest && name.equalsIgnoreCase("xml")) {
                 xml = new Boolean(request.getParameter(name)).booleanValue();
@@ -421,10 +401,10 @@ public class FedoraAccessServlet
         // Property[] so create Property[] from hashtable of user parameters.
         int userParmCounter = 0;
         userParms = new Property[h_userParms.size()];
-        for (Enumeration e = h_userParms.keys(); e.hasMoreElements();) {
+        for (Enumeration<String> e = h_userParms.keys(); e.hasMoreElements();) {
             Property userParm = new Property();
-            userParm.name = (String) e.nextElement();
-            userParm.value = (String) h_userParms.get(userParm.name);
+            userParm.name = e.nextElement();
+            userParm.value = h_userParms.get(userParm.name);
             userParms[userParmCounter] = userParm;
             userParmCounter++;
         }
@@ -583,7 +563,6 @@ public class FedoraAccessServlet
                     Templates template =
                             factory.newTemplates(new StreamSource(xslFile));
                     Transformer transformer = template.newTransformer();
-                    Properties details = template.getOutputProperties();
                     transformer.transform(new StreamSource(pr),
                                           new StreamResult(out));
                 }
@@ -631,10 +610,10 @@ public class FedoraAccessServlet
         try {
             // testing to see what's in request header that might be of interest
             if (LOG.isDebugEnabled()) {
-                for (Enumeration e = request.getHeaderNames(); e
+                for (Enumeration<?> e = request.getHeaderNames(); e
                         .hasMoreElements();) {
                     String name = (String) e.nextElement();
-                    Enumeration headerValues = request.getHeaders(name);
+                    Enumeration<?> headerValues = request.getHeaders(name);
                     StringBuffer sb = new StringBuffer();
                     while (headerValues.hasMoreElements()) {
                         sb.append((String) headerValues.nextElement());
@@ -759,10 +738,10 @@ public class FedoraAccessServlet
         try {
             // testing to see what's in request header that might be of interest
             if (LOG.isDebugEnabled()) {
-                for (Enumeration e = request.getHeaderNames(); e
+                for (Enumeration<?> e = request.getHeaderNames(); e
                         .hasMoreElements();) {
                     String name = (String) e.nextElement();
-                    Enumeration headerValues = request.getHeaders(name);
+                    Enumeration<?> headerValues = request.getHeaders(name);
                     StringBuffer sb = new StringBuffer();
                     while (headerValues.hasMoreElements()) {
                         sb.append((String) headerValues.nextElement());
@@ -852,10 +831,6 @@ public class FedoraAccessServlet
 
         private Date versDateTime = null;
 
-        private String fedoraServerProtocol = null;
-
-        private String fedoraServerPort = null;
-
         /**
          * <p>
          * Constructor for ProfileSerializeThread.
@@ -879,15 +854,6 @@ public class FedoraAccessServlet
             this.PID = PID;
             this.objProfile = objProfile;
             this.versDateTime = versDateTime;
-            fedoraServerPort =
-                    context.getEnvironmentValue(HTTP_REQUEST.SERVER_PORT.uri);
-            if (HTTP_REQUEST.SECURE.uri.equals(context
-                    .getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
-                fedoraServerProtocol = HTTPS;
-            } else if (HTTP_REQUEST.INSECURE.uri.equals(context
-                    .getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
-                fedoraServerProtocol = HTTP;
-            }
         }
 
         /**
@@ -989,10 +955,6 @@ public class FedoraAccessServlet
     public void init() throws ServletException {
         try {
             s_server = Server.getInstance(new File(FEDORA_HOME), false);
-            fedoraServerHost = s_server.getParameter("fedoraServerHost");
-            m_manager =
-                    (DOManager) s_server
-                            .getModule("fedora.server.storage.DOManager");
             s_access =
                     (Access) s_server.getModule("fedora.server.access.Access");
         } catch (InitializationException ie) {

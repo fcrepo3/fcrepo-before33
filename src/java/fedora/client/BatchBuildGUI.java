@@ -44,6 +44,7 @@ import fedora.swing.mdi.MDIDesktopPane;
  * Batch Build GUI.
  * 
  * @author Bill Niebel
+ * @version $Id$
  */
 public class BatchBuildGUI
         extends JInternalFrame
@@ -64,12 +65,6 @@ public class BatchBuildGUI
     private final JRadioButton m_textMap = new JRadioButton("text");
 
     private final ButtonGroup buttonGroup = new ButtonGroup();
-
-    private final JRadioButton m_foxmlMap = new JRadioButton("foxml");
-
-    private final JRadioButton m_metsMap = new JRadioButton("mets");
-
-    private final ButtonGroup templateButtonGroup = new ButtonGroup();
 
     private Dimension unitDimension = null;
 

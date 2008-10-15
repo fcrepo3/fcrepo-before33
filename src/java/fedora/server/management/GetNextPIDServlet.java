@@ -10,14 +10,16 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
+
 import java.net.URLDecoder;
+
 import java.util.Enumeration;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -27,6 +29,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -37,6 +40,7 @@ import fedora.server.errors.StreamIOException;
 import fedora.server.errors.authorization.AuthzException;
 import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
 import fedora.server.errors.servletExceptionExtensions.RootException;
+
 import fedora.utilities.XmlTransformUtility;
 
 /**
@@ -97,13 +101,7 @@ public class GetNextPIDServlet
     /** Instance of the Management subsystem. */
     private static Management s_management = null;
 
-    /** Instance of URLDecoder */
-    private final URLDecoder decoder = new URLDecoder();
-
     public static final String ACTION_LABEL = "Get Pid";
-
-    /** Configured Fedora server hostname */
-    private static String fedoraServerHost = null;
 
     /**
      * <p>
@@ -127,13 +125,12 @@ public class GetNextPIDServlet
         boolean xml = false;
         int numPIDs = 1;
         String namespace = null;
-        String requestURL = request.getRequestURL().toString();
 
         Context context =
                 ReadOnlyContext.getContext(HTTP_REQUEST.REST.uri, request);
 
         // Get optional supplied parameters.
-        for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
+        for (Enumeration<?> e = request.getParameterNames(); e.hasMoreElements();) {
             String name = URLDecoder.decode((String) e.nextElement(), "UTF-8");
             if (name.equalsIgnoreCase("xml")) {
                 xml = new Boolean(request.getParameter(name)).booleanValue();
@@ -238,7 +235,6 @@ public class GetNextPIDServlet
                     Templates template =
                             factory.newTemplates(new StreamSource(xslFile));
                     Transformer transformer = template.newTransformer();
-                    Properties details = template.getOutputProperties();
                     transformer.transform(new StreamSource(pr),
                                           new StreamResult(out));
                 }
@@ -284,8 +280,6 @@ public class GetNextPIDServlet
 
         private String[] pidList = null;
 
-        private String fedoraServerPort = null;
-
         /**
          * <p>
          * Constructor for GetNextPIDSerializerThread.
@@ -301,8 +295,6 @@ public class GetNextPIDServlet
                                           PipedWriter pw) {
             this.pw = pw;
             this.pidList = pidList;
-            fedoraServerPort =
-                    context.getEnvironmentValue(HTTP_REQUEST.SERVER_PORT.uri);
             if (HTTP_REQUEST.SECURE.uri.equals(context
                     .getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
             } else if (HTTP_REQUEST.INSECURE.uri.equals(context
@@ -379,7 +371,6 @@ public class GetNextPIDServlet
     public void init() throws ServletException {
         try {
             s_server = Server.getInstance(new File(FEDORA_HOME), false);
-            fedoraServerHost = s_server.getParameter("fedoraServerHost");
             s_management =
                     (Management) s_server
                             .getModule("fedora.server.management.Management");

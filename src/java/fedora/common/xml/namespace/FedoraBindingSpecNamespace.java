@@ -40,10 +40,7 @@ public class FedoraBindingSpecNamespace
     //---
     // Attributes
     //---
-
-    /** The <code>bDefPID</code> attribute. */
-    public final QName BDEF_PID;
-
+    
     /** The <code>DSMax</code> attribute. */
     public final QName DS_MAX;
 
@@ -81,7 +78,6 @@ public class FedoraBindingSpecNamespace
         DS_MIME = new QName(this, "DSMIME");
 
         // attributes
-        BDEF_PID = new QName(this, "bDefPID");
         DS_MAX = new QName(this, "DSMax");
         DS_MIN = new QName(this, "DSMin");
         DS_ORDINALITY = new QName(this, "DSOrdinality");

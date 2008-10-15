@@ -9,6 +9,7 @@ package fedora.server.storage.types;
  * A datastream binding rule.
  * 
  * @author Sandy Payette
+ * @version $Id$
  */
 public class DeploymentDSBindRule {
 
@@ -25,6 +26,8 @@ public class DeploymentDSBindRule {
     public String bindingInstruction;
 
     public String[] bindingMIMETypes;
+    
+    public String pid;
 
     public DeploymentDSBindRule() {
     }

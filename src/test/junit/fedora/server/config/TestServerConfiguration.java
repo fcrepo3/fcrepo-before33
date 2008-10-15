@@ -106,6 +106,6 @@ public class TestServerConfiguration
     }
 
     private Document getDocument(ByteArrayOutputStream out) throws Exception {
-        return XMLUnit.buildControlDocument(new String(out.toByteArray()));
+        return XMLUnit.buildControlDocument(new String(out.toByteArray(), "UTF-8"));
     }
 }

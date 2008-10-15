@@ -18,7 +18,6 @@ import fedora.server.Context;
 import fedora.server.errors.ServerException;
 import fedora.server.journal.JournalConstants;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.Property;
 import fedora.server.storage.types.RelationshipTuple;
 
 /**

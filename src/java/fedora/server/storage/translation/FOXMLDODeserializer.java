@@ -950,9 +950,9 @@ public class FOXMLDODeserializer
         m_objPropertyName = "";
         m_readingBinaryContent = false; // indicates reading base64-encoded content
         m_inXMLMetadata = false;
-        m_prefixMap = new HashMap();
-        m_localPrefixMap = new HashMap();
-        m_prefixList = new ArrayList();
+        m_prefixMap = new HashMap<String, String>();
+        m_localPrefixMap = new HashMap<String, String>();
+        m_prefixList = new ArrayList<String>();
 
         // temporary variables for processing datastreams		
         m_dsId = "";

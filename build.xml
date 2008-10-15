@@ -42,6 +42,15 @@
     <property name="xsd.src.dir"               location="${src.dir}/xsd"/>
     <property name="xsl.src.dir"               location="${src.dir}/xsl"/>
     
+	<!-- get the current Subversion revision number -->
+    <loadfile property="revision" srcFile=".svn/entries">
+        <filterchain>
+            <headfilter lines="1" skip="3"/>
+            <deletecharacters chars="\n"/>
+            <trim/>
+        </filterchain>
+    </loadfile>
+	
     <!-- load external properties files -->
     <loadproperties srcFile="${properties.src.dir}/lib.properties"/>
     <loadproperties srcFile="${properties.src.dir}/server/fedora/server/resources/Server.properties">
@@ -51,8 +60,13 @@
             </linecontains>
         </filterchain>
     </loadproperties>
-    <!-- get the version of Fedora -->
-    <property name="fedora.version" value="${version.major}.${version.minor}"/>
+	<!-- set the version of Fedora (will append Subversion revision number
+	     unless "release" property is set, e.g. "ant -Drelease=true installer") -->
+    <condition property="fedora.version" 
+               value="${version.major}.${version.minor}" 
+               else="${version.major}.${version.minor}r${revision}">
+        <isset property="release"/>
+    </condition>
     <property name="fedora.releaseDate" value="${version.releaseDate}"/>
     
     <!-- classpaths -->
@@ -330,7 +344,7 @@
     <!-- targets -->
     <target name="init">
         <tstamp>
-        	<format property="build.tstamp" pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" timezone="UTC"/>
+        	<format property="build.tstamp" pattern="yyyyMMdd'T'HHmmss'Z'" timezone="UTC"/>
     	</tstamp>
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${dist.dir}"/>
@@ -716,6 +730,10 @@
         <replace dir="${fedora.home.build.dir}/client/demo/soapclient" 
                  token="fedora-client.jar" 
                  value="fedora-${fedora.version}-client.jar"/> 
+    	
+    	<replace dir="${fedora.home.build.dir}/client/bin"
+            token="fedora-client.jar"
+            value="fedora-${fedora.version}-client.jar"/>
         
         <!-- Prepare batch demo-->
         <!-- Why are these being copied to lib? -->
@@ -1104,7 +1122,7 @@
         </zip>
     </target>
 	
-    <target name="performance-tests" depends="client">
+	<target name="performance-tests" depends="client">
         <java classname="fedora.client.test.PerformanceTests">
             <classpath>
                 <pathelement path="${build.dir}/client/classes" />
@@ -1120,5 +1138,4 @@
         	<arg value="${name}"/>
         </java>
     </target>
-
 </project>

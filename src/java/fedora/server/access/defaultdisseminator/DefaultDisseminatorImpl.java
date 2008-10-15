@@ -10,9 +10,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Properties;
 
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
@@ -36,6 +36,7 @@ import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.ObjectMethodsDef;
+
 import fedora.utilities.XmlTransformUtility;
 
 import static fedora.common.Constants.MODEL;
@@ -127,7 +128,6 @@ public class DefaultDisseminatorImpl
             Templates template =
                     factory.newTemplates(new StreamSource(xslFile));
             Transformer transformer = template.newTransformer();
-            Properties details = template.getOutputProperties();
             transformer.transform(new StreamSource(in), new StreamResult(out));
             in = new ByteArrayInputStream(out.toByteArray());
             return new MIMETypedStream("text/html", in, null);
@@ -193,7 +193,6 @@ public class DefaultDisseminatorImpl
             Templates template =
                     factory.newTemplates(new StreamSource(xslFile));
             Transformer transformer = template.newTransformer();
-            Properties details = template.getOutputProperties();
             transformer.transform(new StreamSource(in), new StreamResult(out));
             in = new ByteArrayInputStream(out.toByteArray());
             return new MIMETypedStream("text/html", in, null);
@@ -238,7 +237,6 @@ public class DefaultDisseminatorImpl
             Templates template =
                     factory.newTemplates(new StreamSource(xslFile));
             Transformer transformer = template.newTransformer();
-            Properties details = template.getOutputProperties();
             transformer.transform(new StreamSource(in), new StreamResult(out));
             in = new ByteArrayInputStream(out.toByteArray());
             return new MIMETypedStream("text/html", in, null);
@@ -291,7 +289,6 @@ public class DefaultDisseminatorImpl
             Templates template =
                     factory.newTemplates(new StreamSource(xslFile));
             Transformer transformer = template.newTransformer();
-            Properties details = template.getOutputProperties();
             transformer.transform(new StreamSource(in), new StreamResult(out));
             in = new ByteArrayInputStream(out.toByteArray());
             return new MIMETypedStream("text/html", in, null);
@@ -348,7 +345,7 @@ public class DefaultDisseminatorImpl
      * @return an array of method defintions
      */
     public static MethodDef[] reflectMethods() {
-        ArrayList methodList = new ArrayList();
+        ArrayList<MethodDef> methodList = new ArrayList<MethodDef>();
         MethodDef method = null;
 
         method = new MethodDef();

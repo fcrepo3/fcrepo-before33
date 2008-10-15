@@ -58,9 +58,9 @@ import fedora.server.utilities.ServerUtility;
  * <p>The servlet also requires that an external mechanism request a datastream
  * within a finite time interval of the tempID's creation. This is to lessen the
  * risk of unauthorized access. The time interval within which a mechanism must
- * repond is set by the Fedora configuration parameter named
- * datastreamMediationLimit and is speci207fied in milliseconds. If this
- * parameter is not supplied it defaults to 5000 miliseconds.
+ * respond is set by the Fedora configuration parameter named
+ * datastreamMediationLimit and is specified in milliseconds. If this
+ * parameter is not supplied it defaults to 5000 milliseconds.
  *
  * @author Ross Wayland
  */
@@ -93,7 +93,7 @@ public class DatastreamResolverServlet
      * Initialize servlet.
      *
      * @throws ServletException
-     *         If the servet cannot be initialized.
+     *         If the servlet cannot be initialized.
      */
     public void init() throws ServletException {
         try {

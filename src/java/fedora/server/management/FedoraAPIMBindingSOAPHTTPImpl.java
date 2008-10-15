@@ -23,7 +23,6 @@ import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
 
-import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;

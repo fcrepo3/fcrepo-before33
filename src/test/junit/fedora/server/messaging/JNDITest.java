@@ -15,7 +15,7 @@ public class JNDITest {
 		Properties props = new Properties();
 		props.setProperty(Context.INITIAL_CONTEXT_FACTORY,"org.apache.activemq.jndi.ActiveMQInitialContextFactory");
 		props.setProperty(Context.PROVIDER_URL,"vm:localhost");
-		javax.naming.Context ctx = new InitialContext(props);
+		new InitialContext(props);
 		
 	}
 	
@@ -24,7 +24,7 @@ public class JNDITest {
 		Properties props = new Properties();
 		props.setProperty(Context.INITIAL_CONTEXT_FACTORY,"org.apache.activemq.jndi.ActiveMQInitialContextFactory");
 		props.setProperty(Context.PROVIDER_URL,"tcp://localhost:61616");
-		javax.naming.Context ctx = new InitialContext(props);
+		new InitialContext(props);
 		
 	}
 }

@@ -502,12 +502,9 @@ public class TestFieldSearchSQLImpl {
 	}
 
 	private static class SDepMockRepositoryReader extends MockRepositoryReader {
-		private final String sdefPid;
-
 		private int calls;
 
-		public SDepMockRepositoryReader(String sdefPid) {
-			this.sdefPid = sdefPid;
+		public SDepMockRepositoryReader() {
 		}
 
 		public void checkExpectations() {
@@ -524,7 +521,6 @@ public class TestFieldSearchSQLImpl {
 				public DeploymentDSBindSpec getServiceDSInputSpec(Date versDateTime)
 						throws ServerException {
 					DeploymentDSBindSpec spec = new DeploymentDSBindSpec();
-					spec.serviceDefinitionPID = sdefPid;
 					return spec;
 				}
 			};

@@ -40,10 +40,10 @@
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" ID="METHODMAP" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2008-07-16T08:50:30.031Z"
-      FORMAT_URI="info:fedora/fedora-system:FedoraSDepMethodMap-1.0"
+      FORMAT_URI="info:fedora/fedora-system:FedoraSDepMethodMap-1.1"
       ID="METHODMAP1.0" LABEL="Deployment Method Map" MIMETYPE="text/xml">
       <foxml:xmlContent>
-        <fmm:MethodMap bDefPID="meaningless"
+        <fmm:MethodMap
           name="MethodMap - Mechanism for getting content" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
           <fmm:Method
             operationLabel="Retrieves Content for Shared Deployment demo"
@@ -58,10 +58,10 @@
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" ID="DSINPUTSPEC" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2008-07-16T08:50:30.031Z"
-      FORMAT_URI="info:fedora/fedora-system:FedoraDSInputSpec-1.0"
+      FORMAT_URI="info:fedora/fedora-system:FedoraDSInputSpec-1.1"
       ID="DSINPUTSPEC1.0" LABEL="Datastream Input Specification" MIMETYPE="text/xml">
       <foxml:xmlContent>
-        <fbs:DSInputSpec bDefPID="meaningless"
+        <fbs:DSInputSpec
           label="Datastream Input Specification for Mechanism for getting contents in Shared Deployment Demo" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
           <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="CONTENT_INPUT">
             <fbs:DSInputLabel>Content input Binding</fbs:DSInputLabel>

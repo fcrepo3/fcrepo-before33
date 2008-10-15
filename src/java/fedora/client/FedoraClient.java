@@ -489,7 +489,7 @@ public class FedoraClient
         String protocol = url.getProtocol();
         String host = url.getHost();
         int port = url.getPort();
-        String path = url.getPath();
+        //String path = url.getPath();
         if (port == -1) {
             port = url.getDefaultPort();
         }
@@ -635,7 +635,7 @@ public class FedoraClient
                     throw new IOException("Method failed: "
                             + head.getStatusLine());
                 }
-                Header[] headers = head.getResponseHeaders();
+                //Header[] headers = head.getResponseHeaders();
 
                 // Retrieve just the last modified header value.
                 Header header = head.getResponseHeader("last-modified");

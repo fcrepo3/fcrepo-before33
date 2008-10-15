@@ -40,6 +40,7 @@ import fedora.swing.mdi.MDIDesktopPane;
  * Batch Ingest GUI.
  * 
  * @author Bill Niebel
+ * @version $Id$
  */
 public class BatchIngestGUI
         extends JInternalFrame
@@ -248,8 +249,6 @@ public class BatchIngestGUI
                             Dimension max) {
         return sized(jc, min, pref, max, false);
     }
-
-    private static final Properties nullProperties = new Properties();
 
     public void ingestBatch() {
         try {

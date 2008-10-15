@@ -10,14 +10,16 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
+
 import java.net.URLDecoder;
+
 import java.util.Enumeration;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -27,6 +29,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -37,6 +40,7 @@ import fedora.server.errors.StreamIOException;
 import fedora.server.errors.authorization.AuthzException;
 import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
 import fedora.server.errors.servletExceptionExtensions.RootException;
+
 import fedora.utilities.XmlTransformUtility;
 
 /**
@@ -87,11 +91,7 @@ public class DescribeRepositoryServlet
     /** Instance of the access subsystem. */
     private static Access s_access = null;
 
-    /** Instance of URLDecoder */
-    private final URLDecoder decoder = new URLDecoder();
 
-    /** Configured Fedora server hostname */
-    private static String fedoraServerHost = null;
 
     String ACTION_LABEL = "describe repository";
 
@@ -119,7 +119,7 @@ public class DescribeRepositoryServlet
                 + request.getQueryString());
 
         // Check for xml parameter.
-        for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
+        for (Enumeration<?> e = request.getParameterNames(); e.hasMoreElements();) {
             String name = URLDecoder.decode((String) e.nextElement(), "UTF-8");
             if (name.equalsIgnoreCase("xml")) {
                 xml = new Boolean(request.getParameter(name)).booleanValue();
@@ -196,7 +196,6 @@ public class DescribeRepositoryServlet
                     Templates template =
                             factory.newTemplates(new StreamSource(xslFile));
                     Transformer transformer = template.newTransformer();
-                    Properties details = template.getOutputProperties();
                     transformer.transform(new StreamSource(pr),
                                           new StreamResult(out));
                 }
@@ -243,8 +242,6 @@ public class DescribeRepositoryServlet
 
         private RepositoryInfo repositoryInfo = null;
 
-        private String fedoraServerPort = null;
-
         /**
          * <p>
          * Constructor for ReposInfoSerializerThread.
@@ -260,9 +257,6 @@ public class DescribeRepositoryServlet
                                          PipedWriter pw) {
             this.pw = pw;
             this.repositoryInfo = repositoryInfo;
-            fedoraServerPort =
-                    context
-                            .getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);
             if (Constants.HTTP_REQUEST.SECURE.uri.equals(context
                     .getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
             } else if (Constants.HTTP_REQUEST.INSECURE.uri.equals(context
@@ -380,7 +374,6 @@ public class DescribeRepositoryServlet
                     Server.getInstance(new File(Constants.FEDORA_HOME), false);
             s_access =
                     (Access) s_server.getModule("fedora.server.access.Access");
-            fedoraServerHost = s_server.getParameter("fedoraServerHost");
         } catch (InitializationException ie) {
             throw new ServletException("Unable to get Fedora Server instance."
                     + ie.getMessage());

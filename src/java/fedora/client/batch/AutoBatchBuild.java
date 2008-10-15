@@ -94,13 +94,12 @@ public class AutoBatchBuild
                 System.out.println("\n*** Format of template files is: "
                         + objectFormat + " . Generated objects will be in "
                         + objectFormat + " format.\n");
-                AutoBatchBuild autoBatch =
-                        new AutoBatchBuild(args[0],
-                                           args[1],
-                                           args[2],
-                                           args[3],
-                                           args[4],
-                                           objectFormat);
+                new AutoBatchBuild(args[0],
+                                   args[1],
+                                   args[2],
+                                   args[3],
+                                   args[4],
+                                   objectFormat);
             }
         } else {
 

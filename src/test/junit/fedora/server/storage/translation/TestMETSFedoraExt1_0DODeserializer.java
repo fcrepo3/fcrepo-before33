@@ -3,8 +3,6 @@ package fedora.server.storage.translation;
 
 import org.junit.Test;
 
-import fedora.server.storage.types.DigitalObject;
-
 /**
  * Unit tests for METSFedoraExt1_0DODeserializer.
  * 

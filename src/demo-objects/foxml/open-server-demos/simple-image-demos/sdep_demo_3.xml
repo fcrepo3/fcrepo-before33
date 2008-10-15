@@ -38,10 +38,10 @@
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" ID="METHODMAP" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2008-07-02T05:09:43.562Z"
-      FORMAT_URI="info:fedora/fedora-system:FedoraSDepMethodMap-1.0"
+      FORMAT_URI="info:fedora/fedora-system:FedoraSDepMethodMap-1.1"
       ID="METHODMAP1.0" LABEL="Deployment Method Map" MIMETYPE="text/xml">
       <foxml:xmlContent>
-        <fmm:MethodMap bDefPID="demo:1"
+        <fmm:MethodMap
           name="MethodMap - UVA ImageZoomer BMech for Simple Image BDEF" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
           <fmm:Method operationName="getThumbnail" wsdlMsgName="getThumbRequest" wsdlMsgOutput="image_response">
             <fmm:DatastreamInputParm parmName="LOWRES_IMG" passBy="URL_REF" required="true"/>
@@ -66,10 +66,11 @@
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" ID="DSINPUTSPEC" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2008-07-02T05:09:43.562Z"
-      FORMAT_URI="info:fedora/fedora-system:FedoraDSInputSpec-1.0"
+      FORMAT_URI="info:fedora/fedora-system:FedoraDSInputSpec-1.1"
       ID="DSINPUTSPEC1.0" LABEL="Datastream Input Specification" MIMETYPE="text/xml">
       <foxml:xmlContent>
-        <fbs:DSInputSpec bDefPID="demo:1" label="Datastream Input Specification" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
+        <fbs:DSInputSpec 
+            label="Datastream Input Specification" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
           <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="LOWRES_IMG">
             <fbs:DSInputLabel>low resolution image</fbs:DSInputLabel>
             <fbs:DSMIME>image/gif image/jpeg</fbs:DSMIME>

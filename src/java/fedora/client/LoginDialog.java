@@ -72,22 +72,22 @@ public class LoginDialog
 
     private String m_lastProtocol = "http";
 
-    private final HashMap m_usernames;
+    private final HashMap<String, String> m_usernames;
 
-    private final HashMap m_servers;
+    private final HashMap<String, String> m_servers;
 
-    private final HashMap m_protocols;
+    private final HashMap<String, String> m_protocols;
 
     public LoginDialog() {
         super(JOptionPane.getFrameForComponent(Administrator.getDesktop()),
               "Login",
               true);
 
-        m_servers = new HashMap();
-        m_protocols = new HashMap();
+        m_servers = new HashMap<String, String>();
+        m_protocols = new HashMap<String, String>();
         m_protocols.put("http", "");
         m_protocols.put("https", "");
-        m_usernames = new HashMap();
+        m_usernames = new HashMap<String, String>();
 
         JLabel serverLabel = new JLabel("Fedora Server");
         JLabel protocolLabel = new JLabel("Protocol");
@@ -169,26 +169,26 @@ public class LoginDialog
             props.setProperty("lastServer", m_lastServer);
             props.setProperty("lastProtocol", m_lastProtocol);
             props.setProperty("lastUsername", m_lastUsername);
-            Iterator iter;
+            Iterator<String> iter;
             int i;
             iter = m_servers.keySet().iterator();
             i = 0;
             while (iter.hasNext()) {
-                String name = (String) iter.next();
+                String name = iter.next();
                 props.setProperty("server" + i, name);
                 i++;
             }
             iter = m_protocols.keySet().iterator();
             i = 0;
             while (iter.hasNext()) {
-                String name = (String) iter.next();
+                String name = iter.next();
                 props.setProperty("protocol" + i, name);
                 i++;
             }
             iter = m_usernames.keySet().iterator();
             i = 0;
             while (iter.hasNext()) {
-                String name = (String) iter.next();
+                String name = iter.next();
                 props.setProperty("username" + i, name);
                 i++;
             }
@@ -209,7 +209,7 @@ public class LoginDialog
             props
                     .load(new FileInputStream(new File(Administrator.BASE_DIR,
                                                        "fedora-admin.properties")));
-            Enumeration names = props.propertyNames();
+            Enumeration<?> names = props.propertyNames();
             while (names.hasMoreElements()) {
                 String prop = (String) names.nextElement();
                 if (prop.equals("lastServer")) {
@@ -231,9 +231,9 @@ public class LoginDialog
         }
         // finally, populate them
         m_serverComboBox.addItem(m_lastServer);
-        Iterator sIter = m_servers.keySet().iterator();
+        Iterator<String> sIter = m_servers.keySet().iterator();
         while (sIter.hasNext()) {
-            String a = (String) sIter.next();
+            String a = sIter.next();
             if (!a.equals(m_lastServer)) {
                 m_serverComboBox.addItem(a);
             }
@@ -241,9 +241,9 @@ public class LoginDialog
         m_servers.put(m_lastServer, "");
 
         m_protocolComboBox.addItem(m_lastProtocol);
-        Iterator protocolIter = m_protocols.keySet().iterator();
+        Iterator<String> protocolIter = m_protocols.keySet().iterator();
         while (protocolIter.hasNext()) {
-            String a = (String) protocolIter.next();
+            String a = protocolIter.next();
             if (!a.equals(m_lastProtocol)) {
                 m_protocolComboBox.addItem(a);
             }
@@ -251,9 +251,9 @@ public class LoginDialog
         m_protocols.put(m_lastProtocol, "");
 
         m_usernameComboBox.addItem(m_lastUsername);
-        Iterator uIter = m_usernames.keySet().iterator();
+        Iterator<String> uIter = m_usernames.keySet().iterator();
         while (uIter.hasNext()) {
-            String a = (String) uIter.next();
+            String a = uIter.next();
             if (!a.equals(m_lastUsername)) {
                 m_usernameComboBox.addItem(a);
             }
@@ -314,14 +314,13 @@ public class LoginDialog
             String serverVersion = fc.getServerVersion();
 
             // ensure client is compatible with server, warn if not
-            List compatibleVersions =
+            List<String> compatibleVersions =
                     FedoraClient.getCompatibleServerVersions();
             if (!compatibleVersions.contains(serverVersion)) {
                 StringBuffer endText = new StringBuffer();
                 if (compatibleVersions.size() == 1) {
                     // version A
-                    endText.append("version "
-                            + (String) compatibleVersions.get(0));
+                    endText.append("version " + compatibleVersions.get(0));
                 } else {
                     // versions A and B
                     // versions A, B, and C
@@ -337,7 +336,7 @@ public class LoginDialog
                                 endText.append(", ");
                             }
                         }
-                        endText.append((String) compatibleVersions.get(i));
+                        endText.append(compatibleVersions.get(i));
                     }
                 }
                 System.err.println("WARNING: Server version is "

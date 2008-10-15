@@ -7,19 +7,21 @@ package fedora.localservices.saxon;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
@@ -72,10 +74,10 @@ public class SaxonServlet
     private final String CRED_PARAM_START = "credentials for ";
 
     /** urlString-to-Templates map of cached stylesheets */
-    private Map m_cache;
+    private Map<String, Templates> m_cache;
 
     /** pathString-to-Credentials map of configured credentials */
-    private Map m_creds;
+    private Map<String, UsernamePasswordCredentials> m_creds;
 
     /** provider of http connections */
     private MultiThreadedHttpConnectionManager m_cManager;
@@ -86,12 +88,12 @@ public class SaxonServlet
      */
     @Override
     public void init(ServletConfig config) throws ServletException {
-        m_cache = new HashMap();
-        m_creds = new HashMap();
+        m_cache = new HashMap<String, Templates>();
+        m_creds = new HashMap<String, UsernamePasswordCredentials>();
         m_cManager = new MultiThreadedHttpConnectionManager();
         m_cManager.getParams().setConnectionTimeout(TIMEOUT_SECONDS * 1000);
 
-        Enumeration enm = config.getInitParameterNames();
+        Enumeration<?> enm = config.getInitParameterNames();
         while (enm.hasMoreElements()) {
             String name = (String) enm.nextElement();
             if (name.startsWith(CRED_PARAM_START)) {
@@ -139,7 +141,7 @@ public class SaxonServlet
 
         if (clear != null && clear.equals("yes")) {
             synchronized (m_cache) {
-                m_cache = new HashMap();
+                m_cache = new HashMap<String, Templates>();
             }
         }
 
@@ -187,9 +189,8 @@ public class SaxonServlet
             // Load the stylesheet (adding to cache if necessary)
             Templates pss = tryCache(style);
             Transformer transformer = pss.newTransformer();
-            Properties details = pss.getOutputProperties();
 
-            Enumeration p = req.getParameterNames();
+            Enumeration<?> p = req.getParameterNames();
             while (p.hasMoreElements()) {
                 String name = (String) p.nextElement();
                 if (!(name.equals("style") || name.equals("source"))) {
@@ -288,7 +289,7 @@ public class SaxonServlet
         UsernamePasswordCredentials longestMatch = null;
         int longestMatchLength = 0;
 
-        Iterator iter = m_creds.keySet().iterator();
+        Iterator<String> iter = m_creds.keySet().iterator();
         while (iter.hasNext()) {
             String realmPath = (String) iter.next();
             if (url.startsWith(realmPath)) {

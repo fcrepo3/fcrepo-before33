@@ -18,13 +18,10 @@ import java.util.HashSet;
 
 import junit.framework.TestCase;
 
-import org.jrdf.graph.GraphElementFactory;
-import org.jrdf.graph.GraphElementFactoryException;
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.Triple;
 
 import org.trippi.RDFFormat;
-import org.trippi.RDFUtil;
 import org.trippi.TripleIterator;
 
 import fedora.common.Constants;

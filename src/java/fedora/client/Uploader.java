@@ -120,7 +120,7 @@ public class Uploader {
                                                     (int) d.getHeight() - 1);
 
             // then start the thread, passing parms in
-            HashMap PARMS = new HashMap();
+            HashMap<String, Object> PARMS = new HashMap<String, Object>();
             PARMS.put("fc", fc);
             PARMS.put("file", file);
             SwingWorker worker = new SwingWorker(PARMS) {

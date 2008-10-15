@@ -1,9 +1,6 @@
 
 package fedora.server.storage.translation;
 
-import static fedora.server.storage.translation.DOTranslationUtility.DESERIALIZE_INSTANCE;
-import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -12,13 +9,12 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+
 import java.lang.reflect.Field;
+
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.jrdf.graph.URIReference;
@@ -35,7 +31,12 @@ import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
 
 import static fedora.common.Constants.MODEL;
-import static fedora.common.Models.*;
+import static fedora.common.Models.FEDORA_OBJECT_3_0;
+import static fedora.common.Models.SERVICE_DEFINITION_3_0;
+import static fedora.common.Models.SERVICE_DEPLOYMENT_3_0;
+
+import static fedora.server.storage.translation.DOTranslationUtility.DESERIALIZE_INSTANCE;
+import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL;
 
 /**
  * Common unit tests and utility methods for XML-based deserializers.

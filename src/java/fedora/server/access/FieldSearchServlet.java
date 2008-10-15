@@ -360,7 +360,7 @@ public class FieldSearchServlet
                                                              .getConditions(query)));
                     }
                 }
-                List searchResults = fsr.objectFieldsList();
+                List<ObjectFields> searchResults = fsr.objectFieldsList();
                 if (!xml) {
                     html
                             .append("<center><table width=\"90%\" border=\"1\" cellpadding=\"5\" cellspacing=\"5\" bgcolor=\"silver\">\n");
@@ -669,7 +669,7 @@ public class FieldSearchServlet
 
     private void appendXML(String name, List<DCField> values, StringBuffer out) {
         for (int i = 0; i < values.size(); i++) {
-            appendXML(name, (String) values.get(i).getValue(), out);
+            appendXML(name, values.get(i).getValue(), out);
         }
     }
 

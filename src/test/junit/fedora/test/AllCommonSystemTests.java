@@ -10,6 +10,7 @@ import org.junit.runners.Suite;
         fedora.test.api.TestAPIMLite.class,
         fedora.test.api.TestHTTPStatusCodes.class,
         fedora.test.integration.cma.ConflictingDeploymentTests.class,
+        fedora.test.integration.cma.ContentModelDSInputTest.class,
         fedora.test.integration.cma.SharedDeploymentTests.class,
         fedora.test.integration.cma.SimpleDeploymentTests.class,
         fedora.test.integration.TestOAIService.class,
@@ -31,6 +32,8 @@ public class AllCommonSystemTests {
         suite.addTest(fedora.test.api.TestHTTPStatusCodes.suite());
         suite.addTest(fedora.test.api.TestManagedDatastreams.suite());
         suite.addTest(fedora.test.integration.cma.ConflictingDeploymentTests
+                .suite());
+        suite.addTest(fedora.test.integration.cma.ContentModelDSInputTest
                 .suite());
         suite
                 .addTest(fedora.test.integration.cma.SharedDeploymentTests

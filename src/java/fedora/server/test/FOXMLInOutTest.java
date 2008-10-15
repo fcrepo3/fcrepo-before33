@@ -17,6 +17,8 @@ import junit.framework.TestCase;
 import fedora.common.Constants;
 
 import fedora.server.errors.ServerException;
+import fedora.server.storage.translation.DODeserializer;
+import fedora.server.storage.translation.DOSerializer;
 import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.storage.translation.DOTranslatorImpl;
 import fedora.server.storage.translation.FOXML1_1DODeserializer;
@@ -60,8 +62,8 @@ public class FOXMLInOutTest
             // setup	
             FOXML1_1DODeserializer deser = new FOXML1_1DODeserializer();
             FOXML1_1DOSerializer ser = new FOXML1_1DOSerializer();
-            HashMap desermap = new HashMap();
-            HashMap sermap = new HashMap();
+            HashMap<String, DODeserializer> desermap = new HashMap<String, DODeserializer>();
+            HashMap<String, DOSerializer> sermap = new HashMap<String, DOSerializer>();
             desermap.put(FOXML1_1.uri, deser);
             DOTranslatorImpl trans = new DOTranslatorImpl(sermap, desermap);
             obj = new BasicDigitalObject();

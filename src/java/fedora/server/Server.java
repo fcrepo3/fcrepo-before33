@@ -9,8 +9,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -412,7 +410,7 @@ public abstract class Server
      * Holds an instance of a <code>Server</code> for each distinct
      * <code>File</code> given as a parameter to <code>getInstance(...)</code>
      */
-    protected static HashMap s_instances = new HashMap();
+    protected static Map<File, Server> s_instances = new HashMap<File, Server>();
 
     /**
      * The server's home directory.
@@ -422,17 +420,12 @@ public abstract class Server
     /**
      * Datastore configurations initialized from the server config file.
      */
-    private HashMap m_datastoreConfigs;
+    private Map<String, DatastoreConfig> m_datastoreConfigs;
 
     /**
      * Modules that have been loaded.
      */
-    private HashMap m_loadedModules;
-
-    /**
-     * <code>LogRecords</code> queued at startup.
-     */
-    private ArrayList m_startupLogRecords;
+    private Map<String, Module> m_loadedModules;
 
     /**
      * Is the server running?
@@ -474,8 +467,7 @@ public abstract class Server
             throws ServerInitializationException, ModuleInitializationException {
         try {
             m_initialized = false;
-            m_startupLogRecords = new ArrayList(); // prepare for startup log queueing
-            m_loadedModules = new HashMap();
+            m_loadedModules = new HashMap<String, Module>();
             m_homeDir = new File(homeDir, "server");
 
             m_statusFile = new ServerStatusFile(m_homeDir);
@@ -503,7 +495,7 @@ public abstract class Server
                     + configFile + "\"");
 
             // do the parsing and validation of configuration
-            HashMap serverParams = loadParameters(rootConfigElement, "");
+            Map serverParams = loadParameters(rootConfigElement, "");
 
             // get the module and datastore info, remove the holding element,
             // and set the server params so they can be seen via getParameter()
@@ -675,15 +667,6 @@ public abstract class Server
         }
     }
 
-    private static final String getStackTrace(Throwable th) {
-
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        th.printStackTrace(pw);
-        pw.flush();
-        return sw.toString();
-    }
-
     protected boolean overrideModuleRole(String moduleRole) {
         return false;
     }
@@ -744,9 +727,9 @@ public abstract class Server
      *        the <code>Document</code>. If there is no distinguishing
      *        attribute, this should be an empty string.
      */
-    private final HashMap loadParameters(Element element, String dAttribute)
+    private final Map loadParameters(Element element, String dAttribute)
             throws ServerInitializationException {
-        HashMap params = new HashMap();
+        Map params = new HashMap();
         if (element.getLocalName().equals(CONFIG_ELEMENT_ROOT)) {
             ArrayList moduleAndDatastreamInfo = new ArrayList(3);
             moduleAndDatastreamInfo.add(new HashMap());
@@ -1133,7 +1116,7 @@ public abstract class Server
         return (DatastoreConfig) m_datastoreConfigs.get(id);
     }
 
-    public Iterator datastoreConfigIds() {
+    public Iterator<String> datastoreConfigIds() {
         return m_datastoreConfigs.keySet().iterator();
     }
 
@@ -1142,7 +1125,7 @@ public abstract class Server
      * 
      * @return (<code>String</code>s) The roles.
      */
-    public final Iterator loadedModuleRoles() {
+    public final Iterator<String> loadedModuleRoles() {
         return m_loadedModules.keySet().iterator();
     }
 

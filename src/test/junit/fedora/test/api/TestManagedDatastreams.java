@@ -158,7 +158,7 @@ public class TestManagedDatastreams
     @Test
     public void testModifyDatastreamByReference() throws Exception {
         String pid = "demo:m_ds_test_add";
-        String dsLocation = "http://www.fedora.info/junit/datastream1.xml";
+        String dsLocation = "http://www.fedora-commons.org/junit/datastream1.xml";
         apim.ingest(getAtomObject(pid, dsLocation), ATOM1_1.uri, null);
 
         try {

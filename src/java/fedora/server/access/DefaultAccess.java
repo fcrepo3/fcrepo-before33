@@ -54,6 +54,8 @@ import fedora.server.storage.types.DatastreamDef;
 import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
+import fedora.server.storage.types.DeploymentDSBindRule;
+import fedora.server.storage.types.DeploymentDSBindSpec;
 import fedora.server.storage.types.DisseminationBindingInfo;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.MethodDef;
@@ -68,6 +70,7 @@ import fedora.server.utilities.DateUtility;
  * The Access Module, providing support for the Fedora Access subsystem.
  * 
  * @author Ross Wayland
+ * @version $Id$
  */
 public class DefaultAccess
         extends Module
@@ -83,7 +86,7 @@ public class DefaultAccess
     private String m_repositoryDomainName;
 
     /** Dynamic Access Module */
-    // FIXIT!! is this the right way to associate the dynamic access module???
+    // FIXME is this the right way to associate the dynamic access module???
     private DynamicAccessModule m_dynamicAccess;
 
     private ExternalContentManager m_externalContentManager;
@@ -107,7 +110,7 @@ public class DefaultAccess
      *         If initilization values are invalid or initialization fails for
      *         some other reason.
      */
-    public DefaultAccess(Map moduleParameters, Server server, String role)
+    public DefaultAccess(Map<String, String> moduleParameters, Server server, String role)
             throws ModuleInitializationException {
         super(moduleParameters, server, role);
     }
@@ -174,7 +177,7 @@ public class DefaultAccess
 
     }
 
-    private static final Hashtable accessActionAttributes = new Hashtable();
+    private static final Hashtable<String, String> accessActionAttributes = new Hashtable<String, String>();
     static {
         accessActionAttributes.put("api", "apia");
     }
@@ -216,7 +219,6 @@ public class DefaultAccess
         long stopTime;
         long interval;
         ServiceDeploymentReader deploymentReader = null;
-        DOReader cmReader = null;
 
         DOReader reader =
                 m_manager.getReader(asOfDateTime == null, context, PID);
@@ -255,7 +257,6 @@ public class DefaultAccess
          * mappings are ever stored in the registry, this may be simplified.
          */
         String serviceDeploymentPID = null;
-        String contentModelPID = null;
         for (RelationshipTuple rel : reader.getRelationships(MODEL.HAS_MODEL,
                                                              null)) {
             String cModelPID = rel.getObjectPID();
@@ -277,7 +278,6 @@ public class DefaultAccess
                 }
 
                 serviceDeploymentPID = foundDeploymentPID;
-                contentModelPID = cModelPID;
             } else {
                 LOG.debug("No deployment for (" + cModelPID + ", " + sDefPID
                         + ")");
@@ -289,7 +289,6 @@ public class DefaultAccess
                     m_manager.getServiceDeploymentReader(false,
                                                          context,
                                                          serviceDeploymentPID);
-            cmReader = m_manager.getReader(false, context, contentModelPID);
         }
 
         ServiceDefinitionReader sDefReader =
@@ -369,7 +368,7 @@ public class DefaultAccess
                                                       authzAux_dissState);
 
         // Get method parms
-        Hashtable h_userParms = new Hashtable();
+        Hashtable<String, String> h_userParms = new Hashtable<String, String>();
         MIMETypedStream dissemination = null;
         MethodParmDef[] defaultMethodParms = null;
 
@@ -432,23 +431,13 @@ public class DefaultAccess
 
         startTime = new Date().getTime();
         DisseminationBindingInfo[] dissBindInfo;
-
-        // Get dissemination binding info.
-        dissBindInfo =
-                GetCMDADisseminationBindingInfo(reader,
-                                                cmReader,
-                                                deploymentReader,
-                                                methodName,
-                                                asOfDateTime);
+        dissBindInfo = getDisseminationBindingInfo(context,
+                                                   reader,
+                                                   deploymentReader,
+                                                   methodName,
+                                                   asOfDateTime);
 
         // Assemble and execute the dissemination request from the binding info.
-        String reposBaseURL =
-                getReposBaseURL(context
-                                        .getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri)
-                                        .equals(Constants.HTTP_REQUEST.SECURE.uri) ? "https"
-                                        : "http",
-                                context
-                                        .getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri));
         DisseminationService dissService = new DisseminationService();
         dissemination =
                 dissService.assembleDissemination(context,
@@ -469,28 +458,21 @@ public class DefaultAccess
         LOG.debug("Roundtrip GetDissemination: " + interval + " milliseconds.");
         return dissemination;
     }
-
-    private DisseminationBindingInfo[] GetCMDADisseminationBindingInfo(DOReader dObj,
-                                                                       DOReader cmReader,
-                                                                       ServiceDeploymentReader bmReader,
-                                                                       String methodName,
-                                                                       Date versDateTime)
+    
+    private DisseminationBindingInfo[] getDisseminationBindingInfo(Context context,
+                                                                   DOReader dObj,
+                                                                   ServiceDeploymentReader bmReader,
+                                                                   String methodName,
+                                                                   Date versDateTime)
             throws MethodNotFoundException, ServerException {
-        // Results will be returned in this array, one item per datastream
-        DisseminationBindingInfo[] bindingInfo;
-
-        //      DSBinding[] dsBindings = getBindingInfoFromContentModel(cmReader, versDateTime);
-        //      int dsCount = dsBindings.length;
-        String[] dsNames = dObj.ListDatastreamIDs(null);
-        int dsCount = dsNames.length;
-        bindingInfo = new DisseminationBindingInfo[dsCount];
+        
         // The sDep reader provides information about the service and params.
-        //wdn5e 2005.04.24 for 2.1 : using false here becuase of versDateTime
         MethodParmDef[] methodParms =
                 bmReader.getServiceMethodParms(methodName, versDateTime);
         // Find the operation bindings for the method in question
         MethodDefOperationBind[] opBindings =
                 bmReader.getServiceMethodBindings(versDateTime);
+        
         String addressLocation = null;
         String operationLocation = null;
         String protocolType = null;
@@ -508,25 +490,33 @@ public class DefaultAccess
                     + " was not found in " + bmReader.GetObjectPID()
                     + "'s operation " + " binding.");
         }
-        // For each datastream referenced by the disseminator's ds bindings,
-        // add an element to the output array which includes key information
-        // on the operation and the datastream.
-        for (int i = 0; i < dsCount; i++) {
-            //          String dsID = dsBindings[i].datastreamID;
-            //          bindingInfo[i] = new DisseminationBindingInfo();
-            //          bindingInfo[i].DSBindKey = dsBindings[i].bindKeyName;
-            String dsID = dsNames[i];
-            bindingInfo[i] = new DisseminationBindingInfo();
-            bindingInfo[i].DSBindKey = dsNames[i];
-            // get key info about the datastream and put it here
-            Datastream ds = dObj.GetDatastream(dsID, versDateTime);
+        
+        DeploymentDSBindSpec dsBindSpec =
+                bmReader.getServiceDSInputSpec(versDateTime);
+        DeploymentDSBindRule[] dsBindRules = dsBindSpec.dsBindRules == null ?
+                new DeploymentDSBindRule[0] : dsBindSpec.dsBindRules;
+        
+        // Results will be returned in this array, one item per datastream
+        DisseminationBindingInfo[] bindingInfo;
+        bindingInfo = new DisseminationBindingInfo[dsBindRules.length];
+        
+        for (int i = 0; i < dsBindRules.length; i++) {
+            DeploymentDSBindRule dsBindRule = dsBindRules[i];
+            String dsPid = dsBindRule.pid == null ? 
+                    dObj.GetObjectPID() : dsBindRule.pid;
+            String dsId = dsBindRule.bindingKeyName;
+            Datastream ds;
+            
+            DOReader reader = m_manager.getReader(false, context, dsPid);
+            ds = reader.GetDatastream(dsId, versDateTime);
+
             if (ds == null) {
                 String message =
                         "The object \""
-                                + dObj.GetObjectPID()
+                                + dsPid
                                 + "\" "
-                                + "contains no datastream for dsID \""
-                                + dsID
+                                + "contains no datastream with ID \""
+                                + dsId
                                 + "\" "
                                 + "that was created on or before the specified date/timestamp "
                                 + " of \""
@@ -534,11 +524,15 @@ public class DefaultAccess
                                 + "\" .";
                 throw new DatastreamNotFoundException(message);
             }
+            
+            bindingInfo[i] = new DisseminationBindingInfo();
+            bindingInfo[i].DSBindKey = dsId;
             bindingInfo[i].dsLocation = ds.DSLocation;
             bindingInfo[i].dsControlGroupType = ds.DSControlGrp;
-            bindingInfo[i].dsID = dsID;
+            bindingInfo[i].dsID = ds.DatastreamID;
             bindingInfo[i].dsVersionID = ds.DSVersionID;
             bindingInfo[i].dsState = ds.DSState;
+            bindingInfo[i].dsCreateDT = ds.DSCreateDT;
             // these will be the same for all elements of the array
             bindingInfo[i].methodParms = methodParms;
             bindingInfo[i].AddressLocation = addressLocation;
@@ -568,7 +562,7 @@ public class DefaultAccess
         ObjectMethodsDef[] dynamicMethodDefs =
         //m_dynamicAccess.getObjectMethods(context, PID, asOfDateTime);
                 m_dynamicAccess.listMethods(context, PID, asOfDateTime);
-        ArrayList methodList = new ArrayList();
+        ArrayList<ObjectMethodsDef> methodList = new ArrayList<ObjectMethodsDef>();
         for (ObjectMethodsDef element : methodDefs) {
             methodList.add(element);
         }
@@ -772,7 +766,7 @@ public class DefaultAccess
     private String[] getAdminEmails() {
         String emailsCSV =
                 convertToCSV(getServer().getParameter("adminEmailList"));
-        Vector emails = new Vector();
+        Vector<Object> emails = new Vector<Object>();
         StringTokenizer st = new StringTokenizer(emailsCSV, ",");
         while (st.hasMoreElements()) {
             emails.add(st.nextElement());
@@ -785,7 +779,7 @@ public class DefaultAccess
                 convertToCSV(getServer()
                         .getModule("fedora.server.storage.DOManager")
                         .getParameter("retainPIDs"));
-        Vector retainPIDs = new Vector();
+        Vector<Object> retainPIDs = new Vector<Object>();
         StringTokenizer st = new StringTokenizer(retainPIDsCSV, ",");
         while (st.hasMoreElements()) {
             retainPIDs.add(st.nextElement());
@@ -841,27 +835,24 @@ public class DefaultAccess
                                    String sDefPID,
                                    ServiceDeploymentReader sdepreader,
                                    String methodName,
-                                   Hashtable h_userParms,
+                                   Hashtable<String, String> h_userParms,
                                    Date versDateTime) throws ServerException {
         PID = Server.getPID(PID).toString();
         sDefPID = Server.getPID(sDefPID).toString();
         MethodParmDef[] methodParms = null;
         MethodParmDef methodParm = null;
         StringBuffer sb = new StringBuffer();
-        Hashtable h_validParms = new Hashtable();
+        Hashtable<String, MethodParmDef> h_validParms = new Hashtable<String, MethodParmDef>();
         boolean isValid = true;
-
-        DOReader reader = null;
 
         if (sdepreader != null) // this code will be used for the CMDA example
         {
             MethodDef[] methods = sdepreader.getServiceMethods(versDateTime);
             // Filter out parms that are internal to the mechanism and not part
             // of the abstract method definition.  We just want user parms.
-            reader = m_manager.getReader(false, context, PID);
             for (MethodDef element : methods) {
                 if (element.methodName.equalsIgnoreCase(methodName)) {
-                    ArrayList filteredParms = new ArrayList();
+                    ArrayList<MethodParmDef> filteredParms = new ArrayList<MethodParmDef>();
                     MethodParmDef[] parms = element.methodParms;
                     for (MethodParmDef element2 : parms) {
                         if (element2.parmType
@@ -887,22 +878,24 @@ public class DefaultAccess
             for (int i = 0; i < methodParms.length; i++) {
                 methodParm = methodParms[i];
                 h_validParms.put(methodParm.parmName, methodParm);
-                LOG.debug("methodParms[" + i + "]: " + methodParms[i].parmName
-                        + "\nlabel: " + methodParms[i].parmLabel
-                        + "\ndefault: " + methodParms[i].parmDefaultValue
-                        + "\nrequired: " + methodParms[i].parmRequired
-                        + "\ntype: " + methodParms[i].parmType);
-                for (String element : methodParms[i].parmDomainValues) {
-                    LOG.debug("domainValue: " + element);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("methodParms[" + i + "]: " + methodParms[i].parmName
+                            + "\nlabel: " + methodParms[i].parmLabel
+                            + "\ndefault: " + methodParms[i].parmDefaultValue
+                            + "\nrequired: " + methodParms[i].parmRequired
+                            + "\ntype: " + methodParms[i].parmType);
+                    for (String element : methodParms[i].parmDomainValues) {
+                        LOG.debug("domainValue: " + element);
+                    }
                 }
             }
         }
 
         if (!h_validParms.isEmpty()) {
             // Iterate over valid parmameters to check for any missing required parms.
-            Enumeration e = h_validParms.keys();
+            Enumeration<String> e = h_validParms.keys();
             while (e.hasMoreElements()) {
-                String validName = (String) e.nextElement();
+                String validName = e.nextElement();
                 MethodParmDef mp = (MethodParmDef) h_validParms.get(validName);
                 if (mp.parmRequired && h_userParms.get(validName) == null) {
                     // This is a fatal error. A required method parameter does not
@@ -916,9 +909,9 @@ public class DefaultAccess
             }
 
             // Iterate over each user supplied parameter name
-            Enumeration parmNames = h_userParms.keys();
+            Enumeration<String> parmNames = h_userParms.keys();
             while (parmNames.hasMoreElements()) {
-                String parmName = (String) parmNames.nextElement();
+                String parmName = parmNames.nextElement();
                 methodParm = (MethodParmDef) h_validParms.get(parmName);
                 if (methodParm != null && methodParm.parmName != null) {
                     // Method has one or more parameters defined
@@ -1000,10 +993,10 @@ public class DefaultAccess
                 // This is an error. There are no method parameters defined for
                 // this method and user parameters are specified in the
                 // dissemination request.
-                Enumeration e = h_userParms.keys();
+                Enumeration<String> e = h_userParms.keys();
                 while (e.hasMoreElements()) {
                     sb.append("The method parameter \""
-                            + (String) e.nextElement()
+                            + e.nextElement()
                             + "\" is not valid for the method \"" + methodName
                             + "\"." + "The method \"" + methodName
                             + "\" defines no method parameters.");

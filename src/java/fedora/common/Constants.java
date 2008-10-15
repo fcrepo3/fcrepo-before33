@@ -34,6 +34,7 @@ import fedora.common.xml.format.FedoraBESecurity1_0Format;
 import fedora.common.xml.format.FedoraBatchModify1_1Format;
 import fedora.common.xml.format.FedoraDSCompositeModel1_0Format;
 import fedora.common.xml.format.FedoraDSInputSpec1_0Format;
+import fedora.common.xml.format.FedoraDSInputSpec1_1Format;
 import fedora.common.xml.format.FedoraObjectDatastreams1_0Format;
 import fedora.common.xml.format.FedoraObjectHistory1_0Format;
 import fedora.common.xml.format.FedoraObjectItems1_0Format;
@@ -45,6 +46,7 @@ import fedora.common.xml.format.FedoraRELSInt1_0Format;
 import fedora.common.xml.format.FedoraRepositoryDesc1_0Format;
 import fedora.common.xml.format.FedoraSDefMethodMap1_0Format;
 import fedora.common.xml.format.FedoraSDepMethodMap1_0Format;
+import fedora.common.xml.format.FedoraSDepMethodMap1_1Format;
 import fedora.common.xml.format.METSFedoraExt1_0Format;
 import fedora.common.xml.format.METSFedoraExt1_1Format;
 import fedora.common.xml.format.OAIDC2_0Format;
@@ -474,6 +476,13 @@ public interface Constants {
      */
     public static final FedoraDSInputSpec1_0Format DS_INPUT_SPEC1_0 =
             FedoraDSInputSpec1_0Format.getInstance();
+    
+    /**
+     * The Fedora Datastream Input Spec 1.1 XML format;
+     * <code>info:fedora/fedora-system:FedoraDSInputSpec-1.1</code>
+     */
+    public static final FedoraDSInputSpec1_1Format DS_INPUT_SPEC1_1 =
+            FedoraDSInputSpec1_1Format.getInstance();
 
     /**
      * The Fedora DS Composite Model 1.0 XML format;
@@ -559,6 +568,13 @@ public interface Constants {
     public static final FedoraSDepMethodMap1_0Format SDEP_METHOD_MAP1_0 =
             FedoraSDepMethodMap1_0Format.getInstance();
 
+    /**
+     * The Fedora Service Deployment Method Map 1.1 XML format;
+     * <code>info:fedora/fedora-system:FedoraSDepMethodMap-1.1</code>
+     */
+    public static final FedoraSDepMethodMap1_1Format SDEP_METHOD_MAP1_1 =
+            FedoraSDepMethodMap1_1Format.getInstance();
+    
     /**
      * Legacy FOXML 1.0 format string
      * Available only for backwards compatibility with old repository versions
