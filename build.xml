@@ -77,8 +77,8 @@
         <pathelement location="${lib.commons-discovery}"/>
         <pathelement location="${lib.commons-logging}"/>
         <pathelement location="${lib.javamail}"/>
-        <pathelement location="${lib.jaxrpc}"/>
-        <pathelement location="${lib.saaj}"/>
+        <pathelement location="${lib.jaxrpc-api}"/>
+        <pathelement location="${lib.saaj-api}"/>
         <pathelement location="${lib.wsdl4j}"/>
     </path>
     
@@ -156,8 +156,8 @@
             <pathelement location="${lib.commons-discovery}"/>
             <pathelement location="${lib.commons-logging}"/>
             <pathelement location="${lib.javamail}"/>
-            <pathelement location="${lib.jaxrpc}"/>
-            <pathelement location="${lib.saaj}"/>
+            <pathelement location="${lib.jaxrpc-api}"/>
+            <pathelement location="${lib.saaj-api}"/>
             <pathelement location="${lib.tt-bytecode}"/>
             <pathelement location="${lib.wsdl4j}"/>
         	
@@ -215,11 +215,11 @@
             <pathelement location="${lib.jai_codec}"/>
             <pathelement location="${lib.jai_core}"/>
             <pathelement location="${lib.javamail}"/>
-            <pathelement location="${lib.jaxrpc}"/>
+            <pathelement location="${lib.jaxrpc-api}"/>
             <pathelement location="${lib.jhbasic}"/>
         	<pathelement location="${lib.mulgara}"/>
             <pathelement location="${lib.openrdf-model}"/>
-            <pathelement location="${lib.saaj}"/>
+            <pathelement location="${lib.saaj-api}"/>
             <pathelement location="${lib.saxon}"/>
         	<pathelement location="${lib.slf4j-api}"/>
         	<pathelement location="${lib.slf4j-jdk14}"/>
@@ -714,7 +714,7 @@
         
         <replace dir="${fedora.home.build.dir}/client/bin" 
                  token="fedora-client.jar" 
-                 value="fedora-${fedora.version}-client.jar"/>                               
+                 value="fedora-client-${fedora.version}.jar"/>                               
 
         <chmod perm="ugo+x" type="file">
             <fileset dir="${fedora.home.build.dir}/client/bin">
@@ -729,11 +729,11 @@
 
         <replace dir="${fedora.home.build.dir}/client/demo/soapclient" 
                  token="fedora-client.jar" 
-                 value="fedora-${fedora.version}-client.jar"/> 
+                 value="fedora-client-${fedora.version}.jar"/> 
     	
     	<replace dir="${fedora.home.build.dir}/client/bin"
             token="fedora-client.jar"
-            value="fedora-${fedora.version}-client.jar"/>
+            value="fedora-client-${fedora.version}.jar"/>
         
         <!-- Prepare batch demo-->
         <!-- Why are these being copied to lib? -->
@@ -771,7 +771,7 @@
             <map from="${lib.dir}${file.separator}" to="lib/"/>
         </pathconvert>
         
-        <jar destfile="${fedora.home.build.dir}/client/fedora-${fedora.version}-client.jar" 
+        <jar destfile="${fedora.home.build.dir}/client/fedora-client-${fedora.version}.jar" 
              basedir="${client.build.dir}/classes">
             <manifest>
                 <attribute name="Version" value="${fedora.version}"/>
@@ -955,7 +955,7 @@
 		<copy file="${lib.openrdf-model}" todir="${install.build.dir}/lib"/>
 		<move file="${install.build.dir}/main.jar" todir="${install.build.dir}/main"/>
 		<unjar src="${lib.one-jar}" dest="${install.build.dir}/boot"/>
-		<jar jarfile="${dist.dir}/fedora-${fedora.version}-installer.jar">
+		<jar jarfile="${dist.dir}/fedora-installer-${fedora.version}.jar">
             <manifest>
                 <attribute name="Version" value="${fedora.version}"/>
                 <attribute name="Build" value="${build.tstamp}"/>
@@ -1007,13 +1007,13 @@
 	</target>
 
     <target name="src-release" depends="clean">
-		<copy todir="${dist.dir}/release/fedora-${fedora.version}-src">
+		<copy todir="${dist.dir}/release/fedora-src-${fedora.version}">
 			<fileset dir=".">
 				<exclude name="src/java/fedora/**/*.java"/>
 			</fileset>
 		</copy>
 		<!-- prepend license boilerplate to all Fedora java source code -->
-		<copy todir="${dist.dir}/release/fedora-${fedora.version}-src">
+		<copy todir="${dist.dir}/release/fedora-src-${fedora.version}">
 			<fileset dir=".">
 				<include name="src/java/fedora/**/*.java"/>
 			</fileset>
@@ -1021,16 +1021,16 @@
 				<concatfilter prepend="license/exhibitA-java.txt"/>
 			</filterchain>
 		</copy>
-        <zip zipfile="${dist.dir}/release/fedora-${fedora.version}-src.zip"
+        <zip zipfile="${dist.dir}/release/fedora-src-${fedora.version}.zip"
             basedir="${dist.dir}/release" 
-            includes="fedora-${fedora.version}-src/**"/>
-        <delete dir="${dist.dir}/release/fedora-${fedora.version}-src"/>
+            includes="fedora-src-${fedora.version}/**"/>
+        <delete dir="${dist.dir}/release/fedora-src-${fedora.version}"/>
     </target>
 
 	<target name="release" depends="src-release, docs, installer"
 		description="build source and binary releases, with checksums">
         <copy todir="${dist.dir}/release"
-            file="${dist.dir}/fedora-${fedora.version}-installer.jar"/>
+            file="${dist.dir}/fedora-installer-${fedora.version}.jar"/>
         <checksum fileext=".md5">
             <fileset dir="${dist.dir}/release">
                 <include name="*.zip"/>
@@ -1073,7 +1073,7 @@
                       fedora/server/utilities/DateUtility.java,
                       fedora/server/utilities/StreamUtility.java"/>
         
-        <jar destfile="${api.build.dir}/fedora-${fedora.version}-api.jar" 
+        <jar destfile="${api.build.dir}/fedora-api-${fedora.version}.jar" 
              basedir="${api.build.dir}/classes">
             <manifest>
                 <attribute name="Version" value="${fedora.version}"/>
@@ -1096,7 +1096,7 @@
             <fileset dir="${src.dir}/properties/server"/>
         </copy>
                 	                  
-        <jar destfile="${client.build.dir}/messaging/fedora-${fedora.version}-messaging-client.jar" 
+        <jar destfile="${client.build.dir}/messaging/fedora-messaging-client-${fedora.version}.jar" 
              basedir="${client.build.dir}/messaging/classes">
             <manifest>
                 <attribute name="Version" value="${fedora.version}"/>
@@ -1106,7 +1106,7 @@
         </jar>  	
 
         <zip destfile="${dist.dir}/fedora-messaging-client.zip">
-            <fileset file="${client.build.dir}/messaging/fedora-${fedora.version}-messaging-client.jar" />
+            <fileset file="${client.build.dir}/messaging/fedora-messaging-client-${fedora.version}.jar" />
             <fileset file="${lib.abdera-il8n}"/>
             <fileset file="${lib.abdera.core}"/>
             <fileset file="${lib.abdera.parser}"/>
