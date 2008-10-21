@@ -1,17 +1,20 @@
 package fedora.server.validation;
 
 import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import fedora.server.errors.ServerException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectValidityException;
+import fedora.server.errors.ServerException;
+
+import fedora.utilities.FileUtils;
 
 /**
  * <p><b>Title: DOValidatorImpl.java </b></p>
@@ -293,26 +296,28 @@ public class DOValidatorImpl
     }
 
     private File streamtoFile(String dirname, InputStream objectAsStream)
-        throws IOException {
-        	
+            throws IOException {
+
         File objectAsFile = null;
         try {
-          File tempDir = new File(dirname);
-          String fileLocation = null;
-          if ( tempDir.exists() || tempDir.mkdirs() ) {
-              fileLocation = tempDir.toString() + File.separator
-                            + System.currentTimeMillis() + ".tmp";
-              FileOutputStream fos = new FileOutputStream(fileLocation);
-              streamCopy(objectAsStream, fos);
-              objectAsFile = new File(fileLocation);
-          }
+            File tempDir = new File(dirname);
+            File fileLocation = null;
+            if (tempDir.exists() || tempDir.mkdirs()) {
+                fileLocation =
+                        File.createTempFile("validation", "tmp", tempDir);
+
+                FileOutputStream fos = new FileOutputStream(fileLocation);
+                if (FileUtils.copy(objectAsStream, fos)) {
+                    objectAsFile = fileLocation;
+                }
+            }
         } catch (IOException e) {
-          if (objectAsFile.exists()) {
-            objectAsFile.delete();
-          }
-          throw e;
+            if (objectAsFile != null && objectAsFile.exists()) {
+                objectAsFile.delete();
+            }
+            throw e;
         }
-        return(objectAsFile);
+        return objectAsFile;
     }
 
     // Distinguish temporary object files from real object files 
