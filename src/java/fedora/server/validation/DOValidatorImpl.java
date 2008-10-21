@@ -358,14 +358,14 @@ public class DOValidatorImpl
         File objectAsFile = null;
         try {
             File tempDir = new File(dirname);
-            String fileLocation = null;
+            File fileLocation = null;
             if (tempDir.exists() || tempDir.mkdirs()) {
-                fileLocation =
-                        tempDir.toString() + File.separator
-                                + System.currentTimeMillis() + ".tmp";
+                fileLocation = File.createTempFile("validation", "tmp", tempDir);
+
                 FileOutputStream fos = new FileOutputStream(fileLocation);
-                FileUtils.copy(objectAsStream, fos);
-                objectAsFile = new File(fileLocation);
+                if (FileUtils.copy(objectAsStream, fos)) {
+                	objectAsFile = fileLocation;
+                }
             }
         } catch (IOException e) {
             if (objectAsFile.exists()) {
