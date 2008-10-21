@@ -97,7 +97,6 @@
             <pathelement location="${lib.log4j}"/>
             <pathelement location="${lib.md5}"/>
             <pathelement location="${lib.oro}"/>
-            <pathelement location="${lib.rio}"/>
             <pathelement location="${lib.sunxacml}"/>
             <pathelement location="${lib.xmlpull}"/>
             <pathelement location="${lib.xpp3}"/>
@@ -442,7 +441,7 @@
         </copy>
         
         <java classname="fedora.common.policy.Release2_1Namespace" 
-            classpath="${server.build.dir}/classes" 
+            classpath="${server.build.dir}/classes;${lib.openrdf-model};${lib.mulgara}" 
             output="${fedora.home.build.dir}/server/fedora-internal-use/vocabulary.txt"/>
             
         <copy file="${xsl.src.dir}/security/build-backend-policy.xsl" 
@@ -765,7 +764,7 @@
     	<!-- generate the Fedora xacml vocabulary listing -->
 		<mkdir dir="${docs.build.dir}/userdocs/server/security/xacml-policies"/>
 		<java classname="fedora.common.policy.Release2_1Namespace" 
-			classpath="${tomcat.server.dir}/classes;${util.build.dir}" 
+			classpath="${tomcat.server.dir}/classes;${util.build.dir};${lib.openrdf-model};${lib.mulgara}" 
 			output="${docs.build.dir}/userdocs/server/security/xacml-policies/vocabulary.txt"/>
 		<!-- copy the default repository-wide policies for linking to documentation -->
 		<mkdir dir="${docs.build.dir}/userdocs/server/security/xacml-policies/default/repository-wide"/>
