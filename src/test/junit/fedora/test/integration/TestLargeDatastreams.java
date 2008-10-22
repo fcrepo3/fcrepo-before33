@@ -95,7 +95,6 @@ public class TestLargeDatastreams
         // Create the object, add the datastream
         System.out.println("  Uploading a file of size " + fileSize + " bytes...");
         String uploadId = upload();
-        System.out.println("uploadId: " + uploadId);
         System.out.println("  Creating data object...");
         apim.ingest(DEMO_FOXML, FOXML1_1.uri, "new foxml object");
         System.out.println("  Adding uploaded file as a datastream...");
