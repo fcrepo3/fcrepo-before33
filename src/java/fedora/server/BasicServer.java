@@ -96,21 +96,57 @@ public class BasicServer
         // check for system objects and pre-ingest them if necessary
         DOManager doManager = (DOManager) getModule(DOManager.class.getName());
         try {
-            preIngestIfNeeded(doManager, Models.CONTENT_MODEL_3_0);
-            preIngestIfNeeded(doManager, Models.FEDORA_OBJECT_3_0);
-            preIngestIfNeeded(doManager, Models.SERVICE_DEFINITION_3_0);
-            preIngestIfNeeded(doManager, Models.SERVICE_DEPLOYMENT_3_0);
+            boolean firstRun = checkFirstRun();
+            preIngestIfNeeded(firstRun, doManager, Models.CONTENT_MODEL_3_0);
+            preIngestIfNeeded(firstRun, doManager, Models.FEDORA_OBJECT_3_0);
+            preIngestIfNeeded(firstRun, doManager, Models.SERVICE_DEFINITION_3_0);
+            preIngestIfNeeded(firstRun, doManager, Models.SERVICE_DEPLOYMENT_3_0);
         } catch (Exception e) {
             throw new ServerInitializationException("Failed to ingest "
                                                     + "system object(s)", e);
         }
     }
     
-    private void preIngestIfNeeded(DOManager doManager,
+    private boolean checkFirstRun() throws IOException {
+        File hasStarted = new File(FEDORA_HOME, "server/fedora-internal-use/has-started.txt");
+        if (hasStarted.exists()) {
+            return false;
+        } else {
+            hasStarted.createNewFile();
+            return true;
+        }
+    }
+   
+    /**
+     * Ingests the given system object if it doesn't exist, OR if it
+     * exists, but this instance of Fedora has never been started.
+     * This ensures that, upon upgrade, the old system object 
+     * is replaced with the new one.
+     */
+    private void preIngestIfNeeded(boolean firstRun,
+                                   DOManager doManager,
                                    RDFName objectName) throws Exception {
         PID pid = new PID(objectName.uri.substring("info:fedora/".length()));
-        if (!doManager.objectExists(pid.toString())) {
-            LOG.info("Pre-ingesting system object: " + pid.toString());
+        boolean exists = doManager.objectExists(pid.toString());
+        if (exists && firstRun) {
+            LOG.info("Purging old system object: " + pid.toString());
+            Context context = ReadOnlyContext.getContext(null,
+                                                         null,
+                                                         null,
+                                                         false);
+            DOWriter w = doManager.getWriter(USE_DEFINITIVE_STORE,
+                                             context,
+                                             pid.toString());
+            w.remove();
+            try {
+                w.commit("Purged by Fedora at startup (to be re-ingested)");
+                exists = false;
+            } finally {
+                doManager.releaseWriter(w);
+            }
+        }
+        if (!exists) {
+            LOG.info("Ingesting new system object: " + pid.toString());
             InputStream xml = getStream("fedora/server/resources/"
                                         + pid.toFilename() + ".xml");
             Context context = ReadOnlyContext.getContext(null,

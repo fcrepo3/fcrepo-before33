@@ -878,33 +878,12 @@
     		destdir="${docs.build.dir}/javadocs" 
     		author="true" 
     		version="true" 
-    		use="true" />
-    	
-        <mkdir dir="${docs.build.dir}/userdocs/server/webservices/wsdl"/>
+    		use="true" />   	
+        
 		<copy todir="${docs.build.dir}/userdocs">
 			<fileset dir="${docs.src.dir}/userdocs"/>
 		</copy>
-        
-        <copy todir="${docs.build.dir}/userdocs/server/webservices/wsdl">
-            <fileset dir="${src.dir}/wsdl" includes="**/*.wsdl"/>
-            <fileset dir="${src.dir}/xsd" includes="fedora-types.xsd"/>
-        </copy>
-        
-    	<!-- generate the Fedora xacml vocabulary listing -->
-		<mkdir dir="${docs.build.dir}/userdocs/server/security/xacml-policies"/>
-		<java classname="fedora.common.policy.Release2_1Namespace" 
-			classpath="${tomcat.server.dir}/classes;${util.build.dir};${lib.openrdf-model};${lib.mulgara}" 
-			output="${docs.build.dir}/userdocs/server/security/xacml-policies/vocabulary.txt"/>
-		<!-- copy the default repository-wide policies for linking to documentation -->
-		<mkdir dir="${docs.build.dir}/userdocs/server/security/xacml-policies/default/repository-wide"/>
-		<copy todir="${docs.build.dir}/userdocs/server/security/xacml-policies/default/repository-wide">
-			<fileset dir="${xacml.src.dir}/default/default-repository-policies-approximating-2.0"/>
-		</copy>
-		<!-- copy the sample policy collection for linking to documentation -->
-		<mkdir dir="${docs.build.dir}/userdocs/server/security/xacml-policies/examples"/>
-		<copy todir="${docs.build.dir}/userdocs/server/security/xacml-policies/examples">
-			<fileset dir="${xacml.src.dir}/examples"/>
-		</copy>
+
     </target>
     
 	<target name="compile-installer" depends="">

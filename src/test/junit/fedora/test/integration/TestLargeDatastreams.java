@@ -12,12 +12,9 @@ import java.io.UnsupportedEncodingException;
 
 import java.util.Random;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -27,6 +24,10 @@ import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.PartSource;
 
 import org.junit.Test;
+
+import junit.framework.JUnit4TestAdapter;
+
+import fedora.client.FedoraClient;
 
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
@@ -46,7 +47,9 @@ import fedora.test.FedoraTestCase;
  */
 public class TestLargeDatastreams
         extends FedoraTestCase {
-
+    
+    private FedoraClient fedoraClient;
+    
     private FedoraAPIM apim;
 
     private FedoraAPIA apia;
@@ -80,8 +83,9 @@ public class TestLargeDatastreams
 
     @Override
     public void setUp() throws Exception {
-        apim = getFedoraClient().getAPIM();
-        apia = getFedoraClient().getAPIA();
+        fedoraClient = getFedoraClient();
+        apim = fedoraClient.getAPIM();
+        apia = fedoraClient.getAPIA();
     }
 
     @Test
@@ -130,8 +134,7 @@ public class TestLargeDatastreams
     }
 
     private String upload() throws Exception {
-        String url = apia.describeRepository().getRepositoryBaseURL() +
-                     "/management/upload";
+        String url = fedoraClient.getUploadURL();
         EntityEnclosingMethod httpMethod = new PostMethod(url);
         httpMethod.setDoAuthentication(true);
         httpMethod.getParams().setParameter("Connection", "Keep-Alive");
@@ -139,20 +142,23 @@ public class TestLargeDatastreams
         Part[] parts = {new FilePart("file", new SizedPartSource())};
         httpMethod.setRequestEntity(
                 new MultipartRequestEntity(parts, httpMethod.getParams()));
+        HttpClient client = fedoraClient.getHttpClient();
+        try {
+            
+            int status = client.executeMethod(httpMethod);
+            String response = new String(httpMethod.getResponseBody());
 
-        HttpClient client = new HttpClient();
-        client.getParams().setAuthenticationPreemptive(true);
-        client.getState().setCredentials(
-                new AuthScope(getHost(), Integer.valueOf(getPort()), "realm"),
-                new UsernamePasswordCredentials(getUsername(), getPassword()));
-
-        client.executeMethod(httpMethod);
-        String response = new String(httpMethod.getResponseBody());
-        response = response.replaceAll("\r", "").replaceAll("\n", "");
-
-        httpMethod.releaseConnection();
-
-        return response;
+            if (status != HttpStatus.SC_CREATED) {
+                throw new IOException("Upload failed: "
+                                      + HttpStatus.getStatusText(status) + ": "
+                                      + replaceNewlines(response, " "));
+            } else {
+                response = response.replaceAll("\r", "").replaceAll("\n", "");
+                return response;
+            }
+        } finally {
+            httpMethod.releaseConnection();
+        }
     }
 
     private long exportAPIALite(String dsId) throws Exception {
@@ -162,12 +168,7 @@ public class TestLargeDatastreams
         httpMethod.setDoAuthentication(true);
         httpMethod.getParams().setParameter("Connection", "Keep-Alive");
 
-        HttpClient client = new HttpClient();
-        client.getParams().setAuthenticationPreemptive(true);
-        client.getState().setCredentials(
-                new AuthScope(getHost(), Integer.valueOf(getPort()), "realm"),
-                new UsernamePasswordCredentials(getUsername(), getPassword()));
-
+        HttpClient client = fedoraClient.getHttpClient();
         client.executeMethod(httpMethod);
         BufferedInputStream dataStream =
                 new BufferedInputStream(httpMethod.getResponseBodyAsStream());
@@ -198,7 +199,14 @@ public class TestLargeDatastreams
 
         return fileStream.getStream().length;
     }
-
+    
+    /**
+     * Replace newlines with the given string.
+     */
+    private static String replaceNewlines(String in, String replaceWith) {
+        return in.replaceAll("\r", replaceWith).replaceAll("\n", replaceWith);
+    }
+    
     public static junit.framework.Test suite() {
         return new JUnit4TestAdapter(TestLargeDatastreams.class);
     }

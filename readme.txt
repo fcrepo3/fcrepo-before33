@@ -1,10 +1,10 @@
 -------------------------------------------------------------------
-              Fedora Release 3.0 - July 29, 2008
+             Fedora Release 3.1 - October 24, 2008
 -------------------------------------------------------------------
 This is a full source code release of Fedora.  Before using this
 software, you must read and agree to the license, found under
-license/license.html.  Documentation can be found under the 
-src/doc/userdocs/ directory, or online at fedora-commons.org.
+license/license.html.  Documentation can be found for online
+browsing or download at http://fedora-commons.org/go/fcr30
 
 Building Fedora
 ===============

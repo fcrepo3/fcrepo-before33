@@ -730,9 +730,6 @@ public class DefaultDOManager
             ObjectLockedException {
         if (cachedObjectRequired) {
             throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
-        } else if (Models.contains("info:fedora/" + pid)) {
-            throw new ObjectLockedException("System object " + pid
-                                            + " is read-only");
         } else {
             BasicDigitalObject obj = new BasicDigitalObject();
             m_translator.deserialize(m_permanentStore.retrieveObject(pid),
