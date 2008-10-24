@@ -307,8 +307,10 @@ public class LoginDialog
                             endText.append((String) compatibleVersions.get(i));
                         }
                     }
-                    throw new IOException("Server is version " + serverVersion
-                            + ", but this client only works with " + endText.toString());
+                    System.err.println("WARNING: Server version is "
+                                       + serverVersion + ".  This client is "
+                                       + "only designed to work with "
+                                       + endText.toString());
                 }
 
                 // set SOAP stubs for Administrator
