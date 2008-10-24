@@ -68,5 +68,16 @@ public class XacmlName implements URIReference {
     public String toString() {
         return this.uri + "\t" + this.datatype;
     }
+	
+	public String stringValue() {
+        return toString();
+    }
 
+    public String getLocalName() {
+        return localName;
+    }
+
+    public String getNamespace() {
+        return parent.toString();
+    }
 }

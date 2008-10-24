@@ -61,8 +61,20 @@ public class RDFName implements URIReference {
         return m_uri;
     }
 
+    @Override
     public String toString() {
-        return this.uri;
+        return uri;
     }
 
+    public String stringValue() {
+        return toString();
+    }
+
+    public String getLocalName() {
+        return localName;
+    }
+
+    public String getNamespace() {
+        return namespace.toString();
+    }
 }
