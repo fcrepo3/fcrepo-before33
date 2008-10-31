@@ -1084,6 +1084,10 @@
             </manifest>
         </jar>  	
 
+        <copy todir="${fedora.home.build.dir}/client">
+            <fileset file="${client.build.dir}/messaging/fedora-messaging-client-${fedora.version}.jar" />
+        </copy>
+
         <zip destfile="${dist.dir}/fedora-messaging-client.zip">
             <fileset file="${client.build.dir}/messaging/fedora-messaging-client-${fedora.version}.jar" />
             <fileset file="${lib.abdera-il8n}"/>
