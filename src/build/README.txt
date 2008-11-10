@@ -1,4 +1,4 @@
-To set up Eclipse (3.3):
+To set up Eclipse (3.3 or Ganymede):
 
 1) Go to "Window" -> "Preferences" -> "Java" -> "Code Style"
 2) Under the top "Code Style" section:
@@ -20,3 +20,6 @@ To set up Eclipse (3.3):
 If using the Subversive plugin (recommended):
 - Go to Team -> SVN -> Automatic Properties
 - Import subversion.config
+
+Also make sure Java 1.5 appears as an installed JRE and that it is the
+default JRE for the project.
