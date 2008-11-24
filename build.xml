@@ -1121,4 +1121,21 @@
         	<arg value="${name}"/>
         </java>
     </target>
+
+    <target name="scalability-tests" depends="client">
+        <java classname="fedora.client.test.ScalabilityTests">
+            <classpath>
+                <pathelement path="${build.dir}/client/classes" />
+                <path refid="compile.classpath"/>
+            </classpath>
+            <arg value="${host}"/>
+            <arg value="${port}"/>
+            <arg value="${username}"/>
+            <arg value="${password}"/>
+        	<arg value="${batchsize}"/>
+        	<arg value="${batches}"/>
+        	<arg value="${threads}"/>
+            <arg value="${file}"/>
+        </java>
+    </target>
 </project>
