@@ -127,6 +127,11 @@ public class TestRESTAPI
         sb.append("      </foxml:xmlContent>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
+        sb.append("  <foxml:datastream CONTROL_GROUP=\"E\" ID=\"EXTDS\" STATE=\"A\" VERSIONABLE=\"true\">");
+        sb.append("    <foxml:datastreamVersion ID=\"EXTDS1.0\" LABEL=\"External\" MIMETYPE=\"text/xml\">");
+        sb.append("      <foxml:contentLocation REF=\"http://"+getHost()+":"+getPort()+"/fedora/get/demo:REST/DS1\" TYPE=\"URL\"/>");
+        sb.append("    </foxml:datastreamVersion>");
+        sb.append("  </foxml:datastream>");
         sb.append("</foxml:digitalObject>");
 
         try {
@@ -412,6 +417,7 @@ public class TestRESTAPI
     }
 
     public void testModifyDatastreamByReference() throws Exception {
+        // Create BAR datastream
         url = String.format("/objects/%s/datastreams/BAR?controlGroup=M&dsLabel=bar",
                             pid.toString());
         File temp = File.createTempFile("test", null);
@@ -421,7 +427,8 @@ public class TestRESTAPI
         assertEquals(SC_UNAUTHORIZED, post(temp, false).getStatusCode());
         assertEquals(SC_CREATED, post(temp, true).getStatusCode());
 
-        url = String.format("/objects/%s/datastreams/BAR?controlGroup=M",
+        // Update the content of the BAR datastream
+        url = String.format("/objects/%s/datastreams/BAR",
                             pid.toString());
         temp = File.createTempFile("test2", null);
         os = new DataOutputStream(new FileOutputStream(temp));
@@ -429,11 +436,31 @@ public class TestRESTAPI
         os.close();
         assertEquals(SC_UNAUTHORIZED, put(temp, false).getStatusCode());
         assertEquals(SC_CREATED, put(temp, true).getStatusCode());
+
+        // Update the label of the BAR datastream
+        String newLabel = "tikibar";
+        url = String.format("/objects/%s/datastreams/BAR?dsLabel="+newLabel,
+                            pid.toString());
+        assertEquals(SC_UNAUTHORIZED, put(false).getStatusCode());
+        assertEquals(SC_CREATED, put(true).getStatusCode());
+        assertEquals(newLabel, apim.getDatastream(pid.toString(), "BAR", null).getLabel());
+
+        // Update the location of the EXTDS datastream
+        String newLocation = "http://"+getHost()+":"+getPort()+"/fedora/get/demo:REST/DC";
+        url = String.format("/objects/%s/datastreams/EXTDS?dsLocation="+newLocation,
+                            pid.toString());
+        assertEquals(SC_UNAUTHORIZED, put(false).getStatusCode());
+        assertEquals(SC_CREATED, put(true).getStatusCode());
+
+        assertEquals(newLocation, apim.getDatastream(pid.toString(), "EXTDS", null).getLocation());
+        String dcDS = new String(apia.getDatastreamDissemination(pid.toString(), "DC", null).getStream());
+        String extDS = new String(apia.getDatastreamDissemination(pid.toString(), "EXTDS", null).getStream());
+        assertEquals(dcDS, extDS);
     }
 
     public void testModifyDatastreamByValue() throws Exception {
         String xmlData = "<baz>quux</baz>";
-        url = String.format("/objects/%s/datastreams/DS1?controlGroup=X",
+        url = String.format("/objects/%s/datastreams/DS1",
                             pid.toString());
 
         assertEquals(SC_UNAUTHORIZED, put(xmlData, false).getStatusCode());
@@ -538,8 +565,7 @@ public class TestRESTAPI
 
         // Modify datastream
         datastreamData = "<test>Update Test</test>";
-        url = String.format("/objects/%s/datastreams/TESTDS?controlGroup=X",
-                            pid.toString());
+        url = String.format("/objects/%s/datastreams/TESTDS", pid.toString());
         assertEquals(SC_UNAUTHORIZED, put(datastreamData, false).getStatusCode());
         assertEquals(SC_CREATED, put(datastreamData, true).getStatusCode());
 
@@ -613,6 +639,10 @@ public class TestRESTAPI
      * @return
      * @throws Exception
      */
+    private HttpResponse put(boolean authenticate) throws Exception {
+        return putOrPost("PUT", null, authenticate);
+    }
+
     private HttpResponse put(String requestContent, boolean authenticate)
             throws Exception {
         return putOrPost("PUT", requestContent, authenticate);
@@ -680,20 +710,22 @@ public class TestRESTAPI
 
             httpMethod.setDoAuthentication(authenticate);
             httpMethod.getParams().setParameter("Connection", "Keep-Alive");
-            httpMethod.setContentChunked(chunked);
-            if (requestContent instanceof String) {
-                httpMethod
-                        .setRequestEntity(new StringRequestEntity((String) requestContent,
-                                                                  "text/xml",
-                                                                  "utf-8"));
-            } else if (requestContent instanceof File) {
-                Part[] parts = { new StringPart("param_name", "value"),
-                                 new FilePart(((File) requestContent).getName(),
-                                             (File) requestContent) };
-                httpMethod.setRequestEntity(
-                    new MultipartRequestEntity(parts, httpMethod.getParams()));
-            } else {
-                throw new IllegalArgumentException("requestContent must be a String or File");
+            if(requestContent != null) {
+                httpMethod.setContentChunked(chunked);
+                if (requestContent instanceof String) {
+                    httpMethod
+                            .setRequestEntity(new StringRequestEntity((String) requestContent,
+                                                                      "text/xml",
+                                                                      "utf-8"));
+                } else if (requestContent instanceof File) {
+                    Part[] parts = { new StringPart("param_name", "value"),
+                                     new FilePart(((File) requestContent).getName(),
+                                                 (File) requestContent) };
+                    httpMethod.setRequestEntity(
+                        new MultipartRequestEntity(parts, httpMethod.getParams()));
+                } else {
+                    throw new IllegalArgumentException("requestContent must be a String or File");
+                }
             }
             getClient(authenticate).executeMethod(httpMethod);
             return new HttpResponse(httpMethod);
