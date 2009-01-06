@@ -126,14 +126,14 @@
         <servlet-name>WSDLServlet</servlet-name>
         <servlet-class>fedora.server.access.WSDLServlet</servlet-class>
     </servlet>
-	<servlet>
-		<display-name>Fedora REST API Servlet</display-name>
-	    <servlet-name>RestServlet</servlet-name>
-	    <servlet-class>com.sun.ws.rest.impl.container.servlet.ServletAdaptor</servlet-class>
-	    <init-param>
-	      <param-name>webresourceclass</param-name>
-	      <param-value>fedora.server.rest.WebResources</param-value>
-	    </init-param>
+    <servlet>
+      <display-name>Fedora REST API Servlet</display-name>
+      <servlet-name>RestServlet</servlet-name>
+      <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+      <init-param>
+        <param-name>com.sun.jersey.config.property.packages</param-name>
+        <param-value>fedora.server.rest</param-value>
+      </init-param>
     </servlet>
 
 	<servlet-mapping>
