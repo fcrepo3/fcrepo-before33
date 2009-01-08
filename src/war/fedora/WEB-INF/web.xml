@@ -134,6 +134,10 @@
         <param-name>com.sun.jersey.config.property.packages</param-name>
         <param-value>fedora.server.rest</param-value>
       </init-param>
+			<init-param>
+				<param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+				<param-value>com.sun.jersey.api.container.filter.PostReplaceFilter</param-value>
+			</init-param>      
     </servlet>
 
 	<servlet-mapping>
