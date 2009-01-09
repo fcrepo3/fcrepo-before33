@@ -245,7 +245,7 @@ public class TestRESTAPI
         assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
         assertEquals(SC_OK, get(true).getStatusCode());
 
-        url = String.format("/objects/%s/datastreams/xml", pid.toString());
+        url = String.format("/objects/%s/datastreams.xml", pid.toString());
         assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
         assertEquals(SC_OK, get(true).getStatusCode());
 

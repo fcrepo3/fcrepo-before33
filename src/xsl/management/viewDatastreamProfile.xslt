@@ -144,7 +144,7 @@
 					<xsl:for-each select="dsAltID">
                         <tr>
                             <td align="right">
-                                <font color="blue">Datastream Checksum: </font>
+                                <font color="blue">Datastream Alternate ID: </font>
                             </td>
                             <td align="left">
                                 <xsl:value-of select="."/>
