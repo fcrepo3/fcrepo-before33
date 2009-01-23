@@ -989,7 +989,6 @@
 	</target>
 
     <target name="src-release" depends="clean">
-        <fail message="Intentionally failed to test breakage notification"/>
 		<copy todir="${dist.dir}/release/fedora-src-${fedora.version}">
 			<fileset dir=".">
 				<exclude name="src/java/fedora/**/*.java"/>
