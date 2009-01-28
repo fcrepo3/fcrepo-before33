@@ -16,9 +16,7 @@
 							<td width="643" valign="top">
 								<center>
 									<h2>Fedora Digital Object Datastream</h2>
-									<h3>Datastream Profile View</h3>
-
-									
+									<h3>Datastream Profile View</h3>	
 								</center>
 							</td>
 						</tr>
@@ -125,6 +123,30 @@
                             <xsl:value-of select="dsVersionable"/>
                         </td>
                     </tr>
+                    <tr>
+                        <td align="right">
+                            <font color="blue">Datastream Info Type: </font>
+                        </td>
+                        <td align="left">
+                            <xsl:value-of select="dsInfoType"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">
+                            <font color="blue">Datastream Location: </font>
+                        </td>
+                        <td align="left">
+                            <xsl:value-of select="dsLocation"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">
+                            <font color="blue">Datastream Location Type: </font>
+                        </td>
+                        <td align="left">
+                            <xsl:value-of select="dsLocationType"/>
+                        </td>
+                    </tr>                    
                     <tr>
                         <td align="right">
                             <font color="blue">Datastream Checksum Type: </font>

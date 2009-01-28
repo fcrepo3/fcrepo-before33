@@ -12,6 +12,7 @@
 				<xs:element ref="objLastModDate" />
 				<xs:element ref="objDissIndexViewURL" />
 				<xs:element ref="objItemIndexViewURL" />
+				<xs:element ref="objState" />
 			</xs:sequence>
 			<xs:attribute name="pid" use="required">
 				<xs:simpleType>
@@ -57,4 +58,9 @@
 			<xs:restriction base="xs:dateTime" />
 		</xs:simpleType>
 	</xs:element>
+    <xs:element name="objState">
+        <xs:simpleType>
+            <xs:restriction base="xs:string" />
+        </xs:simpleType>
+    </xs:element>	
 </xs:schema>

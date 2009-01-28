@@ -37,6 +37,9 @@
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:element>
+                <xs:element name="dsInfoType" type="xs:string" />
+                <xs:element name="dsLocation" type="xs:string" />
+                <xs:element name="dsLocationType" type="xs:string" />                                
                 <xs:element name="dsChecksumType" >
                     <xs:simpleType>
                         <xs:restriction base="xs:string">
