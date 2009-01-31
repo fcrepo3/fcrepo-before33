@@ -61,6 +61,8 @@ public class ConnectionPoolManagerImpl
 
     private int numTestsPerEvictionRun = 0;
 
+    private String validationQuery;
+
     private boolean testOnBorrow = false;
 
     private boolean testOnReturn = false;
@@ -148,6 +150,7 @@ public class ConnectionPoolManagerImpl
                         new Long(config
                                 .getParameter("timeBetweenEvictionRunsMillis"))
                                 .longValue();
+                validationQuery = config.getParameter("validationQuery");
                 testOnBorrow =
                         new Boolean(config.getParameter("testOnBorrow"))
                                 .booleanValue();
@@ -190,6 +193,7 @@ public class ConnectionPoolManagerImpl
                             + minEvictableIdleTimeMillis);
                     LOG.debug("Minimum Evictable Idle time: "
                             + timeBetweenEvictionRunsMillis);
+                    LOG.debug("Validation query: " + validationQuery);
                     LOG.debug("Test on borrow: " + testOnBorrow);
                     LOG.debug("Test on return: " + testOnReturn);
                     LOG.debug("Test while idle: " + testWhileIdle);
@@ -249,6 +253,7 @@ public class ConnectionPoolManagerImpl
                                                minEvictableIdleTimeMillis,
                                                numTestsPerEvictionRun,
                                                timeBetweenEvictionRunsMillis,
+                                               validationQuery,
                                                testOnBorrow,
                                                testOnReturn,
                                                testWhileIdle,

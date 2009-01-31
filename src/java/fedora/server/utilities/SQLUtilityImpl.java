@@ -65,6 +65,10 @@ class SQLUtilityImpl
                 Long.parseLong(cpDC
                         .getParameter("timeBetweenEvictionRunsMillis")
                         .getValue());
+        String cpValidationQuery = null;
+        if (cpDC.getParameter("validationQuery") != null) {   
+            cpValidationQuery = cpDC.getParameter("validationQuery").getValue();
+        }
         boolean cpTestOnBorrow =
                 Boolean.parseBoolean(cpDC.getParameter("testOnBorrow")
                         .getValue());
@@ -104,6 +108,7 @@ class SQLUtilityImpl
                                   cpMinEvictableIdleTimeMillis,
                                   cpNumTestsPerEvictionRun,
                                   cpTimeBetweenEvictionRunsMillis,
+                                  cpValidationQuery,
                                   cpTestOnBorrow,
                                   cpTestOnReturn,
                                   cpTestWhileIdle,

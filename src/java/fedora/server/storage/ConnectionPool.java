@@ -68,6 +68,8 @@ public class ConnectionPool {
      * @param timeBetweenEvictionRunsMillis
      *        Time in milliseconds to sleep between runs of the idle object
      *        evictor thread.
+     * @param validationQuery
+     *        Query to run when validation connections, e.g. SELECT 1.
      * @param testOnBorrow
      *        When true objects are validated before borrowed from the pool.
      * @param testOnReturn
@@ -92,6 +94,7 @@ public class ConnectionPool {
                           long minEvictableIdleTimeMillis,
                           int numTestsPerEvictionRun,
                           long timeBetweenEvictionRunsMillis,
+                          String validationQuery,
                           boolean testOnBorrow,
                           boolean testOnReturn,
                           boolean testWhileIdle,
@@ -121,6 +124,9 @@ public class ConnectionPool {
                         + numTestsPerEvictionRun);
         props.setProperty("timeBetweenEvictionRunsMillis", ""
                 + timeBetweenEvictionRunsMillis);
+        if (validationQuery != null && validationQuery.length() > 0) {
+            props.setProperty("validationQuery", validationQuery);
+        }
         props.setProperty("testOnBorrow", "" + testOnBorrow);
         props.setProperty("testOnReturn", "" + testOnReturn);
         props.setProperty("testWhileIdle", "" + testWhileIdle);
@@ -188,6 +194,8 @@ public class ConnectionPool {
      * @param timeBetweenEvictionRunsMillis
      *        Time in milliseconds to sleep between runs of the idle object
      *        evictor thread.
+     * @param validationQuery
+     *        Query to run when validation connections, e.g. SELECT 1.
      * @param testOnBorrow
      *        When true objects are validated before borrowed from the pool.
      * @param testOnReturn
@@ -213,6 +221,7 @@ public class ConnectionPool {
                           long minEvictableIdleTimeMillis,
                           int numTestsPerEvictionRun,
                           long timeBetweenEvictionRunsMillis,
+                          String validationQuery,
                           boolean testOnBorrow,
                           boolean testOnReturn,
                           boolean testWhileIdle,
@@ -229,6 +238,7 @@ public class ConnectionPool {
              minEvictableIdleTimeMillis,
              numTestsPerEvictionRun,
              timeBetweenEvictionRunsMillis,
+             validationQuery,
              testOnBorrow,
              testOnReturn,
              testWhileIdle,
