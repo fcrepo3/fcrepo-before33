@@ -975,7 +975,7 @@
 			</syspropertyset>
 			<classpath refid="junit.classpath"/>
 			<formatter type="xml"/>
-			<test name="${test}" outfile="build/test-results/result"/>
+			<test name="${test}" outfile="build/test-results/result-${test}"/>
 		</junit>
         <echo>Test results are in build/test-results/</echo>
 	</target>
