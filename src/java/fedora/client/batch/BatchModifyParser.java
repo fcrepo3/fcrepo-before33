@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -15,6 +15,7 @@ import java.io.UnsupportedEncodingException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.SAXParser;
@@ -55,7 +56,7 @@ import fedora.server.utilities.StreamUtility;
  * end of the file. In this case the logs will contain all directives processed
  * up to the point of failure.
  * </p>
- * 
+ *
  * @author Ross Wayland
  */
 public class BatchModifyParser
@@ -79,23 +80,16 @@ public class BatchModifyParser
     /** Count of directives that failed. */
     private int failedCount = 0;
 
-    /**
-     * URI-to-namespace prefix mapping info from SAX2 startPrefixMapping events.
-     */
-    private HashMap<String, String> nsPrefixMap;
+    private Map<String, String> m_prefixMap;
 
-    private HashMap<String, String> m_prefixUris;
+    private Map<String, String> m_localPrefixMap;
+
+    private List<String> m_prefixList;
 
     /** Variables for keeping state during SAX parse. */
     private StringBuffer m_dsXMLBuffer;
 
-    private StringBuffer m_dsFirstElementBuffer;
-
-    private ArrayList<String> m_dsPrefixes;
-
     private boolean m_inXMLMetadata;
-
-    private boolean m_firstInlineXMLElement;
 
     private boolean addObject = false;
 
@@ -123,7 +117,7 @@ public class BatchModifyParser
      * <p>
      * Constructor allows this class to initiate the parsing.
      * </p>
-     * 
+     *
      * @param UPLOADER -
      *        An instance of Uploader.
      * @param APIM -
@@ -192,7 +186,7 @@ public class BatchModifyParser
      * log file will contain details on how many directives were successfully
      * processed before the fatal error was encountered.
      * </p>
-     * 
+     *
      * @return The count of failed directives.
      */
     public int getFailedCount() {
@@ -203,40 +197,39 @@ public class BatchModifyParser
      * <p>
      * Get the count of successful directives.
      * </p>
-     * 
+     *
      * @return The count of successful directives.
      */
     public int getSucceededCount() {
         return succeededCount;
     }
 
+    @Override
     public void startDocument() throws SAXException {
-        nsPrefixMap = new HashMap<String, String>();
-        m_prefixUris = new HashMap<String, String>();
+        m_prefixMap = new HashMap<String, String>();
+        m_localPrefixMap = new HashMap<String, String>();
+        m_prefixList = new ArrayList<String>();
     }
 
-    public void endDocument() throws SAXException {
-        nsPrefixMap = null;
-        m_prefixUris = null;
-    }
-
+    @Override
     public void startPrefixMapping(String prefix, String uri)
             throws SAXException {
-        // save a forward and backward hash of namespace prefix-to-uri
-        // mapping ... for the entire object.
-        m_prefixUris.put(prefix, uri);
-        nsPrefixMap.put(uri, prefix);
-        // if we're looking at inline metadata, be sure to save the prefix
-        // so we know it's used in that datastream
+        m_prefixMap.put(prefix, uri);
         if (m_inXMLMetadata) {
-            if (!m_dsPrefixes.contains(prefix)) {
-                if (!"".equals(prefix)) {
-                    m_dsPrefixes.add(prefix);
-                }
-            }
+            m_localPrefixMap.put(prefix, uri);
+            m_prefixList.add(prefix);
         }
     }
 
+    @Override
+    public void endPrefixMapping(String prefix) {
+        m_prefixMap.remove(prefix);
+        if (m_inXMLMetadata) {
+            m_localPrefixMap.remove(prefix);
+        }
+    }
+
+    @Override
     public void skippedEntity(String name) throws SAXException {
         StringBuffer sb = new StringBuffer();
         sb.append('&');
@@ -247,6 +240,40 @@ public class BatchModifyParser
         characters(text, 0, text.length);
     }
 
+    private void appendElementStart(String uri,
+                                    String localName,
+                                    String qName,
+                                    Attributes a,
+                                    StringBuffer out) {
+        out.append("<" + qName);
+        // add the current qName's namespace to m_localPrefixMap
+        // and m_prefixList if it's not already in m_localPrefixMap
+        // This ensures that all namespaces used in xmlData are declared within,
+        // since it's supposed to be a standalone chunk.
+        String[] parts = qName.split(":");
+        if (parts.length == 2) {
+            String nsuri = m_localPrefixMap.get(parts[0]);
+            if (nsuri == null) {
+                m_localPrefixMap.put(parts[0], parts[1]);
+                m_prefixList.add(parts[0]);
+            }
+        }
+        // do we have any newly-mapped namespaces?
+        while (m_prefixList.size() > 0) {
+            String prefix = m_prefixList.remove(0);
+            out.append(" xmlns");
+            if (prefix.length() > 0) {
+                out.append(":");
+            }
+            out.append(prefix + "=\"" + StreamUtility.enc(m_prefixMap.get(prefix)) + "\"");
+        }
+        for (int i = 0; i < a.getLength(); i++) {
+            out.append(" " + a.getQName(i) + "=\"" + StreamUtility.enc(a.getValue(i)) + "\"");
+        }
+        out.append(">");
+    }
+
+    @Override
     public void characters(char ch[], int start, int length)
             throws SAXException {
         if (m_inXMLMetadata) {
@@ -257,6 +284,7 @@ public class BatchModifyParser
         }
     }
 
+    @Override
     public void startElement(String namespaceURI,
                              String localName,
                              String qName,
@@ -630,143 +658,31 @@ public class BatchModifyParser
                 && localName.equalsIgnoreCase("xmlData")) {
             m_inXMLMetadata = true;
             m_dsXMLBuffer = new StringBuffer();
-            m_dsFirstElementBuffer = new StringBuffer();
-            m_dsPrefixes = new ArrayList<String>();
-            m_firstInlineXMLElement = true;
         } else {
             if (m_inXMLMetadata) {
-                String prefix = (String) nsPrefixMap.get(namespaceURI);
-                if (m_firstInlineXMLElement) {
-                    m_firstInlineXMLElement = false;
-                    m_dsFirstElementBuffer.append('<');
-                    if (prefix != null) {
-                        if (!m_dsPrefixes.contains(prefix)) {
-                            m_dsPrefixes.add(prefix);
-                        }
-                        if (!prefix.equals("")) {
-                            m_dsFirstElementBuffer.append(prefix);
-                            m_dsFirstElementBuffer.append(':');
-                        }
-                    }
-                    m_dsFirstElementBuffer.append(localName);
-
-                    for (int i = 0; i < attrs.getLength(); i++) {
-                        m_dsFirstElementBuffer.append(' ');
-
-                        String aPrefix =
-                                (String) nsPrefixMap.get(attrs.getURI(i));
-                        if (aPrefix != null) {
-                            if (!m_dsPrefixes.contains(aPrefix)) {
-                                m_dsPrefixes.add(aPrefix);
-                            }
-                            if (!prefix.equals("")) {
-                                m_dsFirstElementBuffer.append(aPrefix);
-                                m_dsFirstElementBuffer.append(':');
-                            }
-                        }
-                        if (!attrs.getLocalName(i).equals("")) {
-                            m_dsFirstElementBuffer
-                                    .append(attrs.getLocalName(i));
-                            m_dsFirstElementBuffer.append("=\"");
-                            // re-encode decoded standard entities (&, <, >, ", ')
-                            m_dsFirstElementBuffer.append(StreamUtility
-                                    .enc(attrs.getValue(i)));
-                            m_dsFirstElementBuffer.append("\"");
-                        }
-                    }
-                } else {
-                    m_dsXMLBuffer.append('<');
-                    if (prefix != null) {
-                        if (!m_dsPrefixes.contains(prefix)) {
-                            m_dsPrefixes.add(prefix);
-                        }
-                        if (!prefix.equals("")) {
-                            m_dsXMLBuffer.append(prefix);
-                            m_dsXMLBuffer.append(':');
-                        }
-                    }
-                    m_dsXMLBuffer.append(localName);
-
-                    for (int i = 0; i < attrs.getLength(); i++) {
-                        m_dsXMLBuffer.append(' ');
-                        String aPrefix =
-                                (String) nsPrefixMap.get(attrs.getURI(i));
-                        if (aPrefix != null) {
-                            if (!m_dsPrefixes.contains(aPrefix)) {
-                                m_dsPrefixes.add(aPrefix);
-                            }
-                            if (!prefix.equals("")) {
-                                m_dsXMLBuffer.append(aPrefix);
-                                m_dsXMLBuffer.append(':');
-                            }
-                        }
-                        m_dsXMLBuffer.append(attrs.getLocalName(i));
-                        m_dsXMLBuffer.append("=\"");
-                        // re-encode decoded standard entities (&, <, >, ", ')
-                        m_dsXMLBuffer.append(StreamUtility.enc(attrs
-                                .getValue(i)));
-                        m_dsXMLBuffer.append("\"");
-                    }
-                }
-                m_dsXMLBuffer.append('>');
+                appendElementStart(namespaceURI, localName, qName, attrs, m_dsXMLBuffer);
             }
         }
     }
 
+    @Override
     public void endElement(String namespaceURI, String localName, String qName)
             throws SAXException {
 
         if (m_inXMLMetadata) {
             if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri)
                     && localName.equals("xmlData")) {
-                // finished all xml metadata for this datastream
-                // create the right kind of datastream and add it to m_obj
-                String[] prefixes = new String[m_dsPrefixes.size()];
-                for (int i = 0; i < m_dsPrefixes.size(); i++) {
-                    String pfx = (String) m_dsPrefixes.get(i);
-                    prefixes[i] = pfx;
-                    // now finish writing to m_dsFirstElementBuffer, a series of strings like
-                    // ' xmlns:PREFIX="URI"'
-                    String pfxUri = (String) m_prefixUris.get(pfx);
-                    if (pfx.equals("")) {
-                        m_dsFirstElementBuffer.append(" xmlns");
-                    } else {
-                        m_dsFirstElementBuffer.append(" xmlns:");
-                        m_dsFirstElementBuffer.append(pfx);
-                    }
-                    m_dsFirstElementBuffer.append("=\"");
-                    m_dsFirstElementBuffer.append(pfxUri);
-                    m_dsFirstElementBuffer.append("\"");
-                }
-                m_inXMLMetadata = false;
-                // other stuff is re-initted upon
-                // startElement for next xml metadata
-                // element
-                m_inXMLMetadata = false;
-                m_inXMLMetadata = false;
-                m_firstInlineXMLElement = false;
-                String combined =
-                        m_dsFirstElementBuffer.toString()
-                                + m_dsXMLBuffer.toString();
                 try {
-                    if (m_ds != null && combined != null) {
-                        m_ds.xmlContent = combined.getBytes("UTF-8");
-                    }
-                } catch (UnsupportedEncodingException uee) {
-                    // ignore
+                    m_ds.xmlContent = m_dsXMLBuffer.toString().getBytes("UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    // won't happen
                 }
-
+                m_inXMLMetadata = false;
+                m_localPrefixMap.clear();
             } else {
-                // finished an element in xml metadata... print end tag,
-                // subtracting the level of METS:xmlData elements we're at
-                // if needed
+                // finished an element in xmlData...append end tag.
                 m_dsXMLBuffer.append("</");
-                String prefix = (String) nsPrefixMap.get(namespaceURI);
-                if (prefix != null && !prefix.equals("")) {
-                    m_dsXMLBuffer.append(prefix);
-                    m_dsXMLBuffer.append(':');
-                }
-                m_dsXMLBuffer.append(localName);
+                m_dsXMLBuffer.append(qName);
                 m_dsXMLBuffer.append(">");
             }
         } else if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri)
@@ -1175,7 +1091,7 @@ public class BatchModifyParser
      * <p>
      * Write a log of what happened when a directive fails.
      * <p>
-     * 
+     *
      * @param sourcePID -
      *        The PID of the object being processed.
      * @param directive -
@@ -1207,7 +1123,7 @@ public class BatchModifyParser
      * <p>
      * Write a log of what happened when there is a parsing error.
      * </p>
-     * 
+     *
      * @param e -
      *        The Exception that was thrown.
      * @param msg -
@@ -1231,7 +1147,7 @@ public class BatchModifyParser
      * <p>
      * Write a log when a directive is successfully processed.
      * </p>
-     * 
+     *
      * @param sourcePID -
      *        The PID of the object processed.
      * @param directive -
@@ -1291,7 +1207,7 @@ public class BatchModifyParser
     /**
      * Get a map of pid-to-label of service deployments that implement the
      * service defined by the indicated definition.
-     * 
+     *
      * @param sDefPID
      *        PID of the associated service defintion object.
      * @return A list of the service deployment labels.
@@ -1349,7 +1265,7 @@ public class BatchModifyParser
      * <p>
      * Main method for testing only.
      * </p>
-     * 
+     *
      * @param args
      *        Array of input parms consisting of hostname, port, username,
      *        password, protocol, directives, log.
