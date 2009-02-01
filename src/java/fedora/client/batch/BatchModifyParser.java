@@ -13,9 +13,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.SAXParser;
@@ -47,7 +45,9 @@ import fedora.server.types.gen.ObjectFields;
 import fedora.server.utilities.StreamUtility;
 
 /**
- * A class for parsing the xml modify directives in the Batch Modify input file.
+ * Parses a stream of batch modify directives and makes appropriate calls to
+ * the a Fedora server.
+ *
  * The parsing is configured to parse directives in the file sequentially. Logs
  * are written for each successful and failed directive that is processed.
  * Recoverable(non-fatal) errors are written to the log file and processing
@@ -55,7 +55,6 @@ import fedora.server.utilities.StreamUtility;
  * of failed directives to -1 indicating that parsing was halted prior to the
  * end of the file. In this case the logs will contain all directives processed
  * up to the point of failure.
- * </p>
  *
  * @author Ross Wayland
  */
@@ -79,12 +78,6 @@ public class BatchModifyParser
 
     /** Count of directives that failed. */
     private int failedCount = 0;
-
-    private Map<String, String> m_prefixMap;
-
-    private Map<String, String> m_localPrefixMap;
-
-    private List<String> m_prefixList;
 
     /** Variables for keeping state during SAX parse. */
     private StringBuffer m_dsXMLBuffer;
@@ -205,31 +198,6 @@ public class BatchModifyParser
     }
 
     @Override
-    public void startDocument() throws SAXException {
-        m_prefixMap = new HashMap<String, String>();
-        m_localPrefixMap = new HashMap<String, String>();
-        m_prefixList = new ArrayList<String>();
-    }
-
-    @Override
-    public void startPrefixMapping(String prefix, String uri)
-            throws SAXException {
-        m_prefixMap.put(prefix, uri);
-        if (m_inXMLMetadata) {
-            m_localPrefixMap.put(prefix, uri);
-            m_prefixList.add(prefix);
-        }
-    }
-
-    @Override
-    public void endPrefixMapping(String prefix) {
-        m_prefixMap.remove(prefix);
-        if (m_inXMLMetadata) {
-            m_localPrefixMap.remove(prefix);
-        }
-    }
-
-    @Override
     public void skippedEntity(String name) throws SAXException {
         StringBuffer sb = new StringBuffer();
         sb.append('&');
@@ -246,27 +214,6 @@ public class BatchModifyParser
                                     Attributes a,
                                     StringBuffer out) {
         out.append("<" + qName);
-        // add the current qName's namespace to m_localPrefixMap
-        // and m_prefixList if it's not already in m_localPrefixMap
-        // This ensures that all namespaces used in xmlData are declared within,
-        // since it's supposed to be a standalone chunk.
-        String[] parts = qName.split(":");
-        if (parts.length == 2) {
-            String nsuri = m_localPrefixMap.get(parts[0]);
-            if (nsuri == null) {
-                m_localPrefixMap.put(parts[0], parts[1]);
-                m_prefixList.add(parts[0]);
-            }
-        }
-        // do we have any newly-mapped namespaces?
-        while (m_prefixList.size() > 0) {
-            String prefix = m_prefixList.remove(0);
-            out.append(" xmlns");
-            if (prefix.length() > 0) {
-                out.append(":");
-            }
-            out.append(prefix + "=\"" + StreamUtility.enc(m_prefixMap.get(prefix)) + "\"");
-        }
         for (int i = 0; i < a.getLength(); i++) {
             out.append(" " + a.getQName(i) + "=\"" + StreamUtility.enc(a.getValue(i)) + "\"");
         }
@@ -678,7 +625,6 @@ public class BatchModifyParser
                     // won't happen
                 }
                 m_inXMLMetadata = false;
-                m_localPrefixMap.clear();
             } else {
                 // finished an element in xmlData...append end tag.
                 m_dsXMLBuffer.append("</");
