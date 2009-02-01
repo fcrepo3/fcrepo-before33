@@ -7,20 +7,20 @@
 #
 
 # Where is JDK 1.5 installed?
-JAVA5_HOME=/usr/lib/jvm/java-1.5.0-sun
+JAVA5_HOME=/usr/java/jdk1.5.0_16
 
 # Where is JDK 1.6 installed?
-JAVA6_HOME=/usr/lib/jvm/java-6-sun
+JAVA6_HOME=/usr/local/jdk1.6.0_11
 
 # Where is ant installed?
-ANT_HOME=/usr/share/ant
+ANT_HOME=/usr/local/ant
 
 # Where is the Fedora source distribution to be tested?
-BUILD_HOME=$HOME/work/fedora/trunk
+BUILD_HOME=$HOME/agent-home/xml-data/build-dir/FCREPO-LINUXSAN
 
 # Where should test instances of Fedora be installed?
 # This will be created and cleared out by test scripts as necessary.
-FEDORA_HOME=$HOME/fedora/home
+FEDORA_HOME=$HOME/fedora-home
 
 # When installed, what port will non-secure http requests be on?
 HTTP_PORT=9080
