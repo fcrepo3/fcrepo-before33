@@ -10,8 +10,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
 import java.util.Properties;
 
 import fedora.server.config.ServerConfiguration;
@@ -20,39 +22,40 @@ import fedora.server.security.BESecurityConfig;
 import fedora.server.security.DefaultRoleConfig;
 import fedora.server.security.servletfilters.xmluserfile.FedoraUsers;
 import fedora.server.security.servletfilters.xmluserfile.User;
+
 import fedora.utilities.ExecUtility;
 import fedora.utilities.FileUtils;
 import fedora.utilities.Zip;
 
 public class FedoraHome {
-	private Distribution _dist;
-	private InstallOptions _opts;
-	private File _installDir;
-	private boolean _clientOnlyInstall;
+	private final Distribution _dist;
+	private final InstallOptions _opts;
+	private final File _installDir;
+	private final boolean _clientOnlyInstall;
 	private InetAddress _host;
-	
+
 	public FedoraHome(Distribution dist, InstallOptions opts) {
 		_dist = dist;
 		_opts = opts;
 		_installDir = new File(_opts.getValue(InstallOptions.FEDORA_HOME));
 		_clientOnlyInstall = _opts.getValue(InstallOptions.INSTALL_TYPE).equals(InstallOptions.INSTALL_CLIENT);
 	}
-	
+
 	public void install() throws InstallationFailedException {
 		unpack();
-		
+
 		if (!_clientOnlyInstall)
 			configure();
 	}
-	
-	
+
+
 	/**
 	 * Unpacks the contents of the FEDORA_HOME directory from the Distribution.
 	 * @throws InstallationFailedException
 	 */
 	private void unpack() throws InstallationFailedException {
 		System.out.println("Preparing FEDORA_HOME...");
-		
+
 		if (!_installDir.exists() && !_installDir.mkdirs()) {
 			throw new InstallationFailedException("Unable to create FEDORA_HOME: " + _installDir.getAbsolutePath());
 		}
@@ -62,7 +65,7 @@ public class FedoraHome {
 		try {
 			Zip.unzip(_dist.get(Distribution.FEDORA_HOME), _installDir);
             setScriptsExecutable(new File(_installDir, "client" + File.separator + "bin"));
-            
+
             if (_clientOnlyInstall) {
             	FileUtils.delete(new File(_installDir, "server"));
             } else {
@@ -72,7 +75,7 @@ public class FedoraHome {
 			throw new InstallationFailedException(e.getMessage(), e);
 		}
 	}
-	
+
 	/**
 	 * Sets various configuration files based on InstallOptions
 	 * @throws InstallationFailedException
@@ -83,12 +86,12 @@ public class FedoraHome {
 		configureBeSecurity();
 		configureXACML();
 	}
-	
+
 	private void configureFCFG() throws InstallationFailedException {
     	System.out.println("\tConfiguring fedora.fcfg");
     	File fcfgBase = new File(_installDir, "server/fedora-internal-use/config/fedora-base.fcfg");
     	File fcfg = new File(_installDir, "server/config/fedora.fcfg");
-        
+
         Properties props = new Properties();
         if (_opts.getValue(InstallOptions.TOMCAT_HTTP_PORT) != null)
         	props.put("server.fedoraServerPort", _opts.getValue(InstallOptions.TOMCAT_HTTP_PORT));
@@ -98,7 +101,7 @@ public class FedoraHome {
         	props.put("server.fedoraRedirectPort", _opts.getValue(InstallOptions.TOMCAT_SSL_PORT));
         if (_opts.getValue(InstallOptions.FEDORA_SERVERHOST) != null)
         	props.put("server.fedoraServerHost", _opts.getValue(InstallOptions.FEDORA_SERVERHOST));
-        
+
         String database = _opts.getValue(InstallOptions.DATABASE);
         String dbPoolName = "";
         String backslashIsEscape = "true";
@@ -124,15 +127,21 @@ public class FedoraHome {
         props.put("datastore." + dbPoolName + ".dbUsername", _opts.getValue(InstallOptions.DATABASE_USERNAME));
         props.put("datastore." + dbPoolName + ".dbPassword", _opts.getValue(InstallOptions.DATABASE_PASSWORD));
         props.put("datastore." + dbPoolName + ".jdbcDriverClass", _opts.getValue(InstallOptions.DATABASE_DRIVERCLASS));
-        
+
         if (_opts.getBooleanValue(InstallOptions.XACML_ENABLED, true)) {
         	props.put("module.fedora.server.security.Authorization.ENFORCE-MODE", "enforce-policies");
         } else {
         	props.put("module.fedora.server.security.Authorization.ENFORCE-MODE", "permit-all-requests");
         }
-        
+
+        if (_opts.getBooleanValue(InstallOptions.RI_ENABLED, true)) {
+            props.put("module.fedora.server.resourceIndex.ResourceIndex.level", "2");
+        } else {
+            props.put("module.fedora.server.resourceIndex.ResourceIndex.level", "0");
+        }
+
         props.put("module.fedora.server.access.Access.doMediateDatastreams", _opts.getValue(InstallOptions.APIA_AUTH_REQUIRED));
-        
+
         try {
 	        FileInputStream fis = new FileInputStream(fcfgBase);
 	        ServerConfiguration config = new ServerConfigurationParser(fis).parse();
@@ -142,7 +151,7 @@ public class FedoraHome {
     		throw new InstallationFailedException(e.getMessage(), e);
     	}
     }
-	
+
 	private void configureFedoraUsers() throws InstallationFailedException {
     	FedoraUsers fu = FedoraUsers.getInstance();
     	for (User user : fu.getUsers()) {
@@ -150,7 +159,7 @@ public class FedoraHome {
 				user.setPassword(_opts.getValue(InstallOptions.FEDORA_ADMIN_PASS));
 			}
 		}
-    	
+
     	try {
     		Writer outputWriter = new BufferedWriter(new FileWriter(FedoraUsers.fedoraUsersXML));
 			fu.write(outputWriter);
@@ -159,17 +168,17 @@ public class FedoraHome {
 			throw new InstallationFailedException(e.getMessage(), e);
 		}
     }
-    
+
     private void configureBeSecurity() throws InstallationFailedException {
     	System.out.println("\tInstalling beSecurity");
     	File beSecurity = new File(_installDir, "/server/config/beSecurity.xml");
     	boolean apiaAuth = _opts.getBooleanValue(InstallOptions.APIA_AUTH_REQUIRED, false);
     	boolean apiaSSL = _opts.getBooleanValue(InstallOptions.APIA_SSL_REQUIRED, false);
     	//boolean apimSSL = _opts.getBooleanValue(InstallOptions.APIM_SSL_REQUIRED, false);
-    	
+
     	String[] ipList;
     	String host = _opts.getValue(InstallOptions.FEDORA_SERVERHOST);
-    	if (host != null  && host.length() != 0 && 
+    	if (host != null  && host.length() != 0 &&
     			!(host.equals("localhost") || host.equals("127.0.01"))) {
     		ipList = new String[] {"127.0.0.1", getHost()};
     	} else {
@@ -193,14 +202,14 @@ public class FedoraHome {
     	becfg.write(true, true, pwriter);
     	pwriter.close();
     }
-    
+
     /**
      * Add the serverHost to the following XACML policies:
      * 		deny-apim-if-not-localhost.xml
      * 		deny-reloadPolicies-if-not-localhost.xml
      * 		deny-serverShutdown-if-not-localhost.xml
      * if not already present.
-     * 
+     *
      * @throws InstallationFailedException
      */
     private void configureXACML() throws InstallationFailedException {
@@ -221,7 +230,7 @@ public class FedoraHome {
 			throw new InstallationFailedException(e.getMessage(), e);
 		}
     }
-	
+
     private String getHost() throws InstallationFailedException {
     	if (_host == null) {
     		String host = _opts.getValue(InstallOptions.FEDORA_SERVERHOST);
@@ -233,7 +242,7 @@ public class FedoraHome {
     	}
     	return _host.getHostAddress();
     }
-    
+
 	/**
      * Make scripts (ending with .sh) executable on *nix systems.
      */
@@ -244,7 +253,7 @@ public class FedoraHome {
 			setExecutable(dir, filter);
 		}
     }
-    
+
     private static void setExecutable(File dir, FileFilter filter) {
     	File[] files;
     	if (filter != null) {

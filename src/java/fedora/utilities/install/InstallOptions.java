@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -36,10 +37,11 @@ public class InstallOptions {
     public static final String DATABASE_USERNAME     = "database.username";
     public static final String DATABASE_PASSWORD	 = "database.password";
     public static final String XACML_ENABLED         = "xacml.enabled";
+    public static final String RI_ENABLED            = "ri.enabled";
     public static final String DEPLOY_LOCAL_SERVICES = "deploy.local.services";
     public static final String UNATTENDED 			 = "unattended";
     public static final String DATABASE_UPDATE		 = "database.update";
-    
+
     public static final String DEFAULT				 = "default";
     public static final String INSTALL_QUICK		 = "quick";
     public static final String INSTALL_CLIENT		 = "client";
@@ -51,14 +53,14 @@ public class InstallOptions {
     public static final String OTHER                 = "other";
     public static final String EXISTING_TOMCAT       = "existingTomcat";
 
-    private Map<Object, Object> _map;
-    private Distribution _dist;
+    private final Map<Object, Object> _map;
+    private final Distribution _dist;
 
     /**
-     * Initialize options from the given map of String values, keyed by 
+     * Initialize options from the given map of String values, keyed by
      * option id.
      */
-    public InstallOptions(Distribution dist, Map<Object, Object> map) 
+    public InstallOptions(Distribution dist, Map<Object, Object> map)
             throws OptionValidationException {
     	_dist = dist;
         _map = map;
@@ -70,7 +72,7 @@ public class InstallOptions {
     /**
      * Initialize options interactively, via input from the console.
      */
-    public InstallOptions(Distribution dist) 
+    public InstallOptions(Distribution dist)
             throws InstallationCancelledException {
     	_dist = dist;
         _map = new HashMap<Object, Object>();
@@ -88,16 +90,16 @@ public class InstallOptions {
 
         inputOption(INSTALL_TYPE);
         inputOption(FEDORA_HOME);
-        
+
         if (getValue(INSTALL_TYPE).equals(INSTALL_CLIENT))
         	return;
-        
+
         inputOption(FEDORA_ADMIN_PASS);
-        
+
         String fedoraHome = new File(getValue(InstallOptions.FEDORA_HOME)).getAbsolutePath();
-        String includedJDBCURL = "jdbc:mckoi:local://" + fedoraHome + 
+        String includedJDBCURL = "jdbc:mckoi:local://" + fedoraHome +
 		"/" + Distribution.MCKOI_BASENAME +"/db.conf?create_or_boot=true";
-        
+
         if (getValue(INSTALL_TYPE).equals(INSTALL_QUICK)) {
         	// See the defaultValues defined in OptionDefinition.properties
         	// for the null values below
@@ -110,6 +112,7 @@ public class InstallOptions {
         	_map.put(TOMCAT_HTTP_PORT, null); // 8080
         	_map.put(TOMCAT_SHUTDOWN_PORT, null); // 8005
         	_map.put(XACML_ENABLED, Boolean.toString(false));
+            _map.put(RI_ENABLED, null); // false
         	_map.put(DATABASE, INCLUDED); // included
         	_map.put(DATABASE_DRIVER, INCLUDED);
         	_map.put(DATABASE_USERNAME, "fedoraAdmin");
@@ -120,7 +123,7 @@ public class InstallOptions {
         	applyDefaults();
         	return;
         }
-        
+
         inputOption(FEDORA_SERVERHOST);
         inputOption(APIA_AUTH_REQUIRED);
         inputOption(SSL_AVAILABLE);
@@ -149,21 +152,22 @@ public class InstallOptions {
             }
         }
         inputOption(XACML_ENABLED);
-        
+        inputOption(RI_ENABLED);
+
         // Database selection
         // Ultimately we want to provide the following properties:
-        //   database, database.username, database.password, 
+        //   database, database.username, database.password,
         //   database.driver, database.jdbcURL, database.jdbcDriverClass
         inputOption(DATABASE);
-        
+
         String db = DATABASE + "." + getValue(DATABASE);
-        
+
         // The following lets us use the database-specific OptionDefinition.properties
         // for the user prompts and defaults
         String driver = db + ".driver";
         String jdbcURL = db + ".jdbcURL";
         String jdbcDriverClass = db + ".jdbcDriverClass";
-        
+
         if ( getValue(DATABASE).equals(INCLUDED) ) {
         	_map.put(DATABASE_USERNAME, "fedoraAdmin");
         	_map.put(DATABASE_PASSWORD, "fedoraAdmin");
@@ -184,7 +188,7 @@ public class InstallOptions {
 		        dbValidated = validateDatabaseConnection();
         	}
         }
-        
+
         // If using an "other" servlet container, we can't automatically deploy
         // the local services, so don't even bother to ask.
         if (getValue(SERVLET_ENGINE).equals(OTHER)) {
@@ -208,13 +212,13 @@ public class InstallOptions {
      * Continue prompting until the value is valid, or the user has
      * indicated they want to cancel the installation.
      */
-    private void inputOption(String optionId) 
+    private void inputOption(String optionId)
             throws InstallationCancelledException {
 
         OptionDefinition opt = OptionDefinition.get(optionId, this);
-        
+
         if (opt.getLabel() == null || opt.getLabel().length() == 0) {
-        	throw new InstallationCancelledException(optionId + 
+        	throw new InstallationCancelledException(optionId +
         			" is missing label (check OptionDefinition.properties?)");
         }
         System.out.println(opt.getLabel());
@@ -279,12 +283,12 @@ public class InstallOptions {
     }
 
     /**
-     * Dump all options (including any defaults that were applied) 
+     * Dump all options (including any defaults that were applied)
      * to the given stream, in java properties file format.
      *
      * The output stream remains open after this method returns.
      */
-    public void dump(OutputStream out) 
+    public void dump(OutputStream out)
             throws IOException {
 
         Properties props = new Properties();
@@ -377,15 +381,15 @@ public class InstallOptions {
             opt.validateValue(getValue(optionId), unattended);
         }
     }
-    
+
     private boolean validateDatabaseConnection() {
     	String database = getValue(DATABASE);
     	if (database.equals(InstallOptions.INCLUDED)) {
     		return true;
     	}
-    	
+
     	Database db = new Database(_dist, this);
-    	
+
     	try {
     		// validate the user input by attempting a database connection
     		db.test();
@@ -393,7 +397,7 @@ public class InstallOptions {
 			if (db.usesDOTable()) {
 				inputOption(DATABASE_UPDATE);
 			}
-			
+
 			db.close();
 			return true;
     	} catch(Exception e) {

@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,12 +16,12 @@ import java.util.Properties;
 /**
  *
  */
-public class ServerConfiguration 
+public class ServerConfiguration
         extends Configuration {
 
     private String m_className;
-    private List<ModuleConfiguration> m_moduleConfigurations;
-    private List<DatastoreConfiguration> m_datastoreConfigurations;
+    private final List<ModuleConfiguration> m_moduleConfigurations;
+    private final List<DatastoreConfiguration> m_datastoreConfigurations;
 
     public ServerConfiguration(String className,
                                List<Parameter> parameters,
@@ -59,6 +60,7 @@ public class ServerConfiguration
                     if (name.equals("class")) {
                         m_className = value;
                     } else {
+                        name = fullName.substring(7);
                         setParameterValue(name, value, true);
                     }
                 } else if (fullName.startsWith("module.")) {
@@ -235,7 +237,7 @@ public class ServerConfiguration
 
     public ModuleConfiguration getModuleConfiguration(String role) {
         for (int i = 0; i < m_moduleConfigurations.size(); i++) {
-            ModuleConfiguration config = (ModuleConfiguration) m_moduleConfigurations.get(i);
+            ModuleConfiguration config = m_moduleConfigurations.get(i);
             if (config.getRole().equals(role)) return config;
         }
         return null;
@@ -247,7 +249,7 @@ public class ServerConfiguration
 
     public DatastoreConfiguration getDatastoreConfiguration(String id) {
         for (int i = 0; i < m_datastoreConfigurations.size(); i++) {
-            DatastoreConfiguration config = (DatastoreConfiguration) m_datastoreConfigurations.get(i);
+            DatastoreConfiguration config = m_datastoreConfigurations.get(i);
             if (config.getId().equals(id)) return config;
         }
         return null;

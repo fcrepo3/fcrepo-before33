@@ -851,6 +851,8 @@
                 <exclude name="**/*.java"/>
 	        </fileset>
         </copy>
+	    
+        <mkdir dir="build/test-results"/>
 		
 		<junit printsummary="yes" fork="yes" haltonfailure="yes" showoutput="yes">
 			<syspropertyset id="junit.sysproperties">
@@ -862,9 +864,10 @@
 				<propertyref name="demo.format"/>
 			</syspropertyset>
 			<classpath refid="junit.classpath"/>
-			<formatter type="plain" usefile="false"/>
-			<test name="${test}"/>
+			<formatter type="xml"/>
+			<test name="${test}" outfile="build/test-results/result-${test}"/>
 		</junit>
+        <echo>Test results are in build/test-results/</echo>
 	</target>
 	
 	<target name="demo">
