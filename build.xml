@@ -42,15 +42,6 @@
     <property name="xsd.src.dir"               location="${src.dir}/xsd"/>
     <property name="xsl.src.dir"               location="${src.dir}/xsl"/>
     
-	<!-- get the current Subversion revision number -->
-    <loadfile property="revision" srcFile=".svn/entries">
-        <filterchain>
-            <headfilter lines="1" skip="3"/>
-            <deletecharacters chars="\n"/>
-            <trim/>
-        </filterchain>
-    </loadfile>
-	
     <!-- load external properties files -->
     <loadproperties srcFile="${properties.src.dir}/lib.properties"/>
     <loadproperties srcFile="${properties.src.dir}/server/fedora/server/resources/Server.properties">
@@ -60,12 +51,25 @@
             </linecontains>
         </filterchain>
     </loadproperties>
+
+	<!-- get the current Subversion revision number -->
+	<loadfile property="revision" srcFile=".svn/entries" failonerror="false">
+        <filterchain>
+            <headfilter lines="1" skip="3"/>
+            <deletecharacters chars="\n"/>
+            <trim/>
+        </filterchain>
+    </loadfile>
+	
 	<!-- set the version of Fedora (will append Subversion revision number
 	     unless "release" property is set, e.g. "ant -Drelease=true installer") -->
     <condition property="fedora.version" 
                value="${version.major}.${version.minor}" 
                else="${version.major}.${version.minor}r${revision}">
-        <isset property="release"/>
+    	<or>
+          <isset property="release"/>
+          <not> <isset property="revision"/> </not>
+        </or>
     </condition>
     <property name="fedora.releaseDate" value="${version.releaseDate}"/>
     
