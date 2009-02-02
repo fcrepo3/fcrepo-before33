@@ -10,6 +10,8 @@ SCRIPTDIR=`dirname "$SCRIPTPATH"`
 . $SCRIPTDIR/common.sh
 
 echo ""
+echo "Removing $FEDORA_HOME"                                                                                        
+rm -rf $FEDORA_HOME
 
 echo "========================="
 echo "Compiling distribution..."
