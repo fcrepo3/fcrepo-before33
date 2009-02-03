@@ -1,58 +1,58 @@
 package fedora.client.batch;
 
-import fedora.client.Uploader;
-import fedora.client.batch.types.Datastream;
-import fedora.client.batch.types.DigitalObject;
-import fedora.server.management.FedoraAPIM;
-import fedora.server.access.FedoraAPIA;
-import fedora.client.batch.types.Disseminator;
-import fedora.client.FedoraClient;
-import fedora.client.utility.ingest.AutoIngestor;
-import fedora.server.types.gen.DatastreamBinding;
-import fedora.server.types.gen.DatastreamBindingMap;
-import fedora.server.utilities.StreamUtility;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
+
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
+
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.axis.types.NonNegativeInteger;
+
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
 
+import fedora.client.FedoraClient;
+import fedora.client.Uploader;
+import fedora.client.batch.types.Datastream;
+import fedora.client.batch.types.DigitalObject;
+import fedora.client.batch.types.Disseminator;
+import fedora.client.utility.ingest.AutoIngestor;
 
-import org.apache.axis.types.NonNegativeInteger;
-
+import fedora.server.access.FedoraAPIA;
+import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.ComparisonOperator;
 import fedora.server.types.gen.Condition;
+import fedora.server.types.gen.DatastreamBinding;
+import fedora.server.types.gen.DatastreamBindingMap;
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.types.gen.ObjectFields;
+import fedora.server.utilities.StreamUtility;
 
 
 /**
+ * Parses a stream of batch modify directives and makes appropriate calls to
+ * the Fedora server.
  *
- * <p><b>Title:</b> BatchModifyParser.java</p>
- * <p><b>Description:</b> A class for parsing the xml modify directives in the
- * Batch Modify input file. The parsing is configured to parse directives in the
+ * The parsing is configured to parse directives in the
  * file sequentially. Logs are written for each successful and failed directive
  * that is processed. Recoverable(non-fatal) errors are written to the log file
  * and processing continues. Catastrophic errors will cause parsing to halt and
  * set the count of failed directives to -1 indicating that parsing was halted
  * prior to the end of the file. In this case the logs will contain all directives
- * processed up to the point of failure.</p>
+ * processed up to the point of failure.
  *
  * @author rlw@virginia.edu
  * @version $Id$
@@ -80,18 +80,9 @@ public class BatchModifyParser extends DefaultHandler
     /** Count of directives that failed. */
     private int failedCount = 0;
 
-    /**
-     * URI-to-namespace prefix mapping info from SAX2 startPrefixMapping events.
-     */
-    private HashMap<String, String> nsPrefixMap;
-    private HashMap<String, String> m_prefixUris;
-
     /** Variables for keeping state during SAX parse. */
     private StringBuffer m_dsXMLBuffer;
-    private StringBuffer m_dsFirstElementBuffer;
-    private ArrayList<String> m_dsPrefixes;
     private boolean m_inXMLMetadata;
-    private boolean m_firstInlineXMLElement;
     private boolean addObject = false;
     private boolean modifyObject = false;
     private boolean purgeObject = false;
@@ -195,41 +186,7 @@ public class BatchModifyParser extends DefaultHandler
     }
 
 
-    public void startDocument() throws SAXException
-    {
-        nsPrefixMap = new HashMap<String, String>();
-        m_prefixUris = new HashMap<String, String>();
-    }
-
-
-    public void endDocument() throws SAXException
-    {
-        nsPrefixMap = null;
-        m_prefixUris = null;
-    }
-
-
-    public void startPrefixMapping(String prefix, String uri) throws SAXException
-    {
-        // save a forward and backward hash of namespace prefix-to-uri
-        // mapping ... for the entire object.
-        m_prefixUris.put(prefix, uri);
-        nsPrefixMap.put(uri, prefix);
-        // if we're looking at inline metadata, be sure to save the prefix
-        // so we know it's used in that datastream
-        if (m_inXMLMetadata)
-        {
-            if (!m_dsPrefixes.contains(prefix))
-            {
-                if (!"".equals(prefix))
-                {
-                    m_dsPrefixes.add(prefix);
-                }
-            }
-        }
-    }
-
-
+    @Override
     public void skippedEntity(String name) throws SAXException
     {
         StringBuffer sb = new StringBuffer();
@@ -241,7 +198,19 @@ public class BatchModifyParser extends DefaultHandler
         this.characters(text, 0, text.length);
     }
 
+    private void appendElementStart(String uri,
+                                    String localName,
+                                    String qName,
+                                    Attributes a,
+                                    StringBuffer out) {
+        out.append("<" + qName);
+        for (int i = 0; i < a.getLength(); i++) {
+            out.append(" " + a.getQName(i) + "=\"" + StreamUtility.enc(a.getValue(i)) + "\"");
+        }
+        out.append(">");
+    }
 
+    @Override
     public void characters(char ch[], int start, int length)  throws SAXException
     {
         if (m_inXMLMetadata)
@@ -254,6 +223,7 @@ public class BatchModifyParser extends DefaultHandler
     }
 
 
+    @Override
     public void startElement(String namespaceURI, String localName, String qName, Attributes attrs)
             throws SAXException {
 
@@ -294,9 +264,9 @@ public class BatchModifyParser extends DefaultHandler
 
             // Get required attributes
             m_obj.pid = attrs.getValue("pid");
-            m_obj.logMessage = attrs.getValue("logMessage");            
-            
-            try {       
+            m_obj.logMessage = attrs.getValue("logMessage");
+
+            try {
                 if ( !m_obj.pid.equals("") ) {
                     if (m_obj.pid.indexOf(":")<1) {
                         failedCount++;
@@ -305,7 +275,7 @@ public class BatchModifyParser extends DefaultHandler
                         return;
                     }
                 }
-                
+
                 // Get optional attributes
                 if ( attrs.getValue("label") != null)
                     m_obj.label = attrs.getValue("label");
@@ -316,12 +286,12 @@ public class BatchModifyParser extends DefaultHandler
                     m_obj.state = attrs.getValue("state");
                 else {
                     m_obj.state = null;
-                }      
+                }
                 if ( attrs.getValue("ownerId") != null)
                     m_obj.ownerId = attrs.getValue("ownerId");
                 else {
                     m_obj.ownerId = null;
-                }                 
+                }
                 modifyObject = true;
 
             } catch (Exception e) {
@@ -334,7 +304,7 @@ public class BatchModifyParser extends DefaultHandler
 
             // Get required attributes
             m_obj.pid = attrs.getValue("pid");
-            m_obj.logMessage = attrs.getValue("logMessage");            
+            m_obj.logMessage = attrs.getValue("logMessage");
 
             try {
                 if ( !m_obj.pid.equals("") ) {
@@ -345,13 +315,13 @@ public class BatchModifyParser extends DefaultHandler
                         return;
                     }
                 }
-                
+
                 // Get optional attributes
                 if ( attrs.getValue("force") != null)
                     m_obj.force = new Boolean(attrs.getValue("force")).booleanValue();
                 else {
                     m_obj.force = false;
-                }                
+                }
                 purgeObject = true;
 
             } catch (Exception e) {
@@ -369,11 +339,11 @@ public class BatchModifyParser extends DefaultHandler
                 m_ds.dsLabel = attrs.getValue("dsLabel");
                 m_ds.dsState = attrs.getValue("dsState");
                 m_ds.dsMIME = attrs.getValue("dsMIME");
-                m_ds.logMessage = attrs.getValue("logMessage");                
+                m_ds.logMessage = attrs.getValue("logMessage");
 
                 // Check for optional attributes
                 if ( attrs.getValue("dsID") != null && !attrs.getValue("dsID").equals("")) {
-                    m_ds.dsID = attrs.getValue("dsID");                
+                    m_ds.dsID = attrs.getValue("dsID");
                 } else {
                 	  m_ds.dsID = null;
                 }
@@ -384,11 +354,11 @@ public class BatchModifyParser extends DefaultHandler
                 if ( attrs.getValue("versionable") != null && !attrs.getValue("versionable").equals(""))
                     m_ds.versionable = new Boolean(attrs.getValue("versionable")).booleanValue();
                 if ( attrs.getValue("altIDs") != null && !attrs.getValue("altIDs").equals(""))
-                    m_ds.altIDs = attrs.getValue("altIDs").split(" ");   
+                    m_ds.altIDs = attrs.getValue("altIDs").split(" ");
                 if ( attrs.getValue("checksumType") != null && !attrs.getValue("checksumType").equals(""))
-                    m_ds.checksumType = attrs.getValue("checksumType");                 
+                    m_ds.checksumType = attrs.getValue("checksumType");
                 if ( attrs.getValue("checksum") != null && !attrs.getValue("checksum").equals(""))
-                    m_ds.checksum = attrs.getValue("checksum");                
+                    m_ds.checksum = attrs.getValue("checksum");
                 // Check that MIME type is text/xml if datastream is XMLMetadata datastream
                 if (m_ds.dsControlGrp.equalsIgnoreCase("X") &&
                         !m_ds.dsMIME.equalsIgnoreCase("text/xml") ) {
@@ -400,14 +370,14 @@ public class BatchModifyParser extends DefaultHandler
                     return;
                 }
 
-                addDatastream = true;                
+                addDatastream = true;
 
             } catch (Exception e) {
                 e.printStackTrace();
                 failedCount++;
                 logFailedDirective(m_ds.objectPID, localName, e, "");
                 return;
-            }            
+            }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("purgeDatastream")) {
 
             try {
@@ -425,7 +395,7 @@ public class BatchModifyParser extends DefaultHandler
                 if (attrs.getValue("asOfDate")!=null && !attrs.getValue("asOfDate").equals(""))
                     m_ds.asOfDate = attrs.getValue("asOfDate");
                 if (attrs.getValue("endDate")!=null && !attrs.getValue("endDate").equals(""))
-                    m_ds.endDate = attrs.getValue("endDate");                
+                    m_ds.endDate = attrs.getValue("endDate");
                 if ( attrs.getValue("force") != null && !attrs.getValue("force").equals(""))
                     m_ds.force = new Boolean(attrs.getValue("force")).booleanValue();
 
@@ -494,12 +464,12 @@ public class BatchModifyParser extends DefaultHandler
                         m_ds.force = new Boolean(attrs.getValue("force")).booleanValue();
                     } else {
                         m_ds.force = false;
-                    }                    
+                    }
 //                    if ( attrs.getValue("versionable") != null) {
 //                        m_ds.versionable = new Boolean(attrs.getValue("versionable")).booleanValue();
 //                    } else {
 //                        m_ds.versionable = dsOrig.isVersionable();
-//                    }     
+//                    }
                     if ( attrs.getValue("altIDs") != null) {
                         m_ds.altIDs = attrs.getValue("altIDs").split(" ");
                     } else {
@@ -509,13 +479,13 @@ public class BatchModifyParser extends DefaultHandler
                         m_ds.formatURI = attrs.getValue("formatURI");
                     } else {
                         m_ds.formatURI = dsOrig.getFormatURI();
-                    }   
+                    }
                     if ( attrs.getValue("checksumType") != null) {
                         m_ds.checksumType = attrs.getValue("checksumType");
-                    }                    
+                    }
                     if ( attrs.getValue("checksum") != null) {
                         m_ds.checksum = attrs.getValue("checksum");
-                    }                                        
+                    }
 
                     modifyDatastream = true;
 
@@ -575,23 +545,20 @@ public class BatchModifyParser extends DefaultHandler
                 // Get require attributes
                 m_ds.objectPID = attrs.getValue("pid");
                 m_ds.dsID = attrs.getValue("dsID");
-                
+
                 // Get optional attributes
                 if (attrs.getValue("asOfDate")!=null && !attrs.getValue("asOfDate").equals(""))
                     m_ds.asOfDate = attrs.getValue("asOfDate");
-                
+
                 compareDatastreamChecksum = true;
 
             } catch (Exception e) {
                 failedCount++;
                 logFailedDirective(m_ds.objectPID, localName, e, "");
-            }            
+            }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("xmlData")) {
             m_inXMLMetadata = true;
             m_dsXMLBuffer=new StringBuffer();
-            m_dsFirstElementBuffer=new StringBuffer();
-            m_dsPrefixes=new ArrayList<String>();
-            m_firstInlineXMLElement=true;
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastreamBinding")) {
 
             try {
@@ -640,10 +607,10 @@ public class BatchModifyParser extends DefaultHandler
                 }
 
                 if(addDisseminator) {
-                    
+
                     // If adding new disseminator, just go ahead and add binding
                     m_dsBindings.put(m_dsBinding.getDatastreamID(), m_dsBinding);
-                    
+
                 } else {
 
                     // If modifying disseminator, check that specified binding key name matches that in original disseminator
@@ -653,7 +620,7 @@ public class BatchModifyParser extends DefaultHandler
                             bindKeyExists = true;
                         }
                     }
-                    
+
                     // Add datastream binding to hash of bindings
                     if (bindKeyExists) {
                         m_dsBindings.put(m_dsBinding.getDatastreamID(), m_dsBinding);
@@ -666,7 +633,7 @@ public class BatchModifyParser extends DefaultHandler
                                 +" does not exist in disseminator: "+m_diss.dissID
                                 +"/n    Unable to add datastream binding for datastream: "
                                 +m_dsBinding.getDatastreamID()+" .");
-                    }                    
+                    }
                 }
 
             } catch (Exception e) {
@@ -743,7 +710,7 @@ public class BatchModifyParser extends DefaultHandler
                 // Get require attributes
                 m_diss.parentPID = attrs.getValue("pid");
                 m_diss.bMechID = attrs.getValue("bMechPid");
-                m_diss.dissID = attrs.getValue("dissID");    
+                m_diss.dissID = attrs.getValue("dissID");
                 m_diss.logMessage = attrs.getValue("logMessage");
 
                 try {
@@ -782,7 +749,7 @@ public class BatchModifyParser extends DefaultHandler
                     m_diss.force = new Boolean(attrs.getValue("force")).booleanValue();
                 } else {
                     m_diss.force = false;
-                }                              
+                }
 
                 modifyDisseminator = true;
 
@@ -810,7 +777,7 @@ public class BatchModifyParser extends DefaultHandler
                     m_diss.force = new Boolean(attrs.getValue("force")).booleanValue();
                 } else {
                     m_diss.force = false;
-                }     
+                }
 
                 purgeDisseminator = true;
 
@@ -837,129 +804,27 @@ public class BatchModifyParser extends DefaultHandler
             }
         } else {
             if (m_inXMLMetadata) {
-                String prefix=(String) nsPrefixMap.get(namespaceURI);
-                if (m_firstInlineXMLElement) {
-                    m_firstInlineXMLElement=false;
-                    m_dsFirstElementBuffer.append('<');
-                    if (prefix!=null) {
-                        if (!m_dsPrefixes.contains(prefix)) {
-                                m_dsPrefixes.add(prefix);
-                        }
-                        if(!prefix.equals("")) {
-                        	m_dsFirstElementBuffer.append(prefix);
-                        	m_dsFirstElementBuffer.append(':');
-                        }
-                    }
-                    m_dsFirstElementBuffer.append(localName);
-                    
-                    for (int i=0; i<attrs.getLength(); i++) {
-                    	m_dsFirstElementBuffer.append(' ');
-                    	
-                        String aPrefix=(String) nsPrefixMap.get(attrs.getURI(i));
-                        if (aPrefix!=null) {
-                            if (!m_dsPrefixes.contains(aPrefix)) {
-                                    m_dsPrefixes.add(aPrefix);
-                            }
-                            if(!prefix.equals("")) {
-                            	m_dsFirstElementBuffer.append(aPrefix);
-                            	m_dsFirstElementBuffer.append(':');
-                            }
-                        }
-                    	if(!attrs.getLocalName(i).equals("")) {
-	                        m_dsFirstElementBuffer.append(attrs.getLocalName(i));
-	                        m_dsFirstElementBuffer.append("=\"");
-	                        // re-encode decoded standard entities (&, <, >, ", ')
-	                        m_dsFirstElementBuffer.append(StreamUtility.enc(attrs.getValue(i)));
-	                        m_dsFirstElementBuffer.append("\"");
-                    	}
-                    }                    
-                } else {
-                    m_dsXMLBuffer.append('<');
-                    if (prefix!=null) {
-                        if (!m_dsPrefixes.contains(prefix)) {
-                                m_dsPrefixes.add(prefix);
-                        }
-                        if(!prefix.equals("")) {
-	                        m_dsXMLBuffer.append(prefix);
-	                        m_dsXMLBuffer.append(':');
-                        }
-                    }
-                    m_dsXMLBuffer.append(localName);
-
-                    for (int i=0; i<attrs.getLength(); i++) {
-                        m_dsXMLBuffer.append(' ');
-                        String aPrefix=(String) nsPrefixMap.get(attrs.getURI(i));
-                        if (aPrefix!=null) {
-                            if (!m_dsPrefixes.contains(aPrefix)) {
-                                    m_dsPrefixes.add(aPrefix);
-                            }
-                            if(!prefix.equals("")) {
-	                            m_dsXMLBuffer.append(aPrefix);
-	                            m_dsXMLBuffer.append(':');
-                            }
-                        }
-                        m_dsXMLBuffer.append(attrs.getLocalName(i));
-                        m_dsXMLBuffer.append("=\"");
-                        // re-encode decoded standard entities (&, <, >, ", ')
-                        m_dsXMLBuffer.append(StreamUtility.enc(attrs.getValue(i)));
-                        m_dsXMLBuffer.append("\"");
-                    }
-                }
-                m_dsXMLBuffer.append('>');
+                appendElementStart(namespaceURI, localName, qName, attrs, m_dsXMLBuffer);
             }
         }
     }
 
 
+    @Override
     public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
 
         if (m_inXMLMetadata) {
             if (namespaceURI.equalsIgnoreCase(FBM) && localName.equals("xmlData")) {
-                // finished all xml metadata for this datastream
-                // create the right kind of datastream and add it to m_obj
-                String[] prefixes=new String[m_dsPrefixes.size()];
-                for (int i=0; i<m_dsPrefixes.size(); i++) {
-                    String pfx=(String) m_dsPrefixes.get(i);
-                    prefixes[i]=pfx;
-                    // now finish writing to m_dsFirstElementBuffer, a series of strings like
-                    // ' xmlns:PREFIX="URI"'
-                    String pfxUri=(String) m_prefixUris.get(pfx);
-                    if(pfx.equals("")) {
-                        m_dsFirstElementBuffer.append(" xmlns");                    	
-                    } else {
-                        m_dsFirstElementBuffer.append(" xmlns:");
-                        m_dsFirstElementBuffer.append(pfx);
-                    }
-                    m_dsFirstElementBuffer.append("=\"");
-                    m_dsFirstElementBuffer.append(pfxUri);
-                    m_dsFirstElementBuffer.append("\"");
-                }
-                m_inXMLMetadata=false;
-                // other stuff is re-initted upon
-                // startElement for next xml metadata
-                // element
-                m_inXMLMetadata = false;
-                m_inXMLMetadata=false;
-                m_firstInlineXMLElement=false;
-                String combined=m_dsFirstElementBuffer.toString() + m_dsXMLBuffer.toString();
                 try {
-                    if(m_ds!=null && combined !=null)
-                        m_ds.xmlContent = combined.getBytes("UTF-8");
+                    m_ds.xmlContent = m_dsXMLBuffer.toString().getBytes("UTF-8");
                 } catch (UnsupportedEncodingException uee) {
-                    // ignore
+                    // won't happen
                 }
-
+                m_inXMLMetadata = false;
             } else {
-                // finished an element in xml metadata... print end tag,
-                // subtracting the level of METS:xmlData elements we're at
-                // if needed
+                // finished an element in xml metadata... append end tag,
                 m_dsXMLBuffer.append("</");
-                String prefix=(String) nsPrefixMap.get(namespaceURI);
-                if (prefix!=null && !prefix.equals("")) {
-                    m_dsXMLBuffer.append(prefix);
-                    m_dsXMLBuffer.append(':');
-                }
-                m_dsXMLBuffer.append(localName);
+                m_dsXMLBuffer.append(qName);
                 m_dsXMLBuffer.append(">");
             }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addObject")) {
@@ -980,11 +845,11 @@ public class BatchModifyParser extends DefaultHandler
 				    				xml.append("  <foxml:objectProperties>\n");
 				    				xml.append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"FedoraObject\"/>\n");
 				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"" + StreamUtility.enc(m_obj.label) + "\"/>\n");
-				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#contentModel\" VALUE=\"" + StreamUtility.enc(m_obj.cModel) + "\"/>\n");			
+				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#contentModel\" VALUE=\"" + StreamUtility.enc(m_obj.cModel) + "\"/>\n");
 				    				xml.append("  </foxml:objectProperties>\n");
 				    				xml.append("</foxml:digitalObject>");
 				    				String objXML=xml.toString();
-                	
+
                     ByteArrayInputStream in=new ByteArrayInputStream(
                             objXML.getBytes("UTF-8"));
                     String newPID=AutoIngestor.ingestAndCommit(
@@ -1025,7 +890,7 @@ public class BatchModifyParser extends DefaultHandler
                 }
             } finally {
                 modifyObject = false;
-            }    
+            }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("purgeObject")) {
 
             try {
@@ -1048,11 +913,11 @@ public class BatchModifyParser extends DefaultHandler
                 if(purgeObject) {
                     failedCount++;
                     logFailedDirective(m_obj.pid, localName, e, "");
-      
+
                 }
             } finally {
                 purgeObject = false;
-            }            
+            }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
             try {
 
@@ -1062,31 +927,31 @@ public class BatchModifyParser extends DefaultHandler
                     if (m_ds.dsControlGrp.equalsIgnoreCase("X")) {
                         InputStream xmlMetadata = new ByteArrayInputStream(m_ds.xmlContent);
                         m_ds.dsLocation=UPLOADER.upload(xmlMetadata);
-                        datastreamID = APIM.addDatastream(m_ds.objectPID, 
-                                m_ds.dsID, 
+                        datastreamID = APIM.addDatastream(m_ds.objectPID,
+                                m_ds.dsID,
                                 m_ds.altIDs,
-                                m_ds.dsLabel, 
+                                m_ds.dsLabel,
                                 m_ds.versionable,
-                                m_ds.dsMIME, 
+                                m_ds.dsMIME,
                                 m_ds.formatURI,
-                                m_ds.dsLocation, 
-                                m_ds.dsControlGrp, 
-                                m_ds.dsState, 
-                                m_ds.checksumType, 
-                                m_ds.checksum, 
+                                m_ds.dsLocation,
+                                m_ds.dsControlGrp,
+                                m_ds.dsState,
+                                m_ds.checksumType,
+                                m_ds.checksum,
                                 m_ds.logMessage);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
                             	 m_ds.dsControlGrp.equalsIgnoreCase("M") ||
                             	 m_ds.dsControlGrp.equalsIgnoreCase("R")) {
-                        datastreamID = APIM.addDatastream(m_ds.objectPID, 
-                                m_ds.dsID, 
+                        datastreamID = APIM.addDatastream(m_ds.objectPID,
+                                m_ds.dsID,
                                 m_ds.altIDs,
                                 m_ds.dsLabel,
                                 m_ds.versionable,
-                                m_ds.dsMIME, 
+                                m_ds.dsMIME,
                                 m_ds.formatURI,
-                                m_ds.dsLocation, 
-                                m_ds.dsControlGrp, 
+                                m_ds.dsLocation,
+                                m_ds.dsControlGrp,
                                 m_ds.dsState,
                                 m_ds.checksumType,
                                 m_ds.checksum,
@@ -1141,14 +1006,14 @@ public class BatchModifyParser extends DefaultHandler
                                     "datastreamID: " + m_ds.dsID
                                         + "\n    Purged all versions after : "
                                         + m_ds.asOfDate
-                                        + "\n    Versions purged: "+versionsPurged.length);                        	
+                                        + "\n    Versions purged: "+versionsPurged.length);
                         } else if (m_ds.asOfDate==null && m_ds.endDate!=null) {
                             logSucceededDirective(m_ds.objectPID,
                                     localName,
                                     "datastreamID: " + m_ds.dsID
                                         + "\n    Purged all versions prior to : "
                                         + m_ds.endDate
-                                        + "\n    Versions purged: "+versionsPurged.length); 
+                                        + "\n    Versions purged: "+versionsPurged.length);
                         }
                     } else {
                         failedCount++;
@@ -1171,20 +1036,20 @@ public class BatchModifyParser extends DefaultHandler
                 // Process modifyDatastream only if no previous errors encountered
                 if(modifyDatastream) {
                     if (m_ds.dsControlGrp.equalsIgnoreCase("X")) {
-                        APIM.modifyDatastreamByValue(m_ds.objectPID, m_ds.dsID, 
+                        APIM.modifyDatastreamByValue(m_ds.objectPID, m_ds.dsID,
                                 m_ds.altIDs, m_ds.dsLabel,
                                 m_ds.dsMIME,
                                 m_ds.formatURI,
                                 m_ds.xmlContent,
-                                m_ds.checksumType, 
+                                m_ds.checksumType,
                                 m_ds.checksum,
-                                m_ds.logMessage, 
+                                m_ds.logMessage,
                                 m_ds.force);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
                                m_ds.dsControlGrp.equalsIgnoreCase("M") ||
                                m_ds.dsControlGrp.equalsIgnoreCase("R") ) {
-                        APIM.modifyDatastreamByReference(m_ds.objectPID, m_ds.dsID, 
-                                m_ds.altIDs, 
+                        APIM.modifyDatastreamByReference(m_ds.objectPID, m_ds.dsID,
+                                m_ds.altIDs,
                                 m_ds.dsLabel,
                                 m_ds.dsMIME,
                                 m_ds.formatURI,
@@ -1250,7 +1115,7 @@ public class BatchModifyParser extends DefaultHandler
                 }
             } finally {
                 setDatastreamVersionable = false;
-            }   
+            }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("compareDatastreamChecksum")) {
 
             try {
@@ -1259,7 +1124,7 @@ public class BatchModifyParser extends DefaultHandler
                 if(compareDatastreamChecksum) {
                     String msg = APIM.compareDatastreamChecksum(m_ds.objectPID, m_ds.dsID,
                         m_ds.asOfDate);
-                    
+
                     if (!msg.equals("Checksum validation error")) {
                     	succeededCount++;
                     	logSucceededDirective(m_ds.objectPID, localName,
@@ -1277,7 +1142,7 @@ public class BatchModifyParser extends DefaultHandler
                 }
             } finally {
                 compareDatastreamChecksum = false;
-            }                        
+            }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastreamBinding")) {
 
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("removeDatastreamBinding")) {
@@ -1516,11 +1381,11 @@ public class BatchModifyParser extends DefaultHandler
     /**
      * Get a map of pid-to-label of behavior mechanisms that implement
      * the behavior defined by the indicated bdef.
-     * 
+     *
      * @param bDefPID PID of the associated behavior defintion object.
-     * 
+     *
      * @return A list of the behavior mechanism labels.
-     * 
+     *
      * @throws IOException If an error occurs in retrieving the list of labels.
      */
     public static Map getBMechLabelMap(String bDefPID)
@@ -1561,29 +1426,29 @@ public class BatchModifyParser extends DefaultHandler
 
     /**
      * <p> Main method for testing only.</p>
-     * 
+     *
      * @param args Array of input parms consisting of hostname, port, username, password, protocol, directives, log.
      */
     public static void main(String[] args)
     {
-        
+
         if (args.length == 5) {
 		        String host = args[0];
 		        int port = new Integer(args[1]).intValue();
 		        String user = args[2];
 		        String pass = args[3];
 		        String protocol = args[4];
-		        
+
 		        PrintStream logFile;
 		        FedoraAPIM APIM;
 		        FedoraAPIA APIA;
-		
+
 		        try {
 		            UPLOADER=new Uploader(host, port, user, pass);
 		            logFile = new PrintStream(new FileOutputStream("C:\\zlogfile.txt"));
 		            //APIM = fedora.client.APIMStubFactory.getStub(protocol, host, port, user, pass);
 		            //APIA = fedora.client.APIAStubFactory.getStub(protocol, host, port, user, pass);
-		            
+
 					// ******************************************
 					// NEW: use new client utility class
 					// FIXME:  Get around hardcoding the path in the baseURL
@@ -1592,7 +1457,7 @@ public class BatchModifyParser extends DefaultHandler
 					APIA=fc.getAPIA();
 					APIM=fc.getAPIM();
 					//*******************************************
-		            
+
 		            InputStream file = new FileInputStream("c:\\fedora\\mellon\\dist\\client\\demo\\batch-demo\\modify-batch-directives-valid.xml");
 		            BatchModifyParser bmp = new BatchModifyParser(UPLOADER, APIM, APIA, file, logFile);
 		            file.close();
