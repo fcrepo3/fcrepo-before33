@@ -19,7 +19,7 @@
                      <h2>500 Internal Server Error</h2>
                   </center>
 <%
-if (exception.getMessage() != null) {
+if (exception != null && exception.getMessage() != null) {
     out.print(exception.getMessage());
 }
 %>
@@ -31,12 +31,14 @@ if (exception.getMessage() != null) {
 <hr size="1"/>
 <pre>
 <%
-StringWriter sw = new StringWriter();
-PrintWriter pw = new PrintWriter(sw);
-exception.printStackTrace(pw);
-out.print(sw);
-sw.close();
-pw.close();
+if (exception != null) {
+    StringWriter sw = new StringWriter();
+    PrintWriter pw = new PrintWriter(sw);
+    exception.printStackTrace(pw);
+    out.print(sw);
+    sw.close();
+    pw.close();
+}
 %>
 </pre>
 </td></tr>
