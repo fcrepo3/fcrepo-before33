@@ -1,27 +1,19 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
 package fedora.client.utility;
 
-import java.io.InputStream;
-
 import java.net.MalformedURLException;
-import java.net.URLEncoder;
 
 import java.rmi.RemoteException;
-
-import java.util.HashSet;
-import java.util.Iterator;
 
 import javax.xml.rpc.ServiceException;
 
 import org.apache.axis.types.NonNegativeInteger;
 
-import fedora.client.Downloader;
 import fedora.client.FedoraClient;
-import fedora.client.search.SearchResultParser;
 
 import fedora.server.access.FedoraAPIA;
 import fedora.server.types.gen.FieldSearchQuery;
@@ -68,56 +60,17 @@ public class AutoFinder {
         return skeleton.resumeFindObjects(sessionToken);
     }
 
-    // fieldQuery is the syntax used by API-A-Lite,
-    // such as "pid~demo*".  Leave blank to match all.
-    public static String[] getPIDs(String protocol,
-                                   String host,
-                                   int port,
-                                   String fieldQuery) throws Exception {
-        String firstPart =
-                protocol + "://" + host + ":" + port
-                        + "/fedora/search?xml=true";
-        Downloader dLoader = new Downloader(host, port, "na", "na");
-        String url =
-                firstPart + "&pid=true&query="
-                        + URLEncoder.encode(fieldQuery, "UTF-8");
-        InputStream in = dLoader.get(url);
-        String token = "";
-        SearchResultParser resultParser;
-        HashSet<String> pids = new HashSet<String>();
-        while (token != null) {
-            resultParser = new SearchResultParser(in);
-            if (resultParser.getToken() != null) {
-                // resumeFindObjects
-                token = resultParser.getToken();
-                in = dLoader.get(firstPart + "&sessionToken=" + token);
-            } else {
-                token = null;
-            }
-            pids.addAll(resultParser.getPIDs());
-        }
-        String[] result = new String[pids.size()];
-        int i = 0;
-        Iterator iter = pids.iterator();
-        while (iter.hasNext()) {
-            result[i++] = (String) iter.next();
-        }
-        return result;
-    }
-
     public static void showUsage(String message) {
         System.err.println(message);
-        System.err
-                .println("Usage: fedora-find host port fields phrase protocol");
+        System.err.println("Usage: fedora-find host port user pass fields phrase protocol");
         System.err.println("");
-        System.err
-                .println("    hostname - The Fedora server host or ip address.");
+        System.err.println("    hostname - The Fedora server host or ip address.");
         System.err.println("        port - The Fedora server port.");
+        System.err.println("        user - The username of a repository user.");
+        System.err.println("        pass - The password of a repository user.");
         System.err.println("      fields - Space-delimited list of fields.");
-        System.err
-                .println("      phrase - Phrase to search for in any field (with ? and * wildcards)");
-        System.err
-                .println("    protocol - The protocol to communication with the Fedora server (http|https)");
+        System.err.println("      phrase - Phrase to search for in any field (with ? and * wildcards)");
+        System.err.println("    protocol - The protocol to communication with the Fedora server (http|https)");
     }
 
     public static void printValue(String name, String value) {
@@ -135,39 +88,29 @@ public class AutoFinder {
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length == 3) {
-            // just list all pids
-            System.out.println("Doing query...");
-            String[] pids =
-                    AutoFinder.getPIDs(args[4], args[0], Integer
-                            .parseInt(args[1]), args[2]);
-            System.out.println("All PIDs in " + args[0] + ":"
-                    + Integer.parseInt(args[1]) + " with field query "
-                    + args[2]);
-            for (String element : pids) {
-                System.out.println(element);
-            }
-            System.out.println(pids.length + " total.");
+        if (args.length != 7) {
+            AutoFinder.showUsage("Seven arguments required.");
             System.exit(0);
         }
-        if (args.length != 5) {
-            AutoFinder.showUsage("Five arguments required.");
-        }
+
+        String host = args[0];
+        int port = Integer.parseInt(args[1]);
+        String user = args[2];
+        String pass = args[3];
+        String fields = args[4];
+        String phrase = args[5];
+        String protocol = args[6];
+
         try {
-            // ******************************************
-            // NEW: use new client utility class
             // FIXME:  Get around hardcoding the path in the baseURL
-            String baseURL =
-                    args[4] + "://" + args[0] + ":" + Integer.parseInt(args[1])
-                            + "/fedora";
-            FedoraClient fc = new FedoraClient(baseURL, null, null);
+            String baseURL = protocol + "://" + host + ":" + port + "/fedora";
+            FedoraClient fc = new FedoraClient(baseURL, user, pass);
             AutoFinder finder = new AutoFinder(fc.getAPIA());
-            //*******************************************
 
             FieldSearchQuery query = new FieldSearchQuery();
-            query.setTerms(args[3]);
+            query.setTerms(phrase);
             FieldSearchResult result =
-                    finder.findObjects(args[2].split(" "), 20, query);
+                    finder.findObjects(fields.split(" "), 20, query);
             int matchNum = 0;
             while (result != null) {
                 for (int i = 0; i < result.getResultList().length; i++) {
@@ -183,17 +126,13 @@ public class AutoFinder {
                     AutoFinder.printValue("title            ", o.getTitle());
                     AutoFinder.printValue("creator          ", o.getCreator());
                     AutoFinder.printValue("subject          ", o.getSubject());
-                    AutoFinder.printValue("description      ", o
-                            .getDescription());
-                    AutoFinder
-                            .printValue("publisher        ", o.getPublisher());
-                    AutoFinder.printValue("contributor      ", o
-                            .getContributor());
+                    AutoFinder.printValue("description      ", o.getDescription());
+                    AutoFinder.printValue("publisher        ", o.getPublisher());
+                    AutoFinder.printValue("contributor      ", o.getContributor());
                     AutoFinder.printValue("date             ", o.getDate());
                     AutoFinder.printValue("type             ", o.getType());
                     AutoFinder.printValue("format           ", o.getFormat());
-                    AutoFinder.printValue("identifier       ", o
-                            .getIdentifier());
+                    AutoFinder.printValue("identifier       ", o.getIdentifier());
                     AutoFinder.printValue("source           ", o.getSource());
                     AutoFinder.printValue("language         ", o.getLanguage());
                     AutoFinder.printValue("relation         ", o.getRelation());

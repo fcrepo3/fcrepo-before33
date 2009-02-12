@@ -135,7 +135,7 @@ public class TestCommandLineUtilities
             System.out.println(" out = " + out);
             System.out.println(" err = " + err);
         }
-        
+
         if (out
                 .indexOf("25 modify directives successfully processed.") == -1) {
             System.err.println(out);
@@ -185,6 +185,17 @@ public class TestCommandLineUtilities
         System.out.println("Validate Policies test succeeded");
     }
 
+    public void testFindObjects() {
+        System.out.println("Testing Find Objects");
+        execute(FEDORA_HOME + "/client/bin/fedora-find",
+                getHost(), getPort(), getUsername(), getPassword(),
+                "\"pid\"", "\"*\"", "http");
+        assertEquals(0, sbErr.size());
+        String out = sbOut.toString();
+        assertNotNull(out);
+        assertTrue(out.contains("#1"));
+    }
+
     private void traverseAndValidate(File testDir, boolean expectValid) {
         //      assertEquals(testDir.isDirectory(), true);
         File testFiles[] = testDir.listFiles(new java.io.FilenameFilter() {
@@ -221,20 +232,20 @@ public class TestCommandLineUtilities
     private void ingestFoxmlDirectory(File dir) {
         execute(FEDORA_HOME + "/client/bin/fedora-ingest", "d",
                 dir.getAbsolutePath(), FOXML1_1.uri, "DMO",
-                getHost() + ":" + getPort(), getUsername(), 
+                getHost() + ":" + getPort(), getUsername(),
                 getPassword(), getProtocol(), "junit ingest");
     }
 
     private void ingestFoxmlFile(File f) {
         execute(FEDORA_HOME + "/client/bin/fedora-ingest", "f",
-                f.getAbsolutePath(), FOXML1_1.uri, 
-                getHost() + ":" + getPort(), getUsername(), 
+                f.getAbsolutePath(), FOXML1_1.uri,
+                getHost() + ":" + getPort(), getUsername(),
                 getPassword(), getProtocol(), "junit-ingest");
     }
 
     private static void purgeUsingScript(String pid) {
         //    File exe = new File("client/bin/fedora-purge");
-        execute(FEDORA_HOME + "/client/bin/fedora-purge", 
+        execute(FEDORA_HOME + "/client/bin/fedora-purge",
         		getHost() + ":" + getPort(), getUsername(),
         		getPassword(), pid, getProtocol(), "junit-purge");
     }
@@ -270,7 +281,7 @@ public class TestCommandLineUtilities
     }
 
     private void batchIngest(File objectDir, File logFile) {
-        execute(FEDORA_HOME + "/client/bin/fedora-batch-ingest", 
+        execute(FEDORA_HOME + "/client/bin/fedora-batch-ingest",
         		objectDir.getAbsolutePath(), logFile.getAbsolutePath(),
                 "text", FOXML1_1.uri, getHost() + ":" + getPort(),
                 getUsername(), getPassword(), getProtocol());
@@ -284,7 +295,7 @@ public class TestCommandLineUtilities
                 objectTemplateFile.getAbsolutePath(),
                 objectSpecificDir.getAbsolutePath(),
                 objectDir.getAbsolutePath(),
-                logFile.getAbsolutePath(), 
+                logFile.getAbsolutePath(),
                 "text",
                 getHost() + ":" + getPort(),
                 getUsername(),
@@ -293,15 +304,15 @@ public class TestCommandLineUtilities
     }
 
     private void batchModify(File batchDirectives, File logFile) {
-        execute(FEDORA_HOME + "/client/bin/fedora-modify", 
+        execute(FEDORA_HOME + "/client/bin/fedora-modify",
         		getHost() + ":" + getPort(),
-        		getUsername(), getPassword(), 
+        		getUsername(), getPassword(),
         		batchDirectives.getAbsolutePath(),
         		logFile.getAbsolutePath(), getProtocol());
     }
 
     private void exportObj(String pid, File dir) {
-        execute(FEDORA_HOME + "/client/bin/fedora-export", 
+        execute(FEDORA_HOME + "/client/bin/fedora-export",
         		getHost() + ":" + getPort(),
         		getUsername(), getPassword(), pid, FOXML1_1.uri,
         		"public", dir.getAbsolutePath(), getProtocol());
