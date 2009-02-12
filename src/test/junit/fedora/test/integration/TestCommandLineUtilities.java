@@ -189,7 +189,7 @@ public class TestCommandLineUtilities
         System.out.println("Testing Find Objects");
         execute(FEDORA_HOME + "/client/bin/fedora-find",
                 getHost(), getPort(), getUsername(), getPassword(),
-                "\"pid\"", "\"*\"", "http");
+                "pid", "model", "http");
         assertEquals(0, sbErr.size());
         String out = sbOut.toString();
         assertNotNull(out);
