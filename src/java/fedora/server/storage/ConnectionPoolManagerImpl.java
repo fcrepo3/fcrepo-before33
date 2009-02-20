@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -18,15 +18,16 @@ import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.ModuleInitializationException;
+import fedora.server.errors.ModuleShutdownException;
 import fedora.server.utilities.DDLConverter;
 
 /**
  * Implements <code>ConnectionPoolManager</code> to facilitate obtaining
  * database connection pools. This class initializes the connection pools
- * specified by parameters in the Fedora <code>fedora.fcfg</code>
- * configuration file. The Fedora server must be instantiated in order for this
- * class to function properly.
- * 
+ * specified by parameters in the Fedora <code>fedora.fcfg</code> configuration
+ * file. The Fedora server must be instantiated in order for this class to
+ * function properly.
+ *
  * @author Ross Wayland
  */
 public class ConnectionPoolManagerImpl
@@ -37,7 +38,8 @@ public class ConnectionPoolManagerImpl
     private static final Logger LOG =
             Logger.getLogger(ConnectionPoolManagerImpl.class.getName());
 
-    private static Hashtable<String, ConnectionPool> h_ConnectionPools = new Hashtable<String, ConnectionPool>();
+    private static Hashtable<String, ConnectionPool> h_ConnectionPools =
+            new Hashtable<String, ConnectionPool>();
 
     private static String defaultPoolName = null;
 
@@ -77,7 +79,7 @@ public class ConnectionPoolManagerImpl
      * <p>
      * Constructs a new ConnectionPoolManagerImpl
      * </p>
-     * 
+     *
      * @param moduleParameters
      *        The name/value pair map of module parameters.
      * @param server
@@ -100,7 +102,7 @@ public class ConnectionPoolManagerImpl
      * implementation of this method is dependent on the schema used to define
      * the parameter names for the role of
      * <code>fedora.server.storage.ConnectionPoolManager</code>.
-     * 
+     *
      * @throws ModuleInitializationException
      *         If initialization values are invalid or initialization fails for
      *         some other reason.
@@ -281,7 +283,7 @@ public class ConnectionPoolManagerImpl
      * <p>
      * Gets a named connection pool.
      * </p>
-     * 
+     *
      * @param poolName
      *        The name of the connection pool.
      * @return The named connection pool.
@@ -294,8 +296,7 @@ public class ConnectionPoolManagerImpl
 
         try {
             if (h_ConnectionPools.containsKey(poolName)) {
-                connectionPool =
-                        (ConnectionPool) h_ConnectionPools.get(poolName);
+                connectionPool = h_ConnectionPools.get(poolName);
             } else {
                 // Error: pool was never initialized or name could not be found
                 throw new ConnectionPoolNotFoundException("Connection pool "
@@ -318,9 +319,10 @@ public class ConnectionPoolManagerImpl
     /**
      * <p>
      * Gets the default Connection Pool. This method overrides <code>
-     * getPool(String poolName)</code>.
+     * getPool(String poolName)</code>
+     * .
      * </p>
-     * 
+     *
      * @return The default connection pool.
      * @throws ConnectionPoolNotFoundException
      *         If the default connection pool cannot be found.
@@ -330,8 +332,7 @@ public class ConnectionPoolManagerImpl
 
         try {
             if (h_ConnectionPools.containsKey(defaultPoolName)) {
-                connectionPool =
-                        (ConnectionPool) h_ConnectionPools.get(defaultPoolName);
+                connectionPool = h_ConnectionPools.get(defaultPoolName);
             } else {
                 // Error: default pool was never initialized or could not be found
                 throw new ConnectionPoolNotFoundException("Default connection pool "
@@ -347,5 +348,24 @@ public class ConnectionPoolManagerImpl
         }
 
         return connectionPool;
+    }
+
+    /**
+     * <p>
+     * Closes all connection pools. This method overrides
+     * <code> shutdownModule()</code> .
+     * </p>
+     *
+     * @throws ModuleShutdownException
+     *         If the close operation for the connection pool(s) fails.
+     */
+    @Override
+    public void shutdownModule() throws ModuleShutdownException {
+
+        for (Map.Entry<String, ConnectionPool> e : h_ConnectionPools.entrySet()) {
+            e.getValue().close();
+        }
+
+        super.shutdownModule();
     }
 }
