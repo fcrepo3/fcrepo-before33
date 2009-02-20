@@ -476,7 +476,7 @@ public interface Constants {
      */
     public static final FedoraDSInputSpec1_0Format DS_INPUT_SPEC1_0 =
             FedoraDSInputSpec1_0Format.getInstance();
-    
+
     /**
      * The Fedora Datastream Input Spec 1.1 XML format;
      * <code>info:fedora/fedora-system:FedoraDSInputSpec-1.1</code>
@@ -574,7 +574,7 @@ public interface Constants {
      */
     public static final FedoraSDepMethodMap1_1Format SDEP_METHOD_MAP1_1 =
             FedoraSDepMethodMap1_1Format.getInstance();
-    
+
     /**
      * Legacy FOXML 1.0 format string
      * Available only for backwards compatibility with old repository versions
@@ -625,7 +625,7 @@ public interface Constants {
      * <code>info:fedora/fedora-system:ATOMZip-1.1</code>
      */
     public static final AtomZip1_1Format ATOM_ZIP1_1 = AtomZip1_1Format.getInstance();
-    
+
     /**
      * The OAI DC 2.0 XML format;
      * <code>http://www.openarchives.org/OAI/2.0/oai_dc/</code>
@@ -672,25 +672,34 @@ public interface Constants {
     //---
 
     /**
-     * Utility to determine the value of "Fedora Home" based on the current
-     * environment.
+     * Utility to determine and provide the value of the "Fedora Home" constant.
      */
     static class FedoraHome {
 
+        private static String value;
+
         /**
          * Determines the value of "Fedora Home" based on the
-         * <code>fedora.home</code> system property (checked first) or the
-         * <code>FEDORA_HOME</code> environment variable.
+         * <code>servlet.fedora.home</code> system property (checked first)
+         * <code>fedora.home</code> system property (checked next) or the
+         * <code>FEDORA_HOME</code> environment variable (checked last).
+         * <p>
+         * Once successfully determined, the value is guaranteed not to change
+         * during the life of the application.
          *
-         * @returns the value, or <code>null</code> if undefined in both
-         *          places.
+         * @returns the value, or <code>null</code> if undefined in any way.
          */
         public static final String getValue() {
-            if (System.getProperty("fedora.home") != null) {
-                return System.getProperty("fedora.home");
+          if (value == null){
+            if (System.getProperty("servlet.fedora.home") != null){
+              value = System.getProperty("servlet.fedora.home");
+            } else if (System.getProperty("fedora.home") != null) {
+              value = System.getProperty("fedora.home");
             } else {
-                return System.getenv("FEDORA_HOME");
+              value = System.getenv("FEDORA_HOME");
             }
+          }
+          return value;
         }
     }
 
