@@ -6,8 +6,9 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses( {fedora.utilities.install.container.AllUnitTests.class,
-    TestFileUtils.class, 
-    TestZip.class, 
+    TestBase64.class,
+    TestFileUtils.class,
+    TestZip.class,
     NamespaceContextImplTest.class})
 public class AllUnitTests {
 
@@ -16,8 +17,9 @@ public class AllUnitTests {
 
         junit.framework.TestSuite suite =
                 new junit.framework.TestSuite(AllUnitTests.class.getName());
-        
+
         suite.addTest(fedora.utilities.install.container.AllUnitTests.suite());
+        suite.addTestSuite(TestBase64.class);
         suite.addTestSuite(TestFileUtils.class);
         suite.addTestSuite(TestZip.class);
         suite.addTest(NamespaceContextImplTest.suite());

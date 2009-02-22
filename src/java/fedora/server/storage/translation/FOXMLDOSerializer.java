@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -32,11 +32,13 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.utilities.StringUtility;
 
+import fedora.utilities.Base64;
+
 import static fedora.common.Models.SERVICE_DEPLOYMENT_3_0;
 
 /**
  * Serializes objects in the constructor-provided version of FOXML.
- * 
+ *
  * @author Sandy Payette
  * @author Chris Wilper
  */
@@ -68,7 +70,7 @@ public class FOXMLDOSerializer
 
     /**
      * Creates a serializer that writes the given FOXML format.
-     * 
+     *
      * @param format
      *        the version-specific FOXML format.
      * @throws IllegalArgumentException
@@ -191,7 +193,7 @@ public class FOXMLDOSerializer
                 appendProperty(RDF.TYPE.uri, ftype.uri, writer, false);
             }
         }
-        
+
         appendProperty(MODEL.STATE.uri,
                        DOTranslationUtility.getStateAttribute(obj),
                        writer,
@@ -202,7 +204,7 @@ public class FOXMLDOSerializer
         appendProperty(VIEW.LAST_MODIFIED_DATE.uri,
                        obj.getLastModDate(),
                        writer);
-                       
+
         Iterator<String> iter = obj.getExtProperties().keySet().iterator();
         while (iter.hasNext()) {
             String name = iter.next();
@@ -212,7 +214,7 @@ public class FOXMLDOSerializer
         writer.print(FOXML.prefix);
         writer.print(":objectProperties>\n");
     }
-    
+
     private static void appendProperty(String uri,
                                        String value,
                                        PrintWriter writer,
@@ -231,7 +233,7 @@ public class FOXMLDOSerializer
             writer.print("\"/>\n");
         }
     }
-    
+
     private static void appendProperty(String uri,
                                        Date value,
                                        PrintWriter writer) {
@@ -250,7 +252,7 @@ public class FOXMLDOSerializer
             StreamIOException {
         Iterator<String> iter = obj.datastreamIdIterator();
         while (iter.hasNext()) {
-            String dsid = (String) iter.next();
+            String dsid = iter.next();
             boolean haveWrittenCommonAttributes = false;
 
             // AUDIT datastream is rebuilt from the latest in-memory audit trail
@@ -357,18 +359,16 @@ public class FOXMLDOSerializer
                             m_transContext).DSLocation;
                     writer.print(StreamUtility.enc(urls));
                     writer.print("\"/>\n");
-                    // if M insert ds content location as an internal identifier				
+                    // if M insert ds content location as an internal identifier
                 } else if (vds.DSControlGrp.equalsIgnoreCase("M")) {
                     if (m_transContext == DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE) {
-                        
+                        writer.print("<");
                         writer.print(FOXML.prefix);
                         writer.print(":binaryContent> \n");
-                        writer.print(StringUtility
-                                                .splitAndIndent(StreamUtility
-                                                                        .encodeBase64(vds
-                                                                                .getContentStream()),
-                                                                14,
-                                                                80));
+                        String encoded = Base64.encodeToString(vds.getContentStream());
+                        writer.print(StringUtility.splitAndIndent(encoded,
+                                                                  14,
+                                                                  80));
                         writer.print("</");
                         writer.print(FOXML.prefix);
                         writer.print(":binaryContent> \n");
@@ -454,7 +454,7 @@ public class FOXMLDOSerializer
         writer.print(FOXML.prefix);
         writer.print(":xmlContent>\n");
 
-        // Relative Repository URLs: If it's a WSDL or SERVICE-PROFILE datastream 
+        // Relative Repository URLs: If it's a WSDL or SERVICE-PROFILE datastream
         // in a SDep object search for any embedded URLs that are relative to
         // the local repository (like internal service URLs) and make sure they
         // are converted appropriately for the translation context.
@@ -462,7 +462,7 @@ public class FOXMLDOSerializer
                 && (ds.DatastreamID.equals("SERVICE-PROFILE") || ds.DatastreamID
                         .equals("WSDL"))) {
             // FIXME! We need a more efficient way than to search
-            // the whole block of inline XML. We really only want to 
+            // the whole block of inline XML. We really only want to
             // look at service URLs in the XML.
             writer.print(DOTranslationUtility
                     .normalizeInlineXML(new String(ds.xmlContent, "UTF-8")
@@ -482,13 +482,13 @@ public class FOXMLDOSerializer
 
         Iterator<String> dissIdIter = obj.disseminatorIdIterator();
         while (dissIdIter.hasNext()) {
-            String did = (String) dissIdIter.next();
+            String did = dissIdIter.next();
             List<Disseminator> dissList = obj.disseminators(did);
 
             for (int i = 0; i < dissList.size(); i++) {
                 Disseminator vdiss =
                         DOTranslationUtility
-                                .setDisseminatorDefaults((Disseminator) obj
+                                .setDisseminatorDefaults(obj
                                         .disseminators(did).get(i));
                 // insert the disseminator elements common to all versions.
                 if (i == 0) {
@@ -525,7 +525,7 @@ public class FOXMLDOSerializer
                 }
                 writer.print(">\n");
 
-                // datastream bindings...	
+                // datastream bindings...
                 DSBinding[] bindings = vdiss.dsBindMap.dsBindings;
                 writer.print("<");
                 writer.print(FOXML.prefix);

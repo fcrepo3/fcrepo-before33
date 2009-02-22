@@ -1,12 +1,11 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
 package fedora.server.journal.helpers;
 
-import com.oreilly.servlet.Base64Decoder;
-import com.oreilly.servlet.Base64Encoder;
+import fedora.utilities.Base64;
 
 /**
  * Encipher the password so we aren't writing it to the file in clear.
@@ -18,7 +17,7 @@ import com.oreilly.servlet.Base64Encoder;
  * <li>"" or null - empty cipher, clear text is the same as cipher text</li>
  * <li>"1" - rotating key XOR cipher</li>
  * </ul>
- * 
+ *
  * @author Jim Blake
  */
 public class PasswordCipher {
@@ -51,7 +50,7 @@ public class PasswordCipher {
         byte[] keyBytes = convertKeyToByteArray(key);
         byte[] clearTextBytes = convertClearTextToByteArray(clearText);
         byte[] cipherBytes = applyCipher(keyBytes, clearTextBytes);
-        return Base64Encoder.encode(cipherBytes);
+        return Base64.encodeToString(cipherBytes);
     }
 
     /**
@@ -73,7 +72,7 @@ public class PasswordCipher {
             return cipherText;
         } else if ("1".equalsIgnoreCase(cipherType)) {
             byte[] keyBytes = convertKeyToByteArray(key);
-            byte[] cipherBytes = Base64Decoder.decodeToBytes(cipherText);
+            byte[] cipherBytes = Base64.decode(cipherText);
             sanityCheckOnCipherBytes(cipherText, cipherBytes);
             byte[] clearTextBytes = applyCipher(keyBytes, cipherBytes);
             return convertByteArrayToClearText(clearTextBytes);

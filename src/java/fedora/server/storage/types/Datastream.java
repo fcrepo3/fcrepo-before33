@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -21,7 +21,7 @@ import fedora.server.utilities.StringUtility;
 
 /**
  * A Fedora datastream.
- * 
+ *
  * @author Sandy Payette
  */
 public class Datastream {
@@ -31,7 +31,7 @@ public class Datastream {
             Logger.getLogger(Datastream.class.getName());
 
     public final static String CHECKSUMTYPE_DISABLED = "DISABLED";
-    
+
     public final static String CHECKSUM_NONE = "none";
 
     public final static String CHECKSUM_IOEXCEPTION = "ExceptionReadingStream";
@@ -188,7 +188,6 @@ public class Datastream {
                     md.update(buffer, 0, numread);
                 }
                 LOG.debug("...Done reading content");
-                //checksum = StreamUtility.encodeBase64(md.digest());
                 checksum = StringUtility.byteArraytoHexString(md.digest());
             }
         } catch (NoSuchAlgorithmException e) {

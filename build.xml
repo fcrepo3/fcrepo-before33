@@ -105,7 +105,6 @@
         <path id="server-libs.path">
         	<pathelement location="${lib.avalon-framework}"/>
             <pathelement location="${lib.batik}"/>
-            <pathelement location="${lib.cos}"/>
         	<pathelement location="${lib.dom4j}"/>
             <pathelement location="${lib.fop}"/>
             <pathelement location="${lib.ij}"/>
@@ -147,6 +146,7 @@
         	<pathelement location="${lib.commons-betwixt}"/>
         	<pathelement location="${lib.commons-codec}"/>
         	<pathelement location="${lib.commons-digester}"/>
+        	<pathelement location="${lib.commons-fileupload}"/>
             <pathelement location="${lib.commons-httpclient}"/>
             <pathelement location="${lib.commons-io}"/>
             <pathelement location="${lib.saxon}"/>

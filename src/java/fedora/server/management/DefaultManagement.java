@@ -24,8 +24,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -87,22 +87,22 @@ public class DefaultManagement
 
     public final static String s_RelsExt_Datastream = "RELS-EXT";
 
-    private Authorization m_fedoraXACMLModule;
+    private final Authorization m_fedoraXACMLModule;
 
-    private DOManager m_manager;
+    private final DOManager m_manager;
 
-    private ExternalContentManager m_contentManager;
+    private final ExternalContentManager m_contentManager;
 
-    private int m_uploadStorageMinutes;
+    private final int m_uploadStorageMinutes;
 
     private int m_lastId;
 
-    private File m_tempDir;
+    private final File m_tempDir;
 
-    private Hashtable<String, Long> m_uploadStartTime;
-    
+    private final Hashtable<String, Long> m_uploadStartTime;
+
     private long m_lastPurgeInMillis = System.currentTimeMillis();
-    
+
     private final long m_purgeDelayInMillis;
 
     /**
@@ -112,9 +112,9 @@ public class DefaultManagement
      * @date   August 1, 2008
      */
     public DefaultManagement(Authorization auth,
-                             DOManager doMgr, 
+                             DOManager doMgr,
                              ExternalContentManager ecMgr,
-                             int uploadMinutes, 
+                             int uploadMinutes,
                              int lastId,
                              File tempDir,
                              Hashtable<String, Long> uploadStartTime,
@@ -214,7 +214,7 @@ public class DefaultManagement
                 }
                 w.setState(state);
             }
-            
+
             if (label != null) {
                 w.setLabel(label);
             }
@@ -848,7 +848,7 @@ public class DefaultManagement
                 // If it's a RELS-EXT datastream, do validation
                 if (orig.DatastreamID.equals("RELS-EXT")) {
                     validateRelsExt(pid,
-                                    new ByteArrayInputStream(((DatastreamXMLMetadata) newds).xmlContent));
+                                    new ByteArrayInputStream((newds).xmlContent));
                 }
             }
 
@@ -969,7 +969,7 @@ public class DefaultManagement
                     msg.append("Cannot purge entire datastream because it\n");
                     msg.append("is used by the following disseminators:");
                     for (int i = 0; i < usedList.size(); i++) {
-                        msg.append("\n - " + (String) usedList.get(i));
+                        msg.append("\n - " + usedList.get(i));
                     }
                     throw new GeneralException(msg.toString());
                 }
@@ -1242,7 +1242,7 @@ public class DefaultManagement
                 }
                 outFile.delete();
             }
-            throw new StreamWriteException(e.getMessage());
+            throw new StreamWriteException("Error writing temp stream", e);
         }
         // if we got this far w/o an exception, add to hash with current time
         // and return the identifier-that-looks-like-a-url
@@ -1715,7 +1715,7 @@ public class DefaultManagement
      * Deletes expired uploaded files.
      * <p>
      * This method is called for each upload. But we respect a minimim delay
-     * between two purges. This delay is given by m_purgeDelayInMillis. 
+     * between two purges. This delay is given by m_purgeDelayInMillis.
      */
     private void purgeUploadedFiles() {
         long currentTimeMillis = System.currentTimeMillis();
@@ -1755,7 +1755,7 @@ public class DefaultManagement
             // ------------------------------------------------------------
             for (int i = 0; i < removeList.size(); i++) {
                 String id = removeList.get(i);
-              
+
                 File file = new File(this.m_tempDir, id);
                 if (file.exists()) {
                     if (file.delete()) {
