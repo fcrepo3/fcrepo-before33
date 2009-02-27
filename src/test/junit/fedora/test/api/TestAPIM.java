@@ -1618,15 +1618,9 @@ public class TestAPIM
 
         // (8) test getDatastreamHistory
         System.out.println("Running TestAPIM.testGetDatastreamHistory...");
-        // test getting datastream history for datastream MRSID of object demo:10
-        dsArray = apim.getDatastreamHistory("demo:10", "MRSID");
+        // test getting datastream history for datastream DC of object demo:5
+        dsArray = apim.getDatastreamHistory("demo:5", "DC");
         assertEquals(dsArray.length, 1);
-        for (Datastream element : dsArray) {
-            ds = element;
-            System.out
-                    .println("***** Testcase: TestAPIM.testGetDatastreamHistry createDate: "
-                            + ds.getCreateDate());
-        }
     }
 
     /**

@@ -90,14 +90,14 @@ mv $FEDORA_HOME/server/logs $BUILD_HOME/build/server-logs/fedora.test.AllSystemT
 #
 
 #
-# Config A and C Tests
+# Config A Tests
 #
 
-$SCRIPTDIR/install-fedora.sh $1 ConfigAC.properties
+$SCRIPTDIR/install-fedora.sh $1 ConfigA.properties
 
 if [ $? -ne 0 ]; then
   echo ""
-  echo "ERROR: Failed while installing Fedora for ConfigA and ConfigC tests; see above"
+  echo "ERROR: Failed while installing Fedora for ConfigA tests; see above"
   exit 1
 fi
 
@@ -126,33 +126,8 @@ $CATALINA_HOME/bin/shutdown.sh
 sleep 5
 mv $FEDORA_HOME/server/logs $BUILD_HOME/build/server-logs/fedora.test.AllSystemTestsConfigA
 
-$CATALINA_HOME/bin/startup.sh
-if [ $? -ne 0 ]; then
-  echo ""
-  echo "ERROR: Failed while starting Fedora for ConfigA tests; see above"
-  exit 1
-fi
-echo "Waiting 20 seconds for Fedora to start..."
-sleep 20
-echo ""
-echo "[Running ConfigC Tests...]"
-$SCRIPTDIR/systest.sh $1 -Dtest=fedora.test.AllSystemTestsConfigC
-if [ $? -ne 0 ]; then
-  echo ""
-  echo "ERROR: Failed ConfigC tests; see above"
-  echo "Shutting down Tomcat..."
-  $CATALINA_HOME/bin/shutdown.sh
-  sleep 5
-  mv $FEDORA_HOME/server/logs $BUILD_HOME/build/server-logs/fedora.test.AllSystemTestsConfigC
-  exit 1
-fi
-echo "Shutting down tomcat..."
-$CATALINA_HOME/bin/shutdown.sh
-sleep 5
-mv $FEDORA_HOME/server/logs $BUILD_HOME/build/server-logs/fedora.test.AllSystemTestsConfigC
-
 #
-# End of Config A and C Tests
+# End of Config A Tests
 #
 
 echo ""
