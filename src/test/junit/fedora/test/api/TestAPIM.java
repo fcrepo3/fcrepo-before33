@@ -1056,7 +1056,7 @@ public class TestAPIM
                                true,
                                "text/xml",
                                "info:myFormatURI/Mtype/stuff#junk",
-                               "http://www.fedora-commons.org/junit/datastream1.xml",
+                               getBaseURL() + "/get/fedora-system:ContentModel-3.0/DC",
                                "M",
                                "A",
                                "MD6",
@@ -1077,7 +1077,7 @@ public class TestAPIM
                                true,
                                "text/xml",
                                "info:myFormatURI/Mtype/stuff#junk",
-                               "http://www.fedora-commons.org/junit/datastream1.xml",
+                               getBaseURL() + "/get/fedora-system:ContentModel-3.0/DC",
                                "M",
                                "A",
                                "TIGER",
@@ -1101,7 +1101,7 @@ public class TestAPIM
                                        true,
                                        "text/xml",
                                        "info:myFormatURI/Mtype/stuff#junk",
-                                       "http://www.fedora-commons.org/junit/datastream1.xml",
+                                       getBaseURL() + "/get/fedora-system:ContentModel-3.0/DC",
                                        "M",
                                        "A",
                                        null,
@@ -1136,7 +1136,7 @@ public class TestAPIM
                                        true,
                                        "text/xml",
                                        "info:myFormatURI/Xtype/stuff#junk",
-                                       "http://www.fedora-commons.org/junit/datastream2.xml",
+                                       getBaseURL() + "/get/fedora-system:ContentModel-3.0/DC",
                                        "X",
                                        "A",
                                        null,
@@ -1169,7 +1169,7 @@ public class TestAPIM
                                        true,
                                        "text/xml",
                                        "info:myFormatURI/Etype/stuff#junk",
-                                       "http://www.fedora-commons.org/junit/datastream3.xml",
+                                       getBaseURL() + "/get/fedora-system:ContentModel-3.0/DC",
                                        "E",
                                        "A",
                                        null,
@@ -1197,19 +1197,17 @@ public class TestAPIM
                 .println("Running TestAPIM.testModifyDatastreamByReference...");
         altIds = new String[1];
         altIds[0] = "Datastream 1 Modified Alternate ID";
-        datastreamId =
-                apim
-                        .modifyDatastreamByReference("demo:14",
-                                                     "NEWDS1",
-                                                     altIds,
-                                                     "Modified M-type Datastream",
-                                                     "text/xml",
-                                                     "info:newMyFormatURI/Mtype/stuff#junk",
-                                                     "http://www.fedora-commons.org/junit/datastream2.xml",
-                                                     null,
-                                                     null,
-                                                     "modified datastream",
-                                                     false);
+        datastreamId = apim.modifyDatastreamByReference("demo:14",
+                                                        "NEWDS1",
+                                                        altIds,
+                                                        "Modified M-type Datastream",
+                                                        "text/xml",
+                                                        "info:newMyFormatURI/Mtype/stuff#junk",
+                                                        getBaseURL() + "/get/fedora-system:ContentModel-3.0/DC",
+                                                        null,
+                                                        null,
+                                                        "modified datastream",
+                                                        false);
 
         // test that datastream was modified
         objectXML = apim.getObjectXML("demo:14");
