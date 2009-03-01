@@ -11,6 +11,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+	fedora.server.search.AllIntegrationTests.class,
 	fedora.server.resourceIndex.AllIntegrationTests.class,
 	fedora.server.journal.AllIntegrationTests.class
 })
@@ -23,8 +24,9 @@ public class AllIntegrationTests {
                 new junit.framework.TestSuite(AllIntegrationTests.class
                         .getName());
 
+        suite.addTest(fedora.server.search.AllIntegrationTests.suite());
         suite.addTest(fedora.server.resourceIndex.AllIntegrationTests.suite());
-        suite.addTest(fedora.server.journal.AllIntegrationTests.suite());    
+        suite.addTest(fedora.server.journal.AllIntegrationTests.suite());
 
         return suite;
     }

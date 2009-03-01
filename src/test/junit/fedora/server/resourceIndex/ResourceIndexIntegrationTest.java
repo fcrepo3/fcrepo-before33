@@ -1,8 +1,6 @@
 
 package fedora.server.resourceIndex;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -30,7 +28,7 @@ import org.trippi.TripleIterator;
 import org.trippi.TriplestoreConnector;
 
 import fedora.common.Models;
-import fedora.common.PID;
+
 import fedora.server.storage.DOReader;
 import fedora.server.storage.MockRepositoryReader;
 import fedora.server.storage.ServiceDefinitionReader;
@@ -38,22 +36,16 @@ import fedora.server.storage.ServiceDeploymentReader;
 import fedora.server.storage.SimpleDOReader;
 import fedora.server.storage.SimpleServiceDefinitionReader;
 import fedora.server.storage.SimpleServiceDeploymentReader;
-import fedora.server.storage.translation.DOTranslationUtility;
-import fedora.server.storage.translation.FOXML1_1DODeserializer;
-import fedora.server.storage.translation.FOXML1_1DOSerializer;
-import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.DatastreamManagedContent;
-import fedora.server.storage.types.DatastreamReferencedContent;
-import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
+import fedora.server.storage.types.ObjectBuilder;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
  * Superclass for <code>ResourceIndex</code> integration tests.
- * 
+ *
  * @author Chris Wilper
  */
 public abstract class ResourceIndexIntegrationTest {
@@ -107,7 +99,7 @@ public abstract class ResourceIndexIntegrationTest {
     /**
      * Get the <code>TriplestoreConnector</code> to be used in conjunction
      * with the <code>ResourceIndexImpl</code>.
-     * 
+     *
      * @throws Exception
      *         if constructing the connector fails for any reason.
      */
@@ -133,25 +125,6 @@ public abstract class ResourceIndexIntegrationTest {
 
         return TriplestoreConnector.init("org.trippi.impl.mpt.MPTConnector",
                                          config);
-        //*/
-
-        /*
-         * config.put("jdbcDriver", DB_DRIVER); config.put("jdbcURL", DB_URL);
-         * config.put("username", DB_USERNAME); config.put("password",
-         * DB_PASSWORD); config.put("serverName", "server1");
-         * config.put("modelName", "ri"); config.put("readOnly", "false");
-         * config.put("autoCreate", "true"); config.put("autoTextIndex",
-         * "false"); config.put("autoFlushBufferSize", "1000");
-         * config.put("autoFlushDormantSeconds", "5");
-         * config.put("bufferFlushBatchSize", "1000");
-         * config.put("bufferSafeCapacity", "2000");
-         * config.put("poolInitialSize", "2"); config.put("poolMaxSize", "5");
-         * config.put("poolMaxGrowth", "-1"); config.put("remote", "true");
-         * config.put("host", "localhost"); config.put("path", "/tmp/riTest");
-         * return
-         * TriplestoreConnector.init("org.trippi.impl.mulgara.MulgaraConnector",
-         * config);
-         */
     }
 
     // Test tearDown
@@ -262,45 +235,12 @@ public abstract class ResourceIndexIntegrationTest {
 
     // Utility methods for tests
 
-    /**
-     * Make a deep copy of the given digital object.
-     */
-    protected DigitalObject deepCopy(DigitalObject obj) throws Exception {
-
-        // make sure DOTranslationUtility doesn't die
-        if (System.getProperty("fedoraServerHost") == null
-                || System.getProperty("fedoraServerPort") == null) {
-            System.setProperty("fedoraServerHost", "localhost");
-            System.setProperty("fedoraServerPort", "8080");
-        }
-
-        String charEncoding = "UTF-8";
-        int transContext = DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL;
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        FOXML1_1DOSerializer ser = new FOXML1_1DOSerializer();
-        ser.serialize(obj, out, charEncoding, transContext);
-
-        FOXML1_1DODeserializer deser = new FOXML1_1DODeserializer();
-        ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-        DigitalObject objCopy = new BasicDigitalObject();
-        deser.deserialize(in, objCopy, charEncoding, transContext);
-
-        // make sure dates of any to-be-added new components differ
-        try {
-            Thread.sleep(100);
-        } catch (Exception e) {
-        }
-
-        return objCopy;
-    }
-
     protected void modify(DigitalObject origObject,
                           DigitalObject modifiedObject,
                           boolean flush) throws Exception {
-        
+
         _ri.modifyObject(getDOReader(origObject), getDOReader(modifiedObject));
-        
+
         if (flush) {
             _ri.flushBuffer();
         }
@@ -455,20 +395,7 @@ public abstract class ResourceIndexIntegrationTest {
         return x.toString();
     }
 
-    /**
-     * Get the RELS-EXT xml for an object.
-     */
-    protected String getRELSEXT(String content) {
-        StringBuffer x = new StringBuffer();
-        x
-                .append("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"");
-        x.append(" xmlns:foo=\"http://example.org/foo#\">\n");
-        x.append("<rdf:Description rdf:about=\"info:fedora/test:1\">\n");
-        x.append(content + "\n");
-        x.append("</rdf:Description>\n");
-        x.append("</rdf:RDF>");
-        return x.toString();
-    }
+
 
     /**
      * Get the METHODMAP xml for a sDef.
@@ -637,7 +564,7 @@ public abstract class ResourceIndexIntegrationTest {
 
         //
         // service location
-        // 
+        //
         xml.append("  <service name=\"MyService\">\n");
         xml.append("    <port binding=\"this:MyService_http\" "
                 + "name=\"MyService_port\">\n");
@@ -714,75 +641,25 @@ public abstract class ResourceIndexIntegrationTest {
     }
 
     protected static void addEDatastream(DigitalObject obj, String id) {
-        DatastreamReferencedContent ds = new DatastreamReferencedContent();
-        ds.DSControlGrp = "E";
-        ds.DSMIME = "text/plain";
-        ds.DSLocation = "http://www.example.org/e.txt";
-        ds.DSLocationType = "URL";
-        ds.DSSize = 1;
-        addDatastream(obj, id, ds);
+        ObjectBuilder.addEDatastream(obj, id);
     }
 
     protected static void addRDatastream(DigitalObject obj, String id) {
-        DatastreamReferencedContent ds = new DatastreamReferencedContent();
-        ds.DSControlGrp = "R";
-        ds.DSMIME = "text/plain";
-        ds.DSLocation = "http://www.example.org/r.txt";
-        ds.DSLocationType = "URL";
-        ds.DSSize = 2;
-        addDatastream(obj, id, ds);
+        ObjectBuilder.addRDatastream(obj, id);
     }
 
     protected static void addXDatastream(DigitalObject obj,
                                          String id,
                                          String xml) {
-        DatastreamXMLMetadata ds = new DatastreamXMLMetadata();
-        ds.DSControlGrp = "X";
-        ds.DSMIME = "text/xml";
-        ds.DSSize = xml.length();
-        try {
-            ds.xmlContent = xml.getBytes("UTF-8");
-        } catch (Exception e) {
-        }
-        addDatastream(obj, id, ds);
+        ObjectBuilder.addXDatastream(obj, id, xml);
     }
 
     protected static void addMDatastream(DigitalObject obj, String id) {
-        DatastreamManagedContent ds = new DatastreamManagedContent();
-        ds.DSControlGrp = "M";
-        ds.DSMIME = "image/jpeg";
-        ds.DSLocation = "bogusLocation";
-        ds.DSLocationType = "INTERNAL";
-        ds.DSSize = 4;
-        addDatastream(obj, id, ds);
-    }
-
-    private static void addDatastream(DigitalObject obj,
-                                      String id,
-                                      Datastream ds) {
-        int size = 0;
-        for (Datastream d : obj.datastreams(id)) {
-            size ++;
-        }
-        ds.DatastreamID = id;
-        ds.DSState = "A";
-        ds.DSVersionable = true;
-        ds.DSVersionID = id + "." + size;
-        ds.DSLabel = "ds label";
-        ds.DSCreateDT = new Date();
-        obj.addDatastreamVersion(ds, true);
+        ObjectBuilder.addMDatastream(obj, id);
     }
 
     protected static DigitalObject getTestObject(String pid, String label) {
-        Date now = new Date();
-        URIReference[] models = {Models.FEDORA_OBJECT_3_0};
-        return getTestObject(pid,
-                             models,
-                             "A",
-                             "someOwnerId",
-                             label,
-                             now,
-                             now);
+        return ObjectBuilder.getTestObject(pid, label);
     }
 
     protected static DigitalObject getTestSDef(String pid,
@@ -790,14 +667,13 @@ public abstract class ResourceIndexIntegrationTest {
                                                Set<ParamDomainMap> methodDefs) {
         Date now = new Date();
         URIReference[] models = {Models.SERVICE_DEFINITION_3_0};
-        DigitalObject obj =
-                getTestObject(pid,
-                              models,
-                              "A",
-                              "someOwnerId",
-                              label,
-                              now,
-                              now);
+        DigitalObject obj = ObjectBuilder.getTestObject(pid,
+                                                        models,
+                                                        "A",
+                                                        "someOwnerId",
+                                                        label,
+                                                        now,
+                                                        now);
         addXDatastream(obj, "METHODMAP", getMethodMap(methodDefs));
         return obj;
     }
@@ -812,14 +688,13 @@ public abstract class ResourceIndexIntegrationTest {
 
         Date now = new Date();
         URIReference[] models = {Models.SERVICE_DEPLOYMENT_3_0};
-        DigitalObject obj =
-                getTestObject(pid,
-                              models,
-                              "A",
-                              "someOwnerId",
-                              label,
-                              now,
-                              now);
+        DigitalObject obj = ObjectBuilder.getTestObject(pid,
+                                                        models,
+                                                        "A",
+                                                        "someOwnerId",
+                                                        label,
+                                                        now,
+                                                        now);
 
         String methodMapXML = getMethodMap(methodDefs, inputKeys, true);
         addXDatastream(obj, "METHODMAP", methodMapXML);
@@ -830,40 +705,6 @@ public abstract class ResourceIndexIntegrationTest {
         String wsdlXML = getWSDL(methodDefs, inputKeys, outputTypes);
         addXDatastream(obj, "WSDL", wsdlXML);
 
-        return obj;
-    }
-
-    protected static DigitalObject getTestObject(String pid,
-                                                 URIReference[] models,
-                                                 String state,
-                                                 String ownerId,
-                                                 String label,
-                                                 Date createDate,
-                                                 Date lastModDate) {
-        DigitalObject obj = new BasicDigitalObject();
-        obj.setPid(pid);
-
-        StringBuilder rdf = new StringBuilder();
-        rdf
-                .append("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" "
-                        + "xmlns:fedora-model=\"info:fedora/fedora-system:def/model#\">\n"
-                        + "<rdf:Description rdf:about=\"");
-        rdf.append(PID.getInstance(pid).toURI() + "\">\n");
-
-        for (URIReference model : models) {
-            rdf.append("<fedora-model:hasModel rdf:resource=\""
-                    + model.getURI().toString()
-                    + "\"></fedora-model:hasModel>\n");
-        }
-        rdf.append("</rdf:Description></rdf:RDF>");
-        
-        addXDatastream(obj, "RELS-EXT", rdf.toString());
-        
-        obj.setState(state);
-        obj.setOwnerId(ownerId);
-        obj.setLabel(label);
-        obj.setCreateDate(createDate);
-        obj.setLastModDate(lastModDate);
         return obj;
     }
 
@@ -943,7 +784,7 @@ public abstract class ResourceIndexIntegrationTest {
         return getTestSDef("test:sdef3b", "sdef3b", methodDefs);
     }
 
-    // sdef:4 has two one-parameter methods, one required with two possible 
+    // sdef:4 has two one-parameter methods, one required with two possible
     //        values and the other optional with any possible value
     protected static DigitalObject getSDefFour() {
         Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
@@ -1284,7 +1125,7 @@ public abstract class ResourceIndexIntegrationTest {
         /**
          * Construct a flusher that sleeps the given number of milliseconds
          * between flush attempts.
-         * 
+         *
          * @param sleepMS
          *        milliseconds to sleep. Will simply yield between flush
          *        attempts if less than 1.
@@ -1296,7 +1137,7 @@ public abstract class ResourceIndexIntegrationTest {
 
         /**
          * Set signal for flusher to finish and wait for it.
-         * 
+         *
          * @throws Exception
          *         if the flusher encountered an error any time while it was
          *         running.
@@ -1317,6 +1158,7 @@ public abstract class ResourceIndexIntegrationTest {
         /**
          * Flush the buffer until the finish signal arrives from another thread.
          */
+        @Override
         public void run() {
             try {
                 while (!_shouldFinish) {
