@@ -82,7 +82,7 @@ public class TestFieldSearchSQLImpl {
 
 	private static final ObjectData OBJECT_WITH_NO_DC = new ObjectData(
 			"somePid", "myLabel", "A", "theOwner", new Date(
-					12345), new Date(67890), new Date(10000), null);
+					12345), new Date(67890), new Date(0), null);
 
 	private static final ObjectData OBJECT_WITH_DC = new ObjectData("somePid",
 			"myLabel", "A", "theOwner", new Date(12345),
@@ -152,7 +152,8 @@ public class TestFieldSearchSQLImpl {
 
 	@Test
 	public void noDC() throws ServerException {
-		setSqlUtilityInstance(new UnusedMockSqlUtility());
+		setSqlUtilityInstance(new UpdatingMockSqlUtility(SHORT_FIELDS,
+		        OBJECT_WITH_NO_DC.getShortFieldValueList()));
 		this.mockConnection = new UnusedMockConnection();
 		this.mockRepositoryReader = new UnusedMockRepositoryReader();
 

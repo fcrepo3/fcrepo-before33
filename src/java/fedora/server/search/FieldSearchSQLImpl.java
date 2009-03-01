@@ -184,7 +184,7 @@ public class FieldSearchSQLImpl
                         + " has a DC datastream, but it's not inline XML.");
             }
             if (dcmd == null) {
-                dbRowValues[6] = "1";
+                dbRowValues[6] = "0";
             } else {
                 dbRowValues[6] = "" + dcmd.DSCreateDT.getTime();
             }
