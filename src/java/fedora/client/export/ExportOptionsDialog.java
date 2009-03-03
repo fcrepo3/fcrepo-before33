@@ -72,7 +72,6 @@ public class ExportOptionsDialog
         super(JOptionPane.getFrameForComponent(Administrator.getDesktop()),
               title,
               true);
-        setSize(350, 450);
         setModal(true);
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -133,6 +132,7 @@ public class ExportOptionsDialog
         contentPane.setLayout(new BorderLayout());
         contentPane.add(optionsPanel, BorderLayout.CENTER);
         contentPane.add(buttonPanel, BorderLayout.SOUTH);
+        pack();
         setLocation(Administrator.INSTANCE.getCenteredPos(getWidth(),
                                                           getHeight()));
         setVisible(true);
