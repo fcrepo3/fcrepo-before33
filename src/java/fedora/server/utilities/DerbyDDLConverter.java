@@ -110,7 +110,7 @@ public class DerbyDDLConverter
             }
             // only NON-number types can be stored as 'binary'.
             if (cs.getBinary()) {
-                out.append(" FOR BIT DATA");
+//                out.append(" FOR BIT DATA");
             }
         }
 

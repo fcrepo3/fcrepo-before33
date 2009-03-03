@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -41,7 +41,7 @@ public class FedoraHome {
 
     private final File _installDir;
 
-    private boolean _clientOnlyInstall;
+    private final boolean _clientOnlyInstall;
 
     private InetAddress _host;
 
@@ -64,7 +64,7 @@ public class FedoraHome {
 
     /**
      * Unpacks the contents of the FEDORA_HOME directory from the Distribution.
-     * 
+     *
      * @throws InstallationFailedException
      */
     private void unpack() throws InstallationFailedException {
@@ -96,7 +96,7 @@ public class FedoraHome {
 
     /**
      * Sets various configuration files based on InstallOptions
-     * 
+     *
      * @throws InstallationFailedException
      */
     private void configure() throws InstallationFailedException {
@@ -134,8 +134,11 @@ public class FedoraHome {
         String database = _opts.getValue(InstallOptions.DATABASE);
         String dbPoolName = "";
         String backslashIsEscape = "true";
-        if (database.equals(InstallOptions.MCKOI)
+        if (database.equals(InstallOptions.DERBY)
                 || database.equals(InstallOptions.INCLUDED)) {
+            dbPoolName = "localDerbyPool";
+            backslashIsEscape = "false";
+        } else if (database.equals(InstallOptions.MCKOI)) {
             dbPoolName = "localMcKoiPool";
             backslashIsEscape = "false";
         } else if (database.equals(InstallOptions.MYSQL)) {
@@ -192,13 +195,14 @@ public class FedoraHome {
         if (_opts.getBooleanValue(InstallOptions.MESSAGING_ENABLED, false)) {
             props.put("module.fedora.server.messaging.Messaging:enabled",
                       String.valueOf(true));
-            props.put("module.fedora.server.messaging.Messaging:java.naming.provider.url", 
-                      _opts.getValue(InstallOptions.MESSAGING_URI));
+            props
+                    .put("module.fedora.server.messaging.Messaging:java.naming.provider.url",
+                         _opts.getValue(InstallOptions.MESSAGING_URI));
         } else {
             props.put("module.fedora.server.messaging.Messaging:enabled",
                       String.valueOf(false));
-        }        
-        
+        }
+
         props.put("module.fedora.server.access.Access:doMediateDatastreams",
                   _opts.getValue(InstallOptions.APIA_AUTH_REQUIRED));
 
@@ -273,7 +277,7 @@ public class FedoraHome {
      * Add the serverHost to the following XACML policies:
      * deny-apim-if-not-localhost.xml deny-reloadPolicies-if-not-localhost.xml
      * deny-serverShutdown-if-not-localhost.xml if not already present.
-     * 
+     *
      * @throws InstallationFailedException
      */
     private void configureXACML() throws InstallationFailedException {
@@ -327,7 +331,8 @@ public class FedoraHome {
             files = dir.listFiles();
         }
         for (File element : files) {
-            ExecUtility.exec(new String[]{"chmod", "+x", element.getAbsolutePath()});
+            ExecUtility.exec(new String[] {"chmod", "+x",
+                    element.getAbsolutePath()});
         }
     }
 }

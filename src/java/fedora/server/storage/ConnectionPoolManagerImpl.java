@@ -1,15 +1,18 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
 package fedora.server.storage;
+
+import java.io.File;
 
 import java.sql.SQLException;
 
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -26,7 +29,7 @@ import fedora.server.utilities.DDLConverter;
  * specified by parameters in the Fedora <code>fedora.fcfg</code>
  * configuration file. The Fedora server must be instantiated in order for this
  * class to function properly.
- * 
+ *
  * @author Ross Wayland
  */
 public class ConnectionPoolManagerImpl
@@ -75,7 +78,7 @@ public class ConnectionPoolManagerImpl
      * <p>
      * Constructs a new ConnectionPoolManagerImpl
      * </p>
-     * 
+     *
      * @param moduleParameters
      *        The name/value pair map of module parameters.
      * @param server
@@ -98,7 +101,7 @@ public class ConnectionPoolManagerImpl
      * implementation of this method is dependent on the schema used to define
      * the parameter names for the role of
      * <code>fedora.server.storage.ConnectionPoolManager</code>.
-     * 
+     *
      * @throws ModuleInitializationException
      *         If initialization values are invalid or initialization fails for
      *         some other reason.
@@ -118,6 +121,12 @@ public class ConnectionPoolManagerImpl
 
             // Pool names should be comma delimited
             String[] poolNames = poolList.split(",");
+
+            // Set Derby home property if used or not.
+            Properties p = System.getProperties();
+            p.setProperty("derby.system.home", Server.FEDORA_HOME +File.separator+"db-derby-10.4.2.0-bin");
+            //TODO: set system property for derby
+            // p.setProperty("derby.system.home", "/opt/db-derby");
 
             // Initialize each connection pool
             for (int i = 0; i < poolNames.length; i++) {
@@ -276,7 +285,7 @@ public class ConnectionPoolManagerImpl
      * <p>
      * Gets a named connection pool.
      * </p>
-     * 
+     *
      * @param poolName
      *        The name of the connection pool.
      * @return The named connection pool.
@@ -290,7 +299,7 @@ public class ConnectionPoolManagerImpl
         try {
             if (h_ConnectionPools.containsKey(poolName)) {
                 connectionPool =
-                        (ConnectionPool) h_ConnectionPools.get(poolName);
+                        h_ConnectionPools.get(poolName);
             } else {
                 // Error: pool was never initialized or name could not be found
                 throw new ConnectionPoolNotFoundException("Connection pool "
@@ -315,7 +324,7 @@ public class ConnectionPoolManagerImpl
      * Gets the default Connection Pool. This method overrides <code>
      * getPool(String poolName)</code>.
      * </p>
-     * 
+     *
      * @return The default connection pool.
      * @throws ConnectionPoolNotFoundException
      *         If the default connection pool cannot be found.
@@ -326,7 +335,7 @@ public class ConnectionPoolManagerImpl
         try {
             if (h_ConnectionPools.containsKey(defaultPoolName)) {
                 connectionPool =
-                        (ConnectionPool) h_ConnectionPools.get(defaultPoolName);
+                        h_ConnectionPools.get(defaultPoolName);
             } else {
                 // Error: default pool was never initialized or could not be found
                 throw new ConnectionPoolNotFoundException("Default connection pool "
