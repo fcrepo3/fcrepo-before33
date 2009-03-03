@@ -10,6 +10,7 @@ import org.junit.runners.Suite;
         fedora.server.messaging.AllUnitTests.class,
         fedora.server.proxy.AllUnitTests.class,
         fedora.server.search.AllUnitTests.class,
+        fedora.server.security.AllUnitTests.class,
         fedora.server.storage.AllUnitTests.class,
         fedora.server.utilities.AllUnitTests.class,
         fedora.server.validation.AllUnitTests.class})
@@ -26,6 +27,7 @@ public class AllUnitTests {
         suite.addTest(fedora.server.messaging.AllUnitTests.suite());
         suite.addTest(fedora.server.proxy.AllUnitTests.suite());
         suite.addTest(fedora.server.search.AllUnitTests.suite());
+        suite.addTest(fedora.server.security.AllUnitTests.suite());
         suite.addTest(fedora.server.storage.AllUnitTests.suite());
         suite.addTest(fedora.server.utilities.AllUnitTests.suite());
         suite.addTest(fedora.server.validation.AllUnitTests.suite());

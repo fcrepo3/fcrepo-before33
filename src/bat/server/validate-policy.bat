@@ -7,7 +7,7 @@ if "%1" == "" goto noFileError
 set _CP=%CATALINA_HOME%\webapps\fedora\WEB-INF\classes
 set _ED=%CATALINA_HOME%\webapps\fedora\WEB-INF\lib;%CATALINA_HOME%\common\endorsed;%CATALINA_HOME%\common\lib
 set _SC=%FEDORA_HOME%\server\xsd\cs-xacml-schema-policy-01.xsd
-"%JAVA_HOME%\bin\java" -cp "%_CP%" -Djava.endorsed.dirs="%_ED%" -Dfedora.home="%FEDORA_HOME%" -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dcom.sun.xacml.PolicySchema="%_SC%" fedora.server.security.ValidatePolicy "%1"
+"%JAVA_HOME%\bin\java" -cp "%_CP%" -Djava.endorsed.dirs="%_ED%" -Dfedora.home="%FEDORA_HOME%" -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dcom.sun.xacml.PolicySchema="%_SC%" fedora.server.security.PolicyParser "%1"
 if errorlevel 1 goto validationFailed
 echo Validation successful
 set _CP=

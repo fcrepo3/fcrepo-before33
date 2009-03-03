@@ -6,7 +6,6 @@
 
 package fedora.server.storage;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
@@ -36,13 +35,12 @@ import fedora.server.Server;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;
-import fedora.server.management.DefaultManagement;
 import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.utilities.FilteredTripleIterator;
-import fedora.server.validation.RelsExtValidator;
+import fedora.server.validation.ValidationUtility;
 
 /**
  * A DigitalObject-backed DOWriter.
@@ -59,7 +57,7 @@ import fedora.server.validation.RelsExtValidator;
  * The read methods of DOWriter reflect on the composition of the object in the
  * context of the current transaction.
  * </p>
- * 
+ *
  * @author Chris Wilper
  */
 public class SimpleDOWriter
@@ -136,21 +134,6 @@ public class SimpleDOWriter
         }
     }
 
-    // public void setDisseminatorState(String disseminatorID, String dissState)
-    // throws ServerException {
-    // assertNotInvalidated();
-    // assertNotPendingRemoval();
-    // List allVersions = m_obj.disseminators(disseminatorID);
-    // Iterator dissIter = allVersions.iterator();
-    //
-    // // Set all versions of this disseminatorID to the specified state
-    // while (dissIter.hasNext()) {
-    // Disseminator diss = (Disseminator) dissIter.next();
-    // diss.dissState=dissState;
-    // }
-    //
-    // }
-
     public void setLabel(String label) throws ObjectIntegrityException {
         assertNotInvalidated();
         assertNotPendingRemoval();
@@ -162,7 +145,7 @@ public class SimpleDOWriter
 
     /**
      * Removes the entire digital object.
-     * 
+     *
      * @throws ServerException
      *         If any type of error occurred fulfilling the request.
      */
@@ -174,7 +157,7 @@ public class SimpleDOWriter
 
     /**
      * Adds a datastream to the object.
-     * 
+     *
      * @param datastream
      *        The datastream.
      * @throws ServerException
@@ -189,22 +172,8 @@ public class SimpleDOWriter
     }
 
     /**
-     * Adds a disseminator to the object.
-     * 
-     * @param disseminator
-     *        The disseminator.
-     * @throws ServerException
-     *         If any type of error occurred fulfilling the request.
-     */
-    // public void addDisseminator(Disseminator disseminator)
-    // throws ServerException {
-    // assertNotInvalidated();
-    // assertNotPendingRemoval();
-    // m_obj.disseminators(disseminator.dissID).add(disseminator);
-    // }
-    /**
      * Removes a datastream from the object.
-     * 
+     *
      * @param id
      *        The id of the datastream.
      * @param start
@@ -270,7 +239,7 @@ public class SimpleDOWriter
                                    String object,
                                    boolean isLiteral,
                                    String datatype) throws ServerException {
-        String datastreamID = DefaultManagement.s_RelsExt_Datastream;
+        String datastreamID = "RELS-EXT";
         String subject = PID.toURI(m_obj.getPid());
         Triple toAdd =
                 createTriple(subject, relationship, object, isLiteral, datatype);
@@ -293,8 +262,8 @@ public class SimpleDOWriter
             DatastreamXMLMetadata newds = new DatastreamXMLMetadata();
             newds.DatastreamID = datastreamID;
             newds.DatastreamAltIDs = new String[0];
-            newds.DSFormatURI = null;
-            newds.DSMIME = "text/xml";
+            newds.DSFormatURI = RELS_EXT1_0.uri;
+            newds.DSMIME = "application/rdf+xml";
             newds.DSControlGrp = "X";
             newds.DSInfoType = null;
             newds.DSState = "A";
@@ -308,7 +277,9 @@ public class SimpleDOWriter
             newds.xmlContent = out.toByteArray();
             newds.DSSize = newds.xmlContent.length;
 
-            validateRelsExt(new ByteArrayInputStream(newds.xmlContent));
+            ValidationUtility.validateReservedDatastream(PID.getInstance(m_obj.getPid()),
+                                                         newds.DatastreamID,
+                                                         newds.getContentStream());
             addDatastream(newds, false);
         } else { // (relsExt != null)
             FilteredTripleIterator newIter = null;
@@ -328,21 +299,23 @@ public class SimpleDOWriter
                     newds.DatastreamID = relsExt.DatastreamID;
                     newds.DatastreamAltIDs = relsExt.DatastreamAltIDs;
                     newds.DSFormatURI = relsExt.DSFormatURI;
-                    newds.DSMIME = "text/xml";
+                    newds.DSMIME = relsExt.DSMIME;
                     newds.DSControlGrp = "X";
                     newds.DSInfoType = relsExt.DSInfoType;
                     newds.DSState = relsExt.DSState;
                     newds.DSVersionable = relsExt.DSVersionable;
                     newds.DSVersionID = newDatastreamID(datastreamID);
                     newds.DSLabel = relsExt.DSLabel;
-                    newds.DSCreateDT = new Date(); // rather than
-                    // Server.getCurrentDate(m_context);
+                    newds.DSCreateDT = Server.getCurrentDate(m_context);
                     newds.DSLocation = null;
                     newds.DSLocationType = null;
                     newds.DSChecksumType = relsExt.DSChecksumType;
-                    newds.xmlContent = xmlContent.getBytes(); // out.toByteArray();
+                    newds.xmlContent = xmlContent.getBytes();
                     newds.DSSize = newds.xmlContent.length;
-                    validateRelsExt(new ByteArrayInputStream(newds.xmlContent));
+
+                    ValidationUtility.validateReservedDatastream(PID.getInstance(m_obj.getPid()),
+                                                                 newds.DatastreamID,
+                                                                 newds.getContentStream());
                     addDatastream(newds, newds.DSVersionable);
                 } else {
                     // relationship already exists
@@ -367,7 +340,7 @@ public class SimpleDOWriter
                                      String object,
                                      boolean isLiteral,
                                      String datatype) throws ServerException {
-        String datastreamID = DefaultManagement.s_RelsExt_Datastream;
+        String datastreamID = "RELS-EXT";
         String subject = PID.toURI(m_obj.getPid());
         Triple toPurge =
                 createTriple(subject, relationship, object, isLiteral, datatype);
@@ -396,24 +369,24 @@ public class SimpleDOWriter
                     newds.DatastreamID = datastreamID;
                     newds.DatastreamAltIDs = relsExt.DatastreamAltIDs;
                     newds.DSFormatURI = relsExt.DSFormatURI;
-                    newds.DSMIME = "text/xml";
+                    newds.DSMIME = relsExt.DSMIME;
                     newds.DSControlGrp = "X";
                     newds.DSInfoType = relsExt.DSInfoType;
                     newds.DSState = relsExt.DSState;
                     newds.DSVersionable = relsExt.DSVersionable;
                     newds.DSVersionID = newDatastreamID(datastreamID);
                     newds.DSLabel = relsExt.DSLabel;
-                    newds.DSCreateDT = new Date(); // rather than
-                    // Server.getCurrentDate(m_context);
+                    newds.DSCreateDT = Server.getCurrentDate(m_context);
 
                     newds.DSLocation = null;
                     newds.DSLocationType = null;
                     newds.DSChecksumType = relsExt.DSChecksumType;
                     newds.xmlContent = out.toByteArray();
                     newds.DSSize = newds.xmlContent.length;
-                    RelsExtValidator
-                            .validate(PID.getInstance(m_obj.getPid()),
-                                      new ByteArrayInputStream(newds.xmlContent));
+
+                    ValidationUtility.validateReservedDatastream(PID.getInstance(m_obj.getPid()),
+                                                                 newds.DatastreamID,
+                                                                 newds.getContentStream());
                     addDatastream(newds, newds.DSVersionable);
                 } else {
                     // relationship does not exist
@@ -459,22 +432,9 @@ public class SimpleDOWriter
         }
     }
 
-    private void validateRelsExt(InputStream relsExt) throws ServerException {
-        try {
-            RelsExtValidator.validate(PID.getInstance(m_obj.getPid()), relsExt);
-            relsExt.close();
-        } catch (Exception e) {
-            String message = e.getMessage();
-            if (message == null) {
-                message = e.getClass().getName();
-            }
-            throw new GeneralException("Validate RELS-EXT failed: " + message);
-        }
-    }
-
     /**
      * Saves the changes thus far to the permanent copy of the digital object.
-     * 
+     *
      * @param logMessage
      *        An explanation of the change(s).
      * @throws ServerException
@@ -508,27 +468,6 @@ public class SimpleDOWriter
     public String newDatastreamID(String dsID) {
         return m_obj.newDatastreamID(dsID);
     }
-
-    // /**
-    // * Generate a unique id for a disseminator.
-    // */
-    // public String newDisseminatorID() {
-    // return m_obj.newDisseminatorID();
-    // }
-    //
-    // /**
-    // * Generate a unique id for a disseminator version.
-    // */
-    // public String newDisseminatorID(String dissID) {
-    // return m_obj.newDisseminatorID(dissID);
-    // }
-    //
-    // /**
-    // * Generate a unique id for a datastreamBindingMap.
-    // */
-    // public String newDatastreamBindingMapID() {
-    // return m_obj.newDatastreamBindingMapID();
-    // }
 
     /**
      * Generate a unique id for an audit record.

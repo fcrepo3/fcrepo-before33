@@ -184,14 +184,9 @@ public class PolicyEnforcementPoint {
 
         PolicyFinder policyFinder = new PolicyFinder();
 
-        LOG.debug("just constructed policy finder");
         Set<PolicyFinderModule> policyModules =
                 new HashSet<PolicyFinderModule>();
-        LOG.debug("just constructed policy module hashset");
         PolicyFinderModule combinedPolicyModule = null;
-        LOG
-                .debug("***before constucting fedora policy finder module, policySchemaPath = "
-                        + policySchemaPath);
         combinedPolicyModule =
                 new PolicyFinderModule(combiningAlgorithm,
                                        globalPolicyConfig,
@@ -200,7 +195,7 @@ public class PolicyEnforcementPoint {
                                        manager,
                                        validateRepositoryPolicies,
                                        validateObjectPoliciesFromDatastream,
-                                       policySchemaPath);
+                                       policyParser);
         LOG.debug("after constucting fedora policy finder module");
         LOG
                 .debug("before adding fedora policy finder module to policy finder hashset");
@@ -211,17 +206,7 @@ public class PolicyEnforcementPoint {
         policyFinder.setModules(policyModules);
         LOG.debug("o after setting policy finder hashset into policy finder");
 
-        PDP pdp = null;
-        LOG.debug(combinedPolicyModule.getLoadErrors() + " load errors");
-        if (combinedPolicyModule.getLoadErrors() == 0) {
-            LOG.debug("0 class errors");
-            pdp = new PDP(new PDPConfig(attrFinder, policyFinder, null));
-        }
-        if (pdp == null) {
-            LOG.debug("null pdp");
-            Exception se = new Exception("Xaclmpep.init() failed:  no pdp");
-            throw se;
-        }
+        PDP pdp = new PDP(new PDPConfig(attrFinder, policyFinder, null));
         synchronized (this) {
             this.pdp = pdp;
             //so enforce() will wait, if this pdp update is in progress
@@ -242,7 +227,7 @@ public class PolicyEnforcementPoint {
 
     boolean validateObjectPoliciesFromDatastream = false;
 
-    String policySchemaPath = null;
+    PolicyParser policyParser;
 
     String ownerIdSeparator = ",";
 
@@ -254,11 +239,11 @@ public class PolicyEnforcementPoint {
                         DOManager manager,
                         boolean validateRepositoryPolicies,
                         boolean validateObjectPoliciesFromDatastream,
-                        String policySchemaPath,
+                        PolicyParser policyParser,
                         String ownerIdSeparator) throws Exception {
         LOG.debug("in initPep()");
         destroy();
-
+        this.policyParser = policyParser;
         this.enforceMode = enforceMode;
         if (ENFORCE_MODE_ENFORCE_POLICIES.equals(enforceMode)) {
         } else if (ENFORCE_MODE_PERMIT_ALL_REQUESTS.equals(enforceMode)) {
@@ -274,11 +259,8 @@ public class PolicyEnforcementPoint {
         this.validateRepositoryPolicies = validateRepositoryPolicies;
         this.validateObjectPoliciesFromDatastream =
                 validateObjectPoliciesFromDatastream;
-        this.policySchemaPath = policySchemaPath;
         this.ownerIdSeparator = ownerIdSeparator;
-        LOG.debug("***in initPep(), before calling newPdp()");
         newPdp();
-        LOG.debug("***exiting initPep()");
     }
 
     public void inactivate() {

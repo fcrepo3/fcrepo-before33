@@ -5,11 +5,17 @@
 
 package fedora.server.utilities;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+
+import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import org.apache.log4j.Logger;
+
+import fedora.common.FaultException;
 
 /**
  * Utility methods for working with character-based or raw sequences of data.
@@ -126,6 +132,26 @@ public abstract class StreamUtility {
             } catch (IOException e) {
                 LOG.warn("Unable to close stream", e);
             }
+        }
+    }
+
+    /**
+     * Gets a byte array for the given input stream.
+     */
+    public static byte[] getBytes(InputStream in) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        pipeStream(in, out, 4096);
+        return out.toByteArray();
+    }
+
+    /**
+     * Gets a stream for the given string.
+     */
+    public static InputStream getStream(String string) {
+        try {
+            return new ByteArrayInputStream(string.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException wontHappen) {
+            throw new FaultException(wontHappen);
         }
     }
 

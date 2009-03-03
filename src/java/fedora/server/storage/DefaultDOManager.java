@@ -75,7 +75,7 @@ import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.validation.DOValidator;
 import fedora.server.validation.DOValidatorImpl;
-import fedora.server.validation.RelsExtValidator;
+import fedora.server.validation.ValidationUtility;
 
 /**
  * Manages the reading and writing of digital objects by instantiating an
@@ -279,9 +279,8 @@ public class DefaultDOManager
     @Override
     public void postInitModule() throws ModuleInitializationException {
         // get ref to management module
-        m_management =
-                (Management) getServer()
-                        .getModule("fedora.server.management.Management");
+        m_management = (Management) getServer()
+                .getModule("fedora.server.management.Management");
         if (m_management == null) {
             throw new ModuleInitializationException("Management module not loaded.",
                                                     getRole());
@@ -806,8 +805,7 @@ public class DefaultDOManager
                                      DOTranslationUtility.DESERIALIZE_INSTANCE);
 
                 // SET OBJECT PROPERTIES:
-                LOG
-                        .debug("Setting object/component states and create dates if unset");
+                LOG.debug("Setting object/component states and create dates if unset");
                 // set object state to "A" (Active) if not already set
                 if (obj.getState() == null || obj.getState().equals("")) {
                     obj.setState("A");
@@ -933,19 +931,8 @@ public class DefaultDOManager
                 // DEFAULT DATASTREAMS:
                 populateDC(obj, w, nowUTC);
 
-                // RELS-EXT VALIDATION
-                DatastreamXMLMetadata relsext =
-                        (DatastreamXMLMetadata) w.GetDatastream("RELS-EXT",
-                        null);
-                if (relsext != null) {
-                    RelsExtValidator deser = new RelsExtValidator("UTF-8",
-                                                                  false);
-                    InputStream in2 =
-                            new ByteArrayInputStream(relsext.xmlContent);
-                    LOG.debug("Validating RELS-EXT datastream");
-                    deser.deserialize(in2, "info:fedora/" + obj.getPid());
-                    LOG.debug("RELS-EXT datastream passed validation");
-                }
+                // DATASTREAM VALIDATION
+                ValidationUtility.validateReservedDatastreams(w);
 
                 // REGISTRY:
                 // at this point the object is valid, so make a record
@@ -1184,8 +1171,7 @@ public class DefaultDOManager
                                 if (dmc.DSLocation.startsWith(DatastreamManagedContent.UPLOADED_SCHEME)) {
                                     mimeTypedStream =
                                             new MIMETypedStream(null,
-                                                                m_management
-                                                                        .getTempStream(dmc.DSLocation),
+                                                                m_management.getTempStream(dmc.DSLocation),
                                                                 null);
                                     LOG
                                             .info("Getting managed datastream from internal uploaded "

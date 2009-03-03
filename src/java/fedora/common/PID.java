@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -10,12 +10,12 @@ import java.io.InputStreamReader;
 
 /**
  * A persistent identifier for Fedora digital objects.
- * 
+ *
  * <p>The following describes the syntactic constraints for PIDs in normalized
  * form. The only differences with non-normalized PIDs are that the colon
  * delimiter may be encoded as "%3a" or "%3A", and hex-digits may use lowercase
  * [a-f].
- * 
+ *
  * <pre>
  * PID:
  *   Length : maximum 64
@@ -33,7 +33,7 @@ import java.io.InputStreamReader;
  * hex-digit:
  *   Syntax : [0-9] / [A-F]
  * </pre>
- * 
+ *
  * @author Chris Wilper
  */
 public class PID {
@@ -75,7 +75,7 @@ public class PID {
         try {
             return new PID(pidString);
         } catch (MalformedPIDException e) {
-            throw new RuntimeException("Malformed PID: " + e.getMessage(), e);
+            throw new FaultException("Malformed PID: " + e.getMessage(), e);
         }
     }
 
@@ -243,7 +243,7 @@ public class PID {
     public String getObjectId() {
         return m_objectId;
     }
-   
+
     /**
      * {@inheritDoc}
      */
@@ -251,7 +251,7 @@ public class PID {
     public boolean equals(Object o) {
         return o instanceof PID && m_normalized.equals(((PID) o).toString());
     }
-    
+
     /**
      * {@inheritDoc}
      */

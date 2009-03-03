@@ -7,6 +7,7 @@ import java.util.Map;
 
 import fedora.common.Constants;
 import fedora.common.Models;
+
 import fedora.server.Context;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectNotFoundException;
@@ -17,7 +18,7 @@ import fedora.server.storage.types.DigitalObject;
  * Mock implementation of <code>RepositoryReader</code> for testing. This
  * works by simply keeping a map of <code>DigitalObject</code> instances in
  * memory.
- * 
+ *
  * @author Chris Wilper
  */
 public class MockRepositoryReader
@@ -47,18 +48,18 @@ public class MockRepositoryReader
      * didn't exist in the first place).
      */
     public synchronized DigitalObject deleteObject(String pid) {
-        return (DigitalObject) _objects.remove(pid);
+        return _objects.remove(pid);
     }
 
     /**
      * Get a <code>DigitalObject</code> if it's in the "repository".
-     * 
+     *
      * @throws ObjectNotFoundException
      *         if it's not in the "repository".
      */
     public synchronized DigitalObject getObject(String pid)
             throws ObjectNotFoundException {
-        DigitalObject obj = (DigitalObject) _objects.get(pid);
+        DigitalObject obj = _objects.get(pid);
         if (obj == null) {
             throw new ObjectNotFoundException("No such object: " + pid);
         } else {
@@ -75,12 +76,7 @@ public class MockRepositoryReader
                                            Context context,
                                            String pid) throws ServerException {
         DigitalObject obj = getObject(pid);
-        if (!obj.hasRelationship(Constants.MODEL.HAS_MODEL,
-                                 Models.FEDORA_OBJECT_3_0)) {
-            throw new GeneralException("Not a data object: " + pid);
-        } else {
-            return new SimpleDOReader(null, this, null, null, null, obj);
-        }
+        return new SimpleDOReader(null, this, null, null, null, obj);
     }
 
     /**
