@@ -51,9 +51,10 @@ public class TestCommandLineUtilities
         String out = sbOut.toString();
         String err = sbErr.toString();
         if (out.indexOf("Ingested PID: demo:5") == -1) {
-            System.err.println("Saw message: " + out);
+            System.err.println("Command-line ingest failed: STDOUT='" + out
+                               + "', STDERR='" + err + "'");
         }
-        assertEquals(out.indexOf("Ingested PID: demo:5") != -1, true);
+        assertEquals(true, out.indexOf("Ingested PID: demo:5") != -1);
         System.out.println("Purge and ingest test succeeded");
     }
 
@@ -333,6 +334,7 @@ public class TestCommandLineUtilities
         }
     }
 
+    @Override
     public void setUp() throws Exception {
         sbOut = new ByteArrayOutputStream();
         sbErr = new ByteArrayOutputStream();

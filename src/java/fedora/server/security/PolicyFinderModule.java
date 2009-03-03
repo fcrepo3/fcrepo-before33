@@ -167,16 +167,14 @@ public class PolicyFinderModule
                                                      pid);
             Datastream ds = reader.GetDatastream("POLICY", null);
             if (ds != null) {
-                LOG.info("Got POLICY for " + pid);
+                LOG.debug("Using POLICY for " + pid);
                 return m_policyParser
                         .copy().parse(ds.getContentStream(),
                                       m_validateObjectPoliciesFromDatastream);
             } else {
-                LOG.info("No POLICY for " + pid);
                 return null;
             }
         } catch (ObjectNotInLowlevelStorageException e) {
-            LOG.info("No such object " + pid);
             return null;
         }
     }
