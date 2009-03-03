@@ -27,7 +27,7 @@ _ED=$CATALINA_HOME/webapps/fedora/WEB-INF/lib:$CATALINA_HOME/common/endorsed:$CA
     -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
     -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
     -Dcom.sun.xacml.PolicySchema="$FEDORA_HOME/server/xsd/cs-xacml-schema-policy-01.xsd" \
-    fedora.server.security.ValidatePolicy "$1")
+    fedora.server.security.PolicyParser "$1")
 
 if [ $? -eq 0 ]; then
     echo "Validation successful"

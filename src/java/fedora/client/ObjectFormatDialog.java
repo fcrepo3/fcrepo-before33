@@ -61,7 +61,6 @@ public class ObjectFormatDialog
         super(JOptionPane.getFrameForComponent(Administrator.getDesktop()),
               title,
               true);
-        setSize(350, 350);
         setModal(true);
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -159,7 +158,7 @@ public class ObjectFormatDialog
         contentPane.add(inputPane, BorderLayout.CENTER);
         contentPane.add(buttonPane, BorderLayout.SOUTH);
 
-        //pack();
+        pack();
         setLocation(Administrator.INSTANCE.getCenteredPos(getWidth(),
                                                           getHeight()));
         setVisible(true);

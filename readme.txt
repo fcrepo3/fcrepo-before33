@@ -1,5 +1,5 @@
 -------------------------------------------------------------------
-             Fedora Release 3.1 - October 24, 2008
+             Fedora Release 3.2 - Spring 2009
 -------------------------------------------------------------------
 This is a full source code release of Fedora.  Before using this
 software, you must read and agree to the license, found under
@@ -46,31 +46,23 @@ Running System Tests
 ====================
 The system tests consist of functional "black box" tests to be
 executed against a running Fedora server.  These tests are divided
-into several top-level suites, where each suite is intended to
-be run with the Fedora server configured in a specific way:
+into top-level suites, where each suite is intended to be run with
+the Fedora server configured in a specific way.
 
   [fedora.test.AllSystemTestsConfigA]
     When running this suite, the server should be configured
-    with API-A authentication turned OFF.  This suite has no
-    dependencies on external hosts and can therefore be run
-    without external internet access.
+    with API-A authentication turned OFF.
 
   [fedora.test.AllSystemTestsConfigB]
     When running this suite, the server should be configured
     with API-A authentication turned ON, with the
-    Resource Index, REST api, and Messaging modules enabled.  
-    This suite can also be run without external internet access.
+    Resource Index, REST api, and Messaging modules enabled.
+    
+These tests do not depend on external hosts and can therefore be
+run without external network access.
 
-  [fedora.test.AllSystemTestsConfigC]
-    When running this suite, the server should be installed
-    on a host with external internet access and should also
-    be network-reachable from outside your firewall, if any.
-    Be sure to provide your specific hostname (and not just 
-    "localhost") at install time.
-
-To run any of these tests, make sure the server has been 
-started[*] and that $FEDORA_HOME points to the correct directory.
-Then enter:
+To execute a test suite, make sure the server has been started[*] and 
+that $FEDORA_HOME points to the correct directory. Then enter:
 
   ant junit -Dtest=fedora.test.AllSystemTestsConfigB
 

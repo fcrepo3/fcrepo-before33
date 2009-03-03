@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -8,7 +8,7 @@ package fedora.server.journal.helpers;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.oreilly.servlet.Base64Encoder;
+import fedora.utilities.Base64;
 
 /**
  * Wraps an InputStream with a Base64 encoder, so when you "read" from the
@@ -17,7 +17,7 @@ import com.oreilly.servlet.Base64Encoder;
  * <p>
  * Base64 encoding is defined in Internet RFC 3548, found at
  * http://tools.ietf.org/html/rfc3548 (among other places).
- * 
+ *
  * @author Jim Blake
  */
 public class EncodingBase64InputStream {
@@ -66,7 +66,7 @@ public class EncodingBase64InputStream {
      * and by the limitation of maxStringLength on the size of the resulting
      * encoded String. Since the smallest unit of encoded data is 4 characters,
      * maxStringLength must not be less than 4.
-     * 
+     *
      * @param maxStringLength
      *        the resulting String will be no longer than this.
      * @return a String that is no longer than maxStringLength, or null if no
@@ -105,7 +105,7 @@ public class EncodingBase64InputStream {
 
     /**
      * Close the InputStream, and prevent any further reads.
-     * 
+     *
      * @throws IOException
      *         from the inner InputStream
      */
@@ -116,7 +116,7 @@ public class EncodingBase64InputStream {
 
     /**
      * Fill the buffer with more data from the InputStream, if there is any.
-     * 
+     *
      * @throws IOException
      *         from the inner InputStream
      */
@@ -144,7 +144,7 @@ public class EncodingBase64InputStream {
      * Encode a group of bytes and remove them from the buffer. If the input
      * stream has more data, we need to limit the encoding to a multiple of 3,
      * to avoid prematurely padding the result with equals signs.
-     * 
+     *
      * @param howMany
      *        how many bytes should be encoded and remove from the buffer.
      * @return the Base64-encoded characters.
@@ -162,7 +162,7 @@ public class EncodingBase64InputStream {
 
         byte[] encodeBuffer = new byte[howMany];
         System.arraycopy(buffer, 0, encodeBuffer, 0, howMany);
-        result = Base64Encoder.encode(encodeBuffer);
+        result = Base64.encodeToString(encodeBuffer);
 
         bytesInBuffer -= howMany;
         if (bytesInBuffer != 0) {

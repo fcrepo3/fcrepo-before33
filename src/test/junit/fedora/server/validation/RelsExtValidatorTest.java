@@ -16,13 +16,13 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashSet;
 
-import junit.framework.TestCase;
-
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.Triple;
 
 import org.trippi.RDFFormat;
 import org.trippi.TripleIterator;
+
+import junit.framework.TestCase;
 
 import fedora.common.Constants;
 import fedora.common.PID;
@@ -36,7 +36,7 @@ import fedora.server.errors.ValidationException;
 
 /**
  * Tests the RELS-EXT datastream deserializer and validation.
- * 
+ *
  * @author Edwin Shin
  */
 public class RelsExtValidatorTest
@@ -69,26 +69,25 @@ public class RelsExtValidatorTest
         triples = new HashSet<Triple>();
     }
 
-    public void testConstructor() throws Exception {
+    public void testValidateValid() throws Exception {
         pid = PID.getInstance("demo:888");
         InputStream in = new ByteArrayInputStream(RELS_EXT);
-        RelsExtValidator deser;
-
-        deser = new RelsExtValidator("UTF-8", false);
-        deser.deserialize(in, pid.toURI());
+        RelsExtValidator validator = new RelsExtValidator();
+        validator.validate(pid, in);
     }
-    
+
     public void testEmpty() throws Exception {
         pid = PID.getInstance("demo:demo");
         InputStream in;
         String[] empties = {"", " ", "</>"};
-        
+
         for (String s : empties) {
             in = new ByteArrayInputStream(s.getBytes());
-            
+
             try {
-                RelsExtValidator.validate(pid, in);
-                fail("Empty RELS-EXT datastream not allowed: \"" + s + "\"");
+                new RelsExtValidator().validate(pid, in);
+                fail("Empty RELS-EXT datastream incorrectly passed"
+                     + " validation: \"" + s + "\"");
             } catch (ValidationException e) {}
         }
     }
@@ -271,13 +270,12 @@ public class RelsExtValidatorTest
             TripleIterator iter = new MockTripleIterator(triples);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             iter.toStream(out, RDFFormat.RDF_XML, false);
-            RelsExtValidator.validate(pid, new ByteArrayInputStream(out
-                    .toByteArray()));
+            new RelsExtValidator().validate(pid, new ByteArrayInputStream(out.toByteArray()));
         } finally {
             triples.clear();
         }
     }
-    
+
     private static Triple createTriple(PID pid,
                                        String predicate,
                                        String object,

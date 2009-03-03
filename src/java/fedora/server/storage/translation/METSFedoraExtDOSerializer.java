@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+
 import java.util.Date;
 import java.util.Iterator;
 
@@ -16,6 +17,7 @@ import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
 import fedora.common.xml.format.XMLFormat;
+
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.storage.types.DSBinding;
@@ -27,12 +29,14 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.utilities.StringUtility;
 
+import fedora.utilities.Base64;
+
 import static fedora.common.Models.SERVICE_DEPLOYMENT_3_0;
 
 /**
  * Serializes objects in the constructor-provider version of the METS Fedora
  * Extension format.
- * 
+ *
  * @author Sandy Payette
  * @author Chris Wilper
  */
@@ -66,7 +70,7 @@ public class METSFedoraExtDOSerializer
 
     /**
      * Creates a serializer that writes the given METS Fedora Extension format.
-     * 
+     *
      * @param format
      *        the version-specific METS Fedora Extension format.
      * @throws IllegalArgumentException
@@ -274,7 +278,7 @@ public class METSFedoraExtDOSerializer
             UnsupportedEncodingException, StreamIOException {
         DatastreamXMLMetadata first =
                 (DatastreamXMLMetadata) DOTranslationUtility
-                        .setDatastreamDefaults((DatastreamXMLMetadata) XMLMetadata
+                        .setDatastreamDefaults(XMLMetadata
                                 .iterator().next());
         writer.print("<");
         writer.print(METS.prefix);
@@ -290,8 +294,8 @@ public class METSFedoraExtDOSerializer
         for (Datastream d : XMLMetadata) {
             DatastreamXMLMetadata ds =
                     (DatastreamXMLMetadata) DOTranslationUtility
-                            .setDatastreamDefaults((DatastreamXMLMetadata) d);
-            
+                            .setDatastreamDefaults(d);
+
             writer.print("<");
             writer.print(METS.prefix);
             writer.print(":");
@@ -305,10 +309,10 @@ public class METSFedoraExtDOSerializer
                 writer.print("\"");
             }
             writer.print(">\n");
-            
-            
-            
-            
+
+
+
+
             writer.print("<");
             writer.print(METS.prefix);
             writer.print(":mdWrap MIMETYPE=\"");
@@ -326,30 +330,30 @@ public class METSFedoraExtDOSerializer
                 writer.print(mdType);
             }
             writer.print("\" ");
-            
+
             if (ds.DSLabel != null && !ds.DSLabel.equals("")) {
                 writer.print(" LABEL=\"");
                 writer.print(StreamUtility.enc(ds.DSLabel));
                 writer.print("\"");
             }
-            
+
             if (ds.DSFormatURI != null && !ds.DSFormatURI.equals("")) {
                 writer.print(" FORMAT_URI=\"");
                 writer.print(StreamUtility.enc(ds.DSFormatURI));
                 writer.print("\"");
             }
-            
+
             String altIds = DOTranslationUtility.oneString(ds.DatastreamAltIDs);
             if (altIds != null && !altIds.equals("")) {
                 writer.print(" ALT_IDS=\"");
                 writer.print(StreamUtility.enc(altIds));
                 writer.print("\"");
             }
-            
+
             // CHECKSUM and CHECKSUMTYPE are also optional
             String csType = ds.DSChecksumType;
             if (csType != null
-                    && csType.length() > 0 
+                    && csType.length() > 0
                     && !csType.equals(Datastream.CHECKSUMTYPE_DISABLED)) {
                 writer.print(" CHECKSUM=\"");
                 writer.print(StreamUtility.enc(ds.DSChecksum));
@@ -357,14 +361,14 @@ public class METSFedoraExtDOSerializer
                 writer.print(StreamUtility.enc(csType));
                 writer.print("\"");
             }
-            
+
             writer.print(">\n");
             writer.print("<");
             writer.print(METS.prefix);
             writer.print(":xmlData>\n");
 
-            // If WSDL or SERVICE-PROFILE datastream (in BMech) 
-            // make sure that any embedded URLs are encoded 
+            // If WSDL or SERVICE-PROFILE datastream (in BMech)
+            // make sure that any embedded URLs are encoded
             // appropriately for either EXPORT or STORE.
             if (obj.hasRelationship(MODEL.HAS_MODEL, SERVICE_DEPLOYMENT_3_0)
                     && ds.DatastreamID.equals("SERVICE-PROFILE")
@@ -396,7 +400,7 @@ public class METSFedoraExtDOSerializer
         writer.print(">\n");
     }
 
-    private void appendAuditRecordAdminMD(DigitalObject obj, PrintWriter writer) 
+    private void appendAuditRecordAdminMD(DigitalObject obj, PrintWriter writer)
             throws ObjectIntegrityException {
         if (obj.getAuditRecords().size() > 0) {
             writer.print("<");
@@ -443,7 +447,7 @@ public class METSFedoraExtDOSerializer
         while (iter.hasNext()) {
             String id = iter.next();
             Datastream firstDS =
-                    (Datastream) obj.datastreams(id).iterator().next();
+                    obj.datastreams(id).iterator().next();
             // First, work with the first version to get the mdClass set to
             // a proper value required in the METS XML Schema.
             if (firstDS.DSControlGrp.equals("X")
@@ -478,7 +482,7 @@ public class METSFedoraExtDOSerializer
         boolean didFileSec = false;
         while (iter.hasNext()) {
             Datastream ds =
-                    DOTranslationUtility.setDatastreamDefaults((Datastream) obj
+                    DOTranslationUtility.setDatastreamDefaults(obj
                             .datastreams(iter.next()).iterator().next());
             if (!ds.DSControlGrp.equals("X")) {
                 if (!didFileSec) {
@@ -505,8 +509,8 @@ public class METSFedoraExtDOSerializer
                     Datastream dsc =
                             DOTranslationUtility
                                     .setDatastreamDefaults(contentIter.next());
-                    
-                    
+
+
                     writer.print("<");
                     writer.print(METS.prefix);
                     writer.print(":file ID=\"");
@@ -537,7 +541,7 @@ public class METSFedoraExtDOSerializer
                         writer.print("\"");
                     }
                     String csType = ds.DSChecksumType;
-                    if (csType != null 
+                    if (csType != null
                             && csType.length() > 0
                             && !csType.equals(Datastream.CHECKSUMTYPE_DISABLED)) {
                         writer.print(" CHECKSUM=\"");
@@ -555,12 +559,10 @@ public class METSFedoraExtDOSerializer
                         writer.print("<");
                         writer.print(METS.prefix);
                         writer.print(":FContent> \n");
-                        writer.print(
-                                StringUtility.splitAndIndent(
-                                        StreamUtility.encodeBase64(
-                                                dsc.getContentStream()),
-                                14,
-                                80));
+                        String encoded = Base64.encodeToString(dsc.getContentStream());
+                        writer.print(StringUtility.splitAndIndent(encoded,
+                                                                  14,
+                                                                  80));
                         writer.print("</");
                         writer.print(METS.prefix);
                         writer.print(":FContent>\n");
@@ -694,7 +696,7 @@ public class METSFedoraExtDOSerializer
             for (int i = 0; i < obj.disseminators(did).size(); i++) {
                 diss =
                         DOTranslationUtility
-                                .setDisseminatorDefaults((Disseminator) obj
+                                .setDisseminatorDefaults(obj
                                         .disseminators(did).get(i));
                 writer.print("<");
                 writer.print(METS.prefix);

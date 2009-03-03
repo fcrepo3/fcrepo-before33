@@ -20,7 +20,7 @@
                      <h3>No such object, datastream, or dissemination.</h3>
                   </center>
 <%
-if (exception.getMessage() != null) {
+if (exception != null && exception.getMessage() != null) {
     out.print(exception.getMessage());
 }
 %>

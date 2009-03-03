@@ -75,7 +75,7 @@ import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.validation.DOValidator;
 import fedora.server.validation.DOValidatorImpl;
-import fedora.server.validation.RelsExtValidator;
+import fedora.server.validation.ValidationUtility;
 
 /**
  * Manages the reading and writing of digital objects by instantiating an
@@ -131,23 +131,6 @@ public class DefaultDOManager
 
     private ModelDeploymentMap m_cModelDeploymentMap;
 
-    private static long THIRD_HEAPSIZE;
-
-    /** Whether to request a full gc on each commit. */
-    private static boolean GC_ON_COMMIT;
-
-    static {
-        GC_ON_COMMIT = false;
-        try {
-            if (System.getProperty("fedora.GCOnCommit").toLowerCase()
-                    .equals("true")) {
-                GC_ON_COMMIT = true;
-            }
-        } catch (Throwable th) {
-        }
-        THIRD_HEAPSIZE = Runtime.getRuntime().totalMemory() / 3;
-    }
-
     /**
      * Creates a new DefaultDOManager.
      */
@@ -160,6 +143,7 @@ public class DefaultDOManager
     /**
      * Gets initial param values.
      */
+    @Override
     public void initModule() throws ModuleInitializationException {
         // pidNamespace (required, 1-17 chars, a-z, A-Z, 0-9 '-' '.')
         m_pidNamespace = getParameter("pidNamespace");
@@ -286,17 +270,17 @@ public class DefaultDOManager
                     m_retainPIDs.add(element);
                 }
             }
-            
+
             // fedora-system PIDs must be ingestable as-is
             m_retainPIDs.add("fedora-system");
         }
     }
 
+    @Override
     public void postInitModule() throws ModuleInitializationException {
         // get ref to management module
-        m_management =
-                (Management) getServer()
-                        .getModule("fedora.server.management.Management");
+        m_management = (Management) getServer()
+                .getModule("fedora.server.management.Management");
         if (m_management == null) {
             throw new ModuleInitializationException("Management module not loaded.",
                                                     getRole());
@@ -556,6 +540,7 @@ public class DefaultDOManager
 
     }
 
+    @Override
     public void shutdownModule() {
         if (m_readerCache != null) {
             m_readerCache.close();
@@ -615,6 +600,7 @@ public class DefaultDOManager
         return m_validator;
     }
 
+    @Override
     public String[] getRequiredModuleRoles() {
         return new String[] {"fedora.server.management.PIDGenerator",
                 "fedora.server.search.FieldSearch",
@@ -819,8 +805,7 @@ public class DefaultDOManager
                                      DOTranslationUtility.DESERIALIZE_INSTANCE);
 
                 // SET OBJECT PROPERTIES:
-                LOG
-                        .debug("Setting object/component states and create dates if unset");
+                LOG.debug("Setting object/component states and create dates if unset");
                 // set object state to "A" (Active) if not already set
                 if (obj.getState() == null || obj.getState().equals("")) {
                     obj.setState("A");
@@ -946,19 +931,8 @@ public class DefaultDOManager
                 // DEFAULT DATASTREAMS:
                 populateDC(obj, w, nowUTC);
 
-                // RELS-EXT VALIDATION
-                DatastreamXMLMetadata relsext =
-                        (DatastreamXMLMetadata) w.GetDatastream("RELS-EXT",
-                        null);
-                if (relsext != null) {
-                    RelsExtValidator deser = new RelsExtValidator("UTF-8",
-                                                                  false);
-                    InputStream in2 =
-                            new ByteArrayInputStream(relsext.xmlContent);
-                    LOG.debug("Validating RELS-EXT datastream");
-                    deser.deserialize(in2, "info:fedora/" + obj.getPid());
-                    LOG.debug("RELS-EXT datastream passed validation");
-                }
+                // DATASTREAM VALIDATION
+                ValidationUtility.validateReservedDatastreams(w);
 
                 // REGISTRY:
                 // at this point the object is valid, so make a record
@@ -1068,15 +1042,6 @@ public class DefaultDOManager
                          DigitalObject obj,
                          String logMessage,
                          boolean remove) throws ServerException {
-        // Request a full gc if gcOnCommit is true OR free heap is below 1/3 of total
-        if (GC_ON_COMMIT || Runtime.getRuntime().freeMemory() < THIRD_HEAPSIZE) {
-            LOG.debug("Requesting full GC.  Free bytes = "
-                    + Runtime.getRuntime().freeMemory());
-            System.gc();
-            LOG.debug("Done requesting full GC.  Free bytes = "
-                    + Runtime.getRuntime().freeMemory());
-        }
-
         // OBJECT REMOVAL...
         if (remove) {
 
@@ -1192,8 +1157,8 @@ public class DefaultDOManager
                 while (dsIDIter.hasNext()) {
                     String dsID = dsIDIter.next();
                     Datastream dStream =
-                            (Datastream) obj.datastreams(dsID).iterator()
-                                    .next();
+                            obj.datastreams(dsID).iterator()
+                            .next();
                     String controlGroupType = dStream.DSControlGrp;
                     if (controlGroupType.equalsIgnoreCase("M"))
                     // if it's managed, we might need to grab content
@@ -1206,8 +1171,7 @@ public class DefaultDOManager
                                 if (dmc.DSLocation.startsWith(DatastreamManagedContent.UPLOADED_SCHEME)) {
                                     mimeTypedStream =
                                             new MIMETypedStream(null,
-                                                                m_management
-                                                                        .getTempStream(dmc.DSLocation),
+                                                                m_management.getTempStream(dmc.DSLocation),
                                                                 null);
                                     LOG
                                             .info("Getting managed datastream from internal uploaded "
@@ -1858,7 +1822,7 @@ public class DefaultDOManager
             Iterator<String> pidIter = pidList.iterator();
             int i = 0;
             while (pidIter.hasNext()) {
-                ret[i++] = (String) pidIter.next();
+                ret[i++] = pidIter.next();
             }
             return ret;
         } catch (SQLException sqle) {
@@ -2026,7 +1990,7 @@ public class DefaultDOManager
 
     private class ModelDeploymentMap {
 
-        private Map<ServiceContext, Map<String, Long>> map =
+        private final Map<ServiceContext, Map<String, Long>> map =
                 new ConcurrentHashMap<ServiceContext, Map<String, Long>>();
 
         public String putDeployment(ServiceContext cxt,
@@ -2120,10 +2084,12 @@ public class DefaultDOManager
             return new ServiceContext(cModel, sDef);
         }
 
+        @Override
         public String toString() {
             return _val;
         }
 
+        @Override
         public boolean equals(Object o) {
             if (o == null) return false;
 
@@ -2131,6 +2097,7 @@ public class DefaultDOManager
             return _val.equals(((ServiceContext) o)._val);
         }
 
+        @Override
         public int hashCode() {
             return _val.hashCode();
         }

@@ -40,7 +40,7 @@ public class TestManagementNotifications
     private TextMessage currentMessage;
     private int messageCount = 0; // The number of messages that have been received
     private int messageNumber = 0; // The number of the next message to be processed
-    private int messageTimeout = 5000; // Maximum number of milliseconds to wait for a message
+    private final int messageTimeout = 5000; // Maximum number of milliseconds to wait for a message
     private Connection jmsConnection;
     private Session jmsSession;
     private Destination destination;
@@ -92,6 +92,7 @@ public class TestManagementNotifications
         return new DemoObjectTestSetup(suite);
     }
 
+    @Override
     public void setUp() throws Exception {
         apim = getFedoraClient().getAPIM();
 
@@ -116,6 +117,7 @@ public class TestManagementNotifications
         jmsConnection.start();
     }
 
+    @Override
     public void tearDown() throws Exception {
         jmsConnection.stop();
         jmsSession.close();
@@ -223,7 +225,7 @@ public class TestManagementNotifications
                                        true,
                                        "text/xml",
                                        "info:myFormatURI/Mtype/stuff#junk",
-                                       "http://www.fedora-commons.org/junit/datastream1.xml",
+                                       getBaseURL() + "/get/fedora-system:ContentModel-3.0/DC",
                                        "M",
                                        "A",
                                        null,
@@ -244,7 +246,7 @@ public class TestManagementNotifications
                                        true,
                                        "text/xml",
                                        "info:myFormatURI/Mtype/stuff#junk",
-                                       "http://www.fedora-commons.org/junit/datastream2.xml",
+                                       getBaseURL() + "/get/fedora-system:ContentModel-3.0/DC",
                                        "X",
                                        "A",
                                        null,
@@ -266,7 +268,7 @@ public class TestManagementNotifications
                                                  "Modified Datastream by Reference",
                                                  "text/xml",
                                                  "info:newMyFormatURI/Mtype/stuff#junk",
-                                                 "http://www.fedora-commons.org/junit/datastream3.xml",
+                                                 getBaseURL() + "/get/fedora-system:ContentModel-3.0/DC",
                                                  null,
                                                  null,
                                                  "modified datastream",

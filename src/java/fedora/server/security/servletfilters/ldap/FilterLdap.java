@@ -240,7 +240,7 @@ public class FilterLdap
                  * true;
                  */
             } else {
-                log.error(m + "deferring to super");
+                log.debug(m + "deferring to super");
                 super.initThisSubclass(key, value);
             }
             if (setLocally) {

@@ -4,11 +4,12 @@ package fedora.server.resourceIndex;
 import org.junit.Test;
 
 import fedora.server.storage.types.DigitalObject;
+import fedora.server.storage.types.ObjectBuilder;
 
 /**
  * Tests adding and deleting objects from the RI, with respect to their
  * datastreams. Note: All tests run at RI level 1 unless otherwise noted.
- * 
+ *
  * @author Chris Wilper
  */
 public class ResourceIndexAddDelDSIntegrationTest
@@ -79,7 +80,7 @@ public class ResourceIndexAddDelDSIntegrationTest
     public void testAddDelObjRELSEXTDS() throws Exception {
         DigitalObject obj = getTestObject("test:1", "test");
         String rel = "<foo:bar rdf:resource=\"http://example.org/baz\"/>";
-        addXDatastream(obj, "RELS-EXT", getRELSEXT(rel));
+        addXDatastream(obj, "RELS-EXT", ObjectBuilder.getRELSEXT("test:1", rel));
         doAddDelTest(1, obj);
     }
 

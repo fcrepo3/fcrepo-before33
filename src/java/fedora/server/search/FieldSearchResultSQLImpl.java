@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -39,7 +39,7 @@ import fedora.server.utilities.MD5Utility;
  * A FieldSearchResultSQLImpl is intended to be re-used in cases where the
  * results of a query require more than one call to the server.
  * </p>
- * 
+ *
  * @author Chris Wilper
  */
 public class FieldSearchResultSQLImpl
@@ -94,7 +94,7 @@ public class FieldSearchResultSQLImpl
      * <p />
      * Once the ResultSet is obtained, one result is requested of it (and
      * remembered for use in step()); then the call returns.
-     * 
+     *
      * @param cPool
      *        the connectionPool
      * @param repoReader
@@ -380,7 +380,8 @@ public class FieldSearchResultSQLImpl
                 m_objectFields.add(getObjectFields(pid));
             }
             // done with this block.  now, are there any more results to return?
-            if (resultCount > 0 && !m_resultSet.isAfterLast()) {
+            boolean exhausted = resultCount < m_maxResults;
+            if (!exhausted) {
                 // yes, so generate a token, make sure the cursor is set,
                 // and make sure the expirationDate is set
                 long now = System.currentTimeMillis();
@@ -440,7 +441,7 @@ public class FieldSearchResultSQLImpl
     /**
      * For the given pid, get a reader on the object from the repository and
      * return an ObjectFields object with resultFields fields populated.
-     * 
+     *
      * @param pid
      *        the unique identifier of the object for which the information is
      *        requested.
@@ -541,7 +542,7 @@ public class FieldSearchResultSQLImpl
      * If the string has any characters that need to be escaped, it will begin
      * with a space, indicating to the caller that the entire WHERE clause
      * should end with " {escape '/'}".
-     * 
+     *
      * @param name
      *        the name of the field in the database
      * @param in
@@ -551,7 +552,7 @@ public class FieldSearchResultSQLImpl
      */
     private static String toSql(String name, String in) {
         if (!name.endsWith("pid")) {
-            in = in.toLowerCase(); // if it's not a PID-type field, 
+            in = in.toLowerCase(); // if it's not a PID-type field,
         }
         // it's case insensitive
         if (name.startsWith("dc") || name.startsWith("doFields.dc")) {
@@ -684,7 +685,7 @@ public class FieldSearchResultSQLImpl
     /**
      * Tell whether a field name, as given in the search request, is a dublin
      * core field.
-     * 
+     *
      * @param the
      *        field
      * @return whether it's a dublin core field

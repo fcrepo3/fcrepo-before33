@@ -9,13 +9,14 @@ import org.jrdf.graph.Triple;
 import org.junit.Test;
 
 import fedora.server.storage.types.DigitalObject;
+import fedora.server.storage.types.ObjectBuilder;
 
 import static org.junit.Assert.assertTrue;
 
 /**
  * Miscellaneous tests of modifying existing objects in the RI. Note: All tests
  * run at RI level 1 unless otherwise noted.
- * 
+ *
  * @author Chris Wilper
  */
 public class ResourceIndexModMiscIntegrationTest
@@ -35,7 +36,7 @@ public class ResourceIndexModMiscIntegrationTest
 
         // mod at level 0
         DigitalObject original = (DigitalObject) objects.toArray()[0];
-        DigitalObject modified = deepCopy(original);
+        DigitalObject modified = ObjectBuilder.deepCopy(original);
         modified.setLabel("new label");
         initRI(0);
         modify(original, modified, true);
@@ -51,7 +52,7 @@ public class ResourceIndexModMiscIntegrationTest
     public void testModObjOnceLabel() throws Exception {
         DigitalObject original = getTestObject("test:1", "test1");
 
-        DigitalObject modified = deepCopy(original);
+        DigitalObject modified = ObjectBuilder.deepCopy(original);
         modified.setLabel("new label");
 
         doModifyTest(1, original, modified);
@@ -72,7 +73,7 @@ public class ResourceIndexModMiscIntegrationTest
 
         // modify the label multiple times
         for (int i = 1; i <= 5; i++) {
-            DigitalObject modified = deepCopy(previous);
+            DigitalObject modified = ObjectBuilder.deepCopy(previous);
             modified.setLabel("new label " + i);
             doModifyTest(-1, previous, modified);
             previous = modified;
@@ -102,7 +103,7 @@ public class ResourceIndexModMiscIntegrationTest
         startFlushing(0);
         try {
             for (int i = 0; i <= 5; i++) {
-                DigitalObject modified = deepCopy(previous);
+                DigitalObject modified = ObjectBuilder.deepCopy(previous);
                 modified.setLabel("new label " + i);
                 modify(previous, modified, false);
                 previous = modified;

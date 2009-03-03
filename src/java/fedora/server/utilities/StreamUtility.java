@@ -1,22 +1,24 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
 package fedora.server.utilities;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import org.apache.axis.encoding.Base64;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.log4j.Logger;
 
+import fedora.common.FaultException;
+
 /**
  * Utility methods for working with character-based or raw sequences of data.
- * 
+ *
  * @author Chris Wilper
  */
 public abstract class StreamUtility {
@@ -27,7 +29,7 @@ public abstract class StreamUtility {
 
     /**
      * Returns an XML-appropriate encoding of the given String.
-     * 
+     *
      * @param in
      *        The String to encode.
      * @return A new, encoded String.
@@ -45,7 +47,7 @@ public abstract class StreamUtility {
     /**
      * Appends an XML-appropriate encoding of the given String to the given
      * StringBuffer.
-     * 
+     *
      * @param in
      *        The String to encode.
      * @param out
@@ -60,7 +62,7 @@ public abstract class StreamUtility {
     /**
      * Appends an XML-appropriate encoding of the given range of characters to
      * the given StringBuffer.
-     * 
+     *
      * @param in
      *        The char buffer to read from.
      * @param start
@@ -79,7 +81,7 @@ public abstract class StreamUtility {
     /**
      * Appends an XML-appropriate encoding of the given character to the given
      * StringBuffer.
-     * 
+     *
      * @param in
      *        The character.
      * @param out
@@ -104,7 +106,7 @@ public abstract class StreamUtility {
     /**
      * Copies the contents of an InputStream to an OutputStream, then closes
      * both.
-     * 
+     *
      * @param in
      *        The source stream.
      * @param out
@@ -132,22 +134,24 @@ public abstract class StreamUtility {
         }
     }
 
-    public static byte[] decodeBase64(String data) {
-        return Base64.decode(data);
+    /**
+     * Gets a byte array for the given input stream.
+     */
+    public static byte[] getBytes(InputStream in) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        pipeStream(in, out, 4096);
+        return out.toByteArray();
     }
 
-    public static String encodeBase64(byte[] data) {
-        return Base64.encode(data);
-    }
-
-    public static String encodeBase64(InputStream is) {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
+    /**
+     * Gets a stream for the given string.
+     */
+    public static InputStream getStream(String string) {
         try {
-            pipeStream(is, os, 1024);
-        } catch (IOException ioe) {
-            LOG.warn("Unable to encode stream", ioe);
+            return new ByteArrayInputStream(string.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException wontHappen) {
+            throw new FaultException(wontHappen);
         }
-        return Base64.encode(os.toByteArray());
     }
 
 }

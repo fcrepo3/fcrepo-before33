@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -12,13 +12,13 @@ import fedora.server.storage.types.Datastream;
 
 /**
  * The standard interface for write operations on a digital object.
- * 
+ *
  * <p>A <code>DOWriter</code> instance is a handle on a Fedora digital object,
  * and is obtained via a <code>getWriter(String)</code> call on a
  * <code>DOManager</code>.
- * 
+ *
  * <p>Work with a DOWriter ends with either commit() or cancel().
- * 
+ *
  * @author Chris Wilper
  */
 public interface DOWriter
@@ -26,7 +26,7 @@ public interface DOWriter
 
     /**
      * Sets the state of the entire digital object.
-     * 
+     *
      * @param state
      *        The state.
      * @throws ServerException
@@ -36,7 +36,7 @@ public interface DOWriter
 
     /**
      * Sets the ownerId for the digital object.
-     * 
+     *
      * @param ownerId
      *        The ownerId.
      * @throws ServerException
@@ -46,7 +46,7 @@ public interface DOWriter
 
     /**
      * Sets the state for all versions of the specified datastream.
-     * 
+     *
      * @param id
      *        The datastream id.
      * @param state
@@ -61,7 +61,7 @@ public interface DOWriter
      * Sets the indicator as to whether the datastream is subject to versioning.
      * In Fedora 2.0, the system will not operate on this indicator and all
      * datastreams will be versioned by default.
-     * 
+     *
      * @param id
      *        The datastream id.
      * @param versionable
@@ -74,7 +74,7 @@ public interface DOWriter
 
     /**
      * Sets the label of the digital object.
-     * 
+     *
      * @param label
      *        The label.
      * @throws ServerException
@@ -84,7 +84,7 @@ public interface DOWriter
 
     /**
      * Removes the entire digital object.
-     * 
+     *
      * @throws ServerException
      *         If any type of error occurred fulfilling the request.
      */
@@ -92,7 +92,7 @@ public interface DOWriter
 
     /**
      * Adds a datastream to the object.
-     * 
+     *
      * @param datastream
      *        The datastream.
      * @throws ServerException
@@ -105,7 +105,7 @@ public interface DOWriter
      * Removes a range of datastream versions from an object without leaving
      * anything behind. If any integrity checks need to be done, they should be
      * done outside of this code.
-     * 
+     *
      * @param id
      *        The id of the datastream.
      * @param start
@@ -124,7 +124,7 @@ public interface DOWriter
 
     /**
      * Saves the changes thus far to the permanent copy of the digital object.
-     * 
+     *
      * @param logMessage
      *        An explanation of the change(s).
      * @throws ServerException

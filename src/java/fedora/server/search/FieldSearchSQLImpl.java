@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -37,7 +37,7 @@ import fedora.server.utilities.SQLUtility;
 
 /**
  * A FieldSearch implementation that uses a relational database as a backend.
- * 
+ *
  * @author Chris Wilper
  */
 public class FieldSearchSQLImpl
@@ -83,7 +83,7 @@ public class FieldSearchSQLImpl
 
     /**
      * Construct a FieldSearchSQLImpl that indexes DC fields.
-     * 
+     *
      * @param cPool
      *        the ConnectionPool with connections to the db containing the
      *        fields
@@ -105,7 +105,7 @@ public class FieldSearchSQLImpl
 
     /**
      * Construct a FieldSearchSQLImpl that indexes DC fields only if specified.
-     * 
+     *
      * @param cPool
      *        the ConnectionPool with connections to the db containing the
      *        fields
@@ -184,79 +184,74 @@ public class FieldSearchSQLImpl
                         + " has a DC datastream, but it's not inline XML.");
             }
             if (dcmd == null) {
-                LOG
-                        .debug("Did not have DC Metadata datastream for this object.");
+                dbRowValues[6] = "0";
             } else {
-                LOG.debug("Had DC Metadata datastream for this object.");
                 dbRowValues[6] = "" + dcmd.DSCreateDT.getTime();
+            }
+            if (dcmd != null && m_indexDCFields) {
+                InputStream in = dcmd.getContentStream();
+                DCFields dc = new DCFields(in);
 
-                if (m_indexDCFields) {
-                    InputStream in = dcmd.getContentStream();
-                    DCFields dc = new DCFields(in);
+                dbRowValues[7] = getDbValue(dc.titles());
+                dbRowValues[8] = getDbValue(dc.creators());
+                dbRowValues[9] = getDbValue(dc.subjects());
+                dbRowValues[10] = getDbValue(dc.descriptions());
+                dbRowValues[11] = getDbValue(dc.publishers());
+                dbRowValues[12] = getDbValue(dc.contributors());
+                dbRowValues[13] = getDbValue(dc.dates());
 
-                    dbRowValues[7] = getDbValue(dc.titles());
-                    dbRowValues[8] = getDbValue(dc.creators());
-                    dbRowValues[9] = getDbValue(dc.subjects());
-                    dbRowValues[10] = getDbValue(dc.descriptions());
-                    dbRowValues[11] = getDbValue(dc.publishers());
-                    dbRowValues[12] = getDbValue(dc.contributors());
-                    dbRowValues[13] = getDbValue(dc.dates());
+                // delete any dc.dates that survive from earlier versions
+                st = conn.createStatement();
+                st.executeUpdate("DELETE FROM dcDates WHERE pid='" + pid
+                        + "'");
 
-                    // delete any dc.dates that survive from earlier versions
-                    st = conn.createStatement();
-                    st.executeUpdate("DELETE FROM dcDates WHERE pid='" + pid
-                            + "'");
-
-                    // get any dc.dates strings that are formed such that they
-                    // can be treated as a timestamp
-                    List<Date> wellFormedDates = null;
-                    for (int i = 0; i < dc.dates().size(); i++) {
-                        if (i == 0) {
-                            wellFormedDates = new ArrayList<Date>();
-                        }
-                        Date p = DateUtility.parseDateAsUTC(dc.dates().get(i).getValue());
-                        if (p != null) {
-                            wellFormedDates.add(p);
-                        }
+                // get any dc.dates strings that are formed such that they
+                // can be treated as a timestamp
+                List<Date> wellFormedDates = null;
+                for (int i = 0; i < dc.dates().size(); i++) {
+                    if (i == 0) {
+                        wellFormedDates = new ArrayList<Date>();
                     }
-                    if (wellFormedDates != null && wellFormedDates.size() > 0) {
-                        // found at least one valid date, so add them.
-                        for (int i = 0; i < wellFormedDates.size(); i++) {
-                            Date dt = wellFormedDates.get(i);
-                            st
-                                    .executeUpdate("INSERT INTO dcDates (pid, dcDate) "
-                                            + "values ('"
-                                            + pid
-                                            + "', "
-                                            + dt.getTime() + ")");
-                        }
+                    Date p = DateUtility.parseDateAsUTC(dc.dates().get(i).getValue());
+                    if (p != null) {
+                        wellFormedDates.add(p);
                     }
-                    dbRowValues[14] = getDbValue(dc.types());
-                    dbRowValues[15] = getDbValue(dc.formats());
-                    dbRowValues[16] = getDbValue(dc.identifiers());
-                    dbRowValues[17] = getDbValue(dc.sources());
-                    dbRowValues[18] = getDbValue(dc.languages());
-                    dbRowValues[19] = getDbValue(dc.relations());
-                    dbRowValues[20] = getDbValue(dc.coverages());
-                    dbRowValues[21] = getDbValue(dc.rights());
-                    LOG
-                            .debug("Formulating SQL and inserting/updating WITH DC...");
-                    SQLUtility.replaceInto(conn,
-                                           "doFields",
-                                           DB_COLUMN_NAMES,
-                                           dbRowValues,
-                                           "pid",
-                                           s_dbColumnNumeric);
-                } else {
-                    LOG
-                            .debug("Formulating SQL and inserting/updating WITHOUT DC...");
-                    SQLUtility.replaceInto(conn,
-                                           "doFields",
-                                           DB_COLUMN_NAMES_NODC,
-                                           dbRowValues,
-                                           "pid",
-                                           s_dbColumnNumericNoDC);
                 }
+                if (wellFormedDates != null && wellFormedDates.size() > 0) {
+                    // found at least one valid date, so add them.
+                    for (int i = 0; i < wellFormedDates.size(); i++) {
+                        Date dt = wellFormedDates.get(i);
+                        st
+                                .executeUpdate("INSERT INTO dcDates (pid, dcDate) "
+                                        + "values ('"
+                                        + pid
+                                        + "', "
+                                        + dt.getTime() + ")");
+                    }
+                }
+                dbRowValues[14] = getDbValue(dc.types());
+                dbRowValues[15] = getDbValue(dc.formats());
+                dbRowValues[16] = getDbValue(dc.identifiers());
+                dbRowValues[17] = getDbValue(dc.sources());
+                dbRowValues[18] = getDbValue(dc.languages());
+                dbRowValues[19] = getDbValue(dc.relations());
+                dbRowValues[20] = getDbValue(dc.coverages());
+                dbRowValues[21] = getDbValue(dc.rights());
+                LOG.debug("Formulating SQL and inserting/updating WITH DC...");
+                SQLUtility.replaceInto(conn,
+                                       "doFields",
+                                       DB_COLUMN_NAMES,
+                                       dbRowValues,
+                                       "pid",
+                                       s_dbColumnNumeric);
+            } else {
+                LOG.debug("Formulating SQL and inserting/updating WITHOUT DC...");
+                SQLUtility.replaceInto(conn,
+                                       "doFields",
+                                       DB_COLUMN_NAMES_NODC,
+                                       dbRowValues,
+                                       "pid",
+                                       s_dbColumnNumericNoDC);
             }
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Error attempting FieldSearch "
@@ -342,8 +337,8 @@ public class FieldSearchSQLImpl
             ServerException, UnknownSessionTokenException {
         closeAndForgetOldResults();
         FieldSearchResultSQLImpl result =
-                (FieldSearchResultSQLImpl) m_currentResults
-                        .remove(sessionToken);
+                m_currentResults
+                .remove(sessionToken);
         if (result == null) {
             throw new UnknownSessionTokenException("Session is expired "
                     + "or never existed.");
@@ -368,7 +363,7 @@ public class FieldSearchSQLImpl
                 m_currentResults.values().iterator();
         ArrayList<String> toRemove = new ArrayList<String>();
         while (iter.hasNext()) {
-            FieldSearchResultSQLImpl r = (FieldSearchResultSQLImpl) iter.next();
+            FieldSearchResultSQLImpl r = iter.next();
             if (r.isExpired()) {
                 LOG.debug("listSession " + r.getToken()
                         + " expired; will forget it.");
@@ -376,7 +371,7 @@ public class FieldSearchSQLImpl
             }
         }
         for (int i = 0; i < toRemove.size(); i++) {
-            String token = (String) toRemove.get(i);
+            String token = toRemove.get(i);
             m_currentResults.remove(token);
         }
     }
@@ -385,7 +380,7 @@ public class FieldSearchSQLImpl
      * Get the string that should be inserted for a repeating-value column,
      * given a list of values. Turn each value to lowercase and separate them
      * all by space characters. If the list is empty, return null.
-     * 
+     *
      * @param dcFields
      *        a list of dublin core values
      * @return String the string to insert
@@ -395,7 +390,7 @@ public class FieldSearchSQLImpl
             return null;
         }
         StringBuilder out = new StringBuilder();
-        
+
         for (DCField dcField : dcFields) {
             out.append(" ");
             out.append(dcField.getValue().toLowerCase());
@@ -405,7 +400,7 @@ public class FieldSearchSQLImpl
     }
 
     // same as above, but for case sensitive repeating values
-    public static String getDbValueCaseSensitive(List<String> dcItem) {
+    private static String getDbValueCaseSensitive(List<String> dcItem) {
         if (dcItem.size() == 0) {
             return null;
         }

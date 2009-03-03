@@ -17,7 +17,7 @@
                      <h2>503 Unavailable</h2>
                   </center>
 <%
-if (exception.getMessage() != null) {
+if (exception != null && exception.getMessage() != null) {
     out.print(exception.getMessage());
 }
 %>

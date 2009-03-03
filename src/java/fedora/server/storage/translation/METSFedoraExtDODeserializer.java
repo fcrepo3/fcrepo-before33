@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -48,10 +48,12 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.validation.ValidationUtility;
 
+import fedora.utilities.Base64;
+
 /**
  * Deserializes objects in the constructor-provided version of the METS Fedora
  * Extension format.
- * 
+ *
  * @author Sandy Payette
  * @author Chris Wilper
  */
@@ -177,7 +179,7 @@ public class METSFedoraExtDODeserializer
     private StringBuffer m_auditBuffer;
 
     private String m_auditId;
-    
+
     private String m_auditProcessType;
 
     private String m_auditAction;
@@ -218,7 +220,7 @@ public class METSFedoraExtDODeserializer
 
     /**
      * Creates a deserializer that reads the given Fedora METS Extension format.
-     * 
+     *
      * @param format
      *        the version-specific Fedora METS Extension format.
      * @throws IllegalArgumentException
@@ -352,7 +354,7 @@ public class METSFedoraExtDODeserializer
                 m_obj.setPid(grab(a, METS.uri, "OBJID"));
                 m_obj.setLabel(grab(a, METS.uri, "LABEL"));
                 if (m_format.equals(METS_EXT1_0)) {
-                    // In METS_EXT 1.0, the PROFILE attribute mapped to an 
+                    // In METS_EXT 1.0, the PROFILE attribute mapped to an
                     // object property, fedora-model:contentModel.  This will be
                     // retained as an extended property in the DigitalObject.
                     m_obj.setExtProperty(MODEL.CONTENT_MODEL.uri,
@@ -582,7 +584,7 @@ public class METSFedoraExtDODeserializer
                 // of METS:xmlData elements we see
                 appendElementStart(uri, localName, qName, a, m_dsXMLBuffer);
 
-                // METS INSIDE METS! we have an inline XML datastream 
+                // METS INSIDE METS! we have an inline XML datastream
                 // that is itself METS.  We do not want to parse this!
                 if (uri.equals(METS.uri) && localName.equals("xmlData")) {
                     m_xmlDataLevel++;
@@ -653,7 +655,7 @@ public class METSFedoraExtDODeserializer
                     // In METS each audit record is in its own <digiprovMD>
                     // element within an <amdSec>.  So, pick up the XML ID
                     // of the <digiprovMD> element for the audit record id.
-                    // This amdSec is treated like a datastream, and each 
+                    // This amdSec is treated like a datastream, and each
                     // digiprovMD is a version, so id was parsed into dsVersId.
                     a.id = m_auditId; //m_dsVersId;
                     a.processType = m_auditProcessType;
@@ -713,8 +715,7 @@ public class METSFedoraExtDODeserializer
                             String elementStr =
                                     m_elementContent.toString()
                                             .replaceAll("\\s", "");
-                            byte elementBytes[] =
-                                    StreamUtility.decodeBase64(elementStr);
+                            byte elementBytes[] = Base64.decode(elementStr);
                             os.write(elementBytes);
                             os.close();
                             m_dsLocationType = "INTERNAL_ID";
@@ -837,7 +838,7 @@ public class METSFedoraExtDODeserializer
             // when parsing children
             m_structId = grab(a, METS.uri, "STRUCTID");
             // grab the disseminator associated with the provided structId
-            Disseminator dissem = (Disseminator) m_dissems.get(m_structId);
+            Disseminator dissem = m_dissems.get(m_structId);
             // plug known items in..
             dissem.dissID = m_dissemId;
             dissem.dissState = m_dissemState;
@@ -850,9 +851,9 @@ public class METSFedoraExtDODeserializer
                             .convertStringToDate(grab(a, METS.uri, "CREATED"));
             dissem.dissLabel = grab(a, METS.uri, "LABEL");
         } else if (localName.equals("interfaceMD")) {
-            Disseminator dissem = (Disseminator) m_dissems.get(m_structId);
+            Disseminator dissem = m_dissems.get(m_structId);
         } else if (localName.equals("serviceBindMD")) {
-            Disseminator dissem = (Disseminator) m_dissems.get(m_structId);
+            Disseminator dissem = m_dissems.get(m_structId);
             dissem.sDepID = grab(a, m_xlink.uri, "href");
         }
     }
@@ -869,7 +870,7 @@ public class METSFedoraExtDODeserializer
         // since it's supposed to be a standalone chunk.
         String[] parts = qName.split(":");
         if (parts.length == 2) {
-            String nsuri = (String) m_localPrefixMap.get(parts[0]);
+            String nsuri = m_localPrefixMap.get(parts[0]);
             if (nsuri == null) {
                 m_localPrefixMap.put(parts[0], parts[1]);
                 m_prefixList.add(parts[0]);
@@ -877,13 +878,13 @@ public class METSFedoraExtDODeserializer
         }
         // do we have any newly-mapped namespaces?
         while (m_prefixList.size() > 0) {
-            String prefix = (String) m_prefixList.remove(0);
+            String prefix = m_prefixList.remove(0);
             out.append(" xmlns");
             if (prefix.length() > 0) {
                 out.append(":");
             }
             out.append(prefix + "=\""
-                    + StreamUtility.enc((String) m_prefixMap.get(prefix))
+                    + StreamUtility.enc(m_prefixMap.get(prefix))
                     + "\"");
         }
         for (int i = 0; i < a.getLength(); i++) {
@@ -895,7 +896,7 @@ public class METSFedoraExtDODeserializer
 
     private void instantiateDatastream(Datastream ds) throws SAXException {
 
-        // set datastream variables with values grabbed from the SAX parse     	  	
+        // set datastream variables with values grabbed from the SAX parse
         ds.DatastreamID = m_dsId;
         ds.DSVersionable = m_dsVersionable;
         ds.DSFormatURI = m_dsFormatURI;
@@ -1020,7 +1021,7 @@ public class METSFedoraExtDODeserializer
                         Iterator<String> admIdIter = admIdList.iterator();
                         while (admIdIter.hasNext()) {
                             String admId = admIdIter.next();
-                            // Detect ADMIDs that reference audit records 
+                            // Detect ADMIDs that reference audit records
                             // vs. regular admin metadata. Drop audits from
                             // the list. We know we have an audit if the ADMID
                             // is not a regular datatream in the object.
@@ -1028,7 +1029,7 @@ public class METSFedoraExtDODeserializer
                                     m_obj.datastreams(admId).iterator();
                             if (matchedDatastreams.hasNext()) {
 
-                                // Keep track of audit metadata correlated with the 
+                                // Keep track of audit metadata correlated with the
                                 // datastream version it's about (for later use).
                                 m_AuditIdToComponentId.put(admId,
                                                            ds.DSVersionID);
@@ -1046,8 +1047,8 @@ public class METSFedoraExtDODeserializer
                         // datastream entry from the master hashmap.
                         m_dsADMIDs.remove(ds.DSVersionID);
                     } else {
-                        // otherwise, update the master hashmap with the 
-                        // clean list of non-audit metadata 
+                        // otherwise, update the master hashmap with the
+                        // clean list of non-audit metadata
                         m_dsADMIDs.put(ds.DSVersionID, cleanAdmIdList);
                     }
                 }
@@ -1058,7 +1059,7 @@ public class METSFedoraExtDODeserializer
             while (iter.hasNext()) {
                 AuditRecord au = iter.next();
                 if (au.componentID == null || au.componentID.equals("")) {
-                    // Before Fedora 2.0 audit records were associated with 
+                    // Before Fedora 2.0 audit records were associated with
                     // datastream version ids.  From now on, the datastream id
                     // will be posted as the component id in the audit record,
                     // and associations to particular datastream versions can
@@ -1096,7 +1097,7 @@ public class METSFedoraExtDODeserializer
                 HashSet<String> uniqueDMDIDs = new HashSet<String>();
                 HashSet<String> uniqueADMIDs = new HashSet<String>();
                 // get list of datastream *versions*
-                for (Datastream dsVersion : m_obj.datastreams((String) dsIds
+                for (Datastream dsVersion : m_obj.datastreams(dsIds
                         .next())) {
                     // DMDID processing...
                     List<String> dmdIdList =
@@ -1105,12 +1106,12 @@ public class METSFedoraExtDODeserializer
                         hasRels = true;
                         Iterator<String> dmdIdIter = dmdIdList.iterator();
                         while (dmdIdIter.hasNext()) {
-                            String dmdId = (String) dmdIdIter.next();
+                            String dmdId = dmdIdIter.next();
                             // APPEND TO RDF: record the DMDID relationship.
-                            // Relationships will now be recorded at the 
+                            // Relationships will now be recorded at the
                             // datastream level, not the datastream version level.
                             // So, is the relationship existed on more than one
-                            // datastream version, only write it once to the RDF. 
+                            // datastream version, only write it once to the RDF.
                             if (!uniqueDMDIDs.contains(dmdId)) {
                                 appendRDFRel(m_relsBuffer,
                                              m_obj.getPid(),
@@ -1128,12 +1129,12 @@ public class METSFedoraExtDODeserializer
                         hasRels = true;
                         Iterator<String> admIdIter = cleanAdmIdList.iterator();
                         while (admIdIter.hasNext()) {
-                            String admId = (String) admIdIter.next();
+                            String admId = admIdIter.next();
                             // APPEND TO RDF: record the ADMID relationship.
-                            // Relationships will now be recorded at the 
+                            // Relationships will now be recorded at the
                             // datastream level, not the datastream version level.
                             // So, is the relationship existed on more than one
-                            // datastream version, only write it once to the RDF. 
+                            // datastream version, only write it once to the RDF.
                             if (!uniqueADMIDs.contains(admId)) {
                                 appendRDFRel(m_relsBuffer,
                                              m_obj.getPid(),
@@ -1225,7 +1226,7 @@ public class METSFedoraExtDODeserializer
         m_localPrefixMap = new HashMap<String, String>();
         m_prefixList = new ArrayList<String>();
 
-        // temporary variables for processing datastreams		
+        // temporary variables for processing datastreams
         m_dsId = "";
         m_dsVersionable = true;
         m_dsVersId = "";

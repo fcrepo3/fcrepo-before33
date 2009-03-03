@@ -5,11 +5,12 @@ import org.junit.Test;
 
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
+import fedora.server.storage.types.ObjectBuilder;
 
 /**
  * Tests modifying objects in the RI, with respect to their datastreams. Note:
  * All tests run at RI level 1 unless otherwise noted.
- * 
+ *
  * @author Chris Wilper
  */
 public class ResourceIndexModDSIntegrationTest
@@ -22,7 +23,7 @@ public class ResourceIndexModDSIntegrationTest
     public void testModObjOnceAddDS() throws Exception {
         DigitalObject original = getTestObject("test:1", "test1");
 
-        DigitalObject modified = deepCopy(original);
+        DigitalObject modified = ObjectBuilder.deepCopy(original);
         addEDatastream(modified, "DS1");
 
         doModifyTest(1, original, modified);
@@ -36,8 +37,8 @@ public class ResourceIndexModDSIntegrationTest
         DigitalObject original = getTestObject("test:1", "test1");
         addEDatastream(original, "DS1");
 
-        DigitalObject modified = deepCopy(original);
-        
+        DigitalObject modified = ObjectBuilder.deepCopy(original);
+
         for (Datastream d : modified.datastreams("DS1")) {
             modified.removeDatastreamVersion(d);
         }
@@ -53,9 +54,9 @@ public class ResourceIndexModDSIntegrationTest
         DigitalObject original = getTestObject("test:1", "test1");
         addEDatastream(original, "DS1");
 
-        DigitalObject modified = deepCopy(original);
+        DigitalObject modified = ObjectBuilder.deepCopy(original);
         addEDatastream(modified, "DS2");
-        
+
         for (Datastream d : modified.datastreams("DS1")) {
             modified.removeDatastreamVersion(d);
         }
@@ -71,7 +72,7 @@ public class ResourceIndexModDSIntegrationTest
         DigitalObject original = getTestObject("test:1", "test1");
         addXDatastream(original, "DC", getDC("<dc:title>test</dc:title>"));
 
-        DigitalObject modified = deepCopy(original);
+        DigitalObject modified = ObjectBuilder.deepCopy(original);
         addXDatastream(modified, "DC", getDC("<dc:title>test</dc:title>\n"
                 + "<dc:identifier>id</dc:identifier>"));
 
@@ -87,7 +88,7 @@ public class ResourceIndexModDSIntegrationTest
         addXDatastream(original, "DC", getDC("<dc:title>test</dc:title>\n"
                 + "<dc:identifier>id</dc:identifier>"));
 
-        DigitalObject modified = deepCopy(original);
+        DigitalObject modified = ObjectBuilder.deepCopy(original);
         addXDatastream(modified, "DC", getDC("<dc:title>test</dc:title>"));
 
         doModifyTest(1, original, modified);
@@ -102,7 +103,7 @@ public class ResourceIndexModDSIntegrationTest
         DigitalObject original = getTestObject("test:1", "test1");
         addXDatastream(original, "DC", getDC("<dc:title>test</dc:title>"));
 
-        DigitalObject modified = deepCopy(original);
+        DigitalObject modified = ObjectBuilder.deepCopy(original);
         addXDatastream(modified,
                        "DC",
                        getDC("<dc:identifier>id</dc:identifier>"));
@@ -119,10 +120,10 @@ public class ResourceIndexModDSIntegrationTest
         String rel2 = "<foo:bar rdf:resource=\"http://example.org/quux\"/>";
 
         DigitalObject original = getTestObject("test:1", "test1");
-        addXDatastream(original, "RELS-EXT", getRELSEXT(rel1));
+        addXDatastream(original, "RELS-EXT", ObjectBuilder.getRELSEXT("test:1", rel1));
 
-        DigitalObject modified = deepCopy(original);
-        addXDatastream(modified, "RELS-EXT", getRELSEXT(rel1 + "\n" + rel2));
+        DigitalObject modified = ObjectBuilder.deepCopy(original);
+        addXDatastream(modified, "RELS-EXT", ObjectBuilder.getRELSEXT("test:1", rel1 + "\n" + rel2));
 
         doModifyTest(1, original, modified);
     }
@@ -136,10 +137,10 @@ public class ResourceIndexModDSIntegrationTest
         String rel2 = "<foo:bar rdf:resource=\"http://example.org/quux\"/>";
 
         DigitalObject original = getTestObject("test:1", "test1");
-        addXDatastream(original, "RELS-EXT", getRELSEXT(rel1 + "\n" + rel2));
+        addXDatastream(original, "RELS-EXT", ObjectBuilder.getRELSEXT("test:1", rel1 + "\n" + rel2));
 
-        DigitalObject modified = deepCopy(original);
-        addXDatastream(modified, "RELS-EXT", getRELSEXT(rel1));
+        DigitalObject modified = ObjectBuilder.deepCopy(original);
+        addXDatastream(modified, "RELS-EXT", ObjectBuilder.getRELSEXT("test:1", rel1));
 
         doModifyTest(1, original, modified);
     }
@@ -154,10 +155,10 @@ public class ResourceIndexModDSIntegrationTest
         String rel2 = "<foo:bar rdf:resource=\"http://example.org/quux\"/>";
 
         DigitalObject original = getTestObject("test:1", "test1");
-        addXDatastream(original, "RELS-EXT", getRELSEXT(rel1));
+        addXDatastream(original, "RELS-EXT", ObjectBuilder.getRELSEXT("test:1", rel1));
 
-        DigitalObject modified = deepCopy(original);
-        addXDatastream(modified, "RELS-EXT", getRELSEXT(rel2));
+        DigitalObject modified = ObjectBuilder.deepCopy(original);
+        addXDatastream(modified, "RELS-EXT", ObjectBuilder.getRELSEXT("test:1", rel2));
 
         doModifyTest(1, original, modified);
     }

@@ -193,7 +193,7 @@ public class MockStatement
         throw new RuntimeException("MockStatement.setQueryTimeout not implemented");
     }
     
-    /* JDBC_4_ANT_TOKEN_BEGIN -
+    /* JDBC_4_ANT_TOKEN_BEGIN */
     @Override
     public boolean isPoolable() throws SQLException {
         throw new UnsupportedOperationException(
@@ -217,5 +217,5 @@ public class MockStatement
         throw new UnsupportedOperationException(
             "Java 1.6 JDBC methods are not supported");
     }
-    - JDBC_4_ANT_TOKEN_END */
+    /* JDBC_4_ANT_TOKEN_END */
 }

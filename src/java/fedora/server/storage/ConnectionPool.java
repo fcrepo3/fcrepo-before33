@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -10,7 +10,6 @@ import java.sql.SQLException;
 
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
@@ -22,7 +21,7 @@ import fedora.server.utilities.TableCreatingConnection;
 
 /**
  * Provides a dispenser for database Connection Pools.
- * 
+ *
  * @author Ross Wayland
  * @author Chris Wilper
  */
@@ -40,7 +39,7 @@ public class ConnectionPool {
      * <p>
      * Constructs a ConnectionPool based on the calling arguments.
      * </p>
-     * 
+     *
      * @param driver
      *        The JDBC driver class name.
      * @param url
@@ -68,6 +67,8 @@ public class ConnectionPool {
      * @param timeBetweenEvictionRunsMillis
      *        Time in milliseconds to sleep between runs of the idle object
      *        evictor thread.
+     * @param validationQuery
+     *        Query to run when validation connections, e.g. SELECT 1.
      * @param testOnBorrow
      *        When true objects are validated before borrowed from the pool.
      * @param testOnReturn
@@ -92,6 +93,7 @@ public class ConnectionPool {
                           long minEvictableIdleTimeMillis,
                           int numTestsPerEvictionRun,
                           long timeBetweenEvictionRunsMillis,
+                          String validationQuery,
                           boolean testOnBorrow,
                           boolean testOnReturn,
                           boolean testWhileIdle,
@@ -121,6 +123,9 @@ public class ConnectionPool {
                         + numTestsPerEvictionRun);
         props.setProperty("timeBetweenEvictionRunsMillis", ""
                 + timeBetweenEvictionRunsMillis);
+        if (validationQuery != null && validationQuery.length() > 0) {
+            props.setProperty("validationQuery", validationQuery);
+        }
         props.setProperty("testOnBorrow", "" + testOnBorrow);
         props.setProperty("testOnReturn", "" + testOnReturn);
         props.setProperty("testWhileIdle", "" + testWhileIdle);
@@ -150,14 +155,14 @@ public class ConnectionPool {
     }
 
     protected void setConnectionProperties(Map<String, String> props) {
-        for (String name : (Set<String>) props.keySet()) {
+        for (String name : props.keySet()) {
             dataSource.addConnectionProperty(name, props.get(name));
         }
     }
 
     /**
      * Constructs a ConnectionPool that can provide TableCreatingConnections.
-     * 
+     *
      * @param driver
      *        The JDBC driver class name.
      * @param url
@@ -188,6 +193,8 @@ public class ConnectionPool {
      * @param timeBetweenEvictionRunsMillis
      *        Time in milliseconds to sleep between runs of the idle object
      *        evictor thread.
+     * @param validationQuery
+     *        Query to run when validation connections, e.g. SELECT 1.
      * @param testOnBorrow
      *        When true objects are validated before borrowed from the pool.
      * @param testOnReturn
@@ -213,6 +220,7 @@ public class ConnectionPool {
                           long minEvictableIdleTimeMillis,
                           int numTestsPerEvictionRun,
                           long timeBetweenEvictionRunsMillis,
+                          String validationQuery,
                           boolean testOnBorrow,
                           boolean testOnReturn,
                           boolean testWhileIdle,
@@ -229,6 +237,7 @@ public class ConnectionPool {
              minEvictableIdleTimeMillis,
              numTestsPerEvictionRun,
              timeBetweenEvictionRunsMillis,
+             validationQuery,
              testOnBorrow,
              testOnReturn,
              testWhileIdle,
@@ -243,7 +252,7 @@ public class ConnectionPool {
      * </p>
      * This derives from the same pool, but wraps the Connection in an
      * appropriate TableCreatingConnection before returning it.
-     * 
+     *
      * @return The next available Connection from the pool, wrapped as a
      *         TableCreatingException, or null if this ConnectionPool hasn't
      *         been configured with a DDLConverter (see constructor).
@@ -264,7 +273,7 @@ public class ConnectionPool {
      * <p>
      * Gets the next available connection.
      * </p>
-     * 
+     *
      * @return The next available connection.
      * @throws SQLException
      *         If the maximum number of connections has been reached or there is
@@ -284,7 +293,7 @@ public class ConnectionPool {
      * <p>
      * Releases the specified connection and returns it to the pool.
      * </p>
-     * 
+     *
      * @param connection
      *        A JDBC connection.
      */
@@ -300,12 +309,32 @@ public class ConnectionPool {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return dataSource.getUsername() + "@" + dataSource.getUrl()
                 + ", numIdle=" + dataSource.getNumIdle() + ", numActive="
                 + dataSource.getNumActive() + ", maxActive="
                 + dataSource.getMaxActive();
+    }
+
+    /**
+     * <p>
+     * Closes the underlying data source
+     * </p>
+     */
+    public void close() {
+        try {
+            dataSource.close();
+        } catch (SQLException sqle) {
+            LOG.warn("Unable to close pool", sqle);
+        } finally {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Closed pool (" + toString() + ")");
+            }
+        }
     }
 
 }

@@ -526,6 +526,14 @@
 			object evictor thread. A value less than zero indicates no idle 
 			evictor thread is run.</comment>
 		</param>
+        <param name="validationQuery" value="select 1"> 
+            <comment>The query to run when validating connections.
+            Connections are validated according to the testOnBorrow,
+            testOnReturn, and testWhileIdle configuration values.
+            If this is specified, it must be a SQL SELECT statement
+            that returns at least one row.  If this is NOT specified,
+            validation tests will not be run.</comment>
+        </param>
 		<param name="testOnBorrow" value="true">
 			<comment>When true objects are validated before borrowed from the 
 			pool.</comment>
@@ -751,6 +759,14 @@
 			object evictor thread. A value less than zero indicates no idle 
 			evictor thread is run.</comment>
 		</param>
+        <param name="validationQuery" value="select 'validationQuery' from dual"> 
+            <comment>The query to run when validating connections.
+            Connections are validated according to the testOnBorrow,
+            testOnReturn, and testWhileIdle configuration values.
+            If this is specified, it must be a SQL SELECT statement
+            that returns at least one row.  If this is NOT specified,
+            validation tests will not be run.</comment>
+        </param>
 		<param name="testOnBorrow" value="true">
 			<comment>When true objects are validated before borrowed from the 
 			pool.</comment>
@@ -825,6 +841,14 @@
 			object evictor thread. A value less than zero indicates no idle 
 			evictor thread is run.</comment>
 		</param>
+        <param name="validationQuery" value="select 1"> 
+            <comment>The query to run when validating connections.
+            Connections are validated according to the testOnBorrow,
+            testOnReturn, and testWhileIdle configuration values.
+            If this is specified, it must be a SQL SELECT statement
+            that returns at least one row.  If this is NOT specified,
+            validation tests will not be run.</comment>
+        </param>
 		<param name="testOnBorrow" value="true">
 			<comment>When true objects are validated before borrowed from the 
 			pool.</comment>

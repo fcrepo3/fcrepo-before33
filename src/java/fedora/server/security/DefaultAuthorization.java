@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -18,6 +19,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.MultiValueMap;
@@ -28,14 +30,81 @@ import fedora.server.errors.authorization.AuthzOperationalException;
 import fedora.server.storage.DOManager;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.status.ServerState;
+import fedora.server.validation.ValidationUtility;
+
 import fedora.utilities.XmlTransformUtility;
 
 /**
  * The Authorization module, protecting access to Fedora's API-A and API-M
  * endpoints.
- * 
- * @author Bill Niebel
- * @version $Id$
+ *
+ * The following attributes are available for use in authorization policies
+ * during any enforce call.
+ * </p>
+ * <p>
+ * subject attributes
+ * <ul>
+ * <li>urn:fedora:names:fedora:2.1:subject:loginId (available only if user
+ * has authenticated)</li>
+ * <li>urn:fedora:names:fedora:2.1:subject:<i>x</i> (available if
+ * authenticated user has attribute <i>x</i>)</li>
+ * </ul>
+ * </p>
+ * <p>
+ * environment attributes derived from HTTP request
+ * <ul>
+ * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:security
+ * <ul>
+ * <li>==
+ * urn:fedora:names:fedora:2.1:environment:httpRequest:security-secure(i.e.,
+ * request is HTTPS/SSL)</li>
+ * <li>==
+ * urn:fedora:names:fedora:2.1:environment:httpRequest:security-insecure(i.e.,
+ * request is HTTP/non-SSL)</li>
+ * </ul>
+ * </li>
+ * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:messageProtocol
+ * <ul>
+ * <li>==
+ * urn:fedora:names:fedora:2.1:environment:httpRequest:messageProtocol-soap(i.e.,
+ * request is over SOAP/Axis)</li>
+ * <li>==
+ * urn:fedora:names:fedora:2.1:environment:httpRequest:messageProtocol-rest(i.e.,
+ * request is over non-SOAP/Axis ("REST") HTTP call)</li>
+ * </ul>
+ * </li>
+ * </ul>
+ * </p>
+ * <p>
+ * environment attributes directly from HTTP request
+ * <ul>
+ * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:authType</li>
+ * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:clientFqdn</li>
+ * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:clientIpAddress</li>
+ * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:contentLength</li>
+ * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:contentType</li>
+ * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:method</li>
+ * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:protocol</li>
+ * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:scheme</li>
+ * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:serverFqdn</li>
+ * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:serverIpAddress</li>
+ * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:serverPort</li>
+ * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:sessionEncoding</li>
+ * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:sessionStatus</li>
+ * </ul>
+ * </p>
+ * <p>
+ * other environment attributes
+ * <ul>
+ * <li>urn:fedora:names:fedora:2.1:currentDateTime</li>
+ * <li>urn:fedora:names:fedora:2.1:currentDate</li>
+ * <li>urn:fedora:names:fedora:2.1:currentTime</li>
+ * </ul>
+ * </p>
+ *
+ * @see <a
+ *      href="http://java.sun.com/products/servlet/2.2/javadoc/javax/servlet/http/HttpServletRequest.html">HttpServletRequest
+ *      interface documentation</a>
  */
 public class DefaultAuthorization
         extends Module
@@ -44,42 +113,6 @@ public class DefaultAuthorization
     /** Logger for this class. */
     private static final Logger LOG =
             Logger.getLogger(DefaultAuthorization.class.getName());
-
-    private PolicyEnforcementPoint xacmlPep; // = XACMLPep.getInstance();
-
-    boolean enforceListObjectInFieldSearchResults = true;
-
-    boolean enforceListObjectInResourceIndexResults = true;
-
-    private String repositoryPoliciesActiveDirectory = "";
-
-    private String repositoryPolicyGuitoolDirectory = "";
-
-    private String combiningAlgorithm = ""; // "com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg";
-
-    private String enforceMode = "";
-
-    private String ownerIdSeparator = ",";
-
-    private final String REPOSITORY_POLICIES_DIRECTORY_KEY =
-            "REPOSITORY-POLICIES-DIRECTORY";
-
-    private final String REPOSITORY_POLICY_GUITOOL_DIRECTORY_KEY =
-            "REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY";
-
-    private final String COMBINING_ALGORITHM_KEY = "XACML-COMBINING-ALGORITHM";
-
-    private final String ENFORCE_MODE_KEY = "ENFORCE-MODE";
-
-    private final String POLICY_SCHEMA_PATH_KEY = "POLICY-SCHEMA-PATH";
-
-    private final String VALIDATE_REPOSITORY_POLICIES_KEY =
-            "VALIDATE-REPOSITORY-POLICIES";
-
-    private final String VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM_KEY =
-            "VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM";
-
-    private final String OWNER_ID_SEPARATOR_KEY = "OWNER-ID-SEPARATOR";
 
     private static final String XACML_DIST_BASE = "fedora-internal-use";
 
@@ -96,12 +129,48 @@ public class DefaultAuthorization
     private static final String BACKEND_POLICIES_XSL_LOCATION =
             XACML_DIST_BASE + "/build-backend-policy.xsl";
 
+    private static final String REPOSITORY_POLICIES_DIRECTORY_KEY =
+            "REPOSITORY-POLICIES-DIRECTORY";
+
+    private static final String REPOSITORY_POLICY_GUITOOL_DIRECTORY_KEY =
+            "REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY";
+
+    private static final String COMBINING_ALGORITHM_KEY = "XACML-COMBINING-ALGORITHM";
+
+    private static final String ENFORCE_MODE_KEY = "ENFORCE-MODE";
+
+    private static final String POLICY_SCHEMA_PATH_KEY = "POLICY-SCHEMA-PATH";
+
+    private static final String VALIDATE_REPOSITORY_POLICIES_KEY =
+            "VALIDATE-REPOSITORY-POLICIES";
+
+    private static final String VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM_KEY =
+            "VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM";
+
+    private static final String OWNER_ID_SEPARATOR_KEY = "OWNER-ID-SEPARATOR";
+
+    private final PolicyParser m_policyParser;
+
+    private PolicyEnforcementPoint xacmlPep;
+
+    private String repositoryPoliciesActiveDirectory = "";
+
+    private String repositoryPolicyGuitoolDirectory = "";
+
+    private String combiningAlgorithm = "";
+
+    private String enforceMode = "";
+
+    private String ownerIdSeparator = ",";
+
+    boolean enforceListObjectInFieldSearchResults = true;
+
+    boolean enforceListObjectInResourceIndexResults = true;
+
     /**
-     * <p>
      * Creates and initializes the Access Module. When the server is starting
      * up, this is invoked as part of the initialization process.
-     * </p>
-     * 
+     *
      * @param moduleParameters
      *        A pre-loaded Map of name-value pairs comprising the intended
      *        configuration of this Module.
@@ -129,25 +198,11 @@ public class DefaultAuthorization
         if (moduleParameters.containsKey(REPOSITORY_POLICIES_DIRECTORY_KEY)) {
             repositoryPoliciesActiveDirectory =
                     getParameter(REPOSITORY_POLICIES_DIRECTORY_KEY, true);
-            log("repositoryPoliciesDirectory="
-                    + repositoryPoliciesActiveDirectory);
         }
-        // SDP: removed since object policies directory is obsolete in Fedora
-        // 2.1
-        /*
-         * if (moduleParameters.containsKey(OBJECT_POLICIES_DIRECTORY_KEY)) {
-         * objectPoliciesActiveDirectory = //((String)
-         * moduleParameters.get(OBJECT_POLICIES_DIRECTORY_KEY)).startsWith(File.separator) ? "" :
-         * serverHome + (String)
-         * moduleParameters.get(OBJECT_POLICIES_DIRECTORY_KEY);
-         * log("objectPoliciesDirectory=" + objectPoliciesActiveDirectory); }
-         */
         if (moduleParameters
                 .containsKey(REPOSITORY_POLICY_GUITOOL_DIRECTORY_KEY)) {
             repositoryPolicyGuitoolDirectory =
                     getParameter(REPOSITORY_POLICY_GUITOOL_DIRECTORY_KEY, true);
-            log("repositoryPolicyGuitoolDirectory="
-                    + repositoryPolicyGuitoolDirectory);
         }
         if (moduleParameters.containsKey(COMBINING_ALGORITHM_KEY)) {
             combiningAlgorithm =
@@ -159,47 +214,42 @@ public class DefaultAuthorization
         if (moduleParameters.containsKey(OWNER_ID_SEPARATOR_KEY)) {
             ownerIdSeparator =
                     (String) moduleParameters.get(OWNER_ID_SEPARATOR_KEY);
-            LOG.debug("ownerIdSeparator from config set == ["
-                    + ownerIdSeparator + "]");
+            LOG.debug("ownerIdSeparator is [" + ownerIdSeparator + "]");
         }
-        log("looking for POLICY_SCHEMA_PATH");
+
+        // Initialize the policy parser given the POLICY_SCHEMA_PATH_KEY
         if (moduleParameters.containsKey(POLICY_SCHEMA_PATH_KEY)) {
-            log("found POLICY_SCHEMA_PATH");
-            policySchemaPath =
+            String schemaPath =
                     (((String) moduleParameters.get(POLICY_SCHEMA_PATH_KEY))
                             .startsWith(File.separator) ? "" : serverHome)
                             + (String) moduleParameters
                                     .get(POLICY_SCHEMA_PATH_KEY);
-            log("set it = " + policySchemaPath);
+            try {
+                FileInputStream in = new FileInputStream(schemaPath);
+                m_policyParser = new PolicyParser(in);
+                ValidationUtility.setPolicyParser(m_policyParser);
+            } catch (Exception e) {
+                throw new ModuleInitializationException("Error loading policy"
+                        + " schema: " + schemaPath, role, e);
+            }
+        } else {
+            throw new ModuleInitializationException("Policy schema path not"
+                    + " specified.  Must be given as " + POLICY_SCHEMA_PATH_KEY,
+                    role);
         }
-        log("looking for VALIDATE_REPOSITORY_POLICIES");
+
         if (moduleParameters.containsKey(VALIDATE_REPOSITORY_POLICIES_KEY)) {
-            log("found VALIDATE_REPOSITORY_POLICIES");
-            String temp =
-                    (String) moduleParameters
-                            .get(VALIDATE_REPOSITORY_POLICIES_KEY);
-            log("string vers = " + temp);
             validateRepositoryPolicies =
                     (new Boolean((String) moduleParameters
                             .get(VALIDATE_REPOSITORY_POLICIES_KEY)))
                             .booleanValue();
-            log("set it = " + validateRepositoryPolicies);
         }
-        // SDP: removed since object policies directory is obsolete in Fedora
-        // 2.1
-        /*
-         * if
-         * (moduleParameters.containsKey(VALIDATE_OBJECT_POLICIES_FROM_FILE_KEY)) {
-         * validateObjectPoliciesFromFile = Boolean.getBoolean((String)
-         * moduleParameters.get(VALIDATE_OBJECT_POLICIES_FROM_FILE_KEY)); }
-         */
         if (moduleParameters
                 .containsKey(VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM_KEY)) {
             try {
                 validateObjectPoliciesFromDatastream =
-                        Boolean
-                                .parseBoolean((String) moduleParameters
-                                        .get(VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM_KEY));
+                        Boolean.parseBoolean((String) moduleParameters
+                               .get(VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM_KEY));
             } catch (Exception e) {
                 throw new ModuleInitializationException("bad init parm boolean value for "
                                                                 + VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM_KEY,
@@ -207,27 +257,14 @@ public class DefaultAuthorization
                                                         e);
             }
         }
-        log("DefaultAuthorization constructor end");
     }
 
-    /**
-     * <p>
-     * Initializes the module.
-     * </p>
-     * 
-     * @throws ModuleInitializationException
-     *         If the module cannot be initialized.
-     */
+    @Override
     public void initModule() throws ModuleInitializationException {
-        log("DefaultAuthorization.initModule()");
     }
-
-    private String policySchemaPath = "";
 
     private boolean validateRepositoryPolicies = false;
 
-    // SDP: removed since object policies directory is obsolete in Fedora 2.1
-    // private boolean validateObjectPoliciesFromFile = false;
     private boolean validateObjectPoliciesFromDatastream = false;
 
     private static boolean mkdir(String dirPath) {
@@ -247,84 +284,43 @@ public class DefaultAuthorization
         File srcFile = new File(srcPath);
         FileInputStream fis = new FileInputStream(srcFile);
         File destFile = new File(destPath);
-        slog("before creating new file " + destFile.getAbsolutePath());
         try {
             destFile.createNewFile();
         } catch (Exception e) {
         }
-        slog("after creating new file " + destFile.getAbsolutePath());
         FileOutputStream fos = new FileOutputStream(destFile);
-        slog("after creating new fos " + fos);
         byte[] buffer = new byte[BUFFERSIZE];
         boolean reading = true;
         while (reading) {
-            slog("loop 1 ");
             int bytesRead = fis.read(buffer);
-            slog("loop 2 " + bytesRead);
             if (bytesRead > 0) {
-                slog("loop 2a " + bytesRead);
                 fos.write(buffer, 0, bytesRead);
-                slog("loop 2b " + bytesRead);
             }
             reading = bytesRead > -1;
-            slog("loop 3 " + bytesRead);
         }
-        slog("after loop 1 ");
         fis.close();
-        slog("after loop 2");
         fos.close();
-        slog("after loop 3");
-
     }
 
     private static void dircopy(String srcPath, String destPath)
             throws Exception {
-        slog("copying from " + srcPath + " to " + destPath);
         File srcDir = new File(srcPath);
-        slog("srcDir = " + srcDir);
-        slog("exists?=" + srcDir.exists());
-        slog("canRead?=" + srcDir.canRead());
         String[] paths = srcDir.list();
-        slog("paths = " + paths);
-        slog("copying " + paths.length + " files");
-        try {
-            for (String element : paths) {
-                slog("up = " + element);
-                String absSrcPath = srcPath + File.separator + element;
-                String absDestPath = destPath + File.separator + element;
-                filecopy(absSrcPath, absDestPath);
-            }
-        } catch (IOException e) {
-            slog("caught IOException: " + e.getMessage());
-            throw e;
-        } catch (Exception x) {
-            slog("caught Exception: " + x.getClass().getName() + " "
-                    + x.getMessage());
-            throw x;
+        for (String element : paths) {
+            String absSrcPath = srcPath + File.separator + element;
+            String absDestPath = destPath + File.separator + element;
+            filecopy(absSrcPath, absDestPath);
         }
     }
 
     private static void deldirfiles(String path) throws Exception {
-        slog("deleting from " + path);
         File srcDir = new File(path);
-        slog("srcDir = " + srcDir);
-        slog("exists?=" + srcDir.exists());
         if (srcDir.exists()) {
-            slog("canRead?=" + srcDir.canRead());
             String[] paths = srcDir.list();
-            slog("paths = " + paths);
-            slog("copying " + paths.length + " files");
-            try {
-                for (String element : paths) {
-                    slog("up = " + element);
-                    String absPath = path + File.separator + element;
-                    File f = new File(absPath);
-                    f.delete();
-                }
-            } catch (Exception x) {
-                slog("caught Exception: " + x.getClass().getName() + " "
-                        + x.getMessage());
-                throw x;
+            for (String element : paths) {
+                String absPath = path + File.separator + element;
+                File f = new File(absPath);
+                f.delete();
             }
         } else {
             srcDir.mkdirs();
@@ -332,32 +328,18 @@ public class DefaultAuthorization
     }
 
     private final void generateBackendPolicies() throws Exception {
-        log("in DefaultAuthorization.generateBackendPolicies() 1");
         String fedoraHome =
                 ((Module) this).getServer().getHomeDir().getAbsolutePath();
-        log("in DefaultAuthorization.generateBackendPolicies() 2");
-        log("fedorahome=" + fedoraHome);
         deldirfiles(fedoraHome + File.separator
                 + BACKEND_POLICIES_ACTIVE_DIRECTORY);
-        log("in DefaultAuthorization.generateBackendPolicies() 3");
         BackendPolicies backendPolicies =
                 new BackendPolicies(fedoraHome + File.separator
                         + BE_SECURITY_XML_LOCATION);
-        log("in DefaultAuthorization.generateBackendPolicies() 4");
-        log("fedoraHome + File.separator + BE_SECURITY_XML_LOCATION="
-                + fedoraHome + File.separator + BE_SECURITY_XML_LOCATION);
         Hashtable tempfiles = backendPolicies.generateBackendPolicies();
-        log("in DefaultAuthorization.generateBackendPolicies() 5");
-        log("tempfiles=" + tempfiles);
-        log("tempfiles.length=" + tempfiles.size());
         TransformerFactory tfactory = XmlTransformUtility.getTransformerFactory();
         try {
             Iterator iterator = tempfiles.keySet().iterator();
             while (iterator.hasNext()) {
-                log("fedoraHome + File.separator + BACKEND_POLICIES_XSL_LOCATION="
-                        + fedoraHome
-                        + File.separator
-                        + BACKEND_POLICIES_XSL_LOCATION);
                 File f =
                         new File(fedoraHome + File.separator
                                 + BACKEND_POLICIES_XSL_LOCATION); // <<stylesheet
@@ -365,15 +347,8 @@ public class DefaultAuthorization
                 StreamSource ss = new StreamSource(f);
                 Transformer transformer = tfactory.newTransformer(ss); // xformPath
                 String key = (String) iterator.next();
-                log("key=" + key);
                 File infile = new File((String) tempfiles.get(key));
                 FileInputStream fis = new FileInputStream(infile);
-                log("fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + infile.getName()="
-                        + fedoraHome
-                        + File.separator
-                        + BACKEND_POLICIES_ACTIVE_DIRECTORY
-                        + File.separator
-                        + infile.getName());
                 FileOutputStream fos =
                         new FileOutputStream(fedoraHome + File.separator
                                 + BACKEND_POLICIES_ACTIVE_DIRECTORY
@@ -394,17 +369,8 @@ public class DefaultAuthorization
     private static final String DEFAULT = "default";
 
     private void setupActivePolicyDirectories() throws Exception {
-        log("in setupActivePolicyDirectories() 0");
         String fedoraHome =
                 ((Module) this).getServer().getHomeDir().getAbsolutePath();
-        log("in setupActivePolicyDirectories() fedorahome=" + fedoraHome);
-        /*
-         * add back > 2.1b vvvvv mkdir(repositoryPolicyGuitoolDirectory);
-         * filecopy(fedoraHome + File.separator + XACML_DIST_BASE +
-         * File.separator + "readme-policyguitool-generated-policies.txt",
-         * repositoryPolicyGuitoolDirectory + File.separator +
-         * "readme-policyguitool-generated-policies.txt"); add back > 2.1b ^^^^^
-         */
         mkdir(repositoryPoliciesActiveDirectory);
         if (mkdir(repositoryPoliciesActiveDirectory + File.separator + DEFAULT)) {
             dircopy(fedoraHome + File.separator
@@ -413,45 +379,25 @@ public class DefaultAuthorization
                             + DEFAULT);
         }
         generateBackendPolicies();
-        log("in DefaultAuthorization.setupActivePolicyDirectories() l");
     }
 
+    @Override
     public void postInitModule() throws ModuleInitializationException {
-        log("in DefaultAuthorization.postInitModule() 1");
         DOManager m_manager =
                 (DOManager) getServer()
                         .getModule("fedora.server.storage.DOManager");
-        log("in DefaultAuthorization.postInitModule() 2");
         if (m_manager == null) {
-            log("in DefaultAuthorization.postInitModule() 3");
             throw new ModuleInitializationException("Can't get a DOManager from Server.getModule",
                                                     getRole());
         }
-        log("in DefaultAuthorization.postInitModule() 4");
         try {
             getServer().getStatusFile()
                     .append(ServerState.STARTING,
                             "Initializing XACML Authorization Module");
-            log("in DefaultAuthorization.postInitModule() 5");
             setupActivePolicyDirectories();
-            log("in DefaultAuthorization.postInitModule() 5a");
             xacmlPep = PolicyEnforcementPoint.getInstance();
-            log("in DefaultAuthorization.postInitModule() 6, policySchemaPath="
-                    + policySchemaPath + " validateRepositoryPolicies="
-                    + validateRepositoryPolicies);
             String fedoraHome =
                     ((Module) this).getServer().getHomeDir().getAbsolutePath();
-            log("in DefaultAuthorization.postInitModule() 6a fedoraHome="
-                    + fedoraHome);
-            // SDP: removed method arguments having to do with object policies
-            // directory (obsolete in 2.1)
-            // xacmlPep.initPep(enforceMode, combiningAlgorithm,
-            // repositoryPoliciesActiveDirectory, fedoraHome + File.separator +
-            // BACKEND_POLICIES_ACTIVE_DIRECTORY,
-            // repositoryPolicyGuitoolDirectory, objectPoliciesActiveDirectory,
-            // m_manager,
-            // validateRepositoryPolicies, validateObjectPoliciesFromFile,
-            // validateObjectPoliciesFromDatastream, policySchemaPath);
             xacmlPep.initPep(enforceMode,
                              combiningAlgorithm,
                              repositoryPoliciesActiveDirectory,
@@ -461,16 +407,12 @@ public class DefaultAuthorization
                              m_manager,
                              validateRepositoryPolicies,
                              validateObjectPoliciesFromDatastream,
-                             policySchemaPath,
+                             m_policyParser,
                              ownerIdSeparator);
-            log("in DefaultAuthorization.postInitModule() 7");
         } catch (Throwable e1) {
-            log("in DefaultAuthorization.postInitModule() 8");
-            ModuleInitializationException e2 =
-                    new ModuleInitializationException(e1.getMessage(),
-                                                      getRole(),
-                                                      e1);
-            throw e2;
+            throw new ModuleInitializationException(e1.getMessage(),
+                                                    getRole(),
+                                                    e1);
         }
     }
 
@@ -487,81 +429,6 @@ public class DefaultAuthorization
             namespace = pid.substring(0, colonPosition);
         }
         return namespace;
-    }
-
-    /**
-     * This method serves only to hold comments common to the various Enforce
-     * methods of this class.
-     * <p>
-     * The following attributes are available for use in authorization policies
-     * during any fedora interface call.
-     * </p>
-     * <p>
-     * subject attributes
-     * <ul>
-     * <li>urn:fedora:names:fedora:2.1:subject:loginId (available only if user
-     * has authenticated)</li>
-     * <li>urn:fedora:names:fedora:2.1:subject:<i>x</i> (available if
-     * authenticated user has attribute <i>x</i>)</li>
-     * </ul>
-     * </p>
-     * <p>
-     * environment attributes derived from HTTP request
-     * <ul>
-     * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:security
-     * <ul>
-     * <li>==
-     * urn:fedora:names:fedora:2.1:environment:httpRequest:security-secure(i.e.,
-     * request is HTTPS/SSL)</li>
-     * <li>==
-     * urn:fedora:names:fedora:2.1:environment:httpRequest:security-insecure(i.e.,
-     * request is HTTP/non-SSL)</li>
-     * </ul>
-     * </li>
-     * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:messageProtocol
-     * <ul>
-     * <li>==
-     * urn:fedora:names:fedora:2.1:environment:httpRequest:messageProtocol-soap(i.e.,
-     * request is over SOAP/Axis)</li>
-     * <li>==
-     * urn:fedora:names:fedora:2.1:environment:httpRequest:messageProtocol-rest(i.e.,
-     * request is over non-SOAP/Axis ("REST") HTTP call)</li>
-     * </ul>
-     * </li>
-     * </ul>
-     * </p>
-     * <p>
-     * environment attributes directly from HTTP request
-     * <ul>
-     * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:authType</li>
-     * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:clientFqdn</li>
-     * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:clientIpAddress</li>
-     * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:contentLength</li>
-     * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:contentType</li>
-     * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:method</li>
-     * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:protocol</li>
-     * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:scheme</li>
-     * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:serverFqdn</li>
-     * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:serverIpAddress</li>
-     * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:serverPort</li>
-     * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:sessionEncoding</li>
-     * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:sessionStatus</li>
-     * </ul>
-     * </p>
-     * <p>
-     * other environment attributes
-     * <ul>
-     * <li>urn:fedora:names:fedora:2.1:currentDateTime</li>
-     * <li>urn:fedora:names:fedora:2.1:currentDate</li>
-     * <li>urn:fedora:names:fedora:2.1:currentTime</li>
-     * </ul>
-     * </p>
-     * 
-     * @see <a
-     *      href="http://java.sun.com/products/servlet/2.2/javadoc/javax/servlet/http/HttpServletRequest.html">HttpServletRequest
-     *      interface documentation</a>
-     */
-    public final void enforceMethods(Context context) {
     }
 
     /**
@@ -602,7 +469,7 @@ public class DefaultAuthorization
      * <li>urn:fedora:names:fedora:2.1:resource:datastream:checksum</li>
      * </ul>
      * </p>
-     * 
+     *
      * @see #enforceMethods common attributes available on any fedora interface
      *      call
      */
@@ -621,44 +488,34 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceAddDatastream");
             String target = Constants.ACTION.ADD_DATASTREAM.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.MIME_TYPE.uri,
                                            MIMEType);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.FORMAT_URI.uri,
                                            formatURI);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.STATE.uri,
                                            dsState);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.ID.uri, dsId);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.LOCATION.uri,
                                            dsLocation);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.CONTROL_GROUP.uri,
                                            controlGroup);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.ALT_IDS.uri,
                                            altIDs);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.CHECKSUM_TYPE.uri,
                                            checksumType);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.CHECKSUM.uri,
                                            checksum);
             } catch (Exception e) {
@@ -668,8 +525,7 @@ public class DefaultAuthorization
             }
             context.setResourceAttributes(resourceAttributes);
             xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+                    .enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIM.uri,
                              pid,
@@ -689,21 +545,17 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceExport");
             String target = Constants.ACTION.EXPORT.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.OBJECT.FORMAT_URI.uri,
                                            format);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.OBJECT.CONTEXT.uri,
                                            exportContext);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.OBJECT.ENCODING.uri,
                                            exportEncoding);
             } catch (Exception e) {
@@ -712,9 +564,7 @@ public class DefaultAuthorization
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIM.uri,
                              pid,
@@ -724,9 +574,9 @@ public class DefaultAuthorization
             LOG.debug("Exiting enforceExport");
         }
     }
-    
+
     /**
-     * @deprecated in Fedora 3.0, use enforceExport() instead 
+     * @deprecated in Fedora 3.0, use enforceExport() instead
      */
     @Deprecated
     public final void enforceExportObject(Context context,
@@ -738,38 +588,12 @@ public class DefaultAuthorization
         enforceExport(context, pid, format, exportContext, exportEncoding);
     }
 
-    // public final void enforceGetDisseminatorHistory(Context context, String
-    // pid, String disseminatorId)
-    // throws AuthzException {
-    // try {
-    // LOG.debug("Entered enforceGetDisseminatorHistory");
-    // String target = Constants.ACTION.GET_DISSEMINATOR_HISTORY.uri;
-    // log("enforcing " + target);
-    // context.setActionAttributes(null);
-    // MultiValueMap resourceAttributes = new MultiValueMap();
-    // String name = "";
-    // try {
-    // name = resourceAttributes.setReturn(Constants.DISSEMINATOR.ID.uri,
-    // disseminatorId);
-    // } catch (Exception e) {
-    // context.setResourceAttributes(null);
-    // throw new AuthzOperationalException(target + " couldn't set " + name, e);
-    // }
-    // context.setResourceAttributes(resourceAttributes);
-    // xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
-    // target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-    // } finally {
-    // LOG.debug("Exiting enforceGetDisseminatorHistory");
-    // }
-    // }
-
     public final void enforceGetNextPid(Context context,
                                         String namespace,
                                         int nNewPids) throws AuthzException {
         try {
             LOG.debug("Entered enforceGetNextPid");
             String target = Constants.ACTION.GET_NEXT_PID.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
@@ -785,9 +609,7 @@ public class DefaultAuthorization
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIM.uri,
                              "",
@@ -806,17 +628,14 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceGetDatastream");
             String target = Constants.ACTION.GET_DATASTREAM.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.ID.uri,
                                            datastreamId);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.AS_OF_DATETIME.uri,
                                            ensureDate(asOfDateTime, context));
             } catch (Exception e) {
@@ -825,9 +644,7 @@ public class DefaultAuthorization
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIM.uri,
                              pid,
@@ -845,13 +662,11 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceGetDatastreamHistory");
             String target = Constants.ACTION.GET_DATASTREAM_HISTORY.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.ID.uri,
                                            datastreamId);
             } catch (Exception e) {
@@ -860,9 +675,7 @@ public class DefaultAuthorization
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIM.uri,
                              pid,
@@ -896,32 +709,22 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceGetDatastreams");
             String target = Constants.ACTION.GET_DATASTREAMS.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
-            log("in enforceGetDatastreams");
             String name = "";
             try {
-                log("in enforceGetDatastreams, before setting datastreamState="
-                        + datastreamState);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.STATE.uri,
                                            datastreamState);
-                log("in enforceGetDatastreams, before setting asOfDateAsString");
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri,
                                            ensureDate(asOfDate, context));
-                log("in enforceGetDatastreams, after setting asOfDateAsString");
             } catch (Exception e) {
                 context.setResourceAttributes(null);
                 throw new AuthzOperationalException(target + " couldn't set "
                         + name, e);
             }
-            log("in enforceGetDatastreams, before setting resourceAttributes");
             context.setResourceAttributes(resourceAttributes);
-            log("in enforceGetDatastreams, after setting resourceAttributes");
             xacmlPep
                     .enforce(context
                                      .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
@@ -930,67 +733,10 @@ public class DefaultAuthorization
                              pid,
                              extractNamespace(pid),
                              context);
-            log("in enforceGetDatastreams, after calling global enforce");
         } finally {
             LOG.debug("Exiting enforceGetDatastreams");
         }
     }
-
-    // public final void enforceGetDisseminator(Context context, String pid,
-    // String disseminatorId, Date asOfDate)
-    // throws AuthzException {
-    // try {
-    // LOG.debug("Entered enforceGetDisseminator");
-    // String target = Constants.ACTION.GET_DISSEMINATOR.uri;
-    // log("enforcing " + target);
-    // context.setActionAttributes(null);
-    // MultiValueMap resourceAttributes = new MultiValueMap();
-    // String name = "";
-    // try {
-    // name = resourceAttributes.setReturn(Constants.DISSEMINATOR.ID.uri,
-    // disseminatorId);
-    // name =
-    // resourceAttributes.setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri,
-    // ensureDate(asOfDate, context));
-    // } catch (Exception e) {
-    // context.setResourceAttributes(null);
-    // throw new AuthzOperationalException(target + " couldn't set " + name, e);
-    // }
-    // context.setResourceAttributes(resourceAttributes);
-    // xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
-    // target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-    // } finally {
-    // LOG.debug("Exiting enforceGetDisseminator");
-    // }
-    // }
-
-    // public final void enforceGetDisseminators(Context context, String pid,
-    // Date asOfDate, String disseminatorState)
-    // throws AuthzException {
-    // try {
-    // LOG.debug("Entered enforceGetDisseminators");
-    // String target = Constants.ACTION.GET_DISSEMINATORS.uri;
-    // log("enforcing " + target);
-    // context.setActionAttributes(null);
-    // MultiValueMap resourceAttributes = new MultiValueMap();
-    // String name = "";
-    // try {
-    // name = resourceAttributes.setReturn(Constants.DISSEMINATOR.STATE.uri,
-    // disseminatorState);
-    // name =
-    // resourceAttributes.setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri,
-    // ensureDate(asOfDate, context));
-    // } catch (Exception e) {
-    // context.setResourceAttributes(null);
-    // throw new AuthzOperationalException(target + " couldn't set " + name, e);
-    // }
-    // context.setResourceAttributes(resourceAttributes);
-    // xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
-    // target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-    // } finally {
-    // LOG.debug("Exiting enforceGetDisseminators");
-    // }
-    // }
 
     public final void enforceGetObjectXML(Context context,
                                           String pid,
@@ -999,13 +745,11 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceGetObjectXML");
             String target = Constants.ACTION.GET_OBJECT_XML.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.OBJECT.ENCODING.uri,
                                            objectXmlEncoding);
             } catch (Exception e) {
@@ -1014,9 +758,7 @@ public class DefaultAuthorization
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIM.uri,
                              pid,
@@ -1035,17 +777,14 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceIngest");
             String target = Constants.ACTION.INGEST.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.OBJECT.FORMAT_URI.uri,
                                            format);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.OBJECT.ENCODING.uri,
                                            ingestEncoding);
             } catch (Exception e) {
@@ -1068,7 +807,7 @@ public class DefaultAuthorization
     }
 
     /**
-     * @deprecated in Fedora 3.0, use enforceIngest() instead 
+     * @deprecated in Fedora 3.0, use enforceIngest() instead
      */
     @Deprecated
     public final void enforceIngestObject(Context context,
@@ -1078,7 +817,7 @@ public class DefaultAuthorization
             throws AuthzException {
         enforceIngest(context, pid, format, ingestEncoding);
     }
-    
+
     public final void enforceListObjectInFieldSearchResults(Context context,
                                                             String pid)
             throws AuthzException {
@@ -1086,7 +825,6 @@ public class DefaultAuthorization
             LOG.debug("Entered enforceListObjectInFieldSearchResults");
             String target =
                     Constants.ACTION.LIST_OBJECT_IN_FIELD_SEARCH_RESULTS.uri;
-            log("enforcing " + target);
             if (enforceListObjectInFieldSearchResults) {
                 context.setActionAttributes(null);
                 context.setResourceAttributes(null);
@@ -1111,13 +849,10 @@ public class DefaultAuthorization
             LOG.debug("Entered enforceListObjectInResourceIndexResults");
             String target =
                     Constants.ACTION.LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS.uri;
-            log("enforcing " + target);
             if (enforceListObjectInResourceIndexResults) {
                 context.setActionAttributes(null);
                 context.setResourceAttributes(null);
-                xacmlPep
-                        .enforce(context
-                                         .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+                xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                                  target,
                                  Constants.ACTION.APIA.uri,
                                  pid,
@@ -1142,37 +877,29 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceModifyDatastreamByReference");
             String target = Constants.ACTION.MODIFY_DATASTREAM_BY_REFERENCE.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.ID.uri,
                                            datastreamId);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.NEW_MIME_TYPE.uri,
                                            datastreamNewMimeType);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.NEW_FORMAT_URI.uri,
                                            datastreamNewFormatURI);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.NEW_LOCATION.uri,
                                            datastreamNewLocation);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.NEW_ALT_IDS.uri,
                                            datastreamNewAltIDs);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.NEW_CHECKSUM_TYPE.uri,
                                            datastreamNewChecksumType);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.NEW_CHECKSUM.uri,
                                            datastreamNewChecksum);
             } catch (Exception e) {
@@ -1181,9 +908,7 @@ public class DefaultAuthorization
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIM.uri,
                              pid,
@@ -1206,33 +931,26 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceModifyDatastreamByValue");
             String target = Constants.ACTION.MODIFY_DATASTREAM_BY_VALUE.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.ID.uri,
                                            datastreamId);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.NEW_MIME_TYPE.uri,
                                            newDatastreamMimeType);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.NEW_FORMAT_URI.uri,
                                            newDatastreamFormatURI);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.NEW_ALT_IDS.uri,
                                            newDatastreamAltIDs);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.NEW_CHECKSUM_TYPE.uri,
                                            newDatastreamChecksumType);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.NEW_CHECKSUM.uri,
                                            newDatastreamChecksum);
             } catch (Exception e) {
@@ -1241,9 +959,7 @@ public class DefaultAuthorization
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIM.uri,
                              pid,
@@ -1262,17 +978,14 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceModifyObject");
             String target = Constants.ACTION.MODIFY_OBJECT.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.OBJECT.NEW_STATE.uri,
                                            objectNewState);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.OBJECT.OWNER.uri,
                                            objectNewOwnerId);
             } catch (Exception e) {
@@ -1301,18 +1014,15 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforcePurgeDatastream");
             String target = Constants.ACTION.PURGE_DATASTREAM.uri;
-            log("enforcing " + target);
             String name = "";
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             name = "";
             try {
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.ID.uri,
                                            datastreamId);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri,
                                            ensureDate(endDT, context));
             } catch (Exception e) {
@@ -1321,9 +1031,7 @@ public class DefaultAuthorization
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIM.uri,
                              pid,
@@ -1334,45 +1042,14 @@ public class DefaultAuthorization
         }
     }
 
-    // public final void enforcePurgeDisseminator(Context context, String pid,
-    // String disseminatorId, Date endDT)
-    // throws AuthzException {
-    // try {
-    // LOG.debug("Entered enforcePurgeDisseminator");
-    // String target = Constants.ACTION.PURGE_DISSEMINATOR.uri;
-    // log("enforcing " + target);
-    // String name = "";
-    // context.setActionAttributes(null);
-    // MultiValueMap resourceAttributes = new MultiValueMap();
-    // try {
-    // name = resourceAttributes.setReturn(Constants.DISSEMINATOR.ID.uri,
-    // disseminatorId);
-    // name =
-    // resourceAttributes.setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri,
-    // ensureDate (endDT, context));
-    // } catch (Exception e) {
-    // context.setResourceAttributes(null);
-    // throw new AuthzOperationalException(target + " couldn't set " + name, e);
-    // }
-    // context.setResourceAttributes(resourceAttributes);
-    // xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
-    // target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-    // } finally {
-    // LOG.debug("Exiting enforcePurgeDisseminator");
-    // }
-    // }
-
     public final void enforcePurgeObject(Context context, String pid)
             throws AuthzException {
         try {
             LOG.debug("Entered enforcePurgeObject");
             String target = Constants.ACTION.PURGE_OBJECT.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             context.setResourceAttributes(null);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIM.uri,
                              pid,
@@ -1391,17 +1068,14 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceSetDatastreamState");
             String target = Constants.ACTION.SET_DATASTREAM_STATE.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.ID.uri,
                                            datastreamId);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.NEW_STATE.uri,
                                            datastreamNewState);
             } catch (Exception e) {
@@ -1410,9 +1084,7 @@ public class DefaultAuthorization
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIM.uri,
                              pid,
@@ -1431,17 +1103,14 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceSetDatastreamVersionable");
             String target = Constants.ACTION.SET_DATASTREAM_VERSIONABLE.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.ID.uri,
                                            datastreamId);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.NEW_VERSIONABLE.uri,
                                            new Boolean(datastreamNewVersionable)
                                                    .toString());
@@ -1451,9 +1120,7 @@ public class DefaultAuthorization
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIM.uri,
                              pid,
@@ -1464,33 +1131,6 @@ public class DefaultAuthorization
         }
     }
 
-    // public final void enforceSetDisseminatorState(Context context, String
-    // pid, String disseminatorId, String disseminatorNewState)
-    // throws AuthzException {
-    // try {
-    // LOG.debug("Entered enforceSetDisseminatorState");
-    // String target = Constants.ACTION.SET_DISSEMINATOR_STATE.uri;
-    // log("enforcing " + target);
-    // context.setActionAttributes(null);
-    // MultiValueMap resourceAttributes = new MultiValueMap();
-    // String name = "";
-    // try {
-    // name = resourceAttributes.setReturn(Constants.DISSEMINATOR.ID.uri,
-    // disseminatorId);
-    // name = resourceAttributes.setReturn(Constants.DISSEMINATOR.NEW_STATE.uri,
-    // disseminatorNewState);
-    // } catch (Exception e) {
-    // context.setResourceAttributes(null);
-    // throw new AuthzOperationalException(target + " couldn't set " + name, e);
-    // }
-    // context.setResourceAttributes(resourceAttributes);
-    // xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
-    // target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-    // } finally {
-    // LOG.debug("Exiting enforceSetDisseminatorState");
-    // }
-    // }
-
     public final void enforceCompareDatastreamChecksum(Context context,
                                                        String pid,
                                                        String datastreamId,
@@ -1499,18 +1139,15 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceCompareDatastreamChecksum");
             String target = Constants.ACTION.COMPARE_DATASTREAM_CHECKSUM.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
 
             try {
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.ID.uri,
                                            datastreamId);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri,
                                            ensureDate(versionDate, context));
             } catch (Exception e) {
@@ -1519,9 +1156,7 @@ public class DefaultAuthorization
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIM.uri,
                              pid,
@@ -1537,12 +1172,9 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceDescribeRepository");
             String target = Constants.ACTION.DESCRIBE_REPOSITORY.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             context.setResourceAttributes(null);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIA.uri,
                              "",
@@ -1557,14 +1189,9 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceFindObjects");
             String target = Constants.ACTION.FIND_OBJECTS.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             context.setResourceAttributes(null);
-            log("enforceFindObjects, subject (from context)="
-                    + context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri));
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIA.uri,
                              "",
@@ -1579,12 +1206,9 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceRIFindObjects");
             String target = Constants.ACTION.RI_FIND_OBJECTS.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             context.setResourceAttributes(null);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIA.uri,
                              "",
@@ -1603,17 +1227,14 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceGetDatastreamDissemination");
             String target = Constants.ACTION.GET_DATASTREAM_DISSEMINATION.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.ID.uri,
                                            datastreamId);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri,
                                            ensureDate(asOfDate, context));
             } catch (Exception e) {
@@ -1622,9 +1243,7 @@ public class DefaultAuthorization
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIA.uri,
                              pid,
@@ -1648,45 +1267,34 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceGetDissemination");
             String target = Constants.ACTION.GET_DISSEMINATION.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes.setReturn(Constants.SDEF.PID.uri,
+                name = resourceAttributes.setReturn(Constants.SDEF.PID.uri,
                                                      sDefPid);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.SDEF.NAMESPACE.uri,
                                            extractNamespace(sDefPid));
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DISSEMINATOR.METHOD.uri,
                                            methodName);
-                name =
-                        resourceAttributes.setReturn(Constants.SDEP.PID.uri,
+                name = resourceAttributes.setReturn(Constants.SDEP.PID.uri,
                                                      sDepPid);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.SDEP.NAMESPACE.uri,
                                            extractNamespace(sDepPid));
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.OBJECT.STATE.uri,
                                            objectState);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DISSEMINATOR.STATE.uri,
                                            dissState);
-                name =
-                        resourceAttributes.setReturn(Constants.SDEF.STATE.uri,
+                name = resourceAttributes.setReturn(Constants.SDEF.STATE.uri,
                                                      sDefState);
-                name =
-                        resourceAttributes.setReturn(Constants.SDEP.STATE.uri,
+                name = resourceAttributes.setReturn(Constants.SDEP.STATE.uri,
                                                      sDepState);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri,
                                            ensureDate(asOfDate, context));
             } catch (Exception e) {
@@ -1695,9 +1303,7 @@ public class DefaultAuthorization
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIA.uri,
                              pid,
@@ -1713,12 +1319,9 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceGetObjectHistory");
             String target = Constants.ACTION.GET_OBJECT_HISTORY.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             context.setResourceAttributes(null);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIA.uri,
                              pid,
@@ -1735,13 +1338,11 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceGetObjectProfile");
             String target = Constants.ACTION.GET_OBJECT_PROFILE.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri,
                                            ensureDate(asOfDate, context));
             } catch (Exception e) {
@@ -1750,9 +1351,7 @@ public class DefaultAuthorization
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIA.uri,
                              pid,
@@ -1769,13 +1368,11 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceListDatastreams");
             String target = Constants.ACTION.LIST_DATASTREAMS.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri,
                                            ensureDate(asOfDate, context));
             } catch (Exception e) {
@@ -1784,9 +1381,7 @@ public class DefaultAuthorization
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIA.uri,
                              pid,
@@ -1802,13 +1397,11 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceListMethods");
             String target = Constants.ACTION.LIST_METHODS.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri,
                                            ensureDate(asOfDate, context));
             } catch (Exception e) {
@@ -1817,9 +1410,7 @@ public class DefaultAuthorization
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIA.uri,
                              pid,
@@ -1834,12 +1425,9 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceServerShutdown");
             String target = Constants.ACTION.SERVER_SHUTDOWN.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             context.setResourceAttributes(null);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              "",
                              "",
@@ -1854,12 +1442,9 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceServerStatus");
             String target = Constants.ACTION.SERVER_STATUS.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             context.setResourceAttributes(null);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              "",
                              "",
@@ -1874,12 +1459,9 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceOAIRespond");
             String target = Constants.ACTION.OAI.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             context.setResourceAttributes(null);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              "",
                              "",
@@ -1894,12 +1476,9 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceUpload");
             String target = Constants.ACTION.UPLOAD.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             context.setResourceAttributes(null);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              "",
                              "",
@@ -1916,16 +1495,13 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforce_Internal_DSState");
             String target = Constants.ACTION.INTERNAL_DSSTATE.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.ID.uri, id);
-                name =
-                        resourceAttributes
+                name = resourceAttributes
                                 .setReturn(Constants.DATASTREAM.STATE.uri,
                                            state);
             } catch (Exception e) {
@@ -1934,9 +1510,7 @@ public class DefaultAuthorization
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIA.uri,
                              "",
@@ -1953,15 +1527,13 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceResolveDatastream");
             String target = Constants.ACTION.RESOLVE_DATASTREAM.uri;
-            log("enforcing " + target);
             context.setResourceAttributes(null);
             MultiValueMap actionAttributes = new MultiValueMap();
             String name = "";
             try {
                 String ticketIssuedDateTimeString =
                         DateUtility.convertDateToString(ticketIssuedDateTime);
-                name =
-                        actionAttributes
+                name = actionAttributes
                                 .setReturn(Constants.RESOURCE.TICKET_ISSUED_DATETIME.uri,
                                            ticketIssuedDateTimeString);
             } catch (Exception e) {
@@ -1970,9 +1542,7 @@ public class DefaultAuthorization
                         + name, e);
             }
             context.setActionAttributes(actionAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              "",
                              "",
@@ -1987,12 +1557,9 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceReloadPolicies");
             String target = Constants.ACTION.RELOAD_POLICIES.uri;
-            log("enforcing " + target);
             context.setResourceAttributes(null);
             context.setActionAttributes(null);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              "",
                              "",
@@ -2007,45 +1574,25 @@ public class DefaultAuthorization
         return DateUtility.convertDateToString(date, false);
     }
 
-    private static boolean log = false;
-
-    private final void log(String msg) {
-        if (log) {
-            LOG.debug(msg);
-        }
-    }
-
-    private static boolean slog = false;
-
-    private static final void slog(String msg) {
-        if (slog) {
-            LOG.debug(msg);
-        }
-    }
-
     public void enforceGetRelationships(Context context,
                                         String pid,
                                         String predicate) throws AuthzException {
         try {
             LOG.debug("Entered enforceGetRelationships");
             String target = Constants.ACTION.GET_RELATIONSHIPS.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes.setReturn(Constants.OBJECT.PID.uri,
-                                                     pid);
+                name = resourceAttributes.setReturn(Constants.OBJECT.PID.uri,
+                                                    pid);
             } catch (Exception e) {
                 context.setResourceAttributes(null);
                 throw new AuthzOperationalException(target + " couldn't set "
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIM.uri,
                              pid,
@@ -2065,23 +1612,19 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforceAddRelationship");
             String target = Constants.ACTION.ADD_RELATIONSHIP.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes.setReturn(Constants.OBJECT.PID.uri,
-                                                     pid);
+                name = resourceAttributes.setReturn(Constants.OBJECT.PID.uri,
+                                                    pid);
             } catch (Exception e) {
                 context.setResourceAttributes(null);
                 throw new AuthzOperationalException(target + " couldn't set "
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIM.uri,
                              pid,
@@ -2101,23 +1644,19 @@ public class DefaultAuthorization
         try {
             LOG.debug("Entered enforcePurgeRelationship");
             String target = Constants.ACTION.PURGE_RELATIONSHIP.uri;
-            log("enforcing " + target);
             context.setActionAttributes(null);
             MultiValueMap resourceAttributes = new MultiValueMap();
             String name = "";
             try {
-                name =
-                        resourceAttributes.setReturn(Constants.OBJECT.PID.uri,
-                                                     pid);
+                name = resourceAttributes.setReturn(Constants.OBJECT.PID.uri,
+                                                    pid);
             } catch (Exception e) {
                 context.setResourceAttributes(null);
                 throw new AuthzOperationalException(target + " couldn't set "
                         + name, e);
             }
             context.setResourceAttributes(resourceAttributes);
-            xacmlPep
-                    .enforce(context
-                                     .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
+            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                              target,
                              Constants.ACTION.APIM.uri,
                              pid,

@@ -6,7 +6,6 @@
 
 package fedora.server.management;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,8 +23,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -42,6 +41,7 @@ import org.jrdf.graph.URIReference;
 import org.w3c.dom.Document;
 
 import fedora.common.Constants;
+import fedora.common.PID;
 import fedora.common.rdf.SimpleURIReference;
 
 import fedora.server.Context;
@@ -68,7 +68,6 @@ import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.RelationshipTuple;
 import fedora.server.utilities.StreamUtility;
-import fedora.server.validation.RelsExtValidator;
 import fedora.server.validation.ValidationConstants;
 import fedora.server.validation.ValidationUtility;
 
@@ -85,24 +84,22 @@ public class DefaultManagement
     private static Logger LOG =
             Logger.getLogger(DefaultManagement.class.getName());
 
-    public final static String s_RelsExt_Datastream = "RELS-EXT";
+    private final Authorization m_authz;
 
-    private Authorization m_fedoraXACMLModule;
+    private final DOManager m_manager;
 
-    private DOManager m_manager;
+    private final ExternalContentManager m_contentManager;
 
-    private ExternalContentManager m_contentManager;
-
-    private int m_uploadStorageMinutes;
+    private final int m_uploadStorageMinutes;
 
     private int m_lastId;
 
-    private File m_tempDir;
+    private final File m_tempDir;
 
-    private Hashtable<String, Long> m_uploadStartTime;
-    
+    private final Hashtable<String, Long> m_uploadStartTime;
+
     private long m_lastPurgeInMillis = System.currentTimeMillis();
-    
+
     private final long m_purgeDelayInMillis;
 
     /**
@@ -111,15 +108,15 @@ public class DefaultManagement
      * @author Frederic Buffet & Tommy Bourdin (Atos Worldline)
      * @date   August 1, 2008
      */
-    public DefaultManagement(Authorization auth,
-                             DOManager doMgr, 
+    public DefaultManagement(Authorization authz,
+                             DOManager doMgr,
                              ExternalContentManager ecMgr,
-                             int uploadMinutes, 
+                             int uploadMinutes,
                              int lastId,
                              File tempDir,
                              Hashtable<String, Long> uploadStartTime,
                              long purgeDelayInMillis) {
-        m_fedoraXACMLModule = auth;
+        m_authz = authz;
         m_manager = doMgr;
         m_contentManager = ecMgr;
         m_uploadStorageMinutes = uploadMinutes;
@@ -146,7 +143,7 @@ public class DefaultManagement
                                           newPid);
             String pid = w.GetObjectPID();
 
-            m_fedoraXACMLModule.enforceIngest(context, pid, format, encoding);
+            m_authz.enforceIngest(context, pid, format, encoding);
 
             // Only create an audit record if there is a log message to capture
             if (logMessage != null && !logMessage.equals("")) {
@@ -196,7 +193,7 @@ public class DefaultManagement
         try {
             LOG.debug("Entered modifyObject");
 
-            m_fedoraXACMLModule.enforceModifyObject(context,
+            m_authz.enforceModifyObject(context,
                                                     pid,
                                                     state,
                                                     ownerId);
@@ -214,7 +211,7 @@ public class DefaultManagement
                 }
                 w.setState(state);
             }
-            
+
             if (label != null) {
                 w.setLabel(label);
             }
@@ -251,7 +248,7 @@ public class DefaultManagement
         try {
             LOG.debug("Entered getObjectXML");
 
-            m_fedoraXACMLModule.enforceGetObjectXML(context, pid, encoding);
+            m_authz.enforceGetObjectXML(context, pid, encoding);
 
             DOReader reader =
                     m_manager.getReader(Server.USE_DEFINITIVE_STORE,
@@ -282,7 +279,7 @@ public class DefaultManagement
         try {
             LOG.debug("Entered export");
 
-            m_fedoraXACMLModule.enforceExport(context,
+            m_authz.enforceExport(context,
                                               pid,
                                               format,
                                               exportContext,
@@ -323,7 +320,7 @@ public class DefaultManagement
         try {
             LOG.debug("Entered purgeObject");
 
-            m_fedoraXACMLModule.enforcePurgeObject(context, pid);
+            m_authz.enforcePurgeObject(context, pid);
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             w.remove();
@@ -404,17 +401,17 @@ public class DefaultManagement
         }
         DOWriter w = null;
         try {
-            m_fedoraXACMLModule.enforceAddDatastream(context,
-                                                     pid,
-                                                     dsID,
-                                                     altIDs,
-                                                     MIMEType,
-                                                     formatURI,
-                                                     dsLocation,
-                                                     controlGroup,
-                                                     dsState,
-                                                     checksumType,
-                                                     checksum);
+            m_authz.enforceAddDatastream(context,
+                                         pid,
+                                         dsID,
+                                         altIDs,
+                                         MIMEType,
+                                         formatURI,
+                                         dsLocation,
+                                         controlGroup,
+                                         dsState,
+                                         checksumType,
+                                         checksum);
 
             checkDatastreamID(dsID);
             checkDatastreamLabel(dsLabel);
@@ -430,17 +427,17 @@ public class DefaultManagement
                     if (dsLocation.startsWith(DatastreamManagedContent.UPLOADED_SCHEME)) {
                         in = getTempStream(dsLocation);
                     } else {
-                        mimeTypedStream = m_contentManager.getExternalContent(dsLocation,
-                                                                              context);
+                        mimeTypedStream =
+                                m_contentManager.getExternalContent(dsLocation,
+                                                                    context);
                         in = mimeTypedStream.getStream();
                     }
-                    ((DatastreamXMLMetadata) ds).xmlContent =
-                            getEmbeddableXML(in);
-                    // If it's a RELS-EXT datastream, do validation
-                    if (dsID != null && dsID.equals("RELS-EXT")) {
-                        validateRelsExt(pid,
-                                        new ByteArrayInputStream(((DatastreamXMLMetadata) ds).xmlContent));
-                    }
+                    // set and validate the content
+                    DatastreamXMLMetadata dsm = (DatastreamXMLMetadata) ds;
+                    dsm.xmlContent = getEmbeddableXML(in);
+                    ValidationUtility.validateReservedDatastream(PID.getInstance(pid),
+                                                                 dsm.DatastreamID,
+                                                                 dsm.getContentStream());
                     if(mimeTypedStream != null) {
                         mimeTypedStream.close();
                     }
@@ -588,7 +585,7 @@ public class DefaultManagement
         DOWriter w = null;
         try {
             LOG.debug("Entered modifyDatastreamByReference");
-            m_fedoraXACMLModule
+            m_authz
                     .enforceModifyDatastreamByReference(context,
                                                         pid,
                                                         datastreamId,
@@ -780,7 +777,7 @@ public class DefaultManagement
         DOWriter w = null;
         try {
             LOG.debug("Entered modifyDatastreamByValue");
-            m_fedoraXACMLModule.enforceModifyDatastreamByValue(context,
+            m_authz.enforceModifyDatastreamByValue(context,
                                                                pid,
                                                                datastreamId,
                                                                altIDs,
@@ -824,16 +821,6 @@ public class DefaultManagement
             } else {
                 checksumType = Datastream.validateChecksumType(checksumType);
             }
-            // If "force" is false and the mime type changed, validate the
-            // original datastream with respect to any disseminators it is
-            // involved in, and keep a record of that information for later
-            // (so we can determine whether the mime type change would cause
-            // data contract invalidation)
-            // Map oldValidationReports = null;
-            // if ( !mimeType.equals(orig.DSMIME) && !force) {
-            // oldValidationReports = getAllBindingMapValidationReports(
-            // context, w, datastreamId);
-            // }
 
             DatastreamXMLMetadata newds = new DatastreamXMLMetadata();
             newds.DSMDClass = ((DatastreamXMLMetadata) orig).DSMDClass;
@@ -843,13 +830,11 @@ public class DefaultManagement
                 // Accordingly, here we just make a copy of the old content.
                 newds.xmlContent = ((DatastreamXMLMetadata) orig).xmlContent;
             } else {
-                // If it's not null, use it
+                // set and validate the content
                 newds.xmlContent = getEmbeddableXML(dsContent);
-                // If it's a RELS-EXT datastream, do validation
-                if (orig.DatastreamID.equals("RELS-EXT")) {
-                    validateRelsExt(pid,
-                                    new ByteArrayInputStream(((DatastreamXMLMetadata) newds).xmlContent));
-                }
+                ValidationUtility.validateReservedDatastream(PID.getInstance(pid),
+                                                             orig.DatastreamID,
+                                                             newds.getContentStream());
             }
 
             // update ds attributes that are common to all versions...
@@ -894,15 +879,6 @@ public class DefaultManagement
                            logMessage,
                            nowUTC);
 
-            // if all went ok, check if we need to validate, then commit.
-            // if (oldValidationReports != null) { // mime changed and
-            // force=false
-            // rejectMimeChangeIfCausedInvalidation(
-            // oldValidationReports,
-            // getAllBindingMapValidationReports(context,
-            // w,
-            // datastreamId));
-            // }
             w.commit(logMessage);
 
             return nowUTC;
@@ -945,7 +921,7 @@ public class DefaultManagement
         try {
             LOG.debug("Entered purgeDatastream");
 
-            m_fedoraXACMLModule.enforcePurgeDatastream(context,
+            m_authz.enforcePurgeDatastream(context,
                                                        pid,
                                                        datastreamID,
                                                        endDT);
@@ -969,7 +945,7 @@ public class DefaultManagement
                     msg.append("Cannot purge entire datastream because it\n");
                     msg.append("is used by the following disseminators:");
                     for (int i = 0; i < usedList.size(); i++) {
-                        msg.append("\n - " + (String) usedList.get(i));
+                        msg.append("\n - " + usedList.get(i));
                     }
                     throw new GeneralException(msg.toString());
                 }
@@ -1063,7 +1039,7 @@ public class DefaultManagement
         try {
             LOG.debug("Entered getDatastream");
 
-            m_fedoraXACMLModule.enforceGetDatastream(context,
+            m_authz.enforceGetDatastream(context,
                                                      pid,
                                                      datastreamID,
                                                      asOfDateTime);
@@ -1095,7 +1071,7 @@ public class DefaultManagement
         try {
             LOG.debug("Entered getDatastreams");
 
-            m_fedoraXACMLModule.enforceGetDatastreams(context,
+            m_authz.enforceGetDatastreams(context,
                                                       pid,
                                                       asOfDateTime,
                                                       state);
@@ -1127,7 +1103,7 @@ public class DefaultManagement
         try {
             LOG.debug("Entered getDatastreamHistory");
 
-            m_fedoraXACMLModule.enforceGetDatastreamHistory(context,
+            m_authz.enforceGetDatastreamHistory(context,
                                                             pid,
                                                             datastreamID);
 
@@ -1182,7 +1158,7 @@ public class DefaultManagement
             throws ServerException {
         try {
             LOG.debug("Entered getNextPID");
-            m_fedoraXACMLModule.enforceGetNextPid(context, namespace, numPIDs);
+            m_authz.enforceGetNextPid(context, namespace, numPIDs);
 
             String[] pidList = null;
 
@@ -1223,7 +1199,7 @@ public class DefaultManagement
 
     public String putTempStream(Context context, InputStream in)
             throws StreamWriteException, AuthzException {
-        m_fedoraXACMLModule.enforceUpload(context);
+        m_authz.enforceUpload(context);
         // first clean up after old stuff
         purgeUploadedFiles();
         // then generate an id
@@ -1242,7 +1218,7 @@ public class DefaultManagement
                 }
                 outFile.delete();
             }
-            throw new StreamWriteException(e.getMessage());
+            throw new StreamWriteException("Error writing temp stream", e);
         }
         // if we got this far w/o an exception, add to hash with current time
         // and return the identifier-that-looks-like-a-url
@@ -1307,7 +1283,7 @@ public class DefaultManagement
         try {
             LOG.debug("Entered setDatastreamState");
 
-            m_fedoraXACMLModule.enforceSetDatastreamState(context,
+            m_authz.enforceSetDatastreamState(context,
                                                           pid,
                                                           datastreamID,
                                                           dsState);
@@ -1361,7 +1337,7 @@ public class DefaultManagement
         try {
             LOG.debug("Entered setDatastreamVersionable");
 
-            m_fedoraXACMLModule.enforceSetDatastreamVersionable(context,
+            m_authz.enforceSetDatastreamVersionable(context,
                                                                 pid,
                                                                 datastreamID,
                                                                 versionable);
@@ -1407,7 +1383,7 @@ public class DefaultManagement
         try {
             LOG.debug("Entered compareDatastreamChecksum");
 
-            m_fedoraXACMLModule.enforceCompareDatastreamChecksum(context,
+            m_authz.enforceCompareDatastreamChecksum(context,
                                                                  pid,
                                                                  datastreamID,
                                                                  versionDate);
@@ -1481,25 +1457,6 @@ public class DefaultManagement
         }
     }
 
-    private void validateRelsExt(String pid, InputStream relsext)
-            throws ServerException {
-        // RELATIONSHIP METADATA VALIDATION:
-        try {
-            RelsExtValidator deser = new RelsExtValidator("UTF-8", false);
-            if (relsext != null) {
-                LOG.debug("API-M: Validating RELS-EXT datastream...");
-                deser.deserialize(relsext, "info:fedora/" + pid);
-                LOG.debug("API-M: RELS-EXT datastream passed validation.");
-            }
-        } catch (Exception e) {
-            String message = e.getMessage();
-            if (message == null) {
-                message = e.getClass().getName();
-            }
-            throw new GeneralException("RELS-EXT validation failed: " + message);
-        }
-    }
-
     private void checkDatastreamID(String id) throws ValidationException {
         checkString(id,
                     "Datastream id",
@@ -1549,7 +1506,7 @@ public class DefaultManagement
         try {
             LOG.debug("Entered getRelationships");
 
-            m_fedoraXACMLModule.enforceGetRelationships(context,
+            m_authz.enforceGetRelationships(context,
                                                         pid,
                                                         relationship);
 
@@ -1591,7 +1548,7 @@ public class DefaultManagement
         DOWriter w = null;
         try {
             LOG.debug("Entered addRelationship");
-            m_fedoraXACMLModule.enforceAddRelationship(context,
+            m_authz.enforceAddRelationship(context,
                                                        pid,
                                                        relationship,
                                                        object,
@@ -1639,7 +1596,7 @@ public class DefaultManagement
         DOWriter w = null;
         try {
             LOG.debug("Entered purgeRelationship");
-            m_fedoraXACMLModule.enforcePurgeRelationship(context,
+            m_authz.enforcePurgeRelationship(context,
                                                          pid,
                                                          relationship,
                                                          object,
@@ -1715,7 +1672,7 @@ public class DefaultManagement
      * Deletes expired uploaded files.
      * <p>
      * This method is called for each upload. But we respect a minimim delay
-     * between two purges. This delay is given by m_purgeDelayInMillis. 
+     * between two purges. This delay is given by m_purgeDelayInMillis.
      */
     private void purgeUploadedFiles() {
         long currentTimeMillis = System.currentTimeMillis();
@@ -1755,7 +1712,7 @@ public class DefaultManagement
             // ------------------------------------------------------------
             for (int i = 0; i < removeList.size(); i++) {
                 String id = removeList.get(i);
-              
+
                 File file = new File(this.m_tempDir, id);
                 if (file.exists()) {
                     if (file.delete()) {

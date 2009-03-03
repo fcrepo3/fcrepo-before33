@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -22,7 +22,7 @@ public interface Authorization {
     public static final String SUBJECT_CATEGORY_ACCESS =
             "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject";
 
-    //action	
+    //action
     public static final String ACTION_CATEGORY =
             "urn:oasis:names:tc:xacml:1.0:action";
 
@@ -63,8 +63,8 @@ public interface Authorization {
                               String pid,
                               String format,
                               String exportContext,
-                              String exportEncoding) throws AuthzException;    
-    
+                              String exportEncoding) throws AuthzException;
+
     @Deprecated
     public void enforceExportObject(Context context,
                                     String pid,
@@ -76,7 +76,7 @@ public interface Authorization {
     public void enforceGetDatastream(Context context,
                                      String pid,
                                      String datastreamId,
-                                     Date asOfDateTime) //x 
+                                     Date asOfDateTime) //x
             throws AuthzException;
 
     public void enforceGetDatastreamHistory(Context context,
@@ -88,15 +88,6 @@ public interface Authorization {
                                       String pid,
                                       Date asOfDate,
                                       String state) throws AuthzException;
-
-    //	public void enforceGetDisseminator(Context context, String pid, String disseminatorId, Date asOfDateTime) 
-    //	throws AuthzException;
-    //	
-    //	public void enforceGetDisseminators(Context context, String pid, Date asOfDate, String disseminatorState) 
-    //	throws AuthzException;
-    //
-    //	public void enforceGetDisseminatorHistory(Context context, String pid, String disseminatorPid) 
-    //	throws AuthzException;
 
     public void enforceGetNextPid(Context context,
                                   String namespace,
@@ -118,7 +109,7 @@ public interface Authorization {
                                     String format,
                                     String ingestEncoding)
             throws AuthzException;
-    
+
     public void enforceListObjectInFieldSearchResults(Context context,
                                                       String pid)
             throws AuthzException;
@@ -148,9 +139,6 @@ public interface Authorization {
                                                String checksum)
             throws AuthzException;
 
-    //	public void enforceModifyDisseminator(Context context, String pid, String disseminatorId, String mechanismPid, String disseminatorState) 
-    //	throws AuthzException;
-
     public void enforceModifyObject(Context context,
                                     String pid,
                                     String objectState,
@@ -160,9 +148,6 @@ public interface Authorization {
                                        String pid,
                                        String datastreamId,
                                        Date endDT) throws AuthzException;
-
-    //	public void enforcePurgeDisseminator(Context context, String pid, String disseminatorId, Date endDT) //x
-    //	throws AuthzException;
 
     public void enforcePurgeObject(Context context, String pid)
             throws AuthzException;
@@ -202,9 +187,6 @@ public interface Authorization {
                                          String object,
                                          boolean isLiteral,
                                          String datatype) throws AuthzException;
-
-    //	public void enforceSetDisseminatorState(Context context, String pid, String disseminatorId, String disseminatorNewState) 
-    //	throws AuthzException;
 
     //APIA
 

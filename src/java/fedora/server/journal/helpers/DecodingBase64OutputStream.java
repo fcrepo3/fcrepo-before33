@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -10,7 +10,7 @@ import java.io.OutputStream;
 
 import java.util.regex.Pattern;
 
-import com.oreilly.servlet.Base64Decoder;
+import fedora.utilities.Base64;
 
 /**
  * Wraps an OutputStream with a Base64 decoder, so when you "write" to the
@@ -19,7 +19,7 @@ import com.oreilly.servlet.Base64Decoder;
  * <p>
  * Base64 encoding is defined in Internet RFC 3548, found at
  * http://tools.ietf.org/html/rfc3548 (among other places).
- * 
+ *
  * @author Jim Blake
  */
 public class DecodingBase64OutputStream {
@@ -49,7 +49,7 @@ public class DecodingBase64OutputStream {
      * 4-character groups. Those trailing characters will be prefixed to the
      * next set of data, and hopefully we will have none left over when the
      * writer is closed.
-     * 
+     *
      * @throws IllegalStateException
      *         if called after close().
      * @throws IOException
@@ -62,15 +62,14 @@ public class DecodingBase64OutputStream {
 
         String buffer = pattern.matcher(residual + data).replaceAll("");
         int usableLength = buffer.length() - buffer.length() % 4;
-        stream.write(Base64Decoder
-                .decodeToBytes(buffer.substring(0, usableLength)));
+        stream.write(Base64.decode((buffer.substring(0, usableLength))));
         residual = buffer.substring(usableLength);
     }
 
     /**
      * Close the writer. If there are any residual characters at this point, the
      * data stream was not a valid Base64 encoding.
-     * 
+     *
      * @throws IOException
      *         from the inner OutputStream.
      */

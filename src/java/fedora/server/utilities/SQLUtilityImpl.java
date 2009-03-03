@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -65,6 +65,10 @@ class SQLUtilityImpl
                 Long.parseLong(cpDC
                         .getParameter("timeBetweenEvictionRunsMillis")
                         .getValue());
+        String cpValidationQuery = null;
+        if (cpDC.getParameter("validationQuery") != null) {
+            cpValidationQuery = cpDC.getParameter("validationQuery").getValue();
+        }
         boolean cpTestOnBorrow =
                 Boolean.parseBoolean(cpDC.getParameter("testOnBorrow")
                         .getValue());
@@ -104,6 +108,7 @@ class SQLUtilityImpl
                                   cpMinEvictableIdleTimeMillis,
                                   cpNumTestsPerEvictionRun,
                                   cpTimeBetweenEvictionRunsMillis,
+                                  cpValidationQuery,
                                   cpTestOnBorrow,
                                   cpTestOnReturn,
                                   cpTestWhileIdle,
@@ -112,7 +117,7 @@ class SQLUtilityImpl
 
     /**
      * Adds or replaces a row in the given table.
-     * 
+     *
      * @param conn
      *        the connection to use
      * @param table
@@ -142,7 +147,7 @@ class SQLUtilityImpl
 
     /**
      * Updates an existing row.
-     * 
+     *
      * @return false if the row did not previously exist and therefore was not
      *         updated.
      */
@@ -180,7 +185,7 @@ class SQLUtilityImpl
         try {
             // populate values
             int varIndex = 0;
-            for (int i = 0; i < values.length; i++) {
+            for (int i = 0; i < columns.length; i++) {
                 if (!columns[i].equals(uniqueColumn) && values[i] != null) {
                     varIndex++;
                     if (numeric != null && numeric[i]) {
@@ -206,7 +211,7 @@ class SQLUtilityImpl
 
     /**
      * Adds a new row.
-     * 
+     *
      * @throws SQLException
      *         if the row could not be added.
      */
@@ -417,7 +422,7 @@ class SQLUtilityImpl
     /**
      * Gets the value in the given array whose associated column name matches
      * the given uniqueColumn name.
-     * 
+     *
      * @throws SQLException
      *         if the uniqueColumn doesn't exist in the given column array.
      */

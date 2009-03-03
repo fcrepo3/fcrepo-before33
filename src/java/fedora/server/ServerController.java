@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -12,6 +12,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
 
@@ -30,7 +32,7 @@ import fedora.server.utilities.status.ServerStatusFile;
 
 /**
  * Server Controller.
- * 
+ *
  * @author Chris Wilper
  */
 public class ServerController
@@ -38,6 +40,7 @@ public class ServerController
 
     private static final long serialVersionUID = 1L;
 
+    private static Logger logger = Logger.getLogger(ServerController.class);
     private static Server s_server;
 
     private ServerStatusFile _status;
@@ -185,13 +188,12 @@ public class ServerController
     @Override
     public void init() throws ServletException {
 
-        // make sure fedora.home is defined first
-        File fedoraHomeDir = getFedoraHomeDir();
+        // if fedora.home servlet context init param is present,
+        // this will cause Constants.FEDORA_HOME reflect the value.
+        String contextFH = getServletContext().getInitParameter("fedora.home");
+        System.setProperty("servlet.fedora.home", contextFH);
 
-        // FIXME: This is set here for legacy server code that still picks up
-        // these values from fedora.home.  When the code is updated, this
-        // can be removed.
-        System.setProperty("fedora.home", fedoraHomeDir.getPath());
+        File fedoraHomeDir = getFedoraHomeDir();
 
         // get file for writing startup status
         try {
@@ -218,7 +220,7 @@ public class ServerController
 
     /**
      * Validates and returns the value of FEDORA_HOME.
-     * 
+     *
      * @return the FEDORA_HOME directory.
      * @throws ServletException
      *         if FEDORA_HOME (or fedora.home) was not set, does not denote an
@@ -228,8 +230,10 @@ public class ServerController
 
         String fedoraHome = Constants.FEDORA_HOME;
         if (fedoraHome == null) {
-            failStartup("Neither the FEDORA_HOME environment variable, "
-                    + "nor the fedora.home system property was set", null);
+            failStartup("FEDORA_HOME was not configured properly.  It must be "
+                    + "set via the fedora.home servlet init-param (preferred), "
+                    + "the fedora.home system property, or the FEDORA_HOME "
+                    + "environment variable.", null);
         }
         File fedoraHomeDir = new File(fedoraHome);
         if (!fedoraHomeDir.isDirectory()) {

@@ -1,16 +1,16 @@
 package fedora.server.search;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.fail;
-
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.lang.reflect.Field;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,33 +20,35 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import mock.sql.MockConnection;
-import mock.sql.MockDriver;
-import mock.sql.MockStatement;
-
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import junit.framework.JUnit4TestAdapter;
+import mock.sql.MockConnection;
+import mock.sql.MockDriver;
+import mock.sql.MockStatement;
+
 import fedora.server.Context;
 import fedora.server.config.DatastoreConfiguration;
 import fedora.server.errors.InconsistentTableSpecException;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.ConnectionPool;
-import fedora.server.storage.MockServiceDeploymentReader;
 import fedora.server.storage.MockDOReader;
 import fedora.server.storage.MockRepositoryReader;
+import fedora.server.storage.MockServiceDeploymentReader;
 import fedora.server.storage.ServiceDeploymentReader;
-import fedora.server.storage.types.DeploymentDSBindSpec;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DatastreamXMLMetadata;
+import fedora.server.storage.types.DeploymentDSBindSpec;
 import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.TableCreatingConnection;
 import fedora.server.utilities.TableSpec;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 
 public class TestFieldSearchSQLImpl {
 	private static final String[] SHORT_FIELDS = FieldSearchSQLImpl.DB_COLUMN_NAMES_NODC;
@@ -80,7 +82,7 @@ public class TestFieldSearchSQLImpl {
 
 	private static final ObjectData OBJECT_WITH_NO_DC = new ObjectData(
 			"somePid", "myLabel", "A", "theOwner", new Date(
-					12345), new Date(67890), new Date(10000), null);
+					12345), new Date(67890), new Date(0), null);
 
 	private static final ObjectData OBJECT_WITH_DC = new ObjectData("somePid",
 			"myLabel", "A", "theOwner", new Date(12345),
@@ -109,7 +111,7 @@ public class TestFieldSearchSQLImpl {
 
 	private ConnectionPool connectionPool;
 
-	private MyMockDriver mockDriver = new MyMockDriver();
+	private final MyMockDriver mockDriver = new MyMockDriver();
 
 	private int expectedDateInserts;
 
@@ -139,7 +141,7 @@ public class TestFieldSearchSQLImpl {
 		// plausible values.
 		this.connectionPool = new ConnectionPool(MockDriver.class.getName(),
 				"mock://bogus.url", "bogusUsername", "bogusPassword", 5, 5, 5,
-				0, 0, 2, 300, false, false, false, (byte) 0);
+				0, 0, 2, 300, null, false, false, false, (byte) 0);
 	}
 
 	@Before
@@ -150,7 +152,8 @@ public class TestFieldSearchSQLImpl {
 
 	@Test
 	public void noDC() throws ServerException {
-		setSqlUtilityInstance(new UnusedMockSqlUtility());
+		setSqlUtilityInstance(new UpdatingMockSqlUtility(SHORT_FIELDS,
+		        OBJECT_WITH_NO_DC.getShortFieldValueList()));
 		this.mockConnection = new UnusedMockConnection();
 		this.mockRepositoryReader = new UnusedMockRepositoryReader();
 
@@ -221,7 +224,7 @@ public class TestFieldSearchSQLImpl {
 		BasicDigitalObject theObject = new BasicDigitalObject();
 		theObject.setPid(objectData.getPid());
 		theObject.setLabel(objectData.getLabel());
-		
+
 		theObject.setState(objectData.getState());
 		theObject.setOwnerId(objectData.getOwnerId());
 		theObject.setCreateDate(objectData.getCreateDate());
@@ -424,7 +427,7 @@ public class TestFieldSearchSQLImpl {
 
 		/**
 		 * Write down some of what we expect to have happen.
-		 * 
+		 *
 		 * @param expectedColumns
 		 * @param expectedValues
 		 */
@@ -653,7 +656,7 @@ public class TestFieldSearchSQLImpl {
 
 			return joinStrings(values);
 		}
-		
+
 		private String joinStrings(Collection<String> strings) {
 			if ((strings == null) || (strings.isEmpty())) {
 				return null;

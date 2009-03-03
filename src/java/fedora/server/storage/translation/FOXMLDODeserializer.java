@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -50,9 +50,11 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.validation.ValidationUtility;
 
+import fedora.utilities.Base64;
+
 /**
  * Deserializes objects in the constructor-provided version of FOXML.
- * 
+ *
  * @author Sandy Payette
  * @author Chris Wilper
  */
@@ -190,7 +192,7 @@ public class FOXMLDODeserializer
 
     /**
      * Creates a deserializer that reads the given FOXML format.
-     * 
+     *
      * @param format
      *        the version-specific FOXML format.
      * @throws IllegalArgumentException
@@ -297,7 +299,7 @@ public class FOXMLDODeserializer
                              Attributes a) throws SAXException {
 
         // Initialize string buffer to hold content of the new element.
-        // This will start a fresh buffer for every element encountered.            	
+        // This will start a fresh buffer for every element encountered.
         m_elementContent = new StringBuffer();
 
         if (uri.equals(FOXML.uri) && !m_inXMLMetadata) {
@@ -338,7 +340,7 @@ public class FOXMLDODeserializer
                             .convertStringToDate(grab(a, FOXML.uri, "VALUE")));
                 } else {
                     // Legacy object properties from FOXML 1.0, if present,
-                    // will be retained here as external properties in the 
+                    // will be retained here as external properties in the
                     // DigitalObject.  This includes fedora-model:contentModel
                     // and rdf:type.
                     m_obj.setExtProperty(m_objPropertyName, grab(a,
@@ -350,7 +352,7 @@ public class FOXMLDODeserializer
                 //===============
             } else if (localName.equals("datastream")) {
                 // get datastream container-level attributes...
-                // These are common for all versions of the datastream. 
+                // These are common for all versions of the datastream.
                 m_dsId = grab(a, FOXML.uri, "ID");
                 m_dsState = grab(a, FOXML.uri, "STATE");
                 m_dsControlGrp = grab(a, FOXML.uri, "CONTROL_GROUP");
@@ -479,7 +481,7 @@ public class FOXMLDODeserializer
                 // just output it, remembering the number of foxml:xmlContent elements we see,
                 appendElementStart(uri, localName, qName, a, m_dsXMLBuffer);
 
-                // FOXML INSIDE FOXML! we have an inline XML datastream 
+                // FOXML INSIDE FOXML! we have an inline XML datastream
                 // that is itself FOXML.  We do not want to parse this!
                 if (uri.equals(FOXML.uri) && localName.equals("xmlContent")) {
                     m_xmlDataLevel++;
@@ -532,7 +534,7 @@ public class FOXMLDODeserializer
         //==================
         if (m_inXMLMetadata) {
             //=====================
-            // AUDIT DATASTREAM... 
+            // AUDIT DATASTREAM...
             //=====================
             if (m_gotAudit) {
                 // Pick up audit records from the current ds version
@@ -577,7 +579,7 @@ public class FOXMLDODeserializer
                 // AUDIT DATASTREAM...
                 //=====================
                 if (m_dsId.equals("AUDIT")) {
-                    // if we are in the inline XML of the AUDIT datastream just 
+                    // if we are in the inline XML of the AUDIT datastream just
                     // end processing and move on.  Audit datastream handled elsewhere.
                     m_inXMLMetadata = false; // other stuff is re-initted upon
                     // startElement for next xml metadata
@@ -611,8 +613,7 @@ public class FOXMLDODeserializer
                     // remove all spaces and newlines, this might not be necessary.
                     String elementStr =
                             m_elementContent.toString().replaceAll("\\s", "");
-                    byte elementBytes[] =
-                            StreamUtility.decodeBase64(elementStr);
+                    byte elementBytes[] = Base64.decode(elementStr);
                     os.write(elementBytes);
                     os.close();
                     m_dsLocationType = "INTERNAL_ID";
@@ -694,7 +695,7 @@ public class FOXMLDODeserializer
             // Note that the dsBindMapID is not really necessary from the
             // FOXML standpoint, but it was necessary in METS since the
             // structMap was outside the disseminator.
-            // Also, the rest of the attributes on the DSBindingMap are not 
+            // Also, the rest of the attributes on the DSBindingMap are not
             // really necessary since they are inherited from the disseminator.
             // I just use the values picked up from disseminatorVersion.
             m_diss.dsBindMapID = m_diss.dissVersionID + "b";
@@ -715,7 +716,7 @@ public class FOXMLDODeserializer
     private void endDisseminators(String uri, String localName) {
         if (localName.equals("serviceInputMap")) {
             m_diss.dsBindMap.dsBindings =
-                    (DSBinding[]) m_dsBindings.toArray(new DSBinding[0]);
+                    m_dsBindings.toArray(new DSBinding[0]);
             m_dsBindings = null;
         } else if (uri.equals(FOXML.uri)
                 && localName.equals("disseminatorVersion")) {
@@ -741,7 +742,7 @@ public class FOXMLDODeserializer
         // since it's supposed to be a standalone chunk.
         String[] parts = qName.split(":");
         if (parts.length == 2) {
-            String nsuri = (String) m_localPrefixMap.get(parts[0]);
+            String nsuri = m_localPrefixMap.get(parts[0]);
             if (nsuri == null) {
                 m_localPrefixMap.put(parts[0], parts[1]);
                 m_prefixList.add(parts[0]);
@@ -749,13 +750,13 @@ public class FOXMLDODeserializer
         }
         // do we have any newly-mapped namespaces?
         while (m_prefixList.size() > 0) {
-            String prefix = (String) m_prefixList.remove(0);
+            String prefix = m_prefixList.remove(0);
             out.append(" xmlns");
             if (prefix.length() > 0) {
                 out.append(":");
             }
             out.append(prefix + "=\""
-                    + StreamUtility.enc((String) m_prefixMap.get(prefix))
+                    + StreamUtility.enc(m_prefixMap.get(prefix))
                     + "\"");
         }
         for (int i = 0; i < a.getLength(); i++) {
@@ -783,7 +784,7 @@ public class FOXMLDODeserializer
 
     private void instantiateDatastream(Datastream ds) throws SAXException {
 
-        // set datastream variables with values grabbed from the SAX parse    	  	
+        // set datastream variables with values grabbed from the SAX parse
         ds.DatastreamID = m_dsId;
         ds.DatastreamAltIDs = m_dsAltIds;
         ds.DSVersionable = m_dsVersionable;
@@ -954,7 +955,7 @@ public class FOXMLDODeserializer
         m_localPrefixMap = new HashMap<String, String>();
         m_prefixList = new ArrayList<String>();
 
-        // temporary variables for processing datastreams		
+        // temporary variables for processing datastreams
         m_dsId = "";
         m_dsVersionable = true;
         m_dsVersId = "";

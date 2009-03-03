@@ -6,9 +6,7 @@
 
 package fedora.server.validation;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 
 import java.net.URI;
 
@@ -17,7 +15,6 @@ import java.text.SimpleDateFormat;
 
 import java.util.TimeZone;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -28,10 +25,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import fedora.common.Constants;
+import fedora.common.FaultException;
 import fedora.common.PID;
 
-import fedora.server.errors.RepositoryConfigurationException;
-import fedora.server.errors.StreamIOException;
 import fedora.server.errors.ValidationException;
 
 /**
@@ -46,7 +42,7 @@ import fedora.server.errors.ValidationException;
  * relationship may refer to any resource (identified by URI) via an RDF
  * 'resource' attribute, or a literal. Relationship assertions can be from the
  * default Fedora relationship ontology, or from other namespaces. For example:
- * 
+ *
  * <pre>
  * &lt;rdf:Description about="info:fedora/demo:5"&gt;
  *   &lt;fedora:isMemberOfCollection resource="info:fedora/demo:100"/&gt;
@@ -55,13 +51,13 @@ import fedora.server.errors.ValidationException;
  *   &lt;example:primaryAuthor&gt;Bob Smith&lt;/example:primaryAuthor&gt;
  * &lt;/rdf:Description&gt;<pre></li>
  *   <li> There must be only ONE  &lt;rdf:Description&gt; element.</li>
- *   <li> There must be NO nesting of assertions. In terms of XML depth, 
- *        the RDF root element is considered depth of 0. Then, the 
- *        &lt;rdf:Description&gt; element must be at depth of 1, and the 
+ *   <li> There must be NO nesting of assertions. In terms of XML depth,
+ *        the RDF root element is considered depth of 0. Then, the
+ *        &lt;rdf:Description&gt; element must be at depth of 1, and the
  *        relationship properties must exist at depth of 2. That's it.</li>
  *   <li> The RDF <code>about</code> attribute of the RDF &lt;Description&gt;
- *        must be the URI of the digital object in which the RELS-EXT 
- *        datastream resides. This means that all relationships are FROM 
+ *        must be the URI of the digital object in which the RELS-EXT
+ *        datastream resides. This means that all relationships are FROM
  *        "this" object to other objects.</li>
  *   <li> If the target of the statement is a resource (identified by a URI),
  *        the RDF <code>resource</code> attribute must specify a syntactically
@@ -74,14 +70,12 @@ import fedora.server.errors.ValidationException;
  * fedora-model:hasModel
  * fedora-model:isDeploymentOf
  * fedora-model:isContractorOf
- *        These assertions are allowed in the RELS-EXT datastream, but all 
+ *        These assertions are allowed in the RELS-EXT datastream, but all
  *        others from the <code>fedora-model</code> and <code>fedora-view</code>
  *        namespaces are inferred from values expressed elsewhere in the
  *        digital object, and we do not want duplication.</li>
  * </ul>
- * 
- * FIXME: Validation should be model based!  Pre 3.0 objects may fail..
- * 
+ *
  * @author Sandy Payette
  * @author Eddie Shin
  * @author Chris Wilper
@@ -95,8 +89,6 @@ public class RelsExtValidator
             Logger.getLogger(RelsExtValidator.class.getName());
 
     // state variables
-    private final String m_characterEncoding;
-
     private String m_doURI;
 
     private boolean m_rootRDFFound;
@@ -112,48 +104,30 @@ public class RelsExtValidator
     // SAX parser
     private final SAXParser m_parser;
 
-    public RelsExtValidator(String characterEncoding, boolean validate)
-            throws ParserConfigurationException, SAXException,
-            UnsupportedEncodingException {
-        m_characterEncoding = characterEncoding;
-        new String("test").getBytes(m_characterEncoding);
-        SAXParserFactory spf = SAXParserFactory.newInstance();
-        spf.setValidating(validate);
-        spf.setNamespaceAware(true);
-        m_parser = spf.newSAXParser();
+    public RelsExtValidator() {
+        try {
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            spf.setNamespaceAware(true);
+            m_parser = spf.newSAXParser();
+        } catch (Exception wontHappen) {
+            throw new FaultException(wontHappen);
+        }
     }
 
-    public static RelsExtValidator getInstance()
-            throws RepositoryConfigurationException {
+    public void validate(PID pid, InputStream content)
+            throws ValidationException {
         try {
-            return new RelsExtValidator("UTF-8", false);
+            m_rootRDFFound = false;
+            m_descriptionFound = false;
+            m_depth = 0;
+            m_doURI = pid.toURI();
+            m_parser.parse(content, this);
         } catch (Exception e) {
-            throw new RepositoryConfigurationException("RelsExtValidator:"
-                    + "Error instantiating RELS-EXT datastream validator:"
-                    + e.getClass().getName() + " : " + e.getMessage());
+            throw new ValidationException("RELS-EXT validation failed", e);
         }
     }
 
-    public void deserialize(InputStream relsDS, String doURI)
-            throws StreamIOException, SAXException {
-
-        LOG.debug("Deserializing RELS-EXT...");
-        m_rootRDFFound = false;
-        m_descriptionFound = false;
-        m_depth = 0;
-        m_doURI = doURI;
-        try {
-            m_parser.parse(relsDS, this);
-        } catch (IOException ioe) {
-            throw new StreamIOException("RelsExtValidator:"
-                    + " low-level stream IO problem occurred"
-                    + " while SAX parsing RELS-EXT datastream.");
-        } catch (SAXException se) {
-            throw new SAXException(se.getMessage());
-        }
-        LOG.debug("Just finished parse.");
-    }
-
+    @Override
     public void startElement(String nsURI,
                              String localName,
                              String qName,
@@ -223,12 +197,14 @@ public class RelsExtValidator
         }
     }
 
+    @Override
     public void characters(char[] ch, int start, int length) {
         if (m_literalValue != null) {
             m_literalValue.append(ch, start, length);
         }
     }
 
+    @Override
     public void endElement(String nsURI, String localName, String qName)
             throws SAXException {
         if (m_rootRDFFound && m_descriptionFound) {
@@ -239,16 +215,6 @@ public class RelsExtValidator
         }
         m_literalType = null;
         m_literalValue = null;
-    }
-
-    public static void validate(PID pid, InputStream datastream)
-            throws ValidationException {
-        try {
-            RelsExtValidator validator = RelsExtValidator.getInstance();
-            validator.deserialize(datastream, pid.toURI());
-        } catch (Exception e) {
-            throw new ValidationException(e.getMessage(), e);
-        }
     }
 
     private static String grab(Attributes a,
@@ -272,7 +238,7 @@ public class RelsExtValidator
      * In terms of XML depth, the RDF root element is considered depth of 0.
      * Then, the RDF <Description> must be at depth of 1, and the relationship
      * properties must exist at depth of 2. That's it.
-     * 
+     *
      * @param depth
      *        the depth of the XML element being evaluated
      * @param qName
@@ -298,7 +264,7 @@ public class RelsExtValidator
      * being used in RELS-EXT, and that if fedora-model is used, the localName
      * is hasService, hasModel, isDeploymentOf, or isContractorOf. Also ensures that
      * fedora-model:hasContentModel is only used once.
-     * 
+     *
      * @param nsURI
      *        the namespace URI of the predicate being evaluated
      * @param localName
@@ -340,7 +306,7 @@ public class RelsExtValidator
      * object that contains the RELS-EXT datastream, since the REL-EXT
      * datastream is only supposed to capture relationships about "this" digital
      * object.
-     * 
+     *
      * @param aboutURI
      *        the URI value of the RDF 'about' attribute
      * @throws SAXException
@@ -360,7 +326,7 @@ public class RelsExtValidator
 
     /**
      * checkResourceURI: ensure that the target resource is a proper URI.
-     * 
+     *
      * @param resourceURI
      *        the URI value of the RDF 'resource' attribute
      * @param relName
@@ -389,7 +355,7 @@ public class RelsExtValidator
     /**
      * checkTypedValue: ensure that the datatype of a literal is one of the
      * supported types and that it's a valid value for that type.
-     * 
+     *
      * @param datatypeURI
      *        the URI value of the RDF 'datatype' attribute
      * @param value

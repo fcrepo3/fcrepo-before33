@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * A DDLConverter that works with Oracle.
- * 
+ *
  * @author Chris Wilper
  */
 public class OracleDDLConverter
@@ -116,12 +116,10 @@ public class OracleDDLConverter
                 end.append(cs.getName());
                 end.append(")");
             }
-            /*
-             * if (cs.getIndexName()!=null) { if (!end.toString().equals("")) {
-             * end.append(",\n"); } end.append(" KEY ");
-             * end.append(cs.getIndexName()); end.append(" (");
-             * end.append(cs.getName()); end.append(")"); }
-             */
+            if (cs.getIndexName() != null) {
+                l.add("CREATE INDEX " + spec.getName() + "_" + cs.getName()
+                      + " ON " + spec.getName() + " (" + cs.getName() + ")");
+            }
             if (cs.getForeignTableName() != null) {
                 if (!end.toString().equals("")) {
                     end.append(",\n");
@@ -152,9 +150,6 @@ public class OracleDDLConverter
         }
         out.append("\n");
         out.append(")");
-        /*
-         * if (spec.getType()!=null) { out.append(" TYPE=" + spec.getType()); }
-         */
         l.add(0, out.toString());
         return l;
     }

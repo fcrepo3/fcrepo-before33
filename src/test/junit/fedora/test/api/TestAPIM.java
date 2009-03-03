@@ -13,10 +13,6 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.axis.AxisFault;
 import org.apache.axis.types.NonNegativeInteger;
 
@@ -25,6 +21,10 @@ import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
 
 import org.junit.After;
+
+import junit.framework.Assert;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import fedora.common.Constants;
 
@@ -51,7 +51,7 @@ public class TestAPIM
     public static byte[] demo999bMETS10ObjectXML;
 
     public static byte[] demo1000ATOMObjectXML;
-    
+
     public static byte[] demo1001ATOMZip;
 
     public static byte[] changeme1FOXMLObjectXML;
@@ -105,22 +105,22 @@ public class TestAPIM
         sb.append("</foxml:datastream>");
         sb.append("<foxml:datastream ID=\"DS1\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("<foxml:datastreamVersion ID=\"DS1.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum thumbnail jpg image\">");
-        sb.append("<foxml:contentLocation REF=\"http://" + getHost() + ":8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg\" TYPE=\"URL\"/>");
+        sb.append("<foxml:contentLocation REF=\"http://" + getHost() + ":" + getPort() + "/fedora-demo/simple-image-demo/coliseum-thumb.jpg\" TYPE=\"URL\"/>");
         sb.append("</foxml:datastreamVersion>");
         sb.append("</foxml:datastream>");
         sb.append("<foxml:datastream ID=\"DS2\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("<foxml:datastreamVersion ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum medium jpg image\">");
-        sb.append("<foxml:contentLocation REF=\"http://" + getHost() + ":8080/fedora-demo/simple-image-demo/coliseum-medium.jpg\" TYPE=\"URL\"/>");
+        sb.append("<foxml:contentLocation REF=\"http://" + getHost() + ":" + getPort() + "/fedora-demo/simple-image-demo/coliseum-medium.jpg\" TYPE=\"URL\"/>");
         sb.append("</foxml:datastreamVersion>");
         sb.append("</foxml:datastream>");
         sb.append("<foxml:datastream ID=\"DS3\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("<foxml:datastreamVersion ID=\"DS3.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum high jpg image\">");
-        sb.append("<foxml:contentLocation REF=\"http://" + getHost() + ":8080/fedora-demo/simple-image-demo/coliseum-high.jpg\" TYPE=\"URL\"/>");
+        sb.append("<foxml:contentLocation REF=\"http://" + getHost() + ":" + getPort() + "/fedora-demo/simple-image-demo/coliseum-high.jpg\" TYPE=\"URL\"/>");
         sb.append("</foxml:datastreamVersion>");
         sb.append("</foxml:datastream>");
         sb.append("<foxml:datastream ID=\"DS4\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("<foxml:datastreamVersion ID=\"DS4.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum veryhigh jpg image\">");
-        sb.append("<foxml:contentLocation REF=\"http://" + getHost() + ":8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\" TYPE=\"URL\"/>");
+        sb.append("<foxml:contentLocation REF=\"http://" + getHost() + ":" + getPort() + "/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\" TYPE=\"URL\"/>");
         sb.append("</foxml:datastreamVersion>");
         sb.append("</foxml:datastream>");
         sb.append("<foxml:disseminator ID=\"DISS1\" BDEF_CONTRACT_PID=\"demo:1\" STATE=\"A\">");
@@ -168,29 +168,29 @@ public class TestAPIM
         sb.append("  <foxml:datastream ID=\"DS1\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion ID=\"DS1.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum thumbnail jpg image\">");
         sb.append("      <foxml:contentLocation REF=\"http://"
-                        + getHost()
-                        + ":8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg\" TYPE=\"URL\"/>");
+                        + getHost() + ":" + getPort()
+                        + "/fedora-demo/simple-image-demo/coliseum-thumb.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
         sb.append("  <foxml:datastream ID=\"DS2\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum medium jpg image\">");
         sb.append("      <foxml:contentLocation REF=\"http://"
-                        + getHost()
-                        + ":8080/fedora-demo/simple-image-demo/coliseum-medium.jpg\" TYPE=\"URL\"/>");
+                        + getHost() + ":" + getPort()
+                        + "/fedora-demo/simple-image-demo/coliseum-medium.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
         sb.append("  <foxml:datastream ID=\"DS3\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion ID=\"DS3.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum high jpg image\">");
         sb.append("      <foxml:contentLocation REF=\"http://"
-                        + getHost()
-                        + ":8080/fedora-demo/simple-image-demo/coliseum-high.jpg\" TYPE=\"URL\"/>");
+                        + getHost() + ":" + getPort()
+                        + "/fedora-demo/simple-image-demo/coliseum-high.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
         sb.append("  <foxml:datastream ID=\"DS4\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion ID=\"DS4.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum veryhigh jpg image\">");
         sb.append("      <foxml:contentLocation REF=\"http://"
-                        + getHost()
-                        + ":8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\" TYPE=\"URL\"/>");
+                        + getHost() + ":" + getPort()
+                        + "/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
         sb.append("</foxml:digitalObject>");
@@ -228,29 +228,29 @@ public class TestAPIM
         sb.append("  <foxml:datastream ID=\"DS1\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion ID=\"DS1.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum thumbnail jpg image\">");
         sb.append("      <foxml:contentLocation REF=\"http://"
-                        + getHost()
-                        + ":8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg\" TYPE=\"URL\"/>");
+                        + getHost() + ":" + getPort()
+                        + "/fedora-demo/simple-image-demo/coliseum-thumb.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
         sb.append("  <foxml:datastream ID=\"DS2\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum medium jpg image\">");
         sb.append("      <foxml:contentLocation REF=\"http://"
-                        + getHost()
-                        + ":8080/fedora-demo/simple-image-demo/coliseum-medium.jpg\" TYPE=\"URL\"/>");
+                        + getHost() + ":" + getPort()
+                        + "/fedora-demo/simple-image-demo/coliseum-medium.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
         sb.append("  <foxml:datastream ID=\"DS3\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion ID=\"DS3.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum high jpg image\">");
         sb.append("      <foxml:contentLocation REF=\"http://"
-                        + getHost()
-                        + ":8080/fedora-demo/simple-image-demo/coliseum-high.jpg\" TYPE=\"URL\"/>");
+                        + getHost() + ":" + getPort()
+                        + "/fedora-demo/simple-image-demo/coliseum-high.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
         sb.append("  <foxml:datastream ID=\"DS4\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion ID=\"DS4.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum veryhigh jpg image\">");
         sb.append("      <foxml:contentLocation REF=\"http://"
-                        + getHost()
-                        + ":8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\" TYPE=\"URL\"/>");
+                        + getHost() + ":" + getPort()
+                        + "/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
         sb.append("</foxml:digitalObject>");
@@ -286,29 +286,29 @@ public class TestAPIM
         sb.append("      <METS:fileGrp ID=\"DS1\" STATUS=\"A\">");
         sb.append("        <METS:file ID=\"DS1.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
         sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
-                        + getHost()
-                        + ":8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg\" xlink:title=\"Thorny's Coliseum thumbnail jpg image\"/>");
+                        + getHost() + ":" + getPort()
+                        + "/fedora-demo/simple-image-demo/coliseum-thumb.jpg\" xlink:title=\"Thorny's Coliseum thumbnail jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS2\" STATUS=\"A\">");
         sb.append("        <METS:file ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
         sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
-                        + getHost()
-                        + ":8080/fedora-demo/simple-image-demo/coliseum-medium.jpg\" xlink:title=\"Thorny's Coliseum medium jpg image\"/>");
+                        + getHost() + ":" + getPort()
+                        + "/fedora-demo/simple-image-demo/coliseum-medium.jpg\" xlink:title=\"Thorny's Coliseum medium jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS3\">");
         sb.append("          <METS:file ID=\"DS3.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
         sb.append("            <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
-                        + getHost()
-                        + ":8080/fedora-demo/simple-image-demo/coliseum-high.jpg\" xlink:title=\"Thorny's Coliseum high jpg image\"/>");
+                        + getHost() + ":" + getPort()
+                        + "/fedora-demo/simple-image-demo/coliseum-high.jpg\" xlink:title=\"Thorny's Coliseum high jpg image\"/>");
         sb.append("          </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS4\">");
         sb.append("        <METS:file ID=\"DS4.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
         sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
-                        + getHost()
-                        + ":8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\" xlink:title=\"Thorny's Coliseum veryhigh jpg image\"/>");
+                        + getHost() + ":" + getPort()
+                        + "/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\" xlink:title=\"Thorny's Coliseum veryhigh jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("    </METS:fileGrp>");
@@ -345,26 +345,26 @@ public class TestAPIM
         sb.append("    <METS:fileGrp ID=\"DATASTREAMS\">");
         sb.append("      <METS:fileGrp ID=\"DS1\" STATUS=\"A\">");
         sb.append("        <METS:file ID=\"DS1.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://" + getHost() +
-                              ":8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg\" xlink:title=\"Thorny's Coliseum thumbnail jpg image\"/>");
+        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://" + getHost() + ":" + getPort()
+                              + "/fedora-demo/simple-image-demo/coliseum-thumb.jpg\" xlink:title=\"Thorny's Coliseum thumbnail jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS2\" STATUS=\"A\">");
         sb.append("        <METS:file ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://" + getHost() +
-                              ":8080/fedora-demo/simple-image-demo/coliseum-medium.jpg\" xlink:title=\"Thorny's Coliseum medium jpg image\"/>");
+        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://" + getHost() + ":" + getPort()
+                              + "/fedora-demo/simple-image-demo/coliseum-medium.jpg\" xlink:title=\"Thorny's Coliseum medium jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS3\">");
         sb.append("          <METS:file ID=\"DS3.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb.append("            <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://" + getHost() +
-                                ":8080/fedora-demo/simple-image-demo/coliseum-high.jpg\" xlink:title=\"Thorny's Coliseum high jpg image\"/>");
+        sb.append("            <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://" + getHost() + ":" + getPort()
+                                + "/fedora-demo/simple-image-demo/coliseum-high.jpg\" xlink:title=\"Thorny's Coliseum high jpg image\"/>");
         sb.append("          </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS4\">");
         sb.append("        <METS:file ID=\"DS4.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://" + getHost() +
-                              ":8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\" xlink:title=\"Thorny's Coliseum veryhigh jpg image\"/>");
+        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://" + getHost() + ":" + getPort()
+                              + "/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\" xlink:title=\"Thorny's Coliseum veryhigh jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("    </METS:fileGrp>");
@@ -402,29 +402,29 @@ public class TestAPIM
         sb.append("      <METS:fileGrp ID=\"DS1\" STATUS=\"A\">");
         sb.append("        <METS:file ID=\"DS1.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
         sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
-                        + getHost()
-                        + ":8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg\" xlink:title=\"Thorny's Coliseum thumbnail jpg image\"/>");
+                        + getHost() + ":" + getPort()
+                        + "/fedora-demo/simple-image-demo/coliseum-thumb.jpg\" xlink:title=\"Thorny's Coliseum thumbnail jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS2\" STATUS=\"A\">");
         sb.append("        <METS:file ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
         sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
-                        + getHost()
-                        + ":8080/fedora-demo/simple-image-demo/coliseum-medium.jpg\" xlink:title=\"Thorny's Coliseum medium jpg image\"/>");
+                        + getHost() + ":" + getPort()
+                        + "/fedora-demo/simple-image-demo/coliseum-medium.jpg\" xlink:title=\"Thorny's Coliseum medium jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS3\">");
         sb.append("          <METS:file ID=\"DS3.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
         sb.append("            <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
-                        + getHost()
-                        + ":8080/fedora-demo/simple-image-demo/coliseum-high.jpg\" xlink:title=\"Thorny's Coliseum high jpg image\"/>");
+                        + getHost() + ":" + getPort()
+                        + "/fedora-demo/simple-image-demo/coliseum-high.jpg\" xlink:title=\"Thorny's Coliseum high jpg image\"/>");
         sb.append("          </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS4\">");
         sb.append("        <METS:file ID=\"DS4.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
         sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"
-                        + getHost()
-                        + ":8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\" xlink:title=\"Thorny's Coliseum veryhigh jpg image\"/>");
+                        + getHost() + ":" + getPort()
+                        + "/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\" xlink:title=\"Thorny's Coliseum veryhigh jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("    </METS:fileGrp>");
@@ -525,7 +525,7 @@ public class TestAPIM
         sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
         sb.append("    <category term=\"0\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
         sb.append("    <summary type=\"text\">THUMBRES_IMG1.0</summary>");
-        sb.append("    <content type=\"image/jpeg\" src=\"http://" + getHost() + ":8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg\"></content>");
+        sb.append("    <content type=\"image/jpeg\" src=\"http://" + getHost() + ":" + getPort() + "/fedora-demo/simple-image-demo/coliseum-thumb.jpg\"></content>");
         sb.append("  </entry>");
         sb.append("  <entry>");
         sb.append("    <id>info:fedora/demo:1000/MEDRES_IMG</id>");
@@ -546,7 +546,7 @@ public class TestAPIM
         sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
         sb.append("    <category term=\"0\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
         sb.append("    <summary type=\"text\">MEDRES_IMG1.0</summary>");
-        sb.append("    <content type=\"image/jpeg\" src=\"http://" + getHost() + ":8080/fedora-demo/simple-image-demo/coliseum-medium.jpg\"></content>");
+        sb.append("    <content type=\"image/jpeg\" src=\"http://" + getHost() + ":" + getPort() + "/fedora-demo/simple-image-demo/coliseum-medium.jpg\"></content>");
         sb.append("  </entry>");
         sb.append("  <entry>");
         sb.append("    <id>info:fedora/demo:1000/HIGHRES_IMG</id>");
@@ -567,7 +567,7 @@ public class TestAPIM
         sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
         sb.append("    <category term=\"0\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
         sb.append("    <summary type=\"text\">HIGHRES_IMG1.0</summary>");
-        sb.append("    <content type=\"image/jpeg\" src=\"http://" + getHost() + ":8080/fedora-demo/simple-image-demo/coliseum-high.jpg\"></content>");
+        sb.append("    <content type=\"image/jpeg\" src=\"http://" + getHost() + ":" + getPort() + "/fedora-demo/simple-image-demo/coliseum-high.jpg\"></content>");
         sb.append("  </entry>");
         sb.append("  <entry>");
         sb.append("    <id>info:fedora/demo:1000/VERYHIGHRES_IMG</id>");
@@ -588,7 +588,7 @@ public class TestAPIM
         sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
         sb.append("    <category term=\"0\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
         sb.append("    <summary type=\"text\">VERYHIGHRES_IMG1.0</summary>");
-        sb.append("    <content type=\"image/jpeg\" src=\"http://" + getHost() + ":8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\"></content>");
+        sb.append("    <content type=\"image/jpeg\" src=\"http://" + getHost() + ":" + getPort() + "/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\"></content>");
         sb.append("  </entry>");
         sb.append("</feed>");
 
@@ -596,7 +596,7 @@ public class TestAPIM
             demo1000ATOMObjectXML = sb.toString().getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee) {
         }
-        
+
         sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         sb.append("<feed xmlns=\"http://www.w3.org/2005/Atom\">");
@@ -672,17 +672,17 @@ public class TestAPIM
         sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
         sb.append("    <category term=\"0\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
         sb.append("    <summary type=\"text\">VERYHIGHRES_IMG1.0</summary>");
-        sb.append("    <content type=\"image/jpeg\" src=\"http://" + getHost() + ":8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\"></content>");
+        sb.append("    <content type=\"image/jpeg\" src=\"http://" + getHost() + ":" + getPort() + "/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg\"></content>");
         sb.append("  </entry>");
         sb.append("</feed>");
-        
+
         byte[] demo1001_manifest = null;
         try {
         	demo1001_manifest = sb.toString().getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee) {}
-        
+
         sb = new StringBuffer();
-        sb.append("      <oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">");                 
+        sb.append("      <oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">");
         sb.append("        <dc:title>Coliseum in Rome</dc:title>");
         sb.append("        <dc:creator>Thornton Staples</dc:creator>");
         sb.append("        <dc:subject>Architecture, Roman</dc:subject>");
@@ -695,7 +695,7 @@ public class TestAPIM
         try {
             demo1001_dc = sb.toString().getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee) {}
-        
+
         sb = new StringBuffer();
         sb.append("      <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:fedora-model=\"info:fedora/fedora-system:def/model#\">");
         sb.append("        <rdf:Description rdf:about=\"info:fedora/demo:1001\">");
@@ -706,7 +706,7 @@ public class TestAPIM
         try {
         	demo1001_relsext = sb.toString().getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee) {}
-        
+
         ZipEntry manifest = new ZipEntry("atommanifest.xml");
         ZipEntry dc = new ZipEntry("DC1.0.xml");
         ZipEntry relsext = new ZipEntry("RELS-EXT1.0.xml");
@@ -734,6 +734,7 @@ public class TestAPIM
         return new DemoObjectTestSetup(suite);
     }
 
+    @Override
     public void setUp() throws Exception {
         apim = getFedoraClient().getAPIM();
         Map<String, String> nsMap = new HashMap<String, String>();
@@ -1055,7 +1056,7 @@ public class TestAPIM
                                true,
                                "text/xml",
                                "info:myFormatURI/Mtype/stuff#junk",
-                               "http://www.fedora-commons.org/junit/datastream1.xml",
+                               getBaseURL() + "/get/fedora-system:ContentModel-3.0/DC",
                                "M",
                                "A",
                                "MD6",
@@ -1076,7 +1077,7 @@ public class TestAPIM
                                true,
                                "text/xml",
                                "info:myFormatURI/Mtype/stuff#junk",
-                               "http://www.fedora-commons.org/junit/datastream1.xml",
+                               getBaseURL() + "/get/fedora-system:ContentModel-3.0/DC",
                                "M",
                                "A",
                                "TIGER",
@@ -1100,7 +1101,7 @@ public class TestAPIM
                                        true,
                                        "text/xml",
                                        "info:myFormatURI/Mtype/stuff#junk",
-                                       "http://www.fedora-commons.org/junit/datastream1.xml",
+                                       getBaseURL() + "/get/fedora-system:ContentModel-3.0/DC",
                                        "M",
                                        "A",
                                        null,
@@ -1135,7 +1136,7 @@ public class TestAPIM
                                        true,
                                        "text/xml",
                                        "info:myFormatURI/Xtype/stuff#junk",
-                                       "http://www.fedora-commons.org/junit/datastream2.xml",
+                                       getBaseURL() + "/get/fedora-system:ContentModel-3.0/DC",
                                        "X",
                                        "A",
                                        null,
@@ -1168,7 +1169,7 @@ public class TestAPIM
                                        true,
                                        "text/xml",
                                        "info:myFormatURI/Etype/stuff#junk",
-                                       "http://www.fedora-commons.org/junit/datastream3.xml",
+                                       getBaseURL() + "/get/fedora-system:ContentModel-3.0/DC",
                                        "E",
                                        "A",
                                        null,
@@ -1196,19 +1197,17 @@ public class TestAPIM
                 .println("Running TestAPIM.testModifyDatastreamByReference...");
         altIds = new String[1];
         altIds[0] = "Datastream 1 Modified Alternate ID";
-        datastreamId =
-                apim
-                        .modifyDatastreamByReference("demo:14",
-                                                     "NEWDS1",
-                                                     altIds,
-                                                     "Modified M-type Datastream",
-                                                     "text/xml",
-                                                     "info:newMyFormatURI/Mtype/stuff#junk",
-                                                     "http://www.fedora-commons.org/junit/datastream2.xml",
-                                                     null,
-                                                     null,
-                                                     "modified datastream",
-                                                     false);
+        datastreamId = apim.modifyDatastreamByReference("demo:14",
+                                                        "NEWDS1",
+                                                        altIds,
+                                                        "Modified M-type Datastream",
+                                                        "text/xml",
+                                                        "info:newMyFormatURI/Mtype/stuff#junk",
+                                                        getBaseURL() + "/get/fedora-system:ContentModel-3.0/DC",
+                                                        null,
+                                                        null,
+                                                        "modified datastream",
+                                                        false);
 
         // test that datastream was modified
         objectXML = apim.getObjectXML("demo:14");
@@ -1457,7 +1456,7 @@ public class TestAPIM
                         null,
                         "FOP Dissemination as Datastream",
                         "http://" + getHost()
-                                + ":8080/fedora/get/demo:26/demo:22/getFO",
+                                + ":" + getPort() + "/fedora/get/demo:26/demo:22/getFO",
                         "text/xml",
                         "A",
                         "XML_SOURCE1.0",
@@ -1480,7 +1479,7 @@ public class TestAPIM
                         null,
                         "FOP Dissemination as Datastream",
                         "http://" + getHost()
-                                + ":8080/fedora/get/demo:26/demo:22/getFO",
+                                + ":" + getPort() + "/fedora/get/demo:26/demo:22/getFO",
                         "text/xml",
                         "A",
                         "XML_SOURCE1.0",
@@ -1516,7 +1515,7 @@ public class TestAPIM
                         null,
                         "FOP Dissemination as Datastream",
                         "http://" + getHost()
-                                + ":8080/fedora/get/demo:26/demo:22/getFO",
+                                + ":" + getPort() + "/fedora/get/demo:26/demo:22/getFO",
                         "text/xml",
                         "A",
                         "XML_SOURCE1.0",
@@ -1580,7 +1579,7 @@ public class TestAPIM
                         null,
                         "FOP Dissemination as Datastream",
                         "http://" + getHost()
-                                + ":8080/fedora/get/demo:26/demo:22/getFO",
+                                + ":" + getPort() + "/fedora/get/demo:26/demo:22/getFO",
                         "text/xml",
                         "A",
                         "XML_SOURCE1.0",
@@ -1617,15 +1616,9 @@ public class TestAPIM
 
         // (8) test getDatastreamHistory
         System.out.println("Running TestAPIM.testGetDatastreamHistory...");
-        // test getting datastream history for datastream MRSID of object demo:10
-        dsArray = apim.getDatastreamHistory("demo:10", "MRSID");
+        // test getting datastream history for datastream DC of object demo:5
+        dsArray = apim.getDatastreamHistory("demo:5", "DC");
         assertEquals(dsArray.length, 1);
-        for (Datastream element : dsArray) {
-            ds = element;
-            System.out
-                    .println("***** Testcase: TestAPIM.testGetDatastreamHistry createDate: "
-                            + ds.getCreateDate());
-        }
     }
 
     /**
