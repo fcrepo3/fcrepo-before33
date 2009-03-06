@@ -210,14 +210,12 @@ public class Installer {
         try {
             if (databaseDriver.equals(InstallOptions.INCLUDED)) {
                 if (database.equals(InstallOptions.INCLUDED)) {
-                    File zipFile = File.createTempFile("derby", ".zip");
-                    FileUtils.copy(dist.get(Distribution.DERBY),
-                                   new FileOutputStream(zipFile));
-                    Zip.extractFile(zipFile, Distribution.DERBY_BASENAME
-                            + "/lib/derby.jar", new File(destDir, "derbydb.jar"));
-                } else if (database.equals(InstallOptions.DERBY)) {
                     is = dist.get(Distribution.JDBC_DERBY);
                     driver = new File(destDir, Distribution.JDBC_DERBY);
+                    success = FileUtils.copy(is, new FileOutputStream(driver));
+                } else if (database.equals(InstallOptions.DERBY)) {
+                    is = dist.get(Distribution.JDBC_DERBY_NETWORK);
+                    driver = new File(destDir, Distribution.JDBC_DERBY_NETWORK);
                     success = FileUtils.copy(is, new FileOutputStream(driver));
                 } else if (database.equals(InstallOptions.MCKOI)) {
                     is = dist.get(Distribution.JDBC_MCKOI);

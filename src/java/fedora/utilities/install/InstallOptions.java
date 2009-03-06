@@ -61,6 +61,9 @@ public class InstallOptions {
     public static final String DATABASE_DRIVERCLASS =
             "database.jdbcDriverClass";
 
+    public static final String EMBEDDED_DATABASE_DRIVERCLASSNAME =
+            "org.apache.derby.jdbc.EmbeddedDriver";
+
     public static final String DATABASE_USERNAME = "database.username";
 
     public static final String DATABASE_PASSWORD = "database.password";
@@ -155,7 +158,8 @@ public class InstallOptions {
                 new File(getValue(InstallOptions.FEDORA_HOME))
                         .getAbsolutePath();
         String includedJDBCURL =
-                "jdbc:derby:fedora31;create=true";
+                "jdbc:derby:" + fedoraHome + File.separator
+                        + "derby/fedora31;create=true";
 
         if (getValue(INSTALL_TYPE).equals(INSTALL_QUICK)) {
             // See the defaultValues defined in OptionDefinition.properties
@@ -177,7 +181,7 @@ public class InstallOptions {
             _map.put(DATABASE_USERNAME, "fedoraAdmin");
             _map.put(DATABASE_PASSWORD, "fedoraAdmin");
             _map.put(DATABASE_JDBCURL, includedJDBCURL);
-            _map.put(DATABASE_DRIVERCLASS, "org.apache.derby.jdbc.EmbeddedDriver");
+            _map.put(DATABASE_DRIVERCLASS, EMBEDDED_DATABASE_DRIVERCLASSNAME);
             _map.put(MESSAGING_ENABLED, Boolean.toString(false));
             _map.put(DEPLOY_LOCAL_SERVICES, null); // true
             applyDefaults();
@@ -232,7 +236,7 @@ public class InstallOptions {
             _map.put(DATABASE_PASSWORD, "fedoraAdmin");
             _map.put(DATABASE_DRIVER, INCLUDED);
             _map.put(DATABASE_JDBCURL, includedJDBCURL);
-            _map.put(DATABASE_DRIVERCLASS, "org.apache.derby.jdbc.EmbeddedDriver");
+            _map.put(DATABASE_DRIVERCLASS, EMBEDDED_DATABASE_DRIVERCLASSNAME);
         } else {
             boolean dbValidated = false;
             while (!dbValidated) {
@@ -252,7 +256,7 @@ public class InstallOptions {
         inputOption(RI_ENABLED);
         inputOption(REST_ENABLED);
         inputOption(MESSAGING_ENABLED);
-        if(getValue(MESSAGING_ENABLED).equals(Boolean.toString(true))) {
+        if (getValue(MESSAGING_ENABLED).equals(Boolean.toString(true))) {
             inputOption(MESSAGING_URI);
         }
 

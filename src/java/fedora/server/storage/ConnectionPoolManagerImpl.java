@@ -5,14 +5,11 @@
 
 package fedora.server.storage;
 
-import java.io.File;
-
 import java.sql.SQLException;
 
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -27,17 +24,10 @@ import fedora.server.utilities.DDLConverter;
 /**
  * Implements <code>ConnectionPoolManager</code> to facilitate obtaining
  * database connection pools. This class initializes the connection pools
-<<<<<<< .working
- * specified by parameters in the Fedora <code>fedora.fcfg</code>
- * configuration file. The Fedora server must be instantiated in order for this
- * class to function properly.
- *
-=======
  * specified by parameters in the Fedora <code>fedora.fcfg</code> configuration
  * file. The Fedora server must be instantiated in order for this class to
  * function properly.
  *
->>>>>>> .merge-right.r7935
  * @author Ross Wayland
  */
 public class ConnectionPoolManagerImpl
@@ -132,12 +122,6 @@ public class ConnectionPoolManagerImpl
 
             // Pool names should be comma delimited
             String[] poolNames = poolList.split(",");
-
-            // Set Derby home property if used or not.
-            Properties p = System.getProperties();
-            p.setProperty("derby.system.home", Server.FEDORA_HOME +File.separator+"db-derby-10.4.2.0-bin");
-            //TODO: set system property for derby
-            // p.setProperty("derby.system.home", "/opt/db-derby");
 
             // Initialize each connection pool
             for (int i = 0; i < poolNames.length; i++) {
@@ -312,8 +296,7 @@ public class ConnectionPoolManagerImpl
 
         try {
             if (h_ConnectionPools.containsKey(poolName)) {
-                connectionPool =
-                        h_ConnectionPools.get(poolName);
+                connectionPool = h_ConnectionPools.get(poolName);
             } else {
                 // Error: pool was never initialized or name could not be found
                 throw new ConnectionPoolNotFoundException("Connection pool "
@@ -349,8 +332,7 @@ public class ConnectionPoolManagerImpl
 
         try {
             if (h_ConnectionPools.containsKey(defaultPoolName)) {
-                connectionPool =
-                        h_ConnectionPools.get(defaultPoolName);
+                connectionPool = h_ConnectionPools.get(defaultPoolName);
             } else {
                 // Error: default pool was never initialized or could not be found
                 throw new ConnectionPoolNotFoundException("Default connection pool "
@@ -386,4 +368,5 @@ public class ConnectionPoolManagerImpl
 
         super.shutdownModule();
     }
+
 }
