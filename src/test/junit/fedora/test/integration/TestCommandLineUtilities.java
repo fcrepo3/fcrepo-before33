@@ -41,10 +41,8 @@ public class TestCommandLineUtilities
         System.out.println("Purging object demo:5");
         System.out.println("FEDORA-HOME = " + FEDORA_HOME);
         purgeUsingScript("demo:5");
-        if (sbErr.size() > 0) {
-            System.err.println(sbErr.toString());
-        }
-        assertEquals(0, sbErr.size());
+        assertEquals("Expected empty STDERR output, got '" + sbErr.toString()
+                     + "'", 0, sbErr.size());
         System.out.println("Re-ingesting object demo:5");
         ingestFoxmlFile(new File(FEDORA_HOME
                 + "/client/demo/foxml/local-server-demos/simple-image-demo/obj_demo_5.xml"));
@@ -191,7 +189,8 @@ public class TestCommandLineUtilities
         execute(FEDORA_HOME + "/client/bin/fedora-find",
                 getHost(), getPort(), getUsername(), getPassword(),
                 "pid", "model", "http");
-        assertEquals(0, sbErr.size());
+        assertEquals("Expected empty STDERR output, got '" + sbErr.toString()
+                     + "'", 0, sbErr.size());
         String out = sbOut.toString();
         assertNotNull(out);
         assertTrue(out.contains("#1"));
