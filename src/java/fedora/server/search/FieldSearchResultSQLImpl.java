@@ -339,6 +339,8 @@ public class FieldSearchResultSQLImpl
         long passedSeconds =
                 (System.currentTimeMillis() - m_startMillis) / 1000;
         m_expired = passedSeconds > m_maxSeconds;
+        LOG.debug("has fieldSearchResultSQL expired? "+m_expired +
+                  ", passed: "+passedSeconds);
         if (m_expired) {
             // clean up
             try {

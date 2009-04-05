@@ -166,24 +166,27 @@ public class InstallOptions {
             // for the null values below
             _map.put(FEDORA_SERVERHOST, null); // localhost
             _map.put(APIA_AUTH_REQUIRED, null); // false
-            _map.put(SSL_AVAILABLE, Boolean.toString(false));
-            _map.put(APIM_SSL_REQUIRED, Boolean.toString(false));
+            _map.put(SSL_AVAILABLE, null); // true
+            _map.put(APIA_SSL_REQUIRED, null); // false
+            _map.put(APIM_SSL_REQUIRED, null); // true
             _map.put(SERVLET_ENGINE, null); // included
-            _map.put(USING_JBOSS, null); // included
             _map.put(TOMCAT_HOME, fedoraHome + File.separator + "tomcat");
             _map.put(TOMCAT_HTTP_PORT, null); // 8080
             _map.put(TOMCAT_SHUTDOWN_PORT, null); // 8005
-            _map.put(XACML_ENABLED, Boolean.toString(false));
-            _map.put(RI_ENABLED, null); // false
-            _map.put(REST_ENABLED, null); // false
-            _map.put(DATABASE, INCLUDED); // included
+            _map.put(TOMCAT_SSL_PORT, null); // 8443
+            _map.put(KEYSTORE_FILE, INCLUDED);
+            _map.put(DATABASE, INCLUDED);
             _map.put(DATABASE_DRIVER, INCLUDED);
             _map.put(DATABASE_USERNAME, "fedoraAdmin");
             _map.put(DATABASE_PASSWORD, "fedoraAdmin");
             _map.put(DATABASE_JDBCURL, includedJDBCURL);
             _map.put(DATABASE_DRIVERCLASS, EMBEDDED_DATABASE_DRIVERCLASSNAME);
-            _map.put(MESSAGING_ENABLED, Boolean.toString(false));
+            _map.put(XACML_ENABLED, null); // true
+            _map.put(RI_ENABLED, null); // false
+            _map.put(REST_ENABLED, null); // false
+            _map.put(MESSAGING_ENABLED, null); // false
             _map.put(DEPLOY_LOCAL_SERVICES, null); // true
+            _map.put(USING_JBOSS, null); // included
             applyDefaults();
             return;
         }

@@ -20,7 +20,6 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import fedora.server.utilities.McKoiDDLConverter;
 import fedora.server.utilities.TableCreatingConnection;
@@ -28,7 +27,6 @@ import fedora.server.utilities.TableSpec;
 
 import fedora.utilities.DriverShim;
 import fedora.utilities.FileUtils;
-import fedora.utilities.Zip;
 
 public class Database {
 
@@ -160,30 +158,6 @@ public class Database {
             driver = new File(_opts.getValue(InstallOptions.DATABASE_DRIVER));
         }
         return driver;
-    }
-
-    /**
-     * This method has been deprecated from use with the transition to Derby.
-     *
-     * @throws InstallationFailedException
-     */
-    @SuppressWarnings("unused")
-    private void installEmbeddedMcKoi() throws InstallationFailedException {
-        System.out.println("Installing embedded McKoi...");
-
-        File fedoraHome = new File(_opts.getValue(InstallOptions.FEDORA_HOME));
-        try {
-            Zip.unzip(_dist.get(Distribution.MCKOI), fedoraHome);
-            File mckoiHome = new File(fedoraHome, Distribution.MCKOI_BASENAME);
-
-            // Default is to create data and log dirs relative to JVM, not conf location
-            File mckoiProps = new File(mckoiHome, "db.conf");
-            Properties mckoiConf = FileUtils.loadProperties(mckoiProps);
-            mckoiConf.setProperty("root_path", "configuration");
-            mckoiConf.store(new FileOutputStream(mckoiProps), null);
-        } catch (IOException e) {
-            throw new InstallationFailedException(e.getMessage(), e);
-        }
     }
 
     /**

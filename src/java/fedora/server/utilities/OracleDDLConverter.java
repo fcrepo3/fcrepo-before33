@@ -20,17 +20,6 @@ public class OracleDDLConverter
     public OracleDDLConverter() {
     }
 
-    public boolean supportsTableType() {
-        return true;
-    }
-
-    public String getDropDDL(String command) {
-        String[] parts = command.split(" ");
-        String objectType = parts[1];
-        String objectName = parts[2];
-        return "DROP " + objectType + " " + objectName;
-    }
-
     public List<String> getDDL(TableSpec spec) {
         ArrayList<String> l = new ArrayList<String>();
         StringBuffer out = new StringBuffer();

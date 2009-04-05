@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -17,15 +17,11 @@ import java.util.List;
  * <p>
  * Implementations must also have a public no-arg constructor.
  * </p>
- * 
+ *
  * @author Chris Wilper
  */
 public interface DDLConverter {
 
-    public abstract boolean supportsTableType();
-
     public abstract List<String> getDDL(TableSpec tableSpec);
-
-    public String getDropDDL(String command);
 
 }

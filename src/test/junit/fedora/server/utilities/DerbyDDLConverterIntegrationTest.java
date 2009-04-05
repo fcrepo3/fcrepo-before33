@@ -18,7 +18,6 @@ import mock.fedora.server.utilities.MockTableSpec;
 
 import fedora.server.errors.InconsistentTableSpecException;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -47,14 +46,11 @@ public class DerbyDDLConverterIntegrationTest {
 
     private final String PID_GEN_TABLE_SPEC =
             "CREATE TABLE pidGen (\n  "
-                    // + "namespace VARCHAR(255) FOR BIT DATA NOT NULL,\n  "
                     + "namespace VARCHAR(255) NOT NULL,\n  "
                     + "highestID INT NOT NULL)";
 
     private final String DO_REGISTRY_TABLE_SPEC =
-            "CREATE TABLE doRegistry (\n  "
-                    // + "doPID VARCHAR(64) FOR BIT DATA NOT NULL,\n  "
-                    + "doPID VARCHAR(64) NOT NULL,\n  "
+            "CREATE TABLE doRegistry (\n  " + "doPID VARCHAR(64) NOT NULL,\n  "
                     + "systemVersion SMALLINT NOT NULL DEFAULT 0,\n  "
                     + "ownerId VARCHAR(64),\n  "
                     + "objectState VARCHAR(1) NOT NULL DEFAULT 'A',\n  "
@@ -63,17 +59,12 @@ public class DerbyDDLConverterIntegrationTest {
 
     private final String MODEL_DEPLOYMENT_MAP_TABLE_SPEC =
             "CREATE TABLE modelDeploymentMap (\n  "
-                    // + "cModel VARCHAR(64) FOR BIT DATA NOT NULL,\n  "
-                    // + "sDef VARCHAR(64) FOR BIT DATA NOT NULL,\n  "
-                    // + "sDep VARCHAR(64) FOR BIT DATA NOT NULL)";
                     + "cModel VARCHAR(64) NOT NULL,\n  "
                     + "sDef VARCHAR(64) NOT NULL,\n  "
                     + "sDep VARCHAR(64) NOT NULL)";
 
     private final String DO_FIELDS_TABLE_SPEC =
-            "CREATE TABLE doFields (\n  "
-                    // + "pid VARCHAR(64) FOR BIT DATA NOT NULL,\n  "
-                    + "pid VARCHAR(64) NOT NULL,\n  "
+            "CREATE TABLE doFields (\n  " + "pid VARCHAR(64) NOT NULL,\n  "
                     + "label VARCHAR(255),\n  "
                     + "state VARCHAR(1) NOT NULL DEFAULT 'A',\n  "
                     + "ownerId VARCHAR(64),\n  " + "cDate BIGINT NOT NULL,\n  "
@@ -87,9 +78,9 @@ public class DerbyDDLConverterIntegrationTest {
                     + "dcRelation CLOB,\n  " + "dcCoverage CLOB,\n  "
                     + "dcRights CLOB)";
 
-    private final String DC_DATES_TABLE_SPEC = "CREATE TABLE dcDates (\n  "
-    // + "pid VARCHAR(64) FOR BIT DATA NOT NULL,\n  "
-            + "pid VARCHAR(64) NOT NULL,\n  " + "dcDate BIGINT NOT NULL)";
+    private final String DC_DATES_TABLE_SPEC =
+            "CREATE TABLE dcDates (\n  " + "pid VARCHAR(64) NOT NULL,\n  "
+                    + "dcDate BIGINT NOT NULL)";
 
     private final String DO_FIELDS_INDEX =
             "CREATE INDEX doFields_pid ON doFields (pid)";
@@ -117,21 +108,6 @@ public class DerbyDDLConverterIntegrationTest {
     public void tearDown() throws Exception {
         converter = null;
         expectedStmts = null;
-    }
-
-    @Test
-    public void testSupportsTableType() {
-        assertTrue(converter.supportsTableType());
-    }
-
-    @Test
-    public void testGetDropDDL() {
-        String tableName = "XXX";
-        String command = "test-drop test-table " + tableName;
-        String tableDrop = converter.getDropDDL(command);
-
-        assertNotNull(tableDrop);
-        assertEquals(tableDrop, "DROP TABLE " + tableName);
     }
 
     @Test

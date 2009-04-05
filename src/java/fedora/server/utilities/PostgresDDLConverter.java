@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -11,27 +11,16 @@ import java.util.List;
 
 /**
  * A DDLConverter that works with Postgres.
- * 
+ *
  * <p>This class is based on Hubert Stigler's contribution to the  fedora-users
  * mailing list on April 4th, 2006. It has been modified to create indexes.
- * 
+ *
  * @author Hubert Stigler
  */
 public class PostgresDDLConverter
         implements DDLConverter {
 
     public PostgresDDLConverter() {
-    }
-
-    public boolean supportsTableType() {
-        return false;
-    }
-
-    public String getDropDDL(String command) {
-        String[] parts = command.split(" ");
-        String objectType = parts[1];
-        String objectName = parts[2];
-        return "DROP " + objectType + " " + objectName;
     }
 
     public List<String> getDDL(TableSpec spec) {

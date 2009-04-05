@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -11,23 +11,13 @@ import java.util.List;
 
 /**
  * A DDLConverter that works with McKoi.
- * 
+ *
  * @author Chris Wilper
  */
 public class McKoiDDLConverter
         implements DDLConverter {
 
     public McKoiDDLConverter() {
-    }
-
-    public boolean supportsTableType() {
-        return true;
-    }
-
-    public String getDropDDL(String command) {
-        String[] parts = command.split(" ");
-        String tableName = parts[2];
-        return "DROP TABLE " + tableName;
     }
 
     public List<String> getDDL(TableSpec spec) {

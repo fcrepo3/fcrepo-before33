@@ -19,7 +19,7 @@ import java.util.List;
  * -------                  ----------
  * int(11)                  INT [4-bytes]
  * varchar(x)               VARCHAR(x)
- * varchar(x)-binary        VARCHAR(x) FOR BIT DATA
+ * varchar(x)-binary        VARCHAR(x) FOR BIT DATA // binary setting ignored
  * smallint(6)              SMALLINT [2-bytes]
  * bigint                   BIGINT [8-bytes]
  * text                     CLOB [default: 2GB]
@@ -31,16 +31,6 @@ public class DerbyDDLConverter
         implements DDLConverter {
 
     public DerbyDDLConverter() {
-    }
-
-    public boolean supportsTableType() {
-        return true;
-    }
-
-    public String getDropDDL(String command) {
-        String[] parts = command.split(" ");
-        String tableName = parts[2];
-        return "DROP TABLE " + tableName;
     }
 
     public List<String> getDDL(TableSpec spec) {
@@ -107,10 +97,6 @@ public class DerbyDDLConverter
                 out.append("CLOB");
             } else {
                 out.append(cs.getType());
-            }
-            // only NON-number types can be stored as 'binary'.
-            if (cs.getBinary()) {
-//                out.append(" FOR BIT DATA");
             }
         }
 
