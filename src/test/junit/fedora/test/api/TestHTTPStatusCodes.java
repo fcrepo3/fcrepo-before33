@@ -9,13 +9,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import fedora.client.FedoraClient;
 import fedora.client.HttpInputStream;
@@ -30,7 +30,7 @@ import fedora.test.FedoraServerTestCase;
  * API-A/API-M Lite. For non-200 requests, this also tests the response body for
  * the string "Fedora: # " (where # is the status code) to ensure that the
  * correct jsp has been delivered.
- * 
+ *
  * @author Chris Wilper
  */
 public class TestHTTPStatusCodes
@@ -105,7 +105,7 @@ public class TestHTTPStatusCodes
             "/listMethods/" + BOGUS_OBJ + "?xml=true";
 
     public static final String FIND_OBJECTS_PATH =
-            "/search?pid=true&terms=&query=&maxResults=20&xml=true";
+            "/search?pid=true&terms=&query=&maxResults=120&xml=true";
 
     public static final String FIND_OBJECTS_BADREQ_PATH =
             "/search?pid=true&terms=&query=&maxResults=unparsable&xml=true";
@@ -351,7 +351,6 @@ public class TestHTTPStatusCodes
     //---
     // API-A Lite: findObjects
     //---
-
     public void testFindObjects_OK() throws Exception {
         checkOK(FIND_OBJECTS_PATH);
     }

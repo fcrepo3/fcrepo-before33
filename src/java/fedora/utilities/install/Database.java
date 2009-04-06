@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -20,7 +20,6 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import fedora.server.utilities.McKoiDDLConverter;
 import fedora.server.utilities.TableCreatingConnection;
@@ -28,7 +27,6 @@ import fedora.server.utilities.TableSpec;
 
 import fedora.utilities.DriverShim;
 import fedora.utilities.FileUtils;
-import fedora.utilities.Zip;
 
 public class Database {
 
@@ -48,10 +46,6 @@ public class Database {
     }
 
     public void install() throws InstallationFailedException {
-        if (_db.equals(InstallOptions.INCLUDED)) {
-            installEmbeddedMcKoi();
-        }
-
         if (_opts.getBooleanValue(InstallOptions.DATABASE_UPDATE, false)) {
             updateDOTable();
         }
@@ -66,7 +60,7 @@ public class Database {
      * NULL, doPID varchar(64) default '' NOT NULL, doLabel varchar(255) default
      * '', doState varchar(1) default 'I' NOT NULL, PRIMARY KEY (doDbID), UNIQUE
      * (doPID) )
-     * 
+     *
      * @throws InstallationFailedException
      */
     private void updateDOTable() throws InstallationFailedException {
@@ -124,7 +118,21 @@ public class Database {
                 .equals(InstallOptions.INCLUDED)) {
             InputStream is;
             boolean success = false;
-            if (_db.equals(InstallOptions.MCKOI)) {
+            // INCLUDED driver with INCLUDED database, uses embedded driver.
+            if (_db.equals(InstallOptions.INCLUDED)) {
+                is = _dist.get(Distribution.JDBC_DERBY);
+                driver =
+                        new File(System.getProperty("java.io.tmpdir"),
+                                 Distribution.JDBC_DERBY);
+                success = FileUtils.copy(is, new FileOutputStream(driver));
+            } // INCLUDED driver with DERBY database, uses network driver.
+            else if (_db.equals(InstallOptions.DERBY)) {
+                is = _dist.get(Distribution.JDBC_DERBY_NETWORK);
+                driver =
+                        new File(System.getProperty("java.io.tmpdir"),
+                                 Distribution.JDBC_DERBY_NETWORK);
+                success = FileUtils.copy(is, new FileOutputStream(driver));
+            } else if (_db.equals(InstallOptions.MCKOI)) {
                 is = _dist.get(Distribution.JDBC_MCKOI);
                 driver =
                         new File(System.getProperty("java.io.tmpdir"),
@@ -152,30 +160,12 @@ public class Database {
         return driver;
     }
 
-    private void installEmbeddedMcKoi() throws InstallationFailedException {
-        System.out.println("Installing embedded McKoi...");
-
-        File fedoraHome = new File(_opts.getValue(InstallOptions.FEDORA_HOME));
-        try {
-            Zip.unzip(_dist.get(Distribution.MCKOI), fedoraHome);
-            File mckoiHome = new File(fedoraHome, Distribution.MCKOI_BASENAME);
-
-            // Default is to create data and log dirs relative to JVM, not conf location
-            File mckoiProps = new File(mckoiHome, "db.conf");
-            Properties mckoiConf = FileUtils.loadProperties(mckoiProps);
-            mckoiConf.setProperty("root_path", "configuration");
-            mckoiConf.store(new FileOutputStream(mckoiProps), null);
-        } catch (IOException e) {
-            throw new InstallationFailedException(e.getMessage(), e);
-        }
-    }
-
     /**
      * Simple sanity check of user-supplied database options. Tries to establish
      * a database connection and issue a Connection.getMetaData() using the
      * supplied InstallOptions values for DATABASE_DRIVER, DATABASE_DRIVERCLASS,
      * DATABASE_JDBCURL, DATABASE_USERNAME, and DATABASE_PASSWORD.
-     * 
+     *
      * @throws Exception
      */
     protected void test() throws Exception {
@@ -189,7 +179,7 @@ public class Database {
 
     /**
      * Determines whether or not the database has a table named "do".
-     * 
+     *
      * @return true if the database contains a table with the name "do".
      * @throws Exception
      */
@@ -224,7 +214,7 @@ public class Database {
 
     /**
      * Closes any underlying connection with the database if necessary.
-     * 
+     *
      * @throws SQLException
      */
     public void close() throws SQLException {
@@ -241,11 +231,6 @@ public class Database {
                 .put(InstallOptions.DATABASE_JDBCURL,
                      "jdbc:mckoi://localhost:9157/");
         map.put(InstallOptions.DATABASE_DRIVERCLASS, "com.mckoi.JDBCDriver");
-
-        //map.put(InstallOptions.DATABASE, InstallOptions.MYSQL);
-        //map.put(InstallOptions.DATABASE_DRIVER, InstallOptions.INCLUDED);
-        //map.put(InstallOptions.DATABASE_JDBCURL, "jdbc:mysql://localhost/fedora22?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true");
-        //map.put(InstallOptions.DATABASE_DRIVERCLASS, "com.mysql.jdbc.Driver");
         map.put(InstallOptions.DATABASE_USERNAME, "fedoraAdmin");
         map.put(InstallOptions.DATABASE_PASSWORD, "fedoraAdmin");
 

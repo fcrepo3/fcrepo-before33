@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -153,7 +153,7 @@ public class Installer {
             webXML.write(outputWriter);
             outputWriter.close();
 
-            // Remove commons-collections, commons-dbcp, and commons-pool 
+            // Remove commons-collections, commons-dbcp, and commons-pool
             // from fedora.war if using Tomcat 5.0
             String container = _opts.getValue(InstallOptions.SERVLET_ENGINE);
             File webinfLib = new File(warStage, "WEB-INF/lib/");
@@ -171,7 +171,7 @@ public class Installer {
                             .delete();
                     new File(webinfLib, Distribution.COMMONS_DBCP).delete();
                     new File(webinfLib, Distribution.COMMONS_POOL).delete();
-                    // JDBC driver installation into common/lib for Tomcat 5.0 is 
+                    // JDBC driver installation into common/lib for Tomcat 5.0 is
                     // handled by ExistingTomcat50
                 } else {
                     installJDBCDriver(_dist, _opts, webinfLib);
@@ -210,11 +210,13 @@ public class Installer {
         try {
             if (databaseDriver.equals(InstallOptions.INCLUDED)) {
                 if (database.equals(InstallOptions.INCLUDED)) {
-                    File zipFile = File.createTempFile("mckoi", ".zip");
-                    FileUtils.copy(dist.get(Distribution.MCKOI),
-                                   new FileOutputStream(zipFile));
-                    Zip.extractFile(zipFile, Distribution.MCKOI_BASENAME
-                            + "/mckoidb.jar", new File(destDir, "mckoidb.jar"));
+                    is = dist.get(Distribution.JDBC_DERBY);
+                    driver = new File(destDir, Distribution.JDBC_DERBY);
+                    success = FileUtils.copy(is, new FileOutputStream(driver));
+                } else if (database.equals(InstallOptions.DERBY)) {
+                    is = dist.get(Distribution.JDBC_DERBY_NETWORK);
+                    driver = new File(destDir, Distribution.JDBC_DERBY_NETWORK);
+                    success = FileUtils.copy(is, new FileOutputStream(driver));
                 } else if (database.equals(InstallOptions.MCKOI)) {
                     is = dist.get(Distribution.JDBC_MCKOI);
                     driver = new File(destDir, Distribution.JDBC_MCKOI);

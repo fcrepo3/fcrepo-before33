@@ -10,11 +10,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-	fedora.server.search.AllIntegrationTests.class,
-	fedora.server.resourceIndex.AllIntegrationTests.class,
-	fedora.server.journal.AllIntegrationTests.class
-})
+@Suite.SuiteClasses( {fedora.server.resourceIndex.AllIntegrationTests.class,
+        fedora.server.search.AllIntegrationTests.class,
+        fedora.server.utilities.AllIntegrationTests.class,
+        fedora.server.journal.AllIntegrationTests.class})
 public class AllIntegrationTests {
 
     // Supports legacy tests runners
@@ -24,8 +23,9 @@ public class AllIntegrationTests {
                 new junit.framework.TestSuite(AllIntegrationTests.class
                         .getName());
 
-        suite.addTest(fedora.server.search.AllIntegrationTests.suite());
         suite.addTest(fedora.server.resourceIndex.AllIntegrationTests.suite());
+        suite.addTest(fedora.server.search.AllIntegrationTests.suite());
+        suite.addTest(fedora.server.utilities.AllIntegrationTests.suite());
         suite.addTest(fedora.server.journal.AllIntegrationTests.suite());
 
         return suite;

@@ -6,6 +6,7 @@
 package fedora.server.storage;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import java.util.Map;
@@ -18,6 +19,8 @@ import org.apache.log4j.Logger;
 
 import fedora.server.utilities.DDLConverter;
 import fedora.server.utilities.TableCreatingConnection;
+
+import fedora.utilities.install.InstallOptions;
 
 /**
  * Provides a dispenser for database Connection Pools.
@@ -327,12 +330,37 @@ public class ConnectionPool {
      */
     public void close() {
         try {
+            String username = dataSource.getUsername();
+            String password = dataSource.getPassword();
             dataSource.close();
+
+            if (isEmbeddedDB()) {
+                shutdownEmbeddedDB(username, password);
+            }
         } catch (SQLException sqle) {
             LOG.warn("Unable to close pool", sqle);
         } finally {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Closed pool (" + toString() + ")");
+            }
+        }
+    }
+
+    private boolean isEmbeddedDB() {
+        return InstallOptions.EMBEDDED_DATABASE_DRIVERCLASSNAME
+                .equals(dataSource.getDriverClassName());
+    }
+
+    private void shutdownEmbeddedDB(String username, String password) {
+        LOG.info("Shutting down embedded derby database.");
+        try {
+            DriverManager.getConnection("jdbc:derby:;shutdown=true",
+                                        username,
+                                        password);
+        } catch (SQLException e) {
+            // Shutdown throws the XJ015 exception to confirm success.
+            if (!e.getSQLState().equals("XJ015")) {
+                LOG.error("Embedded Derby DB did not shut down normally.");
             }
         }
     }

@@ -368,4 +368,5 @@ public class ConnectionPoolManagerImpl
 
         super.shutdownModule();
     }
+
 }

@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -34,17 +34,17 @@ public abstract class Distribution {
 
     public static final String TOMCAT;
 
-    public static final String MCKOI;
-
     public static final String JDBC_MYSQL;
 
     public static final String JDBC_MCKOI;
 
+    public static final String JDBC_DERBY;
+
+    public static final String JDBC_DERBY_NETWORK;
+
     public static final String JDBC_POSTGRESQL;
 
     public static final String TOMCAT_BASENAME;
-
-    public static final String MCKOI_BASENAME;
 
     public static final String COMMONS_COLLECTIONS;
 
@@ -70,13 +70,12 @@ public abstract class Distribution {
             System.exit(1);
         }
         TOMCAT = PROPS.getProperty("install.tomcat");
-        MCKOI = PROPS.getProperty("install.mckoi");
         JDBC_MCKOI = PROPS.getProperty("install.jdbc.mckoi");
+        JDBC_DERBY = PROPS.getProperty("install.jdbc.derby");
+        JDBC_DERBY_NETWORK = PROPS.getProperty("install.jdbc.derbynetworkclient");
         JDBC_MYSQL = PROPS.getProperty("install.jdbc.mysql");
         JDBC_POSTGRESQL = PROPS.getProperty("install.jdbc.postgresql");
         TOMCAT_BASENAME = PROPS.getProperty("install.tomcat.basename");
-        MCKOI_BASENAME = PROPS.getProperty("install.mckoi.basename");
-
         COMMONS_COLLECTIONS = PROPS.getProperty("install.commons.collections");
         COMMONS_DBCP = PROPS.getProperty("install.commons.dbcp");
         COMMONS_POOL = PROPS.getProperty("install.commons.pool");

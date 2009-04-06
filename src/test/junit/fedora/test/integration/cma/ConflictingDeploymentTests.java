@@ -1,14 +1,16 @@
 
 package fedora.test.integration.cma;
 
-import junit.framework.Assert;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import junit.framework.Assert;
+
 import fedora.client.FedoraClient;
+
 import fedora.test.FedoraServerTestCase;
+
 import static fedora.test.integration.cma.Util.ingestTestObjects;
 
 /**
@@ -33,7 +35,7 @@ import static fedora.test.integration.cma.Util.ingestTestObjects;
  * purged or modified.
  * </p>
  * These tests verify the above behavior.
- * 
+ *
  * @author birkland
  */
 public class ConflictingDeploymentTests {
@@ -50,15 +52,15 @@ public class ConflictingDeploymentTests {
     private static final String DEPLOYMENT_2_BASE =
             DEMO_OBJECT_BASE + "/sdeps/2";
 
-    private String SDEF_PID = "demo:conflicting-deployment.sdef";
+    private final String SDEF_PID = "demo:conflicting-deployment.sdef";
 
-    private String OBJECT_PID = "demo:conflicting-deployment.object";
+    private final String OBJECT_PID = "demo:conflicting-deployment.object";
 
-    private String SDEP_1_PID = "demo:conflicting-deployment.sdep1";
+    private final String SDEP_1_PID = "demo:conflicting-deployment.sdep1";
 
-    private String SDEP_2_PID = "demo:conflicting-deployment.sdep2";
+    private final String SDEP_2_PID = "demo:conflicting-deployment.sdep2";
 
-    private String METHOD_NAME = "content";
+    private final String METHOD_NAME = "content";
 
     private FedoraClient m_client;
 
