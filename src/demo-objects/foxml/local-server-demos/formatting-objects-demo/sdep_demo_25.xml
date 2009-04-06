@@ -106,7 +106,7 @@
           <wsdl:binding name="FedoraSaxon_http" type="this:FedoraSaxonPortType">
             <http:binding verb="GET"/>
             <wsdl:operation name="getFO">
-              <http:operation location="SaxonServlet?source=(TEI_SOURCE)&amp;style=http://www.fedora-commons.org/services/fop/tei.xsl"/>
+              <http:operation location="SaxonServlet?source=(TEI_SOURCE)&amp;style=http://localhost:8080/fedora-demo/formatting-objects-demo/tei.xsl"/>
               <wsdl:input>
                 <http:urlReplacement/>
               </wsdl:input>

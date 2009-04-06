@@ -191,6 +191,7 @@ public class PolicyParser {
             InputStream instance = getStream(args[0]);
             PolicyParser parser = new PolicyParser(getStream(schemaPath));
             parser.parse(instance, true);
+            System.out.println("Validation successful");
             System.exit(0);
         } catch (ValidationException e) {
             if (e.getCause() != null && e.getCause() instanceof SAXParseException) {
@@ -214,6 +215,7 @@ public class PolicyParser {
 
     private static void fail(String message) {
         System.out.println("ERROR: " + message);
+        System.out.println("Validation failed");
         System.exit(1);
     }
 
