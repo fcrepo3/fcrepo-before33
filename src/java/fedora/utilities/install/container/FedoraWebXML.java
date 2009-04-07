@@ -44,6 +44,7 @@ public class FedoraWebXML {
 
     private static final String FILTER_AUTHN = "EnforceAuthnFilter";
     private static final String FILTER_RESTAPI = "RestApiAuthnFilter";
+    private static final String FILTER_RESTAPI_FLASH = "RestApiFlashFilter";
 
     private static final String[] FILTER_APIA_SERVLET_NAMES =
             new String[] {"AccessServlet", "DescribeRepositoryServlet",
@@ -105,6 +106,11 @@ public class FedoraWebXML {
         fmAPIM.setFilterName(FILTER_RESTAPI);
         fmAPIM.addServletName("RestServlet");
 
+        // Flash filter for all REST API methods
+        FilterMapping fmFlash = new FilterMapping();
+        fmFlash.setFilterName(FILTER_RESTAPI_FLASH);
+        fmFlash.addServletName("RestServlet");
+
         if (options.enableRestAPI()) {
             addServletMapping("RestServlet", "/objects/*");
             addServletMapping("RestServlet", "/objects/nextPID");
@@ -115,12 +121,15 @@ public class FedoraWebXML {
             } else {
                 fedoraWebXML.addFilterMapping(fmAPIM);
             }
+
+            fedoraWebXML.addFilterMapping(fmFlash);
         } else {
             removeServletMapping("RestServlet", "/objects/*");
             removeServletMapping("RestServlet", "/objects/nextPID");
             removeServletMapping("RestServlet", "/objects/nextPID.xml");
             fedoraWebXML.removeFilterMapping(fmAll);
             fedoraWebXML.removeFilterMapping(fmAPIM);
+            fedoraWebXML.removeFilterMapping(fmFlash);
         }
     }
 
