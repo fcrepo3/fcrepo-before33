@@ -36,7 +36,7 @@ marginal notes
 
 <!-- parameterization -->
 
-<xsl:import href="http://www.fedora.info/services/fop/tei-param.xsl"/>
+<xsl:import href="/fedora-demo/formatting-objects-demo/tei-param.xsl"/>
 
 <xsl:strip-space elements="cell"/>
 
@@ -73,23 +73,23 @@ marginal notes
 <xsl:variable name="pageMarginBottom">325pt</xsl:variable>
 <xsl:variable name="pageMarginRight">250pt</xsl:variable>
 -->
-<xsl:include href="http://www.fedora.info/services/fop/tei-lib.xsl"/>
-<xsl:include href="http://www.fedora.info/services/fop/tei-bib.xsl"/>
-<xsl:include href="http://www.fedora.info/services/fop/tei-drama.xsl"/>
-<xsl:include href="http://www.fedora.info/services/fop/tei-figure.xsl"/>
-<xsl:include href="http://www.fedora.info/services/fop/tei-front.xsl"/>
-<xsl:include href="http://www.fedora.info/services/fop/tei-lists.xsl"/>
-<xsl:include href="http://www.fedora.info/services/fop/tei-notes.xsl"/>
-<xsl:include href="http://www.fedora.info/services/fop/tei-para.xsl"/>
-<xsl:include href="http://www.fedora.info/services/fop/tei-poetry.xsl"/>
-<xsl:include href="http://www.fedora.info/services/fop/tei-special.xsl"/>
-<xsl:include href="http://www.fedora.info/services/fop/tei-struct.xsl"/>
-<xsl:include href="http://www.fedora.info/services/fop/tei-table.xsl"/>
-<xsl:include href="http://www.fedora.info/services/fop/tei-xref.xsl"/>
-<xsl:include href="http://www.fedora.info/services/fop/tei-markers.xsl"/>
-<xsl:include href="http://www.fedora.info/services/fop/tei-math.xsl"/>
-<xsl:include href="http://www.fedora.info/services/fop/tei-makecolspec.xsl"/>
-<xsl:include href="http://www.fedora.info/services/fop/teicommon.xsl"/>
+<xsl:include href="/fedora-demo/formatting-objects-demo/tei-lib.xsl"/>
+<xsl:include href="/fedora-demo/formatting-objects-demo/tei-bib.xsl"/>
+<xsl:include href="/fedora-demo/formatting-objects-demo/tei-drama.xsl"/>
+<xsl:include href="/fedora-demo/formatting-objects-demo/tei-figure.xsl"/>
+<xsl:include href="/fedora-demo/formatting-objects-demo/tei-front.xsl"/>
+<xsl:include href="/fedora-demo/formatting-objects-demo/tei-lists.xsl"/>
+<xsl:include href="/fedora-demo/formatting-objects-demo/tei-notes.xsl"/>
+<xsl:include href="/fedora-demo/formatting-objects-demo/tei-para.xsl"/>
+<xsl:include href="/fedora-demo/formatting-objects-demo/tei-poetry.xsl"/>
+<xsl:include href="/fedora-demo/formatting-objects-demo/tei-special.xsl"/>
+<xsl:include href="/fedora-demo/formatting-objects-demo/tei-struct.xsl"/>
+<xsl:include href="/fedora-demo/formatting-objects-demo/tei-table.xsl"/>
+<xsl:include href="/fedora-demo/formatting-objects-demo/tei-xref.xsl"/>
+<xsl:include href="/fedora-demo/formatting-objects-demo/tei-markers.xsl"/>
+<xsl:include href="/fedora-demo/formatting-objects-demo/tei-math.xsl"/>
+<xsl:include href="/fedora-demo/formatting-objects-demo/tei-makecolspec.xsl"/>
+<xsl:include href="/fedora-demo/formatting-objects-demo/teicommon.xsl"/>
 
 <xsl:variable name="processor">
    <xsl:value-of select="system-property('xsl:vendor')"/>
