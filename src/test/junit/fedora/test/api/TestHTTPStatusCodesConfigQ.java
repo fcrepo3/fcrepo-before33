@@ -15,13 +15,12 @@ import static fedora.test.api.TestHTTPStatusCodes.checkError;
  *
  * @author Chris Wilper
  */
-public class TestHTTPStatusCodesConfigA
+public class TestHTTPStatusCodesConfigQ
         extends FedoraServerTestCase {
 
     public static Test suite() {
-        TestSuite suite = new TestSuite("TestHTTPStatusCodesConfigA TestSuite");
-        suite.addTestSuite(TestHTTPStatusCodesConfigA.class);
-        suite.addTest(fedora.test.api.TestHTTPStatusCodes.suite());
+        TestSuite suite = new TestSuite("TestHTTPStatusCodesConfigQ TestSuite");
+        suite.addTestSuite(TestHTTPStatusCodesConfigQ.class);
         return suite;
     }
 

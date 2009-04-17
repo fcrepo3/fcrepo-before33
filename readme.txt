@@ -58,6 +58,11 @@ the Fedora server configured in a specific way.
     with API-A authentication turned ON, with the
     Resource Index, REST api, and Messaging modules enabled.
     
+  [fedora.test.AllSystemTestsConfigQ]
+    When running this suite, the server should be configured
+    with the default options provided by 'quick install'.
+    It can be used to verify the successful installation of 'quick install'.
+    
 These tests do not depend on external hosts and can therefore be
 run without external network access.
 

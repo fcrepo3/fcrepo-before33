@@ -23,7 +23,7 @@ import static fedora.test.api.TestHTTPStatusCodes.checkOK;
 
 /**
  * HTTP status code tests to be run when API-A authentication is on.
- * 
+ *
  * @author Chris Wilper
  */
 public class TestHTTPStatusCodesConfigB
@@ -32,6 +32,7 @@ public class TestHTTPStatusCodesConfigB
     public static Test suite() {
         TestSuite suite = new TestSuite("TestHTTPStatusCodesConfigB TestSuite");
         suite.addTestSuite(TestHTTPStatusCodesConfigB.class);
+        suite.addTest(fedora.test.api.TestHTTPStatusCodes.suite());
         return new DemoObjectTestSetup(suite);
     }
 
