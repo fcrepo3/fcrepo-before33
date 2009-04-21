@@ -120,18 +120,7 @@ public class Installer {
                         + "variables are correctly defined\n"
                         + "\t(e.g. FEDORA_HOME, JAVA_HOME, JAVA_OPTS, CATALINA_HOME).\n"
                         + "For more information, please consult the Installation & Configuration\n"
-                        + "Guide, located online at\n"
-                        + "\thttp://www.fedora.info/download/ or locally at \n"
-                        + "\t"
-                        + fedoraHome.getAbsolutePath()
-                        + File.separator
-                        + "docs"
-                        + File.separator
-                        + "userdocs"
-                        + File.separator
-                        + "distribution"
-                        + File.separator
-                        + "installation.html\n"
+                        + "Guide in the online documentation.\n"
                         + "----------------------------------------------------------------------\n");
     }
 

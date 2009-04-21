@@ -141,8 +141,8 @@ public class InstallOptions {
         System.out
                 .println("Enter CANCEL at any time to abort the installation.");
         System.out
-                .println("Detailed installation instructions are available at:");
-        System.out.println("\thttp://www.fedora.info/download/");
+                .println("Detailed installation instructions are available online:");
+        System.out.println("\thttp://www.fedora-commons.org/confluence/display/FCR30/");
         System.out.println();
 
         inputOption(INSTALL_TYPE);
