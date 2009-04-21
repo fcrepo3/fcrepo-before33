@@ -19,6 +19,7 @@ import junit.framework.TestSuite;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.DeleteMethod;
@@ -49,6 +50,7 @@ import static org.apache.commons.httpclient.HttpStatus.SC_NOT_FOUND;
 import static org.apache.commons.httpclient.HttpStatus.SC_NO_CONTENT;
 import static org.apache.commons.httpclient.HttpStatus.SC_OK;
 import static org.apache.commons.httpclient.HttpStatus.SC_UNAUTHORIZED;
+import static org.apache.commons.httpclient.HttpStatus.SC_INTERNAL_SERVER_ERROR;
 
 /**
  * Tests of the REST API. Tests assume a running instance of Fedora with the
@@ -198,11 +200,23 @@ public class TestRESTAPI
 
         url = String.format("/objects/%s?format=xml", pid.toString());
         assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
-        assertEquals(SC_OK, get(true).getStatusCode());
+        HttpResponse response = get(true);
+        assertEquals(SC_OK, response.getStatusCode());
+        String responseXML = new String(response.responseBody, "UTF-8");
+        assertTrue(responseXML.contains("<objLabel>"));
+        assertTrue(responseXML.contains("<objOwnerId>"));
+        assertTrue(responseXML.contains("<objCreateDate>"));
+        assertTrue(responseXML.contains("<objLastModDate>"));
+        assertTrue(responseXML.contains("<objDissIndexViewURL>"));
+        assertTrue(responseXML.contains("<objItemIndexViewURL>"));
+        assertTrue(responseXML.contains("<objState>"));
 
         url = String.format("/objects/%s.xml", pid.toString());
         assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
-        assertEquals(SC_OK, get(true).getStatusCode());
+        response = get(true);
+        assertEquals(SC_OK, response.getStatusCode());
+        responseXML = new String(response.responseBody, "UTF-8");
+        assertTrue(responseXML.contains("<objectProfile"));
 
         url = String.format("/objects/%s?asOfDateTime=%s",
                             pid.toString(),
@@ -313,14 +327,14 @@ public class TestRESTAPI
     }
 
     public void testFindObjects() throws Exception {
-        url = String.format("/objects?pid=true&terms=%s&query=&format=xml",
+        url = String.format("/objects?pid=true&terms=%s&query=&resultFormat=xml",
                             pid.toString());
         assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
         assertEquals(SC_OK, get(true).getStatusCode());
     }
 
     public void testResumeFindObjects() throws Exception {
-        url = "/objects?pid=true&query=&format=xml";
+        url = "/objects?pid=true&query=&resultFormat=xml";
         assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
         HttpResponse response = get(true);
         assertEquals(SC_OK, response.getStatusCode());
@@ -355,10 +369,15 @@ public class TestRESTAPI
         assertEquals(SC_UNAUTHORIZED, post("", false).getStatusCode());
         HttpResponse response = post("", true);
         assertEquals(SC_CREATED, response.getStatusCode());
-
-        // Delete empty object
         String responseHeaders = response.responseHeaders[1].toString();
         String emptyObjectPid = responseHeaders.substring(responseHeaders.indexOf("/fedora/objects/")+16);
+        assertNotNull(emptyObjectPid);
+        emptyObjectPid = emptyObjectPid.replaceAll("\n", "").replaceAll("\r", "").replaceAll("%3A", ":");
+        // PID should be returned as a header and as the response body
+        String responseBody = new String(response.getResponseBody(), "UTF-8");
+        assertTrue(responseBody.equals(emptyObjectPid));
+
+        // Delete empty object
         url = String.format("/objects/%s", emptyObjectPid);
         assertEquals(SC_UNAUTHORIZED, delete(false).getStatusCode());
         assertEquals(SC_NO_CONTENT, delete(true).getStatusCode());
@@ -390,6 +409,8 @@ public class TestRESTAPI
         Header locationHeader = response.getResponseHeader("location");
         assertNotNull(locationHeader);
         assertTrue(locationHeader.getValue().contains(URLEncoder.encode(pid.toString(), "UTF-8")));
+        responseBody = new String(response.getResponseBody(), "UTF-8");
+        assertTrue(responseBody.equals(pid.toString()));
 
         // Ingest minimal object with no PID
         url = String.format("/objects/new");
@@ -444,7 +465,7 @@ public class TestRESTAPI
         // inline (X) datastream
         String xmlData = "<foo>bar</foo>";
         url = String.format("/objects/%s/datastreams/FOO?controlGroup=X&dsLabel=bar",
-                            pid.toString());
+        		            pid.toString());
         assertEquals(SC_UNAUTHORIZED, post(xmlData, false).getStatusCode());
         HttpResponse response = post(xmlData, true);
         assertEquals(SC_CREATED, response.getStatusCode());
@@ -454,8 +475,9 @@ public class TestRESTAPI
                      locationHeader.getValue());
 
         // managed (M) datastream
-        url = String.format("/objects/%s/datastreams/BAR?controlGroup=M&dsLabel=bar",
-                            pid.toString());
+        String mimeType = "text/plain";
+        url = String.format("/objects/%s/datastreams/BAR?controlGroup=M&dsLabel=bar" +
+                            "&mimeType=%s", pid.toString(), mimeType);
         File temp = File.createTempFile("test", null);
         DataOutputStream os = new DataOutputStream(new FileOutputStream(temp));
         os.write(42);
@@ -467,6 +489,8 @@ public class TestRESTAPI
         assertNotNull(locationHeader);
         assertEquals(new URL(url.substring(0, url.indexOf('?'))).toString(),
                      locationHeader.getValue());
+        Datastream ds = apim.getDatastream(pid.toString(), "BAR", null);
+        assertEquals(ds.getMIMEType(), mimeType);
     }
 
     public void testModifyDatastreamByReference() throws Exception {
@@ -492,16 +516,16 @@ public class TestRESTAPI
 
         // Update the label of the BAR datastream
         String newLabel = "tikibar";
-        url = String.format("/objects/%s/datastreams/BAR?dsLabel="+newLabel,
-                            pid.toString());
+        url = String.format("/objects/%s/datastreams/BAR?dsLabel=%s",
+                            pid.toString(), newLabel);
         assertEquals(SC_UNAUTHORIZED, put(false).getStatusCode());
         assertEquals(SC_OK, put(true).getStatusCode());
         assertEquals(newLabel, apim.getDatastream(pid.toString(), "BAR", null).getLabel());
 
-        // Update the location of the EXTDS datastream
+        // Update the location of the EXTDS datastream (E type datastream)
         String newLocation = "http://"+getHost()+":"+getPort()+"/fedora/get/demo:REST/DC";
-        url = String.format("/objects/%s/datastreams/EXTDS?dsLocation="+newLocation,
-                            pid.toString());
+        url = String.format("/objects/%s/datastreams/EXTDS?dsLocation=%s",
+                            pid.toString(), newLocation);
         assertEquals(SC_UNAUTHORIZED, put(false).getStatusCode());
         assertEquals(SC_OK, put(true).getStatusCode());
 
@@ -509,6 +533,20 @@ public class TestRESTAPI
         String dcDS = new String(apia.getDatastreamDissemination(pid.toString(), "DC", null).getStream());
         String extDS = new String(apia.getDatastreamDissemination(pid.toString(), "EXTDS", null).getStream());
         assertEquals(dcDS, extDS);
+
+        // Update DS1 by reference (X type datastream)
+        // Error expected because attempting to access internal DS with API-A auth on
+        url = String.format("/objects/%s/datastreams/DS1?dsLocation=%s",
+                            pid.toString(), newLocation);
+        assertEquals(SC_UNAUTHORIZED, put(false).getStatusCode());
+        assertEquals(SC_INTERNAL_SERVER_ERROR, put(true).getStatusCode());
+
+        // Update DS1 by reference (X type datastream) - Success expected
+        newLocation = "http://localhost:8080/fedora/ri/index.xsl";
+        url = String.format("/objects/%s/datastreams/DS1?dsLocation=%s",
+                            pid.toString(), newLocation);
+        assertEquals(SC_UNAUTHORIZED, put(false).getStatusCode());
+        assertEquals(SC_OK, put(true).getStatusCode());
     }
 
     public void testModifyDatastreamByValue() throws Exception {
@@ -648,6 +686,16 @@ public class TestRESTAPI
         testModifyDatastreamByValue();
         testModifyDatastreamNoContent();
         testLifecycle();
+    }
+
+    public void testResponseOverride() throws Exception {
+        // Make request which returns error response
+        url = String.format("/objects/%s", "BOGUS_PID");
+        assertEquals(SC_INTERNAL_SERVER_ERROR, post("", true).getStatusCode());
+
+        // With flash=true parameter response should be 200
+        url = String.format("/objects/%s?flash=true", "BOGUS_PID");
+        assertEquals(SC_OK, post("", true).getStatusCode());
     }
 
     // helper methods
