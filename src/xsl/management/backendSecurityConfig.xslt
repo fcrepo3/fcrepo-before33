@@ -314,7 +314,7 @@ h3 {
                   <tr>
                      <td>
                         <!-- <img src="/fedora/images/newlogo2.jpg" width="141" height="134"/> -->
-                        <img src="/fedora/images/newlogo2.jpg" width="70" height="67"/>
+                        <img src="images/newlogo2.jpg" width="70" height="67"/>
                      </td>
                      <td valign="top">
                         <center>

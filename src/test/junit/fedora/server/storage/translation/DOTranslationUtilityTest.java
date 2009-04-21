@@ -1,18 +1,12 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
 package fedora.server.storage.translation;
 
-import static fedora.server.storage.translation.DOTranslationUtility.DESERIALIZE_INSTANCE;
-import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE;
-import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_EXPORT_MIGRATE;
-import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC;
-import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL;
-import static org.junit.Assert.assertEquals;
-
 import java.io.ByteArrayInputStream;
+
 import java.util.List;
 
 import org.junit.After;
@@ -24,25 +18,36 @@ import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.utilities.DateUtility;
 
+import fedora.test.FedoraTestCase;
+
+import static fedora.server.storage.translation.DOTranslationUtility.DESERIALIZE_INSTANCE;
+import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE;
+import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_EXPORT_MIGRATE;
+import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC;
+import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL;
+
 /**
  * @author Edwin Shin
  * @version $Id: DOTranslationUtilityTest.java 6996 2008-04-18 18:46:06Z
  *          pangloss $
  */
-public class DOTranslationUtilityTest {
+public class DOTranslationUtilityTest extends FedoraTestCase {
 
     /**
      * @throws java.lang.Exception
      */
+    @Override
     @Before
     public void setUp() throws Exception {
         System.setProperty("fedoraServerHost", "localhost");
         System.setProperty("fedoraServerPort", "8080");
-    }
+        System.setProperty("fedoraAppServerContext", getFedoraAppServerContext());
+     }
 
     /**
      * @throws java.lang.Exception
      */
+    @Override
     @After
     public void tearDown() throws Exception {
     }
@@ -53,8 +58,7 @@ public class DOTranslationUtilityTest {
      */
     @Test
     public void testNormalizeDSLocationURLs() {
-        String baseURL = "http://localhost:8080/fedora";
-
+        String baseURL = getBaseURL();
         Datastream ds, ds2;
         String pid = "demo:foo";
 
@@ -90,7 +94,7 @@ public class DOTranslationUtilityTest {
                             .getContext());
             assertEquals(ds.DSLocation, ds2.DSLocation);
 
-            ds.DSLocation = "http://localhost:8080/fedora/get/demo:foo/DS1";
+            ds.DSLocation = baseURL + "/get/demo:foo/DS1";
             ds2 =
                     DOTranslationUtility.normalizeDSLocationURLs(pid, ds, pair
                             .getContext());
@@ -107,6 +111,7 @@ public class DOTranslationUtilityTest {
                                     baseURL,
                                     pid,
                                     ds.DatastreamID);
+            System.setProperty("fedoraAppServerContext", getFedoraAppServerContext());
             ds2 =
                     DOTranslationUtility.normalizeDSLocationURLs(pid, ds, pair
                             .getContext());
@@ -125,7 +130,7 @@ public class DOTranslationUtilityTest {
                                     ds.DatastreamID);
             String localURL =
                     String
-                            .format("http://local.fedora.server/fedora/get/%s/%s",
+                            .format("http://local.fedora.server/" + getFedoraAppServerContext() + "/get/%s/%s",
                                     pid,
                                     ds.DatastreamID);
             ds.DSLocation = url;
@@ -190,7 +195,7 @@ public class DOTranslationUtilityTest {
         List<AuditRecord> records =
                 DOTranslationUtility.getAuditRecords(new ByteArrayInputStream(auditXML.getBytes("utf-8")));
 
-        assertEquals(2, records.size());        
+        assertEquals(2, records.size());
         assertEquals("AUDREC1", records.get(0).id);
         assertEquals("modifyDatastreamByReference", records.get(0).action);
         assertEquals("DRAWING-ICON", records.get(0).componentID);
@@ -198,11 +203,11 @@ public class DOTranslationUtilityTest {
         assertEquals("spite", records.get(0).justification);
         assertEquals("Fedora API-M", records.get(0).processType);
         assertEquals("fedoraAdmin", records.get(0).responsibility);
-        
+
         assertEquals("AUDREC2", records.get(1).id);
         assertEquals("modifyDatastreamByValue", records.get(1).action);
         assertEquals("DC", records.get(1).componentID);
-        assertEquals(DateUtility.convertStringToDate("2008-01-20T22:46:07.001Z"), 
+        assertEquals(DateUtility.convertStringToDate("2008-01-20T22:46:07.001Z"),
                      records.get(1).date);
         assertEquals("malice", records.get(1).justification);
         assertEquals("Fedora API-M", records.get(1).processType);
@@ -289,9 +294,9 @@ public class DOTranslationUtilityTest {
 
     class ContextControlPair {
 
-        private int context;
+        private final int context;
 
-        private String controlGroup;
+        private final String controlGroup;
 
         public ContextControlPair(int context, String controlGroup) {
             this.context = context;

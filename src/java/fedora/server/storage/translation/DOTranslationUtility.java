@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -66,14 +66,15 @@ import static fedora.common.Models.SERVICE_DEPLOYMENT_3_0;
  * usage 1=Serialize java object to XML appropriate for "public" export
  * (absolute URLs) 2=Serialize java object to XML appropriate for move/migrate
  * to another repository 3=Serialize java object to XML appropriate for internal
- * storage</b>
- * </p>
- * The public "normalize*" methods in this class should be called to make the
- * right decisions about what conversions should occur for what contexts. Other
- * utility methods set default values for datastreams and disseminators.
- * 
+ * storage</b> </p> The public "normalize*" methods in this class should be
+ * called to make the right decisions about what conversions should occur for
+ * what contexts. Other utility methods set default values for datastreams and
+ * disseminators.
+ *
  * @author Sandy Payette
+ * @version $Id$
  */
+
 @SuppressWarnings("deprecation")
 public abstract class DOTranslationUtility
         implements Constants {
@@ -171,10 +172,10 @@ public abstract class DOTranslationUtility
      * local URL syntax.
      */
     public static final int SERIALIZE_EXPORT_ARCHIVE = 4;
-   
+
     /**
-     * Deserialize or Serialize as is.  This context doesn't attempt to do 
-     * any conversion of URLs.
+     * Deserialize or Serialize as is. This context doesn't attempt to do any
+     * conversion of URLs.
      */
     public static final int AS_IS = 5;
 
@@ -223,8 +224,9 @@ public abstract class DOTranslationUtility
     private static boolean m_serverOnPort80 = false;
 
     private static boolean m_serverOnRedirectPort443 = false;
-    
-    private static XMLInputFactory m_xmlInputFactory = XMLInputFactory.newInstance();
+
+    private static XMLInputFactory m_xmlInputFactory =
+            XMLInputFactory.newInstance();
 
     // initialize static class with stuff that's used by all DO Serializerers
     static {
@@ -232,6 +234,8 @@ public abstract class DOTranslationUtility
         String fedoraServerHost = System.getProperty("fedoraServerHost");
         String fedoraServerPort = System.getProperty("fedoraServerPort");
         String fedoraServerPortSSL = System.getProperty("fedoraRedirectPort");
+        String fedoraAppServerContext = System.getProperty("fedoraAppServerContext");
+
         if (fedoraServerPort != null) {
             if (fedoraServerPort.equals("80")) {
                 m_serverOnPort80 = true;
@@ -243,17 +247,19 @@ public abstract class DOTranslationUtility
             }
         }
 
-        // otherwise, get host port from the server instance if they are null			
-        if (fedoraServerHost == null || fedoraServerPort == null) {
+        // otherwise, get host port from the server instance if they are null
+        if (fedoraServerHost == null || fedoraServerPort == null || fedoraAppServerContext == null) {
             // if fedoraServerHost or fedoraServerPort system properties
             // are not defined, read them from server configuration
             ServerConfiguration config = Server.getConfig();
-            fedoraServerHost = config.getParameter("fedoraServerHost")
-                    .getValue();
-            fedoraServerPort = config.getParameter("fedoraServerPort")
-                    .getValue();
-            fedoraServerPortSSL = config.getParameter("fedoraRedirectPort")
-                    .getValue();
+            fedoraServerHost =
+                    config.getParameter("fedoraServerHost").getValue();
+            fedoraServerPort =
+                    config.getParameter("fedoraServerPort").getValue();
+            fedoraAppServerContext =
+                    config.getParameter("fedoraAppServerContext").getValue();
+            fedoraServerPortSSL =
+                    config.getParameter("fedoraRedirectPort").getValue();
             if (fedoraServerPort.equals("80")) {
                 m_serverOnPort80 = true;
             }
@@ -269,7 +275,7 @@ public abstract class DOTranslationUtility
         s_hostInfo = s_hostInfo + "/";
 
         // compile the pattern for public dissemination URLs at local server
-        s_localDissemUrlStart = s_hostInfo + "fedora/get/";
+        s_localDissemUrlStart = s_hostInfo + fedoraAppServerContext + "/get/";
 
         // compile other patterns using the configured host and port
         s_servernamePort =
@@ -303,10 +309,11 @@ public abstract class DOTranslationUtility
      * "http://local.fedora.server/fedora/get/demo:1/DS1" is converted to
      * "http://myrepo.com:8080/fedora/get/demo:1/DS1" "fedora/get/demo:1/DS1" is
      * converted to "http://myrepo.com:8080/fedora/get/demo:1/DS1"
-     * "http://local.fedora.server/fedora/get/demo:1/sdef:1/getFoo?in="http://local.fedora.server/fedora/get/demo:2/DC"
-     * is converted to
-     * "http://myrepo.com:8080/fedora/get/demo:1/sdef:1/getFoo?in="http://myrepo.com:8080/fedora/get/demo:2/DC"
-     * 
+     * "http://local.fedora.server/fedora/get/demo:1/sdef:1/getFoo?in="
+     * http://local.fedora.server/fedora/get/demo:2/DC" is converted to
+     * "http://myrepo.com:8080/fedora/get/demo:1/sdef:1/getFoo?in="
+     * http://myrepo.com:8080/fedora/get/demo:2/DC"
+     *
      * @param xmlContent
      * @return String with all relative repository URLs and Fedora local URLs
      *         converted to absolute URL syntax.
@@ -333,12 +340,13 @@ public abstract class DOTranslationUtility
      * to an absolute URL or a relative URL to the repository. Examples:
      * "http://myrepo.com:8080/fedora/get/demo:1/DS1" is converted to
      * "http://local.fedora.server/fedora/get/demo:1/DS1"
-     * "https://myrepo.com:8443/fedora/get/demo:1/sdef:1/getFoo?in="http://myrepo.com:8080/fedora/get/demo:2/DC"
-     * is converted to
-     * "http://local.fedora.server/fedora/get/demo:1/sdef:1/getFoo?in="http://local.fedora.server/fedora/get/demo:2/DC"
+     * "https://myrepo.com:8443/fedora/get/demo:1/sdef:1/getFoo?in="
+     * http://myrepo.com:8080/fedora/get/demo:2/DC" is converted to
+     * "http://local.fedora.server/fedora/get/demo:1/sdef:1/getFoo?in="
+     * http://local.fedora.server/fedora/get/demo:2/DC"
      * "http://myrepo.com:8080/saxon..." (internal service in sDep WSDL) is
      * converted to "http://local.fedora.server/saxon..."
-     * 
+     *
      * @param input
      * @return String with all forms of relative repository URLs converted to
      *         the Fedora local URL syntax.
@@ -346,7 +354,7 @@ public abstract class DOTranslationUtility
     private static String makeFedoraLocalURLs(String input) {
         String output = input;
 
-        // Detect any absolute URLs that refer to the local repository 
+        // Detect any absolute URLs that refer to the local repository
         // and convert them to the Fedora LOCALIZATION URL syntax
         // (i.e., "http://local.fedora.server/...")\
 
@@ -398,7 +406,7 @@ public abstract class DOTranslationUtility
      * (/fedora/get/{PID}/fedora-system:3/getItem?itemID={DSID} and replace it
      * with the new API-A-LITE syntax for getting a datastream
      * (/fedora/get/{PID}/{DSID}
-     * 
+     *
      * @param input
      * @return
      */
@@ -537,7 +545,7 @@ public abstract class DOTranslationUtility
      * local Fedora server. However, it this method should be used sparingly,
      * and only on inline XML datastreams where the impact of the conversions is
      * well understood.
-     * 
+     *
      * @param xml
      *        a chunk of XML that's contents of an inline XML datastream
      * @param transContext
@@ -580,7 +588,7 @@ public abstract class DOTranslationUtility
      * validation of required attributes. If 'null' is the attribute value then
      * validation would incorrectly consider in a valid non-empty value. Also,
      * we set some other default values here.
-     * 
+     *
      * @param ds
      *        The Datastream object to work on.
      * @return The Datastream value with default set.
@@ -639,7 +647,7 @@ public abstract class DOTranslationUtility
                 }
                 ds.DSFormatURI =
                         "info:fedora/fedora-system:format/xml.mets."
-                        + mdClassName + "." + mdType + "." + otherType;
+                                + mdClassName + "." + mdType + "." + otherType;
             }
         }
         return ds;
@@ -650,7 +658,7 @@ public abstract class DOTranslationUtility
      * of the inputStream, trimming any leading and trailing whitespace. It does
      * his in a streaming fashion, with resource consumption entirely comprised
      * of fixed internal buffers.
-     * 
+     *
      * @param in
      *        InputStreaming containing serialized XML.
      * @param writer
@@ -739,8 +747,8 @@ public abstract class DOTranslationUtility
      * 'local.fedora.server' with fedora's baseURL)
      */
     public static void normalizeDatastreams(DigitalObject obj,
-                                     int transContext,
-                                     String characterEncoding)
+                                            int transContext,
+                                            String characterEncoding)
             throws UnsupportedEncodingException {
         if (transContext == AS_IS) {
             return;
@@ -796,7 +804,7 @@ public abstract class DOTranslationUtility
             if (i > 0) {
                 out.append(' ');
             }
-            out.append((String) idList[i]);
+            out.append(idList[i]);
         }
         return out.toString();
     }
@@ -839,7 +847,7 @@ public abstract class DOTranslationUtility
      * The audit record is created by the system, so programmatic validation
      * here is o.k. Normally, validation takes place via XML Schema and
      * Schematron.
-     * 
+     *
      * @param audit
      * @throws ObjectIntegrityException
      */
@@ -873,8 +881,7 @@ public abstract class DOTranslationUtility
         return buf.toString();
     }
 
-    protected static void appendAuditTrail(DigitalObject obj,
-                                           PrintWriter writer)
+    protected static void appendAuditTrail(DigitalObject obj, PrintWriter writer)
             throws ObjectIntegrityException {
         appendOpenElement(writer, AUDIT.AUDIT_TRAIL, true);
         for (AuditRecord audit : obj.getAuditRecords()) {
@@ -885,17 +892,13 @@ public abstract class DOTranslationUtility
                               AUDIT.TYPE,
                               audit.processType);
             appendFullElement(writer, AUDIT.ACTION, audit.action);
-            appendFullElement(writer,
-                              AUDIT.COMPONENT_ID,
-                              audit.componentID);
+            appendFullElement(writer, AUDIT.COMPONENT_ID, audit.componentID);
             appendFullElement(writer,
                               AUDIT.RESPONSIBILITY,
                               audit.responsibility);
             appendFullElement(writer, AUDIT.DATE, DateUtility
                     .convertDateToString(audit.date));
-            appendFullElement(writer,
-                              AUDIT.JUSTIFICATION,
-                              audit.justification);
+            appendFullElement(writer, AUDIT.JUSTIFICATION, audit.justification);
             appendCloseElement(writer, AUDIT.RECORD);
         }
         appendCloseElement(writer, AUDIT.AUDIT_TRAIL);
@@ -962,7 +965,7 @@ public abstract class DOTranslationUtility
 
     /**
      * Parse an audit:auditTrail and return a list of AuditRecords.
-     * 
+     *
      * @since 3.0
      * @param auditTrail
      * @return
@@ -1018,13 +1021,12 @@ public abstract class DOTranslationUtility
         writer.print("\">\n");
     }
 
-    private static void appendCloseElement(PrintWriter writer,
-                                           QName element) {
+    private static void appendCloseElement(PrintWriter writer, QName element) {
         writer.print("</");
         writer.print(element.qName);
         writer.print(">\n");
     }
-    
+
     private static void appendFullElement(PrintWriter writer,
                                           QName element,
                                           QName attribute,
@@ -1049,5 +1051,5 @@ public abstract class DOTranslationUtility
         writer.print(element.qName);
         writer.print(">\n");
     }
-    
+
 }

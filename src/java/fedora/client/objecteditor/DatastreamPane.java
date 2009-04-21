@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -58,7 +58,7 @@ import fedora.server.utilities.StreamUtility;
  * Displays a datastream's attributes, allowing the editing of its state, and
  * some of the most recent version's attributes. Also provides buttons for
  * working with the content of the datastream, depending on its type.
- * 
+ *
  * @author Chris Wilper
  * @version $Id$
  */
@@ -330,6 +330,7 @@ public class DatastreamPane
         return m_ds.getChecksumType() + ": " + m_ds.getChecksum();
     }
 
+    @Override
     public void saveChanges(String logMessage) throws Exception {
         String state = null;
         int i = m_stateComboBox.getSelectedIndex();
@@ -378,11 +379,13 @@ public class DatastreamPane
         }
     }
 
+    @Override
     public void changesSaved() {
         m_owner.refresh(m_mostRecent.getID());
         m_done = true;
     }
 
+    @Override
     public void undoChanges() {
         if (m_mostRecent.getState().equals("A")) {
             m_stateComboBox.setSelectedIndex(0);
@@ -413,7 +416,7 @@ public class DatastreamPane
             buf.append(':');
             buf.append(Administrator.getPort());
         }
-        buf.append("/fedora/get/");
+        buf.append("/" + Administrator.getAppServContext() + "/get/");
         buf.append(m_pid);
         buf.append('/');
         buf.append(ds.getID());
@@ -514,7 +517,7 @@ public class DatastreamPane
             if (m_origFormatURI == null) {
                 m_origFormatURI = "";
             }
-            // create a string from alt ids array 
+            // create a string from alt ids array
             m_origAltIDs = getAltIdsString();
 
             if (ds.getControlGroup().toString().equals("X")) {
@@ -526,13 +529,13 @@ public class DatastreamPane
             } else if (ds.getControlGroup().toString().equals("R")) {
                 R = true;
             }
-            // editing is possible if it's XML or Managed content and 
+            // editing is possible if it's XML or Managed content and
             // not a special datastream and hasEditor(mimeType)
             // AND the initial state wasn't "D"
             boolean noEdits = ds.getState().equals("D");
             //            boolean specialDatastream = ds.getID().equals("METHODMAP") ||
             //                                        ds.getID().equals("DSINPUTSPEC") ||
-            //                                        ds.getID().equals("WSDL"); 
+            //                                        ds.getID().equals("WSDL");
             String dsMimetype = getCustomMimeType(m_ds);
             if ((X || M) && !noEdits) {
                 m_canEdit = ContentHandlerFactory.hasEditor(dsMimetype);
@@ -1136,7 +1139,7 @@ public class DatastreamPane
                     // upload the import file, getting a temporary ref
                     loc = Administrator.UPLOADER.upload(m_importFile);
                 } else if (m_editor != null && m_editor.isDirty()) {
-                    // They've edited managed content that came up in an editor... 
+                    // They've edited managed content that came up in an editor...
                     // use its content
                     loc = Administrator.UPLOADER.upload(m_editor.getContent());
                 }
@@ -1292,7 +1295,7 @@ public class DatastreamPane
             if (m_priorFormatURI == null) {
                 m_priorFormatURI = "";
             }
-            // create a string from alt ids array 
+            // create a string from alt ids array
             m_priorAltIDs = "";
             String[] altIDs = m_ds.getAltIDs();
             if (altIDs != null) {
@@ -1542,11 +1545,10 @@ public class DatastreamPane
                     canceled = true;
                 } else {
                     sIndex1 =
-                            ((Integer) m_dsIndex
-                                    .get(purgeDialog.getStartDate()))
+                            (m_dsIndex.get(purgeDialog.getStartDate()))
                                     .intValue();
                     sIndex2 =
-                            ((Integer) m_dsIndex.get(purgeDialog.getEndDate()))
+                            (m_dsIndex.get(purgeDialog.getEndDate()))
                                     .intValue();
                 }
             }

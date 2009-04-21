@@ -125,7 +125,8 @@ public class Installer {
     }
 
     private File buildWAR() throws InstallationFailedException {
-        System.out.println("Preparing fedora.war...");
+        String fedoraWarName = _opts.getValue(InstallOptions.FEDORA_APP_SERVER_CONTEXT) ;
+        System.out.println("Preparing " + fedoraWarName + ".war...");
         // build a staging area in FEDORA_HOME
         try {
             File warStage = new File(installDir, "fedorawar" + File.separator);
@@ -176,7 +177,7 @@ public class Installer {
                 new File(webinfLib, Distribution.LOG4J).delete();
             }
 
-            File fedoraWar = new File(installDir, Distribution.FEDORA_WAR);
+            File fedoraWar = new File(installDir, fedoraWarName + ".war");
             Zip.zip(fedoraWar, warStage.listFiles());
             return fedoraWar;
 

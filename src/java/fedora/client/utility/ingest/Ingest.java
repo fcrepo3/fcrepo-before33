@@ -35,7 +35,7 @@ import fedora.utilities.FileComparator;
 /**
  * Initiates ingest of one or more objects. This class provides static utility
  * methods, and it is also called by command line utilities.
- * 
+ *
  * @version $Id$
  */
 public class Ingest
@@ -76,7 +76,7 @@ public class Ingest
         if (files == null) {
             throw new RuntimeException("Could not read files from directory " + dir.getPath());
         }
-        
+
         Arrays.sort(files, _FILE_COMPARATOR);
         for (File element : files) {
             if (!element.isHidden() && !element.getName().startsWith(".")) {
@@ -318,6 +318,8 @@ public class Ingest
         System.err.println("  TPROTOCOL  is the protocol to communicate with target repository (http or https)");
         System.err.println("  LOG        is the optional log message.  If unspecified, the log message");
         System.err.println("             will indicate the source filename or repository of the object(s).");
+        System.err.println("  CTX        is the optional parameter for specifying the context name under which ");
+        System.err.println("             the Fedora server is deployed. The default is fedora.");
         System.err.println();
         System.err.println("Examples:");
         System.err.println("fedora-ingest f obj1.xml " + FOXML1_1.uri + " myrepo.com:8443 jane jpw https");
@@ -334,6 +336,14 @@ public class Ingest
         System.err.println("  It assumes all files will be in the FOXML 1.1 format");
         System.err.println("  and will fail on ingests of files that are not of this format.");
         System.err.println("  All log messages will be the quoted string.");
+        System.err.println();
+        System.err.println("fedora-ingest d c:\\archive " + FOXML1_1.uri + " myrepo.com:80 jane janepw http \"\" my-personal-fedora");
+        System.err.println("  Traverses entire directory structure of c:\\archive, and ingests any file.");
+        System.err.println("  It assumes all files will be in the FOXML 1.1 format");
+        System.err.println("  and will fail on ingests of files that are not of this format.");
+        System.err.println("  All log messages will be the quoted string.");
+        System.err.println("  Additionally the Fedora server is assumed to be running under the context name ");
+        System.err.println("  http://myrepo:80/my-personal-fedora instead of http://myrepo:80/fedora ");
         System.err.println();
         System.err.println("fedora-ingest r jrepo.com:8081 mike mpw demo:1 myrepo.com:8443 jane jpw http https \"\"");
         System.err.println();
@@ -372,6 +382,7 @@ public class Ingest
             if (args.length < 1) {
                 Ingest.badArgs("No arguments entered!");
             }
+            String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
             PrintStream log = null;
             File logFile = null;
             String logRootName = null;
@@ -379,17 +390,18 @@ public class Ingest
             char kind = args[0].toLowerCase().charAt(0);
             if (kind == 'f') {
                 // USAGE: fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [LOG]
-                if (args.length < 7 || args.length > 8) {
+                if (args.length < 7 || args.length > 9) {
                     Ingest
                             .badArgs("Wrong number of arguments for file ingest.");
                     System.out
-                            .println("USAGE: fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [LOG]");
+                            .println("USAGE: fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [[LOG] | [LOG CTX]]");
                 }
                 File f = new File(args[1]);
                 String ingestFormat = args[2];
                 String logMessage = null;
-                if (args.length == 8) {
+                if (args.length == 9) {
                     logMessage = args[7];
+                    context = args[8];
                 }
 
                 String protocol = args[6];
@@ -400,7 +412,7 @@ public class Ingest
                 // FIXME:  Get around hardcoding the path in the baseURL
                 String baseURL =
                         protocol + "://" + hp[0] + ":"
-                                + Integer.parseInt(hp[1]) + "/fedora";
+                                + Integer.parseInt(hp[1]) + "/" + context;
                 FedoraClient fc = new FedoraClient(baseURL, args[4], args[5]);
                 FedoraAPIA targetRepoAPIA = fc.getAPIA();
                 FedoraAPIM targetRepoAPIM = fc.getAPIM();
@@ -424,7 +436,7 @@ public class Ingest
                     Ingest.badArgs("Wrong number of arguments (" + args.length
                             + ") for directory ingest.");
                     System.out
-                            .println("USAGE: fedora-ingest d[ir] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [LOG]");
+                            .println("USAGE: fedora-ingest d[ir] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [[LOG] | [LOG CTX]]");
                 }
                 File d = new File(args[1]);
                 String ingestFormat = args[2];
@@ -441,7 +453,7 @@ public class Ingest
                 // FIXME:  Get around hardcoding the path in the baseURL
                 String baseURL =
                         protocol + "://" + hp[0] + ":"
-                                + Integer.parseInt(hp[1]) + "/fedora";
+                                + Integer.parseInt(hp[1]) + "/" + context;
                 FedoraClient fc = new FedoraClient(baseURL, args[4], args[5]);
                 FedoraAPIA targetRepoAPIA = fc.getAPIA();
                 FedoraAPIM targetRepoAPIM = fc.getAPIM();
@@ -486,7 +498,7 @@ public class Ingest
                 // FIXME:  Get around hardcoding the path in the baseURL
                 String sourceBaseURL =
                         source_protocol + "://" + source_host + ":"
-                                + Integer.parseInt(source_port) + "/fedora";
+                                + Integer.parseInt(source_port) + "/" + context;
                 FedoraClient sfc =
                         new FedoraClient(sourceBaseURL,
                                          source_user,
@@ -508,7 +520,7 @@ public class Ingest
                 // FIXME:  Get around hardcoding the path in the baseURL
                 String targetBaseURL =
                         target_protocol + "://" + target_host + ":"
-                                + Integer.parseInt(target_port) + "/fedora";
+                                + Integer.parseInt(target_port) + "/" + context;
                 FedoraClient tfc =
                         new FedoraClient(targetBaseURL,
                                          target_user,

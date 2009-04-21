@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -21,6 +21,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import fedora.common.Constants;
 import fedora.common.Models;
 
 import fedora.server.Context;
@@ -51,7 +52,7 @@ import static fedora.common.Constants.MODEL;
  * the Default Disseminator. Unlike other Service Definitions and Deployments,
  * there is no Service Definition Object or Service Deployment Object stored in
  * the repository.
- * 
+ *
  * @author Sandy Payette
  * @version $Id$
  */
@@ -93,7 +94,7 @@ public class DefaultDisseminatorImpl
      * and Item Index. The data is returned as HTML in a presentation-oriented
      * format. This is accomplished by doing an XSLT transform on the XML that
      * is obtained from getObjectProfile in API-A.
-     * 
+     *
      * @return html packaged as a MIMETypedStream
      * @throws ServerException
      */
@@ -124,7 +125,8 @@ public class DefaultDisseminatorImpl
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             File xslFile =
                     new File(reposHomeDir, "access/viewObjectProfile.xslt");
-            TransformerFactory factory = XmlTransformUtility.getTransformerFactory();
+            TransformerFactory factory =
+                    XmlTransformUtility.getTransformerFactory();
             Templates template =
                     factory.newTemplates(new StreamSource(xslFile));
             Transformer transformer = template.newTransformer();
@@ -145,7 +147,7 @@ public class DefaultDisseminatorImpl
      * returned as HTML in a presentation-oriented format. This is accomplished
      * by doing an XSLT transform on the XML that is obtained from listMethods
      * in API-A.
-     * 
+     *
      * @return html packaged as a MIMETypedStream
      * @throws ServerException
      */
@@ -189,10 +191,13 @@ public class DefaultDisseminatorImpl
             //File xslFile = new File(reposHomeDir, "access/objectMethods.xslt");
             File xslFile =
                     new File(reposHomeDir, "access/viewObjectMethods.xslt");
-            TransformerFactory factory = XmlTransformUtility.getTransformerFactory();
+            TransformerFactory factory =
+                    XmlTransformUtility.getTransformerFactory();
             Templates template =
                     factory.newTemplates(new StreamSource(xslFile));
             Transformer transformer = template.newTransformer();
+            transformer.setParameter("fedora", context
+                    .getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME));
             transformer.transform(new StreamSource(in), new StreamResult(out));
             in = new ByteArrayInputStream(out.toByteArray());
             return new MIMETypedStream("text/html", in, null);
@@ -209,18 +214,21 @@ public class DefaultDisseminatorImpl
      * can be data or metadata. The Item Index is returned as HTML in a
      * presentation-oriented format. This is accomplished by doing an XSLT
      * transform on the XML that is obtained from listDatastreams in API-A.
-     * 
+     *
      * @return html packaged as a MIMETypedStream
      * @throws ServerException
      */
     public MIMETypedStream viewItemIndex() throws ServerException {
-        // get the item index as xml  	
+        // get the item index as xml
         InputStream in = null;
         try {
             in =
                     new ByteArrayInputStream(new ObjectInfoAsXML()
-                            .getItemIndex(reposBaseURL, reader, asOfDateTime)
-                            .getBytes("UTF-8"));
+                            .getItemIndex(reposBaseURL,
+                                          context
+                                                  .getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME),
+                                          reader,
+                                          asOfDateTime).getBytes("UTF-8"));
         } catch (Exception e) {
             throw new GeneralException("[DefaultDisseminatorImpl] An error has occurred. "
                     + "The error was a \""
@@ -228,12 +236,13 @@ public class DefaultDisseminatorImpl
                     + "\"  . The " + "Reason was \"" + e.getMessage() + "\"  .");
         }
 
-        // convert the xml to an html view	
+        // convert the xml to an html view
         try {
             //InputStream in = getItemIndex().getStream();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             File xslFile = new File(reposHomeDir, "access/viewItemIndex.xslt");
-            TransformerFactory factory = XmlTransformUtility.getTransformerFactory();
+            TransformerFactory factory =
+                    XmlTransformUtility.getTransformerFactory();
             Templates template =
                     factory.newTemplates(new StreamSource(xslFile));
             Transformer transformer = template.newTransformer();
@@ -250,12 +259,12 @@ public class DefaultDisseminatorImpl
     /**
      * Returns the Dublin Core record for the object, if one exists. The record
      * is returned as HTML in a presentation-oriented format.
-     * 
+     *
      * @return html packaged as a MIMETypedStream
      * @throws ServerException
      */
     public MIMETypedStream viewDublinCore() throws ServerException {
-        // get dublin core record as xml 	
+        // get dublin core record as xml
         DatastreamXMLMetadata dcmd = null;
         InputStream in = null;
         try {
@@ -280,12 +289,13 @@ public class DefaultDisseminatorImpl
                     + "\"  .");
         }
 
-        // convert the dublin core xml to an html view	
+        // convert the dublin core xml to an html view
         try {
             //InputStream in = getDublinCore().getStream();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             File xslFile = new File(reposHomeDir, "access/viewDublinCore.xslt");
-            TransformerFactory factory = XmlTransformUtility.getTransformerFactory();
+            TransformerFactory factory =
+                    XmlTransformUtility.getTransformerFactory();
             Templates template =
                     factory.newTemplates(new StreamSource(xslFile));
             Transformer transformer = template.newTransformer();
@@ -311,7 +321,10 @@ public class DefaultDisseminatorImpl
         sb
                 .append("<table width=\"784\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
         sb
-                .append("<tr><td width=\"141\" height=\"134\" valign=\"top\"><img src=\"/fedora/images/newlogo2.jpg\" width=\"141\" height=\"134\"/></td>");
+                .append("<tr><td width=\"141\" height=\"134\" valign=\"top\"><img src=\"")
+                .append(context
+                        .getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME))
+                .append("/images/newlogo2.jpg\" width=\"141\" height=\"134\"/></td>");
         sb.append("<td width=\"643\" valign=\"top\">");
         sb.append("<center><h2>Fedora Repository</h2>");
         sb.append("<h3>Dissemination Index</h3>");
@@ -341,7 +354,7 @@ public class DefaultDisseminatorImpl
      * constitute the behaviors of the Default Disseminator which is associated
      * with every Fedora object. These will be the methods promulgated by the
      * DefaultDisseminator interface.
-     * 
+     *
      * @return an array of method defintions
      */
     public static MethodDef[] reflectMethods() {
@@ -373,6 +386,6 @@ public class DefaultDisseminatorImpl
         method.methodParms = new MethodParmDef[0];
         methodList.add(method);
 
-        return (MethodDef[]) methodList.toArray(new MethodDef[0]);
+        return methodList.toArray(new MethodDef[0]);
     }
 }

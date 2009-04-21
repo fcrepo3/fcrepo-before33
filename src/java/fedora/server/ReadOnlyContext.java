@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -24,8 +24,9 @@ import fedora.server.utilities.DateUtility;
 
 /**
  * Context that is read-only.
- * 
+ *
  * @author Chris Wilper
+ * @version $Id$
  */
 public class ReadOnlyContext
         implements Context {
@@ -71,7 +72,7 @@ public class ReadOnlyContext
 
     /**
      * Creates and initializes the <code>Context</code>.
-     * 
+     *
      * @param parameters
      *        A pre-loaded Map of name-value pairs comprising the context.
      */
@@ -260,7 +261,7 @@ public class ReadOnlyContext
         return environmentMap;
     }
 
-    //will need fixup for noOp 
+    //will need fixup for noOp
     public static Context getSoapContext() {
         HttpServletRequest req =
                 (HttpServletRequest) MessageContext.getCurrentContext()
@@ -385,7 +386,7 @@ public class ReadOnlyContext
                                                    boolean noOp)
             throws Exception {
         MultiValueMap environmentMap = beginEnvironmentMap(messageProtocol);
-        environmentMap.lock(); // no request to grok more from 
+        environmentMap.lock(); // no request to grok more from
         return getContext(null, environmentMap, subjectId, password, /* roles, */
         null, noOp);
     }
@@ -412,6 +413,10 @@ public class ReadOnlyContext
                 sessionEncoding = "cookie";
             } else if (request.isRequestedSessionIdFromURL()) {
                 sessionEncoding = "url";
+            }
+
+            if (request.getContextPath() != null){
+                environmentMap.set(Constants.FEDORA_APP_CONTEXT_NAME, request.getContextPath().replace("/", ""));
             }
 
             if (request.getContentLength() > -1) {
@@ -494,7 +499,7 @@ public class ReadOnlyContext
             password = "";
         }
 
-        boolean noOp = true; //safest approach 
+        boolean noOp = true; //safest approach
         try {
             noOp =
                     (new Boolean(request.getParameter(NOOP_PARAMETER_NAME)))

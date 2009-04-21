@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -14,6 +14,8 @@ import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
 
 import fedora.client.FedoraClient;
+
+import fedora.common.Constants;
 
 import fedora.server.management.FedoraAPIM;
 
@@ -51,7 +53,8 @@ public class AutoPurger {
                 .println("Summary: Purges an object from the Fedora repository.");
         System.err.println();
         System.err.println("Syntax:");
-        System.err.println("  fedora-purge HST:PRT USR PSS PID PROTOCOL [LOG]");
+        System.err
+                .println("  fedora-purge HST:PRT USR PSS PID PROTOCOL [LOG [CTX]]");
         System.err.println();
         System.err.println("Where:");
         System.err.println("  HST  is the target repository hostname.");
@@ -64,6 +67,9 @@ public class AutoPurger {
         System.err
                 .println("  PROTOCOL  is the protocol to communicate with repository (http or https)");
         System.err.println("  LOG  is a log message.");
+        System.out
+                .println("  CTX  is an alternate web application server context of Fedora (default is fedora)");
+
         System.err.println();
         System.err.println("Example:");
         System.err
@@ -79,8 +85,9 @@ public class AutoPurger {
 
     public static void main(String[] args) {
         try {
-            if (args.length != 6) {
-                AutoPurger.showUsage("You must provide six arguments.");
+            if (args.length < 6 || args.length > 7) {
+                AutoPurger
+                        .showUsage("You must provide six or seven arguments.");
             } else {
                 String[] hp = args[0].split(":");
                 String hostName = hp[0];
@@ -89,11 +96,14 @@ public class AutoPurger {
                 String protocol = args[4];
                 String logMessage = args[5];
 
+                String context = args.length == 7 ? args[6] : Constants.FEDORA_DEFAULT_APP_CONTEXT;
+
                 // ******************************************
                 // NEW: use new client utility class
                 // FIXME:  Get around hardcoding the path in the baseURL
                 String baseURL =
-                        protocol + "://" + hostName + ":" + portNum + "/fedora";
+                        protocol + "://" + hostName + ":" + portNum + "/"
+                                + context;
                 FedoraClient fc = new FedoraClient(baseURL, args[1], args[2]);
                 AutoPurger a = new AutoPurger(fc.getAPIM());
                 //*******************************************

@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -82,7 +82,7 @@ import fedora.utilities.XmlTransformUtility;
  * parameter or a value of "false" indicates format is to be text/html.</li>
  * </ul>
  * </ol>
- * 
+ *
  * @author Ross Wayland
  * @version $Id$
  */
@@ -127,7 +127,7 @@ public class ListMethodsServlet
      * Process Fedora Access Request. Parse and validate the servlet input
      * parameters and then execute the specified request.
      * </p>
-     * 
+     *
      * @param request
      *        The servlet request.
      * @param response
@@ -285,10 +285,12 @@ public class ListMethodsServlet
                 File xslFile =
                         new File(s_server.getHomeDir(),
                                  "access/listMethods.xslt");
-                TransformerFactory factory = XmlTransformUtility.getTransformerFactory();
+                TransformerFactory factory =
+                        XmlTransformUtility.getTransformerFactory();
                 Templates template =
                         factory.newTemplates(new StreamSource(xslFile));
                 Transformer transformer = template.newTransformer();
+                transformer.setParameter("fedora", context.getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME));
                 transformer.transform(new StreamSource(pr),
                                       new StreamResult(out));
             }
@@ -338,11 +340,13 @@ public class ListMethodsServlet
 
         private String fedoraServerPort = null;
 
+        private String fedoraAppServerContext = null;
+
         /**
          * <p>
          * Constructor for ProfileSerializeThread.
          * </p>
-         * 
+         *
          * @param PID
          *        The persistent identifier of the specified digital object.
          * @param methodDefs
@@ -363,6 +367,9 @@ public class ListMethodsServlet
             this.versDateTime = versDateTime;
             fedoraServerPort =
                     context.getEnvironmentValue(HTTP_REQUEST.SERVER_PORT.uri);
+
+            fedoraAppServerContext =
+                    context.getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME);
             if (HTTP_REQUEST.SECURE.uri.equals(context
                     .getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
                 fedoraServerProtocol = HTTPS;
@@ -392,8 +399,8 @@ public class ListMethodsServlet
                     pw.write(" baseURL=\""
                             + StreamUtility.enc(fedoraServerProtocol) + "://"
                             + StreamUtility.enc(fedoraServerHost) + ":"
-                            + StreamUtility.enc(fedoraServerPort)
-                            + "/fedora/\"");
+                            + StreamUtility.enc(fedoraServerPort) + "/"
+                            + fedoraAppServerContext + "/\"");
                     pw.write(" xmlns:xsi=\"" + XSI.uri + "\" ");
                     pw.write(" xsi:schemaLocation=\"" + ACCESS.uri);
                     pw.write(" " + OBJ_METHODS1_0.xsdLocation + "\">");
@@ -465,7 +472,7 @@ public class ListMethodsServlet
      * <p>
      * For now, treat a HTTP POST request just like a GET request.
      * </p>
-     * 
+     *
      * @param request
      *        The servet request.
      * @param response
@@ -485,7 +492,7 @@ public class ListMethodsServlet
      * <p>
      * Initialize servlet.
      * </p>
-     * 
+     *
      * @throws ServletException
      *         If the servet cannot be initialized.
      */

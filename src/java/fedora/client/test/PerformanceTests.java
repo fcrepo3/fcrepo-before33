@@ -53,8 +53,10 @@ public class PerformanceTests
 
     private String host;
     private String port;
+    private String context;
     private String username;
     private String password;
+
 
     private String[] PIDS;
     private byte[][] FOXML;
@@ -138,13 +140,14 @@ public class PerformanceTests
         DEMO_FOXML_TEXT = sb.toString();
     }
 
-    public void init(String host, String port, String username, String password) throws Exception {
+    public void init(String host, String port, String context, String username, String password) throws Exception {
         this.host = host;
         this.port = port;
         this.username = username;
         this.password = password;
+        this.context = context;
 
-        String baseURL =  "http://" + host + ":" + port + "/fedora";
+        String baseURL =  "http://" + host + ":" + port + "/" + context;
         FedoraClient fedoraClient = new FedoraClient(baseURL, username, password);
         apim = fedoraClient.getAPIM();
         apia = fedoraClient.getAPIA();
@@ -388,7 +391,7 @@ public class PerformanceTests
     }
 
     private HttpMethod getHttpMethod(String pid) {
-        String url = "http://" + host + ":" + port + "/fedora/get/" + pid + "/" + "MDS1";
+        String url = "http://" + host + ":" + port + "/" + context + "/get/" + pid + "/" + "MDS1";
         HttpMethod httpMethod = new GetMethod(url);
         httpMethod.setDoAuthentication(true);
         httpMethod.getParams().setParameter("Connection", "Keep-Alive");
@@ -654,7 +657,8 @@ public class PerformanceTests
                                    "-Diterations=NUM-ITERATIONS " +
                                    "-Dthreads=NUM-THREADS " +
                                    "-Dfile=OUTPUT-FILE " +
-                                   "-Dname=TEST-NAME");
+                                   "-Dname=TEST-NAME" +
+                                   "[-Dcontext=CONTEXT]");
         System.out.println("Where:");
         System.out.println("  HOST = Host on which Fedora server is running.");
         System.out.println("  PORT = Port on which the Fedora server APIs can be accessed.");
@@ -666,7 +670,8 @@ public class PerformanceTests
         System.out.println("  OUTPUT-FILE = The file to which the test results will be written.");
         System.out.println("                If the file does not exist, it will be created, if the");
         System.out.println("                file does exist the new results will be appended.");
-        System.out.println("  TEST-NAME = A name for this test run.");
+        System.out.println("  TEST-NAME   = A name for this test run.");
+        System.out.println("  CONTEXT     = The application server context Fedora is deployed in. This parameter is optional");
         System.out.println("Example:");
         System.out.println("ant performance-tests " +
         		           "-Dhost=localhost " +
@@ -676,13 +681,14 @@ public class PerformanceTests
         		           "-Diterations=100 " +
         		           "-Dthreads=10 " +
         		           "-Dfile=C:\\temp\\performance_testing_output.txt " +
-        		           "-Dname=\"Test 1\"");
+        		           "-Dname=\"Test 1\"" +
+        		           "-Dcontext=my-fedora");
         System.exit(1);
     }
 
     public static void main(String[] args) throws Exception {
 
-        if(args.length != 8) {
+        if(args.length < 8 || args.length > 9) {
             usage();
         }
 
@@ -694,6 +700,8 @@ public class PerformanceTests
         String thrds = args[5];
         String output = args[6];
         String name = args[7];
+        String context = args.length == 9 ? args[8] : Constants.FEDORA_DEFAULT_APP_CONTEXT;
+
 
         if(host == null || host.startsWith("$") ||
            port == null || port.startsWith("$") ||
@@ -740,7 +748,7 @@ public class PerformanceTests
         }
 
         PerformanceTests tests = new PerformanceTests();
-        tests.init(host, port, username, password);
+        tests.init(host, port, context, username, password);
         System.out.println("Running Ingest Round-Trip Test...");
         long ingestResults = tests.runIngestTest();
         System.out.println("Running AddDatastream Round-Trip Test...");

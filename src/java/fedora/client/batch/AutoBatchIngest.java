@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -13,7 +13,7 @@ import fedora.common.Constants;
 
 /**
  * Auto Batch Ingest.
- * 
+ *
  * @author Ross Wayland
  */
 public class AutoBatchIngest
@@ -29,7 +29,8 @@ public class AutoBatchIngest
                            String port,
                            String username,
                            String password,
-                           String protocol)
+                           String protocol,
+                           String context)
             throws Exception {
 
         batchProperties.setProperty("ingest", "yes");
@@ -39,6 +40,7 @@ public class AutoBatchIngest
         batchProperties.setProperty("object-format", objectFormat);
         batchProperties.setProperty("server-fqdn", host);
         batchProperties.setProperty("server-port", port);
+        batchProperties.setProperty("server-context", context);
         batchProperties.setProperty("username", username);
         batchProperties.setProperty("password", password);
         batchProperties.setProperty("server-protocol", protocol);
@@ -49,8 +51,9 @@ public class AutoBatchIngest
     }
 
     public static final void main(String[] args) throws Exception {
+        String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
         boolean errors = false;
-        if (args.length == 8) {
+        if (args.length == 8 || args.length == 9) {
             if (!new File(args[0]).isDirectory()) {
                 System.out.println("Specified object directory: \"" + args[0]
                         + "\" is not a directory.");
@@ -80,6 +83,10 @@ public class AutoBatchIngest
                         + "\"http\"  or  \"https\"");
                 errors = true;
             }
+
+            if (args.length == 9 && !args[8].equals("")){
+                context = args[8];
+            }
             if (!errors) {
                 AutoBatchIngest autoBatch =
                         new AutoBatchIngest(args[0],
@@ -90,7 +97,9 @@ public class AutoBatchIngest
                                             server[1],
                                             args[5],
                                             args[6],
-                                            args[7]);
+                                            args[7],
+                                            context
+                        );
             }
         } else {
             System.out.println("\n**** Wrong Number of Arguments *****\n");
@@ -107,6 +116,9 @@ public class AutoBatchIngest
                     .println("(7) - password for admin user of Fedora server\n");
             System.out
                     .println("(8) - protocol to communicate with Fedora server (http or https)");
+            System.out
+            .println("(9) - optional, alternate context location of the Fedora app server (default is fedora (eg. http://localhost:8080/fedora))");
+
         }
 
     }

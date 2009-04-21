@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -20,7 +20,7 @@ import fedora.common.Constants;
 
 /**
  * Provides a client for testing the Fedora Access SOAP service.
- * 
+ *
  * @author Ross Wayland
  */
 public class TestClientAPIA {
@@ -30,14 +30,16 @@ public class TestClientAPIA {
      * Tests the Fedora Access SOAP service by making calls to each of the
      * supported services.
      * </p>
-     * 
+     *
      * @param args
      *        An array of command line arguments.
      */
     public static void main(String[] args) {
+        String fedoraAppServerContext = args.length == 1 ? args[0] : "fedora";
+
         String PID = "uva-lib:1225";
         String qName1 = Constants.API.uri;
-        String endpoint = "http://localhost:8080/fedora/services/access";
+        String endpoint = "http://localhost:8080/" + fedoraAppServerContext + "/services/access";
         Date asOfDate = null;
 
         try {

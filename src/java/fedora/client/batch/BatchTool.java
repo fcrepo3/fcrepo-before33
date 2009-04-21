@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -237,6 +237,8 @@ public class BatchTool {
     static final String SERVERFQDN = "server-fqdn";
 
     static final String SERVERPORT = "server-port";
+
+    static final String CONTEXT = "server-context";
 
     static final String USERNAME = "username";
 

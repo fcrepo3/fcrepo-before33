@@ -1218,19 +1218,25 @@ public class BatchModifyParser
      */
     public static void main(String[] args) {
 
-        if (args.length == 5) {
+        if (args.length == 5 || args.length == 6) {
             String host = args[0];
             int port = new Integer(args[1]).intValue();
             String user = args[2];
             String pass = args[3];
             String protocol = args[4];
 
+            String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
+
+            if (args.length == 6 && !args[5].equals("")){
+                context = args[5];
+            }
+
             PrintStream logFile;
             FedoraAPIM APIM;
             FedoraAPIA APIA;
 
             try {
-                UPLOADER = new Uploader(host, port, user, pass);
+                UPLOADER = new Uploader(host, port, context, user, pass);
                 logFile =
                         new PrintStream(new FileOutputStream("C:\\zlogfile.txt"));
                 //APIM = fedora.client.APIMStubFactory.getStub(protocol, host, port, user, pass);
@@ -1240,7 +1246,7 @@ public class BatchModifyParser
                 // NEW: use new client utility class
                 // FIXME:  Get around hardcoding the path in the baseURL
                 String baseURL =
-                        protocol + "://" + host + ":" + port + "/fedora";
+                        protocol + "://" + host + ":" + port + "/" + context;
                 FedoraClient fc = new FedoraClient(baseURL, user, pass);
                 APIA = fc.getAPIA();
                 APIM = fc.getAPIM();

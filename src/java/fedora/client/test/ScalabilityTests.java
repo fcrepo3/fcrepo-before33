@@ -78,9 +78,9 @@ public class ScalabilityTests
         DEMO_FOXML_BYTES = DEMO_FOXML_TEXT.getBytes();
     }
 
-    public void init(String host, String port, String username, String password, String batch, String batches, String threads, String outputFileLocation) throws Exception {
+    public void init(String host, String port, String username, String password, String batch, String batches, String threads, String outputFileLocation, String context) throws Exception {
 
-        String baseURL =  "http://" + host + ":" + port + "/fedora";
+        String baseURL =  "http://" + host + ":" + port + "/" + context;
         FedoraClient fedoraClient = new FedoraClient(baseURL, username, password);
         apim = fedoraClient.getAPIM();
 
@@ -184,7 +184,8 @@ public class ScalabilityTests
                                    "-Dbatchsize=BATCH-SIZE " +
                                    "-Dbatches=NUM-BATCHES " +
                                    "-Dthreads=NUM-THREADS " +
-                                   "-Dfile=OUTPUT-FILE ");
+                                   "-Dfile=OUTPUT-FILE " +
+                                   "[-Dcontext=CONTEXT]");
         System.out.println("Where:");
         System.out.println("  HOST = Host on which Fedora server is running.");
         System.out.println("  PORT = Port on which the Fedora server APIs can be accessed.");
@@ -197,6 +198,7 @@ public class ScalabilityTests
         System.out.println("  OUTPUT-FILE = The file to which the test results will be written.");
         System.out.println("                If the file does not exist, it will be created, if the");
         System.out.println("                file does exist the new results will be appended.");
+        System.out.println("  CONTEXT     = The application server context Fedora is deployed in. This parameter is optional");
         System.out.println("Example:");
         System.out.println("ant scalability-tests " +
                            "-Dhost=localhost " +
@@ -206,13 +208,14 @@ public class ScalabilityTests
                            "-Dbatchsize=100 " +
                            "-Dbatches=10 " +
                            "-Dthreads=5 " +
-                           "-Dfile=C:\\temp\\scalability_testing_output.txt ");
+                           "-Dfile=C:\\temp\\scalability_testing_output.txt " +
+                           "-Dcontext=my-fedora");
         System.exit(1);
     }
 
     public static void main(String[] args) throws Exception {
 
-        if(args.length != 8) {
+        if(args.length < 8 || args.length > 9) {
             usage();
         }
 
@@ -224,6 +227,7 @@ public class ScalabilityTests
         String numBatches = args[5];
         String threads = args[6];
         String output = args[7];
+        String context = args.length == 9 ? args[8] : Constants.FEDORA_DEFAULT_APP_CONTEXT;
 
         if(host == null || host.startsWith("$") ||
            port == null || port.startsWith("$") ||
@@ -237,7 +241,7 @@ public class ScalabilityTests
         }
 
         ScalabilityTests tests = new ScalabilityTests();
-        tests.init(host, port, username, password, batchSize, numBatches, threads, output);
+        tests.init(host, port, username, password, batchSize, numBatches, threads, output, context);
         System.out.println("Running Scalability Test...");
         tests.runIngestTest();
         tests.close();

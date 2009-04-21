@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -42,7 +42,7 @@ import fedora.swing.mdi.MDIDesktopPane;
 
 /**
  * Batch Build Ingest GUI.
- * 
+ *
  * @author Bill Niebel
  * @version $Id$
  */
@@ -97,6 +97,8 @@ public class BatchBuildIngestGUI
 
     private final String port;
 
+    private final String context;
+
     private final String user;
 
     private final String pass;
@@ -105,6 +107,7 @@ public class BatchBuildIngestGUI
                                MDIDesktopPane mdiDesktopPane,
                                String host,
                                int port,
+                               String context,
                                String user,
                                String pass) {
         super("Batch Build and Ingest", true, // resizable
@@ -114,6 +117,7 @@ public class BatchBuildIngestGUI
 
         this.host = host;
         this.port = Integer.toString(port);
+        this.context = context;
         this.user = user;
         this.pass = pass;
         formatMap.put(FOXML1_1.uri, "FOXML");
@@ -291,6 +295,7 @@ public class BatchBuildIngestGUI
                 properties.setProperty("password", pass);
                 properties.setProperty("server-protocol", Administrator
                         .getProtocol());
+                properties.setProperty("context", context);
 
                 // Verify format of template file to see if it is a METS or
                 // FOXML template

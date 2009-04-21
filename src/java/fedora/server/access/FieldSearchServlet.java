@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -43,7 +43,7 @@ import fedora.server.utilities.StreamUtility;
 
 /**
  * REST interface for API-A's FieldSearch functionality.
- * 
+ *
  * @author Chris Wilper
  */
 public class FieldSearchServlet
@@ -154,13 +154,14 @@ public class FieldSearchServlet
         }
         String[] ret = new String[l.size()];
         for (int i = 0; i < l.size(); i++) {
-            ret[i] = (String) l.get(i);
+            ret[i] = l.get(i);
         }
         return ret;
     }
 
     public static final String ACTION_LABEL = "Field Search";
 
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -209,7 +210,7 @@ public class FieldSearchServlet
             StringBuffer xmlBuf = new StringBuffer();
             StringBuffer html = new StringBuffer();
             if (!xml) {
-                html.append("<form method=\"post\" action=\"/fedora/search\">");
+                html.append("<form method=\"post\" action=\"search\">");
                 html
                         .append("<center><table border=0 cellpadding=6 cellspacing=0>\n");
                 html
@@ -376,7 +377,7 @@ public class FieldSearchServlet
                 SimpleDateFormat formatter =
                         new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                 for (int i = 0; i < searchResults.size(); i++) {
-                    ObjectFields f = (ObjectFields) searchResults.get(i);
+                    ObjectFields f = searchResults.get(i);
                     if (xml) {
                         xmlBuf.append("  <objectFields>\n");
                         appendXML("pid", f.getPid(), xmlBuf);
@@ -407,7 +408,7 @@ public class FieldSearchServlet
                         for (String l : fieldsArray) {
                             html.append("<td valign=\"top\">");
                             if (l.equalsIgnoreCase("pid")) {
-                                html.append("<a href=\"/fedora/get/");
+                                html.append("<a href=\"get/");
                                 html.append(f.getPid());
                                 html.append("\">");
                                 html.append(f.getPid());
@@ -487,8 +488,7 @@ public class FieldSearchServlet
                             }
                             html.append("</p>\n");
                         }
-                        html
-                                .append("<form method=\"post\" action=\"/fedora/search\">");
+                        html.append("<form method=\"post\" action=\"search\">");
                         if (fieldHash.contains("pid")) {
                             html
                                     .append("<input type=\"hidden\" name=\"pid\" value=\"true\">");
@@ -598,7 +598,7 @@ public class FieldSearchServlet
                 out
                         .println("<table width=\"784\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
                 out
-                        .println("<tr><td width=\"141\" height=\"134\" valign=\"top\"><img src=\"/fedora/images/newlogo2.jpg\" width=\"141\" height=\"134\"/></td>");
+                        .println("<tr><td width=\"141\" height=\"134\" valign=\"top\"><img src=\"images/newlogo2.jpg\" width=\"141\" height=\"134\"/></td>");
                 out.println("<td width=\"643\" valign=\"top\">");
                 out.println("<center><h2>Fedora Repository</h2>");
                 out.println("<h3>Find Objects</h3>");
@@ -606,6 +606,7 @@ public class FieldSearchServlet
                 out.print(html.toString());
                 out.print("</center>");
                 out.print("</body>");
+                out.print("</html>");
                 out.flush();
                 out.close();
             } else {
@@ -688,18 +689,20 @@ public class FieldSearchServlet
             if (i > 0) {
                 ret.append(", ");
             }
-            ret.append(StreamUtility.enc((String) l.get(i).getValue()));
+            ret.append(StreamUtility.enc(l.get(i).getValue()));
         }
         return ret.toString();
     }
 
     /** Exactly the same behavior as doGet. */
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doGet(request, response);
     }
 
     /** Gets the Fedora Server instance. */
+    @Override
     public void init() throws ServletException {
         try {
             s_server =

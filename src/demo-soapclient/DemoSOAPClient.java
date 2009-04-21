@@ -47,14 +47,14 @@ public class DemoSOAPClient
 	private static FedoraAPIA APIA;
     private static HashMap s_repoInfo=new HashMap();
 
-    public DemoSOAPClient(String protocol, String host, int port, String user, String pass)
+    public DemoSOAPClient(String protocol, String host, int port, String user, String pass, String context)
             throws Exception {
             	
         // Use the FedoraClient utility to get SOAP stubs.
         // These SOAP stubs enable the client to connect to a Fedora repository
         // via the API-A and API-M web service interfaces.
 
-		String baseURL = protocol + "://" + host + ":" + port + "/fedora";
+		String baseURL = protocol + "://" + host + ":" + port + "/" + context;
 		FedoraClient fc = new FedoraClient(baseURL, user, pass);
 		APIA=fc.getAPIA();
 		APIM=fc.getAPIM();
@@ -226,7 +226,7 @@ public class DemoSOAPClient
 	
 	public static void main(String[] args) {
 		try {
-			if (args.length==5) {		      
+			if (args.length==5 || args.length==6) {		      
 		      	if (!args[0].equals("http") && !args[0].equals("https")) {
 		          	throw new Exception("Protocol must be either \"http\" or \"https\". Value specified was: \""+args[0]+"\".");
 		      	}
@@ -235,14 +235,20 @@ public class DemoSOAPClient
 			  	System.out.println("Host: " + args[1]);
 			  	System.out.println("Port: " + args[2]);
 			  	System.out.println("Username: " + args[3]);
-			  	System.out.println("Password: " + args[4] + "\n");
-		      
+			  	System.out.println("Password: " + args[4]);
+			  	String context = Constants.FEDORA_DEFAULT_CONTEXT;
+
+			  	if (args.length == 6){
+			  	    System.out.println("Context:  " + args[5] + "\n");
+			  	    context = args[5];
+			  	}
+			  	
 			  	// Instantiate the demo client.
 			  	// This will set up connection stubs for making SOAP requests on API-A and API-M		      
 		      
 				DemoSOAPClient caller = new DemoSOAPClient(args[0], 
 								args[1], new Integer(args[2]).intValue(),
-								args[3], args[4]);
+								args[3], args[4], context);
 
 				//**************************************************************								
 				//******** STEP 1 : get info about the repository

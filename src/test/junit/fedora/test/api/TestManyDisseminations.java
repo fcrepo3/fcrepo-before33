@@ -24,7 +24,7 @@ import fedora.test.FedoraServerTestCase;
 /**
  * Tests a series of many dissemination requests. NOTE: This test requies API-A
  * to be open (non-authenticating)
- * 
+ *
  * @author Chris Wilper
  */
 public class TestManyDisseminations
@@ -481,8 +481,12 @@ public class TestManyDisseminations
                     + "  <fbs:DSInput DSMax=\"1\" DSMin=\"1\" DSOrdinality=\"false\" wsdlMsgPartName=\"DC_REF_R\">"
                     + CR
                     + "    <fbs:DSInputLabel>DC_REF_R Binding</fbs:DSInputLabel>"
-                    + CR + "    <fbs:DSMIME>text/xml</fbs:DSMIME>" + CR
-                    + "    <fbs:DSInputInstruction/>" + CR + "  </fbs:DSInput>"
+                    + CR
+                    + "    <fbs:DSMIME>text/xml</fbs:DSMIME>"
+                    + CR
+                    + "    <fbs:DSInputInstruction/>"
+                    + CR
+                    + "  </fbs:DSInput>"
                     + CR + "</fbs:DSInputSpec>";
         }
 
@@ -539,8 +543,9 @@ public class TestManyDisseminations
             InetAddress addr = InetAddress.getLocalHost();
             final String url =
                     "http://" + addr.getHostAddress() + ":"
-                            + FedoraServerTestCase.getPort() + "/fedora/get/"
-                            + DATA_OBJECT_PID + "/" + X_DS;
+                            + FedoraServerTestCase.getPort() + "/"
+                            + FedoraServerTestCase.getFedoraAppServerContext()
+                            + "/get/" + DATA_OBJECT_PID + "/" + X_DS;
             appendInlineDatastream(buf,
                                    X_DS,
                                    "text/xml",
@@ -597,7 +602,8 @@ public class TestManyDisseminations
             buf.append(" PID=\"" + pid + "\"");
             buf.append(" xmlns:foxml=\"" + FOXML_NAMESPACE + "\"");
             buf.append(">" + CR + "<foxml:objectProperties>" + CR);
-            buf.append("<foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"Active\"/>");
+            buf
+                    .append("<foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"Active\"/>");
             buf.append(CR + "</foxml:objectProperties>" + CR);
         }
 
@@ -607,10 +613,7 @@ public class TestManyDisseminations
                                                    String formatURI,
                                                    String xml) {
             openDatastream(buf, dsID, "X");
-            openDatastreamVersion(buf,
-                                  dsID + ".0",
-                                  mimeType,
-                                  formatURI);
+            openDatastreamVersion(buf, dsID + ".0", mimeType, formatURI);
             buf.append("      <foxml:xmlContent>" + CR);
             buf.append(xml);
             buf.append(CR + "      </foxml:xmlContent>" + CR);

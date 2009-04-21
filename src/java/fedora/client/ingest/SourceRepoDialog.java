@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -34,7 +34,7 @@ import fedora.server.types.gen.RepositoryInfo;
 /**
  * Launch a dialog for entering login information for a source repository.
  * getAPIA() and getAPIM() will return non-null if login information is entered.
- * 
+ *
  * @author Chris Wilper
  */
 public class SourceRepoDialog
@@ -43,6 +43,8 @@ public class SourceRepoDialog
     private static final long serialVersionUID = 1L;
 
     private final JTextField m_serverField;
+
+    private final JTextField m_contextField;
 
     private final JTextField m_protocolField;
 
@@ -57,6 +59,8 @@ public class SourceRepoDialog
     private RepositoryInfo m_repositoryInfo;
 
     private static String s_lastServer;
+
+    private static String s_lastContext;
 
     private static String s_lastProtocol;
 
@@ -87,30 +91,38 @@ public class SourceRepoDialog
         inputPane.setLayout(gridBag);
         JLabel serverLabel = new JLabel("Fedora Server");
         JLabel protocolLabel = new JLabel("Protocol");
+        JLabel contextLabel = new JLabel("Fedora Server Context");
         JLabel usernameLabel = new JLabel("Username");
         JLabel passwordLabel = new JLabel("Password");
         if (s_lastServer == null) {
             s_lastServer = "hostname:portnumber";
         }
         m_serverField = new JTextField(s_lastServer);
+
         if (s_lastProtocol == null) {
             s_lastProtocol = "http";
         }
         m_protocolField = new JTextField(s_lastProtocol);
+
+        if (s_lastContext == null) {
+            s_lastContext = "fedora";
+        }
+        m_contextField = new JTextField(s_lastContext);
+
         if (s_lastUsername == null) {
             s_lastUsername = "fedoraAdmin";
         }
         m_usernameField = new JTextField(s_lastUsername);
+
         if (s_lastPassword == null) {
             s_lastPassword = "";
         }
         m_passwordField = new JPasswordField(s_lastPassword);
+
         addLabelValueRows(new JLabel[] {serverLabel, protocolLabel,
-                                  usernameLabel, passwordLabel},
-                          new JComponent[] {m_serverField, m_protocolField,
-                                  m_usernameField, m_passwordField},
-                          gridBag,
-                          inputPane);
+                contextLabel, usernameLabel, passwordLabel}, new JComponent[] {
+                m_serverField, m_protocolField, m_contextField,
+                m_usernameField, m_passwordField}, gridBag, inputPane);
 
         JButton okButton = new JButton(new AbstractAction() {
 
@@ -139,7 +151,7 @@ public class SourceRepoDialog
                             // FIXME:  Get around hardcoding the path in the baseURL
                             String baseURL =
                                     m_protocol + "://" + m_host + ":" + m_port
-                                            + "/fedora";
+                                            + "/" + m_contextField.getText();
                             FedoraClient fc =
                                     new FedoraClient(baseURL,
                                                      m_usernameField.getText(),
@@ -154,7 +166,7 @@ public class SourceRepoDialog
                             // we will immediately try a describe repository
                             // request on the API-A stub to see if it works.  If it
                             // fails, we will try obtaining a stub with the OLD
-                            // SOAP URL syntax.  This is because the path in the 
+                            // SOAP URL syntax.  This is because the path in the
                             // SOAP URLs were changed in Fedora 2.1 to be more standard.
                             /*
                              * try { m_apia=APIAStubFactory.getStub(m_protocol,
@@ -180,6 +192,7 @@ public class SourceRepoDialog
                                 m_repositoryInfo = m_apia.describeRepository();
                                 s_lastServer = m_host + ":" + m_port;
                                 s_lastProtocol = m_protocol;
+                                s_lastContext = m_contextField.getText();
                                 s_lastUsername = m_usernameField.getText();
                                 s_lastPassword =
                                         new String(m_passwordField
@@ -221,6 +234,7 @@ public class SourceRepoDialog
                                     // version of fedora, which is ok.
                                     s_lastServer = m_host + ":" + m_port;
                                     s_lastProtocol = m_protocol;
+                                    s_lastContext = m_contextField.getText();
                                     s_lastUsername = m_usernameField.getText();
                                     s_lastPassword =
                                             new String(m_passwordField

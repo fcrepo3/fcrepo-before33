@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -11,8 +11,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -27,6 +29,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import fedora.common.Constants;
+
 import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
@@ -38,11 +41,12 @@ import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.search.ObjectFields;
 import fedora.server.utilities.StreamUtility;
+
 import fedora.utilities.XmlTransformUtility;
 
 /**
  * Implements reporting functionality.
- * 
+ *
  * @author Bill Niebel
  */
 public class Report {
@@ -228,7 +232,7 @@ public class Report {
     }
 
     private static final String getQuery(String name) {
-        return (String) queries.get(name);
+        return queries.get(name);
     }
 
     private static final Hashtable<String, String[]> fieldArrays =
@@ -240,7 +244,7 @@ public class Report {
     }
 
     private static final String[] getFieldsArray(String name) {
-        return (String[]) fieldArrays.get(name);
+        return fieldArrays.get(name);
     }
 
     private static final int UNKNOWN = 0;
@@ -440,8 +444,8 @@ public class Report {
         }
 
         if ("".equals(_xslt)) { // override default with no transform at all
-        } else if (_xslt != null) { // use stated 
-            xslt = (String) xslts.get(_xslt);
+        } else if (_xslt != null) { // use stated
+            xslt = xslts.get(_xslt);
         } else { // use default transform for this report
             switch (requestType) {
                 case HTMLFORM_ONLY:
@@ -618,7 +622,7 @@ public class Report {
                     if (dateRange != null && !"".equals(dateRange)) {
                         putOr(params,
                               "DATERANGELABEL",
-                              (String) dateRangeLabels.get(dateRange));
+                              dateRangeLabels.get(dateRange));
                     } else {
                         putOr(params, "DATERANGELABEL", "");
                     }
@@ -681,7 +685,7 @@ public class Report {
                 }
                 List<ObjectFields> searchResults = fsr.objectFieldsList();
                 for (int i = 0; i < searchResults.size(); i++) {
-                    ObjectFields f = (ObjectFields) searchResults.get(i);
+                    ObjectFields f = searchResults.get(i);
                     outBuf.append("\t\t<objectFields>\n");
                     for (String name : fieldsArray) {
                         if (isMultivalued(name)) {
@@ -772,6 +776,7 @@ public class Report {
             buffer = new StringBuffer();
         }
 
+        @Override
         public void flush() {
             out.print(buffer.toString());
             buffer.setLength(0);
@@ -789,6 +794,7 @@ public class Report {
             buffer = new StringBuffer();
         }
 
+        @Override
         public void close() {
             StringReader sr = new StringReader(buffer.toString());
             StreamSource streamSource = new StreamSource(sr);

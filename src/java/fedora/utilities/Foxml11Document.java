@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -41,30 +41,30 @@ import fedora.server.utilities.DateUtility;
 
 /**
  * A DOM-based utility for generating FOXML 1.1 documents.
- * 
+ *
  * @author Edwin Shin
  * @since 3.0
  * @version $Id$
  */
 public class Foxml11Document {
-    
+
     public static final String FOXML_NS="info:fedora/fedora-system:def/foxml#";
-    
+
     private DocumentBuilder builder;
-    
+
     private Document doc;
 
     private Element rootElement;
 
     private Element objectProperties;
-    
-    private XPath xpath;
-    
-    private TransformerFactory xformFactory;
+
+    private final XPath xpath;
+
+    private final TransformerFactory xformFactory;
 
     public enum Property {
-        STATE("info:fedora/fedora-system:def/model#state"), 
-        LABEL("info:fedora/fedora-system:def/model#label"), 
+        STATE("info:fedora/fedora-system:def/model#state"),
+        LABEL("info:fedora/fedora-system:def/model#label"),
         CONTENT_MODEL("info:fedora/fedora-system:def/model#contentModel"),
         CREATE_DATE("info:fedora/fedora-system:def/model#createdDate"),
         MOD_DATE("info:fedora/fedora-system:def/view#lastModifiedDate");
@@ -110,13 +110,13 @@ public class Foxml11Document {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         NamespaceContextImpl nsCtx = new NamespaceContextImpl();
         nsCtx.addNamespace("foxml", FOXML_NS);
         XPathFactory factory = XPathFactory.newInstance();
         xpath = factory.newXPath();
         xpath.setNamespaceContext(nsCtx);
-        
+
         xformFactory = XmlTransformUtility.getTransformerFactory();
     }
 
@@ -168,13 +168,13 @@ public class Foxml11Document {
             dsv.setAttribute("SIZE", Integer.toString(size));
             dsv.setAttribute("CREATED", DateUtility.convertDateToString(created));
             node.appendChild(dsv);
-            
+
         } catch (XPathExpressionException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
-    
+
     public void addXmlContent(String dsvId, String xmlContent) {
         try {
             Document contentDoc = builder.parse(new InputSource(new StringReader(xmlContent)));
@@ -191,10 +191,10 @@ public class Foxml11Document {
             e.printStackTrace();
         }
     }
-    
+
     public void setContentLocation(String dsvId, String ref, String type) {
         String expr = String.format("//foxml:datastreamVersion[@ID='%s']/foxml:contentLocation", dsvId);
-        
+
         try {
             NodeList nodes = (NodeList)xpath.evaluate(expr, doc, XPathConstants.NODESET);
             Element location = (Element)nodes.item(0);
@@ -203,23 +203,23 @@ public class Foxml11Document {
             }
             location.setAttribute("REF", ref);
             location.setAttribute("TYPE", type);
-            
+
         } catch (XPathExpressionException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
-    
+
     private Element addContentLocation(String dsvId) {
         Node node = getDatastreamVersion(dsvId);
         Element location = doc.createElementNS(FOXML_NS, "foxml:contentLocation");
         node.appendChild(location);
         return location;
     }
-    
+
     private Node getDatastreamVersion(String dsvId) {
         String expr = String.format("//foxml:datastreamVersion[@ID='%s']", dsvId);
-        
+
         try {
             NodeList nodes = (NodeList)xpath.evaluate(expr, doc, XPathConstants.NODESET);
             Node node = nodes.item(0);

@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -39,6 +39,7 @@ import fedora.server.access.FedoraAPIAServiceLocator;
 
 /**
  * @author Chris Wilper
+ * @version $Id$
  */
 public class AccessConsole
         extends JInternalFrame
@@ -55,6 +56,8 @@ public class AccessConsole
     private final JTextField m_hostTextField;
 
     private final JTextField m_portTextField;
+
+    private final JTextField m_contextTextField;
 
     private boolean m_isBusy;
 
@@ -89,6 +92,7 @@ public class AccessConsole
         m_hostTextField = new JTextField(Administrator.getHost(), 13);
         hostPanel.add(m_hostTextField, BorderLayout.EAST);
 
+
         JPanel portPanel = new JPanel();
         portPanel.setLayout(new BorderLayout());
         portPanel.add(new JLabel("  Port : "), BorderLayout.WEST);
@@ -97,7 +101,16 @@ public class AccessConsole
                                4);
         portPanel.add(m_portTextField, BorderLayout.EAST);
 
+        JPanel contextPanel = new JPanel();
+        contextPanel.setLayout(new BorderLayout());
+        contextPanel.add(new JLabel("  Context : "), BorderLayout.WEST);
+        m_contextTextField =
+                new JTextField(Administrator.getAppServContext(),10);
+        contextPanel.add(m_contextTextField, BorderLayout.EAST);
+
+
         hostPortPanel.add(hostPanel, BorderLayout.WEST);
+        hostPortPanel.add(contextPanel, BorderLayout.CENTER);
         hostPortPanel.add(portPanel, BorderLayout.EAST);
 
         JPanel commandPanel = new JPanel();
@@ -167,6 +180,8 @@ public class AccessConsole
             throws InvocationTargetException {
         String hostString = m_hostTextField.getText();
         String portString = m_portTextField.getText();
+        String contextString = m_contextTextField.getText();
+
         try {
             URL ourl = new URL(m_locator.getFedoraAPIAPortSOAPHTTPAddress());
             StringBuffer nurl = new StringBuffer();
@@ -174,7 +189,7 @@ public class AccessConsole
             nurl.append(hostString);
             nurl.append(':');
             nurl.append(portString);
-            nurl.append(ourl.getPath());
+            nurl.append(ourl.getPath().replaceFirst("^/fedora",  "/" + contextString));
             if (ourl.getQuery() != null && !ourl.getQuery().equals("")) {
                 nurl.append('?');
                 nurl.append(ourl.getQuery());

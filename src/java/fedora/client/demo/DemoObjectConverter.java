@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -14,13 +14,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
 /**
- * Goes through the Fedora demo objects directory and changes all occurrences
- * of strings for protocol, hostname and port number to values supplied by 
- * the user in the calling arguments. This utility is used to convert the 
- * original Fedora demo objects so that they will function correctly when 
- * the Fedora server is configured to run on a protocol, host, or port other
- * than the defaults.
- * 
+ * Goes through the Fedora demo objects directory and changes all occurrences of
+ * strings for protocol, hostname and port number to values supplied by the user
+ * in the calling arguments. This utility is used to convert the original Fedora
+ * demo objects so that they will function correctly when the Fedora server is
+ * configured to run on a protocol, host, or port other than the defaults.
+ *
  * @author Ross Wayland
  */
 public class DemoObjectConverter {
@@ -37,10 +36,15 @@ public class DemoObjectConverter {
 
     private static String toPortNum = null;
 
+    private static String toContext = null;
+
+    private static String fromContext = null;
+
+
     /**
      * Constructor for DemoObjectConverter. Initializes class variables for
      * hostname, port number and fedoraHome.
-     * 
+     *
      * @param fromProtocol
      *        The protocol for the URL to be changed from.
      * @param fromHostName
@@ -62,20 +66,24 @@ public class DemoObjectConverter {
                                String toProtocol,
                                String toHostName,
                                String toPortNum,
-                               String fedoraHome) {
-        DemoObjectConverter.toProtocol = toProtocol;
-        DemoObjectConverter.toHostName = toHostName;
-        DemoObjectConverter.toPortNum = toPortNum;
+                               String fedoraHome,
+                               String fromContext,
+                               String toContext) {
         DemoObjectConverter.fromProtocol = fromProtocol;
         DemoObjectConverter.fromHostName = fromHostName;
         DemoObjectConverter.fromPortNum = fromPortNum;
+        DemoObjectConverter.fromContext = fromContext;
+        DemoObjectConverter.toProtocol = toProtocol;
+        DemoObjectConverter.toHostName = toHostName;
+        DemoObjectConverter.toPortNum = toPortNum;
+        DemoObjectConverter.toContext = toContext;
 
     }
 
     /**
      * Converts all Fedora demo objects by substituting hostname and port numer
      * supplied in calling arguments.
-     * 
+     *
      * @param fedoraHome
      *        The location Fedora is installed.
      */
@@ -93,7 +101,7 @@ public class DemoObjectConverter {
 
     /**
      * Recursively traverse the specified directory and process each file.
-     * 
+     *
      * @param dir
      *        The directory to be traversed.
      */
@@ -115,11 +123,13 @@ public class DemoObjectConverter {
      * Substitute the protocol, hostname and port number supplied in calling
      * arguments with those found in Fedora demo objects. Replaces the original
      * file with the edited version.
-     * 
+     *
      * @param demoObject
      *        The Fedora demo object file to be edited.
      */
     public static void substitute(File demoObject) {
+        String m_fromHostName = fromHostName;
+        String m_toHostName = toHostName;
         try {
             BufferedReader in = new BufferedReader(new FileReader(demoObject));
             String tempFile = demoObject.toString() + "-temp";
@@ -127,6 +137,13 @@ public class DemoObjectConverter {
             OutputStreamWriter out = new OutputStreamWriter(os, "UTF-8");
             String nextLine = "";
             String newUrlStart;
+
+            if (fromContext != null && toContext != null
+                    && !fromContext.equals("") && !toContext.equals("")) {
+                m_toHostName = toHostName + "/" + toContext;
+                m_fromHostName = fromHostName + "/" + fromContext;
+            }
+
             if (toProtocol.equalsIgnoreCase("http")
                     && (toPortNum.equals("") || toPortNum.equals("80"))) {
                 newUrlStart = "http://" + toHostName + "/";
@@ -212,7 +229,7 @@ public class DemoObjectConverter {
 
     /**
      * Shows argument list for application.
-     * 
+     *
      * @param errMessage
      *        The message to be included with usage information.
      */
@@ -221,15 +238,15 @@ public class DemoObjectConverter {
         System.out.println("");
         System.out
                 .println("Usage: DemoObjectConverter fromProtocol fromHostName fromPortNum "
-                        + "toProtocol toHostName toPortNum fedoraHome");
+                        + "toProtocol toHostName toPortNum fedoraHome [fromContext toContext]");
     }
 
     public static void main(String[] args) {
         try {
 
-            if (args.length != 7) {
+            if (args.length != 7 & args.length != 9) {
                 DemoObjectConverter
-                        .showUsage("You must provide seven arguments.");
+                        .showUsage("You must provide seven or nine arguments.");
             } else {
                 String fromProtocol = args[0];
                 String fromHostName = args[1];
@@ -239,6 +256,12 @@ public class DemoObjectConverter {
                 String toPortNum = args[5];
                 String fedoraHome = args[6];
 
+                String fromContext = null, toContext = null;
+                if (args.length == 9) {
+                    fromContext = args[7];
+                    toContext = args[8];
+                }
+
                 DemoObjectConverter doc =
                         new DemoObjectConverter(fromProtocol,
                                                 fromHostName,
@@ -246,7 +269,9 @@ public class DemoObjectConverter {
                                                 toProtocol,
                                                 toHostName,
                                                 toPortNum,
-                                                fedoraHome);
+                                                fedoraHome,
+                                                fromContext,
+                                                toContext);
                 DemoObjectConverter.convert(fedoraHome);
             }
         } catch (Exception e) {

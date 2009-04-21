@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -68,8 +68,7 @@ import fedora.utilities.XmlTransformUtility;
  * requests and responses would most likely communicate directly with the Fedora
  * Access SOAP service rather than use a java servlet as an intermediary. This
  * servlet serves as an example of how to construct a client that uses the
- * Fedora Access API via SOAP.
- * </p>
+ * Fedora Access API via SOAP. </p>
  * <p>
  * Input parameters for the servlet include:
  * </p>
@@ -94,25 +93,25 @@ import fedora.utilities.XmlTransformUtility;
  * ListMethods, GetObjectProfile, and DescribeRepository that determines whether
  * output is formatted as XML or as HTML; value of "true" indicates XML format;
  * value of false or omission indicates HTML format.
- * <li>userParms - methods may require or provide optional parameters
- * that may be input as arguments to the method; these method parameters are
- * entered as name/value pairs like the other serlvet parameters.Used in
- * conjunction with GetDissemination. (optional)</li>
+ * <li>userParms - methods may require or provide optional parameters that may
+ * be input as arguments to the method; these method parameters are entered as
+ * name/value pairs like the other serlvet parameters.Used in conjunction with
+ * GetDissemination. (optional)</li>
  * </ul>
  * <p>
  * <i>Note that all servlet parameter names that are implementation specific end
  * with the underscore character ("_"). This is done to avoid possible name
  * clashes with user-supplied method parameter names. As a general rule,
  * user-supplied parameters should never contain names that end with the
- * underscore character to prevent possible name conflicts.</i>
- * </ul>
+ * underscore character to prevent possible name conflicts.</i> </ul>
  * <p>
  * Example URLs
  * </p>
  * <ol>
  * <li>GetDissemination URL syntax:
  * <p>
- * protocol://hostname:port/soapclient/apia?action_=GetDissemination&PID_=pid&sDefPID_=sdefpid&methodName_=methodname[&asOfDateTime_=dateTime][?parmArray]
+ * protocol://hostname:port/soapclient/apia?action_=GetDissemination&PID_=pid&
+ * sDefPID_=sdefpid&methodName_=methodname[&asOfDateTime_=dateTime][?parmArray]
  * </p>
  * <p>
  * This syntax requests a dissemination of the specified object using the
@@ -126,11 +125,11 @@ import fedora.utilities.XmlTransformUtility;
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>soapclient - required name of the sample soap client.</li>
  * <li>apia - required name of the sample soap client</li>
- * <li> GetDissemination - required action name for getting a dissemination
+ * <li>GetDissemination - required action name for getting a dissemination
  * request.</li>
  * <li>pid - required persistent idenitifer of the digital object.</li>
- * <li>sdefpid - required persistent identifier of the service definition
- * object to which the digital object subscribes.</li>
+ * <li>sdefpid - required persistent identifier of the service definition object
+ * to which the digital object subscribes.</li>
  * <li>methodname - required name of the method to be executed.</li>
  * <li>dateTime - optional dateTime value indicating dissemination of a version
  * of the digital object at the specified point in time.
@@ -139,7 +138,8 @@ import fedora.utilities.XmlTransformUtility;
  * </ul>
  * <li>GetDatastreamDissemination URL syntax:
  * <p>
- * protocol://hostname:port/soapclient/apia?action=GetDatastreamDissemination&PID_=pid&dsID_=dsid[&asOfDateTime_=dateTime]
+ * protocol://hostname:port/soapclient/apia?action=GetDatastreamDissemination&
+ * PID_=pid&dsID_=dsid[&asOfDateTime_=dateTime]
  * </p>
  * <p>
  * This syntax requests a datastream dissemination for the specified digital
@@ -152,7 +152,7 @@ import fedora.utilities.XmlTransformUtility;
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>soapclient - required name of the sample soap client.</li>
  * <li>apia - required name of the sample soap client</li>
- * <li> GetDatastreamDissemination - required action name for getting a
+ * <li>GetDatastreamDissemination - required action name for getting a
  * datastream dissemination request.</li>
  * <li>pid - required persistent identifier of the digital object.</li>
  * <li>dsid - required datastream identifier for the datastream.</li>
@@ -161,7 +161,8 @@ import fedora.utilities.XmlTransformUtility;
  * </ul>
  * <li>GetObjectProfile URL syntax:
  * <p>
- * protocol://hostname:port/soapclient/apia?action_=GetObjectProfile&PID_=pid[&asOfDateTime_=dateTime][&xml=boolean]
+ * protocol://hostname:port/soapclient/apia?action_=GetObjectProfile&PID_=pid[&
+ * asOfDateTime_=dateTime][&xml=boolean]
  * </p>
  * <p>
  * This syntax requests an object profile for the specified digital object.
@@ -173,7 +174,7 @@ import fedora.utilities.XmlTransformUtility;
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>soapclient - required name of the sample soap client.</li>
  * <li>apia - required name of the sample soap client</li>
- * <li> GetObjectProfile - required action name for getting an Object Profile
+ * <li>GetObjectProfile - required action name for getting an Object Profile
  * request.</li>
  * <li>pid - required persistent identifier of the digital object.</li>
  * <li>dateTime - optional dateTime value indicating dissemination of a version
@@ -181,7 +182,8 @@ import fedora.utilities.XmlTransformUtility;
  * </ul>
  * <li>GetObjectHistory URL syntax:
  * <p>
- * protocol://hostname:port/soapclient/apia?action_=GetObjectHistory&PID_=pid[&xml_=boolean]
+ * protocol://hostname:port/soapclient/apia?action_=GetObjectHistory&PID_=pid[&
+ * xml_=boolean]
  * </p>
  * <p>
  * This syntax requests an object history for the specified digital object.
@@ -193,16 +195,17 @@ import fedora.utilities.XmlTransformUtility;
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>soapclient - required name of the sample soap client.</li>
  * <li>apia - required name of the sample soap client</li>
- * <li> GetObjectHistory - required action name for getting an object history
+ * <li>GetObjectHistory - required action name for getting an object history
  * request.</li>
  * <li>pid - required persistent identifier of the digital object.</li>
- * <li>boolean - an optional parameter indicating the requested output format.
- * A value of "true" indicates a return type of text/xml; the absence of the xml
+ * <li>boolean - an optional parameter indicating the requested output format. A
+ * value of "true" indicates a return type of text/xml; the absence of the xml
  * parameter or a value of "false" indicates format is to be text/html.</li>
  * </ul>
  * <li>DescribeRepository URL syntax:
  * <p>
- * protocol://hostname:port/soapclient/apia?action_=DescribeRepository[&xml_=boolean]
+ * protocol://hostname:port/soapclient/apia?action_=DescribeRepository[&xml_=
+ * boolean]
  * </p>
  * <p>
  * This syntax requests an object profile for the specified digital object.
@@ -214,15 +217,16 @@ import fedora.utilities.XmlTransformUtility;
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>soapclient - required name of the sample soap client.</li>
  * <li>apia - required name of the sample soap client</li>
- * <li> DescribeRepository - required action name for getting an describe
+ * <li>DescribeRepository - required action name for getting an describe
  * repository request.</li>
- * <li>boolean - an optional parameter indicating the requested output format.
- * A value of "true" indicates a return type of text/xml; the absence of the xml
+ * <li>boolean - an optional parameter indicating the requested output format. A
+ * value of "true" indicates a return type of text/xml; the absence of the xml
  * parameter or a value of "false" indicates format is to be text/html.</li>
  * </ul>
  * <li>ListDatastreams URL syntax:
  * <p>
- * protocol://hostname:port/soapclient/apia?action_=ListDatastreams&PID_=pid[&asOfDateTime_=dateTime][&xml_=boolean]
+ * protocol://hostname:port/soapclient/apia?action_=ListDatastreams&PID_=pid[&
+ * asOfDateTime_=dateTime][&xml_=boolean]
  * </p>
  * <p>
  * This syntax requests a list of datastreams for the specified digital object.
@@ -234,18 +238,19 @@ import fedora.utilities.XmlTransformUtility;
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>soapclient - required name of the sample soap client.</li>
  * <li>apia - required name of the sample soap client</li>
- * <li> ListDatastreams - required action name for getting a list datastreams
+ * <li>ListDatastreams - required action name for getting a list datastreams
  * request.</li>
  * <li>pid - required persistent identifier of the digital object.</li>
  * <li>dateTime - optional dateTime value indicating dissemination of a version
  * of the digital object at the specified point in time.
- * <li>boolean - an optional parameter indicating the requested output format.
- * A value of "true" indicates a return type of text/xml; the absence of the xml
+ * <li>boolean - an optional parameter indicating the requested output format. A
+ * value of "true" indicates a return type of text/xml; the absence of the xml
  * parameter or a value of "false" indicates format is to be text/html.</li>
  * </ul>
  * <li>ListMethods URL syntax:
  * <p>
- * protocol://hostname:port/soapclient/apia?action_=ListMethods&PID_=pid[&asOfDateTime_=ateTime][xml_=boolean]
+ * protocol://hostname:port/soapclient/apia?action_=ListMethods&PID_=pid[&
+ * asOfDateTime_=ateTime][xml_=boolean]
  * </p>
  * <p>
  * This syntax requests a list of methods for the specified digital object.
@@ -257,16 +262,16 @@ import fedora.utilities.XmlTransformUtility;
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>soapclient - required name of the sample soap client.</li>
  * <li>apia - required name of the sample soap client</li>
- * <li> ListMethods - required action name for getting a list methods request.</li>
+ * <li>ListMethods - required action name for getting a list methods request.</li>
  * <li>pid - required persistent identifier of the digital object.</li>
  * <li>dateTime - optional dateTime value indicating dissemination of a version
  * of the digital object at the specified point in time.
- * <li>boolean - an optional parameter indicating the requested output format.
- * A value of "true" indicates a return type of text/xml; the absence of the xml
+ * <li>boolean - an optional parameter indicating the requested output format. A
+ * value of "true" indicates a return type of text/xml; the absence of the xml
  * parameter or a value of "false" indicates format is to be text/html.</li>
  * </ul>
  * </ol>
- * 
+ *
  * @author Ross Wayland
  */
 public class FedoraAccessSoapServlet
@@ -325,6 +330,9 @@ public class FedoraAccessSoapServlet
     /** Port number on which the Fedora server is running. * */
     private static String fedoraServerPort = null;
 
+    /** The application server context which the Fedora server is running in * */
+    private static String fedoraAppServerContext = null;
+
     /** Authenticated username to connect to Fedora server * */
     private static String fedoraServerUsername = null;
 
@@ -340,7 +348,7 @@ public class FedoraAccessSoapServlet
      * parameters and then execute the specified request by calling the
      * appropriate Fedora Access SOAP service.
      * </p>
-     * 
+     *
      * @param request
      *        The servlet request.
      * @param response
@@ -350,6 +358,7 @@ public class FedoraAccessSoapServlet
      * @throws IOException
      *         If an error occurs with an input or output operation.
      */
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String asOfDateTime = null;
@@ -421,7 +430,8 @@ public class FedoraAccessSoapServlet
         int userParmCounter = 0;
         if (!h_userParms.isEmpty()) {
             userParms = new Property[h_userParms.size()];
-            for (Enumeration<String> e = h_userParms.keys(); e.hasMoreElements();) {
+            for (Enumeration<String> e = h_userParms.keys(); e
+                    .hasMoreElements();) {
                 Property userParm = new Property();
                 userParm.setName(e.nextElement());
                 userParm.setValue(h_userParms.get(userParm.getName()));
@@ -735,6 +745,8 @@ public class FedoraAccessSoapServlet
                             transformer
                                     .setParameter("soapClientMethodParmResolverServletPath",
                                                   new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
+                            transformer.setParameter("fedora",
+                                                     fedoraAppServerContext);
                             transformer.transform(new StreamSource(pr),
                                                   new StreamResult(out));
                         }
@@ -1069,7 +1081,8 @@ public class FedoraAccessSoapServlet
                             File xslFile =
                                     new File(getServletContext()
                                             .getRealPath("WEB-INF/xsl/viewRepositoryInfo.xslt"));
-                            TransformerFactory factory = XmlTransformUtility.getTransformerFactory();
+                            TransformerFactory factory =
+                                    XmlTransformUtility.getTransformerFactory();
                             Templates template =
                                     factory
                                             .newTemplates(new StreamSource(xslFile));
@@ -1085,6 +1098,8 @@ public class FedoraAccessSoapServlet
                             transformer
                                     .setParameter("soapClientMethodParmResolverServletPath",
                                                   new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
+                            transformer.setParameter("fedora",
+                                                     fedoraAppServerContext);
                             transformer.transform(new StreamSource(pr),
                                                   new StreamResult(out));
                         }
@@ -1196,6 +1211,8 @@ public class FedoraAccessSoapServlet
                             transformer
                                     .setParameter("soapClientMethodParmResolverServletPath",
                                                   new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
+                            transformer.setParameter("fedora",
+                                                     fedoraAppServerContext);
                             transformer.transform(new StreamSource(pr),
                                                   new StreamResult(out));
                         }
@@ -1286,7 +1303,7 @@ public class FedoraAccessSoapServlet
          * <p>
          * Constructor for ProfileSerializeThread.
          * </p>
-         * 
+         *
          * @param PID
          *        The persistent identifier of the specified digital object.
          * @param dsDefs
@@ -1311,6 +1328,7 @@ public class FedoraAccessSoapServlet
          * This method executes the thread.
          * </p>
          */
+        @Override
         public void run() {
             if (pw != null) {
                 try {
@@ -1323,7 +1341,8 @@ public class FedoraAccessSoapServlet
                     }
                     final String baseURL =
                             fedoraServerProtocol + "://" + fedoraServerHost
-                                    + ":" + fedoraServerPort + "/fedora/";
+                                    + ":" + fedoraServerPort + "/"
+                                    + fedoraAppServerContext + "/";
                     pw.write(" baseURL=\"" + baseURL + "\"");
                     pw.write(" xmlns:xsi=\"" + XSI.uri + "\"");
                     pw.write(" xsi:schemaLocation=\"" + ACCESS.uri);
@@ -1379,7 +1398,7 @@ public class FedoraAccessSoapServlet
          * <p>
          * Constructor for ProfileSerializeThread.
          * </p>
-         * 
+         *
          * @param PID
          *        The persistent identifier of the specified digital object.
          * @param methodDefs
@@ -1404,6 +1423,7 @@ public class FedoraAccessSoapServlet
          * This method executes the thread.
          * </p>
          */
+        @Override
         public void run() {
             if (pw != null) {
                 try {
@@ -1418,8 +1438,8 @@ public class FedoraAccessSoapServlet
                     pw.write(" baseURL=\""
                             + StreamUtility.enc(fedoraServerProtocol) + "://"
                             + StreamUtility.enc(fedoraServerHost) + ":"
-                            + StreamUtility.enc(fedoraServerPort)
-                            + "/fedora/\"");
+                            + StreamUtility.enc(fedoraServerPort) + "/"
+                            + fedoraAppServerContext + "/\"");
                     pw.write(" xmlns:xsi=\"" + XSI.uri + "\" ");
                     pw.write(" xsi:schemaLocation=\"" + ACCESS.uri);
                     pw.write(" " + OBJ_METHODS1_0.xsdLocation + "\">");
@@ -1513,7 +1533,7 @@ public class FedoraAccessSoapServlet
          * <p>
          * Constructor for ProfileSerializeThread.
          * </p>
-         * 
+         *
          * @param PID
          *        The persistent identifier of the specified digital object.
          * @param objProfile
@@ -1538,6 +1558,7 @@ public class FedoraAccessSoapServlet
          * This method executes the thread.
          * </p>
          */
+        @Override
         public void run() {
             if (pw != null) {
                 try {
@@ -1604,7 +1625,7 @@ public class FedoraAccessSoapServlet
          * <p>
          * Constructor for ReposInfoSerializeThread.
          * </p>
-         * 
+         *
          * @param repositoryInfo
          *        A repository info data structure.
          * @param pw
@@ -1621,6 +1642,7 @@ public class FedoraAccessSoapServlet
          * This method executes the thread.
          * </p>
          */
+        @Override
         public void run() {
             if (pw != null) {
                 try {
@@ -1712,7 +1734,7 @@ public class FedoraAccessSoapServlet
          * <p>
          * Constructor for SerializeThread.
          * </p>
-         * 
+         *
          * @param PID
          *        The persistent identifier of the specified digital object.
          * @param objectHistoryArray
@@ -1733,6 +1755,7 @@ public class FedoraAccessSoapServlet
          * This method executes the thread.
          * </p>
          */
+        @Override
         public void run() {
             if (pw != null) {
                 try {
@@ -1770,7 +1793,7 @@ public class FedoraAccessSoapServlet
      * <p>
      * For now, treat a HTTP POST request just like a GET request.
      * </p>
-     * 
+     *
      * @param request
      *        The servet request.
      * @param response
@@ -1782,6 +1805,7 @@ public class FedoraAccessSoapServlet
      * @throws ServletException
      *         If an error occurs that effects the servlet's basic operation.
      */
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doGet(request, response);
@@ -1792,7 +1816,7 @@ public class FedoraAccessSoapServlet
      * Gets a list of Service Definition object PIDs for the specified digital
      * object by invoking the appropriate Fedora Access SOAP service.
      * </p>
-     * 
+     *
      * @param PID
      *        The persistent identifier of the digital object.
      * @return An array of timestamps indicating when an object component
@@ -1816,7 +1840,7 @@ public class FedoraAccessSoapServlet
      * <p>
      * Gets a MIME-typed bytestream containing the result of a dissemination by
      * invoking the appropriate Fedora Access SOAP service.
-     * 
+     *
      * @param PID
      *        The persistent identifier of the digital object.
      * @param sDefPID
@@ -1911,7 +1935,7 @@ public class FedoraAccessSoapServlet
      * Gets a list of all method definitions for the specified object by
      * invoking the appropriate Fedora Access SOAP service.
      * </p>
-     * 
+     *
      * @param PID
      *        The persistent identifier for the digital object.
      * @param asOfDateTime
@@ -1962,7 +1986,7 @@ public class FedoraAccessSoapServlet
      * Gets a list of all datastream for the specified object by invoking the
      * appropriate Fedora Access SOAP service.
      * </p>
-     * 
+     *
      * @param PID
      *        The persistent identifier of the digital object.
      * @param asOfDateTime
@@ -2004,7 +2028,7 @@ public class FedoraAccessSoapServlet
      * Gets a object profile for the specified object by invoking the
      * appropriate Fedora Access SOAP service.
      * </p>
-     * 
+     *
      * @param PID
      *        The persistent identifier for the digital object.
      * @param asOfDateTime
@@ -2046,7 +2070,7 @@ public class FedoraAccessSoapServlet
      * Gets repository information for the server by invoking the appropriate
      * Fedora Access SOAP service.
      * </p>
-     * 
+     *
      * @return A repository information data structure.
      * @throws Exception
      *         If an error occurs in communicating with the Fedora Access SOAP
@@ -2081,7 +2105,7 @@ public class FedoraAccessSoapServlet
      * <p>
      * Lists the specified fields of each object matching the given criteria.
      * </p>
-     * 
+     *
      * @param resultFields
      *        the names of the fields to return
      * @param maxResults
@@ -2135,7 +2159,7 @@ public class FedoraAccessSoapServlet
      * <p>
      * Resumes an in-progress listing of object fields.
      * </p>
-     * 
+     *
      * @param sessionToken
      *        the token of the session in which the remaining results can be
      *        obtained
@@ -2176,10 +2200,11 @@ public class FedoraAccessSoapServlet
      * <p>
      * Initialize servlet.
      * </p>
-     * 
+     *
      * @throws ServletException
      *         If the servet cannot be initialized.
      */
+    @Override
     public void init() throws ServletException {
         try {
             System.out
@@ -2234,6 +2259,7 @@ public class FedoraAccessSoapServlet
      * Cleans up servlet resources.
      * </p>
      */
+    @Override
     public void destroy() {
     }
 
@@ -2242,7 +2268,7 @@ public class FedoraAccessSoapServlet
      * Validates required servlet URL parameters. Different parameters are
      * required based on the requested action.
      * </p>
-     * 
+     *
      * @param action
      *        The Fedora service to be executed
      * @param PID
@@ -2327,7 +2353,8 @@ public class FedoraAccessSoapServlet
                 html.append("</tr>");
                 html.append("<tr>");
                 html.append("</tr>");
-                for (Enumeration<String> e = h_userParms.keys(); e.hasMoreElements();) {
+                for (Enumeration<String> e = h_userParms.keys(); e
+                        .hasMoreElements();) {
                     String name = e.nextElement();
                     html.append("<tr>");
                     html.append("<td><font color='red'>" + name
@@ -2390,7 +2417,8 @@ public class FedoraAccessSoapServlet
                 html.append("</tr>");
                 html.append("<tr>");
                 html.append("</tr>");
-                for (Enumeration<String> e = h_userParms.keys(); e.hasMoreElements();) {
+                for (Enumeration<String> e = h_userParms.keys(); e
+                        .hasMoreElements();) {
                     String name = e.nextElement();
                     html.append("<tr>");
                     html.append("<td><font color='red'>" + name
@@ -2447,7 +2475,8 @@ public class FedoraAccessSoapServlet
                 html.append("</tr>");
                 html.append("<tr>");
                 html.append("</tr>");
-                for (Enumeration<String> e = h_userParms.keys(); e.hasMoreElements();) {
+                for (Enumeration<String> e = h_userParms.keys(); e
+                        .hasMoreElements();) {
                     String name = e.nextElement();
                     html.append("<tr>");
                     html.append("<td><font color='red'>" + name
@@ -2504,7 +2533,8 @@ public class FedoraAccessSoapServlet
                 html.append("</tr>");
                 html.append("<tr>");
                 html.append("</tr>");
-                for (Enumeration<String> e = h_userParms.keys(); e.hasMoreElements();) {
+                for (Enumeration<String> e = h_userParms.keys(); e
+                        .hasMoreElements();) {
                     String name = e.nextElement();
                     html.append("<tr>");
                     html.append("<td><font color='red'>" + name
@@ -2574,8 +2604,9 @@ public class FedoraAccessSoapServlet
             html.append("</tr>");
             html.append("<tr>");
             html.append("</tr>");
-            for (Enumeration<String> e = h_userParms.keys(); e.hasMoreElements();) {
-                String name = (String) e.nextElement();
+            for (Enumeration<String> e = h_userParms.keys(); e
+                    .hasMoreElements();) {
+                String name = e.nextElement();
                 html.append("<tr>");
                 html.append("<td><font color='red'>" + name + "</font></td>");
                 html.append("<td>= </td>");
@@ -2601,7 +2632,7 @@ public class FedoraAccessSoapServlet
      * help verify the URL parameters sent to the servlet and hopefully fix the
      * problem.
      * </p>
-     * 
+     *
      * @param action
      *        The Fedora service requested.
      * @param PID

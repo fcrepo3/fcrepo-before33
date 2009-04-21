@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -25,8 +25,9 @@ import fedora.server.utilities.StreamUtility;
 
 /**
  * Provide an XML encoding of various object components.
- * 
+ *
  * @author Sandy Payette
+ * @version $Id$
  */
 public class ObjectInfoAsXML
         implements Constants {
@@ -71,6 +72,7 @@ public class ObjectInfoAsXML
     }
 
     public String getItemIndex(String reposBaseURL,
+                               String applicationContext,
                                DOReader reader,
                                Date versDateTime) throws ServerException {
         try {
@@ -100,8 +102,10 @@ public class ObjectInfoAsXML
                 }
                 out.append("<itemLabel>" + StreamUtility.enc(label)
                         + "</itemLabel>\n");
+
                 String itemDissURL =
                         getItemDissURL(reposBaseURL,
+                                       applicationContext,
                                        reader.GetObjectPID(),
                                        element.DatastreamID,
                                        versDateTime);
@@ -196,6 +200,7 @@ public class ObjectInfoAsXML
     }
 
     private String getItemDissURL(String reposBaseURL,
+                                  String applicationContext,
                                   String PID,
                                   String datastreamID,
                                   Date versDateTime) {
@@ -203,10 +208,10 @@ public class ObjectInfoAsXML
 
         if (versDateTime == null) {
             itemDissURL =
-                    reposBaseURL + "/fedora/get/" + PID + "/" + datastreamID;
+                    reposBaseURL + "/" + applicationContext + "/get/" + PID + "/" + datastreamID;
         } else {
             itemDissURL =
-                    reposBaseURL + "/fedora/get/" + PID + "/" + datastreamID
+                    reposBaseURL + "/" + applicationContext + "/get/" + PID + "/" + datastreamID
                             + "/"
                             + DateUtility.convertDateToString(versDateTime);
         }

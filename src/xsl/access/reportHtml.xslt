@@ -1,6 +1,7 @@
 <?xml version="1.0" ?> 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
 		xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0">
+  <xsl:param name="fedora"/>
 	<xsl:param name="REQUEST-TYPE" select="1"/>	
 	<xsl:param name="GENERAL-TITLE"/>
 	<xsl:param name="SPECIFIC-TITLE"/>
@@ -28,7 +29,7 @@
 					<table width="784" border="0" cellpadding="0" cellspacing="0">
 						<tr>
 							<td width="141" height="134" valign="top" rowspan="2">
-								<img src="/fedora/images/newlogo2.jpg" width="141" height="134"/>
+								<img src="/{$fedora}/images/newlogo2.jpg" width="141" height="134"/>
 							</td>
 							<td width="643" valign="top" colspan="3">
 								<center>
@@ -84,7 +85,7 @@
 			<xsl:choose>	
 				<xsl:when test="$SESSIONTOKEN">
 					<td align="center" valign="center">
-						<form method="post" action="/fedora/report">
+						<form method="post" action="/{$fedora}/report">
 							<xsl:for-each select="fieldNames/*">
 								<input type="hidden" name="{./text()}" value="true"/>	
 							</xsl:for-each>
@@ -105,7 +106,7 @@
 				</xsl:otherwise>
 			</xsl:choose>
 	 		<td align="center" valign="center">
-				<form method="get" action="/fedora/report">
+				<form method="/{$fedora}/get" action="report">
 					<input type="submit" value="New Report"/>
 				</form>
 	 		</td>
@@ -134,7 +135,7 @@
 				<td valign="top">
 					<xsl:choose>
 						<xsl:when test="name(.) = 'pid'">
-							<a href="{concat('/fedora/get/',./text())}">
+							<a href="{concat('/',$fedora,'/get/',./text())}">
 								<xsl:value-of select="./text()"/>
 							</a>
 						</xsl:when>

@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -13,11 +13,13 @@ import javax.xml.rpc.ServiceException;
 
 import fedora.client.FedoraClient;
 
+import fedora.server.Server;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.Datastream;
 
 /**
  * @author Chris Wilper
+ * @version $Id$
  */
 public class DatastreamConduit {
 
@@ -207,14 +209,15 @@ public class DatastreamConduit {
         System.out.println("Error: " + errMessage);
         System.out.println("");
         System.out
-                .println("Usage: fedora-dsinfo host port username password pid protocol");
+                .println("Usage: fedora-dsinfo host port username password pid protocol [context]");
         System.out.println("Note: protocol must be either http or https.");
     }
 
     public static void main(String[] args) {
+
         try {
-            if (args.length != 6) {
-                DatastreamConduit.showUsage("You must provide six arguments.");
+            if (args.length < 6 || args.length > 7) {
+                DatastreamConduit.showUsage("You must provide six or seven arguments.");
             } else {
                 String hostName = args[0];
                 int portNum = Integer.parseInt(args[1]);
@@ -222,12 +225,13 @@ public class DatastreamConduit {
                 String password = args[3];
                 String pid = args[4];
                 String protocol = args[5];
+                String context = args.length == 7 ? args[6] : Server.getConfig().getParameter("fedoraAppServerContext").getValue();
 
                 // ******************************************
                 // NEW: use new client utility class
                 // FIXME:  Get around hardcoding the path in the baseURL
                 String baseURL =
-                        protocol + "://" + hostName + ":" + portNum + "/fedora";
+                        protocol + "://" + hostName + ":" + portNum + "/" + context;
                 FedoraClient fc = new FedoraClient(baseURL, username, password);
                 FedoraAPIM sourceRepoAPIM = fc.getAPIM();
                 //*******************************************
