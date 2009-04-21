@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -8,6 +8,7 @@ package fedora.server.storage.lowlevel;
 import java.io.InputStream;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import fedora.server.Module;
@@ -24,11 +25,7 @@ import fedora.server.storage.ConnectionPoolManager;
  */
 public class DefaultLowlevelStorageModule
         extends Module
-        implements ILowlevelStorage {
-
-    /** Logger for this class. */
-    //private static final Logger LOG =
-    //        Logger.getLogger(DefaultLowlevelStorageModule.class.getName());
+        implements ILowlevelStorage, IListable {
 
     private ILowlevelStorage m_llstore;
 
@@ -173,5 +170,15 @@ public class DefaultLowlevelStorageModule
 
     public void auditDatastream() throws LowlevelStorageException {
         m_llstore.auditDatastream();
+    }
+
+    // IListable methods
+
+    public Iterator<String> listObjects() {
+        return ((IListable) m_llstore).listObjects();
+    }
+
+    public Iterator<String> listDatastreams() {
+        return ((IListable) m_llstore).listDatastreams();
     }
 }

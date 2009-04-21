@@ -68,13 +68,11 @@ public class SQLRebuilder
 
     private ServerConfiguration m_serverConfig;
 
-    private static Server s_server;
+    private Server m_server;
 
     private ConnectionPool m_connectionPool;
 
     private Context m_context;
-
-    private final String m_echoString = "Added PID";
 
     /**
      * Get a short phrase describing what the user can do with this rebuilder.
@@ -93,8 +91,8 @@ public class SQLRebuilder
 
     /**
      * Initialize the rebuilder, given the server configuration.
-     * 
-     * @@returns a map of option names to plaintext descriptions.
+     *
+     * @returns a map of option names to plaintext descriptions.
      */
     public Map<String, String> init(File serverDir,
                                     ServerConfiguration serverConfig) {
@@ -114,12 +112,10 @@ public class SQLRebuilder
         blankExistingTables();
 
         try {
-            s_server =
-                    RebuildServer
-                            .getRebuildInstance(new File(Constants.FEDORA_HOME));
+            m_server = Rebuild.getServer();
             // now get the connectionpool
             ConnectionPoolManager cpm =
-                    (ConnectionPoolManager) s_server
+                    (ConnectionPoolManager) m_server
                             .getModule("fedora.server.storage.ConnectionPoolManager");
             if (cpm == null) {
                 throw new ModuleInitializationException("ConnectionPoolManager not loaded.",
@@ -129,9 +125,9 @@ public class SQLRebuilder
             m_context =
                     ReadOnlyContext.getContext("utility", "fedoraAdmin", "", /* null, */
                     ReadOnlyContext.DO_OP);
-            String registryClassTemp = s_server.getParameter("registry");
+            String registryClassTemp = m_server.getParameter("registry");
             ILowlevelStorage llstore =
-                    (ILowlevelStorage) s_server
+                    (ILowlevelStorage) m_server
                             .getModule("fedora.server.storage.lowlevel.ILowlevelStorage");
             try {
                 llstore.rebuildObject();
@@ -276,15 +272,15 @@ public class SQLRebuilder
         Date nowUTC = new Date();
 
         // DOReplicator replicator=(DOReplicator)
-        // s_server.getModule("fedora.server.storage.replication.DOReplicator");
+        // m_server.getModule("fedora.server.storage.replication.DOReplicator");
         DOManager manager =
-                (DOManager) s_server
+                (DOManager) m_server
                         .getModule("fedora.server.storage.DOManager");
         FieldSearch fieldSearch =
-                (FieldSearch) s_server
+                (FieldSearch) m_server
                         .getModule("fedora.server.search.FieldSearch");
         PIDGenerator pidGenerator =
-                (PIDGenerator) s_server
+                (PIDGenerator) m_server
                         .getModule("fedora.server.management.PIDGenerator");
 
         // SET OBJECT PROPERTIES:
@@ -379,7 +375,6 @@ public class SQLRebuilder
                     + th.getClass().getName() + ": " + th.getMessage());
             th.printStackTrace();
         }
-        System.out.println(m_echoString + ": " + obj.getPid());
     }
 
     /**
@@ -476,12 +471,7 @@ public class SQLRebuilder
      * Free up any system resources associated with rebuilding.
      */
     public void finish() {
-        try {
-            s_server.shutdown(null);
-        } catch (Throwable th) {
-            System.out.println("Error shutting down RebuildServer:");
-            th.printStackTrace();
-        }
+        // nothing to do
     }
 
     /**
@@ -519,7 +509,7 @@ public class SQLRebuilder
     /**
      * Update the registry and deployment cache to reflect the latest state of
      * reality.
-     * 
+     *
      * @param obj
      *        DOReader of a service deployment object
      */

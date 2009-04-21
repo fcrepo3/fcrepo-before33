@@ -1,9 +1,19 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
 package fedora.server.storage.lowlevel;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,8 +21,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.apache.log4j.Logger;
 
@@ -220,49 +230,118 @@ public class DBPathRegistry
     @Override
     protected Enumeration<String> keys() throws LowlevelStorageException,
             LowlevelStorageInconsistencyException {
-        Hashtable<String, String> hashtable = new Hashtable<String, String>();
-        {
-            ResultSet rs = null;
-            Connection connection = null;
-            Statement statement = null;
+        File tempFile = null;
+        PrintWriter writer = null;
+        ResultSet rs = null;
+        Connection connection = null;
+        Statement statement = null;
+        try {
+            tempFile = File.createTempFile("fedora-keys", ".tmp");
+            writer = new PrintWriter(new OutputStreamWriter(
+                    new FileOutputStream(tempFile)));
+            connection = connectionPool.getConnection();
+            statement = connection.createStatement();
+            rs = statement.executeQuery("SELECT token FROM "
+                    + getRegistryName());
+            while (rs.next()) {
+                String key = rs.getString(1);
+                if (null == key || 0 == key.length()) {
+                    throw new LowlevelStorageInconsistencyException(
+                        "Null token found in " + getRegistryName());
+                }
+                writer.println(key);
+            }
+            writer.close();
+            return new KeyEnumeration(tempFile);
+        } catch (Exception e) {
+            throw new LowlevelStorageException(true, "Unexpected error", e);
+        } finally {
             try {
-                connection = connectionPool.getConnection();
-                statement = connection.createStatement();
-                rs =
-                        statement.executeQuery("SELECT token FROM "
-                                + getRegistryName());
-                while (rs.next()) {
-                    String pid = rs.getString(1);
-                    if (null == pid || 0 == pid.length()) {
-                        throw new LowlevelStorageInconsistencyException("null pid on enumeration");
-                    }
-                    hashtable.put(pid, "");
+                if (rs != null) {
+                    rs.close();
                 }
-            } catch (SQLException e1) {
-                throw new LowlevelStorageException(true,
-                                                   "sql failure (enum)",
-                                                   e1);
+                if (statement != null) {
+                    statement.close();
+                }
+                if (connection != null) {
+                    connectionPool.free(connection);
+                }
+            } catch (Exception e) {
+                throw new LowlevelStorageException(true, "Unexpected error", e);
             } finally {
-                try {
-                    if (rs != null) {
-                        rs.close();
-                    }
-                    if (statement != null) {
-                        statement.close();
-                    }
-                    if (connection != null) {
-                        connectionPool.free(connection);
-                    }
-                } catch (Exception e2) { // purposely general to include uninstantiated statement, connection
-                    throw new LowlevelStorageException(true,
-                                                       "sql failure closing statement, connection, pool (enum)",
-                                                       e2);
-                } finally {
-                    rs = null;
-                    statement = null;
-                }
+                writer.close();
+                rs = null;
+                statement = null;
             }
         }
-        return hashtable.keys();
+    }
+
+    /**
+     * Iterates over each non-empty line in a temporary file.
+     * When iteration is complete, or garbage collection occurs, the
+     * file will be deleted.
+     */
+    private class KeyEnumeration
+            implements Enumeration<String> {
+
+        private final File file;
+        private final BufferedReader reader;
+
+        private boolean closed;
+        private String nextKey;
+
+        public KeyEnumeration(File file) throws FileNotFoundException {
+            this.file = file;
+            this.reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            setNextKey();
+        }
+
+        private void setNextKey() {
+            try {
+                nextKey = reader.readLine();
+                if (nextKey == null) {
+                    close();
+                } else if (nextKey.length() == 0) {
+                    setNextKey();
+                }
+            } catch (IOException e) {
+                throw new Error(e);
+            }
+        }
+
+        public boolean hasMoreElements() {
+            return nextKey != null;
+        }
+
+        public String nextElement() {
+            if (nextKey != null) {
+                try {
+                    return nextKey;
+                } finally {
+                    setNextKey();
+                }
+            } else {
+                throw new NoSuchElementException();
+            }
+        }
+
+        @Override
+        protected void finalize() {
+            if (!closed) {
+                close();
+            }
+        }
+
+        private void close() {
+            try {
+                reader.close();
+                file.delete();
+            } catch (IOException e) {
+                throw new Error(e);
+            } finally {
+                closed = true;
+            }
+        }
+
     }
 }

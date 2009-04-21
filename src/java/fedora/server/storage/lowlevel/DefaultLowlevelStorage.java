@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -10,8 +10,12 @@ import java.io.InputStream;
 
 import java.lang.reflect.Constructor;
 
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+
+import fedora.common.FaultException;
 
 import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.ObjectAlreadyInLowlevelStorageException;
@@ -21,11 +25,7 @@ import fedora.server.errors.ObjectNotInLowlevelStorageException;
  * @author Bill Niebel
  */
 public class DefaultLowlevelStorage
-        implements ILowlevelStorage {
-
-    /** Logger for this class. */
-    //private static final Logger LOG =
-    //        Logger.getLogger(DefaultLowlevelStorage.class.getName());
+        implements ILowlevelStorage, IListable {
 
     public static final String REGISTRY_NAME = "registryName";
 
@@ -122,6 +122,14 @@ public class DefaultLowlevelStorage
         datastreamStore.audit();
     }
 
+    public Iterator<String> listObjects() {
+        return objectStore.list();
+    }
+
+    public Iterator<String> listDatastreams() {
+        return datastreamStore.list();
+    }
+
     class Store {
 
         private final PathAlgorithm pathAlgorithm;
@@ -168,6 +176,24 @@ public class DefaultLowlevelStorage
                         new LowlevelStorageException(true, "couldn't set up "
                                 + failureReason + " for " + registryName, e);
                 throw wrapper;
+            }
+        }
+
+        /**
+         * Gets the keys of all stored items.
+         *
+         * @return an iterator of all keys.
+         */
+        public Iterator<String> list() {
+            try {
+                final Enumeration<String> keys = pathRegistry.keys();
+                return new Iterator<String>() {
+                    public boolean hasNext() { return keys.hasMoreElements(); }
+                    public String next() { return keys.nextElement(); }
+                    public void remove() { throw new UnsupportedOperationException(); }
+                };
+            } catch (LowlevelStorageException e) {
+                throw new FaultException(e);
             }
         }
 
