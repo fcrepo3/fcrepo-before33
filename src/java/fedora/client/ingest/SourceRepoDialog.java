@@ -27,6 +27,8 @@ import javax.swing.JTextField;
 import fedora.client.Administrator;
 import fedora.client.FedoraClient;
 
+import fedora.common.Constants;
+
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.RepositoryInfo;
@@ -105,7 +107,7 @@ public class SourceRepoDialog
         m_protocolField = new JTextField(s_lastProtocol);
 
         if (s_lastContext == null) {
-            s_lastContext = "fedora";
+            s_lastContext = Constants.FEDORA_DEFAULT_APP_CONTEXT;
         }
         m_contextField = new JTextField(s_lastContext);
 
@@ -148,7 +150,6 @@ public class SourceRepoDialog
 
                             // ******************************************************
                             // NEW: use the new client utility class FedoraClient
-                            // FIXME:  Get around hardcoding the path in the baseURL
                             String baseURL =
                                     m_protocol + "://" + m_host + ":" + m_port
                                             + "/" + m_contextField.getText();

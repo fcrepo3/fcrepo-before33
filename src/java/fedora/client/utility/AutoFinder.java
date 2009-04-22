@@ -74,7 +74,7 @@ public class AutoFinder {
         System.err.println("      fields - Space-delimited list of fields.");
         System.err.println("      phrase - Phrase to search for in any field (with ? and * wildcards)");
         System.err.println("    protocol - The protocol to communication with the Fedora server (http|https)");
-        System.err.println("context name - Optional, the name of the context the Fedora server is deployed in (the default is default");
+        System.err.println("context name - Optional, the name of the context the Fedora server is deployed in (the default is fedora)");
     }
 
     public static void printValue(String name, String value) {

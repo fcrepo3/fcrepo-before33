@@ -54,7 +54,7 @@ public class AutoPurger {
         System.err.println();
         System.err.println("Syntax:");
         System.err
-                .println("  fedora-purge HST:PRT USR PSS PID PROTOCOL [LOG [CTX]]");
+                .println("  fedora-purge HST:PRT USR PSS PID PROTOCOL LOG [CTX]");
         System.err.println();
         System.err.println("Where:");
         System.err.println("  HST  is the target repository hostname.");
@@ -100,7 +100,6 @@ public class AutoPurger {
 
                 // ******************************************
                 // NEW: use new client utility class
-                // FIXME:  Get around hardcoding the path in the baseURL
                 String baseURL =
                         protocol + "://" + hostName + ":" + portNum + "/"
                                 + context;

@@ -66,15 +66,16 @@ public class Ingest
      **************************************************************************/
 
     public static void multiFromDirectory(File dir,
-                                           String ingestFormat,
-                                           FedoraAPIA targetRepoAPIA,
-                                           FedoraAPIM targetRepoAPIM,
-                                           String logMessage,
-                                           PrintStream log,
-                                           IngestCounter c) throws Exception {
+                                          String ingestFormat,
+                                          FedoraAPIA targetRepoAPIA,
+                                          FedoraAPIM targetRepoAPIM,
+                                          String logMessage,
+                                          PrintStream log,
+                                          IngestCounter c) throws Exception {
         File[] files = dir.listFiles();
         if (files == null) {
-            throw new RuntimeException("Could not read files from directory " + dir.getPath());
+            throw new RuntimeException("Could not read files from directory "
+                    + dir.getPath());
         }
 
         Arrays.sort(files, _FILE_COMPARATOR);
@@ -227,14 +228,15 @@ public class Ingest
     }
 
     /**
-     * Determine the default export format of the source repository.
-     * For backward compatibility:
-     *   with pre-2.0 repositories assume the "metslikefedora1" format
+     * Determine the default export format of the source repository. For
+     * backward compatibility: with pre-2.0 repositories assume the
+     * "metslikefedora1" format
      */
-    public static String getExportFormat(RepositoryInfo repoinfo) throws Exception {
+    public static String getExportFormat(RepositoryInfo repoinfo)
+            throws Exception {
         String sourceExportFormat = null;
         StringTokenizer stoken =
-            new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
+                new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
         int majorVersion = new Integer(stoken.nextToken()).intValue();
         if (majorVersion < 2) {
             sourceExportFormat = METS_EXT1_0_LEGACY;
@@ -296,9 +298,9 @@ public class Ingest
         System.err.println("         the local filesystem or another Fedora repository.");
         System.err.println();
         System.err.println("Syntax:");
-        System.err.println("  fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS TPROTOCOL [LOG]");
-        System.err.println("  fedora-ingest d[ir] INPATH FORMAT THST:TPRT TUSR TPSS TPROTOCOL [LOG]");
-        System.err.println("  fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|* THST:TPRT TUSR TPSS SPROTOCOL TPROTOCOL [LOG]");
+        System.err.println("  fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS TPROTOCOL [LOG] [CTX]");
+        System.err.println("  fedora-ingest d[ir] INPATH FORMAT THST:TPRT TUSR TPSS TPROTOCOL [LOG] [CTX]");
+        System.err.println("  fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|* THST:TPRT TUSR TPSS SPROTOCOL TPROTOCOL [LOG] [CTX]");
         System.err.println();
         System.err.println("Where:");
         System.err.println("  INPATH     is the local file or directory name that is ingest source.");
@@ -389,18 +391,22 @@ public class Ingest
             IngestCounter counter = new IngestCounter();
             char kind = args[0].toLowerCase().charAt(0);
             if (kind == 'f') {
-                // USAGE: fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [LOG]
+                // USAGE: fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [LOG] [CTX]
                 if (args.length < 7 || args.length > 9) {
                     Ingest
                             .badArgs("Wrong number of arguments for file ingest.");
                     System.out
-                            .println("USAGE: fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [[LOG] | [LOG CTX]]");
+                            .println("USAGE: fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [LOG] [CTX]");
                 }
                 File f = new File(args[1]);
                 String ingestFormat = args[2];
                 String logMessage = null;
-                if (args.length == 9) {
+
+                if (args.length == 8){
                     logMessage = args[7];
+                }
+
+                if (args.length == 9) {
                     context = args[8];
                 }
 
@@ -409,7 +415,6 @@ public class Ingest
 
                 // ******************************************
                 // NEW: use new client utility class
-                // FIXME:  Get around hardcoding the path in the baseURL
                 String baseURL =
                         protocol + "://" + hp[0] + ":"
                                 + Integer.parseInt(hp[1]) + "/" + context;
@@ -432,17 +437,22 @@ public class Ingest
                 }
             } else if (kind == 'd') {
                 // USAGE: fedora-ingest d[ir] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [LOG]
-                if (args.length < 7 || args.length > 8) {
+                if (args.length < 7 || args.length > 9) {
                     Ingest.badArgs("Wrong number of arguments (" + args.length
                             + ") for directory ingest.");
                     System.out
-                            .println("USAGE: fedora-ingest d[ir] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [[LOG] | [LOG CTX]]");
+                            .println("USAGE: fedora-ingest d[ir] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [LOG] [CTX]");
                 }
                 File d = new File(args[1]);
                 String ingestFormat = args[2];
                 String logMessage = null;
-                if (args.length == 8) {
+
+                if (args.length == 8){
                     logMessage = args[7];
+                }
+
+                if (args.length == 9){
+                    context = args[8];
                 }
 
                 String protocol = args[6];
@@ -450,7 +460,6 @@ public class Ingest
 
                 // ******************************************
                 // NEW: use new client utility class
-                // FIXME:  Get around hardcoding the path in the baseURL
                 String baseURL =
                         protocol + "://" + hp[0] + ":"
                                 + Integer.parseInt(hp[1]) + "/" + context;
@@ -476,14 +485,18 @@ public class Ingest
                 IngestLogger.closeLog(log, logRootName);
                 summarize(counter, logFile);
             } else if (kind == 'r') {
-                // USAGE: fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|* THST:TPRT TUSR TPSS SPROTOCOL TPROTOCOL [LOG]
-                if (args.length < 10 || args.length > 11) {
+                // USAGE: fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|* THST:TPRT TUSR TPSS SPROTOCOL TPROTOCOL [LOG] [CTX]
+                if (args.length < 10 || args.length > 12) {
                     Ingest
                             .badArgs("Wrong number of arguments for repository ingest.");
                 }
                 String logMessage = null;
-                if (args.length == 11) {
-                    logMessage = args[10];
+                if (args.length == 11){
+                    logMessage=args[10];
+                }
+
+                if (args.length == 12){
+                    context = args[11];
                 }
                 //Source repository
                 String[] shp = args[1].split(":");
@@ -495,7 +508,6 @@ public class Ingest
 
                 // ******************************************
                 // NEW: use new client utility class
-                // FIXME:  Get around hardcoding the path in the baseURL
                 String sourceBaseURL =
                         source_protocol + "://" + source_host + ":"
                                 + Integer.parseInt(source_port) + "/" + context;
@@ -517,7 +529,6 @@ public class Ingest
 
                 // ******************************************
                 // NEW: use new client utility class
-                // FIXME:  Get around hardcoding the path in the baseURL
                 String targetBaseURL =
                         target_protocol + "://" + target_host + ":"
                                 + Integer.parseInt(target_port) + "/" + context;
@@ -531,8 +542,9 @@ public class Ingest
 
                 // Determine export format
                 RepositoryInfo repoinfo = sourceRepoAPIA.describeRepository();
-                System.out.println("Ingest: exporting from a source repo version "
-                                 + repoinfo.getRepositoryVersion());
+                System.out
+                        .println("Ingest: exporting from a source repo version "
+                                + repoinfo.getRepositoryVersion());
                 String sourceExportFormat = getExportFormat(repoinfo);
                 System.out.println("Ingest: source repo is using "
                         + sourceExportFormat + " export format.");
