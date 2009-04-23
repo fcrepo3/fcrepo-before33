@@ -290,7 +290,6 @@ public class ListMethodsServlet
                 Templates template =
                         factory.newTemplates(new StreamSource(xslFile));
                 Transformer transformer = template.newTransformer();
-                transformer.setParameter("fedora", context.getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME));
                 transformer.transform(new StreamSource(pr),
                                       new StreamResult(out));
             }
@@ -369,7 +368,8 @@ public class ListMethodsServlet
                     context.getEnvironmentValue(HTTP_REQUEST.SERVER_PORT.uri);
 
             fedoraAppServerContext =
-                    context.getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME);
+                    context
+                            .getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME);
             if (HTTP_REQUEST.SECURE.uri.equals(context
                     .getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
                 fedoraServerProtocol = HTTPS;

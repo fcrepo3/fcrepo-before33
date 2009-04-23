@@ -361,10 +361,6 @@ public class TestCommandLineUtilities
             // needed for the Fedora shell scripts
             cmd[0] = cmd[0] + ".sh";
         }
-        StringBuffer b = new StringBuffer();
-        for (int i=0; i< cmd.length; i++){
-            b.append(cmd[i]);
-        }
         if (sbOut != null && sbErr != null) {
             sbOut.reset();
             sbErr.reset();

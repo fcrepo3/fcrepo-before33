@@ -420,8 +420,11 @@ public class AutoModify {
                     isValidateOnly = true;
                 }
 
+                String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
 
-                String context = args.length == 7 ? args[6] : Constants.FEDORA_DEFAULT_APP_CONTEXT;
+                if (args.length == 7 && !args[6].equals("")){
+                    context = args[6];
+                }
 
                 if (new File(directivesFilePath).exists()) {
                     System.out.println("\nCONNECTING to Fedora server....");

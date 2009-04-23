@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xmlspysamplexml C:\mellon\src\xsl\access\getItemList.xml?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:param name="fedora"/>
 	<xsl:output method="html" indent="yes"/>
 	<xsl:template match="objectDatastreams">
 		<html>
@@ -13,7 +12,7 @@
 					<table width="784" border="0" cellpadding="0" cellspacing="0">
 						<tr>
 							<td width="141" height="134" valign="top">
-								<img src="/{$fedora}/images/newlogo2.jpg" width="141" height="134"/>
+								<img src="images/newlogo2.jpg" width="141" height="134"/>
 							</td>
 							<td width="643" valign="top">
 								<center>
@@ -67,7 +66,7 @@
 									<xsl:choose>
 										<xsl:when test="../@asOfDateTime">
 											<xsl:variable name="datastream-url">
-												<xsl:text>/{$fedora}/get/</xsl:text><xsl:value-of select="../@pid"/><xsl:text>/</xsl:text>
+												<xsl:text>get/</xsl:text><xsl:value-of select="../@pid"/><xsl:text>/</xsl:text>
 												<xsl:value-of select="@dsid"/><xsl:text>/</xsl:text><xsl:value-of select="../@asOfDateTime"/>
 											</xsl:variable>
 											<a href="{$datastream-url}">
@@ -76,7 +75,7 @@
 									</xsl:when>
 									<xsl:otherwise>
 										<xsl:variable name="datastream-url">
-											<xsl:text>/{$fedora}/get/</xsl:text><xsl:value-of select="../@pid"/><xsl:text>/</xsl:text><xsl:value-of select="@dsid"/>
+											<xsl:text>get/</xsl:text><xsl:value-of select="../@pid"/><xsl:text>/</xsl:text><xsl:value-of select="@dsid"/>
 										</xsl:variable>
 										<a href="{$datastream-url}">
 											<xsl:value-of select="@label"/>

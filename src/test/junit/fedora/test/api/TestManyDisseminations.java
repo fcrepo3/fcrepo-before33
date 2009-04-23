@@ -602,8 +602,7 @@ public class TestManyDisseminations
             buf.append(" PID=\"" + pid + "\"");
             buf.append(" xmlns:foxml=\"" + FOXML_NAMESPACE + "\"");
             buf.append(">" + CR + "<foxml:objectProperties>" + CR);
-            buf
-                    .append("<foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"Active\"/>");
+            buf.append("<foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"Active\"/>");
             buf.append(CR + "</foxml:objectProperties>" + CR);
         }
 

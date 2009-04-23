@@ -745,8 +745,6 @@ public class FedoraAccessSoapServlet
                             transformer
                                     .setParameter("soapClientMethodParmResolverServletPath",
                                                   new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
-                            transformer.setParameter("fedora",
-                                                     fedoraAppServerContext);
                             transformer.transform(new StreamSource(pr),
                                                   new StreamResult(out));
                         }

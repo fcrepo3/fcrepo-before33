@@ -35,7 +35,8 @@ import fedora.test.FedoraTestCase;
  * @author Edwin Shin
  * @version $Id$
  */
-public class NotificationInvocationHandlerTest extends FedoraTestCase{
+public class NotificationInvocationHandlerTest
+        extends FedoraTestCase {
 
     private JMSManager jmsMgr;
 
@@ -43,18 +44,16 @@ public class NotificationInvocationHandlerTest extends FedoraTestCase{
     @Before
     public void setUp() throws Exception {
         Properties props = new Properties();
-        props
-                .setProperty(Context.INITIAL_CONTEXT_FACTORY,
+        props.setProperty(Context.INITIAL_CONTEXT_FACTORY,
                              "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
-        props
-                .setProperty(Context.PROVIDER_URL,
+        props.setProperty(Context.PROVIDER_URL,
                              "vm://localhost?broker.useShutdownHook=false&broker.persistent=false");
         props.setProperty(JMSManager.CONNECTION_FACTORY_NAME,
                           "ConnectionFactory");
         props.setProperty("topic.fedora.apim.update", "fedora.apim.update");
 
         jmsMgr = new JMSManager(props);
-   }
+    }
 
     @Override
     @After
@@ -78,9 +77,7 @@ public class NotificationInvocationHandlerTest extends FedoraTestCase{
                     destinations.add("fedora.apim.update");
                     mdMap.put(MessageType.apimUpdate.toString(), destinations);
                     Messaging msg =
-                            new MessagingImpl(getBaseURL(),
-                                              mdMap,
-                                              jmsMgr);
+                            new MessagingImpl(getBaseURL(), mdMap, jmsMgr);
                     Object[] invocationHandlers =
                             {new NotificationInvocationHandler(msg)};
                     Management mgmt = new MockManagementDelegate();

@@ -40,10 +40,9 @@ public class DemoObjectConverter {
 
     private static String fromContext = null;
 
-
     /**
      * Constructor for DemoObjectConverter. Initializes class variables for
-     * hostname, port number and fedoraHome.
+     * protocols, host names, ports and application server contexts.
      *
      * @param fromProtocol
      *        The protocol for the URL to be changed from.
@@ -51,23 +50,24 @@ public class DemoObjectConverter {
      *        The host name to be changed from.
      * @param fromPortNum
      *        The port number to be changed from.
+     * @param fromContext
+     *        The application server context to be changed from.
      * @param toProtocol
      *        The protocol for the URL to be changed to.
      * @param toHostName
      *        The host name to be changed to.
      * @param toPortNum
-     *        The port number ot be changed to.
-     * @param fedoraHome
-     *        The installation directory for Fedora.
+     *        The port number to be changed to.
+     * @param toContext
+     *        The application server context to be changed to.
      */
     public DemoObjectConverter(String fromProtocol,
                                String fromHostName,
                                String fromPortNum,
+                               String fromContext,
                                String toProtocol,
                                String toHostName,
                                String toPortNum,
-                               String fedoraHome,
-                               String fromContext,
                                String toContext) {
         DemoObjectConverter.fromProtocol = fromProtocol;
         DemoObjectConverter.fromHostName = fromHostName;
@@ -120,16 +120,14 @@ public class DemoObjectConverter {
     }
 
     /**
-     * Substitute the protocol, hostname and port number supplied in calling
-     * arguments with those found in Fedora demo objects. Replaces the original
-     * file with the edited version.
+     * Substitute the protocol, hostname, port number and application context
+     * supplied in calling arguments with those found in Fedora demo objects.
+     * Replaces the original file with the edited version.
      *
      * @param demoObject
      *        The Fedora demo object file to be edited.
      */
     public static void substitute(File demoObject) {
-        String m_fromHostName = fromHostName;
-        String m_toHostName = toHostName;
         try {
             BufferedReader in = new BufferedReader(new FileReader(demoObject));
             String tempFile = demoObject.toString() + "-temp";
@@ -137,12 +135,6 @@ public class DemoObjectConverter {
             OutputStreamWriter out = new OutputStreamWriter(os, "UTF-8");
             String nextLine = "";
             String newUrlStart;
-
-            if (fromContext != null && toContext != null
-                    && !fromContext.equals("") && !toContext.equals("")) {
-                m_toHostName = toHostName + "/" + toContext;
-                m_fromHostName = fromHostName + "/" + fromContext;
-            }
 
             if (toProtocol.equalsIgnoreCase("http")
                     && (toPortNum.equals("") || toPortNum.equals("80"))) {
@@ -154,11 +146,21 @@ public class DemoObjectConverter {
                 newUrlStart =
                         toProtocol + "://" + toHostName + ":" + toPortNum + "/";
             }
+
+            if (toContext != null) {
+                newUrlStart += toContext + "/";
+            }
+            String appendContext = "";
+            if (fromContext != null) {
+                appendContext += fromContext + "/";
+            }
+
             String a = fromProtocol + "://" + fromHostName;
-            String fromURLStartNoPort = a + "/";
-            String fromURLStartPort80 = a + ":80" + "/";
-            String fromURLStartPort443 = a + ":443" + "/";
-            String fromURLStartWithPort = a + ":" + fromPortNum + "/";
+            String fromURLStartNoPort = a + "/" + appendContext;
+            String fromURLStartPort80 = a + ":80" + "/" + appendContext;
+            String fromURLStartPort443 = a + ":443" + "/" + appendContext;
+            String fromURLStartWithPort =
+                    a + ":" + fromPortNum + "/" + appendContext;
 
             if (fromProtocol.equalsIgnoreCase("http")
                     && (fromPortNum.equals("") || fromPortNum.equals("80"))) {
@@ -244,10 +246,13 @@ public class DemoObjectConverter {
     public static void main(String[] args) {
         try {
 
-            if (args.length != 7 & args.length != 9) {
+            if (args.length != 7 && args.length != 9) {
                 DemoObjectConverter
                         .showUsage("You must provide seven or nine arguments.");
             } else {
+                String fromContext = null;
+                String toContext = null;
+
                 String fromProtocol = args[0];
                 String fromHostName = args[1];
                 String fromPortNum = args[2];
@@ -256,22 +261,19 @@ public class DemoObjectConverter {
                 String toPortNum = args[5];
                 String fedoraHome = args[6];
 
-                String fromContext = null, toContext = null;
                 if (args.length == 9) {
                     fromContext = args[7];
                     toContext = args[8];
                 }
 
-                DemoObjectConverter doc =
-                        new DemoObjectConverter(fromProtocol,
-                                                fromHostName,
-                                                fromPortNum,
-                                                toProtocol,
-                                                toHostName,
-                                                toPortNum,
-                                                fedoraHome,
-                                                fromContext,
-                                                toContext);
+                new DemoObjectConverter(fromProtocol,
+                                        fromHostName,
+                                        fromPortNum,
+                                        fromContext,
+                                        toProtocol,
+                                        toHostName,
+                                        toPortNum,
+                                        toContext);
                 DemoObjectConverter.convert(fedoraHome);
             }
         } catch (Exception e) {

@@ -90,54 +90,40 @@ public class TestRESTAPI
         sb.append("<foxml:digitalObject VERSION=\"1.1\" PID=\"demo:REST\" ");
         sb.append("  xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" ");
         sb.append("  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ");
-        sb
-                .append("  xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# ");
+        sb.append("  xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# ");
         sb.append("  http://www.fedora.info/definitions/1/0/foxml1-1.xsd\">");
         sb.append("  <foxml:objectProperties>");
-        sb
-                .append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
+        sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
         sb.append("  </foxml:objectProperties>");
-        sb
-                .append("  <foxml:datastream ID=\"DC\" CONTROL_GROUP=\"X\" STATE=\"A\">");
-        sb
-                .append("    <foxml:datastreamVersion FORMAT_URI=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" ID=\"DC1.0\" MIMETYPE=\"text/xml\" LABEL=\"Dublin Core Record for this object\">");
+        sb.append("  <foxml:datastream ID=\"DC\" CONTROL_GROUP=\"X\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion FORMAT_URI=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" ID=\"DC1.0\" MIMETYPE=\"text/xml\" LABEL=\"Dublin Core Record for this object\">");
         sb.append("      <foxml:xmlContent>");
-        sb
-                .append("        <oai_dc:dc xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\">");
+        sb.append("        <oai_dc:dc xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\">");
         sb.append("          <dc:title>Coliseum in Rome</dc:title>");
         sb.append("          <dc:creator>Thornton Staples</dc:creator>");
         sb.append("          <dc:subject>Architecture, Roman</dc:subject>");
-        sb
-                .append("          <dc:description>Image of Coliseum in Rome</dc:description>");
-        sb
-                .append("          <dc:publisher>University of Virginia Library</dc:publisher>");
+        sb.append("          <dc:description>Image of Coliseum in Rome</dc:description>");
+        sb.append("          <dc:publisher>University of Virginia Library</dc:publisher>");
         sb.append("          <dc:format>image/jpeg</dc:format>");
         sb.append("          <dc:identifier>demo:REST</dc:identifier>");
         sb.append("        </oai_dc:dc>");
         sb.append("      </foxml:xmlContent>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
-        sb
-                .append("  <foxml:datastream ID=\"RELS-EXT\" CONTROL_GROUP=\"M\" STATE=\"A\">");
-        sb
-                .append("    <foxml:datastreamVersion FORMAT_URI=\"info:fedora/fedora-system:FedoraRELSExt-1.0\" ID=\"RELS-EXT.0\" MIMETYPE=\"application/rdf+xml\" LABEL=\"RDF Statements about this object\">");
+        sb.append("  <foxml:datastream ID=\"RELS-EXT\" CONTROL_GROUP=\"M\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion FORMAT_URI=\"info:fedora/fedora-system:FedoraRELSExt-1.0\" ID=\"RELS-EXT.0\" MIMETYPE=\"application/rdf+xml\" LABEL=\"RDF Statements about this object\">");
         sb.append("      <foxml:xmlContent>");
-        sb
-                .append("        <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""
+        sb.append("        <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""
                         + "                 xmlns:rel=\"info:fedora/fedora-system:def/relations-external#\">");
-        sb
-                .append("          <rdf:Description rdf:about=\"info:fedora/demo:REST\">");
-        sb
-                .append("            <rel:hasFormalContentModel rdf:resource=\"info:fedora/demo:UVA_STD_IMAGE_1\"/>");
+        sb.append("          <rdf:Description rdf:about=\"info:fedora/demo:REST\">");
+        sb.append("            <rel:hasFormalContentModel rdf:resource=\"info:fedora/demo:UVA_STD_IMAGE_1\"/>");
         sb.append("          </rdf:Description>");
         sb.append("        </rdf:RDF>");
         sb.append("      </foxml:xmlContent>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
-        sb
-                .append("  <foxml:datastream ID=\"DS1\" CONTROL_GROUP=\"X\" STATE=\"A\">");
-        sb
-                .append("    <foxml:datastreamVersion ID=\"DS1.0\" MIMETYPE=\"text/xml\" LABEL=\"Datastream 1\">");
+        sb.append("  <foxml:datastream ID=\"DS1\" CONTROL_GROUP=\"X\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion ID=\"DS1.0\" MIMETYPE=\"text/xml\" LABEL=\"Datastream 1\">");
         sb.append("      <foxml:xmlContent>");
         sb.append("        <foo>");
         sb.append("          <bar>baz</bar>");
@@ -145,10 +131,8 @@ public class TestRESTAPI
         sb.append("      </foxml:xmlContent>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
-        sb
-                .append("  <foxml:datastream CONTROL_GROUP=\"E\" ID=\"EXTDS\" STATE=\"A\" VERSIONABLE=\"true\">");
-        sb
-                .append("    <foxml:datastreamVersion ID=\"EXTDS1.0\" LABEL=\"External\" MIMETYPE=\"text/xml\">");
+        sb.append("  <foxml:datastream CONTROL_GROUP=\"E\" ID=\"EXTDS\" STATE=\"A\" VERSIONABLE=\"true\">");
+        sb.append("    <foxml:datastreamVersion ID=\"EXTDS1.0\" LABEL=\"External\" MIMETYPE=\"text/xml\">");
         sb.append("      <foxml:contentLocation REF=\"" + getBaseURL()
                 + "/get/demo:REST/DS1\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
@@ -167,17 +151,13 @@ public class TestRESTAPI
         sb.append("<foxml:digitalObject VERSION=\"1.1\" ");
         sb.append("  xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" ");
         sb.append("  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ");
-        sb
-                .append("  xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# ");
+        sb.append("  xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# ");
         sb.append("  http://www.fedora.info/definitions/1/0/foxml1-1.xsd\">");
         sb.append("  <foxml:objectProperties>");
-        sb
-                .append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
+        sb.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
         sb.append("  </foxml:objectProperties>");
-        sb
-                .append("  <foxml:datastream ID=\"DS1\" CONTROL_GROUP=\"M\" STATE=\"A\">");
-        sb
-                .append("    <foxml:datastreamVersion ID=\"DS1.0\" MIMETYPE=\"text/xml\" LABEL=\"Datastream 1\">");
+        sb.append("  <foxml:datastream ID=\"DS1\" CONTROL_GROUP=\"M\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion ID=\"DS1.0\" MIMETYPE=\"text/xml\" LABEL=\"Datastream 1\">");
         sb.append("      <foxml:xmlContent>");
         sb.append("        <foo>");
         sb.append("          <bar>baz</bar>");
@@ -194,10 +174,7 @@ public class TestRESTAPI
     public void setUp() throws Exception {
         apia = getFedoraClient().getAPIA();
         apim = getFedoraClient().getAPIM();
-        apim
-                .ingest(DEMO_REST_FOXML,
-                        FOXML1_1.uri,
-                        "ingesting new foxml object");
+        apim.ingest(DEMO_REST_FOXML, FOXML1_1.uri, "ingesting new foxml object");
     }
 
     @Override

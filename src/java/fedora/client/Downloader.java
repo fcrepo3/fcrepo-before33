@@ -47,10 +47,15 @@ public class Downloader {
     /**
      * Construct a downloader for a certain repository as a certain user.
      */
-    public Downloader(String host, int port, String context, String user, String pass)
+    public Downloader(String host,
+                      int port,
+                      String user,
+                      String pass,
+                      String context)
             throws IOException {
         m_fedoraUrlStart =
-                Administrator.getProtocol() + "://" + host + ":" + port + "/" + context + "/" + "get/";
+                Administrator.getProtocol() + "://" + host + ":" + port + "/"
+                        + context + "/" + "get/";
         m_authScope =
                 new AuthScope(host, AuthScope.ANY_PORT, AuthScope.ANY_REALM);
         m_creds = new UsernamePasswordCredentials(user, pass);
@@ -228,24 +233,27 @@ public class Downloader {
     public static void main(String[] args) {
         try {
             if (args.length == 8 || args.length == 9) {
-                String asOfDateTime = null;
-                if (args.length == 9) {
-                    asOfDateTime = args[8];
-                }
-                FileOutputStream out = new FileOutputStream(new File(args[6]));
+                String host = args[0];
+                int port = Integer.parseInt(args[1]);
+                String user = args[2];
+                String password = args[3];
+                String pid = args[4];
+                String dsid = args[5];
+                File outfile = new File(args[6]);
+                String asOfDateTime = args.length == 8 ? args[7] : null;
+                String context = args.length == 9 ? args[8] : null;
+
+                FileOutputStream outStream = new FileOutputStream(outfile);
                 Downloader downloader =
-                        new Downloader(args[0],
-                                       Integer.parseInt(args[1]),
-                                       args[2],
-                                       args[3],
-                                       args[4]);
-                downloader.getDatastreamContent(args[5],
-                                                args[6],
+                        new Downloader(host, port, user, password, context);
+
+                downloader.getDatastreamContent(pid,
+                                                dsid,
                                                 asOfDateTime,
-                                                out);
+                                                outStream);
             } else {
                 System.err
-                        .println("Usage: Downloader host port user pass pid dsid outfile [MMDDYYTHH:MM:SS]");
+                        .println("Usage: Downloader host port user pass pid dsid outfile [MMDDYYTHH:MM:SS] [CTX]");
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -96,7 +96,7 @@ public class AutoBatchBuildIngest
                 errors = true;
             }
 
-            if (args.length == 10){
+            if (args.length == 10 && !args[9].equals("")){
                 context = "/" + args[9];
             }
             // Verify format of template file to see if it is a METS or FOXML template
@@ -159,7 +159,7 @@ public class AutoBatchBuildIngest
                 System.out
                         .println("(9) - protocol to communicate with Fedora server (http or https)");
                 System.out
-                .println("(10) - optional, alternate context location of the Fedora server (default is fedora");
+                .println("(10) - optional, alternate context location of the Fedora server (default is fedora)");
             }
         }
     }

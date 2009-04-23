@@ -13,7 +13,8 @@ import javax.xml.rpc.ServiceException;
 
 import fedora.client.FedoraClient;
 
-import fedora.server.Server;
+import fedora.common.Constants;
+
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.Datastream;
 
@@ -217,7 +218,8 @@ public class DatastreamConduit {
 
         try {
             if (args.length < 6 || args.length > 7) {
-                DatastreamConduit.showUsage("You must provide six or seven arguments.");
+                DatastreamConduit
+                        .showUsage("You must provide six or seven arguments.");
             } else {
                 String hostName = args[0];
                 int portNum = Integer.parseInt(args[1]);
@@ -225,13 +227,17 @@ public class DatastreamConduit {
                 String password = args[3];
                 String pid = args[4];
                 String protocol = args[5];
-                String context = args.length == 7 ? args[6] : Server.getConfig().getParameter("fedoraAppServerContext").getValue();
 
+                String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
+
+                if (args.length == 7 && !args[6].equals("")) {
+                    context = args[6];
+                }
                 // ******************************************
                 // NEW: use new client utility class
-                // FIXME:  Get around hardcoding the path in the baseURL
                 String baseURL =
-                        protocol + "://" + hostName + ":" + portNum + "/" + context;
+                        protocol + "://" + hostName + ":" + portNum + "/"
+                                + context;
                 FedoraClient fc = new FedoraClient(baseURL, username, password);
                 FedoraAPIM sourceRepoAPIM = fc.getAPIM();
                 //*******************************************
@@ -275,5 +281,4 @@ public class DatastreamConduit {
                             .getMessage()));
         }
     }
-
 }
