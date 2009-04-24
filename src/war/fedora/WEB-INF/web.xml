@@ -204,6 +204,14 @@
 	    <servlet-name>RestServlet</servlet-name>
 	    <url-pattern>/objects/*</url-pattern>
   	</servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>RestServlet</servlet-name>
+      <url-pattern>/objects/nextPID</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>RestServlet</servlet-name>
+      <url-pattern>/objects/nextPID.xml</url-pattern>
+    </servlet-mapping>  	
 	<servlet-mapping>
 		<servlet-name>RISearchServlet</servlet-name>
 		<url-pattern>/risearch</url-pattern>
@@ -296,6 +304,10 @@
 		<filter-name>EnforceAuthnFilter</filter-name>
 		<url-pattern>/services/management</url-pattern>
 	</filter-mapping>
+    <filter-mapping>
+      <filter-name>RestApiFlashFilter</filter-name>
+      <servlet-name>RestServlet</servlet-name>
+    </filter-mapping>
   <!-- authn always required ^^^^^ -->
 
   <!-- among security filters, map this one last. -->

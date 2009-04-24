@@ -44,7 +44,6 @@ public class FedoraWebXML {
 
     private static final String FILTER_AUTHN = "EnforceAuthnFilter";
     private static final String FILTER_RESTAPI = "RestApiAuthnFilter";
-    private static final String FILTER_RESTAPI_FLASH = "RestApiFlashFilter";
 
     private static final String[] FILTER_APIA_SERVLET_NAMES =
             new String[] {"AccessServlet", "DescribeRepositoryServlet",
@@ -88,14 +87,18 @@ public class FedoraWebXML {
         fedoraWebXML = fedora.server.config.webxml.WebXML.getInstance(webXML);
 
         setFedoraHome();
-        setServletMappings();
         setFilterMappings();
         Collections.sort(fedoraWebXML.getFilterMappings(),
                          new FilterMappingComparator());
         setSecurityConstraints();
     }
 
-    private void setServletMappings() {
+    /**
+     * Set the filter-mappings. The filter-mappings for APIM are always set.
+     */
+    private void setFilterMappings() {
+        addFilterMappings(FILTER_APIM_SERVLET_NAMES, FILTER_APIM_URL_PATTERNS);
+
         // AuthN filter for all REST API methods
         FilterMapping fmAll = new FilterMapping();
         fmAll.setFilterName(FILTER_AUTHN);
@@ -106,45 +109,14 @@ public class FedoraWebXML {
         fmAPIM.setFilterName(FILTER_RESTAPI);
         fmAPIM.addServletName("RestServlet");
 
-        // Flash filter for all REST API methods
-        FilterMapping fmFlash = new FilterMapping();
-        fmFlash.setFilterName(FILTER_RESTAPI_FLASH);
-        fmFlash.addServletName("RestServlet");
-
-        if (options.enableRestAPI()) {
-            addServletMapping("RestServlet", "/objects/*");
-            addServletMapping("RestServlet", "/objects/nextPID");
-            addServletMapping("RestServlet", "/objects/nextPID.xml");
-
-            if(options.requireApiaAuth()) {
-                fedoraWebXML.addFilterMapping(fmAll);
-            } else {
-                fedoraWebXML.addFilterMapping(fmAPIM);
-            }
-
-            fedoraWebXML.addFilterMapping(fmFlash);
-        } else {
-            removeServletMapping("RestServlet", "/objects/*");
-            removeServletMapping("RestServlet", "/objects/nextPID");
-            removeServletMapping("RestServlet", "/objects/nextPID.xml");
-            fedoraWebXML.removeFilterMapping(fmAll);
-            fedoraWebXML.removeFilterMapping(fmAPIM);
-            fedoraWebXML.removeFilterMapping(fmFlash);
-        }
-    }
-
-    /**
-     * Set the filter-mappings. The filter-mappings for APIM are always set.
-     */
-    private void setFilterMappings() {
-        addFilterMappings(FILTER_APIM_SERVLET_NAMES, FILTER_APIM_URL_PATTERNS);
-
         if (options.requireApiaAuth()) {
             addFilterMappings(FILTER_APIA_SERVLET_NAMES,
                               FILTER_APIA_URL_PATTERNS);
+            fedoraWebXML.addFilterMapping(fmAll);
         } else {
             removeFilterMappings(FILTER_APIA_SERVLET_NAMES,
                                  FILTER_APIA_URL_PATTERNS);
+            fedoraWebXML.addFilterMapping(fmAPIM);
         }
     }
 

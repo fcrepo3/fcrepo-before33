@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -69,12 +69,10 @@ public class InstallOptions {
 
     public static final String RI_ENABLED = "ri.enabled";
 
-    public static final String REST_ENABLED = "rest.enabled";
-    
     public static final String MESSAGING_ENABLED = "messaging.enabled";
-    
+
     public static final String MESSAGING_URI = "messaging.uri";
-    
+
     public static final String DEPLOY_LOCAL_SERVICES = "deploy.local.services";
 
     public static final String UNATTENDED = "unattended";
@@ -171,7 +169,6 @@ public class InstallOptions {
             _map.put(TOMCAT_SHUTDOWN_PORT, null); // 8005
             _map.put(XACML_ENABLED, Boolean.toString(false));
             _map.put(RI_ENABLED, null); // false
-            _map.put(REST_ENABLED, null); // false
             _map.put(DATABASE, INCLUDED); // included
             _map.put(DATABASE_DRIVER, INCLUDED);
             _map.put(DATABASE_USERNAME, "fedoraAdmin");
@@ -215,7 +212,7 @@ public class InstallOptions {
 
         // Database selection
         // Ultimately we want to provide the following properties:
-        //   database, database.username, database.password, 
+        //   database, database.username, database.password,
         //   database.driver, database.jdbcURL, database.jdbcDriverClass
         inputOption(DATABASE);
 
@@ -247,15 +244,14 @@ public class InstallOptions {
                 dbValidated = validateDatabaseConnection();
             }
         }
-        
+
         inputOption(XACML_ENABLED);
         inputOption(RI_ENABLED);
-        inputOption(REST_ENABLED);  
         inputOption(MESSAGING_ENABLED);
-        if(getValue(MESSAGING_ENABLED).equals(Boolean.toString(true))) {                     
+        if(getValue(MESSAGING_ENABLED).equals(Boolean.toString(true))) {
             inputOption(MESSAGING_URI);
-        }            
-        
+        }
+
         // If using an "other" servlet container, we can't automatically deploy
         // the local services, so don't even bother to ask.
         if (getValue(SERVLET_ENGINE).equals(OTHER)) {
@@ -379,7 +375,7 @@ public class InstallOptions {
     /**
      * Get the value of the given option as an integer, or the given default
      * value if unspecified.
-     * 
+     *
      * @throws NumberFormatException
      *         if the value is specified, but cannot be parsed as an integer.
      */
