@@ -198,6 +198,13 @@
             
             <!-- ActiveMQ libs -->
             <pathelement location="${lib.activemq-all}"/>
+            
+            <!-- Spring libs -->
+            <pathelement location="${lib.spring-core}"/>
+            
+            <!-- Akubra libs -->
+            <pathelement location="${lib.akubra-core}"/>
+            <pathelement location="${lib.akubra-fs}"/>
         </path>
         <map from="${lib.dir}${file.separator}" to=""/>
     </pathconvert>

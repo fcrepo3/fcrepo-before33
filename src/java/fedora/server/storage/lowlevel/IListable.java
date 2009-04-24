@@ -8,7 +8,7 @@ import java.util.Iterator;
 
 /**
  * Interface for {@link ILowlevelStorage} implementations that are
- * capable of listing their contents. This capability is now required in order
+ * capable of listing their contents. This capability is required in order
  * to support Fedora's rebuilder utility.
  *
  * @author Chris Wilper
@@ -24,9 +24,9 @@ public interface IListable {
     Iterator<String> listObjects();
 
     /**
-     * Lists all stored datastream versions in no particular order.
+     * Lists all stored datastreams in no particular order.
      *
-     * @return an iterator of all stored datastream version keys, each in the
+     * @return an iterator of all stored datastream keys, each in the
      *         following format: $pid "+" $dsId "+" $dsVersionId
      */
     Iterator<String> listDatastreams();
