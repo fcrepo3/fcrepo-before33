@@ -5,12 +5,19 @@
 
 package fedora.server.storage.lowlevel.akubra;
 
+import java.io.File;
 import java.io.InputStream;
 
 import java.util.Iterator;
 import java.util.Map;
 
-import org.fedoracommons.akubra.BlobStore;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.xml.XmlBeanFactory;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+
+import fedora.common.Constants;
 
 import fedora.server.Module;
 import fedora.server.Server;
@@ -20,7 +27,17 @@ import fedora.server.storage.lowlevel.IListable;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
 
 /**
- * Wraps an {@link AkubraLowlevelStore} instance as a {@link Module}.
+ * Wraps a Spring-configured {@link AkubraLowlevelStore} instance as a
+ * {@link Module}.
+ * <p>
+ * To use this module, edit <code>$FEDORA_HOME/config/akubra-llstore.xml</code>
+ * as appropriate and replace the existing <code>LowlevelStorage</code>
+ * module in <code>fedora.fcfg</code> with the following:
+ * <p>
+ * <pre>
+ * &lt;module role="fedora.server.storage.lowlevel.ILowlevelStorage"
+ *   class="fedora.server.storage.lowlevel.akubra.AkubraLowlevelStorageModule"/>
+ * </pre>
  *
  * @author Chris Wilper
  */
@@ -39,15 +56,16 @@ public class AkubraLowlevelStorageModule
 
     @Override
     public void postInitModule() throws ModuleInitializationException {
-        // TODO: Instantiate via spring
-        BlobStore objectStore = null;
-        BlobStore datastreamStore = null;
-        boolean forceSafeObjectOverwrites = true;
-        boolean forceSafeDatastreamOverwrites = true;
-        impl = new AkubraLowlevelStorage(objectStore,
-                                         datastreamStore,
-                                         forceSafeObjectOverwrites,
-                                         forceSafeDatastreamOverwrites);
+        File beanFile = new File(new File(Constants.FEDORA_HOME),
+                                 "server/config/akubra-llstore.xml");
+        try {
+            Resource beanResource = new FileSystemResource(beanFile);
+            BeanFactory factory = new XmlBeanFactory(beanResource);
+            impl = (ILowlevelStorage) factory.getBean(getRole());
+        } catch (BeansException e) {
+            throw new ModuleInitializationException("Error initializing "
+                    + "from " + beanFile.getPath(), getRole(), e);
+        }
     }
 
     public void addObject(String pid, InputStream content)

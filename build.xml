@@ -201,10 +201,12 @@
             
             <!-- Spring libs -->
             <pathelement location="${lib.spring-core}"/>
+            <pathelement location="${lib.spring-beans}"/>
             
             <!-- Akubra libs -->
             <pathelement location="${lib.akubra-core}"/>
             <pathelement location="${lib.akubra-fs}"/>
+            <pathelement location="${lib.akubra-mem}"/>
         </path>
         <map from="${lib.dir}${file.separator}" to=""/>
     </pathconvert>
@@ -564,6 +566,8 @@
             tofile="${fedora.home.build.dir}/server/config/beSecurity.xml"/>
         <copy file="${fedora.home.build.dir}/server/fedora-internal-use/config/log4j.properties" 
             tofile="${fedora.home.build.dir}/server/config/log4j.properties"/>
+        <copy file="${fedora.home.build.dir}/server/fedora-internal-use/config/akubra-llstore.xml" 
+            tofile="${fedora.home.build.dir}/server/config/akubra-llstore.xml"/>
     </target>
 	
 	<target name="fedorahome" depends="server, client">
