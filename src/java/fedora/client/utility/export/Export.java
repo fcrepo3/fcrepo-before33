@@ -171,7 +171,8 @@ public class Export
         System.err.println("         which the Fedora server is deployed. The default is fedora.");
         System.err.println();
         System.err.println("Examples:");
-        System.err.println("fedora-export myrepo.com:8443 user pw demo:1 " + FOXML1_1.uri + " migrate . https");
+        System.err.println("fedora-export myrepo.com:8443 user pw demo:1 "
+                + FOXML1_1.uri + " migrate . https");
         System.err.println();
         System.err.println("  Exports demo:1 for migration in FOXML format ");
         System.err.println("  using the secure https protocol (SSL).");
@@ -206,19 +207,19 @@ public class Export
                 Export.badArgs("First arg must be of the form 'host:portnum'");
             }
 
-
-
             //SDP - HTTPS
             String protocol = args[7];
             if (!protocol.equals("http") && !protocol.equals("https")) {
                 Export.badArgs("PROTOCOL arg must be 'http' or 'https'");
             }
 
-            String context = args.length == 9 ? args[8] : Constants.FEDORA_DEFAULT_APP_CONTEXT;
+            String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
+            if (args.length == 9 && !args[8].equals("")) {
+                context = args[8];
+            }
 
             // ******************************************
             // NEW: use new client utility class
-            // FIXME:  Get around hardcoding the path in the baseURL
             String baseURL =
                     protocol + "://" + hp[0] + ":" + Integer.parseInt(hp[1])
                             + "/" + context;
@@ -230,19 +231,20 @@ public class Export
             String exportFormat = args[4];
             String exportContext = args[5];
             if (!exportFormat.equals(FOXML1_1.uri)
-                && !exportFormat.equals(FOXML1_0.uri)
-                && !exportFormat.equals(METS_EXT1_1.uri)
-                && !exportFormat.equals(METS_EXT1_0.uri)
-                && !exportFormat.equals(ATOM1_1.uri)
-                && !exportFormat.equals(ATOM_ZIP1_1.uri)
-                && !exportFormat.equals("default")) {
-                    Export.badArgs(exportFormat +" is not a valid export format.");
+                    && !exportFormat.equals(FOXML1_0.uri)
+                    && !exportFormat.equals(METS_EXT1_1.uri)
+                    && !exportFormat.equals(METS_EXT1_0.uri)
+                    && !exportFormat.equals(ATOM1_1.uri)
+                    && !exportFormat.equals(ATOM_ZIP1_1.uri)
+                    && !exportFormat.equals("default")) {
+                Export.badArgs(exportFormat + " is not a valid export format.");
             }
             if (!exportContext.equals("public")
                     && !exportContext.equals("migrate")
                     && !exportContext.equals("archive")
                     && !exportContext.equals("default")) {
-                Export.badArgs("ECONTEXT arg must be 'public', 'migrate', 'archive', or 'default'");
+                Export
+                        .badArgs("ECONTEXT arg must be 'public', 'migrate', 'archive', or 'default'");
             }
 
             RepositoryInfo repoinfo = sourceRepoAPIA.describeRepository();
@@ -250,8 +252,8 @@ public class Export
                     new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
             int majorVersion = new Integer(stoken.nextToken()).intValue();
             if (majorVersion < 2 // pre-2.0 repo
-                && !exportFormat.equals(METS_EXT1_0.uri)
-                && !exportFormat.equals("default")) {
+                    && !exportFormat.equals(METS_EXT1_0.uri)
+                    && !exportFormat.equals("default")) {
                 Export.badArgs("FORMAT arg must be '" + METS_EXT1_0.uri
                         + "' or 'default' for pre-2.0 repository.");
             }
@@ -265,7 +267,8 @@ public class Export
             if (args[3].indexOf(":") == -1) {
                 // assume args[3] is FTYPS... so multi-export
                 int count =
-                        Export.multi(sourceRepoAPIA, sourceRepoAPIM,
+                        Export.multi(sourceRepoAPIA,
+                                     sourceRepoAPIM,
                                      exportFormat,
                                      exportContext,
                                      //args[4], // format

@@ -106,7 +106,6 @@ class BatchIngest
 
         // ******************************************
         // NEW: use new client utility class for SOAP stubs
-        // FIXME:  Get around hardcoding the path in the baseURL
         String baseURL = protocol + "://" + host + ":" + port + "/" + context;
         FedoraClient fc = new FedoraClient(baseURL, username, password);
         APIA = fc.getAPIA();

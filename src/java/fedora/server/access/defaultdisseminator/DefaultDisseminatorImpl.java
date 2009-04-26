@@ -54,7 +54,8 @@ import static fedora.common.Constants.MODEL;
  * the repository.
  *
  * @author Sandy Payette
- * @version $Id$
+ * @version $Id: DefaultDisseminatorImpl.java 7973 2009-04-21 22:03:40Z kstrnad
+ *          $
  */
 public class DefaultDisseminatorImpl
         extends InternalService
@@ -130,6 +131,8 @@ public class DefaultDisseminatorImpl
             Templates template =
                     factory.newTemplates(new StreamSource(xslFile));
             Transformer transformer = template.newTransformer();
+            transformer.setParameter("fedora", context
+                    .getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME));
             transformer.transform(new StreamSource(in), new StreamResult(out));
             in = new ByteArrayInputStream(out.toByteArray());
             return new MIMETypedStream("text/html", in, null);
@@ -246,6 +249,8 @@ public class DefaultDisseminatorImpl
             Templates template =
                     factory.newTemplates(new StreamSource(xslFile));
             Transformer transformer = template.newTransformer();
+            transformer.setParameter("fedora", context
+                    .getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME));
             transformer.transform(new StreamSource(in), new StreamResult(out));
             in = new ByteArrayInputStream(out.toByteArray());
             return new MIMETypedStream("text/html", in, null);
@@ -299,6 +304,8 @@ public class DefaultDisseminatorImpl
             Templates template =
                     factory.newTemplates(new StreamSource(xslFile));
             Transformer transformer = template.newTransformer();
+            transformer.setParameter("fedora", context
+                    .getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME));
             transformer.transform(new StreamSource(in), new StreamResult(out));
             in = new ByteArrayInputStream(out.toByteArray());
             return new MIMETypedStream("text/html", in, null);
@@ -321,7 +328,7 @@ public class DefaultDisseminatorImpl
         sb
                 .append("<table width=\"784\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
         sb
-                .append("<tr><td width=\"141\" height=\"134\" valign=\"top\"><img src=\"")
+                .append("<tr><td width=\"141\" height=\"134\" valign=\"top\"><img src=\"/")
                 .append(context
                         .getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME))
                 .append("/images/newlogo2.jpg\" width=\"141\" height=\"134\"/></td>");

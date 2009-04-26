@@ -97,9 +97,11 @@ public class MassIngest {
                 // third arg==file... must exist
                 File f = new File(args[4]);
                 String protocol = args[8];
-                String context =
-                        args.length == 10 ? args[9]
-                                : Constants.FEDORA_DEFAULT_APP_CONTEXT;
+                String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
+                if (args.length == 10 && !args[9].equals("")){
+                    context = args[9];
+                }
+
 
                 // ******************************************
                 // NEW: use new client utility class

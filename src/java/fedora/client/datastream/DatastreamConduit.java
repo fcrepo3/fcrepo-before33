@@ -229,7 +229,6 @@ public class DatastreamConduit {
                 String protocol = args[5];
 
                 String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
-
                 if (args.length == 7 && !args[6].equals("")) {
                     context = args[6];
                 }

@@ -745,6 +745,8 @@ public class FedoraAccessSoapServlet
                             transformer
                                     .setParameter("soapClientMethodParmResolverServletPath",
                                                   new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
+                            transformer.setParameter("fedora",
+                                                     fedoraAppServerContext);
                             transformer.transform(new StreamSource(pr),
                                                   new StreamResult(out));
                         }
@@ -986,6 +988,8 @@ public class FedoraAccessSoapServlet
                             transformer
                                     .setParameter("soapClientMethodParmResolverServletPath",
                                                   new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
+                            transformer.setParameter("fedora",
+                                                     fedoraAppServerContext);
                             transformer.transform(new StreamSource(pr),
                                                   new StreamResult(out));
                         }
@@ -1096,8 +1100,6 @@ public class FedoraAccessSoapServlet
                             transformer
                                     .setParameter("soapClientMethodParmResolverServletPath",
                                                   new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
-                            transformer.setParameter("fedora",
-                                                     fedoraAppServerContext);
                             transformer.transform(new StreamSource(pr),
                                                   new StreamResult(out));
                         }
@@ -1209,8 +1211,6 @@ public class FedoraAccessSoapServlet
                             transformer
                                     .setParameter("soapClientMethodParmResolverServletPath",
                                                   new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
-                            transformer.setParameter("fedora",
-                                                     fedoraAppServerContext);
                             transformer.transform(new StreamSource(pr),
                                                   new StreamResult(out));
                         }
@@ -2238,6 +2238,7 @@ public class FedoraAccessSoapServlet
             fedoraServerHost = FEDORA_ACCESS_ENDPOINT.substring(k + 3, i);
             fedoraServerPort = FEDORA_ACCESS_ENDPOINT.substring(i + 1, j);
             fedoraServerProtocol = FEDORA_ACCESS_ENDPOINT.substring(0, k);
+            fedoraAppServerContext = p.getProperty("fedoraAppServerContext");
             System.out.println("fedoraServerHost: " + fedoraServerHost);
             System.out.println("fedoraServerPort: " + fedoraServerPort);
             System.out.println("fedoraServerProtocol: " + fedoraServerProtocol);

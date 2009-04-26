@@ -700,8 +700,11 @@ public class PerformanceTests
         String thrds = args[5];
         String output = args[6];
         String name = args[7];
-        String context = args.length == 9 ? args[8] : Constants.FEDORA_DEFAULT_APP_CONTEXT;
+        String context  = Constants.FEDORA_DEFAULT_APP_CONTEXT;
 
+        if(args.length == 9 && !args[8].equals("")){
+            context = args[8];
+        }
 
         if(host == null || host.startsWith("$") ||
            port == null || port.startsWith("$") ||

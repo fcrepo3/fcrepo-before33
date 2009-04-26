@@ -84,7 +84,7 @@ public class AutoBatchIngest
                 errors = true;
             }
 
-            if (args.length == 9 && !args[8].equals("")){
+            if (args.length == 9 && !args[8].equals("")) {
                 context = args[8];
             }
             if (!errors) {
@@ -98,8 +98,7 @@ public class AutoBatchIngest
                                             args[5],
                                             args[6],
                                             args[7],
-                                            context
-                        );
+                                            context);
             }
         } else {
             System.out.println("\n**** Wrong Number of Arguments *****\n");
@@ -117,7 +116,7 @@ public class AutoBatchIngest
             System.out
                     .println("(8) - protocol to communicate with Fedora server (http or https)");
             System.out
-            .println("(9) - optional, alternate context location of the Fedora app server (default is fedora (eg. http://localhost:8080/fedora))");
+                    .println("(9) - optional, alternate context location of the Fedora app server (default is fedora)");
 
         }
 

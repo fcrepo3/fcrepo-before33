@@ -1043,6 +1043,7 @@
 			<arg value="${threads}" />
 			<arg value="${file}" />
 			<arg value="${name}" />
+			<arg value="${context}"/>
 		</java>
 	</target>
 
@@ -1060,6 +1061,7 @@
 			<arg value="${batches}" />
 			<arg value="${threads}" />
 			<arg value="${file}" />
+			<arg value="${context}" />
 		</java>
 	</target>
 </project>

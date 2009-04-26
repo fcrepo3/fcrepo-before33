@@ -49,35 +49,27 @@ public class AutoPurger {
     public static void showUsage(String msg) {
         System.err.println("Command: fedora-purge");
         System.err.println();
-        System.err
-                .println("Summary: Purges an object from the Fedora repository.");
+        System.err.println("Summary: Purges an object from the Fedora repository.");
         System.err.println();
         System.err.println("Syntax:");
-        System.err
-                .println("  fedora-purge HST:PRT USR PSS PID PROTOCOL LOG [CTX]");
+        System.err.println("  fedora-purge HST:PRT USR PSS PID PROTOCOL LOG [CTX]");
         System.err.println();
         System.err.println("Where:");
         System.err.println("  HST  is the target repository hostname.");
         System.err.println("  PRT  is the target repository port number.");
         System.err.println("  USR  is the id of the target repository user.");
-        System.err
-                .println("  PSS  is the password of the target repository user.");
-        System.err
-                .println("  PID  is the id of the object to purge from the target repository.");
-        System.err
-                .println("  PROTOCOL  is the protocol to communicate with repository (http or https)");
+        System.err.println("  PSS  is the password of the target repository user.");
+        System.err.println("  PID  is the id of the object to purge from the target repository.");
+        System.err.println("  PROTOCOL  is the protocol to communicate with repository (http or https)");
         System.err.println("  LOG  is a log message.");
-        System.out
-                .println("  CTX  is an alternate web application server context of Fedora (default is fedora)");
+        System.out.println("  CTX (optional) is a different web application server context of Fedora (default is fedora)");
 
         System.err.println();
         System.err.println("Example:");
-        System.err
-                .println("fedora-purge myrepo.com:8443 jane janepw demo:5 https \"my message\"");
+        System.err.println("fedora-purge myrepo.com:8443 jane janepw demo:5 https \"my message\"");
         System.err.println();
         System.err.println("  Purges the object whose PID is demo:5 from the");
-        System.err
-                .println("  target repository at myrepo.com:8443 using the secure https protocol (SSL)");
+        System.err.println("  target repository at myrepo.com:8443 using the secure https protocol (SSL)");
         System.err.println();
         System.err.println("ERROR  : " + msg);
         System.exit(1);
@@ -96,8 +88,11 @@ public class AutoPurger {
                 String protocol = args[4];
                 String logMessage = args[5];
 
-                String context = args.length == 7 ? args[6] : Constants.FEDORA_DEFAULT_APP_CONTEXT;
+                String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
 
+                if (args.length == 7 && !args[6].equals("")){
+                  context = args[6];
+                }
                 // ******************************************
                 // NEW: use new client utility class
                 String baseURL =

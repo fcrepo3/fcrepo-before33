@@ -49,9 +49,9 @@ public class Downloader {
      */
     public Downloader(String host,
                       int port,
+                      String context,
                       String user,
-                      String pass,
-                      String context)
+                      String pass)
             throws IOException {
         m_fedoraUrlStart =
                 Administrator.getProtocol() + "://" + host + ":" + port + "/"
@@ -245,7 +245,7 @@ public class Downloader {
 
                 FileOutputStream outStream = new FileOutputStream(outfile);
                 Downloader downloader =
-                        new Downloader(host, port, user, password, context);
+                        new Downloader(host, port, context, user, password);
 
                 downloader.getDatastreamContent(pid,
                                                 dsid,

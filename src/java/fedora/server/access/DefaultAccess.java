@@ -68,7 +68,7 @@ import fedora.server.utilities.DateUtility;
 
 /**
  * The Access Module, providing support for the Fedora Access subsystem.
- *
+ * 
  * @author Ross Wayland
  * @version $Id$
  */
@@ -98,7 +98,7 @@ public class DefaultAccess
      * Creates and initializes the Access Module. When the server is starting
      * up, this is invoked as part of the initialization process.
      * </p>
-     *
+     * 
      * @param moduleParameters
      *        A pre-loaded Map of name-value pairs comprising the intended
      *        configuration of this Module.
@@ -110,7 +110,9 @@ public class DefaultAccess
      *         If initilization values are invalid or initialization fails for
      *         some other reason.
      */
-    public DefaultAccess(Map<String, String> moduleParameters, Server server, String role)
+    public DefaultAccess(Map<String, String> moduleParameters,
+                         Server server,
+                         String role)
             throws ModuleInitializationException {
         super(moduleParameters, server, role);
     }
@@ -119,7 +121,7 @@ public class DefaultAccess
      * <p>
      * Initializes the module.
      * </p>
-     *
+     * 
      * @throws ModuleInitializationException
      *         If the module cannot be initialized.
      */
@@ -154,8 +156,7 @@ public class DefaultAccess
                         .getModule("fedora.server.storage.ExternalContentManager");
 
         // get ref to OAIProvider, for repositoryDomainName param for oai info
-        Module oaiProvider =
-                getServer().getModule("fedora.oai.OAIProvider");
+        Module oaiProvider = getServer().getModule("fedora.oai.OAIProvider");
         if (oaiProvider == null) {
             throw new ModuleInitializationException("DefaultAccess module requires that the server "
                                                             + "has an OAIProvider module configured so that it can get the repositoryDomainName parameter.",
@@ -179,7 +180,8 @@ public class DefaultAccess
 
     }
 
-    private static final Hashtable<String, String> accessActionAttributes = new Hashtable<String, String>();
+    private static final Hashtable<String, String> accessActionAttributes =
+            new Hashtable<String, String>();
     static {
         accessActionAttributes.put("api", "apia");
     }
@@ -189,7 +191,7 @@ public class DefaultAccess
      * Disseminates the content produced by executing the specified method of
      * the associated deployment object of the specified digital object.
      * </p>
-     *
+     * 
      * @param context
      *        The context of this request.
      * @param PID
@@ -433,11 +435,12 @@ public class DefaultAccess
 
         startTime = new Date().getTime();
         DisseminationBindingInfo[] dissBindInfo;
-        dissBindInfo = getDisseminationBindingInfo(context,
-                                                   reader,
-                                                   deploymentReader,
-                                                   methodName,
-                                                   asOfDateTime);
+        dissBindInfo =
+                getDisseminationBindingInfo(context,
+                                            reader,
+                                            deploymentReader,
+                                            methodName,
+                                            asOfDateTime);
 
         // Assemble and execute the dissemination request from the binding info.
         DisseminationService dissService = new DisseminationService();
@@ -495,8 +498,9 @@ public class DefaultAccess
 
         DeploymentDSBindSpec dsBindSpec =
                 bmReader.getServiceDSInputSpec(versDateTime);
-        DeploymentDSBindRule[] dsBindRules = dsBindSpec.dsBindRules == null ?
-                new DeploymentDSBindRule[0] : dsBindSpec.dsBindRules;
+        DeploymentDSBindRule[] dsBindRules =
+                dsBindSpec.dsBindRules == null ? new DeploymentDSBindRule[0]
+                        : dsBindSpec.dsBindRules;
 
         // Results will be returned in this array, one item per datastream
         DisseminationBindingInfo[] bindingInfo;
@@ -504,8 +508,9 @@ public class DefaultAccess
 
         for (int i = 0; i < dsBindRules.length; i++) {
             DeploymentDSBindRule dsBindRule = dsBindRules[i];
-            String dsPid = dsBindRule.pid == null ?
-                    dObj.GetObjectPID() : dsBindRule.pid;
+            String dsPid =
+                    dsBindRule.pid == null ? dObj.GetObjectPID()
+                            : dsBindRule.pid;
             String dsId = dsBindRule.bindingKeyName;
             Datastream ds;
 
@@ -564,7 +569,8 @@ public class DefaultAccess
         ObjectMethodsDef[] dynamicMethodDefs =
         //m_dynamicAccess.getObjectMethods(context, PID, asOfDateTime);
                 m_dynamicAccess.listMethods(context, PID, asOfDateTime);
-        ArrayList<ObjectMethodsDef> methodList = new ArrayList<ObjectMethodsDef>();
+        ArrayList<ObjectMethodsDef> methodList =
+                new ArrayList<ObjectMethodsDef>();
         for (ObjectMethodsDef element : methodDefs) {
             methodList.add(element);
         }
@@ -634,12 +640,14 @@ public class DefaultAccess
                                         .getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri));
         profile.dissIndexViewURL =
                 getDissIndexViewURL(reposBaseURL,
-                                    context.getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME),
+                                    context
+                                            .getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME),
                                     reader.GetObjectPID(),
                                     versDateTime);
         profile.itemIndexViewURL =
                 getItemIndexViewURL(reposBaseURL,
-                                    context.getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME),
+                                    context
+                                            .getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME),
                                     reader.GetObjectPID(),
                                     versDateTime);
         return profile;
@@ -649,7 +657,7 @@ public class DefaultAccess
      * <p>
      * Lists the specified fields of each object matching the given criteria.
      * </p>
-     *
+     * 
      * @param context
      *        the context of this request
      * @param resultFields
@@ -675,7 +683,7 @@ public class DefaultAccess
      * <p>
      * Resumes an in-progress listing of object fields.
      * </p>
-     *
+     * 
      * @param context
      *        the context of this request
      * @param sessionToken
@@ -696,7 +704,7 @@ public class DefaultAccess
      * <p>
      * Gets information that describes the repository.
      * </p>
-     *
+     * 
      * @param context
      *        the context of this request
      * @return information that describes the repository.
@@ -716,7 +724,11 @@ public class DefaultAccess
                                         : "http",
                                 context
                                         .getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri));
-        repositoryInfo.repositoryBaseURL = reposBaseURL + context.getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME);
+        repositoryInfo.repositoryBaseURL =
+                reposBaseURL
+                        + "/"
+                        + context
+                                .getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME);
 
         repositoryInfo.repositoryVersion =
                 Server.VERSION_MAJOR + "." + Server.VERSION_MINOR;
@@ -748,7 +760,7 @@ public class DefaultAccess
      * that correspond to modification dates of components. This currently
      * includes changes to datastreams and disseminators.
      * </p>
-     *
+     * 
      * @param context
      *        The context of this request.
      * @param PID
@@ -813,13 +825,13 @@ public class DefaultAccess
      * corresponding Service Definition object. The method will validate for:
      * </p>
      * <ol>
-     * <li> Valid name - each name must match a valid method parameter name</li>
-     * <li> DefaultValue - any specified parameters with valid default values
+     * <li>Valid name - each name must match a valid method parameter name</li>
+     * <li>DefaultValue - any specified parameters with valid default values
      * will have the default value substituted if the user-supplied value is
-     * null </li>
-     * <li> Required name - each required method parameter name must be present
+     * null</li>
+     * <li>Required name - each required method parameter name must be present
      * </ol>
-     *
+     * 
      * @param context
      *        The context of this request.
      * @param PID
@@ -847,7 +859,8 @@ public class DefaultAccess
         MethodParmDef[] methodParms = null;
         MethodParmDef methodParm = null;
         StringBuffer sb = new StringBuffer();
-        Hashtable<String, MethodParmDef> h_validParms = new Hashtable<String, MethodParmDef>();
+        Hashtable<String, MethodParmDef> h_validParms =
+                new Hashtable<String, MethodParmDef>();
         boolean isValid = true;
 
         if (sdepreader != null) // this code will be used for the CMDA example
@@ -857,7 +870,8 @@ public class DefaultAccess
             // of the abstract method definition.  We just want user parms.
             for (MethodDef element : methods) {
                 if (element.methodName.equalsIgnoreCase(methodName)) {
-                    ArrayList<MethodParmDef> filteredParms = new ArrayList<MethodParmDef>();
+                    ArrayList<MethodParmDef> filteredParms =
+                            new ArrayList<MethodParmDef>();
                     MethodParmDef[] parms = element.methodParms;
                     for (MethodParmDef element2 : parms) {
                         if (element2.parmType
@@ -865,9 +879,7 @@ public class DefaultAccess
                             filteredParms.add(element2);
                         }
                     }
-                    methodParms =
-                            filteredParms
-                                    .toArray(new MethodParmDef[0]);
+                    methodParms = filteredParms.toArray(new MethodParmDef[0]);
                 }
             }
         } else {
@@ -884,11 +896,12 @@ public class DefaultAccess
                 methodParm = methodParms[i];
                 h_validParms.put(methodParm.parmName, methodParm);
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("methodParms[" + i + "]: " + methodParms[i].parmName
-                            + "\nlabel: " + methodParms[i].parmLabel
-                            + "\ndefault: " + methodParms[i].parmDefaultValue
-                            + "\nrequired: " + methodParms[i].parmRequired
-                            + "\ntype: " + methodParms[i].parmType);
+                    LOG.debug("methodParms[" + i + "]: "
+                            + methodParms[i].parmName + "\nlabel: "
+                            + methodParms[i].parmLabel + "\ndefault: "
+                            + methodParms[i].parmDefaultValue + "\nrequired: "
+                            + methodParms[i].parmRequired + "\ntype: "
+                            + methodParms[i].parmType);
                     for (String element : methodParms[i].parmDomainValues) {
                         LOG.debug("domainValue: " + element);
                     }
@@ -921,8 +934,7 @@ public class DefaultAccess
                 if (methodParm != null && methodParm.parmName != null) {
                     // Method has one or more parameters defined
                     // Check for default value if user-supplied value is null or empty
-                    String value =
-                            h_userParms.get(methodParm.parmName);
+                    String value = h_userParms.get(methodParm.parmName);
                     if (value == null || value.equalsIgnoreCase("")) {
                         // Value of user-supplied parameter is  null or empty
                         if (methodParm.parmDefaultValue != null) {
@@ -950,8 +962,7 @@ public class DefaultAccess
                             if (!parmDomainValues[0].equalsIgnoreCase("null")) {
                                 boolean isValidValue = false;
                                 String userValue =
-                                        h_userParms
-                                        .get(methodParm.parmName);
+                                        h_userParms.get(methodParm.parmName);
                                 for (String element : parmDomainValues) {
                                     if (userValue.equalsIgnoreCase(element)
                                             || element.equalsIgnoreCase("null")) {
@@ -1000,8 +1011,7 @@ public class DefaultAccess
                 // dissemination request.
                 Enumeration<String> e = h_userParms.keys();
                 while (e.hasMoreElements()) {
-                    sb.append("The method parameter \""
-                            + e.nextElement()
+                    sb.append("The method parameter \"" + e.nextElement()
                             + "\" is not valid for the method \"" + methodName
                             + "\"." + "The method \"" + methodName
                             + "\" defines no method parameters.");

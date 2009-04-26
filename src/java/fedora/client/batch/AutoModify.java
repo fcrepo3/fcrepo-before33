@@ -421,7 +421,6 @@ public class AutoModify {
                 }
 
                 String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
-
                 if (args.length == 7 && !args[6].equals("")){
                     context = args[6];
                 }
@@ -431,7 +430,6 @@ public class AutoModify {
 
                     // ******************************************
                     // NEW: use new client utility class
-                    // FIXME:  Get around hardcoding the path in the baseURL
                     String baseURL =
                             protocol + "://" + hostName + ":" + portNum
                                     + "/" + context;
