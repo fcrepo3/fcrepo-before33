@@ -378,7 +378,7 @@ public class AutoModify {
         System.out.println("");
         System.out
                 .println("Usage: AutoModify host:port username password "
-                        + "directives-filepath log-filepath protocol [validate-only-option]");
+                        + "directives-filepath log-filepath protocol [validate-only-option] [CTX]");
         System.out.println("Note: protocol must be either http or https.");
     }
 
@@ -414,15 +414,15 @@ public class AutoModify {
                 logFilePath = args[4];
                 protocol = args[5];
 
-                if (args.length >= 6) {
+                if (args.length >= 7) {
                     isValidateOnly = false;
                 } else {
                     isValidateOnly = true;
                 }
 
                 String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
-                if (args.length == 7 && !args[6].equals("")){
-                    context = args[6];
+                if (args.length == 8 && !args[7].equals("")){
+                    context = args[7];
                 }
 
                 if (new File(directivesFilePath).exists()) {
