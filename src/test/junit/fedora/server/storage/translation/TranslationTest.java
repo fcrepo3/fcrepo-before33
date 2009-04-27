@@ -4,10 +4,14 @@ package fedora.server.storage.translation;
 import java.util.Date;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+
 import org.jrdf.graph.URIReference;
+
 import org.junit.Before;
 
+import fedora.common.Constants;
 import fedora.common.PID;
+
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DSBinding;
 import fedora.server.storage.types.DSBindingMap;
@@ -18,7 +22,7 @@ import fedora.server.storage.types.Disseminator;
 
 /**
  * Convenience superclass for serializer and deserializer tests.
- * 
+ *
  * @author Chris Wilper
  */
 @SuppressWarnings("deprecation")
@@ -37,6 +41,7 @@ public abstract class TranslationTest
         // HACK: make DOTranslationUtility happy
         System.setProperty("fedoraServerHost", "localhost");
         System.setProperty("fedoraServerPort", "8080");
+        System.setProperty("fedoraAppServerContext", Constants.FEDORA_DEFAULT_APP_CONTEXT);
     }
 
     //---
@@ -62,7 +67,7 @@ public abstract class TranslationTest
         }
         rdf.append("</rdf:Description></rdf:RDF>");
         ds.xmlContent = rdf.toString().getBytes();
-                
+
         obj.addDatastreamVersion(ds, false);
         obj.setCreateDate(new Date());
         obj.setLastModDate(new Date());

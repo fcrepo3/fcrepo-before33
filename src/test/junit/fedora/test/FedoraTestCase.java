@@ -94,6 +94,9 @@ public abstract class FedoraTestCase
     }
 
     public static String getFedoraAppServerContext() {
+        if (System.getProperty("fedoraAppServerContext") != null) {
+            return System.getProperty("fedoraAppServerContext");
+        }
         return getServerConfiguration().getParameter("fedoraAppServerContext")
                 .getValue();
     }

@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -25,32 +25,34 @@ import org.apache.xml.serialize.XMLSerializer;
 
 import org.w3c.dom.Document;
 
+import fedora.common.Constants;
+
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
 
 /**
  * Utility class to convert objects from one serialization format to another.
- * 
+ *
  * @author Edwin Shin
  * @author Chris Wilper
  * @since 3.0
  * @version $Id$
  */
 public class ConvertObjectSerialization {
-    
+
     private static final String ENCODING = "UTF-8";
 
     private final Date m_now = new Date();
-      
+
     private final DODeserializer m_deserializer;
 
     private final DOSerializer m_serializer;
 
     private final boolean m_pretty;
-    
+
     private final String m_inExt;
-    
+
     private final String m_outExt;
 
     public ConvertObjectSerialization(DODeserializer deserializer,
@@ -71,9 +73,9 @@ public class ConvertObjectSerialization {
             m_deserializer.deserialize(source,
                                        obj,
                                        ENCODING,
-                                       DOTranslationUtility.AS_IS);            
+                                       DOTranslationUtility.AS_IS);
             setObjectDefaults(obj);
-            
+
             if (m_pretty) {
                 prettyPrint(obj, destination);
             } else {
@@ -88,7 +90,7 @@ public class ConvertObjectSerialization {
         }
         return true;
     }
-    
+
     private void prettyPrint(DigitalObject obj, OutputStream destination)
             throws Exception {
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
@@ -99,7 +101,7 @@ public class ConvertObjectSerialization {
         InputStream inBuf = new ByteArrayInputStream(outBuf.toByteArray());
         prettyPrint(inBuf, destination);
     }
-    
+
     private static void prettyPrint(InputStream source,
                                     OutputStream destination)
             throws Exception {
@@ -116,11 +118,11 @@ public class ConvertObjectSerialization {
         ser.serialize(doc);
         destination.close();
     }
-    
+
     /**
      * Convert files from one format to the other.
      * Hidden directories (directories starting with a ".") are skipped.
-     * 
+     *
      * @param source
      * @param destination
      * @return
@@ -170,7 +172,7 @@ public class ConvertObjectSerialization {
             }
         }
     }
-    
+
     // - Sets dates to current date if unset
     // - Sets datastream sizes to 0
     private void setObjectDefaults(DigitalObject obj) {
@@ -188,10 +190,10 @@ public class ConvertObjectSerialization {
             }
         }
     }
-   
+
     /**
      * Command-line utility to convert objects from one format to another.
-     * 
+     *
      * @param args command-line args.
      */
     public static void main(String[] args) {
@@ -203,23 +205,23 @@ public class ConvertObjectSerialization {
             die("Not a directory: " + sourceDir.getPath(), false);
         }
         File destDir = new File(args[1]);
-        
-        DODeserializer deserializer = (DODeserializer) getInstance(args[2]); 
-        DOSerializer serializer = (DOSerializer) getInstance(args[3]); 
-      
+
+        DODeserializer deserializer = (DODeserializer) getInstance(args[2]);
+        DOSerializer serializer = (DOSerializer) getInstance(args[3]);
+
         // So DOTranslationUtility works...
         System.setProperty("fedoraServerHost", "localhost");
         System.setProperty("fedoraServerPort", "8080");
-        System.setProperty("fedoraAppServerContext", "fedora");
+        System.setProperty("fedoraAppServerContext", Constants.FEDORA_DEFAULT_APP_CONTEXT);
 
         boolean pretty = args.length > 4 && args[4].equals("true");
-        
+
         String inExt = "xml";
         if (args.length > 5) inExt = args[5];
-        
+
         String outExt = "xml";
         if (args.length > 6) outExt = args[6];
-        
+
         ConvertObjectSerialization converter =
                 new ConvertObjectSerialization(deserializer,
                                                serializer,
@@ -228,7 +230,7 @@ public class ConvertObjectSerialization {
                                                outExt);
         converter.convert(sourceDir, destDir);
     }
-    
+
     private static Object getInstance(String className) {
         try {
             return Class.forName(className).newInstance();
@@ -238,7 +240,7 @@ public class ConvertObjectSerialization {
             return null; // unreachable
         }
     }
-    
+
     private static void die(String message, boolean showUsage) {
         System.out.println("ERROR: " + message);
         if (showUsage) {

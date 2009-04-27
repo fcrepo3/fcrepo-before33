@@ -93,12 +93,15 @@ public class TestAPIALite
         his.close();
     }
 
+// FIXME: This test intermittently fails. See FCREPO-457
+/*
     public void testGetDisseminationChained() throws Exception {
         HttpInputStream his =
                 client.get("/get/demo:26/demo:19/getPDF", true);
         assertEquals(his.getContentType(), "application/pdf");
         his.close();
     }
+*/
 
     public void testGetDisseminationUserInput() throws Exception {
         HttpInputStream his =

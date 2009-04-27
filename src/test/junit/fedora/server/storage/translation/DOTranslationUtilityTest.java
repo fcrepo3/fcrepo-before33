@@ -10,8 +10,9 @@ import java.io.ByteArrayInputStream;
 import java.util.List;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
+
+import fedora.common.Constants;
 
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.Datastream;
@@ -33,15 +34,10 @@ import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_S
  */
 public class DOTranslationUtilityTest extends FedoraTestCase {
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @Override
-    @Before
-    public void setUp() throws Exception {
+    static {
         System.setProperty("fedoraServerHost", "localhost");
         System.setProperty("fedoraServerPort", "8080");
-        System.setProperty("fedoraAppServerContext", getFedoraAppServerContext());
+        System.setProperty("fedoraAppServerContext", Constants.FEDORA_DEFAULT_APP_CONTEXT);
      }
 
     /**

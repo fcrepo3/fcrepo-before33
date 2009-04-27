@@ -109,6 +109,8 @@ public class TestAPIA
         assertTrue(diss.getStream().length > 0);
     }
 
+// FIXME: This test intermittently fails. See FCREPO-457
+/*
     public void testGetDisseminationChained() throws Exception {
         MIMETypedStream diss = null;
         diss = apia.getDissemination("demo:26",
@@ -119,6 +121,7 @@ public class TestAPIA
         assertEquals(diss.getMIMEType(), "application/pdf");
         assertTrue(diss.getStream().length > 0);
     }
+*/
 
     public void testGetDisseminationUserInput() throws Exception {
         MIMETypedStream diss = null;
