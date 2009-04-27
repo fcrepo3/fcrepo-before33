@@ -70,7 +70,7 @@ echo "Waiting 20 seconds for Fedora to start..."
 sleep 20
 echo ""
 echo "[Running ConfigB Tests...]"
-$SCRIPTDIR/systest.sh $1 -Dtest=fedora.test.AllSystemTestsConfigB
+$SCRIPTDIR/systest.sh $1 -Dtest=fedora.test.AllSystemTestsConfigB -Dfedora.port=9080
 if [ $? -ne 0 ]; then
   echo ""
   echo "ERROR: Failed ConfigB tests; see above"
@@ -111,7 +111,7 @@ echo "Waiting 20 seconds for Fedora to start..."
 sleep 20
 echo ""
 echo "[Running ConfigA Tests...]"
-$SCRIPTDIR/systest.sh $1 -Dtest=fedora.test.AllSystemTestsConfigA
+$SCRIPTDIR/systest.sh $1 -Dtest=fedora.test.AllSystemTestsConfigA -Dfedora.port=9080
 if [ $? -ne 0 ]; then
   echo ""
   echo "ERROR: Failed ConfigA tests; see above"
