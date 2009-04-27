@@ -889,7 +889,7 @@
 
 		<mkdir dir="build/test-results" />
 
-		<junit printsummary="yes" fork="yes" haltonfailure="no" showoutput="yes">
+		<junit printsummary="yes" fork="yes" errorproperty="test.failed" haltonerror="no" haltonfailure="no" showoutput="yes">
 			<syspropertyset id="junit.sysproperties">
 				<propertyref name="fedora.home" />
 				<propertyref name="javax.net.ssl.trustStore" />
@@ -910,7 +910,7 @@
 			</fileset>
 			<report format="frames" todir="build/test-results" />
 		</junitreport>
-
+        <fail if="test.failed"/>
 	</target>
 
 	<target name="demo">
