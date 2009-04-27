@@ -625,6 +625,7 @@ public class DefaultAccess
         profile.objectModels = new HashSet<String>();
         profile.objectCreateDate = reader.getCreateDate();
         profile.objectLastModDate = reader.getLastModDate();
+        profile.objectState = reader.GetObjectState();
 
         for (RelationshipTuple rel : reader
                 .getRelationships(Constants.MODEL.HAS_MODEL, null)) {
@@ -725,10 +726,7 @@ public class DefaultAccess
                                 context
                                         .getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri));
         repositoryInfo.repositoryBaseURL =
-                reposBaseURL
-                        + "/"
-                        + context
-                                .getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME);
+                reposBaseURL + "/" + context.getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME);
 
         repositoryInfo.repositoryVersion =
                 Server.VERSION_MAJOR + "." + Server.VERSION_MINOR;

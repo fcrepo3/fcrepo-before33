@@ -45,7 +45,6 @@ public class TestFedoraWebXML {
                 new FedoraWebXML(webXMLFilePath, getOptions(false,
                                                             true,
                                                             true,
-                                                            false,
                                                             ""));
         assertNotNull(webXML);
 
@@ -54,33 +53,21 @@ public class TestFedoraWebXML {
                 new FedoraWebXML(webXMLFilePath, getOptions(true,
                                                             true,
                                                             true,
-                                                            false,
                                                             ""));
-
-        // rest enabled
-        webXML =
-                new FedoraWebXML(webXMLFilePath, getOptions(true,
-                                                            true,
-                                                            true,
-                                                            true,
-                                                            ""));
-
     }
 
     private WebXMLOptions getOptions(boolean apiaA,
                                      boolean apiaS,
                                      boolean apimS,
-                                     boolean rest,
                                      String fedoraHome) {
         WebXMLOptions options = new WebXMLOptions();
         options.setApiaAuth(apiaA);
         options.setApiaSSL(apiaS);
         options.setApimSSL(apimS);
-        options.setRestAPI(rest);
         options.setFedoraHome(new File(fedoraHome));
         return options;
     }
-    
+
     // Supports legacy test runners
     public static junit.framework.Test suite() {
         return new junit.framework.JUnit4TestAdapter(TestFedoraWebXML.class);

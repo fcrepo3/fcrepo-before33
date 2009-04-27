@@ -33,8 +33,14 @@ public class FilterRestApiAuthn
         if(request.getMethod().equals("GET")) {
             String requestPath = request.getPathInfo();
             if(requestPath != null) {
+                // API-M.export() or API-M.getObjectXML()
                 if (requestPath.endsWith("/export") ||
                     requestPath.endsWith("/objectXML")) {
+                    enforceAuthN = true;
+                }
+                // API-M.getDatastream()
+                if (requestPath.contains("/datastreams/") &&
+                    !requestPath.endsWith("/content")) {
                     enforceAuthN = true;
                 }
             }

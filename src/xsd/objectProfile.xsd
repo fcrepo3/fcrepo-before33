@@ -6,11 +6,13 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="objLabel" />
+				<xs:element ref="objOwnerId" />
 				<xs:element ref="objModels" />
 				<xs:element ref="objCreateDate" />
 				<xs:element ref="objLastModDate" />
 				<xs:element ref="objDissIndexViewURL" />
 				<xs:element ref="objItemIndexViewURL" />
+				<xs:element ref="objState" />
 			</xs:sequence>
 			<xs:attribute name="pid" use="required">
 				<xs:simpleType>
@@ -39,6 +41,11 @@
 			<xs:restriction base="xs:string" />
 		</xs:simpleType>
 	</xs:element>
+    <xs:element name="objOwnerId">
+        <xs:simpleType>
+            <xs:restriction base="xs:string" />
+        </xs:simpleType>
+    </xs:element>
 	<xs:element name="objModels">
 		<xs:complexType>
 			<xs:sequence>
@@ -51,4 +58,9 @@
 			<xs:restriction base="xs:dateTime" />
 		</xs:simpleType>
 	</xs:element>
+    <xs:element name="objState">
+        <xs:simpleType>
+            <xs:restriction base="xs:string" />
+        </xs:simpleType>
+    </xs:element>	
 </xs:schema>

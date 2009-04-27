@@ -74,8 +74,6 @@ public class InstallOptions {
 
     public static final String RI_ENABLED = "ri.enabled";
 
-    public static final String REST_ENABLED = "rest.enabled";
-
     public static final String MESSAGING_ENABLED = "messaging.enabled";
 
     public static final String MESSAGING_URI = "messaging.uri";
@@ -183,7 +181,6 @@ public class InstallOptions {
             _map.put(DATABASE_DRIVERCLASS, EMBEDDED_DATABASE_DRIVERCLASSNAME);
             _map.put(XACML_ENABLED, Boolean.toString(false));
             _map.put(RI_ENABLED, null); // false
-            _map.put(REST_ENABLED, null); // false
             _map.put(MESSAGING_ENABLED, null); // false
             _map.put(DEPLOY_LOCAL_SERVICES, null); // true
             _map.put(USING_JBOSS, null); // included
@@ -258,7 +255,6 @@ public class InstallOptions {
 
         inputOption(XACML_ENABLED);
         inputOption(RI_ENABLED);
-        inputOption(REST_ENABLED);
         inputOption(MESSAGING_ENABLED);
         if (getValue(MESSAGING_ENABLED).equals(Boolean.toString(true))) {
             inputOption(MESSAGING_URI);

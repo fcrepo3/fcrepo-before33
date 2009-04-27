@@ -104,6 +104,14 @@
 							<xsl:value-of select="objOwnerId"/>
 						</td>
 					</tr>
+                    <tr>
+                        <td align="right">
+                            <font color="blue">Object State: </font>
+                        </td>
+                        <td align="left">
+                            <xsl:value-of select="objState"/>
+                        </td>
+                    </tr>					
 					</table>
 				</center>
 			</body>
