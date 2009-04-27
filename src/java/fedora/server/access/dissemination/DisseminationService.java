@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -54,7 +54,7 @@ import fedora.server.utilities.ServerUtility;
 
 /**
  * A service for executing a dissemination given its binding information.
- * 
+ *
  * @author Ross Wayland
  */
 public class DisseminationService {
@@ -92,6 +92,9 @@ public class DisseminationService {
     /** Configured Fedora server port */
     private static String fedoraServerPort = null;
 
+    /** Configured Fedora application server context */
+    private static String fedoraAppServerContext = null;
+
     /** Configured Fedora redirect port */
     private static String fedoraServerRedirectPort = null;
 
@@ -114,6 +117,7 @@ public class DisseminationService {
                 s_server = Server.getInstance(new File(fedoraHome), false);
                 fedoraServerHost = s_server.getParameter("fedoraServerHost");
                 fedoraServerPort = s_server.getParameter("fedoraServerPort");
+                fedoraAppServerContext = s_server.getParameter("fedoraAppServerContext");
                 fedoraServerRedirectPort =
                         s_server.getParameter("fedoraRedirectPort");
                 m_beSecurity =
@@ -192,7 +196,7 @@ public class DisseminationService {
      * which has the dissemination-related information from the digital object
      * and its associated Service Deployment object.
      * </p>
-     * 
+     *
      * @param context
      *        The current context.
      * @param PID
@@ -263,7 +267,7 @@ public class DisseminationService {
                             if (rightParenPos != -1 && rightParenPos > 0) {
                                 String key =
                                         parts[x].substring(0, rightParenPos);
-                                String val = (String) h_userParms.get(key);
+                                String val = h_userParms.get(key);
                                 if (val != null) {
                                     // We have a match... so insert the urlencoded value.
                                     try {
@@ -321,7 +325,7 @@ public class DisseminationService {
                 //
                 // dsMediatedCallbackHost - when dsMediation is in effect, all M, X, and E type datastreams
                 //                          are encoded as callbacks to the Fedora server to obtain the
-                //                          datastream's contents. dsMediatedCallbackHost contains protocol, 
+                //                          datastream's contents. dsMediatedCallbackHost contains protocol,
                 //                          host, and port used for this type of backendservice-to-fedora callback.
                 //                          The specifics of protocol, host, and port are obtained from the
                 //                          beSecurity configuration file.
@@ -345,9 +349,9 @@ public class DisseminationService {
                                 .booleanValue();
                 String dsMediatedServletPath = null;
                 if (callbackBasicAuth) {
-                    dsMediatedServletPath = "/fedora/getDSAuthenticated?id=";
+                    dsMediatedServletPath = "/" + fedoraAppServerContext + "/getDSAuthenticated?id=";
                 } else {
-                    dsMediatedServletPath = "/fedora/getDS?id=";
+                    dsMediatedServletPath = "/" + fedoraAppServerContext + "/getDS?id=";
                 }
                 String dsMediatedCallbackHost = null;
                 if (callbackSSL) {
@@ -470,13 +474,13 @@ public class DisseminationService {
                     if (doDatastreamMediation
                             && !dissBindInfo.dsControlGroupType
                                     .equalsIgnoreCase("R")) {
-                        // Use Datastream Mediation (except for Redirected datastreams)              
+                        // Use Datastream Mediation (except for Redirected datastreams)
                         replaceString =
                                 datastreamResolverServletURL
                                         + registerDatastreamLocation(dissBindInfo.dsLocation,
                                                                      dissBindInfo.dsControlGroupType,
                                                                      callbackRole,
-                                                                     methodName); //this is generic, should be made specific per service                        
+                                                                     methodName); //this is generic, should be made specific per service
                     } else {
                         // Bypass Datastream Mediation.
                         if (dissBindInfo.dsControlGroupType
@@ -649,9 +653,9 @@ public class DisseminationService {
                     // See if backend service reference is to fedora server itself or an external location.
                     // We must examine URL to see if this is referencing a remote backend service or is
                     // simply a callback to the fedora server. If the reference is remote, then use
-                    // the role of backend service deployment PID. If the referenc is to the fedora server, 
-                    // use the special role of "fedoraInternalCall-1" to denote that the callback will come from the 
-                    // fedora server itself.          
+                    // the role of backend service deployment PID. If the referenc is to the fedora server,
+                    // use the special role of "fedoraInternalCall-1" to denote that the callback will come from the
+                    // fedora server itself.
                     String beServiceRole = null;
                     if (ServerUtility.isURLFedoraServer(dissURL)) {
                         beServiceRole = BackendPolicies.FEDORA_INTERNAL_CALL;
@@ -787,7 +791,7 @@ public class DisseminationService {
      * <li>dddddd - incremental counter (0-999999)</li>
      * </ul>
      * </ul>
-     * 
+     *
      * @param dsLocation
      *        The physical location of the datastream.
      * @param dsControlGroupType
@@ -853,7 +857,7 @@ public class DisseminationService {
                     beServiceRole = beServiceCallbackRole;
                 }
 
-                // Store beSecurity info in hash 
+                // Store beSecurity info in hash
                 Hashtable<String, String> beHash =
                         m_beSS.getSecuritySpec(beServiceRole, methodName);
                 boolean beServiceCallbackBasicAuth =
@@ -932,7 +936,7 @@ public class DisseminationService {
      * utility method used to extract the Timestamp portion from the tempID by
      * stripping off the arbitrary counter at the end of the string.
      * </p>
-     * 
+     *
      * @param tempID
      *        The tempID to be extracted.
      * @return The extracted Timestamp value as a string.
@@ -949,7 +953,7 @@ public class DisseminationService {
      * Performs simple string replacement using regular expressions. All
      * matching occurrences of the pattern string will be replaced in the input
      * string by the replacement string.
-     * 
+     *
      * @param inputString
      *        The source string.
      * @param patternString
@@ -974,7 +978,7 @@ public class DisseminationService {
      * is a syntax similar to "parm=(PARM_BIND_KEY)". This method removes these
      * non-supplied optional parameters from the string.
      * </p>
-     * 
+     *
      * @param dissURL
      *        String to be processed.
      * @return An edited string with parameters removed where no value was
@@ -1009,7 +1013,7 @@ public class DisseminationService {
      * to the corresponding Default Dissemination request that will return the
      * datastream contents.
      * </p>
-     * 
+     *
      * @param internalDSLocation -
      *        dsLocation of the Managed or XML type datastream.
      * @param PID -
@@ -1036,7 +1040,7 @@ public class DisseminationService {
         String dsLocation = null;
         if (s.length == 3) {
             dsLocation =
-                    callbackHost + "/fedora/get/" + s[0] + "/" + s[1] + "/"
+                    callbackHost + "/" + fedoraAppServerContext + "/get/" + s[0] + "/" + s[1] + "/"
                             + DateUtility.convertDateToString(dsCreateDT);
 
         } else {
@@ -1120,7 +1124,7 @@ public class DisseminationService {
     /**
      * A method that reads the contents of the specified URL and returns the
      * result as a MIMETypedStream
-     * 
+     *
      * @param url
      *        The URL of the external content.
      * @return A MIME-typed stream.

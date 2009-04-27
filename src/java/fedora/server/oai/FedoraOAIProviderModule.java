@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -33,7 +33,7 @@ import fedora.server.search.FieldSearch;
 /**
  * An OAIProvider that acts as a server module and wraps FedoraOAIProvider.
  * </p>
- * 
+ *
  * @author Chris Wilper
  */
 public class FedoraOAIProviderModule
@@ -68,6 +68,12 @@ public class FedoraOAIProviderModule
             throw new ModuleInitializationException("fedoraServerHost must be specified as primary server config element.",
                                                     getRole());
         }
+        String context = getServer().getParameter("fedoraAppServerContext");
+        if (context == null) {
+            throw new ModuleInitializationException("fedoraAppServerContext must be specified as primary server config element.",
+                                                    getRole());
+        }
+
         String port = getServer().getParameter("fedoraServerPort");
         if (port == null) {
             throw new ModuleInitializationException("fedoraServerPort must be specified as primary server config element.",
@@ -171,7 +177,7 @@ public class FedoraOAIProviderModule
                 new FedoraOAIProvider(repositoryName,
                                       repositoryDomainName,
                                       host,
-                                      "/fedora/oai",
+                                      "/" + context + "/oai",
                                       adminEmails,
                                       friends,
                                       pidNamespace,

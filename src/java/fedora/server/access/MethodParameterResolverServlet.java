@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -27,15 +27,16 @@ import fedora.server.errors.InitializationException;
 
 /**
  * This servlet accepts the result of a posted web form containing information
- * about which method parameter values were selected for a dissemination 
+ * about which method parameter values were selected for a dissemination
  * request.
- * 
- * <p>The information is read from the form and translated into the 
- * corresponding API-A-LITE interface dissemination request in the form of 
- * a URI. The initial request is then redirected to the API-A-LITE interface
- * to execute the dissemination request.
- * 
+ * <p>
+ * The information is read from the form and translated into the corresponding
+ * API-A-LITE interface dissemination request in the form of a URI. The initial
+ * request is then redirected to the API-A-LITE interface to execute the
+ * dissemination request.
+ *
  * @author Ross Wayland
+ * @version $Id$
  */
 public class MethodParameterResolverServlet
         extends HttpServlet {
@@ -48,9 +49,6 @@ public class MethodParameterResolverServlet
 
     /** A string constant for the html MIME type */
     private static final String HTML_CONTENT_TYPE = "text/html; charset=UTF-8";
-
-    /** The Fedora API-A-Lite servlet path. */
-    private static final String API_A_LITE_SERVLET_PATH = "/fedora/get/";
 
     /** An instance of the Fedora server. */
     private static Server s_server = null;
@@ -68,7 +66,7 @@ public class MethodParameterResolverServlet
 
     /**
      * Treat Get request identical to Post request.
-     * 
+     *
      * @param request
      *        The servlet request.
      * @param response
@@ -86,7 +84,7 @@ public class MethodParameterResolverServlet
 
     /**
      * Process Post request from web form.
-     * 
+     *
      * @param request
      *        The servlet request.
      * @param response
@@ -151,8 +149,8 @@ public class MethodParameterResolverServlet
         } else {
             // Translate web form parameters into dissemination request.
             StringBuffer redirectURL = new StringBuffer();
-            redirectURL.append(API_A_LITE_SERVLET_PATH + PID + "/" + sDefPID
-                    + "/" + methodName);
+            redirectURL.append(request.getContextPath() + "/get/" + PID + "/"
+                    + sDefPID + "/" + methodName);
 
             // Add method parameters.
             int i = 0;

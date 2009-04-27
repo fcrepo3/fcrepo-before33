@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -38,7 +38,7 @@ import fedora.swing.mdi.MDIDesktopPane;
 
 /**
  * Batch Ingest GUI.
- * 
+ *
  * @author Bill Niebel
  * @version $Id$
  */
@@ -95,12 +95,15 @@ public class BatchIngestGUI
 
     private final String user;
 
+    private final String context;
+
     private final String pass;
 
     public BatchIngestGUI(JFrame parent,
                           MDIDesktopPane mdiDesktopPane,
                           String host,
                           int port,
+                          String context,
                           String user,
                           String pass) {
         super("Batch Ingest", true, //resizable
@@ -112,6 +115,7 @@ public class BatchIngestGUI
         this.port = Integer.toString(port);
         this.user = user;
         this.pass = pass;
+        this.context = context;
 
         this.mdiDesktopPane = mdiDesktopPane;
 
@@ -262,6 +266,7 @@ public class BatchIngestGUI
                                        m_xmlMap.isSelected() ? "xml" : "text");
                 properties.setProperty("server-fqdn", host);
                 properties.setProperty("server-port", port);
+                properties.setProperty("context", context);
                 properties.setProperty("username", user);
                 properties.setProperty("password", pass);
                 properties.setProperty("server-protocol", Administrator

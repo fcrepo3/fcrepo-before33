@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -80,9 +80,10 @@ import fedora.utilities.XmlTransformUtility;
  * parameter or a value of "false" indicates format is to be text/html.</li>
  * </ul>
  * </ol>
- * 
+ *
  * @author Ross Wayland
- * @version $Id$
+ * @version $Id: ListDatastreamsServlet.java 7781 2008-10-15 20:03:30Z pangloss
+ *          $
  */
 public class ListDatastreamsServlet
         extends HttpServlet
@@ -125,7 +126,7 @@ public class ListDatastreamsServlet
      * Process Fedora Access Request. Parse and validate the servlet input
      * parameters and then execute the specified request.
      * </p>
-     * 
+     *
      * @param request
      *        The servlet request.
      * @param response
@@ -276,9 +277,11 @@ public class ListDatastreamsServlet
                 File xslFile =
                         new File(s_server.getHomeDir(),
                                  "access/listDatastreams.xslt");
-                TransformerFactory factory = XmlTransformUtility.getTransformerFactory();
+                TransformerFactory factory =
+                        XmlTransformUtility.getTransformerFactory();
                 Templates template =
                         factory.newTemplates(new StreamSource(xslFile));
+
                 Transformer transformer = template.newTransformer();
                 transformer.transform(new StreamSource(pr),
                                       new StreamResult(out));
@@ -326,11 +329,13 @@ public class ListDatastreamsServlet
 
         private String fedoraServerPort = null;
 
+        private String fedoraAppServerContext = null;
+
         /**
          * <p>
          * Constructor for ProfileSerializeThread.
          * </p>
-         * 
+         *
          * @param PID
          *        The persistent identifier of the specified digital object.
          * @param dsDefs
@@ -351,6 +356,9 @@ public class ListDatastreamsServlet
             this.versDateTime = versDateTime;
             fedoraServerPort =
                     context.getEnvironmentValue(HTTP_REQUEST.SERVER_PORT.uri);
+            fedoraAppServerContext =
+                    context.getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME);
+
             if (HTTP_REQUEST.SECURE.uri.equals(context
                     .getEnvironmentValue(HTTP_REQUEST.SECURITY.uri))) {
                 fedoraServerProtocol = HTTPS;
@@ -378,7 +386,8 @@ public class ListDatastreamsServlet
                     }
                     final String baseURL =
                             fedoraServerProtocol + "://" + fedoraServerHost
-                                    + ":" + fedoraServerPort + "/fedora/";
+                                    + ":" + fedoraServerPort + "/"
+                                    + fedoraAppServerContext + "/";
                     pw.write(" baseURL=\"" + baseURL + "\"");
                     pw.write(" xmlns:xsi=\"" + XSI.uri + "\"");
                     pw.write(" xsi:schemaLocation=\"" + ACCESS.uri);
@@ -414,7 +423,7 @@ public class ListDatastreamsServlet
      * <p>
      * For now, treat a HTTP POST request just like a GET request.
      * </p>
-     * 
+     *
      * @param request
      *        The servet request.
      * @param response
@@ -434,7 +443,7 @@ public class ListDatastreamsServlet
      * <p>
      * Initialize servlet.
      * </p>
-     * 
+     *
      * @throws ServletException
      *         If the servet cannot be initialized.
      */

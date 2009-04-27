@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -19,14 +19,16 @@ import javax.xml.rpc.ServiceException;
 import fedora.client.FedoraClient;
 import fedora.client.Uploader;
 
+import fedora.common.Constants;
+
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.utilities.StreamUtility;
 
 /**
- * Command-line version of the Batch Modify utility that's available 
- * in the admin GUI client. 
- * 
+ * Command-line version of the Batch Modify utility that's available
+ * in the admin GUI client.
+ *
  * This utility processes an xml input file containing modify directives
  * enabling mass updating of existing objects. It has six required arguments:
  * <ol>
@@ -40,7 +42,7 @@ import fedora.server.utilities.StreamUtility;
  * <li>logFilePath - absolute file path of the log file; an xml file providing
  * a history of the transactions processed.</li>
  * </ol>
- * 
+ *
  * @author Ross Wayland
  */
 public class AutoModify {
@@ -72,7 +74,7 @@ public class AutoModify {
      * <p>
      * Constructor for the class.
      * </p>
-     * 
+     *
      * @param apia -
      *        SOAP stub for APIA service.
      * @param apim -
@@ -97,13 +99,14 @@ public class AutoModify {
                       String protocol,
                       String host,
                       int port,
+                      String context,
                       String user,
                       String pass)
             throws MalformedURLException, ServiceException, IOException {
 
         AutoModify.s_APIM = apim;
         AutoModify.s_APIA = apia;
-        AutoModify.s_UPLOADER = new Uploader(protocol, host, port, user, pass);
+        AutoModify.s_UPLOADER = new Uploader(protocol, host, port, context, user, pass);
 
     }
 
@@ -111,7 +114,7 @@ public class AutoModify {
      * <p>
      * Processes the modify directives.
      * </p>
-     * 
+     *
      * @param directivesFilePath -
      *        The absolute file path of the file containing the modify
      *        directives.
@@ -136,7 +139,7 @@ public class AutoModify {
      * <p>
      * Process the modify directives.
      * </p>
-     * 
+     *
      * @param APIM -
      *        An instance of FedoraAPIM.
      * @param UPLOADER -
@@ -289,7 +292,7 @@ public class AutoModify {
      * Convert the duration time from milliseconds to standard hours, minutes,
      * and seconds format.
      * </p>
-     * 
+     *
      * @param millis -
      *        The time interval to convert in miliseconds.
      * @return A string with the converted time.
@@ -331,7 +334,7 @@ public class AutoModify {
      * <p>
      * Initializes the log file for writing.
      * </p>
-     * 
+     *
      * @param outFile -
      *        The absolute file path of the log file.
      * @param rootName -
@@ -352,7 +355,7 @@ public class AutoModify {
      * <p>
      * Closes the log file.
      * </p>
-     * 
+     *
      * @throws Exception -
      *         If any type of error occurs in closing the log file.
      */
@@ -366,7 +369,7 @@ public class AutoModify {
      * <p>
      * Displays the command-line syntax.
      * </p>
-     * 
+     *
      * @param errMessage -
      *        The error message to be displayed.
      */
@@ -375,7 +378,7 @@ public class AutoModify {
         System.out.println("");
         System.out
                 .println("Usage: AutoModify host:port username password "
-                        + "directives-filepath log-filepath protocol [validate-only-option]");
+                        + "directives-filepath log-filepath protocol [validate-only-option] [CTX]");
         System.out.println("Note: protocol must be either http or https.");
     }
 
@@ -391,9 +394,9 @@ public class AutoModify {
         boolean isValidateOnly = true;
 
         try {
-            if (args.length < 6 || args.length > 7) {
+            if (args.length < 6 || args.length > 8) {
                 AutoModify
-                        .showUsage("You must provide either 6 or 7 arguments.");
+                        .showUsage("You must provide either 6, 7 or 8 arguments.");
             } else {
 
                 String[] hostPort = args[0].split(":");
@@ -410,20 +413,26 @@ public class AutoModify {
                 directivesFilePath = args[3];
                 logFilePath = args[4];
                 protocol = args[5];
-                if (args.length == 6) {
+
+                if (args.length >= 7) {
                     isValidateOnly = false;
                 } else {
                     isValidateOnly = true;
                 }
+
+                String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
+                if (args.length == 8 && !args[7].equals("")){
+                    context = args[7];
+                }
+
                 if (new File(directivesFilePath).exists()) {
                     System.out.println("\nCONNECTING to Fedora server....");
 
                     // ******************************************
                     // NEW: use new client utility class
-                    // FIXME:  Get around hardcoding the path in the baseURL
                     String baseURL =
                             protocol + "://" + hostName + ":" + portNum
-                                    + "/fedora";
+                                    + "/" + context;
                     FedoraClient fc =
                             new FedoraClient(baseURL, username, password);
                     APIA = fc.getAPIA();
@@ -436,6 +445,7 @@ public class AutoModify {
                                            protocol,
                                            hostName,
                                            portNum,
+                                           context,
                                            username,
                                            password);
 

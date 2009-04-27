@@ -24,6 +24,8 @@ public class InstallOptions {
 
     public static final String FEDORA_SERVERHOST = "fedora.serverHost";
 
+    public static final String FEDORA_APP_SERVER_CONTEXT = "fedora.serverContext";
+
     public static final String APIA_AUTH_REQUIRED = "apia.auth.required";
 
     public static final String SSL_AVAILABLE = "ssl.available";
@@ -165,6 +167,7 @@ public class InstallOptions {
             // See the defaultValues defined in OptionDefinition.properties
             // for the null values below
             _map.put(FEDORA_SERVERHOST, null); // localhost
+            _map.put(FEDORA_APP_SERVER_CONTEXT, null);
             _map.put(APIA_AUTH_REQUIRED, null); // false
             _map.put(SSL_AVAILABLE, Boolean.toString(false));
             _map.put(APIM_SSL_REQUIRED, Boolean.toString(false));
@@ -189,6 +192,7 @@ public class InstallOptions {
         }
 
         inputOption(FEDORA_SERVERHOST);
+        inputOption(FEDORA_APP_SERVER_CONTEXT);
         inputOption(APIA_AUTH_REQUIRED);
         inputOption(SSL_AVAILABLE);
 

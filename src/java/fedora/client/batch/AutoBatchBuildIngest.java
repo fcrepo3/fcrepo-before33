@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -15,7 +15,7 @@ import fedora.common.Constants;
 
 /**
  * Auto Batch Build Ingest.
- * 
+ *
  * @author Ross Wayland
  */
 public class AutoBatchBuildIngest
@@ -33,7 +33,8 @@ public class AutoBatchBuildIngest
                                 String port,
                                 String username,
                                 String password,
-                                String protocol)
+                                String protocol,
+                                String context)
             throws Exception {
 
         batchProperties.setProperty("merge-objects", "yes");
@@ -46,6 +47,7 @@ public class AutoBatchBuildIngest
         batchProperties.setProperty("object-format", objectFormat);
         batchProperties.setProperty("server-fqdn", host);
         batchProperties.setProperty("server-port", port);
+        batchProperties.setProperty("server-context", context);
         batchProperties.setProperty("username", username);
         batchProperties.setProperty("password", password);
         batchProperties.setProperty("server-protocol", protocol);
@@ -57,8 +59,9 @@ public class AutoBatchBuildIngest
 
     public static final void main(String[] args) throws Exception {
         boolean errors = false;
+        String context = "/" + Constants.FEDORA_DEFAULT_APP_CONTEXT;
         String objectFormat = null;
-        if (args.length == 9) {
+        if (args.length == 9 || args.length == 10) {
             if (!new File(args[0]).exists() && !new File(args[0]).isFile()) {
                 System.out.println("Specified object template file path: \""
                         + args[0] + "\" does not exist.");
@@ -93,6 +96,9 @@ public class AutoBatchBuildIngest
                 errors = true;
             }
 
+            if (args.length == 10 && !args[9].equals("")){
+                context = "/" + args[9];
+            }
             // Verify format of template file to see if it is a METS or FOXML template
             BufferedReader br = new BufferedReader(new FileReader(args[0]));
             String line;
@@ -128,10 +134,11 @@ public class AutoBatchBuildIngest
                                                  server[1],
                                                  args[6],
                                                  args[7],
-                                                 args[8]);
+                                                 args[8],
+                                                 context);
             }
         } else {
-            if (objectFormat == null && args.length == 9) {
+            if (objectFormat == null && (args.length == 10 || args.length == 9)) {
                 System.out.println("\nUnknown format for template file.\n"
                         + "Template file must either be METS or FOXML.\n");
             } else {
@@ -151,6 +158,8 @@ public class AutoBatchBuildIngest
                         .println("(8) - password for admin user of Fedora server\n");
                 System.out
                         .println("(9) - protocol to communicate with Fedora server (http or https)");
+                System.out
+                .println("(10) - optional, alternate context location of the Fedora server (default is fedora)");
             }
         }
     }

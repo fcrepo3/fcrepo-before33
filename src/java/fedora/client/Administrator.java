@@ -110,6 +110,8 @@ public class Administrator
 
     private static String s_protocol;
 
+    private static String s_context;
+
     private static String s_host;
 
     private static int s_port;
@@ -183,6 +185,7 @@ public class Administrator
     public Administrator(String protocol,
                          String host,
                          int port,
+                         String context,
                          String user,
                          String pass) {
         super("Fedora Administrator");
@@ -204,12 +207,12 @@ public class Administrator
                 // NEW: use new client utility class
                 // FIXME:  Get around hardcoding the path in the baseURL
                 String baseURL =
-                        protocol + "://" + host + ":" + port + "/fedora";
+                        protocol + "://" + host + ":" + port + "/" + context;
                 FedoraClient fc = new FedoraClient(baseURL, user, pass);
                 APIA = fc.getAPIA();
                 APIM = fc.getAPIM();
                 //*******************************************
-                setLoginInfo(protocol, host, port, user, pass);
+                setLoginInfo(protocol, host, port, context, user, pass);
             } catch (Exception e) {
                 APIA = null;
                 APIM = null;
@@ -291,6 +294,7 @@ public class Administrator
 
         addWindowListener(new WindowAdapter() {
 
+            @Override
             public void windowClosing(WindowEvent e) {
                 dispose();
                 System.exit(0);
@@ -324,16 +328,18 @@ public class Administrator
     public void setLoginInfo(String protocol,
                              String host,
                              int port,
+                             String context,
                              String user,
                              String pass) {
         s_protocol = protocol;
         s_host = host;
         s_port = port;
+        s_context = context;
         s_user = user;
         s_pass = pass;
         try {
-            DOWNLOADER = new Downloader(host, port, user, pass);
-            UPLOADER = new Uploader(host, port, user, pass);
+            DOWNLOADER = new Downloader(host, port, context, user, pass);
+            UPLOADER = new Uploader(host, port, context, user, pass);
         } catch (IOException ioe) {
         }
         doTitle();
@@ -361,7 +367,6 @@ public class Administrator
     protected JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
@@ -375,8 +380,7 @@ public class Administrator
         fileNewObject.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                new NewObjectDialog(OBJECT_TYPE.dataObject,
-                                    "New Object");
+                new NewObjectDialog(OBJECT_TYPE.dataObject, "New Object");
             }
         });
 
@@ -390,13 +394,13 @@ public class Administrator
         });
 
         JMenuItem fileNewSDef =
-            new JMenuItem("Service Definition", KeyEvent.VK_D);
+                new JMenuItem("Service Definition", KeyEvent.VK_D);
         fileNewSDef.addActionListener(new ActionListener() {
 
-        public void actionPerformed(ActionEvent e) {
-            new NewObjectDialog(OBJECT_TYPE.serviceDefinition,
-                                "New Service Definition");
-        }
+            public void actionPerformed(ActionEvent e) {
+                new NewObjectDialog(OBJECT_TYPE.serviceDefinition,
+                                    "New Service Definition");
+            }
         });
 
         JMenuItem fileNewSDep =
@@ -566,8 +570,10 @@ public class Administrator
 
         JMenu toolsBatchSubMenu = new JMenu("Batch");
 
-        JMenuItem toolsBatchBuild =
-                new JMenuItem("Build Batch"/* , KeyEvent.VK_A */);
+        JMenuItem toolsBatchBuild = new JMenuItem("Build Batch"/*
+                                                                * ,
+                                                                * KeyEvent.VK_A
+                                                                */);
         toolsBatchBuild.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -578,8 +584,8 @@ public class Administrator
 
         JMenuItem toolsBatchBuildIngest =
                 new JMenuItem("Build and Ingest Batch"/*
-                 * , KeyEvent.VK_A
-                 */);
+                                                       * , KeyEvent.VK_A
+                                                       */);
         toolsBatchBuildIngest.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -589,9 +595,9 @@ public class Administrator
         toolsBatchSubMenu.add(toolsBatchBuildIngest);
 
         JMenuItem toolsBatchIngest = new JMenuItem("Ingest Batch"/*
-         * ,
-         * KeyEvent.VK_A
-         */);
+                                                                  * ,
+                                                                  * KeyEvent.VK_A
+                                                                  */);
         toolsBatchIngest.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -793,6 +799,7 @@ public class Administrator
                                         s_desktop,
                                         s_host,
                                         s_port,
+                                        s_context,
                                         s_user,
                                         s_pass);
         frame.setVisible(true);
@@ -809,6 +816,7 @@ public class Administrator
                                    s_desktop,
                                    s_host,
                                    s_port,
+                                   s_context,
                                    s_user,
                                    s_pass);
         frame.setVisible(true);
@@ -862,6 +870,10 @@ public class Administrator
         return s_pass;
     }
 
+    public static String getAppServContext() {
+        return s_context;
+    }
+
     public static void main(String[] args) {
         Log4J.force();
         if (args.length == 1) {
@@ -879,7 +891,8 @@ public class Administrator
         int port = 0;
         String user = null;
         String pass = null;
+        String context = null;
         Administrator administrator =
-                new Administrator(protocol, host, port, user, pass);
+                new Administrator(protocol, host, port, context, user, pass);
     }
 }

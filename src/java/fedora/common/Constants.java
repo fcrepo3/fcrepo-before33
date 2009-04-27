@@ -105,6 +105,17 @@ public interface Constants {
      */
     public static final String FEDORA_HOME = FedoraHome.getValue();
 
+    /**
+     * The default lookup key name for application server related context
+     * values.
+     */
+    public static final String FEDORA_APP_CONTEXT_NAME = "FEDORA_CONTEXT_NAME";
+
+    /**
+     * The default application server context of fedora.
+     */
+    public static final String FEDORA_DEFAULT_APP_CONTEXT = "fedora";
+
     //---
     // RDF Namespaces
     //---
@@ -175,13 +186,15 @@ public interface Constants {
      * The Fedora service definition XACML namespace;
      * <code>urn:fedora:names:fedora:2.1:resource:sdef</code>
      */
-    public static final ServiceDefinitionNamespace SDEF = ServiceDefinitionNamespace.getInstance();
+    public static final ServiceDefinitionNamespace SDEF =
+            ServiceDefinitionNamespace.getInstance();
 
     /**
      * The Fedora service deployment XACML namespace;
      * <code>urn:fedora:names:fedora:2.1:resource:sdep</code>
      */
-    public static final ServiceDeploymentNamespace SDEP = ServiceDeploymentNamespace.getInstance();
+    public static final ServiceDeploymentNamespace SDEP =
+            ServiceDeploymentNamespace.getInstance();
 
     /**
      * The Fedora Datastream XACML namespace;
@@ -576,8 +589,8 @@ public interface Constants {
             FedoraSDepMethodMap1_1Format.getInstance();
 
     /**
-     * Legacy FOXML 1.0 format string
-     * Available only for backwards compatibility with old repository versions
+     * Legacy FOXML 1.0 format string Available only for backwards compatibility
+     * with old repository versions
      */
     public static final String FOXML1_0_LEGACY = "foxml1.0";
 
@@ -594,11 +607,10 @@ public interface Constants {
     public static final FOXML1_1Format FOXML1_1 = FOXML1_1Format.getInstance();
 
     /**
-     * Legacy METS Extention 1.0 format string
-     * Available only for backwards compatibility with old repository versions
+     * Legacy METS Extention 1.0 format string Available only for backwards
+     * compatibility with old repository versions
      */
     public static final String METS_EXT1_0_LEGACY = "metslikefedora1";
-
 
     /**
      * The METS Fedora Extension 1.0 XML format;
@@ -615,8 +627,7 @@ public interface Constants {
             METSFedoraExt1_1Format.getInstance();
 
     /**
-     * The ATOM 1.1 XML format;
-     * <code>info:fedora/fedora-system:ATOM-1.1</code>
+     * The ATOM 1.1 XML format; <code>info:fedora/fedora-system:ATOM-1.1</code>
      */
     public static final Atom1_1Format ATOM1_1 = Atom1_1Format.getInstance();
 
@@ -624,7 +635,8 @@ public interface Constants {
      * The ATOM ZIP 1.1 XML format;
      * <code>info:fedora/fedora-system:ATOMZip-1.1</code>
      */
-    public static final AtomZip1_1Format ATOM_ZIP1_1 = AtomZip1_1Format.getInstance();
+    public static final AtomZip1_1Format ATOM_ZIP1_1 =
+            AtomZip1_1Format.getInstance();
 
     /**
      * The OAI DC 2.0 XML format;
@@ -690,16 +702,16 @@ public interface Constants {
          * @returns the value, or <code>null</code> if undefined in any way.
          */
         public static final String getValue() {
-          if (value == null){
-            if (System.getProperty("servlet.fedora.home") != null){
-              value = System.getProperty("servlet.fedora.home");
-            } else if (System.getProperty("fedora.home") != null) {
-              value = System.getProperty("fedora.home");
-            } else {
-              value = System.getenv("FEDORA_HOME");
+            if (value == null) {
+                if (System.getProperty("servlet.fedora.home") != null) {
+                    value = System.getProperty("servlet.fedora.home");
+                } else if (System.getProperty("fedora.home") != null) {
+                    value = System.getProperty("fedora.home");
+                } else {
+                    value = System.getenv("FEDORA_HOME");
+                }
             }
-          }
-          return value;
+            return value;
         }
     }
 

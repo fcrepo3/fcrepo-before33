@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Feed;
@@ -25,6 +23,8 @@ import org.custommonkey.xmlunit.XMLUnit;
 
 import org.junit.After;
 import org.junit.Test;
+
+import junit.framework.JUnit4TestAdapter;
 
 import fedora.client.utility.export.Export;
 import fedora.client.utility.ingest.Ingest;
@@ -58,7 +58,7 @@ public class TestCommandLineFormats
         NamespaceContext ctx = new SimpleNamespaceContext(nsMap);
         XMLUnit.setXpathNamespaceContext(ctx);
     }
-    
+
     @Override
     @After
     public void tearDown() {
@@ -76,7 +76,7 @@ public class TestCommandLineFormats
         String[] parameters = {"f ", foxml10.getAbsolutePath(),
                 FOXML1_0.uri, getHost() + ":" + getPort(),
                 getUsername(), getPassword(), getProtocol(),
-                "\"Ingest\""};
+                "\"Ingest\"", getFedoraAppServerContext()};
 
         Ingest.main(parameters);
         foxml10.delete();
@@ -106,7 +106,7 @@ public class TestCommandLineFormats
         String[] parameters = {"f ", foxml11.getAbsolutePath(),
                 FOXML1_1.uri, getHost() + ":" + getPort(),
                 getUsername(), getPassword(), getProtocol(),
-                "\"Ingest\""};
+                "\"Ingest\"", getFedoraAppServerContext()};
 
         Ingest.main(parameters);
         foxml11.delete();
@@ -136,7 +136,7 @@ public class TestCommandLineFormats
         String[] parameters = {"f ", mets.getAbsolutePath(),
                 METS_EXT1_1.uri, getHost() + ":" + getPort(),
                 getUsername(), getPassword(), getProtocol(),
-                "\"Ingest\""};
+                "\"Ingest\"", getFedoraAppServerContext()};
 
         Ingest.main(parameters);
         mets.delete();
@@ -166,7 +166,7 @@ public class TestCommandLineFormats
         String[] parameters = {"f ", mets.getAbsolutePath(),
                 METS_EXT1_0.uri, getHost() + ":" + getPort(),
                 getUsername(), getPassword(), getProtocol(),
-                "\"Ingest\""};
+                "\"Ingest\"", getFedoraAppServerContext()};
 
         Ingest.main(parameters);
         mets.delete();
@@ -196,7 +196,7 @@ public class TestCommandLineFormats
         String[] parameters = {"f ", atom.getAbsolutePath(),
                 ATOM1_1.uri, getHost() + ":" + getPort(),
                 getUsername(), getPassword(), getProtocol(),
-                "\"Ingest\""};
+                "\"Ingest\"", getFedoraAppServerContext()};
 
         Ingest.main(parameters);
         atom.delete();
@@ -222,19 +222,19 @@ public class TestCommandLineFormats
         FileOutputStream fileWriter = new FileOutputStream(atom);
         fileWriter.write(TestAPIM.demo1001ATOMZip);
         fileWriter.close();
-        
-        String[] parameters = {"f ", atom.getAbsolutePath(), 
-                ATOM_ZIP1_1.uri, getHost() + ":" + getPort(), 
-                getUsername(), getPassword(), getProtocol(), 
-                "\"Ingest\""};
-        
+
+        String[] parameters = {"f ", atom.getAbsolutePath(),
+                ATOM_ZIP1_1.uri, getHost() + ":" + getPort(),
+                getUsername(), getPassword(), getProtocol(),
+                "\"Ingest\"", getFedoraAppServerContext()};
+
         Ingest.main(parameters);
         atom.delete();
 
         try {
             byte[] objectXML = apim.getObjectXML("demo:1001");
             assertTrue(objectXML.length > 0);
-            String xmlIn = new String(objectXML, "UTF-8");            
+            String xmlIn = new String(objectXML, "UTF-8");
             assertXpathExists("foxml:digitalObject[@PID='demo:1001']", xmlIn);
             assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']", xmlIn);
             assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']", xmlIn);
@@ -244,8 +244,8 @@ public class TestCommandLineFormats
             apim.purgeObject("demo:1001", "", false);
         }
     }
-        
-    @Test    
+
+    @Test
     public void testExportFOXML10() throws Exception {
         System.out.println("Testing Export in FOXML 1.0 format");
         apim.ingest(TestAPIM.demo998FOXMLObjectXML, FOXML1_1.uri, "Ingest for test");
@@ -254,7 +254,7 @@ public class TestCommandLineFormats
             File temp = File.createTempFile("temp", "");
             String[] parameters = {getHost() + ":" + getPort(),
                     getUsername(), getPassword(), "demo:998", FOXML1_0.uri,
-                    "public", temp.getParent(), "http"};
+                    "public", temp.getParent(), "http", getFedoraAppServerContext()};
 
             Export.main(parameters);
             File foxml10 = new File(temp.getParent() + "/demo_998.xml");
@@ -285,7 +285,7 @@ public class TestCommandLineFormats
             File temp = File.createTempFile("temp", "");
             String[] parameters = {getHost() + ":" + getPort(),
                     getUsername(), getPassword(), "demo:998", FOXML1_1.uri,
-                    "public", temp.getParent(), "http"};
+                    "public", temp.getParent(), "http", getFedoraAppServerContext()};
 
             Export.main(parameters);
             File foxml11 = new File(temp.getParent() + "/demo_998.xml");
@@ -316,7 +316,7 @@ public class TestCommandLineFormats
             File temp = File.createTempFile("temp", "");
             String[] parameters = {getHost() + ":" + getPort(),
                     getUsername(), getPassword(), "demo:998", METS_EXT1_1.uri,
-                    "public", temp.getParent(), "http"};
+                    "public", temp.getParent(), "http", getFedoraAppServerContext()};
 
             Export.main(parameters);
             File mets = new File(temp.getParent() + "/demo_998.xml");
@@ -345,7 +345,7 @@ public class TestCommandLineFormats
             File temp = File.createTempFile("temp", "");
             String[] parameters = {getHost() + ":" + getPort(),
                     getUsername(), getPassword(), "demo:998", METS_EXT1_0.uri,
-                    "public", temp.getParent(), "http"};
+                    "public", temp.getParent(), "http", getFedoraAppServerContext()};
 
             Export.main(parameters);
             File mets = new File(temp.getParent() + "/demo_998.xml");
@@ -374,7 +374,7 @@ public class TestCommandLineFormats
             File temp = File.createTempFile("temp", "");
             String[] parameters = {getHost() + ":" + getPort(),
                     getUsername(), getPassword(), "demo:998", ATOM1_1.uri,
-                    "public", temp.getParent(), "http"};
+                    "public", temp.getParent(), "http", getFedoraAppServerContext()};
 
             Export.main(parameters);
             File atom = new File(temp.getParent() + "/demo_998.xml");
@@ -403,12 +403,12 @@ public class TestCommandLineFormats
         try {
             File temp = File.createTempFile("temp", "");
             String[] parameters = {getHost() + ":" + getPort(),
-                    getUsername(), getPassword(), "demo:998", ATOM_ZIP1_1.uri,  
-                    "archive", temp.getParent(), "http"};
-            
+                    getUsername(), getPassword(), "demo:998", ATOM_ZIP1_1.uri,
+                    "archive", temp.getParent(), "http", getFedoraAppServerContext()};
+
             Export.main(parameters);
             File atom = new File(temp.getParent() + "/demo_998.zip");
-            
+
             ZipInputStream zip = new ZipInputStream(new FileInputStream(atom));
             ZipEntry entry;
             int count = 0;
@@ -428,14 +428,14 @@ public class TestCommandLineFormats
             }
             assertEquals("Expected exactly 1 manifest file", 1, count);
             zip.close();
-            
+
             temp.delete();
             atom.delete();
         } finally {
             apim.purgeObject("demo:998", "Purge test object", false);
         }
-    }   
-    
+    }
+
     public static junit.framework.Test suite() {
         return new JUnit4TestAdapter(TestCommandLineFormats.class);
     }

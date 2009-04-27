@@ -131,6 +131,12 @@ public class FedoraHome {
                     .getValue(InstallOptions.FEDORA_SERVERHOST));
         }
 
+        if (_opts.getValue(InstallOptions.FEDORA_APP_SERVER_CONTEXT) != null) {
+            props.put("server:fedoraAppServerContext", _opts
+                    .getValue(InstallOptions.FEDORA_APP_SERVER_CONTEXT));
+        }
+
+
         String database = _opts.getValue(InstallOptions.DATABASE);
         String dbPoolName = "";
         String backslashIsEscape = "true";

@@ -15,6 +15,8 @@ import org.apache.axis.types.NonNegativeInteger;
 
 import fedora.client.FedoraClient;
 
+import fedora.common.Constants;
+
 import fedora.server.access.FedoraAPIA;
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
@@ -23,6 +25,7 @@ import fedora.server.types.gen.ObjectFields;
 
 /**
  * @author Chris Wilper
+ * @version $Id$
  */
 public class AutoFinder {
 
@@ -71,6 +74,7 @@ public class AutoFinder {
         System.err.println("      fields - Space-delimited list of fields.");
         System.err.println("      phrase - Phrase to search for in any field (with ? and * wildcards)");
         System.err.println("    protocol - The protocol to communication with the Fedora server (http|https)");
+        System.err.println("context name - Optional, the name of the context the Fedora server is deployed in (the default is fedora)");
     }
 
     public static void printValue(String name, String value) {
@@ -88,10 +92,13 @@ public class AutoFinder {
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length != 7) {
-            AutoFinder.showUsage("Seven arguments required.");
+
+        if (args.length < 7 || args.length > 8) {
+            AutoFinder.showUsage("Seven or eight arguments required.");
             System.exit(0);
         }
+
+        String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
 
         String host = args[0];
         int port = Integer.parseInt(args[1]);
@@ -101,9 +108,13 @@ public class AutoFinder {
         String phrase = args[5];
         String protocol = args[6];
 
+        if (args.length == 8){
+            context = args[7];
+        }
+
         try {
             // FIXME:  Get around hardcoding the path in the baseURL
-            String baseURL = protocol + "://" + host + ":" + port + "/fedora";
+            String baseURL = protocol + "://" + host + ":" + port + "/" + context;
             FedoraClient fc = new FedoraClient(baseURL, user, pass);
             AutoFinder finder = new AutoFinder(fc.getAPIA());
 

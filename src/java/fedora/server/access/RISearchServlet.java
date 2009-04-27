@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -29,6 +29,11 @@ import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.resourceIndex.ResourceIndex;
 import fedora.server.security.Authorization;
 
+/**
+ * RISearchServlet
+ *
+ * @version $Id$
+ */
 public class RISearchServlet
         extends TrippiServlet {
 
@@ -123,21 +128,21 @@ public class RISearchServlet
 
     @Override
     public String getIndexStylesheetLocation() {
-        return "/fedora/ri/index.xsl";
+        return "ri/index.xsl";
     }
 
     @Override
     public String getFormStylesheetLocation() {
-        return "/fedora/ri/form.xsl";
+        return "ri/form.xsl";
     }
 
     @Override
     public String getErrorStylesheetLocation() {
-        return "/fedora/ri/error.xsl";
+        return "ri/error.xsl";
     }
 
     @Override
     public String getContext(String origContext) {
-        return "/fedora/ri";
+        return "ri";
     }
 }

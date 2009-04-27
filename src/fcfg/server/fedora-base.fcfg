@@ -25,6 +25,12 @@
 		<comment>Defines the host name for the Fedora server, as seen from the 
 		outside world.</comment>
 	</param>
+	<param name="fedoraAppServerContext" value="fedora">
+		<comment>Defines the context name for the Fedora server within the 
+		application server. If set to eg "myfedora" the URL for Fedora will result
+		in http[s]://fedoraServerHost[:fedoraServerPort]/myfedora.
+		</comment>
+	</param>
 	<param name="datastreamExpirationLimit" value="300">
 		<comment>Controls the size of the datastream mediation hash by removing 
 		entries outside the specified threshold. The value is specified in 

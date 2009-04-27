@@ -13,12 +13,13 @@ import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 
 import fedora.client.FedoraClient;
+
 import fedora.server.config.ServerConfiguration;
 import fedora.server.config.ServerConfigurationParser;
 
 /**
  * Base class for Fedora Test Cases
- * 
+ *
  * @author Edwin Shin
  */
 public abstract class FedoraTestCase
@@ -30,7 +31,8 @@ public abstract class FedoraTestCase
     public FedoraTestCase() {
         super();
         TransformerFactory factory = XMLUnit.getTransformerFactory();
-        if (factory.getClass().getName().equals("net.sf.saxon.TransformerFactoryImpl")) {
+        if (factory.getClass().getName()
+                .equals("net.sf.saxon.TransformerFactoryImpl")) {
             factory.setAttribute(FeatureKeys.VERSION_WARNING, Boolean.FALSE);
         }
     }
@@ -38,7 +40,8 @@ public abstract class FedoraTestCase
     public FedoraTestCase(String name) {
         super(name);
         TransformerFactory factory = XMLUnit.getTransformerFactory();
-        if (factory.getClass().getName().equals("net.sf.saxon.TransformerFactoryImpl")) {
+        if (factory.getClass().getName()
+                .equals("net.sf.saxon.TransformerFactoryImpl")) {
             factory.setAttribute(FeatureKeys.VERSION_WARNING, Boolean.FALSE);
         }
     }
@@ -53,12 +56,21 @@ public abstract class FedoraTestCase
         }
     }
 
+    public static String getDemoBaseURL() {
+        if (System.getProperty("fedora.baseURLDemo") != null) {
+            return System.getProperty("fedora.baseURLDemo");
+        } else {
+            return getProtocol() + "://" + getHost() + ":" + getPort() + "/"
+                    + getDemoAppServerContext();
+        }
+    }
+
     public static String getBaseURL() {
         if (System.getProperty("fedora.baseURL") != null) {
             return System.getProperty("fedora.baseURL");
         } else {
-            return getProtocol() + "://" + getHost() + ":" + getPort()
-                    + "/fedora";
+            return getProtocol() + "://" + getHost() + ":" + getPort() + "/"
+                    + getFedoraAppServerContext();
         }
     }
 
@@ -79,6 +91,18 @@ public abstract class FedoraTestCase
                             .getValue();
         }
         return port;
+    }
+
+    public static String getFedoraAppServerContext() {
+        return getServerConfiguration().getParameter("fedoraAppServerContext")
+                .getValue();
+    }
+
+    public static String getDemoAppServerContext() {
+        return getServerConfiguration()
+                .getParameter("fedoraDemoAppServerContext") != null ? getServerConfiguration()
+                .getParameter("fedoraDemoAppServerContext").getValue()
+                : "fedora-demo";
     }
 
     // hack to dynamically set protocol based on settings in beSecurity

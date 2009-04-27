@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -13,6 +13,8 @@ import java.io.FileReader;
 import fedora.client.FedoraClient;
 import fedora.client.utility.ingest.AutoIngestor;
 
+import fedora.common.Constants;
+
 import fedora.oai.sample.RandomDCMetadataFactory;
 
 import fedora.server.access.FedoraAPIA;
@@ -20,6 +22,7 @@ import fedora.server.management.FedoraAPIM;
 
 /**
  * @author Chris Wilper
+ * @version $Id$
  */
 public class MassIngest {
 
@@ -77,13 +80,13 @@ public class MassIngest {
     public static void showUsage(String message) {
         System.out.println("ERROR: " + message);
         System.out
-                .println("Usage: MassIngest host port username password templateFile dictionaryFile format numTimes protocol");
+                .println("Usage: MassIngest host port username password templateFile dictionaryFile format numTimes protocol [context]");
     }
 
     public static void main(String[] args) throws Exception {
         try {
-            if (args.length != 9) {
-                MassIngest.showUsage("You must provide nine arguments.");
+            if (args.length < 9 || args.length > 10) {
+                MassIngest.showUsage("You must provide nine or ten arguments.");
             } else {
                 String hostName = args[0];
                 int portNum = Integer.parseInt(args[1]);
@@ -94,23 +97,25 @@ public class MassIngest {
                 // third arg==file... must exist
                 File f = new File(args[4]);
                 String protocol = args[8];
+                String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
+                if (args.length == 10 && !args[9].equals("")){
+                    context = args[9];
+                }
+
 
                 // ******************************************
                 // NEW: use new client utility class
-                // FIXME:  Get around hardcoding the path in the baseURL
                 String baseURL =
-                        protocol + "://" + hostName + ":" + portNum + "/fedora";
+                        protocol + "://" + hostName + ":" + portNum + "/"
+                                + context;
                 FedoraClient fc = new FedoraClient(baseURL, username, password);
                 APIA = fc.getAPIA();
                 APIM = fc.getAPIM();
                 //*******************************************
                 AutoIngestor autoIngestor = new AutoIngestor(APIA, APIM);
-                MassIngest m =
-                        new MassIngest(autoIngestor,
-                                       f,
-                                       dictFile,
-                                       format,
-                                       Integer.parseInt(args[7]));
+
+                new MassIngest(autoIngestor, f, dictFile, format, Integer
+                        .parseInt(args[7]));
             }
         } catch (Exception e) {
             MassIngest.showUsage(e.getClass().getName()

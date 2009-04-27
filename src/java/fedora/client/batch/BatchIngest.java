@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -22,7 +22,7 @@ import fedora.server.management.FedoraAPIM;
 
 /**
  * Batch Ingest.
- * 
+ *
  * @author Bill Niebel
  */
 class BatchIngest
@@ -37,6 +37,8 @@ class BatchIngest
     String username;
 
     String password;
+
+    String context = "fedora";
 
     FedoraAPIA APIA;
 
@@ -61,6 +63,7 @@ class BatchIngest
         String serverPortAsString = optValues.getProperty(BatchTool.SERVERPORT);
         username = optValues.getProperty(BatchTool.USERNAME);
         password = optValues.getProperty(BatchTool.PASSWORD);
+        context = optValues.getProperty(BatchTool.CONTEXT);
         objectFormat = optValues.getProperty(BatchTool.OBJECTFORMAT);
         if (!BatchTool.argOK(objectsPath)) {
             System.err.println("objectsPath required");
@@ -103,12 +106,11 @@ class BatchIngest
 
         // ******************************************
         // NEW: use new client utility class for SOAP stubs
-        // FIXME:  Get around hardcoding the path in the baseURL
-        String baseURL = protocol + "://" + host + ":" + port + "/fedora";
+        String baseURL = protocol + "://" + host + ":" + port + "/" + context;
         FedoraClient fc = new FedoraClient(baseURL, username, password);
         APIA = fc.getAPIA();
         APIM = fc.getAPIM();
-        //*******************************************	
+        //*******************************************
 
     }
 

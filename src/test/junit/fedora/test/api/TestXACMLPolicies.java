@@ -31,11 +31,11 @@ import fedora.test.FedoraServerTestCase;
 
 /**
  * Tests involving XACML policies, for API-A and API-M.
- * 
+ *
  * Note: Although these tests can run when API-A AuthN is off, for the best
  * coverage, make sure the server is configured to authenticate for API-A
  * access.
- * 
+ *
  * @author Edwin Shin
  */
 public class TestXACMLPolicies
@@ -79,7 +79,7 @@ public class TestXACMLPolicies
         }
     }
 
-    private boolean canWrite(FedoraClient client, String pid) 
+    private boolean canWrite(FedoraClient client, String pid)
             throws Exception {
         FedoraAPIM apim = client.getAPIM();
         try {
@@ -95,9 +95,9 @@ public class TestXACMLPolicies
         String dateOfSecondSuccess = null;
         String dateOfThirdSuccess = null;
         String dateOfFourthSuccess = null;
-        String URL1 = getBaseURL() + "-demo/simple-image-demo/col1.jpg";
-        String URL2 = getBaseURL() + "-demo/simple-image-demo/col2.jpg";
-        String URL3 = getBaseURL() + "-demo/simple-image-demo/col3.jpg";
+        String URL1 = getDemoBaseURL() + "/simple-image-demo/col1.jpg";
+        String URL2 = getDemoBaseURL() + "/simple-image-demo/col2.jpg";
+        String URL3 = getDemoBaseURL() + "/simple-image-demo/col3.jpg";
         Class modDSArgs[] =
                 {String.class, String.class, String[].class, String.class,
                         String.class, String.class, String.class, String.class,
@@ -695,9 +695,9 @@ public class TestXACMLPolicies
         if (sep == null) {
             sep = "\n";
         }
-        String data = "<?xml version='1.0' ?>  " + sep 
-                + "<fedora-users>" + sep 
-                + "    <user name=\"" + getUsername() + "\" password=\"" + getPassword() + "\">" + sep 
+        String data = "<?xml version='1.0' ?>  " + sep
+                + "<fedora-users>" + sep
+                + "    <user name=\"" + getUsername() + "\" password=\"" + getPassword() + "\">" + sep
                 + "      <attribute name=\"fedoraRole\">" + sep
                 + "        <value>administrator</value>" + sep
                 + "      </attribute>" + sep
@@ -727,11 +727,11 @@ public class TestXACMLPolicies
                 + "        <value>roleC</value>" + sep
                 + "      </attribute>" + sep
                 + "    </user>" + sep
-                + "    <user name=\"testuserroleC2\" password=\"testuserroleC2\">" + sep 
+                + "    <user name=\"testuserroleC2\" password=\"testuserroleC2\">" + sep
                 + "      <attribute name=\"fedoraRole\">" + sep
                 + "        <value>roleC</value>" + sep
                 + "        <value>roleUntrusted</value>" + sep
-                + "      </attribute>" + sep 
+                + "      </attribute>" + sep
                 + "    </user>" + sep
                 + "  </fedora-users>";
         try {
@@ -745,6 +745,7 @@ public class TestXACMLPolicies
         }
     }
 
+    @Override
     public void setUp() throws Exception {
 
         System.out.println("setting Up XACML test");
@@ -851,7 +852,7 @@ public class TestXACMLPolicies
             throw new RuntimeException("Failure adding multi-owner object", e);
         }
     }
-    
+
     private void removeMultiOwnerObject() {
         try {
             admin.getAPIM().purgeObject("demo:MultiOwnerObject", "",
@@ -861,6 +862,7 @@ public class TestXACMLPolicies
         }
     }
 
+    @Override
     public void tearDown() {
         restoreFedoraUsersFile();
         deleteJunitPolicies();

@@ -45,16 +45,14 @@ import fedora.server.types.gen.ObjectFields;
 import fedora.server.utilities.StreamUtility;
 
 /**
- * Parses a stream of batch modify directives and makes appropriate calls to
- * the a Fedora server.
- *
- * The parsing is configured to parse directives in the file sequentially. Logs
- * are written for each successful and failed directive that is processed.
- * Recoverable(non-fatal) errors are written to the log file and processing
- * continues. Catastrophic errors will cause parsing to halt and set the count
- * of failed directives to -1 indicating that parsing was halted prior to the
- * end of the file. In this case the logs will contain all directives processed
- * up to the point of failure.
+ * Parses a stream of batch modify directives and makes appropriate calls to the
+ * a Fedora server. The parsing is configured to parse directives in the file
+ * sequentially. Logs are written for each successful and failed directive that
+ * is processed. Recoverable(non-fatal) errors are written to the log file and
+ * processing continues. Catastrophic errors will cause parsing to halt and set
+ * the count of failed directives to -1 indicating that parsing was halted prior
+ * to the end of the file. In this case the logs will contain all directives
+ * processed up to the point of failure.
  *
  * @author Ross Wayland
  */
@@ -111,16 +109,16 @@ public class BatchModifyParser
      * Constructor allows this class to initiate the parsing.
      * </p>
      *
-     * @param UPLOADER -
-     *        An instance of Uploader.
-     * @param APIM -
-     *        An instance of FedoraAPIM.
-     * @param APIA -
-     *        An instance of Fedora APIA.
-     * @param in -
-     *        An input stream containing the xml to be parsed.
-     * @param out -
-     *        A print stream used for writing log info.
+     * @param UPLOADER
+     *        - An instance of Uploader.
+     * @param APIM
+     *        - An instance of FedoraAPIM.
+     * @param APIA
+     *        - An instance of Fedora APIA.
+     * @param in
+     *        - An input stream containing the xml to be parsed.
+     * @param out
+     *        - A print stream used for writing log info.
      */
     public BatchModifyParser(Uploader UPLOADER,
                              FedoraAPIM APIM,
@@ -215,7 +213,8 @@ public class BatchModifyParser
                                     StringBuffer out) {
         out.append("<" + qName);
         for (int i = 0; i < a.getLength(); i++) {
-            out.append(" " + a.getQName(i) + "=\"" + StreamUtility.enc(a.getValue(i)) + "\"");
+            out.append(" " + a.getQName(i) + "=\""
+                    + StreamUtility.enc(a.getValue(i)) + "\"");
         }
         out.append(">");
     }
@@ -607,7 +606,11 @@ public class BatchModifyParser
             m_dsXMLBuffer = new StringBuffer();
         } else {
             if (m_inXMLMetadata) {
-                appendElementStart(namespaceURI, localName, qName, attrs, m_dsXMLBuffer);
+                appendElementStart(namespaceURI,
+                                   localName,
+                                   qName,
+                                   attrs,
+                                   m_dsXMLBuffer);
             }
         }
     }
@@ -620,7 +623,8 @@ public class BatchModifyParser
             if (namespaceURI.equalsIgnoreCase(BATCH_MODIFY.uri)
                     && localName.equals("xmlData")) {
                 try {
-                    m_ds.xmlContent = m_dsXMLBuffer.toString().getBytes("UTF-8");
+                    m_ds.xmlContent =
+                            m_dsXMLBuffer.toString().getBytes("UTF-8");
                 } catch (UnsupportedEncodingException e) {
                     // won't happen
                 }
@@ -1038,14 +1042,14 @@ public class BatchModifyParser
      * Write a log of what happened when a directive fails.
      * <p>
      *
-     * @param sourcePID -
-     *        The PID of the object being processed.
-     * @param directive -
-     *        The name of the directive being processed.
-     * @param e -
-     *        The Exception that was thrown.
-     * @param msg -
-     *        A message providing additional info if no Exception was thrown.
+     * @param sourcePID
+     *        - The PID of the object being processed.
+     * @param directive
+     *        - The name of the directive being processed.
+     * @param e
+     *        - The Exception that was thrown.
+     * @param msg
+     *        - A message providing additional info if no Exception was thrown.
      */
     private static void logFailedDirective(String sourcePID,
                                            String directive,
@@ -1070,10 +1074,10 @@ public class BatchModifyParser
      * Write a log of what happened when there is a parsing error.
      * </p>
      *
-     * @param e -
-     *        The Exception that was thrown.
-     * @param msg -
-     *        A message indicating additional info if no Exception was thrown.
+     * @param e
+     *        - The Exception that was thrown.
+     * @param msg
+     *        - A message indicating additional info if no Exception was thrown.
      */
     private static void logParserError(Exception e, String msg) {
         out.println("  <parserError>");
@@ -1094,12 +1098,12 @@ public class BatchModifyParser
      * Write a log when a directive is successfully processed.
      * </p>
      *
-     * @param sourcePID -
-     *        The PID of the object processed.
-     * @param directive -
-     *        The name of the directive processed.
-     * @param msg -
-     *        A message.
+     * @param sourcePID
+     *        - The PID of the object processed.
+     * @param directive
+     *        - The name of the directive processed.
+     * @param msg
+     *        - A message.
      */
     private static void logSucceededDirective(String sourcePID,
                                               String directive,
@@ -1218,19 +1222,24 @@ public class BatchModifyParser
      */
     public static void main(String[] args) {
 
-        if (args.length == 5) {
+        if (args.length == 5 || args.length == 6) {
             String host = args[0];
             int port = new Integer(args[1]).intValue();
             String user = args[2];
             String pass = args[3];
             String protocol = args[4];
 
+            String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
+            if (args.length == 6 && !args[5].equals("")) {
+                context = args[5];
+            }
+
             PrintStream logFile;
             FedoraAPIM APIM;
             FedoraAPIA APIA;
 
             try {
-                UPLOADER = new Uploader(host, port, user, pass);
+                UPLOADER = new Uploader(host, port, context, user, pass);
                 logFile =
                         new PrintStream(new FileOutputStream("C:\\zlogfile.txt"));
                 //APIM = fedora.client.APIMStubFactory.getStub(protocol, host, port, user, pass);
@@ -1238,9 +1247,8 @@ public class BatchModifyParser
 
                 // ******************************************
                 // NEW: use new client utility class
-                // FIXME:  Get around hardcoding the path in the baseURL
                 String baseURL =
-                        protocol + "://" + host + ":" + port + "/fedora";
+                        protocol + "://" + host + ":" + port + "/" + context;
                 FedoraClient fc = new FedoraClient(baseURL, user, pass);
                 APIA = fc.getAPIA();
                 APIM = fc.getAPIM();

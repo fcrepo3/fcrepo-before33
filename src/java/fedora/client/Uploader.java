@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -20,13 +20,15 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 
 import org.apache.log4j.Logger;
 
+import fedora.common.Constants;
+
 import fedora.server.utilities.StreamUtility;
 
 /**
  * A client to a Fedora server's upload facility, accessed via a
  * basic-authenticated multipart POST to the server. See
  * server.management.UploadServlet for protocol details.
- * 
+ *
  * @author Chris Wilper
  */
 public class Uploader {
@@ -46,15 +48,19 @@ public class Uploader {
     /**
      * Construct an uploader to a certain repository as a certain user.
      */
-    public Uploader(String host, int port, String user, String pass)
+    public Uploader(String host,
+                    int port,
+                    String context,
+                    String user,
+                    String pass)
             throws IOException {
         m_uploadURL =
-                Administrator.getProtocol() + "://" + host + ":" + port
-                        + "/fedora/management/upload";
+                Administrator.getProtocol() + "://" + host + ":" + port + "/"
+                        + context + "/management/upload";
         m_creds = new UsernamePasswordCredentials(user, pass);
         String baseURL =
-                Administrator.getProtocol() + "://" + host + ":" + port
-                        + "/fedora";
+                Administrator.getProtocol() + "://" + host + ":" + port + "/"
+                        + context;
         fc = new FedoraClient(baseURL, user, pass);
     }
 
@@ -64,14 +70,15 @@ public class Uploader {
     public Uploader(String protocol,
                     String host,
                     int port,
+                    String context,
                     String user,
                     String pass)
             throws IOException {
         m_uploadURL =
-                protocol + "://" + host + ":" + port
-                        + "/fedora/management/upload";
+                protocol + "://" + host + ":" + port + context + "/"
+                        + "/management/upload";
         m_creds = new UsernamePasswordCredentials(user, pass);
-        String baseURL = protocol + "://" + host + ":" + port + "/fedora";
+        String baseURL = protocol + "://" + host + ":" + port + "/" + context;
         fc = new FedoraClient(baseURL, user, pass);
     }
 
@@ -183,23 +190,34 @@ public class Uploader {
      */
     public static void main(String[] args) {
         try {
-            if (args.length == 5) {
+            if (args.length == 5 || args.length == 6) {
+                String protocol = args[0];
+                int port = Integer.parseInt(args[1]);
+                String user = args[2];
+                String password = args[3];
+                String fileName = args[4];
+
+                String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
+
+                if (args.length == 6 && !args[5].equals("")) {
+                    context = args[5];
+                }
+
                 Uploader uploader =
-                        new Uploader(args[0],
-                                     Integer.parseInt(args[1]),
-                                     args[2],
-                                     args[3]);
-                File f = new File(args[4]);
+                        new Uploader(protocol, port, context, user, password);
+                File f = new File(fileName);
                 System.out.println(uploader.upload(new FileInputStream(f)));
                 System.out.println(uploader.upload(f));
                 uploader =
-                        new Uploader(args[0],
-                                     Integer.parseInt(args[1]),
-                                     args[2],
-                                     args[3] + "test");
+                        new Uploader(protocol,
+                                     port,
+                                     context,
+                                     user + "test",
+                                     password);
                 System.out.println(uploader.upload(f));
             } else {
-                System.err.println("Usage: Uploader host port user pass file");
+                System.err
+                        .println("Usage: Uploader host port user pass file [CTX]");
             }
         } catch (Exception e) {
             System.err.println("ERROR: " + e.getMessage());

@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -35,6 +35,8 @@ public class ServerUtility {
     public static final String FEDORA_SERVER_HOST = "fedoraServerHost";
 
     public static final String FEDORA_SERVER_PORT = "fedoraServerPort";
+
+    public static final String FEDORA_SERVER_CONTEXT = "fedoraAppServerContext";
 
     public static final String FEDORA_REDIRECT_PORT = "fedoraRedirectPort";
 
@@ -86,7 +88,7 @@ public class ServerUtility {
         }
         return protocol + "://"
                 + CONFIG.getParameter(FEDORA_SERVER_HOST).getValue() + ":"
-                + port + "/fedora";
+                + port + "/" + CONFIG.getParameter(FEDORA_SERVER_CONTEXT).getValue();
     }
 
     /**
@@ -127,14 +129,16 @@ public class ServerUtility {
                 CONFIG.getParameter(FEDORA_SERVER_PORT).getValue();
         String fedoraServerRedirectPort =
                 CONFIG.getParameter(FEDORA_REDIRECT_PORT).getValue();
+        String fedoraAppServerContext =
+                CONFIG.getParameter(FEDORA_SERVER_CONTEXT).getValue();
 
         // Check for URLs that are callbacks to the Fedora server
         if (url.startsWith("http://" + fedoraServerHost + ":"
-                + fedoraServerPort + "/fedora/")
-                || url.startsWith("http://" + fedoraServerHost + "/fedora/")
+                + fedoraServerPort + "/" + fedoraAppServerContext + "/")
+                || url.startsWith("http://" + fedoraServerHost + "/" + fedoraAppServerContext + "/")
                 || url.startsWith("https://" + fedoraServerHost + ":"
-                        + fedoraServerRedirectPort + "/fedora/")
-                || url.startsWith("https://" + fedoraServerHost + "/fedora/")) {
+                        + fedoraServerRedirectPort + "/" + fedoraAppServerContext + "/")
+                || url.startsWith("https://" + fedoraServerHost + "/" + fedoraAppServerContext + "/")) {
             LOG.debug("URL was Fedora-to-Fedora callback: " + url);
             return true;
         } else {

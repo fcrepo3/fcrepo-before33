@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -67,7 +67,8 @@ import fedora.utilities.XmlTransformUtility;
  * <ol>
  * <li>GetDissemination URL syntax:
  * <p>
- * protocol://hostname:port/fedora/get/PID/sDefPID/methodName[/dateTime][?parmArray]
+ * protocol://hostname:port/fedora/get/PID/sDefPID/methodName[/dateTime][?
+ * parmArray]
  * </p>
  * <p>
  * This syntax requests a dissemination of the specified object using the
@@ -82,8 +83,8 @@ import fedora.utilities.XmlTransformUtility;
  * <li>fedora - required path name for the Fedora access service.</li>
  * <li>get - required path name for the Fedora service.</li>
  * <li>PID - required persistent idenitifer of the digital object.</li>
- * <li>sDefPID - required persistent identifier of the service definition
- * object to which the digital object subscribes.</li>
+ * <li>sDefPID - required persistent identifier of the service definition object
+ * to which the digital object subscribes.</li>
  * <li>methodName - required name of the method to be executed.</li>
  * <li>dateTime - optional dateTime value indicating dissemination of a version
  * of the digital object at the specified point in time.
@@ -122,8 +123,7 @@ import fedora.utilities.XmlTransformUtility;
  * </p>
  * This syntax requests a datastream dissemination for the specified digital
  * object. It is used to return the contents of a datastream.
- * <p>
- * </li>
+ * <p></li>
  * <ul>
  * <li>protocol - either http or https.</li>
  * <li>hostname - required hostname of the Fedora server.</li>
@@ -136,7 +136,7 @@ import fedora.utilities.XmlTransformUtility;
  * of the digital object at the specified point in time.
  * </ul>
  * </ol>
- * 
+ *
  * @author Ross Wayland
  */
 public class FedoraAccessServlet
@@ -172,7 +172,7 @@ public class FedoraAccessServlet
      * Process Fedora Access Request. Parse and validate the servlet input
      * parameters and then execute the specified request.
      * </p>
-     * 
+     *
      * @param request
      *        The servlet request.
      * @param response
@@ -182,6 +182,7 @@ public class FedoraAccessServlet
      * @throws IOException
      *         If an error occurrs with an input or output operation.
      */
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String PID = null;
@@ -260,9 +261,11 @@ public class FedoraAccessServlet
                                 + message);
                         /*
                          * commented out for exception.jsp test
-                         * response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                         * response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                         * message); return; commented out for exception.jsp
+                         * response.setStatus
+                         * (HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                         * response
+                         * .sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR
+                         * , message); return; commented out for exception.jsp
                          * test
                          */
                     }
@@ -309,9 +312,11 @@ public class FedoraAccessServlet
                                 + message);
                         /*
                          * commented out for exception.jsp test
-                         * response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                         * response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                         * message); return; commented out for exception.jsp
+                         * response.setStatus
+                         * (HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                         * response
+                         * .sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR
+                         * , message); return; commented out for exception.jsp
                          * test
                          */
                     }
@@ -346,9 +351,11 @@ public class FedoraAccessServlet
                             + message);
                     /*
                      * commented out for exception.jsp test
-                     * response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                     * response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                     * message); return; commented out for exception.jsp test
+                     * response.setStatus(HttpServletResponse
+                     * .SC_INTERNAL_SERVER_ERROR);
+                     * response.sendError(HttpServletResponse
+                     * .SC_INTERNAL_SERVER_ERROR, message); return; commented
+                     * out for exception.jsp test
                      */
                 }
                 asOfDateTime = versDateTime;
@@ -372,9 +379,11 @@ public class FedoraAccessServlet
                 throw new ServletException("from FedoraAccessServlet" + message);
                 /*
                  * commented out for exception.jsp test
-                 * response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                 * response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                 * message); return; commented out for exception.jsp test
+                 * response.setStatus(HttpServletResponse
+                 * .SC_INTERNAL_SERVER_ERROR);
+                 * response.sendError(HttpServletResponse
+                 * .SC_INTERNAL_SERVER_ERROR, message); return; commented out
+                 * for exception.jsp test
                  */
             }
         } else {
@@ -386,7 +395,8 @@ public class FedoraAccessServlet
 
         // Separate out servlet parameters from method parameters
         Hashtable<String, String> h_userParms = new Hashtable<String, String>();
-        for (Enumeration<?> e = request.getParameterNames(); e.hasMoreElements();) {
+        for (Enumeration<?> e = request.getParameterNames(); e
+                .hasMoreElements();) {
             String name = URLDecoder.decode((String) e.nextElement(), "UTF-8");
             if (isGetObjectProfileRequest && name.equalsIgnoreCase("xml")) {
                 xml = new Boolean(request.getParameter(name)).booleanValue();
@@ -560,9 +570,12 @@ public class FedoraAccessServlet
                                      "access/viewObjectProfile.xslt");
                     TransformerFactory factory =
                             XmlTransformUtility.getTransformerFactory();
+
                     Templates template =
                             factory.newTemplates(new StreamSource(xslFile));
                     Transformer transformer = template.newTransformer();
+                    transformer.setParameter("fedora", context
+                            .getEnvironmentValue(FEDORA_APP_CONTEXT_NAME));
                     transformer.transform(new StreamSource(pr),
                                           new StreamResult(out));
                 }
@@ -628,15 +641,15 @@ public class FedoraAccessServlet
             // Return MIMETypedStream back to browser client
             if (dissemination.MIMEType
                     .equalsIgnoreCase("application/fedora-redirect")) {
-                // A MIME type of application/fedora-redirect signals that 
-                // the MIMETypedStream returned from the dissemination is 
-                // a special Fedora-specific MIME type. In this case, the 
-                // Fedora server will not proxy the datastream, but 
-                // instead perform a simple redirect to the URL contained 
-                // within the body of the MIMETypedStream. This special 
+                // A MIME type of application/fedora-redirect signals that
+                // the MIMETypedStream returned from the dissemination is
+                // a special Fedora-specific MIME type. In this case, the
+                // Fedora server will not proxy the datastream, but
+                // instead perform a simple redirect to the URL contained
+                // within the body of the MIMETypedStream. This special
                 // MIME type is used primarily for streaming media where
-                // it is more efficient to stream the data directly 
-                // between the streaming server and the browser client 
+                // it is more efficient to stream the data directly
+                // between the streaming server and the browser client
                 // rather than proxy it through the Fedora server.
 
                 BufferedReader br =
@@ -694,7 +707,7 @@ public class FedoraAccessServlet
      * This method calls the Fedora Access Subsystem to retrieve a MIME-typed
      * stream corresponding to the dissemination request.
      * </p>
-     * 
+     *
      * @param context
      *        The read only context of the request.
      * @param PID
@@ -756,15 +769,15 @@ public class FedoraAccessServlet
             // Return MIMETypedStream back to browser client
             if (dissemination.MIMEType
                     .equalsIgnoreCase("application/fedora-redirect")) {
-                // A MIME type of application/fedora-redirect signals that 
-                // the MIMETypedStream returned from the dissemination is 
-                // a special Fedora-specific MIME type. In this case, the 
-                // Fedora server will not proxy the datastream, but 
-                // instead perform a simple redirect to the URL contained 
-                // within the body of the MIMETypedStream. This special 
+                // A MIME type of application/fedora-redirect signals that
+                // the MIMETypedStream returned from the dissemination is
+                // a special Fedora-specific MIME type. In this case, the
+                // Fedora server will not proxy the datastream, but
+                // instead perform a simple redirect to the URL contained
+                // within the body of the MIMETypedStream. This special
                 // MIME type is used primarily for streaming media where
                 // it is more efficient to stream the data directly between
-                // the streaming server and the browser client rather than 
+                // the streaming server and the browser client rather than
                 // proxy it through the Fedora server.
 
                 BufferedReader br =
@@ -835,7 +848,7 @@ public class FedoraAccessServlet
          * <p>
          * Constructor for ProfileSerializeThread.
          * </p>
-         * 
+         *
          * @param PID
          *        The persistent identifier of the specified digital object.
          * @param objProfile
@@ -861,6 +874,7 @@ public class FedoraAccessServlet
          * This method executes the thread.
          * </p>
          */
+        @Override
         public void run() {
             if (pw != null) {
                 try {
@@ -885,13 +899,13 @@ public class FedoraAccessServlet
                     pw.write("<objOwnerId>"
                             + StreamUtility.enc(objProfile.objectOwnerId)
                             + "</objOwnerId>");
-                    
+
                     pw.write("<objModels>\n");
                     for (String model : objProfile.objectModels) {
                         pw.write("<model>" + model + "</model>\n");
                     }
                     pw.write("</objModels>");
-                    
+
                     String cDate =
                             DateUtility
                                     .convertDateToString(objProfile.objectCreateDate);
@@ -900,7 +914,7 @@ public class FedoraAccessServlet
                             DateUtility
                                     .convertDateToString(objProfile.objectLastModDate);
                     pw.write("<objLastModDate>" + mDate + "</objLastModDate>");;
-                    
+
                     pw.write("<objDissIndexViewURL>"
                             + StreamUtility.enc(objProfile.dissIndexViewURL)
                             + "</objDissIndexViewURL>");
@@ -929,7 +943,7 @@ public class FedoraAccessServlet
      * <p>
      * For now, treat a HTTP POST request just like a GET request.
      * </p>
-     * 
+     *
      * @param request
      *        The servet request.
      * @param response
@@ -939,6 +953,7 @@ public class FedoraAccessServlet
      * @throws IOException
      *         If thrown by <code>doGet</code>.
      */
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doGet(request, response);
@@ -948,10 +963,11 @@ public class FedoraAccessServlet
      * <p>
      * Initialize servlet.
      * </p>
-     * 
+     *
      * @throws ServletException
      *         If the servet cannot be initialized.
      */
+    @Override
     public void init() throws ServletException {
         try {
             s_server = Server.getInstance(new File(FEDORA_HOME), false);

@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -30,7 +30,7 @@ import fedora.server.utilities.StreamUtility;
  * authentication) or any other server (without authentication). Each kind of
  * request can either request an InputStream or request that the Downloader
  * write the content directly to a provided OutputStream.
- * 
+ *
  * @author Chris Wilper
  */
 public class Downloader {
@@ -47,11 +47,15 @@ public class Downloader {
     /**
      * Construct a downloader for a certain repository as a certain user.
      */
-    public Downloader(String host, int port, String user, String pass)
+    public Downloader(String host,
+                      int port,
+                      String context,
+                      String user,
+                      String pass)
             throws IOException {
         m_fedoraUrlStart =
-                Administrator.getProtocol() + "://" + host + ":" + port
-                        + "/fedora/get/";
+                Administrator.getProtocol() + "://" + host + ":" + port + "/"
+                        + context + "/" + "get/";
         m_authScope =
                 new AuthScope(host, AuthScope.ANY_PORT, AuthScope.ANY_REALM);
         m_creds = new UsernamePasswordCredentials(user, pass);
@@ -180,7 +184,7 @@ public class Downloader {
                     }
                 };
                 worker.start();
-                // The following code will run in the (safe) 
+                // The following code will run in the (safe)
                 // Swing event dispatcher thread.
                 int ms = 200;
                 while (!worker.done) {
@@ -228,24 +232,28 @@ public class Downloader {
      */
     public static void main(String[] args) {
         try {
-            if (args.length == 7 || args.length == 8) {
-                String asOfDateTime = null;
-                if (args.length == 8) {
-                    asOfDateTime = args[7];
-                }
-                FileOutputStream out = new FileOutputStream(new File(args[6]));
+            if (args.length == 8 || args.length == 9) {
+                String host = args[0];
+                int port = Integer.parseInt(args[1]);
+                String user = args[2];
+                String password = args[3];
+                String pid = args[4];
+                String dsid = args[5];
+                File outfile = new File(args[6]);
+                String asOfDateTime = args.length == 8 ? args[7] : null;
+                String context = args.length == 9 ? args[8] : null;
+
+                FileOutputStream outStream = new FileOutputStream(outfile);
                 Downloader downloader =
-                        new Downloader(args[0],
-                                       Integer.parseInt(args[1]),
-                                       args[2],
-                                       args[3]);
-                downloader.getDatastreamContent(args[4],
-                                                args[5],
+                        new Downloader(host, port, context, user, password);
+
+                downloader.getDatastreamContent(pid,
+                                                dsid,
                                                 asOfDateTime,
-                                                out);
+                                                outStream);
             } else {
                 System.err
-                        .println("Usage: Downloader host port user pass pid dsid outfile [MMDDYYTHH:MM:SS]");
+                        .println("Usage: Downloader host port user pass pid dsid outfile [MMDDYYTHH:MM:SS] [CTX]");
             }
         } catch (Exception e) {
             e.printStackTrace();

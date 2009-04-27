@@ -1456,7 +1456,7 @@ public class TestAPIM
                         null,
                         "FOP Dissemination as Datastream",
                         "http://" + getHost()
-                                + ":" + getPort() + "/fedora/get/demo:26/demo:22/getFO",
+                                + ":" + getPort() + "/" + getFedoraAppServerContext() + "/get/demo:26/demo:22/getFO",
                         "text/xml",
                         "A",
                         "XML_SOURCE1.0",
@@ -1479,7 +1479,7 @@ public class TestAPIM
                         null,
                         "FOP Dissemination as Datastream",
                         "http://" + getHost()
-                                + ":" + getPort() + "/fedora/get/demo:26/demo:22/getFO",
+                                + ":" + getPort() + "/" + getFedoraAppServerContext() + "/get/demo:26/demo:22/getFO",
                         "text/xml",
                         "A",
                         "XML_SOURCE1.0",
@@ -1515,7 +1515,7 @@ public class TestAPIM
                         null,
                         "FOP Dissemination as Datastream",
                         "http://" + getHost()
-                                + ":" + getPort() + "/fedora/get/demo:26/demo:22/getFO",
+                                + ":" + getPort() +  "/" + getFedoraAppServerContext() + "/get/demo:26/demo:22/getFO",
                         "text/xml",
                         "A",
                         "XML_SOURCE1.0",
@@ -1579,7 +1579,7 @@ public class TestAPIM
                         null,
                         "FOP Dissemination as Datastream",
                         "http://" + getHost()
-                                + ":" + getPort() + "/fedora/get/demo:26/demo:22/getFO",
+                                + ":" + getPort() +  "/" + getFedoraAppServerContext() + "/get/demo:26/demo:22/getFO",
                         "text/xml",
                         "A",
                         "XML_SOURCE1.0",

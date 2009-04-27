@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -41,12 +41,14 @@ import javax.swing.event.DocumentListener;
 
 import org.apache.log4j.Logger;
 
+import fedora.common.Constants;
+
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
 
 /**
  * Launch a dialog for logging into a Fedora repository.
- * 
+ *
  * @author Chris Wilper
  */
 public class LoginDialog
@@ -66,11 +68,15 @@ public class LoginDialog
 
     private final JPasswordField m_passwordField;
 
+    private final JComboBox m_contextComboBox;
+
     private String m_lastUsername = "fedoraAdmin";
 
     private String m_lastServer = "localhost:8080";
 
     private String m_lastProtocol = "http";
+
+    private String m_lastContext = Constants.FEDORA_DEFAULT_APP_CONTEXT;
 
     private final HashMap<String, String> m_usernames;
 
@@ -78,12 +84,15 @@ public class LoginDialog
 
     private final HashMap<String, String> m_protocols;
 
+    private final HashMap<String, String> m_contexts;
+
     public LoginDialog() {
         super(JOptionPane.getFrameForComponent(Administrator.getDesktop()),
               "Login",
               true);
 
         m_servers = new HashMap<String, String>();
+        m_contexts = new HashMap<String, String>();
         m_protocols = new HashMap<String, String>();
         m_protocols.put("http", "");
         m_protocols.put("https", "");
@@ -93,11 +102,14 @@ public class LoginDialog
         JLabel protocolLabel = new JLabel("Protocol");
         JLabel usernameLabel = new JLabel("Username");
         JLabel passwordLabel = new JLabel("Password");
+        JLabel contextLabel = new JLabel("Context");
 
         m_serverComboBox = new JComboBox();
         m_serverComboBox.setEditable(true);
         m_protocolComboBox = new JComboBox();
         m_protocolComboBox.setEditable(true);
+        m_contextComboBox = new JComboBox();
+        m_contextComboBox.setEditable(true);
         m_usernameComboBox = new JComboBox();
         m_usernameComboBox.setEditable(true);
         m_passwordField = new JPasswordField();
@@ -124,9 +136,9 @@ public class LoginDialog
         GridBagLayout gridBag = new GridBagLayout();
         inputPane.setLayout(gridBag);
         addLabelValueRows(new JLabel[] {serverLabel, protocolLabel,
-                usernameLabel, passwordLabel}, new JComponent[] {
-                m_serverComboBox, m_protocolComboBox, m_usernameComboBox,
-                m_passwordField}, gridBag, inputPane);
+                contextLabel, usernameLabel, passwordLabel}, new JComponent[] {
+                m_serverComboBox, m_protocolComboBox, m_contextComboBox,
+                m_usernameComboBox, m_passwordField}, gridBag, inputPane);
 
         JButton cancelButton = new JButton(new AbstractAction() {
 
@@ -161,7 +173,7 @@ public class LoginDialog
         setVisible(true);
     }
 
-    // re-writes fedora-admin.properties with latest values for servers 
+    // re-writes fedora-admin.properties with latest values for servers
     // and usernames
     public void saveProperties() {
         try {
@@ -169,6 +181,8 @@ public class LoginDialog
             props.setProperty("lastServer", m_lastServer);
             props.setProperty("lastProtocol", m_lastProtocol);
             props.setProperty("lastUsername", m_lastUsername);
+            props.setProperty("lastContext", m_lastContext);
+
             Iterator<String> iter;
             int i;
             iter = m_servers.keySet().iterator();
@@ -192,6 +206,14 @@ public class LoginDialog
                 props.setProperty("username" + i, name);
                 i++;
             }
+            iter = m_contexts.keySet().iterator();
+            i = 0;
+            while (iter.hasNext()) {
+                String name = iter.next();
+                props.setProperty("context" + i, name);
+                i++;
+            }
+
             props
                     .store(new FileOutputStream(new File(Administrator.BASE_DIR,
                                                          "fedora-admin.properties")),
@@ -216,12 +238,16 @@ public class LoginDialog
                     m_lastServer = props.getProperty(prop);
                 } else if (prop.equals("lastProtocol")) {
                     m_lastProtocol = props.getProperty(prop);
+                } else if (prop.startsWith("lastContext")) {
+                    m_lastContext = props.getProperty(prop);
                 } else if (prop.equals("lastUsername")) {
                     m_lastUsername = props.getProperty(prop);
                 } else if (prop.startsWith("server")) {
                     m_servers.put(props.getProperty(prop), "");
                 } else if (prop.startsWith("protocol")) {
                     m_protocols.put(props.getProperty(prop), "");
+                } else if (prop.startsWith("context")) {
+                    m_contexts.put(props.getProperty(prop), "");
                 } else if (prop.startsWith("username")) {
                     m_usernames.put(props.getProperty(prop), "");
                 }
@@ -249,6 +275,17 @@ public class LoginDialog
             }
         }
         m_protocols.put(m_lastProtocol, "");
+
+        m_contextComboBox.addItem(m_lastContext);
+        Iterator<String> contextIter = m_contexts.keySet().iterator();
+        while (contextIter.hasNext()) {
+            String a = contextIter.next();
+            if (!a.equals(m_lastContext)) {
+                m_contextComboBox.addItem(a);
+            }
+        }
+        m_contexts.put(m_lastContext, "");
+
 
         m_usernameComboBox.addItem(m_lastUsername);
         Iterator<String> uIter = m_usernames.keySet().iterator();
@@ -299,15 +336,16 @@ public class LoginDialog
 
     // sets Administrator.APIA/M if success, throws Exception if fails.
     public void tryLogin(String protocol,
-                                String host,
-                                int port,
-                                String user,
-                                String pass) throws Exception {
+                         String host,
+                         int port,
+                         String context,
+                         String user,
+                         String pass) throws Exception {
 
         try {
             LOG.info("Logging in...");
             // get a FedoraClient
-            String baseURL = protocol + "://" + host + ":" + port + "/fedora";
+            String baseURL = protocol + "://" + host + ":" + port + "/" + context;
             FedoraClient fc = new FedoraClient(baseURL, user, pass);
 
             // attempt to connect via REST
@@ -340,9 +378,8 @@ public class LoginDialog
                     }
                 }
                 System.err.println("WARNING: Server version is "
-                                   + serverVersion + ".  This client is "
-                                   + "only designed to work with "
-                                   + endText.toString());
+                        + serverVersion + ".  This client is "
+                        + "only designed to work with " + endText.toString());
             }
 
             // set SOAP stubs for Administrator
@@ -444,6 +481,11 @@ public class LoginDialog
                     if (protocol.equals("")) {
                         throw new IOException("No protocol provided.");
                     }
+                    String context = (String) m_contextComboBox.getSelectedItem();
+                    if (context.equals("")){
+                        throw new IOException("No context provided");
+                    }
+
                     String username =
                             (String) m_usernameComboBox.getSelectedItem();
                     if (username.equals("")) {
@@ -451,7 +493,7 @@ public class LoginDialog
                     }
                     String pass = new String(m_passwordField.getPassword());
 
-                    tryLogin(protocol, host, port, username, pass);
+                    tryLogin(protocol, host, port, context, username, pass);
                     // all looks ok...just save stuff and exit now
                     m_lastServer = host + ":" + port;
                     m_lastProtocol = protocol;
@@ -460,6 +502,7 @@ public class LoginDialog
                     Administrator.INSTANCE.setLoginInfo(protocol,
                                                         host,
                                                         port,
+                                                        context,
                                                         username,
                                                         pass);
                     m_loginDialog.dispose();

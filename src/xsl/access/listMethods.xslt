@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" >
+<xsl:param name="fedora"/>
 <xsl:output method="html" indent="yes"/> 
 <xsl:template match="objectMethods">
 	<html>
@@ -11,7 +12,7 @@
 			<table border="0" cellpadding="0" cellspacing="0">
 				<tr>
 					<td width="141" height="134" valign="top">
-						<img src="/fedora/images/newlogo2.jpg" width="141" height="134"/>
+						<img src="/{$fedora}/images/newlogo2.jpg" width="141" height="134"/>
 					</td>
 					<td width="643" valign="top">
 						<center>
@@ -58,7 +59,7 @@
 </xsl:template>
 
 <xsl:template match="method">
-	<form name="parmResolverForm" method="post" action="/fedora/getAccessParmResolver?">
+	<form name="parmResolverForm" method="post" action="getAccessParmResolver?">
 	<tr>
 		<td><font color="blue"><xsl:value-of select="../@pid"/></font></td>
 		<td><font size="+1"><xsl:value-of select="@name"/></font></td>
