@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import java.net.URI;
+
 import java.util.Properties;
 
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
@@ -123,27 +125,46 @@ public class ServerUtility {
      */
     public static boolean isURLFedoraServer(String url) {
 
-        String fedoraServerHost =
-                CONFIG.getParameter(FEDORA_SERVER_HOST).getValue();
-        String fedoraServerPort =
-                CONFIG.getParameter(FEDORA_SERVER_PORT).getValue();
-        String fedoraServerRedirectPort =
-                CONFIG.getParameter(FEDORA_REDIRECT_PORT).getValue();
-        String fedoraAppServerContext =
-                CONFIG.getParameter(FEDORA_SERVER_CONTEXT).getValue();
-
-        // Check for URLs that are callbacks to the Fedora server
-        if (url.startsWith("http://" + fedoraServerHost + ":"
-                + fedoraServerPort + "/" + fedoraAppServerContext + "/")
-                || url.startsWith("http://" + fedoraServerHost + "/" + fedoraAppServerContext + "/")
-                || url.startsWith("https://" + fedoraServerHost + ":"
-                        + fedoraServerRedirectPort + "/" + fedoraAppServerContext + "/")
-                || url.startsWith("https://" + fedoraServerHost + "/" + fedoraAppServerContext + "/")) {
-            LOG.debug("URL was Fedora-to-Fedora callback: " + url);
-            return true;
-        } else {
-            LOG.debug("URL was Non-Fedora callback: " + url);
+        // scheme must be http or https
+        URI uri = URI.create(url);
+        String scheme = uri.getScheme();
+        if (!scheme.equals("http") && !scheme.equals("https")) {
             return false;
+        }
+
+        // host must be configured hostname or localhost
+        String fHost = CONFIG.getParameter(FEDORA_SERVER_HOST).getValue();
+        String host = uri.getHost();
+        if (!host.equals(fHost) && !host.equals("localhost")) {
+            return false;
+        }
+
+        // path must begin with configured webapp context
+        String path = uri.getPath();
+        String fedoraContext = CONFIG.getParameter(
+                FEDORA_SERVER_CONTEXT).getValue();
+        if (!path.startsWith("/" + fedoraContext + "/")) {
+            return false;
+        }
+
+        // port specification must match http or https port as appropriate
+        String httpPort = CONFIG.getParameter(FEDORA_SERVER_PORT).getValue();
+        String httpsPort = CONFIG.getParameter(FEDORA_REDIRECT_PORT).getValue();
+        if (uri.getPort() == -1) {
+            // unspecified, so fedoraPort must be 80 (http), or 443 (https)
+            if (scheme.equals("http")) {
+                return httpPort.equals("80");
+            } else {
+                return httpsPort.equals("443");
+            }
+        } else {
+            // specified, so must match appropriate http or https port
+            String port = "" + uri.getPort();
+            if (scheme.equals("http")) {
+                return port.equals(httpPort);
+            } else {
+                return port.equals(httpsPort);
+            }
         }
 
     }
