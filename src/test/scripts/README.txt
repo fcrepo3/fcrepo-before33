@@ -16,6 +16,9 @@ Configuration Files:
                        your environment.  See the comments in the script for
                        details.
 
+    sanity.sh          Modify the -Dfedora.hostname and -Dfedora.port values as
+                       appropriate.
+
     *.properties       These are install.properties files for automatically
                        installing specific configurations of the Fedora
                        server for testing.  As with env.sh, these files 
