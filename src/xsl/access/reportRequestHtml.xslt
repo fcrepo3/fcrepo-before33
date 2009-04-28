@@ -1,6 +1,7 @@
 <?xml version="1.0" ?> 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
 		xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0">
+    <xsl:param name="fedora"/>
 	<xsl:param name="GENERAL-TITLE"/>
 	<xsl:param name="SPECIFIC-TITLE"/>
 	<xsl:template match="/">
@@ -15,7 +16,7 @@
 					<table width="784" border="0" cellpadding="0" cellspacing="0">
 						<tr>
 							<td width="141" height="134" valign="top">
-								<img src="images/newlogo2.jpg" width="141" height="134"/>
+								<img src="/{$fedora}/images/newlogo2.jpg" width="141" height="134"/>
 							</td>
 							<td width="643" valign="top">
 								<center>

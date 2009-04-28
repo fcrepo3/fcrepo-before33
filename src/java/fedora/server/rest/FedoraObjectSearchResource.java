@@ -20,12 +20,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
-import fedora.common.Constants;
 
 import fedora.server.Context;
-import fedora.server.ReadOnlyContext;
 import fedora.server.search.Condition;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
@@ -44,12 +40,6 @@ public class FedoraObjectSearchResource extends BaseRestResource {
             "cDate", "mDate", "dcmDate", "title", "creator", "subject", "description",
             "publisher", "contributor", "date", "type", "format", "identifier",
             "source", "language", "relation", "coverage", "rights" };
-
-    @javax.ws.rs.core.Context
-    HttpServletRequest servletRequest;
-
-    @javax.ws.rs.core.Context
-    UriInfo uriInfo;
 
     @GET
     @Produces( { HTML, XML })
@@ -196,14 +186,5 @@ public class FedoraObjectSearchResource extends BaseRestResource {
         }
 
         return fields.toArray(new String[fields.size()]);
-    }
-
-    private DefaultSerializer getSerializer(
-            Context context) {
-        return new DefaultSerializer(fedoraServerHost, context);
-    }
-
-    private Context getContext() {
-        return ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, servletRequest);
     }
 }

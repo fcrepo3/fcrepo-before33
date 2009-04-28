@@ -14,8 +14,6 @@ import java.net.URLEncoder;
 
 import java.util.Date;
 
-import javax.servlet.http.HttpServletRequest;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -29,14 +27,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
 
 import fedora.server.Context;
-import fedora.server.ReadOnlyContext;
 import fedora.server.access.ObjectProfile;
 import fedora.server.errors.ObjectExistsException;
 import fedora.server.rest.RestUtil.RequestContent;
@@ -53,11 +49,6 @@ import fedora.server.utilities.StreamUtility;
 @Path("/{pid}")
 public class FedoraObjectResource extends BaseRestResource {
     private final String FOXML1_1 = "info:fedora/fedora-system:FOXML-1.1";
-    @javax.ws.rs.core.Context
-    HttpServletRequest servletRequest;
-
-    @javax.ws.rs.core.Context
-    UriInfo uriInfo;
 
     private static Logger LOG =
             Logger.getLogger(FedoraObjectResource.class.getName());
@@ -485,14 +476,5 @@ public class FedoraObjectResource extends BaseRestResource {
         xml.append("</foxml:digitalObject>");
 
         return xml.toString();
-    }
-
-    private DefaultSerializer getSerializer(
-            Context context) {
-        return new DefaultSerializer(fedoraServerHost, context);
-    }
-
-    private Context getContext() {
-        return ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, servletRequest);
     }
 }

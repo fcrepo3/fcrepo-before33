@@ -1,7 +1,7 @@
 <?xml version="1.0" ?> 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
 		xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0">
-  <xsl:param name="fedora"/>
+    <xsl:param name="fedora"/>
 	<xsl:param name="REQUEST-TYPE" select="1"/>	
 	<xsl:param name="GENERAL-TITLE"/>
 	<xsl:param name="SPECIFIC-TITLE"/>

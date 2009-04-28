@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.StringReader;
 import java.io.Writer;
 
+import javax.servlet.http.HttpServletRequest;
+
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -19,8 +21,10 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
 
 import net.sf.saxon.FeatureKeys;
@@ -29,6 +33,8 @@ import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
 
+import fedora.server.Context;
+import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.access.Access;
 import fedora.server.errors.DatastreamNotFoundException;
@@ -60,6 +66,15 @@ public class BaseRestResource {
     protected Access apiAService;
     protected String fedoraServerHost;
 
+    @javax.ws.rs.core.Context
+    protected HttpServletRequest servletRequest;
+
+    @javax.ws.rs.core.Context
+    protected UriInfo uriInfo;
+
+    @javax.ws.rs.core.Context
+    protected HttpHeaders headers;
+
     public BaseRestResource() {
         try {
             this.fedoraServer = Server.getInstance(new File(Constants.FEDORA_HOME), false);
@@ -71,10 +86,19 @@ public class BaseRestResource {
         }
     }
 
-    protected void transform(
-            String xml,
-            String xslt,
-            Writer out) throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
+    protected Context getContext() {
+        return ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri,
+                                          servletRequest);
+    }
+
+    protected DefaultSerializer getSerializer(Context context) {
+        return new DefaultSerializer(fedoraServerHost, context);
+    }
+
+    protected void transform(String xml, String xslt, Writer out)
+    throws TransformerFactoryConfigurationError,
+           TransformerConfigurationException,
+           TransformerException {
         File xslFile = new File(fedoraServer.getHomeDir(), xslt);
         TransformerFactory factory = TransformerFactory.newInstance();
         if (factory.getClass().getName().equals("net.sf.saxon.TransformerFactoryImpl")) {
@@ -82,6 +106,8 @@ public class BaseRestResource {
         }
         Templates template = factory.newTemplates(new StreamSource(xslFile));
         Transformer transformer = template.newTransformer();
+        String appContext = getContext().getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME);
+        transformer.setParameter("fedora", appContext);
         transformer.transform(new StreamSource(new StringReader(xml)), new StreamResult(out));
     }
 

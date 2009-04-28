@@ -17,8 +17,6 @@ import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -27,18 +25,14 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
-import fedora.common.Constants;
 import fedora.common.http.WebClient;
 
 import fedora.server.Context;
-import fedora.server.ReadOnlyContext;
 import fedora.server.rest.RestUtil.RequestContent;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamDef;
@@ -70,15 +64,6 @@ import fedora.server.utilities.DateUtility;
  */
 @Path("/{pid}/datastreams")
 public class DatastreamResource extends BaseRestResource {
-
-    @javax.ws.rs.core.Context
-    HttpServletRequest servletRequest;
-
-    @javax.ws.rs.core.Context
-    HttpHeaders headers;
-
-    @javax.ws.rs.core.Context
-    UriInfo uriInfo;
 
     /**
      * Inquires upon all object Datastreams to obtain datastreams contained by a
@@ -513,15 +498,5 @@ public class DatastreamResource extends BaseRestResource {
         } catch (Exception ex) {
             return handleException(ex);
         }
-    }
-
-    private DefaultSerializer getSerializer(
-            Context context) {
-        return new DefaultSerializer(fedoraServerHost, context);
-    }
-
-    private Context getContext() {
-        return ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri,
-                                          servletRequest);
     }
 }
