@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
 
@@ -12,9 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import java.lang.reflect.Constructor;
-
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,14 +19,17 @@ import java.util.Map;
 
 import fedora.common.Constants;
 
+import fedora.server.Server;
 import fedora.server.config.Configuration;
 import fedora.server.config.ModuleConfiguration;
 import fedora.server.config.Parameter;
 import fedora.server.config.ServerConfiguration;
 import fedora.server.config.ServerConfigurationParser;
+import fedora.server.errors.InitializationException;
 import fedora.server.errors.LowlevelStorageException;
-import fedora.server.storage.lowlevel.DefaultLowlevelStorage;
 import fedora.server.storage.lowlevel.FileSystem;
+import fedora.server.storage.lowlevel.IListable;
+import fedora.server.storage.lowlevel.ILowlevelStorage;
 import fedora.server.storage.translation.DODeserializer;
 import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.storage.translation.FOXML1_1DODeserializer;
@@ -41,11 +41,13 @@ import fedora.utilities.FileComparator;
 
 /**
  * Entry-point for rebuilding various aspects of the repository.
- * 
+ *
  * @author Chris Wilper
  */
 public class Rebuild
         implements Constants {
+
+    private static Server server;
 
     private FileSystem fs;
 
@@ -78,107 +80,100 @@ public class Rebuild
             System.err.println();
             System.err.println("Rebuilding...");
             try {
-                rebuilder.start(options);
-                // fedora.server.storage.lowlevel.Configuration conf =
-                // fedora.server.storage.lowlevel.Configuration.getInstance();
-                // String objStoreBaseStr = conf.getObjectStoreBase();
-                String role = "fedora.server.storage.lowlevel.ILowlevelStorage";
+                // ensure rebuilds are possible before trying anything,
+                // as rebuilder.start() may be destructive!
+                final String llPackage = "fedora.server.storage.lowlevel";
+                String llstoreInterface = llPackage + ".ILowlevelStorage";
+                String listableInterface = llPackage + ".IListable";
                 ModuleConfiguration mcfg =
-                        serverConfig.getModuleConfiguration(role);
-                Iterator<Parameter> parameters =
-                        mcfg.getParameters().iterator();
-                Map<String, String> config = new HashMap<String, String>();
-                while (parameters.hasNext()) {
-                    Parameter p = parameters.next();
-                    config.put(p.getName(), p.getValue(p.getIsFilePath()));
+                        serverConfig.getModuleConfiguration(llstoreInterface);
+                Class<?> clazz = Class.forName(mcfg.getClassName());
+                boolean isListable = false;
+                for (Class<?> iface : clazz.getInterfaces()) {
+                    if (iface.getName().equals(listableInterface)) {
+                        isListable = true;
+                    }
                 }
-                getFilesystem(config);
+                if (!isListable) {
+                    throw new Exception("ERROR: Rebuilds are not supported"
+                            + " by " + clazz.getName()
+                            + " because it does not implement the"
+                            + " fedora.server.storage.lowlevel.IListable"
+                            + " interface.");
+                }
 
-                Parameter param =
-                        mcfg
-                                .getParameter(DefaultLowlevelStorage.OBJECT_STORE_BASE);
-                String objStoreBaseStr = param.getValue(param.getIsFilePath());
-                File dir = new File(objStoreBaseStr);
+                // looks good, so init the rebuilder
+                rebuilder.start(options);
 
-                /*
-                 * Just assume every file under the directory is a digital
-                 * object and try processing. We may need/want to filter if
-                 * non-object files are ever stored alongside objects in the
-                 * specified directory.
-                 */
-                rebuildFromDirectory(rebuilder, dir, null);
+                // add each object in llstore
+                ILowlevelStorage llstore = (ILowlevelStorage)
+                        getServer().getModule(llstoreInterface);
+                Iterator<String> pids = ((IListable) llstore).listObjects();
+                int total = 0;
+                int errors = 0;
+                while (pids.hasNext()) {
+                    total++;
+                    String pid = pids.next();
+                    System.out.println("Adding object #" + total + ": " + pid);
+                    if (!addObject(rebuilder, llstore, pid)) {
+                        errors++;
+                    }
+                }
+                if (errors == 0) {
+                    System.out.println("SUCCESS: " + total + " objects rebuilt.");
+                } else {
+                    System.out.println("WARNING: " + errors + " of " + total + " objects failed to rebuild due to errors.");
+                }
             } finally {
                 rebuilder.finish();
+                if (server != null) {
+                    server.shutdown(null);
+                    server = null;
+                }
             }
-            System.err.println("Finished.");
+            System.err.print("Finished.");
             System.err.println();
         }
     }
 
-    private void getFilesystem(Map<String, String> configuration) {
-        String filesystemClassName =
-                configuration.get(DefaultLowlevelStorage.FILESYSTEM);
-        Object[] parameters = new Object[] {configuration};
-        Class[] parameterTypes = new Class[] {Map.class};
-        ClassLoader loader = getClass().getClassLoader();
-        Class cclass;
-        Constructor constructor;
-
+    private boolean addObject(Rebuilder rebuilder,
+                              ILowlevelStorage llstore,
+                              String pid) {
+        InputStream in = null;
         try {
-            cclass = loader.loadClass(filesystemClassName);
-            constructor = cclass.getConstructor(parameterTypes);
-            fs = (FileSystem) constructor.newInstance(parameters);
+            in = llstore.retrieveObject(pid);
+            DigitalObject obj = new BasicDigitalObject();
+            DODeserializer deser = new FOXML1_1DODeserializer();
+            deser.deserialize(in,
+                              obj,
+                              "UTF-8",
+                              DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
+            rebuilder.addObject(obj);
+            return true;
         } catch (Exception e) {
+            System.out.println("WARNING: Skipped " + pid + " due to exception: ");
             e.printStackTrace();
+            return false;
+        } finally {
+            if (in != null) {
+                try { in.close(); } catch (IOException e) { }
+            }
         }
     }
 
     /**
-     * Recurse directories in reverse order (latest time first) looking for
-     * files that contain searchString, and call rebuilder.addObject on them.
+     * Gets the instance of the server appropriate for rebuilding.
+     * If no such instance has been initialized yet, initialize one.
+     *
+     * @return the server instance.
+     * @throws InitializationException if initialization fails.
      */
-    private void rebuildFromDirectory(Rebuilder rebuilder,
-                                      File dir,
-                                      String searchString) throws Exception {
-        String[] filenames = fs.list(dir);
-        if (filenames == null) {
-            return;
+    public static Server getServer() throws InitializationException {
+        if (server == null) {
+            server = RebuildServer.getRebuildInstance(
+                    new File(Constants.FEDORA_HOME));
         }
-        Arrays.sort(filenames);
-        for (String element : filenames) {
-            File f = new File(dir.getAbsolutePath() + File.separator + element);
-            if (fs.isDirectory(f)) {
-                rebuildFromDirectory(rebuilder, f, searchString);
-            } else {
-                ;
-                InputStream in;
-                in = getFile(f, searchString);
-                if (in != null) {
-                    try {
-                        System.out.println(f.getAbsoluteFile());
-                        DigitalObject obj = new BasicDigitalObject();
-                        DODeserializer deser = new FOXML1_1DODeserializer();
-                        deser
-                                .deserialize(in,
-                                             obj,
-                                             "UTF-8",
-                                             DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
-                        rebuilder.addObject(obj);
-                    } catch (Exception e) {
-                        System.out.println("WARNING: Skipped "
-                                + f.getAbsoluteFile()
-                                + " due to following exception:");
-                        e.printStackTrace();
-                    } finally {
-                        try {
-                            in.close();
-                        } catch (Exception e) {
-                        }
-                    }
-
-                }
-            }
-        }
+        return server;
     }
 
     private static Map<String, String> getOptions(Map<String, String> descs)
