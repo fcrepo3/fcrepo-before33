@@ -24,13 +24,45 @@
   </bean>
   
   <bean name="objectStore"
-        class="org.fedoracommons.akubra.mem.MemBlobStore"
+        class="org.fedoracommons.akubra.map.IdMappingBlobStore"
         singleton="true">
+    <constructor-arg value="urn:example.org:objectStore"/>
+    <constructor-arg><ref bean="fsObjectStore"/></constructor-arg>
+    <constructor-arg><ref bean="fsObjectStoreMapper"/></constructor-arg>
+  </bean>
+
+  <bean name="fsObjectStore"
+        class="org.fedoracommons.akubra.fs.FSBlobStore"
+        singleton="true">
+    <constructor-arg value="urn:example.org:fsObjectStore"/>
+    <constructor-arg value="/tmp/objectStore"/>
+  </bean>
+
+  <bean name="fsObjectStoreMapper"
+        class="fedora.server.storage.lowlevel.akubra.HashPathIdMapper"
+        singleton="true">
+    <constructor-arg value="##/##"/>
   </bean>
 
   <bean name="datastreamStore"
-        class="org.fedoracommons.akubra.mem.MemBlobStore"
+        class="org.fedoracommons.akubra.map.IdMappingBlobStore"
         singleton="true">
+    <constructor-arg value="urn:fedora:datastreamStore"/>
+    <constructor-arg><ref bean="fsDatastreamStore"/></constructor-arg>
+    <constructor-arg><ref bean="fsDatastreamStoreMapper"/></constructor-arg>
+  </bean>
+
+  <bean name="fsDatastreamStore"
+        class="org.fedoracommons.akubra.fs.FSBlobStore"
+        singleton="true">
+    <constructor-arg value="urn:example.org:fsDatastreamStore"/>
+    <constructor-arg value="/tmp/datastreamStore"/>
+  </bean>
+
+  <bean name="fsDatastreamStoreMapper"
+        class="fedora.server.storage.lowlevel.akubra.HashPathIdMapper"
+        singleton="true">
+    <constructor-arg value="##/##"/>
   </bean>
 
 </beans>

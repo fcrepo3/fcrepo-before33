@@ -206,6 +206,7 @@
             <!-- Akubra libs -->
             <pathelement location="${lib.akubra-core}"/>
             <pathelement location="${lib.akubra-fs}"/>
+            <pathelement location="${lib.akubra-map}"/>
             <pathelement location="${lib.akubra-mem}"/>
         </path>
         <map from="${lib.dir}${file.separator}" to=""/>

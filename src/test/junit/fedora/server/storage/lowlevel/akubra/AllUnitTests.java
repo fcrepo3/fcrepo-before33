@@ -4,7 +4,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses( {AkubraLowlevelStorageTest.class})
+@Suite.SuiteClasses( {AkubraLowlevelStorageTest.class,
+    HashPathIdMapperTest.class})
 
 public class AllUnitTests {
 
@@ -15,6 +16,7 @@ public class AllUnitTests {
                 new junit.framework.TestSuite(AllUnitTests.class.getName());
 
         suite.addTest(AkubraLowlevelStorageTest.suite());
+        suite.addTest(HashPathIdMapperTest.suite());
 
         return suite;
     }
