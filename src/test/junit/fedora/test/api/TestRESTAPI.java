@@ -578,7 +578,7 @@ public class TestRESTAPI
         assertEquals(SC_INTERNAL_SERVER_ERROR, put(true).getStatusCode());
 
         // Update DS1 by reference (X type datastream) - Success expected
-        newLocation = "http://localhost:8080/fedora/ri/index.xsl";
+        newLocation = getBaseURL() + "/ri/index.xsl";
         url = String.format("/objects/%s/datastreams/DS1?dsLocation=%s",
                             pid.toString(), newLocation);
         assertEquals(SC_UNAUTHORIZED, put(false).getStatusCode());
