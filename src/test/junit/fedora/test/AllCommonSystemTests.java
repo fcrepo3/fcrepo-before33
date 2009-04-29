@@ -8,7 +8,6 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses( {fedora.test.api.TestAPIA.class,
         fedora.test.api.TestAPIALite.class, fedora.test.api.TestAPIM.class,
         fedora.test.api.TestAPIMLite.class,
-        fedora.test.api.TestHTTPStatusCodes.class,
         fedora.test.integration.cma.ConflictingDeploymentTests.class,
         fedora.test.integration.cma.ContentModelDSInputTest.class,
         fedora.test.integration.cma.SharedDeploymentTests.class,
@@ -29,7 +28,6 @@ public class AllCommonSystemTests {
         suite.addTest(fedora.test.api.TestAPIALite.suite());
         suite.addTest(fedora.test.api.TestAPIM.suite());
         suite.addTest(fedora.test.api.TestAPIMLite.suite());
-        suite.addTest(fedora.test.api.TestHTTPStatusCodes.suite());
         suite.addTest(fedora.test.api.TestManagedDatastreams.suite());
         suite.addTest(fedora.test.integration.cma.ConflictingDeploymentTests
                 .suite());
