@@ -184,7 +184,7 @@ public class AkubraLowlevelStorage
         } catch (DuplicateBlobException e) {
             throw new ObjectAlreadyInLowlevelStorageException(key, e);
         } finally {
-            connection.close();
+            closeConnection(connection);
         }
     }
 
@@ -212,7 +212,7 @@ public class AkubraLowlevelStorage
                 throw new ObjectNotInLowlevelStorageException(key);
             }
         } finally {
-            connection.close();
+            closeConnection(connection);
         }
     }
 
@@ -240,7 +240,7 @@ public class AkubraLowlevelStorage
         } catch (DuplicateBlobException wontHappen) {
             throw new FaultException(wontHappen);
         } finally {
-            connection.close();
+            closeConnection(connection);
         }
     }
 
@@ -254,7 +254,7 @@ public class AkubraLowlevelStorage
             return new ConnectionClosingKeyIterator(connection, blobIds);
         } finally {
             if (!successful) {
-                connection.close();
+                closeConnection(connection);
             }
         }
     }
@@ -364,7 +364,7 @@ public class AkubraLowlevelStorage
         } finally {
             if (!successful) {
                 IOUtils.closeQuietly(content);
-                connection.close();
+                closeConnection(connection);
             }
         }
     }
@@ -375,6 +375,16 @@ public class AkubraLowlevelStorage
         } catch (IOException e) {
             throw new FaultException(
                     "System error getting blob store connection", e);
+        }
+    }
+
+    private static void closeConnection(BlobStoreConnection connection) {
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (Throwable th) {
+            log.warn("Unexpected error closing blob store connection", th);
         }
     }
 
