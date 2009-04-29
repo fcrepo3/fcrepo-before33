@@ -233,6 +233,7 @@
       <pathelement location="${lib.akubra-fs}"/>
       <pathelement location="${lib.akubra-map}"/>
       <pathelement location="${lib.akubra-mem}"/>
+      <pathelement location="${lib.google-collections}"/>
     </path>
     <map from="${lib.dir}${file.separator}" to="" />
   </pathconvert>

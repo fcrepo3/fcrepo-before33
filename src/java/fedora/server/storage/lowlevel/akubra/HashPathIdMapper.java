@@ -10,29 +10,27 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
-import java.util.zip.CRC32;
-
 import org.fedoracommons.akubra.map.IdMapper;
 
-import fedora.common.FaultException;
+import fedora.server.utilities.MD5Utility;
 
 /**
  * Provides a hash-based <code>file:</code> mapping for any URI.
  * <p>
- * The path component of each internal URI is derived from a CRC32 hash of
+ * The path component of each internal URI is derived from an MD5 hash of
  * the external URI. The filename component is a reversible encoding of the
  * external URI that is safe to use as a filename on modern filesystems.
  * <p>
  * <h2>Hash Path Patterns</h2>
  * The pattern given at construction time determines how the path component
  * of each internal URI will be composed. Within the pattern, the # character
- * is a stand-in for a hexadecimal [0-f] digit from the CRC32 hash of the
+ * is a stand-in for a hexadecimal [0-f] digit from the MD5 hash of the
  * external id.
  * <p>
  * Patterns:
  * <ul>
  *   <li> must consist only of # and / characters.</li>
- *   <li> must contain between 1 and 8 # characters.</li>
+ *   <li> must contain between 1 and 32 # characters.</li>
  *   <li> must not begin or end with the / character.</li>
  *   <li> must not contain consecutive / characters.</li>
  * </ul>
@@ -57,13 +55,13 @@ import fedora.common.FaultException;
  * <h2>Example Mappings</h2>
  * With pattern <em>#/#</em>:
  * <ul>
- *   <li> <code>urn:example1</code> becomes <code>file:9/3/urn%3Aexample1</code></li>
- *   <li> <code>http://tinyurl.com/cxzzf</code> becomes <code>file:0/7/http%3A%2F%2Ftinyurl.com%2Fcxzzf</code></li>
+ *   <li> <code>urn:example1</code> becomes <code>file:0/8/urn%3Aexample1</code></li>
+ *   <li> <code>http://tinyurl.com/cxzzf</code> becomes <code>file:6/2/http%3A%2F%2Ftinyurl.com%2Fcxzzf</code></li>
  * </ul>
  * With pattern <em>##/##</em>:
  * <ul>
- *   <li> <code>urn:example1</code> becomes <code>file:93/63/urn%3Aexample1</code></li>
- *   <li> <code>http://tinyurl.com/cxzzf</code> becomes <code>file:07/42/http%3A%2F%2Ftinyurl.com%2Fcxzzf</code></li>
+ *   <li> <code>urn:example1</code> becomes <code>file:08/86/urn%3Aexample1</code></li>
+ *   <li> <code>http://tinyurl.com/cxzzf</code> becomes <code>file:62/ca/http%3A%2F%2Ftinyurl.com%2Fcxzzf</code></li>
  * </ul>
  *
  * @author Chris Wilper
@@ -107,6 +105,20 @@ public class HashPathIdMapper
         return URI.create(internalScheme + ":" + getPath(uri) + encode(uri));
     }
 
+    //@Override
+    public String getInternalPrefix(String externalPrefix)
+            throws NullPointerException {
+        if (externalPrefix == null) {
+            throw new NullPointerException();
+        }
+        // we can only do this if pattern is ""
+        if (pattern.length() == 0) {
+            return internalScheme + ":" + encode(externalPrefix);
+        } else {
+            return null;
+        }
+    }
+
     // gets the path based on the hash of the uri, or "" if the pattern is empty
     private String getPath(String uri) {
         if (pattern.length() == 0) {
@@ -127,19 +139,9 @@ public class HashPathIdMapper
         return builder.toString();
     }
 
-    // computes the crc32 and returns an 8-char lowercase hex string
+    // computes the md5 and returns a 32-char lowercase hex string
     private static String getHash(String uri) {
-        CRC32 crc = new CRC32();
-        try {
-            crc.update(uri.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException wontHappen) {
-            throw new FaultException(wontHappen);
-        }
-        String hash = Long.toHexString(crc.getValue());
-        while (hash.length() < 8) {
-            hash = "0" + hash;
-        }
-        return hash;
+        return MD5Utility.getBase16Hash(uri);
     }
 
     private static String encode(String uri) {
@@ -221,9 +223,9 @@ public class HashPathIdMapper
                         + " pattern: " + c);
             }
         }
-        if (count > 8) {
+        if (count > 32) {
             throw new IllegalArgumentException("Pattern must not contain more"
-                    + " than 8 '#' characters");
+                    + " than 32 '#' characters");
         }
         return pattern;
     }

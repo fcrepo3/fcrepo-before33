@@ -371,7 +371,7 @@ public class AkubraLowlevelStorage
 
     private static BlobStoreConnection getConnection(BlobStore store) {
         try {
-            return store.openConnection(null);
+            return store.openConnection(null, null);
         } catch (IOException e) {
             throw new FaultException(
                     "System error getting blob store connection", e);

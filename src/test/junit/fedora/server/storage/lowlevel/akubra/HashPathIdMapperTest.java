@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.fedoracommons.akubra.map.IdMapper;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 /**
@@ -17,13 +18,13 @@ import static org.junit.Assert.fail;
 public class HashPathIdMapperTest {
 
     private static final URI URI1 = URI.create("urn:example1");
-    private static final URI URI1_ENCODED = URI.create("file:93/63/f7/urn%3Aexample1");
+    private static final URI URI1_ENCODED = URI.create("file:08/86/ca/urn%3Aexample1");
 
     private static final URI URI2 = URI.create("http://tinyurl.com/cxzzf");
-    private static final URI URI2_ENCODED = URI.create("file:07/42/41/http%3A%2F%2Ftinyurl.com%2Fcxzzf");
+    private static final URI URI2_ENCODED = URI.create("file:62/ca/d6/http%3A%2F%2Ftinyurl.com%2Fcxzzf");
 
     private static final URI URI3 = URI.create("info:foo/bar.baz.");
-    private static final URI URI3_ENCODED = URI.create("file:6a/1b/1e/info%3Afoo%2Fbar.baz%2E");
+    private static final URI URI3_ENCODED = URI.create("file:13/a7/21/info%3Afoo%2Fbar.baz%2E");
 
     /** Generic tests should all pass with these patterns. */
     @Test
@@ -35,6 +36,7 @@ public class HashPathIdMapperTest {
         runGenericTests("##");
         runGenericTests("##/##");
         runGenericTests("##/##/##");
+        runGenericTests("################################"); // 32 chars
     }
 
     /** Bad patterns should fail at construction-time. */
@@ -47,8 +49,16 @@ public class HashPathIdMapperTest {
         assertBadPattern("#/");
         assertBadPattern("/#/");
         assertBadPattern("/#/");
-        assertBadPattern("#########");
-        assertBadPattern("####/#####");
+        assertBadPattern("#################################"); // 33 chars
+    }
+
+    /** getExternalId should produce the expected URIs. */
+    @Test
+    public void testGetExternalId() {
+        IdMapper mapper = new HashPathIdMapper("##/##/##");
+        assertEquals(URI1, mapper.getExternalId(URI1_ENCODED));
+        assertEquals(URI2, mapper.getExternalId(URI2_ENCODED));
+        assertEquals(URI3, mapper.getExternalId(URI3_ENCODED));
     }
 
     /** getInternalId should produce the expected URIs. */
@@ -60,13 +70,23 @@ public class HashPathIdMapperTest {
         assertEquals(URI3_ENCODED, mapper.getInternalId(URI3));
     }
 
-    /** getExternalId should produce the expected URIs. */
+    /** getInternalPrefix should throw NPE if given null. */
+    @Test (expected=NullPointerException.class)
+    public void testGetInternalPrefixNull() {
+        new HashPathIdMapper("").getInternalPrefix(null);
+    }
+
+    /** getInternalPrefix should return encoded prefix if pattern is empty. */
     @Test
-    public void testGetExternalId() {
-        IdMapper mapper = new HashPathIdMapper("##/##/##");
-        assertEquals(URI1, mapper.getExternalId(URI1_ENCODED));
-        assertEquals(URI2, mapper.getExternalId(URI2_ENCODED));
-        assertEquals(URI3, mapper.getExternalId(URI3_ENCODED));
+    public void testGetInternalPrefixNoPattern() {
+        assertEquals("file:urn%3Atest",
+                     new HashPathIdMapper("").getInternalPrefix("urn:test"));
+    }
+
+    /** getInternalPrefix should return null if pattern is nonempty. */
+    @Test
+    public void testGetInternalPrefixWithPattern() {
+        assertNull(new HashPathIdMapper("#").getInternalPrefix("urn:test"));
     }
 
     private static void runGenericTests(String pattern)
