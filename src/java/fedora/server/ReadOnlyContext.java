@@ -485,7 +485,9 @@ public class ReadOnlyContext
         String password = null;
 
         try {
-            password = ((ExtendedHttpServletRequest) request).getPassword();
+            if(request instanceof ExtendedHttpServletRequest){
+                password = ((ExtendedHttpServletRequest) request).getPassword();
+            }
         } catch (Throwable th) {
             LOG.error("in context, can't grok password from extended request "
                     + th.getMessage());
