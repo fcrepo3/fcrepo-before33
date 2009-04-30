@@ -70,7 +70,7 @@
 												<xsl:text>get/</xsl:text><xsl:value-of select="../@pid"/><xsl:text>/</xsl:text>
 												<xsl:value-of select="@dsid"/><xsl:text>/</xsl:text><xsl:value-of select="../@asOfDateTime"/>
 											</xsl:variable>
-											<a href="{$datastream-url}">
+											<a href="/{$fedora}/{$datastream-url}">
 												<xsl:value-of select="@label"/>
 											</a>
 									</xsl:when>
@@ -78,7 +78,7 @@
 										<xsl:variable name="datastream-url">
 											<xsl:text>get/</xsl:text><xsl:value-of select="../@pid"/><xsl:text>/</xsl:text><xsl:value-of select="@dsid"/>
 										</xsl:variable>
-										<a href="{$datastream-url}">
+										<a href="/{$fedora}/{$datastream-url}">
 											<xsl:value-of select="@label"/>
 										</a>									
 									</xsl:otherwise>

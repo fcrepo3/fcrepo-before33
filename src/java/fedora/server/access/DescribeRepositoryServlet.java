@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.server.access;
@@ -65,7 +65,7 @@ import fedora.utilities.XmlTransformUtility;
  * value of "true" indicates a return type of text/xml; the absence of the xml
  * parameter or a value of "false" indicates format is to be text/html.</li>
  * </ul>
- * 
+ *
  * @author Ross Wayland
  */
 public class DescribeRepositoryServlet
@@ -99,7 +99,7 @@ public class DescribeRepositoryServlet
      * Process Fedora Access Request. Parse and validate the servlet input
      * parameters and then execute the specified request.
      * </p>
-     * 
+     *
      * @param request
      *        The servlet request.
      * @param response
@@ -195,6 +195,8 @@ public class DescribeRepositoryServlet
                     Templates template =
                             factory.newTemplates(new StreamSource(xslFile));
                     Transformer transformer = template.newTransformer();
+                    transformer.setParameter("fedora", context
+                                             .getEnvironmentValue(FEDORA_APP_CONTEXT_NAME));
                     transformer.transform(new StreamSource(pr),
                                           new StreamResult(out));
                 }
@@ -245,7 +247,7 @@ public class DescribeRepositoryServlet
          * <p>
          * Constructor for ReposInfoSerializerThread.
          * </p>
-         * 
+         *
          * @param repositoryInfo
          *        A repository info data structure.
          * @param pw
@@ -342,7 +344,7 @@ public class DescribeRepositoryServlet
      * <p>
      * For now, treat a HTTP POST request just like a GET request.
      * </p>
-     * 
+     *
      * @param request
      *        The servet request.
      * @param response
@@ -362,7 +364,7 @@ public class DescribeRepositoryServlet
      * <p>
      * Initialize servlet.
      * </p>
-     * 
+     *
      * @throws ServletException
      *         If the servet cannot be initialized.
      */

@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.server.access;
@@ -71,7 +71,7 @@ import fedora.utilities.XmlTransformUtility;
  * value of "true" indicates a return type of text/xml; the absence of the xml
  * parameter or a value of "false" indicates format is to be text/html.</li>
  * </ul>
- * 
+ *
  * @author Ross Wayland
  * @version $Id$
  */
@@ -104,7 +104,7 @@ public class GetObjectHistoryServlet
      * Process Fedora Access Request. Parse and validate the servlet input
      * parameters and then execute the specified request.
      * </p>
-     * 
+     *
      * @param request
      *        The servlet request.
      * @param response
@@ -233,6 +233,8 @@ public class GetObjectHistoryServlet
                     Templates template =
                             factory.newTemplates(new StreamSource(xslFile));
                     Transformer transformer = template.newTransformer();
+                    transformer.setParameter("fedora", context
+                                             .getEnvironmentValue(FEDORA_APP_CONTEXT_NAME));
                     transformer.transform(new StreamSource(pr),
                                           new StreamResult(out));
                 }
@@ -283,7 +285,7 @@ public class GetObjectHistoryServlet
          * <p>
          * Constructor for ObjectHistorySerializerThread.
          * </p>
-         * 
+         *
          * @param objectHistory
          *        An object history data structure.
          * @param PID
@@ -347,7 +349,7 @@ public class GetObjectHistoryServlet
      * <p>
      * For now, treat a HTTP POST request just like a GET request.
      * </p>
-     * 
+     *
      * @param request
      *        The servet request.
      * @param response
@@ -367,7 +369,7 @@ public class GetObjectHistoryServlet
      * <p>
      * Initialize servlet.
      * </p>
-     * 
+     *
      * @throws ServletException
      *         If the servet cannot be initialized.
      */

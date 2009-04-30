@@ -95,7 +95,7 @@ public class DatastreamResource extends BaseRestResource {
 
             if (TEXT_HTML.isCompatible(mime)) {
                 CharArrayWriter writer = new CharArrayWriter();
-                transform(output, "access/listDatastreams.xslt", writer);
+                transform(output, "access/listDatastreamsRest.xslt", writer);
                 output = writer.toString();
             }
 

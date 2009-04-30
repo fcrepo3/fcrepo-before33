@@ -270,7 +270,7 @@ public class FedoraObjectResource extends BaseRestResource {
 
             if (TEXT_HTML.isCompatible(mime)) {
                 CharArrayWriter writer = new CharArrayWriter();
-                transform(xml, "access/viewObjectProfile.xslt", writer);
+                transform(xml, "access/viewObjectProfileRest.xslt", writer);
                 xml = writer.toString();
             }
 
@@ -362,6 +362,7 @@ public class FedoraObjectResource extends BaseRestResource {
             @DefaultValue("A")
             String state,
             @QueryParam(RestParam.IGNORE_MIME)
+            @DefaultValue("false")
             boolean ignoreMime) {
         try {
             Context context = getContext();

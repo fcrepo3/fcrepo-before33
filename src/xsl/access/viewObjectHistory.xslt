@@ -17,7 +17,7 @@
 							</td>
 							<td width="643" valign="top">
 								<center>
-									<h2>Fedora</h2>
+									<h2>Fedora Digital Object</h2>
 									<h3>Object History View</h3>
 								</center>
 							</td>

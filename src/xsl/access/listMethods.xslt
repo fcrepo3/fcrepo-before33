@@ -59,7 +59,7 @@
 </xsl:template>
 
 <xsl:template match="method">
-	<form name="parmResolverForm" method="post" action="getAccessParmResolver?">
+	<form name="parmResolverForm" method="post" action="/{$fedora}/getAccessParmResolver?">
 	<tr>
 		<td><font color="blue"><xsl:value-of select="../@pid"/></font></td>
 		<td><font size="+1"><xsl:value-of select="@name"/></font></td>

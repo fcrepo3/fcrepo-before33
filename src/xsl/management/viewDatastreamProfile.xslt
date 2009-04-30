@@ -33,6 +33,17 @@
 							<font size="+1">current</font>	
 						</xsl:otherwise>
 					</xsl:choose>
+                    <p />
+                    <xsl:variable name="content-url">
+                        <xsl:text>objects/</xsl:text>
+                        <xsl:value-of select="@pid" />
+                        <xsl:text>/datastreams/</xsl:text>
+                        <xsl:value-of select="@dsID" />
+                        <xsl:text>/content</xsl:text>
+                    </xsl:variable>        
+                    <font size="+1" color="blue">
+                        <a href="/{$fedora}/{$content-url}">View the Content of this Datastream</a>
+                    </font>
 					<p/>					
 					<hr/>
 					<table width="784" border="1" cellpadding="5" cellspacing="5" bgcolor="silver">

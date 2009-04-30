@@ -282,6 +282,8 @@ public class ListDatastreamsServlet
                         factory.newTemplates(new StreamSource(xslFile));
 
                 Transformer transformer = template.newTransformer();
+                transformer.setParameter("fedora", context
+                                         .getEnvironmentValue(FEDORA_APP_CONTEXT_NAME));
                 transformer.transform(new StreamSource(pr),
                                       new StreamResult(out));
             }
