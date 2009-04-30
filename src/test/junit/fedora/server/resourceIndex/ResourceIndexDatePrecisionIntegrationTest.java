@@ -1,4 +1,7 @@
-
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 package fedora.server.resourceIndex;
 
 import java.text.DateFormat;
@@ -23,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Date precision tests.
- * 
+ *
  * @author Chris Wilper
  * @author Edwin Shin
  */
@@ -88,7 +91,7 @@ public class ResourceIndexDatePrecisionIntegrationTest
 
     /**
      * Test that dateTime, date and xsdDateTime all represent the same date.
-     * 
+     *
      * @param dateTime
      *        dateTime for parsing by DateFormat using the pattern
      *        "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'".

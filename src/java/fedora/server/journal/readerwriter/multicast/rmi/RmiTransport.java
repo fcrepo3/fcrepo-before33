@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal.readerwriter.multicast.rmi;
@@ -40,7 +39,7 @@ import fedora.server.journal.readerwriter.multicast.TransportParent;
  * the receiving RMI service. Also accepts optional parameters for the RMI port
  * number and the internal message buffer size.
  * </p>
- * 
+ *
  * @author jblake
  * @version $Id: RmiTransport.java,v 1.3 2007/06/01 17:21:32 jblake Exp $
  */

@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal.readerwriter.multicast.rmi;
@@ -39,7 +38,7 @@ import fedora.server.journal.readerwriter.multicast.TransportOutputFile;
  * Note: command-line arguments are specified in
  * {@link RmiJournalReceiverArguments}.
  * </p>
- * 
+ *
  * @author jblake
  * @version $Id: RmiJournalReceiver.java,v 1.4 2007/06/21 15:59:53 jblake Exp $
  */

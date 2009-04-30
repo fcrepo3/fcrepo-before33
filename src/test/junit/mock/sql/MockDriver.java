@@ -1,3 +1,7 @@
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 
 package mock.sql;
 
@@ -11,7 +15,7 @@ import java.util.Properties;
 /**
  * A partial implementation of {@link Driver} for use in unit tests. Add more
  * mocking to this class as needed, or override methods in sub-classes.
- * 
+ *
  * @author Jim Blake
  */
 public class MockDriver

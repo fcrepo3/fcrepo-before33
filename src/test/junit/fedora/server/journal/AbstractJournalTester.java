@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal;
@@ -23,7 +22,7 @@ import static org.junit.Assert.fail;
  * <b>Description:</b> A base class that holds some useful methods for
  * Journaling test.
  * </p>
- * 
+ *
  * @author jblake
  * @version $Id: AbstractJournalTester.java,v 1.3 2007/06/01 17:21:32 jblake Exp $
  */
@@ -32,7 +31,7 @@ public class AbstractJournalTester {
     /**
      * Remove all files and sub-directories in this directory, so it will be
      * pristine for the next test.
-     * 
+     *
      * @throws IllegalStateException
      *         if we fail to delete anything - this might cause the next test to
      *         behave incorrectly.

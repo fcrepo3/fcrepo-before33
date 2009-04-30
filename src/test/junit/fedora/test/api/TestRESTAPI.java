@@ -1,4 +1,7 @@
-
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 package fedora.test.api;
 
 import java.io.DataOutputStream;
@@ -19,7 +22,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.DeleteMethod;
@@ -48,12 +50,11 @@ import fedora.test.DemoObjectTestSetup;
 import fedora.test.FedoraServerTestCase;
 
 import static org.apache.commons.httpclient.HttpStatus.SC_CREATED;
+import static org.apache.commons.httpclient.HttpStatus.SC_INTERNAL_SERVER_ERROR;
 import static org.apache.commons.httpclient.HttpStatus.SC_NOT_FOUND;
 import static org.apache.commons.httpclient.HttpStatus.SC_NO_CONTENT;
 import static org.apache.commons.httpclient.HttpStatus.SC_OK;
-import static org.apache.commons.httpclient.HttpStatus.SC_TEMPORARY_REDIRECT;
 import static org.apache.commons.httpclient.HttpStatus.SC_UNAUTHORIZED;
-import static org.apache.commons.httpclient.HttpStatus.SC_INTERNAL_SERVER_ERROR;
 
 /**
  * Tests of the REST API. Tests assume a running instance of Fedora with the

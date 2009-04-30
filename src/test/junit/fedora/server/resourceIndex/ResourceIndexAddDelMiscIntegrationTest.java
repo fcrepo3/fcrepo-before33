@@ -1,4 +1,7 @@
-
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 package fedora.server.resourceIndex;
 
 import java.util.Collections;
@@ -16,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Miscellaneous tests of adding and deleting objects from the RI. Note: All
  * tests run at RI level 1 unless otherwise noted.
- * 
+ *
  * @author Chris Wilper
  */
 public class ResourceIndexAddDelMiscIntegrationTest

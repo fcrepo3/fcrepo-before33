@@ -1,13 +1,13 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
- * available online at http://www.fedora.info/license/).
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
  */
 package fedora.utilities.install.container;
-
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,10 +25,10 @@ import fedora.utilities.install.InstallOptions;
 public class TestTomcatServerXML {
     private InputStream is;
     private InstallOptions installOptions;
-    
+
     /** The default server.xml shipped with Tomcat 5.5.23 (stripped of comments) */
     private static byte[] defaultServerXML;
-    
+
     static {
         StringBuilder sb = new StringBuilder();
         sb.append("<Server port=\"8005\" shutdown=\"SHUTDOWN\">");
@@ -61,14 +61,14 @@ public class TestTomcatServerXML {
         sb.append("    </Engine>");
         sb.append("  </Service>");
         sb.append("</Server>");
-        
+
         try {
             defaultServerXML = sb.toString().getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
             // should never happen with UTF-8
         }
     }
-    
+
     /**
      * @throws java.lang.Exception
      */
@@ -87,14 +87,14 @@ public class TestTomcatServerXML {
             is.close();
         }
     }
-    
+
     @Test
     public void testUpdate() throws Exception {
         TomcatServerXML serverXML;
         serverXML = new TomcatServerXML(is, installOptions);
         serverXML.update();
     }
-    
+
     private InstallOptions getDefaultOptions() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         map.put(InstallOptions.TOMCAT_HTTP_PORT, "8080");
@@ -102,10 +102,10 @@ public class TestTomcatServerXML {
         map.put(InstallOptions.SSL_AVAILABLE, "true");
         map.put(InstallOptions.TOMCAT_SSL_PORT, "8443");
         map.put(InstallOptions.KEYSTORE_FILE, "included");
-        
+
         return new InstallOptions(null, map);
     }
-    
+
     // Supports legacy test runners
     public static junit.framework.Test suite() {
         return new junit.framework.JUnit4TestAdapter(TestTomcatServerXML.class);

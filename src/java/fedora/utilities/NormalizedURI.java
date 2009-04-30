@@ -1,6 +1,6 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
- * available online at http://www.fedora.info/license/).
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
  */
 package fedora.utilities;
 
@@ -14,16 +14,16 @@ import java.util.regex.Pattern;
 
 /**
  * A representation of a normalized URI, per RFC3986.
- * 
+ *
  * @author Edwin Shin
  * @since 3.0
  * @see RFC3986
  * @version $Id$
  */
 public class NormalizedURI {
-    
+
     private URI uri;
-    
+
     /**
      * see http://www.iana.org/assignments/uri-schemes
      * see http://www.iana.org/assignments/port-numbers
@@ -66,7 +66,7 @@ public class NormalizedURI {
         defaultPorts.put("z39.50r", new Integer(210));
         defaultPorts.put("z39.50s", new Integer(210));
     }
-    
+
     private static final Pattern PERCENT_ENCODED = Pattern.compile("%([a-z0-9]{2})");
 
     public NormalizedURI(String uri) throws URISyntaxException {
@@ -76,13 +76,13 @@ public class NormalizedURI {
     public NormalizedURI(URI uri) {
         this.uri = uri;
     }
-    
+
     public void normalize() {
         normalizeSyntax();
         normalizeByScheme();
         normalizeByProtocol();
     }
-    
+
     /**
      * Performs the following:
      *  Case Normalization
@@ -95,7 +95,7 @@ public class NormalizedURI {
         normalizePercentEncoding();
         normalizePathSegment();
     }
-    
+
     /**
      * Case Normalization
      * @see RFC3986 6.2.2.1
@@ -112,11 +112,11 @@ public class NormalizedURI {
         if (host != null) {
             rURI = rURI.replaceFirst(host, host.toLowerCase());
         }
-        
+
         // Percent-encoded characters should be uppercase
         if (rURI.indexOf('%') != -1) {
             Matcher m = PERCENT_ENCODED.matcher(rURI);
-            
+
             StringBuffer sb = new StringBuffer();
             int lastEnd = 0;
             while(m.find()) {
@@ -129,7 +129,7 @@ public class NormalizedURI {
         }
         uri = URI.create(rURI);
     }
-    
+
     /**
      * Percent-Encoding Normalization
      * @see RFC3986 6.2.2.2
@@ -137,15 +137,15 @@ public class NormalizedURI {
      */
     public void normalizePercentEncoding() {
         try {
-            uri = new URI(uri.getScheme(), 
-                          uri.getSchemeSpecificPart(), 
+            uri = new URI(uri.getScheme(),
+                          uri.getSchemeSpecificPart(),
                           uri.getFragment());
         } catch (URISyntaxException e) {
             // This should never be reached
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Path Segment Normalization
      * @see RFC3986 6.2.2.3
@@ -154,7 +154,7 @@ public class NormalizedURI {
     public void normalizePathSegment() {
         uri = uri.normalize();
     }
-    
+
     /**
      * Scheme-Based Normalization
      * @see RFC3986 6.2.3
@@ -167,7 +167,7 @@ public class NormalizedURI {
         String host = uri.getHost();
         int port = uri.getPort();
         String path = uri.getPath();
-        
+
         if (port == defaultPort(scheme)) {
             rURI = rURI.replaceFirst(":" + port, "");
             try {
@@ -177,7 +177,7 @@ public class NormalizedURI {
                 e.printStackTrace();
             }
         }
-        
+
         if (port == -1 && authority != null && authority.endsWith(":")) {
             rURI = rURI.replaceFirst(authority, authority.substring(0, authority.length() -1));
             try {
@@ -187,7 +187,7 @@ public class NormalizedURI {
                 e.printStackTrace();
             }
         }
-        
+
         if (path == null || path.length() == 0) {
             if (host != null) {
                 rURI = rURI.replaceFirst(host, host + '/');
@@ -197,7 +197,7 @@ public class NormalizedURI {
             uri = URI.create(rURI);
         }
     }
-    
+
     /**
      * Protocol-Based Normalization
      * @see RFC3986 6.2.4
@@ -206,18 +206,19 @@ public class NormalizedURI {
     public void normalizeByProtocol() {
         //TODO noop
     }
-    
+
+    @Override
     public String toString() {
         return uri.toASCIIString();
     }
-    
+
     public URI toURI() {
         return uri;
     }
-    
+
     /**
      * Return the default port used by a given scheme.
-     * 
+     *
      * @param the scheme, e.g. http
      * @return the port number, or -1 if unknown
      */

@@ -1,4 +1,7 @@
-
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 package fedora.test.integration;
 
 import java.io.ByteArrayOutputStream;
@@ -7,20 +10,17 @@ import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.custommonkey.xmlunit.NamespaceContext;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
 
 import org.w3c.dom.Document;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import fedora.client.FedoraClient;
 
@@ -40,7 +40,7 @@ public class TestOAIService
     private DocumentBuilder builder;
 
     private FedoraClient client;
-    
+
     public static Test suite() {
         TestSuite suite = new TestSuite("Test OAI Service");
         suite.addTestSuite(TestOAIService.class);
@@ -55,7 +55,7 @@ public class TestOAIService
 
         factory = DocumentBuilderFactory.newInstance();
         builder = factory.newDocumentBuilder();
-        
+
         Map<String, String> nsMap = new HashMap<String, String>();
         nsMap.put(NS_FEDORA_TYPES_PREFIX, NS_FEDORA_TYPES);
         nsMap.put("oai", "http://www.openarchives.org/OAI/2.0/");

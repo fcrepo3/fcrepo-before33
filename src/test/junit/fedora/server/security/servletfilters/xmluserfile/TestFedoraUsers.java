@@ -1,10 +1,14 @@
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 package fedora.server.security.servletfilters.xmluserfile;
-
-import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
 
 public class TestFedoraUsers {
 
@@ -16,7 +20,7 @@ public class TestFedoraUsers {
         //fu.write(outputWriter);
         //outputWriter.close();
     }
-    
+
     @Test
     public void testGetInstanceString() throws Exception {
         String fedoraUsersXML = "src/fcfg/server/fedora-users.xml";
@@ -27,7 +31,7 @@ public class TestFedoraUsers {
         //fu.write(outputWriter);
         //outputWriter.close();
     }
-    
+
     /*
      * @Test public void testGetInstanceString() { fail("Not yet implemented"); }
      * @Test public void testGetRoles() { fail("Not yet implemented"); } @Test

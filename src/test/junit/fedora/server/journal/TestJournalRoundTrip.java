@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal;
@@ -16,10 +15,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import junit.framework.JUnit4TestAdapter;
 
 import fedora.common.Constants;
 import fedora.common.rdf.RDFName;
@@ -48,7 +47,7 @@ import static junit.framework.Assert.fail;
  * <li>that a non-journaled method WILL be accepted from an outside source by a
  * JournalConsumer</li>
  * </ul>
- * 
+ *
  * @author Jim Blake
  */
 public class TestJournalRoundTrip {
@@ -407,7 +406,7 @@ public class TestJournalRoundTrip {
      * Calling the method directly on the JournalConsumer should produce an
      * exception.
      * </p>
-     * 
+     *
      * @throws ModuleInitializationException
      * @throws ModuleShutdownException
      */

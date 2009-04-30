@@ -1,6 +1,6 @@
 /* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 package fedora.server.messaging;
 
@@ -31,9 +31,9 @@ public class MessagingImpl implements Messaging {
     private static Logger LOG =
             Logger.getLogger(MessagingImpl.class.getName());
 
-    private Map<String, List<String>> mdMap;
-    private JMSManager jmsMgr;
-    private String fedoraBaseUrl;
+    private final Map<String, List<String>> mdMap;
+    private final JMSManager jmsMgr;
+    private final String fedoraBaseUrl;
     private final static String serverVersion = Server.VERSION_MAJOR + Server.VERSION_MINOR;
     private final static String messageFormat = Constants.ATOM_APIM1_0.uri;
 

@@ -1,23 +1,29 @@
-
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 package fedora.test.integration.cma;
 
 import org.apache.axis.AxisFault;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import fedora.client.FedoraClient;
+
 import fedora.server.access.FedoraAPIA;
 import fedora.server.types.gen.ObjectMethodsDef;
-import fedora.test.FedoraServerTestCase;
 
-import static fedora.test.integration.cma.Util.filterMethods;
+import fedora.test.FedoraServerTestCase;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
+
+import static fedora.test.integration.cma.Util.filterMethods;
 
 /**
  * Tests involving one SDep that deploys for more than one SDef.
@@ -43,7 +49,7 @@ import static junit.framework.Assert.fail;
  * methods.</li>
  * </ul>
  * </p>
- * 
+ *
  * @author birkland
  */
 public class SharedDeploymentTests {

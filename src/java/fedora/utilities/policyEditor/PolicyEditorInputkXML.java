@@ -1,10 +1,6 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
- * available online at http://www.fedora.info/license/).
- */
-
-/**
- * @author Robert Haschart
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
  */
 package fedora.utilities.policyEditor;
 
@@ -26,6 +22,9 @@ import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+/**
+ * @author Robert Haschart
+ */
 public class PolicyEditorInputkXML {
 
     static boolean verbose = true;
@@ -411,7 +410,7 @@ public class PolicyEditorInputkXML {
      * <tt>&amp;quot;bread&amp;quot; &amp;amp; &amp;quot;butter&amp;quot;</tt>.
      * Update: supports nearly all HTML entities, including funky accents. See
      * the source code for more detail.
-     * 
+     *
      * @see #htmlunescape(String)
      */
     public static String htmlescape(String s1) {
@@ -422,9 +421,9 @@ public class PolicyEditorInputkXML {
         int i;
         for (i = 0; i < s1.length(); ++i) {
             char ch = s1.charAt(i);
-            String entity = (String) i2e.get(new Integer((int) ch));
+            String entity = (String) i2e.get(new Integer(ch));
             if (entity == null) {
-                if ((int) ch > 128) {
+                if (ch > 128) {
                     buf.append("&#" + (int) ch + ";");
                 } else {
                     buf.append(ch);
@@ -442,7 +441,7 @@ public class PolicyEditorInputkXML {
      * fixed by Helge Tesgaard (and, in parallel, by Alex, but Helge deserves
      * major props for emailing me the fix). 15-Feb-2002 Another bug fixed by
      * Sean Brown <sean@boohai.com>
-     * 
+     *
      * @see #htmlescape(String)
      */
     public static String htmlunescape(String s1) {

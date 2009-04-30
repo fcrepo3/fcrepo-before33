@@ -30,7 +30,7 @@ public class CopyUtils {
     /**
      * Copy bytes from an <code>InputStream</code> to an
      * <code>OutputStream</code>.
-     * 
+     *
      * @param input
      *            the <code>InputStream</code> to read from
      * @param output
@@ -52,7 +52,7 @@ public class CopyUtils {
 
     /**
      * Copy chars from a &ltcode&gtReader</code> to a &ltcode&gtWriter</code&gt.
-     * 
+     *
      * @param input
      *            the &ltcode&gtReader</code> to read from
      * @param output

@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal.readerwriter.multicast.rmi;
@@ -19,7 +18,7 @@ import org.apache.log4j.lf5.LogLevelFormatException;
  * Parses and encapsulates the command line arguments that are provided to the
  * {@link RmiJournalReceiver}.
  * </p>
- * 
+ *
  * @author jblake
  * @version $Id: RmiJournalReceiverArguments.java,v 1.1 2007/03/07 19:30:42
  *          jblake Exp $

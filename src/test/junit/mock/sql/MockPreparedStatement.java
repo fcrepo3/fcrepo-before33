@@ -1,3 +1,7 @@
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 
 package mock.sql;
 
@@ -5,12 +9,6 @@ import java.io.InputStream;
 import java.io.Reader;
 
 import java.net.URL;
-
-/* JDBC_4_ANT_TOKEN_BEGIN -
-import java.sql.NClob;
-import java.sql.RowId;
-import java.sql.SQLXML;
-- JDBC_4_ANT_TOKEN_END */
 
 import java.sql.Array;
 import java.sql.Blob;
@@ -35,7 +33,7 @@ import java.math.BigDecimal;
 /**
  * A partial implementation of {@link PreparedStatement} for use in unit tests.
  * Add more mocking to this class as needed, or override methods in sub-classes.
- * 
+ *
  * @author Jim Blake
  */
 public class MockPreparedStatement
@@ -423,7 +421,7 @@ public class MockPreparedStatement
     public void setQueryTimeout(int arg0) throws SQLException {
         throw new RuntimeException("MockPreparedStatement.setQueryTimeout not implemented");
     }
-    
+
     /* JDBC_4_ANT_TOKEN_BEGIN -
     @Override
     public void setAsciiStream(int arg0, InputStream arg1) throws SQLException {

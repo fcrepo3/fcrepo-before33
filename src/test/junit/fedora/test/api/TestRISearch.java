@@ -1,4 +1,7 @@
-
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 package fedora.test.api;
 
 import java.io.IOException;
@@ -19,16 +22,16 @@ import fedora.test.FedoraServerTestCase;
 
 /**
  * Tests risearch functionality when the resource index is enabled.
- * 
+ *
  * @author Chris Wilper
  */
 public class TestRISearch
         extends FedoraServerTestCase {
 
-    private static final String RISEARCH_COUNT = 
+    private static final String RISEARCH_COUNT =
             "/risearch?type=triples&lang=spo&format=count&stream=on&"
             + "flush=true&query=";
-    
+
     public static Test suite() {
         TestSuite suite = new TestSuite("TestRISearch TestSuite");
         suite.addTestSuite(TestRISearch.class);
@@ -45,7 +48,7 @@ public class TestRISearch
             checkSPOCount(client, query, 1);
         }
     }
-    
+
     private void checkSPOCount(FedoraClient client,
                                String query,
                                int expectedCount) {
@@ -54,7 +57,7 @@ public class TestRISearch
                      + " " + query + ", but got " + actualCount,
                      expectedCount, actualCount);
     }
-    
+
     private int getSPOCount(FedoraClient client,
                             String query) {
         String response = null;

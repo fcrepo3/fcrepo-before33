@@ -1,14 +1,8 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
- * available online at http://www.fedora.info/license/).
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
  */
 package fedora.utilities;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,6 +15,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fedora.common.xml.namespace.XMLNamespace;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  *
@@ -68,7 +68,7 @@ public class NamespaceContextImplTest {
         } catch(IllegalArgumentException e) {
             assertTrue(e.getMessage().endsWith("not allowed."));
         }
-        
+
     }
 
     /**
@@ -102,7 +102,7 @@ public class NamespaceContextImplTest {
         String prefix = "foo";
         String ns = "http://www.example.org/foo";
         nsCtx.addNamespace(prefix, ns);
-        
+
         Iterator<String> it = nsCtx.getPrefixes(ns);
         assertNotNull(it);
         assertTrue(it.hasNext());
@@ -130,7 +130,7 @@ public class NamespaceContextImplTest {
         assertEquals(ns, nsCtx.getNamespaceURI(prefix));
         assertEquals(prefix, nsCtx.getPrefix(ns));
     }
-    
+
     // Supports legacy test runners
     public static junit.framework.Test suite() {
         return new junit.framework.JUnit4TestAdapter(NamespaceContextImplTest.class);

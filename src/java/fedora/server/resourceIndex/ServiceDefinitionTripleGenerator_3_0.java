@@ -1,4 +1,7 @@
-
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 package fedora.server.resourceIndex;
 
 import java.io.IOException;
@@ -29,7 +32,7 @@ import static fedora.common.Constants.MODEL;
 
 /**
  * Generates all triples objects modeled as Fedora 3.0 Service Definitions.
- * 
+ *
  * @author Aaron Birkland
  */
 public class ServiceDefinitionTripleGenerator_3_0

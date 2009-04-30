@@ -1,3 +1,7 @@
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 
 package fedora.server.storage.translation;
 
@@ -32,7 +36,7 @@ import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_S
 
 /**
  * Common unit tests and utility methods for XML-based serializers.
- * 
+ *
  * @author Chris Wilper
  */
 public abstract class TestXMLDOSerializer
@@ -135,7 +139,7 @@ public abstract class TestXMLDOSerializer
     /**
      * Serialize the object, failing the test only if obviously incorrect
      * behavior occurs.
-     * 
+     *
      * @throws ObjectIntegrityException
      *         if the serializer fails due to same.
      * @throws SAXException
@@ -151,7 +155,7 @@ public abstract class TestXMLDOSerializer
         } catch (UnsupportedEncodingException e) {
             fail("Serializer doesn't support UTF-8!?");
         }
-        
+
         InputStream in = new ByteArrayInputStream(out.toByteArray());
         try {
             return XMLUnit.buildControlDocument(new InputSource(in));

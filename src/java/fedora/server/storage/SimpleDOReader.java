@@ -1,9 +1,7 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
-
 package fedora.server.storage;
 
 import java.io.ByteArrayInputStream;
@@ -49,7 +47,7 @@ import fedora.server.utilities.DateUtility;
 
 /**
  * A DOReader backed by a DigitalObject.
- * 
+ *
  * @author Chris Wilper
  */
 public class SimpleDOReader
@@ -325,7 +323,7 @@ public class SimpleDOReader
         for (Datastream d : m_obj.datastreams(datastreamID)) {
             versionDates.add(d.DSCreateDT);
         }
-        return (Date[]) versionDates.toArray(new Date[0]);
+        return versionDates.toArray(new Date[0]);
     }
 
     /**
@@ -397,7 +395,7 @@ public class SimpleDOReader
      * input parms) so that what is returned is only method parms that reflect
      * abstract method definitions. Abstract method definitions only expose
      * user-supplied parms.
-     * 
+     *
      * @param method
      * @return
      */
@@ -492,10 +490,10 @@ public class SimpleDOReader
 
         ObjectMethodsDef[] ret = new ObjectMethodsDef[methodList.size()];
         for (int i = 0; i < methodList.size(); i++) {
-            MethodDef def = (MethodDef) methodList.get(i);
+            MethodDef def = methodList.get(i);
             ret[i] = new ObjectMethodsDef();
             ret[i].PID = GetObjectPID();
-            ret[i].sDefPID = (String) sDefIDList.get(i);
+            ret[i].sDefPID = sDefIDList.get(i);
             ret[i].methodName = def.methodName;
             ret[i].methodParmDefs = def.methodParms;
             ret[i].asOfDate = versDateTime;

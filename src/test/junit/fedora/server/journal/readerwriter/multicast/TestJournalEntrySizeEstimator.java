@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal.readerwriter.multicast;
@@ -38,7 +37,7 @@ import static org.junit.Assert.fail;
  * <p>
  * <b>Description:</b> Unit tests for JournalEntrySizeEstimator
  * </p>
- * 
+ *
  * @author jblake
  * @version $Id: TestJournalEntrySizeEstimator.java,v 1.1 2007/02/27 20:23:48
  *          jblake Exp $

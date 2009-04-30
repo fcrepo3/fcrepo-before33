@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal;
@@ -24,7 +23,7 @@ import fedora.server.journal.recoverylog.JournalRecoveryLog;
  * lost if not read before the next instance is created and shut down, but that
  * should not pose a problem in unit tests.
  * </p>
- * 
+ *
  * @author Jim Blake
  */
 public class MockJournalRecoveryLog

@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal.readerwriter.multicast.rmi;
@@ -27,7 +26,7 @@ import static junit.framework.Assert.assertEquals;
  * <p>
  * <b>Description:</b> Put the RmiTransportWriter through its paces.
  * </p>
- * 
+ *
  * @author jblake
  * @version $Id: TestRmiTransportWriter.java,v 1.3 2007/06/01 17:21:31 jblake
  *          Exp $

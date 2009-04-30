@@ -1,9 +1,7 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
-
 package fedora.server.management;
 
 import java.io.ByteArrayInputStream;
@@ -34,7 +32,7 @@ import fedora.server.utilities.TypeUtility;
 
 /**
  * Implements the Fedora management SOAP service.
- * 
+ *
  * @author Chris Wilper
  */
 public class FedoraAPIMBindingSOAPHTTPImpl

@@ -1,6 +1,6 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
- * available online at http://www.fedora.info/license/).
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
  */
 package fedora.server.utilities;
 
@@ -43,7 +43,8 @@ public class DCFieldsTest extends XMLTestCase {
         sb.append("</oai_dc:dc> ");
         dcWithXmlLang = sb.toString();
     }
-    
+
+    @Override
     public void setUp() throws Exception {
         Map<String, String> nsMap = new HashMap<String, String>();
         nsMap.put(OAI_DC.prefix, OAI_DC.uri);
@@ -52,23 +53,23 @@ public class DCFieldsTest extends XMLTestCase {
         engine = XMLUnit.newXpathEngine();
         engine.setNamespaceContext(ctx);
     }
-    
+
     @Test
     public void testDCFieldsInputStream() throws Exception {
         DCFields dc;
         Document dcXML;
-        
+
         dc = new DCFields(new ByteArrayInputStream(dcWithXmlLang.getBytes("UTF-8")));
         dcXML = XMLUnit.buildControlDocument(dc.getAsXML());
-        assertEquals("Time interval", 
+        assertEquals("Time interval",
                      engine.evaluate("//dc:subject[@xml:lang='en']", dcXML));
-        assertEquals("Tidsinterval", 
+        assertEquals("Tidsinterval",
                      engine.evaluate("//dc:subject[@xml:lang='da']", dcXML));
-        
+
         dc = new DCFields();
         dcXML = XMLUnit.buildControlDocument(dc.getAsXML());
-        assertEquals("Expected empty element", 
-                     "", 
+        assertEquals("Expected empty element",
+                     "",
                      engine.evaluate("//oai_dc:dc", dcXML).trim());
     }
 

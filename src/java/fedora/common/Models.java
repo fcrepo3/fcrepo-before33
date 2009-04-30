@@ -1,4 +1,7 @@
-
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 package fedora.common;
 
 import java.lang.reflect.Field;
@@ -11,7 +14,7 @@ import fedora.common.rdf.RDFName;
 
 /**
  * Identities of the system content models.
- * 
+ *
  * @author Aaron Birkland
  * @author Chris Wilper
  */
@@ -78,7 +81,7 @@ public abstract class Models {
 
     /**
      * Determine if any of the models defined herein match the given model uri.
-     * 
+     *
      * @param model
      *        URI of a content model;
      * @return true if the uri of one of the models matches the given uri.
@@ -94,7 +97,7 @@ public abstract class Models {
      * @param model
      *        URI of a content model;
      * @return true if the given model URI denotes a basic content model.
-     */ 
+     */
     public static boolean isBasicModel(String model) {
         return FEDORA_OBJECT_3_0.uri.equals(model);
     }

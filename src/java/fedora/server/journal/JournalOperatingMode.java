@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal;
@@ -21,7 +20,7 @@ import fedora.server.journal.entry.CreatorJournalEntry;
  * {@link JournalOperatingMode#enforceCurrentMode} before performing an
  * operation that might modify the repository.
  * </p>
- * 
+ *
  * @author jblake
  * @version $Id: JournalOperatingMode.java,v 1.3 2007/06/01 17:21:31 jblake Exp $
  */
@@ -50,7 +49,7 @@ public enum JournalOperatingMode {
     /**
      * If a modifying operation is attempted while we are in Read-Only mode,
      * throw an exception to prevent it. In Normal mode, do nothing.
-     * 
+     *
      * @throws ServerException
      *         to prevent a modifying operation in Read-Only mode.
      */

@@ -1,3 +1,7 @@
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 
 package fedora.client.objecteditor;
 
@@ -29,7 +33,7 @@ public class SpringUtilities {
      * <code>parent</code> in a grid. Each component is as big as the maximum
      * preferred width and height of the components. The parent is made just big
      * enough to fit them all.
-     * 
+     *
      * @param rows
      *        number of rows
      * @param cols
@@ -138,7 +142,7 @@ public class SpringUtilities {
      * the maximum preferred width of the components in that column; height is
      * similarly determined for each row. The parent is made just big enough to
      * fit them all.
-     * 
+     *
      * @param rows
      *        number of rows
      * @param cols

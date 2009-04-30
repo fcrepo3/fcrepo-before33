@@ -1,9 +1,7 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
-
 package fedora.server.storage.types;
 
 import java.util.ArrayList;
@@ -30,7 +28,7 @@ import fedora.server.storage.RDFRelationshipReader;
 
 /**
  * A basic implementation of DigitalObject that stores things in memory.
- * 
+ *
  * @author Chris Wilper
  */
 @SuppressWarnings("deprecation")
@@ -53,7 +51,7 @@ public class BasicDigitalObject
 
     private Date m_lastModDate;
 
-    private DatastreamProcessor m_datastreamProcessor;
+    private final DatastreamProcessor m_datastreamProcessor;
 
     private final ArrayList<AuditRecord> m_auditRecords;
 
@@ -266,7 +264,7 @@ public class BasicDigitalObject
 
     /**
      * Sets an extended property on the object.
-     * 
+     *
      * @param propName
      *        The extende property name, either a string, or URI as string.
      */
@@ -277,7 +275,7 @@ public class BasicDigitalObject
 
     /**
      * Gets an extended property value, given the property name.
-     * 
+     *
      * @return The property value.
      */
     public String getExtProperty(String propName) {
@@ -288,7 +286,7 @@ public class BasicDigitalObject
     /**
      * Gets a Map containing all of the extended properties on the object. Map
      * key is property name.
-     * 
+     *
      * @return The property Map.
      */
     public Map<String, String> getExtProperties() {
@@ -310,17 +308,17 @@ public class BasicDigitalObject
         }
 
         boolean basicExplicit = false;
-        
+
         // Iterate explicit relationships, finding matches and
         // determining whether the object has an explicit basic cmodel.
         for (RelationshipTuple t : m_rels) {
-            
+
             // Do any hasModel rels point to a basic cmodel?
             if (Constants.MODEL.HAS_MODEL.uri.equals(t.predicate)
                     && Models.isBasicModel(t.object)) {
                 basicExplicit = true;
             }
-            
+
             // Find matching relationships from those that are explicit
             if (predicate != null) {
                 if (!JRDF.samePredicate(predicate, t.predicate)) {
@@ -339,9 +337,9 @@ public class BasicDigitalObject
             }
             foundRels.add(t);
         }
-       
+
         // If necessary, add the current basic cmodel to the set of matches
-        if (!basicExplicit 
+        if (!basicExplicit
                 && (predicate == null ||
                     JRDF.samePredicate(predicate, Constants.MODEL.HAS_MODEL))
                 && (object == null ||
@@ -353,7 +351,7 @@ public class BasicDigitalObject
                                           false,
                                           null));
         }
-        
+
         return foundRels;
     }
 
@@ -437,10 +435,12 @@ public class BasicDigitalObject
 
         private static final String RELS_EXT = "RELS-EXT";
 
+        @Override
         void processRemove(Datastream d) {
             invalidateIfLatestRelsExt(d);
         }
 
+        @Override
         void processAdd(Datastream d) {
             invalidateIfLatestRelsExt(d);
         }

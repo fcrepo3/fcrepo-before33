@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal;
@@ -23,7 +22,7 @@ import fedora.server.journal.recoverylog.JournalRecoveryLog;
 /**
  * Read Journal XML from a String buffer. If the buffer is null or empty, treat
  * it as an empty Journal.
- * 
+ *
  * @author Jim Blake
  */
 public class MockJournalReader

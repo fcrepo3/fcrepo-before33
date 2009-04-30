@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal.readerwriter.multicast;
@@ -33,7 +32,7 @@ import fedora.server.journal.helpers.ParameterHelper;
  * stored.</li>
  * </ul>
  * </p>
- * 
+ *
  * @author jblake
  * @version $Id: LocalDirectoryTransport.java,v 1.1 2007/03/06 15:02:58 jblake
  *          Exp $

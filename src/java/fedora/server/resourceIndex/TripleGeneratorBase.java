@@ -1,3 +1,7 @@
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 package fedora.server.resourceIndex;
 
 import java.util.Date;
@@ -19,7 +23,7 @@ import static fedora.common.Constants.RDF_XSD;
 
 public abstract class TripleGeneratorBase {
     // Helper methods for creating RDF components
-    
+
     protected RDFName getStateResource(String state)
             throws ResourceIndexException {
         if (state == null) {
@@ -52,7 +56,7 @@ public abstract class TripleGeneratorBase {
             set.add(new SimpleTriple(subject, predicate, new SimpleLiteral(lexicalValue)));
         }
     }
-    
+
     protected void add(SubjectNode subject,
                        RDFName predicate,
                        String lexicalValue,

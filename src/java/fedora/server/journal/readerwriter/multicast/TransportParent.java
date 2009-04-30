@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal.readerwriter.multicast;
@@ -20,7 +19,7 @@ import fedora.server.journal.JournalException;
  * <b>Description:</b> Allows a Transport to request formatting operations from
  * its parent object.
  * </p>
- * 
+ *
  * @author jblake
  * @version $Id: TransportParent.java,v 1.3 2007/06/01 17:21:31 jblake Exp $
  */

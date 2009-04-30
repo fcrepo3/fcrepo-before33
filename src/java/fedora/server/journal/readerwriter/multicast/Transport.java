@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal.readerwriter.multicast;
@@ -31,7 +30,7 @@ import fedora.server.journal.JournalException;
  * {@link #getWriter() getWriter}, which does not change the Transport state,
  * and should call {@link #testWriterState() testWriterState} instead.
  * </p>
- * 
+ *
  * @author jblake
  * @version $Id: Transport.java,v 1.3 2007/06/01 17:21:31 jblake Exp $
  */

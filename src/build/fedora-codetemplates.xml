@@ -6,7 +6,7 @@
  * ${tags}
  */</template><template autoinsert="false" context="filecomment_context" deleted="false" description="Comment for created Java files" enabled="true" id="org.eclipse.jdt.ui.text.codetemplates.filecomment" name="filecomment">/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also 
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */</template><template autoinsert="false" context="typecomment_context" deleted="false" description="Comment for created types" enabled="true" id="org.eclipse.jdt.ui.text.codetemplates.typecomment" name="typecomment">/**
  *
  * @author Firstname Lastname

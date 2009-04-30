@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.management;
@@ -25,7 +24,7 @@ import fedora.server.storage.types.RelationshipTuple;
  * call generates a {@link Call} object which is added to a list of calls for
  * later inspection. The method then returns some plausible result value if
  * required.
- * 
+ *
  * @author Firstname Lastname
  */
 public class MockManagementDelegate
@@ -88,7 +87,7 @@ public class MockManagementDelegate
             for (int i = 0; i < args1.length; i++) {
                 if (args1[i] instanceof InputStream
                         && args2[i] instanceof InputStream) {
-                    // Input streams are considered equal, even if different types, 
+                    // Input streams are considered equal, even if different types,
                     // and without testing the contents.
                     continue;
                 } else if (args1[i] instanceof Object[]

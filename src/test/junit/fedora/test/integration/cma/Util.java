@@ -1,14 +1,20 @@
-
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 package fedora.test.integration.cma;
 
 import java.io.File;
 import java.io.PrintStream;
+
 import java.util.ArrayList;
 
 import fedora.client.FedoraClient;
 import fedora.client.utility.ingest.Ingest;
 import fedora.client.utility.ingest.IngestCounter;
+
 import fedora.server.types.gen.ObjectMethodsDef;
+
 import fedora.test.FedoraTestCase;
 
 import static fedora.common.Constants.FOXML1_1;

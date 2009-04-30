@@ -1,9 +1,7 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
-
 package fedora.server.journal;
 
 import java.io.InputStream;
@@ -30,7 +28,7 @@ import fedora.server.storage.types.RelationshipTuple;
  * CreatorJournalEntry and ask it to invoke the method on the
  * ManagementDelegate. If a "read-only" Management method is called, just pass
  * it along to the ManagementDelegate.
- * 
+ *
  * @author Jim Blake
  */
 public class JournalCreator
@@ -86,10 +84,10 @@ public class JournalCreator
 
     //
     // -------------------------------------------------------------------------
-    // 
+    //
     // Create a Journal entry for each call to one of the Management API
     // "writing" methods.
-    // 
+    //
     // -------------------------------------------------------------------------
     //
 
@@ -413,9 +411,9 @@ public class JournalCreator
 
     //
     // -------------------------------------------------------------------------
-    // 
+    //
     // For read-only methods, don't bother with a Journal entry.
-    // 
+    //
     // -------------------------------------------------------------------------
     //
 

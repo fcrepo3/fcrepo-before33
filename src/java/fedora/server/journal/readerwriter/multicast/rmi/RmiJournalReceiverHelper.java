@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal.readerwriter.multicast.rmi;
@@ -13,7 +12,7 @@ package fedora.server.journal.readerwriter.multicast.rmi;
  * <p>
  * Utility methods that are used by multiple RMI-related classes.
  * </p>
- * 
+ *
  * @author jblake
  * @version $Id: RmiJournalReceiverHelper.java,v 1.3 2007/06/01 17:21:32 jblake
  *          Exp $

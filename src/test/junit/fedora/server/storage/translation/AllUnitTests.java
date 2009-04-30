@@ -1,3 +1,7 @@
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 
 package fedora.server.storage.translation;
 
@@ -15,7 +19,7 @@ import org.junit.runners.Suite;
         TestAtomDOSerializer.class,
         TestAtomDODeserializer.class,
         DOTranslationUtilityTest.class})
-        
+
 public class AllUnitTests {
 
     // Supports legacy tests runners
@@ -37,10 +41,10 @@ public class AllUnitTests {
 
         suite.addTest(TestMETSFedoraExt1_1DOSerializer.suite());
         suite.addTest(TestMETSFedoraExt1_1DODeserializer.suite());
-        
+
         suite.addTest(TestAtomDOSerializer.suite());
         suite.addTest(TestAtomDODeserializer.suite());
-        
+
         suite.addTest(DOTranslationUtilityTest.suite());
 
         return suite;

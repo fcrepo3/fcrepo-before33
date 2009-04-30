@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal.readerwriter.multicast.rmi;
@@ -13,7 +12,7 @@ import fedora.server.journal.JournalException;
 
 /**
  * The RMI proxy interface for the {@link RmiJournalReceiver}.
- * 
+ *
  * @author Jim Blake
  */
 public interface RmiJournalReceiverInterface

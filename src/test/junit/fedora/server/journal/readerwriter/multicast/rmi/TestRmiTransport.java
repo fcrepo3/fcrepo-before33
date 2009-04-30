@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal.readerwriter.multicast.rmi;
@@ -38,7 +37,7 @@ import static junit.framework.Assert.fail;
  * NOTE: The tests which require a functioning RMI receiver do not work in all
  * environments, and have been disabled with the "Ignore" annotation. At this
  * time, I don't know where the problem lies.
- * 
+ *
  * @author Jim Blake
  */
 public class TestRmiTransport {

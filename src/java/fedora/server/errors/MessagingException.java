@@ -1,9 +1,13 @@
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 package fedora.server.errors;
 
 public class MessagingException extends ServerException {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	/**
 	 * @param message An informative message explaining what happened and
      *                (possibly) how to fix it.
@@ -11,7 +15,7 @@ public class MessagingException extends ServerException {
 	public MessagingException(String message) {
         super(null, message, null, null, null);
     }
-	
+
 	/**
 	 * @param message An informative message explaining what happened and
      *                (possibly) how to fix it.
@@ -21,7 +25,7 @@ public class MessagingException extends ServerException {
     public MessagingException(String message, Throwable cause) {
         super(null, message, null, null, cause);
     }
-	
+
 	/**
 	 * @param bundleName The bundle in which the message resides.
      * @param code The identifier for the message in the bundle, aka the key.

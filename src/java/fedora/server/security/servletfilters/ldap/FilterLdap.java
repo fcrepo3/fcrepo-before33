@@ -1,4 +1,7 @@
-
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 package fedora.server.security.servletfilters.ldap;
 
 import java.util.HashSet;
@@ -88,6 +91,7 @@ public class FilterLdap
 
     //public Boolean REQUIRE_RETURNED_ATTRS = Boolean.FALSE;
 
+    @Override
     public void init(FilterConfig filterConfig) {
         String m = "L init() ";
         try {
@@ -172,6 +176,7 @@ public class FilterLdap
         }
     }
 
+    @Override
     public void destroy() {
         String m = FilterSetup.getFilterNameAbbrev(FILTER_NAME) + " destroy() ";
         try {
@@ -182,6 +187,7 @@ public class FilterLdap
         }
     }
 
+    @Override
     protected void initThisSubclass(String key, String value) {
         String m =
                 FilterSetup.getFilterNameAbbrev(FILTER_NAME)
@@ -463,9 +469,9 @@ public class FilterLdap
                 FilterSetup.getFilterNameAbbrev(FILTER_NAME)
                         + " getNamingEnumeration() ";
         log.debug(m + ">");
-        // this condition is to -further- protect against behavior suggested by 
+        // this condition is to -further- protect against behavior suggested by
         // log from hull (see below for first-line protection)
-        // the idea here is to steer clear of possible trouble in underlying 
+        // the idea here is to steer clear of possible trouble in underlying
         // code and avoid calling ldap w/o a needed and practical password
 
         String msg = "[LDAP: error code 49 - Bind failed: ";
@@ -743,6 +749,7 @@ public class FilterLdap
         return authenticated;
     }
 
+    @Override
     public void populateCacheElement(CacheElement cacheElement, String password) {
         //this is heavy on logging for field reporting
         String m =
@@ -823,8 +830,8 @@ public class FilterLdap
                     }
                 }
             } catch (NamingException e) {
-                // the -error- logs here are because, though ne==null 
-                // never before seen, yet hull log suggests caution and 
+                // the -error- logs here are because, though ne==null
+                // never before seen, yet hull log suggests caution and
                 // preemptive logging
                 log.error(m + "unexpected null ne w/o exception thrown");
                 if (!AUTHENTICATE) {
@@ -840,13 +847,13 @@ public class FilterLdap
                     }
                 }
             } catch (Exception e) {
-                // this seemingly was a condition reached at hull, of course 
+                // this seemingly was a condition reached at hull, of course
                 // though, in an earlier different code version
                 if (AUTHENTICATE && individualUserComparison()) {
-                    authenticated = null; //Boolean.FALSE; PASSTHROUGH                                                          
+                    authenticated = null; //Boolean.FALSE; PASSTHROUGH
                     log.error(m + "has no ret vals, so reject authentication");
                 } else if (AUTHENTICATE && individualUserBind()) {
-                    authenticated = null; //Boolean.FALSE; PASSTHROUGH                                              
+                    authenticated = null; //Boolean.FALSE; PASSTHROUGH
                     log.error(m + "has no ret vals, so reject authentication");
                 }
             }

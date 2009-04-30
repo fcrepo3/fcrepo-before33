@@ -1,4 +1,7 @@
-
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 package fedora.test.api;
 
 import java.io.UnsupportedEncodingException;
@@ -8,9 +11,6 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.custommonkey.xmlunit.NamespaceContext;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -18,6 +18,9 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.jrdf.graph.Node;
 
 import org.trippi.TupleIterator;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import fedora.client.FedoraClient;
 
@@ -33,7 +36,7 @@ import fedora.test.FedoraServerTestCase;
 /**
  * Tests for the various relationship API-M methods. Tests assume a running
  * instance of the Fedora server with Resource Index enabled.
- * 
+ *
  * @author Edwin Shin
  */
 public class TestRelationships
@@ -105,7 +108,7 @@ public class TestRelationships
         nsMap.put("foxml", "info:fedora/fedora-system:def/foxml#");
         NamespaceContext ctx = new SimpleNamespaceContext(nsMap);
         XMLUnit.setXpathNamespaceContext(ctx);
-        
+
         apim.ingest(DEMO_888_FOXML, FOXML1_1.uri, "ingesting new foxml object");
         apim.ingest(DEMO_777_FOXML, FOXML1_1.uri, "ingesting new foxml object");
         pid = "demo:888";
@@ -174,7 +177,7 @@ public class TestRelationships
         RelationshipTuple[] tuples = apim.getRelationships("demo:777", null);
         assertEquals(1, tuples.length);
     }
-    
+
     public void testBasicCModelRelationships() throws Exception {
         for (String pid : new String[] { "demo:777", "demo:888" }) {
             checkExistsViaGetRelationships(pid,
@@ -182,7 +185,7 @@ public class TestRelationships
                                            Models.FEDORA_OBJECT_CURRENT.uri);
         }
     }
-    
+
     private void checkExistsViaGetRelationships(String pid,
                                                 String predicate,
                                                 String object) throws Exception {

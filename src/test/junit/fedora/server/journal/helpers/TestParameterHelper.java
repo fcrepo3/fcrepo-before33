@@ -1,9 +1,7 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
-
 package fedora.server.journal.helpers;
 
 import java.util.HashMap;
@@ -25,7 +23,7 @@ import static org.junit.Assert.fail;
  * <p>
  * <b>Description:</b> Test cases for the ParameterHelper class.
  * </p>
- * 
+ *
  * @author jblake@cs.cornell.edu
  * @version $Id: TestParameterHelper.java 6734 2008-03-03 22:12:28 +0000 (Mon,
  *          03 Mar 2008) j2blake $

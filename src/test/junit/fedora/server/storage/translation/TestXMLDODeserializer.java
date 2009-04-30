@@ -1,3 +1,7 @@
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 
 package fedora.server.storage.translation;
 
@@ -40,7 +44,7 @@ import static fedora.server.storage.translation.DOTranslationUtility.SERIALIZE_S
 
 /**
  * Common unit tests and utility methods for XML-based deserializers.
- * 
+ *
  * @author Chris Wilper
  */
 @SuppressWarnings("deprecation")
@@ -108,7 +112,7 @@ public abstract class TestXMLDODeserializer
      * Tests for deterministic inline-XML content between generations. Addresses
      * bug #1771136: inlineXML would increase in size between copy generations
      * due to added whitespace.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -135,7 +139,7 @@ public abstract class TestXMLDODeserializer
                      ds1copy.xmlContent.length,
                      ds1copyOfCopy.xmlContent.length);
     }
-    
+
     @Test
     public void testAuditDatastream() throws Exception {
         AuditRecord record = new AuditRecord();
@@ -146,16 +150,16 @@ public abstract class TestXMLDODeserializer
         record.justification = "malice";
         record.processType = "Fedora API-M";
         record.responsibility = "fedoraAdmin";
-        
+
         DigitalObject original = createTestObject(FEDORA_OBJECT_3_0);
         original.getAuditRecords().add(record);
-        
+
         // serialize to file
         File temp = File.createTempFile("audit", ".xml");
         OutputStream out = new FileOutputStream(temp);
         m_serializer.serialize(original, out, "utf-8", DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC);
         out.close();
-        
+
         // deserialize
         DigitalObject candidate = new BasicDigitalObject();
         InputStream in = new FileInputStream(temp);
@@ -172,7 +176,7 @@ public abstract class TestXMLDODeserializer
             assertEquals(a1.get(i).processType, a2.get(i).processType);
             assertEquals(a1.get(i).responsibility, a2.get(i).responsibility);
         }
-        
+
         temp.delete();
     }
 
@@ -201,7 +205,7 @@ public abstract class TestXMLDODeserializer
     /**
      * Copies of an object by deserializing and re-serializing. In theory, there
      * should be no difference between copy generations..
-     * 
+     *
      * @param original
      *        Object to copy
      * @return Copy formed by serializing and de-serializing the original.

@@ -1,11 +1,11 @@
-
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 package fedora.test.api;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.custommonkey.xmlunit.NamespaceContext;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
@@ -14,6 +14,9 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.After;
 
 import org.w3c.dom.Document;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import fedora.client.FedoraClient;
 
@@ -32,7 +35,7 @@ import fedora.test.OneEmptyObjectTestSetup;
  * <p>
  * By default, the tests will run against the "default" Fedora base URL, but
  * this can be overridden by setting the "fedora.baseURL" system property.
- * 
+ *
  * @author Chris Wilper
  */
 public class TestAuthentication
@@ -210,7 +213,7 @@ public class TestAuthentication
         NamespaceContext ctx = new SimpleNamespaceContext(nsMap);
         XMLUnit.setXpathNamespaceContext(ctx);
     }
-    
+
     @Override
     @After
     public void tearDown() {

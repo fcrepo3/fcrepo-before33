@@ -1,11 +1,14 @@
-
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 package fedora.server.errors.servletExceptionExtensions;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
  * Thrown to reach 404 Not Found error page.
- * 
+ *
  * @author Chris Wilper
  */
 public class NotFound404Exception

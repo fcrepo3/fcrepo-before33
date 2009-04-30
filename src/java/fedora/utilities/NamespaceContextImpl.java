@@ -1,6 +1,6 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
- * available online at http://www.fedora.info/license/).
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
  */
 package fedora.utilities;
 
@@ -20,30 +20,30 @@ import fedora.common.xml.namespace.XMLNamespace;
 /**
  * An implementation of {@link NamespaceContext NamespaceContext} that provides
  * an addNamespace method.
- * 
+ *
  * @author Edwin Shin
  * @version $Id$
  */
 public class NamespaceContextImpl
         implements NamespaceContext {
-    
-    private Map<String, String> prefix2ns = new ConcurrentHashMap<String, String>();
-    
+
+    private final Map<String, String> prefix2ns = new ConcurrentHashMap<String, String>();
+
     public NamespaceContextImpl() {
         prefix2ns.put(XMLConstants.XML_NS_PREFIX, XMLConstants.XML_NS_URI);
         prefix2ns.put(XMLConstants.XMLNS_ATTRIBUTE, XMLConstants.XMLNS_ATTRIBUTE_NS_URI);
     }
-    
+
     public NamespaceContextImpl(String prefix, String namespaceURI) {
         this();
         this.addNamespace(prefix, namespaceURI);
     }
-    
+
     /**
      * Constructor that takes a Map of prefix to namespaces.
-     * 
+     *
      * @param prefix2ns a mapping of prefixes to namespaces.
-     * @throws IllegalArgumentException if prefix2ns contains 
+     * @throws IllegalArgumentException if prefix2ns contains
      * {@value XMLConstants.XML_NS_URI} or {@value XMLConstants.XMLNS_ATTRIBUTE_NS_URI}
      */
     public NamespaceContextImpl(Map<String, String> prefix2ns) {
@@ -52,7 +52,7 @@ public class NamespaceContextImpl
             addNamespace(prefix, prefix2ns.get(prefix));
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -87,20 +87,20 @@ public class NamespaceContextImpl
     public Iterator<String> getPrefixes(String namespaceURI) {
         List<String> prefixes = new ArrayList<String>();
         for (String prefix : prefix2ns.keySet()) {
-            if (prefix2ns.containsKey(prefix) && 
+            if (prefix2ns.containsKey(prefix) &&
                     prefix2ns.get(prefix).equals(namespaceURI)) {
                 prefixes.add(prefix);
             }
         }
         return Collections.unmodifiableList(prefixes).iterator();
     }
-    
+
     /**
      * Add a prefix to namespace mapping.
-     * 
+     *
      * @param prefix
      * @param namespaceURI
-     * @throws IllegalArgumentException if namespaceURI is one of 
+     * @throws IllegalArgumentException if namespaceURI is one of
      * {@value XMLConstants.XML_NS_URI} or {@value XMLConstants.XMLNS_ATTRIBUTE_NS_URI}
      */
     public void addNamespace(String prefix, String namespaceURI) {

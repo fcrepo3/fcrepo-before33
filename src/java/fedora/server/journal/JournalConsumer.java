@@ -1,9 +1,7 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
-
 package fedora.server.journal;
 
 import java.io.InputStream;
@@ -27,7 +25,7 @@ import fedora.server.storage.types.RelationshipTuple;
  * Create a <code>JournalConsumerThread</code> to process the journal. If any
  * calls to Management methods come in from outside, reject them.
  * </p>
- * 
+ *
  * @author Jim Blake
  */
 public class JournalConsumer
@@ -91,10 +89,10 @@ public class JournalConsumer
 
     //
     // -------------------------------------------------------------------------
-    // 
-    // Reject outside calls to Management API methods that modify the 
+    //
+    // Reject outside calls to Management API methods that modify the
     // repository.
-    // 
+    //
     // -------------------------------------------------------------------------
     //
 
@@ -278,10 +276,10 @@ public class JournalConsumer
 
     //
     // -------------------------------------------------------------------------
-    // 
-    // Permit outside calls to Management API methods that do not modify the 
+    //
+    // Permit outside calls to Management API methods that do not modify the
     // repository.
-    // 
+    //
     // -------------------------------------------------------------------------
     //
 
@@ -372,7 +370,7 @@ public class JournalConsumer
     /**
      * While the server is reading a Journal to recover its state, block any
      * attempt to use the Management API.
-     * 
+     *
      * @throws ServerException
      */
     private ServerException rejectCallsFromOutsideWhileInRecoveryMode() {

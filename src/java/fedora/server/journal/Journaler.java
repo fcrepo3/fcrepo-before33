@@ -1,9 +1,7 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
-
 package fedora.server.journal;
 
 import java.io.InputStream;
@@ -29,7 +27,7 @@ import fedora.server.storage.types.RelationshipTuple;
  * A Management module that decorates a ManagementDelegate module with code that
  * either creates a Journal or consumes a Journal, depending on the startup
  * parameters.
- * 
+ *
  * @author Jim Blake
  */
 public class Journaler
@@ -138,9 +136,9 @@ public class Journaler
 
     //
     // -------------------------------------------------------------------------
-    // 
+    //
     // Delegate all of the "Management" methods to the worker.
-    // 
+    //
     // -------------------------------------------------------------------------
     //
 

@@ -1,3 +1,7 @@
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 
 package fedora.server.storage.translation;
 
@@ -11,11 +15,12 @@ import org.w3c.dom.Document;
 
 import fedora.server.storage.types.DigitalObject;
 
-import static fedora.common.Models.*;
+import static fedora.common.Models.CONTENT_MODEL_3_0;
+import static fedora.common.Models.FEDORA_OBJECT_3_0;
 
 /**
  * Unit tests for FOXML1_1DOSerializer.
- * 
+ *
  * @author Chris Wilper
  */
 public class TestFOXML1_1DOSerializer

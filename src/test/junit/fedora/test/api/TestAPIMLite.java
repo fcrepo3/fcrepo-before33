@@ -1,9 +1,13 @@
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 package fedora.test.api;
+
+import org.w3c.dom.Document;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
-import org.w3c.dom.Document;
 
 import fedora.test.FedoraServerTestCase;
 

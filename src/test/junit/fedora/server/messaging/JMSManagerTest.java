@@ -1,6 +1,6 @@
 /* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 package fedora.server.messaging;
 
@@ -18,14 +18,14 @@ import javax.jms.Queue;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
 
-import junit.framework.JUnit4TestAdapter;
-import junit.framework.TestCase;
-
 import org.apache.activemq.broker.BrokerService;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import junit.framework.JUnit4TestAdapter;
+import junit.framework.TestCase;
 
 import fedora.server.errors.MessagingException;
 import fedora.server.messaging.JMSManager.DestinationType;
@@ -43,8 +43,9 @@ public class JMSManagerTest extends TestCase implements MessageListener {
     private final String messageText = "Message Text";
     private Message currentMessage = null;
     private int messageCount = 0;
-    private int timeout = 5000; // Maximum number of milliseconds to wait for a message
+    private final int timeout = 5000; // Maximum number of milliseconds to wait for a message
 
+    @Override
     @Before
     public void setUp() throws Exception {
         properties = new Properties();
@@ -408,13 +409,14 @@ public class JMSManagerTest extends TestCase implements MessageListener {
 
     public class JmsBroker extends Thread {
 
-        private String connectorUrl;
+        private final String connectorUrl;
         private boolean stop = false;
 
         public JmsBroker(String connectorUrl) {
             this.connectorUrl = connectorUrl;
         }
 
+        @Override
         public void run() {
             BrokerService broker = new BrokerService();
             try {

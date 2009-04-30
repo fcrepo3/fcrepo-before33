@@ -1,3 +1,7 @@
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 
 package fedora.server.storage;
 
@@ -23,7 +27,7 @@ import fedora.server.storage.types.RelationshipTuple;
 /**
  * A partial implementation of {@link DOReader} for use in unit tests. Add more
  * mocking to this class as needed, or override methods in sub-classes.
- * 
+ *
  * @author Jim Blake
  */
 public class MockDOReader
@@ -46,7 +50,7 @@ public class MockDOReader
     public DigitalObject getObject() {
         return theObject;
     }
-    
+
     public Datastream GetDatastream(String datastreamID, Date versDateTime)
             throws ServerException {
         List<Datastream> datastreams = new ArrayList<Datastream>();

@@ -1,4 +1,7 @@
-
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
+ */
 package fedora.test;
 
 import java.io.File;
@@ -25,7 +28,7 @@ import fedora.server.management.FedoraAPIM;
 
 /**
  * Base class for JUnit tests that assume a running Fedora instance.
- * 
+ *
  * @author Edwin Shin
  */
 public abstract class FedoraServerTestCase
@@ -42,7 +45,7 @@ public abstract class FedoraServerTestCase
 
     /**
      * Returns the requested HTTP resource as an XML Document
-     * 
+     *
      * @param location
      *        a URL relative to the Fedora base URL
      * @return Document
@@ -91,7 +94,7 @@ public abstract class FedoraServerTestCase
      * underneath the <code>client/demo/[format]/local-server-demos/</code>
      * hierarchy
      * </p>
-     * 
+     *
      * @param path
      *        format-independent path to a directory within the demo object
      *        hierarchy.
@@ -101,7 +104,7 @@ public abstract class FedoraServerTestCase
         File dir = null;
 
         String specificPath = File.separator + path;
-        
+
         String ingestFormat;
         if (testingMETS()) {
             System.out.println("Ingesting demo objects in METS format from " + specificPath);
@@ -136,7 +139,7 @@ public abstract class FedoraServerTestCase
     /**
      * Gets the PIDs of objects in the "demo" pid namespace that are in the
      * repository
-     * 
+     *
      * @return set of PIDs of the specified object type
      * @throws Exception
      */

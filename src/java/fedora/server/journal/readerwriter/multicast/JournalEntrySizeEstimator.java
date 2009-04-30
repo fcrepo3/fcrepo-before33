@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal.readerwriter.multicast;
@@ -33,7 +32,7 @@ import fedora.server.journal.entry.JournalEntry;
  * files from the entry before formatting: we know how big the files will be
  * when encoded.
  * </p>
- * 
+ *
  * @author jblake
  * @version $Id: JournalEntrySizeEstimator.java,v 1.3 2007/06/01 17:21:31 jblake
  *          Exp $
@@ -50,7 +49,7 @@ public class JournalEntrySizeEstimator {
      * Create a modified entry, minus any file arguments, and ask the
      * JournalWriter to format it so we can check the size. The size of the
      * file(s) can be determined separately.
-     * 
+     *
      * @throws JournalException
      */
     public long estimateSize(JournalEntry journalEntry) throws JournalException {

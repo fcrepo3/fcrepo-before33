@@ -1,9 +1,7 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
-
 package fedora.server.utilities;
 
 import java.text.DateFormat;
@@ -15,7 +13,7 @@ import java.util.TimeZone;
 
 /**
  * A collection of utility methods for performing frequently required tasks.
- * 
+ *
  * @author Ross Wayland
  */
 public abstract class DateUtility {
@@ -27,7 +25,7 @@ public abstract class DateUtility {
     /**
      * Converts a datetime string into and instance of java.util.Date using the
      * date format: yyyy-MM-ddTHH:mm:ss.SSSZ.
-     * 
+     *
      * @param dateTime
      *        A datetime string
      * @return Corresponding instance of java.util.Date (returns null if
@@ -40,7 +38,7 @@ public abstract class DateUtility {
     /**
      * Converts an instance of java.util.Date into a String using the date
      * format: yyyy-MM-ddTHH:mm:ss.SSSZ.
-     * 
+     *
      * @param date
      *        Instance of java.util.Date.
      * @return ISO 8601 String representation (yyyy-MM-ddTHH:mm:ss.SSSZ) of the
@@ -55,7 +53,7 @@ public abstract class DateUtility {
      * representation. Uses the date format yyyy-MM-ddTHH:mm:ss.SSSZ or
      * yyyy-MM-ddTHH:mm:ssZ, depending on whether millisecond precision is
      * desired.
-     * 
+     *
      * @param date
      *        Instance of java.util.Date.
      * @param millis
@@ -91,7 +89,7 @@ public abstract class DateUtility {
      * before 1 CE (i.e. 1 AD) are handled according to ISO 8601:2000 Second
      * Edition: "0000" is the lexical representation of 1 BCE "-0001" is the
      * lexical representation of 2 BCE
-     * 
+     *
      * @param date
      *        Instance of java.util.Date.
      * @return the lexical form of the XSD dateTime value, e.g.
@@ -141,7 +139,7 @@ public abstract class DateUtility {
     /**
      * Converts an instance of java.util.Date into a String using the date
      * format: yyyy-MM-ddZ.
-     * 
+     *
      * @param date
      *        Instance of java.util.Date.
      * @return Corresponding date string (returns null if Date argument is
@@ -160,7 +158,7 @@ public abstract class DateUtility {
     /**
      * Converts an instance of java.util.Date into a String using the date
      * format: HH:mm:ss.SSSZ.
-     * 
+     *
      * @param date
      *        Instance of java.util.Date.
      * @return Corresponding time string (returns null if Date argument is
@@ -179,7 +177,7 @@ public abstract class DateUtility {
     /**
      * Attempt to parse the given string of form: yyyy-MM-dd[THH:mm:ss[.SSS][Z]]
      * as a Date. If the string is not of that form, return null.
-     * 
+     *
      * @param dateString
      *        the date string to parse
      * @return Date the date, if parse was successful; null otherwise

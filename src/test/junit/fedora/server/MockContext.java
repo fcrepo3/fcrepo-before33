@@ -1,20 +1,17 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
- * available online at http://www.fedora.info/license/).
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://fedora-commons.org/license/).
  */
 package fedora.server;
 
 import java.util.Date;
 import java.util.Iterator;
 
-import fedora.server.Context;
-import fedora.server.MultiValueMap;
-
 
 /**
  * Context object for testing.
  * Currently, only getSubjectValue() and now() are implemented.
- * 
+ *
  * @author Edwin Shin
  * @version $Id$
  */

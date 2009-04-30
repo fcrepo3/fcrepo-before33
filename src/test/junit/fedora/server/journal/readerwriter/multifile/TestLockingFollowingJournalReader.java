@@ -1,9 +1,7 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
-
 package fedora.server.journal.readerwriter.multifile;
 
 import java.io.File;
@@ -515,7 +513,7 @@ public class TestLockingFollowingJournalReader
     /**
      * This sub-class of {@link MockManagementDelegate} allows us to insert a
      * {@link Runnable} that will be executed in the middle of an ingest call.
-     * 
+     *
      * @author Firstname Lastname
      */
     private static class MyMockManagementDelegate

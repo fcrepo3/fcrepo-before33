@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal.readerwriter.multicast;
@@ -40,7 +39,7 @@ import static fedora.server.journal.readerwriter.multicast.Transport.State.SHUTD
  * {@link JournalWriter.SYNCHRONIZER}, as is the {@link #closeFile() closeFile}
  * method. This means that an asynchronous call by the timer task will not
  * interrupt a synchronous operation already in progress, or vice versa.
- * 
+ *
  * @author jblake
  */
 public class MulticastJournalWriter
@@ -121,7 +120,7 @@ public class MulticastJournalWriter
 
     /**
      * Create a Map of Maps, holding parameters for all of the transports.
-     * 
+     *
      * @throws JournalException
      */
     private Map<String, Map<String, String>> parseTransportParameters(Map<String, String> parameters)
@@ -262,7 +261,7 @@ public class MulticastJournalWriter
      * shut a file down based on size limit. Then check to see whether we need
      * to open another file. If so, we'll need a repository hash and a filename.
      * </p>
-     * 
+     *
      * @see fedora.server.journal.JournalWriter#prepareToWriteJournalEntry()
      */
     @Override
@@ -293,7 +292,7 @@ public class MulticastJournalWriter
      * from each Transport in turn, and write the entry. If this puts the file
      * size over the limit, close them.
      * </p>
-     * 
+     *
      * @see fedora.server.journal.JournalWriter#writeJournalEntry(fedora.server.journal.entry.CreatorJournalEntry)
      */
     @Override
@@ -321,7 +320,7 @@ public class MulticastJournalWriter
      * If the Transports still have files open, close them. Then stop responding
      * to requests.
      * </p>
-     * 
+     *
      * @see fedora.server.journal.JournalWriter#shutdown()
      */
     @Override
@@ -469,7 +468,7 @@ public class MulticastJournalWriter
      * Send a request for some operation to the Transports. Send it to all of
      * them, even if one or more throws an Exception. Report any exceptions when
      * all Transports have been attempted.
-     * 
+     *
      * @param request
      *        the request object
      * @param args

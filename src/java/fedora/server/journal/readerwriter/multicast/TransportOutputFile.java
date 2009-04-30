@@ -1,7 +1,6 @@
-/*
- * The contents of this file are subject to the license and copyright terms
+/* The contents of this file are subject to the license and copyright terms
  * detailed in the license directory at the root of the source tree (also
- * available online at http://www.fedora.info/license/).
+ * available online at http://fedora-commons.org/license/).
  */
 
 package fedora.server.journal.readerwriter.multicast;
@@ -25,7 +24,7 @@ import org.apache.log4j.Logger;
  * output is in progress. When the file is closed, it is renamed to remove the
  * prefix.
  * </p>
- * 
+ *
  * @author jblake
  * @version $Id: TransportOutputFile.java,v 1.3 2007/06/01 17:21:31 jblake Exp $
  */
@@ -48,7 +47,7 @@ public class TransportOutputFile {
 
     /**
      * Sture the filename, and the "in process" filename.
-     * 
+     *
      * @throws IOException
      *         if either file already exists.
      */
@@ -70,7 +69,7 @@ public class TransportOutputFile {
 
     /**
      * Create the file with its "in progress" filename.
-     * 
+     *
      * @return a Writer on the new file.
      */
     public Writer open() throws IOException {
@@ -91,7 +90,7 @@ public class TransportOutputFile {
 
     /**
      * Close the writer and rename the file.
-     * 
+     *
      * @throws IOException
      */
     public void close() throws IOException {
