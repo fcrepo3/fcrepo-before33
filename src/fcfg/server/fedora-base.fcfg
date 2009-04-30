@@ -480,7 +480,7 @@
 		</param>
 	</module>
 	<datastore id="localMySQLPool">
-		<comment>MySQL database on localhost with db name of fedora31. Each
+		<comment>MySQL database on localhost with db name of fedora32. Each
              connection pool instance has several configuration parameter that
              can be used to tune the options for the connection pool. It is
              recommended that you not change the default values unless you are
@@ -494,7 +494,7 @@
 		<param name="dbPassword" value="fedoraAdmin">
 			<comment>The database password.</comment>
 		</param>
-		<param name="jdbcURL" value="jdbc:mysql://localhost/fedora31?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true">
+		<param name="jdbcURL" value="jdbc:mysql://localhost/fedora32?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true">
 			<comment>The JDBC connection URL.</comment>
 		</param>
 		<param name="jdbcDriverClass" value="com.mysql.jdbc.Driver">
@@ -713,7 +713,7 @@
 	
 	
 	<datastore id="localOraclePool">
-    	<comment>Oracle database on localhost with SID=fedora31 Each
+    	<comment>Oracle database on localhost with SID=fedora32 Each
             connection pool instance has several configuration parameter that
             can be used to tune the options for the connection pool. It is
             recommended that you not change the default values unless you are
@@ -727,7 +727,7 @@
 		<param name="dbPassword" value="fedoraAdmin">
 			<comment>The database password.</comment>
 		</param>
-		<param name="jdbcURL" value="jdbc:oracle:thin:@localhost:1521:fedora31">
+		<param name="jdbcURL" value="jdbc:oracle:thin:@localhost:1521:fedora32">
 			<comment>The JDBC connection URL.</comment>
 		</param>
 		<param name="jdbcDriverClass" value="oracle.jdbc.driver.OracleDriver">
@@ -795,7 +795,7 @@
 		<param name="connection.SetBigStringTryClob" value="true"/>
 	</datastore>
 	<datastore id="localPostgreSQLPool">
-		<comment>PostgreSQL database on localhost with db name of fedora31. Each
+		<comment>PostgreSQL database on localhost with db name of fedora32. Each
              connection pool instance has several configuration parameter that
              can be used to tune the options for the connection pool. It is
              recommended that you not change the default values unless you are
@@ -809,7 +809,7 @@
 		<param name="dbPassword" value="fedoraAdmin">
 			<comment>The database password.</comment>
 		</param>
-		<param name="jdbcURL" value="jdbc:postgresql:fedora31">
+		<param name="jdbcURL" value="jdbc:postgresql:fedora32">
 			<comment>The JDBC connection URL.</comment>
 		</param>
 		<param name="jdbcDriverClass" value="org.postgresql.Driver">
