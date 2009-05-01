@@ -158,7 +158,7 @@ public class InstallOptions {
                         .getAbsolutePath();
         String includedJDBCURL =
                 "jdbc:derby:" + fedoraHome + File.separator
-                        + "derby/fedora31;create=true";
+                        + "derby/fedora32;create=true";
 
         if (getValue(INSTALL_TYPE).equals(INSTALL_QUICK)) {
             // See the defaultValues defined in OptionDefinition.properties
