@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -67,7 +68,7 @@ import fedora.server.utilities.DateUtility;
 
 /**
  * The Access Module, providing support for the Fedora Access subsystem.
- * 
+ *
  * @author Ross Wayland
  * @version $Id$
  */
@@ -97,7 +98,7 @@ public class DefaultAccess
      * Creates and initializes the Access Module. When the server is starting
      * up, this is invoked as part of the initialization process.
      * </p>
-     * 
+     *
      * @param moduleParameters
      *        A pre-loaded Map of name-value pairs comprising the intended
      *        configuration of this Module.
@@ -120,7 +121,7 @@ public class DefaultAccess
      * <p>
      * Initializes the module.
      * </p>
-     * 
+     *
      * @throws ModuleInitializationException
      *         If the module cannot be initialized.
      */
@@ -190,7 +191,7 @@ public class DefaultAccess
      * Disseminates the content produced by executing the specified method of
      * the associated deployment object of the specified digital object.
      * </p>
-     * 
+     *
      * @param context
      *        The context of this request.
      * @param PID
@@ -501,9 +502,13 @@ public class DefaultAccess
                 dsBindSpec.dsBindRules == null ? new DeploymentDSBindRule[0]
                         : dsBindSpec.dsBindRules;
 
-        // Results will be returned in this array, one item per datastream
-        DisseminationBindingInfo[] bindingInfo;
-        bindingInfo = new DisseminationBindingInfo[dsBindRules.length];
+        // Results will be returned in this list, one item per *existing*
+        // datastream. If a datastream mentioned in the dsBindRules is not
+        // present in the object, it will not be present in this list.
+        // If the datastream is *really* required in order to invoke the
+        // dissemination method in question, rest assured it will fail later.
+        List<DisseminationBindingInfo> bindingInfoList =
+                new ArrayList<DisseminationBindingInfo>();
 
         for (int i = 0; i < dsBindRules.length; i++) {
             DeploymentDSBindRule dsBindRule = dsBindRules[i];
@@ -511,41 +516,29 @@ public class DefaultAccess
                     dsBindRule.pid == null ? dObj.GetObjectPID()
                             : dsBindRule.pid;
             String dsId = dsBindRule.bindingKeyName;
-            Datastream ds;
 
             DOReader reader = m_manager.getReader(false, context, dsPid);
-            ds = reader.GetDatastream(dsId, versDateTime);
+            Datastream ds = reader.GetDatastream(dsId, versDateTime);
 
-            if (ds == null) {
-                String message =
-                        "The object \""
-                                + dsPid
-                                + "\" "
-                                + "contains no datastream with ID \""
-                                + dsId
-                                + "\" "
-                                + "that was created on or before the specified date/timestamp "
-                                + " of \""
-                                + DateUtility.convertDateToString(versDateTime)
-                                + "\" .";
-                throw new DatastreamNotFoundException(message);
+            if (ds != null) {
+                DisseminationBindingInfo bindingInfo =
+                        new DisseminationBindingInfo();
+                bindingInfo.DSBindKey = dsId;
+                bindingInfo.dsLocation = ds.DSLocation;
+                bindingInfo.dsControlGroupType = ds.DSControlGrp;
+                bindingInfo.dsID = ds.DatastreamID;
+	            bindingInfo.dsVersionID = ds.DSVersionID;
+                bindingInfo.dsState = ds.DSState;
+  	            bindingInfo.dsCreateDT = ds.DSCreateDT;
+   	            // these will be the same for all elements of the array
+    	        bindingInfo.methodParms = methodParms;
+                bindingInfo.AddressLocation = addressLocation;
+                bindingInfo.OperationLocation = operationLocation;
+                bindingInfo.ProtocolType = protocolType;
+                bindingInfoList.add(bindingInfo);
             }
-
-            bindingInfo[i] = new DisseminationBindingInfo();
-            bindingInfo[i].DSBindKey = dsId;
-            bindingInfo[i].dsLocation = ds.DSLocation;
-            bindingInfo[i].dsControlGroupType = ds.DSControlGrp;
-            bindingInfo[i].dsID = ds.DatastreamID;
-            bindingInfo[i].dsVersionID = ds.DSVersionID;
-            bindingInfo[i].dsState = ds.DSState;
-            bindingInfo[i].dsCreateDT = ds.DSCreateDT;
-            // these will be the same for all elements of the array
-            bindingInfo[i].methodParms = methodParms;
-            bindingInfo[i].AddressLocation = addressLocation;
-            bindingInfo[i].OperationLocation = operationLocation;
-            bindingInfo[i].ProtocolType = protocolType;
         }
-        return bindingInfo;
+        return bindingInfoList.toArray(new DisseminationBindingInfo[0]);
     }
 
     public ObjectMethodsDef[] listMethods(Context context,
@@ -657,7 +650,7 @@ public class DefaultAccess
      * <p>
      * Lists the specified fields of each object matching the given criteria.
      * </p>
-     * 
+     *
      * @param context
      *        the context of this request
      * @param resultFields
@@ -683,7 +676,7 @@ public class DefaultAccess
      * <p>
      * Resumes an in-progress listing of object fields.
      * </p>
-     * 
+     *
      * @param context
      *        the context of this request
      * @param sessionToken
@@ -704,7 +697,7 @@ public class DefaultAccess
      * <p>
      * Gets information that describes the repository.
      * </p>
-     * 
+     *
      * @param context
      *        the context of this request
      * @return information that describes the repository.
@@ -757,7 +750,7 @@ public class DefaultAccess
      * that correspond to modification dates of components. This currently
      * includes changes to datastreams and disseminators.
      * </p>
-     * 
+     *
      * @param context
      *        The context of this request.
      * @param PID
@@ -828,7 +821,7 @@ public class DefaultAccess
      * null</li>
      * <li>Required name - each required method parameter name must be present
      * </ol>
-     * 
+     *
      * @param context
      *        The context of this request.
      * @param PID
