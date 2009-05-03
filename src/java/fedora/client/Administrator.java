@@ -232,7 +232,7 @@ public class Administrator
                         .getResource("images/fedora/aboutadmin.gif")));
         m_aboutText =
                 new JLabel("<html>"
-                        + "<p>Copyright 2008, Fedora Commons, Inc.</p>"
+                        + "<p>Copyright 2008-2009, Fedora Commons, Inc.</p>"
                         + "<p>Copyright 2002-2007, The Rector and Visitors of the</p>"
                         + "<p>University of Virginia and Cornell University.</p><p></p>"
                         + "<p><b>License: </b>This software is subject to the terms of the</p>"

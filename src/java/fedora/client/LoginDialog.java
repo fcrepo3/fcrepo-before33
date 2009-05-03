@@ -252,7 +252,18 @@ public class LoginDialog
                 }
             }
         } catch (Exception e) {
-            // no problem if props file doesn't exist...we have defaults
+            // if props file doesn't exist, this must be the first
+            // time they've run the java client for this install,
+            // so point them to the new one.
+            JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                    "Check out the new, web-based Fedora Administrator.\n"
+                  + "If you're running Fedora 3.2, it's already available\n"
+                  + "on your server at the following URL (or similar):\n"
+                  + "\n       http://localhost:8080/fedora/admin\n\n"
+                  + "NOTE: The web-based Fedora Admin GUI will completely\n"
+                  + "replace this one in future releases of Fedora.",
+                    "Try the *New* Fedora Admin GUI!",
+                    JOptionPane.INFORMATION_MESSAGE);  
         }
         // finally, populate them
         m_serverComboBox.addItem(m_lastServer);
