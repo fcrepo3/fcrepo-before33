@@ -675,22 +675,13 @@ public class Administrator
         if (getPort() != 80) {
             portPart = ":" + getPort();
         }
-        String documentationURL =
-                getProtocol() + "://" + getHost() + portPart + "/userdocs/";
-        helpContents.setToolTipText("See " + documentationURL);
 
         helpContents.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                String portPart = "";
-                if (getPort() != 80) {
-                    portPart = ":" + getPort();
-                }
-                String documentationURL =
-                        getProtocol() + "://" + getHost() + portPart
-                                + "/userdocs/";
+                String documentationURL = "http://fedora-commons.org/go/fcr30";
                 JOptionPane.showMessageDialog(getDesktop(),
-                                              "For documentation, see "
+                                              "For Fedora documentation, see "
                                                       + documentationURL,
                                               "Fedora Documentation",
                                               JOptionPane.INFORMATION_MESSAGE);
