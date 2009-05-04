@@ -10,6 +10,12 @@ import java.io.Reader;
 
 import java.net.URL;
 
+/* JDBC_4_ANT_TOKEN_BEGIN -
+import java.sql.NClob;
+import java.sql.RowId;
+import java.sql.SQLXML;
+- JDBC_4_ANT_TOKEN_END */
+
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
