@@ -70,6 +70,8 @@ public class Rebuild
                 .getParameter("fedoraServerHost").getValue());
         System.setProperty("fedoraServerPort", serverConfig
                 .getParameter("fedoraServerPort").getValue());
+        System.setProperty("fedoraAppServerContext", serverConfig
+                .getParameter("fedoraAppServerContext").getValue());
         boolean serverIsRunning = ServerUtility.pingServer("http", null, null);
         if (serverIsRunning && rebuilder.shouldStopServer()) {
             throw new Exception("The Fedora server appears to be running."
