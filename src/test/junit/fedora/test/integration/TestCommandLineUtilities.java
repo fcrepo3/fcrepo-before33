@@ -342,7 +342,7 @@ public class TestCommandLineUtilities
     private void batchModify(File batchDirectives, File logFile) {
         execute(FEDORA_HOME + "/client/bin/fedora-modify", getHost() + ":"
                 + getPort(), getUsername(), getPassword(), batchDirectives
-                .getAbsolutePath(), logFile.getAbsolutePath(), getProtocol(), getFedoraAppServerContext());
+                .getAbsolutePath(), logFile.getAbsolutePath(), getProtocol(), "validate-only-option", getFedoraAppServerContext());
     }
 
     private void exportObj(String pid, File dir) {
