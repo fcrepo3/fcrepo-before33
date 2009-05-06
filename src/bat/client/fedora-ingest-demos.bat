@@ -11,9 +11,9 @@ set LAUNCHER="%FEDORA_HOME%\client\bin\env-client.bat"
 if not "%5"=="" goto enoughArgs
 echo ERROR: Not enough arguments.
 echo Usage:
-echo   fedora-ingest-demos HOST PORT USERNAME PASSWORD http[s]
+echo   fedora-ingest-demos HOST PORT USERNAME PASSWORD http[s] [CTX]
 echo Example:
-echo   fedora-ingest-demos localhost 8080 fedoraAdmin fedoraAdmin http
+echo   fedora-ingest-demos localhost 8080 fedoraAdmin fedoraAdmin http my-fedora
 exit /B 1
 :enoughArgs
 
@@ -23,6 +23,6 @@ set DEMO_FORMAT=info:fedora/fedora-system:FOXML-1.1
 set ARGS=d
 set ARGS=%ARGS% %DEMO_PATH%
 set ARGS=%ARGS% %DEMO_FORMAT%
-set ARGS=%ARGS% "%1:%2" %3 %4 %5
+set ARGS=%ARGS% "%1:%2" %3 %4 %5 "" %6
 
 call %LAUNCHER% fedora.client.utility.ingest.Ingest %ARGS%

@@ -405,7 +405,7 @@ public class Ingest
                     logMessage = args[7];
                 }
 
-                if (args.length == 9) {
+                if (args.length == 9 && !args[8].equals("")) {
                     context = args[8];
                 }
 
@@ -450,7 +450,7 @@ public class Ingest
                     logMessage = args[7];
                 }
 
-                if (args.length == 9){
+                if (args.length == 9 && !args[8].equals("")) {
                     context = args[8];
                 }
 
@@ -494,7 +494,7 @@ public class Ingest
                     logMessage=args[10];
                 }
 
-                if (args.length == 12){
+                if (args.length == 12 && !args[11].equals("")){
                     context = args[11];
                 }
                 //Source repository
