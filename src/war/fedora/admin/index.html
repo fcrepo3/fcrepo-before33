@@ -15,15 +15,45 @@ Learn more about Flex at http://flex.org
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 <script language="JavaScript" type="text/javascript">
-function upload(url) {
-  var top = (screen.height - 50) / 2;
-  var left = (screen.width - 240) / 2;
-  var w = window.open("","UploadWindow","height=50,width=320,scrollbars=no,status=no,statusbar=no,menubar=no,titlebar=no,toolbar=no,location=no,resizable=no,top="+top+",left="+left);
-  var s = "<html><head><title>Upload</title></head><body bgcolor='#686B8D'><form action='"+url+"' method='POST' enctype='multipart/form-data' target='upload_target' onsubmit='window.close()'><input type='file' name='file'><input type='submit' value='Upload'></form><iframe id='upload_target' name='upload_target' src='#' style='width:0;height:0;border:0px solid #fff;'></iframe></body></html>";
-  w.document.open();
-  w.document.write(s);
-  w.document.close();
+<!--
+  var url;
+
+  function upload(url) {
+    var top = (screen.height - 50) / 2;
+    var left = (screen.width - 240) / 2;
+    this.url = url;
+
+    // Open the upload window
+    var windowOptions = "height=50,width=320,scrollbars=no,"+
+                        "status=no,statusbar=no,menubar=no,"+
+                        "titlebar=no,toolbar=no,location=no,"+
+                        "resizable=no,top="+top+",left="+left;
+    var w = window.open("upload/upload.html",
+                        "UploadWindow",
+                        windowOptions);
+
+    // Give the upload window a back-reference
+    w.opener = this.window;
+  }
+
+  // Passes the upload response back into Flex
+  function uploadComplete(response) {
+    getFlexApp().jsUploadComplete(response);
+  }
+
+  // Provides multi-browser access to the Flex application
+  function getFlexApp() {
+    var appName = "FedoraAdministrator";
+    if (navigator.appName.indexOf("Microsoft") !=-1)
+    {
+      return window[appName];
+    }
+    else
+    {
+      return document[appName];
+    }
 }
+//-->
 </script>
 
 <!--  BEGIN Browser History required section -->
