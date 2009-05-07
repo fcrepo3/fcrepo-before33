@@ -52,7 +52,7 @@ public class PerformanceTests
     private static String DEMO_FOXML_TEXT;
 
     private static String datastream =
-        "http://localhost:8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg";
+        "http://local.fedora.server/fedora-demo/simple-image-demo/coliseum-thumb.jpg";
 
     private String host;
     private String port;

@@ -14,7 +14,9 @@ REM                  If JAVA_HOME is unspecified, will use FEDORA_JAVA_HOME.
 REM                  If FEDORA_JAVA_HOME is unspecified, will use java in PATH.
 REM ---------------------------------------------------------------------------
 
+if not "%WEBAPP_NAME%" == "" goto gotWebappName
 set WEBAPP_NAME=fedora
+:gotWebappName
 
 if not "%FEDORA_HOME%" == "" goto gotFedoraHome
 echo ERROR: The FEDORA_HOME environment variable is not defined.

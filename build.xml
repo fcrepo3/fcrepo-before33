@@ -49,20 +49,7 @@
   <property name="fedora.username" value="fedoraAdmin" />
   <property name="fedora.password" value="fedoraAdmin" />
   <property name="fedora.protocol" value="http" />
-  <property name="fedora.hostname" value="localhost" />
-  <property name="fedora.port" value="8080" />
-
-  <!--
-  set this value to the context fedora should run in (the hardcoded demo objects
-  go from ${fedora.appServerContextDefault} -> ${fedora.appServerContext}
-  Run this first BEFORE running the fedora installer. 
-  -->
-  <property name="fedora.appServerContext" value="fedora" />
-  <property name="fedora.appServerContextDemo" value="fedora-demo" />
-  <property name="fedora.appServerContextDefault" value="fedora" />
-  <property name="fedora.baseURL" value="${fedora.protocol}://${fedora.hostname}:${fedora.port}/${fedora.appServerContext}" />
-  <property name="fedora.baseURLDemo" value="${fedora.protocol}://${fedora.hostname}:${fedora.port}/${fedora.appServerContextDemo}" />
-  <property name="fedora.baseURLDefault" value="${fedora.protocol}://${fedora.hostname}:${fedora.port}/${fedora.appServerContextDefault}" />
+	
   <property name="javax.net.ssl.trustStore" value="inc/keystore" />
   <property name="test" value="fedora.test.AllOfflineTests" />
   <property name="org.apache.activemq.default.directory.prefix" value="${junit.build.dir}${file.separator}" />
@@ -640,14 +627,7 @@
     </axis-wsdl2java>
   </target>
 
-  <target name="check-demo-objects">
-    <replace dir="${src.dir}/demo-objects" token="${fedora.baseURLDefault}/" value="${fedora.baseURL}/" />
-    <uptodate property="demo-objects.uptodate" targetfile="${fedora.home.build.dir}/client/demo/mets/local-server-demos/simple-image-demo/cm_image_demo.xml">
-      <srcfiles dir="${src.dir}/demo-objects" includes="**/*.xml" />
-    </uptodate>
-  </target>
-
-  <target name="demo-objects" depends="compile-server,check-demo-objects" unless="demo-objects.uptodate">
+  <target name="demo-objects" depends="compile-server" unless="demo-objects.uptodate">
     <copy todir="${fedora.home.build.dir}/client/demo/foxml">
       <fileset dir="${src.dir}/demo-objects/foxml" />
     </copy>
@@ -886,13 +866,6 @@
 
   <target name="junit" depends="compile-junit,demo-objects">
 
-
-    <!-- substitute all occurrences of /fedora/get with the current application server context. This
-    is needed because some demo objects and some test objects have this location hardcoded, but
-    the application server context can differ.
-    -->
-    <replace dir="${src.dir}/test-objects" token="${fedora.appServerContextDefault}/get/" value="${fedora.appServerContext}/get/" />
-
     <copy todir="${junit.build.dir}" includeEmptyDirs="false">
       <fileset dir="${junit.src.dir}">
         <exclude name="**/*.java" />
@@ -907,7 +880,6 @@
         <propertyref name="javax.net.ssl.trustStore" />
         <propertyref name="fedora.username" />
         <propertyref name="fedora.password" />
-        <propertyref name="fedora.baseURL" />
         <propertyref name="demo.format" />
         <propertyref name="org.apache.activemq.default.directory.prefix" />
       </syspropertyset>

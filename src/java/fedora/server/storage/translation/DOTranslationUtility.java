@@ -183,8 +183,13 @@ public abstract class DOTranslationUtility
     // refer back to the local repository.  This pattern virtualized the
     // repository server address, so that if the host:port of the repository is
     // changed, objects that have URLs that refer to the local repository won't break.
-    public static Pattern s_fedoraLocalPattern =
+    private static final Pattern s_fedoraLocalPattern =
             Pattern.compile("http://local.fedora.server/");
+
+    // Fedora Application Context Localization pattern
+    // Specifically refers to the current fedora application context (host:port/context)
+    private static final Pattern s_fedoraLocalAppContextPattern =
+            Pattern.compile("http://local.fedora.server/fedora/");
 
     // PATTERN FOR DEPRECATED METHOD (getItem of the Default Disseminator), for example:
     public static Pattern s_getItemPattern =
@@ -193,21 +198,12 @@ public abstract class DOTranslationUtility
     // ABSOLUTE REPOSITORY URL Patterns:
     // Patterns of how the protocol and repository server address may be encoded
     // in a URL that points back to the local repository.
-    private static Pattern s_servernamePort; // "http://hostname:port/"
 
-    private static Pattern s_servername; // "http://hostname/"
+    private static Pattern s_concreteLocalUrl;
+    private static Pattern s_concreteLocalUrlAppContext;
 
-    private static Pattern s_localhostPort; // "http://localhost:port/"
-
-    private static Pattern s_localhost; // "http://localhost/"
-
-    private static Pattern s_servernamePortSSL; // "https://hostname:redirectport/"
-
-    private static Pattern s_servernameSSL; // "https://hostname/"
-
-    private static Pattern s_localhostPortSSL; // "https://localhost:redirectport/"
-
-    private static Pattern s_localhostSSL; // "https://localhost/"
+    private static Pattern s_concreteLocalUrlNoPort;
+    private static Pattern s_concreteLocalUrlAppContextNoPort;
 
     // CALLBACK DISSEMINATION URL Pattern (for M datastreams in export files):
     // Pattern of how protocol, repository server address, and path is encoded
@@ -219,6 +215,9 @@ public abstract class DOTranslationUtility
 
     // The actual host and port of the Fedora repository server
     private static String s_hostInfo = null;
+
+    // Host, port, and Fedora context
+    private static String s_hostContextInfo;
 
     private static boolean m_serverOnPort80 = false;
 
@@ -233,7 +232,8 @@ public abstract class DOTranslationUtility
         String fedoraServerHost = System.getProperty("fedoraServerHost");
         String fedoraServerPort = System.getProperty("fedoraServerPort");
         String fedoraServerPortSSL = System.getProperty("fedoraRedirectPort");
-        String fedoraAppServerContext = System.getProperty("fedoraAppServerContext");
+        String fedoraAppServerContext =
+                System.getProperty("fedoraAppServerContext");
 
         if (fedoraServerPort != null) {
             if (fedoraServerPort.equals("80")) {
@@ -247,7 +247,8 @@ public abstract class DOTranslationUtility
         }
 
         // otherwise, get host port from the server instance if they are null
-        if (fedoraServerHost == null || fedoraServerPort == null || fedoraAppServerContext == null) {
+        if (fedoraServerHost == null || fedoraServerPort == null
+                || fedoraAppServerContext == null) {
             // if fedoraServerHost or fedoraServerPort system properties
             // are not defined, read them from server configuration
             ServerConfiguration config = Server.getConfig();
@@ -272,27 +273,27 @@ public abstract class DOTranslationUtility
             s_hostInfo = s_hostInfo + ":" + fedoraServerPort;
         }
         s_hostInfo = s_hostInfo + "/";
+        s_hostContextInfo = s_hostInfo + fedoraAppServerContext + "/";
 
         // compile the pattern for public dissemination URLs at local server
         s_localDissemUrlStart = s_hostInfo + fedoraAppServerContext + "/get/";
 
-        // compile other patterns using the configured host and port
-        s_servernamePort =
-                Pattern.compile("http://" + fedoraServerHost + ":"
-                        + fedoraServerPort + "/");
-        s_servername = Pattern.compile("http://" + fedoraServerHost + "/");
-        s_localhostPort =
-                Pattern.compile("http://localhost:" + fedoraServerPort + "/");
-        s_localhost = Pattern.compile("http://localhost/");
+        s_concreteLocalUrl =
+            Pattern.compile("https?://(localhost|" + fedoraServerHost
+                            + "):" + fedoraServerPort + "/");
 
-        s_servernamePortSSL =
-                Pattern.compile("https://" + fedoraServerHost + ":"
-                        + fedoraServerPortSSL + "/");
-        s_servernameSSL = Pattern.compile("https://" + fedoraServerHost + "/");
-        s_localhostPortSSL =
-                Pattern.compile("https://localhost:" + fedoraServerPortSSL
-                        + "/");
-        s_localhostSSL = Pattern.compile("https://localhost/");
+        s_concreteLocalUrlAppContext =
+            Pattern.compile("https?://(localhost|" + fedoraServerHost
+                            + "):" + fedoraServerPort + "/("
+                            + fedoraAppServerContext + "|fedora)/");
+
+        s_concreteLocalUrlNoPort =
+            Pattern.compile("https?://(localhost|" + fedoraServerHost
+                            + ")/");
+
+        s_concreteLocalUrlAppContextNoPort =
+            Pattern.compile("https?://(localhost|" + fedoraServerHost
+                            + ")/(" + fedoraAppServerContext + "|fedora)/");
     }
 
     /**
@@ -317,11 +318,17 @@ public abstract class DOTranslationUtility
      * @return String with all relative repository URLs and Fedora local URLs
      *         converted to absolute URL syntax.
      */
-    private static String makeAbsoluteURLs(String input) {
+    public static String makeAbsoluteURLs(String input) {
         String output = input;
 
-        // Make absolute URLs out of all instances of the Fedora local URL syntax ...
+        // First pass: convert fedora app context URLs via variable substitution
+        output =
+                s_fedoraLocalAppContextPattern.matcher(output)
+                        .replaceAll(s_hostContextInfo);
+
+        // Second pass: convert non-fedora-app-context URLs via variable substitution
         output = s_fedoraLocalPattern.matcher(output).replaceAll(s_hostInfo);
+
         LOG.debug("makeAbsoluteURLs: input=" + input + ", output=" + output);
         return output;
     }
@@ -350,51 +357,27 @@ public abstract class DOTranslationUtility
      * @return String with all forms of relative repository URLs converted to
      *         the Fedora local URL syntax.
      */
-    private static String makeFedoraLocalURLs(String input) {
+    public static String makeFedoraLocalURLs(String input) {
         String output = input;
 
         // Detect any absolute URLs that refer to the local repository
         // and convert them to the Fedora LOCALIZATION URL syntax
         // (i.e., "http://local.fedora.server/...")\
 
-        // convert URLs that begin with http along with host and port
-        // explicitly configured for the repository
-        output =
-                s_servernamePort.matcher(output)
-                        .replaceAll(s_fedoraLocalPattern.pattern());
-        output =
-                s_localhostPort.matcher(output).replaceAll(s_fedoraLocalPattern
-                        .pattern());
+        if (m_serverOnPort80 || m_serverOnRedirectPort443) {
+            output = s_concreteLocalUrlAppContextNoPort.matcher(output)
+                        .replaceAll(s_fedoraLocalAppContextPattern.pattern());
 
-        // convert URLs that begin with https along with the host and port
-        // explicitly configured for the repository
-        output =
-                s_servernamePortSSL.matcher(output)
+            output = s_concreteLocalUrlNoPort.matcher(output)
                         .replaceAll(s_fedoraLocalPattern.pattern());
-        output =
-                s_localhostPortSSL.matcher(output)
-                        .replaceAll(s_fedoraLocalPattern.pattern());
+        } else {
+            output = s_concreteLocalUrlAppContext.matcher(output)
+                        .replaceAll(s_fedoraLocalAppContextPattern.pattern());
 
-        if (m_serverOnPort80) {
-            // if the server is running on port 80, convert
-            // URLs that begin with "http://localhost/"
-            output =
-                    s_servername.matcher(output)
-                            .replaceAll(s_fedoraLocalPattern.pattern());
-            output =
-                    s_localhost.matcher(output).replaceAll(s_fedoraLocalPattern
-                            .pattern());
+            output = s_concreteLocalUrl.matcher(output)
+                        .replaceAll(s_fedoraLocalPattern.pattern());
         }
-        if (m_serverOnRedirectPort443) {
-            // if the server is running on port 443, convert
-            // URLs that begin with "https://localhost/"
-            output =
-                    s_servernameSSL.matcher(output)
-                            .replaceAll(s_fedoraLocalPattern.pattern());
-            output =
-                    s_localhostSSL.matcher(output)
-                            .replaceAll(s_fedoraLocalPattern.pattern());
-        }
+
         LOG.debug("makeFedoraLocalURLs: input=" + input + ", output=" + output);
         return output;
     }
@@ -1050,5 +1033,4 @@ public abstract class DOTranslationUtility
         writer.print(element.qName);
         writer.print(">\n");
     }
-
 }

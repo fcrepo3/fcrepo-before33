@@ -11,7 +11,11 @@
 #                  If FEDORA_JAVA_HOME is unspecified, will use java in PATH. 
 #------------------------------------------------------------------------------
 
-webapp_name="fedora"
+if [ -z "$WEBAPP_NAME" ]; then
+  webapp_name="fedora"
+else 
+  webapp_name=$WEBAPP_NAME
+fi
 
 if [ -z "$FEDORA_HOME" ]; then
   echo "ERROR: The FEDORA_HOME environment variable is not defined."

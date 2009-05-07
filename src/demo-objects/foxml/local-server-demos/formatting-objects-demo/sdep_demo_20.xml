@@ -100,7 +100,7 @@
           </wsdl:portType>
           <wsdl:service name="FedoraFOP">
             <wsdl:port binding="this:FedoraFOP_http" name="FedoraFOP_port">
-              <http:address location="http://localhost:8080/fop/"/>
+              <http:address location="http://local.fedora.server/fop/"/>
             </wsdl:port>
           </wsdl:service>
           <wsdl:binding name="FedoraFOP_http" type="this:FedoraFOPPortType">

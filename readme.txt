@@ -108,7 +108,7 @@ Then enter:
     ant performance-tests -Dhost=[HOST] -Dport=[PORT] 
                           -Dusername=[USERNAME] -Dpassword=[PASSWORD] 
                           -Diterations=[NUM-ITERATIONS] -Dthreads=[NUM-THREADS] 
-                          -Dfile=[OUTPUT-FILE] -Dname=[TEST-NAME]   
+                          -Dfile=[OUTPUT-FILE] -Dname=[TEST-NAME]  
     where
 
     [HOST] = Host on which the Fedora server is running
@@ -124,6 +124,4 @@ Then enter:
     Fedora server instance at localhost:8080.  However, if
     your test host is on a public IP, you *may* need to manually
     edit the deny-apim-if-not-localhost.xml policy before
-    testing.  In addition, if you're not testing on
-    localhost:8080, you should run the fedora-convert-demos 
-    script before starting the tests.
+    testing.

@@ -139,7 +139,7 @@
           </wsdl:portType>
           <wsdl:service name="FedoraSaxon">
             <wsdl:port binding="this:FedoraSaxon_http" name="FedoraSaxon_port">
-              <http:address location="http://localhost:8080/saxon/"/>
+              <http:address location="http://local.fedora.server/saxon/"/>
             </wsdl:port>
           </wsdl:service>
           <wsdl:binding name="FedoraSaxon_http" type="this:FedoraSaxonPortType">

@@ -40,7 +40,7 @@
     <foxml:datastreamVersion CREATED="2008-07-02T05:09:42.765Z"
       ID="XML_SOURCE1.0" LABEL="FOP Dissemination as Datastream" MIMETYPE="text/xml">
       <foxml:contentLocation
-        REF="http://localhost:8080/fedora/get/demo:26/demo:22/getFO" TYPE="URL"/>
+        REF="http://local.fedora.server/fedora/get/demo:26/demo:22/getFO" TYPE="URL"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" ID="TEI_SOURCE" STATE="A" VERSIONABLE="true">

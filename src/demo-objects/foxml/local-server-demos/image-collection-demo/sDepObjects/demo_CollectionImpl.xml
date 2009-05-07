@@ -160,13 +160,13 @@
           </wsdl:portType>
           <wsdl:service name="ImageCollection">
             <wsdl:port binding="this:ImageCollection_http" name="ImageCollection_port">
-              <http:address location="http://local.fedora.server/"/>
+              <http:address location="LOCAL"/>
             </wsdl:port>
           </wsdl:service>
           <wsdl:binding name="ImageCollection_http" type="this:ImageCollectionPortType">
             <http:binding verb="GET"/>
             <wsdl:operation name="view">
-              <http:operation location="saxon/SaxonServlet?source=(LIST)&amp;style=(XSLT)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+              <http:operation location="http://local.fedora.server/saxon/SaxonServlet?source=(LIST)&amp;style=(XSLT)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
               <wsdl:input>
                 <http:urlReplacement/>
               </wsdl:input>
@@ -175,7 +175,7 @@
               </wsdl:output>
             </wsdl:operation>
             <wsdl:operation name="list">
-              <http:operation location="fedora/risearch?type=(TYPE)&amp;lang=(LANG)&amp;format=(FORMAT)&amp;query=(QUERY)"/>
+              <http:operation location="http://local.fedora.server/fedora/risearch?type=(TYPE)&amp;lang=(LANG)&amp;format=(FORMAT)&amp;query=(QUERY)"/>
               <wsdl:input>
                 <http:urlReplacement/>
               </wsdl:input>

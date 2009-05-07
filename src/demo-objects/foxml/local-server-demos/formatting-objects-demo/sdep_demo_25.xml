@@ -100,13 +100,13 @@
           </wsdl:portType>
           <wsdl:service name="FedoraSaxon">
             <wsdl:port binding="this:FedoraSaxon_http" name="FedoraSaxon_port">
-              <http:address location="http://localhost:8080/saxon/"/>
+              <http:address location="http://local.fedora.server/saxon/"/>
             </wsdl:port>
           </wsdl:service>
           <wsdl:binding name="FedoraSaxon_http" type="this:FedoraSaxonPortType">
             <http:binding verb="GET"/>
             <wsdl:operation name="getFO">
-              <http:operation location="SaxonServlet?source=(TEI_SOURCE)&amp;style=http://localhost:8080/fedora-demo/formatting-objects-demo/tei.xsl"/>
+              <http:operation location="SaxonServlet?source=(TEI_SOURCE)&amp;style=http://local.fedora.server/fedora-demo/formatting-objects-demo/tei.xsl"/>
               <wsdl:input>
                 <http:urlReplacement/>
               </wsdl:input>

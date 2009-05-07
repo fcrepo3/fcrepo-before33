@@ -41,14 +41,14 @@
     <foxml:datastreamVersion CREATED="2008-07-02T05:09:42.984Z"
       ID="MediumSize.jpg.0" LABEL="Medium-size image" MIMETYPE="image/jpeg">
       <foxml:contentLocation
-        REF="http://localhost:8080/fedora-demo/image-collection-demo/SmileyEarring-MediumSize.jpg" TYPE="URL"/>
+        REF="http://local.fedora.server/fedora-demo/image-collection-demo/SmileyEarring-MediumSize.jpg" TYPE="URL"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="E" ID="FULL_SIZE" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2008-07-02T05:09:42.984Z"
       ID="FullSize.jpg.0" LABEL="Full-size image" MIMETYPE="image/jpeg">
       <foxml:contentLocation
-        REF="http://localhost:8080/fedora-demo/image-collection-demo/SmileyEarring-FullSize.jpg" TYPE="URL"/>
+        REF="http://local.fedora.server/fedora-demo/image-collection-demo/SmileyEarring-FullSize.jpg" TYPE="URL"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
 </foxml:digitalObject>

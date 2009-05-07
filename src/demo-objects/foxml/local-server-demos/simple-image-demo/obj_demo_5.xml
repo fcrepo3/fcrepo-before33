@@ -39,32 +39,32 @@
       </foxml:xmlContent>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:datastream CONTROL_GROUP="M" ID="THUMBRES_IMG" STATE="A" VERSIONABLE="true">
+  <foxml:datastream CONTROL_GROUP="E" ID="THUMBRES_IMG" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2008-07-02T05:09:43.375Z"
       ID="THUMBRES_IMG1.0" LABEL="Thorny's Coliseum thumbnail jpg image" MIMETYPE="image/jpeg">
       <foxml:contentLocation
-        REF="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-thumb.jpg" TYPE="INTERNAL_ID"/>
+        REF="http://local.fedora.server/fedora-demo/simple-image-demo/coliseum-thumb.jpg" TYPE="INTERNAL_ID"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:datastream CONTROL_GROUP="M" ID="MEDRES_IMG" STATE="A" VERSIONABLE="true">
+  <foxml:datastream CONTROL_GROUP="E" ID="MEDRES_IMG" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2008-07-02T05:09:43.375Z"
       ID="MEDRES_IMG1.0" LABEL="Thorny's Coliseum medium jpg image" MIMETYPE="image/jpeg">
       <foxml:contentLocation
-        REF="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-medium.jpg" TYPE="INTERNAL_ID"/>
+        REF="http://local.fedora.server/fedora-demo/simple-image-demo/coliseum-medium.jpg" TYPE="INTERNAL_ID"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:datastream CONTROL_GROUP="M" ID="HIGHRES_IMG" STATE="A" VERSIONABLE="true">
+  <foxml:datastream CONTROL_GROUP="E" ID="HIGHRES_IMG" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2008-07-02T05:09:43.375Z"
       ID="HIGHRES_IMG1.0" LABEL="Thorny's Coliseum high jpg image" MIMETYPE="image/jpeg">
       <foxml:contentLocation
-        REF="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-high.jpg" TYPE="INTERNAL_ID"/>
+        REF="http://local.fedora.server/fedora-demo/simple-image-demo/coliseum-high.jpg" TYPE="INTERNAL_ID"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:datastream CONTROL_GROUP="M" ID="VERYHIGHRES_IMG" STATE="A" VERSIONABLE="true">
+  <foxml:datastream CONTROL_GROUP="E" ID="VERYHIGHRES_IMG" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2008-07-02T05:09:43.375Z"
       ID="VERYHIGHRES_IMG1.0" LABEL="Thorny's Coliseum veryhigh jpg image" MIMETYPE="image/jpeg">
       <foxml:contentLocation
-        REF="http://localhost:8080/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg" TYPE="INTERNAL_ID"/>
+        REF="http://local.fedora.server/fedora-demo/simple-image-demo/coliseum-veryhigh.jpg" TYPE="INTERNAL_ID"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
 </foxml:digitalObject>

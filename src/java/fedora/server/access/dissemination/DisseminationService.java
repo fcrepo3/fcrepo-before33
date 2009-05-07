@@ -315,6 +315,16 @@ public class DisseminationService {
                         dissURL =
                                 dissBindInfo.AddressLocation
                                         + dissBindInfo.OperationLocation;
+
+                        /*
+                         * Substitute real app server context if we detect '/fedora'.
+                         * This is necessary here because DOTranslator does not scrub
+                         * URLs that result from concatenating fragments from different
+                         * locations in the file
+                         */
+                        dissURL = dissURL.replaceAll(
+                                fedoraServerHost + ":"  + fedoraServerPort + "/fedora/",
+                                fedoraServerHost + ":" + fedoraServerPort + "/" + fedoraAppServerContext + "/");
                     }
                     protocolType = dissBindInfo.ProtocolType;
                 }

@@ -45,15 +45,6 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-if [ $HTTP_PORT != "8080" ]; then
-  echo "Setting http port to $HTTP_PORT for all demo objects"
-  $FEDORA_HOME/client/bin/fedora-convert-demos.sh http localhost 8080 http localhost $HTTP_PORT $FEDORA_HOME
-  if [ $? -ne 0 ]; then
-    echo "ERROR: Failed to change http port for demo objects; see above"
-    exit 1
-  fi
-fi
-
 echo ""
 echo "-----------------------------"
 echo "Successfully installed Fedora"

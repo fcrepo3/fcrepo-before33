@@ -37,6 +37,7 @@ public class DOTranslationUtilityTest extends FedoraTestCase {
         System.setProperty("fedoraServerHost", "localhost");
         System.setProperty("fedoraServerPort", "8080");
         System.setProperty("fedoraAppServerContext", Constants.FEDORA_DEFAULT_APP_CONTEXT);
+        System.setProperty("fedora.baseURL", "http://localhost:8080/" +  Constants.FEDORA_DEFAULT_APP_CONTEXT);
      }
 
     /**

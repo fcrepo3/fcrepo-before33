@@ -39,14 +39,14 @@
     <foxml:datastreamVersion CREATED="2008-07-02T05:09:43.062Z" ID="QUERY.0"
       LABEL="RDF Query to list members" MIMETYPE="text/plain">
       <foxml:contentLocation
-        REF="http://localhost:8080/fedora-demo/image-collection-demo/SmileyStuff-MemberQuery.txt" TYPE="URL"/>
+        REF="http://local.fedora.server/fedora-demo/image-collection-demo/SmileyStuff-MemberQuery.txt" TYPE="URL"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="E" ID="XSLT" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2008-07-02T05:09:43.062Z" ID="XSLT.0"
       LABEL="Stylesheet to view list dissemination as html" MIMETYPE="text/xml">
       <foxml:contentLocation
-        REF="http://localhost:8080/fedora-demo/image-collection-demo/SmileyStuff-ViewStylesheet.xsl" TYPE="URL"/>
+        REF="http://local.fedora.server/fedora-demo/image-collection-demo/SmileyStuff-ViewStylesheet.xsl" TYPE="URL"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="E" ID="LIST" STATE="A" VERSIONABLE="true">

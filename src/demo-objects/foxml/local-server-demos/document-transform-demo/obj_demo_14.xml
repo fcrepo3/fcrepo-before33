@@ -42,27 +42,27 @@
       </foxml:xmlContent>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:datastream CONTROL_GROUP="M" ID="XML_SOURCE" STATE="A" VERSIONABLE="true">
+  <foxml:datastream CONTROL_GROUP="E" ID="XML_SOURCE" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2008-07-02T05:09:42.484Z"
       ID="XML_SOURCE1.0"
       LABEL="XML source for Fedora Access Web Service Definition (WSDL)" MIMETYPE="text/xml">
       <foxml:contentLocation
-        REF="http://localhost:8080/fedora-demo/document-transform-demo/Fedora-API-A.wsdl" TYPE="INTERNAL_ID"/>
+        REF="http://local.fedora.server/fedora-demo/document-transform-demo/Fedora-API-A.wsdl" TYPE="INTERNAL_ID"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:datastream CONTROL_GROUP="M" ID="XSL_STYLESHEET1" STATE="A" VERSIONABLE="true">
+  <foxml:datastream CONTROL_GROUP="E" ID="XSL_STYLESHEET1" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2008-07-02T05:09:42.484Z"
       ID="XSL_STYLESHEET1.0" LABEL="XSL Stylesheet to transform WSDL to HTML" MIMETYPE="text/xml">
       <foxml:contentLocation
-        REF="http://localhost:8080/fedora-demo/document-transform-demo/wsdlToAPIDoc.xsl" TYPE="INTERNAL_ID"/>
+        REF="http://local.fedora.server/fedora-demo/document-transform-demo/wsdlToAPIDoc.xsl" TYPE="INTERNAL_ID"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:datastream CONTROL_GROUP="M" ID="XSL_STYLESHEET2" STATE="A" VERSIONABLE="true">
+  <foxml:datastream CONTROL_GROUP="E" ID="XSL_STYLESHEET2" STATE="A" VERSIONABLE="true">
     <foxml:datastreamVersion CREATED="2008-07-02T05:09:42.484Z"
       ID="XSL_STYLESHEET2.0"
       LABEL="Alt. XSL Stylesheet to transform WSDL to HTML" MIMETYPE="text/xml">
       <foxml:contentLocation
-        REF="http://localhost:8080/fedora-demo/document-transform-demo/wsdlToSummaryTbl.xsl" TYPE="INTERNAL_ID"/>
+        REF="http://local.fedora.server/fedora-demo/document-transform-demo/wsdlToSummaryTbl.xsl" TYPE="INTERNAL_ID"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
 </foxml:digitalObject>
