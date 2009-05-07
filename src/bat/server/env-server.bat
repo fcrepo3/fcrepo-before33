@@ -28,6 +28,12 @@ echo ERROR: The CATALINA_HOME environment variable is not defined.
 exit /B 1
 :gotCatalinaHome
 
+set WEBINF="%CATALINA_HOME%\webapps\%WEBAPP_NAME%\WEB-INF"
+if exist "%WEBINF%" goto webInfExists
+echo ERROR: Fedora could not be found in the specified path, please set the environment variable WEBAPP_NAME to the context Fedora is installed in.
+exit /B 1
+:webInfExists
+
 if not "%JAVA_HOME%" == "" goto setJavaFromJavaHome
 if not "%FEDORA_JAVA_HOME%" == "" goto setJavaFromFedoraJavaHome
 set JAVA=java
@@ -39,7 +45,6 @@ goto gotJava
 set JAVA="%JAVA_HOME%\bin\java"
 :gotJava
 
-set WEBINF="%CATALINA_HOME%\webapps\%WEBAPP_NAME%\WEB-INF"
 set COMMON="%CATALINA_HOME%\common"
 set CP="%WEBINF%\classes"
 set OPTS=-Djava.endorsed.dirs="%WEBINF%\lib;%COMMON%\endorsed;%COMMON%\lib"

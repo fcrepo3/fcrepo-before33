@@ -27,6 +27,12 @@ if [ -z "$CATALINA_HOME" ]; then
   exit 1
 fi
 
+webinf="$CATALINA_HOME"/webapps/$webapp_name/WEB-INF                                                                                               
+if [ ! -d "$webinf" ]; then
+	echo "ERROR: Fedora could not be found in the specified path, please set the environment variable WEBAPP_NAME to the context Fedora is installed in."
+	exit 1
+fi  
+
 if [ -z "$JAVA_HOME" ]; then
   if [ -z "$FEDORA_JAVA_HOME" ]; then
     java="java"
@@ -48,7 +54,6 @@ execWithCmdlineArgs() {
 }
 
 execWithTheseArgs() {
-    webinf="$CATALINA_HOME"/webapps/$webapp_name/WEB-INF
     common="$CATALINA_HOME"/common
     exec_cmd="exec \"$java\" -server -Xmn64m -Xms256m -Xmx256m \
             -cp \"$webinf\"/classes \
