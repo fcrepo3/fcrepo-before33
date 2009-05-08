@@ -55,7 +55,7 @@ public class TestCommandLineUtilities
             System.err.println("Command-line ingest failed: STDOUT='" + out
                     + "', STDERR='" + err + "'");
         }
-        assertEquals(true, out.indexOf("Ingested PID: demo:5") != -1);
+        assertEquals(true, out.indexOf("Ingested pid: demo:5") != -1);
         System.out.println("Purge and ingest test succeeded");
     }
 
