@@ -6,7 +6,7 @@ scriptdir=`dirname "$0"`
 if [ $# -lt 5 ]; then
 	echo "ERROR: Not enough arguments."
 	echo "Usage:"
-	echo "  fedora-ingest-demos HOST PORT USERNAME PASSWORD http[s] [CTX]"
+	echo "  fedora-ingest-demos host port user password protocol [context]"
 	echo "Example:"
 	echo "  fedora-ingest-demos localhost 8080 fedoraAdmin fedoraAdmin http my-fedora"
 	exit 1

@@ -252,7 +252,7 @@ public class Downloader {
                                                 outStream);
             } else {
                 System.err
-                        .println("Usage: Downloader host port user pass pid dsid outfile [MMDDYYTHH:MM:SS] [CTX]");
+                        .println("Usage: Downloader host port user password pid dsid outfile [MMDDYYTHH:MM:SS] [context]");
             }
         } catch (Exception e) {
             e.printStackTrace();

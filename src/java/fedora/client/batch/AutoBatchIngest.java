@@ -100,22 +100,21 @@ public class AutoBatchIngest
                                             context);
             }
         } else {
-            System.out.println("\n**** Wrong Number of Arguments *****\n");
-            System.out.println("AutoBatchIngest requires 8 arguments.");
-            System.out.println("(1) - full path to object directory");
-            System.out.println("(2) - full path to log file");
-            System.out.println("(3) - format of log file (xml or text)");
-            System.out.println("(4) - object format (" + FOXML1_1.uri + " or "
-                    + METS_EXT1_1.uri + ")\n");
-            System.out
-                    .println("(5) - host name and port of Fedora server (host:port)");
-            System.out.println("(6) - admin username of Fedora server");
-            System.out
-                    .println("(7) - password for admin user of Fedora server\n");
-            System.out
-                    .println("(8) - protocol to communicate with Fedora server (http or https)");
-            System.out
-                    .println("(9) - optional, alternate context location of the Fedora app server (default is fedora)");
+            System.out.println("ERROR: Invalid number of arguments:");
+            System.out.println("");
+            System.out.println("Command: fedora-batch-ingest");
+            System.out.println("Syntax:");
+            System.out.println("  fedora-batch-ingest object-directory log-filepath log-format host:port user password protocol [context]");
+            System.out.println("");
+            System.out.println("  Where:");
+            System.out.println("   object-directory - the full path to the directory containing the objects to be ingested");
+            System.out.println("   log-filepath     - the full path to the file where logs will be written");
+            System.out.println("   log-format       - the format of the log file. Valid values are text or xml");
+            System.out.println("   host:port        - the hostname and port of the target Fedora server");
+            System.out.println("   user             - the Fedora administrator username (e.g., fedoraAdmin)");
+            System.out.println("   password         - the password for the Fedora administrator user");
+            System.out.println("   protocol         - the protocol to communicate with Fedora server, either http or https.");
+            System.out.println("   context          - an _optional_ parameter indicating the webapp context. This is only necessary if the Fedora server was installed under a context name other than 'fedora'.");
 
         }
 

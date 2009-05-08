@@ -209,7 +209,7 @@ public class DatastreamConduit {
         System.out.println("Error: " + errMessage);
         System.out.println("");
         System.out
-                .println("Usage: fedora-dsinfo host port username password pid protocol [context]");
+                .println("Usage: fedora-dsinfo host port user password pid protocol [context]");
         System.out.println("Note: protocol must be either http or https.");
     }
 

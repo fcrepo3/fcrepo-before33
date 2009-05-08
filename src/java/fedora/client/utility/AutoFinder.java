@@ -64,16 +64,16 @@ public class AutoFinder {
 
     public static void showUsage(String message) {
         System.err.println(message);
-        System.err.println("Usage: fedora-find host port user pass fields phrase protocol");
+        System.err.println("Usage: fedora-find host port user password fields phrase protocol [context]");
         System.err.println("");
-        System.err.println("    hostname - The Fedora server host or ip address.");
-        System.err.println("        port - The Fedora server port.");
-        System.err.println("        user - The username of a repository user.");
-        System.err.println("        pass - The password of a repository user.");
-        System.err.println("      fields - Space-delimited list of fields.");
-        System.err.println("      phrase - Phrase to search for in any field (with ? and * wildcards)");
+        System.err.println("    host     - The Fedora server host or ip address.");
+        System.err.println("    port     - The Fedora server port.");
+        System.err.println("    user     - The username of a repository user.");
+        System.err.println("    password - The password of a repository user.");
+        System.err.println("    fields   - Space-delimited list of fields.");
+        System.err.println("    phrase   - Phrase to search for in any field (with ? and * wildcards)");
         System.err.println("    protocol - The protocol to communication with the Fedora server (http|https)");
-        System.err.println("context name - Optional, the name of the context the Fedora server is deployed in (the default is fedora)");
+        System.err.println("    context  - Optional, the name of the context the Fedora server is deployed in (default is fedora)");
     }
 
     public static void printValue(String name, String value) {
@@ -107,7 +107,7 @@ public class AutoFinder {
         String phrase = args[5];
         String protocol = args[6];
 
-        if (args.length == 8){
+        if (args.length == 8 && !args[7].equals("")){
             context = args[7];
         }
 

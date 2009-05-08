@@ -106,16 +106,21 @@ public class AutoBatchBuild
                 System.out.println("\nUnknown format for template file.\n"
                         + "Template file must either be METS or FOXML.\n");
             } else {
-                System.out.println("\n**** Wrong Number of Arguments *****\n");
-                System.out.println("AutoBatchBuild requires 5 arguments.");
-                System.out.println("merge-objects=yes");
-                System.out.println("(1) - full path to object template file");
-                System.out
-                        .println("(2) - full path to object specific directory");
-                System.out.println("(3) - full path to object directory");
-                System.out.println("(4) - full path to log file");
-                System.out.println("(5) - format of log file (xml or text)");
-            }
+                System.out.println("ERROR: Wrong Number of Arguments, AutoBatchBuild requires 5 arguments.");
+                System.out.println("");
+                System.out.println("Command: fedora-batch-build");
+                System.out.println("");
+                System.out.println("Syntax:");
+                System.out.println("  fedora-batch-build [object-template-file] [object-specific-dir] [object-directory] [log-filepath] [log-format]");
+                System.out.println("");
+                System.out.println("  Where:");
+                System.out.println("");
+                System.out.println("    object-template-file - the full path to the batch template file");
+                System.out.println("    obj-specific-dir     - the full path to the directory containing the object-specific files");
+                System.out.println("    object-directory     - the full path to the directory where the generated objects will be built");
+                System.out.println("    log-filepath         - the full path to the file where logs will be written");
+                System.out.println("    log-format           - the format of the log file. Valid values are text or xml.");
+            }     
         }
     }
 }

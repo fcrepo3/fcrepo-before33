@@ -216,7 +216,7 @@ public class Uploader {
                 System.out.println(uploader.upload(f));
             } else {
                 System.err
-                        .println("Usage: Uploader host port user pass file [CTX]");
+                        .println("Usage: Uploader host port user password file [context]");
             }
         } catch (Exception e) {
             System.err.println("ERROR: " + e.getMessage());

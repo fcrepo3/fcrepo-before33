@@ -31,9 +31,9 @@ import fedora.server.utilities.StreamUtility;
  * This utility processes an xml input file containing modify directives
  * enabling mass updating of existing objects. It has six required arguments:
  * <ol>
- * <li>hostName - Name of the Fedora repository server.</li>
- * <li>portNum - port number o fthe Fedora server.</li>
- * <li>username - username of the Fedora server admin user</li>
+ * <li>host - Name of the Fedora repository server.</li>
+ * <li>port - port number o fthe Fedora server.</li>
+ * <li>user - username of the Fedora server admin user</li>
  * <li>password - password of the Fedora server admin user</li>
  * <li>directivesFilePath - absolute file path of the input file containing
  * modify directives. Note that his file should should validate against the
@@ -376,8 +376,8 @@ public class AutoModify {
         System.out.println("Error: " + errMessage);
         System.out.println("");
         System.out
-                .println("Usage: AutoModify host:port username password "
-                        + "directives-filepath log-filepath protocol [validate-only-option] [CTX]");
+                .println("Usage: AutoModify host:port user password "
+                        + "directives-filepath log-filepath protocol [validate-only-option] [context]");
         System.out.println("Note: protocol must be either http or https.");
     }
 

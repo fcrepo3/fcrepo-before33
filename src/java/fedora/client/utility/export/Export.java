@@ -145,29 +145,29 @@ public class Export
         System.err.println("Summary: Exports one or more objects from a Fedora repository.");
         System.err.println();
         System.err.println("Syntax:");
-        System.err.println("  fedora-export HST:PRT USR PSS PID|FTYPS FORMAT ECONTEXT PATH PROTOCOL [CTX]");
+        System.err.println("  fedora-export host:port user password pid|ftyps format econtext path protocol [context]");
         System.err.println();
         System.err.println("Where:");
-        System.err.println("  HST    is the repository hostname.");
-        System.err.println("  PRT    is the repository port number.");
-        System.err.println("  USR    is the id of the repository user.");
-        System.err.println("  PSS    is the password of repository user.");
-        System.err.println("  PID    is the id of the object to export from the source repository.");
-        System.err.println("  FORMAT is the XML format to export ");
-        System.err.println("         ('" + FOXML1_1.uri + "',");
-        System.err.println("          '" + FOXML1_0.uri + "',");
-        System.err.println("          '" + METS_EXT1_1.uri + "',");
-        System.err.println("          '" + METS_EXT1_0.uri + "',");
-        System.err.println("          '" + ATOM1_1.uri + "',");
-        System.err.println("          '" + ATOM_ZIP1_1.uri + "',");
-        System.err.println("          or 'default')");
-        System.err.println("  ECONTEXT is the export context (which indicates what use case");
-        System.err.println("         the output should be prepared for.");
-        System.err.println("         ('public', 'migrate', 'archive' or 'default')");
-        System.err.println("  PATH   is the directory to export the object.");
-        System.err.println("  PROTOCOL is the how to connect to repository, either http or https.");
-        System.err.println("  CTX    is an optional parameter for specifying the context name under ");
-        System.err.println("         which the Fedora server is deployed. The default is fedora.");
+        System.err.println("  host        is the repository hostname.");
+        System.err.println("  port        is the repository port number.");
+        System.err.println("  user        is the id of the repository user.");
+        System.err.println("  password    is the password of repository user.");
+        System.err.println("  pid | ftyps is the id of the object to export from the source repository OR the types of objects.");
+        System.err.println("  format      is the XML format to export ");
+        System.err.println("              ('" + FOXML1_1.uri + "',");
+        System.err.println("               '" + FOXML1_0.uri + "',");
+        System.err.println("               '" + METS_EXT1_1.uri + "',");
+        System.err.println("               '" + METS_EXT1_0.uri + "',");
+        System.err.println("               '" + ATOM1_1.uri + "',");
+        System.err.println("               '" + ATOM_ZIP1_1.uri + "',");
+        System.err.println("              or 'default')");
+        System.err.println("  econtext    is the export context (which indicates what use case");
+        System.err.println("              the output should be prepared for.");
+        System.err.println("              ('public', 'migrate', 'archive' or 'default')");
+        System.err.println("  path        is the directory to export the object.");
+        System.err.println("  protocol    is the how to connect to repository, either http or https.");
+        System.err.println("  context     is an optional parameter for specifying the context name under ");
+        System.err.println("              which the Fedora server is deployed. The default is fedora.");
         System.err.println();
         System.err.println("Examples:");
         System.err.println("fedora-export myrepo.com:8443 user pw demo:1 "
@@ -182,11 +182,11 @@ public class Export
         System.err.println("  Exports all objects in the default export format and context ");
         System.err.println("  (from myrepo.com:80 to directory /tmp/fedoradump).");
         System.err.println();
-        System.err.println("fedora-export myrepo.com:80 user pw DMO default default /tmp/fedoradump http my-personal-fedora");
+        System.err.println("fedora-export myrepo.com:80 user pw DMO default default /tmp/fedoradump http my-fedora");
         System.err.println();
         System.err.println("  Exports all objects in the default export format and context ");
         System.err.println("  (from myrepo.com:80 to directory /tmp/fedoradump).");
-        System.err.println("  from a Fedora server running under http://myrepo:80/my-personal-fedora instead of http://myrepo:80/fedora ");
+        System.err.println("  from a Fedora server running under http://myrepo:80/my-fedora instead of http://myrepo:80/fedora ");
         System.err.println();
         System.err.println("ERROR  : " + msg);
         System.exit(1);
@@ -197,19 +197,19 @@ public class Export
      */
     public static void main(String[] args) {
         try {
-            // USAGE: fedora-export HST:PRT USR PSS PID|FTYPS FORMAT ECONTEXT PATH PROTOCOL [CTX]
+            // USAGE: fedora-export host:port user password pid|ftyps format econtext path protocol [context]
             if (args.length < 8 || args.length > 9) {
                 Export.badArgs("Wrong number of arguments.");
             }
             String[] hp = args[0].split(":");
             if (hp.length != 2) {
-                Export.badArgs("First arg must be of the form 'host:portnum'");
+                Export.badArgs("First arg must be of the form 'host:port'");
             }
 
             //SDP - HTTPS
             String protocol = args[7];
             if (!protocol.equals("http") && !protocol.equals("https")) {
-                Export.badArgs("PROTOCOL arg must be 'http' or 'https'");
+                Export.badArgs("protocol arg must be 'http' or 'https'");
             }
 
             String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
@@ -243,7 +243,7 @@ public class Export
                     && !exportContext.equals("archive")
                     && !exportContext.equals("default")) {
                 Export
-                        .badArgs("ECONTEXT arg must be 'public', 'migrate', 'archive', or 'default'");
+                        .badArgs("econtext arg must be 'public', 'migrate', 'archive', or 'default'");
             }
 
             RepositoryInfo repoinfo = sourceRepoAPIA.describeRepository();
@@ -253,7 +253,7 @@ public class Export
             if (majorVersion < 2 // pre-2.0 repo
                     && !exportFormat.equals(METS_EXT1_0.uri)
                     && !exportFormat.equals("default")) {
-                Export.badArgs("FORMAT arg must be '" + METS_EXT1_0.uri
+                Export.badArgs("format arg must be '" + METS_EXT1_0.uri
                         + "' or 'default' for pre-2.0 repository.");
             }
 

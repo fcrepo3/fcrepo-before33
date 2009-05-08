@@ -297,30 +297,30 @@ public class Ingest
         System.err.println("         the local filesystem or another Fedora repository.");
         System.err.println();
         System.err.println("Syntax:");
-        System.err.println("  fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS TPROTOCOL [LOG] [CTX]");
-        System.err.println("  fedora-ingest d[ir] INPATH FORMAT THST:TPRT TUSR TPSS TPROTOCOL [LOG] [CTX]");
-        System.err.println("  fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|* THST:TPRT TUSR TPSS SPROTOCOL TPROTOCOL [LOG] [CTX]");
+        System.err.println("  fedora-ingest f[ile] path format targetHost:targetPort targetUser targetPassword targetProtocol [log] [context]");
+        System.err.println("  fedora-ingest d[ir]  path format targetHost:targetPort targetUser targetPassword targetProtocol [log] [context]");
+        System.err.println("  fedora-ingest r[epos] sourceHost:sourcePort sourceUser sourcePassword pid|* targetHost:targetPort targetUser targetPassword sourceProtocol targetProtocol [log] [context]");
         System.err.println();
         System.err.println("Where:");
-        System.err.println("  INPATH     is the local file or directory name that is ingest source.");
-        System.err.println("  FORMAT     is a string value which indicates the XML format of the ingest file(s)");
-        System.err.println("             ('" + FOXML1_1.uri + "',");
-        System.err.println("              '" + FOXML1_0.uri + "',");
-        System.err.println("              '" + METS_EXT1_1.uri + "',");
-        System.err.println("              '" + METS_EXT1_0.uri + "',");
-        System.err.println("              '" + ATOM1_1.uri + "',");
-        System.err.println("              or '" + ATOM_ZIP1_1.uri + "')");
-        System.err.println("  PID        is the id of the object to ingest from the source repository.");
-        System.err.println("  SHST/THST  is the source or target repository's hostname.");
-        System.err.println("  SPRT/TPRT  is the source or target repository's port number.");
-        System.err.println("  SUSR/TUSR  is the id of the source or target repository user.");
-        System.err.println("  SPSS/TPSS  is the password of the source or target repository user.");
-        System.err.println("  SPROTOCOL  is the protocol to communicate with source repository (http or https)");
-        System.err.println("  TPROTOCOL  is the protocol to communicate with target repository (http or https)");
-        System.err.println("  LOG        is the optional log message.  If unspecified, the log message");
-        System.err.println("             will indicate the source filename or repository of the object(s).");
-        System.err.println("  CTX        is the optional parameter for specifying the context name under which ");
-        System.err.println("             the Fedora server is deployed. The default is fedora.");
+        System.err.println("  path                           is the local file or directory name that is ingest source.");
+        System.err.println("  format                         is a string value which indicates the XML format of the ingest file(s)");
+        System.err.println("                                 ('" + FOXML1_1.uri + "',");
+        System.err.println("                                 '" + FOXML1_0.uri + "',");
+        System.err.println("                                 '" + METS_EXT1_1.uri + "',");
+        System.err.println("                                 '" + METS_EXT1_0.uri + "',");
+        System.err.println("                                 '" + ATOM1_1.uri + "',");
+        System.err.println("                                 or '" + ATOM_ZIP1_1.uri + "')");
+        System.err.println("  pid | *                        is the id of the object to ingest from the source repository OR * in case of all objects from the source repository.");
+        System.err.println("  sourceHost/targetHost          is the source or target repository's hostname.");
+        System.err.println("  sourcePort/targetPort          is the source or target repository's port number.");
+        System.err.println("  sourceUser/targetUser          is the id of the source or target repository user.");
+        System.err.println("  sourcePassword/targetPassword  is the password of the source or target repository user.");
+        System.err.println("  sourceProtocol                 is the protocol to communicate with source repository (http or https)");
+        System.err.println("  targetProtocol                 is the protocol to communicate with target repository (http or https)");
+        System.err.println("  log                            is the optional log message.  If unspecified, the log message");
+        System.err.println("                                 will indicate the source filename or repository of the object(s).");
+        System.err.println("  context                        is the optional parameter for specifying the context name under which ");
+        System.err.println("                                 the Fedora server is deployed. The default is fedora.");
         System.err.println();
         System.err.println("Examples:");
         System.err.println("fedora-ingest f obj1.xml " + FOXML1_1.uri + " myrepo.com:8443 jane jpw https");
@@ -338,13 +338,13 @@ public class Ingest
         System.err.println("  and will fail on ingests of files that are not of this format.");
         System.err.println("  All log messages will be the quoted string.");
         System.err.println();
-        System.err.println("fedora-ingest d c:\\archive " + FOXML1_1.uri + " myrepo.com:80 jane janepw http \"\" my-personal-fedora");
+        System.err.println("fedora-ingest d c:\\archive " + FOXML1_1.uri + " myrepo.com:80 jane janepw http \"\" my-fedora");
         System.err.println("  Traverses entire directory structure of c:\\archive, and ingests any file.");
         System.err.println("  It assumes all files will be in the FOXML 1.1 format");
         System.err.println("  and will fail on ingests of files that are not of this format.");
         System.err.println("  All log messages will be the quoted string.");
         System.err.println("  Additionally the Fedora server is assumed to be running under the context name ");
-        System.err.println("  http://myrepo:80/my-personal-fedora instead of http://myrepo:80/fedora ");
+        System.err.println("  http://myrepo:80/my-fedora instead of http://myrepo:80/fedora ");
         System.err.println();
         System.err.println("fedora-ingest r jrepo.com:8081 mike mpw demo:1 myrepo.com:8443 jane jpw http https \"\"");
         System.err.println();
@@ -390,12 +390,12 @@ public class Ingest
             IngestCounter counter = new IngestCounter();
             char kind = args[0].toLowerCase().charAt(0);
             if (kind == 'f') {
-                // USAGE: fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [LOG] [CTX]
+                // USAGE: fedora-ingest f[ile] path format targetHost:targetProtocol targetUser targetPassword targetProtocol [log] [context]
                 if (args.length < 7 || args.length > 9) {
                     Ingest
                             .badArgs("Wrong number of arguments for file ingest.");
                     System.out
-                            .println("USAGE: fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [LOG] [CTX]");
+                            .println("USAGE: fedora-ingest f[ile] path format targetHost:targetProtocol targetUser targetPassword targetProtocol [log] [context]");
                 }
                 File f = new File(args[1]);
                 String ingestFormat = args[2];
@@ -432,15 +432,15 @@ public class Ingest
                     System.out.print("ERROR: ingest failed for file: "
                             + args[1]);
                 } else {
-                    System.out.println("Ingested PID: " + pid);
+                    System.out.println("Ingested pid: " + pid);
                 }
             } else if (kind == 'd') {
-                // USAGE: fedora-ingest d[ir] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [LOG]
+                // USAGE: fedora-ingest d[ir] path format targetHost:targetPort targetUser targetPassword targetProtocol [log] [context]
                 if (args.length < 7 || args.length > 9) {
                     Ingest.badArgs("Wrong number of arguments (" + args.length
                             + ") for directory ingest.");
                     System.out
-                            .println("USAGE: fedora-ingest d[ir] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [LOG] [CTX]");
+                            .println("USAGE: fedora-ingest d[ir] path format targetHost:targetPort targetUser targetPassword targetProtocol [log] [context]");
                 }
                 File d = new File(args[1]);
                 String ingestFormat = args[2];
@@ -484,7 +484,7 @@ public class Ingest
                 IngestLogger.closeLog(log, logRootName);
                 summarize(counter, logFile);
             } else if (kind == 'r') {
-                // USAGE: fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|* THST:TPRT TUSR TPSS SPROTOCOL TPROTOCOL [LOG] [CTX]
+                // USAGE: fedora-ingest r[epos] sourceHost:sourcePort sourceUser sourcePassword pid|* targetHost:targetPort targetUser targetPassword sourceProtocol targetProtocol [log] [context]
                 if (args.length < 10 || args.length > 12) {
                     Ingest
                             .badArgs("Wrong number of arguments for repository ingest.");
@@ -560,10 +560,10 @@ public class Ingest
                                                      logMessage);
                     if (successfulPID == null) {
                         System.out
-                                .print("ERROR: ingest from repo failed for PID="
+                                .print("ERROR: ingest from repo failed for pid="
                                         + args[4]);
                     } else {
-                        System.out.println("Ingested PID: " + successfulPID);
+                        System.out.println("Ingested pid: " + successfulPID);
                     }
                 } else {
                     // multi-object
