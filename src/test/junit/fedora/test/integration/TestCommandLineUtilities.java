@@ -51,7 +51,7 @@ public class TestCommandLineUtilities
                 + "/client/demo/foxml/local-server-demos/simple-image-demo/obj_demo_5.xml"));
         String out = sbOut.toString();
         String err = sbErr.toString();
-        if (out.indexOf("Ingested PID: demo:5") == -1) {
+        if (out.indexOf("Ingested pid: demo:5") == -1) {
             System.err.println("Command-line ingest failed: STDOUT='" + out
                     + "', STDERR='" + err + "'");
         }
