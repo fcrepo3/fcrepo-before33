@@ -121,7 +121,13 @@ Then enter:
     [TEST-NAME] = A name for this test run
 
 [*] Normally, no additional setup is required when testing a
-    Fedora server instance at localhost:8080.  However, if
-    your test host is on a public IP, you *may* need to manually
-    edit the deny-apim-if-not-localhost.xml policy before
-    testing.
+    Fedora server instance at http://localhost:8080/fedora/.  
+    A different server port may be chosen with no consequence.    
+    However, if the fedora server uses an alternate app
+    server context (i.e. not /fedora), you must set the environment
+    variable WEBAPP_NAME to the alternate context name.  This variable
+    is used by command-line utilities.  System tests involving these 
+    utiliteis may fail if WEBAPP_NAME is not set properly.
+    Additionally, your test host is on a public IP and (not localhost), 
+    you *may* need to manually edit the deny-apim-if-not-localhost.xml 
+    policy before testing.
