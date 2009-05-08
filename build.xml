@@ -723,22 +723,38 @@
   </target>
 
   <target name="rmi-journal-receiver-jar" depends="compile-server" description="">
-  	<mkdir dir="${journal.build.dir}" />
   	<property name="journal.jar.name" value="RmiJournalReceiver-${fedora.version}.jar" />
-  	<jar destfile="${journal.build.dir}/${journal.jar.name}">
+  	
+  	<mkdir dir="${journal.build.dir}" />
+  	<mkdir dir="${journal.build.dir}/main" />
+  	<mkdir dir="${journal.build.dir}/lib" />
+  	<mkdir dir="${journal.build.dir}/boot" />
+  	
+  	<jar destfile="${journal.build.dir}/main/main.jar">
       <zipfileset dir="${server.build.dir}/classes/fedora/server/journal/readerwriter/multicast" 
-                  prefix="/fedora/server/journal/readerwriter/multicast/" includes="**/*.class"/>
+                  prefix="fedora/server/journal/readerwriter/multicast/" includes="**/*.class"/>
       <zipfileset dir="${server.build.dir}/classes/fedora/server/journal" 
-                  prefix="/fedora/server/journal/"
+                  prefix="fedora/server/journal/"
                   includes="JournalException.class" />
-      <zipfileset src="${lib.log4j}" includes="org/**/*.class" />
       <manifest>
-      	<attribute name="Version" value="${fedora.version}" />
-      	<attribute name="Build" value="${build.tstamp}" />
-      	<attribute name="Built-By" value="${user.name}" />
       	<attribute name="Main-Class" value="fedora.server.journal.readerwriter.multicast.rmi.RmiJournalReceiver" />
       </manifest>
   	</jar>
+  	
+  	<copy file="${lib.log4j}" todir="${journal.build.dir}/lib" />
+  	<unjar src="${lib.one-jar}" dest="${journal.build.dir}/boot" />
+
+  	<jar destfile="${journal.build.dir}/${journal.jar.name}">
+  	  <manifest>
+  	    <attribute name="Version" value="${fedora.version}" />
+  	    <attribute name="Build" value="${build.tstamp}" />
+  	    <attribute name="Built-By" value="${user.name}" />
+  	    <attribute name="Main-Class" value="com.simontuffs.onejar.Boot" />
+  	  </manifest>
+  	  <fileset dir="${journal.build.dir}/boot" />
+  	  <fileset dir="${journal.build.dir}" includes="main/** lib/**" />
+  	</jar>
+  	
   </target>
 
   <target name="rmi-journal-receiver" depends="rmi-journal-receiver-jar" description="">
