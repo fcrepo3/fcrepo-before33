@@ -20,6 +20,7 @@
   <property name="junit.build.dir" location="${build.dir}/junit" />
   <property name="localservices.build.dir" location="${build.dir}/localservices" />
   <property name="server.build.dir" location="${build.dir}/server" />
+  <property name="journal.build.dir" location="${build.dir}/journal" />
   <property name="stubwrappers.build.dir" location="${build.dir}/stubwrappers" />
   <property name="util.build.dir" location="${build.dir}/util" />
   <property name="war.build.dir" location="${build.dir}/war" />
@@ -721,6 +722,33 @@
     </jar>
   </target>
 
+  <target name="rmi-journal-receiver-jar" depends="compile-server" description="">
+  	<mkdir dir="${journal.build.dir}" />
+  	<property name="journal.jar.name" value="RmiJournalReceiver-${fedora.version}.jar" />
+  	<jar destfile="${journal.build.dir}/${journal.jar.name}">
+      <zipfileset dir="${server.build.dir}/classes/fedora/server/journal/readerwriter/multicast" 
+                  prefix="/fedora/server/journal/readerwriter/multicast/" includes="**/*.class"/>
+      <zipfileset dir="${server.build.dir}/classes/fedora/server/journal" 
+                  prefix="/fedora/server/journal/"
+                  includes="JournalException.class" />
+      <zipfileset src="${lib.log4j}" includes="org/**/*.class" />
+      <manifest>
+      	<attribute name="Version" value="${fedora.version}" />
+      	<attribute name="Build" value="${build.tstamp}" />
+      	<attribute name="Built-By" value="${user.name}" />
+      	<attribute name="Main-Class" value="fedora.server.journal.readerwriter.multicast.rmi.RmiJournalReceiver" />
+      </manifest>
+  	</jar>
+  </target>
+
+  <target name="rmi-journal-receiver" depends="rmi-journal-receiver-jar" description="">
+  	<property name="journal.dist.name" value="RmiJournalReceiver-${fedora.version}" />
+  	<zip destfile="${dist.dir}/${journal.dist.name}.zip">
+  		<zipfileset dir="${journal.build.dir}" includes="RmiJournalReceiver-${fedora.version}.jar" prefix="${journal.dist.name}"/>
+  		<zipfileset dir="inc/journal" includes="*" prefix="${journal.dist.name}"/>
+  	</zip>
+  </target>
+	
   <target name="localservices" depends="init, compile-localservices" description="">
 
     <path id="fop-libs.path">
