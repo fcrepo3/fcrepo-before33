@@ -367,53 +367,48 @@ public class FedoraObjectResource extends BaseRestResource {
         try {
             Context context = getContext();
 
-            try {
-                InputStream is = null;
-                boolean newPID = false;
+            InputStream is = null;
+            boolean newPID = false;
 
-                // Determine if content is provided
-                RestUtil restUtil = new RestUtil();
-                RequestContent content =
-                    restUtil.getRequestContent(servletRequest, headers);
-                if(content != null && content.getContentStream() != null) {
-                    if(ignoreMime) {
-                        is = content.getContentStream();
-                    } else {
-                        // Make sure content is XML
-                        String contentMime = content.getMimeType();
-                        if(contentMime != null &&
-                           TEXT_XML.isCompatible(MediaType.valueOf(contentMime))) {
-                            is = content.getContentStream();
-                        }
-                    }
-                }
-
-                // If no content is provided, use a FOXML template
-                if (is == null) {
-                    if (pid == null || pid.equals("new")) {
-                        pid = apiMService.getNextPID(context, 1, namespace)[0];
-                    }
-
-                    ownerID = context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
-                    is = new ByteArrayInputStream(getFOXMLTemplate(pid, label, ownerID, encoding).getBytes());
+            // Determine if content is provided
+            RestUtil restUtil = new RestUtil();
+            RequestContent content =
+                restUtil.getRequestContent(servletRequest, headers);
+            if(content != null && content.getContentStream() != null) {
+                if(ignoreMime) {
+                    is = content.getContentStream();
                 } else {
-                    // content provided, but no pid
-                    if (pid == null || pid.equals("new")) {
-                        newPID = true;
-                    }
-
-                    if(namespace != null && !namespace.equals("")) {
-                        LOG.warn("The namespace parameter is only applicable when object " +
-                        		 "content is not provided, thus the namespace provided '" +
-                        		 namespace + "' has been ignored.");
+                    // Make sure content is XML
+                    String contentMime = content.getMimeType();
+                    if(contentMime != null &&
+                       TEXT_XML.isCompatible(MediaType.valueOf(contentMime))) {
+                        is = content.getContentStream();
                     }
                 }
-
-                pid = apiMService.ingest(context, is, logMessage, format, encoding, newPID);
-
-            } catch (ObjectExistsException ex) {
-                return updateObject(pid, label, logMessage, ownerID, state);
             }
+
+            // If no content is provided, use a FOXML template
+            if (is == null) {
+                if (pid == null || pid.equals("new")) {
+                    pid = apiMService.getNextPID(context, 1, namespace)[0];
+                }
+
+                ownerID = context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
+                is = new ByteArrayInputStream(getFOXMLTemplate(pid, label, ownerID, encoding).getBytes());
+            } else {
+                // content provided, but no pid
+                if (pid == null || pid.equals("new")) {
+                    newPID = true;
+                }
+
+                if(namespace != null && !namespace.equals("")) {
+                    LOG.warn("The namespace parameter is only applicable when object " +
+                    		 "content is not provided, thus the namespace provided '" +
+                    		 namespace + "' has been ignored.");
+                }
+            }
+
+            pid = apiMService.ingest(context, is, logMessage, format, encoding, newPID);
 
             URI createdLocation = uriInfo.getRequestUri().resolve(URLEncoder.encode(pid, DEFAULT_ENC));
             return Response.created(createdLocation).entity(pid).build();
