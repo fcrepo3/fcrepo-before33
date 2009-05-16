@@ -1002,6 +1002,7 @@
       fedora/server/storage/ExternalContentManager.java,
       fedora/server/storage/RepositoryReader.java,
       fedora/server/storage/lowlevel/ILowlevelStorage.java,
+      fedora/server/storage/lowlevel/IListable.java,
       fedora/server/storage/translation/DODeserializer.java,
       fedora/server/storage/translation/DOSerializer.java,
       fedora/server/storage/translation/DOTranslator.java,
