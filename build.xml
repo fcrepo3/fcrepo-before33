@@ -30,18 +30,23 @@
 
   <property name="dist.dir" location="dist" />
   <property name="lib.dir" location="lib" />
-
-  <property name="src.dir" location="src" /> 
-  <property name="docs.src.dir" location="${src.dir}/doc" />
-  <property name="java.src.dir" location="${src.dir}/main/java" />
-  <property name="junit.src.dir" location="${src.dir}/test/java" />
-  <property name="properties.src.dir" location="${src.dir}/properties" />
+  
+  <property name="resrc.dir" location="resources" />
+  <property name="docs.resrc.dir" location="${resrc.dir}/doc" />
+  
+  <property name="src.dir" location="src" />
+  <property name="main.src.dir" location="${src.dir}/main" />
+  <property name="java.src.dir" location="${main.src.dir}/java" />
+  <property name="junit.src.dir" location="${src.dir}/test/java" />  
   <property name="war.src.dir" location="${src.dir}/war" />
   <property name="war-fedora.src.dir" location="${war.src.dir}/fedora" />
   <property name="wsdl.src.dir" location="${src.dir}/wsdl" />
   <property name="xacml.src.dir" location="${src.dir}/xacml-policies" />
   <property name="xsd.src.dir" location="${src.dir}/xsd" />
   <property name="xsl.src.dir" location="${src.dir}/xsl" />
+  
+  <property name="resrc.src.dir" location="${main.src.dir}/resources" />
+  <property name="properties.src.dir" location="${resrc.src.dir}/properties" />
   <!-- 
   the following properties are mainly for junit, have to be set globally though due to 
   the application server context replace tasks
@@ -107,7 +112,7 @@
 
   <path id="junit.classpath">
     <path refid="compile.classpath" />
-    <pathelement path="src/properties/server" />
+    <pathelement path="${resrc.src.dir}/properties/server" />
     <pathelement path="${junit.build.dir}" />
     <pathelement path="${client.build.dir}/classes" />
     <pathelement path="${server.build.dir}/classes" />
@@ -468,8 +473,8 @@
     </copy>
 
     <copy todir="${fedora.home.build.dir}/server/bin">
-      <fileset dir="${src.dir}/bat/server" />
-      <fileset dir="${src.dir}/sh/server" />
+      <fileset dir="${resrc.src.dir}/scripts/bat/server" />
+      <fileset dir="${resrc.src.dir}/scripts/sh/server" />
     </copy>
 
     <chmod perm="ugo+x" type="file">
@@ -575,7 +580,7 @@
       </classpath>
     </java>
 
-    <copy file="${src.dir}/images/server/newlogo2.jpg" todir="${fedora.war.build.dir}/images" />
+    <copy file="${resrc.src.dir}/images/server/newlogo2.jpg" todir="${fedora.war.build.dir}/images" />
 
     <copy todir="${fedora.war.build.dir}/ri">
       <fileset dir="src/xsl/ri" />
@@ -655,8 +660,8 @@
     </copy>
 
     <copy todir="${fedora.home.build.dir}/client/bin">
-      <fileset dir="${src.dir}/bat/client" />
-      <fileset dir="${src.dir}/sh/client" />
+      <fileset dir="${resrc.src.dir}/scripts/bat/client" />
+      <fileset dir="${resrc.src.dir}/scripts/sh/client" />
     </copy>
 
     <replace dir="${fedora.home.build.dir}/client/bin" token="fedora-client.jar" value="fedora-client-${fedora.version}.jar" />
@@ -694,7 +699,7 @@
     <mkdir dir="${fedora.home.build.dir}/client" />
 
     <copy todir="${client.build.dir}/classes/images">
-      <fileset dir="${src.dir}/images/client" />
+      <fileset dir="${resrc.src.dir}/images/client" />
     </copy>
 
     <copy todir="${client.build.dir}/classes">
@@ -847,7 +852,7 @@
     <javadoc packagenames="fedora.*" sourcepath="${java.src.dir};${wsdl.build.dir}" maxmemory="256m" classpathref="compile.classpath" destdir="${docs.build.dir}/javadocs" author="true" version="true" use="true" />
 
     <copy todir="${docs.build.dir}/userdocs">
-      <fileset dir="${docs.src.dir}/userdocs" />
+      <fileset dir="${docs.resrc.dir}/userdocs" />
     </copy>
 
   </target>
@@ -877,7 +882,7 @@
       <fileset dir="${lib.dir}" includes="${install.jdbc.mckoi} ${install.jdbc.derby} ${install.jdbc.derbynetworkclient} ${install.jdbc.mysql} ${install.jdbc.postgresql}" />
       <fileset dir="${dist.dir}" includes="fedorahome.zip fedora.war fop.war imagemanip.war saxon.war fedora-demo.war" />
       <fileset dir="inc" includes="${install.tomcat} keystore" />
-      <fileset dir="${src.dir}/dbspec/server/fedora/server/storage/resources" includes="DefaultDOManager.dbspec" />
+      <fileset dir="${resrc.src.dir}/dbspec/server/fedora/server/storage/resources" includes="DefaultDOManager.dbspec" />
     </copy>
 
     <mkdir dir="${install.build.dir}/boot" />

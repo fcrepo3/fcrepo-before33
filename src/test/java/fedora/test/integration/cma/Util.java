@@ -57,7 +57,7 @@ public abstract class Util {
 
         System.out.println("Ingesting test objects in FOXML format from "
                 + specificPath);
-        dir = new File("src/test-objects/foxml" + specificPath);
+        dir = new File("src/test/resources/test-objects/foxml" + specificPath);
 
         FedoraClient client = FedoraTestCase.getFedoraClient();
 

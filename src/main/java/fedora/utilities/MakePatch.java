@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.utilities;
@@ -227,7 +227,7 @@ public class MakePatch {
         } else {
             props
                     .load(new FileInputStream(new File(dir,
-                                                       "src/properties/server/fedora/server/resources/Server.properties")));
+                                                       "src/main/resources/properties/server/fedora/server/resources/Server.properties")));
         }
         String major = props.getProperty("version.major");
         String minor = props.getProperty("version.minor");

@@ -176,11 +176,11 @@ public class TestCommandLineUtilities
     public void testValidatePolicy() {
         System.out.println("Testing Validate Policies");
         File validDir =
-                new File("src/test/junit/XACMLTestPolicies/valid-policies");
+                new File("src/test/java/XACMLTestPolicies/valid-policies");
         traverseAndValidate(validDir, true);
 
         File invalidDir =
-                new File("src/test/junit/XACMLTestPolicies/invalid-policies");
+                new File("src/test/java/XACMLTestPolicies/invalid-policies");
         traverseAndValidate(invalidDir, false);
 
         System.out.println("Validate Policies test succeeded");
