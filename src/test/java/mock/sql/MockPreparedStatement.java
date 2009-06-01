@@ -10,11 +10,11 @@ import java.io.Reader;
 
 import java.net.URL;
 
-/* JDBC_4_ANT_TOKEN_BEGIN -
+/* JDBC_4_ANT_TOKEN_BEGIN */
 import java.sql.NClob;
 import java.sql.RowId;
 import java.sql.SQLXML;
-- JDBC_4_ANT_TOKEN_END */
+/* JDBC_4_ANT_TOKEN_END */
 
 import java.sql.Array;
 import java.sql.Blob;
@@ -428,7 +428,7 @@ public class MockPreparedStatement
         throw new RuntimeException("MockPreparedStatement.setQueryTimeout not implemented");
     }
 
-    /* JDBC_4_ANT_TOKEN_BEGIN -
+    /* JDBC_4_ANT_TOKEN_BEGIN */
     @Override
     public void setAsciiStream(int arg0, InputStream arg1) throws SQLException {
         throw new UnsupportedOperationException(
@@ -571,5 +571,5 @@ public class MockPreparedStatement
         throw new UnsupportedOperationException(
         "Java 1.6 JDBC methods are not supported");
     }
-    - JDBC_4_ANT_TOKEN_END */
+    /* JDBC_4_ANT_TOKEN_END */
 }

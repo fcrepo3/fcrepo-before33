@@ -17,7 +17,7 @@
   <property name="docs.build.dir" location="${build.dir}/docs" />
   <property name="fedora.home.build.dir" location="${build.dir}/home" />
   <property name="install.build.dir" location="${build.dir}/install" />
-  <property name="junit.build.dir" location="${build.dir}/junit" />
+  <property name="junit.build.dir" location="${build.dir}/java" />
   <property name="localservices.build.dir" location="${build.dir}/localservices" />
   <property name="server.build.dir" location="${build.dir}/server" />
   <property name="journal.build.dir" location="${build.dir}/journal" />
@@ -31,10 +31,10 @@
   <property name="dist.dir" location="dist" />
   <property name="lib.dir" location="lib" />
 
-  <property name="src.dir" location="src" />
+  <property name="src.dir" location="src" /> 
   <property name="docs.src.dir" location="${src.dir}/doc" />
-  <property name="java.src.dir" location="${src.dir}/java" />
-  <property name="junit.src.dir" location="${src.dir}/test/junit" />
+  <property name="java.src.dir" location="${src.dir}/main/java" />
+  <property name="junit.src.dir" location="${src.dir}/test/java" />
   <property name="properties.src.dir" location="${src.dir}/properties" />
   <property name="war.src.dir" location="${src.dir}/war" />
   <property name="war-fedora.src.dir" location="${war.src.dir}/fedora" />
