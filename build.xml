@@ -38,16 +38,16 @@
   <property name="main.src.dir" location="${src.dir}/main" />
   <property name="java.src.dir" location="${main.src.dir}/java" />
   <property name="junit.src.dir" location="${src.dir}/test/java" />  
-  <property name="war.src.dir" location="${src.dir}/war" />
-  <property name="war-fedora.src.dir" location="${war.src.dir}/fedora" />
   
   <property name="resrc.src.dir" location="${main.src.dir}/resources" />
   <property name="properties.src.dir" location="${resrc.src.dir}/properties" />
   <property name="demo.src.dir" location="${resrc.src.dir}/demo" />
   <property name="wsdl.src.dir" location="${resrc.src.dir}/wsdl" />
-  <property name="xacml.src.dir" location="${src.dir}/xacml-policies" />
+  <property name="xacml.src.dir" location="${resrc.src.dir}/xacml-policies" />
   <property name="xsd.src.dir" location="${resrc.src.dir}/xsd" />
   <property name="xsl.src.dir" location="${resrc.src.dir}/xsl" />
+  <property name="war.src.dir" location="${resrc.src.dir}/war" />
+  <property name="war-fedora.src.dir" location="${war.src.dir}/fedora" />
   <!-- 
   the following properties are mainly for junit, have to be set globally though due to 
   the application server context replace tasks
