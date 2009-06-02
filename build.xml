@@ -40,14 +40,14 @@
   <property name="junit.src.dir" location="${src.dir}/test/java" />  
   <property name="war.src.dir" location="${src.dir}/war" />
   <property name="war-fedora.src.dir" location="${war.src.dir}/fedora" />
-  <property name="wsdl.src.dir" location="${src.dir}/wsdl" />
-  <property name="xacml.src.dir" location="${src.dir}/xacml-policies" />
-  <property name="xsd.src.dir" location="${src.dir}/xsd" />
-  <property name="xsl.src.dir" location="${src.dir}/xsl" />
   
   <property name="resrc.src.dir" location="${main.src.dir}/resources" />
   <property name="properties.src.dir" location="${resrc.src.dir}/properties" />
   <property name="demo.src.dir" location="${resrc.src.dir}/demo" />
+  <property name="wsdl.src.dir" location="${resrc.src.dir}/wsdl" />
+  <property name="xacml.src.dir" location="${src.dir}/xacml-policies" />
+  <property name="xsd.src.dir" location="${resrc.src.dir}/xsd" />
+  <property name="xsl.src.dir" location="${resrc.src.dir}/xsl" />
   <!-- 
   the following properties are mainly for junit, have to be set globally though due to 
   the application server context replace tasks
@@ -500,14 +500,14 @@
     </copy>
 
     <copy todir="${fedora.home.build.dir}/server/schematron">
-      <fileset dir="${src.dir}/schematron">
+      <fileset dir="${resrc.src.dir}/schematron">
         <include name="*.xml" />
         <include name="*.xslt" />
       </fileset>
     </copy>
 
     <copy todir="${fedora.home.build.dir}/server/xsd">
-      <fileset dir="${src.dir}/xsd">
+      <fileset dir="${xsd.src.dir}">
         <include name="**/*.xsd" />
         <include name="**/*.dtd" />
       </fileset>
@@ -584,7 +584,7 @@
     <copy file="${resrc.src.dir}/images/server/newlogo2.jpg" todir="${fedora.war.build.dir}/images" />
 
     <copy todir="${fedora.war.build.dir}/ri">
-      <fileset dir="src/xsl/ri" />
+      <fileset dir="${xsl.src.dir}/ri" />
     </copy>
 
     <copy todir="${fedora.war.build.dir}">
@@ -654,7 +654,7 @@
 
     <copy file="inc/truststore" toFile="${fedora.home.build.dir}/client/truststore" />
 
-    <copy file="src/xml/client-log4j.xml" toFile="${fedora.home.build.dir}/client/log4j.xml" />
+    <copy file="${resrc.src.dir}/xml/client-log4j.xml" toFile="${fedora.home.build.dir}/client/log4j.xml" />
 
     <copy todir="${fedora.home.build.dir}/client/lib">
       <fileset refid="client-libs.fileset" />
@@ -684,14 +684,14 @@
 
     <!-- Prepare batch demo-->
     <!-- Why are these being copied to lib? -->
-    <copy file="${src.dir}/xsl/batchtool/mets-merge.xsl" todir="${fedora.home.build.dir}/client/lib" />
-    <copy file="${src.dir}/xsl/batchtool/foxml-merge.xsl" todir="${fedora.home.build.dir}/client/lib" />
+    <copy file="${xsl.src.dir}/batchtool/mets-merge.xsl" todir="${fedora.home.build.dir}/client/lib" />
+    <copy file="${xsl.src.dir}/batchtool/foxml-merge.xsl" todir="${fedora.home.build.dir}/client/lib" />
 
     <copy todir="${fedora.home.build.dir}/client/demo/batch-demo">
       <fileset dir="${demo.src.dir}/demo-objects/batch-demo" />
     </copy>
     <copy todir="${fedora.home.build.dir}/client/demo/batch-demo/object-specifics">
-      <fileset dir="${src.dir}/xml/batch-demo/object-specifics" />
+      <fileset dir="${resrc.src.dir}/xml/batch-demo/object-specifics" />
     </copy>
   </target>
 

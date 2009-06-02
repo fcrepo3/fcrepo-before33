@@ -64,9 +64,9 @@ public class TestAtomDOSerializer
         extends TestXMLDOSerializer {
 
     private static final String iso_tron =
-            "src/schematron/iso_schematron_skeleton.xsl";
+            "src/main/resources/schematron/iso_schematron_skeleton.xsl";
 
-    private static final String atom_tron = "src/schematron/atom.sch";
+    private static final String atom_tron = "src/main/resources/schematron/atom.sch";
 
     public TestAtomDOSerializer() {
         super(new AtomDOSerializer());

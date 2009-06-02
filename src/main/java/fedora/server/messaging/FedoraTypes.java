@@ -88,7 +88,7 @@ public class FedoraTypes
     /**
      * Get fedora-types.xsd. First attempts to fetch the file from
      * FEDORA_HOME/server/xsd/fedora-types.xsd. Failing that, tries
-     * src/xsd/fedora-types.xsd (for the JUnit tests).
+     * src/main/resources/xsd/fedora-types.xsd (for the JUnit tests).
      *
      * @return fedora-types.xsd
      * @throws FileNotFoundException
@@ -101,7 +101,7 @@ public class FedoraTypes
                                                "server/xsd/fedora-types.xsd"));
         } catch (FileNotFoundException e) {
             LOG.warn(e.getMessage());
-            xsd = new FileInputStream("src/xsd/fedora-types.xsd");
+            xsd = new FileInputStream("src/main/resources/xsd/fedora-types.xsd");
         }
         return xsd;
     }

@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.server.test;
@@ -32,11 +32,11 @@ public class ValidateSchematronTest
     @Override
     protected void setUp() {
         tempdir = "TestValidation";
-        inSchematronPPFile = "src/schematron/preprocessor.xslt";
+        inSchematronPPFile = "src/main/resources/schematron/preprocessor.xslt";
 
         // FOXML
-        inFile = "TestIngestFiles/foxml-reference-ingest.xml";			
-        inSchematronRulesFile = "src/xml/schematron/foxmlRules1-0.xml";
+        inFile = "TestIngestFiles/foxml-reference-ingest.xml";
+        inSchematronRulesFile = "src/main/resources/schematron/foxmlRules1-0.xml";
 
         FileInputStream in = null;
         try {
@@ -61,6 +61,6 @@ public class ValidateSchematronTest
     }
 
     public void testFoo() {
-        //assertNotNull("Failure: foo is null.", foo.getA());	
+        //assertNotNull("Failure: foo is null.", foo.getA());
     }
 }

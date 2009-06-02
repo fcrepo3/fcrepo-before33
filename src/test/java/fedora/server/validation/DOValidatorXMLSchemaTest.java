@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.server.validation;
@@ -12,13 +12,14 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import junit.framework.JUnit4TestAdapter;
+
 import fedora.common.Constants;
+
 import fedora.test.FedoraTestConstants;
 
 /**
@@ -41,7 +42,7 @@ public class DOValidatorXMLSchemaTest
     @After
     public void tearDown() throws Exception {
     }
-    
+
     private static File getDemoFile(String path) {
         return new File(DEMO_DIR_PREFIX + path);
     }
@@ -51,7 +52,7 @@ public class DOValidatorXMLSchemaTest
         InputStream in =
                 new FileInputStream(getDemoFile("foxml/local-server-demos/simple-image-demo/obj_demo_5.xml"));
         DOValidatorXMLSchema dov =
-                new DOValidatorXMLSchema("src/xsd/foxml1-1.xsd");
+                new DOValidatorXMLSchema("src/main/resources/xsd/foxml1-1.xsd");
         dov.validate(in);
     }
 
@@ -60,7 +61,7 @@ public class DOValidatorXMLSchemaTest
         InputStream in =
                 new FileInputStream(getDemoFile("mets/local-server-demos/simple-image-demo/obj_demo_5.xml"));
         DOValidatorXMLSchema dov =
-                new DOValidatorXMLSchema("src/xsd/mets-fedora-ext1-1.xsd");
+                new DOValidatorXMLSchema("src/main/resources/xsd/mets-fedora-ext1-1.xsd");
         dov.validate(in);
     }
 
@@ -68,12 +69,12 @@ public class DOValidatorXMLSchemaTest
     public void testAtomValidation() throws Exception {
         InputStream in =
                 new FileInputStream(getDemoFile("atom/local-server-demos/simple-image-demo/obj_demo_5.xml"));
-        DOValidatorXMLSchema dov = new DOValidatorXMLSchema("src/xsd/atom.xsd");
+        DOValidatorXMLSchema dov = new DOValidatorXMLSchema("src/main/resources/xsd/atom.xsd");
         dov.validate(in);
 
         SchemaFactory sf =
                 SchemaFactory.newInstance(Constants.XML_XSD.uri);
-        Schema schema = sf.newSchema(new File("src/xsd/atom.xsd"));
+        Schema schema = sf.newSchema(new File("src/main/resources/xsd/atom.xsd"));
         Validator validator = schema.newValidator();
         //validator.validate(new StreamSource(in));
     }
