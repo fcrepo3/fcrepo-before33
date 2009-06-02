@@ -31,7 +31,7 @@ public class TestServerConfiguration
         extends FedoraTestCase {
 
     private static final File FCFG_BASE =
-            new File("src/fcfg/server/fedora-base.fcfg");
+            new File("src/main/resources/fcfg/server/fedora-base.fcfg");
 
     private static final String NS_FCFG_PREFIX = "fcfg";
 

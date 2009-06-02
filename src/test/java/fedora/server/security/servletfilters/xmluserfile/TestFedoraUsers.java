@@ -23,7 +23,7 @@ public class TestFedoraUsers {
 
     @Test
     public void testGetInstanceString() throws Exception {
-        String fedoraUsersXML = "src/fcfg/server/fedora-users.xml";
+        String fedoraUsersXML = "src/main/resources/fcfg/server/fedora-users.xml";
         File f = new File(fedoraUsersXML);
         FedoraUsers fu = FedoraUsers.getInstance(f.toURI());
         assertNotNull(fu);

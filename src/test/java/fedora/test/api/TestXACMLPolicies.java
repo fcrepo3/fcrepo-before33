@@ -581,7 +581,7 @@ public class TestXACMLPolicies
 
     public void installJunitPolicies() {
         System.out.println("Copying Policies For Testing");
-        File junitDir = new File("src/test/junit/XACMLTestPolicies/junit");
+        File junitDir = new File("src/test/java/XACMLTestPolicies/junit");
         File junitsaveDir =
                 new File(FEDORA_HOME,
                          "data/fedora-xacml-policies/repository-policies/junit");

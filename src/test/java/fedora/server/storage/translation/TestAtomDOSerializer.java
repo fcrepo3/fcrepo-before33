@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.server.storage.translation;
@@ -97,9 +97,9 @@ public class TestAtomDOSerializer
     @Test
     public void testSerializeFromFOXML() throws Exception {
         String source =
-                "src/demo-objects/foxml/local-server-demos/image-collection-demo/dataObjects/demo_SmileyBeerGlass.xml";
+                "src/main/resources/demo/demo-objects/foxml/local-server-demos/image-collection-demo/dataObjects/demo_SmileyBeerGlass.xml";
         source =
-                "src/demo-objects/foxml/local-server-demos/formatting-objects-demo/obj_demo_26.xml";
+                "src/main/resources/demo/demo-objects/foxml/local-server-demos/formatting-objects-demo/obj_demo_26.xml";
         InputStream in = new FileInputStream(source);
         File f = File.createTempFile("test", null);
         OutputStream out = new FileOutputStream(f);
@@ -197,7 +197,7 @@ public class TestAtomDOSerializer
         temp.flush();
         String output = temp.toString();
 
-        // Check for no output if all tests pass. 
+        // Check for no output if all tests pass.
         assertEquals(output, "", output);
     }
 
