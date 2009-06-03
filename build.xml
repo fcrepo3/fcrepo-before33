@@ -17,7 +17,7 @@
   <property name="docs.build.dir" location="${build.dir}/docs" />
   <property name="fedora.home.build.dir" location="${build.dir}/home" />
   <property name="install.build.dir" location="${build.dir}/install" />
-  <property name="junit.build.dir" location="${build.dir}/junit" />
+  <property name="junit.build.dir" location="${build.dir}/java" />
   <property name="localservices.build.dir" location="${build.dir}/localservices" />
   <property name="server.build.dir" location="${build.dir}/server" />
   <property name="journal.build.dir" location="${build.dir}/journal" />
@@ -30,18 +30,24 @@
 
   <property name="dist.dir" location="dist" />
   <property name="lib.dir" location="lib" />
-
+  
+  <property name="resrc.dir" location="resources" />
+  <property name="docs.resrc.dir" location="${resrc.dir}/doc" />
+  
   <property name="src.dir" location="src" />
-  <property name="docs.src.dir" location="${src.dir}/doc" />
-  <property name="java.src.dir" location="${src.dir}/java" />
-  <property name="junit.src.dir" location="${src.dir}/test/junit" />
-  <property name="properties.src.dir" location="${src.dir}/properties" />
-  <property name="war.src.dir" location="${src.dir}/war" />
+  <property name="main.src.dir" location="${src.dir}/main" />
+  <property name="java.src.dir" location="${main.src.dir}/java" />
+  <property name="junit.src.dir" location="${src.dir}/test/java" />  
+  
+  <property name="resrc.src.dir" location="${main.src.dir}/resources" />
+  <property name="properties.src.dir" location="${resrc.src.dir}/properties" />
+  <property name="demo.src.dir" location="${resrc.src.dir}/demo" />
+  <property name="wsdl.src.dir" location="${resrc.src.dir}/wsdl" />
+  <property name="xacml.src.dir" location="${resrc.src.dir}/xacml-policies" />
+  <property name="xsd.src.dir" location="${resrc.src.dir}/xsd" />
+  <property name="xsl.src.dir" location="${resrc.src.dir}/xsl" />
+  <property name="war.src.dir" location="${resrc.src.dir}/war" />
   <property name="war-fedora.src.dir" location="${war.src.dir}/fedora" />
-  <property name="wsdl.src.dir" location="${src.dir}/wsdl" />
-  <property name="xacml.src.dir" location="${src.dir}/xacml-policies" />
-  <property name="xsd.src.dir" location="${src.dir}/xsd" />
-  <property name="xsl.src.dir" location="${src.dir}/xsl" />
   <!-- 
   the following properties are mainly for junit, have to be set globally though due to 
   the application server context replace tasks
@@ -107,7 +113,7 @@
 
   <path id="junit.classpath">
     <path refid="compile.classpath" />
-    <pathelement path="src/properties/server" />
+    <pathelement path="${resrc.src.dir}/properties/server" />
     <pathelement path="${junit.build.dir}" />
     <pathelement path="${client.build.dir}/classes" />
     <pathelement path="${server.build.dir}/classes" />
@@ -314,7 +320,7 @@
   </macrodef>
 
   <macrodef name="md-convert-objects">
-    <attribute name="inputDir" default="${src.dir}/demo-objects/foxml" />
+    <attribute name="inputDir" default="${demo.src.dir}/demo-objects/foxml" />
     <attribute name="outputDir" />
     <attribute name="deserializer" default="fedora.server.storage.translation.FOXML1_1DODeserializer" />
     <attribute name="serializer" />
@@ -427,8 +433,8 @@
       fedora/server/access/FedoraAPIABindingSOAPHTTPImpl.java,
       fedora/server/access/FedoraAPIAServiceLocator.java" />
     <copy todir="${server.build.dir}/classes">
-      <fileset dir="${src.dir}/properties/server" />
-      <fileset dir="${src.dir}/dbspec/server" />
+      <fileset dir="${resrc.src.dir}/properties/server" />
+      <fileset dir="${resrc.src.dir}/dbspec/server" />
       <fileset dir="${java.src.dir}">
         <include name="**/*.betwixt" />
         <include name="**/*.xml" />
@@ -468,8 +474,8 @@
     </copy>
 
     <copy todir="${fedora.home.build.dir}/server/bin">
-      <fileset dir="${src.dir}/bat/server" />
-      <fileset dir="${src.dir}/sh/server" />
+      <fileset dir="${resrc.src.dir}/scripts/bat/server" />
+      <fileset dir="${resrc.src.dir}/scripts/sh/server" />
     </copy>
 
     <chmod perm="ugo+x" type="file">
@@ -479,7 +485,7 @@
     </chmod>
 
     <copy todir="${fedora.home.build.dir}/server/config">
-      <fileset dir="${src.dir}/fcfg/server">
+      <fileset dir="${resrc.src.dir}/fcfg/server">
         <include name="**/my.properties" />
         <include name="**/fedora-users.xml" />
       </fileset>
@@ -494,14 +500,14 @@
     </copy>
 
     <copy todir="${fedora.home.build.dir}/server/schematron">
-      <fileset dir="${src.dir}/schematron">
+      <fileset dir="${resrc.src.dir}/schematron">
         <include name="*.xml" />
         <include name="*.xslt" />
       </fileset>
     </copy>
 
     <copy todir="${fedora.home.build.dir}/server/xsd">
-      <fileset dir="${src.dir}/xsd">
+      <fileset dir="${xsd.src.dir}">
         <include name="**/*.xsd" />
         <include name="**/*.dtd" />
       </fileset>
@@ -532,7 +538,7 @@
 
     <!-- fedora configuration files -->
     <copy todir="${fedora.home.build.dir}/server/fedora-internal-use/config">
-      <fileset dir="src/fcfg/server">
+      <fileset dir="${resrc.src.dir}/fcfg/server">
         <include name="**/fedora-base.fcfg" />
         <include name="**/fedora-*.properties" />
         <include name="**/logging.properties" />
@@ -575,10 +581,10 @@
       </classpath>
     </java>
 
-    <copy file="${src.dir}/images/server/newlogo2.jpg" todir="${fedora.war.build.dir}/images" />
+    <copy file="${resrc.src.dir}/images/server/newlogo2.jpg" todir="${fedora.war.build.dir}/images" />
 
     <copy todir="${fedora.war.build.dir}/ri">
-      <fileset dir="src/xsl/ri" />
+      <fileset dir="${xsl.src.dir}/ri" />
     </copy>
 
     <copy todir="${fedora.war.build.dir}">
@@ -630,7 +636,7 @@
 
   <target name="demo-objects" depends="compile-server" unless="demo-objects.uptodate">
     <copy todir="${fedora.home.build.dir}/client/demo/foxml">
-      <fileset dir="${src.dir}/demo-objects/foxml" />
+      <fileset dir="${demo.src.dir}/demo-objects/foxml" />
     </copy>
     <md-convert-objects outputDir="${fedora.home.build.dir}/client/demo/mets" serializer="fedora.server.storage.translation.METSFedoraExt1_1DOSerializer" pretty="true" />
     <md-convert-objects outputDir="${fedora.home.build.dir}/client/demo/atom" serializer="fedora.server.storage.translation.Atom1_1DOSerializer" pretty="true" />
@@ -648,15 +654,15 @@
 
     <copy file="inc/truststore" toFile="${fedora.home.build.dir}/client/truststore" />
 
-    <copy file="src/xml/client-log4j.xml" toFile="${fedora.home.build.dir}/client/log4j.xml" />
+    <copy file="${resrc.src.dir}/xml/client-log4j.xml" toFile="${fedora.home.build.dir}/client/log4j.xml" />
 
     <copy todir="${fedora.home.build.dir}/client/lib">
       <fileset refid="client-libs.fileset" />
     </copy>
 
     <copy todir="${fedora.home.build.dir}/client/bin">
-      <fileset dir="${src.dir}/bat/client" />
-      <fileset dir="${src.dir}/sh/client" />
+      <fileset dir="${resrc.src.dir}/scripts/bat/client" />
+      <fileset dir="${resrc.src.dir}/scripts/sh/client" />
     </copy>
 
     <replace dir="${fedora.home.build.dir}/client/bin" token="fedora-client.jar" value="fedora-client-${fedora.version}.jar" />
@@ -669,7 +675,7 @@
 
     <!-- SOAP demo client (simple java reference client) -->
     <copy todir="${fedora.home.build.dir}/client/demo/soapclient">
-      <fileset dir="${src.dir}/demo-soapclient" />
+      <fileset dir="${demo.src.dir}/demo-soapclient" />
     </copy>
 
     <replace dir="${fedora.home.build.dir}/client/demo/soapclient" token="fedora-client.jar" value="fedora-client-${fedora.version}.jar" />
@@ -678,14 +684,14 @@
 
     <!-- Prepare batch demo-->
     <!-- Why are these being copied to lib? -->
-    <copy file="${src.dir}/xsl/batchtool/mets-merge.xsl" todir="${fedora.home.build.dir}/client/lib" />
-    <copy file="${src.dir}/xsl/batchtool/foxml-merge.xsl" todir="${fedora.home.build.dir}/client/lib" />
+    <copy file="${xsl.src.dir}/batchtool/mets-merge.xsl" todir="${fedora.home.build.dir}/client/lib" />
+    <copy file="${xsl.src.dir}/batchtool/foxml-merge.xsl" todir="${fedora.home.build.dir}/client/lib" />
 
     <copy todir="${fedora.home.build.dir}/client/demo/batch-demo">
-      <fileset dir="${src.dir}/demo-objects/batch-demo" />
+      <fileset dir="${demo.src.dir}/demo-objects/batch-demo" />
     </copy>
     <copy todir="${fedora.home.build.dir}/client/demo/batch-demo/object-specifics">
-      <fileset dir="${src.dir}/xml/batch-demo/object-specifics" />
+      <fileset dir="${resrc.src.dir}/xml/batch-demo/object-specifics" />
     </copy>
   </target>
 
@@ -694,12 +700,12 @@
     <mkdir dir="${fedora.home.build.dir}/client" />
 
     <copy todir="${client.build.dir}/classes/images">
-      <fileset dir="${src.dir}/images/client" />
+      <fileset dir="${resrc.src.dir}/images/client" />
     </copy>
 
     <copy todir="${client.build.dir}/classes">
-      <fileset dir="${src.dir}/properties/client" />
-      <fileset dir="${src.dir}/properties/server" />
+      <fileset dir="${resrc.src.dir}/properties/client" />
+      <fileset dir="${resrc.src.dir}/properties/server" />
       <filterset>
         <filter token="version" value="${fedora.version}" />
         <filter token="releaseDate" value="${fedora.releaseDate}" />
@@ -847,7 +853,7 @@
     <javadoc packagenames="fedora.*" sourcepath="${java.src.dir};${wsdl.build.dir}" maxmemory="256m" classpathref="compile.classpath" destdir="${docs.build.dir}/javadocs" author="true" version="true" use="true" />
 
     <copy todir="${docs.build.dir}/userdocs">
-      <fileset dir="${docs.src.dir}/userdocs" />
+      <fileset dir="${docs.resrc.dir}/userdocs" />
     </copy>
 
   </target>
@@ -877,7 +883,7 @@
       <fileset dir="${lib.dir}" includes="${install.jdbc.mckoi} ${install.jdbc.derby} ${install.jdbc.derbynetworkclient} ${install.jdbc.mysql} ${install.jdbc.postgresql}" />
       <fileset dir="${dist.dir}" includes="fedorahome.zip fedora.war fop.war imagemanip.war saxon.war fedora-demo.war" />
       <fileset dir="inc" includes="${install.tomcat} keystore" />
-      <fileset dir="${src.dir}/dbspec/server/fedora/server/storage/resources" includes="DefaultDOManager.dbspec" />
+      <fileset dir="${resrc.src.dir}/dbspec/server/fedora/server/storage/resources" includes="DefaultDOManager.dbspec" />
     </copy>
 
     <mkdir dir="${install.build.dir}/boot" />
@@ -944,7 +950,7 @@
   <target name="demo">
     <mkdir dir="${demo.war.build.dir}" />
     <copy todir="${demo.war.build.dir}">
-      <fileset dir="${src.dir}/demo-content" />
+      <fileset dir="${demo.src.dir}/demo-content" />
     </copy>
     <jar destfile="${dist.dir}/fedora-demo.war" basedir="${demo.war.build.dir}" />
   </target>
@@ -1026,7 +1032,7 @@
       fedora/server/messaging/AtomAPIMMessage.java" />
 
     <copy todir="${client.build.dir}/messaging/classes">
-      <fileset dir="${src.dir}/properties/server" />
+      <fileset dir="${resrc.src.dir}/properties/server" />
     </copy>
 
     <jar destfile="${client.build.dir}/messaging/fedora-messaging-client-${fedora.version}.jar" basedir="${client.build.dir}/messaging/classes">
