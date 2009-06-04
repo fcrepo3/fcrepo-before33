@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--  $Id$ -->
-<project name="Fedora" default="dist" basedir=".">
+<project name="Fedora" default="dist" basedir="./repository">
   <description>The Fedora Project</description>
 
   <!-- set global properties for this build -->
@@ -29,7 +29,9 @@
   <property name="wsdl.build.dir" location="${build.dir}/wsdl" />
 
   <property name="dist.dir" location="dist" />
-  <property name="lib.dir" location="lib" />
+  <property name="lib.dir" location="../lib" />
+  <property name="inc.dir" location="../inc" />
+  <property name="license.dir" location="../license" />
   
   <property name="resrc.dir" location="resources" />
   <property name="docs.resrc.dir" location="${resrc.dir}/doc" />
@@ -57,7 +59,7 @@
   <property name="fedora.password" value="fedoraAdmin" />
   <property name="fedora.protocol" value="http" />
 	
-  <property name="javax.net.ssl.trustStore" value="inc/keystore" />
+  <property name="javax.net.ssl.trustStore" value="${inc.dir}/keystore" />
   <property name="test" value="fedora.test.AllOfflineTests" />
   <property name="org.apache.activemq.default.directory.prefix" value="${junit.build.dir}${file.separator}" />
 
@@ -463,7 +465,7 @@
     <mkdir dir="${fedora.home.build.dir}/server/fedora-internal-use/fedora-internal-use-backend-service-policies" />
     <mkdir dir="${fedora.home.build.dir}/server/fedora-internal-use/fedora-internal-use-repository-policies-approximating-2.0" />
 
-    <copy file="inc/truststore" todir="${fedora.home.build.dir}/server" />
+    <copy file="${inc.dir}/truststore" todir="${fedora.home.build.dir}/server" />
 
     <copy todir="${fedora.home.build.dir}/server/access">
       <fileset dir="${xsl.src.dir}/access">
@@ -559,7 +561,7 @@
     <zip destfile="${dist.dir}/fedorahome.zip">
       <fileset dir="${fedora.home.build.dir}" />
       <zipfileset dir="${docs.build.dir}" prefix="docs" />
-      <zipfileset dir="license" prefix="docs/license" />
+      <zipfileset dir="$(license.dir}" prefix="docs/license" />
     </zip>
   </target>
 
@@ -652,7 +654,7 @@
     <mkdir dir="${fedora.home.build.dir}/client/demo/soapclient" />
     <mkdir dir="${fedora.home.build.dir}/client/lib" />
 
-    <copy file="inc/truststore" toFile="${fedora.home.build.dir}/client/truststore" />
+    <copy file="${inc.dir}/truststore" toFile="${fedora.home.build.dir}/client/truststore" />
 
     <copy file="${resrc.src.dir}/xml/client-log4j.xml" toFile="${fedora.home.build.dir}/client/log4j.xml" />
 
@@ -767,7 +769,7 @@
   	<property name="journal.dist.name" value="RmiJournalReceiver-${fedora.version}" />
   	<zip destfile="${dist.dir}/${journal.dist.name}.zip">
   		<zipfileset dir="${journal.build.dir}" includes="RmiJournalReceiver-${fedora.version}.jar" prefix="${journal.dist.name}"/>
-  		<zipfileset dir="inc/journal" includes="*" prefix="${journal.dist.name}"/>
+  		<zipfileset dir="${inc.dir}/journal" includes="*" prefix="${journal.dist.name}"/>
   	</zip>
   </target>
 	
@@ -882,7 +884,7 @@
       <fileset dir="${properties.src.dir}" includes="install.properties" />
       <fileset dir="${lib.dir}" includes="${install.jdbc.mckoi} ${install.jdbc.derby} ${install.jdbc.derbynetworkclient} ${install.jdbc.mysql} ${install.jdbc.postgresql}" />
       <fileset dir="${dist.dir}" includes="fedorahome.zip fedora.war fop.war imagemanip.war saxon.war fedora-demo.war" />
-      <fileset dir="inc" includes="${install.tomcat} keystore" />
+      <fileset dir="${inc.dir}" includes="${install.tomcat} keystore" />
       <fileset dir="${resrc.src.dir}/dbspec/server/fedora/server/storage/resources" includes="DefaultDOManager.dbspec" />
     </copy>
 
@@ -958,16 +960,16 @@
   <target name="src-release" depends="clean">
     <copy todir="${dist.dir}/release/fedora-src-${fedora.version}">
       <fileset dir=".">
-        <exclude name="src/java/fedora/**/*.java" />
+        <exclude name="src/main/java/fedora/**/*.java" />
       </fileset>
     </copy>
     <!-- prepend license boilerplate to all Fedora java source code -->
     <copy todir="${dist.dir}/release/fedora-src-${fedora.version}">
       <fileset dir=".">
-        <include name="src/java/fedora/**/*.java" />
+        <include name="src/main/java/fedora/**/*.java" />
       </fileset>
       <filterchain>
-        <concatfilter prepend="license/exhibitA-java.txt" />
+        <concatfilter prepend="${license.dir}/exhibitA-java.txt" />
       </filterchain>
     </copy>
     <zip zipfile="${dist.dir}/release/fedora-src-${fedora.version}.zip" basedir="${dist.dir}/release" includes="fedora-src-${fedora.version}/**" />
