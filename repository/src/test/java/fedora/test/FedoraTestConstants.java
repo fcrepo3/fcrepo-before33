@@ -14,7 +14,7 @@ import fedora.common.Constants;
 public interface FedoraTestConstants
         extends Constants {
 
-    public static final String DEMO_DIR_PREFIX = "build/home/client/demo/";
+    public static final String DEMO_DIR_PREFIX = "repository/build/home/client/demo/";
 
     public static final File FEDORA_HOME_CLIENT =
             new File(FEDORA_HOME + File.separator + "client");

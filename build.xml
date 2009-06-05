@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--  $Id$ -->
-<project name="Fedora" default="dist" basedir="./repository">
+<project name="Fedora" default="dist" basedir=".">
   <description>The Fedora Project</description>
 
   <!-- set global properties for this build -->
@@ -11,44 +11,64 @@
   <property name="javac.source" value="1.5" />
   <property name="javac.target" value="1.5" />
 
-  <property name="build.dir" location="build" />
-  <property name="api.build.dir" location="${build.dir}/api" />
-  <property name="client.build.dir" location="${build.dir}/client" />
-  <property name="docs.build.dir" location="${build.dir}/docs" />
-  <property name="fedora.home.build.dir" location="${build.dir}/home" />
-  <property name="install.build.dir" location="${build.dir}/install" />
-  <property name="junit.build.dir" location="${build.dir}/java" />
-  <property name="localservices.build.dir" location="${build.dir}/localservices" />
-  <property name="server.build.dir" location="${build.dir}/server" />
-  <property name="journal.build.dir" location="${build.dir}/journal" />
-  <property name="stubwrappers.build.dir" location="${build.dir}/stubwrappers" />
-  <property name="util.build.dir" location="${build.dir}/util" />
-  <property name="war.build.dir" location="${build.dir}/war" />
+  <property name="repo.home" location="repository" />
+  <property name="common.home" location="common" />
+  <property name="util.home" location="utilities" />
+  <property name="soap.home" location="soap" />
+
+  <property name="repo.build.dir" location="${repo.home}/build" />
+  <property name="common.build.dir" location="${common.home}/build" />
+  <!--<property name="util.build.dir" location="${util.home}/build" />-->
+  <property name="soap.build.dir" location="${soap.home}/build" />
+
+  <property name="api.build.dir" location="${repo.build.dir}/api" />
+  <property name="client.build.dir" location="${repo.build.dir}/client" />
+  <property name="docs.build.dir" location="${repo.build.dir}/docs" />
+  <property name="fedora.home.build.dir" location="${repo.build.dir}/home" />
+  <property name="install.build.dir" location="${repo.build.dir}/install" />
+  <property name="junit.build.dir" location="${repo.build.dir}/java" />
+  <property name="localservices.build.dir" location="${repo.build.dir}/localservices" />
+  <property name="server.build.dir" location="${repo.build.dir}/server" />
+  <property name="journal.build.dir" location="${repo.build.dir}/journal" />
+  <property name="stubwrappers.build.dir" location="${repo.build.dir}/stubwrappers" />
+  <property name="util.build.dir" location="${repo.build.dir}/util" />
+  <property name="war.build.dir" location="${repo.build.dir}/war" />
   <property name="fedora.war.build.dir" location="${war.build.dir}/fedora" />
   <property name="demo.war.build.dir" location="${war.build.dir}/demo" />
-  <property name="wsdl.build.dir" location="${build.dir}/wsdl" />
+  <property name="wsdl.build.dir" location="${repo.build.dir}/wsdl" />
 
+  <property name="common.junit.build.dir" location="${common.build.dir}/java" /> 
   <property name="dist.dir" location="dist" />
-  <property name="lib.dir" location="../lib" />
-  <property name="inc.dir" location="../inc" />
-  <property name="license.dir" location="../license" />
+  <property name="lib.dir" location="lib" />
+  <property name="inc.dir" location="inc" />
+  <property name="license.dir" location="license" />
   
   <property name="resrc.dir" location="resources" />
   <property name="docs.resrc.dir" location="${resrc.dir}/doc" />
   
-  <property name="src.dir" location="src" />
-  <property name="main.src.dir" location="${src.dir}/main" />
-  <property name="java.src.dir" location="${main.src.dir}/java" />
-  <property name="junit.src.dir" location="${src.dir}/test/java" />  
-  
-  <property name="resrc.src.dir" location="${main.src.dir}/resources" />
-  <property name="properties.src.dir" location="${resrc.src.dir}/properties" />
-  <property name="demo.src.dir" location="${resrc.src.dir}/demo" />
-  <property name="wsdl.src.dir" location="${resrc.src.dir}/wsdl" />
-  <property name="xacml.src.dir" location="${resrc.src.dir}/xacml-policies" />
-  <property name="xsd.src.dir" location="${resrc.src.dir}/xsd" />
-  <property name="xsl.src.dir" location="${resrc.src.dir}/xsl" />
-  <property name="war.src.dir" location="${resrc.src.dir}/war" />
+  <property name="repo.src.dir" location="${repo.home}/src" />
+  <property name="repo.java.dir" location="${repo.src.dir}/main/java" />
+  <property name="repo.junit.dir" location="${repo.src.dir}/test/java" />  
+
+  <property name="common.src.dir" location="${common.home}/src" />
+  <property name="common.java.dir" location="${common.src.dir}/main/java" />
+  <property name="common.junit.dir" location="${common.src.dir}/test/java" />  
+
+
+  <property name="util.src.dir" location="${util.home}/src" />
+  <property name="util.java.dir" location="${util.src.dir}/main/java" />
+  <property name="util.junit.dir" location="${util.src.dir}/test/java" />
+
+  <!-- continue here : awoods -->
+ 
+  <property name="repo.resrc.dir" location="${repo.src.dir}/main/resources" />
+  <property name="properties.src.dir" location="${repo.resrc.dir}/properties" />
+  <property name="demo.src.dir" location="${repo.resrc.dir}/demo" />
+  <property name="wsdl.src.dir" location="${repo.resrc.dir}/wsdl" />
+  <property name="xacml.src.dir" location="${repo.resrc.dir}/xacml-policies" />
+  <property name="xsd.src.dir" location="${repo.resrc.dir}/xsd" />
+  <property name="xsl.src.dir" location="${repo.resrc.dir}/xsl" />
+  <property name="war.src.dir" location="${repo.resrc.dir}/war" />
   <property name="war-fedora.src.dir" location="${war.src.dir}/fedora" />
   <!-- 
   the following properties are mainly for junit, have to be set globally though due to 
@@ -61,6 +81,7 @@
 	
   <property name="javax.net.ssl.trustStore" value="${inc.dir}/keystore" />
   <property name="test" value="fedora.test.AllOfflineTests" />
+  <property name="common.test" value="fedora.common.AllUnitTests" />
   <property name="org.apache.activemq.default.directory.prefix" value="${junit.build.dir}${file.separator}" />
 
   <!-- load external properties files -->
@@ -107,7 +128,14 @@
     <pathelement location="${lib.wsdl4j}" />
   </path>
 
+  <path id="common.classpath">
+    <fileset dir="${common.build.dir}">
+      <include name="**/*.jar" />
+    </fileset>
+  </path>
+
   <path id="compile.classpath">
+    <path refid="common.classpath" />
     <fileset dir="${lib.dir}">
       <include name="**/*.jar" />
     </fileset>
@@ -115,8 +143,9 @@
 
   <path id="junit.classpath">
     <path refid="compile.classpath" />
-    <pathelement path="${resrc.src.dir}/properties/server" />
+    <pathelement path="${repo.resrc.dir}/properties/server" />
     <pathelement path="${junit.build.dir}" />
+    <pathelement path="${common.junit.build.dir}" />
     <pathelement path="${client.build.dir}/classes" />
     <pathelement path="${server.build.dir}/classes" />
     <pathelement path="${util.build.dir}" />
@@ -333,6 +362,7 @@
       <java classname="fedora.server.storage.translation.ConvertObjectSerialization">
         <classpath>
           <pathelement path="${server.build.dir}/classes" />
+          <pathelement path="${common.build.dir}" />
           <pathelement path="${lib.abdera.core}" />
           <pathelement path="${lib.abdera-il8n}" />
           <pathelement path="${lib.abdera.parser}" />
@@ -370,17 +400,21 @@
     <tstamp>
       <format property="build.tstamp" pattern="yyyyMMdd'T'HHmmss'Z'" timezone="UTC" />
     </tstamp>
-    <mkdir dir="${build.dir}" />
+    <mkdir dir="${repo.build.dir}" />
+    <mkdir dir="${common.build.dir}" />
+    <mkdir dir="${util.build.dir}" />
     <mkdir dir="${dist.dir}" />
   </target>
 
   <target name="clean">
-    <delete dir="${build.dir}" />
+    <delete dir="${repo.build.dir}" />
+    <delete dir="${common.build.dir}" />
+    <delete dir="${util.build.dir}" />
     <delete dir="${dist.dir}" />
   </target>
 
   <target name="compile-client" depends="init, stubwrappers" description="">
-    <md-compile srcdir="${java.src.dir}:${wsdl.build.dir}:${stubwrappers.build.dir}" destdir="${client.build.dir}/classes" includes="fedora/client/**,
+    <md-compile srcdir="${common.java.dir}:${repo.java.dir}:${wsdl.build.dir}:${stubwrappers.build.dir}" destdir="${client.build.dir}/classes" includes="fedora/client/**,
       fedora/common/**,
       fedora/server/access/FedoraAPIABindingSOAPHTTPStub.java
       fedora/server/management/APIMStub.java,
@@ -391,12 +425,18 @@
       fedora/swing/mdi/**" />
   </target>
 
-  <target name="compile-junit" depends="compile-server, client-jar, compile-util">
-    <md-compile srcdir="${junit.src.dir}" destdir="${junit.build.dir}" classpathref="junit.classpath" />
-    <copy todir="${junit.build.dir}" file="${junit.src.dir}/log4j.xml" />
+  <target name="compile-junit-common" depends="compile-common">
+    <md-compile srcdir="${common.junit.dir}" destdir="${common.junit.build.dir}" classpathref="junit.classpath" />
+    <copy todir="${common.junit.build.dir}" file="${repo.junit.dir}/log4j.xml" />
+  </target>
+
+
+  <target name="compile-junit" depends="compile-junit-common, compile-server, client-jar, compile-util">
+    <md-compile srcdir="${repo.junit.dir}" destdir="${junit.build.dir}" classpathref="junit.classpath" />
+    <copy todir="${junit.build.dir}" file="${repo.junit.dir}/log4j.xml" />
 
     <copy todir="${junit.build.dir}">
-      <fileset dir="${java.src.dir}">
+      <fileset dir="${repo.java.dir}">
         <include name="**/OptionDefinition.properties" />
         <include name="**/webxml-mapping.xml" />
       </fileset>
@@ -404,27 +444,27 @@
   </target>
 
   <target name="compile-localservices" depends="init" description="Generate java classes for local services">
-    <md-compile srcdir="${java.src.dir}/fedora/localservices" destdir="${localservices.build.dir}" />
+    <md-compile srcdir="${repo.java.dir}/fedora/localservices" destdir="${localservices.build.dir}" />
   </target>
 
   <target name="prepare-jdbc3" if="jdbc3">
     <echo message="Commenting out jdbc4 additional methods." />
-    <replace dir="${java.src.dir}" token="/* JDBC_4_ANT_TOKEN_BEGIN */" value="/* JDBC_4_ANT_TOKEN_BEGIN -" />
-    <replace dir="${java.src.dir}" token="/* JDBC_4_ANT_TOKEN_END */" value="- JDBC_4_ANT_TOKEN_END */" />
-    <replace dir="${junit.src.dir}" token="/* JDBC_4_ANT_TOKEN_BEGIN */" value="/* JDBC_4_ANT_TOKEN_BEGIN -" />
-    <replace dir="${junit.src.dir}" token="/* JDBC_4_ANT_TOKEN_END */" value="- JDBC_4_ANT_TOKEN_END */" />
+    <replace dir="${repo.java.dir}" token="/* JDBC_4_ANT_TOKEN_BEGIN */" value="/* JDBC_4_ANT_TOKEN_BEGIN -" />
+    <replace dir="${repo.java.dir}" token="/* JDBC_4_ANT_TOKEN_END */" value="- JDBC_4_ANT_TOKEN_END */" />
+    <replace dir="${repo.junit.dir}" token="/* JDBC_4_ANT_TOKEN_BEGIN */" value="/* JDBC_4_ANT_TOKEN_BEGIN -" />
+    <replace dir="${repo.junit.dir}" token="/* JDBC_4_ANT_TOKEN_END */" value="- JDBC_4_ANT_TOKEN_END */" />
   </target>
 
   <target name="prepare-jdbc4" unless="jdbc3">
     <echo message="Uncommenting jdbc4 additional methods." />
-    <replace dir="${java.src.dir}" token="/* JDBC_4_ANT_TOKEN_BEGIN -" value="/* JDBC_4_ANT_TOKEN_BEGIN */" />
-    <replace dir="${java.src.dir}" token="- JDBC_4_ANT_TOKEN_END */" value="/* JDBC_4_ANT_TOKEN_END */" />
-    <replace dir="${junit.src.dir}" token="/* JDBC_4_ANT_TOKEN_BEGIN -" value="/* JDBC_4_ANT_TOKEN_BEGIN */" />
-    <replace dir="${junit.src.dir}" token="- JDBC_4_ANT_TOKEN_END */" value="/* JDBC_4_ANT_TOKEN_END */" />
+    <replace dir="${repo.java.dir}" token="/* JDBC_4_ANT_TOKEN_BEGIN -" value="/* JDBC_4_ANT_TOKEN_BEGIN */" />
+    <replace dir="${repo.java.dir}" token="- JDBC_4_ANT_TOKEN_END */" value="/* JDBC_4_ANT_TOKEN_END */" />
+    <replace dir="${repo.junit.dir}" token="/* JDBC_4_ANT_TOKEN_BEGIN -" value="/* JDBC_4_ANT_TOKEN_BEGIN */" />
+    <replace dir="${repo.junit.dir}" token="- JDBC_4_ANT_TOKEN_END */" value="/* JDBC_4_ANT_TOKEN_END */" />
   </target>
 
   <target name="compile-server" depends="init, prepare-jdbc3, prepare-jdbc4, wsdl2java">
-    <md-compile srcdir="${java.src.dir}:${wsdl.build.dir}" destdir="${server.build.dir}/classes" includes="fedora/server/**, 
+    <md-compile srcdir="${repo.java.dir}:${wsdl.build.dir}" destdir="${server.build.dir}/classes" includes="fedora/server/**, 
       fedora/logging/**,
       fedora/oai/**,
       fedora/common/**,
@@ -435,9 +475,9 @@
       fedora/server/access/FedoraAPIABindingSOAPHTTPImpl.java,
       fedora/server/access/FedoraAPIAServiceLocator.java" />
     <copy todir="${server.build.dir}/classes">
-      <fileset dir="${resrc.src.dir}/properties/server" />
-      <fileset dir="${resrc.src.dir}/dbspec/server" />
-      <fileset dir="${java.src.dir}">
+      <fileset dir="${repo.resrc.dir}/properties/server" />
+      <fileset dir="${repo.resrc.dir}/dbspec/server" />
+      <fileset dir="${repo.java.dir}">
         <include name="**/*.betwixt" />
         <include name="**/*.xml" />
       </fileset>
@@ -448,12 +488,18 @@
 
   </target>
 
+  <target name="compile-common" depends="init" description="">
+    <md-compile srcdir="${common.java.dir}" destdir="${common.build.dir}" includes="fedora/common/**" />
+    <jar jarfile="${common.build.dir}/fedora-common.jar" basedir="${common.build.dir}" excludes="fedora-common.jar" />
+  </target>
+
+
   <target name="compile-util" depends="init" description="">
-    <md-compile srcdir="${java.src.dir}" destdir="${util.build.dir}" includes="fedora/utilities/**" />
+    <md-compile srcdir="${repo.java.dir}" destdir="${util.build.dir}" includes="fedora/utilities/**" />
     <jar jarfile="${util.build.dir}/fedora-utilities.jar" basedir="${util.build.dir}" excludes="fedora-utilities.jar" />
   </target>
 
-  <target name="server" depends="compile-server" description="">
+  <target name="server" depends="compile-common, compile-server" description="">
     <mkdir dir="${fedora.home.build.dir}/server/access" />
     <mkdir dir="${fedora.home.build.dir}/server/bin" />
     <mkdir dir="${fedora.home.build.dir}/server/config" />
@@ -476,8 +522,8 @@
     </copy>
 
     <copy todir="${fedora.home.build.dir}/server/bin">
-      <fileset dir="${resrc.src.dir}/scripts/bat/server" />
-      <fileset dir="${resrc.src.dir}/scripts/sh/server" />
+      <fileset dir="${repo.resrc.dir}/scripts/bat/server" />
+      <fileset dir="${repo.resrc.dir}/scripts/sh/server" />
     </copy>
 
     <chmod perm="ugo+x" type="file">
@@ -487,7 +533,7 @@
     </chmod>
 
     <copy todir="${fedora.home.build.dir}/server/config">
-      <fileset dir="${resrc.src.dir}/fcfg/server">
+      <fileset dir="${repo.resrc.dir}/fcfg/server">
         <include name="**/my.properties" />
         <include name="**/fedora-users.xml" />
       </fileset>
@@ -502,7 +548,7 @@
     </copy>
 
     <copy todir="${fedora.home.build.dir}/server/schematron">
-      <fileset dir="${resrc.src.dir}/schematron">
+      <fileset dir="${repo.resrc.dir}/schematron">
         <include name="*.xml" />
         <include name="*.xslt" />
       </fileset>
@@ -534,13 +580,13 @@
       <fileset dir="${xacml.src.dir}/default/default-repository-policies-approximating-2.0" />
     </copy>
 
-    <java classname="fedora.common.policy.Release2_1Namespace" classpath="${server.build.dir}/classes;${lib.openrdf-model};${lib.mulgara}" output="${fedora.home.build.dir}/server/fedora-internal-use/vocabulary.txt" />
+    <java classname="fedora.common.policy.Release2_1Namespace" classpath="${server.build.dir}/classes;${lib.openrdf-model};${lib.mulgara};${common.build.dir}" output="${fedora.home.build.dir}/server/fedora-internal-use/vocabulary.txt" />
 
     <copy file="${xsl.src.dir}/security/build-backend-policy.xsl" todir="${fedora.home.build.dir}/server/fedora-internal-use" />
 
     <!-- fedora configuration files -->
     <copy todir="${fedora.home.build.dir}/server/fedora-internal-use/config">
-      <fileset dir="${resrc.src.dir}/fcfg/server">
+      <fileset dir="${repo.resrc.dir}/fcfg/server">
         <include name="**/fedora-base.fcfg" />
         <include name="**/fedora-*.properties" />
         <include name="**/logging.properties" />
@@ -561,7 +607,7 @@
     <zip destfile="${dist.dir}/fedorahome.zip">
       <fileset dir="${fedora.home.build.dir}" />
       <zipfileset dir="${docs.build.dir}" prefix="docs" />
-      <zipfileset dir="$(license.dir}" prefix="docs/license" />
+      <zipfileset dir="${license.dir}" prefix="docs/license" />
     </zip>
   </target>
 
@@ -583,7 +629,7 @@
       </classpath>
     </java>
 
-    <copy file="${resrc.src.dir}/images/server/newlogo2.jpg" todir="${fedora.war.build.dir}/images" />
+    <copy file="${repo.resrc.dir}/images/server/newlogo2.jpg" todir="${fedora.war.build.dir}/images" />
 
     <copy todir="${fedora.war.build.dir}/ri">
       <fileset dir="${xsl.src.dir}/ri" />
@@ -600,6 +646,8 @@
     <copy todir="${fedora.war.build.dir}/WEB-INF/lib">
       <fileset refid="server-libs.fileset" />
     </copy>
+
+    <copy file="${common.build.dir}/fedora-common.jar" todir="${fedora.war.build.dir}/WEB-INF/lib" />
 
     <jar jarfile="${dist.dir}/fedora.war" basedir="${fedora.war.build.dir}">
       <manifest>
@@ -656,15 +704,15 @@
 
     <copy file="${inc.dir}/truststore" toFile="${fedora.home.build.dir}/client/truststore" />
 
-    <copy file="${resrc.src.dir}/xml/client-log4j.xml" toFile="${fedora.home.build.dir}/client/log4j.xml" />
+    <copy file="${repo.resrc.dir}/xml/client-log4j.xml" toFile="${fedora.home.build.dir}/client/log4j.xml" />
 
     <copy todir="${fedora.home.build.dir}/client/lib">
       <fileset refid="client-libs.fileset" />
     </copy>
 
     <copy todir="${fedora.home.build.dir}/client/bin">
-      <fileset dir="${resrc.src.dir}/scripts/bat/client" />
-      <fileset dir="${resrc.src.dir}/scripts/sh/client" />
+      <fileset dir="${repo.resrc.dir}/scripts/bat/client" />
+      <fileset dir="${repo.resrc.dir}/scripts/sh/client" />
     </copy>
 
     <replace dir="${fedora.home.build.dir}/client/bin" token="fedora-client.jar" value="fedora-client-${fedora.version}.jar" />
@@ -693,7 +741,7 @@
       <fileset dir="${demo.src.dir}/demo-objects/batch-demo" />
     </copy>
     <copy todir="${fedora.home.build.dir}/client/demo/batch-demo/object-specifics">
-      <fileset dir="${resrc.src.dir}/xml/batch-demo/object-specifics" />
+      <fileset dir="${repo.resrc.dir}/xml/batch-demo/object-specifics" />
     </copy>
   </target>
 
@@ -702,12 +750,12 @@
     <mkdir dir="${fedora.home.build.dir}/client" />
 
     <copy todir="${client.build.dir}/classes/images">
-      <fileset dir="${resrc.src.dir}/images/client" />
+      <fileset dir="${repo.resrc.dir}/images/client" />
     </copy>
 
     <copy todir="${client.build.dir}/classes">
-      <fileset dir="${resrc.src.dir}/properties/client" />
-      <fileset dir="${resrc.src.dir}/properties/server" />
+      <fileset dir="${repo.resrc.dir}/properties/client" />
+      <fileset dir="${repo.resrc.dir}/properties/server" />
       <filterset>
         <filter token="version" value="${fedora.version}" />
         <filter token="releaseDate" value="${fedora.releaseDate}" />
@@ -802,7 +850,7 @@
   <target name="check-stubwrappers">
     <uptodate property="stubwrappers.uptodate" targetfile="${stubwrappers.build.dir}/uptodate.txt">
       <srcfiles dir="." includes="${wsdl.build.dir}/**,
-        ${java.src.dir}/fedora/client/FedoraStubWrapper.template" />
+        ${repo.java.dir}/fedora/client/FedoraStubWrapper.template" />
     </uptodate>
   </target>
 
@@ -810,17 +858,17 @@
 
     <mkdir dir="${stubwrappers.build.dir}/fedora/client" />
     <!-- Stub wrapper for API-M -->
-    <java classname="fedora.utilities.BuildAxisStubWrapper" classpath="${util.build.dir}/fedora-utilities.jar">
+    <java classname="fedora.common.generator.BuildAxisStubWrapper" classpath="${common.build.dir}/fedora-common.jar">
       <arg path="${wsdl.build.dir}/fedora/server/management/FedoraAPIMBindingSOAPHTTPStub.java" />
-      <arg path="${java.src.dir}/fedora/client/FedoraStubWrapper.template" />
+      <arg path="${repo.java.dir}/fedora/client/FedoraStubWrapper.template" />
       <arg value="fedora.client" />
       <arg value="APIMStubWrapper" />
       <arg path="${stubwrappers.build.dir}/fedora/client/APIMStubWrapper.java" />
     </java>
     <!-- Stub wrapper for API-A -->
-    <java classname="fedora.utilities.BuildAxisStubWrapper" classpath="${util.build.dir}/fedora-utilities.jar">
+    <java classname="fedora.common.generator.BuildAxisStubWrapper" classpath="${common.build.dir}/fedora-common.jar">
       <arg path="${wsdl.build.dir}/fedora/server/access/FedoraAPIABindingSOAPHTTPStub.java" />
-      <arg path="${java.src.dir}/fedora/client/FedoraStubWrapper.template" />
+      <arg path="${repo.java.dir}/fedora/client/FedoraStubWrapper.template" />
       <arg value="fedora.client" />
       <arg value="APIAStubWrapper" />
       <arg path="${stubwrappers.build.dir}/fedora/client/APIAStubWrapper.java" />
@@ -828,11 +876,11 @@
     <touch file="${stubwrappers.build.dir}/uptodate.txt" />
   </target>
 
-  <target name="dist" depends="fedorahome, war, localservices" />
+  <target name="dist" depends="compile-common, fedorahome, war, localservices" />
 
   <target name="generatedCode" depends="stubwrappers" description="Builds all autogenerated code (e.g. WSDL)">
-    <mkdir dir="${build.dir}/generatedCode" />
-    <copy todir="${build.dir}/generatedCode">
+    <mkdir dir="${repo.build.dir}/generatedCode" />
+    <copy todir="${repo.build.dir}/generatedCode">
       <fileset dir="${stubwrappers.build.dir}">
         <include name="**/*.java" />
       </fileset>
@@ -852,7 +900,7 @@
 
     <!-- Build javadocs -->
     <mkdir dir="${docs.build.dir}/javadocs" />
-    <javadoc packagenames="fedora.*" sourcepath="${java.src.dir};${wsdl.build.dir}" maxmemory="256m" classpathref="compile.classpath" destdir="${docs.build.dir}/javadocs" author="true" version="true" use="true" />
+    <javadoc packagenames="fedora.*" sourcepath="${repo.java.dir};${wsdl.build.dir}" maxmemory="256m" classpathref="compile.classpath" destdir="${docs.build.dir}/javadocs" author="true" version="true" use="true" />
 
     <copy todir="${docs.build.dir}/userdocs">
       <fileset dir="${docs.resrc.dir}/userdocs" />
@@ -861,9 +909,9 @@
   </target>
 
   <target name="compile-installer" depends="">
-    <md-compile srcdir="${java.src.dir}" destdir="${install.build.dir}" includes="fedora/utilities/install/**" />
+    <md-compile srcdir="${repo.java.dir}" destdir="${install.build.dir}" includes="fedora/utilities/install/**" />
     <copy todir="${install.build.dir}">
-      <fileset dir="${java.src.dir}">
+      <fileset dir="${repo.java.dir}">
         <include name="**/fedorausers-mapping.xml" />
         <include name="**/webxml-mapping.xml" />
         <include name="**/OptionDefinition.properties" />
@@ -885,12 +933,13 @@
       <fileset dir="${lib.dir}" includes="${install.jdbc.mckoi} ${install.jdbc.derby} ${install.jdbc.derbynetworkclient} ${install.jdbc.mysql} ${install.jdbc.postgresql}" />
       <fileset dir="${dist.dir}" includes="fedorahome.zip fedora.war fop.war imagemanip.war saxon.war fedora-demo.war" />
       <fileset dir="${inc.dir}" includes="${install.tomcat} keystore" />
-      <fileset dir="${resrc.src.dir}/dbspec/server/fedora/server/storage/resources" includes="DefaultDOManager.dbspec" />
+      <fileset dir="${repo.resrc.dir}/dbspec/server/fedora/server/storage/resources" includes="DefaultDOManager.dbspec" />
     </copy>
 
     <mkdir dir="${install.build.dir}/boot" />
     <mkdir dir="${install.build.dir}/main" />
     <mkdir dir="${install.build.dir}/lib" />
+    <copy file="${common.build.dir}/fedora-common.jar" todir="${install.build.dir}/lib" />
     <copy file="${lib.dom4j}" todir="${install.build.dir}/lib" />
     <copy file="${lib.jaxen}" todir="${install.build.dir}/lib" />
     <copy file="${lib.mulgara}" todir="${install.build.dir}/lib" />
@@ -915,11 +964,42 @@
     </jar>
   </target>
 
+  <target name="junit-common" depends="compile-junit-common" description="run common-package junit tests">
+    <copy todir="" includeEmptyDirs="false">
+      <fileset dir="${common.junit.dir}">
+        <exclude name="**/*.java" />
+      </fileset>
+    </copy>
+
+    <mkdir dir="common/build/test-results" />
+
+    <junit printsummary="yes" fork="yes" failureproperty="test.failed" haltonerror="no" haltonfailure="no" showoutput="yes">
+      <syspropertyset id="junit.sysproperties">
+        <propertyref name="fedora.home" />
+        <propertyref name="javax.net.ssl.trustStore" />
+        <propertyref name="fedora.username" />
+        <propertyref name="fedora.password" />
+        <propertyref name="demo.format" />
+        <propertyref name="org.apache.activemq.default.directory.prefix" />
+      </syspropertyset>
+      <classpath refid="junit.classpath" />
+      <formatter type="xml" />
+      <test name="${common.test}" outfile="common/build/test-results/result-${common.test}" />
+    </junit>
+    <echo>Test results are in common/build/test-results/</echo>
+    <junitreport todir="common/build/test-results">
+      <fileset dir="common/build/test-results">
+        <include name="result-*.xml" />
+      </fileset>
+      <report format="frames" todir="common/build/test-results" />
+    </junitreport>
+    <fail if="test.failed"/> 
+  </target>
 
   <target name="junit" depends="compile-junit,demo-objects">
 
     <copy todir="${junit.build.dir}" includeEmptyDirs="false">
-      <fileset dir="${junit.src.dir}">
+      <fileset dir="${repo.junit.dir}">
         <exclude name="**/*.java" />
       </fileset>
     </copy>
@@ -988,7 +1068,7 @@
 
   <target name="api-jar" depends="init">
     <mkdir dir="${api.build.dir}/classes" />
-    <md-compile srcdir="${java.src.dir}" destdir="${api.build.dir}/classes" includes="fedora/common/**,
+    <md-compile srcdir="${repo.java.dir}" destdir="${api.build.dir}/classes" includes="fedora/common/**,
       fedora/server/Context.java,
       fedora/server/ReadOnlyContext.java,
       fedora/server/access/Access.java,
@@ -1029,12 +1109,12 @@
 
   <target name="messaging-client" depends="init">
     <mkdir dir="${client.build.dir}/messaging/classes" />
-    <md-compile srcdir="${java.src.dir}" destdir="${client.build.dir}/messaging/classes" includes="fedora/client/messaging/**,
+    <md-compile srcdir="${repo.java.dir}" destdir="${client.build.dir}/messaging/classes" includes="fedora/client/messaging/**,
       fedora/server/messaging/APIMMessage.java,
       fedora/server/messaging/AtomAPIMMessage.java" />
 
     <copy todir="${client.build.dir}/messaging/classes">
-      <fileset dir="${resrc.src.dir}/properties/server" />
+      <fileset dir="${repo.resrc.dir}/properties/server" />
     </copy>
 
     <jar destfile="${client.build.dir}/messaging/fedora-messaging-client-${fedora.version}.jar" basedir="${client.build.dir}/messaging/classes">
@@ -1069,7 +1149,7 @@
   <target name="performance-tests" depends="client">
     <java classname="fedora.client.test.PerformanceTests">
       <classpath>
-        <pathelement path="${build.dir}/client/classes" />
+        <pathelement path="${repo.build.dir}/client/classes" />
         <path refid="compile.classpath" />
       </classpath>
       <arg value="${host}" />
@@ -1087,7 +1167,7 @@
   <target name="scalability-tests" depends="client">
     <java classname="fedora.client.test.ScalabilityTests">
       <classpath>
-        <pathelement path="${build.dir}/client/classes" />
+        <pathelement path="${repo.build.dir}/client/classes" />
         <path refid="compile.classpath" />
       </classpath>
       <arg value="${host}" />

@@ -2,7 +2,7 @@
  * detailed in the license directory at the root of the source tree (also 
  * available online at http://fedora-commons.org/license/).
  */
-package fedora.utilities;
+package fedora.common.generator;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
