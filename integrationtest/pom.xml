@@ -30,16 +30,16 @@
       <version>1.0.0</version>
       <scope>test</scope>
     </dependency> 
-
+    
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
-      <artifactId>repository</artifactId>
+      <artifactId>server</artifactId>
       <version>1.0.0</version>
     </dependency> 
 
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
-      <artifactId>repository</artifactId>
+      <artifactId>server</artifactId>
       <classifier>tests</classifier>
       <version>1.0.0</version>
       <scope>test</scope>
@@ -48,12 +48,6 @@
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>client</artifactId>
-      <version>1.0.0</version>
-    </dependency> 
-
-    <dependency>
-      <groupId>org.duraspace.fedora</groupId>
-      <artifactId>server</artifactId>
       <version>1.0.0</version>
     </dependency> 
 
