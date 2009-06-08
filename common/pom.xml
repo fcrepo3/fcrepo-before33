@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.duraspace.fedora</groupId>
+  <artifactId>common</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0.0</version>
+  <name>Common</name>
+  <url>http://duraspace.org</url>
+
+  <parent>
+    <groupId>org.duraspace.fedora</groupId>
+    <artifactId>fedora-repository</artifactId>
+    <version>1.0.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>axistools-maven-plugin</artifactId>
+        <version>1.3</version>
+
+        <dependencies>
+          <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis</artifactId>
+            <version>1.3</version>
+          </dependency>
+        </dependencies>
+
+        <configuration>
+          <sourceDirectory>${basedir}/../resources/wsdl</sourceDirectory>
+          <testCases>false</testCases>
+          <serverSide>true</serverSide>
+          <skeletonDeploy>true</skeletonDeploy>
+          <wrapArrays>false</wrapArrays>
+        </configuration>
+           
+        <executions>
+          <execution>
+            <id>api-m</id>
+            <goals>         
+              <goal>wsdl2java</goal>
+            </goals>
+
+            <configuration>
+              <wsdlFiles>
+                <wsdlFile>
+                  Fedora-API-M.wsdl 
+                </wsdlFile>
+              </wsdlFiles>
+
+              <mappings>
+                <mapping>
+                  <namespace>http://www.fedora.info/definitions/1/0/api/</namespace>
+                  <targetPackage>fedora.server.management</targetPackage>
+                </mapping>
+                <mapping>
+                  <namespace>http://www.fedora.info/definitions/1/0/auditing/</namespace>
+                  <targetPackage>fedora.server.types.gen</targetPackage>
+                </mapping>
+                <mapping>
+                  <namespace>http://www.fedora.info/definitions/1/0/binding/</namespace>
+                  <targetPackage>fedora.server.types.gen</targetPackage>
+                </mapping>
+                <mapping>
+                  <namespace>http://www.fedora.info/definitions/1/0/types/</namespace>
+                  <targetPackage>fedora.server.types.gen</targetPackage>
+                </mapping>
+              </mappings>
+
+            </configuration>
+
+          </execution>
+          <execution>
+            <id>api-a</id>
+            <goals>         
+              <goal>wsdl2java</goal>
+            </goals>
+
+            <configuration>
+              <wsdlFiles>
+                <wsdlFile>
+                  Fedora-API-A.wsdl 
+                </wsdlFile>
+              </wsdlFiles>
+
+              <mappings>
+                <mapping>
+                  <namespace>http://www.fedora.info/definitions/1/0/api/</namespace>
+                  <targetPackage>fedora.server.access</targetPackage>
+                </mapping>
+                <mapping>
+                  <namespace>http://www.fedora.info/definitions/1/0/types/</namespace>
+                  <targetPackage>fedora.server.types.gen</targetPackage>
+                </mapping>
+              </mappings>
+
+            </configuration>
+
+          </execution>
+
+
+
+        </executions>
+
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+          <execution>
+            <configuration>
+              <excludeDefaultDirectories>true</excludeDefaultDirectories>
+            </configuration>
+            <id>wsdl-clean</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${project.build.directory}</directory>
+              <includes>
+                <include>**/FedoraAPIMBindingSOAPHTTPImpl*</include>
+                <include>**/FedoraAPIMServiceLocator*</include>
+                <include>**/FedoraAPIABindingSOAPHTTPImpl*</include>
+                <include>**/FedoraAPIAServiceLocator*</include>
+              </includes>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.1.1</version>
+        <executions>
+
+          <execution>
+            <id>api-m</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>fedora.generate.BuildAxisStubWrapper</mainClass>
+              <arguments>
+                <argument>${project.build.directory}/generated-sources/axistools/wsdl2java/fedora/server/management/FedoraAPIMBindingSOAPHTTPStub.java</argument>
+                <argument>${project.build.sourceDirectory}/fedora/common/generate/FedoraStubWrapper.template</argument>
+                <argument>fedora.client</argument>
+                <argument>APIMStubWrapper</argument>
+                <argument>${basedir}/../client/stubwrappers/fedora/client/APIMStubWrapper.java</argument>
+              </arguments>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>api-a</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>fedora.generate.BuildAxisStubWrapper</mainClass>
+              <arguments>
+                <argument>${project.build.directory}/generated-sources/axistools/wsdl2java/fedora/server/access/FedoraAPIABindingSOAPHTTPStub.java</argument>
+                <argument>${project.build.sourceDirectory}/fedora/common/generate/FedoraStubWrapper.template</argument>
+                <argument>fedora.client</argument>
+                <argument>APIAStubWrapper</argument>
+                <argument>${basedir}/../client/stubwrappers/fedora/client/APIAStubWrapper.java</argument>
+              </arguments>
+            </configuration>
+          </execution>
+
+        </executions>
+
+
+      </plugin>
+
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+
+          <execution>
+            <id>clean-wsdl</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <forceCreation>true</forceCreation>
+              <excludes>
+                <exclude>**/FedoraAPIABindingSOAPHTTPImpl.class</exclude>
+                <exclude>**/FedoraAPIMBindingSOAPHTTPImpl.class</exclude>
+                <exclude>**/FedoraAPIAServiceLocator.class</exclude>
+                <exclude>**/FedoraAPIMServiceLocator.class</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>jar-tests</id>
+            <phase>package</phase>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+
+        </executions>
+      </plugin>
+
+
+    </plugins>
+
+  </build>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.duraspace.fedora</groupId>
+      <artifactId>generate</artifactId>
+      <version>1.0.0</version>
+    </dependency> 
+
+    <dependency>
+      <groupId>axis</groupId>
+      <artifactId>axis-wsdl4j</artifactId>
+      <version>1.3</version>
+    </dependency> 
+
+
+  </dependencies>
+</project>
