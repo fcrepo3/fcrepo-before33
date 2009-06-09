@@ -9,7 +9,9 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses( {fedora.test.AllUnitTests.class,
-        fedora.test.AllIntegrationTests.class})
+        fedora.test.AllIntegrationTests.class,
+        fedora.server.AllUnitTests.class,
+        fedora.utilities.AllUnitTests.class})
 public class AllOfflineTests {
 
     // Supports legacy tests runners
@@ -20,6 +22,8 @@ public class AllOfflineTests {
 
         suite.addTest(fedora.test.AllUnitTests.suite());
         suite.addTest(fedora.test.AllIntegrationTests.suite());
+        suite.addTest(fedora.utilities.AllUnitTests.suite());
+        suite.addTest(fedora.server.AllUnitTests.suite());
 
         return suite;
     }
