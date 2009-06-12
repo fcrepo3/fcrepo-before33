@@ -68,8 +68,10 @@
 
   <properties>
     <unitTests>**/*Test.class</unitTests>
-    <integrationTests>**/Test*.class</integrationTests>
+    <integrationTests>**/*Integration*.class</integrationTests>
+<!--    <integrationTests>**/Test*.class</integrationTests>-->
     <instrumentedTests>**/*Test*__*.class</instrumentedTests>
+    <nestedClassTests>**/*Test*$*.class</nestedClassTests>
   </properties>
 
   <repositories>
@@ -163,11 +165,13 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.4.2</version>
         <configuration>
-          <skip>true</skip>
+          <skip>false</skip>
           <excludes>
             <exclude>${integrationTests}</exclude>
             <exclude>${instrumentedTests}</exclude>
+            <exclude>${nestedClassTests}</exclude>
           </excludes>
           <includes>
             <include>${unitTests}</include>
@@ -181,6 +185,7 @@
               <goal>test</goal>
             </goals>
             <configuration>
+              <skip>true</skip>
               <systemProperties>
               </systemProperties>
               <excludes>
@@ -200,6 +205,15 @@
 
   <dependencies>
 
+    <!-- Maven-central dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.5</version>
+    </dependency>
+
+
+    <!-- Local dependencies that need to be converted -->
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>abdera-core-0.4.0-incubating</artifactId>
@@ -515,11 +529,13 @@
       <artifactId>jta-spec1_0_1</artifactId>
       <version>1.0</version>
     </dependency>
+<!--
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>junit-4.5</artifactId>
       <version>1.0</version>
     </dependency>
+-->
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>log4j-1.2.15</artifactId>

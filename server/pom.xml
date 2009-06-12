@@ -15,9 +15,118 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
+  <properties>
+    <demo.src.dir>${basedir}/src/main/resources/demo</demo.src.dir>
+    <fedora.home.build.dir>${basedir}/build/home</fedora.home.build.dir>
+  </properties>
+
   <build>
+
+    <!-- This 'resource' directory should be migrated to default location -->
+    <resources>
+      <resource>
+        <directory>src/main/resources/properties/server</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+
+
     <plugins>
 
+      <!-- ** This plugin needs to be removed when ANT is gone ** -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.4.2</version>
+        <configuration> 
+          <includes>
+            <include>**/Test*</include>
+            <include>**/*Test.class</include>
+          </includes>
+          <excludes>
+            <exclude>**/DOValidatorXMLSchemaTest*</exclude> <!-- needs adjustment for server/... basedir -->
+            <exclude>**/TestAtomDODeserializer*</exclude> <!-- needs adjustment for server/... basedir -->
+            <exclude>**/TestAtomDOSerializer*</exclude> <!-- needs adjustment for server/... basedir -->
+            <exclude>**/TestFedoraUsers*</exclude> <!-- needs adjustment for server/... basedir -->
+            <exclude>**/TestFedoraWebXML*</exclude> <!-- needs adjustment for server/... basedir -->
+            <exclude>**/TestServer.class</exclude> <!-- this is not a test class -->
+            <exclude>${integrationTests}</exclude>
+            <exclude>${nestedClassTests}</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
+<!-- 
+      ** This plugin should be turned on when ANT is gone **
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.1.1</version>
+        <executions>
+
+          <execution>
+            <id>demo-convert-mets</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>fedora.server.storage.translation.ConvertObjectSerialization</mainClass>
+              <arguments>
+                <argument>${demo.src.dir}/demo-objects/foxml</argument>
+                <argument>${fedora.home.build.dir}/client/demo/mets</argument>
+                <argument>fedora.server.storage.translation.FOXML1_1DODeserializer</argument>
+                <argument>fedora.server.storage.translation.METSFedoraExt1_1DOSerializer</argument>
+                <argument>true</argument>
+                <argument>xml</argument>
+                <argument>xml</argument>
+              </arguments>
+            </configuration>
+          </execution>
+           <execution>
+            <id>demo-convert-atom</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>fedora.server.storage.translation.ConvertObjectSerialization</mainClass>
+              <arguments>
+                <argument>${demo.src.dir}/demo-objects/foxml</argument>
+                <argument>${fedora.home.build.dir}/client/demo/atom</argument>
+                <argument>fedora.server.storage.translation.FOXML1_1DODeserializer</argument>
+                <argument>fedora.server.storage.translation.Atom1_1DOSerializer</argument>
+                <argument>true</argument>
+                <argument>xml</argument>
+                <argument>xml</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>demo-convert-atomzip</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>fedora.server.storage.translation.ConvertObjectSerialization</mainClass>
+              <arguments>
+                <argument>${demo.src.dir}/demo-objects/foxml</argument>
+                <argument>${fedora.home.build.dir}/client/demo/atom-zip</argument>
+                <argument>fedora.server.storage.translation.FOXML1_1DODeserializer</argument>
+                <argument>fedora.server.storage.translation.AtomZip1_1DOSerializer</argument>
+                <argument>false</argument>
+                <argument>xml</argument>
+                <argument>zip</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+-->
+
+
+      <!-- Some of the server test classes are needed by /integrationtest -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
