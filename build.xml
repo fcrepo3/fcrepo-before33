@@ -474,8 +474,13 @@
 
     <copy todir="${junit.build.dir}">
       <fileset dir="${repo.java.dir}">
-        <include name="**/OptionDefinition.properties" />
         <include name="**/webxml-mapping.xml" />
+      </fileset>
+    </copy>
+
+    <copy todir="${junit.build.dir}">
+      <fileset dir="${properties.src.dir}/server">
+        <include name="**/OptionDefinition.properties" />
       </fileset>
     </copy>
   </target>
@@ -960,9 +965,15 @@
       <fileset dir="${repo.java.dir}">
         <include name="**/fedorausers-mapping.xml" />
         <include name="**/webxml-mapping.xml" />
+      </fileset>
+    </copy>
+    <copy todir="${install.build.dir}">
+      <fileset dir="${properties.src.dir}/server">
         <include name="**/OptionDefinition.properties" />
       </fileset>
     </copy>
+
+
     <jar jarfile="${install.build.dir}/main.jar" basedir="${install.build.dir}" includes="fedora/**">
       <manifest>
         <attribute name="Main-Class" value="fedora.utilities.install.Installer" />

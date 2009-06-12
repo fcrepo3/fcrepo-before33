@@ -230,10 +230,14 @@ public class JMSManagerTest extends TestCase implements MessageListener {
         }
 
         long startTime = System.currentTimeMillis();
-        while(messageCount < sentMessages) {
-            if(System.currentTimeMillis() > (startTime + timeout)) {
+        boolean timeExpired = false;
+        while (messageCount < sentMessages) {
+            if (timeExpired) {
                 fail("Sent " + sentMessages + " messages but only received "
                         + messageCount + " messages");
+            }
+            if (System.currentTimeMillis() > (startTime + timeout)) {
+                timeExpired = true;
             }
         }
 
