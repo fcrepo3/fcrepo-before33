@@ -30,8 +30,11 @@ import fedora.test.FedoraTestCase;
 public class TestServerConfiguration
         extends FedoraTestCase {
 
+    // FIXME: Not only swap file path after ANT is no longer used,
+    //        Refactor 'FedoraTestCase' so this test can go back to '/server'.
     private static final File FCFG_BASE =
             new File("server/src/main/resources/fcfg/server/fedora-base.fcfg");
+//    new File("../server/src/main/resources/fcfg/server/fedora-base.fcfg");
 
     private static final String NS_FCFG_PREFIX = "fcfg";
 

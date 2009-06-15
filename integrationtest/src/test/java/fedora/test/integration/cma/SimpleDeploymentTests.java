@@ -49,6 +49,8 @@ public class SimpleDeploymentTests {
             "cma-examples/simple-deployment/deployments";
 
     public static junit.framework.Test suite() {
+        // FIXME: The specified class should be 'Simple...' not 'Shared...'
+        //        But test does not work when classname set correctly.
         return new junit.framework.JUnit4TestAdapter(SharedDeploymentTests.class);
     }
 

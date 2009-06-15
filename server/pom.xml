@@ -25,7 +25,11 @@
     <!-- This 'resource' directory should be migrated to default location -->
     <resources>
       <resource>
-        <directory>src/main/resources/properties/server</directory>
+        <directory>${basedir}/../resources/server</directory>
+        <filtering>true</filtering>
+      </resource>
+       <resource>
+        <directory>src/main/resources/dbspec/server</directory>
         <filtering>true</filtering>
       </resource>
     </resources>
@@ -54,6 +58,34 @@
             <exclude>${nestedClassTests}</exclude>
           </excludes>
         </configuration>
+        <executions>
+          <execution>
+            <id>int-test</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <skip>${integration.test.skip}</skip>
+              <systemProperties>
+              </systemProperties>
+              <excludes>
+                <exclude>${instrumentedTests}</exclude>
+                <exclude>${nestedClassTests}</exclude>
+                <exclude>**/All*</exclude>
+                <!-- see comment in file for fixing when ANT is gone. -->
+                <exclude>**/ResourceIndexModMiscIntegrationTest*</exclude>
+                <exclude>**/ResourceIndexDatePrecisionIntegrationTest*</exclude>
+                <exclude>**/ResourceIndexModDSIntegrationTest*</exclude>
+                <exclude>**/ResourceIndexAddDelDSIntegrationTest*</exclude>
+                <exclude>**/ResourceIndexAddDelMiscIntegrationTest*</exclude>
+              </excludes>
+              <includes>
+                <include>${integrationTests}</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>  
       </plugin>
 
 <!-- 

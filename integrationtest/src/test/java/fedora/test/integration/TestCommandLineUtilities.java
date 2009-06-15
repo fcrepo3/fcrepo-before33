@@ -175,12 +175,16 @@ public class TestCommandLineUtilities
 
     public void testValidatePolicy() {
         System.out.println("Testing Validate Policies");
+        // FIXME: swap 'validDir' when ANT is no longer used.
         File validDir =
-                new File("server/src/test/java/XACMLTestPolicies/valid-policies");
+//                new File("src/test/resources/XACMLTestPolicies/valid-policies");
+            new File("integrationtest/src/test/resources/XACMLTestPolicies/valid-policies");
         traverseAndValidate(validDir, true);
 
+        // FIXME: swap 'validDir' when ANT is no longer used.
         File invalidDir =
-                new File("server/src/test/java/XACMLTestPolicies/invalid-policies");
+//                new File("src/test/resources/XACMLTestPolicies/invalid-policies");
+            new File("integrationtest/src/test/resources/XACMLTestPolicies/invalid-policies");
         traverseAndValidate(invalidDir, false);
 
         System.out.println("Validate Policies test succeeded");

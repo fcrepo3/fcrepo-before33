@@ -16,6 +16,18 @@
   </parent>
 
   <build>
+
+    <resources>
+      <resource>
+        <directory>${basedir}/../resources/server</directory>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+
     <plugins>
 
       <!-- 
@@ -61,6 +73,44 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.2</version>
+        <executions>
+          <execution>
+            <id>fedora-client-jar</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+
+            <configuration>
+              <classifier>fedora</classifier>
+              <!-- may want to add svn version info here 
+              <classifier>fedora-${fedora.version}</classifier>
+              -->
+              <archive>
+                <manifest>
+                  <mainClass>fedora.client.Administrator</mainClass>
+                  <addClasspath>true</addClasspath>
+                  <classpathPrefix>lib/</classpathPrefix>
+                  <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                </manifest>
+                <manifestEntries>
+                  <Version>${fedora.version}</Version>
+                  <Build>${build.tstamp}</Build>
+                </manifestEntries>
+              </archive>
+            </configuration>
+          </execution>
+        </executions>
+
+
+      </plugin>
+
+
+
 
     </plugins>
 

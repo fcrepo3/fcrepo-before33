@@ -56,6 +56,8 @@ public abstract class ResourceIndexIntegrationTest {
     private static final Logger LOG =
             Logger.getLogger(ResourceIndexIntegrationTest.class.getName());
 
+    // TODO: swap out TEST_DIR after ANT no longer used.
+    // private static final String TEST_DIR = "target";
     private static final String TEST_DIR = "build/junit";
 
     private static final String DB_DRIVER =
