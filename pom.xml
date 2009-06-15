@@ -66,12 +66,15 @@
     <module>integrationtest</module>
   </modules>
 
+  <!-- All of these flags can be overwritten with -D cli options -->
   <properties>
     <unitTests>**/*Test.class</unitTests>
     <integrationTests>**/*Integration*.class</integrationTests>
 <!--    <integrationTests>**/Test*.class</integrationTests>-->
     <instrumentedTests>**/*Test*__*.class</instrumentedTests>
     <nestedClassTests>**/*Test*$*.class</nestedClassTests>
+
+    <integration.test.skip>false</integration.test.skip>
   </properties>
 
   <repositories>
@@ -129,15 +132,6 @@
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptor>src/main/assembly/dep.xml</descriptor>
-          <includeSite>false</includeSite>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <debug>true</debug>
@@ -145,29 +139,13 @@
           <target>1.5</target>
         </configuration>
       </plugin>
-      
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <warName>${artifactId}-${version}</warName>
-          <webResources>
-            <resource>
-              <directory>src/main/resources</directory>
-              <filtering>true</filtering>
-            </resource>
-          </webResources>
-        </configuration>
-      </plugin>
-
-
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.4.2</version>
+
         <configuration>
-          <skip>false</skip>
           <excludes>
             <exclude>${integrationTests}</exclude>
             <exclude>${instrumentedTests}</exclude>
@@ -177,15 +155,16 @@
             <include>${unitTests}</include>
           </includes>
         </configuration>
+
         <executions>
           <execution>
-            <id>integrationtest</id>
+            <id>int-test</id>
             <phase>integration-test</phase>
             <goals>
               <goal>test</goal>
             </goals>
             <configuration>
-              <skip>true</skip>
+              <skip>${integration.test.skip}</skip>
               <systemProperties>
               </systemProperties>
               <excludes>

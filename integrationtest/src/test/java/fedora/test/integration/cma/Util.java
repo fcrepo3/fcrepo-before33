@@ -57,7 +57,9 @@ public abstract class Util {
 
         System.out.println("Ingesting test objects in FOXML format from "
                 + specificPath);
-        dir = new File("server/src/test/resources/test-objects/foxml" + specificPath);
+        // FIXME: swap 'dir' after ANT is no longer used
+        dir = new File("integrationtest/src/test/resources/test-objects/foxml" + specificPath);
+//        dir = new File("src/test/resources/test-objects/foxml" + specificPath);
 
         FedoraClient client = FedoraTestCase.getFedoraClient();
 

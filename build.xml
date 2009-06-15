@@ -45,15 +45,17 @@
 
   <property name="dist.dir" location="dist" />
   <property name="lib.dir" location="lib" />
-  <property name="inc.dir" location="inc" />
   <property name="license.dir" location="license" />
   
   <property name="resrc.dir" location="resources" />
+  <property name="inc.dir" location="${resrc.dir}/inc" />
   <property name="docs.resrc.dir" location="${resrc.dir}/doc" />
+  <property name="junit.resrc.dir" location="${resrc.dir}/junit" />
   
   <property name="repo.src.dir" location="${repo.home}/src" />
   <property name="repo.java.dir" location="${repo.src.dir}/main/java" />
   <property name="repo.junit.dir" location="${repo.src.dir}/test/java" />  
+  <property name="repo.junit.resrc.dir" location="${repo.src.dir}/test/resources" />  
 
   <property name="common.src.dir" location="${common.home}/src" />
   <property name="common.java.dir" location="${common.src.dir}/main/java" />
@@ -62,10 +64,12 @@
   <property name="client.src.dir" location="${client.home}/src" />
   <property name="client.java.dir" location="${client.src.dir}/main/java" />
   <property name="client.junit.dir" location="${client.src.dir}/test/java" />  
+  <property name="client.resrc.dir" location="${client.src.dir}/main/resources" />  
 
   <property name="inttest.src.dir" location="${inttest.home}/src" />
   <property name="inttest.java.dir" location="${inttest.src.dir}/main/java" />
   <property name="inttest.junit.dir" location="${inttest.src.dir}/test/java" />  
+  <property name="inttest.junit.resrc.dir" location="${inttest.src.dir}/test/resources" />  
 
   <property name="generate.src.dir" location="${generate.home}/src" />
   <property name="generate.java.dir" location="${generate.src.dir}/main/java" />
@@ -101,7 +105,7 @@
 
   <!-- load external properties files -->
   <loadproperties srcFile="${properties.src.dir}/lib.properties" />
-  <loadproperties srcFile="${properties.src.dir}/server/fedora/server/resources/Server.properties">
+  <loadproperties srcFile="${resrc.dir}/server/fedora/server/resources/Server.properties">
     <filterchain>
       <linecontains>
         <contains value="version." />
@@ -165,7 +169,7 @@
 
   <path id="junit.classpath">
     <path refid="compile.classpath" />
-    <pathelement path="${repo.resrc.dir}/properties/server" />
+    <pathelement path="${resrc.dir}/server" />
     <pathelement path="${junit.build.dir}" />
     <pathelement path="${inttest.junit.build.dir}" />
     <pathelement path="${common.junit.build.dir}" />
@@ -455,22 +459,22 @@
 
   <target name="compile-junit-common" depends="compile-common">
     <md-compile srcdir="${common.junit.dir}" destdir="${common.junit.build.dir}" classpathref="junit.classpath" />
-    <copy todir="${common.junit.build.dir}" file="${repo.junit.dir}/log4j.xml" />
+    <copy todir="${common.junit.build.dir}" file="${junit.resrc.dir}/log4j.xml" />
   </target>
 
   <target name="compile-junit-inttest" depends="compile-junit, compile-junit-common, compile-junit-client, server, client">
     <md-compile srcdir="${inttest.junit.dir}" destdir="${inttest.junit.build.dir}" classpathref="junit.classpath" />
-    <copy todir="${inttest.junit.build.dir}" file="${repo.junit.dir}/log4j.xml" />
+    <copy todir="${inttest.junit.build.dir}" file="${junit.resrc.dir}/log4j.xml" />
   </target>
 
   <target name="compile-junit-client" depends="compile-client,compile-junit-common">
     <md-compile srcdir="${client.junit.dir}" destdir="${client.junit.build.dir}" classpathref="junit.classpath" />
-    <copy todir="${client.junit.build.dir}" file="${repo.junit.dir}/log4j.xml" />
+    <copy todir="${client.junit.build.dir}" file="${junit.resrc.dir}/log4j.xml" />
   </target>
 
   <target name="compile-junit" depends="compile-junit-common, compile-server, client-jar, compile-util">
     <md-compile srcdir="${repo.junit.dir}" destdir="${junit.build.dir}" classpathref="junit.classpath" />
-    <copy todir="${junit.build.dir}" file="${repo.junit.dir}/log4j.xml" />
+    <copy todir="${junit.build.dir}" file="${junit.resrc.dir}/log4j.xml" />
 
     <copy todir="${junit.build.dir}">
       <fileset dir="${repo.java.dir}">
@@ -479,7 +483,7 @@
     </copy>
 
     <copy todir="${junit.build.dir}">
-      <fileset dir="${properties.src.dir}/server">
+      <fileset dir="${resrc.dir}/server">
         <include name="**/OptionDefinition.properties" />
       </fileset>
     </copy>
@@ -518,7 +522,7 @@
       fedora/server/access/FedoraAPIABindingSOAPHTTPImpl.java,
       fedora/server/access/FedoraAPIAServiceLocator.java" />
     <copy todir="${server.build.dir}/classes">
-      <fileset dir="${repo.resrc.dir}/properties/server" />
+      <fileset dir="${resrc.dir}/server" />
       <fileset dir="${repo.resrc.dir}/dbspec/server" />
       <fileset dir="${repo.java.dir}">
         <include name="**/*.betwixt" />
@@ -801,12 +805,27 @@
     <mkdir dir="${fedora.home.build.dir}/client" />
 
     <copy todir="${client.build.dir}/classes/images">
-      <fileset dir="${repo.resrc.dir}/images/client" />
+      <fileset dir="${client.resrc.dir}/images/client" />
+    </copy>
+
+    <copy todir="${client.build.dir}/classes/batch">
+      <fileset dir="${client.resrc.dir}/batch" />
+      <filterset>
+        <filter token="version" value="${fedora.version}" />
+        <filter token="releaseDate" value="${fedora.releaseDate}" />
+      </filterset>
+    </copy>
+ 
+    <copy todir="${client.build.dir}/classes/fedora">
+      <fileset dir="${client.resrc.dir}/fedora" />
+      <filterset>
+        <filter token="version" value="${fedora.version}" />
+        <filter token="releaseDate" value="${fedora.releaseDate}" />
+      </filterset>
     </copy>
 
     <copy todir="${client.build.dir}/classes">
-      <fileset dir="${repo.resrc.dir}/properties/client" />
-      <fileset dir="${repo.resrc.dir}/properties/server" />
+      <fileset dir="${resrc.dir}/server" />
       <filterset>
         <filter token="version" value="${fedora.version}" />
         <filter token="releaseDate" value="${fedora.releaseDate}" />
@@ -968,7 +987,7 @@
       </fileset>
     </copy>
     <copy todir="${install.build.dir}">
-      <fileset dir="${properties.src.dir}/server">
+      <fileset dir="${resrc.dir}/server">
         <include name="**/OptionDefinition.properties" />
       </fileset>
     </copy>
@@ -1086,10 +1105,8 @@
   </target>
  
   <target name="junit" depends="compile-junit-inttest,demo-objects" description="run integrationtest-package junit tests">
-    <copy todir="${inttest.junit.build.dir}" includeEmptyDirs="false">
-      <fileset dir="${inttest.junit.dir}">
-        <exclude name="**/*.java" />
-      </fileset>
+    <copy todir="${inttest.junit.build.dir}/XACMLTestPolicies" includeEmptyDirs="false">
+      <fileset dir="${inttest.junit.resrc.dir}/XACMLTestPolicies"/>
     </copy>
 
     <mkdir dir="integrationtest/build/test-results" />
@@ -1236,7 +1253,7 @@
       fedora/server/messaging/AtomAPIMMessage.java" />
 
     <copy todir="${client.build.dir}/messaging/classes">
-      <fileset dir="${repo.resrc.dir}/properties/server" />
+      <fileset dir="${resrc.dir}/server" />
     </copy>
 
     <jar destfile="${client.build.dir}/messaging/fedora-messaging-client-${fedora.version}.jar" basedir="${client.build.dir}/messaging/classes">
