@@ -17,6 +17,7 @@
   <property name="client.home" location="client" />
   <property name="inttest.home" location="integrationtest" />
   <property name="generate.home" location="generate" />
+  <property name="demo.home" location="democontent" />
 
   <property name="repo.build.dir" location="${repo.home}/build" />
   <property name="common.build.dir" location="${common.home}/build" />
@@ -1168,10 +1169,10 @@
     <fail if="test.failed"/>
   </target>
 
-  <target name="demo">
+  <target name="demo" depends="init">
     <mkdir dir="${demo.war.build.dir}" />
     <copy todir="${demo.war.build.dir}">
-      <fileset dir="${demo.src.dir}/demo-content" />
+      <fileset dir="${demo.home}/src/main/webapp" />
     </copy>
     <jar destfile="${dist.dir}/fedora-demo.war" basedir="${demo.war.build.dir}" />
   </target>
