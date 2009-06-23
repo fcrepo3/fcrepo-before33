@@ -2,15 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.duraspace.fedora</groupId>
-  <artifactId>democontent</artifactId>
+  <artifactId>fop</artifactId>
   <packaging>war</packaging>
   <version>1.0.0</version>
-  <name>Fedora Demo Content Webapp</name>
+  <name>Formatting Objects Processor Webapp</name>
   <url>http://duraspace.org</url>
 
   <parent>
     <groupId>org.duraspace.fedora</groupId>
-    <artifactId>fedora-repository</artifactId>
+    <artifactId>localservices</artifactId>
     <version>1.0.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
@@ -24,15 +24,35 @@
         <version>2.1-beta-1</version>
 
         <configuration>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
-          <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
-          <warName>fedora-demo</warName>
+          <packagingIncludes>**/index.html,**/classes/**,WEB-INF/lib/avalon-framework-4.2.0-1.0.jar,WEB-INF/lib/batik-all-1.0.jar,WEB-INF/lib/fop-1.0.jar</packagingIncludes>
+          <warName>fop</warName>
         </configuration>
 
       </plugin>
 
     </plugins>
   </build>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>duraspace</groupId>
+      <artifactId>avalon-framework-4.2.0</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>duraspace</groupId>
+      <artifactId>batik-all</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>duraspace</groupId>
+      <artifactId>fop</artifactId>
+      <version>1.0</version>
+    </dependency>
+  
+  </dependencies>
+
 
 </project>
 

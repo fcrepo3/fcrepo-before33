@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.duraspace.fedora</groupId>
-  <artifactId>democontent</artifactId>
-  <packaging>war</packaging>
+  <artifactId>localservices</artifactId>
+  <packaging>pom</packaging>
   <version>1.0.0</version>
-  <name>Fedora Demo Content Webapp</name>
+  <name>Local Services</name>
   <url>http://duraspace.org</url>
 
   <parent>
@@ -15,24 +15,12 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <build>
-    <plugins>
-    
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>2.1-beta-1</version>
+  <modules>
+    <module>fop</module>
+    <module>imagemanip</module>
+    <module>saxon</module>
+  </modules>
 
-        <configuration>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
-          <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
-          <warName>fedora-demo</warName>
-        </configuration>
-
-      </plugin>
-
-    </plugins>
-  </build>
 
 </project>
 

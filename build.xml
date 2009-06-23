@@ -18,19 +18,20 @@
   <property name="inttest.home" location="integrationtest" />
   <property name="generate.home" location="generate" />
   <property name="demo.home" location="democontent" />
+  <property name="localservices.home" location="localservices" />
 
   <property name="repo.build.dir" location="${repo.home}/build" />
   <property name="common.build.dir" location="${common.home}/build" />
   <property name="client.build.dir" location="${client.home}/build" />
   <property name="inttest.build.dir" location="${inttest.home}/build" />
   <property name="generate.build.dir" location="${generate.home}/build" />
+  <property name="localservices.build.dir" location="${localservices.home}/build" />
 
   <property name="api.build.dir" location="${repo.build.dir}/api" />
   <property name="docs.build.dir" location="${repo.build.dir}/docs" />
   <property name="fedora.home.build.dir" location="${repo.build.dir}/home" />
   <property name="install.build.dir" location="${repo.build.dir}/install" />
   <property name="junit.build.dir" location="${repo.build.dir}/java" />
-  <property name="localservices.build.dir" location="${repo.build.dir}/localservices" />
   <property name="server.build.dir" location="${repo.build.dir}/server" />
   <property name="journal.build.dir" location="${repo.build.dir}/journal" />
   <property name="util.build.dir" location="${repo.build.dir}/util" />
@@ -75,6 +76,13 @@
   <property name="generate.src.dir" location="${generate.home}/src" />
   <property name="generate.java.dir" location="${generate.src.dir}/main/java" />
 
+  <property name="fop.src.dir" location="${localservices.home}/fop/src" />
+  <property name="fop.java.dir" location="${fop.src.dir}/main/java" />
+  <property name="imagemanip.src.dir" location="${localservices.home}/imagemanip/src" />
+  <property name="imagemanip.java.dir" location="${imagemanip.src.dir}/main/java" />
+  <property name="saxon.src.dir" location="${localservices.home}/saxon/src" />
+  <property name="saxon.java.dir" location="${saxon.src.dir}/main/java" />
+  
   <property name="util.src.dir" location="${util.home}/src" />
   <property name="util.java.dir" location="${util.src.dir}/main/java" />
   <property name="util.junit.dir" location="${util.src.dir}/test/java" />
@@ -361,7 +369,7 @@
     <sequential>
       <mkdir dir="${war.build.dir}/@{service}/WEB-INF/lib" />
       <copy todir="${war.build.dir}/@{service}">
-        <fileset dir="${war.src.dir}/@{service}" />
+        <fileset dir="${localservices.home}/@{service}/src/main/webapp" />
       </copy>
       <copy todir="${war.build.dir}/@{service}/WEB-INF/classes/fedora/localservices/@{service}">
         <fileset dir="${localservices.build.dir}/fedora/localservices/@{service}" />
@@ -490,8 +498,16 @@
     </copy>
   </target>
 
-  <target name="compile-localservices" depends="init" description="Generate java classes for local services">
-    <md-compile srcdir="${repo.java.dir}/fedora/localservices" destdir="${localservices.build.dir}" />
+  <target name="compile-localservices" depends="init,compile-fop,compile-imagemanip,compile-saxon" description="Generate java classes for local services"/>
+
+  <target name="compile-fop" depends="init" >
+    <md-compile srcdir="${fop.java.dir}/fedora/localservices" destdir="${localservices.build.dir}" />
+  </target>
+  <target name="compile-imagemanip" depends="init" >
+    <md-compile srcdir="${imagemanip.java.dir}/fedora/localservices" destdir="${localservices.build.dir}" />
+  </target>
+  <target name="compile-saxon" depends="init" >
+    <md-compile srcdir="${saxon.java.dir}/fedora/localservices" destdir="${localservices.build.dir}" />
   </target>
 
   <target name="prepare-jdbc3" if="jdbc3">
@@ -916,6 +932,7 @@
       <pathelement location="${lib.saxon}" />
     </path>
     <md-localservice service="saxon" libs.path="saxon-libs.path" />
+
   </target>
 
   <target name="check-stubwrappers">
