@@ -64,6 +64,8 @@
     <module>server</module>
     <module>client</module>
     <module>integrationtest</module>
+    <module>localservices</module>
+    <module>democontent</module>
   </modules>
 
   <!-- All of these flags can be overwritten with -D cli options -->
