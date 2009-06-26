@@ -48,10 +48,10 @@ public class FilterRestApiAuthn
         }
 
         if(enforceAuthN) {
-            super.doThisSubclass(request, response);
+            return super.doThisSubclass(request, response);
+        } else {
+            return false;
         }
-
-        return false;
     }
 
 }
