@@ -47,7 +47,7 @@
 
   <property name="dist.dir" location="dist" />
   <property name="lib.dir" location="lib" />
-  <property name="license.dir" location="license" />
+  <property name="license.dir" location="resources/doc/license" />
   
   <property name="resrc.dir" location="resources" />
   <property name="inc.dir" location="${resrc.dir}/inc" />
@@ -452,6 +452,7 @@
     <delete dir="${util.build.dir}" />
     <delete dir="${inttest.build.dir}" />
     <delete dir="${dist.dir}" />
+    <delete file="${stubwrappers.build.dir}/uptodate.txt" />
   </target>
 
   <target name="compile-client" depends="init, compile-common, compile-server, stubwrappers" description="">
@@ -783,11 +784,11 @@
     </copy>
 
     <copy todir="${fedora.home.build.dir}/client/bin">
-      <fileset dir="${repo.resrc.dir}/scripts/bat/client" />
-      <fileset dir="${repo.resrc.dir}/scripts/sh/client" />
+      <fileset dir="${client.resrc.dir}/scripts/bat/client" />
+      <fileset dir="${client.resrc.dir}/scripts/sh/client" />
     </copy>
 
-    <replace dir="${fedora.home.build.dir}/client/bin" token="fedora-client.jar" value="fedora-client-${fedora.version}.jar" />
+    <replace dir="${fedora.home.build.dir}/client/bin" token="${fedora-client-jar}" value="fedora-client-${fedora.version}.jar" />
 
     <chmod perm="ugo+x" type="file">
       <fileset dir="${fedora.home.build.dir}/client/bin">
@@ -797,10 +798,10 @@
 
     <!-- SOAP demo client (simple java reference client) -->
     <copy todir="${fedora.home.build.dir}/client/demo/soapclient">
-      <fileset dir="${demo.src.dir}/demo-soapclient" />
+      <fileset dir="${client.resrc.dir}/demo/demo-soapclient" />
     </copy>
 
-    <replace dir="${fedora.home.build.dir}/client/demo/soapclient" token="fedora-client.jar" value="fedora-client-${fedora.version}.jar" />
+    <replace dir="${fedora.home.build.dir}/client/demo/soapclient" token="${fedora-client-jar}" value="fedora-client-${fedora.version}.jar" />
 
     <replace dir="${fedora.home.build.dir}/client/bin" token="fedora-client.jar" value="fedora-client-${fedora.version}.jar" />
 

@@ -107,9 +107,6 @@
   </scm>
 
   <build>
-    <directory>target</directory>
-    <outputDirectory>target/classes</outputDirectory>
-    <testOutputDirectory>target/test-classes</testOutputDirectory>
 
     <resources>
       <resource>
@@ -181,8 +178,67 @@
         </executions>        
       </plugin>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
+
+  <profiles>
+
+    <profile>
+      <id>fedora-home</id>
+
+      <activation>
+        <property>
+          <name>fedora</name>
+          <value>home</value>
+        </property>
+      </activation>
+
+      <build>
+
+        <resources>
+          <resource>
+            <directory>resources/assemblies</directory>
+            <filtering>true</filtering>
+          </resource>
+        </resources>
+ 
+        <plugins>
+
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>2.2-beta-4</version>
+
+            <configuration>
+              <!-- Consider using default name/assembly-id after ANT is gone -->
+              <finalName>fedorahome</finalName>
+              <appendAssemblyId>false</appendAssemblyId>
+              <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
+              <filters>
+                <filter>resources/assemblies/filter.properties</filter>
+              </filters>
+              <descriptors>
+                <descriptor>resources/assemblies/fedora-home-root.xml</descriptor>
+              </descriptors>
+            </configuration>
+
+          </plugin>
+
+        </plugins>
+      </build>
+
+    </profile>
+
+  </profiles>
+
 
   <dependencies>
 

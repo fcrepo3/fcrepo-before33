@@ -1,0 +1,310 @@
+<assembly>
+  <id>fedora-home-root</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+
+  <fileSets>
+    <!-- Top-level entries -->
+    <fileSet>
+      <directory>resources/doc/license</directory>
+      <outputDirectory>/docs/license</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>resources/doc/userdocs</directory>
+      <outputDirectory>/docs/userdocs</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>target/site/apidocs</directory>
+      <outputDirectory>/docs/javadocs</outputDirectory>
+    </fileSet>
+
+    <fileSet>
+      <directory>resources/inc</directory>
+      <outputDirectory>/server</outputDirectory>
+      <includes>
+        <include>truststore</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
+      <directory>resources/wsdl</directory>
+      <outputDirectory>/server/management</outputDirectory>
+      <includes>
+        <include>Fedora-API-M.wsdl</include>
+        <include>Fedora-API-M-LITE.wsdl</include>
+      </includes>
+    </fileSet>  
+    <fileSet>
+      <directory>resources/wsdl</directory>
+      <outputDirectory>/server/access</outputDirectory>
+      <includes>
+        <include>Fedora-API-A.wsdl</include>
+        <include>Fedora-API-A-LITE.wsdl</include>
+      </includes>
+    </fileSet>  
+
+    <fileSet>
+      <directory>resources/wsdl</directory>
+      <outputDirectory>/server/xsd</outputDirectory>
+      <includes>
+        <include>*.xsd</include>
+      </includes>
+    </fileSet>  
+
+
+    <!-- Server entries -->
+    <fileSet>
+      <directory>server/src/main/resources/xsl/access</directory>
+      <outputDirectory>/server/access</outputDirectory>
+      <includes>
+        <include>*.xslt</include>
+      </includes>
+    </fileSet>  
+
+    <fileSet>
+      <directory>server/src/main/resources/scripts/bat/server</directory>
+      <outputDirectory>/server/bin</outputDirectory>
+    </fileSet>  
+    <fileSet>
+      <directory>server/src/main/resources/scripts/sh/server</directory>
+      <outputDirectory>/server/bin</outputDirectory>
+      <fileMode>0755</fileMode>
+    </fileSet>  
+
+    <fileSet>
+      <directory>server/src/main/resources/fcfg/server</directory>
+      <outputDirectory>/server/config</outputDirectory>
+      <includes>
+        <include>fedora-users.xml</include>
+      </includes>
+    </fileSet>  
+
+    <fileSet>
+      <directory>server/src/main/resources/xsl/management</directory>
+      <outputDirectory>/server/management</outputDirectory>
+      <includes>
+        <include>*.xslt</include>
+      </includes>
+    </fileSet>  
+
+    <fileSet>
+      <directory>server/src/main/resources/schematron</directory>
+      <outputDirectory>/server/schematron</outputDirectory>
+      <includes>
+        <include>*.xml</include>
+        <include>*.xslt</include>
+      </includes>
+    </fileSet>  
+
+    <fileSet>
+      <directory>server/src/main/resources/xsd</directory>
+      <outputDirectory>/server/xsd</outputDirectory>
+      <includes>
+        <include>*.xsd</include>
+        <include>*.dtd</include>
+      </includes>
+    </fileSet>  
+
+    <fileSet>
+      <directory>server/src/main/resources/xacml-policies</directory>
+      <outputDirectory>/server/fedora-internal-use</outputDirectory>
+      <includes>
+        <include>readme.txt</include>
+        <include>readme-design-choices.txt</include>
+      </includes>
+    </fileSet>  
+
+    <fileSet>
+      <directory>server/src/main/resources/xacml-policies/default/default-repository-policies-approximating-2.0</directory>
+      <outputDirectory>/server/fedora-internal-use/fedora-internal-use-repository-policies-approximating-2.0</outputDirectory>
+    </fileSet>  
+
+    <fileSet>
+      <directory>server/target</directory>
+      <outputDirectory>/server/fedora-internal-use</outputDirectory>
+      <includes>
+        <include>vocabulary.txt</include>
+      </includes>
+    </fileSet>  
+
+    <fileSet>
+      <directory>server/src/main/resources/xsl/security</directory>
+      <outputDirectory>/server/fedora-internal-use</outputDirectory>
+      <includes>
+        <include>build-backend-policy.xsl</include>
+      </includes>
+    </fileSet>  
+
+    <fileSet>
+      <directory>server/src/main/resources/fcfg/server</directory>
+      <outputDirectory>/server/fedora-internal-use/config</outputDirectory>
+      <includes>
+        <include>fedora-base.fcfg</include>
+        <include>fedora-*.properties</include>
+        <include>logging.properties</include>
+        <include>log4j.properties</include>
+        <include>*.xml</include>
+      </includes>
+      <excludes>
+        <exclude>fedora-users.xml</exclude>
+      </excludes>
+    </fileSet> 
+ 
+    <fileSet>
+      <directory>server/src/main/resources/fcfg/server</directory>
+      <outputDirectory>/server/config</outputDirectory>
+      <includes>
+        <include>log4j.properties</include>
+        <include>akubra-llstore.xml</include>
+      </includes>
+    </fileSet>  
+
+    <fileSet>
+      <directory>server/src/main/resources/demo/demo-objects/foxml</directory>
+      <outputDirectory>/client/demo/foxml</outputDirectory>
+    </fileSet>  
+    <fileSet>
+      <directory>server/target/client/demo</directory>
+      <outputDirectory>/client/demo</outputDirectory>
+    </fileSet>  
+
+    <fileSet>
+      <directory>client/src/main/resources/demo/demo-soapclient</directory>
+      <outputDirectory>/client/demo/soapclient</outputDirectory>
+      <filtered>true</filtered>
+    </fileSet>  
+
+    <!-- Do these files really need to be copied to client/lib? --> 
+    <fileSet>
+      <directory>server/src/main/resources/xsl/batchtool</directory>
+      <outputDirectory>/client/lib</outputDirectory>
+      <includes>
+        <include>mets-merge.xsl</include>
+        <include>foxml-merge.xsl</include>
+      </includes>
+    </fileSet>  
+
+    <fileSet>
+      <directory>server/src/main/resources/demo/demo-objects/batch-demo</directory>
+      <outputDirectory>/client/demo/batch-demo</outputDirectory>
+    </fileSet>  
+
+    <fileSet>
+      <directory>server/src/main/resources/xml/batch-demo/object-specifics</directory>
+      <outputDirectory>/client/demo/batch-demo/object-specifics</outputDirectory>
+    </fileSet>  
+
+
+ 
+    <!-- Client entries -->
+    <fileSet>
+      <directory>resources/inc</directory>
+      <outputDirectory>/client</outputDirectory>
+      <includes>
+        <include>truststore</include>
+      </includes>
+    </fileSet>  
+
+    <fileSet>
+      <directory>client/src/main/resources/scripts/bat/client</directory>
+      <outputDirectory>/client/bin</outputDirectory>
+      <filtered>true</filtered>
+    </fileSet>  
+    <fileSet>
+      <directory>client/src/main/resources/scripts/sh/client</directory>
+      <outputDirectory>/client/bin</outputDirectory>
+      <fileMode>0755</fileMode>
+      <filtered>true</filtered>
+    </fileSet>  
+
+ 
+
+
+    <!-- Common entries -->
+    <fileSet>
+      <directory>common/target/generated-sources/axistools/wsdl2java/fedora/server/management</directory>
+      <outputDirectory>/server/fedora-internal-use/deploy</outputDirectory>
+      <includes>
+        <include>deploy.wsdd</include>
+        <include>undeploy.wsdd</include>
+      </includes>
+    </fileSet>
+
+  </fileSets>
+
+
+  <!-- A few files that needed to be renamed -->
+  <files>
+
+    <file>
+      <source>server/src/main/resources/fcfg/server/beSecurity-secure-apim.xml</source>
+      <outputDirectory>/server/config</outputDirectory>
+      <destName>beSecurity.xml</destName>
+    </file>
+
+    <file>
+      <source>common/target/generated-sources/axistools/wsdl2java/fedora/server/access/deploy.wsdd</source>
+      <outputDirectory>/server/fedora-internal-use/deploy</outputDirectory>
+      <destName>deployAPI-A.wsdd</destName>
+    </file>
+    <file>
+      <source>common/target/generated-sources/axistools/wsdl2java/fedora/server/access/undeploy.wsdd</source>
+      <outputDirectory>/server/fedora-internal-use/deploy</outputDirectory>
+      <destName>undeployAPI-A.wsdd</destName>
+    </file>
+
+    <file>
+      <source>server/src/main/resources/xml/client-log4j.xml</source>
+      <outputDirectory>/client</outputDirectory>
+      <destName>log4j.xml</destName>
+    </file>  
+
+  </files>
+
+
+  <moduleSets>
+    <moduleSet>
+      <includes>
+        <include>org.duraspace.fedora:client</include>
+      </includes>
+      <binaries>
+        <dependencySets>
+          <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <useProjectAttachments>false</useProjectAttachments>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+          </dependencySet>
+        </dependencySets>
+        <includeDependencies>false</includeDependencies>
+        <outputDirectory>/client/lib</outputDirectory>
+        <unpack>false</unpack>
+      </binaries>
+    </moduleSet>
+
+    <moduleSet>
+      <includes>
+        <include>org.duraspace.fedora:client</include>
+      </includes>
+      <binaries>
+        <attachmentClassifier>fedora-messaging</attachmentClassifier>
+        <includeDependencies>false</includeDependencies>
+        <outputDirectory>/client</outputDirectory>
+        <unpack>false</unpack>
+      </binaries>
+    </moduleSet>
+    <moduleSet>
+      <includes>
+        <include>org.duraspace.fedora:client</include>
+      </includes>
+      <binaries>
+        <attachmentClassifier>fedora</attachmentClassifier>
+        <includeDependencies>false</includeDependencies>
+        <outputDirectory>/client</outputDirectory>
+        <unpack>false</unpack>
+      </binaries>
+    </moduleSet>
+  </moduleSets>
+
+
+</assembly>
