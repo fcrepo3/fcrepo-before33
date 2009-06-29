@@ -13,7 +13,8 @@ import org.junit.runners.Suite;
         fedora.test.api.TestAPIAConfigA.class,
         fedora.test.api.TestAPIALiteConfigA.class,
         fedora.test.api.TestHTTPStatusCodesConfigQ.class,
-        fedora.test.api.TestManyDisseminations.class})
+        fedora.test.api.TestManyDisseminations.class,
+        fedora.test.api.TestRESTAPIConfigQ.class})
 public class AllSystemTestsConfigQ {
 
     // Supports legacy tests runners

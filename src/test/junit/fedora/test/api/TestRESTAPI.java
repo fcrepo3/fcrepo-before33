@@ -81,7 +81,7 @@ public class TestRESTAPI
 
     private final PID pid = PID.getInstance("demo:REST");
 
-    private String url;
+    protected String url;
 
     private final String datetime =
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
@@ -766,11 +766,11 @@ public class TestRESTAPI
      * @return HttpResponse
      * @throws Exception
      */
-    private HttpResponse get(boolean authenticate) throws Exception {
+    protected HttpResponse get(boolean authenticate) throws Exception {
         return getOrDelete("GET", authenticate);
     }
 
-    private HttpResponse delete(boolean authenticate) throws Exception {
+    protected HttpResponse delete(boolean authenticate) throws Exception {
         return getOrDelete("DELETE", authenticate);
     }
 
@@ -783,26 +783,26 @@ public class TestRESTAPI
      * @return
      * @throws Exception
      */
-    private HttpResponse put(boolean authenticate) throws Exception {
+    protected HttpResponse put(boolean authenticate) throws Exception {
         return putOrPost("PUT", null, authenticate);
     }
 
-    private HttpResponse put(String requestContent, boolean authenticate)
+    protected HttpResponse put(String requestContent, boolean authenticate)
             throws Exception {
         return putOrPost("PUT", requestContent, authenticate);
     }
 
-    private HttpResponse post(String requestContent, boolean authenticate)
+    protected HttpResponse post(String requestContent, boolean authenticate)
             throws Exception {
         return putOrPost("POST", requestContent, authenticate);
     }
 
-    private HttpResponse put(File requestContent, boolean authenticate)
+    protected HttpResponse put(File requestContent, boolean authenticate)
             throws Exception {
         return putOrPost("PUT", requestContent, authenticate);
     }
 
-    private HttpResponse post(File requestContent, boolean authenticate)
+    protected HttpResponse post(File requestContent, boolean authenticate)
             throws Exception {
         return putOrPost("POST", requestContent, authenticate);
     }
