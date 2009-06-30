@@ -103,6 +103,26 @@
 
         </plugins>
       </build>
+
+      <dependencies>
+
+        <dependency>
+          <groupId>org.duraspace.fedora</groupId>
+          <artifactId>server</artifactId>
+          <classifier>utilities-main</classifier>
+          <version>1.0.0</version>
+        </dependency> 
+
+        <dependency>
+          <groupId>org.duraspace.fedora</groupId>
+          <artifactId>server</artifactId>
+          <classifier>webapp</classifier>
+          <type>war</type>
+          <version>1.0.0</version>
+        </dependency> 
+
+      </dependencies>
+
     </profile>
   </profiles>
 
@@ -117,21 +137,6 @@
     </dependency> 
 
     <dependency>
-      <groupId>org.duraspace.fedora</groupId>
-      <artifactId>server</artifactId>
-      <classifier>webapp</classifier>
-      <type>war</type>
-      <version>1.0.0</version>
-    </dependency> 
-
-    <dependency>
-      <groupId>org.duraspace.fedora</groupId>
-      <artifactId>server</artifactId>
-      <classifier>utilities-main</classifier>
-      <version>1.0.0</version>
-    </dependency> 
-
-   <dependency>
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>democontent</artifactId>
       <type>war</type>
