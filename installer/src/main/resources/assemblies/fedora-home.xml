@@ -274,6 +274,8 @@
                 catch properly defined (i.e. maven-central) dependencies.
          -->
         <include>duraspace:*</include>
+        <include>org.apache.axis:*</include>
+
       </includes>
       <excludes>
         <exclude>org.duraspace.fedora:client:jar:fedora*</exclude>

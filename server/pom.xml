@@ -93,7 +93,6 @@
         </executions>  
       </plugin>
 
-
       <!-- Some of the server test classes are needed by /integrationtest -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
