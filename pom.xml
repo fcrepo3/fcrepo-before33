@@ -66,6 +66,7 @@
     <module>integrationtest</module>
     <module>localservices</module>
     <module>democontent</module>
+    <module>installer</module>
   </modules>
 
   <!-- All of these flags can be overwritten with -D cli options -->
@@ -105,6 +106,7 @@
       <name>Apache Incubating Repository</name>
       <url>http://people.apache.org/repo/m2-incubating-repository/</url>
     </repository>
+
   </repositories>
 
   <scm>
@@ -112,9 +114,6 @@
   </scm>
 
   <build>
-    <directory>target</directory>
-    <outputDirectory>target/classes</outputDirectory>
-    <testOutputDirectory>target/test-classes</testOutputDirectory>
 
     <resources>
       <resource>
@@ -135,7 +134,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
         <version>2.3</version>
-     </plugin>
+      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -186,8 +185,18 @@
         </executions>        
       </plugin>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
+
 
   <dependencies>
 
@@ -197,80 +206,88 @@
       <artifactId>junit</artifactId>
       <version>4.5</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-all</artifactId>
-      <version>5.1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>asm</groupId>
-      <artifactId>asm</artifactId>
-      <version>3.1</version>
-    </dependency>
-    <dependency> <!-- Library Update Needed -->
-      <groupId>avalon-framework</groupId>
-      <artifactId>avalon-framework-api</artifactId>
-      <version>4.2.0</version>
-    </dependency>
-    <dependency> <!-- Library Update Needed -->
-      <groupId>avalon-framework</groupId>
-      <artifactId>avalon-framework-impl</artifactId>
-      <version>4.2.0</version>
-    </dependency>
-    <dependency> <!-- Library Update Needed -->
-      <groupId>org.apache.ws.commons.axiom</groupId>
-      <artifactId>axiom-api</artifactId>
-      <version>1.2.5</version>
-    </dependency>
-    <dependency> <!-- Library Update Needed -->
-      <groupId>org.apache.ws.commons.axiom</groupId>
-      <artifactId>axiom-impl</artifactId>
-      <version>1.2.5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.axis</groupId>
-      <artifactId>axis</artifactId>
-      <version>1.4</version>
-    </dependency>	
-    <dependency>
-      <groupId>org.apache.axis</groupId>
-      <artifactId>axis-ant</artifactId>
-      <version>1.4</version>
-    </dependency>
-	
-     <!-- Java.net dependencies -->
-    <dependency>
-      <groupId>javax.activation</groupId>
-      <artifactId>activation</artifactId>
-      <version>1.1.1</version>
-    </dependency>
 
-     <!-- Apache Incubating dependencies -->
-	 <!-- Causes test failures
-    <dependency>
-      <groupId>org.apache.abdera</groupId>
-      <artifactId>abdera-core</artifactId>
-      <version>0.4.0-incubating</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.abdera</groupId>
-      <artifactId>abdera-extensions-main</artifactId>
-      <version>0.4.0-incubating</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.abdera</groupId>
-      <artifactId>abdera-i18n</artifactId>
-      <version>0.4.0-incubating</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.abdera</groupId>
-      <artifactId>abdera-parser</artifactId>
-      <version>0.4.0-incubating</version>
-    </dependency>
-    -->
-	
+
+    <!-- 
+      Dependencies that should work, but cause config[A/B/Q] failures
+
+     <dependency>
+       <groupId>org.apache.activemq</groupId>
+       <artifactId>activemq-all</artifactId>
+       <version>5.1.0</version>
+     </dependency>
+     <dependency>
+       <groupId>asm</groupId>
+       <artifactId>asm</artifactId>
+       <version>3.1</version>
+     </dependency>
+     <dependency>  Library Update Needed 
+       <groupId>avalon-framework</groupId>
+       <artifactId>avalon-framework-api</artifactId>
+       <version>4.2.0</version>
+     </dependency>
+     <dependency>  Library Update Needed 
+       <groupId>avalon-framework</groupId>
+       <artifactId>avalon-framework-impl</artifactId>
+       <version>4.2.0</version>
+     </dependency>
+     <dependency>  Library Update Needed 
+       <groupId>org.apache.ws.commons.axiom</groupId>
+       <artifactId>axiom-api</artifactId>
+       <version>1.2.5</version>
+     </dependency>
+     <dependency>  Library Update Needed 
+       <groupId>org.apache.ws.commons.axiom</groupId>
+       <artifactId>axiom-impl</artifactId>
+       <version>1.2.5</version>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.axis</groupId>
+       <artifactId>axis</artifactId>
+       <version>1.4</version>
+     </dependency>     
+     <dependency>
+       <groupId>org.apache.axis</groupId>
+       <artifactId>axis-ant</artifactId>
+       <version>1.4</version>
+     </dependency>
+       
+       Java.net dependencies 
+     <dependency>
+       <groupId>javax.activation</groupId>
+       <artifactId>activation</artifactId>
+       <version>1.1.1</version>
+     </dependency>
+-->
+
+    <!-- Apache Incubating dependencies -->
+        <!-- Causes test failures
+     <dependency>
+       <groupId>org.apache.abdera</groupId>
+       <artifactId>abdera-core</artifactId>
+       <version>0.4.0-incubating</version>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.abdera</groupId>
+       <artifactId>abdera-extensions-main</artifactId>
+       <version>0.4.0-incubating</version>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.abdera</groupId>
+       <artifactId>abdera-i18n</artifactId>
+       <version>0.4.0-incubating</version>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.abdera</groupId>
+       <artifactId>abdera-parser</artifactId>
+       <version>0.4.0-incubating</version>
+     </dependency>
+     -->
+
+
+
+
     <!-- Local dependencies that need to be converted -->
-   
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>abdera-core-0.4.0-incubating</artifactId>
@@ -290,7 +307,17 @@
       <groupId>duraspace</groupId>
       <artifactId>abdera-parser-0.4.0-incubating</artifactId>
       <version>1.0</version>
-    </dependency>     
+    </dependency>
+   <dependency>
+      <groupId>duraspace</groupId>
+      <artifactId>activation-1.1.1</artifactId>
+      <version>1.0</version>
+    </dependency>
+   <dependency>
+      <groupId>duraspace</groupId>
+      <artifactId>activemq-all-5.1.0</artifactId>
+      <version>1.0</version>
+    </dependency>
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>akubra-core-0.1</artifactId>
@@ -310,7 +337,37 @@
       <groupId>duraspace</groupId>
       <artifactId>akubra-mem-0.1</artifactId>
       <version>1.0</version>
-    </dependency>    
+    </dependency>
+   <dependency>
+      <groupId>duraspace</groupId>
+      <artifactId>asm-3.1</artifactId>
+      <version>1.0</version>
+    </dependency>
+   <dependency>
+      <groupId>duraspace</groupId>
+      <artifactId>avalon-framework-4.2.0</artifactId>
+      <version>1.0</version>
+    </dependency>
+   <dependency>
+      <groupId>duraspace</groupId>
+      <artifactId>axiom-api-1.2.5</artifactId>
+      <version>1.0</version>
+    </dependency>
+   <dependency>
+      <groupId>duraspace</groupId>
+      <artifactId>axiom-impl-1.2.5</artifactId>
+      <version>1.0</version>
+    </dependency>
+   <dependency>
+      <groupId>duraspace</groupId>
+      <artifactId>axis-ant</artifactId>
+      <version>1.0</version>
+    </dependency>
+   <dependency>
+      <groupId>duraspace</groupId>
+      <artifactId>axis</artifactId>
+      <version>1.0</version>
+    </dependency>
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>batik-all</artifactId>

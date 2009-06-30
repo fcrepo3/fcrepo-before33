@@ -47,7 +47,7 @@
 
   <property name="dist.dir" location="dist" />
   <property name="lib.dir" location="lib" />
-  <property name="license.dir" location="license" />
+  <property name="license.dir" location="resources/doc/license" />
   
   <property name="resrc.dir" location="resources" />
   <property name="inc.dir" location="${resrc.dir}/inc" />
@@ -95,7 +95,7 @@
   <property name="xsd.src.dir" location="${repo.resrc.dir}/xsd" />
   <property name="xsl.src.dir" location="${repo.resrc.dir}/xsl" />
   <property name="war.src.dir" location="${repo.resrc.dir}/war" />
-  <property name="war-fedora.src.dir" location="${war.src.dir}/fedora" />
+  <property name="war-fedora.src.dir" location="${repo.src.dir}/main/webapp" />
   <!-- 
   the following properties are mainly for junit, have to be set globally though due to 
   the application server context replace tasks
@@ -452,6 +452,7 @@
     <delete dir="${util.build.dir}" />
     <delete dir="${inttest.build.dir}" />
     <delete dir="${dist.dir}" />
+    <delete file="${stubwrappers.build.dir}/uptodate.txt" />
   </target>
 
   <target name="compile-client" depends="init, compile-common, compile-server, stubwrappers" description="">
@@ -486,7 +487,7 @@
     <copy todir="${junit.build.dir}" file="${junit.resrc.dir}/log4j.xml" />
 
     <copy todir="${junit.build.dir}">
-      <fileset dir="${repo.java.dir}">
+      <fileset dir="${repo.resrc.dir}/utilities/server">
         <include name="**/webxml-mapping.xml" />
       </fileset>
     </copy>
@@ -713,6 +714,9 @@
 
     <copy todir="${fedora.war.build.dir}/WEB-INF/classes">
       <fileset dir="${server.build.dir}/classes" />
+      <fileset dir="${repo.resrc.dir}/utilities/server" >
+        <include name="**/fedora-system*xml" />
+      </fileset>
     </copy>
 
     <copy todir="${fedora.war.build.dir}/WEB-INF/lib">
@@ -783,11 +787,11 @@
     </copy>
 
     <copy todir="${fedora.home.build.dir}/client/bin">
-      <fileset dir="${repo.resrc.dir}/scripts/bat/client" />
-      <fileset dir="${repo.resrc.dir}/scripts/sh/client" />
+      <fileset dir="${client.resrc.dir}/scripts/bat/client" />
+      <fileset dir="${client.resrc.dir}/scripts/sh/client" />
     </copy>
 
-    <replace dir="${fedora.home.build.dir}/client/bin" token="fedora-client.jar" value="fedora-client-${fedora.version}.jar" />
+    <replace dir="${fedora.home.build.dir}/client/bin" token="${fedora-client-jar}" value="fedora-client-${fedora.version}.jar" />
 
     <chmod perm="ugo+x" type="file">
       <fileset dir="${fedora.home.build.dir}/client/bin">
@@ -797,10 +801,10 @@
 
     <!-- SOAP demo client (simple java reference client) -->
     <copy todir="${fedora.home.build.dir}/client/demo/soapclient">
-      <fileset dir="${demo.src.dir}/demo-soapclient" />
+      <fileset dir="${client.resrc.dir}/demo/demo-soapclient" />
     </copy>
 
-    <replace dir="${fedora.home.build.dir}/client/demo/soapclient" token="fedora-client.jar" value="fedora-client-${fedora.version}.jar" />
+    <replace dir="${fedora.home.build.dir}/client/demo/soapclient" token="${fedora-client-jar}" value="fedora-client-${fedora.version}.jar" />
 
     <replace dir="${fedora.home.build.dir}/client/bin" token="fedora-client.jar" value="fedora-client-${fedora.version}.jar" />
 
@@ -997,9 +1001,9 @@
   </target>
 
   <target name="compile-installer" depends="">
-    <md-compile srcdir="${repo.java.dir}" destdir="${install.build.dir}" includes="fedora/utilities/install/**" />
+    <md-compile srcdir="${repo.java.dir}" destdir="${install.build.dir}" includes="fedora/utilities/**,fedora/server/config/**" />
     <copy todir="${install.build.dir}">
-      <fileset dir="${repo.java.dir}">
+      <fileset dir="${repo.resrc.dir}/utilities/server">
         <include name="**/fedorausers-mapping.xml" />
         <include name="**/webxml-mapping.xml" />
       </fileset>

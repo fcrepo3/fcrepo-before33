@@ -1,0 +1,150 @@
+<assembly>
+  <id>fedora-installer</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+
+  <fileSets>
+    <!-- Server entries -->
+    <fileSet>
+      <directory>../server/src/main/resources/properties</directory>
+      <outputDirectory>/resources</outputDirectory>
+      <includes>
+        <include>install.properties</include>
+      </includes>
+    </fileSet>  
+
+    <fileSet>
+      <directory>../server/src/main/resources/dbspec/server/fedora/server/storage/resources</directory>
+      <outputDirectory>/resources</outputDirectory>
+      <includes>
+        <include>DefaultDOManager.dbspec</include>
+      </includes>
+    </fileSet>  
+
+    <!-- Top-level entries -->
+    <fileSet>
+      <directory>../lib</directory>
+      <outputDirectory>/resources</outputDirectory>
+      <includes>
+        <include>mkjdbc.jar</include>
+        <include>derby.jar</include>
+        <include>derbyclient.jar</include>
+        <include>mysql-connector-java-5.1.6-bin.jar</include>
+        <include>postgresql-8.3-603.jdbc3.jar</include>
+      </includes>
+    </fileSet>  
+
+    <fileSet>
+      <directory>../resources/inc</directory>
+      <outputDirectory>/resources</outputDirectory>
+      <includes>
+        <include>apache-tomcat-5.5.26.zip</include>
+        <include>keystore</include>
+      </includes>
+    </fileSet>  
+
+
+  </fileSets>
+
+  <dependencySets>
+
+    <dependencySet>
+      <includes>
+        <include>org.duraspace.fedora:fop:war</include>
+        <include>org.duraspace.fedora:saxon:war</include>
+        <include>org.duraspace.fedora:imagemanip:war</include>
+      </includes>
+      <unpack>false</unpack>
+      <outputDirectory>/resources</outputDirectory>
+      <!-- 
+        Note: Output file is hard-coded here because it is also in java files.
+              May want to consider refactoring both.
+        -->
+      <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+    </dependencySet>
+
+    <dependencySet>
+      <includes>
+        <include>org.duraspace.fedora:democontent:war</include>
+      </includes>
+      <unpack>false</unpack>
+      <!-- 
+        Note: Output file is hard-coded here because it is also in java files.
+              May want to consider refactoring both.
+        -->
+      <outputDirectory>/resources</outputDirectory>
+      <outputFileNameMapping>fedora-demo.war</outputFileNameMapping>
+    </dependencySet>
+
+   <dependencySet>
+      <includes>
+        <include>org.duraspace.fedora:server:war:webapp:*</include>
+      </includes>
+      <unpack>false</unpack>
+      <!-- 
+        Note: Output file is hard-coded here because it is also in java files.
+              May want to consider refactoring both.
+        -->
+      <outputDirectory>/resources</outputDirectory>
+      <outputFileNameMapping>fedora.war</outputFileNameMapping>
+    </dependencySet>
+
+   <dependencySet>
+      <includes>
+        <include>org.duraspace.fedora:installer:zip*</include>
+      </includes>
+      <unpack>false</unpack>
+      <outputDirectory>/resources</outputDirectory>
+      <!-- 
+        Note: Output file is hard-coded here because it is also in java files.
+              May want to consider refactoring both.
+        -->
+      <useProjectAttachments>true</useProjectAttachments>
+      <outputFileNameMapping>fedorahome.zip</outputFileNameMapping>
+    </dependencySet>
+
+    <dependencySet>
+      <includes>
+        <include>org.duraspace.fedora:common</include>
+
+        <!-- 
+          Note: The include statement below will need to be expanded to
+                catch properly defined (i.e. maven-central) dependencies.
+                See installer/pom.xml for exact dependency list.
+         -->
+        <include>duraspace:*</include>
+
+      </includes> 
+      <excludes>
+        <exclude>duraspace:one-jar-boot-0.96</exclude>
+      </excludes>
+      <unpack>false</unpack>
+      <outputDirectory>/lib</outputDirectory>
+    </dependencySet>
+
+    <dependencySet>
+      <includes>
+        <include>org.duraspace.fedora:server:jar:utilities-main:*</include>
+      </includes>
+      <unpack>false</unpack>
+      <outputDirectory>/main</outputDirectory>
+      <!-- 
+        Note: Output file is hard-coded here because it is also in java files.
+              May want to consider refactoring both.
+        -->
+      <outputFileNameMapping>main.jar</outputFileNameMapping>
+    </dependencySet>
+
+    <dependencySet>
+      <includes>
+        <include>duraspace:one-jar-boot-0.96</include>
+      </includes>
+      <unpack>true</unpack>
+      <outputDirectory>/</outputDirectory>
+    </dependencySet>
+
+
+  </dependencySets>
+</assembly>

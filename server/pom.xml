@@ -25,17 +25,22 @@
     <!-- This 'resource' directory should be migrated to default location -->
     <resources>
       <resource>
-        <directory>${basedir}/../resources/server</directory>
+        <directory>../resources/server</directory>
         <filtering>true</filtering>
       </resource>
-       <resource>
+      <resource>
         <directory>src/main/resources/dbspec/server</directory>
-        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>src/main/resources/utilities/server</directory>
       </resource>
     </resources>
 
 
     <plugins>
+
+
+
 
       <!-- ** This plugin needs to be removed when ANT is gone ** -->
       <plugin>
@@ -88,76 +93,6 @@
         </executions>  
       </plugin>
 
-<!-- 
-      ** This plugin should be turned on when ANT is gone **
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.1.1</version>
-        <executions>
-
-          <execution>
-            <id>demo-convert-mets</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <configuration>
-              <mainClass>fedora.server.storage.translation.ConvertObjectSerialization</mainClass>
-              <arguments>
-                <argument>${demo.src.dir}/demo-objects/foxml</argument>
-                <argument>${fedora.home.build.dir}/client/demo/mets</argument>
-                <argument>fedora.server.storage.translation.FOXML1_1DODeserializer</argument>
-                <argument>fedora.server.storage.translation.METSFedoraExt1_1DOSerializer</argument>
-                <argument>true</argument>
-                <argument>xml</argument>
-                <argument>xml</argument>
-              </arguments>
-            </configuration>
-          </execution>
-           <execution>
-            <id>demo-convert-atom</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <configuration>
-              <mainClass>fedora.server.storage.translation.ConvertObjectSerialization</mainClass>
-              <arguments>
-                <argument>${demo.src.dir}/demo-objects/foxml</argument>
-                <argument>${fedora.home.build.dir}/client/demo/atom</argument>
-                <argument>fedora.server.storage.translation.FOXML1_1DODeserializer</argument>
-                <argument>fedora.server.storage.translation.Atom1_1DOSerializer</argument>
-                <argument>true</argument>
-                <argument>xml</argument>
-                <argument>xml</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>demo-convert-atomzip</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <configuration>
-              <mainClass>fedora.server.storage.translation.ConvertObjectSerialization</mainClass>
-              <arguments>
-                <argument>${demo.src.dir}/demo-objects/foxml</argument>
-                <argument>${fedora.home.build.dir}/client/demo/atom-zip</argument>
-                <argument>fedora.server.storage.translation.FOXML1_1DODeserializer</argument>
-                <argument>fedora.server.storage.translation.AtomZip1_1DOSerializer</argument>
-                <argument>false</argument>
-                <argument>xml</argument>
-                <argument>zip</argument>
-              </arguments>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
--->
-
-
       <!-- Some of the server test classes are needed by /integrationtest -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -178,6 +113,350 @@
     </plugins>
 
   </build>
+
+  <profiles>
+
+    <profile>
+      <id>prepare-jdbc3</id>
+      <activation>
+        <jdk>1.5</jdk>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>ant-prepare-jdbc3</id>
+                <phase>process-sources</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+
+                <configuration>
+                  <tasks>
+                    <echo message="Commenting out jdbc4 additional methods." />
+                    <replace dir="src/main/java" token="/* JDBC_4_ANT_TOKEN_BEGIN */" value="/* JDBC_4_ANT_TOKEN_BEGIN -" />
+                    <replace dir="src/main/java" token="/* JDBC_4_ANT_TOKEN_END */" value="- JDBC_4_ANT_TOKEN_END */" />
+                    <replace dir="src/test/java" token="/* JDBC_4_ANT_TOKEN_BEGIN */" value="/* JDBC_4_ANT_TOKEN_BEGIN -" />
+                    <replace dir="src/test/java" token="/* JDBC_4_ANT_TOKEN_END */" value="- JDBC_4_ANT_TOKEN_END */" />
+                  </tasks>
+                </configuration>
+
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+
+    <profile>
+      <id>prepare-jdbc4</id>
+      <activation>
+        <jdk>!1.5</jdk>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>ant-prepare-jdbc4</id>
+                <phase>process-sources</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+
+                <configuration>
+                  <tasks>
+                    <echo message="Uncommenting jdbc4 additional methods." />
+                    <replace dir="src/main/java" token="/* JDBC_4_ANT_TOKEN_BEGIN -" value="/* JDBC_4_ANT_TOKEN_BEGIN */" />
+                    <replace dir="src/main/java" token="- JDBC_4_ANT_TOKEN_END */" value="/* JDBC_4_ANT_TOKEN_END */" />
+                    <replace dir="src/test/java" token="/* JDBC_4_ANT_TOKEN_BEGIN -" value="/* JDBC_4_ANT_TOKEN_BEGIN */" />
+                    <replace dir="src/test/java" token="- JDBC_4_ANT_TOKEN_END */" value="/* JDBC_4_ANT_TOKEN_END */" />
+                  </tasks>
+                </configuration>
+
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+
+   <profile>
+      <id>fedora-installer</id>
+
+      <activation>
+        <property>
+          <name>fedora</name>
+          <value>installer</value>
+        </property>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.1.1</version>
+            <executions>
+
+              <execution>
+                <id>gen-vocab</id>
+                <phase>process-classes</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <configuration>
+                  <mainClass>fedora.common.policy.Release2_1Namespace</mainClass>
+                  <arguments>
+                    <argument>${project.build.directory}/vocabulary.txt</argument>
+                  </arguments>
+                  <!-- 
+                      Note: this execution has the following dependencies:
+                          openrdf-sesame-2.2.1-onejar.jar
+                          mulgara-core-2.1.1.jar
+                          fedora-common.jar
+                   -->
+                </configuration>
+              </execution>
+            </executions>
+
+          </plugin>
+
+
+<!-- 
+      Note: This plugin was defined as required by: client, integrationtest, & server.test.
+         It is certainly required by fedorahome.zip. 
+         The other three dependencies listed above are questionable.
+ -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.1.1</version>
+            <executions>
+
+              <execution>
+                <id>demo-convert-mets</id>
+                <phase>generate-test-resources</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <configuration>
+                  <mainClass>fedora.server.storage.translation.ConvertObjectSerialization</mainClass>
+                  <arguments>
+                    <argument>${basedir}/src/main/resources/demo/demo-objects/foxml</argument>
+                    <argument>${project.build.directory}/client/demo/mets</argument>
+                    <argument>fedora.server.storage.translation.FOXML1_1DODeserializer</argument>
+                    <argument>fedora.server.storage.translation.METSFedoraExt1_1DOSerializer</argument>
+                    <argument>true</argument>
+                    <argument>xml</argument>
+                    <argument>xml</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+              <execution>
+                <id>demo-convert-atom</id>
+                <phase>generate-test-resources</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <configuration>
+                  <mainClass>fedora.server.storage.translation.ConvertObjectSerialization</mainClass>
+                  <arguments>
+                    <argument>${basedir}/src/main/resources/demo/demo-objects/foxml</argument>
+                    <argument>${project.build.directory}/client/demo/atom</argument>
+                    <argument>fedora.server.storage.translation.FOXML1_1DODeserializer</argument>
+                    <argument>fedora.server.storage.translation.Atom1_1DOSerializer</argument>
+                    <argument>true</argument>
+                    <argument>xml</argument>
+                    <argument>xml</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+              <execution>
+                <id>demo-convert-atomzip</id>
+                <phase>generate-test-resources</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <configuration>
+                  <mainClass>fedora.server.storage.translation.ConvertObjectSerialization</mainClass>
+                  <arguments>
+                    <argument>${basedir}/src/main/resources/demo/demo-objects/foxml</argument>
+                    <argument>${project.build.directory}/client/demo/atom-zip</argument>
+                    <argument>fedora.server.storage.translation.FOXML1_1DODeserializer</argument>
+                    <argument>fedora.server.storage.translation.AtomZip1_1DOSerializer</argument>
+                    <argument>false</argument>
+                    <argument>xml</argument>
+                    <argument>zip</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.1.1</version>
+            <executions>
+
+              <execution>
+                <id>deploy-wsdd-exec</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <configuration>
+                  <mainClass>org.apache.axis.utils.Admin</mainClass>
+
+                  <!--
+                    Note: The *.wsdd files were generated and modified in /common.
+                          It is ugly having to grab them from there into /server.
+                          On top of that, the Admin execution dumps 
+                            the server-config.wsdd at the top of /server.
+                   -->
+                  <arguments>
+                    <argument>server</argument>
+                    <argument>${basedir}/../common/target/generated-sources/axistools/wsdl2java/fedora/server/management/deploy.wsdd</argument>
+                    <argument>${basedir}/../common/target/generated-sources/axistools/wsdl2java/fedora/server/access/deploy.wsdd</argument>
+                  </arguments>
+                  <!-- 
+                      Note: this execution has the following dependencies:
+                        lib.activation
+                        lib.axis
+                        lib.axis-ant
+                        lib.commons-discovery
+                        lib.commons-logging
+                        lib.javamail
+                        lib.jaxrpc-api
+                        lib.saaj-api
+                        lib.wsdl4j
+                   -->
+                </configuration>
+              </execution>
+            </executions>
+
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.1-beta-1</version>
+            <executions>
+              <execution>
+                <id>fedora-war</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>war</goal>
+                </goals>
+ 
+                <configuration>   
+      
+                  <classifier>webapp</classifier>
+                  <archive>
+                    <manifest>
+                      <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                    </manifest>
+
+                    <!-- 
+                      Note: The version and build need to be generated.
+                      -->
+                    <manifestEntries>
+                      <Version>${fedora.version}</Version>
+                      <Build>${build.tstamp}</Build>
+                    </manifestEntries>
+                  </archive>
+
+                  <webResources>
+
+                    <!--
+                      Note: Both basedir and '..' are included to find 'server-config.wsdd'
+                            depending on where 'mvn install...' was run from.
+                            axis.util.Admin dumps the wsdd file in the dir in which it is run.
+                     -->
+                    <resource>
+                      <directory>${basedir}</directory>
+                      <targetPath>WEB-INF</targetPath>
+                      <includes>
+                        <include>server-config.wsdd</include>
+                      </includes>
+                    </resource>                  
+                    <resource>
+                      <directory>..</directory>
+                      <targetPath>WEB-INF</targetPath>
+                      <includes>
+                        <include>server-config.wsdd</include>
+                      </includes>
+                    </resource>
+
+                    <resource>
+                      <directory>src/main/resources/images/server</directory>
+                      <targetPath>images</targetPath>
+                      <includes>
+                        <include>newlogo2.jpg</include>
+                      </includes>
+                    </resource>
+
+                    <resource>
+                      <directory>src/main/resources/xsl/ri</directory>
+                      <targetPath>ri</targetPath>
+                    </resource>
+     
+                  </webResources>
+                </configuration>
+
+
+              </execution>
+
+
+            </executions>
+
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>utilities-main</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+ 
+                <configuration>   
+      
+                  <classifier>utilities-main</classifier>
+                  <archive>
+                    <manifest>
+                      <mainClass>fedora.utilities.install.Installer</mainClass>
+                    </manifest>
+                  </archive>
+
+                  <includes>
+                    <include>fedora/utilities/**</include>
+                    <include>fedora/server/**</include>
+                    <include>**/fedorausers-mapping.xml</include>
+                    <include>**/webxml-mapping.xml</include>
+                  </includes>
+                </configuration> 
+              </execution>
+            </executions>
+          </plugin> 
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+
 
   <dependencies>
 

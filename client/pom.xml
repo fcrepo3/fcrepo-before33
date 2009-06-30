@@ -17,14 +17,23 @@
 
   <build>
 
+    <!-- 
+      Note: Need to filter following variables:
+              filter token="version" value="${fedora.version}"
+              filter token="releaseDate" value="${fedora.releaseDate}"
+    -->
     <resources>
       <resource>
-        <directory>${basedir}/../resources/server</directory>
+        <directory>../resources/server</directory>
         <filtering>true</filtering>
       </resource>
       <resource>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
+        <excludes>
+          <exclude>**/demo/**</exclude>
+          <exclude>**/scripts/**</exclude>
+        </excludes>
       </resource>
     </resources>
 
@@ -104,19 +113,76 @@
               </archive>
             </configuration>
           </execution>
+
+          <execution>
+            <id>fedora-messaging-client-jar</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+
+            <configuration>
+              <classifier>fedora-messaging</classifier>
+              <!-- may want to add svn version info here 
+              <classifier>fedora-${fedora.version}</classifier>
+              -->
+              <archive>
+                <manifest>
+                  <addClasspath>true</addClasspath>
+                  <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                </manifest>
+                <manifestEntries>
+                  <Version>${fedora.version}</Version>
+                  <Build>${build.tstamp}</Build>
+                </manifestEntries>
+              </archive>
+              <includes>
+                <include>**/fedora/client/messaging/**</include>
+                <include>fedora/server/**</include>
+                <include>fedora/utilities/**</include>
+              </includes>
+            </configuration>
+          </execution>
+ 
         </executions>
 
-
       </plugin>
-
-
-
 
     </plugins>
 
   </build>
 
   <dependencies>
+
+    <!-- 
+      Note: dependencies of client as defined in build.xml are:
+        lib.activation
+        lib.axis
+        lib.batik
+        lib.commons-codec
+        lib.commons-dbcp
+        lib.commons-discovery
+        lib.commons-httpclient
+        lib.commons-logging
+        lib.log4j
+        lib.commons-pool
+        lib.getopt
+        lib.jai_codec
+        lib.jai_core
+        lib.javamail
+        lib.jaxrpc-api
+        lib.jhbasic
+        lib.mulgara
+        lib.openrdf-model
+        lib.saaj-api
+        lib.saxon
+        lib.slf4j-api
+        lib.slf4j-jdk14
+        lib.sunxacml
+        lib.trippi-core
+        lib.wsdl4j
+        lib.xerces
+        lib.xml-apis
+    -->
 
     <dependency>
       <groupId>org.duraspace.fedora</groupId>

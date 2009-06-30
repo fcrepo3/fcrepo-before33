@@ -14,8 +14,8 @@ if [ -z "$FEDORA_HOME" ]; then
   exit 1
 fi
 
-if [ ! -f "$FEDORA_HOME/client/fedora-client.jar" ]; then
-  echo "ERROR: fedora-client.jar not found in $FEDORA_HOME/client"
+if [ ! -f "$FEDORA_HOME/client/${fedora-client-jar}" ]; then
+  echo "ERROR: ${fedora-client-jar} not found in $FEDORA_HOME/client"
   exit 1
 fi
 
@@ -41,7 +41,7 @@ execWithCmdlineArgs() {
 
 execWithTheseArgs() {
     exec_cmd="exec \"$java\" -Xms64m -Xmx96m \
-            -cp \"$FEDORA_HOME\"/client:\"$FEDORA_HOME\"/client/fedora-client.jar \
+            -cp \"$FEDORA_HOME\"/client:\"$FEDORA_HOME\"/client/${fedora-client-jar} \
             -Djava.endorsed.dirs=\"$FEDORA_HOME\"/client/lib \
             -Djavax.net.ssl.trustStore=\"$FEDORA_HOME\"/client/truststore \
             -Djavax.net.ssl.trustStorePassword=tomcat \
