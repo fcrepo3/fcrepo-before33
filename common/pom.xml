@@ -243,12 +243,12 @@
   <profiles>
 
     <profile>
-      <id>fedora-home</id>
+      <id>fedora-installer</id>
 
       <activation>
         <property>
           <name>fedora</name>
-          <value>home</value>
+          <value>installer</value>
         </property>
       </activation>
 

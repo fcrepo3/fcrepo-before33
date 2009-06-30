@@ -95,7 +95,7 @@
   <property name="xsd.src.dir" location="${repo.resrc.dir}/xsd" />
   <property name="xsl.src.dir" location="${repo.resrc.dir}/xsl" />
   <property name="war.src.dir" location="${repo.resrc.dir}/war" />
-  <property name="war-fedora.src.dir" location="${war.src.dir}/fedora" />
+  <property name="war-fedora.src.dir" location="${repo.src.dir}/main/webapp" />
   <!-- 
   the following properties are mainly for junit, have to be set globally though due to 
   the application server context replace tasks
@@ -487,7 +487,7 @@
     <copy todir="${junit.build.dir}" file="${junit.resrc.dir}/log4j.xml" />
 
     <copy todir="${junit.build.dir}">
-      <fileset dir="${repo.java.dir}">
+      <fileset dir="${repo.resrc.dir}">
         <include name="**/webxml-mapping.xml" />
       </fileset>
     </copy>
@@ -714,6 +714,9 @@
 
     <copy todir="${fedora.war.build.dir}/WEB-INF/classes">
       <fileset dir="${server.build.dir}/classes" />
+      <fileset dir="${repo.resrc.dir}/utilities/server" >
+        <include name="**/fedora-system*xml" />
+      </fileset>
     </copy>
 
     <copy todir="${fedora.war.build.dir}/WEB-INF/lib">
@@ -998,9 +1001,9 @@
   </target>
 
   <target name="compile-installer" depends="">
-    <md-compile srcdir="${repo.java.dir}" destdir="${install.build.dir}" includes="fedora/utilities/install/**" />
+    <md-compile srcdir="${repo.java.dir}" destdir="${install.build.dir}" includes="fedora/utilities/**,fedora/server/config/**" />
     <copy todir="${install.build.dir}">
-      <fileset dir="${repo.java.dir}">
+      <fileset dir="${repo.resrc.dir}/utilities/server">
         <include name="**/fedorausers-mapping.xml" />
         <include name="**/webxml-mapping.xml" />
       </fileset>
