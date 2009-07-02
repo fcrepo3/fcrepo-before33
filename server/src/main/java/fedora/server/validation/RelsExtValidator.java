@@ -2,6 +2,9 @@
  * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
+
+// TODO: revise all comments!
+
 package fedora.server.validation;
 
 import java.io.InputStream;
@@ -16,6 +19,8 @@ import java.util.TimeZone;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.axis.types.NCName;
+
 import org.apache.log4j.Logger;
 
 import org.xml.sax.Attributes;
@@ -29,40 +34,59 @@ import fedora.common.PID;
 import fedora.server.errors.ValidationException;
 
 /**
- * Validates the RDF/XML content of the RELS-EXT datastream.
+ * Validates the RDF/XML content of the RELS-EXT  and RELS-INT datastreams.
  * <p>
  * The following restrictions are enforced:
  * <ul>
- * <li> The RDF must follow a prescribed RDF/XML authoring style where there is
- * ONE subject encoded as an RDF &lt;Description&gt; with an RDF
- * <code>about</code> attribute containing a digital object URI. The
- * sub-elements are the relationship properties of the subject. Each
- * relationship may refer to any resource (identified by URI) via an RDF
- * 'resource' attribute, or a literal. Relationship assertions can be from the
- * default Fedora relationship ontology, or from other namespaces. For example:
- *
- * <pre>
- * &lt;rdf:Description about="info:fedora/demo:5"&gt;
+ * <li>The RDF must follow a prescribed RDF/XML authoring style where there is
+ * ONE (RELS-EXT) or more (RELS-INT) subjects encoded as RDF &lt;Description&gt;
+ * elements with RDF <code>about</code> attribute containing either a digital
+ * object URI (RELS-EXT) or a datastream URI (RELS-INT). The sub-elements
+ * are the relationship properties of the subject. Each relationship may refer
+ * to any resource (identified by URI) via an RDF 'resource' attribute, or a
+ * literal. Relationship assertions can be from the default Fedora relationship
+ * ontology, or from other namespaces.
+ * <ul>
+ * <li>RELS-EXT example:
+ * <pre>&lt;rdf:Description about="info:fedora/demo:5"&gt;
  *   &lt;fedora:isMemberOfCollection resource="info:fedora/demo:100"/&gt;
  *   &lt;nsdl:isAugmentedBy resource="info:fedora/demo:333"/&gt;
  *   &lt;example:source resource="http://example.org/bsmith/article1.html"/&gt;
  *   &lt;example:primaryAuthor&gt;Bob Smith&lt;/example:primaryAuthor&gt;
- * &lt;/rdf:Description&gt;<pre></li>
- *   <li> There must be only ONE  &lt;rdf:Description&gt; element.</li>
- *   <li> There must be NO nesting of assertions. In terms of XML depth,
- *        the RDF root element is considered depth of 0. Then, the
- *        &lt;rdf:Description&gt; element must be at depth of 1, and the
- *        relationship properties must exist at depth of 2. That's it.</li>
- *   <li> The RDF <code>about</code> attribute of the RDF &lt;Description&gt;
- *        must be the URI of the digital object in which the RELS-EXT
- *        datastream resides. This means that all relationships are FROM
- *        "this" object to other objects.</li>
- *   <li> If the target of the statement is a resource (identified by a URI),
- *        the RDF <code>resource</code> attribute must specify a syntactically
- *        valid, absolute URI.</li>
- *   <li> There must NOT be any assertion of properties from the DC namespace
- *        or from the Fedora object properties namespaces (model and view),
- *        with the following exceptions:
+ * &lt;/rdf:Description&gt;
+ * </pre>
+ * </li>
+ * <li>RELS-INT example:
+ * <pre>&lt;rdf:Description about="info:fedora/demo:5/DS1"&gt;
+ *   &lt;nsdl:isAugmentedBy resource="info:fedora/demo:333"/&gt;
+ *   &lt;example:source resource="http://example.org/bsmith/article1.html"/&gt;
+ *   &lt;example:primaryAuthor&gt;Bob Smith&lt;/example:primaryAuthor&gt;
+ * &lt;/rdf:Description&gt;
+ * </pre>
+ * </li>
+ * </ul>
+ * </li>
+ * <li>For RELS-EXT, there must be only ONE &lt;rdf:Description&gt; element.</li>
+ * <li>There must be NO nesting of assertions. In terms of XML depth, the RDF
+ * root element is considered depth of 0. Then, the &lt;rdf:Description&gt;
+ * element must be at depth of 1, and the relationship properties must exist at
+ * depth of 2. That's it.</li>
+ * <li>For RELS-EXT, The RDF <code>about</code> attribute of the RDF
+ * &lt;Description&gt; must be the URI of the digital object in which the RELS-EXT
+ * datastream resides. This means that all relationships are FROM "this" object
+ * to other objects.</li>
+ * <li>For RELS-INT, the RDF <code>about</code> attribute(s) of the RDF
+ * &lt;Description&gt; element(s) must be valid URIs of datastreams for the digital
+ * object in which the RELS-EXT datastream resides. The datastreams do not actually
+ * have to exist, but these URIs must be syntactically valid. This means that all
+ * relationships are FROM datastreams in "this" object to other objects.</li>
+ * <li>If the target of the statement is a resource (identified by a URI), the
+ * RDF <code>resource</code> attribute must specify a syntactically valid,
+ * absolute URI.</li>
+ * <li>For RELS-EXT, there must NOT be any assertion of properties from the DC namespace.</li>
+ * <li>There must NOT be any assertions of properties  from the Fedora object
+ * properties namespaces (model and view), with the following exceptions for RELS-EXT only:
+ *
  * <pre>
  * fedora-model:hasService
  * fedora-model:hasModel
@@ -71,12 +95,14 @@ import fedora.server.errors.ValidationException;
  *        These assertions are allowed in the RELS-EXT datastream, but all
  *        others from the <code>fedora-model</code> and <code>fedora-view</code>
  *        namespaces are inferred from values expressed elsewhere in the
- *        digital object, and we do not want duplication.</li>
+ *        digital object, and we do not want duplication.
+ * </li>
  * </ul>
  *
  * @author Sandy Payette
  * @author Eddie Shin
  * @author Chris Wilper
+ * @author Stephen Bayliss
  */
 public class RelsExtValidator
         extends DefaultHandler
@@ -89,9 +115,15 @@ public class RelsExtValidator
     // state variables
     private String m_doURI;
 
+    private String m_dsId;
+
     private boolean m_rootRDFFound;
 
-    private boolean m_descriptionFound;
+    // total number of description elements encountered
+    private int m_descriptionCount;
+
+    // if currently within a description element
+    private boolean m_withinDescription;
 
     private int m_depth;
 
@@ -101,6 +133,9 @@ public class RelsExtValidator
 
     // SAX parser
     private final SAXParser m_parser;
+
+    private static final String RELS_EXT = "RELS-EXT";
+    private static final String RELS_INT = "RELS-INT";
 
     public RelsExtValidator() {
         try {
@@ -112,16 +147,22 @@ public class RelsExtValidator
         }
     }
 
-    public void validate(PID pid, InputStream content)
+    public void validate(PID pid, String dsId, InputStream content)
             throws ValidationException {
         try {
             m_rootRDFFound = false;
-            m_descriptionFound = false;
+            m_descriptionCount = 0;
+            m_withinDescription = false;
             m_depth = 0;
             m_doURI = pid.toURI();
+            if (!dsId.equals(RELS_EXT) && !dsId.equals(RELS_INT)) {
+                throw new ValidationException("Relationships datastream ID must be RELS-EXT or RELS-INT (" + dsId +")");
+            }
+            m_dsId = dsId;
             m_parser.parse(content, this);
         } catch (Exception e) {
-            throw new ValidationException("RELS-EXT validation failed", e);
+            throw new ValidationException(dsId + " validation failed: "
+                    + e.getMessage(), e);
         }
     }
 
@@ -136,17 +177,25 @@ public class RelsExtValidator
         } else if (m_rootRDFFound) {
             if (nsURI.equals(RDF.uri)
                     && localName.equalsIgnoreCase("Description")) {
-                if (!m_descriptionFound) {
-                    m_descriptionFound = true;
+                // are we not already within a Description element?
+                if (!m_withinDescription) {
+                    m_withinDescription = true;
+                    m_descriptionCount++;
                     m_depth++;
+                    if ((m_descriptionCount > 1) && m_dsId.equals(RELS_EXT)) {
+                        throw new SAXException("RelsExtValidator:"
+                                + " Only ONE RDF <Description> element is allowed"
+                                + " in the RELS-EXT datastream.");
+                    }
                     checkDepth(m_depth, qName);
                     checkAboutURI(grab(a, RDF.uri, "about"));
+
                 } else {
                     throw new SAXException("RelsExtValidator:"
-                            + " Only ONE RDF <Description> element is allowed"
-                            + " in the RELS-EXT datastream.");
+                            + " RDF <Description> elements may not be nested"
+                            + " in the " + m_dsId + " datastream.");
                 }
-            } else if (m_descriptionFound) {
+            } else if (m_withinDescription) {
                 m_depth++;
                 checkDepth(m_depth, qName);
                 checkBadAssertion(nsURI, localName, qName);
@@ -205,8 +254,11 @@ public class RelsExtValidator
     @Override
     public void endElement(String nsURI, String localName, String qName)
             throws SAXException {
-        if (m_rootRDFFound && m_descriptionFound) {
+        if (m_rootRDFFound) {
             m_depth--;
+        }
+        if (nsURI.equals(RDF.uri) && localName.equalsIgnoreCase("Description")) {
+            m_withinDescription = false;
         }
         if (m_literalType != null && m_literalValue != null) {
             checkTypedValue(m_literalType, m_literalValue.toString(), qName);
@@ -260,8 +312,8 @@ public class RelsExtValidator
     /**
      * checkBadAssertion: checks that the DC and fedora-view namespace are not
      * being used in RELS-EXT, and that if fedora-model is used, the localName
-     * is hasService, hasModel, isDeploymentOf, or isContractorOf. Also ensures that
-     * fedora-model:hasContentModel is only used once.
+     * is hasService, hasModel, isDeploymentOf, or isContractorOf. Also ensures
+     * that fedora-model:hasContentModel is only used once.
      *
      * @param nsURI
      *        the namespace URI of the predicate being evaluated
@@ -273,19 +325,22 @@ public class RelsExtValidator
     private void checkBadAssertion(String nsURI, String localName, String qName)
             throws SAXException {
 
-        if (nsURI.equals(DC.uri) || nsURI.equals(OAI_DC.uri)) {
+        if (m_dsId.equals(RELS_EXT)
+                && (nsURI.equals(DC.uri) || nsURI.equals(OAI_DC.uri))) {
             throw new SAXException("RelsExtValidator:"
                     + " The RELS-EXT datastream has improper"
                     + " relationship assertion: " + qName + ".\n"
                     + " No Dublin Core assertions allowed"
                     + " in Fedora relationship metadata.");
         } else if (nsURI.equals(MODEL.uri)) {
-            if (!localName.equals(MODEL.HAS_SERVICE.localName)
+            if (m_dsId.equals(RELS_INT) ||
+                    (m_dsId.equals(RELS_EXT)
+                    && !localName.equals(MODEL.HAS_SERVICE.localName)
                     && !localName.equals(MODEL.IS_CONTRACTOR_OF.localName)
                     && !localName.equals(MODEL.HAS_MODEL.localName)
-                    && !localName.equals(MODEL.IS_DEPLOYMENT_OF.localName)) {
+                    && !localName.equals(MODEL.IS_DEPLOYMENT_OF.localName))) {
                 throw new SAXException("RelsExtValidator:"
-                        + " Disallowed predicate in RELS-EXT: "
+                        + " Disallowed predicate in " + m_dsId + ": "
                         + qName
                         + "\n"
                         + " The only predicates from the fedora-model namespace"
@@ -310,15 +365,40 @@ public class RelsExtValidator
      * @throws SAXException
      */
     private void checkAboutURI(String aboutURI) throws SAXException {
+        if (m_dsId.equals(RELS_EXT)) {
+            if (!m_doURI.equals(aboutURI)) {
+                throw new SAXException("RelsExtValidator:"
+                        + " The RELS-EXT datastream refers to"
+                        + " an improper URI in the 'about' attribute of the"
+                        + " RDF <Description> element.\n"
+                        + " The URI must be that of the digital object"
+                        + " in which the RELS-EXT datastream resides" + " ("
+                        + m_doURI + ").");
+            }
+        } else if (m_dsId.equals(RELS_INT)) {
+            if (!aboutURI.startsWith(m_doURI + "/")) {
+                throw new SAXException("RelsExtValidator:"
+                        + " The RELS-INT datastream refers to"
+                        + " an improper URI in the 'about' attribute of the"
+                        + " RDF <Description> element.\n"
+                        + " The URI must be a datastream in the digital object"
+                        + " in which the RELS-INT datastream resides" + " ("
+                        + m_doURI + ", " + aboutURI + ").");
 
-        if (!m_doURI.equals(aboutURI)) {
-            throw new SAXException("RelsExtValidator:"
-                    + " The RELS-EXT datastream refers to"
-                    + " an improper URI in the 'about' attribute of the"
-                    + " RDF <Description> element.\n"
-                    + " The URI must be that of the digital object"
-                    + " in which the RELS-EXT datastream resides" + " ("
-                    + m_doURI + ").");
+            }
+            String dsId = aboutURI.replace(m_doURI + "/", "");
+            // datastream ID must be an XML NCName, implemented using axis NCName class
+            if (dsId.length() > ValidationConstants.DATASTREAM_ID_MAXLEN
+                    || dsId.length() < 1
+                    || !NCName.isValid(dsId)) {
+                throw new SAXException("RelsExtValidator:"
+                        + " The RELS-INT datastream refers to"
+                        + " an improper URI in the 'about' attribute of the"
+                        + " RDF <Description> element.\n" + " " + dsId
+                        + " is not a valid datastream ID");
+
+            }
+
         }
     }
 

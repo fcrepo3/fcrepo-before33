@@ -15,6 +15,7 @@ import fedora.server.storage.types.ObjectBuilder;
  * All tests run at RI level 1 unless otherwise noted.
  *
  * @author Chris Wilper
+ * @author Stephen Bayliss
  */
 public class ResourceIndexModDSIntegrationTest
         extends ResourceIndexIntegrationTest {
@@ -162,6 +163,63 @@ public class ResourceIndexModDSIntegrationTest
 
         DigitalObject modified = ObjectBuilder.deepCopy(original);
         addXDatastream(modified, "RELS-EXT", ObjectBuilder.getRELSEXT("test:1", rel2));
+
+        doModifyTest(1, original, modified);
+    }
+    /**
+     * Add relations to the RELS-INT datastream of an existing object.
+     */
+    @Test
+    public void testModObjOnceAddOneRELSINTField() throws Exception {
+        String rel1 = "<foo:bar rdf:resource=\"http://example.org/baz\"/>";
+        String rel2 = "<foo:qux>quux</foo:qux>";
+        String rel3 = "<foo:corge rdf:resource=\"http://example.org/grault\"/>";
+        String rel4 = "<foo:garply rdf:resource=\"http://example.org/waldo\"/>";
+
+        DigitalObject original = getTestObject("test:1", "test1");
+        addXDatastream(original, "RELS-INT", ObjectBuilder.getRELSINT("test:1", rel1, rel2));
+
+        DigitalObject modified = ObjectBuilder.deepCopy(original);
+        addXDatastream(modified, "RELS-INT", ObjectBuilder.getRELSINT("test:1", rel1 + "\n" + rel3, rel2 + "\n" + rel4));
+
+        doModifyTest(1, original, modified);
+    }
+
+    /**
+     * Delete a relation from the RELS-INT datastream of an existing object.
+     */
+    @Test
+    public void testModObjOnceDelOneRELSINTField() throws Exception {
+        String rel1 = "<foo:bar rdf:resource=\"http://example.org/baz\"/>";
+        String rel2 = "<foo:qux>quux</foo:qux>";
+        String rel3 = "<foo:corge rdf:resource=\"http://example.org/grault\"/>";
+        String rel4 = "<foo:garply rdf:resource=\"http://example.org/waldo\"/>";
+
+        DigitalObject original = getTestObject("test:1", "test1");
+        addXDatastream(original, "RELS-INT", ObjectBuilder.getRELSINT("test:1", rel1 + "\n" + rel3, rel2 + "\n" + rel4));
+
+        DigitalObject modified = ObjectBuilder.deepCopy(original);
+        addXDatastream(modified, "RELS-INT", ObjectBuilder.getRELSINT("test:1", rel1, rel2));
+
+        doModifyTest(1, original, modified);
+    }
+
+    /**
+     * Add a relation and delete another from the RELS-EXT datastream of an
+     * existing object.
+     */
+    @Test
+    public void testModObjOnceAddOneRELSINTFieldDelAnother() throws Exception {
+        String rel1 = "<foo:bar rdf:resource=\"http://example.org/baz\"/>";
+        String rel2 = "<foo:qux>quux</foo:qux>";
+        String rel3 = "<foo:corge rdf:resource=\"http://example.org/grault\"/>";
+        String rel4 = "<foo:garply rdf:resource=\"http://example.org/waldo\"/>";
+
+        DigitalObject original = getTestObject("test:1", "test1");
+        addXDatastream(original, "RELS-INT", ObjectBuilder.getRELSINT("test:1", rel1, rel2));
+
+        DigitalObject modified = ObjectBuilder.deepCopy(original);
+        addXDatastream(modified, "RELS-INT", ObjectBuilder.getRELSINT("test:1", rel3, rel4));
 
         doModifyTest(1, original, modified);
     }

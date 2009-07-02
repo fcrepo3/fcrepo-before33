@@ -14,6 +14,7 @@ import fedora.server.storage.types.ObjectBuilder;
  * datastreams. Note: All tests run at RI level 1 unless otherwise noted.
  *
  * @author Chris Wilper
+ * @author Stephen Bayliss
  */
 public class ResourceIndexAddDelDSIntegrationTest
         extends ResourceIndexIntegrationTest {
@@ -87,6 +88,17 @@ public class ResourceIndexAddDelDSIntegrationTest
         doAddDelTest(1, obj);
     }
 
+    /**
+     * Add, then delete an object with a "RELS-INT" datastream.
+     */
+    @Test
+    public void testAddDelObjRELSINTDS() throws Exception {
+        DigitalObject obj = getTestObject("test:1", "test");
+        String rel1 = "<foo:bar rdf:resource=\"http://example.org/baz\"/>";
+        String rel2 = "<foo:baz>qux</foo:baz>";
+        addXDatastream(obj, "RELS-INT", ObjectBuilder.getRELSINT("test:1", rel1, rel2));
+        doAddDelTest(1, obj);
+    }
     // Supports legacy test runners
     public static junit.framework.Test suite() {
         return new junit.framework.JUnit4TestAdapter(ResourceIndexAddDelDSIntegrationTest.class);

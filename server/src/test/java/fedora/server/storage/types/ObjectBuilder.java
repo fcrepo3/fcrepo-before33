@@ -188,6 +188,24 @@ public abstract class ObjectBuilder {
     }
 
     /**
+     * Get the RELS-INT xml for an object.
+     */
+    public static String getRELSINT(String pid, String content1, String content2) {
+        StringBuffer x = new StringBuffer();
+        x.append("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"");
+        x.append(" xmlns:foo=\"http://example.org/foo#\">\n");
+        // relationship(s) from datastream DS1
+        x.append("<rdf:Description rdf:about=\"" + PID.getInstance(pid).toURI() + "/DS1" + "\">\n");
+        x.append(content1 + "\n");
+        x.append("</rdf:Description>\n");
+        // relationship(s) from datastream DS2
+        x.append("<rdf:Description rdf:about=\"" + PID.getInstance(pid).toURI() + "/DS2" + "\">\n");
+        x.append(content2 + "\n");
+        x.append("</rdf:Description>\n");
+        x.append("</rdf:RDF>");
+        return x.toString();
+    }
+    /**
      * Sets any un-set dates in the object to the given date.
      */
     public static void setDates(DigitalObject obj, Date date) {

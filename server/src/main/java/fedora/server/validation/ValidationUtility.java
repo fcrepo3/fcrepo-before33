@@ -101,8 +101,8 @@ public abstract class ValidationUtility {
             throws ValidationException {
         if ("POLICY".equals(dsId)) {
             validatePOLICY(content);
-        } else if ("RELS-EXT".equals(dsId)) {
-            validateRELSEXT(pid, content);
+        } else if ("RELS-EXT".equals(dsId) || "RELS-INT".equals(dsId)) {
+            validateRELS(pid, dsId, content);
         } else {
             try {
                 content.close();
@@ -119,11 +119,18 @@ public abstract class ValidationUtility {
         LOG.debug("POLICY datastream is valid");
     }
 
-    private static void validateRELSEXT(PID pid, InputStream content)
+    /**
+     * validate relationships datastream
+     * @param pid
+     * @param dsId
+     * @param content
+     * @throws ValidationException
+     */
+    private static void validateRELS(PID pid, String dsId, InputStream content)
             throws ValidationException {
-        LOG.debug("Validating RELS-EXT datastream");
-        new RelsExtValidator().validate(pid, content);
-        LOG.debug("RELS-EXT datastream is valid");
+        LOG.debug("Validating " + dsId + " datastream");
+        new RelsExtValidator().validate(pid, dsId, content);
+        LOG.debug(dsId + " datastream is valid");
     }
 
 }

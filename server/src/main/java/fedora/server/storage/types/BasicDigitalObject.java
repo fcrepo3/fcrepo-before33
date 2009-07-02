@@ -30,6 +30,7 @@ import fedora.server.storage.RDFRelationshipReader;
  * A basic implementation of DigitalObject that stores things in memory.
  *
  * @author Chris Wilper
+ * @author Stephen Bayliss
  */
 @SuppressWarnings("deprecation")
 public class BasicDigitalObject
@@ -378,27 +379,37 @@ public class BasicDigitalObject
         int newNum = highest + 1;
         return start + newNum;
     }
-
+    /**
+     * read relationships from RELS-EXT and RELS-INT datastreams
+     */
     private void readRels() {
-        List<Datastream> relsExtVersions = m_datastreams.get("RELS-EXT");
+        m_rels = getRels("RELS-EXT");
+        m_rels.addAll(getRels("RELS-INT"));
+    }
 
-        if (relsExtVersions == null || relsExtVersions.size() == 0) {
-            m_rels = new HashSet<RelationshipTuple>();
-            return;
+    /**
+     * Given a relationships datastream name, return the relationships contained
+     * in that datastream
+     */
+    private Set<RelationshipTuple> getRels(String relsDatastreamName) {
+        List<Datastream> relsDatastreamVersions = m_datastreams.get(relsDatastreamName);
+
+        if (relsDatastreamVersions == null || relsDatastreamVersions.size() == 0) {
+            return new HashSet<RelationshipTuple>();
         }
 
-        Datastream latestRels = relsExtVersions.get(0);
+        Datastream latestRels = relsDatastreamVersions.get(0);
 
-        for (Datastream v : relsExtVersions) {
+        for (Datastream v : relsDatastreamVersions) {
             if (v.DSCreateDT.getTime() > latestRels.DSCreateDT.getTime()) {
                 latestRels = v;
             }
         }
 
         try {
-            m_rels = RDFRelationshipReader.readRelationships(latestRels);
+            return RDFRelationshipReader.readRelationships(latestRels);
         } catch (ServerException e) {
-            throw new RuntimeException("Error reading object relationships", e);
+            throw new RuntimeException("Error reading object relationships in " + relsDatastreamName, e);
         }
     }
 
@@ -427,26 +438,27 @@ public class BasicDigitalObject
     }
 
     /**
-     * If the latest RELS-EXT is added or removed, invalidate the relationship
+     * If the latest RELS-EXT or RELS-INT is added or removed, invalidate the relationship
      * cache so that it has to be re-read next time it is requested.
      */
     private class RelationshipProcessor
             extends DatastreamProcessor {
 
         private static final String RELS_EXT = "RELS-EXT";
+        private static final String RELS_INT = "RELS-INT";
 
         @Override
         void processRemove(Datastream d) {
-            invalidateIfLatestRelsExt(d);
+            invalidateIfLatestRels(d);
         }
 
         @Override
         void processAdd(Datastream d) {
-            invalidateIfLatestRelsExt(d);
+            invalidateIfLatestRels(d);
         }
 
-        private void invalidateIfLatestRelsExt(Datastream d) {
-            if (d.DatastreamID.equals(RELS_EXT) && isLatestVersion(d)) {
+        private void invalidateIfLatestRels(Datastream d) {
+            if ((d.DatastreamID.equals(RELS_EXT) || d.DatastreamID.equals(RELS_INT))&& isLatestVersion(d)) {
                 m_rels = null;
             }
         }

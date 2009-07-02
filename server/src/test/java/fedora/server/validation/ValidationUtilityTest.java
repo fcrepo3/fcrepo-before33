@@ -44,6 +44,17 @@ public class ValidationUtilityTest {
             + "  </rdf:Description>\n"
             + "</rdf:RDF>";
 
+    private static final String RELSINT_GOOD
+    = "<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#\'\n"
+    + "       xmlns:foo='http://www.example.org/bar#'>\n"
+    + "  <rdf:Description rdf:about='info:fedora/" + TEST_PID + "/DS1" + "'>\n"
+    + "     <foo:baz rdf:resource='info:fedora/test:X'/>\n"
+    + "  </rdf:Description>\n"
+    + "  <rdf:Description rdf:about='info:fedora/" + TEST_PID + "/DS2" + "'>\n"
+    + "     <foo:qux>quux</foo:qux>\n"
+    + "  </rdf:Description>\n"
+    + "</rdf:RDF>";
+
     private final String tmpDir = System.getProperty("java.io.tmpdir");
 
     @Test
@@ -94,12 +105,22 @@ public class ValidationUtilityTest {
 
     @Test(expected=ValidationException.class)
     public void testValidateRelsExtBad() throws ValidationException {
-        validateRelsExt("");
+        validateRels("RELS-EXT", "");
+    }
+
+    @Test(expected=ValidationException.class)
+    public void testValidateRelsIntBad() throws ValidationException {
+        validateRels("RELS-INT", "");
     }
 
     @Test
     public void testValidateRelsExtGood() throws ValidationException {
-        validateRelsExt(RELSEXT_GOOD);
+        validateRels("RELS-EXT", RELSEXT_GOOD);
+    }
+
+    @Test
+    public void testValidateRelsIntGood() throws ValidationException {
+        validateRels("RELS-INT", RELSINT_GOOD);
     }
 
     @Test
@@ -128,6 +149,12 @@ public class ValidationUtilityTest {
                          new String[] { "RELS-EXT", "" });
     }
 
+    @Test(expected=ValidationException.class)
+    public void testValidateReservedRelsIntBad()
+            throws IOException, SAXException, ValidationException {
+        validateReserved(new MockPolicyParser(),
+                         new String[] { "RELS-INT", "" });
+    }
     @Test
     public void testValidateReservedRelsExtGood()
             throws IOException, SAXException, ValidationException {
@@ -136,11 +163,19 @@ public class ValidationUtilityTest {
     }
 
     @Test
-    public void testValidateReservedBothGood()
+    public void testValidateReservedRelsIntGood()
+            throws IOException, SAXException, ValidationException {
+        validateReserved(new MockPolicyParser(),
+                         new String[] { "RELS-INT", RELSINT_GOOD });
+    }
+
+    @Test
+    public void testValidateReservedAllGood()
             throws IOException, SAXException, ValidationException {
         validateReserved(new MockPolicyParser(),
                          new String[] { "POLICY", POLICY_GOODENOUGH,
-                                        "RELS-EXT", RELSEXT_GOOD });
+                                        "RELS-EXT", RELSEXT_GOOD,
+                                        "RELS-INT", RELSINT_GOOD});
     }
 
     private static void validatePolicy(PolicyParser parser, String policy)
@@ -151,11 +186,11 @@ public class ValidationUtilityTest {
                                                      StreamUtility.getStream(policy));
     }
 
-    private static void validateRelsExt(String relsExt)
+    private static void validateRels(String dsId, String rels)
             throws ValidationException {
         ValidationUtility.validateReservedDatastream(PID.getInstance(TEST_PID),
-                                                     "RELS-EXT",
-                                                     StreamUtility.getStream(relsExt));
+                                                     dsId,
+                                                     StreamUtility.getStream(rels));
     }
 
     private static void validateReserved(PolicyParser parser, String[] dsData)
