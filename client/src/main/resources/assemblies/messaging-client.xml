@@ -1,0 +1,38 @@
+<assembly>
+  <id>fedora-messaging</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <formats>
+    <format>zip</format>
+  </formats>
+
+  <dependencySets>
+
+    <dependencySet>
+      <includes>
+        <include>org.duraspace.fedora:client:jar:fedora-messaging:${project.version}</include>
+
+        <!-- 
+          Note: The include statement below will need to be rewritten to
+                catch properly defined (i.e. maven-central) dependencies.
+         -->
+        <include>duraspace:abdera-core-0.4.0-incubating</include>
+        <include>duraspace:abdera-i18n-0.4.0-incubating</include>
+        <include>duraspace:abdera-parser-0.4.0-incubating</include>
+        <include>duraspace:activation-1.1.1</include>
+        <include>duraspace:activemq-all-5.1.0</include>
+        <include>duraspace:axiom-api-1.2.5</include>
+        <include>duraspace:axiom-impl-1.2.5</include>
+        <include>duraspace:dom4j-1.6.1</include>
+        <include>duraspace:jaxen-1.1.1</include>
+        <include>duraspace:jsr173_1.0_api</include>
+        <include>duraspace:log4j-1.2.15</include>
+        <include>duraspace:sjsxp</include>
+
+      </includes>
+      <unpack>false</unpack>
+      <useProjectAttachments>true</useProjectAttachments>
+    </dependencySet>
+
+  </dependencySets>
+
+</assembly>
