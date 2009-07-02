@@ -159,8 +159,12 @@
                  Note: may want to add svn version info here 
                 --> 
                 <manifestEntries>
+                  <Version>${buildNumber}</Version>
+                  <Build>${timestamp}</Build>
+                <!--
                   <Version>${fedora.version}</Version>
                   <Build>${build.tstamp}</Build>
+                -->
                 </manifestEntries>
               </archive>
             </configuration>
@@ -443,8 +447,12 @@
                       Note: The version and build need to be generated.
                       -->
                     <manifestEntries>
+                      <Version>${buildNumber}</Version>
+                      <Build>${timestamp}</Build>
+                    <!--
                       <Version>${fedora.version}</Version>
                       <Build>${build.tstamp}</Build>
+                    -->
                     </manifestEntries>
                   </archive>
 

@@ -107,8 +107,12 @@
                   <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                 </manifest>
                 <manifestEntries>
+                  <Version>${buildNumber}</Version>
+                  <Build>${timestamp}</Build>
+                 <!--
                   <Version>${fedora.version}</Version>
                   <Build>${build.tstamp}</Build>
+                 -->
                 </manifestEntries>
               </archive>
             </configuration>
@@ -131,8 +135,12 @@
                   <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                 </manifest>
                 <manifestEntries>
+                  <Version>${buildNumber}</Version>
+                  <Build>${timestamp}</Build>
+                <!--
                   <Version>${fedora.version}</Version>
                   <Build>${build.tstamp}</Build>
+                -->
                 </manifestEntries>
               </archive>
               <includes>
