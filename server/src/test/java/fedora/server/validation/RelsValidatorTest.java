@@ -87,20 +87,20 @@ public class RelsValidatorTest
     public void testValidateValidRelsExt() throws Exception {
         pid = PID.getInstance("demo:888");
         InputStream in = new ByteArrayInputStream(RELS_EXT);
-        RelsExtValidator validator = new RelsExtValidator();
+        RelsValidator validator = new RelsValidator();
         validator.validate(pid, "RELS-EXT", in);
     }
     public void testValidateValidRelsInt() throws Exception {
         pid = PID.getInstance("demo:888");
         InputStream in = new ByteArrayInputStream(RELS_INT);
-        RelsExtValidator validator = new RelsExtValidator();
+        RelsValidator validator = new RelsValidator();
         validator.validate(pid, "RELS-INT", in);
     }
     public void testValidateInvalidRelsExt() throws Exception {
         pid = PID.getInstance("demo:888");
         // use RELS-INT sample as a RELS-EXT datastream
         InputStream in = new ByteArrayInputStream(RELS_INT);
-        RelsExtValidator validator = new RelsExtValidator();
+        RelsValidator validator = new RelsValidator();
         try {
             validator.validate(pid, "RELS-EXT", in);
             fail("Multiple Description elements not allowed for RELS-EXT");
@@ -121,7 +121,7 @@ public class RelsValidatorTest
             in = new ByteArrayInputStream(s.getBytes());
 
             try {
-                new RelsExtValidator().validate(pid, dsId, in);
+                new RelsValidator().validate(pid, dsId, in);
                 fail("Empty " + dsId + " datastream incorrectly passed"
                      + " validation: \"" + s + "\"");
             } catch (ValidationException e) {}
@@ -441,7 +441,7 @@ public class RelsValidatorTest
             TripleIterator iter = new MockTripleIterator(triples);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             iter.toStream(out, RDFFormat.RDF_XML, false);
-            new RelsExtValidator().validate(pid, dsId, new ByteArrayInputStream(out.toByteArray()));
+            new RelsValidator().validate(pid, dsId, new ByteArrayInputStream(out.toByteArray()));
         } finally {
             triples.clear();
         }

@@ -108,7 +108,7 @@ public class RelsValidator
 
     /** Logger for this class. */
     private static final Logger LOG =
-            Logger.getLogger(RelsExtValidator.class.getName());
+            Logger.getLogger(RelsValidator.class.getName());
 
     // state variables
     private String m_doURI;

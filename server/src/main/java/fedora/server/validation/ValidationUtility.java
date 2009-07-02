@@ -129,7 +129,7 @@ public abstract class ValidationUtility {
     private static void validateRELS(PID pid, String dsId, InputStream content)
             throws ValidationException {
         LOG.debug("Validating " + dsId + " datastream");
-        new RelsExtValidator().validate(pid, dsId, content);
+        new RelsValidator().validate(pid, dsId, content);
         LOG.debug(dsId + " datastream is valid");
     }
 
