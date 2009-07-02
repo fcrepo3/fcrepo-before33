@@ -3,8 +3,6 @@
  * available online at http://fedora-commons.org/license/).
  */
 
-// TODO: revise all comments!
-
 package fedora.server.validation;
 
 import java.io.InputStream;
@@ -104,7 +102,7 @@ import fedora.server.errors.ValidationException;
  * @author Chris Wilper
  * @author Stephen Bayliss
  */
-public class RelsExtValidator
+public class RelsValidator
         extends DefaultHandler
         implements Constants {
 
@@ -137,7 +135,7 @@ public class RelsExtValidator
     private static final String RELS_EXT = "RELS-EXT";
     private static final String RELS_INT = "RELS-INT";
 
-    public RelsExtValidator() {
+    public RelsValidator() {
         try {
             SAXParserFactory spf = SAXParserFactory.newInstance();
             spf.setNamespaceAware(true);

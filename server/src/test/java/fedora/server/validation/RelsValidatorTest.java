@@ -39,7 +39,7 @@ import fedora.server.errors.ValidationException;
  * @author Edwin Shin
  * @author Stephen Bayliss
  */
-public class RelsExtValidatorTest
+public class RelsValidatorTest
         extends TestCase {
 
     private Collection<Triple> triples;
