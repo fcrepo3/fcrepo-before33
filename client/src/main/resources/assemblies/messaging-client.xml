@@ -29,7 +29,6 @@
         <include>duraspace:sjsxp</include>
 
       </includes>
-      <unpack>false</unpack>
       <useProjectAttachments>true</useProjectAttachments>
     </dependencySet>
 
