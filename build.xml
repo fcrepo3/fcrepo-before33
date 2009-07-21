@@ -271,10 +271,6 @@
       <pathelement location="${lib.commons-dbcp}" />
       <pathelement location="${lib.commons-pool}" />
 
-      <!-- JAXP libs (may be able to remove these in next release) -->
-      <pathelement location="${lib.xerces}" />
-      <pathelement location="${lib.xml-apis}" />
-
       <!-- Abdera libs -->
       <pathelement location="${lib.abdera-il8n}" />
       <pathelement location="${lib.abdera.core}" />
@@ -328,8 +324,6 @@
       <pathelement location="${lib.sunxacml}" />
       <pathelement location="${lib.trippi-core}" />
       <pathelement location="${lib.wsdl4j}" />
-      <pathelement location="${lib.xerces}" />
-      <pathelement location="${lib.xml-apis}" />
     </path>
     <map from="${lib.dir}${file.separator}" to="" />
   </pathconvert>
@@ -397,6 +391,9 @@
     <attribute name="outExt" default="xml" />
     <sequential>
       <java classname="fedora.server.storage.translation.ConvertObjectSerialization">
+      <!-- the following two system properties are needed in case ant brings along its own xerces -->
+      <sysproperty key="javax.xml.parsers.SAXParserFactory" value="com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl"/>
+      <sysproperty key="javax.xml.parsers.DocumentBuilderFactory" value="com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl"/>
         <classpath>
           <pathelement path="${server.build.dir}/classes" />
           <pathelement path="${common.build.dir}" />
@@ -409,7 +406,6 @@
           <pathelement location="${lib.jaxen}" />
           <pathelement location="${lib.activation}" />
           <pathelement path="${lib.log4j}" />
-          <pathelement path="${lib.xerces}" />
           <pathelement path="${lib.staxapi}" />
           <pathelement path="${lib.sjsxp}" />
           <pathelement path="${lib.trippi-core}" />

@@ -213,8 +213,6 @@
         lib.sunxacml
         lib.trippi-core
         lib.wsdl4j
-        lib.xerces
-        lib.xml-apis
     -->
 
     <dependency>

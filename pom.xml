@@ -786,16 +786,6 @@
     </dependency>
    <dependency>
       <groupId>duraspace</groupId>
-      <artifactId>xercesImpl</artifactId>
-      <version>1.0</version>
-    </dependency>
-   <dependency>
-      <groupId>duraspace</groupId>
-      <artifactId>xml-apis</artifactId>
-      <version>1.0</version>
-    </dependency>
-   <dependency>
-      <groupId>duraspace</groupId>
       <artifactId>xmlpull_1_1_3_4a</artifactId>
       <version>1.0</version>
     </dependency>
