@@ -38,6 +38,10 @@ public class TestRISearch
         return new DemoObjectTestSetup(suite);
     }
 
+    /**
+     * Implicit relationship to Fedora object CModel
+     * @throws Exception
+     */
     public void testRISearchBasicCModel() throws Exception {
         FedoraClient client = getFedoraClient();
         for (String pid : new String[] { "demo:SmileyPens",
@@ -48,6 +52,38 @@ public class TestRISearch
             checkSPOCount(client, query, 1);
         }
     }
+
+    /**
+     * Explicit RELS-EXT relation to collection object
+     * @throws Exception
+     */
+    public void testRISearchRelsExtCollection() throws Exception {
+        FedoraClient client = getFedoraClient();
+        String collectionPid = "demo:SmileyStuff";
+        for (String pid : new String[] { "demo:SmileyPens",
+                                         "demo:SmileyGreetingCard" }) {
+            String query = "<" + PID.toURI(pid) + ">"
+                        + " <" + Constants.RELS_EXT.IS_MEMBER_OF.uri + ">"
+                        + " <" + PID.toURI(collectionPid) + ">";
+            checkSPOCount(client, query, 1);
+        }
+    }
+
+    /**
+     * RELS-INT relationships specifying image size for jpeg datastreams
+     * @throws Exception
+     */
+    public void testRISearchRelsInt() throws Exception {
+        FedoraClient client = getFedoraClient();
+        for (String pid : new String[] { "demo:SmileyPens" ,
+                                         "demo:SmileyGreetingCard" }) {
+            String query = "<" + PID.toURI(pid) + "/MEDIUM_SIZE" + ">"
+                        + " <" + "http://ns.adobe.com/exif/1.0/PixelXDimension" + ">"
+                        + " \"320\"";
+            checkSPOCount(client, query, 1);
+        }
+    }
+
 
     private void checkSPOCount(FedoraClient client,
                                String query,

@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.server.resourceIndex;
@@ -32,7 +32,7 @@ import fedora.server.utilities.DCFields;
 
 /**
  * Generates basic RDF triples for Fedora 3.0 objects.
- * 
+ *
  * @author Chris Wilper
  */
 public class FedoraObjectTripleGenerator_3_0
@@ -64,7 +64,7 @@ public class FedoraObjectTripleGenerator_3_0
                     new URI(PID.toURI(reader.GetObjectPID())));
 
             addCoreObjectTriples(reader, objURI, set);
-           
+
             Datastream[] datastreams = reader.GetDatastreams(null, null);
             for (Datastream ds : datastreams) {
                 addCoreDatastreamTriples(ds, objURI, set);
@@ -72,9 +72,9 @@ public class FedoraObjectTripleGenerator_3_0
                     addDCTriples((DatastreamXMLMetadata) ds, objURI, set);
                 }
             }
-            
+
             addRelationshipTriples(reader, objURI, set);
-            
+
             return objURI;
         } catch (ResourceIndexException e) {
             throw e;
@@ -165,7 +165,7 @@ public class FedoraObjectTripleGenerator_3_0
     /**
      * Adds all triples given by reader.getRelationships(null, null).
      * <p>
-     * This includes everything in RELS-EXT as well as the implicit
+     * This includes everything in RELS-EXT and RELS-INT as well as the implicit
      * basic content model assertion, if any.
      */
     private void addRelationshipTriples(DOReader reader,

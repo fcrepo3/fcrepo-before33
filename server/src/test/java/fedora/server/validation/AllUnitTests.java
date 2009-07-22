@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses( {RelsExtValidatorTest.class,
+@Suite.SuiteClasses( {RelsValidatorTest.class,
                       DOValidatorXMLSchemaTest.class,
                       ValidationUtilityTest.class})
 public class AllUnitTests {
@@ -19,7 +19,7 @@ public class AllUnitTests {
         junit.framework.TestSuite suite =
                 new junit.framework.TestSuite(AllUnitTests.class.getName());
 
-        suite.addTestSuite(RelsExtValidatorTest.class);
+        suite.addTestSuite(RelsValidatorTest.class);
         suite.addTest(DOValidatorXMLSchemaTest.suite());
         suite.addTest(ValidationUtilityTest.suite());
 
