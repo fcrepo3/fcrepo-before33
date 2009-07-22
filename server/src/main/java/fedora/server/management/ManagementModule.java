@@ -185,11 +185,13 @@ public class ManagementModule
     }
     
     @Override
-    public void shutdownModule() throws ModuleShutdownException {
-        for (AbstractInvocationHandler h : invocationHandlers) {
-            h.close();
-        }
-    }
+	public void shutdownModule() throws ModuleShutdownException {
+		if (invocationHandlers != null) {
+			for (AbstractInvocationHandler h : invocationHandlers) {
+				h.close();
+			}
+		}
+	}
 
     /**
      * {@inheritDoc}

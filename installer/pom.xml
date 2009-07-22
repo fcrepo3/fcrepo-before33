@@ -42,14 +42,6 @@
 
       <build>
 
-        <resources>
-          <resource>
-            <directory>resources/assemblies</directory>
-            <filtering>true</filtering>
-          </resource>
-        </resources>
-
-
         <plugins>
 
           <plugin>

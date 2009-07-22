@@ -107,8 +107,12 @@
                   <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                 </manifest>
                 <manifestEntries>
+                  <Version>${buildNumber}</Version>
+                  <Build>${timestamp}</Build>
+                 <!--
                   <Version>${fedora.version}</Version>
                   <Build>${build.tstamp}</Build>
+                 -->
                 </manifestEntries>
               </archive>
             </configuration>
@@ -131,8 +135,12 @@
                   <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                 </manifest>
                 <manifestEntries>
+                  <Version>${buildNumber}</Version>
+                  <Build>${timestamp}</Build>
+                <!--
                   <Version>${fedora.version}</Version>
                   <Build>${build.tstamp}</Build>
+                -->
                 </manifestEntries>
               </archive>
               <includes>
@@ -145,6 +153,31 @@
  
         </executions>
 
+      </plugin>
+
+
+
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-4</version>
+
+        <executions>
+
+          <!-- Create the messaging-client.zip -->
+          <execution>
+            <id>fedora-messaging-zip-assembly</id> 
+            <phase>package</phase> 
+            <goals>
+              <goal>single</goal> 
+            </goals>
+
+            <configuration>
+              <descriptors>
+                <descriptor>${basedir}/src/main/resources/assemblies/messaging-client.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
     </plugins>
@@ -180,8 +213,6 @@
         lib.sunxacml
         lib.trippi-core
         lib.wsdl4j
-        lib.xerces
-        lib.xml-apis
     -->
 
     <dependency>

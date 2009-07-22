@@ -111,6 +111,8 @@
 
   <scm>
     <connection>scm:svn:https://fedora-commons.svn.sourceforge.net/svnroot/fedora-commons/trunk</connection>
+    <developerConnection>scm:svn:https://fedora-commons.svn.sourceforge.net/svnroot/fedora-commons/trunk</developerConnection>
+    <url>http://fedora-commons.svn.sourceforge.net/viewvc/fedora-commons/fedora</url>
   </scm>
 
   <build>
@@ -127,7 +129,7 @@
         <filtering>true</filtering>
       </testResource>
     </testResources>
-  
+ 
     <plugins>
 
      <plugin>
@@ -191,6 +193,23 @@
         <version>2.5</version>
         <configuration>
           <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>1.0-beta-3</version>
+        <executions>
+          <execution>
+            <phase>validate</phase>        
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat>
         </configuration>
       </plugin>
 
@@ -763,16 +782,6 @@
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>wsdl4j-1.5.1</artifactId>
-      <version>1.0</version>
-    </dependency>
-   <dependency>
-      <groupId>duraspace</groupId>
-      <artifactId>xercesImpl</artifactId>
-      <version>1.0</version>
-    </dependency>
-   <dependency>
-      <groupId>duraspace</groupId>
-      <artifactId>xml-apis</artifactId>
       <version>1.0</version>
     </dependency>
    <dependency>

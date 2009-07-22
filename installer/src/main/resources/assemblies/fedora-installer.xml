@@ -56,7 +56,6 @@
         <include>org.duraspace.fedora:saxon:war</include>
         <include>org.duraspace.fedora:imagemanip:war</include>
       </includes>
-      <unpack>false</unpack>
       <outputDirectory>/resources</outputDirectory>
       <!-- 
         Note: Output file is hard-coded here because it is also in java files.
@@ -69,7 +68,6 @@
       <includes>
         <include>org.duraspace.fedora:democontent:war</include>
       </includes>
-      <unpack>false</unpack>
       <!-- 
         Note: Output file is hard-coded here because it is also in java files.
               May want to consider refactoring both.
@@ -82,7 +80,6 @@
       <includes>
         <include>org.duraspace.fedora:server:war:webapp:*</include>
       </includes>
-      <unpack>false</unpack>
       <!-- 
         Note: Output file is hard-coded here because it is also in java files.
               May want to consider refactoring both.
@@ -95,7 +92,6 @@
       <includes>
         <include>org.duraspace.fedora:installer:zip*</include>
       </includes>
-      <unpack>false</unpack>
       <outputDirectory>/resources</outputDirectory>
       <!-- 
         Note: Output file is hard-coded here because it is also in java files.
@@ -120,7 +116,6 @@
       <excludes>
         <exclude>duraspace:one-jar-boot-0.96</exclude>
       </excludes>
-      <unpack>false</unpack>
       <outputDirectory>/lib</outputDirectory>
     </dependencySet>
 
@@ -128,7 +123,6 @@
       <includes>
         <include>org.duraspace.fedora:server:jar:utilities-main:*</include>
       </includes>
-      <unpack>false</unpack>
       <outputDirectory>/main</outputDirectory>
       <!-- 
         Note: Output file is hard-coded here because it is also in java files.

@@ -107,8 +107,85 @@
             </goals>
           </execution>
 
+          <execution>
+            <id>rmi-journal-recv-main</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+
+            <configuration>   
+              <classifier>rmi-journal-recv-main</classifier>
+              
+              <archive>
+                <manifest>
+                  <mainClass>fedora.server.journal.readerwriter.multicast.rmi.RmiJournalReceiver</mainClass>
+                </manifest>
+              </archive>
+
+              <includes>
+                <include>fedora/server/journal/readerwriter/multicast/**</include>
+                <include>fedora/server/journal/JournalException.class</include>
+              </includes>
+            </configuration> 
+          </execution>
+ 
         </executions>
       </plugin>
+
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-4</version>
+
+        <executions>
+          <execution>
+            <id>rmi-journal-recv-jar-assembly</id> 
+            <phase>package</phase> 
+            <goals>
+              <goal>single</goal> 
+            </goals>
+
+            <configuration>
+              <descriptors>
+                <descriptor>${basedir}/src/main/resources/assemblies/rmi-journal-recv-jar.xml</descriptor>
+              </descriptors>
+             
+              <archive>
+                <manifest>
+                  <mainClass>com.simontuffs.onejar.Boot</mainClass>
+                  <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                </manifest>
+               <!-- 
+                 Note: may want to add svn version info here 
+                --> 
+                <manifestEntries>
+                  <Version>${buildNumber}</Version>
+                  <Build>${timestamp}</Build>
+                <!--
+                  <Version>${fedora.version}</Version>
+                  <Build>${build.tstamp}</Build>
+                -->
+                </manifestEntries>
+              </archive>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>rmi-journal-recv-zip-assembly</id> 
+            <phase>package</phase> 
+            <goals>
+              <goal>single</goal> 
+            </goals>
+
+            <configuration>
+              <descriptors>
+                <descriptor>${basedir}/src/main/resources/assemblies/rmi-journal-recv-zip.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
 
     </plugins>
 
@@ -370,8 +447,12 @@
                       Note: The version and build need to be generated.
                       -->
                     <manifestEntries>
+                      <Version>${buildNumber}</Version>
+                      <Build>${timestamp}</Build>
+                    <!--
                       <Version>${fedora.version}</Version>
                       <Build>${build.tstamp}</Build>
+                    -->
                     </manifestEntries>
                   </archive>
 

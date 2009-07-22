@@ -8,7 +8,7 @@ echo Starting Demo SOAP Client...
 set OLD_JAVA_HOME=%JAVA_HOME%
 set JAVA_HOME=%THIS_JAVA_HOME%
 
-"%JAVA_HOME%\bin\java" -cp %FEDORA_HOME%;%FEDORA_HOME%\client;%FEDORA_HOME%\client\${fedora-client-jar};%FEDORA_HOME%\client\lib\xercesImpl.jar;%FEDORA_HOME%\client\lib\axis.jar;%FEDORA_HOME%\client\lib\jaxrpc.jar;%FEDORA_HOME%\client\lib\commons-discovery.jar;%FEDORA_HOME%\client\lib\commons-logging.jar;%FEDORA_HOME%\client\lib\saaj.jar -Djavax.net.ssl.trustStore="%FEDORA_HOME%\client\truststore" -Djavax.net.ssl.trustStorePassword=tomcat -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.home=%FEDORA_HOME% demo.soapclient.DemoSOAPClient %1 %2 %3 %4 %5
+"%JAVA_HOME%\bin\java" -cp %FEDORA_HOME%;%FEDORA_HOME%\client;%FEDORA_HOME%\client\${fedora-client-jar};%FEDORA_HOME%\client\lib\axis.jar;%FEDORA_HOME%\client\lib\jaxrpc.jar;%FEDORA_HOME%\client\lib\commons-discovery.jar;%FEDORA_HOME%\client\lib\commons-logging.jar;%FEDORA_HOME%\client\lib\saaj.jar -Djavax.net.ssl.trustStore="%FEDORA_HOME%\client\truststore" -Djavax.net.ssl.trustStorePassword=tomcat -Djavax.xml.parsers.DocumentBuilderFactory=com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl -Dfedora.home=%FEDORA_HOME% demo.soapclient.DemoSOAPClient %1 %2 %3 %4 %5
 
 set JAVA_HOME=%OLD_JAVA_HOME%
 
