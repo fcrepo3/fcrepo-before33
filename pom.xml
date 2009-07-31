@@ -367,13 +367,11 @@
       <artifactId>asm-3.1</artifactId>
       <version>1.0</version>
     </dependency>
-<!--
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>avalon-framework-4.2.0</artifactId>
       <version>1.0</version>
     </dependency>
--->
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>axiom-api-1.2.5</artifactId>
@@ -504,13 +502,11 @@
       <artifactId>emory-util-2.1-remote</artifactId>
       <version>1.0</version>
     </dependency>
-<!--
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>fop</artifactId>
       <version>1.0</version>
     </dependency>
--->
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>google-collections-1.0-rc1</artifactId>
