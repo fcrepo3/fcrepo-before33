@@ -13,6 +13,10 @@
   </prerequisites>
 
   <inceptionYear>2009</inceptionYear>
+  <issueManagement>
+  	<system>Fedora</system>
+  	<url>https://fedora-commons.org/jira</url>
+  </issueManagement>
 
   <developers>
     <developer>
@@ -209,6 +213,7 @@
           </execution>
         </executions>
         <configuration>
+          <revisionOnScmFailure>${version}</revisionOnScmFailure>
           <timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat>
         </configuration>
       </plugin>
@@ -362,11 +367,13 @@
       <artifactId>asm-3.1</artifactId>
       <version>1.0</version>
     </dependency>
+<!--
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>avalon-framework-4.2.0</artifactId>
       <version>1.0</version>
     </dependency>
+-->
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>axiom-api-1.2.5</artifactId>
@@ -497,11 +504,13 @@
       <artifactId>emory-util-2.1-remote</artifactId>
       <version>1.0</version>
     </dependency>
+<!--
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>fop</artifactId>
       <version>1.0</version>
     </dependency>
+-->
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>google-collections-1.0-rc1</artifactId>
