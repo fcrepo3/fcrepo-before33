@@ -6,12 +6,18 @@
 
 	<display-name>Fedora Repository Server</display-name>
     
-	<!--
+	<!--  Cleanup listener for general resource handling -->
 	<listener>
-        <listener-class>
-            fedora.server.utilities.Log4jConfigListener
-		</listener-class>
-    </listener>
+    <listener-class>
+       fedora.server.utilities.CleanupContextListener
+	  </listener-class>
+  </listener>
+  <!-- 
+  <listener>
+    <listener-class>
+          fedora.server.utilities.Log4jConfigListener
+   	</listener-class>
+  </listener>
 	
 	<context-param>
         <param-name>log4j-configLocation</param-name>
@@ -239,7 +245,8 @@
 
 	<!-- security filters -->
 
-	<!-- refactoring after fedora 2.2 might eliminate the need for this "setup" filter.  map it first. -->
+	<!-- refactoring after fedora 2.2 might eliminate the need for this "setup" filter.  map it first.
+-->
 	<filter>
 		<filter-name>SetupFilter</filter-name>
 		<filter-class>fedora.server.security.servletfilters.FilterSetup</filter-class>
