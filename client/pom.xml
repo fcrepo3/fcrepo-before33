@@ -225,6 +225,11 @@
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>server</artifactId>
       <version>1.0.0</version>
+    </dependency>
+    <dependency>
+    	<groupId>duraspace</groupId>
+    	<artifactId>batik-all</artifactId>
+    	<version>1.0</version>
     </dependency> 
 
   </dependencies>

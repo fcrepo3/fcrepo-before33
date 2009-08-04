@@ -13,7 +13,6 @@ mvn install:install-file -Dfile=lib/akubra-fs-0.1.jar -DgroupId=duraspace -Darti
 mvn install:install-file -Dfile=lib/akubra-map-0.1.jar -DgroupId=duraspace -DartifactId=akubra-map-0.1 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/akubra-mem-0.1.jar -DgroupId=duraspace -DartifactId=akubra-mem-0.1 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/asm-3.1.jar -DgroupId=duraspace -DartifactId=asm-3.1 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/avalon-framework-4.2.0.jar -DgroupId=duraspace -DartifactId=avalon-framework-4.2.0 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/axiom-api-1.2.5.jar -DgroupId=duraspace -DartifactId=axiom-api-1.2.5 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/axiom-impl-1.2.5.jar -DgroupId=duraspace -DartifactId=axiom-impl-1.2.5 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/axis-ant.jar -DgroupId=duraspace -DartifactId=axis-ant -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
@@ -21,8 +20,8 @@ mvn install:install-file -Dfile=lib/axis.jar -DgroupId=duraspace -DartifactId=ax
 mvn install:install-file -Dfile=lib/batik-all.jar -DgroupId=duraspace -DartifactId=batik-all -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/carol-2.0.5.jar -DgroupId=duraspace -DartifactId=carol-2.0.5 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/castor-1.2-codegen.jar -DgroupId=duraspace -DartifactId=castor-1.2-codegen -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/castor-1.2-xml.jar -DgroupId=duraspace -DartifactId=castor-1.2-xml -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/castor-1.2-xml-schema.jar -DgroupId=duraspace -DartifactId=castor-1.2-xml-schema -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
+mvn install:install-file -Dfile=lib/castor-1.2-xml.jar -DgroupId=duraspace -DartifactId=castor-1.2-xml -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/commons-beanutils.jar -DgroupId=duraspace -DartifactId=commons-beanutils -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/commons-betwixt-0.7.jar -DgroupId=duraspace -DartifactId=commons-betwixt-0.7 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/commons-codec-1.3.jar -DgroupId=duraspace -DartifactId=commons-codec-1.3 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
@@ -36,11 +35,11 @@ mvn install:install-file -Dfile=lib/commons-io-1.4.jar -DgroupId=duraspace -Dart
 mvn install:install-file -Dfile=lib/commons-logging.jar -DgroupId=duraspace -DartifactId=commons-logging -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/commons-pool-1.2.jar -DgroupId=duraspace -DartifactId=commons-pool-1.2 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/connector-1_5.jar -DgroupId=duraspace -DartifactId=connector-1_5 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/derbyclient.jar -DgroupId=duraspace -DartifactId=derbyclient -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/derby.jar -DgroupId=duraspace -DartifactId=derby -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
+mvn install:install-file -Dfile=lib/derbyclient.jar -DgroupId=duraspace -DartifactId=derbyclient -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/dom4j-1.6.1.jar -DgroupId=duraspace -DartifactId=dom4j-1.6.1 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/emory-util-2.1-remote.jar -DgroupId=duraspace -DartifactId=emory-util-2.1-remote -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/fop.jar -DgroupId=duraspace -DartifactId=fop -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
+mvn install:install-file -Dfile=lib/fop-hyph.jar -DgroupId=duraspace -DartifactId=fop-hyph -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/google-collections-1.0-rc1.jar -DgroupId=duraspace -DartifactId=google-collections-1.0-rc1 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/GroboTestingJUnit-1.2.1-core.jar -DgroupId=duraspace -DartifactId=GroboTestingJUnit-1.2.1-core -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/howl-logger-0.1.11.jar -DgroupId=duraspace -DartifactId=howl-logger-0.1.11 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
@@ -59,8 +58,8 @@ mvn install:install-file -Dfile=lib/jettison-1.0.1.jar -DgroupId=duraspace -Dart
 mvn install:install-file -Dfile=lib/jhbasic.jar -DgroupId=duraspace -DartifactId=jhbasic -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/jmx.jar -DgroupId=duraspace -DartifactId=jmx -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/joda-time-1.5.2.jar -DgroupId=duraspace -DartifactId=joda-time-1.5.2 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/jotm-2.0.10.jar -DgroupId=duraspace -DartifactId=jotm-2.0.10 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/jotm_jrmp_stubs-2.0.10.jar -DgroupId=duraspace -DartifactId=jotm_jrmp_stubs-2.0.10 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
+mvn install:install-file -Dfile=lib/jotm-2.0.10.jar -DgroupId=duraspace -DartifactId=jotm-2.0.10 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/jsp-api.jar -DgroupId=duraspace -DartifactId=jsp-api -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/jsr173_1.0_api.jar -DgroupId=duraspace -DartifactId=jsr173_1.0_api -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/jsr311-api-1.0.jar -DgroupId=duraspace -DartifactId=jsr311-api-1.0 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
