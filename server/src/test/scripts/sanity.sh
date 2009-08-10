@@ -51,7 +51,6 @@ mkdir $BUILD_HOME/build/server-logs
 #
 # Config B Tests
 #
-exit 0
 $SCRIPTDIR/install-fedora.sh $1 ConfigB.properties
 
 if [ $? -ne 0 ]; then
@@ -70,7 +69,10 @@ echo "Waiting 20 seconds for Fedora to start..."
 sleep 20
 echo ""
 echo "[Running ConfigB Tests...]"
-$SCRIPTDIR/systest.sh $1 -Dtest=fedora.test.AllSystemTestsConfigB -Dfedora.port=9080 -Dfedora.hostname=fedcommdevsrv1.nsdlib.org
+cd $BUILD_HOME/integrationtest
+
+$M2_HOME/bin/mvn integration-test -P configB -Dfedora.port=9080 -Dfedora.hostname=fedcommdevsrv1.nsdlib.org
+#$SCRIPTDIR/systest.sh $1 -Dtest=fedora.test.AllSystemTestsConfigB -Dfedora.port=9080 -Dfedora.hostname=fedcommdevsrv1.nsdlib.org
 if [ $? -ne 0 ]; then
   echo ""
   echo "ERROR: Failed ConfigB tests; see above"
@@ -85,6 +87,7 @@ $CATALINA_HOME/bin/shutdown.sh
 sleep 5
 mv $FEDORA_HOME/server/logs $BUILD_HOME/build/server-logs/fedora.test.AllSystemTestsConfigB
 
+exit 0
 #
 # End of Config B Tests
 #
