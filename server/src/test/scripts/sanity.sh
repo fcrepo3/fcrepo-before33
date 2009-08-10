@@ -20,7 +20,6 @@ echo ""
 cd $BUILD_HOME
 $M2_HOME/bin/mvn clean install
 # $M2_HOME/bin/mvn clean install -P fedora-installer
-#remove: $ANT_HOME/bin/ant clean generatedCode release
 exit 0
 
 if [ $? -ne 0 ]; then
