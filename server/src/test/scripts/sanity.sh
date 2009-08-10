@@ -13,31 +13,29 @@ echo ""
 echo "Removing $FEDORA_HOME"                                                                                        
 rm -rf $FEDORA_HOME
 
-echo "========================="
-echo "Compiling distribution..."
-echo "========================="
+echo "================================================"
+echo "Compiling distribution and running unit tests..."
+echo "================================================"
 echo ""
 cd $BUILD_HOME
 $M2_HOME/bin/mvn clean install
-# $M2_HOME/bin/mvn clean install -P fedora-installer
-exit 0
 
 if [ $? -ne 0 ]; then
   echo ""
-  echo "ERROR: Failed to compile distribution; see above"
+  echo "ERROR: Failed to compile and unit-test distribution; see above"
   exit 1
 fi
 
 echo ""
-echo "========================"
-echo "Running offline tests..."
-echo "========================"
+echo "============================"
+echo "Building Fedora Installer..."
+echo "============================"
 echo ""
-$ANT_HOME/bin/ant junit
+$M2_HOME/bin/mvn install -P fedora-installer -Dmaven.test.skip=true -Dintegration.test.skip=true
 
 if [ $? -ne 0 ]; then
   echo ""
-  echo "ERROR: Offline tests failed; see above"
+  echo "ERROR: Failed to build installer; see above"
   exit 1
 fi
 
@@ -53,7 +51,7 @@ mkdir $BUILD_HOME/build/server-logs
 #
 # Config B Tests
 #
-
+exit 0
 $SCRIPTDIR/install-fedora.sh $1 ConfigB.properties
 
 if [ $? -ne 0 ]; then
