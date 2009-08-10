@@ -15,6 +15,9 @@ JAVA6_HOME=/usr/local/jdk1.6.0_11
 # Where is ant installed?
 ANT_HOME=/usr/local/ant
 
+# Where is maven installed?
+M2_HOME=/usr/local/maven
+
 # Where is the Fedora source distribution to be tested?
 BUILD_HOME=$HOME/agent-home/xml-data/build-dir/FCREPO-LINUXSAN
 
