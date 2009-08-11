@@ -12,8 +12,7 @@ import java.io.File;
 public interface FedoraTestConstants
         extends Constants {
 
-    // FIXME: remove 'server' after migrating to Maven2
-    public static final String DEMO_DIR_PREFIX = "server/build/home/client/demo/";
+    public static final String DEMO_DIR_PREFIX = "target/client/demo/";
 
     public static final File FEDORA_HOME_CLIENT =
             new File(FEDORA_HOME + File.separator + "client");

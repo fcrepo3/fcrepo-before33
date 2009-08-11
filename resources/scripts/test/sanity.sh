@@ -46,7 +46,7 @@ echo "==========================="
 echo ""
 
 # Where to put server log artifacts after each sys test
-mkdir $BUILD_HOME/build/server-logs
+mkdir -p $BUILD_HOME/build/server-logs
 
 #
 # Config B Tests

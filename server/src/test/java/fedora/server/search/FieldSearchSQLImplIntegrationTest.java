@@ -138,9 +138,12 @@ public class FieldSearchSQLImplIntegrationTest {
     // Test tearDown
     @AfterClass
     public static void tearDownTest() throws Exception {
-        if (cPool != null) {
-            cPool.close();
-        }
+        // FIXME: Although cPool.close() should be called, it causes the removal
+        //       of the Embedded-Derby driver needed by 'ResourceIndexIntegrationTest.java'
+        //
+        // if (cPool != null) {
+        //     cPool.close();
+        // }
     }
 
     private void init(int maxResults,

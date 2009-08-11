@@ -64,9 +64,9 @@ public class TestAtomDOSerializer
         extends TestXMLDOSerializer {
 
     private static final String iso_tron =
-            "server/src/main/resources/schematron/iso_schematron_skeleton.xsl";
+            "src/main/resources/schematron/iso_schematron_skeleton.xsl";
 
-    private static final String atom_tron = "server/src/main/resources/schematron/atom.sch";
+    private static final String atom_tron = "src/main/resources/schematron/atom.sch";
 
     public TestAtomDOSerializer() {
         super(new AtomDOSerializer());
@@ -97,9 +97,9 @@ public class TestAtomDOSerializer
     @Test
     public void testSerializeFromFOXML() throws Exception {
         String source =
-                "server/src/main/resources/demo/demo-objects/foxml/local-server-demos/image-collection-demo/dataObjects/demo_SmileyBeerGlass.xml";
+                "src/main/resources/demo/demo-objects/foxml/local-server-demos/image-collection-demo/dataObjects/demo_SmileyBeerGlass.xml";
         source =
-                "server/src/main/resources/demo/demo-objects/foxml/local-server-demos/formatting-objects-demo/obj_demo_26.xml";
+                "src/main/resources/demo/demo-objects/foxml/local-server-demos/formatting-objects-demo/obj_demo_26.xml";
         InputStream in = new FileInputStream(source);
         File f = File.createTempFile("test", null);
         OutputStream out = new FileOutputStream(f);

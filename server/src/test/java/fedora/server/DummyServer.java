@@ -14,7 +14,7 @@ import fedora.server.errors.ServerInitializationException;
 /**
  * @author eddie
  */
-public class TestServer
+public class DummyServer
         extends Server {
 
     public static String CONFIG_FILE = "test.fcfg";
@@ -25,7 +25,7 @@ public class TestServer
      * @throws ServerInitializationException
      * @throws ModuleInitializationException
      */
-    protected TestServer(Element rootConfigElement, File homeDir)
+    protected DummyServer(Element rootConfigElement, File homeDir)
             throws ServerInitializationException, ModuleInitializationException {
         super(rootConfigElement, homeDir);
     }

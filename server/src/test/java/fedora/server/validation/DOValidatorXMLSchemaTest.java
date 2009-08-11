@@ -28,6 +28,8 @@ import fedora.common.FedoraTestConstants;
 public class DOValidatorXMLSchemaTest
         implements FedoraTestConstants {
 
+    private static String RESOURCES = "src/main/resources/";
+
     /**
      * @throws java.lang.Exception
      */
@@ -49,10 +51,9 @@ public class DOValidatorXMLSchemaTest
     @Test
     public void testFoxmlValidation() throws Exception {
         InputStream in =
-                new FileInputStream(getDemoFile("foxml/local-server-demos/simple-image-demo/obj_demo_5.xml"));
-        // FIXME: remove 'server' after migrating to Maven2
+                new FileInputStream(RESOURCES + "demo/demo-objects/foxml/local-server-demos/simple-image-demo/obj_demo_5.xml");
         DOValidatorXMLSchema dov =
-                new DOValidatorXMLSchema("server/src/main/resources/xsd/foxml1-1.xsd");
+                new DOValidatorXMLSchema(RESOURCES + "xsd/foxml1-1.xsd");
         dov.validate(in);
     }
 
@@ -60,9 +61,8 @@ public class DOValidatorXMLSchemaTest
     public void testMetsValidation() throws Exception {
         InputStream in =
                 new FileInputStream(getDemoFile("mets/local-server-demos/simple-image-demo/obj_demo_5.xml"));
-        // FIXME: remove 'server' after migrating to Maven2
         DOValidatorXMLSchema dov =
-                new DOValidatorXMLSchema("server/src/main/resources/xsd/mets-fedora-ext1-1.xsd");
+                new DOValidatorXMLSchema(RESOURCES + "xsd/mets-fedora-ext1-1.xsd");
         dov.validate(in);
     }
 
@@ -70,14 +70,12 @@ public class DOValidatorXMLSchemaTest
     public void testAtomValidation() throws Exception {
         InputStream in =
                 new FileInputStream(getDemoFile("atom/local-server-demos/simple-image-demo/obj_demo_5.xml"));
-        // FIXME: remove 'server' after migrating to Maven2
-        DOValidatorXMLSchema dov = new DOValidatorXMLSchema("server/src/main/resources/xsd/atom.xsd");
+        DOValidatorXMLSchema dov = new DOValidatorXMLSchema(RESOURCES + "xsd/atom.xsd");
         dov.validate(in);
 
         SchemaFactory sf =
                 SchemaFactory.newInstance(Constants.XML_XSD.uri);
-        // FIXME: remove 'server' after migrating to Maven2
-        Schema schema = sf.newSchema(new File("server/src/main/resources/xsd/atom.xsd"));
+        Schema schema = sf.newSchema(new File(RESOURCES + "xsd/atom.xsd"));
         Validator validator = schema.newValidator();
         //validator.validate(new StreamSource(in));
     }
