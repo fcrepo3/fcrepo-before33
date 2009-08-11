@@ -20,6 +20,12 @@
     <javax.net.ssl.trustStore>${basedir}/../resources/inc/keystore</javax.net.ssl.trustStore>
     <fedora.username>fedoraAdmin</fedora.username>
     <fedora.password>fedoraAdmin</fedora.password>
+
+    <fedora.hostname>localhost</fedora.hostname>
+    <fedora.port>8080</fedora.port>
+    <fedora.appServerContext>fedora</fedora.appServerContext>
+    <fedora.baseURL>http://localhost:8080/fedora</fedora.baseURL>
+
     <org.apache.activemq.default.directory.prefix>${project.build.directory}</org.apache.activemq.default.directory.prefix>
   </properties>
 
@@ -105,6 +111,24 @@
                       <name>demo.format</name>
                       <value></value>
                     </property>
+
+                    <property>
+                      <name>fedora.hostname</name>
+                      <value>${fedora.hostname}</value>
+                    </property>
+                    <property>
+                      <name>fedora.port</name>
+                      <value>${fedora.port}</value>
+                    </property>
+                    <property>
+                      <name>fedora.appServerContext</name>
+                      <value>${fedora.appServerContext}</value>
+                    </property>
+                    <property>
+                      <name>fedora.baseURL</name>
+                      <value>${fedora.baseURL}</value>
+                    </property>
+
                     <property>
                       <name>org.apache.activemq.default.directory.prefix</name>
                       <value>${org.apache.activemq.default.directory.prefix}</value>
@@ -204,6 +228,24 @@
                       <name>demo.format</name>
                       <value></value>
                     </property>
+
+                    <property>
+                      <name>fedora.hostname</name>
+                      <value>${fedora.hostname}</value>
+                    </property>
+                    <property>
+                      <name>fedora.port</name>
+                      <value>${fedora.port}</value>
+                    </property>
+                    <property>
+                      <name>fedora.appServerContext</name>
+                      <value>${fedora.appServerContext}</value>
+                    </property>
+                    <property>
+                      <name>fedora.baseURL</name>
+                      <value>${fedora.baseURL}</value>
+                    </property>
+
                     <property>
                       <name>org.apache.activemq.default.directory.prefix</name>
                       <value>${org.apache.activemq.default.directory.prefix}</value>
@@ -306,6 +348,24 @@
                       <name>demo.format</name>
                       <value></value>
                     </property>
+ 
+                    <property>
+                      <name>fedora.hostname</name>
+                      <value>${fedora.hostname}</value>
+                    </property>
+                    <property>
+                      <name>fedora.port</name>
+                      <value>${fedora.port}</value>
+                    </property>
+                    <property>
+                      <name>fedora.appServerContext</name>
+                      <value>${fedora.appServerContext}</value>
+                    </property>
+                    <property>
+                      <name>fedora.baseURL</name>
+                      <value>${fedora.baseURL}</value>
+                    </property>
+
                     <property>
                       <name>org.apache.activemq.default.directory.prefix</name>
                       <value>${org.apache.activemq.default.directory.prefix}</value>

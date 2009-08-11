@@ -71,7 +71,7 @@ echo ""
 echo "[Running ConfigB Tests...]"
 cd $BUILD_HOME/integrationtest
 
-$M2_HOME/bin/mvn integration-test -P configB -Dfedora.port=9080 -Dfedora.hostname=fedcommdevsrv1.nsdlib.org
+$M2_HOME/bin/mvn integration-test -P configB -Dfedora.baseURL=http://fedcommdevsrv1.nsdlib.org:9080/fedora
 #$SCRIPTDIR/systest.sh $1 -Dtest=fedora.test.AllSystemTestsConfigB -Dfedora.port=9080 -Dfedora.hostname=fedcommdevsrv1.nsdlib.org
 if [ $? -ne 0 ]; then
   echo ""
