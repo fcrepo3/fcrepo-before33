@@ -71,7 +71,7 @@ echo ""
 echo "[Running ConfigB Tests...]"
 
 cd $BUILD_HOME/integrationtest
-$M2_HOME/bin/mvn integration-test -P configB -Dfedora.baseURL=http://fedcommdevsrv1.nsdlib.org:9080/fedora
+$M2_HOME/bin/mvn integration-test -P configB -Dfedora.baseURL=http://fedcommdevsrv1.nsdlib.org:9080/fedora -Dfedora.hostname=fedcommdevsrv1.nsdlib.org -Dfedora.port=9080
 if [ $? -ne 0 ]; then
   echo ""
   echo "ERROR: Failed ConfigB tests; see above"
@@ -114,8 +114,7 @@ echo ""
 echo "[Running ConfigA Tests...]"
 
 cd $BUILD_HOME/integrationtest
-$M2_HOME/bin/mvn integration-test -P configA -Dfedora.baseURL=http://fedcommdevsrv1.nsdlib.org:9080/fedora
-#$SCRIPTDIR/systest.sh $1 -Dtest=fedora.test.AllSystemTestsConfigA -Dfedora.port=9080 -Dfedora.hostname=fedcommdevsrv1.nsdlib.org
+$M2_HOME/bin/mvn integration-test -P configA -Dfedora.baseURL=http://fedcommdevsrv1.nsdlib.org:9080/fedora -Dfedora.hostname=fedcommdevsrv1.nsdlib.org -Dfedora.port=9080
 if [ $? -ne 0 ]; then
   echo ""
   echo "ERROR: Failed ConfigA tests; see above"
