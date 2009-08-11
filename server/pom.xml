@@ -18,6 +18,11 @@
   <properties>
     <demo.src.dir>${basedir}/src/main/resources/demo</demo.src.dir>
     <fedora.home.build.dir>${basedir}/build/home</fedora.home.build.dir>
+
+    <fedora.hostname>localhost</fedora.hostname>
+    <fedora.port>8080</fedora.port>
+    <fedora.appServerContext>fedora</fedora.appServerContext>
+
   </properties>
 
   <build>
@@ -120,6 +125,22 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.4.2</version>
         <configuration> 
+          <systemProperties>
+
+            <property>
+              <name>fedora.hostname</name>
+              <value>${fedora.hostname}</value>
+            </property>
+            <property>
+              <name>fedora.port</name>
+              <value>${fedora.port}</value>
+            </property>
+            <property>
+              <name>fedora.appServerContext</name>
+              <value>${fedora.appServerContext}</value>
+            </property>
+
+          </systemProperties>
           <includes>
             <include>**/Test*</include>
             <include>**/*Test.class</include>
@@ -139,6 +160,20 @@
             <configuration>
               <skip>${integration.test.skip}</skip>
               <systemProperties>
+
+                <property>
+                  <name>fedora.hostname</name>
+                  <value>${fedora.hostname}</value>
+                </property>
+                <property>
+                  <name>fedora.port</name>
+                  <value>${fedora.port}</value>
+                </property>
+                <property>
+                  <name>fedora.appServerContext</name>
+                  <value>${fedora.appServerContext}</value>
+                </property>
+
               </systemProperties>
               <excludes>
                 <exclude>${instrumentedTests}</exclude>

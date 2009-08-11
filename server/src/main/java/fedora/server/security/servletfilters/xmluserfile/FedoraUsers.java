@@ -1,20 +1,24 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.server.security.servletfilters.xmluserfile;
 
 import java.beans.IntrospectionException;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
+
 import java.net.URI;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.betwixt.io.BeanReader;
 import org.apache.commons.betwixt.io.BeanWriter;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -32,9 +36,19 @@ public class FedoraUsers
 
     private final List<User> users;
 
-    public static File fedoraUsersXML =
-            new File(FEDORA_HOME + File.separator + "server" + File.separator
-                    + "config" + File.separator + "fedora-users.xml");
+    public static File fedoraUsersXML = getFedoraUsersXML();
+
+    private static File getFedoraUsersXML() {
+        String homeConfig =
+                FEDORA_HOME + File.separator + "server" + File.separator
+                        + "config" + File.separator + "fedora-users.xml";
+        String testConfig = "src/main/resources/fcfg/server/fedora-users.xml";
+        fedoraUsersXML = new File(homeConfig);
+        if (!fedoraUsersXML.exists()) {
+            fedoraUsersXML = new File(testConfig);
+        }
+        return fedoraUsersXML;
+    }
 
     public FedoraUsers() {
         roles = new ArrayList<Role>();

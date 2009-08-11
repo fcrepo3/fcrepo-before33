@@ -229,11 +229,11 @@ public abstract class DOTranslationUtility
     // initialize static class with stuff that's used by all DO Serializerers
     static {
         // get host port from system properties (for testing without server instance)
-        String fedoraServerHost = System.getProperty("fedoraServerHost");
-        String fedoraServerPort = System.getProperty("fedoraServerPort");
+        String fedoraServerHost = System.getProperty("fedora.hostname");
+        String fedoraServerPort = System.getProperty("fedora.port");
         String fedoraServerPortSSL = System.getProperty("fedoraRedirectPort");
         String fedoraAppServerContext =
-                System.getProperty("fedoraAppServerContext");
+                System.getProperty("fedora.appServerContext");
 
         if (fedoraServerPort != null) {
             if (fedoraServerPort.equals("80")) {

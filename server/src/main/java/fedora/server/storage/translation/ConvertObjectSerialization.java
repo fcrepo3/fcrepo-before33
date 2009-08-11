@@ -209,9 +209,9 @@ public class ConvertObjectSerialization {
         DOSerializer serializer = (DOSerializer) getInstance(args[3]);
 
         // So DOTranslationUtility works...
-        System.setProperty("fedoraServerHost", "localhost");
-        System.setProperty("fedoraServerPort", "8080");
-        System.setProperty("fedoraAppServerContext", Constants.FEDORA_DEFAULT_APP_CONTEXT);
+        System.setProperty("fedora.hostname", "localhost");
+        System.setProperty("fedora.port", "8080");
+        System.setProperty("fedora.appServerContext", Constants.FEDORA_DEFAULT_APP_CONTEXT);
 
         boolean pretty = args.length > 4 && args[4].equals("true");
 
