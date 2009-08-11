@@ -25,7 +25,7 @@ echo ""
 # Determine the installer path
 INSTALLER=`find $BUILD_HOME/installer/target/ -name *installer*.jar`
 if [ ${#INSTALLER} -lt 5 ]; then
-  echo "ERROR: Installer not found in $BUILD_HOME/dist/release"
+  echo "ERROR: Installer not found in $BUILD_HOME/installer/target"
   exit 1
 fi
 

@@ -69,10 +69,9 @@ echo "Waiting 20 seconds for Fedora to start..."
 sleep 20
 echo ""
 echo "[Running ConfigB Tests...]"
-cd $BUILD_HOME/integrationtest
 
+cd $BUILD_HOME/integrationtest
 $M2_HOME/bin/mvn integration-test -P configB -Dfedora.baseURL=http://fedcommdevsrv1.nsdlib.org:9080/fedora
-#$SCRIPTDIR/systest.sh $1 -Dtest=fedora.test.AllSystemTestsConfigB -Dfedora.port=9080 -Dfedora.hostname=fedcommdevsrv1.nsdlib.org
 if [ $? -ne 0 ]; then
   echo ""
   echo "ERROR: Failed ConfigB tests; see above"
@@ -87,7 +86,6 @@ $CATALINA_HOME/bin/shutdown.sh
 sleep 5
 mv $FEDORA_HOME/server/logs $BUILD_HOME/build/server-logs/fedora.test.AllSystemTestsConfigB
 
-exit 0
 #
 # End of Config B Tests
 #
@@ -114,7 +112,10 @@ echo "Waiting 20 seconds for Fedora to start..."
 sleep 20
 echo ""
 echo "[Running ConfigA Tests...]"
-$SCRIPTDIR/systest.sh $1 -Dtest=fedora.test.AllSystemTestsConfigA -Dfedora.port=9080 -Dfedora.hostname=fedcommdevsrv1.nsdlib.org
+
+cd $BUILD_HOME/integrationtest
+$M2_HOME/bin/mvn integration-test -P configA -Dfedora.baseURL=http://fedcommdevsrv1.nsdlib.org:9080/fedora
+#$SCRIPTDIR/systest.sh $1 -Dtest=fedora.test.AllSystemTestsConfigA -Dfedora.port=9080 -Dfedora.hostname=fedcommdevsrv1.nsdlib.org
 if [ $? -ne 0 ]; then
   echo ""
   echo "ERROR: Failed ConfigA tests; see above"
