@@ -581,9 +581,7 @@ public class TestXACMLPolicies
 
     public void installJunitPolicies() {
         System.out.println("Copying Policies For Testing");
-        // FIXME: swap 'junitDir' after ANT no longer used.
-        File junitDir = new File("integrationtest/src/test/resources/XACMLTestPolicies/junit");
-//        File junitDir = new File("src/test/resources/XACMLTestPolicies/junit");
+        File junitDir = new File("src/test/resources/XACMLTestPolicies/junit");
         File junitsaveDir =
                 new File(FEDORA_HOME,
                          "data/fedora-xacml-policies/repository-policies/junit");

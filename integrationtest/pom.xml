@@ -141,7 +141,12 @@
 
                     <!-- Hangs intermittently
                     <include>**/NotificationInvocationHandlerTest.class</include>
-                    -->
+                     -->
+
+                    <!-- Has bug in source-code
+                    <include>**/SimpleDeploymentTests.class</include>
+                     -->
+
                     <include>**/DOTranslationUtilityTest.class</include>
                     <include>**/TestIngest.class</include>
                     <include>**/TestAPIA.class</include>
@@ -155,15 +160,11 @@
                     <include>**/TestManyDisseminations.class</include>
                     <include>**/TestCommandLineFormats.class</include>
                     <include>**/TestOAIService.class</include>
-
-               <!-- Can be turned on when ANT is no longer used 
                     <include>**/TestServerConfiguration.class</include>
                     <include>**/ConflictingDeploymentTests.class</include>
                     <include>**/SharedDeploymentTests.class</include>
-                    <include>**/SimpleDeploymentTests.class</include>
                     <include>**/TestCommandLineUtilities.class</include>
                     <include>**/ContentModelDSInputTest.class</include>
-               -->
 
                   </includes>
                   <excludes>
@@ -254,11 +255,15 @@
 
                   <includes>
 
-                    <include>**/AtomAPIMMessageTest.class</include>
-
                     <!-- Hangs intermititently
                     <include>**/NotificationInvocationHandlerTest.class</include>
-                    -->
+                     -->
+
+                    <!-- Has bug in source-code
+                    <include>**/SimpleDeploymentTests.class</include>
+                     -->
+
+                    <include>**/AtomAPIMMessageTest.class</include>
                     <include>**/DOTranslationUtilityTest.class</include>
                     <include>**/TestIngest.class</include>  
                     <include>**/TestAPIA.class</include>
@@ -273,17 +278,11 @@
                     <include>**/TestManyDisseminations.class</include>
                     <include>**/TestCommandLineFormats.class</include>
                     <include>**/TestOAIService.class</include>
-
-
-                <!-- Can be turned on when ANT is no longer used
                     <include>**/TestServerConfiguration.class</include>
                     <include>**/ConflictingDeploymentTests.class</include>
                     <include>**/TestCommandLineUtilities.class</include>
                     <include>**/SharedDeploymentTests.class</include>
-                    <include>**/SimpleDeploymentTests.class</include>
                     <include>**/ContentModelDSInputTest.class</include>
-
-                -->
 
                   </includes>
                   <excludes>
@@ -373,12 +372,16 @@
                   </systemProperties>
 
                   <includes>
-
-                    <include>**/AtomAPIMMessageTest.class</include>
                     
                     <!-- Hangs intermittently
                     <include>**/NotificationInvocationHandlerTest.class</include>
-                    -->
+                     -->
+
+                    <!-- Has bug in source-code
+                    <include>**/SimpleDeploymentTests.class</include>
+                     -->
+
+                    <include>**/AtomAPIMMessageTest.class</include>
                     <include>**/DOTranslationUtilityTest.class</include>
                     <include>**/TestIngest.class</include>
                     <include>**/TestAPIA.class</include>
@@ -395,17 +398,12 @@
                     <include>**/TestRISearch.class</include>
                     <include>**/TestOAIService.class</include>
                     <include>**/TestCommandLineFormats.class</include>
-
-
-                <!-- Can be turned on when ANT is no longer used 
                     <include>**/TestServerConfiguration.class</include>
                     <include>**/ConflictingDeploymentTests.class</include>
                     <include>**/SharedDeploymentTests.class</include>
-                    <include>**/SimpleDeploymentTests.class</include>
                     <include>**/TestXACMLPolicies.class</include>
                     <include>**/ContentModelDSInputTest.class</include>
                     <include>**/TestCommandLineUtilities.class</include>
-                -->
 
                   </includes>
                   <excludes>
