@@ -8,39 +8,21 @@ browsing or download at http://fedora-commons.org/go/fcr30
 
 Building Fedora
 ===============
-To build the executable installer, make sure you have ant 1.7
+To build the executable installer, make sure you have maven2
 installed and enter the following:
 
-  ant installer
+   1. Until dependencies are found in a public repository, 
+      the following script needs to be run
+          * ./resources/scripts/installLibs.sh
+   2. mvn install -P fedora-installer
+          * generates fedora-installer.jar
+          * found in /installer/target
+  
 
-Running Offline Tests
+Running Unit Tests
 =====================
-The offline tests consist of unit and integration tests,
-and require no prior setup.  To execute the entire set of
-offline tests, enter the following:
 
-  ant junit
-
-To execute only the unit tests:
-
-  ant junit -Dtest=fedora.test.AllUnitTests
-
-To execute only the integration tests:
-
-  ant junit -Dtest=fedora.test.AllIntegrationTests
-
-You can also execute all unit or integration tests on
-a per-package level by running the "AllUnit/IntegrationTests"
-suite residing in the package of interest.  For example, 
-to run all unit tests in the fedora.server.journal package:
-
-  ant junit -Dtest=fedora.server.journal.AllUnitTests
-
-There are some offline tests that are not included in the 
-offline test suites due to the time required to execute 
-the test. These tests can be run by entering the following:
-
-  ant junit -Dtest=fedora.client.messaging.TestMessagingClient
+  mvn install -Dintegration.test.skip=true
 
 Running System Tests
 ====================
@@ -69,7 +51,7 @@ run without external network access.
 To execute a test suite, make sure the server has been started[*] and 
 that $FEDORA_HOME points to the correct directory. Then enter:
 
-  ant junit -Dtest=fedora.test.AllSystemTestsConfigB
+  mvn integration-test -P config[A|B|Q]
 
 By default, each test will run using the demo objects in
 FOXML format.  To run the same tests using the demo objects
