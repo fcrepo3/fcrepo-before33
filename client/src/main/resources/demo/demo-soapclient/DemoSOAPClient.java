@@ -21,8 +21,8 @@ import javax.xml.rpc.ServiceException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 import fedora.client.FedoraClient;
 
@@ -240,7 +240,7 @@ public class DemoSOAPClient
 			  	System.out.println("Port: " + args[2]);
 			  	System.out.println("Username: " + args[3]);
 			  	System.out.println("Password: " + args[4]);
-			  	String context = Constants.FEDORA_DEFAULT_CONTEXT;
+			  	String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
 
 			  	if (args.length == 6){
 			  	    System.out.println("Context:  " + args[5] + "\n");
