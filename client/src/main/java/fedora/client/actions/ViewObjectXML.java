@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.client.actions;
@@ -75,8 +75,8 @@ public class ViewObjectXML
         AutoExporter exporter = null;
         try {
             //exporter=new AutoExporter(
-            //	Administrator.getProtocol(), Administrator.getHost(), 
-            //	Administrator.getPort(), Administrator.getUser(), Administrator.getPass());            	
+            //	Administrator.getProtocol(), Administrator.getHost(),
+            //	Administrator.getPort(), Administrator.getUser(), Administrator.getPass());
             exporter = new AutoExporter(Administrator.APIA, Administrator.APIM);
         } catch (Exception e) {
             Administrator.showErrorDialog(Administrator.getDesktop(),
@@ -104,11 +104,10 @@ public class ViewObjectXML
                                                    true,
                                                    true,
                                                    true);
-                        viewFrame
-                                .setFrameIcon(new ImageIcon(this
-                                        .getClass()
-                                        .getClassLoader()
-                                        .getResource("images/standard/general/Edit16.gif")));
+                        ImageIcon editIcon =
+                            new ImageIcon(ClassLoader.
+                                          getSystemResource("images/client/standard/general/Edit16.gif"));
+                        viewFrame.setFrameIcon(editIcon);
                         viewFrame.getContentPane()
                                 .add(new JScrollPane(textEditor));
                         viewFrame.setSize(720, 520);

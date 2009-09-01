@@ -90,9 +90,11 @@ public class DatastreamsPane
 
     public String[] XML_MIMETYPE = new String[] {"text/xml"};
 
-    static ImageIcon newIcon =
-            new ImageIcon(Administrator.cl
-                    .getResource("images/standard/general/New16.gif"));
+    ImageIcon newIcon = null;
+
+    //static ImageIcon newIcon =
+    //        new ImageIcon(Administrator.cl
+    //                .getResource("images/standard/general/New16.gif"));
 
     /**
      * Build the pane.
@@ -104,6 +106,10 @@ public class DatastreamsPane
         m_currentVersionMap = new HashMap();
         // this(m_tabbedPane)
         m_dsListeners = new ArrayList();
+
+        newIcon =
+            new ImageIcon(this.getClass().getClassLoader().getSystemClassLoader()
+                    .getSystemResource("images/client/standard/general/New16.gif"));
 
         // m_tabbedPane(DatastreamPane[])
 
@@ -163,6 +169,7 @@ public class DatastreamsPane
      */
     public void doNew(String[] dropdownMimeTypes, boolean makeSelected) {
         int i = getTabIndex("New...");
+
         m_tabbedPane
                 .setComponentAt(i, new NewDatastreamPane(dropdownMimeTypes));
         i = getTabIndex("New...");

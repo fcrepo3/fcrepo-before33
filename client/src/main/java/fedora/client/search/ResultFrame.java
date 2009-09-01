@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.client.search;
@@ -153,8 +153,10 @@ public class ResultFrame
                                                                this));
             getContentPane().add(m_moreButton, BorderLayout.SOUTH);
         }
-        setFrameIcon(new ImageIcon(this.getClass().getClassLoader()
-                .getResource("images/standard/general/Zoom16.gif")));
+        ImageIcon zoomIcon =
+            new ImageIcon(ClassLoader.
+                          getSystemResource("images/client/standard/general/Zoom16.gif"));
+        setFrameIcon(zoomIcon);
         pack();
         setSize(Administrator.getDesktop().getWidth() - 40, getSize().height);
     }

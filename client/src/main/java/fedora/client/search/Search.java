@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.client.search;
@@ -88,7 +88,7 @@ public class Search
             if (i > 0) {
                 text.append(", ");
             }
-            text.append((String) m_displayFields.get(i));
+            text.append(m_displayFields.get(i));
         }
         text.append("</i></html>");
         selectedFieldsLabel.setText(text.toString());
@@ -270,8 +270,10 @@ public class Search
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(outerPane, BorderLayout.CENTER);
 
-        setFrameIcon(new ImageIcon(this.getClass().getClassLoader()
-                .getResource("images/standard/general/Search16.gif")));
+        ImageIcon searchIcon =
+            new ImageIcon(ClassLoader.
+                          getSystemResource("images/client/standard/general/Search16.gif"));
+        setFrameIcon(searchIcon);
 
         setSize(400, 400);
     }
@@ -836,6 +838,7 @@ public class Search
             return m_conditions;
         }
 
+        @Override
         public String getColumnName(int col) {
             if (col == 0) {
                 return "Field";
@@ -854,12 +857,13 @@ public class Search
             return 3;
         }
 
+        @Override
         public Class getColumnClass(int c) {
             return getValueAt(0, c).getClass();
         }
 
         public Object getValueAt(int row, int col) {
-            Condition cond = (Condition) m_conditions.get(row);
+            Condition cond = m_conditions.get(row);
             if (col == 0) {
                 return cond.getProperty();
             } else if (col == 1) {

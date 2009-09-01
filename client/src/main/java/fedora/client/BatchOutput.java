@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.client;
@@ -38,8 +38,10 @@ public class BatchOutput
         jTextArea.setEditable(false);
         JScrollPane jScrollPane = new JScrollPane(jTextArea);
         getContentPane().add(jScrollPane);
-        setFrameIcon(new ImageIcon(this.getClass().getClassLoader()
-                .getResource("images/standard/general/New16.gif")));
+        ImageIcon newIcon =
+            new ImageIcon(ClassLoader.
+                          getSystemResource("images/client/standard/general/New16.gif"));
+        setFrameIcon(newIcon);
         setSize(400, 400);
     }
 
@@ -47,7 +49,7 @@ public class BatchOutput
         return jTextArea;
     }
 
-    //2003.12.03 niebel vvvvv -- duplicate output to file	
+    //2003.12.03 niebel vvvvv -- duplicate output to file
     /**
      * extract parent directory from filepath of pidsfile, store it as directory
      * where processing progress report will be written. see also

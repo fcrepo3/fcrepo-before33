@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.client.batch;
@@ -35,7 +35,7 @@ import fedora.server.utilities.StreamUtility;
  * utility has validation turned on so pre-validation is not necessary.
  * It is provided as a means to pre-validate a modify directives file prior
  * to running it through the batch modify utility.
- * 
+ *
  * @author Ross Wayland
  */
 public class BatchModifyValidate {
@@ -151,11 +151,10 @@ public class BatchModifyValidate {
                                                    true,
                                                    true,
                                                    true);
-                        viewFrame
-                                .setFrameIcon(new ImageIcon(this
-                                        .getClass()
-                                        .getClassLoader()
-                                        .getResource("images/standard/general/Edit16.gif")));
+                        ImageIcon editIcon =
+                            new ImageIcon(ClassLoader.
+                                          getSystemResource("images/client/standard/general/Edit16.gif"));
+                        viewFrame.setFrameIcon(editIcon);
                         viewFrame.getContentPane()
                                 .add(new JScrollPane(textEditor));
                         viewFrame.setSize(720, 520);
@@ -186,7 +185,7 @@ public class BatchModifyValidate {
     /**
      * Convert the duration time from milliseconds to standard hours, minutes,
      * and seconds format.
-     * 
+     *
      * @param millis
      *        The time interval to convert in miliseconds.
      * @return A string with the converted time.
@@ -226,7 +225,7 @@ public class BatchModifyValidate {
 
     /**
      * Initializes the log file for writing.
-     * 
+     *
      * @param rootName
      *        The name of the root element for the xml log file.
      * @throws Exception
@@ -260,7 +259,7 @@ public class BatchModifyValidate {
 
     /**
      * Closes the log file.
-     * 
+     *
      * @throws Exception
      *         If any type of error occurs in closing the log file.
      */
@@ -271,7 +270,7 @@ public class BatchModifyValidate {
 
     /**
      * Converts file into string.
-     * 
+     *
      * @param path
      *        The absolute file path of the file.
      * @return The contents of the file as a string.

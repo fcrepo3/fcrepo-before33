@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.client.batch;
@@ -34,7 +34,7 @@ import fedora.server.utilities.StreamUtility;
  * consists of a file containing the modify directives to be processed. A log
  * file is generated and saved in the client logs directory detailing the
  * events that occured during processing.
- * 
+ *
  * @author Ross Wayland
  */
 public class BatchModify {
@@ -166,11 +166,10 @@ public class BatchModify {
                                                    true,
                                                    true,
                                                    true);
-                        viewFrame
-                                .setFrameIcon(new ImageIcon(this
-                                        .getClass()
-                                        .getClassLoader()
-                                        .getResource("images/standard/general/Edit16.gif")));
+                        ImageIcon editIcon =
+                            new ImageIcon(ClassLoader.
+                                          getSystemResource("images/client/standard/general/Edit16.gif"));
+                        viewFrame.setFrameIcon(editIcon);
                         viewFrame.getContentPane()
                                 .add(new JScrollPane(textEditor));
                         viewFrame.setSize(720, 520);
@@ -200,7 +199,7 @@ public class BatchModify {
     /**
      * Convert the duration time from milliseconds to standard hours, minutes,
      * and seconds format.
-     * 
+     *
      * @param millis
      *        The time interval to convert in miliseconds.
      * @return A string with the converted time.
@@ -240,7 +239,7 @@ public class BatchModify {
 
     /**
      * Initializes the log file for writing.
-     * 
+     *
      * @param rootName
      *        The name of the root element for the xml log file.
      * @throws Exception
@@ -274,7 +273,7 @@ public class BatchModify {
 
     /**
      * Closes the log file.
-     * 
+     *
      * @throws Exception
      *         If any type of error occurs in closing the log file.
      */
@@ -285,7 +284,7 @@ public class BatchModify {
 
     /**
      * Converts file into string.
-     * 
+     *
      * @param path
      *        The absolute file path of the file.
      * @return The contents of the file as a string.

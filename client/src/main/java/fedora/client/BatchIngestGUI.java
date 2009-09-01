@@ -212,8 +212,10 @@ public class BatchIngestGUI
         getContentPane().add(sized(btn, okMin, okPref, okMax, true),
                              BorderLayout.SOUTH);
 
-        setFrameIcon(new ImageIcon(this.getClass().getClassLoader()
-                .getResource("images/standard/general/Export16.gif")));
+        ImageIcon exportIcon =
+            new ImageIcon(ClassLoader.
+                          getSystemResource("images/client/standard/general/Export16.gif"));
+        setFrameIcon(exportIcon);
 
         pack();
         setSize(getSize().width + 20, getSize().height * 2);

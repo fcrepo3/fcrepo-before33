@@ -97,7 +97,7 @@ public class Administrator
 
     protected static File batchtoolLastDir;
 
-    public static ClassLoader cl;
+    //public static ClassLoader cl;
 
     public static JTextArea WATCH_AREA;
 
@@ -225,11 +225,10 @@ public class Administrator
                 s_lastDir = BASE_DIR;
             }
         }
-        cl = this.getClass().getClassLoader();
 
-        m_aboutPic =
-                new JLabel(new ImageIcon(cl
-                        .getResource("images/fedora/aboutadmin.gif")));
+        ImageIcon aboutIcon =
+            new ImageIcon(ClassLoader.getSystemResource("images/client/fedora/aboutadmin.gif"));
+        m_aboutPic = new JLabel(aboutIcon);
         m_aboutText =
                 new JLabel("<html>"
                         + "<p>Copyright 2008-2009, Fedora Commons, Inc.</p>"
@@ -270,8 +269,9 @@ public class Administrator
         splashScreen.setBounds(xLoc, yLoc, xSize, ySize);
         splashScreen.setVisible(true);
 
-        setIconImage(new ImageIcon(cl
-                .getResource("images/fedora/fedora-icon16.gif")).getImage());
+        ImageIcon fedoraIcon =
+            new ImageIcon(ClassLoader.getSystemResource("images/client/fedora/fedora-icon16.gif"));
+        setIconImage(fedoraIcon.getImage());
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         s_desktop = new MDIDesktopPane();

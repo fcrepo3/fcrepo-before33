@@ -27,7 +27,7 @@ import fedora.server.types.gen.ObjectFields;
 /**
  * An editing window that includes facilities for editing and viewing everything
  * about a digital object.
- * 
+ *
  * @author Chris Wilper
  */
 public class ObjectEditorFrame
@@ -45,17 +45,17 @@ public class ObjectEditorFrame
 
     private final String m_pid;
 
-    static ImageIcon objIcon =
-            new ImageIcon(Administrator.cl
-                    .getResource("images/standard/general/Information16.gif"));
+    //static ImageIcon objIcon =
+    //        new ImageIcon(Administrator.cl
+    //                .getResource("images/standard/general/Information16.gif"));
 
-    static ImageIcon dsIcon =
-            new ImageIcon(Administrator.cl
-                    .getResource("images/standard/general/Copy16.gif"));
+    //static ImageIcon dsIcon =
+    //        new ImageIcon(Administrator.cl
+    //                .getResource("images/standard/general/Copy16.gif"));
 
-    static ImageIcon dissIcon =
-            new ImageIcon(Administrator.cl
-                    .getResource("images/standard/general/Refresh16.gif"));
+    //static ImageIcon dissIcon =
+    //        new ImageIcon(Administrator.cl
+    //                .getResource("images/standard/general/Refresh16.gif"));
 
     /**
      * Constructor. Queries the server for the object, builds the object and
@@ -82,6 +82,17 @@ public class ObjectEditorFrame
         addInternalFrameListener(new ObjectEditorClosingListener(pid));
 
         // outerPane(tabbedPane)
+        ImageIcon objIcon =
+            new ImageIcon(this.getClass().getClassLoader().getSystemClassLoader()
+                          .getSystemResource("images/client/standard/general/Information16.gif"));
+
+        ImageIcon dsIcon =
+            new ImageIcon(this.getClass().getClassLoader().getSystemClassLoader()
+                          .getSystemResource("images/client/standard/general/Copy16.gif"));
+
+        ImageIcon dissIcon =
+            new ImageIcon(this.getClass().getClassLoader().getSystemClassLoader()
+                          .getSystemResource("images/client/standard/general/Refresh16.gif"));
 
         // tabbedPane(ObjectPane, DatastreamsPane, DisseminatorsPane)
         m_objectPane =
@@ -110,8 +121,10 @@ public class ObjectEditorFrame
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(outerPane, BorderLayout.CENTER);
-        setFrameIcon(new ImageIcon(this.getClass().getClassLoader()
-                .getResource("images/standard/general/Open16.gif")));
+        //ImageIcon openIcon =
+        //    new ImageIcon(ClassLoader.
+        //                  getSystemResource("images/client/standard/general/Open16.gif"));
+        //setFrameIcon(openIcon);
         pack();
         Dimension dims = getSize();
         if (dims.height < 545) {

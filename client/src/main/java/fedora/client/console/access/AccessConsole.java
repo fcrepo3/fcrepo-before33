@@ -146,8 +146,10 @@ public class AccessConsole
         getContentPane().add(controlPanel, BorderLayout.NORTH);
         getContentPane().add(outputScrollPane);
 
-        setFrameIcon(new ImageIcon(this.getClass().getClassLoader()
-                .getResource("images/standard/development/Host16.gif")));
+        ImageIcon hostIcon =
+            new ImageIcon(ClassLoader.
+                          getSystemResource("images/client/standard/development/Host16.gif"));
+        setFrameIcon(hostIcon);
 
         pack();
         int w = getSize().width;
