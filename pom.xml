@@ -719,6 +719,7 @@
       <artifactId>slf4j-jdk14-1.5.2</artifactId>
       <version>1.0</version>
     </dependency>
+<!--
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>spring-beans-2.5.6</artifactId>
@@ -729,6 +730,7 @@
       <artifactId>spring-core-2.5.6</artifactId>
       <version>1.0</version>
     </dependency>
+-->
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>stax-utils</artifactId>

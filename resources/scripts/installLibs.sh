@@ -17,7 +17,6 @@ mvn install:install-file -Dfile=lib/axiom-api-1.2.5.jar -DgroupId=duraspace -Dar
 mvn install:install-file -Dfile=lib/axiom-impl-1.2.5.jar -DgroupId=duraspace -DartifactId=axiom-impl-1.2.5 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/axis-ant.jar -DgroupId=duraspace -DartifactId=axis-ant -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/axis.jar -DgroupId=duraspace -DartifactId=axis -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/batik-all.jar -DgroupId=duraspace -DartifactId=batik-all -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/carol-2.0.5.jar -DgroupId=duraspace -DartifactId=carol-2.0.5 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/castor-1.2-codegen.jar -DgroupId=duraspace -DartifactId=castor-1.2-codegen -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/castor-1.2-xml-schema.jar -DgroupId=duraspace -DartifactId=castor-1.2-xml-schema -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
@@ -85,8 +84,6 @@ mvn install:install-file -Dfile=lib/servlet-api.jar -DgroupId=duraspace -Dartifa
 mvn install:install-file -Dfile=lib/sjsxp.jar -DgroupId=duraspace -DartifactId=sjsxp -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/slf4j-api-1.5.2.jar -DgroupId=duraspace -DartifactId=slf4j-api-1.5.2 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/slf4j-jdk14-1.5.2.jar -DgroupId=duraspace -DartifactId=slf4j-jdk14-1.5.2 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/spring-beans-2.5.6.jar -DgroupId=duraspace -DartifactId=spring-beans-2.5.6 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/spring-core-2.5.6.jar -DgroupId=duraspace -DartifactId=spring-core-2.5.6 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/stax-utils.jar -DgroupId=duraspace -DartifactId=stax-utils -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/sunxacml-patched.jar -DgroupId=duraspace -DartifactId=sunxacml-patched -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/Tidy.jar -DgroupId=duraspace -DartifactId=Tidy -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true

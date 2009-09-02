@@ -275,7 +275,13 @@
          -->
         <include>duraspace:*</include>
         <include>org.apache.axis:*</include>
+        <include>batik:*</include>
 
+        <include>xerces:xercesImpl</include>
+        <!--
+        <include>xml-apis:*</include>
+        -->
+                        
       </includes>
       <excludes>
         <exclude>org.duraspace.fedora:client:jar:fedora*</exclude>

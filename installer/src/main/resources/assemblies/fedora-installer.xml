@@ -111,7 +111,7 @@
                 See installer/pom.xml for exact dependency list.
          -->
         <include>duraspace:*</include>
-
+                
       </includes> 
       <excludes>
         <exclude>duraspace:one-jar-boot-0.96</exclude>

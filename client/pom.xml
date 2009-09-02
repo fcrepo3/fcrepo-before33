@@ -226,10 +226,11 @@
       <artifactId>server</artifactId>
       <version>1.0.0</version>
     </dependency>
+    
     <dependency>
-    	<groupId>duraspace</groupId>
-    	<artifactId>batik-all</artifactId>
-    	<version>1.0</version>
+      <groupId>batik</groupId>
+      <artifactId>batik-swing</artifactId>
+      <version>1.6-1</version>
     </dependency> 
 
   </dependencies>
