@@ -55,6 +55,8 @@
         <include>org.duraspace.fedora:fop:war</include>
         <include>org.duraspace.fedora:saxon:war</include>
         <include>org.duraspace.fedora:imagemanip:war</include>
+        <include>org.apache.derby:derbyclient:jar:10.4.2.0</include>
+        <include>org.apache.derby:derby:jar:10.4.2.0</include>
       </includes>
       <outputDirectory>/resources</outputDirectory>
       <!-- 
@@ -111,6 +113,7 @@
                 See installer/pom.xml for exact dependency list.
          -->
         <include>duraspace:*</include>
+        <include>commons-logging:commons-logging:jar:1.0.4</include>
                 
       </includes> 
       <excludes>

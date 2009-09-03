@@ -288,17 +288,20 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.duraspace.fedora</groupId>
-      <artifactId>generate</artifactId>
-      <version>1.0.0</version>
+        <groupId>org.duraspace.fedora</groupId>
+        <artifactId>generate</artifactId>
+        <version>1.0.0</version>
     </dependency> 
-
     <dependency>
-      <groupId>axis</groupId>
-      <artifactId>axis-wsdl4j</artifactId>
-      <version>1.3</version>
-    </dependency> 
-
+        <groupId>axis</groupId>
+        <artifactId>axis-wsdl4j</artifactId>
+        <version>1.3</version>
+    </dependency>
+	<dependency>
+        <groupId>commons-httpclient</groupId>
+        <artifactId>commons-httpclient</artifactId>
+        <version>3.1</version>
+    </dependency>
 
   </dependencies>
 </project>
