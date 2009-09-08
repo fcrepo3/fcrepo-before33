@@ -29,8 +29,8 @@
       <outputDirectory>/resources</outputDirectory>
       <includes>
         <include>mkjdbc.jar</include>
-        <include>derby.jar</include>
-        <include>derbyclient.jar</include>
+        <!-- <include>derby.jar</include> -->
+        <!-- <include>derbyclient.jar</include> -->
         <include>mysql-connector-java-5.1.6-bin.jar</include>
         <include>postgresql-8.3-603.jdbc3.jar</include>
       </includes>
@@ -49,6 +49,16 @@
   </fileSets>
 
   <dependencySets>
+    
+    <!-- Note: The version names of the libraries are hard coded and should likely be refactored.
+    <dependencySet>
+      <includes>
+        <include>org.apache.derby:derbyclient:jar:10.4.2.0</include>
+        <include>org.apache.derby:derby:jar:10.4.2.0</include>
+        <include>org.mulgara:mulgara-core:jar:2.1.1</include>
+      </includes>
+      <outputDirectory>/resources</outputDirectory>
+    </dependencySet>  -->
 
     <dependencySet>
       <includes>
@@ -57,6 +67,7 @@
         <include>org.duraspace.fedora:imagemanip:war</include>
         <include>org.apache.derby:derbyclient:jar:10.4.2.0</include>
         <include>org.apache.derby:derby:jar:10.4.2.0</include>
+        <include>org.mulgara:mulgara-core:jar:2.1.1</include>
       </includes>
       <outputDirectory>/resources</outputDirectory>
       <!-- 
@@ -114,6 +125,7 @@
          -->
         <include>duraspace:*</include>
         <include>commons-logging:commons-logging:jar:1.0.4</include>
+        <include>org.mulgara:mulgara-core:jar:2.1.1</include>
                 
       </includes> 
       <excludes>

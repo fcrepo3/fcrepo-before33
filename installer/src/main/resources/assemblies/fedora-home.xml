@@ -180,7 +180,7 @@
         <include>foxml-merge.xsl</include>
       </includes>
     </fileSet>  
-
+    
     <fileSet>
       <directory>../server/src/main/resources/demo/demo-objects/batch-demo</directory>
       <outputDirectory>/client/demo/batch-demo</outputDirectory>
@@ -190,8 +190,18 @@
       <directory>../server/src/main/resources/xml/batch-demo</directory>
       <outputDirectory>/client/demo/batch-demo</outputDirectory>
     </fileSet>  
+    
+    <!-- Note: This is a temporary fix.  Dependency matching is working properly for
+    the war files but not here. See the dependencySet below.  DWD 9/8/2009    -->
+    <fileSet>
+      <directory>../lib</directory>
+      <outputDirectory>/client/lib</outputDirectory>
+      <includes>
+        <include>jai_codec.jar</include>
+        <include>jai_core.jar</include>
+      </includes>
+    </fileSet>
 
- 
     <!-- Client entries -->
     <fileSet>
       <directory>../resources/inc</directory>
@@ -206,6 +216,7 @@
       <outputDirectory>/client/bin</outputDirectory>
       <filtered>true</filtered>
     </fileSet>  
+
     <fileSet>
       <directory>../client/src/main/resources/scripts/sh/client</directory>
       <outputDirectory>/client/bin</outputDirectory>
@@ -218,7 +229,6 @@
       <outputDirectory>/client/demo/soapclient</outputDirectory>
       <filtered>true</filtered>
     </fileSet>  
-
 
     <!-- Common entries -->
     <fileSet>
@@ -264,6 +274,7 @@
   <dependencySets>
 
     <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
       <includes>
         <include>org.duraspace.fedora:client</include>
         <include>org.duraspace.fedora:common</include>
@@ -281,7 +292,11 @@
         <include>commons-discovery:commons-discovery:jar:0.2</include>
         <include>commons-httpclient:commons-httpclient:jar:3.1</include>
         <include>commons-logging:commons-logging:jar:1.0.4</include>
-
+        <!-- Note: This does not trigger.  For now using an ugly fileSet above.  DWD 9/8/2009
+        <include>com.sun.media:jai-codec:jar:1.1.2_01</include>        
+        <include>javax.media:jai-core:jar:1.1.2_01</include>
+         -->
+        <include>org.mulgara:mulgara-core:jar:2.1.1</include>
         <include>xerces:xercesImpl</include>
         <!--
         <include>xml-apis:*</include>

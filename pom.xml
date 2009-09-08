@@ -440,7 +440,8 @@
       <artifactId>commons-collections-3.1</artifactId>
       <version>1.0</version>
     </dependency>
-    <!-- Note: Moving duraspace commons-dbcp down to server does not cause a test failure.  DWD 9/3/2000
+    <!-- Note: Moving duraspace commons-dbcp down to server does not cause a test failure however
+    using the one of central does cause a failure.  DWD 9/3/2000
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>commons-dbcp-1.2.1</artifactId>
@@ -544,6 +545,7 @@
       <artifactId>ij</artifactId>
       <version>1.0</version>
     </dependency>
+    <!--
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>jai_codec</artifactId>
@@ -554,6 +556,7 @@
       <artifactId>jai_core</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>jakarta-oro-2.0.5</artifactId>
@@ -654,11 +657,13 @@
       <artifactId>lucene-core-2.4.0</artifactId>
       <version>1.0</version>
     </dependency>
+    <!--
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>mail-1.4.1</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>md5</artifactId>
@@ -674,11 +679,13 @@
       <artifactId>mptstore-0.9.1</artifactId>
       <version>1.0</version>
     </dependency>
+    <!--
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>mulgara-core-2.1.1</artifactId>
       <version>1.0</version>
     </dependency>
+      -->
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>mysql-connector-java-5.1.6-bin</artifactId>

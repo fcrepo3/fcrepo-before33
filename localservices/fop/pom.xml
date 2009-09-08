@@ -50,7 +50,7 @@
             WEB-INF/lib/commons-io-1.3.1.jar,
             WEB-INF/lib/xmlgraphics-commons-1.3.1.jar,
             WEB-INF/lib/fop-0.95-1.jar,
-            WEB-INF/lib/fop-hyph-1.0.jar,
+            WEB-INF/lib/fop-hyph-1.2.jar,
             WEB-INF/lib/commons-logging-1.0.4.jar,
             WEB-INF/lib/xmlunit-1.2-1.0.jar
           </packagingIncludes>
@@ -77,9 +77,9 @@
    	<version>1.0.4</version>
    </dependency>
    <dependency>
-     <groupId>duraspace</groupId>
+     <groupId>offo.hyphenation</groupId>
      <artifactId>fop-hyph</artifactId>
-     <version>1.0</version>
+     <version>1.2</version>
     </dependency>
   </dependencies>
 
