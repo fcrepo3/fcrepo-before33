@@ -301,6 +301,13 @@
         <!--
         <include>xml-apis:*</include>
         -->
+        
+        <!-- Note: Temporary due to messaging client assembly problems. DWD 9/9/2009 -->
+        <include>org.apache.abdera:abdera-core:jar:0.4.0-incubating</include>
+        <include>org.apache.abdera:abdera-i18n:jar:0.4.0-incubating</include>
+        <include>org.apache.abdera:abdera-parser:jar:0.4.0-incubating</include>
+        <include>org.apache.ws.commons.axiom:axiom-api:jar:1.2.5</include>
+        <include>org.apache.ws.commons.axiom:axiom-impl:jar:1.2.5</include>
                         
       </includes>
       <excludes>
