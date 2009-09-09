@@ -312,6 +312,7 @@
 
 
     <!-- Local dependencies that need to be converted -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>abdera-core-0.4.0-incubating</artifactId>
@@ -332,6 +333,7 @@
       <artifactId>abdera-parser-0.4.0-incubating</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
    <dependency>
       <groupId>duraspace</groupId>
@@ -366,39 +368,43 @@
       <version>1.0</version>
     </dependency>
     -->
-   <dependency>
+    <!-- Note: No evidence of current use.  DWD 09/09/2009
+    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>asm-3.1</artifactId>
       <version>1.0</version>
     </dependency>
-<!--
+    -->
+    <!--
    <dependency> - No longer used DWD.
       <groupId>duraspace</groupId>
       <artifactId>avalon-framework-4.2.0</artifactId>
       <version>1.0</version>
     </dependency>
--->
-   <dependency>
+    -->
+    <!-- Note: Having trouble proving axiom is being used outside Mulgara.  DWD 9/9/2009
+    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>axiom-api-1.2.5</artifactId>
       <version>1.0</version>
     </dependency>
-   <dependency>
+    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>axiom-impl-1.2.5</artifactId>
       <version>1.0</version>
     </dependency>
-   <dependency>
+    -->
+    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>axis-ant</artifactId>
       <version>1.0</version>
     </dependency>
-   <dependency>
+    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>axis</artifactId>
       <version>1.0</version>
     </dependency>
-   <dependency>
+    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>carol-2.0.5</artifactId>
       <version>1.0</version>
