@@ -382,7 +382,7 @@
       <version>1.0</version>
     </dependency>
     -->
-    <!-- Note: Having trouble proving axiom is being used outside Mulgara.  DWD 9/9/2009
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>axiom-api-1.2.5</artifactId>

@@ -292,7 +292,7 @@
         <include>commons-discovery:commons-discovery:jar:0.2</include>
         <include>commons-httpclient:commons-httpclient:jar:3.1</include>
         <include>commons-logging:commons-logging:jar:1.0.4</include>
-        <!-- Note: This does not trigger.  For now using an ugly fileSet above.  DWD 9/8/2009
+        <!-- Note: This does not trigger.  For now using an fileSet above.  DWD 9/8/2009
         <include>com.sun.media:jai-codec:jar:1.1.2_01</include>        
         <include>javax.media:jai-core:jar:1.1.2_01</include>
          -->

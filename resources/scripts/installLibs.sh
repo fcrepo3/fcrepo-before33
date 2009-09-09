@@ -2,18 +2,11 @@
 
 # Install libraries not in maven2 central repository
 
-mvn install:install-file -Dfile=lib/abdera-core-0.4.0-incubating.jar -DgroupId=duraspace -DartifactId=abdera-core-0.4.0-incubating -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/abdera-extensions-main-0.4.0-incubating.jar -DgroupId=duraspace -DartifactId=abdera-extensions-main-0.4.0-incubating -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/abdera-i18n-0.4.0-incubating.jar -DgroupId=duraspace -DartifactId=abdera-i18n-0.4.0-incubating -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/abdera-parser-0.4.0-incubating.jar -DgroupId=duraspace -DartifactId=abdera-parser-0.4.0-incubating -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/activemq-all-5.1.0.jar -DgroupId=duraspace -DartifactId=activemq-all-5.1.0 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/akubra-core-0.1.jar -DgroupId=duraspace -DartifactId=akubra-core-0.1 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/akubra-fs-0.1.jar -DgroupId=duraspace -DartifactId=akubra-fs-0.1 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/akubra-map-0.1.jar -DgroupId=duraspace -DartifactId=akubra-map-0.1 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/akubra-mem-0.1.jar -DgroupId=duraspace -DartifactId=akubra-mem-0.1 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/asm-3.1.jar -DgroupId=duraspace -DartifactId=asm-3.1 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/axiom-api-1.2.5.jar -DgroupId=duraspace -DartifactId=axiom-api-1.2.5 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/axiom-impl-1.2.5.jar -DgroupId=duraspace -DartifactId=axiom-impl-1.2.5 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/axis-ant.jar -DgroupId=duraspace -DartifactId=axis-ant -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/axis.jar -DgroupId=duraspace -DartifactId=axis -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/carol-2.0.5.jar -DgroupId=duraspace -DartifactId=carol-2.0.5 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
