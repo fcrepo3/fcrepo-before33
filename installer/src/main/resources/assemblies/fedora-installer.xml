@@ -126,7 +126,9 @@
         <include>duraspace:*</include>
         <include>commons-logging:commons-logging:jar:1.0.4</include>
         <include>org.mulgara:mulgara-core:jar:2.1.1</include>
-                
+        <include>dom4j:dom4j:jar:1.6.1</include>
+        <include>jaxen:jaxen:jar:1.1.1</include>                        
+      
       </includes> 
       <excludes>
         <exclude>duraspace:one-jar-boot-0.96</exclude>

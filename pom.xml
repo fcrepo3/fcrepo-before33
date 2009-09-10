@@ -521,11 +521,13 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>dom4j-1.6.1</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>emory-util-2.1-remote</artifactId>
@@ -583,21 +585,25 @@
       <artifactId>jaxb-impl</artifactId>
       <version>1.0</version>
     </dependency>
+    <!--
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>jaxen-1.1.1</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>jaxrpc-api-1.1</artifactId>
       <version>1.0</version>
     </dependency>
+    <!--
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>jdom-1.0</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>jersey-bundle-1.0.1</artifactId>
@@ -757,23 +763,23 @@
       <artifactId>slf4j-jdk14-1.5.2</artifactId>
       <version>1.0</version>
     </dependency>
-<!--
-   <dependency>
+    <!--
+    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>spring-beans-2.5.6</artifactId>
       <version>1.0</version>
     </dependency>
-   <dependency>
+    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>spring-core-2.5.6</artifactId>
       <version>1.0</version>
     </dependency>
--->
-   <dependency>
+    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>stax-utils</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>sunxacml-patched</artifactId>

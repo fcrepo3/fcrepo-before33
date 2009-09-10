@@ -297,7 +297,7 @@
         <include>javax.media:jai-core:jar:1.1.2_01</include>
          -->
         <include>org.mulgara:mulgara-core:jar:2.1.1</include>
-        <include>xerces:xercesImpl</include>
+        <include>xerces:xercesImpl:jar:2.6.2</include>
         <!--
         <include>xml-apis:*</include>
         -->
