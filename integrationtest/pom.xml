@@ -280,7 +280,7 @@
                     <include>**/TestOAIService.class</include>
                     <include>**/TestServerConfiguration.class</include>
                     <include>**/ConflictingDeploymentTests.class</include>
-                    <include>**/TestCommandLineUtilities.class</include>
+                    <!-- <include>**/TestCommandLineUtilities.class</include> -->
                     <include>**/SharedDeploymentTests.class</include>
                     <include>**/ContentModelDSInputTest.class</include>
 
@@ -403,7 +403,7 @@
                     <include>**/SharedDeploymentTests.class</include>
                     <include>**/TestXACMLPolicies.class</include>
                     <include>**/ContentModelDSInputTest.class</include>
-                    <include>**/TestCommandLineUtilities.class</include>
+                    <!-- <include>**/TestCommandLineUtilities.class</include>   -->
 
                   </includes>
                   <excludes>
@@ -417,7 +417,6 @@
         </plugins>
       </build>
     </profile>
-
 
   </profiles>
    
@@ -456,6 +455,7 @@
       <artifactId>client</artifactId>
       <version>1.0.0</version>
     </dependency> 
+
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>client</artifactId>

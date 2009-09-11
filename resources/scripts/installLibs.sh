@@ -69,9 +69,9 @@ mvn install:install-file -Dfile=lib/slf4j-api-1.5.2.jar -DgroupId=duraspace -Dar
 mvn install:install-file -Dfile=lib/slf4j-jdk14-1.5.2.jar -DgroupId=duraspace -DartifactId=slf4j-jdk14-1.5.2 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/sunxacml-patched.jar -DgroupId=duraspace -DartifactId=sunxacml-patched -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/Tidy.jar -DgroupId=duraspace -DartifactId=Tidy -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/trippi-1.4.1-core.jar -DgroupId=duraspace -DartifactId=trippi-1.4.1-core -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/trippi-1.4.1-mptstore.jar -DgroupId=duraspace -DartifactId=trippi-1.4.1-mptstore -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/trippi-1.4.1-mulgara.jar -DgroupId=duraspace -DartifactId=trippi-1.4.1-mulgara -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
+mvn install:install-file -Dfile=lib/trippi-1.4.1-core.jar -DgroupId=org.fedorarepo -DartifactId=trippi-core -Dversion=1.4.1 -Dpackaging=jar -DgeneratePom=true
+mvn install:install-file -Dfile=lib/trippi-1.4.1-mptstore.jar -DgroupId=org.fedorarepo -DartifactId=trippi-mptstore -Dversion=1.4.1 -Dpackaging=jar -DgeneratePom=true
+mvn install:install-file -Dfile=lib/trippi-1.4.1-mulgara.jar -DgroupId=org.fedorarepo -DartifactId=trippi-mulgara -Dversion=1.4.1 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/trove-2.0.4.jar -DgroupId=duraspace -DartifactId=trove-2.0.4 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/tt-bytecode.jar -DgroupId=duraspace -DartifactId=tt-bytecode -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/wsdl4j-1.5.1.jar -DgroupId=duraspace -DartifactId=wsdl4j-1.5.1 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
