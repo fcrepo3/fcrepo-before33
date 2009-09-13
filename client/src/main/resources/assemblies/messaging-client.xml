@@ -24,7 +24,7 @@
         <include>org.apache.ws.commons.axiom:axiom-impl:jar:1.2.5</include>
         <include>dom4j:dom4j:jar:1.6.1</include>
         <include>jaxen:jaxen:jar:1.1.1</include>
-        <include>duraspace:jsr173_1.0_api</include>
+        <include>javax.xml:jsr173:jar:1.0</include>
         <include>duraspace:log4j-1.2.15</include>
         <include>duraspace:sjsxp</include>
 

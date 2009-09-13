@@ -1,10 +1,10 @@
 REM Install libraries not in maven2 central repository
 
 call mvn install:install-file -Dfile=../../lib/activemq-all-5.1.0.jar -DgroupId=duraspace -DartifactId=activemq-all-5.1.0 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-call mvn install:install-file -Dfile=../../lib/akubra-core-0.1.jar -DgroupId=duraspace -DartifactId=akubra-core -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-call mvn install:install-file -Dfile=../../lib/akubra-fs-0.1.jar -DgroupId=duraspace -DartifactId=akubra-fs -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-call mvn install:install-file -Dfile=../../lib/akubra-map-0.1.jar -DgroupId=duraspace -DartifactId=akubra-map -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-call mvn install:install-file -Dfile=../../lib/akubra-mem-0.1.jar -DgroupId=duraspace -DartifactId=akubra-mem -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
+call mvn install:install-file -Dfile=../../lib/akubra-core-0.1.jar -DgroupId=org.fedorarepo -DartifactId=akubra-core -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
+call mvn install:install-file -Dfile=../../lib/akubra-fs-0.1.jar -DgroupId=org.fedorarepo -DartifactId=akubra-fs -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
+call mvn install:install-file -Dfile=../../lib/akubra-map-0.1.jar -DgroupId=org.fedorarepo -DartifactId=akubra-map -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
+call mvn install:install-file -Dfile=../../lib/akubra-mem-0.1.jar -DgroupId=org.fedorarepo -DartifactId=akubra-mem -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 call mvn install:install-file -Dfile=../../lib/axis-ant.jar -DgroupId=duraspace -DartifactId=axis-ant -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 call mvn install:install-file -Dfile=../../lib/axis.jar -DgroupId=duraspace -DartifactId=axis -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 call mvn install:install-file -Dfile=../../lib/carol-2.0.5.jar -DgroupId=duraspace -DartifactId=carol-2.0.5 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
@@ -30,8 +30,6 @@ call mvn install:install-file -Dfile=../../lib/jai_codec.jar -DgroupId=com.sun.m
 call mvn install:install-file -Dfile=../../lib/jai_core.jar -DgroupId=javax.media -DartifactId=jai_core -Dversion=1.1.2_01 -Dpackaging=jar -DgeneratePom=false
 call mvn install:install-file -Dfile=../../lib/jakarta-oro-2.0.5.jar -DgroupId=duraspace -DartifactId=jakarta-oro-2.0.5 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 call mvn install:install-file -Dfile=../../lib/java-getopt-1.0.11.jar -DgroupId=duraspace -DartifactId=java-getopt-1.0.11 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-call mvn install:install-file -Dfile=../../lib/jaxb-api.jar -DgroupId=duraspace -DartifactId=jaxb-api -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-call mvn install:install-file -Dfile=../../lib/jaxb-impl.jar -DgroupId=duraspace -DartifactId=jaxb-impl -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 call mvn install:install-file -Dfile=../../lib/jaxrpc-api-1.1.jar -DgroupId=duraspace -DartifactId=jaxrpc-api-1.1 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 call mvn install:install-file -Dfile=../../lib/jersey-bundle-1.0.1.jar -DgroupId=duraspace -DartifactId=jersey-bundle-1.0.1 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 call mvn install:install-file -Dfile=../../lib/jettison-1.0.1.jar -DgroupId=duraspace -DartifactId=jettison-1.0.1 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
@@ -41,8 +39,6 @@ call mvn install:install-file -Dfile=../../lib/joda-time-1.5.2.jar -DgroupId=dur
 call mvn install:install-file -Dfile=../../lib/jotm_jrmp_stubs-2.0.10.jar -DgroupId=duraspace -DartifactId=jotm_jrmp_stubs-2.0.10 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 call mvn install:install-file -Dfile=../../lib/jotm-2.0.10.jar -DgroupId=duraspace -DartifactId=jotm-2.0.10 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 call mvn install:install-file -Dfile=../../lib/jsp-api.jar -DgroupId=duraspace -DartifactId=jsp-api -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-call mvn install:install-file -Dfile=../../lib/jsr173_1.0_api.jar -DgroupId=duraspace -DartifactId=jsr173_1.0_api -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
-call mvn install:install-file -Dfile=../../lib/jsr311-api-1.0.jar -DgroupId=duraspace -DartifactId=jsr311-api-1.0 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 call mvn install:install-file -Dfile=../../lib/jta-spec1_0_1.jar -DgroupId=duraspace -DartifactId=jta-spec1_0_1 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 call mvn install:install-file -Dfile=../../lib/junit-4.5.jar -DgroupId=duraspace -DartifactId=junit-4.5 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 call mvn install:install-file -Dfile=../../lib/log4j-1.2.15.jar -DgroupId=duraspace -DartifactId=log4j-1.2.15 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
