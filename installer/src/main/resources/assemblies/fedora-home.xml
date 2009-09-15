@@ -290,7 +290,7 @@
         <include>commons-discovery:commons-discovery:jar:0.2</include>
         <include>commons-httpclient:commons-httpclient:jar:3.1</include>
         <include>commons-logging:commons-logging:jar:1.0.4</include>
-        <include>duraspace:commons-pool-1.2:jar:1.0</include>
+        <include>commons-pool:commons-pool:jar:1.2</include>
         <include>gnu.getopt:java-getopt:jar:1.0.13</include>
         <include>javax.activation:activation:jar:1.1.1</include>
         <include>javax.mail:mail:jar:1.4.1</include>
@@ -301,7 +301,7 @@
         <include>javax.xml:jaxrpc-api:jar:1.1</include>
         <include>duraspace:jhbasic:jar:1.0</include>
         <include>javax.xml.soap:saaj-api:jar:1.3</include>
-        <include>duraspace:log4j-1.2.15:jar:1.0</include>
+        <include>log4j:log4j:jar:1.2.15</include>
         <include>duraspace:openrdf-sesame-2.2.1-onejar:jar:1.0</include>
         <include>duraspace:saxon9:jar:1.0</include>
         <include>duraspace:slf4j-api-1.5.2:jar:1.0</include>

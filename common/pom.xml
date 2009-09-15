@@ -321,5 +321,11 @@
       <version>1.5.1</version>
     </dependency>
 
+    <dependency>
+      <groupId>duraspace</groupId>
+      <artifactId>openrdf-sesame-2.2.1-onejar</artifactId>
+      <version>1.0</version>
+    </dependency>
+
   </dependencies>
 </project>

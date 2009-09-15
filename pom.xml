@@ -391,11 +391,13 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>axis-ant</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -423,16 +425,20 @@
       <artifactId>castor-1.2-xml-schema</artifactId>
       <version>1.0</version>
     </dependency>
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>commons-beanutils</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>commons-betwixt-0.7</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -440,31 +446,27 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>commons-collections-3.1</artifactId>
       <version>1.0</version>
     </dependency>
-    <!-- Note: Moving duraspace commons-dbcp down to server does not cause a test failure however
-    using the one of central does cause a failure.  DWD 9/3/2000
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>commons-dbcp-1.2.1</artifactId>
       <version>1.0</version>
     </dependency>
     -->
-    <!-- Note: Using central commons-dbcp here or in the server is currently causing a server test failure.  DWD 9/3/2000
-    <dependency>
-	    <groupId>commons-dbcp</groupId>
-	    <artifactId>commons-dbcp</artifactId>
-	    <version>1.2.1</version>
-	</dependency>
-	-->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>commons-digester-1.7</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -472,11 +474,13 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>commons-fileupload-1.2.1</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -484,11 +488,13 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>commons-io-1.4</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -670,11 +676,13 @@
       <artifactId>jta-spec1_0_1</artifactId>
       <version>1.0</version>
     </dependency>
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>log4j-1.2.15</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>lucene-core-2.4.0</artifactId>
@@ -719,11 +727,13 @@
       <artifactId>one-jar-boot-0.96</artifactId>
       <version>1.0</version>
     </dependency>
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>openrdf-sesame-2.2.1-onejar</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>persistence-api-1.0.2</artifactId>

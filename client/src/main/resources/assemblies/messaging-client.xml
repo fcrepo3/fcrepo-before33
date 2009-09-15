@@ -25,7 +25,7 @@
         <include>dom4j:dom4j:jar:1.6.1</include>
         <include>jaxen:jaxen:jar:1.1.1</include>
         <include>javax.xml:jsr173:jar:1.0</include>
-        <include>duraspace:log4j-1.2.15</include>
+        <include>log4j:log4j:jar:1.2.15</include>
         <include>duraspace:sjsxp</include>
 
       </includes>

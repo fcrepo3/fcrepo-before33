@@ -123,15 +123,21 @@
                 catch properly defined (i.e. maven-central) dependencies.
                 See installer/pom.xml for exact dependency list.
          -->
-        <include>duraspace:*</include>
+        <!-- <include>duraspace:*</include> -->
+        <include>commons-beanutils:commons-beanutils:jar:1.6</include>
+        <include>commons-betwixt:commons-betwixt:jar:0.7</include>
+        <include>commons-collections:commons-collections:jar:3.1</include>
+        <include>commons-digester:commons-digester:jar:1.7</include>
         <include>commons-logging:commons-logging:jar:1.0.4</include>
-        <include>org.mulgara:mulgara-core:jar:2.1.1</include>
         <include>dom4j:dom4j:jar:1.6.1</include>
+        <include>duraspace:openrdf-sesame-2.2.1-onejar:jar:1.0</include>
+        <include>org.mulgara:mulgara-core:jar:2.1.1</include>
         <include>jaxen:jaxen:jar:1.1.1</include>                        
-      
-      </includes> 
+        <include>log4j:log4j:jar:1.2.15</include>
+
+      </includes>
       <excludes>
-        <exclude>duraspace:one-jar-boot-0.96</exclude>
+        <!-- <exclude>duraspace:one-jar-boot-0.96:jar:1.0</exclude> -->
       </excludes>
       <outputDirectory>/lib</outputDirectory>
     </dependencySet>
