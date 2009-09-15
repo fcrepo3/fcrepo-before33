@@ -394,7 +394,7 @@
                     <include>**/TestManagedDatastreams.class</include>
                     <include>**/TestManagementNotifications.class</include>
                     <include>**/TestRelationships.class</include>
-                    <!-- Temporary Failed Test DWD 9/14/2009 <include>**/TestRESTAPI.class</include> -->
+                    <include>**/TestRESTAPI.class</include>
                     <include>**/TestRISearch.class</include>
                     <include>**/TestOAIService.class</include>
                     <include>**/TestCommandLineFormats.class</include>

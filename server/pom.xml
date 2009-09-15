@@ -568,6 +568,12 @@
     </dependency>
 
     <dependency>
+      <groupId>asm</groupId>
+      <artifactId>asm</artifactId>
+      <version>3.1</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.abdera</groupId>
       <artifactId>abdera-core</artifactId>
       <version>0.4.0-incubating</version>
@@ -892,6 +898,13 @@
     </dependency>
     
     <dependency>
+      <groupId>org.objectweb.carol</groupId>
+      <artifactId>carol</artifactId>
+      <version>2.0.5</version>
+      <!-- <scope>test</scope> -->
+    </dependency>
+
+    <dependency>
       <groupId>wsdl4j</groupId>
       <artifactId>wsdl4j</artifactId>
       <version>1.5.1</version>
@@ -927,6 +940,12 @@
       <version>1.0</version>
     </dependency>
 
+    <dependency>
+      <groupId>duraspace</groupId>
+      <artifactId>sunxacml-patched</artifactId>
+      <version>1.0</version>
+    </dependency>
+    
   </dependencies>
 
 </project>

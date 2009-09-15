@@ -326,6 +326,12 @@
       <artifactId>openrdf-sesame-2.2.1-onejar</artifactId>
       <version>1.0</version>
     </dependency>
+   
+    <dependency>
+      <groupId>duraspace</groupId>
+      <artifactId>sunxacml-patched</artifactId>
+      <version>1.0</version>
+    </dependency>
 
   </dependencies>
 </project>

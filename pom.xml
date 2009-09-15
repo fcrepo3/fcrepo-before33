@@ -365,7 +365,7 @@
       <version>1.0</version>
     </dependency>
     -->
-    <!-- Note: No evidence of current use.  DWD 09/09/2009
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>asm-3.1</artifactId>
@@ -405,11 +405,13 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>carol-2.0.5</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>castor-1.2-codegen</artifactId>
@@ -570,11 +572,13 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!-- Note: No demonstrated evidence of use.  DWD 9/15/2009
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>jakarta-oro-2.0.5</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--    
     <dependency>
       <groupId>duraspace</groupId>
@@ -656,6 +660,7 @@
       <groupId>duraspace</groupId>
       <artifactId>jsp-api</artifactId>
       <version>1.0</version>
+      <scope>provided</scope>
     </dependency>
     <!--
     <dependency>
@@ -683,11 +688,13 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>lucene-core-2.4.0</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -772,6 +779,7 @@
       <groupId>duraspace</groupId>
       <artifactId>servlet-api</artifactId>
       <version>1.0</version>
+      <scope>provided</scope>
     </dependency>
    <dependency>
       <groupId>duraspace</groupId>
@@ -805,11 +813,13 @@
       <version>1.0</version>
     </dependency>
     -->
-   <dependency>
+    <!--
+    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>sunxacml-patched</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>Tidy</artifactId>

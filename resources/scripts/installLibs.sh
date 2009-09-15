@@ -9,7 +9,6 @@ mvn install:install-file -Dfile=lib/akubra-map-0.1.jar -DgroupId=org.fedorarepo 
 mvn install:install-file -Dfile=lib/akubra-mem-0.1.jar -DgroupId=org.fedorarepo -DartifactId=akubra-mem -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/axis-ant.jar -DgroupId=duraspace -DartifactId=axis-ant -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/axis.jar -DgroupId=org.fedorarepo -DartifactId=axis -Dversion=1.3-PATCHED -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/carol-2.0.5.jar -DgroupId=duraspace -DartifactId=carol-2.0.5 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/castor-1.2-codegen.jar -DgroupId=duraspace -DartifactId=castor-1.2-codegen -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/castor-1.2-xml-schema.jar -DgroupId=duraspace -DartifactId=castor-1.2-xml-schema -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/castor-1.2-xml.jar -DgroupId=duraspace -DartifactId=castor-1.2-xml -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
