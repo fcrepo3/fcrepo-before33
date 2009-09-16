@@ -137,7 +137,7 @@
 
       </includes>
       <excludes>
-        <!-- <exclude>duraspace:one-jar-boot-0.96:jar:1.0</exclude> -->
+        <!-- <exclude>org.fedorarepo:one-jar-boot:jar:0.96</exclude> -->
       </excludes>
       <outputDirectory>/lib</outputDirectory>
     </dependencySet>
@@ -156,12 +156,11 @@
 
     <dependencySet>
       <includes>
-        <include>duraspace:one-jar-boot-0.96</include>
+        <include>org.fedorarepo:one-jar-boot:jar:0.96</include>
       </includes>
       <unpack>true</unpack>
       <outputDirectory>/</outputDirectory>
     </dependencySet>
-
 
   </dependencySets>
 </assembly>

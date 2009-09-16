@@ -124,17 +124,6 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-
-    <repository>
-      <id>ondex</id>
-      <url>http://www4.rothamsted.bbsrc.ac.uk/ondex/maven2/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
   </repositories>
 
   <scm>
@@ -577,11 +566,13 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>emory-util-2.1-remote</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>google-collections-1.0-rc1</artifactId>
@@ -672,11 +663,13 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>jettison-1.0.1</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -777,11 +770,13 @@
       <artifactId>mysql-connector-java-5.1.6-bin</artifactId>
       <version>1.0</version>
     </dependency>
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>one-jar-boot-0.96</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -789,21 +784,25 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--    
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>persistence-api-1.0.2</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>postgresql-8.3-603.jdbc3</artifactId>
       <version>1.0</version>
     </dependency>
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>rome-0.9</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>

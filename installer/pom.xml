@@ -25,7 +25,6 @@
       </resource>
     </resources>
 
-
   </build>
 
   <profiles>
@@ -68,7 +67,6 @@
                 </configuration>
               </execution>
 
-
               <!-- Create the fedora installer -->
               <execution>
                 <id>fedora-installer-assembly</id> 
@@ -97,7 +95,6 @@
       </build>
 
       <dependencies>
-
         <dependency>
           <groupId>commons-beanutils</groupId>
           <artifactId>commons-beanutils</artifactId>
@@ -142,22 +139,12 @@
           <type>war</type>
           <version>1.0.0</version>
         </dependency> 
-
       </dependencies>
 
     </profile>
   </profiles>
 
   <dependencies>
-
-    <!-- Note: Using this requires adding a repository.  DWD 9/14/2009
-    <dependency>
-      <groupId>com.simontuffs</groupId>
-      <artifactId>one-jar-boot</artifactId>
-      <version>0.96</version>
-    </dependency>
-    -->
-
     <dependency>
       <groupId>commons-digester</groupId>
       <artifactId>commons-digester</artifactId>
@@ -194,12 +181,6 @@
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
       <version>1.4.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>duraspace</groupId>
-      <artifactId>one-jar-boot-0.96</artifactId>
-      <version>1.0</version>
     </dependency>
 
     <dependency>
@@ -257,7 +238,13 @@
     </dependency> 
 
     <dependency>
-      <groupId>org.mulgara</groupId>
+      <groupId>org.fedorarepo</groupId>
+      <artifactId>one-jar-boot</artifactId>
+      <version>0.96</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.fedorarepo</groupId>
       <artifactId>mulgara-core</artifactId>
       <version>2.1.1</version>
     </dependency>
@@ -267,7 +254,6 @@
       <artifactId>xercesImpl</artifactId>
       <version>2.6.2</version>
     </dependency>
-    
 
     <!-- dependencies needed by the actual installer.jar 
             fedora-common.jar
