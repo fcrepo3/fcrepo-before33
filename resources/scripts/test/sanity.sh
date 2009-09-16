@@ -13,11 +13,16 @@ echo ""
 echo "Removing $FEDORA_HOME"                                                                                        
 rm -rf $FEDORA_HOME
 
+echo ""
+echo "Installing fresh libs to local repository"
+cd $BUILD_HOME
+$SCRIPTDIR/../uninstallLibs.sh ~/.m2/repository
+$SCRIPTDIR/../installLibs.sh
+
 echo "================================================"
 echo "Compiling distribution and running unit tests..."
 echo "================================================"
 echo ""
-cd $BUILD_HOME
 $M2_HOME/bin/mvn clean install
 
 if [ $? -ne 0 ]; then
