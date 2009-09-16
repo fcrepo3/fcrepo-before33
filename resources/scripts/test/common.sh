@@ -17,13 +17,11 @@ CATALINA_HOME=$FEDORA_HOME/tomcat
 echo "[Global Settings]"
 echo "JAVA5_HOME    = $JAVA5_HOME"
 echo "JAVA6_HOME    = $JAVA6_HOME"
-echo "ANT_HOME      = $ANT_HOME"
 echo "BUILD_HOME    = $BUILD_HOME"
 echo "FEDORA_HOME   = $FEDORA_HOME"
 echo "CATALINA_HOME = $CATALINA_HOME"
 echo ""
 
-export ANT_HOME
 export FEDORA_HOME
 export CATALINA_HOME
 

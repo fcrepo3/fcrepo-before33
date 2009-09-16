@@ -61,13 +61,3 @@ Scripts:
 
                        Example Usage:
                          install-fedora.sh java5 ConfigB.properties
-
-    systest.sh         Runs a system test on the already-running Fedora
-                       instance.  The first argument is the version of java
-                       to use when executing the test (java5 or java6) and
-                       the remaining arguments specify the test to run and
-                       any other system properties to be passed to ant.
-
-                       Example Usage:
-                         systest.sh java5 -Dtest=fedora.test.AllSystemTestsConfigB
-                       

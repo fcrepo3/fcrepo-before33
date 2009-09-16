@@ -12,9 +12,6 @@ JAVA5_HOME=/usr/java/jdk1.5.0_16
 # Where is JDK 1.6 installed?
 JAVA6_HOME=/usr/local/jdk1.6.0_11
 
-# Where is ant installed?
-ANT_HOME=/usr/local/ant
-
 # Where is maven installed?
 M2_HOME=/usr/local/maven
 
@@ -33,6 +30,5 @@ HTTP_PORT=9080
 #
 CATALINA_HOME=$FEDORA_HOME/tomcat
 
-export ANT_HOME
 export FEDORA_HOME
 export CATALINA_HOME

@@ -51,6 +51,7 @@ echo "==========================="
 echo ""
 
 # Where to put server log artifacts after each sys test
+rm -rf $BUILD_HOME/build/server-logs
 mkdir -p $BUILD_HOME/build/server-logs
 
 #
@@ -84,12 +85,14 @@ if [ $? -ne 0 ]; then
   $CATALINA_HOME/bin/shutdown.sh
   sleep 5
   mv $FEDORA_HOME/server/logs $BUILD_HOME/build/server-logs/fedora.test.AllSystemTestsConfigB
+  mv $FEDORA_HOME/tomcat/logs/catalina.out $BUILD_HOME/build/server-logs/catalina.out.AllSystemTestsConfigB
   exit 1
 fi
 echo "Shutting down tomcat..."
 $CATALINA_HOME/bin/shutdown.sh
 sleep 5
 mv $FEDORA_HOME/server/logs $BUILD_HOME/build/server-logs/fedora.test.AllSystemTestsConfigB
+mv $FEDORA_HOME/tomcat/logs/catalina.out $BUILD_HOME/build/server-logs/catalina.out.AllSystemTestsConfigB
 
 #
 # End of Config B Tests
@@ -127,12 +130,14 @@ if [ $? -ne 0 ]; then
   $CATALINA_HOME/bin/shutdown.sh
   sleep 5
   mv $FEDORA_HOME/server/logs $BUILD_HOME/build/server-logs/fedora.test.AllSystemTestsConfigA
+  mv $FEDORA_HOME/tomcat/logs/catalina.out $BUILD_HOME/build/server-logs/catalina.out.AllSystemTestsConfigA
   exit 1
 fi
 echo "Shutting down tomcat..."
 $CATALINA_HOME/bin/shutdown.sh
 sleep 5
 mv $FEDORA_HOME/server/logs $BUILD_HOME/build/server-logs/fedora.test.AllSystemTestsConfigA
+mv $FEDORA_HOME/tomcat/logs/catalina.out $BUILD_HOME/build/server-logs/catalina.out.AllSystemTestsConfigA
 
 #
 # End of Config A Tests
