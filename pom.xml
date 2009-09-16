@@ -93,24 +93,48 @@
       <name>Maven Repository Switchboard</name>
       <url>http://repo1.maven.org/maven2</url>
     </repository>
+
     <repository>
       <id>maven2-repository.dev.java.net</id>
       <name>Java.net Repository for Maven</name>
       <url>http://download.java.net/maven/2/</url>
       <layout>default</layout>
     </repository> 
+
     <repository>
       <id>maven-repository.dev.java.net</id>
       <name>Java.net Maven 1 Repository (legacy)</name>
       <url>http://download.java.net/maven/1</url>
       <layout>legacy</layout>
     </repository>
+
     <repository>
       <id>apache-incubating</id>
       <name>Apache Incubating Repository</name>
       <url>http://people.apache.org/repo/m2-incubating-repository/</url>
     </repository>
 
+    <repository>
+      <id>jboss</id>
+      <url>http://repository.jboss.com/maven2/</url>
+      <releases>
+          <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+
+    <repository>
+      <id>ondex</id>
+      <url>http://www4.rothamsted.bbsrc.ac.uk/ondex/maven2/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
   </repositories>
 
   <scm>
@@ -120,13 +144,13 @@
   </scm>
 
   <build>
-
     <resources>
       <resource>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
       </resource>
     </resources>
+    
     <testResources>
       <testResource>
         <directory>src/test/resources</directory>
@@ -135,8 +159,7 @@
     </testResources>
  
     <plugins>
-
-     <plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
         <version>2.3</version>
@@ -221,16 +244,13 @@
     </plugins>
   </build>
 
-
   <dependencies>
-
     <!-- Maven-central dependencies -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.5</version>
     </dependency>
-
 
     <!-- 
       Dependencies that should work, but cause config[A/B/Q] failures
@@ -315,16 +335,22 @@
       <artifactId>abdera-core-0.4.0-incubating</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>abdera-extensions-main-0.4.0-incubating</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>abdera-i18n-0.4.0-incubating</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>abdera-parser-0.4.0-incubating</artifactId>
@@ -349,16 +375,22 @@
       <artifactId>akubra-core-0.1</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>akubra-fs-0.1</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>akubra-map-0.1</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>akubra-mem-0.1</artifactId>
@@ -385,6 +417,8 @@
       <artifactId>axiom-api-1.2.5</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>axiom-impl-1.2.5</artifactId>
@@ -412,21 +446,27 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>castor-1.2-codegen</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>castor-1.2-xml</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>castor-1.2-xml-schema</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -522,6 +562,8 @@
       <artifactId>derbyclient</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>derby</artifactId>
@@ -566,6 +608,8 @@
       <artifactId>jai_codec</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>jai_core</artifactId>
@@ -592,6 +636,8 @@
       <artifactId>jaxb-api</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>jaxb-impl</artifactId>
@@ -631,11 +677,13 @@
       <artifactId>jettison-1.0.1</artifactId>
       <version>1.0</version>
     </dependency>
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>jhbasic</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>jmx</artifactId>
@@ -769,6 +817,8 @@
       <artifactId>saxon9-dom</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>saxon9</artifactId>
@@ -786,27 +836,35 @@
       <artifactId>sjsxp</artifactId>
       <version>1.0</version>
     </dependency>
-   <dependency>
+    <!--
+    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>slf4j-api-1.5.2</artifactId>
       <version>1.0</version>
     </dependency>
-   <dependency>
+    -->
+    <!--
+    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>slf4j-jdk14-1.5.2</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>spring-beans-2.5.6</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>spring-core-2.5.6</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>stax-utils</artifactId>
@@ -820,7 +878,7 @@
       <version>1.0</version>
     </dependency>
     -->
-   <dependency>
+    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>Tidy</artifactId>
       <version>1.0</version>
@@ -831,27 +889,35 @@
       <artifactId>trippi-1.4.1-core</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>trippi-1.4.1-mptstore</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>trippi-1.4.1-mulgara</artifactId>
       <version>1.0</version>
     </dependency>
     -->
-   <dependency>
+    <!--
+    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>trove-2.0.4</artifactId>
       <version>1.0</version>
     </dependency>
-   <dependency>
+    -->
+    <!--
+    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>tt-bytecode</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -892,7 +958,6 @@
       <version>1.0</version>
     </dependency>
     -->
-
   </dependencies>
 
 </project>

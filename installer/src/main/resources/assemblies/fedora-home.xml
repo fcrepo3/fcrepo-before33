@@ -299,15 +299,16 @@
         <include>javax.media:jai-core:jar:1.1.2_01</include>
          -->
         <include>javax.xml:jaxrpc-api:jar:1.1</include>
-        <include>duraspace:jhbasic:jar:1.0</include>
+        <include>com.sun.woodstock.dependlibs:jhbasic:jar:2.0</include>
         <include>javax.xml.soap:saaj-api:jar:1.3</include>
         <include>log4j:log4j:jar:1.2.15</include>
         <include>duraspace:openrdf-sesame-2.2.1-onejar:jar:1.0</include>
         <include>duraspace:saxon9:jar:1.0</include>
-        <include>duraspace:slf4j-api-1.5.2:jar:1.0</include>
-        <include>duraspace:slf4j-jdk14-1.5.2:jar:1.0</include>
         <include>duraspace:sunxacml-patched:jar:1.0</include>
         <include>org.fedorarepo:axis:jar:1.3-PATCHED</include>
+        <include>org.fedorarepo:trippi-core:jar:1.4.1</include>
+        <include>org.slf4j:slf4j-api:jar:1.5.2</include>
+        <include>org.slf4j:slf4j-log4j12:jar:1.5.2</include>
         <include>org.mulgara:mulgara-core:jar:2.1.1</include>
         <include>wsdl4j:wsdl4j:jar:1.5.1</include>
         <include>xerces:xercesImpl:jar:2.6.2</include>
