@@ -85,14 +85,14 @@ if [ $? -ne 0 ]; then
   $CATALINA_HOME/bin/shutdown.sh
   sleep 5
   mv $FEDORA_HOME/server/logs $BUILD_HOME/build/server-logs/fedora.test.AllSystemTestsConfigB
-  mv $FEDORA_HOME/tomcat/logs/catalina.out $BUILD_HOME/build/server-logs/catalina.out.AllSystemTestsConfigB
+  mv $FEDORA_HOME/tomcat/logs/catalina.out $BUILD_HOME/build/server-logs/catalina.out.AllSystemTestsConfigB.log
   exit 1
 fi
 echo "Shutting down tomcat..."
 $CATALINA_HOME/bin/shutdown.sh
 sleep 5
 mv $FEDORA_HOME/server/logs $BUILD_HOME/build/server-logs/fedora.test.AllSystemTestsConfigB
-mv $FEDORA_HOME/tomcat/logs/catalina.out $BUILD_HOME/build/server-logs/catalina.out.AllSystemTestsConfigB
+mv $FEDORA_HOME/tomcat/logs/catalina.out $BUILD_HOME/build/server-logs/catalina.out.AllSystemTestsConfigB.log
 
 #
 # End of Config B Tests
@@ -130,14 +130,14 @@ if [ $? -ne 0 ]; then
   $CATALINA_HOME/bin/shutdown.sh
   sleep 5
   mv $FEDORA_HOME/server/logs $BUILD_HOME/build/server-logs/fedora.test.AllSystemTestsConfigA
-  mv $FEDORA_HOME/tomcat/logs/catalina.out $BUILD_HOME/build/server-logs/catalina.out.AllSystemTestsConfigA
+  mv $FEDORA_HOME/tomcat/logs/catalina.out $BUILD_HOME/build/server-logs/catalina.out.AllSystemTestsConfigA.log
   exit 1
 fi
 echo "Shutting down tomcat..."
 $CATALINA_HOME/bin/shutdown.sh
 sleep 5
 mv $FEDORA_HOME/server/logs $BUILD_HOME/build/server-logs/fedora.test.AllSystemTestsConfigA
-mv $FEDORA_HOME/tomcat/logs/catalina.out $BUILD_HOME/build/server-logs/catalina.out.AllSystemTestsConfigA
+mv $FEDORA_HOME/tomcat/logs/catalina.out $BUILD_HOME/build/server-logs/catalina.out.AllSystemTestsConfigA.log
 
 #
 # End of Config A Tests
