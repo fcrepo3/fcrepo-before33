@@ -17,7 +17,6 @@
 
   <build>
     <plugins>
-    
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -56,37 +55,38 @@
           </packagingIncludes>
           <warName>fop</warName>
         </configuration>
-
       </plugin>
-
     </plugins>
   </build>
 
-  <repositories>
-  </repositories>
-
   <dependencies>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.4</version>
+      <scope>provided</scope>
+    </dependency>    
+   
+   <dependency>
+    <groupId>commons-logging</groupId>
+    <artifactId>commons-logging</artifactId>
+    <version>1.0.4</version>
+   </dependency>
+    
    <dependency>
     <groupId>org.apache.xmlgraphics</groupId>
     <artifactId>fop</artifactId>
     <version>0.95-1</version>
    </dependency>
+   
    <dependency>
-   	<groupId>commons-logging</groupId>
-   	<artifactId>commons-logging</artifactId>
-   	<version>1.0.4</version>
-   </dependency>
-   <dependency>
-     <groupId>offo.hyphenation</groupId>
+     <groupId>org.fedorarepo</groupId>
      <artifactId>fop-hyph</artifactId>
      <version>1.2</version>
     </dependency>
+    
   </dependencies>
-
-  <dependencyManagement>
-  	<dependencies>
-  	</dependencies>
-  </dependencyManagement>
 
 </project>
 

@@ -352,7 +352,7 @@
       <artifactId>activation-1.1.1</artifactId>
       <version>1.0</version>
     </dependency>
-    -->
+    -->   
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>activemq-all-5.1.0</artifactId>
@@ -540,11 +540,15 @@
       <version>1.0</version>
     </dependency>
     -->
+
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>connector-1_5</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -573,26 +577,34 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>google-collections-1.0-rc1</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>GroboTestingJUnit-1.2.1-core</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>howl-logger-0.1.11</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>ij</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -682,27 +694,35 @@
       <artifactId>jmx</artifactId>
       <version>1.0</version>
     </dependency>
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>joda-time-1.5.2</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>jotm-2.0.10</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>jotm_jrmp_stubs-2.0.10</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>jsp-api</artifactId>
       <version>1.0</version>
       <scope>provided</scope>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -717,11 +737,13 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>jta-spec1_0_1</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -824,13 +846,15 @@
       <version>1.0</version>
     </dependency>
     -->
-   <dependency>
+    <!--
+    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>servlet-api</artifactId>
       <version>1.0</version>
       <scope>provided</scope>
     </dependency>
-   <dependency>
+    -->
+    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>sjsxp</artifactId>
       <version>1.0</version>
@@ -931,11 +955,13 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>xmlunit-1.2</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>

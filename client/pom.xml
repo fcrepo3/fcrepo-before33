@@ -286,12 +286,6 @@
        </exclusions>
     </dependency>
 
-	<dependency>
-      <groupId>com.sun.media</groupId>
-      <artifactId>jai_codec</artifactId>
-      <version>1.1.2_01</version>
-    </dependency>
-    
     <dependency>
       <groupId>com.sun.woodstock.dependlibs</groupId>
       <artifactId>jhbasic</artifactId>
@@ -315,12 +309,6 @@
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
       <version>1.4.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.media</groupId>
-      <artifactId>jai_core</artifactId>
-      <version>1.1.2_01</version>
     </dependency>
 
     <dependency>
@@ -378,6 +366,18 @@
 
     <dependency>
       <groupId>org.fedorarepo</groupId>
+      <artifactId>jai_codec</artifactId>
+      <version>1.1.2_01</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.fedorarepo</groupId>
+      <artifactId>jai_core</artifactId>
+      <version>1.1.2_01</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.fedorarepo</groupId>
       <artifactId>mulgara-core</artifactId>
       <version>2.1.1</version>
     </dependency>
@@ -398,18 +398,6 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.5.2</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.fedorarepo</groupId>
-      <artifactId>trippi-core</artifactId>
-      <version>1.4.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mulgara</groupId>
-      <artifactId>mulgara-core</artifactId>
-      <version>2.1.1</version>
     </dependency>
     
     <dependency>
