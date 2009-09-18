@@ -293,6 +293,12 @@
     </dependency>
 
     <dependency>
+      <groupId>com.sun.xml.stream</groupId>
+      <artifactId>sjsxp</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+
+    <dependency>
       <groupId>gnu.getopt</groupId>
       <artifactId>java-getopt</artifactId>
       <version>1.0.13</version>

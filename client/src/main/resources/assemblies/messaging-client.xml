@@ -26,7 +26,7 @@
         <include>jaxen:jaxen:jar:1.1.1</include>
         <include>javax.xml:jsr173:jar:1.0</include>
         <include>log4j:log4j:jar:1.2.15</include>
-        <include>duraspace:sjsxp</include>
+        <include>com.sun.xml.stream:sjsxp:jar:1.0.1</include>
 
       </includes>
       <useProjectAttachments>true</useProjectAttachments>

@@ -234,7 +234,7 @@
   </build>
 
   <dependencies>
-    <!-- Maven-central dependencies -->
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -292,30 +292,6 @@
        <version>1.1.1</version>
      </dependency>
 -->
-
-    <!-- Apache Incubating dependencies -->
-        <!-- Causes test failures
-     <dependency>
-       <groupId>org.apache.abdera</groupId>
-       <artifactId>abdera-core</artifactId>
-       <version>0.4.0-incubating</version>
-     </dependency>
-     <dependency>
-       <groupId>org.apache.abdera</groupId>
-       <artifactId>abdera-extensions-main</artifactId>
-       <version>0.4.0-incubating</version>
-     </dependency>
-     <dependency>
-       <groupId>org.apache.abdera</groupId>
-       <artifactId>abdera-i18n</artifactId>
-       <version>0.4.0-incubating</version>
-     </dependency>
-     <dependency>
-       <groupId>org.apache.abdera</groupId>
-       <artifactId>abdera-parser</artifactId>
-       <version>0.4.0-incubating</version>
-     </dependency>
-     -->
 
     <!-- Local dependencies that need to be converted -->
     <!--
@@ -540,7 +516,6 @@
       <version>1.0</version>
     </dependency>
     -->
-
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -548,7 +523,6 @@
       <version>1.0</version>
     </dependency>
     -->
-
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -765,21 +739,27 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>md5</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>mkjdbc</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>mptstore-0.9.1</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -787,11 +767,13 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--    
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>mysql-connector-java-5.1.6-bin</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -813,11 +795,13 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>postgresql-8.3-603.jdbc3</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -854,11 +838,13 @@
       <scope>provided</scope>
     </dependency>
     -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>sjsxp</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -901,11 +887,13 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>Tidy</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>

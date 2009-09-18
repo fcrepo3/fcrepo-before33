@@ -24,17 +24,18 @@
     </fileSet>  
 
     <!-- Top-level entries -->
+    <!-- 
     <fileSet>
       <directory>../lib</directory>
       <outputDirectory>/resources</outputDirectory>
       <includes>
         <include>mkjdbc.jar</include>
-        <!-- <include>derby.jar</include> -->
-        <!-- <include>derbyclient.jar</include> -->
+        <include>derby.jar</include>
+        <include>derbyclient.jar</include>
         <include>mysql-connector-java-5.1.6-bin.jar</include>
         <include>postgresql-8.3-603.jdbc3.jar</include>
       </includes>
-    </fileSet>  
+    </fileSet>  --> 
 
     <fileSet>
       <directory>../resources/inc</directory>
@@ -68,6 +69,9 @@
         <include>org.apache.derby:derbyclient:jar:10.4.2.0</include>
         <include>org.apache.derby:derby:jar:10.4.2.0</include>
         <include>org.fedorarepo:mulgara-core:jar:2.1.1</include>
+        <include>mckoi:mckoi:jar:1.0.2</include>
+        <include>mysql:mysql-connector-java:jar:5.1.6</include>
+        <include>postgresql:postgresql:jar:8.3-603.jdbc3</include>
       </includes>
       <outputDirectory>/resources</outputDirectory>
       <!-- 

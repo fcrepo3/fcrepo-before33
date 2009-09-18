@@ -586,6 +586,12 @@
     </dependency>
 
     <dependency>
+      <groupId>com.sun.xml.stream</groupId>
+      <artifactId>sjsxp</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+
+    <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
       <version>1.6</version>
@@ -661,6 +667,12 @@
       <groupId>dom4j</groupId>
       <artifactId>dom4j</artifactId>
       <version>1.6.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>fast-md5</groupId>
+      <artifactId>fast-md5</artifactId>
+      <version>2.5</version>
     </dependency>
 
     <dependency>
@@ -800,6 +812,20 @@
     </dependency>
 
     <dependency>
+      <groupId>mckoi</groupId>
+      <artifactId>mckoi</artifactId>
+      <version>1.0.2</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.6</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.abdera</groupId>
       <artifactId>abdera-core</artifactId>
       <version>0.4.0-incubating</version>
@@ -932,6 +958,12 @@
       <artifactId>one-jar-boot</artifactId>
       <version>0.96</version>
     </dependency>
+    
+    <dependency>
+      <groupId>org.fedorarepo</groupId>
+      <artifactId>mptstore</artifactId>
+      <version>0.9.1</version>
+    </dependency>
 
     <!-- For the Journal Receiver Assembly -->
     <dependency>
@@ -985,6 +1017,13 @@
     </dependency>
 
     <dependency>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>8.3-603.jdbc3</version>
+      <scope>runtime</scope>
+    </dependency>
+    
+    <dependency>
       <groupId>duraspace</groupId>
       <artifactId>saxon9-dom</artifactId>
       <version>1.0</version>
@@ -1027,16 +1066,24 @@
     </dependency>
 
     <dependency>
+      <groupId>org.fedorarepo</groupId>
+      <artifactId>Tidy</artifactId>
+      <version>1.0</version>
+    </dependency>
+
+    <dependency>
       <groupId>trove</groupId>
       <artifactId>trove</artifactId>
       <version>2.1.1</version>
     </dependency>
 
+    <!-- Note: No evidence of current use.  DWD 9/18/2000
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>tt-bytecode</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
 
     <dependency>
       <groupId>wsdl4j</groupId>
