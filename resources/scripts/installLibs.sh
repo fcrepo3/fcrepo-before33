@@ -11,7 +11,7 @@ mvn install:install-file -Dfile=lib/axis.jar -DgroupId=org.fedorarepo -Dartifact
 mvn install:install-file -Dfile=lib/emory-util-2.1-remote.jar -DgroupId=org.fedorarepo -DartifactId=emory-util-remote -Dversion=2.1 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/fop-hyph.jar -DgroupId=org.fedorarepo -DartifactId=fop-hyph -Dversion=1.2 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/GroboTestingJUnit-1.2.1-core.jar -DgroupId=org.fedorarepo -DartifactId=GroboTestingJUnit-core -Dversion=1.2.1 -Dpackaging=jar -DgeneratePom=true
-mvn install:install-file -Dfile=lib/ij.jar -DgroupId=org.fedorarepo -DartifactId=ij -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
+mvn install:install-file -Dfile=lib/ij.jar -DgroupId=org.fedorarepo -DartifactId=ij -Dversion=1.32 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/jai_codec.jar -DgroupId=org.fedorarepo -DartifactId=jai_codec -Dversion=1.1.2_01 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/jai_core.jar -DgroupId=org.fedorarepo -DartifactId=jai_core -Dversion=1.1.2_01 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=lib/jakarta-oro-2.0.5.jar -DgroupId=duraspace -DartifactId=jakarta-oro-2.0.5 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
