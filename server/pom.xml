@@ -856,6 +856,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-all</artifactId>
+      <version>5.1.0</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derbyclient</artifactId>
       <version>10.4.2.0</version>
@@ -951,6 +957,13 @@
       <groupId>org.fedorarepo</groupId>
       <artifactId>GroboTestingJUnit-core</artifactId>
       <version>1.2.1</version>
+    </dependency>
+
+    <!-- Note: No demonstrated evidence of use.  DWD 9/15/2009 -->
+    <dependency>
+      <groupId>org.fedorarepo</groupId>
+      <artifactId>jakarta-oro</artifactId>
+      <version>2.0.5</version>
     </dependency>
 
     <dependency>
@@ -1067,7 +1080,20 @@
 
     <dependency>
       <groupId>org.fedorarepo</groupId>
+      <artifactId>sunxacml</artifactId>
+      <version>1.2-PATCHED</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.fedorarepo</groupId>
       <artifactId>Tidy</artifactId>
+      <version>1.0</version>
+    </dependency>
+    
+    <!-- Note: No evidence of current use.  DWD 9/18/2000 -->
+    <dependency>
+      <groupId>org.fedorarepo</groupId>
+      <artifactId>tt-bytecode</artifactId>
       <version>1.0</version>
     </dependency>
 
@@ -1076,14 +1102,6 @@
       <artifactId>trove</artifactId>
       <version>2.1.1</version>
     </dependency>
-
-    <!-- Note: No evidence of current use.  DWD 9/18/2000
-    <dependency>
-      <groupId>duraspace</groupId>
-      <artifactId>tt-bytecode</artifactId>
-      <version>1.0</version>
-    </dependency>
-    -->
 
     <dependency>
       <groupId>wsdl4j</groupId>
@@ -1127,12 +1145,6 @@
       <version>1.0</version>
     </dependency>
 
-    <dependency>
-      <groupId>duraspace</groupId>
-      <artifactId>sunxacml-patched</artifactId>
-      <version>1.0</version>
-    </dependency>
-    
   </dependencies>
 
 </project>

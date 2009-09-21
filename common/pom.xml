@@ -309,6 +309,12 @@
     </dependency>
     
     <dependency>
+      <groupId>org.fedorarepo</groupId>
+      <artifactId>sunxacml</artifactId>
+      <version>1.2-PATCHED</version>
+    </dependency>
+
+    <dependency>
       <groupId>wsdl4j</groupId>
       <artifactId>wsdl4j</artifactId>
       <version>1.5.1</version>
@@ -317,12 +323,6 @@
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>openrdf-sesame-2.2.1-onejar</artifactId>
-      <version>1.0</version>
-    </dependency>
-   
-    <dependency>
-      <groupId>duraspace</groupId>
-      <artifactId>sunxacml-patched</artifactId>
       <version>1.0</version>
     </dependency>
 

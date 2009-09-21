@@ -239,6 +239,7 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.5</version>
+      <!-- <scope>test</scope> -->
     </dependency>
 
     <!-- 
@@ -328,12 +329,14 @@
       <artifactId>activation-1.1.1</artifactId>
       <version>1.0</version>
     </dependency>
-    -->   
+    -->
+    <!--  
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>activemq-all-5.1.0</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
@@ -663,11 +666,13 @@
       <version>1.0</version>
     </dependency>
     -->
+    <!--
     <dependency>
       <groupId>duraspace</groupId>
       <artifactId>jmx</artifactId>
       <version>1.0</version>
     </dependency>
+    -->
     <!--
     <dependency>
       <groupId>duraspace</groupId>
