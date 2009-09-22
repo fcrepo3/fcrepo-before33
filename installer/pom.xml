@@ -127,9 +127,9 @@
         </dependency> 
 
         <dependency>
-          <groupId>duraspace</groupId>
-          <artifactId>openrdf-sesame-2.2.1-onejar</artifactId>
-          <version>1.0</version>
+          <groupId>org.fedorarepo</groupId>
+          <artifactId>openrdf-sesame-onejar</artifactId>
+          <version>2.2.1</version>
         </dependency>
 
         <dependency>

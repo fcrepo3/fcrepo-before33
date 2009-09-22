@@ -24,19 +24,6 @@
     </fileSet>  
 
     <!-- Top-level entries -->
-    <!-- 
-    <fileSet>
-      <directory>../lib</directory>
-      <outputDirectory>/resources</outputDirectory>
-      <includes>
-        <include>mkjdbc.jar</include>
-        <include>derby.jar</include>
-        <include>derbyclient.jar</include>
-        <include>mysql-connector-java-5.1.6-bin.jar</include>
-        <include>postgresql-8.3-603.jdbc3.jar</include>
-      </includes>
-    </fileSet>  --> 
-
     <fileSet>
       <directory>../resources/inc</directory>
       <outputDirectory>/resources</outputDirectory>
@@ -46,21 +33,11 @@
       </includes>
     </fileSet>  
 
-
   </fileSets>
 
   <dependencySets>
     
-    <!-- Note: The version names of the libraries are hard coded and should likely be refactored.
-    <dependencySet>
-      <includes>
-        <include>org.apache.derby:derbyclient:jar:10.4.2.0</include>
-        <include>org.apache.derby:derby:jar:10.4.2.0</include>
-        <include>org.mulgara:mulgara-core:jar:2.1.1</include>
-      </includes>
-      <outputDirectory>/resources</outputDirectory>
-    </dependencySet>  -->
-
+    <!-- Note: The version names of the libraries are hard coded and should likely be refactored. -->
     <dependencySet>
       <includes>
         <include>org.duraspace.fedora:fop:war</include>
@@ -127,15 +104,14 @@
                 catch properly defined (i.e. maven-central) dependencies.
                 See installer/pom.xml for exact dependency list.
          -->
-        <!-- <include>duraspace:*</include> -->
         <include>commons-beanutils:commons-beanutils:jar:1.6</include>
         <include>commons-betwixt:commons-betwixt:jar:0.7</include>
         <include>commons-collections:commons-collections:jar:3.1</include>
         <include>commons-digester:commons-digester:jar:1.7</include>
         <include>commons-logging:commons-logging:jar:1.0.4</include>
         <include>dom4j:dom4j:jar:1.6.1</include>
-        <include>duraspace:openrdf-sesame-2.2.1-onejar:jar:1.0</include>
         <include>org.fedorarepo:mulgara-core:jar:2.1.1</include>
+        <include>org.fedorarepo:openrdf-sesame-onejar:jar:2.2.1</include>
         <include>jaxen:jaxen:jar:1.1.1</include>                        
         <include>log4j:log4j:jar:1.2.15</include>
 

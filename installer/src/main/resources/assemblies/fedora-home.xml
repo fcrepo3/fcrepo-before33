@@ -6,15 +6,18 @@
   </formats>
 
   <fileSets>
+
     <!-- Top-level entries -->
     <fileSet>
       <directory>../resources/doc/license</directory>
       <outputDirectory>/docs/license</outputDirectory>
     </fileSet>
+
     <fileSet>
       <directory>../resources/doc/userdocs</directory>
       <outputDirectory>/docs/userdocs</outputDirectory>
     </fileSet>
+
     <fileSet>
       <directory>../target/site/apidocs</directory>
       <outputDirectory>/docs/javadocs</outputDirectory>
@@ -36,6 +39,7 @@
         <include>Fedora-API-M-LITE.wsdl</include>
       </includes>
     </fileSet>  
+
     <fileSet>
       <directory>../resources/wsdl</directory>
       <outputDirectory>/server/access</outputDirectory>
@@ -52,7 +56,6 @@
         <include>*.xsd</include>
       </includes>
     </fileSet>  
-
 
     <!-- Server entries -->
     <fileSet>
@@ -165,11 +168,11 @@
       <directory>../server/src/main/resources/demo/demo-objects/foxml</directory>
       <outputDirectory>/client/demo/foxml</outputDirectory>
     </fileSet>  
+
     <fileSet>
       <directory>../server/target/client/demo</directory>
       <outputDirectory>/client/demo</outputDirectory>
     </fileSet>  
-
 
     <!-- Do these files really need to be copied to client/lib? --> 
     <fileSet>
@@ -231,7 +234,6 @@
 
   </fileSets>
 
-
   <!-- A few files that needed to be renamed -->
   <files>
 
@@ -261,10 +263,11 @@
   </files>
 
   <dependencySets>
-
+  
     <dependencySet>
       <useProjectArtifact>false</useProjectArtifact>
       <includes>
+      
         <include>org.duraspace.fedora:client</include>
         <include>org.duraspace.fedora:common</include>
         <include>org.duraspace.fedora:server</include>
@@ -286,29 +289,21 @@
         <include>com.sun.woodstock.dependlibs:jhbasic:jar:2.0</include>
         <include>javax.xml.soap:saaj-api:jar:1.3</include>
         <include>log4j:log4j:jar:1.2.15</include>
-        <include>duraspace:openrdf-sesame-2.2.1-onejar:jar:1.0</include>
-        <include>duraspace:saxon9:jar:1.0</include>
         <include>org.fedorarepo:axis:jar:1.3-PATCHED</include>
         <include>org.fedorarepo:jai_codec:jar:1.1.2_01</include>        
         <include>org.fedorarepo:jai_core:jar:1.1.2_01</include>
         <include>org.fedorarepo:mulgara-core:jar:2.1.1</include>
+        <include>org.fedorarepo:openrdf-sesame-onejar:jar:2.2.1</include>
+        <include>org.fedorarepo:saxon:jar:9.0</include>
         <include>org.fedorarepo:sunxacml:jar:1.2-PATCHED</include>
         <include>org.fedorarepo:trippi-core:jar:1.4.1</include>
         <include>org.slf4j:slf4j-api:jar:1.5.2</include>
         <include>org.slf4j:slf4j-log4j12:jar:1.5.2</include>
-
         <include>wsdl4j:wsdl4j:jar:1.5.1</include>
         <include>xerces:xercesImpl:jar:2.6.2</include>
         <!--
         <include>xml-apis:*</include>
         -->
-        
-        <!-- Note: Temporary due to messaging client assembly problems. DWD 9/9/2009
-        <include>org.apache.abdera:abdera-core:jar:0.4.0-incubating</include>
-        <include>org.apache.abdera:abdera-i18n:jar:0.4.0-incubating</include>
-        <include>org.apache.abdera:abdera-parser:jar:0.4.0-incubating</include>
-        <include>org.apache.ws.commons.axiom:axiom-api:jar:1.2.5</include>
-        <include>org.apache.ws.commons.axiom:axiom-impl:jar:1.2.5</include>  -->
                         
       </includes>
       <excludes>
