@@ -50,8 +50,8 @@ set CP="%WEBINF%\classes"
 set OPTS=-Djava.endorsed.dirs="%WEBINF%\lib;%COMMON%\endorsed;%COMMON%\lib"
 set OPTS=%OPTS% -Djavax.net.ssl.trustStore="%FEDORA_HOME%\server\truststore"
 set OPTS=%OPTS% -Djavax.net.ssl.trustStorePassword=tomcat
-set OPTS=%OPTS% -Djavax.xml.parsers.DocumentBuilderFactory=com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl
-set OPTS=%OPTS% -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl
+set OPTS=%OPTS% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl
+set OPTS=%OPTS% -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl
 set OPTS=%OPTS% -Dorg.apache.commons.logging.LogFactory=org.apache.commons.logging.impl.Log4jFactory
 set OPTS=%OPTS% -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4jLogger
 set OPTS=%OPTS% -Dcom.sun.xacml.PolicySchema="%FEDORA_HOME%\server\xsd\cs-xacml-schema-policy-01.xsd"

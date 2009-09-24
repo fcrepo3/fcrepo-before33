@@ -45,8 +45,8 @@ execWithTheseArgs() {
             -Djava.endorsed.dirs=\"$FEDORA_HOME\"/client/lib \
             -Djavax.net.ssl.trustStore=\"$FEDORA_HOME\"/client/truststore \
             -Djavax.net.ssl.trustStorePassword=tomcat \
-            -Djavax.xml.parsers.DocumentBuilderFactory=com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl \
-            -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl \
+            -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
+            -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
             -Dorg.apache.commons.logging.LogFactory=org.apache.commons.logging.impl.Log4jFactory \
             -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4jLogger \
             -Dfedora.home=\"$FEDORA_HOME\" \

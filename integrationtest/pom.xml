@@ -163,7 +163,7 @@
                     <include>**/TestServerConfiguration.class</include>
                     <include>**/ConflictingDeploymentTests.class</include>
                     <include>**/SharedDeploymentTests.class</include>
-                    <!-- Temporary Failed Test DWD 9/14/2009 <include>**/TestCommandLineUtilities.class</include> -->
+                    <include>**/TestCommandLineUtilities.class</include>
                     <include>**/ContentModelDSInputTest.class</include>
 
                   </includes>
@@ -280,7 +280,7 @@
                     <include>**/TestOAIService.class</include>
                     <include>**/TestServerConfiguration.class</include>
                     <include>**/ConflictingDeploymentTests.class</include>
-                    <!-- Temporary Failed Test DWD 9/14/2009 <include>**/TestCommandLineUtilities.class</include> -->
+                    <include>**/TestCommandLineUtilities.class</include>
                     <include>**/SharedDeploymentTests.class</include>
                     <include>**/ContentModelDSInputTest.class</include>
 
@@ -403,7 +403,7 @@
                     <include>**/SharedDeploymentTests.class</include>
                     <include>**/TestXACMLPolicies.class</include>
                     <include>**/ContentModelDSInputTest.class</include>
-                    <!-- Temporary Failed Test DWD 9/14/2009 <include>**/TestCommandLineUtilities.class</include> -->
+                    <include>**/TestCommandLineUtilities.class</include>
 
                   </includes>
                   <excludes>
@@ -422,11 +422,13 @@
    
   <dependencies>
 
+    <!--
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>common</artifactId>
       <version>1.0.0</version>
-    </dependency> 
+    </dependency>
+    --> 
 
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
@@ -436,11 +438,13 @@
       <scope>test</scope>
     </dependency> 
     
+    <!--
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>server</artifactId>
       <version>1.0.0</version>
-    </dependency> 
+    </dependency>
+    --> 
 
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
@@ -461,7 +465,14 @@
       <artifactId>client</artifactId>
       <version>1.0.0</version>
       <classifier>fedora</classifier>
-    </dependency> 
+    </dependency>
+    
+    <dependency>
+      <groupId>xmlunit</groupId>
+      <artifactId>xmlunit</artifactId>
+      <version>1.2</version>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 </project>
