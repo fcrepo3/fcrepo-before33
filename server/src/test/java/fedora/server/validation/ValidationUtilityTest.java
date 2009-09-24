@@ -28,6 +28,8 @@ import fedora.server.utilities.StreamUtility;
 
 import static fedora.server.security.TestPolicyParser.POLICY_GOODENOUGH;
 import static fedora.server.security.TestPolicyParser.POLICY_QUESTIONABLE;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Unit tests for ValidationUtility.
@@ -59,30 +61,74 @@ public class ValidationUtilityTest {
 
     @Test
     public void testValidUrls() throws Exception {
-        String[] urls = {"http://localhost",
+        String[] urls_managed = {"http://localhost",
                          "http://localhost:8080",
-                         "uploaded:///tmp/foo.xml"};
-
+                         "uploaded:///tmp/foo.xml",
+                         "file:///etc/passwd",
+                         "file:/etc/passwd"
+                        };
+        for (String url : urls_managed) {
+            ValidationUtility.validateURL(url,"M");
+        }
+        
+        String[] urls = {"http://localhost",
+                        "http://localhost:8080",
+                        "uploaded:///tmp/foo.xml",
+                        };
+        
         for (String url : urls) {
-            ValidationUtility.validateURL(url);
+           ValidationUtility.validateURL(url,"M");
         }
     }
 
-    @Test(expected=ValidationException.class)
-    public void testInvalidUrls() throws Exception {
-        String[] urls = {"", "a",
+    @Test
+    public void testInvalidUrls(){
+        String[] urls_management = {"", "a",
                          "temp:///etc/passwd",
                          "copy:///etc/passwd",
                          "temp://" + tmpDir + "/../etc/passwd",
                          "temp://" + tmpDir + "/../../etc/passwd",
-                         "file:///etc/passwd",
-                         "file:/etc/passwd",
                          "/etc/passwd",
                          "../../etc/passwd"};
 
-        for (String url : urls) {
-            ValidationUtility.validateURL(url);
+        for (String url : urls_management) {
+            try {
+                ValidationUtility.validateURL(url,"M");
+            } catch (Exception e) {
+                assertTrue("Expected Exception of type "
+                        + ValidationException.class.getName() + " but got: "
+                        + e.getClass().getName(), e.getClass().getName()
+                        .equals(ValidationException.class.getName()));
+                continue;
+            }
+            fail("Expected " + ValidationException.class.getName()
+                    + " for URL:" + url + " but got none");
         }
+
+        String[] urls = {"", "a",
+                "temp:///etc/passwd",
+                "copy:///etc/passwd",
+                "temp://" + tmpDir + "/../etc/passwd",
+                "temp://" + tmpDir + "/../../etc/passwd",
+                "/etc/passwd",
+                "../../etc/passwd",
+                "file:///etc/passwd",
+                "file:/etc/passwd"};
+
+        for (String url : urls) {
+            try {
+                ValidationUtility.validateURL(url,"R");
+            } catch (Exception e) {
+                assertTrue("Expected Exception of type "
+                        + ValidationException.class.getName() + " but got: "
+                        + e.getClass().getName(), e.getClass().getName()
+                        .equals(ValidationException.class.getName()));
+                continue;
+            }
+            fail("Expected " + ValidationException.class.getName()
+                    + " for URL:" + url + " but got none");
+        }
+
     }
 
     @Test(expected=NullPointerException.class)

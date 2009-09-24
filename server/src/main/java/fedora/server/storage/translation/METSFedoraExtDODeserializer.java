@@ -533,7 +533,7 @@ public class METSFedoraExtDODeserializer
                     // URL FORMAT VALIDATION for dsLocation:
                     // make sure we have a properly formed URL (must have protocol)
                     try {
-                        ValidationUtility.validateURL(dsLocation);
+                        ValidationUtility.validateURL(dsLocation, m_dsControlGrp);
                     } catch (ValidationException ve) {
                         throw new SAXException(ve.getMessage());
                     }
@@ -549,7 +549,7 @@ public class METSFedoraExtDODeserializer
                     // once the repository has sucked in the content for storage.
                     if (m_obj.isNew()) {
                         try {
-                            ValidationUtility.validateURL(dsLocation);
+                            ValidationUtility.validateURL(dsLocation, m_dsControlGrp);
                         } catch (ValidationException ve) {
                             throw new SAXException(ve.getMessage());
                         }

@@ -46,6 +46,8 @@ public class DatastreamNamespace
     public final XacmlName NEW_STATE;
 
     public final XacmlName NEW_LOCATION;
+    
+    public final XacmlName FILE_URI;
 
     public final XacmlName NEW_CONTROL_GROUP;
 
@@ -112,6 +114,11 @@ public class DatastreamNamespace
                 addName(new XacmlName(this,
                                       "newLocation",
                                       AnyURIAttribute.identifier));
+        FILE_URI =
+            addName(new XacmlName(this,
+                                  "fileUri",
+                                  AnyURIAttribute.identifier));
+
         LOCATION_TYPE =
                 addName(new XacmlName(this,
                                       "locationType",

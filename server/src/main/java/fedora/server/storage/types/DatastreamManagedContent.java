@@ -16,6 +16,7 @@ import fedora.server.errors.InitializationException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.ValidationException;
 import fedora.server.management.Management;
+import fedora.server.storage.ContentManagerParams;
 import fedora.server.storage.ExternalContentManager;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
 import fedora.server.validation.ValidationUtility;
@@ -90,7 +91,8 @@ public class DatastreamManagedContent
             try {
                 server = Server.getInstance(new File(Constants.FEDORA_HOME),
                                    false);
-                s_ecm = (ExternalContentManager) server.getModule("fedora.server.storage.ExternalContentManager");
+                s_ecm = (ExternalContentManager) server
+                        .getModule("fedora.server.storage.ExternalContentManager");
             } catch (InitializationException e) {
                 throw new Exception("Unable to get ExternalContentManager Module: "
                                     + e.getMessage(), e);
@@ -111,13 +113,13 @@ public class DatastreamManagedContent
                 try {
                     // validation precludes internal DSLocations, which
                     // have the form pid+dsid+dsvid, e.g. demo:foo+DS1+DS1.0
-                    ValidationUtility.validateURL(DSLocation);
+                    ValidationUtility.validateURL(DSLocation, this.DSControlGrp);
                     // If validation has succeeded, assume an external resource.
                     // Fetch it, store it locally, update DSLocation
                     Context ctx = ReadOnlyContext.EMPTY;
-                    MIMETypedStream stream = 
-                        getExternalContentManager().getExternalContent(DSLocation, 
-                                                                   ctx);
+                    MIMETypedStream stream = getExternalContentManager()
+                            .getExternalContent(
+                                    new ContentManagerParams(DSLocation));
                     DSLocation = getManagement().putTempStream(ctx, stream.getStream());
                     return getManagement().getTempStream(DSLocation);
                 } catch(ValidationException e) {

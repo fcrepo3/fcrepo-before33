@@ -20,6 +20,8 @@ import org.apache.commons.httpclient.methods.GetMethod;
 /**
  * A general-purpose, connection-pooling HTTP Client. All methods are
  * thread-safe. Provides option for client to handle HTTP redirects
+ * 
+ * @version $Id$
  */
 public class WebClient {
 
@@ -99,9 +101,10 @@ public class WebClient {
                                boolean failIfNotOK,
                                String user,
                                String pass) throws IOException {
-        return get(url,
-                   failIfNotOK,
-                   new UsernamePasswordCredentials(user, pass));
+        UsernamePasswordCredentials creds = null;
+        if (user != null && !user.equals("") && pass != null && !pass.equals(""))
+            creds = new UsernamePasswordCredentials(user, pass);
+        return get(url, failIfNotOK, creds);
     }
 
     /**

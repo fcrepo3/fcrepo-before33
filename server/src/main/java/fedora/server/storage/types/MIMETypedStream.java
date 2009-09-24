@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
  * Data structure for holding a MIME-typed stream.
  *
  * @author Ross Wayland
+ * @version $Id$
  */
 public class MIMETypedStream {
 
@@ -51,7 +52,6 @@ public class MIMETypedStream {
      * @return The byte stream
      */
     public InputStream getStream() {
-        gotStream = true;
         return stream;
     }
 
@@ -74,7 +74,7 @@ public class MIMETypedStream {
             }
         }
     }
-
+    
     /**
      * Ensures the underlying stream is closed at garbage-collection time
      * if the stream has not been retrieved. If getStream() has been called
@@ -88,4 +88,5 @@ public class MIMETypedStream {
             close();
         }
     }
+
 }

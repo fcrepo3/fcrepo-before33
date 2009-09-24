@@ -4,22 +4,28 @@
  */
 package fedora.server.storage;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URL;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.apache.commons.httpclient.Header;
+import javax.activation.MimetypesFileTypeMap;
 
+import org.apache.commons.httpclient.Header;
 import org.apache.log4j.Logger;
 
 import fedora.common.http.HttpInputStream;
 import fedora.common.http.WebClient;
-
 import fedora.server.Context;
 import fedora.server.Module;
+import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.HttpServiceNotFoundException;
 import fedora.server.errors.ModuleInitializationException;
+import fedora.server.errors.authorization.AuthzException;
+import fedora.server.security.Authorization;
 import fedora.server.security.BackendPolicies;
 import fedora.server.security.BackendSecurity;
 import fedora.server.security.BackendSecuritySpec;
@@ -31,6 +37,8 @@ import fedora.server.utilities.ServerUtility;
  * Provides a mechanism to obtain external HTTP-accessible content.
  * 
  * @author Ross Wayland
+ * @version $Id$
+ *
  */
 public class DefaultExternalContentManager
         extends Module
@@ -40,6 +48,7 @@ public class DefaultExternalContentManager
     private static final Logger LOG =
             Logger.getLogger(DefaultExternalContentManager.class.getName());
 
+    private static final String DEFAULT_MIMETYPE="text/plain";
     private String m_userAgent;
 
     private String fedoraServerHost;
@@ -110,18 +119,50 @@ public class DefaultExternalContentManager
         }
     }
 
+    /*
+     * Retrieves the external content. 
+     * Currently the protocols <code>file</code> and 
+     * <code>http[s]</code> are supported.
+     * 
+     * @see
+     * fedora.server.storage.ExternalContentManager#getExternalContent(fedora
+     * .server.storage.ContentManagerParams)
+     */
+    public MIMETypedStream getExternalContent(ContentManagerParams params)
+            throws GeneralException, HttpServiceNotFoundException{
+        LOG.debug("in getExternalContent(), url=" + params.getUrl());
+        try {
+            if(params.getProtocol().equals("file")){
+                return getFromFilesystem(params);
+            }
+            if (params.getProtocol().equals("http") || params.getProtocol().equals("https")){
+                return getFromWeb(params);
+            }
+            throw new GeneralException("protocol for retrieval of external content not supported. URL: " + params.getUrl());
+        } catch (Exception ex) {
+            // catch anything but generalexception
+            ex.printStackTrace();
+            throw new HttpServiceNotFoundException("[" + this.getClass().getSimpleName() + "] "
+                    + "returned an error.  The underlying error was a "
+                    + ex.getClass().getName()
+                    + "  The message "
+                    + "was  \""
+                    + ex.getMessage() + "\"  .  ",ex);
+        }
+    }
+
     /**
      * Get a MIMETypedStream for the given URL. If user or password are
      * <code>null</code>, basic authentication will not be attempted.
      */
-    private MIMETypedStream get(String url, String user, String pass)
+    private MIMETypedStream get(String url, String user, String pass, String knownMimeType)
             throws GeneralException {
         LOG.debug("DefaultExternalContentManager.get(" + url + ")");
         try {
             HttpInputStream response = m_http.get(url, true, user, pass);
             String mimeType =
                     response.getResponseHeaderValue("Content-Type",
-                                                    "text/plain");
+                                                    knownMimeType);
             Property[] headerArray =
                     toPropertyArray(response.getResponseHeaders());
             return new MIMETypedStream(mimeType, response, headerArray);
@@ -146,73 +187,151 @@ public class DefaultExternalContentManager
     }
 
     /**
-     * A method that reads the contents of the specified URL and returns the
-     * result as a MIMETypedStream
+     * Creates a property array out of the MIME type and the length of the
+     * provided file.
      * 
-     * @param url
-     *        The URL of the external content.
-     * @return A MIME-typed stream.
-     * @throws HttpServiceNotFoundException
-     *         If the URL connection could not be established.
+     * @param file
+     *            the file containing the content.
+     * @return an array of properties containing content-length and
+     *         content-type.
      */
-    public MIMETypedStream getExternalContent(String url, Context context)
-            throws GeneralException, HttpServiceNotFoundException {
-        LOG.debug("in getExternalContent(), url=" + url);
+    private static Property[] getPropertyArray(File file, String mimeType) {
+         Property[] props = new Property[2];
+         Property clen = new Property("Content-Length",Long.toString(file.length()));
+         Property ctype = new Property("Content-Type", mimeType);
+         props[0] = clen;
+         props[1] = ctype;
+         return props;
+    }
+        
+    /**
+     * Get a MIMETypedStream for the given URL. If user or password are
+     * <code>null</code>, basic authentication will not be attempted.
+     *
+     * @param params
+     * @return
+     * @throws HttpServiceNotFoundException
+     * @throws GeneralException
+     */
+    private MIMETypedStream getFromFilesystem(ContentManagerParams params)
+            throws HttpServiceNotFoundException,GeneralException {
+        LOG.debug("in getFile(), url=" + params.getUrl());
+
         try {
-            String backendUsername = "";
-            String backendPassword = "";
-            boolean backendSSL = false;
-            String modURL = url;
-            if (ServerUtility.isURLFedoraServer(modURL)) {
-                BackendSecuritySpec m_beSS;
-                BackendSecurity m_beSecurity =
-                        (BackendSecurity) getServer()
-                                .getModule("fedora.server.security.BackendSecurity");
-                try {
-                    m_beSS = m_beSecurity.getBackendSecuritySpec();
-                } catch (Exception e) {
-                    throw new ModuleInitializationException("Can't intitialize BackendSecurity module (in default access) from Server.getModule",
-                                                            getRole());
-                }
-                Hashtable<String, String> beHash =
-                        m_beSS
-                                .getSecuritySpec(BackendPolicies.FEDORA_INTERNAL_CALL);
-                backendUsername = (String) beHash.get("callUsername");
-                backendPassword = (String) beHash.get("callPassword");
-                backendSSL =
-                        new Boolean((String) beHash.get("callSSL"))
-                                .booleanValue();
-                if (backendSSL) {
-                    if (modURL.startsWith("http:")) {
-                        modURL = modURL.replaceFirst("http:", "https:");
-                    }
-                    modURL =
-                            modURL.replaceFirst(":" + fedoraServerPort + "/",
-                                                ":" + fedoraServerRedirectPort
-                                                        + "/");
-                }
+            URL fileUrl = new URL(params.getUrl());
+            File cFile = new File(fileUrl.toURI()).getCanonicalFile();
+            // security check
+            URI cURI = cFile.toURI();
+            LOG.info("Checking resolution security on " + cURI);
+            Authorization authModule = (Authorization) getServer().getModule(
+            "fedora.server.security.Authorization");
+            if (authModule == null) {
+                throw new GeneralException(
+                "Missing required Authorization module");
             }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("************************* backendUsername: "
-                        + backendUsername + "     backendPassword: "
-                        + backendPassword + "     backendSSL: " + backendSSL);
-                LOG.debug("************************* doAuthnGetURL: " + modURL);
+            authModule.enforceRetrieveFile(params.getContext(), cURI.toString());
+            // end security check         
+            String mimeType = params.getMimeType();
+            
+            // if mimeType was not given, try to determine it automatically
+            if (mimeType == null || mimeType.equalsIgnoreCase("")){
+                mimeType = determineMimeType(cFile);
             }
-
-            return get(modURL, backendUsername, backendPassword);
-
-        } catch (GeneralException ge) {
-            throw ge;
+            return new MIMETypedStream(mimeType,fileUrl.openStream(),getPropertyArray(cFile,mimeType));
+        }
+        catch(AuthzException ae){
+            LOG.error(ae.getMessage(),ae); 
+            throw new HttpServiceNotFoundException("Policy blocked datastream resolution",ae);
+        }
+        catch (GeneralException me) {
+            LOG.error(me.getMessage(),me); 
+            throw me;
         } catch (Throwable th) {
+            th.printStackTrace(System.err);
             // catch anything but generalexception
-            th.printStackTrace();
-            throw new HttpServiceNotFoundException("[DefaultExternalContentManager] "
+            LOG.error(th.getMessage(),th);
+             throw new HttpServiceNotFoundException("[FileExternalContentManager] "
                     + "returned an error.  The underlying error was a "
                     + th.getClass().getName()
                     + "  The message "
                     + "was  \""
-                    + th.getMessage() + "\"  .  ");
-        }
+                    + th.getMessage() + "\"  .  ",th);
+        }    
     }
 
+    /**
+     * Retrieves external content via http or https.
+     * 
+     * @param url
+     *            The url pointing to the content.
+     * @param context
+     *            The Map containing parameters.
+     * @param mimeType
+     *            The default MIME type to be used in case no MIME type can be
+     *            detected.
+     * @return A MIMETypedStream
+     * @throws ModuleInitializationException
+     * @throws GeneralException
+     */
+    private MIMETypedStream getFromWeb(ContentManagerParams params)
+            throws ModuleInitializationException, GeneralException {
+           String username = params.getUsername();
+        String password = params.getPassword();
+        boolean backendSSL = false;
+        String url = params.getUrl();
+        
+        if (ServerUtility.isURLFedoraServer(url) && !params.isBypassBackend()) {
+            BackendSecuritySpec m_beSS;
+            BackendSecurity m_beSecurity =
+                    (BackendSecurity) getServer()
+                            .getModule("fedora.server.security.BackendSecurity");
+            try {
+                m_beSS = m_beSecurity.getBackendSecuritySpec();
+            } catch (Exception e) {
+                throw new ModuleInitializationException(
+                        "Can't intitialize BackendSecurity module (in default access) from Server.getModule",
+                        getRole());
+            }
+            Hashtable<String, String> beHash =
+                    m_beSS.getSecuritySpec(BackendPolicies.FEDORA_INTERNAL_CALL);
+            username = (String) beHash.get("callUsername");
+            password = (String) beHash.get("callPassword");
+            backendSSL =
+                    new Boolean((String) beHash.get("callSSL"))
+                            .booleanValue();
+            if (backendSSL) {
+                if (params.getProtocol().equals("http:")) {
+                    url = url.replaceFirst("http:", "https:");
+                }
+                url =
+                        url.replaceFirst(":" + fedoraServerPort + "/",
+                                            ":" + fedoraServerRedirectPort
+                                                    + "/");
+            }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("************************* backendUsername: "
+                        + username + "     backendPassword: "
+                        + password + "     backendSSL: " + backendSSL);
+                LOG.debug("************************* doAuthnGetURL: " + url);
+            }
+
+        }
+        return get(url, username, password, params.getMimeType());
+    }
+    
+/**
+     * Determines the mime type of a given file
+     * 
+     * @param file for which the mime type needs to be detected
+     * @return the detected mime type
+     */
+    private String determineMimeType(File file){
+        String mimeType = new MimetypesFileTypeMap().getContentType(file);
+        // if mimeType detection failed, fall back to the default
+        if (mimeType == null || mimeType.equalsIgnoreCase("")){
+            mimeType = DEFAULT_MIMETYPE;
+        }
+        return mimeType;
+    }
 }
+

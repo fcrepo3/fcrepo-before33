@@ -68,6 +68,7 @@ import fedora.server.validation.ValidationUtility;
 import fedora.utilities.FileUtils;
 import fedora.utilities.NormalizedURI;
 
+
 /**
  * Deserializer for Fedora Objects in Atom format.
  * 
@@ -317,7 +318,7 @@ public class AtomDODeserializer
             
             if (m_obj.isNew()) {
                 ValidationUtility
-                        .validateURL(contentLocation.toString());
+                        .validateURL(contentLocation.toString(),ds.DSControlGrp);
             }
             
             if (m_format.equals(ATOM_ZIP1_1)) {

@@ -1204,14 +1204,11 @@ public class DefaultDOManager
                                         throw new StreamIOException("Error reading from temporary file created for binary content");
                                     }
                                 } else {
-
-
-                                    mimeTypedStream =
-                                        m_contentManager
-                                                .getExternalContent(DOTranslationUtility
-                                                                            .makeAbsoluteURLs(dmc.DSLocation
-                                                                                    .toString()),
-                                                                    context);
+                                    ContentManagerParams params = new ContentManagerParams(DOTranslationUtility
+                                            .makeAbsoluteURLs(dmc.DSLocation
+                                                    .toString()),dmc.DSMIME,null,null);
+                                    params.setContext(context);
+                                    mimeTypedStream = m_contentManager.getExternalContent(params);
                                     LOG
                                             .info("Getting managed datastream from remote "
                                                     + "location: "

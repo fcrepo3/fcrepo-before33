@@ -245,4 +245,7 @@ public interface Authorization {
 
     public void enforceReloadPolicies(Context context) throws AuthzException;
 
+    public void enforceRetrieveFile(Context context, String fileURI)
+            throws AuthzException;
+    
 }

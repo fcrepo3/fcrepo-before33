@@ -19,20 +19,14 @@ import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.httpclient.Header;
-
 import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
-import fedora.common.http.HttpInputStream;
-import fedora.common.http.WebClient;
-
 import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.errors.DisseminationBindingInfoNotFoundException;
 import fedora.server.errors.DisseminationException;
 import fedora.server.errors.GeneralException;
-import fedora.server.errors.HttpServiceNotFoundException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
@@ -40,6 +34,8 @@ import fedora.server.security.Authorization;
 import fedora.server.security.BackendPolicies;
 import fedora.server.security.BackendSecurity;
 import fedora.server.security.BackendSecuritySpec;
+import fedora.server.storage.ContentManagerParams;
+import fedora.server.storage.ExternalContentManager;
 import fedora.server.storage.ServiceDeploymentReader;
 import fedora.server.storage.types.DatastreamMediation;
 import fedora.server.storage.types.DeploymentDSBindRule;
@@ -47,7 +43,6 @@ import fedora.server.storage.types.DeploymentDSBindSpec;
 import fedora.server.storage.types.DisseminationBindingInfo;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.MethodParmDef;
-import fedora.server.storage.types.Property;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.ServerUtility;
 
@@ -103,8 +98,7 @@ public class DisseminationService {
 
     private static BackendSecurity m_beSecurity;
 
-    private static WebClient s_http;
-
+    private static ExternalContentManager s_ecm;
     /** Make sure we have a server instance for error logging purposes. */
     static {
         try {
@@ -147,9 +141,9 @@ public class DisseminationService {
                             new Boolean(dsMediation).booleanValue();
                 }
 
-                s_http = new WebClient();
-                s_http.USER_AGENT = "Fedora";
             }
+            s_ecm =   (ExternalContentManager)
+            s_server.getModule("fedora.server.storage.ExternalContentManager");
 
         } catch (InitializationException ie) {
             LOG.error("Initialization error", ie);
@@ -733,11 +727,12 @@ public class DisseminationService {
                     }
 
                     // Dispatch backend service URL request authenticating as necessary based on beSecurity configuration
-                    dissemination =
-                            getDisseminationContent(dissURL,
-                                                    context,
-                                                    beServiceCallUsername,
-                                                    beServiceCallPassword);
+                    ContentManagerParams params = new ContentManagerParams(
+                            dissURL, null, beServiceCallUsername,
+                            beServiceCallPassword);
+                    params.setBypassBackend(true);
+                    params.setContext(context);
+                    dissemination = s_ecm.getExternalContent(params);
                 }
 
             } else if (protocolType.equalsIgnoreCase("soap")) {
@@ -748,7 +743,12 @@ public class DisseminationService {
                 LOG.error(message);
                 throw new DisseminationException(message);
 
-            } else {
+            } else if (protocolType.equalsIgnoreCase("file")) {
+                ContentManagerParams params = new ContentManagerParams(dissURL);
+                params.setContext(context);
+                dissemination = s_ecm.getExternalContent(params);
+            }
+            else {
                 String message =
                         "[DisseminationService] Protocol type: " + protocolType
                                 + "NOT supported.";
@@ -1094,58 +1094,5 @@ public class DisseminationService {
             }
         }
     }
-
-    /**
-     * Get a MIMETypedStream for the given URL. If user or password are
-     * <code>null</code>, basic authentication will not be attempted.
-     */
-    private static MIMETypedStream get(String url, String user, String pass)
-            throws GeneralException {
-        LOG.debug("DisseminationService.get(" + url + ")");
-        try {
-            HttpInputStream response = s_http.get(url, true, user, pass);
-            String mimeType =
-                    response.getResponseHeaderValue("Content-Type",
-                                                    "text/plain");
-            Property[] headerArray =
-                    toPropertyArray(response.getResponseHeaders());
-            return new MIMETypedStream(mimeType, response, headerArray);
-        } catch (Exception e) {
-            throw new GeneralException("Error getting " + url, e);
-        }
-    }
-
-    /**
-     * Convert the given HTTP <code>Headers</code> to an array of
-     * <code>Property</code> objects.
-     */
-    private static Property[] toPropertyArray(Header[] headers) {
-
-        Property[] props = new Property[headers.length];
-        for (int i = 0; i < headers.length; i++) {
-            props[i] = new Property();
-            props[i].name = headers[i].getName();
-            props[i].value = headers[i].getValue();
-        }
-        return props;
-    }
-
-    /**
-     * A method that reads the contents of the specified URL and returns the
-     * result as a MIMETypedStream
-     *
-     * @param url
-     *        The URL of the external content.
-     * @return A MIME-typed stream.
-     * @throws HttpServiceNotFoundException
-     *         If the URL connection could not be established.
-     */
-    public MIMETypedStream getDisseminationContent(String url,
-                                                   Context context,
-                                                   String user,
-                                                   String pass)
-            throws GeneralException, HttpServiceNotFoundException {
-        return get(url, user, pass);
-    }
-
 }
+

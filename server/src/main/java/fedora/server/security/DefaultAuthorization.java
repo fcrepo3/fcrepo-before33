@@ -1670,4 +1670,30 @@ public class DefaultAuthorization
         }
     }
 
+    public void enforceRetrieveFile(Context context, String fileURI) throws AuthzException {
+        try {
+            LOG.debug("Entered enforceRetrieveFile");
+            String target = Constants.ACTION.RETRIEVE_FILE.uri;
+            context.setActionAttributes(null);
+            context.setResourceAttributes(null);
+            MultiValueMap resourceAttributes = new MultiValueMap();
+            String name = "";
+            try{
+                name = resourceAttributes.setReturn(Constants.DATASTREAM.FILE_URI.uri, fileURI);
+            } catch (Exception e){
+                context.setResourceAttributes(null);
+                throw new AuthzOperationalException(target + " couldn't be set " + name, e);
+            }
+            context.setResourceAttributes(resourceAttributes);
+            xacmlPep.enforce(context
+                    .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), 
+                    target,
+                    Constants.ACTION.APIM.uri, 
+                    fileURI, 
+                    extractNamespace(fileURI),
+                    context);
+            } finally {
+                LOG.debug("Exiting enforceRetrieveFile");
+            }
+    }
 }

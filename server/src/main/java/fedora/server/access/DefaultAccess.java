@@ -44,6 +44,7 @@ import fedora.server.errors.ServerException;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.security.Authorization;
+import fedora.server.storage.ContentManagerParams;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.ExternalContentManager;
@@ -1109,9 +1110,10 @@ public class DefaultAccess
             DatastreamReferencedContent drc =
                     (DatastreamReferencedContent) reader
                             .GetDatastream(dsID, asOfDateTime);
-            mimeTypedStream =
-                    m_externalContentManager.getExternalContent(drc.DSLocation,
-                                                                context);
+            ContentManagerParams params = new ContentManagerParams(drc.DSLocation,
+                    drc.DSMIME, null, null);
+            params.setContext(context);
+            mimeTypedStream = m_externalContentManager.getExternalContent(params);
         } else if (ds.DSControlGrp.equalsIgnoreCase("M")) {
             DatastreamManagedContent dmc =
                     (DatastreamManagedContent) reader

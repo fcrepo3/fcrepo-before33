@@ -54,6 +54,7 @@ import fedora.server.errors.StreamWriteException;
 import fedora.server.errors.ValidationException;
 import fedora.server.errors.authorization.AuthzException;
 import fedora.server.security.Authorization;
+import fedora.server.storage.ContentManagerParams;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.DOWriter;
@@ -425,9 +426,9 @@ public class DefaultManagement
                     if (dsLocation.startsWith(DatastreamManagedContent.UPLOADED_SCHEME)) {
                         in = getTempStream(dsLocation);
                     } else {
-                        mimeTypedStream =
-                                m_contentManager.getExternalContent(dsLocation,
-                                                                    context);
+                        ContentManagerParams params = new ContentManagerParams(dsLocation);
+                        params.setContext(context);
+                        mimeTypedStream = m_contentManager.getExternalContent(params);
                         in = mimeTypedStream.getStream();
                     }
                     // set and validate the content
@@ -496,7 +497,7 @@ public class DefaultManagement
             ds.DSLabel = dsLabel;
             ds.DSLocation = dsLocation;
             if (dsLocation != null) {
-                ValidationUtility.validateURL(dsLocation);
+                ValidationUtility.validateURL(dsLocation,ds.DSControlGrp);
             }
             ds.DSFormatURI = formatURI;
             ds.DatastreamAltIDs = altIDs;
@@ -641,7 +642,7 @@ public class DefaultManagement
                     dsLocation = orig.DSLocation;
                 }
             } else {
-                ValidationUtility.validateURL(dsLocation);
+                ValidationUtility.validateURL(dsLocation,orig.DSControlGrp);
             }
 
             // if "force" is false and the mime type changed, validate the

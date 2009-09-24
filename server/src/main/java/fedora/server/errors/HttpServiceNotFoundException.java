@@ -25,4 +25,18 @@ public class HttpServiceNotFoundException
     public HttpServiceNotFoundException(String message) {
         super(message);
     }
+
+    /**
+     * Creates a HttpServiceNotFoundException.
+     * 
+     * @param message
+     *        An informative message explaining what happened and (possibly) how
+     *        to fix it.
+     * @param cause
+     * 		  A throwable containing the cause of the exception.
+     */
+    public HttpServiceNotFoundException(String message, Throwable cause) {
+        super(message,cause);
+    }
+
 }

@@ -102,6 +102,8 @@ public class ActionNamespace
     public final XacmlName ADD_RELATIONSHIP;
 
     public final XacmlName PURGE_RELATIONSHIP;
+    
+    public final XacmlName RETRIEVE_FILE;
 
     private ActionNamespace(XacmlNamespace parent, String localName) {
         super(parent, localName);
@@ -167,8 +169,9 @@ public class ActionNamespace
                 addName(new XacmlName(this,
                                       "contextId",
                                       StringAttribute.identifier)); //internal callback support
+        RETRIEVE_FILE =
+            addName(new XacmlName(this, "id-retrieveFile"));
         // Values of CONTEXT_ID are sequential numerals, hence not enumerated here.
-
     }
 
     public static ActionNamespace onlyInstance =

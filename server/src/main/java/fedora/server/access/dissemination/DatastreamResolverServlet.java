@@ -34,6 +34,7 @@ import fedora.server.errors.authorization.AuthzException;
 import fedora.server.errors.authorization.AuthzOperationalException;
 import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.security.BackendPolicies;
+import fedora.server.storage.ContentManagerParams;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.ExternalContentManager;
@@ -455,9 +456,10 @@ public class DatastreamResolverServlet
                 ExternalContentManager externalContentManager =
                         (ExternalContentManager) s_server
                                 .getModule("fedora.server.storage.ExternalContentManager");
-                mimeTypedStream =
-                        externalContentManager
-                                .getExternalContent(dsPhysicalLocation, context);
+                ContentManagerParams params = new ContentManagerParams(dsPhysicalLocation);
+                params.setContext(context);
+                mimeTypedStream = externalContentManager.getExternalContent(params);
+                
                 // had substituted context:
                 // ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri,
                 // request));

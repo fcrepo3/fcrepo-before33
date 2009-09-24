@@ -61,9 +61,8 @@ public class TestManagedDatastreams
             "copy://../etc/passwd",
             "temp:///tmp/foo.txt",
             "temp://tmp/foo.txt",
-            "temp://../etc/passwd",
-            "file:///tmp/foo.txt",
-            "file:/tmp/foo.txt"};
+            "temp://../etc/passwd"
+            };
 
     private final String[] uploadedLocations = {
             "uploaded:///tmp/foo.txt",

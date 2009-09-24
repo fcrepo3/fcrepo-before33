@@ -36,19 +36,27 @@ public abstract class ValidationUtility {
     private static PolicyParser policyParser;
 
     /**
-     * Validates the candidate URL. File URLs (e.g. file:///bar/baz) are
-     * rejected as malformed.
-     *
-     * @param url The URL to validate.
-     * @throws ValidationException if the URL is malformed.
+     * Validates the candidate URL. The result of the validation also depends on the
+     * control group of the datastream in question. Managed datastreams may be ingested
+     * using the file URI scheme, other datastreams may not.
+     * 
+     * @param url
+     *            The URL to validate.
+     * @param controlGroup
+     *            The control group of the datastream the URL belongs to.
+     * 
+     * @throws ValidationException
+     *             if the URL is malformed.
      */
-    public static void validateURL(String url)
+    public static void validateURL(String url, String controlGroup)
             throws ValidationException {
+        if (!controlGroup.equalsIgnoreCase("M") && url.startsWith("file:")) {
+            throw new ValidationException(
+                    "Malformed URL (file: not allowed for control group "
+                            + controlGroup + ") " + url);
+        }
         try {
-            URL candidate = new URL(url);
-            if (candidate.getProtocol().equals("file")) {
-                throw new ValidationException("Malformed URL: invalid protocol: " + url);
-            }
+            new URL(url);
         } catch (MalformedURLException e) {
             if (url.startsWith(DatastreamManagedContent.UPLOADED_SCHEME)) {
                 return;
