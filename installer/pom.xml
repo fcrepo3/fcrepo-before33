@@ -145,6 +145,19 @@
   </profiles>
 
   <dependencies>
+
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbyclient</artifactId>
+      <version>10.4.2.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.4.2.0</version>
+    </dependency>
+
     <dependency>
       <groupId>commons-digester</groupId>
       <artifactId>commons-digester</artifactId>
@@ -181,6 +194,20 @@
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
       <version>1.4.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>mckoi</groupId>
+      <artifactId>mckoi</artifactId>
+      <version>1.0.2</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.6</version>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
@@ -249,6 +276,13 @@
       <version>2.1.1</version>
     </dependency>
 
+    <dependency>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>8.3-603.jdbc3</version>
+      <scope>runtime</scope>
+    </dependency>
+    
     <dependency>
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
