@@ -85,6 +85,31 @@
   </properties>
 
   <repositories>
+    
+    <repository>
+      <id>duraspace-releases</id>
+      <name>Duraspace Releases Maven Repository</name>
+      <url>https://fedora-commons.org/m2/content/repositories/releases</url>
+      <releases>
+          <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+
+    <repository>
+      <id>duraspace-thirdparty</id>
+      <name>Duraspace Thirdparty Maven Repository</name>
+      <url>https://fedora-commons.org/m2/content/repositories/thirdparty</url>
+      <releases>
+          <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+
     <repository>
       <snapshots>
         <enabled>false</enabled>

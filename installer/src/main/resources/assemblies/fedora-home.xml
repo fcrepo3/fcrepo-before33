@@ -313,6 +313,7 @@
     </dependencySet>
 
     <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
       <includes>
         <include>org.duraspace.fedora:client:jar:fedora*</include>
       </includes>
