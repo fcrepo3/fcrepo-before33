@@ -312,6 +312,10 @@
 		<url-pattern>/services/management</url-pattern>
 	</filter-mapping>
     <filter-mapping>
+      <filter-name>RestApiAuthnFilter</filter-name>
+      <servlet-name>RestServlet</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
       <filter-name>RestApiFlashFilter</filter-name>
       <servlet-name>RestServlet</servlet-name>
     </filter-mapping>

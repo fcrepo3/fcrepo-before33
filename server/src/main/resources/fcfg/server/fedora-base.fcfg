@@ -73,13 +73,13 @@
 			<comment>The java class that determines the implementation class; 
 			default is fedora.server.storage.lowlevel.GenericFileSystem.</comment>
 		</param>
-		<param name="backslash_is_escape" value="true">
+		<param name="backslash_is_escape" value="false">
 			<comment>Whether the escape character (i.e. (the token beginning an 
 			escape sequence) for the backing database (which includes 
 			registry tables) is the backslash character. This is needed to 
 			correctly store and retrieve filepaths from the registry 
 			tables, if running under Windows/DOS. (Set to true for MySQL and 
-			Postgresql, false for Oracle and McKoi.</comment>
+			Postgresql, false for Derby, Oracle and McKoi.</comment>
 		</param>
 	</module>
 	<module role="fedora.server.security.Authorization" class="fedora.server.security.DefaultAuthorization">
@@ -127,7 +127,7 @@
 	    	characters, and may only contain A-Z, a-z, 0-9, '.', or '-' (dash).
 	    	</comment>
 	    </param>
-	    <param name="storagePool" value="localMySQLPool">
+	    <param name="storagePool" value="localDerbyPool">
 	    	<comment>The named connection pool from which read/write database 
 	    	connections are to be provided for the storage subsystem (see the 
 	    	ConnectionPoolManager module). Default is the default provided by the 
@@ -280,7 +280,7 @@
             number of results is greater than maxResults (as specified by the
             server [above] or the client [in the search request]).</comment>
 	    </param>
-	    <param name="connectionPool" value="localMySQLPool">
+	    <param name="connectionPool" value="localDerbyPool">
 	    	<comment>(optional) To make unspecified, comment out or delete the 
 	    	whole param line as opposed to using an empty string,
             default=ConnectionPoolManager's default) The connectionPool
@@ -388,8 +388,8 @@
 	</module>
 	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
 		<comment>This module facilitates obtaining ConnectionPools</comment>
-		<param name="defaultPoolName" value="localMySQLPool" />
-		<param name="poolNames" value="localMySQLPool" />
+		<param name="defaultPoolName" value="localDerbyPool" />
+		<param name="poolNames" value="localDerbyPool" />
 	</module>
 	<module role="fedora.server.validation.DOValidator" class="fedora.server.validation.DOValidatorModule">
 		<comment>Description: Supports validation of digital objects, including
@@ -649,7 +649,7 @@
         <param name="dbPassword" value="fedoraAdmin">
             <comment>The database password.</comment>
         </param>
-        <param name="jdbcURL" value="jdbc:derby://localhost:1527/">
+        <param name="jdbcURL" value="jdbc:derby:/opt/fedora/current/derby/fedora32;create=true">
             <comment>The JDBC connection URL.</comment>
         </param>
         <param name="jdbcDriverClass" value="org.apache.derby.jdbc.EmbeddedDriver">
