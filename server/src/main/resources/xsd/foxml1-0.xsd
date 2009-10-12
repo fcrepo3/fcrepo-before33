@@ -40,7 +40,6 @@
 					<xsd:enumeration value="M"/>
 					<xsd:enumeration value="R"/>
 					<xsd:enumeration value="X"/>
-					<xsd:enumeration value="B"/>
 				</xsd:restriction>
 			</xsd:simpleType>
 		</xsd:attribute>
