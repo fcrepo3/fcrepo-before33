@@ -207,7 +207,6 @@ public interface Constants {
      * <code>urn:fedora:names:fedora:2.1:resource:disseminator</code>
      */
     @Deprecated
-    @SuppressWarnings("deprecation")
     public static final DisseminatorNamespace DISSEMINATOR =
             DisseminatorNamespace.getInstance();
 
@@ -702,7 +701,7 @@ public interface Constants {
          */
         public static final String getValue() {
             if (value == null) {
-                if (System.getProperty("servlet.fedora.home") != null) {
+                if (System.getProperty("servlet.fedora.home") != null) {                	
                     value = System.getProperty("servlet.fedora.home");
                 } else if (System.getProperty("fedora.home") != null) {
                     value = System.getProperty("fedora.home");
