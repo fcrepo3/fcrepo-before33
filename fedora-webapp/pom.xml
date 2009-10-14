@@ -70,6 +70,17 @@
           </webResources>
           <archive>
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+            <manifest>
+                      <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                    </manifest>
+
+                    <!-- 
+                      Note: The version and build need to be generated.
+                      -->
+                    <manifestEntries>
+                      <Version>${buildNumber}</Version>
+                      <Build>${timestamp}</Build>
+                    </manifestEntries>
           </archive>
 
         </configuration>
