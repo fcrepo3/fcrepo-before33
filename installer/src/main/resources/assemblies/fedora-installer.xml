@@ -91,7 +91,7 @@
 
    <dependencySet>
       <includes>
-        <include>org.duraspace.fedora:server:war:webapp:*</include>
+        <include>org.duraspace.fedora:fedora-webapp:war</include>
       </includes>
       <useProjectArtifact>false</useProjectArtifact>
       <!-- 
