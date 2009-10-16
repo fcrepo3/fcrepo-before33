@@ -246,21 +246,37 @@
 
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
-      <artifactId>client</artifactId>
-      <version>1.0.0</version>
+      <artifactId>fedora-admin-client</artifactId>
+      <version>3.3</version>
     </dependency>
  
+    <!--
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>client</artifactId>
       <classifier>fedora</classifier>
       <version>1.0.0</version>
+    </dependency>
+    --> 
+
+    <dependency>
+      <groupId>org.duraspace.fedora</groupId>
+      <artifactId>fedora-messaging-client</artifactId>
+      <version>3.3</version>
     </dependency> 
 
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
-      <artifactId>client</artifactId>
+      <artifactId>fedora-messaging-client</artifactId>
+      <version>3.3</version>
       <classifier>fedora-messaging</classifier>
+      <type>zip</type>
+    </dependency> 
+    
+    <dependency>
+      <groupId>org.duraspace.fedora</groupId>
+      <artifactId>fedora-webapp</artifactId>
+      <type>war</type>
       <version>1.0.0</version>
     </dependency> 
 

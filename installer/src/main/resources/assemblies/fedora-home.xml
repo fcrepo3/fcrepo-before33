@@ -204,20 +204,20 @@
     </fileSet>  
 
     <fileSet>
-      <directory>../client/src/main/resources/scripts/bat/client</directory>
+      <directory>../client/fedora-admin-client/src/main/resources/scripts/bat/client</directory>
       <outputDirectory>/client/bin</outputDirectory>
       <filtered>true</filtered>
     </fileSet>  
 
     <fileSet>
-      <directory>../client/src/main/resources/scripts/sh/client</directory>
+      <directory>../client/fedora-admin-client/src/main/resources/scripts/sh/client</directory>
       <outputDirectory>/client/bin</outputDirectory>
       <fileMode>0755</fileMode>
       <filtered>true</filtered>
     </fileSet>  
 
     <fileSet>
-      <directory>../client/src/main/resources/demo/demo-soapclient</directory>
+      <directory>../client/fedora-admin-client/src/main/resources/demo/demo-soapclient</directory>
       <outputDirectory>/client/demo/soapclient</outputDirectory>
       <filtered>true</filtered>
     </fileSet>  
@@ -268,7 +268,7 @@
       <useProjectArtifact>false</useProjectArtifact>
       <includes>
       
-        <include>org.duraspace.fedora:client</include>
+        <!-- <include>org.duraspace.fedora:fedora-admin-client</include> -->
         <include>org.duraspace.fedora:common</include>
         <include>org.duraspace.fedora:server</include>
 
@@ -306,18 +306,73 @@
         -->
                         
       </includes>
+      <!--
       <excludes>
-        <exclude>org.duraspace.fedora:client:jar:fedora*</exclude>
+        <exclude>org.duraspace.fedora:fedora-admin-client:jar</exclude>
       </excludes>
+      -->
       <outputDirectory>/client/lib</outputDirectory>
     </dependencySet>
 
     <dependencySet>
       <useProjectArtifact>false</useProjectArtifact>
       <includes>
-        <include>org.duraspace.fedora:client:jar:fedora*</include>
+        <include>org.duraspace.fedora:fedora-admin-client:jar</include>
       </includes>
       <outputDirectory>/client</outputDirectory>
+    </dependencySet>
+
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+
+        <include>org.duraspace.fedora:common</include>
+        <include>org.duraspace.fedora:server</include>
+
+        <!-- 
+          Note: The include statement below will need to be expanded to
+                catch properly defined (i.e. maven-central) dependencies.
+         -->
+        <include>batik:*</include>
+        <include>commons-codec:commons-codec:jar:1.3</include>
+        <include>commons-discovery:commons-discovery:jar:0.2</include>
+        <include>commons-httpclient:commons-httpclient:jar:3.1</include>
+        <include>commons-logging:commons-logging:jar:1.0.4</include>
+        <include>commons-pool:commons-pool:jar:1.2</include>
+        <include>gnu.getopt:java-getopt:jar:1.0.13</include>
+        <include>javax.activation:activation:jar:1.1.1</include>
+        <include>javax.mail:mail:jar:1.4.1</include>
+        <include>javax.xml:jaxrpc-api:jar:1.1</include>
+        <include>com.sun.woodstock.dependlibs:jhbasic:jar:2.0</include>
+        <include>javax.xml.soap:saaj-api:jar:1.3</include>
+        <include>log4j:log4j:jar:1.2.15</include>
+        <include>org.fedorarepo:axis:jar:1.3-PATCHED</include>
+        <include>org.fedorarepo:jai_codec:jar:1.1.2_01</include>        
+        <include>org.fedorarepo:jai_core:jar:1.1.2_01</include>
+        <include>org.fedorarepo:mulgara-core:jar:2.1.1</include>
+        <include>org.fedorarepo:openrdf-sesame-onejar:jar:2.2.1</include>
+        <include>org.fedorarepo:saxon:jar:9.0</include>
+        <include>org.fedorarepo:sunxacml:jar:1.2-PATCHED</include>
+        <include>org.fedorarepo:trippi-core:jar:1.4.1</include>
+        <include>org.slf4j:slf4j-api:jar:1.5.2</include>
+        <include>org.slf4j:slf4j-log4j12:jar:1.5.2</include>
+        <include>wsdl4j:wsdl4j:jar:1.5.1</include>
+        <include>xerces:xercesImpl:jar:2.6.2</include>
+        <!--
+        <include>xml-apis:*</include>
+        -->
+                        
+      </includes>
+      <outputDirectory>/client/lib</outputDirectory>
+    </dependencySet>
+
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <unpack>true</unpack>
+      <includes>
+        <include>org.duraspace.fedora:fedora-messaging-client:zip:fedora-messaging</include>
+      </includes>
+      <outputDirectory>/client/fedora-messaging-client</outputDirectory>
     </dependencySet>
 
   </dependencySets>

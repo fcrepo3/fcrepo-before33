@@ -67,9 +67,12 @@
     <module>generate</module>
     <module>common</module>
     <module>server</module>
-    <module>client</module>
+    <module>client/fedora-admin-client</module>
+    <module>client/fedora-messaging-client</module>
     <module>integrationtest</module>
-    <module>localservices</module>
+    <module>localservices/fop</module>
+    <module>localservices/imagemanip</module>
+    <module>localservices/saxon</module>
     <module>democontent</module>
     <module>installer</module>
     <module>fedora-webapp</module>

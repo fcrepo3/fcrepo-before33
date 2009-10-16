@@ -10,9 +10,9 @@
 
   <parent>
     <groupId>org.duraspace.fedora</groupId>
-    <artifactId>localservices</artifactId>
+    <artifactId>fedora-repository</artifactId>
     <version>1.0.0</version>
-    <relativePath>../pom.xml</relativePath>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
 
   <build>
@@ -21,7 +21,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>2.1-beta-1</version>
-
         <configuration>
           <packagingIncludes>
             **/index.html,
@@ -67,8 +66,8 @@
       <version>2.4</version>
       <scope>provided</scope>
     </dependency>    
-   
-   <dependency>
+
+    <dependency>
     <groupId>commons-logging</groupId>
     <artifactId>commons-logging</artifactId>
     <version>1.0.4</version>

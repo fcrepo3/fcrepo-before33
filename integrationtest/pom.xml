@@ -456,16 +456,18 @@
 
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
-      <artifactId>client</artifactId>
-      <version>1.0.0</version>
+      <artifactId>fedora-admin-client</artifactId>
+      <version>3.3</version>
     </dependency> 
 
+    <!--
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>client</artifactId>
       <version>1.0.0</version>
       <classifier>fedora</classifier>
     </dependency>
+    -->
     
     <dependency>
       <groupId>xmlunit</groupId>

@@ -4,13 +4,12 @@
   <formats>
     <format>zip</format>
   </formats>
-
   <dependencySets>
-
+  
     <dependencySet>
       <includes>
       
-        <include>org.duraspace.fedora:client:jar:fedora-messaging:${project.version}</include>
+        <!--  <include>org.duraspace.fedora:fedora-messaging-client:jar</include> -->
         <include>com.sun.xml.stream:sjsxp:jar:1.0.1</include>
         <include>dom4j:dom4j:jar:1.6.1</include>
         <include>javax.activation:activation:jar:1.1.1</include>
@@ -25,9 +24,17 @@
         <include>org.apache.ws.commons.axiom:axiom-impl:jar:1.2.5</include>
 
       </includes>
-      <useProjectAttachments>true</useProjectAttachments>
+      <!-- <useProjectAttachments>true</useProjectAttachments> -->
+      <outputDirectory>/lib</outputDirectory>
     </dependencySet>
-
+    
+    <dependencySet>
+      <includes>
+        <!-- <include>org.duraspace.fedora:fedora-messaging-client:jar:fedora-messaging:${project.version}</include> -->
+        <!-- <include>org.duraspace.fedora:fedora-messaging-client:jar:${project.version}</include> -->
+        <include>org.duraspace.fedora:fedora-messaging-client:jar</include>
+      </includes>
+    </dependencySet>
+    
   </dependencySets>
-
 </assembly>
