@@ -28,7 +28,6 @@
   </build>
 
   <profiles>
-
     <profile>
       <id>fedora-installer</id>
 
@@ -40,9 +39,7 @@
       </activation>
 
       <build>
-
         <plugins>
-
           <plugin>
             <artifactId>maven-assembly-plugin</artifactId>
             <version>2.2-beta-4</version>
@@ -90,7 +87,6 @@
             </executions>
 
           </plugin>
-
         </plugins>
       </build>
 
@@ -132,13 +128,16 @@
           <version>2.2.1</version>
         </dependency>
 
+        <!--
         <dependency>
           <groupId>org.duraspace.fedora</groupId>
           <artifactId>server</artifactId>
           <classifier>webapp</classifier>
           <type>war</type>
           <version>1.0.0</version>
-        </dependency> 
+        </dependency>
+        -->
+        
       </dependencies>
 
     </profile>
