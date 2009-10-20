@@ -730,7 +730,7 @@
 		<param name="jdbcURL" value="jdbc:oracle:thin:@localhost:1521:fedora32">
 			<comment>The JDBC connection URL.</comment>
 		</param>
-		<param name="jdbcDriverClass" value="oracle.jdbc.driver.OracleDriver">
+		<param name="jdbcDriverClass" value="oracle.jdbc.OracleDriver">
 			<comment>The JDBC driver class name.</comment>
 		</param>
 		<param name="ddlConverter" value="fedora.server.utilities.OracleDDLConverter"/>
