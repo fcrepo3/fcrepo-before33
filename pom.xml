@@ -67,8 +67,7 @@
     <module>generate</module>
     <module>common</module>
     <module>server</module>
-    <module>client/fedora-admin-client</module>
-    <module>client/fedora-messaging-client</module>
+    <module>client</module>
     <module>integrationtest</module>
     <module>localservices</module>
     <module>democontent</module>

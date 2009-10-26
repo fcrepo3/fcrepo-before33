@@ -12,7 +12,7 @@
     <groupId>org.duraspace.fedora</groupId>
     <artifactId>fedora-repository</artifactId>
     <version>1.0.0</version>
-    <relativePath>../../pom.xml</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <build>
@@ -31,6 +31,15 @@
     </resources>
     -->
 
+    <resources>
+      <resource>
+        <directory>**/resources</directory>
+        <excludes>
+          <exclude>*</exclude>
+        </excludes>
+      </resource>
+    </resources>
+    
     <plugins>
 
       <!-- 
@@ -72,9 +81,9 @@
               <classifier>fedora-${fedora.version}</classifier>
               -->
               <archive>
-                <!-- <addMavenDescriptor>false</addMavenDescriptor> -->
+                <addMavenDescriptor>false</addMavenDescriptor>
                 <manifest>
-                  <addClasspath>true</addClasspath>
+                  <!-- <addClasspath>true</addClasspath> -->
                   <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                 </manifest>
                 <manifestEntries>
@@ -86,13 +95,6 @@
                   -->
                 </manifestEntries>
               </archive>
-              <!--
-              <includes>
-                <include>**/fedora/client/messaging/**</include>
-                <include>fedora/server/**</include>
-                <include>fedora/utilities/**</include>
-              </includes>
-              -->
             </configuration>
           </execution>
         </executions>
@@ -102,6 +104,7 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.2-beta-4</version>
         <executions>
+          
           <!-- Create the messaging-client.zip -->
           <execution>
             <id>fedora-messaging-zip-assembly</id> 
@@ -115,6 +118,20 @@
               </descriptors>
             </configuration>
           </execution>
+          
+          <execution>
+            <id>fedora-messaging-jar-assembly</id> 
+            <phase>package</phase> 
+            <goals>
+              <goal>single</goal> 
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>${basedir}/src/main/resources/assemblies/messaging-client-jar.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          
         </executions>
       </plugin>
 
@@ -124,42 +141,12 @@
 
   <dependencies>
 
-    <!-- 
-      Note: dependencies of client as defined in build.xml are:
-        lib.activation
-        lib.axis
-        lib.batik
-        lib.commons-codec
-        lib.commons-dbcp
-        lib.commons-discovery
-        lib.commons-httpclient
-        lib.commons-logging
-        lib.log4j
-        lib.commons-pool
-        lib.getopt
-        lib.jai_codec
-        lib.jai_core
-        lib.javamail
-        lib.jaxrpc-api
-        lib.jhbasic
-        lib.mulgara
-        lib.openrdf-model
-        lib.saaj-api
-        lib.saxon
-        lib.slf4j-api
-        lib.slf4j-jdk14
-        lib.sunxacml
-        lib.trippi-core
-        lib.wsdl4j
-    -->
-
-    <!--
+    <!-- Note: There is a runtime dependency on selected classes. DWD 10/20/2009 -->
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>common</artifactId>
       <version>1.0.0</version>
     </dependency>
-    -->
 
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
@@ -173,38 +160,6 @@
       <version>5.1.0</version>
     </dependency>
 
-    <!--
-    <dependency>
-      <groupId>batik</groupId>
-      <artifactId>batik-swing</artifactId>
-      <version>1.6-1</version>
-    </dependency>
-    -->
-
-    <!--
-	<dependency>
-      <groupId>commons-codec</groupId>
-	  <artifactId>commons-codec</artifactId>
-	  <version>1.3</version>
-	</dependency>
-    -->
-	
-    <!--
-	Note: This appears to no longer be required by the client. DWD 9/2/2009
-	<dependency>
-	    <groupId>commons-dbcp</groupId>
-	    <artifactId>commons-dbcp</artifactId>
-	    <version>1.2.1</version>
-	</dependency>
-	-->
-	
-    <!--
-    <dependency>
-      <groupId>commons-discovery</groupId>
-      <artifactId>commons-discovery</artifactId>
-      <version>0.2</version>
-    </dependency>
-    -->
 
     <!--
 	<dependency>
@@ -242,27 +197,11 @@
        </exclusions>
     </dependency>
 
-    <!--
-    <dependency>
-      <groupId>com.sun.woodstock.dependlibs</groupId>
-      <artifactId>jhbasic</artifactId>
-      <version>2.0</version>
-    </dependency>
-    -->
-
     <dependency>
       <groupId>com.sun.xml.stream</groupId>
       <artifactId>sjsxp</artifactId>
       <version>1.0.1</version>
     </dependency>
-
-    <!--
-    <dependency>
-      <groupId>gnu.getopt</groupId>
-      <artifactId>java-getopt</artifactId>
-      <version>1.0.13</version>
-    </dependency>
-    -->
 
     <!-- Note: Used by messaging and admin client. DWD 9/9/2009 -->
     <dependency>
@@ -329,30 +268,6 @@
       <artifactId>axiom-impl</artifactId>
       <version>1.2.5</version>
     </dependency>
-
-    <!--
-    <dependency>
-      <groupId>org.fedorarepo</groupId>
-      <artifactId>axis</artifactId>
-      <version>1.3-PATCHED</version>
-    </dependency>
-    -->
-
-    <!--
-    <dependency>
-      <groupId>org.fedorarepo</groupId>
-      <artifactId>jai_codec</artifactId>
-      <version>1.1.2_01</version>
-    </dependency>
-    -->
-    
-    <!--
-    <dependency>
-      <groupId>org.fedorarepo</groupId>
-      <artifactId>jai_core</artifactId>
-      <version>1.1.2_01</version>
-    </dependency>
-    -->
 
     <!--
     <dependency>
