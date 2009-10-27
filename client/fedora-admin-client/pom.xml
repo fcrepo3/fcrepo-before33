@@ -74,7 +74,7 @@
             </goals>
             <configuration>
               <sources>
-                <source>${basedir}/stubwrappers/fedora/client</source>
+                <source>${basedir}/stubwrappers</source>
              </sources>
             </configuration>
           </execution>
