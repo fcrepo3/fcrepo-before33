@@ -151,18 +151,17 @@
         lib.trippi-core
         lib.wsdl4j
     -->
-
-    <dependency>
-      <groupId>org.duraspace.fedora</groupId>
-      <artifactId>common</artifactId>
-      <version>1.0.0</version>
-    </dependency> 
-    
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>server</artifactId>
       <version>1.0.0</version>
     </dependency>
+    
+    <dependency>
+      <groupId>org.duraspace.fedora</groupId>
+      <artifactId>common</artifactId>
+      <version>1.0.0</version>
+    </dependency> 
     
     <dependency>
       <groupId>org.apache.activemq</groupId>
