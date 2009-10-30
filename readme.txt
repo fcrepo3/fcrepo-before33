@@ -11,12 +11,10 @@ Building Fedora
 To build the executable installer, make sure you have maven2
 installed and enter the following:
 
-   1. Until dependencies are found in a public repository, 
-      the following script needs to be run
-          * ./resources/scripts/installLibs.sh
-   2. mvn install -P fedora-installer
-          * generates fedora-installer.jar
-          * found in /installer/target
+  mvn install -P fedora-installer
+
+This generates fedora-installer.jar, which can be found in
+/installer/target
   
 
 Running Unit Tests
