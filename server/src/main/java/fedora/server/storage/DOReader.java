@@ -4,36 +4,34 @@
  */
 package fedora.server.storage;
 
-import java.io.InputStream;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
-import org.jrdf.graph.ObjectNode;
-import org.jrdf.graph.PredicateNode;
-
 import fedora.server.errors.ServerException;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.RelationshipTuple;
+import org.jrdf.graph.ObjectNode;
+import org.jrdf.graph.PredicateNode;
+
+import java.io.InputStream;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Interface for reading Fedora digital objects from within the storage sub
  * system.
- * 
+ *
  * @author Sandy Payette
  */
 public interface DOReader {
 
     /** Gets the underlying digital object this reader is working with. */
     public DigitalObject getObject();
-    
+
     /**
      * Gets the date of creation of this object.
-     * 
+     *
      * @return the date of creation of this object.
      * @throws ServerException
      *         If any type of error occurred fulfilling the request.
@@ -42,7 +40,7 @@ public interface DOReader {
 
     /**
      * Gets the date of the last modification of this object.
-     * 
+     *
      * @return the date of the last modification of this object.
      * @throws ServerException
      *         If any type of error occurred fulfilling the request.
@@ -51,7 +49,7 @@ public interface DOReader {
 
     /**
      * Gets the userid of the user who owns the objects.
-     * 
+     *
      * @return the userid
      * @throws ServerException
      *         If any type of error occurred fulfilling the request.
@@ -61,7 +59,7 @@ public interface DOReader {
     /**
      * Gets the entire list of audit records for the object. Changes to the list
      * affect the underlying object if this is DOWriter.
-     * 
+     *
      * @return the entire list of audit records for the object.
      * @throws ServerException
      *         If any type of error occurred fulfilling the request.
@@ -71,7 +69,7 @@ public interface DOReader {
     /**
      * Gets the content of the entire digital object as XML. The object will be
      * returned exactly as it is stored in the repository.
-     * 
+     *
      * @return the content of the entire digital object as XML.
      * @throws ServerException
      *         If there object could not be found or there was was a failure in
@@ -115,7 +113,7 @@ public interface DOReader {
 
     /**
      * Gets the PID of the digital object.
-     * 
+     *
      * @return the PID of the digital object.
      * @throws ServerException
      *         If any type of error occurred fulfilling the request.
@@ -124,7 +122,7 @@ public interface DOReader {
 
     /**
      * Gets the label of the digital object.
-     * 
+     *
      * @return the label of the digital object.
      * @throws ServerException
      *         If any type of error occurred fulfilling the request.
@@ -135,7 +133,7 @@ public interface DOReader {
      * Gets the state of the digital object. The state indicates the status of
      * the digital object at any point in time. Valid states are: A=Active,
      * I=Inactive, D=Deleted
-     * 
+     *
      * @return the state of the digital object.
      * @throws ServerException
      *         If any type of error occurred fulfilling the request.
@@ -143,12 +141,29 @@ public interface DOReader {
     public String GetObjectState() throws ServerException;
 
     /**
+     * Gets a list of the content models of the object. The strings will be
+     * of the format "info:fedora/PID"
+     * @return the content models of the object
+     * @throws ServerException
+     *         If any type of error occurred fulfilling the request.
+     */
+    public List<String> getContentModels() throws ServerException;
+
+    /**
+     * Determins whether or not the object have the given uri as a content model.
+     *
+     * @param contentModel The object node of the content model
+     * @return true if the object have the content model.
+     */
+    public boolean hasContentModel(ObjectNode contentModel) throws ServerException;
+
+    /**
      * Gets a list of Datastream identifiers for all Datastreams in the digital
      * object. Will take a state parameter to specify that only Datastreams that
      * are in a particular state should be listed (e.g., only active Datastreams
      * with a state value of "A"). If state is given as null, all datastream ids
      * will be returned, regardless of state.
-     * 
+     *
      * @param state
      *        The state of the Datastreams to be listed.
      * @return a list of Datastream identifiers for all Datastreams in the
@@ -161,7 +176,7 @@ public interface DOReader {
     /**
      * Gets the creation dates of all versions of a particular datastream, in no
      * particular order.
-     * 
+     *
      * @param datastreamID
      *        The datastream identifier
      * @return the creation dates.
@@ -178,7 +193,7 @@ public interface DOReader {
      * If the date/time given is null, the most recent version of each
      * datastream is obtained. If the state is null, all datastreams as of the
      * given time will be returned, regardless of state.
-     * 
+     *
      * @param versDateTime
      *        The date-time stamp to get appropriate Datastream versions
      * @param state
@@ -196,7 +211,7 @@ public interface DOReader {
      * non-null, the closest version of the Datastream to the specified
      * date/time (without going over) is given. If no datastreams match the
      * given criteria, null is returned.
-     * 
+     *
      * @param datastreamID
      *        The Datastream identifier
      * @param versDateTime
@@ -214,7 +229,7 @@ public interface DOReader {
      * version id (and not the date). The datastream id and version id must
      * match actual ids of an existing datastream in the object. Otherwise, null
      * will be returned.
-     * 
+     *
      * @param datastreamID
      *        The datastream identifier
      * @param versionID
@@ -233,7 +248,7 @@ public interface DOReader {
      * The methods are reflected via the service deployment object, which is
      * implementing the methods defined in a particular by a behavior
      * definition.
-     * 
+     *
      * @param versDateTime
      *        The date-time stamp to get appropriate version. If this is given
      *        as null, the most recent version is used.
@@ -249,7 +264,7 @@ public interface DOReader {
      * Gets the change history of an object by returning a list of timestamps
      * that correspond to modification dates of components. This currently
      * includes changes to datastreams and disseminators.
-     * 
+     *
      * @param PID
      *        The persistent identifier of the digitla object.
      * @return An Array containing the list of timestamps indicating when
@@ -261,7 +276,7 @@ public interface DOReader {
 
     /**
      * Determine of the object contains the given relationship.
-     * 
+     *
      * @param predicate
      *        Predicate of the relationship, or null if unspecified (will match
      *        any).
@@ -277,7 +292,7 @@ public interface DOReader {
 
     /**
      * Get all matching relationships in the object.
-     * 
+     *
      * @param predicate
      *        Predicate of the relationship, or null if unspecified (will match
      *        any).

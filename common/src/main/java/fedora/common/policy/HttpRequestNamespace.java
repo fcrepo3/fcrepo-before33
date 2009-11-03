@@ -48,12 +48,12 @@ public class HttpRequestNamespace
 
     public final XacmlName SERVER_PORT;
 
-    // Values of MESSAGE_PROTOCOL	 
+    // Values of MESSAGE_PROTOCOL     
     public final XacmlName SOAP;
 
     public final XacmlName REST;
 
-    // Values of SECURITY	 
+    // Values of SECURITY     
     public final XacmlName SECURE;
 
     public final XacmlName INSECURE;

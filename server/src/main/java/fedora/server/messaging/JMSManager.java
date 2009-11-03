@@ -132,10 +132,10 @@ public class JMSManager {
             }
             if(providerUrl == null) {
                 throw new MessagingException("JMS connection properties must either be "
-                		+ "provided by the container or by a non-null properties file "
-                		+ "containing, at minimum, a value for "
-                		+ Context.INITIAL_CONTEXT_FACTORY + " and "
-                		+ Context.PROVIDER_URL + ".");
+                        + "provided by the container or by a non-null properties file "
+                        + "containing, at minimum, a value for "
+                        + Context.INITIAL_CONTEXT_FACTORY + " and "
+                        + Context.PROVIDER_URL + ".");
             }
         } else {
             String icf = jndiProps.getProperty(Context.INITIAL_CONTEXT_FACTORY);

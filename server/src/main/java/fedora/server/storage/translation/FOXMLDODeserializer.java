@@ -542,7 +542,7 @@ public class FOXMLDODeserializer
                 if (localName.equals("action")) {
                     m_auditAction = m_elementContent.toString();
                     //} else if (localName.equals("recordID")) {
-                    //	m_auditRecordID=m_elementContent.toString();
+                    //    m_auditRecordID=m_elementContent.toString();
                 } else if (localName.equals("componentID")) {
                     m_auditComponentID = m_elementContent.toString();
                 } else if (localName.equals("responsibility")) {
@@ -874,10 +874,8 @@ public class FOXMLDODeserializer
 
             StringBuilder rels = new StringBuilder();
             if (m_dsId.equals("WSDL")) {
-                for (RelationshipTuple rel : m_obj
-                        .getRelationships(MODEL.HAS_MODEL,
-                                          Models.SERVICE_DEPLOYMENT_3_0)) {
-                    rels.append(rel.object + "\n");
+                if (m_obj.hasContentModel(Models.SERVICE_DEPLOYMENT_3_0)){
+                    rels.append(Models.SERVICE_DEPLOYMENT_3_0 + "\n");
                 }
 
                 LOG.debug("Not processing WSDL from " + m_obj.getPid()

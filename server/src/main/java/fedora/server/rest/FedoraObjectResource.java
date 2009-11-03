@@ -403,8 +403,8 @@ public class FedoraObjectResource extends BaseRestResource {
 
                 if(namespace != null && !namespace.equals("")) {
                     LOG.warn("The namespace parameter is only applicable when object " +
-                    		 "content is not provided, thus the namespace provided '" +
-                    		 namespace + "' has been ignored.");
+                             "content is not provided, thus the namespace provided '" +
+                             namespace + "' has been ignored.");
                 }
             }
 

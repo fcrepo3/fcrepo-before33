@@ -241,7 +241,7 @@ public abstract class TestXMLDODeserializer
 
         for (URIReference model : models) {
             assertTrue("Did not detect that object had model " + model, obj
-                    .hasRelationship(MODEL.HAS_MODEL, model));
+                    .hasContentModel(model));
         }
         assertEquals(TEST_PID, obj.getPid());
     }

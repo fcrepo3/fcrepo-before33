@@ -33,7 +33,7 @@ public class HttpServiceNotFoundException
      *        An informative message explaining what happened and (possibly) how
      *        to fix it.
      * @param cause
-     * 		  A throwable containing the cause of the exception.
+     *           A throwable containing the cause of the exception.
      */
     public HttpServiceNotFoundException(String message, Throwable cause) {
         super(message,cause);

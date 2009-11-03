@@ -36,7 +36,7 @@ public class METSInOutTest
 
     public static void main(String args[]) {
         FileInputStream in = null;
-        // set system properties for testing purposes      	
+        // set system properties for testing purposes          
         System.setProperty("fedoraServerHost", "localhost");
         System.setProperty("fedoraServerPort", "80");
 

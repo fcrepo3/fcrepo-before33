@@ -4,25 +4,8 @@
  */
 package fedora.server.access.defaultdisseminator;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-
-import java.util.ArrayList;
-import java.util.Date;
-
-import javax.xml.transform.Templates;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-
 import fedora.common.Constants;
 import fedora.common.Models;
-
 import fedora.server.Context;
 import fedora.server.access.Access;
 import fedora.server.access.ObjectProfile;
@@ -36,10 +19,21 @@ import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.ObjectMethodsDef;
-
 import fedora.utilities.XmlTransformUtility;
 
-import static fedora.common.Constants.MODEL;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Implements the methods defined in the DefaultDisseminator interface. This is
@@ -156,10 +150,8 @@ public class DefaultDisseminatorImpl
     public MIMETypedStream viewMethodIndex() throws ServerException {
         // sdp: the dissemination index is disabled for service definition and deployment objects
         // so send back a message saying so.
-        if (reader.hasRelationship(MODEL.HAS_MODEL,
-                                   Models.SERVICE_DEFINITION_3_0)
-                || reader.hasRelationship(MODEL.HAS_MODEL,
-                                          Models.SERVICE_DEPLOYMENT_3_0)) {
+        if (reader.hasContentModel(Models.SERVICE_DEFINITION_3_0)
+                || reader.hasContentModel(Models.SERVICE_DEPLOYMENT_3_0)) {
             return noMethodIndexMsg();
         }
 

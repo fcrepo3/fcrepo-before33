@@ -25,22 +25,22 @@ public interface Messaging {
      * @param message The message to send.
      * @throws MessagingException
      */
-	public void send(String destName, FedoraMessage message) throws MessagingException;
+    public void send(String destName, FedoraMessage message) throws MessagingException;
 
-	/**
-	 * Send a message representing the <code>FedoraMethod</code>.
-	 * The message representation and destination(s) are determined by the
-	 * implementing class.
-	 *
-	 * @param method The method to send.
-	 * @throws MessagingException
-	 */
-	public void send(FedoraMethod method) throws MessagingException;
+    /**
+     * Send a message representing the <code>FedoraMethod</code>.
+     * The message representation and destination(s) are determined by the
+     * implementing class.
+     *
+     * @param method The method to send.
+     * @throws MessagingException
+     */
+    public void send(FedoraMethod method) throws MessagingException;
 
-	/**
-	 * Shutdown and/or close any resources and/or connections.
-	 *
-	 * @throws MessagingException
-	 */
-	public void close() throws MessagingException;
+    /**
+     * Shutdown and/or close any resources and/or connections.
+     *
+     * @throws MessagingException
+     */
+    public void close() throws MessagingException;
 }

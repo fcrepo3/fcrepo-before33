@@ -109,7 +109,7 @@ public class TestAtomDODeserializer
     }
     
     public void testDeserializeZip() throws Exception {
-    	StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         sb.append("<feed xmlns=\"http://www.w3.org/2005/Atom\">");
         sb.append("  <id>info:fedora/demo:1001</id>");
@@ -139,7 +139,7 @@ public class TestAtomDODeserializer
         sb.append("    <category term=\"DISABLED\" scheme=\"info:fedora/fedora-system:def/model#digestType\"></category>");
         sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
         sb.append("    <category term=\"491\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
-        sb.append("	   <summary type=\"text\">DC1.0</summary>");
+        sb.append("       <summary type=\"text\">DC1.0</summary>");
         sb.append("    <content type=\"text/xml\" src=\"DC1.0.xml\"/>");
         sb.append("  </entry>");
         sb.append("  <entry>");
@@ -192,22 +192,22 @@ public class TestAtomDODeserializer
         ZipEntry relsext = new ZipEntry("RELS-EXT1.0.xml");
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         ZipOutputStream zip = new ZipOutputStream(bout);
-    	zip.putNextEntry(manifest);
-    	zip.write(demo1001_manifest);
-    	zip.putNextEntry(dc);
-    	zip.write(demo1001_dc);
-    	zip.putNextEntry(relsext);
-    	zip.write(demo1001_relsext);
-    	zip.flush();
-    	zip.close();
-    	byte[] demo1001ATOMZip = bout.toByteArray();
+        zip.putNextEntry(manifest);
+        zip.write(demo1001_manifest);
+        zip.putNextEntry(dc);
+        zip.write(demo1001_dc);
+        zip.putNextEntry(relsext);
+        zip.write(demo1001_relsext);
+        zip.flush();
+        zip.close();
+        byte[] demo1001ATOMZip = bout.toByteArray();
 
-    	InputStream in = new ByteArrayInputStream(demo1001ATOMZip);
-    	DigitalObject obj = new BasicDigitalObject();
-    	DODeserializer dser = new AtomDODeserializer(Constants.ATOM_ZIP1_1);
-    	dser.deserialize(in, obj, "UTF-8", DOTranslationUtility.DESERIALIZE_INSTANCE);
-    	assertEquals("demo:1001", obj.getPid());
-    	//TODO more tests
+        InputStream in = new ByteArrayInputStream(demo1001ATOMZip);
+        DigitalObject obj = new BasicDigitalObject();
+        DODeserializer dser = new AtomDODeserializer(Constants.ATOM_ZIP1_1);
+        dser.deserialize(in, obj, "UTF-8", DOTranslationUtility.DESERIALIZE_INSTANCE);
+        assertEquals("demo:1001", obj.getPid());
+        //TODO more tests
     }
 
     // Supports legacy test runners

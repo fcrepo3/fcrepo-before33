@@ -112,7 +112,7 @@ public class ActionNamespace
         APIA = addName(new XacmlName(this, "api-a"));
 
         ID = addName(new XacmlName(this, "id", StringAttribute.identifier));
-        // derived from respective Java methods in Access.java or Management.java    	
+        // derived from respective Java methods in Access.java or Management.java        
         ADD_DATASTREAM = addName(new XacmlName(this, "id-addDatastream"));
         EXPORT = addName(new XacmlName(this, "id-export"));
         GET_DATASTREAM = addName(new XacmlName(this, "id-getDatastream"));

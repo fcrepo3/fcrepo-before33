@@ -319,7 +319,7 @@ public class ExportOptionsDialog
                         + "             to be encoded according to the FOXML 1.0 XML schema.\n\n"
                         + "     METS 1.1 - select this option if you want the export file\n"
                         + "             to be encoded according to version 1.1 of the Fedora\n"
-                        + "		        extension of the METS XML schema.\n\n"
+                        + "             extension of the METS XML schema.\n\n"
                         + "     METS 1.0 - select this option if you want the export file\n"
                         + "             to be encoded according to version 1.0 of the Fedora\n"
                         + "             extension of the METS XML schema.\n\n"

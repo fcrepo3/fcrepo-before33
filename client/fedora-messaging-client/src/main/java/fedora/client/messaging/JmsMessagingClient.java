@@ -237,7 +237,7 @@ public class JmsMessagingClient implements MessagingClient, MessageListener {
                     }
                 } else {
                     throw new MessagingException("Timeout reached waiting " +
-                    		               "for messaging client to start.");
+                                           "for messaging client to start.");
                 }
             }
         }

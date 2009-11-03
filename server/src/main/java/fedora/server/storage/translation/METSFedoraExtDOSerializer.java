@@ -367,10 +367,10 @@ public class METSFedoraExtDOSerializer
             writer.print(METS.prefix);
             writer.print(":xmlData>\n");
 
-            // If WSDL or SERVICE-PROFILE datastream (in BMech)
+            // If WSDL or SERVICE-PROFILE datastream (in SDep)
             // make sure that any embedded URLs are encoded
             // appropriately for either EXPORT or STORE.
-            if (obj.hasRelationship(MODEL.HAS_MODEL, SERVICE_DEPLOYMENT_3_0)
+            if (obj.hasContentModel(SERVICE_DEPLOYMENT_3_0)
                     && ds.DatastreamID.equals("SERVICE-PROFILE")
                     || ds.DatastreamID.equals("WSDL")) {
                 writer.print(DOTranslationUtility

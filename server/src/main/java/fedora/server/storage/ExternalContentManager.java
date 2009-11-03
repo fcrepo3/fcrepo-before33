@@ -15,7 +15,7 @@ import fedora.server.storage.types.MIMETypedStream;
  */
 public interface ExternalContentManager {
 
-	
+    
     /**
      * Reads the contents of the specified URL and returns the
      * result as a MIMETypedStream. Used as a wrapper with a default MIME type 
@@ -24,7 +24,7 @@ public interface ExternalContentManager {
      * @param url
      *        The URL of the external content.
      * @param context
-     * 		  The context map.       
+     *           The context map.       
      * @return A MIME-typed stream.
      * @throws ServerException
      *         If the URL connection could not be established.

@@ -92,14 +92,14 @@ public class ConnectPubcookie {
                             + " after getting method");
 
             //XXX method.getParams().setBooleanParameter(HttpMethodParams.USE_EXPECT_CONTINUE, false); //new way
-            //XXX method.getParams().setIntParameter(HttpMethodParams.SO_TIMEOUT, 10000);			
+            //XXX method.getParams().setIntParameter(HttpMethodParams.SO_TIMEOUT, 10000);            
             //XXX method.getParams().setVersion(HttpVersion.HTTP_0_9); //or HttpVersion.HTTP_1_0 HttpVersion.HTTP_1_1
 
             LogFactory.getLog(ConnectPubcookie.class)
                     .debug(ConnectPubcookie.class.getName() + ".setup()"
                             + " after setting USE_EXPECT_CONTINUE");
 
-            //PostMethod is subclass of ExpectContinueMethod, so we require here:			
+            //PostMethod is subclass of ExpectContinueMethod, so we require here:            
             //((PostMethod)method).setUseExpectHeader(false);
             //client.setTimeout(30000); // increased from 10000 as temp fix; 2005-03-17 wdn5e
             //HttpClientParams httpClientParams = new HttpClientParams();
@@ -130,7 +130,7 @@ public class ConnectPubcookie {
                     .debug(ConnectPubcookie.class.getName() + ".setup()" + " B");
 
             //XXX MultipartRequestEntity multipartRequestEntity = new MultipartRequestEntity(parts, method.getParams());
-            // ((PostMethod)method).setRequestEntity(multipartRequestEntity); //new way			
+            // ((PostMethod)method).setRequestEntity(multipartRequestEntity); //new way            
         }
         //method.getParams().setCookiePolicy(CookiePolicy.RFC_2109);
         HttpState state = client.getState();

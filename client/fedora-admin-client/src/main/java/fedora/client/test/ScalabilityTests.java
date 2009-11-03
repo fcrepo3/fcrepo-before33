@@ -118,8 +118,8 @@ public class ScalabilityTests
         out = new PrintStream(outputFile);
         out.println("--- Scalability Test Results ---");
         out.println("Total Objects Ingested, " +
-        		    "Time (ms) To Ingest Batch of " + batchSize + " Objects, " +
-        		    "Average Ingest Time (ms) Per Object");
+                    "Time (ms) To Ingest Batch of " + batchSize + " Objects, " +
+                    "Average Ingest Time (ms) Per Object");
 
         threadPool = Executors.newFixedThreadPool(numThreads);
         ingestRunnerList = new ArrayList<Callable<Boolean>>();

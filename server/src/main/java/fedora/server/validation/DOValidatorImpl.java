@@ -31,21 +31,21 @@ import fedora.utilities.FileUtils;
  * <pre>
  *   0=VALDIATE_ALL : All validation will be done.
  *   1=VALIDATE_XML_SCHEMA : the digital object will be validated against 
- * 				the the appropriate XML Schema. An ObjectValidityException 
- * 				will be thrown if the object fails the schema test.
+ *                 the the appropriate XML Schema. An ObjectValidityException 
+ *                 will be thrown if the object fails the schema test.
  *   2=VALIDATE_SCHEMATRON : the digital object will be validated 
- * 				against a set of rules expressed by a Schematron schema.  
- * 				These rules are beyond what can be expressed in XML Schema.  
- * 				The Schematron schema expresses rules for different phases
- * 				of the object. There are rules appropriate to a digital 
- * 				object when it is first ingested into the repository 
- * 				(ingest phase). There are additional rules that must be met 
- * 				before a digital object is considered valid for permanent 
- * 				storage in the repository (completed phase). These rules 
- * 				pertain to aspects of the object that are system assigned,
- * 				such as created dates and state codes.
- * 				An ObjectValidityException will be thrown if the object fails 
- * 				the Fedora rules test.
+ *                 against a set of rules expressed by a Schematron schema.  
+ *                 These rules are beyond what can be expressed in XML Schema.  
+ *                 The Schematron schema expresses rules for different phases
+ *                 of the object. There are rules appropriate to a digital 
+ *                 object when it is first ingested into the repository 
+ *                 (ingest phase). There are additional rules that must be met 
+ *                 before a digital object is considered valid for permanent 
+ *                 storage in the repository (completed phase). These rules 
+ *                 pertain to aspects of the object that are system assigned,
+ *                 such as created dates and state codes.
+ *                 An ObjectValidityException will be thrown if the object fails 
+ *                 the Fedora rules test.
  * </pre>
  * 
  * @author Sandy Payette
@@ -155,7 +155,7 @@ public class DOValidatorImpl
      * @param objectAsStream
      *        The digital object provided as a stream.
      * @param format 
-     * 		  The format URI of the object serialization.
+     *           The format URI of the object serialization.
      * @param validationType
      *        The level of validation to perform on the digital object. This is
      *        an integer from 0-2 with the following meanings: 0 = VALIDATE_ALL
@@ -184,7 +184,7 @@ public class DOValidatorImpl
         // InputStream. For now, I will just write the object InputStream to
         // disk so I can read it multiple times.
         try {
-        	File objectAsFile = streamtoFile(tempDir, objectAsStream);
+            File objectAsFile = streamtoFile(tempDir, objectAsStream);
             validate(objectAsFile, format, validationType, phase);
         } catch (ObjectValidityException e) {
             throw e;
@@ -228,24 +228,24 @@ public class DOValidatorImpl
         checkFormat(format);
         
         if (format.equals(Constants.ATOM_ZIP1_1.uri)) {
-    		// If the object serialization is a Zip file with an atom
-    		// manifest, extract the manifest for validation.
-        	try {
-        		File manifest = null;
-	    		ZipInputStream zip = new ZipInputStream(new FileInputStream(objectAsFile));
-	            ZipEntry entry;
-	            while ((entry = zip.getNextEntry()) != null) {
-	                if (entry.getName().equals("atommanifest.xml")) {
-	                    manifest = streamtoFile(tempDir, zip);
-	                    break;
-	                }
-	            }
-	            zip.close();
-	            objectAsFile = manifest;
-        	} catch(IOException e) {
-        		throw new GeneralException(e.getMessage(), e);
-        	}
-    	}
+            // If the object serialization is a Zip file with an atom
+            // manifest, extract the manifest for validation.
+            try {
+                File manifest = null;
+                ZipInputStream zip = new ZipInputStream(new FileInputStream(objectAsFile));
+                ZipEntry entry;
+                while ((entry = zip.getNextEntry()) != null) {
+                    if (entry.getName().equals("atommanifest.xml")) {
+                        manifest = streamtoFile(tempDir, zip);
+                        break;
+                    }
+                }
+                zip.close();
+                objectAsFile = manifest;
+            } catch(IOException e) {
+                throw new GeneralException(e.getMessage(), e);
+            }
+        }
         
         if (validationType == VALIDATE_ALL) {
             validateByRules(objectAsFile,
@@ -363,7 +363,7 @@ public class DOValidatorImpl
 
                 FileOutputStream fos = new FileOutputStream(fileLocation);
                 if (FileUtils.copy(objectAsStream, fos)) {
-                	objectAsFile = fileLocation;
+                    objectAsFile = fileLocation;
                 }
             }
         } catch (IOException e) {

@@ -27,7 +27,7 @@ public class ObjectNamespace
 
     public final XacmlName LAST_MODIFIED_DATETIME;
 
-    public final XacmlName NAMESPACE; //not a "patterning" error; this is the pid prefix, part before ":"	
+    public final XacmlName NAMESPACE; //not a "patterning" error; this is the pid prefix, part before ":"    
 
     public final XacmlName OBJECT_TYPE;
 

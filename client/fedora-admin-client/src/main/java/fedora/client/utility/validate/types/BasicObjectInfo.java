@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import fedora.common.Constants;
+
 /**
  * A simple immutable implementation of {@link ObjectInfo}.
  * 
@@ -95,6 +97,28 @@ public class BasicObjectInfo
 
     public DatastreamInfo getDatastreamInfo(String dsId) {
         return datastreamMap.get(dsId);
+    }
+
+    public Collection<String> getContentModels() {
+        //TODO: This is one of the methods to change for inheritance
+        Collection<RelationshipInfo> cms = getRelations(Constants.MODEL.HAS_MODEL.uri);
+        List<String> result = new ArrayList<String>();
+        for (RelationshipInfo cm:cms){
+            String uri = cm.getObject();
+            result.add(uri);
+        }
+        return result;
+    }
+
+    public boolean hasContentModel(String contentmodelpid) {
+        //TODO: This is one of the methods to change for inheritance
+        Collection<RelationshipInfo> cms = getRelations(Constants.MODEL.HAS_MODEL.uri);
+        for (RelationshipInfo cm:cms){
+            if (cm.getObjectPid().equals(contentmodelpid)){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

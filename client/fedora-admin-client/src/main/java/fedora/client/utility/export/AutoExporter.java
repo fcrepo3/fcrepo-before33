@@ -87,7 +87,7 @@ public class AutoExporter
                     || format.equals("default")) {
                 if (format.equals(METS_EXT1_1.uri)) {
                     System.out.println("WARNING: Repository does not support METS Fedora " +
-                    		           "Extension 1.1; exporting older format (v1.0) instead");
+                                       "Extension 1.1; exporting older format (v1.0) instead");
                 }
                 bytes = apim.export(pid, METS_EXT1_0_LEGACY, exportContext);
             } else {
@@ -99,13 +99,13 @@ public class AutoExporter
                 if (format != null) {
                     if (format.equals(FOXML1_1.uri)) {
                         System.out.println("WARNING: Repository does not support FOXML 1.1; " +
-                        		           "exporting older format (v1.0) instead");
+                                           "exporting older format (v1.0) instead");
                         format = FOXML1_0_LEGACY;
                     } else if (format.equals(FOXML1_0.uri)) {
                         format = FOXML1_0_LEGACY;
                     } else if (format.equals(METS_EXT1_1.uri)) {
                         System.out.println("WARNING: Repository does not support METS Fedora " +
-                        		           "Extension 1.1; exporting older format (v1.0) instead");
+                                           "Extension 1.1; exporting older format (v1.0) instead");
                         format = METS_EXT1_0_LEGACY;
                     } else if (format.equals(METS_EXT1_0.uri)) {
                         format = METS_EXT1_0_LEGACY;

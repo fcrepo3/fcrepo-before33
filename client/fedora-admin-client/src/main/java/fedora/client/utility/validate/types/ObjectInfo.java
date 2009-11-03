@@ -26,4 +26,8 @@ public interface ObjectInfo {
 
     public DatastreamInfo getDatastreamInfo(String dsId);
 
+    public Collection<String> getContentModels();
+
+    public boolean hasContentModel(String contentmodelpid);
+
 }

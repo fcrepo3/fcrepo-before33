@@ -105,7 +105,7 @@ public class AutoIngestor
                 ingestFormat = METS_EXT1_0_LEGACY;
             } else {
                 throw new IOException("You are connected to a pre-2.0 Fedora repository which " +
-                		              "will only accept the format \"metslikefedora1\" for ingest.");
+                                      "will only accept the format \"metslikefedora1\" for ingest.");
             }
         } else {
             if(majorVersion < 3) {
@@ -117,7 +117,7 @@ public class AutoIngestor
                     ingestFormat = FOXML1_0_LEGACY;
                 } else {
                     throw new IOException("You are connected to a 2.x repository which " +
-                    		              "will only ingest in FOXML 1.0 or METS 1.0 XML formats");
+                                          "will only ingest in FOXML 1.0 or METS 1.0 XML formats");
                 }
             } else { // majorVersion >= 3
                 if (ingestFormat.equals(FOXML1_0_LEGACY)) {

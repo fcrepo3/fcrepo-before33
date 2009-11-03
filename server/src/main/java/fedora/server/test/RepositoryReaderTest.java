@@ -4,25 +4,22 @@
  */
 package fedora.server.test;
 
-import java.io.File;
-
-import java.util.HashMap;
-
-import junit.framework.TestCase;
-
 import fedora.common.Constants;
 import fedora.common.Models;
-
 import fedora.server.Server;
-import fedora.server.storage.ServiceDefinitionReader;
-import fedora.server.storage.ServiceDeploymentReader;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.DirectoryBasedRepositoryReader;
+import fedora.server.storage.ServiceDefinitionReader;
+import fedora.server.storage.ServiceDeploymentReader;
 import fedora.server.storage.translation.DODeserializer;
 import fedora.server.storage.translation.DOSerializer;
 import fedora.server.storage.translation.DOTranslatorImpl;
 import fedora.server.storage.translation.METSFedoraExt1_1DODeserializer;
 import fedora.server.storage.translation.METSFedoraExt1_1DOSerializer;
+import junit.framework.TestCase;
+
+import java.io.File;
+import java.util.HashMap;
 
 /**
  * Tests the implementation of the RepositoryReader interface,
@@ -98,7 +95,7 @@ public class RepositoryReaderTest
                         m_repoReader.getReader(Server.USE_DEFINITIVE_STORE,
                                                null,
                                                element);
-                if (r.hasRelationship(MODEL.HAS_MODEL,
+                if (r.hasContentModel(
                                       Models.SERVICE_DEPLOYMENT_3_0)) {
                     ServiceDefinitionReader dr =
                             m_repoReader
@@ -123,7 +120,7 @@ public class RepositoryReaderTest
                         m_repoReader.getReader(Server.USE_DEFINITIVE_STORE,
                                                null,
                                                element);
-                if (r.hasRelationship(MODEL.HAS_MODEL,
+                if (r.hasContentModel(
                                       Models.SERVICE_DEPLOYMENT_3_0)) {
                     ServiceDeploymentReader mr =
                             m_repoReader

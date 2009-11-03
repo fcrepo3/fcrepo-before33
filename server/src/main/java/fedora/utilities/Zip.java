@@ -175,11 +175,11 @@ public class Zip {
         // 2 arguments: zipfile, source/destination
         // whether or not the zipfile exists, i.e.:
         // if zipfile exists
-        // 		if zipfile extension == zip, then unzip
-        //		if zipfile extension == gz, then gunzip
+        //         if zipfile extension == zip, then unzip
+        //        if zipfile extension == gz, then gunzip
         // else
-        // 		if zipfile extension == zip, then zip
-        //		if zipfile extension == gz, then gzip
+        //         if zipfile extension == zip, then zip
+        //        if zipfile extension == gz, then gzip
 
         // valid actions are: zip, unzip, gzip, and gunzip
 

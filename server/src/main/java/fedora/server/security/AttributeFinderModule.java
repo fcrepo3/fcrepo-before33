@@ -386,7 +386,7 @@ abstract class AttributeFinderModule
                 } catch (Throwable t) {
                 }
             } //xacml fixup
-            //was set.add(new StringAttribute((String)temp));			
+            //was set.add(new StringAttribute((String)temp));            
         } else if (temp instanceof String[]) {
             LOG.debug("AttributeFinder:findAttribute" + " will return a "
                     + "String[] " + iAm());

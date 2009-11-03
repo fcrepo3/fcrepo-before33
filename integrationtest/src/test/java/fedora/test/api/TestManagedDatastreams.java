@@ -263,7 +263,7 @@ public class TestManagedDatastreams
         return sWriter.toString().getBytes("UTF-8");
     }
 
-	private byte[] getFoxmlObject(String pid, String contentLocation) throws Exception {
+    private byte[] getFoxmlObject(String pid, String contentLocation) throws Exception {
         Foxml11Document doc = createFoxmlObject(pid, contentLocation);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         doc.serialize(out);

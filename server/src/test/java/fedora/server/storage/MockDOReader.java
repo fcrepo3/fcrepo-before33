@@ -24,6 +24,8 @@ import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.RelationshipTuple;
 
+import static fedora.common.Constants.MODEL;
+
 /**
  * A partial implementation of {@link DOReader} for use in unit tests. Add more
  * mocking to this class as needed, or override methods in sub-classes.
@@ -97,6 +99,19 @@ public class MockDOReader
 
     public String GetObjectState() throws ServerException {
         return theObject.getState();
+    }
+
+    public List<String> getContentModels() throws ServerException {
+       List<String> list = new ArrayList<String>();
+       for (RelationshipTuple rel : getRelationships(MODEL.HAS_MODEL, null)) {
+           list.add(rel.object);
+       }
+       return list;
+    }
+
+    public boolean hasContentModel(ObjectNode contentModel)
+            throws ServerException {
+        return hasRelationship(MODEL.HAS_MODEL, contentModel);
     }
 
     public Date getCreateDate() throws ServerException {

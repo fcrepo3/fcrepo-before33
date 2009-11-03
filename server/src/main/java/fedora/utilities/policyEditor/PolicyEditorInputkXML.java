@@ -73,7 +73,7 @@ public class PolicyEditorInputkXML {
 
     static FedoraNode readURLbyName(String urlName) {
         try {
-            //		System.out.println("metadataURL is: " + urlName);
+            //        System.out.println("metadataURL is: " + urlName);
             URL url = new URL(urlName);
             return readInputStream(url.openStream(), url.toString());
         } catch (MalformedURLException e) {

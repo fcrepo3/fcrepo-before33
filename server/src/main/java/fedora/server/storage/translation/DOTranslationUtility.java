@@ -4,36 +4,14 @@
  */
 package fedora.server.storage.translation;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-
-import java.nio.charset.Charset;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.Characters;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
-
-import org.apache.log4j.Logger;
-
 import fedora.common.Constants;
 import fedora.common.Models;
+import static fedora.common.Models.CONTENT_MODEL_3_0;
+import static fedora.common.Models.FEDORA_OBJECT_3_0;
+import static fedora.common.Models.SERVICE_DEFINITION_3_0;
+import static fedora.common.Models.SERVICE_DEPLOYMENT_3_0;
 import fedora.common.rdf.RDFName;
 import fedora.common.xml.namespace.QName;
-
 import fedora.server.Server;
 import fedora.server.config.ServerConfiguration;
 import fedora.server.errors.ObjectIntegrityException;
@@ -45,11 +23,27 @@ import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
+import org.apache.log4j.Logger;
 
-import static fedora.common.Models.CONTENT_MODEL_3_0;
-import static fedora.common.Models.FEDORA_OBJECT_3_0;
-import static fedora.common.Models.SERVICE_DEFINITION_3_0;
-import static fedora.common.Models.SERVICE_DEPLOYMENT_3_0;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Utility methods for usage by digital object serializers and deserializers.
@@ -735,7 +729,7 @@ public abstract class DOTranslationUtility
         if (transContext == AS_IS) {
             return;
         }
-        if (obj.hasRelationship(MODEL.HAS_MODEL, Models.SERVICE_DEPLOYMENT_3_0)) {
+        if (obj.hasContentModel( Models.SERVICE_DEPLOYMENT_3_0)) {
             Iterator<String> datastreams = obj.datastreamIdIterator();
             while (datastreams.hasNext()) {
                 String dsid = datastreams.next();
@@ -808,18 +802,18 @@ public abstract class DOTranslationUtility
 
     public static RDFName getTypeAttribute(DigitalObject obj)
             throws ObjectIntegrityException {
-        if (obj.hasRelationship(MODEL.HAS_MODEL, SERVICE_DEFINITION_3_0)) {
+        if (obj.hasContentModel(SERVICE_DEFINITION_3_0)) {
             return MODEL.BDEF_OBJECT;
         }
-        if (obj.hasRelationship(MODEL.HAS_MODEL, SERVICE_DEPLOYMENT_3_0)) {
+        if (obj.hasContentModel(SERVICE_DEPLOYMENT_3_0)) {
             return MODEL.BMECH_OBJECT;
         }
-        if (obj.hasRelationship(MODEL.HAS_MODEL, CONTENT_MODEL_3_0)) {
+        if (obj.hasContentModel( CONTENT_MODEL_3_0)) {
 
             // FOXML 1.0 doesn't support this type; down-convert
             return MODEL.DATA_OBJECT;
         }
-        if (obj.hasRelationship(MODEL.HAS_MODEL, FEDORA_OBJECT_3_0)) {
+        if (obj.hasContentModel( FEDORA_OBJECT_3_0)) {
             return MODEL.DATA_OBJECT;
         }
         return null;

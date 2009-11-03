@@ -114,7 +114,7 @@ public class AtomDODeserializer
     }
 
     public AtomDODeserializer(XMLFormat format) {
-    	if (format.equals(ATOM1_1) || format.equals(ATOM_ZIP1_1)) {
+        if (format.equals(ATOM1_1) || format.equals(ATOM_ZIP1_1)) {
             m_format = format;
         } else {
             throw new IllegalArgumentException("Not an Atom format: "
@@ -130,22 +130,22 @@ public class AtomDODeserializer
                             String encoding,
                             int transContext) throws ObjectIntegrityException,
             StreamIOException, UnsupportedEncodingException {
-    	if (m_format.equals(ATOM_ZIP1_1)) {
+        if (m_format.equals(ATOM_ZIP1_1)) {
             try {
-            	m_tempDir = FileUtils.createTempDir("atomzip", null);
+                m_tempDir = FileUtils.createTempDir("atomzip", null);
                 m_zin = new ZipInputStream(new BufferedInputStream(in));
                 ZipEntry entry;
-				while ((entry = m_zin.getNextEntry()) != null) {
-				    FileUtils.copy(m_zin, new FileOutputStream(new File(m_tempDir, entry.getName())));
-				}
-				in = new FileInputStream(new File(m_tempDir, "atommanifest.xml"));
-			} catch (FileNotFoundException e) {
-				throw new StreamIOException(e.getMessage(), e);
-			} catch (IOException e) {
-				throw new StreamIOException(e.getMessage(), e);
-			}
+                while ((entry = m_zin.getNextEntry()) != null) {
+                    FileUtils.copy(m_zin, new FileOutputStream(new File(m_tempDir, entry.getName())));
+                }
+                in = new FileInputStream(new File(m_tempDir, "atommanifest.xml"));
+            } catch (FileNotFoundException e) {
+                throw new StreamIOException(e.getMessage(), e);
+            } catch (IOException e) {
+                throw new StreamIOException(e.getMessage(), e);
+            }
         }
-    	
+        
         Parser parser = abdera.getParser();
         Document<Feed> feedDoc = parser.parse(in);
         m_feed = feedDoc.getRoot();
@@ -252,20 +252,20 @@ public class AtomDODeserializer
             addAuditDatastream(entry);
         } else {
             try {
-            	if (m_format.equals(ATOM_ZIP1_1)) {
-            		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            		FileUtils.copy(new FileInputStream(getContentSrcAsFile(entry.getContentSrc())), 
-            				bout);
-            		ds.xmlContent = bout.toByteArray();
-            		
-            	} else {
-            		ds.xmlContent = entry.getContent().getBytes(m_encoding); //IOUtils.toByteArray(entry.getContentStream());
-            	}
+                if (m_format.equals(ATOM_ZIP1_1)) {
+                    ByteArrayOutputStream bout = new ByteArrayOutputStream();
+                    FileUtils.copy(new FileInputStream(getContentSrcAsFile(entry.getContentSrc())), 
+                            bout);
+                    ds.xmlContent = bout.toByteArray();
+                    
+                } else {
+                    ds.xmlContent = entry.getContent().getBytes(m_encoding); //IOUtils.toByteArray(entry.getContentStream());
+                }
             } catch (UnsupportedEncodingException e) {
                 throw new StreamIOException(e.getMessage(), e);
             } catch (FileNotFoundException e) {
-				throw new ObjectIntegrityException(e.getMessage(), e);
-			}
+                throw new ObjectIntegrityException(e.getMessage(), e);
+            }
         }
 
         if (ds.xmlContent != null) {
@@ -358,14 +358,14 @@ public class AtomDODeserializer
     private void addAuditDatastream(Entry entry)
             throws ObjectIntegrityException, StreamIOException {
         try {
-        	Reader auditTrail;
-        	if (m_format.equals(ATOM_ZIP1_1)) {
-        		File f = getContentSrcAsFile(entry.getContentSrc());
-        		auditTrail = new InputStreamReader(new FileInputStream(f), m_encoding);
-        	} else {
-	            auditTrail = new StringReader(entry.getContent());
-        	}
-        	m_obj.getAuditRecords().addAll(DOTranslationUtility
+            Reader auditTrail;
+            if (m_format.equals(ATOM_ZIP1_1)) {
+                File f = getContentSrcAsFile(entry.getContentSrc());
+                auditTrail = new InputStreamReader(new FileInputStream(f), m_encoding);
+            } else {
+                auditTrail = new StringReader(entry.getContent());
+            }
+            m_obj.getAuditRecords().addAll(DOTranslationUtility
                     .getAuditRecords(auditTrail));
             auditTrail.close();
         } catch (XMLStreamException e) {
@@ -601,25 +601,25 @@ public class AtomDODeserializer
      * @throws ObjectIntegrityException
      */
     protected File getContentSrcAsFile(IRI contentSrc) throws ObjectIntegrityException {
-    	if (contentSrc.isAbsolute() || contentSrc.isPathAbsolute()) {
-    		throw new ObjectIntegrityException("contentSrc must not be absolute");
-    	}
-		try {
-		    // Normalize the IRI to resolve percent-encoding and 
-		    // backtracking (e.g. "../")
-		    NormalizedURI nUri = new NormalizedURI(m_tempDir.toURI().toString() + contentSrc.toString());
-		    nUri.normalize();
+        if (contentSrc.isAbsolute() || contentSrc.isPathAbsolute()) {
+            throw new ObjectIntegrityException("contentSrc must not be absolute");
+        }
+        try {
+            // Normalize the IRI to resolve percent-encoding and 
+            // backtracking (e.g. "../")
+            NormalizedURI nUri = new NormalizedURI(m_tempDir.toURI().toString() + contentSrc.toString());
+            nUri.normalize();
 
-		    File f = new File(nUri.toURI());
-			if (f.getParentFile().equals(m_tempDir)) {
-			    return f;
-			} else {
-			    throw new ObjectIntegrityException(contentSrc.toString() 
-			                                       + " is not a valid path.");
-			}
-		} catch (URISyntaxException e) {
-			throw new ObjectIntegrityException(e.getMessage(), e);
-		}
+            File f = new File(nUri.toURI());
+            if (f.getParentFile().equals(m_tempDir)) {
+                return f;
+            } else {
+                throw new ObjectIntegrityException(contentSrc.toString() 
+                                                   + " is not a valid path.");
+            }
+        } catch (URISyntaxException e) {
+            throw new ObjectIntegrityException(e.getMessage(), e);
+        }
     }
     
     private static class UpdatedIdComparator

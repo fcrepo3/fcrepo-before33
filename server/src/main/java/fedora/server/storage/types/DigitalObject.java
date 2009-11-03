@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
+import fedora.server.errors.ServerException;
 
 /**
  * Java representation of a Fedora digital object.
@@ -286,4 +287,22 @@ public interface DigitalObject {
      */
     public Set<RelationshipTuple> getRelationships(PredicateNode predicate,
                                                    ObjectNode object);
+
+
+
+    /**
+     * Gets a list of the content models of the object. The strings will be
+     * of the format "info:fedora/PID"
+     * @return the content models of the object
+     */
+    public List<String> getContentModels();
+
+    /**
+     * Determins whether or not the object have the given uri as a content model.
+     *
+     * @param contentModel The object node of the content model
+     * @return true if the object have the content model.
+     */
+    public boolean hasContentModel(ObjectNode contentModel);
+
 }

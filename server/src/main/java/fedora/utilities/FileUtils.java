@@ -104,7 +104,7 @@ public class FileUtils {
      * @throws IOException
      */
     public static File createTempDir(String prefix, File directory) throws IOException {
-    	File tempFile = File.createTempFile(prefix, "", directory);
+        File tempFile = File.createTempFile(prefix, "", directory);
         if (!tempFile.delete())
             throw new IOException();
         if (!tempFile.mkdir())

@@ -4,27 +4,15 @@
  */
 package fedora.server.storage.types;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.jrdf.graph.ObjectNode;
-import org.jrdf.graph.PredicateNode;
-
 import fedora.common.Constants;
 import fedora.common.Models;
 import fedora.common.rdf.JRDF;
-
 import fedora.server.errors.ServerException;
 import fedora.server.storage.RDFRelationshipReader;
+import org.jrdf.graph.ObjectNode;
+import org.jrdf.graph.PredicateNode;
+
+import java.util.*;
 
 /**
  * A basic implementation of DigitalObject that stores things in memory.
@@ -65,6 +53,8 @@ public class BasicDigitalObject
     private final HashMap<String, List<Disseminator>> m_disseminators;
 
     private final Map<String, String> m_extProperties;
+
+
 
     public BasicDigitalObject() {
         m_auditRecords = new ArrayList<AuditRecord>();
@@ -354,6 +344,20 @@ public class BasicDigitalObject
         }
 
         return foundRels;
+    }
+
+    public List<String> getContentModels() {
+        Set<RelationshipTuple> cmTubles = getRelationships(Constants.MODEL.HAS_MODEL,
+                                                           null);
+        List<String> cms = new ArrayList<String>();
+        for (RelationshipTuple cmTuble:cmTubles){
+            cms.add(cmTuble.object);
+        }
+        return cms;
+    }
+
+    public boolean hasContentModel(ObjectNode contentModel) {
+        return hasRelationship(Constants.MODEL.HAS_MODEL,contentModel);
     }
 
     /**

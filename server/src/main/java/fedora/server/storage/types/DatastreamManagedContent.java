@@ -27,16 +27,16 @@ import fedora.server.validation.ValidationUtility;
  */
 public class DatastreamManagedContent
         extends Datastream {
-	
-	/**
-	 * Internal scheme to indicating that a copy should made of the resource.
-	 */
-	public static final String COPY_SCHEME = "copy://";
-	
-	public static final String TEMP_SCHEME = "temp://";
-	
-	public static final String UPLOADED_SCHEME = "uploaded://";
-	
+    
+    /**
+     * Internal scheme to indicating that a copy should made of the resource.
+     */
+    public static final String COPY_SCHEME = "copy://";
+    
+    public static final String TEMP_SCHEME = "temp://";
+    
+    public static final String UPLOADED_SCHEME = "uploaded://";
+    
     private static ILowlevelStorage s_llstore;
     
     private static Management s_mgmt;

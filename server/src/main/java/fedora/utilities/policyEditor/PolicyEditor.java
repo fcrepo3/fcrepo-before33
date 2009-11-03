@@ -171,10 +171,10 @@ public class PolicyEditor
 
         //        frame.addWindowListener(new WindowAdapter() 
         //        {
-        //    	    public void windowClosing(WindowEvent we) 
+        //            public void windowClosing(WindowEvent we) 
         //            {
-        //    	        System.exit(0);
-        //    	    }
+        //                System.exit(0);
+        //            }
         //        });
         tab = new JTabbedPane(SwingConstants.BOTTOM);
         getContentPane().setLayout(new BorderLayout());

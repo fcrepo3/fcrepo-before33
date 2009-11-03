@@ -60,21 +60,21 @@ public class JMSManagerTest extends TestCase implements MessageListener {
         currentMessage = null;
     }
 
-	@Test
-	public void testVMMessage() throws Exception {
-	    String topic = "jmsmanager.test";
-	    properties.setProperty("topic." + topic, topic);
-		JMSManager jmsMgr = new JMSManager(properties);
-		jmsMgr.listen(topic, this);
-		jmsMgr.send(topic, messageText);
-		checkMessage(topic, DestinationType.Topic, messageText);
-		jmsMgr.close();
-	}
+    @Test
+    public void testVMMessage() throws Exception {
+        String topic = "jmsmanager.test";
+        properties.setProperty("topic." + topic, topic);
+        JMSManager jmsMgr = new JMSManager(properties);
+        jmsMgr.listen(topic, this);
+        jmsMgr.send(topic, messageText);
+        checkMessage(topic, DestinationType.Topic, messageText);
+        jmsMgr.close();
+    }
 
-	@Ignore("Broker thread in test occationally fails to start")
+    @Ignore("Broker thread in test occationally fails to start")
     @Test
     public void testTCPMessage() throws Exception {
-	    /*
+        /*
         String topic = "jmsmanager.test";
         String connectorUrl = "tcp://localhost:61616";
         JmsBroker broker = new JmsBroker(connectorUrl);
@@ -102,8 +102,8 @@ public class JMSManagerTest extends TestCase implements MessageListener {
         */
     }
 
-	@Test
-	public void testCreateTopic() throws Exception {
+    @Test
+    public void testCreateTopic() throws Exception {
         String topic = "jmsmanager.test";
         JMSManager jmsMgr = new JMSManager(properties);
         jmsMgr.createDestination(topic, DestinationType.Topic);
@@ -111,20 +111,20 @@ public class JMSManagerTest extends TestCase implements MessageListener {
         jmsMgr.send(topic, messageText);
         checkMessage(topic, DestinationType.Topic, messageText);
         jmsMgr.close();
-	}
+    }
 
-	@Test
-	public void testCreateQueue() throws Exception {
-	    String queue = "jmsmanager";
+    @Test
+    public void testCreateQueue() throws Exception {
+        String queue = "jmsmanager";
         JMSManager jmsMgr = new JMSManager(properties);
         jmsMgr.createDestination(queue, DestinationType.Queue);
         jmsMgr.listen(queue, this);
         jmsMgr.send(queue, messageText);
         checkMessage(queue, DestinationType.Queue, messageText);
         jmsMgr.close();
-	}
+    }
 
-	@Test
+    @Test
     public void testSendToDestination() throws Exception {
         String topic = "jmsmanager.test";
         JMSManager jmsMgr = new JMSManager(properties);
@@ -159,10 +159,10 @@ public class JMSManagerTest extends TestCase implements MessageListener {
         jmsMgr.close();
     }
 
-	@Test
+    @Test
     public void testDurableSubscription() throws Exception {
-	    // Connect and ensure that a message can be received
-	    String topic = "jmsmanager.test.durable";
+        // Connect and ensure that a message can be received
+        String topic = "jmsmanager.test.durable";
         JMSManager jmsMgr = new JMSManager(properties, "clientId1");
         jmsMgr.listenDurable(topic, this);
         jmsMgr.send(topic, messageText);
@@ -184,8 +184,8 @@ public class JMSManagerTest extends TestCase implements MessageListener {
         jmsMgr.close();
     }
 
-	@Test
-	public void testSendMessages() throws Exception {
+    @Test
+    public void testSendMessages() throws Exception {
         String topic = "jmsmanager.test";
         JMSManager jmsMgr = new JMSManager(properties);
         jmsMgr.createDestination(topic, DestinationType.Topic);
@@ -214,9 +214,9 @@ public class JMSManagerTest extends TestCase implements MessageListener {
         checkMessage(topic, DestinationType.Topic, null);
 
         jmsMgr.close();
-	}
+    }
 
-	@Test
+    @Test
     public void testMessageVolume() throws Exception {
         String topic = "jmsmanager.test";
         JMSManager jmsMgr = new JMSManager(properties);
@@ -244,7 +244,7 @@ public class JMSManagerTest extends TestCase implements MessageListener {
         jmsMgr.close();
     }
 
-	@Test
+    @Test
     public void testInvalidProperties() throws Exception {
         // Null properties
         try {
@@ -402,10 +402,10 @@ public class JMSManagerTest extends TestCase implements MessageListener {
         currentMessage = null;
     }
 
-	public void onMessage(Message message) {
+    public void onMessage(Message message) {
         currentMessage = message;
         messageCount++;
-	}
+    }
 
     public static junit.framework.Test suite() {
         return new JUnit4TestAdapter(JMSManagerTest.class);

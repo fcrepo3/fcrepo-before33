@@ -75,14 +75,14 @@ public class ObjectValidator {
 
         ValidationResult result = new ValidationResult(object);
 
-        if (!object.hasRelation(Constants.MODEL.HAS_MODEL.uri)) {
+        Collection<String> contentmodels = object.getContentModels();
+        if (contentmodels.size() == 0){
             result.addNote(ValidationResultNotation.noContentModel());
             return result;
         }
 
-        for (RelationshipInfo relation : object
-                .getRelations(Constants.MODEL.HAS_MODEL.uri)) {
-            validateAgainstContentModel(result, relation, object);
+        for (String contentmodel:contentmodels){
+            validateAgainstContentModel(result, contentmodel, object);
         }
 
         return result;
@@ -102,13 +102,14 @@ public class ObjectValidator {
      * </p>
      */
     private void validateAgainstContentModel(ValidationResult result,
-                                             RelationshipInfo relation,
+                                             String cm,
                                              ObjectInfo object) {
-        String contentModelPid = relation.getObjectPid();
-
-        if (contentModelPid == null) {
+        String contentModelPid;
+        if (cm.startsWith("info:fedora/")){
+            contentModelPid = cm.substring(12);
+        } else{
             result.addNote(ValidationResultNotation
-                    .unrecognizedContentModelUri(relation.getObject()));
+                    .unrecognizedContentModelUri(cm));
             return;
         }
 

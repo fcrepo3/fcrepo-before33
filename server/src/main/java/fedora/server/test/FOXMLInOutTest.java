@@ -58,7 +58,7 @@ public class FOXMLInOutTest
             ioe.printStackTrace();
         }
         try {
-            // setup	
+            // setup    
             FOXML1_1DODeserializer deser = new FOXML1_1DODeserializer();
             FOXML1_1DOSerializer ser = new FOXML1_1DOSerializer();
             HashMap<String, DODeserializer> desermap = new HashMap<String, DODeserializer>();
@@ -100,6 +100,6 @@ public class FOXMLInOutTest
         //assertNotNull("Failure: digital object PID is null.", obj.getPid());
         //assertNotNull("Failure: digital object audit record set is null.", obj.getAuditRecords());
         //assertNotNull("Failure: digital object cmodel is null.", obj.getContentModelId());
-        //assertNotNull("Failure: digital object createDate is null.", obj.getCreateDate());	
+        //assertNotNull("Failure: digital object createDate is null.", obj.getCreateDate());    
     }
 }

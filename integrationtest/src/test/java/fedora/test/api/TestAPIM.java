@@ -155,7 +155,7 @@ public class TestAPIM
         sb.append("  </foxml:objectProperties>");
         sb.append("  <foxml:datastream ID=\"DC\" CONTROL_GROUP=\"X\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion FORMAT_URI=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" ID=\"DC1.0\" MIMETYPE=\"text/xml\" LABEL=\"Dublin Core Record for this object\">");
-        sb.append("	     <foxml:xmlContent>");
+        sb.append("         <foxml:xmlContent>");
         sb.append("        <oai_dc:dc xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\">");
         sb.append("          <dc:title>Coliseum in Rome</dc:title>");
         sb.append("          <dc:creator>Thornton Staples</dc:creator>");
@@ -215,7 +215,7 @@ public class TestAPIM
         sb.append("  </foxml:objectProperties>");
         sb.append("  <foxml:datastream ID=\"DC\" CONTROL_GROUP=\"X\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion FORMAT_URI=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" ID=\"DC1.0\" MIMETYPE=\"text/xml\" LABEL=\"Dublin Core Record for this object\">");
-        sb.append("	     <foxml:xmlContent>");
+        sb.append("         <foxml:xmlContent>");
         sb.append("        <oai_dc:dc xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\">");
         sb.append("          <dc:title>Coliseum in Rome</dc:title>");
         sb.append("          <dc:creator>Thornton Staples</dc:creator>");
@@ -631,7 +631,7 @@ public class TestAPIM
         sb.append("    <category term=\"none\" scheme=\"info:fedora/fedora-system:def/model#digest\"></category>");
         sb.append("    <category term=\"491\" scheme=\"info:fedora/fedora-system:def/model#length\"></category>");
         sb.append("    <category term=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" scheme=\"info:fedora/fedora-system:def/model#formatURI\"></category>");
-        sb.append("	   <summary type=\"text\">DC1.0</summary>");
+        sb.append("       <summary type=\"text\">DC1.0</summary>");
         sb.append("    <content type=\"text/xml\" src=\"DC1.0.xml\"/>");
         sb.append("  </entry>");
         sb.append("  <entry>");
@@ -681,7 +681,7 @@ public class TestAPIM
 
         byte[] demo1001_manifest = null;
         try {
-        	demo1001_manifest = sb.toString().getBytes("UTF-8");
+            demo1001_manifest = sb.toString().getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee) {}
 
         sb = new StringBuffer();
@@ -707,7 +707,7 @@ public class TestAPIM
         sb.append("      </rdf:RDF>");
         byte[] demo1001_relsext = null;
         try {
-        	demo1001_relsext = sb.toString().getBytes("UTF-8");
+            demo1001_relsext = sb.toString().getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee) {}
 
         ZipEntry manifest = new ZipEntry("atommanifest.xml");
@@ -716,19 +716,19 @@ public class TestAPIM
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         ZipOutputStream zip = new ZipOutputStream(bout);
         try {
-        	zip.putNextEntry(manifest);
-        	zip.write(demo1001_manifest);
-        	zip.putNextEntry(dc);
-        	zip.write(demo1001_dc);
-        	zip.putNextEntry(relsext);
-        	zip.write(demo1001_relsext);
-        	zip.flush();
-        	zip.close();
-        	demo1001ATOMZip = bout.toByteArray();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            zip.putNextEntry(manifest);
+            zip.write(demo1001_manifest);
+            zip.putNextEntry(dc);
+            zip.write(demo1001_dc);
+            zip.putNextEntry(relsext);
+            zip.write(demo1001_relsext);
+            zip.flush();
+            zip.close();
+            demo1001ATOMZip = bout.toByteArray();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public static Test suite() {
@@ -1847,12 +1847,12 @@ public class TestAPIM
         xmlIn = new String(objectXML, "UTF-8");
         assertXpathExists("foxml:digitalObject[@PID='" + pid + "']", xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property" +
-        		          "[@NAME='info:fedora/fedora-system:def/model#state' " +
-        		          "and @VALUE='Active']",
+                          "[@NAME='info:fedora/fedora-system:def/model#state' " +
+                          "and @VALUE='Active']",
                           xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property" +
-        		          "[@NAME='info:fedora/fedora-system:def/model#label' " +
-        		          "and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
+                          "[@NAME='info:fedora/fedora-system:def/model#label' " +
+                          "and @VALUE='Data Object (Coliseum) for Local Simple Image Demo']",
                           xmlIn);
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])", xmlIn);
 

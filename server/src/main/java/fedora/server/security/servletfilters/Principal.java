@@ -33,19 +33,19 @@ public class Principal
 
     @Override
     public String toString() {
-        //need to re-implement this    	
+        //need to re-implement this        
         return "Principal[" + getName() + "]";
     }
 
     @Override
     public int hashCode() {
-        //need to implement this    	
+        //need to implement this        
         return 1;
     }
 
     @Override
     public boolean equals(Object another) {
-        //need to implement this    	
+        //need to implement this        
         return false;
     }
 

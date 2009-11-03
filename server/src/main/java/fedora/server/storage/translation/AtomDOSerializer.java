@@ -4,27 +4,6 @@
  */
 package fedora.server.storage.translation;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import org.apache.abdera.Abdera;
-import org.apache.abdera.ext.thread.ThreadHelper;
-import org.apache.abdera.i18n.iri.IRI;
-import org.apache.abdera.model.Entry;
-import org.apache.abdera.model.Feed;
-import org.apache.abdera.model.Link;
-import org.apache.abdera.util.MimeTypeHelper;
-import org.apache.commons.io.IOUtils;
-
 import fedora.common.Constants;
 import fedora.common.Models;
 import fedora.common.PID;
@@ -37,6 +16,26 @@ import fedora.server.storage.types.DigitalObject;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 import fedora.utilities.MimeTypeUtils;
+import org.apache.abdera.Abdera;
+import org.apache.abdera.ext.thread.ThreadHelper;
+import org.apache.abdera.i18n.iri.IRI;
+import org.apache.abdera.model.Entry;
+import org.apache.abdera.model.Feed;
+import org.apache.abdera.model.Link;
+import org.apache.abdera.util.MimeTypeHelper;
+import org.apache.commons.io.IOUtils;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * <p>Serializes a Fedora Object in Atom with Threading Extensions.</p>
@@ -345,7 +344,7 @@ public class AtomDOSerializer
             throws UnsupportedEncodingException, StreamIOException {
         String content;
 
-        if (m_obj.hasRelationship(MODEL.HAS_MODEL,
+        if (m_obj.hasContentModel(
                                   Models.SERVICE_DEPLOYMENT_3_0)
                 && (ds.DatastreamID.equals("SERVICE-PROFILE") || ds.DatastreamID
                         .equals("WSDL"))) {
@@ -391,10 +390,10 @@ public class AtomDOSerializer
 
     private void setManagedContent(Entry entry, Datastream vds)
             throws StreamIOException {
-    	// If the ARCHIVE context is selected, inline & base64 encode the content,
-    	// unless the format is ZIP.
+        // If the ARCHIVE context is selected, inline & base64 encode the content,
+        // unless the format is ZIP.
         if (m_transContext == DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE &&
-        		!m_format.equals(ATOM_ZIP1_1)) {
+                !m_format.equals(ATOM_ZIP1_1)) {
             String mimeType = vds.DSMIME;
             if (MimeTypeHelper.isText(mimeType)
                     || MimeTypeHelper.isXml(mimeType)) {

@@ -4,23 +4,19 @@
  */
 package fedora.server.resourceIndex;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.jrdf.graph.Triple;
-
-import fedora.server.errors.ResourceIndexException;
-import fedora.server.errors.ServerException;
-import fedora.server.storage.DOReader;
-import fedora.server.storage.types.RelationshipTuple;
-
-import static fedora.common.Constants.MODEL;
 import static fedora.common.Models.CONTENT_MODEL_3_0;
 import static fedora.common.Models.FEDORA_OBJECT_3_0;
 import static fedora.common.Models.SERVICE_DEFINITION_3_0;
 import static fedora.common.Models.SERVICE_DEPLOYMENT_3_0;
+import fedora.server.errors.ResourceIndexException;
+import fedora.server.errors.ServerException;
+import fedora.server.storage.DOReader;
+import org.jrdf.graph.Triple;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Generates an object's triples based upon its declared content models.
@@ -91,11 +87,14 @@ public class ModelBasedTripleGenerator
         Set<Triple> objectTriples = new HashSet<Triple>();
 
         try {
+            for (String modelRelobject:reader.getContentModels()){
+/*
             for (RelationshipTuple modelRel : reader
                     .getRelationships(MODEL.HAS_MODEL, null)) {
+*/
 
-                if (m_generators.containsKey(modelRel.object)) {
-                    objectTriples.addAll(m_generators.get(modelRel.object)
+                if (m_generators.containsKey(modelRelobject)) {
+                    objectTriples.addAll(m_generators.get(modelRelobject)
                             .getTriplesForObject(reader));
                 }
             }

@@ -4,43 +4,13 @@
  */
 package fedora.server.access;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-
-import java.net.InetAddress;
-import java.net.URLDecoder;
-import java.net.UnknownHostException;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.log4j.Logger;
-
 import fedora.common.Constants;
 import fedora.common.Models;
-
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.access.dissemination.DisseminationService;
-import fedora.server.errors.DatastreamNotFoundException;
-import fedora.server.errors.DisseminationException;
-import fedora.server.errors.DisseminatorNotFoundException;
-import fedora.server.errors.GeneralException;
-import fedora.server.errors.InvalidUserParmException;
-import fedora.server.errors.MethodNotFoundException;
-import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.ServerException;
+import fedora.server.errors.*;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.security.Authorization;
@@ -50,22 +20,19 @@ import fedora.server.storage.DOReader;
 import fedora.server.storage.ExternalContentManager;
 import fedora.server.storage.ServiceDefinitionReader;
 import fedora.server.storage.ServiceDeploymentReader;
-import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.DatastreamDef;
-import fedora.server.storage.types.DatastreamManagedContent;
-import fedora.server.storage.types.DatastreamReferencedContent;
-import fedora.server.storage.types.DatastreamXMLMetadata;
-import fedora.server.storage.types.DeploymentDSBindRule;
-import fedora.server.storage.types.DeploymentDSBindSpec;
-import fedora.server.storage.types.DisseminationBindingInfo;
-import fedora.server.storage.types.MIMETypedStream;
-import fedora.server.storage.types.MethodDef;
-import fedora.server.storage.types.MethodDefOperationBind;
-import fedora.server.storage.types.MethodParmDef;
-import fedora.server.storage.types.ObjectMethodsDef;
-import fedora.server.storage.types.Property;
-import fedora.server.storage.types.RelationshipTuple;
+import fedora.server.storage.types.*;
 import fedora.server.utilities.DateUtility;
+import org.apache.log4j.Logger;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.URLDecoder;
+import java.net.UnknownHostException;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The Access Module, providing support for the Fedora Access subsystem.
@@ -262,9 +229,14 @@ public class DefaultAccess
          * mappings are ever stored in the registry, this may be simplified.
          */
         String serviceDeploymentPID = null;
+        for (String cModelURI: reader.getContentModels()){
+            String cModelPID = cModelURI.substring("info:fedora/".length());
+        
+/*
         for (RelationshipTuple rel : reader.getRelationships(MODEL.HAS_MODEL,
                                                              null)) {
             String cModelPID = rel.getObjectPID();
+*/
             String foundDeploymentPID =
                     m_manager.lookupDeploymentForCModel(cModelPID, sDefPID);
 
@@ -319,9 +291,13 @@ public class DefaultAccess
             String cModelPID = null;
             String message = null;
 
+/*
             models: for (RelationshipTuple rel : reader
                     .getRelationships(MODEL.HAS_MODEL, null)) {
                 cModelPID = rel.getObjectPID();
+*/
+            models: for (String cm:reader.getContentModels()){
+                cModelPID = cm.substring(12);
 
                 /* Skip over system models */
                 if (Models.contains("info:fedora/" + cModelPID)) {
@@ -528,11 +504,11 @@ public class DefaultAccess
                 bindingInfo.dsLocation = ds.DSLocation;
                 bindingInfo.dsControlGroupType = ds.DSControlGrp;
                 bindingInfo.dsID = ds.DatastreamID;
-	            bindingInfo.dsVersionID = ds.DSVersionID;
+                bindingInfo.dsVersionID = ds.DSVersionID;
                 bindingInfo.dsState = ds.DSState;
-  	            bindingInfo.dsCreateDT = ds.DSCreateDT;
-   	            // these will be the same for all elements of the array
-    	        bindingInfo.methodParms = methodParms;
+                  bindingInfo.dsCreateDT = ds.DSCreateDT;
+                   // these will be the same for all elements of the array
+                bindingInfo.methodParms = methodParms;
                 bindingInfo.AddressLocation = addressLocation;
                 bindingInfo.OperationLocation = operationLocation;
                 bindingInfo.ProtocolType = protocolType;
@@ -620,10 +596,14 @@ public class DefaultAccess
         profile.objectLastModDate = reader.getLastModDate();
         profile.objectState = reader.GetObjectState();
 
+        profile.objectModels.addAll(reader.getContentModels());
+
+/*
         for (RelationshipTuple rel : reader
                 .getRelationships(Constants.MODEL.HAS_MODEL, null)) {
             profile.objectModels.add(rel.object);
         }
+*/
 
         String reposBaseURL =
                 getReposBaseURL(context

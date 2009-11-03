@@ -171,8 +171,8 @@ public class FieldSearchResultSQLImpl
             queryText.append(" FROM doFields");
             queryText.append(getWhereClause(query.getConditions()));
             // disabled sorting: see bug 78
-            //			queryText.append(" ORDER BY");
-            //			queryText.append(resultFieldsString);
+            //            queryText.append(" ORDER BY");
+            //            queryText.append(resultFieldsString);
 
         }
         String qt = queryText.toString();

@@ -458,7 +458,7 @@ public class FOXMLDOSerializer
         // in a SDep object search for any embedded URLs that are relative to
         // the local repository (like internal service URLs) and make sure they
         // are converted appropriately for the translation context.
-        if (obj.hasRelationship(MODEL.HAS_MODEL, SERVICE_DEPLOYMENT_3_0)
+        if (obj.hasContentModel(SERVICE_DEPLOYMENT_3_0)
                 && (ds.DatastreamID.equals("SERVICE-PROFILE") || ds.DatastreamID
                         .equals("WSDL"))) {
             // FIXME! We need a more efficient way than to search

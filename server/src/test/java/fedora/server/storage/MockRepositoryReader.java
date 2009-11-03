@@ -4,18 +4,16 @@
  */
 package fedora.server.storage;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import fedora.common.Constants;
 import fedora.common.Models;
-
 import fedora.server.Context;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.types.DigitalObject;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Mock implementation of <code>RepositoryReader</code> for testing. This
@@ -90,7 +88,8 @@ public class MockRepositoryReader
                                                                            String pid)
             throws ServerException {
         DigitalObject obj = getObject(pid);
-        if (!obj.hasRelationship(Constants.MODEL.HAS_MODEL,
+        //TODO hasModel
+        if (!obj.hasContentModel(
                                  Models.SERVICE_DEPLOYMENT_3_0)) {
             throw new GeneralException("Not a service deployment: " + pid);
         } else {
@@ -111,7 +110,8 @@ public class MockRepositoryReader
                                                                            String pid)
             throws ServerException {
         DigitalObject obj = getObject(pid);
-        if (!obj.hasRelationship(Constants.MODEL.HAS_MODEL,
+        //TODO hasModel
+        if (!obj.hasContentModel(
                                  Models.SERVICE_DEFINITION_3_0)) {
             throw new GeneralException("Not a service definition object: "
                     + pid);

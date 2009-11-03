@@ -4,53 +4,13 @@
  */
 package fedora.server.storage;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.log4j.Logger;
-
 import fedora.common.Constants;
 import fedora.common.Models;
-
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.RecoveryContext;
 import fedora.server.Server;
-import fedora.server.errors.ConnectionPoolNotFoundException;
-import fedora.server.errors.GeneralException;
-import fedora.server.errors.InvalidContextException;
-import fedora.server.errors.LowlevelStorageException;
-import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.ObjectAlreadyInLowlevelStorageException;
-import fedora.server.errors.ObjectExistsException;
-import fedora.server.errors.ObjectLockedException;
-import fedora.server.errors.ObjectNotFoundException;
-import fedora.server.errors.ObjectNotInLowlevelStorageException;
-import fedora.server.errors.ServerException;
-import fedora.server.errors.StorageDeviceException;
-import fedora.server.errors.StreamIOException;
+import fedora.server.errors.*;
 import fedora.server.management.Management;
 import fedora.server.management.PIDGenerator;
 import fedora.server.resourceIndex.ResourceIndex;
@@ -60,14 +20,7 @@ import fedora.server.search.FieldSearchResult;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
 import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.storage.translation.DOTranslator;
-import fedora.server.storage.types.BasicDigitalObject;
-import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.DatastreamManagedContent;
-import fedora.server.storage.types.DatastreamXMLMetadata;
-import fedora.server.storage.types.DigitalObject;
-import fedora.server.storage.types.DigitalObjectUtil;
-import fedora.server.storage.types.MIMETypedStream;
-import fedora.server.storage.types.RelationshipTuple;
+import fedora.server.storage.types.*;
 import fedora.server.utilities.DCField;
 import fedora.server.utilities.DCFields;
 import fedora.server.utilities.SQLUtility;
@@ -75,6 +28,22 @@ import fedora.server.utilities.StreamUtility;
 import fedora.server.validation.DOValidator;
 import fedora.server.validation.DOValidatorImpl;
 import fedora.server.validation.ValidationUtility;
+import org.apache.log4j.Logger;
+
+import java.io.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Manages the reading and writing of digital objects by instantiating an
@@ -1370,8 +1339,8 @@ public class DefaultDOManager
                             + systemVersion + " " + "WHERE doPID='"
                             + obj.getPid() + "'");
 
-                    if (obj.hasRelationship(MODEL.HAS_MODEL,
-                                            Models.SERVICE_DEPLOYMENT_3_0)) {
+                    //TODO hasModel
+                    if (obj.hasContentModel(Models.SERVICE_DEPLOYMENT_3_0)) {
                         updateDeploymentMap(obj, conn, false);
                     }
                 } catch (SQLException sqle) {
@@ -1664,8 +1633,8 @@ public class DefaultDOManager
                     .executeUpdate("DELETE FROM doRegistry WHERE doPID='" + pid
                             + "'");
 
-            if (obj.hasRelationship(MODEL.HAS_MODEL,
-                                    Models.SERVICE_DEPLOYMENT_3_0)) {
+            //TODO hasModel
+            if (obj.hasContentModel(Models.SERVICE_DEPLOYMENT_3_0)) {
                 updateDeploymentMap(obj, conn, true);
             }
         } catch (SQLException sqle) {

@@ -490,7 +490,7 @@ public class TestRESTAPI
         // inline (X) datastream
         String xmlData = "<foo>bar</foo>";
         url = String.format("/objects/%s/datastreams/FOO?controlGroup=X&dsLabel=bar",
-        		            pid.toString());
+                            pid.toString());
         assertEquals(SC_UNAUTHORIZED, post(xmlData, false).getStatusCode());
         HttpResponse response = post(xmlData, true);
         assertEquals(SC_CREATED, response.getStatusCode());

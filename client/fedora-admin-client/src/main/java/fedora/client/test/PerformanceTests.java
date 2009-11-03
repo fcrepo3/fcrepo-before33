@@ -677,15 +677,15 @@ public class PerformanceTests
         System.out.println("  CONTEXT     = The application server context Fedora is deployed in. This parameter is optional");
         System.out.println("Example:");
         System.out.println("ant performance-tests " +
-        		           "-Dhost=localhost " +
-        		           "-Dport=8080 " +
-        		           "-Dusername=fedoraAdmin " +
-        		           "-Dpassword=fedoraAdmin " +
-        		           "-Diterations=100 " +
-        		           "-Dthreads=10 " +
-        		           "-Dfile=C:\\temp\\performance_testing_output.txt " +
-        		           "-Dname=\"Test 1\"" +
-        		           "-Dcontext=my-fedora");
+                           "-Dhost=localhost " +
+                           "-Dport=8080 " +
+                           "-Dusername=fedoraAdmin " +
+                           "-Dpassword=fedoraAdmin " +
+                           "-Diterations=100 " +
+                           "-Dthreads=10 " +
+                           "-Dfile=C:\\temp\\performance_testing_output.txt " +
+                           "-Dname=\"Test 1\"" +
+                           "-Dcontext=my-fedora");
         System.exit(1);
     }
 

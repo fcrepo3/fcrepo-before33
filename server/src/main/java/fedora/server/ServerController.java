@@ -191,7 +191,7 @@ public class ServerController
         // this will cause Constants.FEDORA_HOME reflect the value.
         String contextFH = getServletContext().getInitParameter("fedora.home");
         if (contextFH != null && !contextFH.equals("")) {
-        	System.setProperty("servlet.fedora.home", contextFH);
+            System.setProperty("servlet.fedora.home", contextFH);
         }
 
         File fedoraHomeDir = getFedoraHomeDir();

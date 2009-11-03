@@ -4,30 +4,25 @@
  */
 package fedora.server.security;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
 import com.sun.xacml.EvaluationCtx;
 import com.sun.xacml.attr.AttributeDesignator;
 import com.sun.xacml.attr.StringAttribute;
 import com.sun.xacml.cond.EvaluationResult;
-
-import org.apache.log4j.Logger;
-
 import fedora.common.Constants;
-
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.RelationshipTuple;
 import fedora.server.utilities.DateUtility;
+import org.apache.log4j.Logger;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Bill Niebel
@@ -230,10 +225,13 @@ class ResourceAttributeFinderModule
             else if (Constants.MODEL.HAS_MODEL.uri.equals(attributeId)) {
                 Set<String> models = new HashSet<String>();
                 try {
+                    models.addAll(reader.getContentModels());
+/*
                     for (RelationshipTuple r : reader
                             .getRelationships(Constants.MODEL.HAS_MODEL, null)) {
                         models.add(r.object);
                     }
+*/
                 } catch (ServerException e) {
                     LOG
                             .debug("failed getting "

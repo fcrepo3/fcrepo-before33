@@ -53,10 +53,6 @@ public class ExportObject
     public void actionPerformed(ActionEvent ae) {
         AutoExporter exporter = null;
         try {
-            //exporter=new AutoExporter(
-            //	Administrator.getProtocol(), Administrator.getHost(), 
-            //	Administrator.getPort(), Administrator.getUser(), Administrator.getPass());
-
             exporter = new AutoExporter(Administrator.APIA, Administrator.APIM);
         } catch (Exception e) {
             Administrator.showErrorDialog(Administrator.getDesktop(),
