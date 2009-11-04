@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.utilities.install.container;
@@ -27,6 +27,14 @@ public class TomcatServerXML
 
     private static final String KEYSTORE_TYPE_DEFAULT = "JKS";
 
+    private static final String URI_ENCODING = "UTF-8";
+
+    private static final String HTTP_CONNECTOR_XPATH = "/Server/Service[@name='Catalina']/Connector[not(@scheme='https' or contains(@protocol, 'AJP'))]";
+
+    private static final String HTTPS_CONNECTOR_XPATH = "/Server/Service[@name='Catalina']/Connector[@scheme='https' and not(contains(@protocol, 'AJP'))]";
+
+    private static final String AJP_CONNECTOR_XPATH = "/Server/Service[@name='Catalina']/Connector[contains(@protocol, 'AJP')]";
+
     private final InstallOptions options;
 
     public TomcatServerXML(File serverXML, InstallOptions installOptions)
@@ -44,13 +52,14 @@ public class TomcatServerXML
         setHTTPPort();
         setShutdownPort();
         setSSLPort();
+        setURIEncoding();
     }
 
     public void setHTTPPort() throws InstallationFailedException {
         // Note this very significant assumption: this xpath will select exactly one connector
         Element httpConnector =
                 (Element) getDocument()
-                        .selectSingleNode("/Server/Service[@name='Catalina']/Connector[not(@scheme='https' or contains(@protocol, 'AJP'))]");
+                        .selectSingleNode(HTTP_CONNECTOR_XPATH);
 
         if (httpConnector == null) {
             throw new InstallationFailedException("Unable to set server.xml HTTP Port. XPath for Connector element failed.");
@@ -78,13 +87,13 @@ public class TomcatServerXML
      * Sets the port and keystore information on the SSL connector if it already
      * exists; creates a new SSL connector, otherwise. Also sets the
      * redirectPort on the non-SSL connector to match.
-     * 
+     *
      * @throws InstallationFailedException
      */
     public void setSSLPort() throws InstallationFailedException {
         Element httpsConnector =
                 (Element) getDocument()
-                        .selectSingleNode("/Server/Service[@name='Catalina']/Connector[@scheme='https' and not(contains(@protocol, 'AJP'))]");
+                        .selectSingleNode(HTTPS_CONNECTOR_XPATH);
         if (options.getBooleanValue(InstallOptions.SSL_AVAILABLE, true)) {
             if (httpsConnector == null) {
                 Element service =
@@ -129,7 +138,7 @@ public class TomcatServerXML
             // http://tomcat.apache.org/tomcat-5.0-doc/ssl-howto.html
             Element httpConnector =
                     (Element) getDocument()
-                            .selectSingleNode("/Server/Service[@name='Catalina']/Connector[(@scheme='http' or not(@scheme)) and not(contains(@protocol, 'AJP'))]");
+                            .selectSingleNode(HTTP_CONNECTOR_XPATH);
             if (httpConnector != null) {
                 httpConnector.addAttribute("redirectPort", options
                         .getValue(InstallOptions.TOMCAT_SSL_PORT));
@@ -141,11 +150,37 @@ public class TomcatServerXML
         }
     }
 
+    public void setURIEncoding() throws InstallationFailedException {
+        // http connector
+        // Note this very significant assumption: this xpath will select exactly one connector
+        Element httpConnector =
+                (Element) getDocument()
+                        .selectSingleNode(HTTP_CONNECTOR_XPATH);
+        httpConnector.addAttribute("URIEncoding", URI_ENCODING);
+
+        // https connector
+        httpConnector =
+            (Element) getDocument()
+                .selectSingleNode(HTTPS_CONNECTOR_XPATH);
+        if (httpConnector != null ) {
+            httpConnector.addAttribute("URIEncoding", URI_ENCODING);
+        }
+
+        // AJP connector
+        httpConnector =
+            (Element) getDocument()
+                .selectSingleNode(AJP_CONNECTOR_XPATH);
+        if (httpConnector != null ) {
+            httpConnector.addAttribute("URIEncoding", URI_ENCODING);
+        }
+    }
+
+
     /**
      * Adds the attribute to the element if the attributeValue is not equal to
      * defaultValue. If attributeValue is null or equals defaultValue, remove
      * the attribute from the element if it is present.
-     * 
+     *
      * @param element
      * @param attributeName
      * @param attributeValue

@@ -49,6 +49,8 @@ public class TestRelationships
 
     private static byte[] DEMO_777_FOXML;
 
+    private static String MULTIBYTE_UTF8;
+
     private String pid;
 
     static {
@@ -91,6 +93,22 @@ public class TestRelationships
             DEMO_777_FOXML = sb.toString().getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee) {
         }
+
+        try {
+            // UTF-8 string with multibyte characters (for literal object tests)
+            // construct explicitly from bytes to avoid any encoding issues with this source file (which *should* be utf-8)
+            // (or could use: MULTIBYTE_UTF8 = "“Α ¿”";
+            MULTIBYTE_UTF8 = new String( new byte[] {
+                    (byte)0xE2, (byte)0x80, (byte)0x9C, // left double quotes “
+                    (byte)0xCE, (byte)0x91, // capital alpha Α
+                    (byte)0x20, // space
+                    (byte)0xC2, (byte)0xBF, // inverted question mark ¿
+                    (byte)0xE2, (byte)0x80, (byte)0x9D // right double quotes ”
+            }, "UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+        }
+
+
     }
 
     public static Test suite() {
@@ -135,6 +153,11 @@ public class TestRelationships
         // datatyped literal
         o = "1970-01-01T00:00:00Z";
         addRelationship(pid, p, o, true, Constants.RDF_XSD.DATE_TIME.uri);
+
+        // utf-8 literal with multibyte sequences
+        o = MULTIBYTE_UTF8;
+        addRelationship(pid, p, o, true, null);
+
     }
 
     public void testBadRelationships() {
@@ -154,6 +177,16 @@ public class TestRelationships
             fail("Adding Fedora Model relationship should have failed");
         } catch (RemoteException e) {
         }
+
+        p = "urn:bar";
+        // invalid dateTime literal
+        o = "2009-10-05T16:02:26+0100";
+        try {
+            apim.addRelationship(pid, p, o, true, Constants.RDF_XSD.DATE_TIME.uri);
+            fail("Adding invalid date/time literal in relationship should have failed");
+        } catch (RemoteException e) {
+        }
+
     }
 
     public void testGetRelationships() throws Exception {
@@ -165,12 +198,18 @@ public class TestRelationships
         getRelationship(pid, p, o, false, null);
 
         p = "urn:title";
-        o = "asdf";//"三国演义"; // test unicode
+        o = "asdf";
         getRelationship(pid, p, o, true, null);
 
         p = "urn:temperature";
         o = "98.6";
         getRelationship(pid, p, o, true, Constants.RDF_XSD.FLOAT.uri);
+
+        // utf-8 literal with multibyte sequences
+        p = "urn:utf8literal";
+        o = MULTIBYTE_UTF8;
+        getRelationship(pid, p, o, true, null);
+
     }
 
     public void testGetAllRelationships() throws Exception {
@@ -215,6 +254,11 @@ public class TestRelationships
         p = "urn:temperature";
         o = "98.6";
         purgeRelationship(pid, p, o, true, Constants.RDF_XSD.FLOAT.uri);
+
+        // utf-8 literal with multibyte sequences
+        p = "urn:utf8literal";
+        o = MULTIBYTE_UTF8;
+        purgeRelationship(pid, p, o, true, null);
 
         assertFalse("Purging non-existant relation should have failed", apim
                 .purgeRelationship(pid, "urn:asdf", "867-5309", true, null));

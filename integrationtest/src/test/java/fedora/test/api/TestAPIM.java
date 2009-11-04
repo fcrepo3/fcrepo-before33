@@ -8,6 +8,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import java.rmi.RemoteException;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -56,6 +58,8 @@ public class TestAPIM
     public static byte[] demo1000ATOMObjectXML;
 
     public static byte[] demo1001ATOMZip;
+
+    public static byte[] demo1001_relsext;
 
     public static byte[] changeme1FOXMLObjectXML;
 
@@ -705,7 +709,7 @@ public class TestAPIM
         sb.append("          <fedora-model:hasModel rdf:resource=\"info:fedora/demo:UVA_STD_IMAGE_1\"></fedora-model:hasModel>");
         sb.append("        </rdf:Description>");
         sb.append("      </rdf:RDF>");
-        byte[] demo1001_relsext = null;
+
         try {
             demo1001_relsext = sb.toString().getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee) {}
@@ -1195,6 +1199,35 @@ public class TestAPIM
                                "count(//foxml:datastream[@ID!='AUDIT'])",
                                xmlIn);
 
+
+        // test adding RELS-EXT and RELS-INT datastreams triggers validation
+        // add RELS-EXT from a different object; will be invalid for this object
+        // FIXME: consider refactoring into a general validation test suite
+
+        for (String relsDsId : new String[] { "RELS-EXT", "RELS-INT" }) {
+            try {
+                altIds[0] = "Datastream 2 Alternate ID";
+                datastreamId =
+                        apim
+                                .addDatastream("demo:18",
+                                               relsDsId,
+                                               altIds,
+                                               "A New RELS Datastream",
+                                               true,
+                                               "application/rdf+xml",
+                                               "info:fedora/fedora-system:FedoraRELSExt-1.0",
+                                               getBaseURL() + "/get/fedora-system:ContentModel-3.0/RELS-EXT",
+                                               "X",
+                                               "A",
+                                               null,
+                                               null,
+                                               "adding new datastream");
+                fail(relsDsId + " was not validated on addDatastream");
+            } catch (RemoteException e) {
+            }
+        }
+
+
         // (2) test modifyDatastreamByReference
         System.out
                 .println("Running TestAPIM.testModifyDatastreamByReference...");
@@ -1263,6 +1296,31 @@ public class TestAPIM
         assertXpathEvaluatesTo("8",
                                "count(//foxml:datastream[@ID!='AUDIT'])",
                                xmlIn);
+
+        // test modifyDatastreamByValue triggers RELS-EXT and RELS-INT validation
+        // RELS datastream content is invalid as it's for a different object
+        // FIXME: consider refactoring into a general validation test suite
+        for (String relsDsId : new String[] { "RELS-EXT", "RELS-INT" }) {
+            try {
+                altIds[0] = "Datastream 2 Alternate ID";
+                datastreamId =
+                        apim
+                                .modifyDatastreamByValue("demo:SmileyGreetingCard",
+                                               relsDsId,
+                                               altIds,
+                                               "Modified RELS Datastream",
+                                               "application/rdf+xml",
+                                               "info:fedora/fedora-system:FedoraRELSExt-1.0",
+                                               demo1001_relsext,
+                                               null,
+                                               null,
+                                               "modifying datastream",
+                                               false);
+                fail(relsDsId + " was not validated on modifyDatastreamByValue");
+            } catch (RemoteException e) {
+            }
+        }
+
 
         // (3.5) test modifyDatastreamByValue of METHODMAP datastream of BMech object
         System.out

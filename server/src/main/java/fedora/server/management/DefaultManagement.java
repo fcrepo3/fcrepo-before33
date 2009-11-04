@@ -27,12 +27,12 @@ import java.util.Map.Entry;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
+
 import org.apache.commons.betwixt.XMLUtils;
 
 import org.apache.log4j.Logger;
-
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 import org.jrdf.graph.URIReference;
 
@@ -435,7 +435,7 @@ public class DefaultManagement
                     DatastreamXMLMetadata dsm = (DatastreamXMLMetadata) ds;
                     dsm.xmlContent = getEmbeddableXML(in);
                     ValidationUtility.validateReservedDatastream(PID.getInstance(pid),
-                                                                 dsm.DatastreamID,
+                                                                 dsID,
                                                                  dsm.getContentStream());
                     if(mimeTypedStream != null) {
                         mimeTypedStream.close();

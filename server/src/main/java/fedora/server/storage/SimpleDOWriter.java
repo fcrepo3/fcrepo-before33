@@ -288,7 +288,6 @@ public class SimpleDOWriter
                                                   RDFFormat.RDF_XML);
                 newIter = new FilteredTripleIterator(iter, toAdd, true);
                 newIter.toStream(out, RDFFormat.RDF_XML, false);
-                String xmlContent = new String(out.toByteArray());
 
                 if (newIter.wasChangeMade()) {
                     DatastreamXMLMetadata newds = new DatastreamXMLMetadata();
@@ -308,7 +307,7 @@ public class SimpleDOWriter
                     newds.DSLocation = null;
                     newds.DSLocationType = null;
                     newds.DSChecksumType = relsExt.DSChecksumType;
-                    newds.xmlContent = xmlContent.getBytes();
+                    newds.xmlContent = out.toByteArray();
                     newds.DSSize = newds.xmlContent.length;
 
                     ValidationUtility.validateReservedDatastream(PID.getInstance(m_obj.getPid()),
