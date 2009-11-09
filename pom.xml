@@ -77,6 +77,8 @@
 
   <!-- All of these flags can be overwritten with -D cli options -->
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
     <unitTests>**/*Test.class</unitTests>
     <integrationTests>**/*Integration*.class</integrationTests>
     <!--    <integrationTests>**/Test*.class</integrationTests>-->
@@ -270,6 +272,50 @@
 
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>source-release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>2.2-beta-4</version>
+            <dependencies>
+              <dependency>
+                <!-- 
+                NOTE: The fix for PLXUTILS-120 is crucial for the assembly descriptor regex,
+                therefore we have to insist on plexus utils >= 2.0.1 for the time being
+                -->
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>2.0.1</version>
+              </dependency>
+            </dependencies>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <!-- 
+                  TODO: decision on file names for source distribution
+                  <appendAssemblyId>false</appendAssemblyId>
+                  <finalName>fedora-${project.version}</finalName> 
+                  -->
+                  <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
+                  <descriptors>
+                    <descriptor>src/main/resources/assemblies/fedora-source-release.xml</descriptor>
+                  </descriptors>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <dependencies>
 
