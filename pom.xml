@@ -5,7 +5,7 @@
   <groupId>org.duraspace.fedora</groupId>
   <artifactId>fedora-repository</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.0</version>
+  <version>3.3-SNAPSHOT</version>
   <name>Fedora Repository</name>
   <url>http://duraspace.org</url>
 
@@ -21,23 +21,13 @@
 
   <developers>
     <developer>
-      <name>Branan, Bill</name>
-      <email>bbranan@fedora-commons.org</email>
+      <name>Armintor, Benjamin</name>
+      <email>armintor@gmail.com</email>
     </developer>
 
     <developer>
-      <name>Wilper, Chris</name>
-      <email>cwilper@fedora-commons.org</email>
-    </developer>
-
-    <developer>
-      <name>Shin, Edwin</name>
-      <email>eddie@fedora-commons.org</email>
-    </developer>
-
-    <developer>
-      <name>Woods, Andrew</name>
-      <email>awoods@fedora-commons.org</email>
+      <name>Bayliss, Steve</name>
+      <email>stephen.bayliss@acuityunlimited.co.uk</email>
     </developer>
 
     <developer>
@@ -46,9 +36,45 @@
     </developer>
 
     <developer>
+      <name>Blekinge, Asger Askov</name>
+      <email>abr@statsbiblioteket.dk</email>
+    </developer>
+
+    <developer>
+      <name>Branan, Bill</name>
+      <email>bbranan@duraspace.org</email>
+    </developer>
+
+    <developer>
+      <name>Davis, Daniel</name>
+      <email>ddavis@fedora-commons.org</email>
+    </developer>
+
+    <developer>
+      <name>Pedersen, Gert</name>
+      <email>gsp@dtic.dtu.dk</email>
+    </developer>
+
+    <developer>
+      <name>Shin, Edwin</name>
+      <email>edwin.shin@yourmediashelf.com</email>
+    </developer>
+
+    <developer>
       <name>Strnad, Kai</name>
       <email>kai.strnad@googlemail.com</email>
     </developer>
+
+    <developer>
+      <name>Wilper, Chris</name>
+      <email>cwilper@duraspace.org</email>
+    </developer>
+
+    <developer>
+      <name>Woods, Andrew</name>
+      <email>awoods@duraspace.org</email>
+    </developer>
+
   </developers>
 
   <licenses>
@@ -187,6 +213,16 @@
     </testResources>
 
     <plugins>
+      <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.0-beta-9</version>
+        <configuration>
+          <tagBase>
+            scm:svn:https://fedora-commons.svn.sourceforge.net/svnroot/fedora-commons/tags
+          </tagBase>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>

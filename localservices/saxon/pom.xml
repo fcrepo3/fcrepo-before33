@@ -4,14 +4,14 @@
   <groupId>org.duraspace.fedora</groupId>
   <artifactId>saxon</artifactId>
   <packaging>war</packaging>
-  <version>1.0.0</version>
+  <version>3.3-SNAPSHOT</version>
   <name>Saxon XSLT Processor Webapp</name>
   <url>http://duraspace.org</url>
 
   <parent>
     <groupId>org.duraspace.fedora</groupId>
     <artifactId>fedora-repository</artifactId>
-    <version>1.0.0</version>
+    <version>3.3-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 

@@ -4,14 +4,14 @@
   <groupId>org.duraspace.fedora</groupId>
   <artifactId>integrationtest</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0</version>
+  <version>3.3-SNAPSHOT</version>
   <name>Integration Test</name>
   <url>http://duraspace.org</url>
 
   <parent>
     <groupId>org.duraspace.fedora</groupId>
     <artifactId>fedora-repository</artifactId>
-    <version>1.0.0</version>
+    <version>3.3-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -434,7 +434,7 @@
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>common</artifactId>
       <classifier>tests</classifier>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency> 
     
@@ -450,14 +450,14 @@
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>server</artifactId>
       <classifier>tests</classifier>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency> 
 
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>fedora-admin-client</artifactId>
-      <version>3.3</version>
+      <version>${project.version}</version>
     </dependency> 
 
     <!--

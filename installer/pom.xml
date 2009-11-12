@@ -4,14 +4,14 @@
   <groupId>org.duraspace.fedora</groupId>
   <artifactId>installer</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.0</version>
+  <version>3.3-SNAPSHOT</version>
   <name>Installer</name>
   <url>http://duraspace.org</url>
 
   <parent>
     <groupId>org.duraspace.fedora</groupId>
     <artifactId>fedora-repository</artifactId>
-    <version>1.0.0</version>
+    <version>3.3-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -119,7 +119,7 @@
           <groupId>org.duraspace.fedora</groupId>
           <artifactId>server</artifactId>
           <classifier>utilities-main</classifier>
-          <version>1.0.0</version>
+          <version>${project.version}</version>
         </dependency> 
 
         <dependency>
@@ -212,41 +212,41 @@
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>common</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency> 
 
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>democontent</artifactId>
       <type>war</type>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency> 
 
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>fop</artifactId>
       <type>war</type>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency> 
 
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>saxon</artifactId>
       <type>war</type>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency> 
 
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>imagemanip</artifactId>
       <type>war</type>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency> 
 
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>fedora-admin-client</artifactId>
-      <version>3.3</version>
+      <version>${project.version}</version>
     </dependency>
  
     <!--
@@ -261,13 +261,13 @@
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>fedora-messaging-client</artifactId>
-      <version>3.3</version>
+      <version>${project.version}</version>
     </dependency> 
 
     <dependency>
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>fedora-messaging-client</artifactId>
-      <version>3.3</version>
+      <version>${project.version}</version>
       <classifier>fedora-messaging</classifier>
       <type>zip</type>
     </dependency> 
@@ -276,7 +276,7 @@
       <groupId>org.duraspace.fedora</groupId>
       <artifactId>fedora-webapp</artifactId>
       <type>war</type>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency> 
 
     <dependency>
