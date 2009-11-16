@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.duraspace.fedora</groupId>
-  <artifactId>fedora-repository</artifactId>
+  <groupId>org.fedorarepo</groupId>
+  <artifactId>fedorarepo</artifactId>
   <packaging>pom</packaging>
   <version>3.3-SNAPSHOT</version>
   <name>Fedora Repository</name>
@@ -90,15 +90,15 @@
   </organization>
 
   <modules>
-    <module>generate</module>
-    <module>common</module>
-    <module>server</module>
-    <module>client</module>
-    <module>integrationtest</module>
-    <module>localservices</module>
-    <module>democontent</module>
-    <module>installer</module>
-    <module>fedora-webapp</module>
+    <module>fedorarepo-generate</module>
+    <module>fedorarepo-common</module>
+    <module>fedorarepo-server</module>
+    <module>fedorarepo-client</module>
+    <module>fedorarepo-integrationtest</module>
+    <module>fedorarepo-localservices</module>
+    <module>fedorarepo-democontent</module>
+    <module>fedorarepo-installer</module>
+    <module>fedorarepo-webapp</module>
   </modules>
 
   <!-- All of these flags can be overwritten with -D cli options -->
@@ -335,11 +335,8 @@
                 </goals>
                 <phase>package</phase>
                 <configuration>
-                  <!-- 
-                  TODO: decision on file names for source distribution
                   <appendAssemblyId>false</appendAssemblyId>
-                  <finalName>fedora-${project.version}</finalName> 
-                  -->
+                  <finalName>fedorarepo-src-${project.version}</finalName> 
                   <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
                   <descriptors>
                     <descriptor>src/main/resources/assemblies/fedora-source-release.xml</descriptor>
