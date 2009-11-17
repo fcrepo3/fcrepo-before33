@@ -128,13 +128,25 @@
 
     <repository>
       <id>duraspace-releases</id>
-      <name>Duraspace Releases Maven Repository</name>
+      <name>DuraSpace Releases Maven Repository</name>
       <url>https://fedora-commons.org/m2/content/repositories/releases</url>
       <releases>
         <enabled>true</enabled>
       </releases>
       <snapshots>
         <enabled>false</enabled>
+      </snapshots>
+    </repository>
+
+    <repository>
+      <id>duraspace-snapshots</id>
+      <name>DuraSpace Snapshots Maven Repository</name>
+      <url>https://fedora-commons.org/m2/content/repositories/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
       </snapshots>
     </repository>
 

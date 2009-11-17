@@ -8,7 +8,7 @@ import java.net.URI;
 
 import org.junit.Test;
 
-import org.fedoracommons.akubra.map.IdMapper;
+import org.akubraproject.map.IdMapper;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

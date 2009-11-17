@@ -10,7 +10,7 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
-import org.fedoracommons.akubra.map.IdMapper;
+import org.akubraproject.map.IdMapper;
 
 import fedora.server.utilities.MD5Utility;
 

@@ -22,11 +22,11 @@ import org.apache.commons.io.IOUtils;
 
 import org.apache.log4j.Logger;
 
-import org.fedoracommons.akubra.Blob;
-import org.fedoracommons.akubra.BlobStore;
-import org.fedoracommons.akubra.BlobStoreConnection;
-import org.fedoracommons.akubra.DuplicateBlobException;
-import org.fedoracommons.akubra.MissingBlobException;
+import org.akubraproject.Blob;
+import org.akubraproject.BlobStore;
+import org.akubraproject.BlobStoreConnection;
+import org.akubraproject.DuplicateBlobException;
+import org.akubraproject.MissingBlobException;
 
 import fedora.common.Constants;
 import fedora.common.FaultException;
@@ -75,7 +75,7 @@ public class AkubraLowlevelStorage
      *   <li> support atomic overwrites natively. If not,
      *        <code>forceSafe..Overwrites</code> MUST be given as
      *        <code>true</code> and the blob store MUST support
-     *        {@link org.fedoracommons.akubra.core.Blob#renameTo}
+     *        {@link org.akubraproject.core.Blob#renameTo}
      *   </li>
      * </ul>
      *

@@ -19,7 +19,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.fedoracommons.akubra.mem.MemBlobStore;
+import org.akubraproject.mem.MemBlobStore;
 
 import fedora.common.FaultException;
 
