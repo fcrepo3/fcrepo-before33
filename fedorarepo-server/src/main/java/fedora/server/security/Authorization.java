@@ -228,8 +228,6 @@ public interface Authorization {
     public void enforceListMethods(Context context, String pid, Date ofAsDate)
             throws AuthzException;
 
-    public void enforceServerShutdown(Context context) throws AuthzException;
-
     public void enforceServerStatus(Context context) throws AuthzException;
 
     public void enforceOAIRespond(Context context) throws AuthzException;
@@ -247,5 +245,5 @@ public interface Authorization {
 
     public void enforceRetrieveFile(Context context, String fileURI)
             throws AuthzException;
-    
+
 }

@@ -102,7 +102,6 @@ public class FedoraHome {
         configureFCFG();
         configureFedoraUsers();
         configureBeSecurity();
-        configureXACML();
     }
 
     private void configureFCFG() throws InstallationFailedException {
@@ -276,33 +275,6 @@ public class FedoraHome {
         becfg.setInternalUsername("fedoraIntCallUser");
         becfg.write(true, true, pwriter);
         pwriter.close();
-    }
-
-    /**
-     * Add the serverHost to the following XACML policies:
-     * deny-apim-if-not-localhost.xml deny-reloadPolicies-if-not-localhost.xml
-     * deny-serverShutdown-if-not-localhost.xml if not already present.
-     *
-     * @throws InstallationFailedException
-     */
-    private void configureXACML() throws InstallationFailedException {
-        String[] policies =
-                new String[] {"deny-apim-if-not-localhost.xml",
-                        "deny-reloadPolicies-if-not-localhost.xml",
-                        "deny-serverShutdown-if-not-localhost.xml"};
-        File defaultPolicyDir =
-                new File(_installDir
-                        + "/server/fedora-internal-use/fedora-internal-use-repository-policies-approximating-2.0");
-        try {
-            for (String policy : policies) {
-                File pFile = new File(defaultPolicyDir, policy);
-                XACMLPolicy xacml = new XACMLPolicy(pFile, _opts);
-                xacml.addServerHost(getHost());
-                xacml.write(pFile.getAbsolutePath());
-            }
-        } catch (Exception e) {
-            throw new InstallationFailedException(e.getMessage(), e);
-        }
     }
 
     private String getHost() throws InstallationFailedException {

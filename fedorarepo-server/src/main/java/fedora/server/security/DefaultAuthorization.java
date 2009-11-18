@@ -1424,23 +1424,6 @@ public class DefaultAuthorization
         }
     }
 
-    public void enforceServerShutdown(Context context) throws AuthzException {
-        try {
-            LOG.debug("Entered enforceServerShutdown");
-            String target = Constants.ACTION.SERVER_SHUTDOWN.uri;
-            context.setActionAttributes(null);
-            context.setResourceAttributes(null);
-            xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
-                             target,
-                             "",
-                             "",
-                             "",
-                             context);
-        } finally {
-            LOG.debug("Exiting enforceServerShutdown");
-        }
-    }
-
     public void enforceServerStatus(Context context) throws AuthzException {
         try {
             LOG.debug("Entered enforceServerStatus");
@@ -1686,10 +1669,10 @@ public class DefaultAuthorization
             }
             context.setResourceAttributes(resourceAttributes);
             xacmlPep.enforce(context
-                    .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), 
+                    .getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),
                     target,
-                    Constants.ACTION.APIM.uri, 
-                    fileURI, 
+                    Constants.ACTION.APIM.uri,
+                    fileURI,
                     extractNamespace(fileURI),
                     context);
             } finally {

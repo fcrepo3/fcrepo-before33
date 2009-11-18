@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.common.policy;
@@ -8,7 +8,7 @@ import com.sun.xacml.attr.StringAttribute;
 
 /**
  * The Fedora Action XACML namespace.
- * 
+ *
  * <pre>
  * Namespace URI    : urn:fedora:names:fedora:2.1:action
  * </pre>
@@ -28,7 +28,7 @@ public class ActionNamespace
 
     public final XacmlName APIA;
 
-    // Values of ID   
+    // Values of ID
     public final XacmlName ADD_DATASTREAM;
 
     public final XacmlName EXPORT;
@@ -58,7 +58,7 @@ public class ActionNamespace
     public final XacmlName SET_DATASTREAM_STATE;
 
     public final XacmlName DESCRIBE_REPOSITORY;
-    
+
     public final XacmlName FIND_OBJECTS;
 
     public final XacmlName RI_FIND_OBJECTS;
@@ -78,8 +78,6 @@ public class ActionNamespace
     public final XacmlName LIST_OBJECT_IN_FIELD_SEARCH_RESULTS;
 
     public final XacmlName LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS;
-
-    public final XacmlName SERVER_SHUTDOWN;
 
     public final XacmlName SERVER_STATUS;
 
@@ -102,7 +100,7 @@ public class ActionNamespace
     public final XacmlName ADD_RELATIONSHIP;
 
     public final XacmlName PURGE_RELATIONSHIP;
-    
+
     public final XacmlName RETRIEVE_FILE;
 
     private ActionNamespace(XacmlNamespace parent, String localName) {
@@ -112,7 +110,7 @@ public class ActionNamespace
         APIA = addName(new XacmlName(this, "api-a"));
 
         ID = addName(new XacmlName(this, "id", StringAttribute.identifier));
-        // derived from respective Java methods in Access.java or Management.java        
+        // derived from respective Java methods in Access.java or Management.java
         ADD_DATASTREAM = addName(new XacmlName(this, "id-addDatastream"));
         EXPORT = addName(new XacmlName(this, "id-export"));
         GET_DATASTREAM = addName(new XacmlName(this, "id-getDatastream"));
@@ -153,7 +151,6 @@ public class ActionNamespace
         LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS =
                 addName(new XacmlName(this,
                                       "id-listObjectInResourceIndexResults"));
-        SERVER_SHUTDOWN = addName(new XacmlName(this, "id-serverShutdown"));
         SERVER_STATUS = addName(new XacmlName(this, "id-serverStatus"));
         OAI = addName(new XacmlName(this, "id-oai"));
         UPLOAD = addName(new XacmlName(this, "id-upload"));
