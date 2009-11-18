@@ -13,12 +13,6 @@ echo ""
 echo "Removing $FEDORA_HOME"                                                                                        
 rm -rf $FEDORA_HOME
 
-echo ""
-echo "Installing fresh libs to local repository"
-cd $BUILD_HOME
-$SCRIPTDIR/../uninstallLibs.sh ~/.m2/repository
-#$SCRIPTDIR/../installLibs.sh
-
 echo "================================================"
 echo "Compiling distribution and running unit tests..."
 echo "================================================"
