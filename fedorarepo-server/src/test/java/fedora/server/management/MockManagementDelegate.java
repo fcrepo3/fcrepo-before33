@@ -168,14 +168,14 @@ public class MockManagementDelegate
     }
 
     public boolean addRelationship(Context context,
-                                   String pid,
+                                   String subject,
                                    String relationship,
                                    String object,
                                    boolean isLiteral,
                                    String datatype) throws ServerException {
         calls.add(new Call(JournalConstants.METHOD_ADD_RELATIONSHIP,
                            context,
-                           pid,
+                           subject,
                            relationship,
                            object,
                            isLiteral,
@@ -258,10 +258,10 @@ public class MockManagementDelegate
     }
 
     public RelationshipTuple[] getRelationships(Context context,
-                                                String pid,
+                                                String subject,
                                                 String relationship)
             throws ServerException {
-        calls.add(new Call("getRelationships", context, pid, relationship));
+        calls.add(new Call("getRelationships", context, subject, relationship));
         return new RelationshipTuple[0];
     }
 
@@ -391,14 +391,14 @@ public class MockManagementDelegate
     }
 
     public boolean purgeRelationship(Context context,
-                                     String pid,
+                                     String subject,
                                      String relationship,
                                      String object,
                                      boolean isLiteral,
                                      String datatype) throws ServerException {
         calls.add(new Call(JournalConstants.METHOD_PURGE_RELATIONSHIP,
                            context,
-                           pid,
+                           subject,
                            relationship,
                            object,
                            isLiteral,

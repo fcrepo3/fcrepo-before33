@@ -422,7 +422,7 @@ public class RelsValidator
         }
 
         if (!uri.isAbsolute()) {
-            throw new SAXException("RelsExtValidator:"
+            throw new SAXException("RelsValidator:"
                     + "Error in relationship '" + relName + "'."
                     + " The specified RDF 'resource' is not an absolute URI.");
         }

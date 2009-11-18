@@ -1,8 +1,18 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.server.storage;
+
+import java.io.InputStream;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
+import org.jrdf.graph.ObjectNode;
+import org.jrdf.graph.PredicateNode;
+import org.jrdf.graph.SubjectNode;
 
 import fedora.server.errors.ServerException;
 import fedora.server.storage.types.AuditRecord;
@@ -10,13 +20,6 @@ import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.RelationshipTuple;
-import org.jrdf.graph.ObjectNode;
-import org.jrdf.graph.PredicateNode;
-
-import java.io.InputStream;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Interface for reading Fedora digital objects from within the storage sub
@@ -275,7 +278,25 @@ public interface DOReader {
     public String[] getObjectHistory(String PID) throws ServerException;
 
     /**
-     * Determine of the object contains the given relationship.
+     * Determine if the object contains the given relationship.
+     *
+     * @param subject
+     *        Subject of the relationship, or null if unspecified (will match
+     *        any).
+     * @param predicate
+     *        Predicate of the relationship, or null if unspecified (will match
+     *        any).
+     * @param object
+     *        Object (target) of the relationship, or null if unspecified (will
+     *        match any).
+     * @return true if the object
+     * @throws ServerException
+     *         If any type of error occurred fulfilling the request.
+     */
+    public boolean hasRelationship(SubjectNode subject, PredicateNode predicate, ObjectNode object)
+            throws ServerException;
+    /**
+     * Determine if the object contains the given relationship, assumes pid as the subject.
      *
      * @param predicate
      *        Predicate of the relationship, or null if unspecified (will match
@@ -291,20 +312,49 @@ public interface DOReader {
             throws ServerException;
 
     /**
-     * Get all matching relationships in the object.
+     * Get all RELS-EXT and RELS-INT relationships in the object.
      *
-     * @param predicate
-     *        Predicate of the relationship, or null if unspecified (will match
-     *        any).
-     * @param object
-     *        Object (target) of the relationship, or null if unspecified (will
-     *        match any).
-     * @return All matching relationships in the object
+     * @return All RELS-EXT and RELS-INT relationships in the object
      * @throws ServerException
      *         If any type of error occurred fulfilling the request.
      */
-    public Set<RelationshipTuple> getRelationships(PredicateNode predicate,
-                                                   ObjectNode object)
+    public Set<RelationshipTuple> getRelationships()
             throws ServerException;
 
+/**
+ * Get all matching RELS-EXT and RELS-INT relationships in the object.
+ *
+ * @param subject
+ *        Subject of the relationship, or null if unspecified (will match
+ *        any).
+ * @param predicate
+ *        Predicate of the relationship, or null if unspecified (will match
+ *        any).
+ * @param object
+ *        Object (target) of the relationship, or null if unspecified (will
+ *        match any).
+ * @return All matching relationships in the object
+ * @throws ServerException
+ *         If any type of error occurred fulfilling the request.
+ */
+public Set<RelationshipTuple> getRelationships(SubjectNode subject,
+                                               PredicateNode predicate,
+                                               ObjectNode object)
+        throws ServerException;
+/**
+ * Get all matching RELS-EXT relationships in the object, assumes pid is the subject
+ *
+ * @param predicate
+ *        Predicate of the relationship, or null if unspecified (will match
+ *        any).
+ * @param object
+ *        Object (target) of the relationship, or null if unspecified (will
+ *        match any).
+ * @return All matching relationships in the object
+ * @throws ServerException
+ *         If any type of error occurred fulfilling the request.
+ */
+public Set<RelationshipTuple> getRelationships(PredicateNode predicate,
+                                               ObjectNode object)
+        throws ServerException;
 }

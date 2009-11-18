@@ -174,7 +174,7 @@ public class TestJournalRoundTrip {
     public void addRelationship() throws ServerException {
         testJournaledMethod(JournalConstants.METHOD_ADD_RELATIONSHIP,
                             leadingContext,
-                            "thePid",
+                            "theSubject",
                             "relationship",
                             "anObject",
                             false,
@@ -249,7 +249,7 @@ public class TestJournalRoundTrip {
     public void getRelationships() throws ServerException {
         testNonJournaledMethod("getRelationships",
                                leadingContext,
-                               "myPID",
+                               "mySubject",
                                "someRelationship");
     }
 
@@ -344,7 +344,7 @@ public class TestJournalRoundTrip {
     public void purgeRelationship() throws ServerException {
         testJournaledMethod(JournalConstants.METHOD_PURGE_RELATIONSHIP,
                             leadingContext,
-                            "aPID",
+                            "aSubject",
                             "theRelationship",
                             "someObject",
                             false,

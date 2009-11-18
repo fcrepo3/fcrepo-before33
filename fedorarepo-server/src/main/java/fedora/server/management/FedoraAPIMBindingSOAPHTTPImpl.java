@@ -499,16 +499,16 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public fedora.server.types.gen.RelationshipTuple[] getRelationships(String pid,
+    public fedora.server.types.gen.RelationshipTuple[] getRelationships(String subject,
                                                                         String relationship)
             throws java.rmi.RemoteException {
         LOG.debug("start: getRelationships");
         assertInitialized();
         try {
-            fedora.server.storage.types.RelationshipTuple[] intRelationshipTuples;
+            fedora.server.storage.types.RelationshipTuple[] intRelationshipTuples = null;
             intRelationshipTuples =
-                    s_management.getRelationships(ReadOnlyContext
-                            .getSoapContext(), pid, relationship);
+                s_management.getRelationships(ReadOnlyContext
+                    .getSoapContext(), subject, relationship);
             return getGenRelsTuples(intRelationshipTuples);
         } catch (Throwable th) {
             LOG.error("Error getting relationships", th);
@@ -518,7 +518,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public boolean addRelationship(String pid,
+    public boolean addRelationship(String subject,
                                    String relationship,
                                    String object,
                                    boolean isLiteral,
@@ -529,7 +529,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             return s_management.addRelationship(ReadOnlyContext
                                                         .getSoapContext(),
-                                                pid,
+                                                subject,
                                                 relationship,
                                                 object,
                                                 isLiteral,
@@ -542,7 +542,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public boolean purgeRelationship(String pid,
+    public boolean purgeRelationship(String subject,
                                      String relationship,
                                      String object,
                                      boolean isLiteral,
@@ -552,12 +552,12 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         assertInitialized();
         try {
             return s_management.purgeRelationship(ReadOnlyContext
-                                                          .getSoapContext(),
-                                                  pid,
-                                                  relationship,
-                                                  object,
-                                                  isLiteral,
-                                                  datatype);
+                                                  .getSoapContext(),
+                                          subject,
+                                          relationship,
+                                          object,
+                                          isLiteral,
+                                          datatype);
         } catch (Throwable th) {
             LOG.error("Error purging relationships", th);
             throw AxisUtility.getFault(th);

@@ -4,15 +4,33 @@
  */
 package fedora.server.storage.types;
 
-import fedora.common.Constants;
-import fedora.common.Models;
-import fedora.common.rdf.JRDF;
-import fedora.server.errors.ServerException;
-import fedora.server.storage.RDFRelationshipReader;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
+import org.jrdf.graph.SubjectNode;
 
-import java.util.*;
+import fedora.common.Constants;
+import fedora.common.Models;
+import fedora.common.PID;
+import fedora.common.rdf.JRDF;
+import fedora.common.rdf.SimpleURIReference;
+
+import fedora.server.errors.ServerException;
+import fedora.server.storage.RDFRelationshipReader;
 
 /**
  * A basic implementation of DigitalObject that stores things in memory.
@@ -285,12 +303,28 @@ public class BasicDigitalObject
 
     }
 
+    // assumes m_pid as subject; ie RELS-EXT only
     public boolean hasRelationship(PredicateNode predicate, ObjectNode object) {
-        /* Brute force */
-        return getRelationships(predicate, object).size() > 0;
+        return hasRelationship(PID.toURIReference(m_pid), predicate, object);
     }
 
+    public boolean hasRelationship(SubjectNode subject, PredicateNode predicate, ObjectNode object) {
+        /* Brute force */
+        return getRelationships(subject, predicate, object).size() > 0;
+    }
+
+    // assume m_pid as subject; ie RELS-EXT only
     public Set<RelationshipTuple> getRelationships(PredicateNode predicate,
+                                                   ObjectNode object) {
+        return getRelationships(PID.toURIReference(m_pid), predicate, object);
+    }
+
+    public Set<RelationshipTuple> getRelationships() {
+        return getRelationships(null, null, null);
+    }
+
+    public Set<RelationshipTuple> getRelationships(SubjectNode subject,
+                                                   PredicateNode predicate,
                                                    ObjectNode object) {
         Set<RelationshipTuple> foundRels = new HashSet<RelationshipTuple>();
 
@@ -311,6 +345,11 @@ public class BasicDigitalObject
             }
 
             // Find matching relationships from those that are explicit
+            if (subject != null) {
+                if (!JRDF.sameSubject(subject, t.subject)) {
+                    continue;
+                }
+            }
             if (predicate != null) {
                 if (!JRDF.samePredicate(predicate, t.predicate)) {
                     continue;
@@ -330,17 +369,23 @@ public class BasicDigitalObject
         }
 
         // If necessary, add the current basic cmodel to the set of matches
-        if (!basicExplicit
-                && (predicate == null ||
-                    JRDF.samePredicate(predicate, Constants.MODEL.HAS_MODEL))
-                && (object == null ||
-                    JRDF.sameObject(object, Models.FEDORA_OBJECT_CURRENT))) {
-            foundRels.add(
-                    new RelationshipTuple(Constants.FEDORA.uri + m_pid,
-                                          Constants.MODEL.HAS_MODEL.uri,
-                                          Models.FEDORA_OBJECT_CURRENT.uri,
-                                          false,
-                                          null));
+        try {
+            if (!basicExplicit
+                    && (subject == null ||
+                            JRDF.sameSubject(subject, new SimpleURIReference(new URI(PID.toURI(m_pid)))))
+                    && (predicate == null ||
+                        JRDF.samePredicate(predicate, Constants.MODEL.HAS_MODEL))
+                    && (object == null ||
+                        JRDF.sameObject(object, Models.FEDORA_OBJECT_CURRENT))) {
+                foundRels.add(
+                        new RelationshipTuple(Constants.FEDORA.uri + m_pid,
+                                              Constants.MODEL.HAS_MODEL.uri,
+                                              Models.FEDORA_OBJECT_CURRENT.uri,
+                                              false,
+                                              null));
+            }
+        } catch (URISyntaxException e) {
+            // assume that m_pid is a valid pid
         }
 
         return foundRels;

@@ -172,7 +172,7 @@ public class FedoraObjectTripleGenerator_3_0
                                         URIReference objURI,
                                         Set<Triple> set)
             throws Exception {
-        for (RelationshipTuple tuple : reader.getRelationships(null, null)) {
+        for (RelationshipTuple tuple : reader.getRelationships()) {
             ObjectNode oNode;
             if (tuple.isLiteral) {
                 if (tuple.datatype != null) {

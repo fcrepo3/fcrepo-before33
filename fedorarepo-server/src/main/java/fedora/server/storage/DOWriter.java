@@ -162,17 +162,37 @@ public interface DOWriter
     public boolean isNew();
 
     /**
-     * Adds a RDF triple to the RELS-EXT datastream
+     * Adds a RDF triple to a reserved datastream (based on the subject)
      */
-    public boolean addRelationship(String relationship,
+    public boolean addRelationship(String subject,
+                                   String relationship,
+                                   String object,
+                                   boolean isLiteral,
+                                   String datatype) throws ServerException;
+    /**
+     * Adds a RDF triple to the specified (RDF) datastream
+     */
+    public boolean addRelationship(String dsId,
+                                   String subject,
+                                   String relationship,
                                    String object,
                                    boolean isLiteral,
                                    String datatype) throws ServerException;
 
     /**
-     * Purges a RDF triple from the RELS-EXT datastream
+     * Purges a RDF triple from a reserved datastream (based on the subject)
      */
-    public boolean purgeRelationship(String relationship,
+    public boolean purgeRelationship(String subject,
+                                     String relationship,
+                                     String object,
+                                     boolean isLiteral,
+                                     String datatype) throws ServerException;
+    /**
+     * Purges a RDF triple from the specified (RDF) datastream
+     */
+    public boolean purgeRelationship(String dsId,
+                                     String subject,
+                                     String relationship,
                                      String object,
                                      boolean isLiteral,
                                      String datatype) throws ServerException;

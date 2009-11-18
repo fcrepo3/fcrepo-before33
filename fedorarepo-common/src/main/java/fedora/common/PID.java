@@ -7,6 +7,11 @@ package fedora.common;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import fedora.common.rdf.SimpleURIReference;
+
 /**
  * A persistent identifier for Fedora digital objects.
  *
@@ -214,6 +219,20 @@ public class PID {
      */
     public static String toURI(String pidString) {
         return Constants.FEDORA.uri + pidString;
+    }
+
+    /**
+     * Return a URIReference of some PID string, assuming it is well-formed.
+     */
+    public static SimpleURIReference toURIReference(String pidString) {
+        SimpleURIReference ref = null;
+        try {
+            ref = new SimpleURIReference(new URI(toURI(pidString)));
+        } catch (URISyntaxException e) {
+            // assumes pid is well-formed
+            throw new Error(e);
+        }
+        return ref;
     }
 
     /**

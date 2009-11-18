@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.server.storage.types;
@@ -12,7 +12,7 @@ import java.util.Set;
 
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
-import fedora.server.errors.ServerException;
+import org.jrdf.graph.SubjectNode;
 
 /**
  * Java representation of a Fedora digital object.
@@ -30,7 +30,7 @@ import fedora.server.errors.ServerException;
  * validation on these items, or serialization/deserialization to/from specific
  * formats.
  * </p>
- * 
+ *
  * @author Chris Wilper
  */
 public interface DigitalObject {
@@ -41,14 +41,14 @@ public interface DigitalObject {
 
     /**
      * Gets the pid.
-     * 
+     *
      * @return The pid, or null if it hasn't been set.
      */
     public String getPid();
 
     /**
      * Sets the pid.
-     * 
+     *
      * @param pid
      *        The pid.
      */
@@ -56,14 +56,14 @@ public interface DigitalObject {
 
     /**
      * Gets the state.
-     * 
+     *
      * @return The state, or null if it hasn't been set.
      */
     public String getState();
 
     /**
      * Sets the state.
-     * 
+     *
      * @param state
      *        The state.
      */
@@ -71,14 +71,14 @@ public interface DigitalObject {
 
     /**
      * Gets the userid of the user who owns the object.
-     * 
+     *
      * @return The userid
      */
     public String getOwnerId();
 
     /**
      * Sets the owner of the object.
-     * 
+     *
      * @param user
      *        The userid.
      */
@@ -86,14 +86,14 @@ public interface DigitalObject {
 
     /**
      * Gets the label.
-     * 
+     *
      * @return The label, or null if it hasn't been set.
      */
     public String getLabel();
 
     /**
      * Sets the label.
-     * 
+     *
      * @param label
      *        The label.
      */
@@ -101,14 +101,14 @@ public interface DigitalObject {
 
     /**
      * Gets the date the object was created.
-     * 
+     *
      * @return The date, or null if it hasn't been set.
      */
     public Date getCreateDate();
 
     /**
      * Sets the date the object was created.
-     * 
+     *
      * @param createDate
      *        The date.
      */
@@ -116,14 +116,14 @@ public interface DigitalObject {
 
     /**
      * Gets the date the object was last modified.
-     * 
+     *
      * @return The date, or null if it hasn't been set.
      */
     public Date getLastModDate();
 
     /**
      * Sets the date the object was last modified.
-     * 
+     *
      * @param lastModDate
      *        The date.
      */
@@ -131,7 +131,7 @@ public interface DigitalObject {
 
     /**
      * Gets this object's mutable List of AuditRecord objects.
-     * 
+     *
      * @return The List of AuditRecords, possibly of zero size but never null.
      */
     public List<AuditRecord> getAuditRecords();
@@ -142,7 +142,7 @@ public interface DigitalObject {
      * </p>
      * The Iterator is not tied to the underlying Collection and cannot be used
      * to remove datastreams.
-     * 
+     *
      * @return A new Iterator of datastream ids, possibly of zero size but never
      *         null.
      */
@@ -158,7 +158,7 @@ public interface DigitalObject {
      * datastream from the object, use
      * {@link #removeDatastreamVersion(Datastream)}
      * <p>
-     * 
+     *
      * @param id
      *        The datastream id.
      * @return The list, possibly of zero size but never null.
@@ -170,7 +170,7 @@ public interface DigitalObject {
      * that datastream. Appending a new version of the datastream if the
      * datastream is marked as versionable or replacing the existing version(s)
      * of the datastream is it is marked as non-versionable identifier.
-     * 
+     *
      * @param ds
      *        The datastream to add.
      * @param addNewVersion
@@ -181,7 +181,7 @@ public interface DigitalObject {
 
     /**
      * Removes a datastream from a digital object.
-     * 
+     *
      * @param ds
      *        Datastream to remove.
      */
@@ -193,7 +193,7 @@ public interface DigitalObject {
      * The Iterator is not tied to the underlying Collection and cannot be used
      * to remove datastreams.
      * </p>
-     * 
+     *
      * @return A new Iterator of disseminator ids, possibly of zero size but
      *         never null.
      */
@@ -203,7 +203,7 @@ public interface DigitalObject {
     /**
      * Gets a mutable List that consists of versions of the same disseminator
      * which is identified by the requested disseminator identifier.
-     * 
+     *
      * @param id
      *        The disseminator id.
      * @return The list, possibly of zero size but never null.
@@ -228,7 +228,7 @@ public interface DigitalObject {
 
     /**
      * Sets an extended property on the object.
-     * 
+     *
      * @param propName
      *        The property name, either a string, or URI as string.
      */
@@ -236,7 +236,7 @@ public interface DigitalObject {
 
     /**
      * Gets an extended property value, given the property name.
-     * 
+     *
      * @return The property value.
      */
     public String getExtProperty(String propName);
@@ -244,20 +244,42 @@ public interface DigitalObject {
     /**
      * Gets a Map containing all of the extended properties on the object. Map
      * key is property name.
-     * 
+     *
      * @return The property Map.
      */
     public Map<String, String> getExtProperties();
-    
+
     /**
-     * Determine of the object contains the given relationship.
+     * Determine if the object contains the given relationship.
      * <p>
      * Returns results that are accurate for the current state of the object at
      * the time of invocation. Thus, if there is some change to the object that
      * changes the set of relationships contained within, the next call to
      * hasRelationship will reflect those changes.
      * </p>
-     * 
+     *
+     * @param subject
+     *        Subject of the relationship, or null if unspecified (will match
+     *        any).
+     * @param predicate
+     *        Predicate of the relationship, or null if unspecified (will match
+     *        any).
+     * @param object
+     *        Object (target) of the relationship, or null if unspecified (will
+     *        match any).
+     * @return true if the object
+     */
+    public boolean hasRelationship(SubjectNode subject, PredicateNode predicate, ObjectNode object);
+
+    /**
+     * Determine if the object contains the given relationship, assumes pid is the subject
+     * <p>
+     * Returns results that are accurate for the current state of the object at
+     * the time of invocation. Thus, if there is some change to the object that
+     * changes the set of relationships contained within, the next call to
+     * hasRelationship will reflect those changes.
+     * </p>
+     *
      * @param predicate
      *        Predicate of the relationship, or null if unspecified (will match
      *        any).
@@ -268,26 +290,62 @@ public interface DigitalObject {
      */
     public boolean hasRelationship(PredicateNode predicate, ObjectNode object);
 
+
     /**
-     * Get all matching relationships in the object.
+     * Get all RELS-EXT and RELS-INT relationships in the object.
      * <p>
      * Returns results that are accurate for the current state of the object at
      * the time of invocation. Thus, if there is some change to the object that
      * changes the set of relationships contained within, the next call to
      * getRelationships will reflect those changes.
      * </p>
-     * 
+     *
+     * @return All matching relationships in the object
+     */
+    public Set<RelationshipTuple> getRelationships();
+
+    /**
+     * Get all matching RELS-EXT and RELS-INT relationships in the object.
+     * <p>
+     * Returns results that are accurate for the current state of the object at
+     * the time of invocation. Thus, if there is some change to the object that
+     * changes the set of relationships contained within, the next call to
+     * getRelationships will reflect those changes.
+     * </p>
+     *
+     * @param subject
+     *        Subject of the relationship, or null if unspecified (will match
+     *        any).
      * @param predicate
      *        Predicate of the relationship, or null if unspecified (will match
      *        any).
      * @param object
      *        Object (target) of the relationship, or null if unspecified (will
      *        match any).
-     * @return All matching relationships in the object
+     * @return All RELS-EXT and RELS-INT relationships in the object
+     */
+    public Set<RelationshipTuple> getRelationships(SubjectNode subject,
+                                                   PredicateNode predicate,
+                                                   ObjectNode object);
+    /**
+     * Get all matching RELS-EXT relationships in the object, assumes pid is the subject
+     * <p>
+     * Returns results that are accurate for the current state of the object at
+     * the time of invocation. Thus, if there is some change to the object that
+     * changes the set of relationships contained within, the next call to
+     * getRelationships will reflect those changes.
+     * </p>
+     *
+     * @param predicate
+     *        Predicate of the relationship, or null if unspecified (will match
+     *        any).
+     * @param object
+     *        Object (target) of the relationship, or null if unspecified (will
+     *        match any).
+     * @return All RELS-EXT and RELS-INT relationships in the object
      */
     public Set<RelationshipTuple> getRelationships(PredicateNode predicate,
                                                    ObjectNode object);
-
 
 
     /**

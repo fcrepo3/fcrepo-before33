@@ -51,10 +51,33 @@ public class TestRelationships
 
     private static String MULTIBYTE_UTF8;
 
-    private String pid;
+    // FIXME: once the raw pid form of subject in the relationship methods is no longer in use, remove 0 and 4 below
+    // demo:777 contains no rels-ext/rels-int datastream, demo:888 contains both
+    // subject identifiers for the following scenarios (add/purge mostly)
+    // 0: demo:777, subject is the digital object, as a pid
+    // 1: demo:777, subject is the digital object, as a uri
+    // 2: demo:777, subject is Datastream DS1, as a uri
+    // 3: demo:777, subject is Datastream DS2, as a uri
+    // 4: demo:888, subject is the digital object, as a pid
+    // 5: demo:888, subject is the digital object, as a uri
+    // 6: demo:888, subject is Datastream DS1, as a uri
+    // 7: demo:888, subject is Datastream DS2, as a uri
+
+    // test subject identifiers for the above
+    private final String subject[] = {
+            "demo:777", // deprecated
+            "info:fedora/demo:777",
+            "info:fedora/demo:777/DS1",
+            "info:fedora/demo:777/DS2",
+            "demo:888", // deprecated
+            "info:fedora/demo:888",
+            "info:fedora/demo:888/DS1",
+            "info:fedora/demo:888/DS2" };
+
+
 
     static {
-        // Test FOXML object with RELS-EXT datastream
+        // Test FOXML object with RELS-EXT and RELS-INT datastream
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         sb.append("<foxml:digitalObject VERSION=\"1.1\" PID=\"demo:888\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd\">");
@@ -74,6 +97,21 @@ public class TestRelationships
         sb.append("      </foxml:xmlContent>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
+        sb.append("  <foxml:datastream ID=\"RELS-INT\" CONTROL_GROUP=\"M\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion FORMAT_URI=\"info:fedora/fedora-system:FedoraRELSInt-1.0\" ID=\"RELS-INT.0\" MIMETYPE=\"application/rdf+xml\" LABEL=\"RDF Statements about datastreams in this object\">");
+        sb.append("      <foxml:xmlContent>");
+        sb.append("        <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""
+                + "                 xmlns:myns=\"http://www.example.org/testns#\">");
+        sb.append("          <rdf:Description rdf:about=\"info:fedora/demo:888/DS1\">");
+        sb.append("            <myns:test1 rdf:resource=\"info:fedora/demo:UVA_STD_IMAGE_1\"/>");
+        sb.append("          </rdf:Description>");
+        sb.append("          <rdf:Description rdf:about=\"info:fedora/demo:888/DS3\">");
+        sb.append("            <myns:test2 rdf:resource=\"info:fedora/demo:11223344\"/>");
+        sb.append("          </rdf:Description>");
+        sb.append("        </rdf:RDF>");
+        sb.append("      </foxml:xmlContent>");
+        sb.append("    </foxml:datastreamVersion>");
+        sb.append("  </foxml:datastream>");
         sb.append("</foxml:digitalObject>");
 
         try {
@@ -81,6 +119,7 @@ public class TestRelationships
         } catch (UnsupportedEncodingException uee) {
         }
 
+        // Test FOXML object with no RELS-EXT (or RELS-INT) datastream
         sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         sb.append("<foxml:digitalObject VERSION=\"1.1\" PID=\"demo:777\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd\">");
@@ -129,7 +168,6 @@ public class TestRelationships
 
         apim.ingest(DEMO_888_FOXML, FOXML1_1.uri, "ingesting new foxml object");
         apim.ingest(DEMO_777_FOXML, FOXML1_1.uri, "ingesting new foxml object");
-        pid = "demo:888";
     }
 
     @Override
@@ -141,141 +179,198 @@ public class TestRelationships
 
     public void testAddRelationship() throws Exception {
         String p, o;
+        int relNum = 0; // used to form unique relationships... addRelationship needs unique predicate x object combinatinos
 
-        p = "urn:bar";
-        o = "urn:baz";
-        addRelationship(pid, p, o, false, null);
+        for (String s : subject) {
+            p = "urn:bar" + relNum++;
+            o = "urn:baz";
+            addRelationship(s, p, o, false, null);
 
-        // plain literal
-        o = "quux";
-        addRelationship(pid, p, o, true, null);
+            // plain literal
+            o = "quux";
+            addRelationship(s, p, o, true, null);
 
-        // datatyped literal
-        o = "1970-01-01T00:00:00Z";
-        addRelationship(pid, p, o, true, Constants.RDF_XSD.DATE_TIME.uri);
+            // datatyped literal
+            o = "1970-01-01T00:00:00Z";
+            addRelationship(s, p, o, true, Constants.RDF_XSD.DATE_TIME.uri);
 
-        // utf-8 literal with multibyte sequences
-        o = MULTIBYTE_UTF8;
-        addRelationship(pid, p, o, true, null);
+            // utf-8 literal with multibyte sequences
+            o = MULTIBYTE_UTF8;
+            addRelationship(s, p, o, true, null);
+        }
 
     }
 
-    public void testBadRelationships() {
+    public void testValidation() {
         String p, o;
+        int relNum = 0; // used to form unique relationships or objects/object literals... addRelationship needs unique predicate x object combinations
 
-        p = "http://purl.org/dc/elements/1.1/title";
-        o = "A Dictionary of Maqiao";
+        for (String s : subject) {
+
+            p = "http://purl.org/dc/elements/1.1/title";
+            o = "A Dictionary of Maqiao" + relNum++;
+
+            // DC rels only invalid for RELS-EXT...
+            if (!s.endsWith("DS1") && !s.endsWith("DS2")) {
+                try {
+                    apim.addRelationship(s, p, o, true, null);
+                    fail("Adding Dublin Core relationship should have failed - " + s);
+                } catch (RemoteException e) {
+                }
+            }
+
+            p = "info:fedora/fedora-system:def/model#foo";
+            try {
+                apim.addRelationship(s, p, o, true, null);
+                fail("Adding Fedora Model relationship should have failed - " + s);
+            } catch (RemoteException e) {
+            }
+
+            p = "urn:bar" + relNum;
+            // invalid dateTime literal
+            o = "2009-10-05T16:02:26+0100";
+            try {
+                apim.addRelationship(s, p, o, true, Constants.RDF_XSD.DATE_TIME.uri);
+                fail("Adding invalid date/time literal in relationship should have failed - " + s);
+            } catch (RemoteException e) {
+            }
+        }
+    }
+
+    public void testBadSubjectURI() {
+        String s, p, o;
+
+        // subject is a valid info:fedora/ uri for an object, but object does not exist
+        s = "info:fedora/does:notexist";
+        p = "urn:foo";
+        o = "urn:bar";
         try {
-            apim.addRelationship(pid, p, o, true, null);
-            fail("Adding Dublin Core relationship should have failed");
+            apim.addRelationship(s, p, o, false, null);
+            fail("Adding relationship with subject as a Fedora DO that does not exist should have failed");
         } catch (RemoteException e) {
         }
 
-        p = "info:fedora/fedora-system:def/model#foo";
+        // subject is a valid info:fedora/ uri for a datastream, but object does not exist
+        s = "info:fedora/does:notexist/DS1";
+        p = "urn:foo";
+        o = "urn:baz";
         try {
-            apim.addRelationship(pid, p, o, true, null);
-            fail("Adding Fedora Model relationship should have failed");
+            apim.addRelationship(s, p, o, false, null);
+            fail("Adding relationship with subject as a Fedora object datastream where DO does not exist should have failed");
         } catch (RemoteException e) {
         }
 
-        p = "urn:bar";
-        // invalid dateTime literal
-        o = "2009-10-05T16:02:26+0100";
+        // subject is a valid uri, but not in info:fedora/ scheme
+        s = "http://www.example.org/test";
+        p = "urn:foo";
+        o = "urn:quux";
         try {
-            apim.addRelationship(pid, p, o, true, Constants.RDF_XSD.DATE_TIME.uri);
-            fail("Adding invalid date/time literal in relationship should have failed");
+            apim.addRelationship(s, p, o, false, null);
+            fail("Adding relationship with subject uri not in the info:fedora scheme should have failed");
         } catch (RemoteException e) {
         }
 
     }
 
     public void testGetRelationships() throws Exception {
-        pid = "demo:777";
         String p, o;
+        int relNum = 0; // used to form unique relationships or objects/object literals... addRelationship needs unique predicate x object combinations
 
-        p = "urn:bar";
-        o = "urn:baz";
-        getRelationship(pid, p, o, false, null);
+        for (String s : subject) {
 
-        p = "urn:title";
-        o = "asdf";
-        getRelationship(pid, p, o, true, null);
+            p = "urn:bar" + relNum++;
+            o = "urn:baz";
+            getRelationship(s, p, o, false, null);
 
-        p = "urn:temperature";
-        o = "98.6";
-        getRelationship(pid, p, o, true, Constants.RDF_XSD.FLOAT.uri);
+            p = "urn:title" + relNum;
+            o = "asdf";
+            getRelationship(s, p, o, true, null);
 
-        // utf-8 literal with multibyte sequences
-        p = "urn:utf8literal";
-        o = MULTIBYTE_UTF8;
-        getRelationship(pid, p, o, true, null);
+            p = "urn:temperature" + relNum;
+            o = "98.6";
+            getRelationship(s, p, o, true, Constants.RDF_XSD.FLOAT.uri);
+
+            // utf-8 literal with multibyte sequences
+            p = "urn:utf8literal" + relNum;
+            o = MULTIBYTE_UTF8;
+            getRelationship(s, p, o, true, null);
+        }
 
     }
 
     public void testGetAllRelationships() throws Exception {
+        // subject uri and pid
         RelationshipTuple[] tuples = apim.getRelationships("demo:777", null);
         assertEquals(1, tuples.length);
     }
 
     public void testBasicCModelRelationships() throws Exception {
-        for (String pid : new String[] { "demo:777", "demo:888" }) {
+        // just the uri form for subject, pid form has got a hammering above
+        for (String pid : new String[] { "info:fedora/demo:777", "info:fedora/demo:888" }) {
             checkExistsViaGetRelationships(pid,
                                            Constants.MODEL.HAS_MODEL.uri,
                                            Models.FEDORA_OBJECT_CURRENT.uri);
         }
     }
 
-    private void checkExistsViaGetRelationships(String pid,
+    private void checkExistsViaGetRelationships(String subject,
                                                 String predicate,
                                                 String object) throws Exception {
         boolean found = false;
-        for (RelationshipTuple tuple : apim.getRelationships(pid, predicate)) {
-            if (tuple.getSubject().equals(PID.toURI(pid))
+
+        for (RelationshipTuple tuple : apim.getRelationships(subject, predicate)) {
+            if (tuple.getSubject().equals(subjectAsURI(subject))
                     && tuple.getPredicate().equals(predicate)
                     && tuple.getObject().equals(object)) {
                 found = true;
             }
         }
-        assertTrue("Relationship not found via getRelationships (pid=" + pid
+        assertTrue("Relationship not found via getRelationships (subject=" + subject
                    + ", predicate=" + predicate + ", object=" + object, found);
     }
 
     public void testPurgeRelationships() throws Exception {
         String p, o;
+        int relNum = 0; // used to form unique relationships or objects/object literals... addRelationship needs unique predicate x object combinations
 
-        p = "urn:p";
-        o = "urn:o";
-        purgeRelationship(pid, p, o, false, null);
+        for (String s : subject) {
 
-        p = "urn:title";
-        o = "asdf";//"三国演义"; // test unicode
-        purgeRelationship(pid, p, o, true, null);
+            p = "urn:p" + relNum++;
+            o = "urn:o";
+            purgeRelationship(s, p, o, false, null);
 
-        p = "urn:temperature";
-        o = "98.6";
-        purgeRelationship(pid, p, o, true, Constants.RDF_XSD.FLOAT.uri);
+            p = "urn:title" + relNum;
+            o = "asdf";//"三国演义"; // test unicode
+            purgeRelationship(s, p, o, true, null);
 
-        // utf-8 literal with multibyte sequences
-        p = "urn:utf8literal";
-        o = MULTIBYTE_UTF8;
-        purgeRelationship(pid, p, o, true, null);
+            p = "urn:temperature" + relNum;
+            o = "98.6";
+            purgeRelationship(s, p, o, true, Constants.RDF_XSD.FLOAT.uri);
 
-        assertFalse("Purging non-existant relation should have failed", apim
-                .purgeRelationship(pid, "urn:asdf", "867-5309", true, null));
+            // utf-8 literal with multibyte sequences
+            p = "urn:utf8literal" + relNum;
+            o = MULTIBYTE_UTF8;
+            purgeRelationship(s, p, o, true, null);
+
+            assertFalse("Purging non-existant relation should have failed", apim
+                .purgeRelationship(s, "urn:asdf", "867-5309", true, null));
+        }
     }
 
-    private void addRelationship(String pid,
+    // note: queries resource index by predicate and object, and then checks subject is ok
+    // so make sure if testing across multiple objects that predicate x object combinations are unique
+    private void addRelationship(String subject,
                                  String predicate,
                                  String object,
                                  boolean isLiteral,
                                  String datatype) throws Exception {
-        assertTrue(apim.addRelationship(pid,
+        assertTrue(apim.addRelationship(subject,
                                         predicate,
                                         object,
                                         isLiteral,
                                         datatype));
         assertFalse("Adding duplicate relationship should return false", apim
-                .addRelationship(pid, predicate, object, isLiteral, datatype));
+                .addRelationship(subject, predicate, object, isLiteral, datatype));
 
         // check resource index
         String query = "";
@@ -305,34 +400,45 @@ public class TestRelationships
         assertTrue(tuples.hasNext());
         Map<String, Node> row = tuples.next();
         for (String key : row.keySet()) {
-            assertEquals(PID.toURI(pid), row.get(key).toString());
+            assertEquals(subjectAsURI(subject), row.get(key).toString());
         }
 
     }
 
-    private void getRelationship(String pid,
+    // FIXME: remove once pid no longer allowed as subject in relationships methods
+    // check if subject is a uri or just a pid, if a pid then return the uri form
+    private String subjectAsURI(String subj) {
+        // already a uri?
+        if (subj.startsWith(Constants.FEDORA.uri))
+            return subj;
+        // no, convert to uri
+        return PID.toURI(subj);
+
+    }
+
+    private void getRelationship(String subject,
                                  String predicate,
                                  String object,
                                  boolean isLiteral,
                                  String datatype) throws Exception {
-        addRelationship(pid, predicate, object, isLiteral, datatype);
-        RelationshipTuple[] tuples = apim.getRelationships(pid, predicate);
+        addRelationship(subject, predicate, object, isLiteral, datatype);
+        RelationshipTuple[] tuples = apim.getRelationships(subject, predicate);
         assertNotNull(tuples);
         assertEquals(1, tuples.length);
-        assertEquals(PID.toURI(pid), tuples[0].getSubject());
+        assertEquals(subjectAsURI(subject), tuples[0].getSubject());
         assertEquals(predicate, tuples[0].getPredicate());
         assertEquals(object, tuples[0].getObject());
         assertEquals(isLiteral, tuples[0].isIsLiteral());
         assertEquals(datatype, tuples[0].getDatatype());
     }
 
-    private void purgeRelationship(String pid,
+    private void purgeRelationship(String subject,
                                    String predicate,
                                    String object,
                                    boolean isLiteral,
                                    String datatype) throws Exception {
-        addRelationship(pid, predicate, object, isLiteral, datatype);
-        assertTrue(apim.purgeRelationship(pid,
+        addRelationship(subject, predicate, object, isLiteral, datatype);
+        assertTrue(apim.purgeRelationship(subject,
                                           predicate,
                                           object,
                                           isLiteral,

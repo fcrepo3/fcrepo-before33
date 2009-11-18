@@ -1,5 +1,5 @@
 /* The contents of this file are subject to the license and copyright terms
- * detailed in the license directory at the root of the source tree (also 
+ * detailed in the license directory at the root of the source tree (also
  * available online at http://fedora-commons.org/license/).
  */
 package fedora.server.management;
@@ -16,12 +16,12 @@ import fedora.server.storage.types.RelationshipTuple;
 
 /**
  * The management subsystem interface.
- * 
+ *
  * @author Chris Wilper
  * @version $Id$
  */
 public interface Management {
-    
+
     public String ingest(@PName("context")Context context,
                          @PName("serialization")InputStream serialization,
                          @PName("logMessage")String logMessage,
@@ -35,7 +35,7 @@ public interface Management {
                              @PName("label")String label,
                              @PName("ownerID")String ownerID,
                              @PName("logMessage")String logMessage) throws ServerException;
-    
+
     public InputStream getObjectXML(@PName("context")Context context, @PName("pid")String pid, @PName("encoding")String encoding)
             throws ServerException;
 
@@ -143,19 +143,19 @@ public interface Management {
             throws ServerException;
 
     public RelationshipTuple[] getRelationships(@PName("context")Context context,
-                                                @PName("pid")String pid,
+                                                @PName("subject")String subject,
                                                 @PName("relationship")String relationship)
             throws ServerException;
 
     public boolean addRelationship(@PName("context")Context context,
-                                   @PName("pid")String pid,
+                                   @PName("subject")String subject,
                                    @PName("relationship")String relationship,
                                    @PName("object")String object,
                                    @PName("isLiteral")boolean isLiteral,
                                    @PName("datatype")String datatype) throws ServerException;
 
     public boolean purgeRelationship(@PName("context")Context context,
-                                     @PName("pid")String pid,
+                                     @PName("subject")String subject,
                                      @PName("relationship")String relationship,
                                      @PName("object")String object,
                                      @PName("isLiteral")boolean isLiteral,

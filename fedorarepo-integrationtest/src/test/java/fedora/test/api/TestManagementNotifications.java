@@ -25,6 +25,8 @@ import javax.jms.Topic;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import fedora.common.PID;
+
 import fedora.server.management.FedoraAPIM;
 
 import fedora.test.DemoObjectTestSetup;
@@ -164,7 +166,7 @@ public class TestManagementNotifications
         // Check on the notification produced by modifyObject
         checkNotification(pid, "modifyObject");
 
-        // (3) test addRelationship
+        // (3a) test addRelationship - pid
         System.out.println("Running TestManagementNotifications.testAddRelationship...");
         boolean addRelResult =
                 apim.addRelationship(pid,
@@ -177,12 +179,64 @@ public class TestManagementNotifications
         // Check on the notification produced by addRelationship
         checkNotification(pid, "addRelationship");
 
-        // (4) test purgeRelationship
+        // (3b) test addRelationship - object uri
+        System.out.println("Running TestManagementNotifications.testAddRelationship...");
+        addRelResult =
+                apim.addRelationship(PID.toURI(pid),
+                                     "rel:isRelatedTo",
+                                     "demo:6",
+                                     false,
+                                     null);
+        assertTrue(addRelResult);
+
+        // Check on the notification produced by addRelationship
+        checkNotification(pid, "addRelationship");
+
+        // (3c) test addRelationship - datastream uri
+        System.out.println("Running TestManagementNotifications.testAddRelationship...");
+        addRelResult =
+                apim.addRelationship(PID.toURI(pid) + "/DS1",
+                                     "rel:isRelatedTo",
+                                     "demo:7",
+                                     false,
+                                     null);
+        assertTrue(addRelResult);
+
+        // Check on the notification produced by addRelationship
+        checkNotification(pid, "addRelationship");
+
+        // (4a) test purgeRelationship - pid
         System.out.println("Running TestManagementNotifications.testPurgeRelationship...");
         boolean purgeRelResult =
                 apim.purgeRelationship(pid,
                                        "rel:isRelatedTo",
                                        "demo:5",
+                                       false,
+                                       null);
+        assertTrue(purgeRelResult);
+
+        // Check on the notification produced by purgeRelationship
+        checkNotification(pid, "purgeRelationship");
+
+        // (4b) test purgeRelationship - object uri
+        System.out.println("Running TestManagementNotifications.testPurgeRelationship...");
+        purgeRelResult =
+                apim.purgeRelationship(PID.toURI(pid) ,
+                                       "rel:isRelatedTo",
+                                       "demo:6",
+                                       false,
+                                       null);
+        assertTrue(purgeRelResult);
+
+        // Check on the notification produced by purgeRelationship
+        checkNotification(pid, "purgeRelationship");
+
+        // (4c) test purgeRelationship - datastream uri
+        System.out.println("Running TestManagementNotifications.testPurgeRelationship...");
+        purgeRelResult =
+                apim.purgeRelationship(PID.toURI(pid) + "/DS1",
+                                       "rel:isRelatedTo",
+                                       "demo:7",
                                        false,
                                        null);
         assertTrue(purgeRelResult);

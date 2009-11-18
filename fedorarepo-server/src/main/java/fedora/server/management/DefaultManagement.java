@@ -23,6 +23,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -1497,13 +1498,50 @@ public class DefaultManagement
         }
     }
 
+
+    // helper class to get pid from subject and to get URI form of subject
+    // subject can either be a pid or an info:fedora/ uri
+    private static class SubjectProcessor {
+
+        private static Pattern pidRegex = Pattern.compile("^([A-Za-z0-9]|-|\\.)+:(([A-Za-z0-9])|-|\\.|~|_|(%[0-9A-F]{2}))+$");
+
+        static String getSubjectAsUri(String subject) {
+            // if we weren't given a pid, assume it's a URI
+            if (!isPid(subject))
+                return subject;
+            // otherwise return URI from the pid
+            LOG.warn("Relationships API methods:  the 'pid' (" + subject + ") form of a relationship's subject is deprecated.  Please specify the subject using the " + Constants.FEDORA.uri + " uri scheme.");
+            return PID.toURI(subject);
+        }
+        static String getSubjectPID(String subject) throws ServerException {
+            if (isPid(subject))
+                return subject;
+            // check for info:uri scheme
+            if (subject.startsWith(Constants.FEDORA.uri)) {
+                // pid is everything after the first / to the 2nd / or to the end of the string
+                return subject.split("/",3)[1];
+
+            } else {
+                throw new GeneralException("Subject URI must be in the " + Constants.FEDORA.uri + " scheme.");
+            }
+
+        }
+        private static boolean isPid(String subject) {
+            return pidRegex.matcher(subject).matches();
+        }
+    }
+
+
     public RelationshipTuple[] getRelationships(Context context,
-                                                String pid,
+                                                String subject,
                                                 String relationship)
             throws ServerException {
         DOReader r = null;
+        String pid = null;
         try {
             LOG.debug("Entered getRelationships");
+
+            pid = SubjectProcessor.getSubjectPID(subject);
 
             m_authz.enforceGetRelationships(context,
                                                         pid,
@@ -1517,8 +1555,12 @@ public class DefaultManagement
                 if (relationship != null) {
                     pred = new SimpleURIReference(new URI(relationship));
                 }
+                URIReference subj = null;
+                if (subject != null) {
+                    subj = new SimpleURIReference(new URI(SubjectProcessor.getSubjectAsUri(subject)));
+                }
                 Set<RelationshipTuple> tuples =
-                        r.getRelationships(pred, null);
+                        r.getRelationships(subj, pred, null);
                 return tuples.toArray(new RelationshipTuple[tuples.size()]);
             } catch (URISyntaxException e) {
                 throw new GeneralException("Relationship must be a URI", e);
@@ -1539,14 +1581,16 @@ public class DefaultManagement
     }
 
     public boolean addRelationship(Context context,
-                                   String pid,
+                                   String subject,
                                    String relationship,
                                    String object,
                                    boolean isLiteral,
                                    String datatype) throws ServerException {
         DOWriter w = null;
+        String pid = null;
         try {
             LOG.debug("Entered addRelationship");
+            pid = SubjectProcessor.getSubjectPID(subject);
             m_authz.enforceAddRelationship(context,
                                                        pid,
                                                        relationship,
@@ -1557,7 +1601,8 @@ public class DefaultManagement
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             boolean added =
                     w
-                            .addRelationship(relationship,
+                            .addRelationship(SubjectProcessor.getSubjectAsUri(subject),
+                                             relationship,
                                              object,
                                              isLiteral,
                                              datatype);
@@ -1587,14 +1632,16 @@ public class DefaultManagement
     }
 
     public boolean purgeRelationship(Context context,
-                                     String pid,
+                                     String subject,
                                      String relationship,
                                      String object,
                                      boolean isLiteral,
                                      String datatype) throws ServerException {
         DOWriter w = null;
+        String pid = null;
         try {
             LOG.debug("Entered purgeRelationship");
+            pid = SubjectProcessor.getSubjectPID(subject);
             m_authz.enforcePurgeRelationship(context,
                                                          pid,
                                                          relationship,
@@ -1604,7 +1651,8 @@ public class DefaultManagement
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             boolean purged =
-                    w.purgeRelationship(relationship,
+                    w.purgeRelationship(SubjectProcessor.getSubjectAsUri(subject),
+                                        relationship,
                                         object,
                                         isLiteral,
                                         datatype);

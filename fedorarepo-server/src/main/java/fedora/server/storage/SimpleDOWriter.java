@@ -233,20 +233,55 @@ public class SimpleDOWriter
         return deletedDates;
     }
 
-    public boolean addRelationship(String relationship,
+    // from the relationship subject, determine which datastream to modify etc
+    private String resolveSubjectToDatastream(String subject) throws ServerException{
+        String dsId = null;
+        String pidURI = PID.toURI(m_obj.getPid());
+        if (subject.equals(pidURI)) {
+            dsId = "RELS-EXT";
+        } else {
+            if (subject.startsWith(pidURI + "/")) {
+                dsId = "RELS-INT";
+            } else {
+                throw new GeneralException("Cannot determine which relationship datastream to update for subject " + subject + ".  Relationship subjects must be the URI of the object or the URI of a datastream within the object.");
+            }
+        }
+        return dsId;
+
+    }
+
+    public boolean addRelationship(String subject,
+                                   String relationship,
                                    String object,
                                    boolean isLiteral,
                                    String datatype) throws ServerException {
-        String datastreamID = "RELS-EXT";
-        String subject = PID.toURI(m_obj.getPid());
+
+        return addRelationship(resolveSubjectToDatastream(subject),
+                               subject,
+                               relationship,
+                               object,
+                               isLiteral,
+                               datatype);
+    }
+
+    public boolean addRelationship(String dsId,
+                                   String subject,
+                                   String relationship,
+                                   String object,
+                                   boolean isLiteral,
+                                   String datatype) throws ServerException {
+
         Triple toAdd =
                 createTriple(subject, relationship, object, isLiteral, datatype);
-        Datastream relsExt = GetDatastream(datastreamID, null);
-        if (relsExt == null) {
+        Datastream relsDatastream = GetDatastream(dsId, null);
+        if (relsDatastream == null) {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             Map<String, String> map = new HashMap<String, String>();
-            map.put(RELS_EXT.prefix, RELS_EXT.uri);
-            map.put(MODEL.prefix, MODEL.uri);
+            // namespaces for RELS-EXT
+            if (dsId.equals("RELS-EXT")) {
+                map.put(RELS_EXT.prefix, RELS_EXT.uri);
+                map.put(MODEL.prefix, MODEL.uri);
+            }
             map.put(RDF.prefix, RDF.uri);
 
             try {
@@ -258,15 +293,21 @@ public class SimpleDOWriter
             }
 
             DatastreamXMLMetadata newds = new DatastreamXMLMetadata();
-            newds.DatastreamID = datastreamID;
+            newds.DatastreamID = dsId;
             newds.DatastreamAltIDs = new String[0];
-            newds.DSFormatURI = RELS_EXT1_0.uri;
+            // formats for internal datastreams
+            if (dsId.equals("RELS-EXT")) {
+                newds.DSFormatURI = RELS_EXT1_0.uri;
+            } else {
+                if (dsId.equals("RELS-INT"))
+                    newds.DSFormatURI = RELS_INT1_0.uri;
+            }
             newds.DSMIME = "application/rdf+xml";
             newds.DSControlGrp = "X";
             newds.DSInfoType = null;
             newds.DSState = "A";
             newds.DSVersionable = false;
-            newds.DSVersionID = datastreamID + ".0";
+            newds.DSVersionID = dsId + ".0";
             newds.DSLabel = "Relationships";
             newds.DSCreateDT = Server.getCurrentDate(m_context);
             newds.DSLocation = null;
@@ -279,12 +320,12 @@ public class SimpleDOWriter
                                                          newds.DatastreamID,
                                                          newds.getContentStream());
             addDatastream(newds, false);
-        } else { // (relsExt != null)
+        } else { // (relsDatastream != null)
             FilteredTripleIterator newIter = null;
             try {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 TripleIterator iter =
-                        TripleIterator.fromStream(relsExt.getContentStream(),
+                        TripleIterator.fromStream(relsDatastream.getContentStream(),
                                                   RDFFormat.RDF_XML);
                 newIter = new FilteredTripleIterator(iter, toAdd, true);
                 newIter.toStream(out, RDFFormat.RDF_XML, false);
@@ -292,21 +333,21 @@ public class SimpleDOWriter
                 if (newIter.wasChangeMade()) {
                     DatastreamXMLMetadata newds = new DatastreamXMLMetadata();
                     newds.DSMDClass =
-                            ((DatastreamXMLMetadata) relsExt).DSMDClass;
-                    newds.DatastreamID = relsExt.DatastreamID;
-                    newds.DatastreamAltIDs = relsExt.DatastreamAltIDs;
-                    newds.DSFormatURI = relsExt.DSFormatURI;
-                    newds.DSMIME = relsExt.DSMIME;
+                            ((DatastreamXMLMetadata) relsDatastream).DSMDClass;
+                    newds.DatastreamID = relsDatastream.DatastreamID;
+                    newds.DatastreamAltIDs = relsDatastream.DatastreamAltIDs;
+                    newds.DSFormatURI = relsDatastream.DSFormatURI;
+                    newds.DSMIME = relsDatastream.DSMIME;
                     newds.DSControlGrp = "X";
-                    newds.DSInfoType = relsExt.DSInfoType;
-                    newds.DSState = relsExt.DSState;
-                    newds.DSVersionable = relsExt.DSVersionable;
-                    newds.DSVersionID = newDatastreamID(datastreamID);
-                    newds.DSLabel = relsExt.DSLabel;
+                    newds.DSInfoType = relsDatastream.DSInfoType;
+                    newds.DSState = relsDatastream.DSState;
+                    newds.DSVersionable = relsDatastream.DSVersionable;
+                    newds.DSVersionID = newDatastreamID(dsId);
+                    newds.DSLabel = relsDatastream.DSLabel;
                     newds.DSCreateDT = Server.getCurrentDate(m_context);
                     newds.DSLocation = null;
                     newds.DSLocationType = null;
-                    newds.DSChecksumType = relsExt.DSChecksumType;
+                    newds.DSChecksumType = relsDatastream.DSChecksumType;
                     newds.xmlContent = out.toByteArray();
                     newds.DSSize = newds.xmlContent.length;
 
@@ -333,26 +374,41 @@ public class SimpleDOWriter
         return true;
     }
 
-    public boolean purgeRelationship(String relationship,
+    public boolean purgeRelationship(String subject,
+                                     String relationship,
                                      String object,
                                      boolean isLiteral,
                                      String datatype) throws ServerException {
-        String datastreamID = "RELS-EXT";
-        String subject = PID.toURI(m_obj.getPid());
+
+        return purgeRelationship(resolveSubjectToDatastream(subject),
+                                 subject,
+                                 relationship,
+                                 object,
+                                 isLiteral,
+                                 datatype);
+    }
+
+    public boolean purgeRelationship(String dsId,
+                                     String subject,
+                                     String relationship,
+                                     String object,
+                                     boolean isLiteral,
+                                     String datatype) throws ServerException {
+
         Triple toPurge =
                 createTriple(subject, relationship, object, isLiteral, datatype);
 
-        Datastream relsExt = GetDatastream(datastreamID, null);
-        if (relsExt == null) {
+        Datastream relsDatastream = GetDatastream(dsId, null);
+        if (relsDatastream == null) {
             // relationship does not exist
             return false;
         } else { // (relsExt != null)
-            InputStream relsExtIS = relsExt.getContentStream();
+            InputStream relsDatastreamIS = relsDatastream.getContentStream();
 
             TripleIterator iter = null;
             FilteredTripleIterator newIter = null;
             try {
-                iter = TripleIterator.fromStream(relsExtIS, RDFFormat.RDF_XML);
+                iter = TripleIterator.fromStream(relsDatastreamIS, RDFFormat.RDF_XML);
 
                 newIter = new FilteredTripleIterator(iter, toPurge, false);
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -362,22 +418,22 @@ public class SimpleDOWriter
                 if (newIter.wasChangeMade()) {
                     DatastreamXMLMetadata newds = new DatastreamXMLMetadata();
                     newds.DSMDClass =
-                            ((DatastreamXMLMetadata) relsExt).DSMDClass;
-                    newds.DatastreamID = datastreamID;
-                    newds.DatastreamAltIDs = relsExt.DatastreamAltIDs;
-                    newds.DSFormatURI = relsExt.DSFormatURI;
-                    newds.DSMIME = relsExt.DSMIME;
+                            ((DatastreamXMLMetadata) relsDatastream).DSMDClass;
+                    newds.DatastreamID = dsId;
+                    newds.DatastreamAltIDs = relsDatastream.DatastreamAltIDs;
+                    newds.DSFormatURI = relsDatastream.DSFormatURI;
+                    newds.DSMIME = relsDatastream.DSMIME;
                     newds.DSControlGrp = "X";
-                    newds.DSInfoType = relsExt.DSInfoType;
-                    newds.DSState = relsExt.DSState;
-                    newds.DSVersionable = relsExt.DSVersionable;
-                    newds.DSVersionID = newDatastreamID(datastreamID);
-                    newds.DSLabel = relsExt.DSLabel;
+                    newds.DSInfoType = relsDatastream.DSInfoType;
+                    newds.DSState = relsDatastream.DSState;
+                    newds.DSVersionable = relsDatastream.DSVersionable;
+                    newds.DSVersionID = newDatastreamID(dsId);
+                    newds.DSLabel = relsDatastream.DSLabel;
                     newds.DSCreateDT = Server.getCurrentDate(m_context);
 
                     newds.DSLocation = null;
                     newds.DSLocationType = null;
-                    newds.DSChecksumType = relsExt.DSChecksumType;
+                    newds.DSChecksumType = relsDatastream.DSChecksumType;
                     newds.xmlContent = out.toByteArray();
                     newds.DSSize = newds.xmlContent.length;
 

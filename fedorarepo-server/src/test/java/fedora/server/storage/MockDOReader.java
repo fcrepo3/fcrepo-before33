@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
+import org.jrdf.graph.SubjectNode;
 
 import fedora.server.errors.ServerException;
 import fedora.server.storage.types.AuditRecord;
@@ -126,12 +127,21 @@ public class MockDOReader
         return theObject.getOwnerId();
     }
 
-    public boolean hasRelationship(PredicateNode p, ObjectNode o) {
+    public boolean hasRelationship(SubjectNode s, PredicateNode p, ObjectNode o) {
+        return theObject.hasRelationship(s, p, o);
+    }
+    public boolean hasRelationship( PredicateNode p, ObjectNode o) {
         return theObject.hasRelationship(p, o);
     }
 
+    public Set<RelationshipTuple> getRelationships(SubjectNode s, PredicateNode p, ObjectNode o) {
+        return theObject.getRelationships(s, p, o);
+    }
     public Set<RelationshipTuple> getRelationships(PredicateNode p, ObjectNode o) {
         return theObject.getRelationships(p, o);
+    }
+    public Set<RelationshipTuple> getRelationships() {
+        return theObject.getRelationships();
     }
 
     // ----------------------------------------------------------------------

@@ -4,8 +4,27 @@
  */
 package fedora.server.storage;
 
-import static fedora.common.Constants.MODEL;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+
+import java.text.SimpleDateFormat;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.apache.log4j.Logger;
+
+import org.jrdf.graph.ObjectNode;
+import org.jrdf.graph.PredicateNode;
+import org.jrdf.graph.SubjectNode;
+
 import fedora.common.Models;
+
 import fedora.server.Context;
 import fedora.server.errors.DisseminationException;
 import fedora.server.errors.MethodNotFoundException;
@@ -16,22 +35,17 @@ import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnsupportedTranslationException;
 import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.storage.translation.DOTranslator;
-import fedora.server.storage.types.*;
+import fedora.server.storage.types.AuditRecord;
+import fedora.server.storage.types.BasicDigitalObject;
+import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DigitalObject;
+import fedora.server.storage.types.MethodDef;
+import fedora.server.storage.types.MethodParmDef;
+import fedora.server.storage.types.ObjectMethodsDef;
+import fedora.server.storage.types.RelationshipTuple;
 import fedora.server.utilities.DateUtility;
-import org.apache.log4j.Logger;
-import org.jrdf.graph.ObjectNode;
-import org.jrdf.graph.PredicateNode;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import static fedora.common.Constants.MODEL;
 
 
 /**
@@ -510,8 +524,24 @@ public class SimpleDOReader
     /**
      * {@inheritDoc}
      */
+    public boolean hasRelationship(SubjectNode subject, PredicateNode predicate, ObjectNode object) {
+        return m_obj.hasRelationship(subject, predicate, object);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean hasRelationship(PredicateNode predicate, ObjectNode object) {
         return m_obj.hasRelationship(predicate, object);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Set<RelationshipTuple> getRelationships(SubjectNode subject,
+                                                   PredicateNode predicate,
+                                                   ObjectNode object) {
+        return m_obj.getRelationships(subject, predicate, object);
     }
 
     /**
@@ -520,6 +550,12 @@ public class SimpleDOReader
     public Set<RelationshipTuple> getRelationships(PredicateNode predicate,
                                                    ObjectNode object) {
         return m_obj.getRelationships(predicate, object);
+    }
+    /**
+     * {@inheritDoc}
+     */
+    public Set<RelationshipTuple> getRelationships() {
+        return m_obj.getRelationships();
     }
 
 }
