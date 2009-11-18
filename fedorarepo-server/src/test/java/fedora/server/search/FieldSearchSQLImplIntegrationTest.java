@@ -196,10 +196,16 @@ public class FieldSearchSQLImplIntegrationTest {
         m_impl.update(reader1);
 
         // query for it via dc:identifier
-        // should get 1 page w/1 result
         FieldSearchQuery query = new FieldSearchQuery(Condition.getConditions("identifier~" + pid1));
         int[] expected = new int[] { 1, 1 };
+
+        // first try with client requesting max TEN results per page
+        // should get 1 page w/1 result
         checkResults(expected, countResults(query, 10));
+
+        // then try same, but with client requesting max ONE result per page
+        // should still get 1 page w/1 result
+        checkResults(expected, countResults(query, 1));
     }
 
     // runs the query (all pages) and returns { pageCount, resultCount }

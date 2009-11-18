@@ -59,6 +59,8 @@ public class FieldSearchResultSQLImpl
 
     private Date m_expirationDate;
 
+    private String m_nextPID;
+
     /* invariants */
     private final Connection m_conn;
 
@@ -370,20 +372,34 @@ public class FieldSearchResultSQLImpl
             StreamIOException, ServerException {
         m_objectFields = new ArrayList();
         int resultCount = 0;
-        // run through resultSet, adding each result to m_objectFields
+        // Run through resultSet, adding each result to m_objectFields
         // for up to maxResults objects, or until the result set is
         // empty, whichever comes first.
+        // Note: If this is the first chunk of results for the entire search,
+        // m_nextPID will be null, and will require the cursor to be advanced
+        // to the first result.  For all remaining chunks, the cursor will
+        // already be in the correct position (and m_nextPID will have been set)
+        // so a call to m_resultSet.next() is not initially necessary.
         try {
-            while (resultCount < m_maxResults && m_resultSet.next()) {
+            while (resultCount < m_maxResults
+                    && (m_nextPID != null || m_resultSet.next())) {
                 resultCount++;
-                // add the current object from the resultSet to m_objectFields
-                String pid = m_resultSet.getString("pid");
+                // add the current object's info to m_objectFields
+                String pid;
+                if (m_nextPID == null) {
+                    pid = m_resultSet.getString("pid");
+                } else {
+                    pid = m_nextPID;
+                    m_nextPID = null;
+                }
                 m_objectFields.add(getObjectFields(pid));
             }
-            // done with this block.  now, are there any more results to return?
-            boolean exhausted = resultCount < m_maxResults;
-            if (!exhausted) {
-                // yes, so generate a token, make sure the cursor is set,
+            // done with this block. now, are there more results?
+            if (resultCount == m_maxResults && m_resultSet.next()) {
+                // yes, and we've now advanced the cursor so we must remember
+                // the pid so the next chunk can use it
+                m_nextPID = m_resultSet.getString("pid");
+                // generate a token, make sure the cursor is set,
                 // and make sure the expirationDate is set
                 long now = System.currentTimeMillis();
                 m_token = MD5Utility.getBase16Hash(hashCode() + "" + now);
