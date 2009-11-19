@@ -57,6 +57,14 @@
                     </xs:simpleType>
                 </xs:element>
                 <xs:element name="dsChecksum" type="xs:string" />
+                <xs:element name="dsChecksumValid" minOccurs="0" maxOccurs="unbounded" >
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="true"/>
+                            <xs:enumeration value="false"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
                 <xs:element name="dsAltID" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
 			</xs:sequence>
 			<xs:attribute name="pid" use="required">
