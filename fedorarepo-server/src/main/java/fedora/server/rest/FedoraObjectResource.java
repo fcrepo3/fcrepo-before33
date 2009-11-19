@@ -33,7 +33,6 @@ import fedora.common.Constants;
 
 import fedora.server.Context;
 import fedora.server.access.ObjectProfile;
-import fedora.server.errors.ObjectExistsException;
 import fedora.server.rest.RestUtil.RequestContent;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.utilities.DateUtility;
@@ -125,46 +124,6 @@ public class FedoraObjectResource extends BaseRestResource {
     }
 
     /**
-     * Gets a list of timestamps indicating when components changed in an
-     * object. This is a set of timestamps indicating when a datastream or
-     * disseminator was created or modified in the object. These timestamps can
-     * be used to request a timestamped dissemination request to view the object
-     * as it appeared at a specific point in time.
-     *
-     * GET /objects/{pid}/versions.xml
-     *
-     * @see http://www.fedora.info/wiki/index.php/GetObjectHistory
-     */
-    @Path("/versions.xml")
-    @GET
-    public Response getObjectHistoryAsXML(
-            @PathParam(RestParam.PID)
-            String pid) {
-        return getObjectHistory(pid, XML);
-    }
-
-    /**
-     * Inquires upon all object Disseminators to obtain Behavior Definition
-     * pids, and methodNames supported by a digital object. This returns a set
-     * of method definitions that represent all possible disseminations that can
-     * be run on the object.
-     *
-     * GET /objects/{pid}/methods.xml ? asOfDateTime
-     *
-     * @see http://www.fedora.info/wiki/index.php/ListMethods
-     */
-    @Path("/methods.xml")
-    @GET
-    @Produces({ XML })
-    public Response getObjectMethodsAsXml(
-            @PathParam(RestParam.PID)
-            String pid,
-            @QueryParam(RestParam.AS_OF_DATE_TIME)
-            String dTime) {
-        return getObjectMethods(pid, dTime, XML);
-    }
-
-    /**
      * Inquires upon all object Disseminators to obtain Behavior Definition
      * pids, and methodNames supported by a digital object. This returns a set
      * of method definitions that represent all possible disseminations that can
@@ -253,14 +212,6 @@ public class FedoraObjectResource extends BaseRestResource {
             String format) {
 
         try {
-            if (pid.endsWith(".xml")) {
-                format = XML;
-                pid = pid.substring(0, pid.length() - 4);
-            } else if (pid.endsWith(".html")) {
-                format = HTML;
-                pid = pid.substring(0, pid.length() - 5);
-            }
-
             Date asOfDateTime = DateUtility.convertStringToDate(dateTime);
             Context context = getContext();
             ObjectProfile objProfile = apiAService.getObjectProfile(context, pid, asOfDateTime);
@@ -278,30 +229,6 @@ public class FedoraObjectResource extends BaseRestResource {
         } catch (Exception ex) {
             return handleException(ex);
         }
-    }
-
-    /**
-     * Provides a listing of the datastreams available on an object in xml format.
-     * This method is not included in DatastreamResource due to limitations in
-     * path resolution.
-     *
-     * GET /objects/{pid}/datastreams.xml ? asOfDateTime
-     * Equivalent to: GET /objects/{pid}/datastreams?format=xml
-     *
-     * @param pid
-     * @param dateTime
-     */
-    @Path("/datastreams.xml")
-    @GET
-    public Response listDatastreamsAsXml(
-            @PathParam(RestParam.PID)
-            String pid,
-            @QueryParam(RestParam.AS_OF_DATE_TIME)
-            String dateTime) {
-        DatastreamResource resource = new DatastreamResource();
-        resource.servletRequest = servletRequest;
-        resource.uriInfo = uriInfo;
-        return resource.listDatastreams(pid, dateTime, XML);
     }
 
     /**

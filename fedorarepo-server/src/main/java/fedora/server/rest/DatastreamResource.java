@@ -125,14 +125,6 @@ public class DatastreamResource extends BaseRestResource {
                      @DefaultValue(HTML)
                      String format) {
         try {
-            if (dsID.endsWith(".xml")) {
-                format = XML;
-                dsID = dsID.substring(0, dsID.length() - 4);
-            } else if (dsID.endsWith(".html")) {
-                format = HTML;
-                dsID = dsID.substring(0, dsID.length() - 5);
-            }
-
             Date asOfDateTime = DateUtility.convertStringToDate(dateTime);
             Context context = getContext();
             Datastream dsProfile = apiMService.getDatastream(context, pid, dsID, asOfDateTime);

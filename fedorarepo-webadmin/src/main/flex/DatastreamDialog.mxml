@@ -40,7 +40,7 @@
 				this.dsID = dsID;
 				this.url = url;
 				      	  
-    		    datastreamProfile.url = url + ".xml?flash=true";
+    		    datastreamProfile.url = url + "?format=xml&flash=true";
 			    datastreamProfile.send();
 			}
           

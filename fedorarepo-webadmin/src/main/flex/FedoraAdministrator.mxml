@@ -149,7 +149,7 @@
                     objectLoader.addEventListener(Event.COMPLETE, 
                                                   function():void{addObjectTab(pid);});            
                     var objectRequest:URLRequest =
-                        new URLRequest(baseUrl+"/objects/"+pid+".xml");           
+                        new URLRequest(baseUrl+"/objects/"+pid+"?format=xml");           
                     objectLoader.load(objectRequest);
                 }
             }                     

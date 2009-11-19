@@ -218,13 +218,6 @@ public class TestRESTAPI
         assertTrue(responseXML.contains("<objItemIndexViewURL>"));
         assertTrue(responseXML.contains("<objState>"));
 
-        url = String.format("/objects/%s.xml", pid.toString());
-        assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
-        response = get(true);
-        assertEquals(SC_OK, response.getStatusCode());
-        responseXML = new String(response.responseBody, "UTF-8");
-        assertTrue(responseXML.contains("<objectProfile"));
-
         url =
                 String.format("/objects/%s?asOfDateTime=%s",
                               pid.toString(),
@@ -247,10 +240,6 @@ public class TestRESTAPI
         assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
         assertEquals(SC_OK, get(true).getStatusCode());
 
-        url = String.format("/objects/%s/methods.xml", pid.toString());
-        assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
-        assertEquals(SC_OK, get(true).getStatusCode());
-
         url =
                 String.format("/objects/%s/methods?asOfDateTime=%s", pid
                         .toString(), datetime);
@@ -266,10 +255,6 @@ public class TestRESTAPI
         url =
                 String.format("/objects/%s/datastreams?format=xml", pid
                         .toString());
-        assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
-        assertEquals(SC_OK, get(true).getStatusCode());
-
-        url = String.format("/objects/%s/datastreams.xml", pid.toString());
         assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
         assertEquals(SC_OK, get(true).getStatusCode());
 
@@ -290,7 +275,7 @@ public class TestRESTAPI
         assertTrue(responseXML.contains("<html>"));
 
         // Datastream profile in XML format
-        url = String.format("/objects/%s/datastreams/RELS-EXT.xml", pid.toString());
+        url = String.format("/objects/%s/datastreams/RELS-EXT?format=xml", pid.toString());
         assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
         response = get(true);
         assertEquals(SC_OK, response.getStatusCode());
@@ -370,10 +355,6 @@ public class TestRESTAPI
         assertEquals(SC_OK, get(true).getStatusCode());
 
         url = String.format("/objects/%s/versions?format=xml", pid.toString());
-        assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
-        assertEquals(SC_OK, get(true).getStatusCode());
-
-        url = String.format("/objects/%s/versions.xml", pid.toString());
         assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
         assertEquals(SC_OK, get(true).getStatusCode());
     }
@@ -645,17 +626,13 @@ public class TestRESTAPI
         url = "/objects/nextPID";
         assertEquals(SC_UNAUTHORIZED, post("", false).getStatusCode());
         assertEquals(SC_OK, post("", true).getStatusCode());
-
-        url = "/objects/nextPID.xml";
-        assertEquals(SC_UNAUTHORIZED, post("", false).getStatusCode());
-        assertEquals(SC_OK, post("", true).getStatusCode());
     }
 
     public void testLifecycle() throws Exception {
         HttpResponse response = null;
 
         // Get next PID
-        url = "/objects/nextPID.xml";
+        url = "/objects/nextPID?format=xml";
         assertEquals(SC_UNAUTHORIZED, post("", false).getStatusCode());
         response = post("", true);
         assertEquals(SC_OK, response.getStatusCode());

@@ -233,11 +233,11 @@
 	</mx:Script>
 
 	<mx:HTTPService id="object" method="GET" showBusyCursor="true"
-	                url="{baseUrl}/objects/{pid}.xml?flash=true" 	                
+	                url="{baseUrl}/objects/{pid}?format=xml&amp;flash=true" 	                
 	                result="setObjectProfile(event)" 
 	                fault="ErrorHandler.handleFault(event)" />
 	<mx:HTTPService id="datastreams" method="GET" showBusyCursor="true"
-	                url="{baseUrl}/objects/{pid}/datastreams.xml?flash=true"
+	                url="{baseUrl}/objects/{pid}/datastreams?format=xml&amp;flash=true"
 	                result="getDatastreamsComplete(event)"	               
 	                fault="ErrorHandler.handleFault(event)" />
 	<mx:HTTPService id="objectUpdate" method="POST" resultFormat="text" showBusyCursor="true" 

@@ -89,37 +89,6 @@ public class FedoraObjectSearchResource extends BaseRestResource {
         }
     }
 
-
-    /**
-     * Implements the "getNextPID" functionality of the Fedora Management LITE
-     * (API-M-LITE) interface using a java servlet front end. The syntax defined
-     * by API-M-LITE for getting a list of the next available PIDs has the
-     * following binding:
-     * <ol>
-     * <li>getNextPID URL syntax:
-     * protocol://hostname:port/fedora/objects/nextPID[?numPIDs=NUMPIDS&namespace=NAMESPACE&format=html,xml]
-     * This syntax requests a list of next available PIDS. The parameter numPIDs
-     * determines the number of requested PIDS to generate. If omitted, numPIDs
-     * defaults to 1. The namespace parameter determines the namespace to be
-     * used in generating the PIDs. If omitted, namespace defaults to the
-     * namespace defined in the fedora.fcfg configuration file for the parameter
-     * pidNamespace. The xml parameter determines the type of output returned.
-     * If the parameter is omitted or has a value of "false", a MIME-typed
-     * stream consisting of an html table is returned providing a browser-savvy
-     * means of viewing the object profile. If the value specified is "true",
-     * then a MIME-typed stream consisting of XML is returned.</li>
-     */
-    @Path("nextPID.xml")
-    @POST
-    public Response getNextPID(
-            @QueryParam("numPIDs")
-            @DefaultValue("1")
-            int numPIDS,
-            @QueryParam(RestParam.NAMESPACE)
-            String namespace) throws Exception {
-        return getNextPID(numPIDS, namespace, XML);
-    }
-
     /**
      * Implements the "getNextPID" functionality of the Fedora Management LITE
      * (API-M-LITE) interface using a java servlet front end. The syntax defined
