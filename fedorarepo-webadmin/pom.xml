@@ -11,7 +11,9 @@
   <!--
     TEMPORARY Instructions:
       To build: mvn package
-      To test: point browser to target/index.html
+      To test: a) make sure test instance of Fedora is started
+               b) copy crossdomain.xml to that instance's ROOT webapp
+               c) point browser to target/index.html
       To integrate: a) examine existing files and dirs in
                        fedorarepo-webapp/src/main/webapp/admin
                     b) for each one that already exists there,
