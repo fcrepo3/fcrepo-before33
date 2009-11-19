@@ -52,14 +52,34 @@ public class WebClient {
      */
     public String USER_AGENT = null;
 
-    private final MultiThreadedHttpConnectionManager m_cManager;
+    private MultiThreadedHttpConnectionManager m_cManager;
 
+
+    /**
+     * The proxy configuration for the web client. 
+     */
+    private static ProxyConfiguration proxy = new ProxyConfiguration();
+    
+ 
     public WebClient() {
-        m_cManager = new MultiThreadedHttpConnectionManager();
+        configureConnectionManager();
     }
-
-    public HttpClient getHttpClient() throws IOException {
-        return getHttpClient(null, null);
+    
+    public WebClient(ProxyConfiguration configuration){
+        proxy = configuration;
+        configureConnectionManager();
+    }   
+    
+    private void configureConnectionManager(){
+        m_cManager = new MultiThreadedHttpConnectionManager();
+        m_cManager.getParams().setDefaultMaxConnectionsPerHost(MAX_CONNECTIONS_PER_HOST);
+        m_cManager.getParams().setMaxTotalConnections(MAX_TOTAL_CONNECTIONS);
+        m_cManager.getParams().setConnectionTimeout(TIMEOUT_SECONDS * 1000);
+        m_cManager.getParams().setSoTimeout(SOCKET_TIMEOUT_SECONDS * 1000);
+    }
+    
+    public HttpClient getHttpClient(String hostOrUrl) throws IOException {
+        return getHttpClient(hostOrUrl, null);
     }
 
     public HttpClient getHttpClient(String hostOrURL,
@@ -77,11 +97,6 @@ public class WebClient {
             }
         }
 
-        m_cManager.getParams()
-                .setDefaultMaxConnectionsPerHost(MAX_CONNECTIONS_PER_HOST);
-        m_cManager.getParams().setMaxTotalConnections(MAX_TOTAL_CONNECTIONS);
-        m_cManager.getParams().setConnectionTimeout(TIMEOUT_SECONDS * 1000);
-        m_cManager.getParams().setSoTimeout(SOCKET_TIMEOUT_SECONDS * 1000);
         HttpClient client = new HttpClient(m_cManager);
         if (host != null && creds != null) {
             client.getState().setCredentials(new AuthScope(host,
@@ -89,8 +104,21 @@ public class WebClient {
                                              creds);
             client.getParams().setAuthenticationPreemptive(true);
         }
+
+        if (proxy.isHostProxyable(host)) {
+            client.getHostConfiguration().setProxy(proxy.getProxyHost(),
+                                                   proxy.getProxyPort());
+            if (proxy.hasValidCredentials()) {
+                client.getState().setProxyCredentials(new AuthScope(proxy.getProxyHost(),
+                                                           proxy.getProxyPort(),
+                                                           null),
+                                                      new UsernamePasswordCredentials(proxy.getProxyUser(),
+                                                                             proxy.getProxyPassword()));
+            }
+        }
         return client;
     }
+
 
     public HttpInputStream get(String url, boolean failIfNotOK)
             throws IOException {
@@ -140,7 +168,7 @@ public class WebClient {
             client = getHttpClient(url, creds);
             getMethod.setDoAuthentication(true);
         } else {
-            client = getHttpClient();
+            client = getHttpClient(url);
         }
 
         HttpInputStream in = new HttpInputStream(client, getMethod, url);
