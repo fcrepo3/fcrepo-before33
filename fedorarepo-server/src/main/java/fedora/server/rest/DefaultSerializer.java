@@ -115,7 +115,7 @@ public class DefaultSerializer {
         return buffer.toString();
     }
 
-    String datastreamProfileToXML(String pid, String dsID, Datastream dsProfile, Date versDateTime)
+    String datastreamProfileToXML(String pid, String dsID, Datastream dsProfile, Date versDateTime, boolean validateChecksum)
             throws IOException {
         StringBuffer buffer = new StringBuffer();
 
@@ -153,7 +153,10 @@ public class DefaultSerializer {
         buffer.append("<dsLocationType>" + StreamUtility.enc(dsProfile.DSLocationType) + "</dsLocationType>");
         buffer.append("<dsChecksumType>" + StreamUtility.enc(dsProfile.DSChecksumType) + "</dsChecksumType>");
         buffer.append("<dsChecksum>" + StreamUtility.enc(dsProfile.DSChecksum) + "</dsChecksum>");
-
+        if (validateChecksum){
+            String valid = dsProfile.compareChecksum() ? "true" : "false";
+            buffer.append("<dsChecksumValid>" + valid + "</dsChecksumValid>");
+        }
         String[] dsAltIDs = dsProfile.DatastreamAltIDs;
         for(int i = 0; i < dsAltIDs.length; i++) {
             buffer.append("<dsAltID>" + StreamUtility.enc(dsAltIDs[i]) + "</dsAltID>");

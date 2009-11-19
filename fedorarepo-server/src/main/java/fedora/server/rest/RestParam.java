@@ -23,6 +23,7 @@ public interface RestParam {
     String FORMAT_URI = "formatURI";
     String CHECKSUM_TYPE = "checksumType";
     String CHECKSUM = "checksum";
+    String VALIDATE_CHECKSUM = "validateChecksum";
     String END_DT = "endDT";
     String START_DT = "startDT";
     String NAMESPACE = "namespace";

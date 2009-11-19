@@ -108,7 +108,7 @@ public class DatastreamResource extends BaseRestResource {
     /**
      * Invoke API-M.getDatastream(context, pid, dsID, asOfDateTime)
      *
-     * GET /objects/{pid}/datastreams/{dsID} ? asOfDateTime format
+     * GET /objects/{pid}/datastreams/{dsID} ? asOfDateTime & validateChecksum=true|false
      *
      * @see http://www.fedora.info/wiki/index.php/GetDatastream
      */
@@ -123,7 +123,10 @@ public class DatastreamResource extends BaseRestResource {
                      String dateTime,
                      @QueryParam(RestParam.FORMAT)
                      @DefaultValue(HTML)
-                     String format) {
+                     String format,
+                     @QueryParam(RestParam.VALIDATE_CHECKSUM)
+                     @DefaultValue("false")
+                     boolean validateChecksum) {
         try {
             Date asOfDateTime = DateUtility.convertStringToDate(dateTime);
             Context context = getContext();
@@ -138,7 +141,7 @@ public class DatastreamResource extends BaseRestResource {
             }
 
             String xml = getSerializer(context).
-                datastreamProfileToXML(pid, dsID, dsProfile, asOfDateTime);
+                datastreamProfileToXML(pid, dsID, dsProfile, asOfDateTime, validateChecksum);
 
             MediaType mime = RestHelper.getContentType(format);
 

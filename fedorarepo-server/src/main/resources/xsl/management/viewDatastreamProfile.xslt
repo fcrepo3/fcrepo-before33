@@ -174,7 +174,17 @@
                         <td align="left">
                             <xsl:value-of select="dsChecksum"/>
                         </td>
-                    </tr>				
+                    </tr>	
+                    <xsl:if test="dsChecksumValid">
+                        <tr>
+                            <td align="right">
+                                <font color="blue">Datastream Checksum Valid: </font>
+                            </td>
+                            <td align="left">
+                                <xsl:value-of select="dsChecksumValid"/>
+                            </td>
+                        </tr>   
+                    </xsl:if>			
 					<xsl:for-each select="dsAltID">
                         <tr>
                             <td align="right">
