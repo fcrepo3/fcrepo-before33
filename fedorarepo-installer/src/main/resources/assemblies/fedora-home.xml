@@ -273,8 +273,9 @@
         <include>org.fedorarepo:fedorarepo-server</include>
 
         <!-- 
-          Note: The include statement below will need to be expanded to
-                catch properly defined (i.e. maven-central) dependencies.
+          Note: The include statement below needs catch properly defined
+                (i.e. maven-central) dependencies or they will not be
+                included in the assembly.
          -->
         <include>batik:*</include>
         <include>commons-codec:commons-codec:jar:1.3</include>
@@ -301,9 +302,8 @@
         <include>org.slf4j:slf4j-log4j12:jar:1.5.2</include>
         <include>wsdl4j:wsdl4j:jar:1.5.1</include>
         <include>xerces:xercesImpl:jar:2.6.2</include>
-        <!--
-        <include>xml-apis:*</include>
-        -->
+        <include>xmlpull:xmlpull:jar:1.1.3.4a</include>
+        <include>xpp3:xpp3_min:jar:1.1.3.4.O</include>
                         
       </includes>
       <!--
