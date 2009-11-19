@@ -57,7 +57,7 @@
                     </xs:simpleType>
                 </xs:element>
                 <xs:element name="dsChecksum" type="xs:string" />
-                <xs:element name="dsChecksumValid" minOccurs="0" maxOccurs="unbounded" >
+                <xs:element name="dsChecksumValid" minOccurs="0">
                     <xs:simpleType>
                         <xs:restriction base="xs:string">
                             <xs:enumeration value="true"/>
