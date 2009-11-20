@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
+import fedora.server.messaging.PName;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
@@ -34,7 +35,9 @@ public class Journaler
         extends Module
         implements Management, JournalConstants {
 
-    /** Logger for this class. */
+    /**
+     * Logger for this class.
+     */
     private static final Logger LOG =
             Logger.getLogger(Journaler.class.getName());
 
@@ -81,7 +84,7 @@ public class Journaler
         ManagementDelegate delegate = serverInterface.getManagementDelegate();
         if (delegate == null) {
             throw new ModuleInitializationException("Can't get a ManagementDelegate from Server.getModule()",
-                                                    getRole());
+                    getRole());
         }
         worker.setManagementDelegate(delegate);
     }
@@ -106,7 +109,7 @@ public class Journaler
             String key = (String) object;
             if (key.startsWith(SYSTEM_PROPERTY_PREFIX)) {
                 parameters.put(key.substring(SYSTEM_PROPERTY_PREFIX.length()),
-                               properties.getProperty(key));
+                        properties.getProperty(key));
             }
         }
     }
@@ -142,6 +145,12 @@ public class Journaler
     // -------------------------------------------------------------------------
     //
 
+    public String createNewObject(@PName("context") Context context, @PName("logMessage") String logMessage, @PName("newPid") String newPid) throws ServerException {
+        return worker.createNewObject(context,
+                logMessage
+                , newPid);
+    }
+
     /**
      * Delegate to the JournalWorker.
      */
@@ -152,11 +161,11 @@ public class Journaler
                          String encoding,
                          boolean newPid) throws ServerException {
         return worker.ingest(context,
-                             serialization,
-                             logMessage,
-                             format,
-                             encoding,
-                             newPid);
+                serialization,
+                logMessage,
+                format,
+                encoding,
+                newPid);
     }
 
     /**
@@ -169,11 +178,11 @@ public class Journaler
                              String ownerId,
                              String logMessage) throws ServerException {
         return worker.modifyObject(context,
-                                   pid,
-                                   state,
-                                   label,
-                                   ownerId,
-                                   logMessage);
+                pid,
+                state,
+                label,
+                ownerId,
+                logMessage);
     }
 
     /**
@@ -223,19 +232,19 @@ public class Journaler
                                 String checksum,
                                 String logMessage) throws ServerException {
         return worker.addDatastream(context,
-                                    pid,
-                                    dsID,
-                                    altIDs,
-                                    dsLabel,
-                                    versionable,
-                                    MIMEType,
-                                    formatURI,
-                                    location,
-                                    controlGroup,
-                                    dsState,
-                                    checksumType,
-                                    checksum,
-                                    logMessage);
+                pid,
+                dsID,
+                altIDs,
+                dsLabel,
+                versionable,
+                MIMEType,
+                formatURI,
+                location,
+                controlGroup,
+                dsState,
+                checksumType,
+                checksum,
+                logMessage);
     }
 
     /**
@@ -255,17 +264,17 @@ public class Journaler
                                             boolean force)
             throws ServerException {
         return worker.modifyDatastreamByReference(context,
-                                                  pid,
-                                                  datastreamID,
-                                                  altIDs,
-                                                  dsLabel,
-                                                  mimeType,
-                                                  formatURI,
-                                                  dsLocation,
-                                                  checksumType,
-                                                  checksum,
-                                                  logMessage,
-                                                  force);
+                pid,
+                datastreamID,
+                altIDs,
+                dsLabel,
+                mimeType,
+                formatURI,
+                dsLocation,
+                checksumType,
+                checksum,
+                logMessage,
+                force);
     }
 
     /**
@@ -284,17 +293,17 @@ public class Journaler
                                         String logMessage,
                                         boolean force) throws ServerException {
         return worker.modifyDatastreamByValue(context,
-                                              pid,
-                                              datastreamID,
-                                              altIDs,
-                                              dsLabel,
-                                              mimeType,
-                                              formatURI,
-                                              dsContent,
-                                              checksumType,
-                                              checksum,
-                                              logMessage,
-                                              force);
+                pid,
+                datastreamID,
+                altIDs,
+                dsLabel,
+                mimeType,
+                formatURI,
+                dsContent,
+                checksumType,
+                checksum,
+                logMessage,
+                force);
     }
 
     /**
@@ -308,12 +317,12 @@ public class Journaler
                                   String logMessage,
                                   boolean force) throws ServerException {
         return worker.purgeDatastream(context,
-                                      pid,
-                                      datastreamID,
-                                      startDT,
-                                      endDT,
-                                      logMessage,
-                                      force);
+                pid,
+                datastreamID,
+                startDT,
+                endDT,
+                logMessage,
+                force);
     }
 
     /**
@@ -370,10 +379,10 @@ public class Journaler
                                    String dsState,
                                    String logMessage) throws ServerException {
         return worker.setDatastreamState(context,
-                                         pid,
-                                         dsID,
-                                         dsState,
-                                         logMessage);
+                pid,
+                dsID,
+                dsState,
+                logMessage);
     }
 
     /**
@@ -386,10 +395,10 @@ public class Journaler
                                          String logMessage)
             throws ServerException {
         return worker.setDatastreamVersionable(context,
-                                               pid,
-                                               dsID,
-                                               versionable,
-                                               logMessage);
+                pid,
+                dsID,
+                versionable,
+                logMessage);
     }
 
     /**
@@ -432,11 +441,11 @@ public class Journaler
                                    boolean isLiteral,
                                    String datatype) throws ServerException {
         return worker.addRelationship(context,
-                                      pid,
-                                      relationship,
-                                      object,
-                                      isLiteral,
-                                      datatype);
+                pid,
+                relationship,
+                object,
+                isLiteral,
+                datatype);
     }
 
     /**
@@ -449,11 +458,11 @@ public class Journaler
                                      boolean isLiteral,
                                      String datatype) throws ServerException {
         return worker.purgeRelationship(context,
-                                        pid,
-                                        relationship,
-                                        object,
-                                        isLiteral,
-                                        datatype);
+                pid,
+                relationship,
+                object,
+                isLiteral,
+                datatype);
     }
 
 }

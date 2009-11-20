@@ -102,6 +102,10 @@ public interface Authorization {
                               String format,
                               String ingestEncoding) throws AuthzException;
 
+    public void enforceCreateNew(Context context,
+                                 String pid) throws AuthzException;
+
+
     @Deprecated
     public void enforceIngestObject(Context context,
                                     String pid,

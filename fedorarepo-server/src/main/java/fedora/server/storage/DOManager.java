@@ -13,9 +13,9 @@ import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 
 /**
- * A RepositoryReader that provides facilities for creating and modifying 
+ * A RepositoryReader that provides facilities for creating and modifying
  * objects within the repository, as well as a query facility.
- * 
+ *
  * @author Chris Wilper
  */
 public interface DOManager
@@ -23,30 +23,26 @@ public interface DOManager
 
     /**
      * Relinquishes control of a DOWriter back to the DOManager.
-     * 
+     * <p/>
      * <p>When a DOManager provides a DOWriter, it creates a session lock. This
-     * is used to guarantee that there will never be concurrent changes to the 
-     * same object. To release the session lock, a DOWriter user calls this 
+     * is used to guarantee that there will never be concurrent changes to the
+     * same object. To release the session lock, a DOWriter user calls this
      * method.
-     * 
-     * @param writer
-     *        an instance of a digital object writer.
-     * @throws ServerException
-     *         if an error occurs in obtaining a writer.
+     *
+     * @param writer an instance of a digital object writer.
+     * @throws ServerException if an error occurs in obtaining a writer.
      */
     public abstract void releaseWriter(DOWriter writer) throws ServerException;
 
     /**
      * Gets a DOWriter for an existing digital object.
-     * 
-     * @param context
-     *        The context of this request.
-     * @param pid
-     *        The PID of the object.
+     *
+     * @param cachedObjectRequired ?
+     * @param context              The context of this request.
+     * @param pid                  The PID of the object.
      * @return A writer, or null if the pid didn't point to an accessible
      *         object.
-     * @throws ServerException
-     *         If anything went wrong.
+     * @throws ServerException If anything went wrong.
      */
     public abstract DOWriter getWriter(boolean cachedObjectRequired,
                                        Context context,
@@ -55,21 +51,16 @@ public interface DOManager
     /**
      * Creates a copy of the digital object given by the InputStream, with
      * either a new PID or the PID indicated by the InputStream.
-     * 
-     * @param context
-     *        The context of this request.
-     * @param in
-     *        A serialization of the digital object.
-     * @param format
-     *        The format of the serialization.
-     * @param encoding
-     *        The character encoding.
-     * @param newPid
-     *        Whether a new PID should be generated or the one indicated by the
-     *        InputStream should be used.
+     *
+     * @param cachedObjectRequired ?
+     * @param context              The context of this request.
+     * @param in                   A serialization of the digital object.
+     * @param format               The format of the serialization.
+     * @param encoding             The character encoding.
+     * @param newPid               Whether a new PID should be generated or the one indicated by the
+     *                             InputStream should be used.
      * @return a writer.
-     * @throws ServerException
-     *         If anything went wrong.
+     * @throws ServerException If anything went wrong.
      */
     public abstract DOWriter getIngestWriter(boolean cachedObjectRequired,
                                              Context context,
@@ -78,7 +69,19 @@ public interface DOManager
                                              String encoding,
                                              boolean newPid)
             throws ServerException;
-    
+
+    /**
+     * Gets a DOWriter for a not existing object. The method can be used to create new objects in the repository
+     *
+     * @param context The context of this request.
+     * @param pid     The PID that the new object should have.
+     * @return A writer, or null if the object could not be created, or already existed.
+     * @throws ServerException If anything went wrong.
+     */
+    public abstract DOWriter getNewWriter(Context context,
+                                          String pid) throws ServerException;
+
+
     public boolean objectExists(String pid)
             throws StorageDeviceException;
 

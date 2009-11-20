@@ -94,7 +94,7 @@ public class MockManagementDelegate
                         && args2[i] instanceof Object[]) {
                     // Arrays are compared for equal members, not identical members.
                     if (Arrays.deepEquals((Object[]) args1[i],
-                                          (Object[]) args2[i])) {
+                            (Object[]) args2[i])) {
                         continue;
                     }
                 } else if (args1[i].equals(args2[i])) {
@@ -145,20 +145,20 @@ public class MockManagementDelegate
                                 String checksum,
                                 String logMessage) throws ServerException {
         calls.add(new Call(JournalConstants.METHOD_ADD_DATASTREAM,
-                           context,
-                           pid,
-                           dsID,
-                           altIDs,
-                           dsLabel,
-                           versionable,
-                           MIMEType,
-                           formatURI,
-                           location,
-                           controlGroup,
-                           dsState,
-                           checksumType,
-                           checksum,
-                           logMessage));
+                context,
+                pid,
+                dsID,
+                altIDs,
+                dsLabel,
+                versionable,
+                MIMEType,
+                formatURI,
+                location,
+                controlGroup,
+                dsState,
+                checksumType,
+                checksum,
+                logMessage));
         return dsID;
     }
 
@@ -174,12 +174,12 @@ public class MockManagementDelegate
                                    boolean isLiteral,
                                    String datatype) throws ServerException {
         calls.add(new Call(JournalConstants.METHOD_ADD_RELATIONSHIP,
-                           context,
-                           subject,
-                           relationship,
-                           object,
-                           isLiteral,
-                           datatype));
+                context,
+                subject,
+                relationship,
+                object,
+                isLiteral,
+                datatype));
         return true;
     }
 
@@ -189,10 +189,10 @@ public class MockManagementDelegate
                                             Date asOfDateTime)
             throws ServerException {
         calls.add(new Call("compareDatastreamChecksum",
-                           context,
-                           pid,
-                           dsID,
-                           asOfDateTime));
+                context,
+                pid,
+                dsID,
+                asOfDateTime));
         return "bogusChecksum";
     }
 
@@ -202,11 +202,11 @@ public class MockManagementDelegate
                               String exportContext,
                               String encoding) throws ServerException {
         calls.add(new Call("export",
-                           context,
-                           pid,
-                           format,
-                           exportContext,
-                           encoding));
+                context,
+                pid,
+                format,
+                exportContext,
+                encoding));
         return new ByteArrayInputStream(new byte[0]);
     }
 
@@ -215,10 +215,10 @@ public class MockManagementDelegate
                                     String datastreamID,
                                     Date asOfDateTime) throws ServerException {
         calls.add(new Call("getDatastream",
-                           context,
-                           pid,
-                           datastreamID,
-                           asOfDateTime));
+                context,
+                pid,
+                datastreamID,
+                asOfDateTime));
         return null;
     }
 
@@ -235,10 +235,10 @@ public class MockManagementDelegate
                                        Date asOfDateTime,
                                        String dsState) throws ServerException {
         calls.add(new Call("getDatastreams",
-                           context,
-                           pid,
-                           asOfDateTime,
-                           dsState));
+                context,
+                pid,
+                asOfDateTime,
+                dsState));
         return new Datastream[0];
     }
 
@@ -270,6 +270,12 @@ public class MockManagementDelegate
         return new ByteArrayInputStream(new byte[0]);
     }
 
+    public String createNewObject(Context context,
+                                  String logMessage,
+                                  String newPid) throws ServerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public String ingest(Context context,
                          InputStream serialization,
                          String logMessage,
@@ -277,12 +283,12 @@ public class MockManagementDelegate
                          String encoding,
                          boolean newPid) throws ServerException {
         calls.add(new Call(JournalConstants.METHOD_INGEST,
-                           context,
-                           serialization,
-                           logMessage,
-                           format,
-                           encoding,
-                           newPid));
+                context,
+                serialization,
+                logMessage,
+                format,
+                encoding,
+                newPid));
         return "Ingest:" + getCallCount();
     }
 
@@ -301,18 +307,18 @@ public class MockManagementDelegate
             throws ServerException {
         calls
                 .add(new Call(JournalConstants.METHOD_MODIFY_DATASTREAM_BY_REFERENCE,
-                              context,
-                              pid,
-                              datastreamID,
-                              altIDs,
-                              dsLabel,
-                              mimeType,
-                              formatURI,
-                              dsLocation,
-                              checksumType,
-                              checksum,
-                              logMessage,
-                              force));
+                        context,
+                        pid,
+                        datastreamID,
+                        altIDs,
+                        dsLabel,
+                        mimeType,
+                        formatURI,
+                        dsLocation,
+                        checksumType,
+                        checksum,
+                        logMessage,
+                        force));
         return new Date(111111L);
     }
 
@@ -329,18 +335,18 @@ public class MockManagementDelegate
                                         String logMessage,
                                         boolean force) throws ServerException {
         calls.add(new Call(JournalConstants.METHOD_MODIFY_DATASTREAM_BY_VALUE,
-                           context,
-                           pid,
-                           datastreamID,
-                           altIDs,
-                           dsLabel,
-                           mimeType,
-                           formatURI,
-                           dsContent,
-                           checksumType,
-                           checksum,
-                           logMessage,
-                           force));
+                context,
+                pid,
+                datastreamID,
+                altIDs,
+                dsLabel,
+                mimeType,
+                formatURI,
+                dsContent,
+                checksumType,
+                checksum,
+                logMessage,
+                force));
         return new Date(222222L);
     }
 
@@ -351,12 +357,12 @@ public class MockManagementDelegate
                              String ownerId,
                              String logMessage) throws ServerException {
         calls.add(new Call(JournalConstants.METHOD_MODIFY_OBJECT,
-                           context,
-                           pid,
-                           state,
-                           label,
-                           ownerId,
-                           logMessage));
+                context,
+                pid,
+                state,
+                label,
+                ownerId,
+                logMessage));
         return new Date(10000L);
     }
 
@@ -368,13 +374,13 @@ public class MockManagementDelegate
                                   String logMessage,
                                   boolean force) throws ServerException {
         calls.add(new Call(JournalConstants.METHOD_PURGE_DATASTREAM,
-                           context,
-                           pid,
-                           datastreamID,
-                           startDT,
-                           endDT,
-                           logMessage,
-                           force));
+                context,
+                pid,
+                datastreamID,
+                startDT,
+                endDT,
+                logMessage,
+                force));
         return new Date[0];
     }
 
@@ -383,10 +389,10 @@ public class MockManagementDelegate
                             String logMessage,
                             boolean force) throws ServerException {
         calls.add(new Call(JournalConstants.METHOD_PURGE_OBJECT,
-                           context,
-                           pid,
-                           logMessage,
-                           force));
+                context,
+                pid,
+                logMessage,
+                force));
         return new Date(654L);
     }
 
@@ -397,12 +403,12 @@ public class MockManagementDelegate
                                      boolean isLiteral,
                                      String datatype) throws ServerException {
         calls.add(new Call(JournalConstants.METHOD_PURGE_RELATIONSHIP,
-                           context,
-                           subject,
-                           relationship,
-                           object,
-                           isLiteral,
-                           datatype));
+                context,
+                subject,
+                relationship,
+                object,
+                isLiteral,
+                datatype));
         return false;
     }
 
@@ -410,8 +416,8 @@ public class MockManagementDelegate
             throws ServerException {
         calls
                 .add(new Call(JournalConstants.METHOD_PUT_TEMP_STREAM,
-                              context,
-                              in));
+                        context,
+                        in));
         return "tempStreamId";
     }
 
@@ -421,11 +427,11 @@ public class MockManagementDelegate
                                    String dsState,
                                    String logMessage) throws ServerException {
         calls.add(new Call(JournalConstants.METHOD_SET_DATASTREAM_STATE,
-                           context,
-                           pid,
-                           dsID,
-                           dsState,
-                           logMessage));
+                context,
+                pid,
+                dsID,
+                dsState,
+                logMessage));
         return new Date(3000000L);
     }
 
@@ -436,11 +442,11 @@ public class MockManagementDelegate
                                          String logMessage)
             throws ServerException {
         calls.add(new Call(JournalConstants.METHOD_SET_DATASTREAM_VERSIONABLE,
-                           context,
-                           pid,
-                           dsID,
-                           versionable,
-                           logMessage));
+                context,
+                pid,
+                dsID,
+                versionable,
+                logMessage));
         return new Date(234234L);
     }
 

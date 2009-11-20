@@ -46,6 +46,7 @@ import fedora.common.rdf.SimpleURIReference;
 import fedora.server.Context;
 import fedora.server.RecoveryContext;
 import fedora.server.Server;
+import fedora.server.messaging.PName;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.InvalidStateException;
 import fedora.server.errors.InvalidXMLNameException;
@@ -80,7 +81,9 @@ import fedora.server.validation.ValidationUtility;
 public class DefaultManagement
         implements Constants, Management, ManagementDelegate {
 
-    /** Logger for this class. */
+    /**
+     * Logger for this class.
+     */
     private static Logger LOG =
             Logger.getLogger(DefaultManagement.class.getName());
 
@@ -106,7 +109,7 @@ public class DefaultManagement
      * @param purgeDelayInMillis milliseconds to delay before removing
      *                           old uploaded files
      * @author Frederic Buffet & Tommy Bourdin (Atos Worldline)
-     * @date   August 1, 2008
+     * @date August 1, 2008
      */
     public DefaultManagement(Authorization authz,
                              DOManager doMgr,
@@ -126,6 +129,40 @@ public class DefaultManagement
         m_purgeDelayInMillis = purgeDelayInMillis;
     }
 
+    public String createNewObject(Context context,
+                                  String logMessage,
+                                  String newPid) throws ServerException {
+        DOWriter w = null;
+        try {
+            LOG.debug("Entered createNewObject");
+            w = m_manager.getNewWriter(context, newPid);
+            String pid = w.GetObjectPID();
+
+            m_authz.enforceCreateNew(context, pid);
+
+            // Only create an audit record if there is a log message to capture
+            if (logMessage != null && !logMessage.equals("")) {
+                Date nowUTC = Server.getCurrentDate(context);
+                addAuditRecord(context, w, "Created", "", logMessage, nowUTC);
+            }
+
+            w.commit(logMessage);
+            return pid;
+        } finally {
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg = new StringBuilder("Completed createNewObject(");
+                logMsg.append(", newPid: ").append(newPid);
+                logMsg.append(", logMessage: ").append(logMessage);
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }
+
+            finishModification(w, "createNewObject");
+        }
+
+    }
+
     public String ingest(Context context,
                          InputStream serialization,
                          String logMessage,
@@ -136,11 +173,11 @@ public class DefaultManagement
         try {
             LOG.debug("Entered ingest");
             w = m_manager.getIngestWriter(Server.USE_DEFINITIVE_STORE,
-                                          context,
-                                          serialization,
-                                          format,
-                                          encoding,
-                                          newPid);
+                    context,
+                    serialization,
+                    format,
+                    encoding,
+                    newPid);
             String pid = w.GetObjectPID();
 
             m_authz.enforceIngest(context, pid, format, encoding);
@@ -194,9 +231,9 @@ public class DefaultManagement
             LOG.debug("Entered modifyObject");
 
             m_authz.enforceModifyObject(context,
-                                                    pid,
-                                                    state,
-                                                    ownerId);
+                    pid,
+                    state,
+                    ownerId);
 
             checkObjectLabel(label);
 
@@ -252,8 +289,8 @@ public class DefaultManagement
 
             DOReader reader =
                     m_manager.getReader(Server.USE_DEFINITIVE_STORE,
-                                        context,
-                                        pid);
+                            context,
+                            pid);
             InputStream instream = reader.GetObjectXML();
             return instream;
         } finally {
@@ -280,15 +317,15 @@ public class DefaultManagement
             LOG.debug("Entered export");
 
             m_authz.enforceExport(context,
-                                              pid,
-                                              format,
-                                              exportContext,
-                                              encoding);
+                    pid,
+                    format,
+                    exportContext,
+                    encoding);
 
             DOReader reader =
                     m_manager.getReader(Server.USE_DEFINITIVE_STORE,
-                                        context,
-                                        pid);
+                            context,
+                            pid);
             InputStream instream = reader.Export(format, exportContext);
 
             return instream;
@@ -402,16 +439,16 @@ public class DefaultManagement
         DOWriter w = null;
         try {
             m_authz.enforceAddDatastream(context,
-                                         pid,
-                                         dsID,
-                                         altIDs,
-                                         MIMEType,
-                                         formatURI,
-                                         dsLocation,
-                                         controlGroup,
-                                         dsState,
-                                         checksumType,
-                                         checksum);
+                    pid,
+                    dsID,
+                    altIDs,
+                    MIMEType,
+                    formatURI,
+                    dsLocation,
+                    controlGroup,
+                    dsState,
+                    checksumType,
+                    checksum);
 
             checkDatastreamID(dsID);
             checkDatastreamLabel(dsLabel);
@@ -436,9 +473,9 @@ public class DefaultManagement
                     DatastreamXMLMetadata dsm = (DatastreamXMLMetadata) ds;
                     dsm.xmlContent = getEmbeddableXML(in);
                     ValidationUtility.validateReservedDatastream(PID.getInstance(pid),
-                                                                 dsID,
-                                                                 dsm.getContentStream());
-                    if(mimeTypedStream != null) {
+                            dsID,
+                            dsm.getContentStream());
+                    if (mimeTypedStream != null) {
                         mimeTypedStream.close();
                     }
                 } catch (Exception e) {
@@ -498,7 +535,7 @@ public class DefaultManagement
             ds.DSLabel = dsLabel;
             ds.DSLocation = dsLocation;
             if (dsLocation != null) {
-                ValidationUtility.validateURL(dsLocation,ds.DSControlGrp);
+                ValidationUtility.validateURL(dsLocation, ds.DSControlGrp);
             }
             ds.DSFormatURI = formatURI;
             ds.DatastreamAltIDs = altIDs;
@@ -515,11 +552,11 @@ public class DefaultManagement
             // Update audit trail
             Date nowUTC = Server.getCurrentDate(context);
             addAuditRecord(context,
-                           w,
-                           "addDatastream",
-                           ds.DatastreamID,
-                           logMessage,
-                           nowUTC);
+                    w,
+                    "addDatastream",
+                    ds.DatastreamID,
+                    logMessage,
+                    nowUTC);
 
             // Commit the updates
             ds.DSCreateDT = nowUTC;
@@ -587,14 +624,14 @@ public class DefaultManagement
             LOG.debug("Entered modifyDatastreamByReference");
             m_authz
                     .enforceModifyDatastreamByReference(context,
-                                                        pid,
-                                                        datastreamId,
-                                                        altIDs,
-                                                        mimeType,
-                                                        formatURI,
-                                                        dsLocation,
-                                                        checksumType,
-                                                        checksum);
+                            pid,
+                            datastreamId,
+                            altIDs,
+                            mimeType,
+                            formatURI,
+                            dsLocation,
+                            checksumType,
+                            checksum);
 
             checkDatastreamLabel(dsLabel);
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
@@ -643,7 +680,7 @@ public class DefaultManagement
                     dsLocation = orig.DSLocation;
                 }
             } else {
-                ValidationUtility.validateURL(dsLocation,orig.DSControlGrp);
+                ValidationUtility.validateURL(dsLocation, orig.DSControlGrp);
             }
 
             // if "force" is false and the mime type changed, validate the
@@ -705,11 +742,11 @@ public class DefaultManagement
 
             // Update audit trail
             addAuditRecord(context,
-                           w,
-                           "modifyDatastreamByReference",
-                           newds.DatastreamID,
-                           logMessage,
-                           nowUTC);
+                    w,
+                    "modifyDatastreamByReference",
+                    newds.DatastreamID,
+                    logMessage,
+                    nowUTC);
 
             // if all went ok, check if we need to validate, then commit.
             // if (oldValidationReports != null) { // mime changed and
@@ -778,13 +815,13 @@ public class DefaultManagement
         try {
             LOG.debug("Entered modifyDatastreamByValue");
             m_authz.enforceModifyDatastreamByValue(context,
-                                                               pid,
-                                                               datastreamId,
-                                                               altIDs,
-                                                               mimeType,
-                                                               formatURI,
-                                                               checksumType,
-                                                               checksum);
+                    pid,
+                    datastreamId,
+                    altIDs,
+                    mimeType,
+                    formatURI,
+                    checksumType,
+                    checksum);
 
             checkDatastreamLabel(dsLabel);
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
@@ -833,8 +870,8 @@ public class DefaultManagement
                 // set and validate the content
                 newds.xmlContent = getEmbeddableXML(dsContent);
                 ValidationUtility.validateReservedDatastream(PID.getInstance(pid),
-                                                             orig.DatastreamID,
-                                                             newds.getContentStream());
+                        orig.DatastreamID,
+                        newds.getContentStream());
             }
 
             // update ds attributes that are common to all versions...
@@ -873,11 +910,11 @@ public class DefaultManagement
 
             // Update audit trail
             addAuditRecord(context,
-                           w,
-                           "modifyDatastreamByValue",
-                           newds.DatastreamID,
-                           logMessage,
-                           nowUTC);
+                    w,
+                    "modifyDatastreamByValue",
+                    newds.DatastreamID,
+                    logMessage,
+                    nowUTC);
 
             w.commit(logMessage);
 
@@ -922,9 +959,9 @@ public class DefaultManagement
             LOG.debug("Entered purgeDatastream");
 
             m_authz.enforcePurgeDatastream(context,
-                                                       pid,
-                                                       datastreamID,
-                                                       endDT);
+                    pid,
+                    datastreamID,
+                    endDT);
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             Date[] deletedDates =
@@ -958,19 +995,19 @@ public class DefaultManagement
             }
             logMessage +=
                     getPurgeLogMessage("datastream",
-                                       datastreamID,
-                                       startDT,
-                                       endDT,
-                                       deletedDates);
+                            datastreamID,
+                            startDT,
+                            endDT,
+                            deletedDates);
 
             // Update audit trail
             Date nowUTC = Server.getCurrentDate(context);
             addAuditRecord(context,
-                           w,
-                           "purgeDatastream",
-                           datastreamID,
-                           logMessage,
-                           nowUTC);
+                    w,
+                    "purgeDatastream",
+                    datastreamID,
+                    logMessage,
+                    nowUTC);
 
             // It looks like all went ok, so commit
             w.commit(logMessage);
@@ -1040,9 +1077,9 @@ public class DefaultManagement
             LOG.debug("Entered getDatastream");
 
             m_authz.enforceGetDatastream(context,
-                                                     pid,
-                                                     datastreamID,
-                                                     asOfDateTime);
+                    pid,
+                    datastreamID,
+                    asOfDateTime);
 
             DOReader r =
                     m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
@@ -1072,9 +1109,9 @@ public class DefaultManagement
             LOG.debug("Entered getDatastreams");
 
             m_authz.enforceGetDatastreams(context,
-                                                      pid,
-                                                      asOfDateTime,
-                                                      state);
+                    pid,
+                    asOfDateTime,
+                    state);
 
             DOReader r =
                     m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
@@ -1104,8 +1141,8 @@ public class DefaultManagement
             LOG.debug("Entered getDatastreamHistory");
 
             m_authz.enforceGetDatastreamHistory(context,
-                                                            pid,
-                                                            datastreamID);
+                    pid,
+                    datastreamID);
 
             DOReader r =
                     m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
@@ -1284,9 +1321,9 @@ public class DefaultManagement
             LOG.debug("Entered setDatastreamState");
 
             m_authz.enforceSetDatastreamState(context,
-                                                          pid,
-                                                          datastreamID,
-                                                          dsState);
+                    pid,
+                    datastreamID,
+                    dsState);
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             if (!dsState.equals("A") && !dsState.equals("D")
@@ -1301,11 +1338,11 @@ public class DefaultManagement
             // Update audit trail
             Date nowUTC = Server.getCurrentDate(context);
             addAuditRecord(context,
-                           w,
-                           "setDatastreamState",
-                           datastreamID,
-                           logMessage,
-                           nowUTC);
+                    w,
+                    "setDatastreamState",
+                    datastreamID,
+                    logMessage,
+                    nowUTC);
 
             // if all went ok, commit
             w.commit(logMessage);
@@ -1338,9 +1375,9 @@ public class DefaultManagement
             LOG.debug("Entered setDatastreamVersionable");
 
             m_authz.enforceSetDatastreamVersionable(context,
-                                                                pid,
-                                                                datastreamID,
-                                                                versionable);
+                    pid,
+                    datastreamID,
+                    versionable);
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             w.setDatastreamVersionable(datastreamID, versionable);
@@ -1348,11 +1385,11 @@ public class DefaultManagement
             // Update audit trail
             Date nowUTC = Server.getCurrentDate(context);
             addAuditRecord(context,
-                           w,
-                           "setDatastreamVersionable",
-                           datastreamID,
-                           logMessage,
-                           nowUTC);
+                    w,
+                    "setDatastreamVersionable",
+                    datastreamID,
+                    logMessage,
+                    nowUTC);
 
             // if all went ok, commit
             w.commit(logMessage);
@@ -1384,9 +1421,9 @@ public class DefaultManagement
             LOG.debug("Entered compareDatastreamChecksum");
 
             m_authz.enforceCompareDatastreamChecksum(context,
-                                                                 pid,
-                                                                 datastreamID,
-                                                                 versionDate);
+                    pid,
+                    datastreamID,
+                    versionDate);
 
             LOG.debug("Getting Reader");
             r = m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);
@@ -1459,23 +1496,23 @@ public class DefaultManagement
 
     private void checkDatastreamID(String id) throws ValidationException {
         checkString(id,
-                    "Datastream id",
-                    ValidationConstants.DATASTREAM_ID_MAXLEN,
-                    ValidationConstants.DATASTREAM_ID_BADCHARS);
+                "Datastream id",
+                ValidationConstants.DATASTREAM_ID_MAXLEN,
+                ValidationConstants.DATASTREAM_ID_BADCHARS);
     }
 
     private void checkDatastreamLabel(String label) throws ValidationException {
         checkString(label,
-                    "Datastream label",
-                    ValidationConstants.DATASTREAM_LABEL_MAXLEN,
-                    null);
+                "Datastream label",
+                ValidationConstants.DATASTREAM_LABEL_MAXLEN,
+                null);
     }
 
     private void checkObjectLabel(String label) throws ValidationException {
         checkString(label,
-                    "Object label",
-                    ValidationConstants.OBJECT_LABEL_MAXLEN,
-                    null);
+                "Object label",
+                ValidationConstants.OBJECT_LABEL_MAXLEN,
+                null);
     }
 
     private void checkString(String string,
@@ -1513,19 +1550,21 @@ public class DefaultManagement
             LOG.warn("Relationships API methods:  the 'pid' (" + subject + ") form of a relationship's subject is deprecated.  Please specify the subject using the " + Constants.FEDORA.uri + " uri scheme.");
             return PID.toURI(subject);
         }
+
         static String getSubjectPID(String subject) throws ServerException {
             if (isPid(subject))
                 return subject;
             // check for info:uri scheme
             if (subject.startsWith(Constants.FEDORA.uri)) {
                 // pid is everything after the first / to the 2nd / or to the end of the string
-                return subject.split("/",3)[1];
+                return subject.split("/", 3)[1];
 
             } else {
                 throw new GeneralException("Subject URI must be in the " + Constants.FEDORA.uri + " scheme.");
             }
 
         }
+
         private static boolean isPid(String subject) {
             return pidRegex.matcher(subject).matches();
         }
@@ -1544,8 +1583,8 @@ public class DefaultManagement
             pid = SubjectProcessor.getSubjectPID(subject);
 
             m_authz.enforceGetRelationships(context,
-                                                        pid,
-                                                        relationship);
+                    pid,
+                    relationship);
 
             r = m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);
             LOG.debug("Getting Relationships:  pid = " + pid + " predicate = "
@@ -1592,20 +1631,20 @@ public class DefaultManagement
             LOG.debug("Entered addRelationship");
             pid = SubjectProcessor.getSubjectPID(subject);
             m_authz.enforceAddRelationship(context,
-                                                       pid,
-                                                       relationship,
-                                                       object,
-                                                       isLiteral,
-                                                       datatype);
+                    pid,
+                    relationship,
+                    object,
+                    isLiteral,
+                    datatype);
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             boolean added =
                     w
                             .addRelationship(SubjectProcessor.getSubjectAsUri(subject),
-                                             relationship,
-                                             object,
-                                             isLiteral,
-                                             datatype);
+                                    relationship,
+                                    object,
+                                    isLiteral,
+                                    datatype);
 
             // if all went ok, commit
             if (added) {
@@ -1643,19 +1682,19 @@ public class DefaultManagement
             LOG.debug("Entered purgeRelationship");
             pid = SubjectProcessor.getSubjectPID(subject);
             m_authz.enforcePurgeRelationship(context,
-                                                         pid,
-                                                         relationship,
-                                                         object,
-                                                         isLiteral,
-                                                         datatype);
+                    pid,
+                    relationship,
+                    object,
+                    isLiteral,
+                    datatype);
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             boolean purged =
                     w.purgeRelationship(SubjectProcessor.getSubjectAsUri(subject),
-                                        relationship,
-                                        object,
-                                        isLiteral,
-                                        datatype);
+                            relationship,
+                            object,
+                            isLiteral,
+                            datatype);
 
             // if all went ok, commit
             if (purged) {
@@ -1717,7 +1756,7 @@ public class DefaultManagement
 
     /**
      * Deletes expired uploaded files.
-     * <p>
+     * <p/>
      * This method is called for each upload. But we respect a minimim delay
      * between two purges. This delay is given by m_purgeDelayInMillis.
      */
@@ -1727,14 +1766,14 @@ public class DefaultManagement
         // Do purge if purge delay is past before last purge
         // -------------------------------------------------
         long nextPurgeInMillis =
-          this.m_lastPurgeInMillis + this.m_purgeDelayInMillis;
+                this.m_lastPurgeInMillis + this.m_purgeDelayInMillis;
         if (nextPurgeInMillis < currentTimeMillis) {
             this.m_lastPurgeInMillis = currentTimeMillis;
 
             // Compute limit file time to purged
             // ---------------------------------
             long minStartTime =
-                currentTimeMillis - (this.m_uploadStorageMinutes * 60000);
+                    currentTimeMillis - (this.m_uploadStorageMinutes * 60000);
 
             // List files to purge and remove filename to map
             // This operation is synchronized to be thread-safe
@@ -1742,7 +1781,7 @@ public class DefaultManagement
             List<String> removeList = new ArrayList<String>();
             synchronized (this.m_uploadStartTime) {
                 for (Entry<String, Long> entry :
-                  m_uploadStartTime.entrySet()) {
+                        m_uploadStartTime.entrySet()) {
                     String filename = entry.getKey();
                     long startTime = entry.getValue().longValue();
                     if (startTime < minStartTime) {
@@ -1764,10 +1803,10 @@ public class DefaultManagement
                 if (file.exists()) {
                     if (file.delete()) {
                         LOG.info("Removed uploaded file '" + id
-                            + "' because it expired.");
+                                + "' because it expired.");
                     } else {
                         LOG.warn("Could not remove expired uploaded file '"
-                            + id + "'. Check permissions in management/upload/ directory.");
+                                + id + "'. Check permissions in management/upload/ directory.");
                     }
                 }
             }

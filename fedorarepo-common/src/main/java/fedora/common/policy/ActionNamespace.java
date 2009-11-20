@@ -8,7 +8,7 @@ import com.sun.xacml.attr.StringAttribute;
 
 /**
  * The Fedora Action XACML namespace.
- *
+ * <p/>
  * <pre>
  * Namespace URI    : urn:fedora:names:fedora:2.1:action
  * </pre>
@@ -44,6 +44,7 @@ public class ActionNamespace
     public final XacmlName GET_OBJECT_XML;
 
     public final XacmlName INGEST;
+    public final XacmlName CREATENEW;
 
     public final XacmlName MODIFY_DATASTREAM_BY_REFERENCE;
 
@@ -120,6 +121,7 @@ public class ActionNamespace
         GET_NEXT_PID = addName(new XacmlName(this, "id-getNextPid"));
         GET_OBJECT_XML = addName(new XacmlName(this, "id-getObjectXML"));
         INGEST = addName(new XacmlName(this, "id-ingest"));
+        CREATENEW = addName(new XacmlName(this, "id-createNew"));
         MODIFY_DATASTREAM_BY_REFERENCE =
                 addName(new XacmlName(this, "id-modifyDatastreamByReference"));
         MODIFY_DATASTREAM_BY_VALUE =
@@ -150,7 +152,7 @@ public class ActionNamespace
                 addName(new XacmlName(this, "id-listObjectInFieldSearchResults"));
         LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS =
                 addName(new XacmlName(this,
-                                      "id-listObjectInResourceIndexResults"));
+                        "id-listObjectInResourceIndexResults"));
         SERVER_STATUS = addName(new XacmlName(this, "id-serverStatus"));
         OAI = addName(new XacmlName(this, "id-oai"));
         UPLOAD = addName(new XacmlName(this, "id-upload"));
@@ -164,10 +166,10 @@ public class ActionNamespace
                 addName(new XacmlName(this, "id-purgeRelationship"));
         CONTEXT_ID =
                 addName(new XacmlName(this,
-                                      "contextId",
-                                      StringAttribute.identifier)); //internal callback support
+                        "contextId",
+                        StringAttribute.identifier)); //internal callback support
         RETRIEVE_FILE =
-            addName(new XacmlName(this, "id-retrieveFile"));
+                addName(new XacmlName(this, "id-retrieveFile"));
         // Values of CONTEXT_ID are sequential numerals, hence not enumerated here.
     }
 

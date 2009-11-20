@@ -9,7 +9,7 @@ import javax.xml.namespace.QName;
 /**
  * A collection of String constants and QName constants used by the Journaler
  * and its associated classes.
- * 
+ *
  * @author Jim Blake
  */
 public interface JournalConstants {
@@ -131,6 +131,8 @@ public interface JournalConstants {
 
     // Names of the management methods that are written to the Journal
     String METHOD_INGEST = "ingest";
+
+    String METHOD_CREATE_NEW = "createNew";
 
     String METHOD_MODIFY_OBJECT = "modifyObject";
 

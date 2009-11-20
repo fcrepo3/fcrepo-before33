@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import fedora.server.Context;
+import fedora.server.messaging.PName;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
@@ -23,7 +24,7 @@ import fedora.server.storage.types.RelationshipTuple;
 
 /**
  * This is the worker class to use in Journaling mode (normal mode).
- * <p>
+ * <p/>
  * Each time a "writing" Management method is called, create a
  * CreatorJournalEntry and ask it to invoke the method on the
  * ManagementDelegate. If a "read-only" Management method is called, just pass
@@ -34,7 +35,9 @@ import fedora.server.storage.types.RelationshipTuple;
 public class JournalCreator
         implements JournalWorker, JournalConstants {
 
-    /** Logger for this class. */
+    /**
+     * Logger for this class.
+     */
     private static final Logger LOG =
             Logger.getLogger(JournalCreator.class.getName());
 
@@ -77,8 +80,8 @@ public class JournalCreator
             writer.shutdown();
         } catch (JournalException e) {
             throw new ModuleShutdownException("JournalWriter generated an error on shutdown()",
-                                              role,
-                                              e);
+                    role,
+                    e);
         }
     }
 
@@ -90,6 +93,21 @@ public class JournalCreator
     //
     // -------------------------------------------------------------------------
     //
+
+    public String createNewObject(Context context,
+                                  String logMessage,
+                                  String newPid) throws ServerException {
+        try {
+            CreatorJournalEntry cje =
+                    new CreatorJournalEntry(METHOD_CREATE_NEW, context);
+            cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
+            cje.addArgument(ARGUMENT_NAME_NEW_PID, newPid);
+            return (String) cje.invokeAndClose(delegate, writer);
+        } catch (JournalException e) {
+            throw new GeneralException("Problem creating the Journal", e);
+        }
+
+    }
 
     /**
      * Let the delegate do it, and then write a journal entry.
@@ -213,7 +231,7 @@ public class JournalCreator
         try {
             CreatorJournalEntry cje =
                     new CreatorJournalEntry(METHOD_MODIFY_DATASTREAM_BY_VALUE,
-                                            context);
+                            context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_DS_ID, datastreamID);
             cje.addArgument(ARGUMENT_NAME_ALT_IDS, altIDs);
@@ -250,7 +268,7 @@ public class JournalCreator
         try {
             CreatorJournalEntry cje =
                     new CreatorJournalEntry(METHOD_MODIFY_DATASTREAM_BY_REFERENCE,
-                                            context);
+                            context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_DS_ID, datastreamID);
             cje.addArgument(ARGUMENT_NAME_ALT_IDS, altIDs);
@@ -279,7 +297,7 @@ public class JournalCreator
         try {
             CreatorJournalEntry cje =
                     new CreatorJournalEntry(METHOD_SET_DATASTREAM_STATE,
-                                            context);
+                            context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_DS_ID, dsID);
             cje.addArgument(ARGUMENT_NAME_DS_STATE, dsState);
@@ -302,7 +320,7 @@ public class JournalCreator
         try {
             CreatorJournalEntry cje =
                     new CreatorJournalEntry(METHOD_SET_DATASTREAM_VERSIONABLE,
-                                            context);
+                            context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_DS_ID, dsID);
             cje.addArgument(ARGUMENT_NAME_VERSIONABLE, versionable);
@@ -426,9 +444,9 @@ public class JournalCreator
                                             Date versionDate)
             throws ServerException {
         return delegate.compareDatastreamChecksum(context,
-                                                  pid,
-                                                  dsID,
-                                                  versionDate);
+                pid,
+                dsID,
+                versionDate);
     }
 
     /**

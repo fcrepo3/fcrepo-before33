@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Map;
 
 import fedora.server.Context;
+import fedora.server.messaging.PName;
 import fedora.server.errors.InvalidStateException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
@@ -57,10 +58,10 @@ public class JournalConsumer
                         .getInstance(parameters, role, recoveryLog, server);
         consumerThread =
                 new JournalConsumerThread(parameters,
-                                          role,
-                                          server,
-                                          reader,
-                                          recoveryLog);
+                        role,
+                        server,
+                        reader,
+                        recoveryLog);
     }
 
     /**
@@ -82,8 +83,8 @@ public class JournalConsumer
             recoveryLog.shutdown("Server is shutting down.");
         } catch (JournalException e) {
             throw new ModuleShutdownException("Error closing journal reader.",
-                                              role,
-                                              e);
+                    role,
+                    e);
         }
     }
 
@@ -95,6 +96,10 @@ public class JournalConsumer
     //
     // -------------------------------------------------------------------------
     //
+
+    public String createNewObject(@PName("context") Context context, @PName("logMessage") String logMessage, @PName("newPid") String newPid) throws ServerException {
+        throw rejectCallsFromOutsideWhileInRecoveryMode();
+    }
 
     /**
      * Reject API calls from outside while we are in recovery mode.
@@ -292,9 +297,9 @@ public class JournalConsumer
                                             Date versionDate)
             throws ServerException {
         return delegate.compareDatastreamChecksum(context,
-                                                  pid,
-                                                  dsID,
-                                                  versionDate);
+                pid,
+                dsID,
+                versionDate);
     }
 
     /**
