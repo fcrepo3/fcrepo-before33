@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.StringReader;
 import java.io.Writer;
 
+import java.net.URI;
+
 import javax.servlet.http.HttpServletRequest;
 
 import javax.xml.transform.Templates;
@@ -24,9 +26,12 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import net.sf.saxon.FeatureKeys;
+
+import org.apache.commons.io.IOUtils;
 
 import org.apache.log4j.Logger;
 
@@ -40,6 +45,8 @@ import fedora.server.errors.DatastreamNotFoundException;
 import fedora.server.errors.ObjectNotInLowlevelStorageException;
 import fedora.server.errors.authorization.AuthzException;
 import fedora.server.management.Management;
+import fedora.server.storage.types.MIMETypedStream;
+import fedora.server.storage.types.Property;
 
 /**
  * A barebone RESTFUL resource implementation.
@@ -108,6 +115,29 @@ public class BaseRestResource {
         String appContext = getContext().getEnvironmentValue(Constants.FEDORA_APP_CONTEXT_NAME);
         transformer.setParameter("fedora", appContext);
         transformer.transform(new StreamSource(new StringReader(xml)), new StreamResult(out));
+    }
+
+    protected Response buildResponse(MIMETypedStream result) throws Exception {
+        if (result.MIMEType.equalsIgnoreCase("application/fedora-redirect")) {
+            URI location = URI.create(IOUtils.toString(result.getStream()));
+            return Response.temporaryRedirect(location).build();
+        } else {
+            ResponseBuilder builder = Response.ok();
+
+            if (result.header != null) {
+                for (Property header : result.header) {
+                    if (header.name != null
+                            && !(header.name.equalsIgnoreCase("transfer-encoding"))
+                            && !(header.name.equalsIgnoreCase("content-type"))) {
+                        builder.header(header.name, header.value);
+                    }
+                }
+            }
+
+            builder.type(result.MIMEType);
+            builder.entity(result.getStream());
+            return builder.build();
+        }
     }
 
     protected Response handleException(Exception ex) {

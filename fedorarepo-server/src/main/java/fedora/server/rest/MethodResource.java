@@ -15,10 +15,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import fedora.server.Context;
 import fedora.server.storage.types.ObjectMethodsDef;
+import fedora.server.storage.types.Property;
 import fedora.server.utilities.DateUtility;
 
 /**
@@ -30,6 +33,7 @@ import fedora.server.utilities.DateUtility;
  */
 @Path("/{pid}/methods")
 public class MethodResource extends BaseRestResource {
+    @javax.ws.rs.core.Context UriInfo uriInfo;
 
     /**
      * Lists all Service Definitions methods that can be invoked on a digital
@@ -72,6 +76,33 @@ public class MethodResource extends BaseRestResource {
         return getObjectMethodsForSDefImpl(pid, sDef, dTime, format);
     }
 
+    /**
+     * Invokes a Service Definition method on an object, using GET.
+     */
+    @Path("/{sDef}/{method}")
+    @GET
+    public Response invokeSDefMethodUsingGET(
+            @PathParam(RestParam.PID)
+            String pid,
+            @PathParam(RestParam.SDEF)
+            String sDef,
+            @PathParam(RestParam.METHOD)
+            String method,
+            @QueryParam(RestParam.AS_OF_DATE_TIME)
+            String dTime) {
+        try {
+            return buildResponse(apiAService.getDissemination(
+                    getContext(),
+                    pid,
+                    sDef,
+                    method,
+                    toProperties(uriInfo.getQueryParameters()),
+                    DateUtility.convertStringToDate(dTime)));
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
     private Response getObjectMethodsForSDefImpl(String pid, String sDef, String dTime, String format) {
         try {
             Date asOfDateTime = DateUtility.convertStringToDate(dTime);
@@ -88,9 +119,18 @@ public class MethodResource extends BaseRestResource {
             }
 
             return Response.ok(xml, mime).build();
-        } catch (Exception ex) {
-            return handleException(ex);
+        } catch (Exception e) {
+            return handleException(e);
         }
+    }
+
+    private static Property[] toProperties(MultivaluedMap<String, String> map) {
+        Property[] props = new Property[map.size()];
+        int i = 0;
+        for (String key: map.keySet()) {
+            props[i++] = new Property(key, map.getFirst(key));
+        }
+        return props;
     }
 
 }

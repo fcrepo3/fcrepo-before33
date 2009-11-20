@@ -31,6 +31,7 @@ public interface RestParam {
     String DSID = "dsID";
     String PID = "pid";
     String SDEF = "sDef";
+    String METHOD = "method";
     String MIME_TYPE = "mimeType";
     String IGNORE_CONTENT = "ignoreContent";
     String IGNORE_MIME = "ignoreMime";

@@ -223,7 +223,7 @@ public class DefaultSerializer {
             currentSdef = methodDefs[i].sDefPID;
             if (sDef == null || currentSdef.equals(sDef)) {
                 if (!currentSdef.equalsIgnoreCase(nextSdef)) {
-                    if (i != 0)
+                    if (!nextSdef.equals("null"))
                         buffer.append("</sDef>");
                     buffer.append("<sDef pid=\"" + StreamUtility.enc(methodDefs[i].sDefPID)
                             + "\" >");

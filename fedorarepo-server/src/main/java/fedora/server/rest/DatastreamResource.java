@@ -4,13 +4,10 @@
  */
 package fedora.server.rest;
 
-import java.io.ByteArrayOutputStream;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
-import java.net.URI;
 import java.net.URLEncoder;
 
 import java.util.Date;
@@ -26,7 +23,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import fedora.common.http.WebClient;
@@ -35,8 +31,6 @@ import fedora.server.Context;
 import fedora.server.rest.RestUtil.RequestContent;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamDef;
-import fedora.server.storage.types.MIMETypedStream;
-import fedora.server.storage.types.Property;
 import fedora.server.utilities.DateUtility;
 
 /**
@@ -171,40 +165,11 @@ public class DatastreamResource extends BaseRestResource {
             String dateTime) {
 
         try {
-            Date asOfDateTime = DateUtility.convertStringToDate(dateTime);
-            Context context = getContext();
-            MIMETypedStream dissemination =
-                apiAService.getDatastreamDissemination(context, pid, dsID, asOfDateTime);
-
-            if (dissemination.MIMEType.equalsIgnoreCase("application/fedora-redirect")) {
-                InputStream inStream = dissemination.getStream();
-                OutputStream outStream = new ByteArrayOutputStream(64);
-
-                try {
-                    CopyUtils.copy(inStream, outStream);
-                    outStream.flush();
-                } finally {
-                    inStream.close();
-                }
-
-                return Response.temporaryRedirect(new URI(outStream.toString())).build();
-            } else {
-                ResponseBuilder rBuilder = Response.ok();
-                rBuilder.type(dissemination.MIMEType);
-
-                if (dissemination.header != null) {
-                    for (Property header : dissemination.header) {
-                        if (header.name != null
-                                && !(header.name.equalsIgnoreCase("transfer-encoding"))
-                                && !(header.name.equalsIgnoreCase("content-type"))) {
-                            rBuilder.header(header.name, header.value);
-                        }
-                    }
-                }
-
-                return Response.ok(dissemination.getStream(),
-                                   dissemination.MIMEType).build();
-            }
+            return buildResponse(apiAService.getDatastreamDissemination(
+                    getContext(),
+                    pid,
+                    dsID,
+                    DateUtility.convertStringToDate(dateTime)));
         } catch (Exception ex) {
             return handleException(ex);
         }
