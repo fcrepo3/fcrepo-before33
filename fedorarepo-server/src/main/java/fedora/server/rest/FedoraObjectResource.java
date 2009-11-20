@@ -170,7 +170,7 @@ public class FedoraObjectResource extends BaseRestResource {
 
             if (TEXT_HTML.isCompatible(mime)) {
                 CharArrayWriter writer = new CharArrayWriter();
-                transform(xml, "access/viewObjectProfileRest.xslt", writer);
+                transform(xml, "access/viewObjectProfile.xslt", writer);
                 xml = writer.toString();
             }
 

@@ -91,13 +91,15 @@ public class MethodResource extends BaseRestResource {
             @QueryParam(RestParam.AS_OF_DATE_TIME)
             String dTime) {
         try {
+            Date asOfDateTime = DateUtility.convertStringToDate(dTime);
             return buildResponse(apiAService.getDissemination(
                     getContext(),
                     pid,
                     sDef,
                     method,
-                    toProperties(uriInfo.getQueryParameters()),
-                    DateUtility.convertStringToDate(dTime)));
+                    toProperties(uriInfo.getQueryParameters(),
+                                 asOfDateTime != null),
+                    asOfDateTime));
         } catch (Exception e) {
             return handleException(e);
         }
@@ -124,11 +126,19 @@ public class MethodResource extends BaseRestResource {
         }
     }
 
-    private static Property[] toProperties(MultivaluedMap<String, String> map) {
-        Property[] props = new Property[map.size()];
+    private static Property[] toProperties(MultivaluedMap<String, String> map,
+                                           boolean omitDateTime) {
+        Property[] props;
+        if (omitDateTime) {
+            props = new Property[map.size() - 1];
+        } else {
+            props = new Property[map.size()];
+        }
         int i = 0;
         for (String key: map.keySet()) {
-            props[i++] = new Property(key, map.getFirst(key));
+            if (!key.equals(RestParam.AS_OF_DATE_TIME)) {
+                props[i++] = new Property(key, map.getFirst(key));
+            }
         }
         return props;
     }

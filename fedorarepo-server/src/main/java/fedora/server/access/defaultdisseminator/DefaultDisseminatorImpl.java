@@ -4,8 +4,25 @@
  */
 package fedora.server.access.defaultdisseminator;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
 import fedora.common.Constants;
 import fedora.common.Models;
+
 import fedora.server.Context;
 import fedora.server.access.Access;
 import fedora.server.access.ObjectProfile;
@@ -19,21 +36,8 @@ import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.ObjectMethodsDef;
-import fedora.utilities.XmlTransformUtility;
 
-import javax.xml.transform.Templates;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Date;
+import fedora.utilities.XmlTransformUtility;
 
 /**
  * Implements the methods defined in the DefaultDisseminator interface. This is
@@ -180,11 +184,9 @@ public class DefaultDisseminatorImpl
 
         // transform the method definitions xml to an html view
         try {
-            //InputStream in = getMethodIndex().getStream();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            //File xslFile = new File(reposHomeDir, "access/objectMethods.xslt");
             File xslFile =
-                    new File(reposHomeDir, "access/viewObjectMethods.xslt");
+                    new File(reposHomeDir, "access/listMethods.xslt");
             TransformerFactory factory =
                     XmlTransformUtility.getTransformerFactory();
             Templates template =

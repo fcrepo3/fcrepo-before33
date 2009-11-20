@@ -97,6 +97,13 @@ public class DefaultSerializer {
                 + "</objLabel>");
         buffer.append("<objOwnerId>" + StreamUtility.enc(objProfile.objectOwnerId)
                 + "</objOwnerId>");
+        buffer.append("<objModels>");
+        for (String model: objProfile.objectModels) {
+            buffer.append("<model>");
+            buffer.append(StreamUtility.enc(model));
+            buffer.append("</model>");
+        }
+        buffer.append("</objModels>");
         String cDate = DateUtility.convertDateToString(objProfile.objectCreateDate);
         buffer.append("<objCreateDate>" + cDate + "</objCreateDate>");
         String mDate = DateUtility.convertDateToString(objProfile.objectLastModDate);

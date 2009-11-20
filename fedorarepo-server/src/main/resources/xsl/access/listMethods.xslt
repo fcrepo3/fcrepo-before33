@@ -17,7 +17,7 @@
           <td width="643" valign="top">
             <center>
               <h2>Fedora Digital Object</h2>
-                            <h3>List Methods</h3>
+              <h3>List Methods</h3>
             </center>
           </td>
         </tr>
@@ -66,32 +66,30 @@
 </xsl:template>
 
 <xsl:template match="method">
-  <form name="parmResolverForm" method="post" action="/{$fedora}/getAccessParmResolver?">
+<form>
+  <xsl:attribute name="method">get</xsl:attribute>
+  <xsl:attribute name="action">
+    <xsl:text>/</xsl:text>
+    <xsl:value-of select="$fedora"/>
+    <xsl:text>/objects/</xsl:text>
+    <xsl:value-of select="../../@pid"/>
+    <xsl:text>/methods/</xsl:text>
+    <xsl:value-of select="../@pid"/>
+    <xsl:text>/</xsl:text>
+    <xsl:value-of select="@name"/>
+  </xsl:attribute>
   <tr>
     <td><font color="blue"><xsl:value-of select="../@pid"/></font></td>
     <td><font size="+1"><xsl:value-of select="@name"/></font></td>
     <td>
-      <input>
-        <xsl:attribute name="type">hidden</xsl:attribute>
-        <xsl:attribute name="name">PID</xsl:attribute>
-        <xsl:attribute name="value"><xsl:value-of select="../../@pid"/></xsl:attribute>        
-      </input>
-      <input>
-        <xsl:attribute name="type">hidden</xsl:attribute>
-        <xsl:attribute name="name">sDefPID</xsl:attribute>
-        <xsl:attribute name="value"><xsl:value-of select="../@pid"/></xsl:attribute>      
-      </input>
-      <input>
-        <xsl:attribute name="type">hidden</xsl:attribute>
-        <xsl:attribute name="name">methodName</xsl:attribute>
-        <xsl:attribute name="value"><xsl:value-of select="@name"/></xsl:attribute>      
-      </input>
-      <input>
-        <xsl:attribute name="type">hidden</xsl:attribute>
-        <xsl:attribute name="name">asOfDateTime</xsl:attribute>
-        <xsl:attribute name="value"><xsl:value-of select="../../@asOfDateTime"/></xsl:attribute>      
-      </input>
-      <input type="submit" name="Submit" value="Run"></input>
+      <xsl:if test="../../@asOfDateTime">
+        <input>
+          <xsl:attribute name="type">hidden</xsl:attribute>
+          <xsl:attribute name="name">asOfDateTime</xsl:attribute>
+          <xsl:attribute name="value"><xsl:value-of select="../../@asOfDateTime"/></xsl:attribute>      
+        </input>
+      </xsl:if>
+      <input type="submit" value="Run"/>
     </td>
     <xsl:choose>
       <xsl:when test="./methodParm/@parmName">
