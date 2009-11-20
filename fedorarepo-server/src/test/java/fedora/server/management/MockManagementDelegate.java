@@ -270,9 +270,9 @@ public class MockManagementDelegate
         return new ByteArrayInputStream(new byte[0]);
     }
 
-    public String createNewObject(Context context,
-                                  String logMessage,
-                                  String newPid) throws ServerException {
+    public String createNew(Context context,
+                            String logMessage,
+                            String newPid) throws ServerException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

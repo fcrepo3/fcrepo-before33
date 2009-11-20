@@ -110,7 +110,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         LOG.debug("start: createNew");
         assertInitialized();
         try {
-            return s_management.createNewObject(ReadOnlyContext.getSoapContext(),
+            return s_management.createNew(ReadOnlyContext.getSoapContext(),
                     logMessage,
                     newPid);
         } catch (Throwable th) {

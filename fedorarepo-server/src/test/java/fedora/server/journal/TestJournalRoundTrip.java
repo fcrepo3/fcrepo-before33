@@ -122,13 +122,13 @@ public class TestJournalRoundTrip {
         journalParameters = new HashMap<String, String>();
         journalParameters
                 .put(JournalConstants.PARAMETER_JOURNAL_WRITER_CLASSNAME,
-                     MockJournalWriter.class.getName());
+                        MockJournalWriter.class.getName());
         journalParameters
                 .put(JournalConstants.PARAMETER_JOURNAL_READER_CLASSNAME,
-                     MockJournalReader.class.getName());
+                        MockJournalReader.class.getName());
         journalParameters
                 .put(JournalConstants.PARAMETER_JOURNAL_RECOVERY_LOG_CLASSNAME,
-                     MockJournalRecoveryLog.class.getName());
+                        MockJournalRecoveryLog.class.getName());
     }
 
     @Before
@@ -154,103 +154,103 @@ public class TestJournalRoundTrip {
     public void addDatastream() throws ServerException {
         expectInContext(Constants.RECOVERY.DATASTREAM_ID, "theDsId");
         testJournaledMethod(JournalConstants.METHOD_ADD_DATASTREAM,
-                            leadingContext,
-                            "thePid",
-                            "theDsId",
-                            new String[0],
-                            "theDsLabel",
-                            false,
-                            "theMIMEType",
-                            "theFormatURI",
-                            "theLocation",
-                            "theControlGroup",
-                            "theDsState",
-                            "theChecksumType",
-                            "theChecksum",
-                            "theLogMessage");
+                leadingContext,
+                "thePid",
+                "theDsId",
+                new String[0],
+                "theDsLabel",
+                false,
+                "theMIMEType",
+                "theFormatURI",
+                "theLocation",
+                "theControlGroup",
+                "theDsState",
+                "theChecksumType",
+                "theChecksum",
+                "theLogMessage");
     }
 
     @Test
     public void addRelationship() throws ServerException {
         testJournaledMethod(JournalConstants.METHOD_ADD_RELATIONSHIP,
-                            leadingContext,
-                            "theSubject",
-                            "relationship",
-                            "anObject",
-                            false,
-                            "");
+                leadingContext,
+                "theSubject",
+                "relationship",
+                "anObject",
+                false,
+                "");
     }
 
     @Test
     public void compareDatastreamChecksum() throws ServerException {
         testNonJournaledMethod("compareDatastreamChecksum",
-                               leadingContext,
-                               "thePid",
-                               "theDsId",
-                               new Date(12345L));
+                leadingContext,
+                "thePid",
+                "theDsId",
+                new Date(12345L));
     }
 
     @Test
     public void export() throws ServerException {
         testNonJournaledMethod("export",
-                               leadingContext,
-                               "PID",
-                               "format",
-                               "SomeExportContext",
-                               "encoding");
+                leadingContext,
+                "PID",
+                "format",
+                "SomeExportContext",
+                "encoding");
     }
 
     @Test
     public void getDatastream() throws ServerException {
         testNonJournaledMethod("getDatastream",
-                               leadingContext,
-                               "PID",
-                               "aDatastreamID",
-                               new Date());
+                leadingContext,
+                "PID",
+                "aDatastreamID",
+                new Date());
     }
 
     @Test
     public void getDatastreamHistory() throws ServerException {
         testNonJournaledMethod("getDatastreamHistory",
-                               leadingContext,
-                               "PID",
-                               "anotherDatastreamID");
+                leadingContext,
+                "PID",
+                "anotherDatastreamID");
     }
 
     @Test
     public void getDatastreams() throws ServerException {
         testNonJournaledMethod("getDatastreams",
-                               leadingContext,
-                               "sonOfPID",
-                               new Date(111111L),
-                               "someStateString");
+                leadingContext,
+                "sonOfPID",
+                new Date(111111L),
+                "someStateString");
     }
 
     @Test
     public void getNextPID() throws ServerException {
-        expectInContext(Constants.RECOVERY.PID_LIST, new String[] {
+        expectInContext(Constants.RECOVERY.PID_LIST, new String[]{
                 "sillyPID_0", "sillyPID_1", "sillyPID_2", "sillyPID_3",
                 "sillyPID_4"});
         testJournaledMethod(JournalConstants.METHOD_GET_NEXT_PID,
-                            leadingContext,
-                            5,
-                            "myFavoriteNamespace");
+                leadingContext,
+                5,
+                "myFavoriteNamespace");
     }
 
     @Test
     public void getObjectXML() throws ServerException {
         testNonJournaledMethod("getObjectXML",
-                               leadingContext,
-                               "myPID",
-                               "encodingScheme");
+                leadingContext,
+                "myPID",
+                "encodingScheme");
     }
 
     @Test
     public void getRelationships() throws ServerException {
         testNonJournaledMethod("getRelationships",
-                               leadingContext,
-                               "mySubject",
-                               "someRelationship");
+                leadingContext,
+                "mySubject",
+                "someRelationship");
     }
 
     /**
@@ -266,117 +266,127 @@ public class TestJournalRoundTrip {
     public void ingest() throws ServerException {
         expectInContext(Constants.RECOVERY.PID, "Ingest:1");
         testJournaledMethod(JournalConstants.METHOD_INGEST,
-                            leadingContext,
-                            new ByteArrayInputStream(new byte[0]),
-                            "theLogMessage",
-                            "aFormat",
-                            "someEncoding",
-                            true);
+                leadingContext,
+                new ByteArrayInputStream(new byte[0]),
+                "theLogMessage",
+                "aFormat",
+                "someEncoding",
+                true);
     }
+
+    @Test
+    public void createNew() throws ServerException {
+        testJournaledMethod(JournalConstants.METHOD_CREATE_NEW,
+                leadingContext,
+                "theLogMessage",
+                "mypid"
+        );
+    }
+
 
     @Test
     public void modifyDatastreamByReference() throws ServerException {
         testJournaledMethod(JournalConstants.METHOD_MODIFY_DATASTREAM_BY_REFERENCE,
-                            leadingContext,
-                            "myPid",
-                            "datastreamIdentifier",
-                            new String[] {"altID"},
-                            "datastreamLabel",
-                            "mime/type",
-                            "formatUri",
-                            "dsLocation",
-                            "checksumType",
-                            "checksum",
-                            "logMessage",
-                            false);
+                leadingContext,
+                "myPid",
+                "datastreamIdentifier",
+                new String[]{"altID"},
+                "datastreamLabel",
+                "mime/type",
+                "formatUri",
+                "dsLocation",
+                "checksumType",
+                "checksum",
+                "logMessage",
+                false);
     }
 
     @Test
     public void modifyDatastreamByValue() throws ServerException {
         testJournaledMethod(JournalConstants.METHOD_MODIFY_DATASTREAM_BY_VALUE,
-                            leadingContext,
-                            "myPid",
-                            "datastreamIdentifier",
-                            new String[] {"altID"},
-                            "datastreamLabel",
-                            "mime/type",
-                            "formatUri",
-                            new ByteArrayInputStream(new byte[0]),
-                            "checksumType",
-                            "checksum",
-                            "logMessage",
-                            false);
+                leadingContext,
+                "myPid",
+                "datastreamIdentifier",
+                new String[]{"altID"},
+                "datastreamLabel",
+                "mime/type",
+                "formatUri",
+                new ByteArrayInputStream(new byte[0]),
+                "checksumType",
+                "checksum",
+                "logMessage",
+                false);
     }
 
     @Test
     public void modifyObject() throws ServerException {
         testJournaledMethod(JournalConstants.METHOD_MODIFY_OBJECT,
-                            leadingContext,
-                            "myPid",
-                            "state",
-                            "objectLabel",
-                            "owner",
-                            "logMessage");
+                leadingContext,
+                "myPid",
+                "state",
+                "objectLabel",
+                "owner",
+                "logMessage");
     }
 
     @Test
     public void purgeDatastream() throws ServerException {
         testJournaledMethod(JournalConstants.METHOD_PURGE_DATASTREAM,
-                            leadingContext,
-                            "myPid",
-                            "dsID",
-                            new Date(123),
-                            new Date(456),
-                            "logMessage",
-                            true);
+                leadingContext,
+                "myPid",
+                "dsID",
+                new Date(123),
+                new Date(456),
+                "logMessage",
+                true);
     }
 
     @Test
     public void purgeObject() throws ServerException {
         testJournaledMethod(JournalConstants.METHOD_PURGE_OBJECT,
-                            leadingContext,
-                            "aPID",
-                            "PurgeLogMessage",
-                            true);
+                leadingContext,
+                "aPID",
+                "PurgeLogMessage",
+                true);
     }
 
     @Test
     public void purgeRelationship() throws ServerException {
         testJournaledMethod(JournalConstants.METHOD_PURGE_RELATIONSHIP,
-                            leadingContext,
-                            "aSubject",
-                            "theRelationship",
-                            "someObject",
-                            false,
-                            "datatype");
+                leadingContext,
+                "aSubject",
+                "theRelationship",
+                "someObject",
+                false,
+                "datatype");
     }
 
     @Test
     public void putTempStream() throws ServerException {
         expectInContext(Constants.RECOVERY.UPLOAD_ID, "tempStreamId");
         testJournaledMethod(JournalConstants.METHOD_PUT_TEMP_STREAM,
-                            leadingContext,
-                            new ByteArrayInputStream(new byte[0]));
+                leadingContext,
+                new ByteArrayInputStream(new byte[0]));
     }
 
     @Test
     public void setDatastreamState() throws ServerException {
         testJournaledMethod(JournalConstants.METHOD_SET_DATASTREAM_STATE,
-                            leadingContext,
-                            "pid",
-                            "dsID",
-                            "dsState",
-                            "dsLogMessage");
+                leadingContext,
+                "pid",
+                "dsID",
+                "dsState",
+                "dsLogMessage");
     }
 
     @Test
     public void setDatastreamVersionable() throws ServerException {
         testJournaledMethod(JournalConstants.METHOD_SET_DATASTREAM_VERSIONABLE,
-                            leadingContext,
-                            "lastPID",
-                            "lastDsID",
-                            true,
-                            "the Log!");
+                leadingContext,
+                "lastPID",
+                "lastDsID",
+                true,
+                "the Log!");
     }
 
     /*
@@ -490,7 +500,7 @@ public class TestJournalRoundTrip {
         for (Map.Entry<RDFName, Object> entry : contextAdditions.entrySet()) {
             try {
                 expectedContext.getRecoveryAttributes().set(entry.getKey().uri,
-                                                            entry.getValue());
+                        entry.getValue());
             } catch (Exception e) {
                 fail("Stupid design of MultiValueMap");
             }
@@ -501,7 +511,7 @@ public class TestJournalRoundTrip {
         leadingDelegate = new MockManagementDelegate();
         MockServerForJournalTesting leadingServer =
                 new MockServerForJournalTesting(leadingDelegate,
-                                                THE_SERVER_HASH);
+                        THE_SERVER_HASH);
         creator =
                 new JournalCreator(journalParameters, THE_ROLE, leadingServer);
         creator.setManagementDelegate(leadingDelegate);
@@ -552,7 +562,7 @@ public class TestJournalRoundTrip {
     /**
      * Figure the class of each argument to the call, assuming that we always
      * use <code>boolean</code> or <code>int</code> rather than
-     * {@link Bookean} or {@link Integer}. Also, use {@link Context} and
+     * {@link Boolean} or {@link Integer}. Also, use {@link Context} and
      * {@link InputStream} rather than one of their subclasses.
      */
     private Class<?> getArgType(Object argument) {
@@ -586,11 +596,11 @@ public class TestJournalRoundTrip {
         followingDelegate = new MockManagementDelegate();
         MockServerForJournalTesting followingServer =
                 new MockServerForJournalTesting(followingDelegate,
-                                                THE_SERVER_HASH);
+                        THE_SERVER_HASH);
         consumer =
                 new JournalConsumer(journalParameters,
-                                    THE_ROLE,
-                                    followingServer);
+                        THE_ROLE,
+                        followingServer);
     }
 
     private void letFollowerCatchUp() throws ModuleShutdownException {

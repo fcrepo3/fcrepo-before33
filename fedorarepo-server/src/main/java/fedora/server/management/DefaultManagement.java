@@ -46,7 +46,6 @@ import fedora.common.rdf.SimpleURIReference;
 import fedora.server.Context;
 import fedora.server.RecoveryContext;
 import fedora.server.Server;
-import fedora.server.messaging.PName;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.InvalidStateException;
 import fedora.server.errors.InvalidXMLNameException;
@@ -129,12 +128,12 @@ public class DefaultManagement
         m_purgeDelayInMillis = purgeDelayInMillis;
     }
 
-    public String createNewObject(Context context,
-                                  String logMessage,
-                                  String newPid) throws ServerException {
+    public String createNew(Context context,
+                            String logMessage,
+                            String newPid) throws ServerException {
         DOWriter w = null;
         try {
-            LOG.debug("Entered createNewObject");
+            LOG.debug("Entered createNew");
             w = m_manager.getNewWriter(context, newPid);
             String pid = w.GetObjectPID();
 
@@ -151,14 +150,14 @@ public class DefaultManagement
         } finally {
             // Log completion
             if (LOG.isInfoEnabled()) {
-                StringBuilder logMsg = new StringBuilder("Completed createNewObject(");
+                StringBuilder logMsg = new StringBuilder("Completed createNew(");
                 logMsg.append(", newPid: ").append(newPid);
                 logMsg.append(", logMessage: ").append(logMessage);
                 logMsg.append(")");
                 LOG.info(logMsg.toString());
             }
 
-            finishModification(w, "createNewObject");
+            finishModification(w, "createNew");
         }
 
     }

@@ -20,7 +20,7 @@ import fedora.server.management.ManagementDelegate;
  * repository in any way. If a method is read-only, it will not be written to
  * the journal, and so doesn't require an adapter class.
  * </p>
- * 
+ *
  * @author Jim Blake
  */
 public abstract class ManagementMethod
@@ -35,6 +35,8 @@ public abstract class ManagementMethod
             return new IngestMethod(parent);
         } else if (METHOD_MODIFY_OBJECT.equals(methodName)) {
             return new ModifyObjectMethod(parent);
+        } else if (METHOD_CREATE_NEW.equals(methodName)) {
+            return new CreateNewMethod(parent);
         } else if (METHOD_PURGE_OBJECT.equals(methodName)) {
             return new PurgeObjectMethod(parent);
         } else if (METHOD_ADD_DATASTREAM.equals(methodName)) {

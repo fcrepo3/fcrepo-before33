@@ -145,8 +145,8 @@ public class Journaler
     // -------------------------------------------------------------------------
     //
 
-    public String createNewObject(@PName("context") Context context, @PName("logMessage") String logMessage, @PName("newPid") String newPid) throws ServerException {
-        return worker.createNewObject(context,
+    public String createNew(@PName("context") Context context, @PName("logMessage") String logMessage, @PName("newPid") String newPid) throws ServerException {
+        return worker.createNew(context,
                 logMessage
                 , newPid);
     }

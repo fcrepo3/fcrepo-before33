@@ -20,7 +20,6 @@ import org.apache.log4j.Logger;
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
-import fedora.server.messaging.PName;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
@@ -333,8 +332,8 @@ public class ManagementModule
         return mgmt.getTempStream(id);
     }
 
-    public String createNewObject(Context context, String logMessage, String newPid) throws ServerException {
-        return mgmt.createNewObject(context, logMessage, newPid);
+    public String createNew(Context context, String logMessage, String newPid) throws ServerException {
+        return mgmt.createNew(context, logMessage, newPid);
     }
 
     /**

@@ -94,9 +94,9 @@ public class JournalCreator
     // -------------------------------------------------------------------------
     //
 
-    public String createNewObject(Context context,
-                                  String logMessage,
-                                  String newPid) throws ServerException {
+    public String createNew(Context context,
+                            String logMessage,
+                            String newPid) throws ServerException {
         try {
             CreatorJournalEntry cje =
                     new CreatorJournalEntry(METHOD_CREATE_NEW, context);

@@ -97,7 +97,7 @@ public class JournalConsumer
     // -------------------------------------------------------------------------
     //
 
-    public String createNewObject(@PName("context") Context context, @PName("logMessage") String logMessage, @PName("newPid") String newPid) throws ServerException {
+    public String createNew(@PName("context") Context context, @PName("logMessage") String logMessage, @PName("newPid") String newPid) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 

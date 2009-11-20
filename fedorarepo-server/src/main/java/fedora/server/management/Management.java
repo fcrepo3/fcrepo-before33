@@ -22,9 +22,9 @@ import fedora.server.storage.types.RelationshipTuple;
  */
 public interface Management {
 
-    public String createNewObject(@PName("context") Context context,
-                                  @PName("logMessage") String logMessage,
-                                  @PName("newPid") String newPid) throws ServerException;
+    public String createNew(@PName("context") Context context,
+                            @PName("logMessage") String logMessage,
+                            @PName("newPid") String newPid) throws ServerException;
 
 
     public String ingest(@PName("context") Context context,
