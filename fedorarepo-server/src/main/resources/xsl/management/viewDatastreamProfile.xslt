@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-    <xsl:param name="fedora"/>
-	<xsl:output method="html" indent="yes"/>
-	<xsl:template match="datastreamProfile">
-		<html>
-			<head>
-				<title>Datastream Profile HTML Presentation</title> 
-			</head>
-			<body>
-				<center>
-					<table width="784" border="0" cellpadding="0" cellspacing="0">
-						<tr>
-							<td width="141" height="134" valign="top">
-								<img src="/{$fedora}/images/newlogo2.jpg" width="141" height="134"/>
-							</td>
-							<td width="643" valign="top">
-								<center>
-									<h2>Fedora Digital Object Datastream</h2>
-									<h3>Datastream Profile View</h3>	
-								</center>
-							</td>
-						</tr>
-					</table>
-					<hr/>
-					<xsl:choose>
-						<xsl:when test="@dateTime">
-							<font size="+1" color="blue">Version Date:   </font>
-							<font size="+1"><xsl:value-of select="@dateTime"/></font>
-						</xsl:when>
-						<xsl:otherwise>
-							<font size="+1" color="blue">Version Date:   </font>
-							<font size="+1">current</font>	
-						</xsl:otherwise>
-					</xsl:choose>
+  <xsl:param name="fedora"/>
+  <xsl:output method="html" indent="yes"/>
+  <xsl:template match="datastreamProfile">
+    <html>
+      <head>
+        <title>Datastream Profile HTML Presentation</title> 
+      </head>
+      <body>
+        <center>
+          <table width="784" border="0" cellpadding="0" cellspacing="0">
+            <tr>
+              <td width="141" height="134" valign="top">
+                <img src="/{$fedora}/images/newlogo2.jpg" width="141" height="134"/>
+              </td>
+              <td width="643" valign="top">
+                <center>
+                  <h2>Fedora Digital Object Datastream</h2>
+                  <h3>Datastream Profile View</h3>  
+                </center>
+              </td>
+            </tr>
+          </table>
+          <hr/>
+          <xsl:choose>
+            <xsl:when test="@dateTime">
+              <font size="+1" color="blue">Version Date:   </font>
+              <font size="+1"><xsl:value-of select="@dateTime"/></font>
+            </xsl:when>
+            <xsl:otherwise>
+              <font size="+1" color="blue">Version Date:   </font>
+              <font size="+1">current</font>  
+            </xsl:otherwise>
+          </xsl:choose>
                     <p />
                     <xsl:variable name="content-url">
                         <xsl:text>objects/</xsl:text>
@@ -44,17 +44,17 @@
                     <font size="+1" color="blue">
                         <a href="/{$fedora}/{$content-url}">View the Content of this Datastream</a>
                     </font>
-					<p/>					
-					<hr/>
-					<table width="784" border="1" cellpadding="5" cellspacing="5" bgcolor="silver">
-					<tr>
-						<td align="right">
-							<font color="blue">Object Identifier (PID): </font>
-						</td>
-						<td align="left">
-							<xsl:value-of select="@pid"/>
-						</td>
-					</tr>
+          <p/>          
+          <hr/>
+          <table width="784" border="1" cellpadding="5" cellspacing="5" bgcolor="silver">
+          <tr>
+            <td align="right">
+              <font color="blue">Object Identifier (PID): </font>
+            </td>
+            <td align="left">
+              <xsl:value-of select="@pid"/>
+            </td>
+          </tr>
                     <tr>
                         <td align="right">
                             <font color="blue">Datastream Identifier (DSID): </font>
@@ -63,14 +63,14 @@
                             <xsl:value-of select="@dsID"/>
                         </td>
                     </tr>
-					<tr>
-						<td align="right">
-							<font color="blue">Datastream Label: </font>
-						</td>
-						<td align="left">
-							<xsl:value-of select="dsLabel"/>
-						</td>
-					</tr>
+          <tr>
+            <td align="right">
+              <font color="blue">Datastream Label: </font>
+            </td>
+            <td align="left">
+              <xsl:value-of select="dsLabel"/>
+            </td>
+          </tr>
                     <tr>
                         <td align="right">
                             <font color="blue">Datastream Version ID: </font>
@@ -94,7 +94,7 @@
                         <td align="left">
                             <xsl:value-of select="dsState"/>
                         </td>
-                    </tr>					
+                    </tr>          
                     <tr>
                         <td align="right">
                             <font color="blue">Datastream MIME type: </font>
@@ -102,7 +102,7 @@
                         <td align="left">
                             <xsl:value-of select="dsMIME"/>
                         </td>
-                    </tr>					
+                    </tr>          
                     <tr>
                         <td align="right">
                             <font color="blue">Datastream Format URI: </font>
@@ -174,7 +174,7 @@
                         <td align="left">
                             <xsl:value-of select="dsChecksum"/>
                         </td>
-                    </tr>	
+                    </tr>  
                     <xsl:if test="dsChecksumValid">
                         <tr>
                             <td align="right">
@@ -184,8 +184,8 @@
                                 <xsl:value-of select="dsChecksumValid"/>
                             </td>
                         </tr>   
-                    </xsl:if>			
-					<xsl:for-each select="dsAltID">
+                    </xsl:if>      
+          <xsl:for-each select="dsAltID">
                         <tr>
                             <td align="right">
                                 <font color="blue">Datastream Alternate ID: </font>
@@ -194,10 +194,10 @@
                                 <xsl:value-of select="."/>
                             </td>
                         </tr>
-					</xsl:for-each>							
-					</table>
-				</center>
-			</body>
-		</html>
-	</xsl:template>
+          </xsl:for-each>              
+          </table>
+        </center>
+      </body>
+    </html>
+  </xsl:template>
 </xsl:stylesheet>

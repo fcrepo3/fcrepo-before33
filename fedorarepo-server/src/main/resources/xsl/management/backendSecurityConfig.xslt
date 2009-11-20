@@ -206,8 +206,8 @@ function callBasicAuthChanged(name) {
 }
 
 * html .innerTop {
-	width: 200px; 
-	w\idth: 210px; 
+  width: 200px; 
+  w\idth: 210px; 
 }
 
 .innerBottom {
@@ -225,8 +225,8 @@ function callBasicAuthChanged(name) {
 }
 
 * html .innerBottom {
-	width: 650px; 
-	w\idth: 660px; 
+  width: 650px; 
+  w\idth: 660px; 
 }
 
 #left {
@@ -244,8 +244,8 @@ function callBasicAuthChanged(name) {
 }
 
 * html #left {  /* This is the Tan hack */
-	width: 225px; 
-	w\idth: 238px; 
+  width: 225px; 
+  w\idth: 238px; 
 }
 
 .right {
@@ -265,8 +265,8 @@ function callBasicAuthChanged(name) {
 }
 
 * html .right {
-	width: 670px; 
-	w\idth: 686px; 
+  width: 670px; 
+  w\idth: 686px; 
 }
 
 p {

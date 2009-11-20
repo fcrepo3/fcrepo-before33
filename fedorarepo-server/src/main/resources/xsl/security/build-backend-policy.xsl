@@ -1,5 +1,5 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns="urn:oasis:names:tc:xacml:1.0:policy" xmlns:xacml="urn:oasis:names:tc:xacml:1.0:policy">     
+  xmlns="urn:oasis:names:tc:xacml:1.0:policy" xmlns:xacml="urn:oasis:names:tc:xacml:1.0:policy">     
 <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
 
 <!-- build backend policy -->
