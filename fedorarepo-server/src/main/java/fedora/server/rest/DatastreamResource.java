@@ -109,8 +109,6 @@ public class DatastreamResource extends BaseRestResource {
      * Invoke API-M.getDatastream(context, pid, dsID, asOfDateTime)
      *
      * GET /objects/{pid}/datastreams/{dsID} ? asOfDateTime & validateChecksum=true|false
-     *
-     * @see http://www.fedora.info/wiki/index.php/GetDatastream
      */
     @Path("/{dsID}")
     @GET
@@ -161,8 +159,6 @@ public class DatastreamResource extends BaseRestResource {
      * Invoke API-A.getDatastreamDissemination(context, pid, dsID, asOfDateTime)
      *
      * GET /objects/{pid}/datastreams/{dsID}/content ? asOfDateTime
-     *
-     * @see http://www.fedora.info/wiki/index.php/GetDatastream
      */
     @Path("/{dsID}/content")
     @GET
@@ -218,8 +214,6 @@ public class DatastreamResource extends BaseRestResource {
      * Invoke API-M.purgeDatastream
      *
      * DELETE /objects/{pid}/datastreams/{dsID} ? startDT endDT logMessage force
-     *
-     * @see http://www.fedora.info/wiki/index.php/PurgeDatastream
      */
     @Path("/{dsID}")
     @DELETE
@@ -256,9 +250,6 @@ public class DatastreamResource extends BaseRestResource {
      * PUT /objects/{pid}/datastreams/{dsID} ? dsLocation altIDs dsLabel versionable
      *                                         dsState formatURI checksumType checksum
      *                                         logMessage force
-     *
-     * @see http://www.fedora.info/wiki/index.php/ModifyDatastreamByReference
-     * @see http://www.fedora.info/wiki/index.php/ModifyDatastreamByValue
      */
     @Path("/{dsID}")
     @PUT
@@ -306,8 +297,6 @@ public class DatastreamResource extends BaseRestResource {
      * POST /objects/{pid}/datastreams/{dsID} ? controlGroup dsLocation altIDs dsLabel
      *                                          versionable dsState formatURI
      *                                          checksumType checksum logMessage
-     *
-     * @see http://www.fedora.info/wiki/index.php/AddDatastream
      */
     @Path("/{dsID}")
     @POST

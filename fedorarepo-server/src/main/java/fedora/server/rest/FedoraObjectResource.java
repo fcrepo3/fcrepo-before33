@@ -34,7 +34,6 @@ import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.access.ObjectProfile;
 import fedora.server.rest.RestUtil.RequestContent;
-import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 
@@ -58,8 +57,6 @@ public class FedoraObjectResource extends BaseRestResource {
      * for the specified export context ("public", "migrate", or "archive").
      *
      * GET /objects/{pid}/export ? format context encoding
-     *
-     * @see http://www.fedora.info/wiki/index.php/Export
      */
     @Path("/export")
     @GET
@@ -93,8 +90,6 @@ public class FedoraObjectResource extends BaseRestResource {
      * as it appeared at a specific point in time.
      *
      * GET /objects/{pid}/versions ? format
-     *
-     * @see http://www.fedora.info/wiki/index.php/GetObjectHistory
      */
     @Path("/versions")
     @GET
@@ -124,55 +119,11 @@ public class FedoraObjectResource extends BaseRestResource {
     }
 
     /**
-     * Inquires upon all object Disseminators to obtain Behavior Definition
-     * pids, and methodNames supported by a digital object. This returns a set
-     * of method definitions that represent all possible disseminations that can
-     * be run on the object.
-     *
-     * GET /objects/{pid}/methods ? format asOfDateTime
-     *
-     * @see http://www.fedora.info/wiki/index.php/ListMethods
-     */
-    @Path("/methods")
-    @GET
-    @Produces({ HTML, XML })
-    public Response getObjectMethods(
-            @PathParam(RestParam.PID)
-            String pid,
-            @QueryParam(RestParam.AS_OF_DATE_TIME)
-            String dTime,
-            @QueryParam("format")
-            @DefaultValue(HTML)
-            String format) {
-
-        try {
-            Date asOfDateTime = DateUtility.convertStringToDate(dTime);
-            Context context = getContext();
-            ObjectMethodsDef[] methodDefs = apiAService.listMethods(context, pid, asOfDateTime);
-            String xml = getSerializer(context).objectMethodsToXml(methodDefs, pid, asOfDateTime);
-
-            MediaType mime = RestHelper.getContentType(format);
-
-            if (TEXT_HTML.isCompatible(mime)) {
-                CharArrayWriter writer = new CharArrayWriter();
-                transform(xml, "access/listMethods.xslt", writer);
-                xml = writer.toString();
-            }
-
-            return Response.ok(xml, mime).build();
-        } catch (Exception ex) {
-            return handleException(ex);
-        }
-    }
-
-    /**
      * Gets a profile of the object which includes key metadata fields and URLs
      * for the object Dissemination Index and the object Item Index. Can be
      * thought of as a default view of the object.
      *
      * GET /objects/{pid}/objectXML
-     *
-     * @see http://www.fedora.info/wiki/index.php/GetObjectXML
      */
     @Path("/objectXML")
     @GET
@@ -197,8 +148,6 @@ public class FedoraObjectResource extends BaseRestResource {
      * thought of as a default view of the object.
      *
      * GET /objects/{pid} ? format asOfDateTime
-     *
-     * @see http://www.fedora.info/wiki/index.php/GetObjectProfile
      */
     @GET
     @Produces( { HTML, XML })
@@ -235,8 +184,6 @@ public class FedoraObjectResource extends BaseRestResource {
      * Permanently removes an object from the repository.
      *
      * DELETE /objects/{pid} ? logMessage force
-     *
-     * @see http://www.fedora.info/wiki/index.php/PurgeObject
      */
     @DELETE
     public Response deleteObject(
@@ -261,8 +208,6 @@ public class FedoraObjectResource extends BaseRestResource {
      * create an empty object.
      *
      * POST /objects/{pid} ? label logMessage format encoding namespace ownerId state
-     *
-     * @see http://www.fedora.info/wiki/index.php/Ingest
      */
     @POST
     @Consumes({ XML, FORM })

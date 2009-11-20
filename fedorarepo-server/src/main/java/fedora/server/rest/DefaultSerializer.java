@@ -191,76 +191,72 @@ public class DefaultSerializer {
     String objectMethodsToXml(
             ObjectMethodsDef[] methodDefs,
             String pid,
+            String sDef,
             Date versDateTime) {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        if (versDateTime == null
-                || DateUtility.convertDateToString(versDateTime).equalsIgnoreCase("")) {
-            buffer.append("<objectMethods "
-                    + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
-                    + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
-                    + "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-                    + StreamUtility.enc(fedoraServerProtocol) + "://"
-                    + StreamUtility.enc(fedoraServerHost) + ":"
-                    + StreamUtility.enc(fedoraServerPort) + "/listMethods.xsd\""
-                    + " pid=\"" + StreamUtility.enc(pid) + "\" " + "baseURL=\""
-                    + StreamUtility.enc(fedoraServerProtocol) + "://"
-                    + StreamUtility.enc(fedoraServerHost) + ":"
-                    + StreamUtility.enc(fedoraServerPort) + "/" + fedoraAppServerContext + "/\" >");
-        } else {
-            buffer.append("<objectMethods "
-                    + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
-                    + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
-                    + "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-                    + StreamUtility.enc(fedoraServerProtocol) + "://"
-                    + StreamUtility.enc(fedoraServerHost) + ":"
-                    + StreamUtility.enc(fedoraServerPort) + "/listMethods.xsd\""
-                    + " pid=\"" + StreamUtility.enc(pid) + "\" " + "asOfDateTime=\""
-                    + DateUtility.convertDateToString(versDateTime) + "\" "
-                    + "baseURL=\"" + StreamUtility.enc(fedoraServerProtocol) + "://"
-                    + StreamUtility.enc(fedoraServerHost) + ":"
-                    + StreamUtility.enc(fedoraServerPort) + "/" + fedoraAppServerContext + "/\"" + " >");
-        }
+        String asOfDateTimeElement = "";
+        if (versDateTime != null)
+            asOfDateTimeElement = "asOfDateTime=\""
+                    + DateUtility.convertDateToString(versDateTime) + "\" ";
+        String sDefElement = "";
+        if (sDef != null)
+            sDefElement = "sDef=\"" + StreamUtility.enc(sDef) + "\" ";
+        buffer.append("<objectMethods "
+                + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
+                + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+                + "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
+                + StreamUtility.enc(fedoraServerProtocol) + "://"
+                + StreamUtility.enc(fedoraServerHost) + ":"
+                + StreamUtility.enc(fedoraServerPort) + "/listMethods.xsd\""
+                + " pid=\"" + StreamUtility.enc(pid) + "\" "
+                + asOfDateTimeElement + sDefElement + "baseURL=\""
+                + StreamUtility.enc(fedoraServerProtocol) + "://"
+                + StreamUtility.enc(fedoraServerHost) + ":"
+                + StreamUtility.enc(fedoraServerPort) + "/" + fedoraAppServerContext + "/\" >");
 
         // ObjectMethodsDef SERIALIZATION
         String nextSdef = "null";
         String currentSdef = "";
         for (int i = 0; i < methodDefs.length; i++) {
             currentSdef = methodDefs[i].sDefPID;
-            if (!currentSdef.equalsIgnoreCase(nextSdef)) {
-                if (i != 0)
-                    buffer.append("</sDef>");
-                buffer.append("<sDef pid=\"" + StreamUtility.enc(methodDefs[i].sDefPID)
-                        + "\" >");
-            }
-            buffer.append("<method name=\"" + StreamUtility.enc(methodDefs[i].methodName)
-                    + "\" >");
-            MethodParmDef[] methodParms = methodDefs[i].methodParmDefs;
-            for (int j = 0; j < methodParms.length; j++) {
-                buffer.append("<methodParm parmName=\""
-                        + StreamUtility.enc(methodParms[j].parmName)
-                        + "\" parmDefaultValue=\""
-                        + StreamUtility.enc(methodParms[j].parmDefaultValue)
-                        + "\" parmRequired=\"" + methodParms[j].parmRequired
-                        + "\" parmLabel=\"" + StreamUtility.enc(methodParms[j].parmLabel)
-                        + "\" >");
-                if (methodParms[j].parmDomainValues.length > 0) {
-                    buffer.append("<methodParmDomain>");
-                    for (int k = 0; k < methodParms[j].parmDomainValues.length; k++) {
-                        buffer.append("<methodParmValue>"
-                                + StreamUtility.enc(methodParms[j].parmDomainValues[k])
-                                + "</methodParmValue>");
-                    }
-                    buffer.append("</methodParmDomain>");
+            if (sDef == null || currentSdef.equals(sDef)) {
+                if (!currentSdef.equalsIgnoreCase(nextSdef)) {
+                    if (i != 0)
+                        buffer.append("</sDef>");
+                    buffer.append("<sDef pid=\"" + StreamUtility.enc(methodDefs[i].sDefPID)
+                            + "\" >");
                 }
-                buffer.append("</methodParm>");
-            }
+                buffer.append("<method name=\"" + StreamUtility.enc(methodDefs[i].methodName)
+                        + "\" >");
+                MethodParmDef[] methodParms = methodDefs[i].methodParmDefs;
+                for (int j = 0; j < methodParms.length; j++) {
+                    buffer.append("<methodParm parmName=\""
+                            + StreamUtility.enc(methodParms[j].parmName)
+                            + "\" parmDefaultValue=\""
+                            + StreamUtility.enc(methodParms[j].parmDefaultValue)
+                            + "\" parmRequired=\"" + methodParms[j].parmRequired
+                            + "\" parmLabel=\"" + StreamUtility.enc(methodParms[j].parmLabel)
+                            + "\" >");
+                    if (methodParms[j].parmDomainValues.length > 0) {
+                        buffer.append("<methodParmDomain>");
+                        for (int k = 0; k < methodParms[j].parmDomainValues.length; k++) {
+                            buffer.append("<methodParmValue>"
+                                    + StreamUtility.enc(methodParms[j].parmDomainValues[k])
+                                    + "</methodParmValue>");
+                        }
+                        buffer.append("</methodParmDomain>");
+                    }
+                    buffer.append("</methodParm>");
+                }
 
-            buffer.append("</method>");
-            nextSdef = currentSdef;
+                buffer.append("</method>");
+                nextSdef = currentSdef;
+            }
         }
-        buffer.append("</sDef>");
+        if (!nextSdef.equals("null"))
+            buffer.append("</sDef>");
         buffer.append("</objectMethods>");
 
         return buffer.toString();

@@ -17,7 +17,7 @@
 					<td width="643" valign="top">
 						<center>
 							<h2>Fedora Digital Object</h2>
-							<h3>List Methods</h3>
+                            <h3>List Methods</h3>
 						</center>
 					</td>
 				</tr>
@@ -28,6 +28,13 @@
 				<xsl:value-of select="@pid"/>
 			</font>
 			<p/>
+            <xsl:if test="@sDef">
+              <font size="+1">
+                <font color="blue">Service Definition: </font>
+                <xsl:value-of select="@sDef"/>
+              </font>
+              <p/>
+            </xsl:if>
 			<xsl:choose>
 				<xsl:when test="@asOfDateTime">
 					<font size="+1" color="blue">Version Date:   </font>

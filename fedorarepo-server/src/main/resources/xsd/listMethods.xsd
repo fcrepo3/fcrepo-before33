@@ -14,6 +14,7 @@
 			<xsd:element name="sDef" type="serviceDefinitionType" maxOccurs="unbounded"/>
 		</xsd:sequence>
 		<xsd:attribute name="pid" type="xsd:string" use="required"/>
+		<xsd:attribute name="sDef" type="xsd:string" use="optional"/>
 		<xsd:attribute name="asOfDateTime" type="xsd:string" use="optional"/>
 		<xsd:attribute name="baseURL" type="xsd:string" use="required"/>
 	</xsd:complexType>

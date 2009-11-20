@@ -30,6 +30,7 @@ public interface RestParam {
     String EXPORT_CONTEXT = "context";
     String DSID = "dsID";
     String PID = "pid";
+    String SDEF = "sDef";
     String MIME_TYPE = "mimeType";
     String IGNORE_CONTENT = "ignoreContent";
     String IGNORE_MIME = "ignoreMime";

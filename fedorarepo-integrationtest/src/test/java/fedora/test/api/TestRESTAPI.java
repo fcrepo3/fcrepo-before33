@@ -240,8 +240,25 @@ public class TestRESTAPI
         assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
         assertEquals(SC_OK, get(true).getStatusCode());
 
-        url =
-                String.format("/objects/%s/methods?asOfDateTime=%s", pid
+        url = String.format("/objects/%s/methods?asOfDateTime=%s", pid
+                        .toString(), datetime);
+        assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
+    }
+
+    public void testListMethodsForSDef() throws Exception {
+        url = String.format("/objects/%s/methods/fedora-system:2", pid.toString());
+        assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
+
+        url = String.format("/objects/%s/methods/fedora-system:2?format=xml", pid.toString());
+        assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
+        HttpResponse response = get(true);
+        assertEquals(SC_OK, response.getStatusCode());
+        String responseXML = new String(response.responseBody, "UTF-8");
+        assertTrue(responseXML.contains("sDef=\"fedora-system:2\""));
+
+        url = String.format("/objects/%s/methods/fedora-system:2?asOfDateTime=%s", pid
                         .toString(), datetime);
         assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
         assertEquals(SC_OK, get(true).getStatusCode());
