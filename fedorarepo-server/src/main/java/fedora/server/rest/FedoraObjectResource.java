@@ -34,7 +34,6 @@ import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.access.ObjectProfile;
 import fedora.server.rest.RestUtil.RequestContent;
-import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 
 /**
@@ -161,7 +160,7 @@ public class FedoraObjectResource extends BaseRestResource {
             String format) {
 
         try {
-            Date asOfDateTime = DateUtility.convertStringToDate(dateTime);
+            Date asOfDateTime = parseDate(dateTime);
             Context context = getContext();
             ObjectProfile objProfile = apiAService.getObjectProfile(context, pid, asOfDateTime);
             String xml = getSerializer(context).objectProfileToXML(objProfile, asOfDateTime);

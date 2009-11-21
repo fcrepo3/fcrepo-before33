@@ -83,8 +83,8 @@ public class TestRESTAPI
 
     protected String url;
 
-    private final String datetime =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private static final String datetime =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
                     .format(new Date());
 
     private boolean chunked = false;
@@ -117,7 +117,7 @@ public class TestRESTAPI
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
         sb.append("  <foxml:datastream ID=\"RELS-EXT\" CONTROL_GROUP=\"M\" STATE=\"A\">");
-        sb.append("    <foxml:datastreamVersion FORMAT_URI=\"info:fedora/fedora-system:FedoraRELSExt-1.0\" ID=\"RELS-EXT.0\" MIMETYPE=\"application/rdf+xml\" LABEL=\"RDF Statements about this object\">");
+        sb.append("    <foxml:datastreamVersion FORMAT_URI=\"info:fedora/fedora-system:FedoraRELSExt-1.0\" ID=\"RELS-EXT.0\" MIMETYPE=\"application/rdf+xml\" LABEL=\"RDF Statements about this object\" CREATED=\"" + datetime + "\">");
         sb.append("      <foxml:xmlContent>");
         sb.append("        <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""
                         + "                 xmlns:rel=\"info:fedora/fedora-system:def/relations-external#\">");
@@ -246,22 +246,112 @@ public class TestRESTAPI
         assertEquals(SC_OK, get(true).getStatusCode());
     }
 
-    public void testListMethodsForSDef() throws Exception {
-        url = String.format("/objects/%s/methods/fedora-system:2", pid.toString());
+    public void testListMethodsForSDep() throws Exception {
+        url = String.format("/objects/%s/methods/fedora-system:3", pid.toString());
         assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
         assertEquals(SC_OK, get(true).getStatusCode());
 
-        url = String.format("/objects/%s/methods/fedora-system:2?format=xml", pid.toString());
+        url = String.format("/objects/%s/methods/fedora-system:3?format=xml", pid.toString());
         assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
         HttpResponse response = get(true);
         assertEquals(SC_OK, response.getStatusCode());
         String responseXML = new String(response.responseBody, "UTF-8");
-        assertTrue(responseXML.contains("sDef=\"fedora-system:2\""));
+        assertTrue(responseXML.contains("sDef=\"fedora-system:3\""));
 
-        url = String.format("/objects/%s/methods/fedora-system:2?asOfDateTime=%s", pid
+        url = String.format("/objects/%s/methods/fedora-system:3?asOfDateTime=%s", pid
                         .toString(), datetime);
         assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
         assertEquals(SC_OK, get(true).getStatusCode());
+    }
+
+    //
+    // GETs on built-in Service Definition methods
+    //
+
+    public void testGETMethodBuiltInBadMethod() throws Exception {
+        url = String.format("/objects/%s/methods/fedora-system:3/noSuchMethod", pid.toString());
+        assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
+        assertFalse(SC_OK == get(true).getStatusCode());
+    }
+
+    public void testGETMethodBuiltInBadUserArg() throws Exception {
+        url = String.format("/objects/%s/methods/fedora-system:3/viewMethodIndex?noSuchArg=foo", pid.toString());
+        assertFalse(SC_OK == get(true).getStatusCode());
+    }
+
+    public void testGETMethodBuiltInNoArg() throws Exception {
+        url = String.format("/objects/%s/methods/fedora-system:3/viewMethodIndex", pid.toString());
+        assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
+    }
+
+    //
+    // GETs on custom Service Definition methods
+    //
+
+    public void testGETMethodCustomBadMethod() throws Exception {
+        url = "/objects/demo:14/methods/demo:12/noSuchMethod";
+        assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
+        assertFalse(SC_OK == get(true).getStatusCode());
+    }
+
+    public void testGETMethodCustomBadUserArg() throws Exception {
+        url = "/objects/demo:14/methods/demo:12/getDocumentStyle1?noSuchArg=foo";
+        assertFalse(SC_OK == get(true).getStatusCode());
+    }
+
+    public void testGETMethodCustomNoArg() throws Exception {
+        url = "/objects/demo:14/methods/demo:12/getDocumentStyle1";
+        assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
+    }
+
+    public void testGETMethodCustomGoodUserArg() throws Exception {
+        url = "/objects/demo:29/methods/demo:27/resizeImage?width=50";
+        assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
+        HttpResponse response = get(true);
+        assertEquals(SC_OK, response.getStatusCode());
+        assertEquals(1486, response.getResponseBody().length);
+        assertEquals("image/jpeg", response.getResponseHeader("Content-Type").getValue());
+    }
+
+    public void testGETMethodCustomGoodUserArgGoodDate() throws Exception {
+        url = "/objects/demo:29/methods/demo:27/resizeImage?width=50&asOfDateTime=" + datetime;
+        assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
+        HttpResponse response = get(true);
+        assertEquals(SC_OK, response.getStatusCode());
+        assertEquals(1486, response.getResponseBody().length);
+        assertEquals("image/jpeg", response.getResponseHeader("Content-Type").getValue());
+    }
+
+    public void testGETMethodCustomUserArgBadDate() throws Exception {
+        url = "/objects/demo:14/methods/demo:12/getDocumentStyle1?width=50&asOfDateTime=badDate";
+        assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
+        assertFalse(SC_OK == get(true).getStatusCode());
+    }
+
+    public void testGETMethodCustomUserArgEarlyDate() throws Exception {
+        url = "/objects/demo:14/methods/demo:12/getDocumentStyle1?width=50&asOfDateTime=1999-11-21T16:38:32.200Z";
+        assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
+        assertEquals(SC_NOT_FOUND, get(true).getStatusCode());
+    }
+
+    public void testGETMethodCustomGoodDate() throws Exception {
+        url = "/objects/demo:14/methods/demo:12/getDocumentStyle1?asOfDateTime=" + datetime;
+        assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
+        assertEquals(SC_OK, get(true).getStatusCode());
+    }
+
+    public void testGETMethodCustomBadDate() throws Exception {
+        url = "/objects/demo:14/methods/demo:12/getDocumentStyle1?asOfDateTime=badDate";
+        assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
+        assertFalse(SC_OK == get(true).getStatusCode());
+    }
+
+    public void testGETMethodCustomEarlyDate() throws Exception {
+        url = "/objects/demo:14/methods/demo:12/getDocumentStyle1?asOfDateTime=1999-11-21T16:38:32.200Z";
+        assertEquals(SC_UNAUTHORIZED, get(false).getStatusCode());
+        assertEquals(SC_NOT_FOUND, get(true).getStatusCode());
     }
 
     public void testListDatastreams() throws Exception {

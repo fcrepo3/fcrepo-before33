@@ -80,7 +80,7 @@ public class DatastreamResource extends BaseRestResource {
             String format) {
 
         try {
-            Date asOfDateTime = DateUtility.convertStringToDate(dateTime);
+            Date asOfDateTime = parseDate(dateTime);
             Context context = getContext();
             MediaType mime = RestHelper.getContentType(format);
             DatastreamDef[] dsDefs = apiAService.listDatastreams(context, pid, asOfDateTime);
@@ -120,7 +120,7 @@ public class DatastreamResource extends BaseRestResource {
                      @DefaultValue("false")
                      boolean validateChecksum) {
         try {
-            Date asOfDateTime = DateUtility.convertStringToDate(dateTime);
+            Date asOfDateTime = parseDate(dateTime);
             Context context = getContext();
             Datastream dsProfile = apiMService.getDatastream(context, pid, dsID, asOfDateTime);
 
@@ -169,7 +169,7 @@ public class DatastreamResource extends BaseRestResource {
                     getContext(),
                     pid,
                     dsID,
-                    DateUtility.convertStringToDate(dateTime)));
+                    parseDate(dateTime)));
         } catch (Exception ex) {
             return handleException(ex);
         }

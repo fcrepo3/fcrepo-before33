@@ -10,6 +10,8 @@ import java.io.Writer;
 
 import java.net.URI;
 
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 
 import javax.xml.transform.Templates;
@@ -47,6 +49,7 @@ import fedora.server.errors.authorization.AuthzException;
 import fedora.server.management.Management;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Property;
+import fedora.server.utilities.DateUtility;
 
 /**
  * A barebone RESTFUL resource implementation.
@@ -141,15 +144,31 @@ public class BaseRestResource {
     }
 
     protected Response handleException(Exception ex) {
-        LOG.error(ex);
-
         if (ex instanceof ObjectNotInLowlevelStorageException ||
             ex instanceof DatastreamNotFoundException) {
+            LOG.warn("Resource not found: " + ex.getMessage() + "; unable to fulfill REST API request", ex);
             return Response.status(Status.NOT_FOUND).entity(ex.getMessage()).type("text/plain").build();
         } else if (ex instanceof AuthzException) {
+            LOG.warn("Authorization failed; unable to fulfill REST API request", ex);
             return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).type("text/plain").build();
+        } else if (ex instanceof IllegalArgumentException) {
+            LOG.warn("Bad request; unable to fulfill REST API request", ex);
+            return Response.status(Status.BAD_REQUEST).entity(ex.getMessage()).type("text/plain").build();
         } else {
+            LOG.error("Unexpected error fulfilling REST API request", ex);
             throw new WebApplicationException(ex);
         }
+    }
+
+    protected static Date parseDate(String dTime) throws IllegalArgumentException {
+        Date date = null;
+        if (dTime != null) {
+            date = DateUtility.convertStringToDate(dTime);
+            if (date == null) {
+                throw new IllegalArgumentException(
+                        "Illegal date syntax: " + dTime);
+            }
+        }
+        return date;
     }
 }

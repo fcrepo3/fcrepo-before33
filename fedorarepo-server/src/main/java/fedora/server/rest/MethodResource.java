@@ -22,7 +22,6 @@ import javax.ws.rs.core.UriInfo;
 import fedora.server.Context;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.Property;
-import fedora.server.utilities.DateUtility;
 
 /**
  * A rest controller to handle listing and invoking all Service Definition
@@ -91,7 +90,7 @@ public class MethodResource extends BaseRestResource {
             @QueryParam(RestParam.AS_OF_DATE_TIME)
             String dTime) {
         try {
-            Date asOfDateTime = DateUtility.convertStringToDate(dTime);
+            Date asOfDateTime = parseDate(dTime);
             return buildResponse(apiAService.getDissemination(
                     getContext(),
                     pid,
@@ -107,7 +106,7 @@ public class MethodResource extends BaseRestResource {
 
     private Response getObjectMethodsForSDefImpl(String pid, String sDef, String dTime, String format) {
         try {
-            Date asOfDateTime = DateUtility.convertStringToDate(dTime);
+            Date asOfDateTime = parseDate(dTime);
             Context context = getContext();
             ObjectMethodsDef[] methodDefs = apiAService.listMethods(context, pid, asOfDateTime);
             String xml = getSerializer(context).objectMethodsToXml(methodDefs, pid, sDef, asOfDateTime);
