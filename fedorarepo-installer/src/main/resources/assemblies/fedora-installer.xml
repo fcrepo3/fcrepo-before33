@@ -41,8 +41,8 @@
     <dependencySet>
       <includes>
 
-        <include>org.apache.derby:derbyclient:jar:10.4.2.0</include>
-        <include>org.apache.derby:derby:jar:10.4.2.0</include>
+        <include>org.apache.derby:derbyclient:jar:10.5.3.0_1</include>
+        <include>org.apache.derby:derby:jar:10.5.3.0_1</include>
         <include>org.fedorarepo:mulgara-core:jar:2.1.1</include>
         <include>mckoi:mckoi:jar:1.0.2</include>
         <include>mysql:mysql-connector-java:jar:5.1.6</include>

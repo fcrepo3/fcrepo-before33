@@ -496,8 +496,6 @@
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
-      <version>10.4.2.0</version>
-      <!-- <scope>test</scope> -->
     </dependency>
 
     <!-- Note: Used by messaging. DWD 9/9/2009 -->

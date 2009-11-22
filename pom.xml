@@ -121,6 +121,16 @@
         <artifactId>abdera-core</artifactId>
         <version>0.4.0-incubating</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derby</artifactId>
+        <version>10.5.3.0_1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derbyclient</artifactId>
+        <version>10.5.3.0_1</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
