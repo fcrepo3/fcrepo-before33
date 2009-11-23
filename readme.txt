@@ -1,10 +1,10 @@
 -------------------------------------------------------------------
-             Fedora Release 3.2.1 - Summer 2009
+               Fedora Release 3.3 - December 2009
 -------------------------------------------------------------------
 This is a full source code release of Fedora.  Before using this
 software, you must read and agree to the license, found under
-license/license.html.  Documentation can be found for online
-browsing or download at http://fedora-commons.org/go/fcr30
+resources/doc/license/license.html.  Documentation can be found for
+online browsing or download at http://fedora-commons.org/go/fcr30
 
 Building Fedora
 ===============
@@ -15,7 +15,6 @@ installed and enter the following:
 
 This generates fedora-installer.jar, which can be found in
 /installer/target
-  
 
 Running Unit Tests
 =====================
@@ -73,41 +72,23 @@ the following tests fall into that category:
     run without external internet access.
   
   To run this test, make sure the server has been started[*] 
-  Then enter:
+  Then, from within the integrationtest sub-module enter:
     
-    ant junit -Dtest=fedora.test.integration.TestLargeDatastreams 
+    mvn integration-test -P config[A|Q] -Dtest=fedora.test.integration.TestLargeDatastreams
 
-Running Performance Tests
-=========================
-The performance tests provide information about the time required to
-perform a variety of repository functions. This information can be used 
-to determine the performance impact of various configuration choices.
-To run these tests, make sure the server has been started[*]
-Then enter: 
+Running system tests with an alternate host or webapp context
+=============================================================
+By default, integration tests assume Fedora is running at
+http://localhost:8080/fedora/.  A different server port may be
+chosen with no consequence.
 
-    ant performance-tests -Dhost=[HOST] -Dport=[PORT] 
-                          -Dusername=[USERNAME] -Dpassword=[PASSWORD] 
-                          -Diterations=[NUM-ITERATIONS] -Dthreads=[NUM-THREADS] 
-                          -Dfile=[OUTPUT-FILE] -Dname=[TEST-NAME]  
-    where
+However, if the fedora server uses an alternate app
+server context (i.e. not /fedora), you must set the environment
+variable WEBAPP_NAME to the alternate context name.  This variable
+is used by command-line utilities.  System tests involving these 
+utilities may fail if WEBAPP_NAME is not set properly.
 
-    [HOST] = Host on which the Fedora server is running
-    [PORT] = Port on which the Fedora server APIs can be accessed
-    [USERNAME] = A fedora user with administrative privileges
-    [PASSWORD] = The fedora user's password
-    [NUM-ITERATIONS] = The number of times to perform each operation
-    [NUM-THREADS] = The number of threads to use in the thread pool
-    [OUTPUT-FILE] = The full path to the file where test results will be written
-    [TEST-NAME] = A name for this test run
-
-[*] Normally, no additional setup is required when testing a
-    Fedora server instance at http://localhost:8080/fedora/.  
-    A different server port may be chosen with no consequence.    
-    However, if the fedora server uses an alternate app
-    server context (i.e. not /fedora), you must set the environment
-    variable WEBAPP_NAME to the alternate context name.  This variable
-    is used by command-line utilities.  System tests involving these 
-    utiliteis may fail if WEBAPP_NAME is not set properly.
-    Additionally, your test host is on a public IP and (not localhost), 
-    you *may* need to manually edit the deny-apim-if-not-localhost.xml 
-    policy before testing.
+Additionally, if your test instance of Fedora is not on the same 
+host from which you are running the tests, you must manually 
+edit or remove the deny-apim-if-not-localhost.xml policy before
+testing.
