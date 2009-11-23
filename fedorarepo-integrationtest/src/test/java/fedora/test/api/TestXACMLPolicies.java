@@ -72,13 +72,48 @@ public class TestXACMLPolicies
 
     public void testXACMLMultiOwnerAccess() throws Exception {
         // demo:MultiOwnerObject is owned by fedoraAdmin and testuser1
-        addMultiOwnerObject();
+        final String pid = "test:MultiOwnerObject";
+        final String owners = "fedoraAdmin,testuser1";
+        addTestObject(pid, owners, null);
+
+        // should only be modifiable by an owner
         try {
-            assertTrue(canWrite(admin, "demo:MultiOwnerObject"));
-            assertTrue(canWrite(testuser1, "demo:MultiOwnerObject"));
-            assertFalse(canWrite(testuserroleA, "demo:MultiOwnerObject"));
+            assertTrue(canWrite(admin, pid));
+            assertTrue(canWrite(testuser1, pid));
+            assertFalse(canWrite(testuserroleA, pid));
         } finally {
-            removeMultiOwnerObject();
+            removeTestObject(pid);
+        }
+    }
+
+    public void testXACMLUnmodifiableContentModel() throws Exception {
+
+        // test policy disallows modifyObject for test:RestrictedCModel
+        final String unrestrictedCModel = "test:UnrestrictedCModel";
+        final String restrictedCModel = "test:RestrictedCModel";
+
+        final String hasUnrestricted = "test:HasUnrestrictedCModel";
+        addTestObject(hasUnrestricted, null, unrestrictedCModel);
+
+        final String hasRestricted = "test:HasRestrictedCModel";
+        addTestObject(hasRestricted, null, restrictedCModel);
+
+        final String hasUnrestrictedAndRestricted = "test:HasUnrestrictedAndRestrictedCModel";
+        addTestObject(hasUnrestrictedAndRestricted, null, unrestrictedCModel, restrictedCModel);
+
+        final String hasRestrictedAndUnrestricted = "test:HasRestrictedAndUnrestrictedCModel";
+        addTestObject(hasRestrictedAndUnrestricted, null, restrictedCModel, unrestrictedCModel);
+
+        try {
+            assertTrue(canWrite(admin, hasUnrestricted));
+            assertFalse(canWrite(admin, hasRestricted));
+            assertFalse(canWrite(admin, hasUnrestrictedAndRestricted));
+            assertFalse(canWrite(admin, hasRestrictedAndUnrestricted));
+        } finally {
+            removeTestObject(hasUnrestricted);
+            removeTestObject(hasRestricted);
+            removeTestObject(hasUnrestrictedAndRestricted);
+            removeTestObject(hasRestrictedAndUnrestricted);
         }
     }
 
@@ -836,32 +871,50 @@ public class TestXACMLPolicies
         }
     }
 
-    private void addMultiOwnerObject() {
+    private void addTestObject(String pid, String ownerId, String... cModelPIDs) {
         try {
             StringBuffer xml = new StringBuffer();
             xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            xml.append("<foxml:digitalObject VERSION=\"1.1\" PID=\"demo:MultiOwnerObject\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\">");
+            xml.append("<foxml:digitalObject VERSION=\"1.1\" PID=\"" + pid + "\" xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\">");
             xml.append("  <foxml:objectProperties>");
-            xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#ownerId\" VALUE=\"fedoraAdmin,testuser1\"/>");
+            if (ownerId != null && ownerId.trim().length() > 0) {
+                xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#ownerId\" VALUE=\"");
+                xml.append(ownerId.trim());
+                xml.append("\"/>");
+            }
             xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"A\"/>");
             xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"MultiOwnerObject\"/>");
             xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#createdDate\" VALUE=\"2004-12-10T00:21:57Z\"/>");
             xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/view#lastModifiedDate\" VALUE=\"2004-12-10T00:21:57Z\"/>");
             xml.append("  </foxml:objectProperties>");
+            if (cModelPIDs != null) {
+                xml.append("<foxml:datastream CONTROL_GROUP=\"X\" ID=\"RELS-EXT\">");
+                xml.append("  <foxml:datastreamVersion CREATED=\"2008-07-02T05:09:43.375Z\" FORMAT_URI=\"info:fedora/fedora-system:FedoraRELSExt-1.0\" ID=\"RELS-EXT1.0\" LABEL=\"RDF Statements about this object\" MIMETYPE=\"application/rdf+xml\">");
+                xml.append("    <foxml:xmlContent>");
+                xml.append("      <rdf:RDF xmlns:fedora-model=\"info:fedora/fedora-system:def/model#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">");
+                xml.append("        <rdf:Description rdf:about=\"info:fedora/" + pid + "\">");
+                for (String cModelPID: cModelPIDs) {
+                    xml.append("          <fedora-model:hasModel rdf:resource=\"info:fedora/" + cModelPID + "\"/>");
+                }
+                xml.append("        </rdf:Description>");
+                xml.append("      </rdf:RDF>");
+                xml.append("    </foxml:xmlContent>");
+                xml.append("  </foxml:datastreamVersion>");
+                xml.append("</foxml:datastream>");
+            }
             xml.append("</foxml:digitalObject>");
             admin.getAPIM().ingest(xml.toString().getBytes("UTF-8"),
                     FOXML1_1.uri, "");
         } catch (Exception e) {
-            throw new RuntimeException("Failure adding multi-owner object", e);
+            throw new RuntimeException("Failure adding test object: " + pid, e);
         }
     }
 
-    private void removeMultiOwnerObject() {
+    private void removeTestObject(String pid) {
         try {
-            admin.getAPIM().purgeObject("demo:MultiOwnerObject", "",
-                    false);
+            admin.getAPIM().purgeObject(pid, "", false);
         } catch (Exception e) {
-            throw new RuntimeException("Failure removing multi-owner object");
+            throw new RuntimeException("Failure removing test object: " + pid, e);
         }
     }
 

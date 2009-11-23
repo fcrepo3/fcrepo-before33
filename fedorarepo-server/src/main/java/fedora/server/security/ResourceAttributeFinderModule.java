@@ -4,11 +4,22 @@
  */
 package fedora.server.security;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.sun.xacml.EvaluationCtx;
 import com.sun.xacml.attr.AttributeDesignator;
 import com.sun.xacml.attr.StringAttribute;
 import com.sun.xacml.cond.EvaluationResult;
+
+import org.apache.log4j.Logger;
+
 import fedora.common.Constants;
+
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.ServerException;
@@ -16,13 +27,6 @@ import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.types.Datastream;
 import fedora.server.utilities.DateUtility;
-import org.apache.log4j.Logger;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Bill Niebel
@@ -53,8 +57,6 @@ class ResourceAttributeFinderModule
                               Constants.OBJECT.OBJECT_TYPE.datatype);
             registerAttribute(Constants.OBJECT.OWNER.uri,
                               Constants.OBJECT.OWNER.datatype);
-            registerAttribute(Constants.OBJECT.CONTENT_MODEL.uri,
-                              Constants.OBJECT.CONTENT_MODEL.datatype);
             registerAttribute(Constants.OBJECT.CREATED_DATETIME.uri,
                               Constants.OBJECT.CREATED_DATETIME.datatype);
             registerAttribute(Constants.OBJECT.LAST_MODIFIED_DATETIME.uri,
@@ -78,6 +80,9 @@ class ResourceAttributeFinderModule
                               Constants.DATASTREAM.FORMAT_URI.datatype);
             registerAttribute(Constants.DATASTREAM.LOCATION.uri,
                               Constants.DATASTREAM.LOCATION.datatype);
+
+            registerAttribute(Constants.MODEL.HAS_MODEL.uri,
+                              StringAttribute.identifier);
 
             registerSupportedDesignatorType(AttributeDesignator.RESOURCE_TARGET);
             setInstantiatedOk(true);
@@ -216,49 +221,16 @@ class ResourceAttributeFinderModule
                     LOG.debug("failed getting " + Constants.OBJECT.OWNER.uri);
                     return null;
                 }
-            }
-
-            /*
-             * TODO: Document this, it is new. Content model uris are exposed as
-             * attribute IDs. Is this a good thing to do?
-             */
-            else if (Constants.MODEL.HAS_MODEL.uri.equals(attributeId)) {
+            } else if (Constants.MODEL.HAS_MODEL.uri.equals(attributeId)) {
                 Set<String> models = new HashSet<String>();
                 try {
                     models.addAll(reader.getContentModels());
-/*
-                    for (RelationshipTuple r : reader
-                            .getRelationships(Constants.MODEL.HAS_MODEL, null)) {
-                        models.add(r.object);
-                    }
-*/
                 } catch (ServerException e) {
-                    LOG
-                            .debug("failed getting "
-                                    + Constants.MODEL.HAS_MODEL.uri);
+                    LOG.debug("failed getting " + Constants.MODEL.HAS_MODEL.uri);
                     return null;
                 }
-
-                values = models.toArray(values);
-            }
-
-            /*
-             * FIXME: Content models as object properties are no longer present.
-             * If removed, is everything OK?
-             */
-            //else if (Constants.OBJECT.CONTENT_MODEL.uri.equals(attributeId)) {
-            //    try {
-            //        values = new String[1];
-            //        values[0] = reader.getContentModelId();
-            //        LOG.debug("got " + Constants.OBJECT.CONTENT_MODEL.uri + "="
-            //                + values[0]);
-            //    } catch (ServerException e) {
-            //        LOG.debug("failed getting "
-            //                + Constants.OBJECT.CONTENT_MODEL.uri);
-            //        return null;
-            //    }
-            //}
-            else if (Constants.OBJECT.CREATED_DATETIME.uri.equals(attributeId)) {
+                values = models.toArray(new String[0]);
+            } else if (Constants.OBJECT.CREATED_DATETIME.uri.equals(attributeId)) {
                 try {
                     values = new String[1];
                     values[0] =
