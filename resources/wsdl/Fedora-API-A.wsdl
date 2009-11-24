@@ -109,7 +109,7 @@
     </operation>
     <operation name="resumeFindObjects">
       <input message="fedora-api:resumeFindObjectsRequest"/>
-      <output message="fedora-api:findObjectsResponse"/>
+      <output message="fedora-api:resumeFindObjectsResponse"/>
     </operation>
     <operation name="getObjectHistory">
       <input message="fedora-api:getObjectHistoryRequest"/>
