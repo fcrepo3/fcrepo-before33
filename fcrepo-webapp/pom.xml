@@ -8,12 +8,15 @@
     <version>3.3-SNAPSHOT</version>
   </parent>
 
-  <artifactId>fcrepo-client</artifactId>
+  <artifactId>fcrepo-webapp</artifactId>
   <packaging>pom</packaging>
-  <name>All Fedora Client Libraries</name>
+  <name>All Fedora Webapps</name>
 
   <modules>
-    <module>fcrepo-client-admin</module>
-    <module>fcrepo-client-messaging</module>
+    <module>fcrepo-webapp-democontent</module>
+    <module>fcrepo-webapp-fedora</module>
+    <module>fcrepo-webapp-fop</module>
+    <module>fcrepo-webapp-imagemanip</module>
+    <module>fcrepo-webapp-saxon</module>
   </modules>
 </project>

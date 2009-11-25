@@ -1,23 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.fcrepo</groupId>
   <artifactId>fcrepo</artifactId>
   <packaging>pom</packaging>
   <version>3.3-SNAPSHOT</version>
-  <name>Fedora Repository</name>
-  <url>http://duraspace.org</url>
+  <name>Fedora Repository Project</name>
+  <url>http://fedora-commons.org/</url>
 
-  <prerequisites>
-    <maven>2.0.9</maven>
-  </prerequisites>
+  <organization>
+    <name>DuraSpace</name>
+    <url>http://www.duraspace.org/</url>
+  </organization>
 
-  <inceptionYear>2009</inceptionYear>
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+      <comments>Copyright (c) 2009 DuraSpace</comments>
+    </license>
+  </licenses>
+
   <issueManagement>
-    <system>Fedora</system>
-    <url>https://fedora-commons.org/jira</url>
+    <system>jira</system>
+    <url>https://fedora-commons.org/jira/browse/FCREPO</url>
   </issueManagement>
+
+  <ciManagement>
+    <system>bamboo</system>
+    <url>https://fedora-commons.org/bamboo/browse/FCREPO</url>
+  </ciManagement>
 
   <developers>
     <developer>
@@ -77,18 +90,6 @@
 
   </developers>
 
-  <licenses>
-    <license>
-      <name>Apache License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-    </license>
-  </licenses>
-
-  <organization>
-    <name>DuraSpace</name>
-    <url>http://www.duraspace.org</url>
-  </organization>
-
   <modules>
     <module>fcrepo-generate</module>
     <module>fcrepo-common</module>
@@ -99,16 +100,12 @@
     <module>fcrepo-webapp</module>
   </modules>
 
-  <!-- All of these flags can be overwritten with -D cli options -->
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
     <unitTests>**/*Test.class</unitTests>
     <integrationTests>**/*Integration*.class</integrationTests>
-    <!--    <integrationTests>**/Test*.class</integrationTests>-->
     <instrumentedTests>**/*Test*__*.class</instrumentedTests>
     <nestedClassTests>**/*Test*$*.class</nestedClassTests>
-
     <integration.test.skip>false</integration.test.skip>
   </properties>
 
@@ -212,9 +209,9 @@
   </repositories>
 
   <scm>
-    <connection>scm:svn:https://fedora-commons.svn.sourceforge.net/svnroot/fedora-commons/trunk</connection>
-    <developerConnection>scm:svn:https://fedora-commons.svn.sourceforge.net/svnroot/fedora-commons/trunk</developerConnection>
-    <url>http://fedora-commons.svn.sourceforge.net/viewvc/fedora-commons/fedora</url>
+    <connection>scm:svn:https://fedora-commons.svn.sourceforge.net/svnroot/fedora-commons/fedora/trunk</connection>
+    <developerConnection>scm:svn:https://fedora-commons.svn.sourceforge.net/svnroot/fedora-commons/fedora/trunk</developerConnection>
+    <url>http://fedora-commons.svn.sourceforge.net/viewvc/fedora-commons/fedora/trunk</url>
   </scm>
 
   <build>
@@ -238,7 +235,7 @@
         <version>2.0-beta-9</version>
         <configuration>
           <tagBase>
-            scm:svn:https://fedora-commons.svn.sourceforge.net/svnroot/fedora-commons/tags
+            scm:svn:https://fedora-commons.svn.sourceforge.net/svnroot/fedora-commons/fedora/tags
           </tagBase>
         </configuration>
       </plugin>
