@@ -401,6 +401,7 @@
                     <include>**/TestXACMLPolicies.class</include>
                     <include>**/ContentModelDSInputTest.class</include>
                     <include>**/TestCommandLineUtilities.class</include>
+                    <include>**/TestMisplacedNamespace.class</include>
 
                   </includes>
                   <excludes>
