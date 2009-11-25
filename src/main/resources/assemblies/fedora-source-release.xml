@@ -38,15 +38,15 @@ http://maven.apache.org/apache-resource-bundles/apache-source-release-assembly-d
 
         <!-- fedora related leftovers that should not be included -->
         <!-- server -->
-        <exclude>fedorarepo-server/activemq-data</exclude>
-        <exclude>fedorarepo-server/activemq-data/**</exclude>
-        <exclude>fedorarepo-server/test</exclude>
-        <exclude>fedorarepo-server/test/**</exclude>
-        <exclude>fedorarepo-server/*.log</exclude>
+        <exclude>fcrepo-server/activemq-data</exclude>
+        <exclude>fcrepo-server/activemq-data/**</exclude>
+        <exclude>fcrepo-server/test</exclude>
+        <exclude>fcrepo-server/test/**</exclude>
+        <exclude>fcrepo-server/*.log</exclude>
         
         <!-- client stubwrappers -->
-        <exclude>fedorarepo-client/stubwrappers</exclude>
-        <exclude>fedorarepo-client/stubwrappers/**</exclude>
+        <exclude>fcrepo-client/stubwrappers</exclude>
+        <exclude>fcrepo-client/stubwrappers/**</exclude>
         
 
         <!-- release-plugin temp files -->

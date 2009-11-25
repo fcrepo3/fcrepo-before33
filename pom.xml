@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.fedorarepo</groupId>
-  <artifactId>fedorarepo</artifactId>
+  <groupId>org.fcrepo</groupId>
+  <artifactId>fcrepo</artifactId>
   <packaging>pom</packaging>
   <version>3.3-SNAPSHOT</version>
   <name>Fedora Repository</name>
@@ -90,15 +90,15 @@
   </organization>
 
   <modules>
-    <module>fedorarepo-generate</module>
-    <module>fedorarepo-common</module>
-    <module>fedorarepo-server</module>
-    <module>fedorarepo-client</module>
-    <module>fedorarepo-integrationtest</module>
-    <module>fedorarepo-localservices</module>
-    <module>fedorarepo-democontent</module>
-    <module>fedorarepo-installer</module>
-    <module>fedorarepo-webapp</module>
+    <module>fcrepo-generate</module>
+    <module>fcrepo-common</module>
+    <module>fcrepo-server</module>
+    <module>fcrepo-client</module>
+    <module>fcrepo-integrationtest</module>
+    <module>fcrepo-localservices</module>
+    <module>fcrepo-democontent</module>
+    <module>fcrepo-installer</module>
+    <module>fcrepo-webapp</module>
   </modules>
 
   <!-- All of these flags can be overwritten with -D cli options -->
@@ -358,7 +358,7 @@
                 <phase>package</phase>
                 <configuration>
                   <appendAssemblyId>false</appendAssemblyId>
-                  <finalName>fedorarepo-src-${project.version}</finalName> 
+                  <finalName>fcrepo-src-${project.version}</finalName> 
                   <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
                   <descriptors>
                     <descriptor>src/main/resources/assemblies/fedora-source-release.xml</descriptor>

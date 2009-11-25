@@ -70,7 +70,7 @@ sleep 20
 echo ""
 echo "[Running ConfigB Tests...]"
 
-cd $BUILD_HOME/fedorarepo-integrationtest
+cd $BUILD_HOME/fcrepo-integrationtest
 $M2_HOME/bin/mvn integration-test -P configB -Dfedora.baseURL=http://fedcommdevsrv1.nsdlib.org:9080/fedora -Dfedora.hostname=fedcommdevsrv1.nsdlib.org -Dfedora.port=9080
 if [ $? -ne 0 ]; then
   echo ""
@@ -115,7 +115,7 @@ sleep 20
 echo ""
 echo "[Running ConfigA Tests...]"
 
-cd $BUILD_HOME/fedorarepo-integrationtest
+cd $BUILD_HOME/fcrepo-integrationtest
 $M2_HOME/bin/mvn integration-test -P configA -Dfedora.baseURL=http://fedcommdevsrv1.nsdlib.org:9080/fedora -Dfedora.hostname=fedcommdevsrv1.nsdlib.org -Dfedora.port=9080
 if [ $? -ne 0 ]; then
   echo ""

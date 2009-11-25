@@ -13,7 +13,7 @@ installed and enter the following:
 
   mvn install -P fedora-installer
 
-This generates fedora-installer.jar, which can be found in
+This generates fcrepo-installer-VERSION.jar, which can be found in
 /installer/target
 
 Running Unit Tests

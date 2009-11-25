@@ -23,9 +23,9 @@ echo "CATALINA_HOME = $CATALINA_HOME"
 echo ""
 
 # Determine the installer path
-INSTALLER=`find $BUILD_HOME/fedorarepo-installer/target/ -name *installer*.jar`
+INSTALLER=`find $BUILD_HOME/fcrepo-installer/target/ -name *installer*.jar`
 if [ ${#INSTALLER} -lt 5 ]; then
-  echo "ERROR: Installer not found in $BUILD_HOME/fedorarepo-installer/target"
+  echo "ERROR: Installer not found in $BUILD_HOME/fcrepo-installer/target"
   exit 1
 fi
 
