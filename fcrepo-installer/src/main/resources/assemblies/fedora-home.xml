@@ -204,20 +204,20 @@
     </fileSet>  
 
     <fileSet>
-      <directory>../fcrepo-client/fcrepo-admin-client/src/main/resources/scripts/bat/client</directory>
+      <directory>../fcrepo-client/fcrepo-client-admin/src/main/resources/scripts/bat/client</directory>
       <outputDirectory>/client/bin</outputDirectory>
       <filtered>true</filtered>
     </fileSet>  
 
     <fileSet>
-      <directory>../fcrepo-client/fcrepo-admin-client/src/main/resources/scripts/sh/client</directory>
+      <directory>../fcrepo-client/fcrepo-client-admin/src/main/resources/scripts/sh/client</directory>
       <outputDirectory>/client/bin</outputDirectory>
       <fileMode>0755</fileMode>
       <filtered>true</filtered>
     </fileSet>  
 
     <fileSet>
-      <directory>../fcrepo-client/fcrepo-admin-client/src/main/resources/demo/demo-soapclient</directory>
+      <directory>../fcrepo-client/fcrepo-client-admin/src/main/resources/demo/demo-soapclient</directory>
       <outputDirectory>/client/demo/soapclient</outputDirectory>
       <filtered>true</filtered>
     </fileSet>  
@@ -268,7 +268,7 @@
       <useProjectArtifact>false</useProjectArtifact>
       <includes>
       
-        <!-- <include>org.duraspace.fedora:fedora-admin-client</include> -->
+        <!-- <include>org.duraspace.fedora:fedora-client-admin</include> -->
         <include>org.fcrepo:fcrepo-common</include>
         <include>org.fcrepo:fcrepo-server</include>
 
@@ -308,7 +308,7 @@
       </includes>
       <!--
       <excludes>
-        <exclude>org.duraspace.fedora:fedora-admin-client:jar</exclude>
+        <exclude>org.duraspace.fedora:fedora-client-admin:jar</exclude>
       </excludes>
       -->
       <outputDirectory>/client/lib</outputDirectory>
@@ -317,7 +317,7 @@
     <dependencySet>
       <useProjectArtifact>false</useProjectArtifact>
       <includes>
-        <include>org.fcrepo:fcrepo-admin-client:jar:${project.version}</include>
+        <include>org.fcrepo:fcrepo-client-admin:jar:${project.version}</include>
       </includes>
       <outputDirectory>/client</outputDirectory>
     </dependencySet>
@@ -370,9 +370,9 @@
       <useProjectArtifact>false</useProjectArtifact>
       <unpack>true</unpack>
       <includes>
-        <include>org.fcrepo:fcrepo-messaging-client-${project.version}:zip:*</include>
+        <include>org.fcrepo:fcrepo-client-messaging-${project.version}:zip:*</include>
       </includes>
-      <outputDirectory>/client/fedora-messaging-client</outputDirectory>
+      <outputDirectory>/client/fedora-client-messaging</outputDirectory>
     </dependencySet>
 
   </dependencySets>

@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.fcrepo</groupId>
-  <artifactId>fcrepo-messaging-client</artifactId>
+  <artifactId>fcrepo-client-messaging</artifactId>
   <packaging>jar</packaging>
   <version>3.3-SNAPSHOT</version>
   <name>Fedora Messaging Client</name>
@@ -71,7 +71,7 @@
         <version>2.2</version>
         <executions>
           <execution>
-            <id>fcrepo-messaging-client-jar</id>
+            <id>fcrepo-client-messaging-jar</id>
             <goals>
               <goal>jar</goal>
             </goals>
@@ -106,7 +106,7 @@
         <version>2.2-beta-4</version>
         <executions>
           
-          <!-- Create the messaging-client.zip -->
+          <!-- Create the client-messaging.zip -->
           <execution>
             <id>fcrepo-messaging-zip-assembly</id> 
             <phase>package</phase> 
@@ -115,7 +115,7 @@
             </goals>
             <configuration>
               <descriptors>
-                <descriptor>${basedir}/src/main/resources/assemblies/messaging-client.xml</descriptor>
+                <descriptor>${basedir}/src/main/resources/assemblies/client-messaging.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>
@@ -128,7 +128,7 @@
             </goals>
             <configuration>
               <descriptors>
-                <descriptor>${basedir}/src/main/resources/assemblies/messaging-client-jar.xml</descriptor>
+                <descriptor>${basedir}/src/main/resources/assemblies/client-messaging-jar.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>

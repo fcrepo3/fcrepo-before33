@@ -3,7 +3,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.fcrepo</groupId>
-  <artifactId>fcrepo-webapp</artifactId>
+  <artifactId>fcrepo-webapp-fedora</artifactId>
   <packaging>war</packaging>
   <version>3.3-SNAPSHOT</version>
   <name>Fedora WAR</name>
@@ -36,9 +36,9 @@
                   classpathref="maven.compile.classpath" dir="${project.build.outputDirectory}">
                   <arg value="server" />
                   <arg
-                    value="${basedir}/../fcrepo-common/target/generated-sources/axistools/wsdl2java/fedora/server/management/deploy.wsdd" />
+                    value="${basedir}/../../fcrepo-common/target/generated-sources/axistools/wsdl2java/fedora/server/management/deploy.wsdd" />
                   <arg
-                    value="${basedir}/../fcrepo-common/target/generated-sources/axistools/wsdl2java/fedora/server/access/deploy.wsdd" />
+                    value="${basedir}/../../fcrepo-common/target/generated-sources/axistools/wsdl2java/fedora/server/access/deploy.wsdd" />
                 </java>
               </tasks>
             </configuration>

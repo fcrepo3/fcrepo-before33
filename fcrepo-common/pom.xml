@@ -169,7 +169,7 @@
                 <argument>${project.build.sourceDirectory}/fedora/common/generate/FedoraStubWrapper.template</argument>
                 <argument>fedora.client</argument>
                 <argument>APIMStubWrapper</argument>
-                <argument>${basedir}/../fcrepo-client/fcrepo-admin-client/stubwrappers/fedora/client/APIMStubWrapper.java</argument>
+                <argument>${basedir}/../fcrepo-client/fcrepo-client-admin/stubwrappers/fedora/client/APIMStubWrapper.java</argument>
               </arguments>
             </configuration>
           </execution>
@@ -187,7 +187,7 @@
                 <argument>${project.build.sourceDirectory}/fedora/common/generate/FedoraStubWrapper.template</argument>
                 <argument>fedora.client</argument>
                 <argument>APIAStubWrapper</argument>
-                <argument>${basedir}/../fcrepo-client/fcrepo-admin-client/stubwrappers/fedora/client/APIAStubWrapper.java</argument>
+                <argument>${basedir}/../fcrepo-client/fcrepo-client-admin/stubwrappers/fedora/client/APIAStubWrapper.java</argument>
               </arguments>
             </configuration>
           </execution>

@@ -15,16 +15,16 @@
                b) copy crossdomain.xml to that instance's ROOT webapp
                c) point browser to target/index.html
       To integrate: a) examine existing files and dirs in
-                       fcrepo-webapp/src/main/webapp/admin
+                       fcrepo-webapp-fedora/src/main/webapp/admin
                     b) for each one that already exists there,
                        copy the corresponding one from target/ 
                        after a successful build
-                    c) check built changes in to fcrepo-webapp
+                    c) check built changes in to fcrepo-webapp-fedora
                        as indicated above anytime source in this
                        module changes
     TODO: Integrate this as a module of the parent fcrepo project,
           and have its relevant target/ artifacts pulled in automatically
-          by the fcrepo-webapp project.
+          by the fcrepo-webapp-fedora project.
   -->
 
   <properties>

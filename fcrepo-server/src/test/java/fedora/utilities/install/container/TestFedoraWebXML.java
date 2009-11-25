@@ -25,7 +25,7 @@ public class TestFedoraWebXML {
      */
     @Before
     public void setUp() throws Exception {
-        File f = new File("../fcrepo-webapp/src/main/webapp/WEB-INF/web.xml");
+        File f = new File("../fcrepo-webapp/fcrepo-webapp-fedora/src/main/webapp/WEB-INF/web.xml");
         assertTrue("Couldn't find source web.xml file", f.exists());
         webXMLFilePath = f.getAbsolutePath();
     }

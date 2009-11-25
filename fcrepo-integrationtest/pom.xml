@@ -456,7 +456,7 @@
 
     <dependency>
       <groupId>org.fcrepo</groupId>
-      <artifactId>fcrepo-admin-client</artifactId>
+      <artifactId>fcrepo-client-admin</artifactId>
       <version>${project.version}</version>
     </dependency> 
 

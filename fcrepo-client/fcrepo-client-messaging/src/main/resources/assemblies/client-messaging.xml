@@ -32,7 +32,7 @@
     <dependencySet>
       <includes>
        
-        <include>org.fcrepo:fcrepo-messaging-client:jar:${project.version}</include>
+        <include>org.fcrepo:fcrepo-client-messaging:jar:${project.version}</include>
         
       </includes>
     </dependencySet>

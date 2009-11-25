@@ -95,8 +95,6 @@
     <module>fcrepo-server</module>
     <module>fcrepo-client</module>
     <module>fcrepo-integrationtest</module>
-    <module>fcrepo-localservices</module>
-    <module>fcrepo-democontent</module>
     <module>fcrepo-installer</module>
     <module>fcrepo-webapp</module>
   </modules>
