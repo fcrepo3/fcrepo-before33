@@ -31,6 +31,7 @@ import fedora.server.Context;
 import fedora.server.rest.RestUtil.RequestContent;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamDef;
+import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.utilities.DateUtility;
 
 /**
@@ -162,14 +163,24 @@ public class DatastreamResource extends BaseRestResource {
             @PathParam(RestParam.DSID)
             String dsID,
             @QueryParam(RestParam.AS_OF_DATE_TIME)
-            String dateTime) {
+            String dateTime,
+            @QueryParam(RestParam.DOWNLOAD)
+            String download) {
 
+
+        Context context = getContext();
         try {
-            return buildResponse(apiAService.getDatastreamDissemination(
-                    getContext(),
-                    pid,
-                    dsID,
-                    parseDate(dateTime)));
+            MIMETypedStream stream = apiAService.getDatastreamDissemination(
+                                                                        context,
+                                                                        pid,
+                                                                        dsID,
+                                                                        parseDate(dateTime));
+            if (datastreamFilenameHelper != null) {
+                datastreamFilenameHelper.addContentDispositionHeader(context, pid, dsID, download, parseDate(dateTime), stream);
+
+            }
+
+            return buildResponse(stream);
         } catch (Exception ex) {
             return handleException(ex);
         }

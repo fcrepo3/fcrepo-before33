@@ -35,4 +35,5 @@ public interface RestParam {
     String MIME_TYPE = "mimeType";
     String IGNORE_CONTENT = "ignoreContent";
     String IGNORE_MIME = "ignoreMime";
+    String DOWNLOAD = "download";
 }

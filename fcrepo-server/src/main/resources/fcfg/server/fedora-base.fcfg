@@ -45,6 +45,55 @@
 		this value must be less than the limit specified for the 
 		datastreamExpirationLimit.</comment>
 	</param>
+	<param name="datastreamContentDispositionInlineEnabled" value="true">
+		<comment>determines if a content-disposition header specifying "inline" and
+		a filename is added to the response for the REST API getDatastreamDissemination
+		when no query parameter of download=true is specified.  Browser support for 
+		recognising a filename in case of "inline" content disposition is patchy,
+		so you may wish to disable the content disposition header in this case and only
+		have it provided when download=true is specified, in which case the content disposition
+		of "attachment" will be used; which is generally supported.</comment>
+	</param>
+	<param name="datastreamFilenameSource" value="rels label id">
+		<comment>determines the source of the filename generated when download=true
+		on a datastream dissemination.  Value is space separated list of label: use the datastream label;
+		id: use the datastream ID; rels: use the value defined in RELS-INT.  Each
+		source is checked in order, and the first containing a value is used.  Omit
+		any of the sources if that source is never to be used.</comment>
+	</param>
+	<param name="datastreamExtensionMappingLabel" value="always">
+		<comment>Controls filename extension mapping when the datastream label is used
+		as the source of the filename.  Values are always: always generate an extension
+		based on the MIMETYPE, using the default extension if none can be determined; 
+		ifmissing: generate an extension if the filename obtained from the source does not
+		already contain one (again returning the default if there is no MIMETYPE-to-extension
+		mapping is found); never: never generate an extension, use the filename from the source
+		as-is</comment>
+	</param>
+	<param name="datastreamExtensionMappingId" value="ifmissing">
+		<comment>Controls filename extension mapping when the datastream ID is used
+		as the source of the filename.  Values are as above.</comment>
+	</param>
+	<param name="datastreamExtensionMappingRels" value="never">
+		<comment>Controls filename extension mapping when RELS-INT is used
+		as the source of the filename.  Values are as above.</comment>
+	</param>
+	<param name="datastreamExtensionMappingDefault" value="never">
+		<comment>Controls filename extension mapping when no filename can be determined from
+		the sources listed in datastreamFilenameSource.  Values are always: always generate an extension
+		based on the MIMETYPE (using the default if no appropriate mapping is specified);
+		never: never generate an extension.</comment>
+	</param>
+	<param name="datstreamDefaultFilename" value="download">
+		<comment>Filename to use for datastream downloads when none can be determined from the
+		sources listed in datastreamFilenameSource.</comment>
+	</param>
+	<param name="datastreamDefaultExtension" value="bin">
+		<comment>Extension to use when none can be determined from mappings</comment>
+	</param>
+	<param name="datastreamExtensionMappingSource" value="mime-to-extensions.xml">
+		<comment>Source of mappings from MIMETYPE to file extension</comment>
+	</param>
 
 	<module role="fedora.server.storage.lowlevel.ILowlevelStorage" 
 			class="fedora.server.storage.lowlevel.DefaultLowlevelStorageModule">

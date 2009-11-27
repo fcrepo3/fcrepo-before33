@@ -161,6 +161,7 @@
       <includes>
         <include>log4j.properties</include>
         <include>akubra-llstore.xml</include>
+        <include>mime-to-extensions.xml</include>
       </includes>
     </fileSet>  
 

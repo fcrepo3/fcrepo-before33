@@ -81,6 +81,26 @@ public class TestRESTAPI
 
     private final PID pid = PID.getInstance("demo:REST");
 
+    // various download filenames used in test object for content-disposition header test
+    // datastreams in test object (using these) are:
+    // DS1 with label; also has relationship in RELS-INT specifying filename
+    // DS2 with label - MIMETYPE maps to an extension
+    // DS3 with label - unknown MIMETYPE
+    // DS4 with label containing illegal filename characters
+    // DS5 with no label
+    // DS6.xml with no label; datastream ID contains extension
+    //
+    // all datastreams text/xml apart from DS2 which is image/jpeg
+
+    private static String DS1RelsFilename = "Datastream 1 filename from rels.extension";
+    private static String DS2LabelFilename = "Datastream 2 filename from label";
+    private static String DS3LabelFilename = "Datastream 3 filename from label";
+    private static String DodgyChars = "\\/*?&lt;&gt;:|";
+    private static String DS4LabelFilenameOriginal = "Datastream 4 filename " + DodgyChars + "from label"; // this one in foxml
+    private static String DS4LabelFilename = "Datastream 4 filename from label"; // this should be the cleaned version
+    private static String DS5ID = "DS5";
+    private static String DS6ID = "DS6.xml";
+
     protected String url;
 
     private static final String datetime =
@@ -90,6 +110,7 @@ public class TestRESTAPI
     private boolean chunked = false;
 
     static {
+        // TODO:  RELS-INT relationship from MODEL, not text
         // Test FOXML object with RELS-EXT datastream
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -143,6 +164,76 @@ public class TestRESTAPI
                 + "/get/demo:REST/DS1\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
+        // datastreams for content-disposition header (get datastream filename) testing
+        // RELS-INT: specifies filename for DS1
+        sb.append("  <foxml:datastream ID=\"RELS-INT\" CONTROL_GROUP=\"M\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion FORMAT_URI=\"info:fedora/fedora-system:FedoraRELSInt-1.0\" ID=\"RELS-INT.0\" MIMETYPE=\"application/rdf+xml\" LABEL=\"RDF Statements about datastreams in this object\" CREATED=\"" + datetime + "\">");
+        sb.append("      <foxml:xmlContent>");
+        sb.append("        <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""
+                        + "                 xmlns:fedora-model=\"" + MODEL.uri + "\">");
+        sb.append("          <rdf:Description rdf:about=\"info:fedora/demo:REST/DS1\">");
+        sb.append("            <fedora-model:" + MODEL.DOWNLOAD_FILENAME.localName + ">" + DS1RelsFilename + "</fedora-model:" + MODEL.DOWNLOAD_FILENAME.localName + ">");
+        sb.append("          </rdf:Description>");
+        sb.append("        </rdf:RDF>");
+        sb.append("      </foxml:xmlContent>");
+        sb.append("    </foxml:datastreamVersion>");
+        sb.append("  </foxml:datastream>");
+
+
+        // DS2:  label is filename, known mimetype of image/jpeg so extension (jpg) should be determined by mappings file
+        sb.append("  <foxml:datastream ID=\"DS2\" CONTROL_GROUP=\"M\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" LABEL=\"" + DS2LabelFilename +"\">");
+        sb.append("      <foxml:xmlContent>");
+        sb.append("        <foo>");
+        sb.append("          <bar>baz</bar>");
+        sb.append("        </foo>");
+        sb.append("      </foxml:xmlContent>");
+        sb.append("    </foxml:datastreamVersion>");
+        sb.append("  </foxml:datastream>");
+
+        // DS3:  label is filename, mimetype unknown so extension should be default
+        sb.append("  <foxml:datastream ID=\"DS3\" CONTROL_GROUP=\"X\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion ID=\"DS3.0\" MIMETYPE=\"unknown/mimetype\" LABEL=\"" + DS3LabelFilename +"\">");
+        sb.append("      <foxml:xmlContent>");
+        sb.append("        <foo>");
+        sb.append("          <bar>baz</bar>");
+        sb.append("        </foo>");
+        sb.append("      </foxml:xmlContent>");
+        sb.append("    </foxml:datastreamVersion>");
+        sb.append("  </foxml:datastream>");
+
+        // DS4: label is filename, with illegal filename characters
+        sb.append("  <foxml:datastream ID=\"DS4\" CONTROL_GROUP=\"X\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion ID=\"DS4.0\" MIMETYPE=\"text/xml\" LABEL=\"" + DS4LabelFilenameOriginal +"\">");
+        sb.append("      <foxml:xmlContent>");
+        sb.append("        <foo>");
+        sb.append("          <bar>baz</bar>");
+        sb.append("        </foo>");
+        sb.append("      </foxml:xmlContent>");
+        sb.append("    </foxml:datastreamVersion>");
+        sb.append("  </foxml:datastream>");
+
+        //DS5: no label, ID is filename
+        sb.append("  <foxml:datastream ID=\"DS5\" CONTROL_GROUP=\"X\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion ID=\"DS5.0\" MIMETYPE=\"text/xml\">");
+        sb.append("      <foxml:xmlContent>");
+        sb.append("        <foo>");
+        sb.append("          <bar>baz</bar>");
+        sb.append("        </foo>");
+        sb.append("      </foxml:xmlContent>");
+        sb.append("    </foxml:datastreamVersion>");
+        sb.append("  </foxml:datastream>");
+
+        // DS6: no label, ID is filename plus extension
+        sb.append("  <foxml:datastream ID=\"DS6.xml\" CONTROL_GROUP=\"X\" STATE=\"A\">");
+        sb.append("    <foxml:datastreamVersion ID=\"DS6.0\" MIMETYPE=\"text/xml\">");
+        sb.append("      <foxml:xmlContent>");
+        sb.append("        <foo>");
+        sb.append("          <bar>baz</bar>");
+        sb.append("        </foo>");
+        sb.append("      </foxml:xmlContent>");
+        sb.append("    </foxml:datastreamVersion>");
+        sb.append("  </foxml:datastream>");
         sb.append("</foxml:digitalObject>");
 
         try {
@@ -174,6 +265,8 @@ public class TestRESTAPI
         sb.append("</foxml:digitalObject>");
 
         DEMO_MIN = sb.toString();
+
+
     }
 
     @Override
@@ -181,6 +274,7 @@ public class TestRESTAPI
         apia = getFedoraClient().getAPIA();
         apim = getFedoraClient().getAPIM();
         apim.ingest(DEMO_REST_FOXML, FOXML1_1.uri, "ingesting new foxml object");
+
     }
 
     @Override
@@ -824,6 +918,82 @@ public class TestRESTAPI
         url = String.format("/objects/%s?flash=true", "BOGUS_PID");
         assertEquals(SC_OK, post("", true).getStatusCode());
     }
+
+    // test correct content-disposition header on getDatastreamDissemination
+    // Note that these tests are dependent on the following configuration in fedora.fcfg
+    // Datastream filename sources: rels, label, id
+    // Datastream extension preferences:
+    // rels: never (filename always sourced from relationship)
+    // label: always (filename always determined from mime-type to extension mapping)
+    // id: ifmissing (filename sourced from mapping if none present in datastream id)
+
+
+    @Test
+    public void testDatastreamDisseminationContentDispositionFromRels() throws Exception {
+
+        // filename from RELS-INT, no lookup of extension; no download
+        url = "/objects/demo:REST/datastreams/DS1/content";
+        HttpResponse response = get(true);
+        assertEquals(SC_OK, response.getStatusCode());
+        CheckCDHeader(response, "inline", TestRESTAPI.DS1RelsFilename);
+        // again with download
+        url = url + "?download=true";
+        response = get(true);
+        assertEquals(SC_OK, response.getStatusCode());
+        CheckCDHeader(response, "attachment", TestRESTAPI.DS1RelsFilename);
+    }
+
+    @Test
+    public void testDatastreamDisseminationContentDispositionFromLabel() throws Exception {
+
+        // filename from label, known MIMETYPE
+        url = "/objects/demo:REST/datastreams/DS2/content?download=true";
+        HttpResponse response = get(true);
+        assertEquals(SC_OK, response.getStatusCode());
+        CheckCDHeader(response, "attachment", TestRESTAPI.DS2LabelFilename + ".jpg"); // jpg should be from MIMETYPE mapping
+
+        // filename from label, unknown MIMETYPE
+        url = "/objects/demo:REST/datastreams/DS3/content?download=true";
+        response = get(true);
+        assertEquals(SC_OK, response.getStatusCode());
+        CheckCDHeader(response, "attachment", TestRESTAPI.DS3LabelFilename + ".bin"); // default extension from config
+
+        // filename from label with illegal characters, known MIMETYPE
+        url = "/objects/demo:REST/datastreams/DS4/content?download=true";
+        response = get(true);
+        assertEquals(SC_OK, response.getStatusCode());
+        CheckCDHeader(response, "attachment", TestRESTAPI.DS4LabelFilename + ".xml"); // xml from mimetype mapping
+    }
+
+    @Test
+    public void testDatastreamDisseminationContentDispositionFromId() throws Exception {
+
+        // filename from id (no label present)
+        url = "/objects/demo:REST/datastreams/DS5/content?download=true";
+        HttpResponse response = get(true);
+        assertEquals(SC_OK, response.getStatusCode());
+        CheckCDHeader(response, "attachment", TestRESTAPI.DS5ID + ".xml"); // xml from mimetype mapping
+
+        // filename from id, id contains extension (no label present)
+        url = "/objects/demo:REST/datastreams/DS6.xml/content?download=true";
+        response = get(true);
+        assertEquals(SC_OK, response.getStatusCode());
+        CheckCDHeader(response, "attachment", TestRESTAPI.DS6ID); // no extension, id contains it
+
+    }
+
+    // check content disposition header of response
+    private void CheckCDHeader(HttpResponse response, String expectedType, String expectedFilename) {
+        String contentDisposition = "";
+        Header[] headers = response.responseHeaders;
+        for (Header header : headers) {
+            if (header.getName().equals("content-disposition")) {
+                contentDisposition = header.getValue();
+            }
+        }
+        assertEquals(expectedType + "; " + "filename=\"" + expectedFilename + "\"", contentDisposition);
+    }
+
 
     // helper methods
     private HttpClient getClient(boolean auth) {

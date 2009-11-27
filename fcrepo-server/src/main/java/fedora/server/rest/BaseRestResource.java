@@ -75,6 +75,8 @@ public class BaseRestResource {
     protected Access apiAService;
     protected String fedoraServerHost;
 
+    protected DatastreamFilenameHelper datastreamFilenameHelper;
+
     @javax.ws.rs.core.Context
     protected HttpServletRequest servletRequest;
 
@@ -90,6 +92,7 @@ public class BaseRestResource {
             this.apiMService = (Management) fedoraServer.getModule("fedora.server.management.Management");
             this.apiAService = (Access) fedoraServer.getModule("fedora.server.access.Access");
             this.fedoraServerHost = fedoraServer.getParameter("fedoraServerHost");
+            datastreamFilenameHelper = new DatastreamFilenameHelper(fedoraServer, apiMService, apiAService );
         } catch (Exception ex) {
             throw new RestException("Unable to locate Fedora server instance", ex);
         }

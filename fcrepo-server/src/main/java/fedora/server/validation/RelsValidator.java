@@ -32,20 +32,21 @@ import fedora.common.PID;
 import fedora.server.errors.ValidationException;
 
 /**
- * Validates the RDF/XML content of the RELS-EXT  and RELS-INT datastreams.
+ * Validates the RDF/XML content of the RELS-EXT and RELS-INT datastreams.
  * <p>
  * The following restrictions are enforced:
  * <ul>
  * <li>The RDF must follow a prescribed RDF/XML authoring style where there is
  * ONE (RELS-EXT) or more (RELS-INT) subjects encoded as RDF &lt;Description&gt;
  * elements with RDF <code>about</code> attribute containing either a digital
- * object URI (RELS-EXT) or a datastream URI (RELS-INT). The sub-elements
- * are the relationship properties of the subject. Each relationship may refer
- * to any resource (identified by URI) via an RDF 'resource' attribute, or a
+ * object URI (RELS-EXT) or a datastream URI (RELS-INT). The sub-elements are
+ * the relationship properties of the subject. Each relationship may refer to
+ * any resource (identified by URI) via an RDF 'resource' attribute, or a
  * literal. Relationship assertions can be from the default Fedora relationship
  * ontology, or from other namespaces.
  * <ul>
  * <li>RELS-EXT example:
+ *
  * <pre>&lt;rdf:Description about="info:fedora/demo:5"&gt;
  *   &lt;fedora:isMemberOfCollection resource="info:fedora/demo:100"/&gt;
  *   &lt;nsdl:isAugmentedBy resource="info:fedora/demo:333"/&gt;
@@ -55,6 +56,7 @@ import fedora.server.errors.ValidationException;
  * </pre>
  * </li>
  * <li>RELS-INT example:
+ *
  * <pre>&lt;rdf:Description about="info:fedora/demo:5/DS1"&gt;
  *   &lt;nsdl:isAugmentedBy resource="info:fedora/demo:333"/&gt;
  *   &lt;example:source resource="http://example.org/bsmith/article1.html"/&gt;
@@ -70,20 +72,23 @@ import fedora.server.errors.ValidationException;
  * element must be at depth of 1, and the relationship properties must exist at
  * depth of 2. That's it.</li>
  * <li>For RELS-EXT, The RDF <code>about</code> attribute of the RDF
- * &lt;Description&gt; must be the URI of the digital object in which the RELS-EXT
- * datastream resides. This means that all relationships are FROM "this" object
- * to other objects.</li>
+ * &lt;Description&gt; must be the URI of the digital object in which the
+ * RELS-EXT datastream resides. This means that all relationships are FROM
+ * "this" object to other objects.</li>
  * <li>For RELS-INT, the RDF <code>about</code> attribute(s) of the RDF
- * &lt;Description&gt; element(s) must be valid URIs of datastreams for the digital
- * object in which the RELS-EXT datastream resides. The datastreams do not actually
- * have to exist, but these URIs must be syntactically valid. This means that all
- * relationships are FROM datastreams in "this" object to other objects.</li>
+ * &lt;Description&gt; element(s) must be valid URIs of datastreams for the
+ * digital object in which the RELS-EXT datastream resides. The datastreams do
+ * not actually have to exist, but these URIs must be syntactically valid. This
+ * means that all relationships are FROM datastreams in "this" object to other
+ * objects.</li>
  * <li>If the target of the statement is a resource (identified by a URI), the
  * RDF <code>resource</code> attribute must specify a syntactically valid,
  * absolute URI.</li>
- * <li>For RELS-EXT, there must NOT be any assertion of properties from the DC namespace.</li>
- * <li>There must NOT be any assertions of properties  from the Fedora object
- * properties namespaces (model and view), with the following exceptions for RELS-EXT only:
+ * <li>For RELS-EXT, there must NOT be any assertion of properties from the DC
+ * namespace.</li>
+ * <li>There must NOT be any assertions of properties from the Fedora object
+ * properties namespaces (model and view), with the following exceptions for
+ * RELS-EXT only:
  *
  * <pre>
  * fedora-model:hasService
@@ -133,6 +138,7 @@ public class RelsValidator
     private final SAXParser m_parser;
 
     private static final String RELS_EXT = "RELS-EXT";
+
     private static final String RELS_INT = "RELS-INT";
 
     public RelsValidator() {
@@ -154,7 +160,8 @@ public class RelsValidator
             m_depth = 0;
             m_doURI = pid.toURI();
             if (!dsId.equals(RELS_EXT) && !dsId.equals(RELS_INT)) {
-                throw new ValidationException("Relationships datastream ID must be RELS-EXT or RELS-INT (" + dsId +")");
+                throw new ValidationException("Relationships datastream ID must be RELS-EXT or RELS-INT ("
+                        + dsId + ")");
             }
             m_dsId = dsId;
             m_parser.parse(content, this);
@@ -331,19 +338,28 @@ public class RelsValidator
                     + " No Dublin Core assertions allowed"
                     + " in Fedora relationship metadata.");
         } else if (nsURI.equals(MODEL.uri)) {
-            if (m_dsId.equals(RELS_INT) ||
+            if ((m_dsId.equals(RELS_INT)
+                    && !localName.equals(MODEL.DOWNLOAD_FILENAME.localName)                    )
+                    ||
                     (m_dsId.equals(RELS_EXT)
                     && !localName.equals(MODEL.HAS_SERVICE.localName)
                     && !localName.equals(MODEL.IS_CONTRACTOR_OF.localName)
                     && !localName.equals(MODEL.HAS_MODEL.localName)
-                    && !localName.equals(MODEL.IS_DEPLOYMENT_OF.localName))) {
+                    && !localName.equals(MODEL.IS_DEPLOYMENT_OF.localName)
+                    )) {
                 throw new SAXException("RelsExtValidator:"
                         + " Disallowed predicate in " + m_dsId + ": "
                         + qName
                         + "\n"
                         + " The only predicates from the fedora-model namespace"
-                        + " allowed in RELS-EXT are hasService, hasModel,"
-                        + "  isDeploymentOf, and isContractor.");
+                        + " allowed in RELS-EXT are "
+                        + MODEL.HAS_SERVICE.localName + ", "
+                        + MODEL.IS_CONTRACTOR_OF.localName + ", "
+                        + MODEL.HAS_MODEL.localName + ", "
+                        + MODEL.IS_DEPLOYMENT_OF.localName + ".  The only predicate allowed "
+                        + "in RELS-INT is "
+                        + MODEL.DOWNLOAD_FILENAME.localName +"."
+                        );
             }
         } else if (nsURI.equals(VIEW.uri)) {
             throw new SAXException("RelsExtValidator:"
@@ -387,8 +403,7 @@ public class RelsValidator
             String dsId = aboutURI.replace(m_doURI + "/", "");
             // datastream ID must be an XML NCName, implemented using axis NCName class
             if (dsId.length() > ValidationConstants.DATASTREAM_ID_MAXLEN
-                    || dsId.length() < 1
-                    || !NCName.isValid(dsId)) {
+                    || dsId.length() < 1 || !NCName.isValid(dsId)) {
                 throw new SAXException("RelsExtValidator:"
                         + " The RELS-INT datastream refers to"
                         + " an improper URI in the 'about' attribute of the"
@@ -422,8 +437,8 @@ public class RelsValidator
         }
 
         if (!uri.isAbsolute()) {
-            throw new SAXException("RelsValidator:"
-                    + "Error in relationship '" + relName + "'."
+            throw new SAXException("RelsValidator:" + "Error in relationship '"
+                    + relName + "'."
                     + " The specified RDF 'resource' is not an absolute URI.");
         }
     }
