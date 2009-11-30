@@ -572,6 +572,208 @@ return m_instance.addDatastream((java.lang.String) parms.get("pid"), (java.lang.
         return (java.lang.String) worker.get();
     }
 
+    public java.lang.String addDatastreamByReference(java.lang.String pid, java.lang.String dsID, java.lang.String[] altIDs, java.lang.String dsLabel, boolean versionable, java.lang.String MIMEType, java.lang.String formatURI, java.lang.String dsLocation, java.lang.String controlGroup, java.lang.String dsState, java.lang.String checksumType, java.lang.String checksum, java.lang.String logMessage) throws java.rmi.RemoteException {
+        String METHOD_NAME="addDatastreamByReference";
+        HashMap PARMS=new HashMap();
+        PARMS.put("pid", pid);
+        PARMS.put("dsID", dsID);
+        PARMS.put("altIDs", altIDs);
+        PARMS.put("dsLabel", dsLabel);
+        PARMS.put("versionable", new Boolean(versionable));
+        PARMS.put("MIMEType", MIMEType);
+        PARMS.put("formatURI", formatURI);
+        PARMS.put("dsLocation", dsLocation);
+        PARMS.put("controlGroup", controlGroup);
+        PARMS.put("dsState", dsState);
+        PARMS.put("checksumType", checksumType);
+        PARMS.put("checksum", checksum);
+        PARMS.put("logMessage", logMessage);
+        // Run the method in a SwingWorker thread
+        SwingWorker worker=new SwingWorker(PARMS) {
+            public Object construct() {
+                try {
+
+// call wrapped method
+return m_instance.addDatastreamByReference((java.lang.String) parms.get("pid"), (java.lang.String) parms.get("dsID"), (java.lang.String[]) parms.get("altIDs"), (java.lang.String) parms.get("dsLabel"), ((Boolean) parms.get("versionable")).booleanValue(), (java.lang.String) parms.get("MIMEType"), (java.lang.String) parms.get("formatURI"), (java.lang.String) parms.get("dsLocation"), (java.lang.String) parms.get("controlGroup"), (java.lang.String) parms.get("dsState"), (java.lang.String) parms.get("checksumType"), (java.lang.String) parms.get("checksum"), (java.lang.String) parms.get("logMessage"));
+
+                } catch (RemoteException e) {
+                    thrownException=e;
+                }
+                return "";
+            }
+        };
+        worker.start();
+        // The following code will run in the (safe) 
+        // Swing event dispatcher thread.
+        int ms=0;
+        Dimension d=Administrator.PROGRESS.getSize();
+        // Devise verbage based on method name
+        ArrayList words=new ArrayList();
+        StringBuffer word=new StringBuffer();
+        boolean lastWasCaps=true;
+        for (int i=0; i<METHOD_NAME.length(); i++) {
+            char c=METHOD_NAME.charAt(i);
+            if (c>='A' && c<='Z') {
+               // char is caps
+               if (!lastWasCaps) {
+                   // new word
+                   words.add(word.toString());
+                   word=new StringBuffer();
+               }
+               word.append(c);
+               lastWasCaps=true;
+            } else {
+               // char is lowercase
+               word.append(c);
+               lastWasCaps=false;
+            }
+        }
+        words.add(word.toString());
+        StringBuffer buf=new StringBuffer();
+        for (int i=0; i<words.size(); i++) {
+            String lcWord=((String) words.get(i)).toLowerCase();
+            if (i==0) {
+                String firstChar=lcWord.substring(0, 1).toUpperCase();
+                char lastChar=lcWord.charAt(lcWord.length()-1);
+                String middle=lcWord.substring(1, lcWord.length()-1);
+                buf.append(firstChar);
+                buf.append(middle);
+                buf.append(lastChar);
+                buf.append(" ");
+            } else {
+                buf.append(lcWord + " ");
+            }
+        }
+        Administrator.PROGRESS.setString(buf.toString() + ". . .");
+        while (!worker.done) {
+            try {
+                Administrator.PROGRESS.setValue(ms);
+                Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
+                Thread.sleep(100);
+                ms=ms+100;
+                if (ms>=2000) ms=200;
+            } catch (InterruptedException ie) { }
+        }
+        Administrator.PROGRESS.setValue(2000);
+        Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ie) { }
+        Administrator.PROGRESS.setValue(0);
+        Administrator.PROGRESS.setString("");
+        
+        // The worker is finished.  
+        // Throw exception if caught.
+        if (worker.thrownException!=null) {
+            throw (RemoteException) worker.thrownException;
+        }
+        
+        // Otherwise, get the value from the 
+        // worker (returning it if applicable)
+        return (java.lang.String) worker.get();
+    }
+
+    public java.lang.String addDatastreamByValue(java.lang.String pid, java.lang.String dsID, java.lang.String[] altIDs, java.lang.String dsLabel, boolean versionable, java.lang.String MIMEType, java.lang.String formatURI, byte[] dsContent, java.lang.String controlGroup, java.lang.String dsState, java.lang.String checksumType, java.lang.String checksum, java.lang.String logMessage) throws java.rmi.RemoteException {
+        String METHOD_NAME="addDatastreamByValue";
+        HashMap PARMS=new HashMap();
+        PARMS.put("pid", pid);
+        PARMS.put("dsID", dsID);
+        PARMS.put("altIDs", altIDs);
+        PARMS.put("dsLabel", dsLabel);
+        PARMS.put("versionable", new Boolean(versionable));
+        PARMS.put("MIMEType", MIMEType);
+        PARMS.put("formatURI", formatURI);
+        PARMS.put("dsContent", dsContent);
+        PARMS.put("controlGroup", controlGroup);
+        PARMS.put("dsState", dsState);
+        PARMS.put("checksumType", checksumType);
+        PARMS.put("checksum", checksum);
+        PARMS.put("logMessage", logMessage);
+        // Run the method in a SwingWorker thread
+        SwingWorker worker=new SwingWorker(PARMS) {
+            public Object construct() {
+                try {
+
+// call wrapped method
+return m_instance.addDatastreamByValue((java.lang.String) parms.get("pid"), (java.lang.String) parms.get("dsID"), (java.lang.String[]) parms.get("altIDs"), (java.lang.String) parms.get("dsLabel"), ((Boolean) parms.get("versionable")).booleanValue(), (java.lang.String) parms.get("MIMEType"), (java.lang.String) parms.get("formatURI"), (byte[]) parms.get("dsContent"), (java.lang.String) parms.get("controlGroup"), (java.lang.String) parms.get("dsState"), (java.lang.String) parms.get("checksumType"), (java.lang.String) parms.get("checksum"), (java.lang.String) parms.get("logMessage"));
+
+                } catch (RemoteException e) {
+                    thrownException=e;
+                }
+                return "";
+            }
+        };
+        worker.start();
+        // The following code will run in the (safe) 
+        // Swing event dispatcher thread.
+        int ms=0;
+        Dimension d=Administrator.PROGRESS.getSize();
+        // Devise verbage based on method name
+        ArrayList words=new ArrayList();
+        StringBuffer word=new StringBuffer();
+        boolean lastWasCaps=true;
+        for (int i=0; i<METHOD_NAME.length(); i++) {
+            char c=METHOD_NAME.charAt(i);
+            if (c>='A' && c<='Z') {
+               // char is caps
+               if (!lastWasCaps) {
+                   // new word
+                   words.add(word.toString());
+                   word=new StringBuffer();
+               }
+               word.append(c);
+               lastWasCaps=true;
+            } else {
+               // char is lowercase
+               word.append(c);
+               lastWasCaps=false;
+            }
+        }
+        words.add(word.toString());
+        StringBuffer buf=new StringBuffer();
+        for (int i=0; i<words.size(); i++) {
+            String lcWord=((String) words.get(i)).toLowerCase();
+            if (i==0) {
+                String firstChar=lcWord.substring(0, 1).toUpperCase();
+                char lastChar=lcWord.charAt(lcWord.length()-1);
+                String middle=lcWord.substring(1, lcWord.length()-1);
+                buf.append(firstChar);
+                buf.append(middle);
+                buf.append(lastChar);
+                buf.append(" ");
+            } else {
+                buf.append(lcWord + " ");
+            }
+        }
+        Administrator.PROGRESS.setString(buf.toString() + ". . .");
+        while (!worker.done) {
+            try {
+                Administrator.PROGRESS.setValue(ms);
+                Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
+                Thread.sleep(100);
+                ms=ms+100;
+                if (ms>=2000) ms=200;
+            } catch (InterruptedException ie) { }
+        }
+        Administrator.PROGRESS.setValue(2000);
+        Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ie) { }
+        Administrator.PROGRESS.setValue(0);
+        Administrator.PROGRESS.setString("");
+        
+        // The worker is finished.  
+        // Throw exception if caught.
+        if (worker.thrownException!=null) {
+            throw (RemoteException) worker.thrownException;
+        }
+        
+        // Otherwise, get the value from the 
+        // worker (returning it if applicable)
+        return (java.lang.String) worker.get();
+    }
+
     public java.lang.String modifyDatastreamByReference(java.lang.String pid, java.lang.String dsID, java.lang.String[] altIDs, java.lang.String dsLabel, java.lang.String MIMEType, java.lang.String formatURI, java.lang.String dsLocation, java.lang.String checksumType, java.lang.String checksum, java.lang.String logMessage, boolean force) throws java.rmi.RemoteException {
         String METHOD_NAME="modifyDatastreamByReference";
         HashMap PARMS=new HashMap();

@@ -5,19 +5,19 @@
 
 package fedora.server.management;
 
+import fedora.server.Context;
+import fedora.server.errors.ServerException;
+import fedora.server.journal.JournalConstants;
+import fedora.server.messaging.PName;
+import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.RelationshipTuple;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-
-import fedora.server.Context;
-import fedora.server.errors.ServerException;
-import fedora.server.journal.JournalConstants;
-import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.RelationshipTuple;
 
 /**
  * A generic management delegate for use in Journal unit testing. Each method
@@ -447,5 +447,48 @@ public class MockManagementDelegate
     // ----------------------------------------------------------------------
     // Un-implemented methods
     // ----------------------------------------------------------------------
+    public String addDatastreamByReference(@PName("context") Context context,
+                                           @PName("pid") String pid,
+                                           @PName("dsID") String dsID,
+                                           @PName("altIDs") String[] altIDs,
+                                           @PName("dsLabel") String dsLabel,
+                                           @PName("versionable")
+                                           boolean versionable,
+                                           @PName("mimeType") String mimeType,
+                                           @PName("formatURI") String formatURI,
+                                           @PName("dsLocation")
+                                           String dsLocation,
+                                           @PName("controlGroup")
+                                           String controlGroup,
+                                           @PName("dsState") String dsState,
+                                           @PName("checksumType")
+                                           String checksumType,
+                                           @PName("checksum") String checksum,
+                                           @PName("logMessage")
+                                           String logMessage)
+            throws ServerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
+    public String addDatastreamByValue(@PName("context") Context context,
+                                       @PName("pid") String pid,
+                                       @PName("dsID") String dsID,
+                                       @PName("altIDs") String[] altIDs,
+                                       @PName("dsLabel") String dsLabel,
+                                       @PName("versionable")
+                                       boolean versionable,
+                                       @PName("mimeType") String mimeType,
+                                       @PName("formatURI") String formatURI,
+                                       @PName("dsContent")
+                                       InputStream dsContent,
+                                       @PName("controlGroup")
+                                       String controlGroup,
+                                       @PName("dsState") String dsState,
+                                       @PName("checksumType")
+                                       String checksumType,
+                                       @PName("checksum") String checksum,
+                                       @PName("logMessage") String logMessage)
+            throws ServerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

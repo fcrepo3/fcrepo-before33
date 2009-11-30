@@ -4,19 +4,6 @@
  */
 package fedora.server.management;
 
-import java.io.File;
-import java.io.InputStream;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
@@ -30,6 +17,11 @@ import fedora.server.storage.DOManager;
 import fedora.server.storage.ExternalContentManager;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.RelationshipTuple;
+import org.apache.log4j.Logger;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * @author Edwin Shin
@@ -58,9 +50,9 @@ public class ManagementModule
     private Hashtable<String, Long> m_uploadStartTime;
 
     private Management mgmt;
-    
+
     private AbstractInvocationHandler[] invocationHandlers;
-    
+
     /** Delay between purge of two uploaded files. */
     private long m_purgeDelayInMillis;
 
@@ -83,11 +75,11 @@ public class ManagementModule
             m_uploadStorageMinutes = Integer.parseInt(min);
             if (m_uploadStorageMinutes < 1) {
                 throw new ModuleInitializationException("uploadStorageMinutes "
-                        + "must be 1 or more, if specified.", getRole());
+                                                        + "must be 1 or more, if specified.", getRole());
             }
         } catch (NumberFormatException nfe) {
             throw new ModuleInitializationException("uploadStorageMinutes must "
-                                                            + "be an integer, if specified.",
+                                                    + "be an integer, if specified.",
                                                     getRole());
         }
         // initialize storage area by 1) ensuring the directory is there
@@ -116,8 +108,8 @@ public class ManagementModule
             }
         } catch (Exception e) {
             throw new ModuleInitializationException("Error while initializing "
-                    + "temporary storage area: " + e.getClass().getName()
-                    + ": " + e.getMessage(), getRole(), e);
+                                                    + "temporary storage area: " + e.getClass().getName()
+                                                    + ": " + e.getMessage(), getRole(), e);
         }
 
         // initialize variables pertaining to checksumming datastreams.
@@ -129,21 +121,21 @@ public class ManagementModule
         }
         LOG.debug("autoChecksum is " + auto);
         LOG.debug("defaultChecksumType is " + Datastream.defaultChecksumType);
-       
+
         // get delay between purge of two uploaded files (default 1 minute)
         String purgeDelayInMillis = getParameter("purgeDelayInMillis");
         if (purgeDelayInMillis == null) {
-          purgeDelayInMillis = "60000";
+            purgeDelayInMillis = "60000";
         }
         try {
             this.m_purgeDelayInMillis = Integer.parseInt(purgeDelayInMillis);
         } catch (NumberFormatException nfe) {
             throw new ModuleInitializationException(
-                "purgeDelayInMillis must be an integer, if specified.",
-                getRole());
+                    "purgeDelayInMillis must be an integer, if specified.",
+                    getRole());
         }
     }
-    
+
     @Override
     public void postInitModule() throws ModuleInitializationException {
         // Verify required modules have been loaded
@@ -152,14 +144,14 @@ public class ManagementModule
                         .getModule("fedora.server.storage.DOManager");
         if (m_manager == null) {
             throw new ModuleInitializationException("Can't get a DOManager "
-                    + "from Server.getModule", getRole());
+                                                    + "from Server.getModule", getRole());
         }
         m_contentManager =
                 (ExternalContentManager) getServer()
                         .getModule("fedora.server.storage.ExternalContentManager");
         if (m_contentManager == null) {
             throw new ModuleInitializationException("Can't get an ExternalContentManager "
-                                                            + "from Server.getModule",
+                                                    + "from Server.getModule",
                                                     getRole());
         }
 
@@ -183,7 +175,7 @@ public class ManagementModule
 
         mgmt = getProxyChain(m);
     }
-    
+
     @Override
     public void shutdownModule() throws ModuleShutdownException {
         if (invocationHandlers != null) {
@@ -224,6 +216,77 @@ public class ManagementModule
                                   checksumType,
                                   checksum,
                                   logMessage);
+    }
+
+    public String addDatastreamByReference(Context context,
+                                           String pid,
+                                           String dsID,
+                                           String[] altIDs,
+                                           String dsLabel,
+
+                                           boolean versionable,
+                                           String mimeType,
+                                           String formatURI,
+
+                                           String dsLocation,
+
+                                           String controlGroup,
+                                           String dsState,
+
+                                           String checksumType,
+                                           String checksum,
+
+                                           String logMessage)
+            throws ServerException {
+        return mgmt.addDatastreamByReference(context,
+                                             pid,
+                                             dsID,
+                                             altIDs,
+                                             dsLabel,
+                                             versionable,
+                                             mimeType,
+                                             formatURI,
+                                             dsLocation,
+                                             controlGroup,
+                                             dsState,
+                                             checksumType,
+                                             checksum,
+                                             logMessage);
+    }
+
+    public String addDatastreamByValue( Context context,
+                                       String pid,
+                                       String dsID,
+                                       String[] altIDs,
+                                        String dsLabel,
+
+                                       boolean versionable,
+                                        String mimeType,
+                                        String formatURI,
+
+                                       InputStream dsContent,
+
+                                       String controlGroup,
+                                        String dsState,
+
+                                       String checksumType,
+                                       String checksum,
+                                       String logMessage)
+            throws ServerException {
+        return mgmt.addDatastreamByValue(context,
+                                         pid,
+                                         dsID,
+                                         altIDs,
+                                         dsLabel,
+                                         versionable,
+                                         mimeType,
+                                         formatURI,
+                                         dsContent,
+                                         controlGroup,
+                                         dsState,
+                                         checksumType,
+                                         checksum,
+                                         logMessage);
     }
 
     /**
@@ -505,7 +568,7 @@ public class ManagementModule
 
     /**
      * Build a proxy chain as configured by the module parameters.
-     * 
+     *
      * @param m
      *        The concrete Management implementation to wrap.
      * @return A proxy chain for Management
@@ -526,7 +589,7 @@ public class ManagementModule
      * ordering is ascending alphabetical, determined by the module parameter
      * names that begin with the string "decorator", e.g. "decorator1",
      * "decorator2".
-     * 
+     *
      * @return An array InvocationHandlers
      */
     private AbstractInvocationHandler[] getInvocationHandlers() throws Exception {

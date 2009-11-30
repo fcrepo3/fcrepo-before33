@@ -4,15 +4,14 @@
  */
 package fedora.server.management;
 
-import java.io.InputStream;
-
-import java.util.Date;
-
 import fedora.server.Context;
 import fedora.server.errors.ServerException;
 import fedora.server.messaging.PName;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.RelationshipTuple;
+
+import java.io.InputStream;
+import java.util.Date;
 
 /**
  * The management subsystem interface.
@@ -49,7 +48,7 @@ public interface Management {
                             @PName("pid")String pid,
                             @PName("logMessage")String logMessage,
                             @PName("force")boolean force) throws ServerException;
-
+    @Deprecated
     public String addDatastream(@PName("context")Context context,
                                 @PName("pid")String pid,
                                 @PName("dsID")String dsID,
@@ -64,6 +63,37 @@ public interface Management {
                                 @PName("checksumType")String checksumType,
                                 @PName("checksum")String checksum,
                                 @PName("logMessage")String logMessage) throws ServerException;
+
+    public String addDatastreamByReference(@PName("context")Context context,
+                                @PName("pid")String pid,
+                                @PName("dsID")String dsID,
+                                @PName("altIDs")String[] altIDs,
+                                @PName("dsLabel")String dsLabel,
+                                @PName("versionable")boolean versionable,
+                                @PName("mimeType")String mimeType,
+                                @PName("formatURI")String formatURI,
+                                @PName("dsLocation")String dsLocation,
+                                @PName("controlGroup")String controlGroup,
+                                @PName("dsState")String dsState,
+                                @PName("checksumType")String checksumType,
+                                @PName("checksum")String checksum,
+                                @PName("logMessage")String logMessage) throws ServerException;
+
+    public String addDatastreamByValue(@PName("context")Context context,
+                                @PName("pid")String pid,
+                                @PName("dsID")String dsID,
+                                @PName("altIDs")String[] altIDs,
+                                @PName("dsLabel")String dsLabel,
+                                @PName("versionable")boolean versionable,
+                                @PName("mimeType")String mimeType,
+                                @PName("formatURI")String formatURI,
+                                @PName("dsContent")InputStream dsContent,
+                                @PName("controlGroup")String controlGroup,
+                                @PName("dsState")String dsState,
+                                @PName("checksumType")String checksumType,
+                                @PName("checksum")String checksum,
+                                @PName("logMessage")String logMessage) throws ServerException;
+
 
     public Date modifyDatastreamByReference(@PName("context")Context context,
                                             @PName("pid")String pid,

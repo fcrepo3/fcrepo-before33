@@ -31,6 +31,10 @@ public class ActionNamespace
     // Values of ID
     public final XacmlName ADD_DATASTREAM;
 
+    public final XacmlName ADD_DATASTREAM_BY_REFERENCE;
+
+    public final XacmlName ADD_DATASTREAM_BY_VALUE;
+
     public final XacmlName EXPORT;
 
     public final XacmlName GET_DATASTREAM;
@@ -112,6 +116,8 @@ public class ActionNamespace
         ID = addName(new XacmlName(this, "id", StringAttribute.identifier));
         // derived from respective Java methods in Access.java or Management.java
         ADD_DATASTREAM = addName(new XacmlName(this, "id-addDatastream"));
+        ADD_DATASTREAM_BY_REFERENCE = addName(new XacmlName(this, "id-addDatastreamByReference"));
+        ADD_DATASTREAM_BY_VALUE = addName(new XacmlName(this, "id-addDatastreamByValue"));
         EXPORT = addName(new XacmlName(this, "id-export"));
         GET_DATASTREAM = addName(new XacmlName(this, "id-getDatastream"));
         GET_DATASTREAM_HISTORY =
@@ -167,7 +173,7 @@ public class ActionNamespace
                                       "contextId",
                                       StringAttribute.identifier)); //internal callback support
         RETRIEVE_FILE =
-            addName(new XacmlName(this, "id-retrieveFile"));
+                addName(new XacmlName(this, "id-retrieveFile"));
         // Values of CONTEXT_ID are sequential numerals, hence not enumerated here.
     }
 

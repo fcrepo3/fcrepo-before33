@@ -4,72 +4,36 @@
  */
 package fedora.server.management;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import java.text.SimpleDateFormat;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Set;
-import java.util.Map.Entry;
-import java.util.regex.Pattern;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
-
-import org.apache.commons.betwixt.XMLUtils;
-
-import org.apache.log4j.Logger;
-
-import org.jrdf.graph.URIReference;
-
-import org.w3c.dom.Document;
-
 import fedora.common.Constants;
 import fedora.common.PID;
 import fedora.common.rdf.SimpleURIReference;
-
 import fedora.server.Context;
 import fedora.server.RecoveryContext;
 import fedora.server.Server;
-import fedora.server.errors.GeneralException;
-import fedora.server.errors.InvalidStateException;
-import fedora.server.errors.InvalidXMLNameException;
-import fedora.server.errors.ServerException;
-import fedora.server.errors.StreamReadException;
-import fedora.server.errors.StreamWriteException;
-import fedora.server.errors.ValidationException;
+import fedora.server.errors.*;
 import fedora.server.errors.authorization.AuthzException;
 import fedora.server.security.Authorization;
-import fedora.server.storage.ContentManagerParams;
-import fedora.server.storage.DOManager;
-import fedora.server.storage.DOReader;
-import fedora.server.storage.DOWriter;
-import fedora.server.storage.ExternalContentManager;
-import fedora.server.storage.types.AuditRecord;
-import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.DatastreamManagedContent;
-import fedora.server.storage.types.DatastreamReferencedContent;
-import fedora.server.storage.types.DatastreamXMLMetadata;
-import fedora.server.storage.types.MIMETypedStream;
-import fedora.server.storage.types.RelationshipTuple;
+import fedora.server.storage.*;
+import fedora.server.storage.types.*;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.validation.ValidationConstants;
 import fedora.server.validation.ValidationUtility;
+import org.apache.commons.betwixt.XMLUtils;
+import org.apache.log4j.Logger;
+import org.jrdf.graph.URIReference;
+import org.w3c.dom.Document;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 /**
  * Implements API-M without regard to the transport/messaging protocol.
@@ -136,11 +100,11 @@ public class DefaultManagement
         try {
             LOG.debug("Entered ingest");
             w = m_manager.getIngestWriter(Server.USE_DEFINITIVE_STORE,
-                                          context,
-                                          serialization,
-                                          format,
-                                          encoding,
-                                          newPid);
+                    context,
+                    serialization,
+                    format,
+                    encoding,
+                    newPid);
             String pid = w.GetObjectPID();
 
             m_authz.enforceIngest(context, pid, format, encoding);
@@ -194,9 +158,9 @@ public class DefaultManagement
             LOG.debug("Entered modifyObject");
 
             m_authz.enforceModifyObject(context,
-                                                    pid,
-                                                    state,
-                                                    ownerId);
+                    pid,
+                    state,
+                    ownerId);
 
             checkObjectLabel(label);
 
@@ -252,8 +216,8 @@ public class DefaultManagement
 
             DOReader reader =
                     m_manager.getReader(Server.USE_DEFINITIVE_STORE,
-                                        context,
-                                        pid);
+                            context,
+                            pid);
             InputStream instream = reader.GetObjectXML();
             return instream;
         } finally {
@@ -280,15 +244,15 @@ public class DefaultManagement
             LOG.debug("Entered export");
 
             m_authz.enforceExport(context,
-                                              pid,
-                                              format,
-                                              exportContext,
-                                              encoding);
+                    pid,
+                    format,
+                    exportContext,
+                    encoding);
 
             DOReader reader =
                     m_manager.getReader(Server.USE_DEFINITIVE_STORE,
-                                        context,
-                                        pid);
+                            context,
+                            pid);
             InputStream instream = reader.Export(format, exportContext);
 
             return instream;
@@ -342,22 +306,22 @@ public class DefaultManagement
         }
     }
 
-    public String addDatastream(Context context,
-                                String pid,
-                                String dsID,
-                                String[] altIDs,
-                                String dsLabel,
-                                boolean versionable,
-                                String MIMEType,
-                                String formatURI,
-                                String dsLocation,
-                                String controlGroup,
-                                String dsState,
-                                String checksumType,
-                                String checksum,
-                                String logMessage) throws ServerException {
+    public String addDatastreamByReference(Context context,
+                                           String pid,
+                                           String dsID,
+                                           String[] altIDs,
+                                           String dsLabel,
+                                           boolean versionable,
+                                           String MIMEType,
+                                           String formatURI,
+                                           String dsLocation,
+                                           String controlGroup,
+                                           String dsState,
+                                           String checksumType,
+                                           String checksum,
+                                           String logMessage) throws ServerException {
 
-        LOG.debug("Entered addDatastream");
+        LOG.debug("Entered addDatastreamByReference");
 
         // empty MIME types are allowed. assume they meant "" if they provide it
         // as null.
@@ -401,17 +365,17 @@ public class DefaultManagement
         }
         DOWriter w = null;
         try {
-            m_authz.enforceAddDatastream(context,
-                                         pid,
-                                         dsID,
-                                         altIDs,
-                                         MIMEType,
-                                         formatURI,
-                                         dsLocation,
-                                         controlGroup,
-                                         dsState,
-                                         checksumType,
-                                         checksum);
+            m_authz.enforceAddDatastreamByReference(context,
+                    pid,
+                    dsID,
+                    altIDs,
+                    MIMEType,
+                    formatURI,
+                    dsLocation,
+                    controlGroup,
+                    dsState,
+                    checksumType,
+                    checksum);
 
             checkDatastreamID(dsID);
             checkDatastreamLabel(dsLabel);
@@ -436,8 +400,8 @@ public class DefaultManagement
                     DatastreamXMLMetadata dsm = (DatastreamXMLMetadata) ds;
                     dsm.xmlContent = getEmbeddableXML(in);
                     ValidationUtility.validateReservedDatastream(PID.getInstance(pid),
-                                                                 dsID,
-                                                                 dsm.getContentStream());
+                            dsID,
+                            dsm.getContentStream());
                     if(mimeTypedStream != null) {
                         mimeTypedStream.close();
                     }
@@ -515,11 +479,11 @@ public class DefaultManagement
             // Update audit trail
             Date nowUTC = Server.getCurrentDate(context);
             addAuditRecord(context,
-                           w,
-                           "addDatastream",
-                           ds.DatastreamID,
-                           logMessage,
-                           nowUTC);
+                    w,
+                    "addDatastreamByReference",
+                    ds.DatastreamID,
+                    logMessage,
+                    nowUTC);
 
             // Commit the updates
             ds.DSCreateDT = nowUTC;
@@ -531,7 +495,7 @@ public class DefaultManagement
             // Log completion
             if (LOG.isInfoEnabled()) {
                 StringBuilder logMsg =
-                        new StringBuilder("Completed addDatastream(");
+                        new StringBuilder("Completed addDatastreamByReference(");
                 logMsg.append("pid: ").append(pid);
                 logMsg.append(", dsID: ").append(dsID);
                 appendAltIDs(logMsg, altIDs);
@@ -549,8 +513,203 @@ public class DefaultManagement
                 LOG.info(logMsg.toString());
             }
 
-            finishModification(w, "addDatastream");
+            finishModification(w, "addDatastreamByReference");
         }
+    }
+
+    public String addDatastream(Context context,
+                                String pid,
+                                String dsID,
+                                String[] altIDs,
+                                String dsLabel,
+                                boolean versionable,
+                                String mimeType,
+                                String formatURI,
+                                String dsLocation,
+                                String controlGroup,
+                                String dsState,
+                                String checksumType,
+                                String checksum,
+                                String logMessage) throws ServerException {
+        return addDatastreamByReference(context,pid,dsID,altIDs,dsLabel,versionable,mimeType,formatURI,dsLocation,controlGroup,dsState,checksumType,checksum,logMessage);
+    }
+
+    public String addDatastreamByValue(Context context,
+                                       String pid,
+                                       String dsID,
+                                       String[] altIDs,
+                                       String dsLabel,
+                                       boolean versionable,
+                                       String MIMEType,
+                                       String formatURI,
+                                       InputStream dsContent,
+                                       String controlGroup,
+                                       String dsState,
+                                       String checksumType,
+                                       String checksum,
+                                       String logMessage) throws ServerException {
+        LOG.debug("Entered addDatastreamByValue");
+
+        // empty MIME types are allowed. assume they meant "" if they provide it
+        // as null.
+        if (MIMEType == null) {
+            MIMEType = "";
+        }
+
+        // empty altIDs are allowed. assume they meant String[0] if they provide
+        // it as null.
+        if (altIDs == null) {
+            altIDs = new String[0];
+        }
+
+        // If the datastream ID is not specified directly, see
+        // if we can get it from the RecoveryContext
+        if (dsID == null && context instanceof RecoveryContext) {
+            RecoveryContext rContext = (RecoveryContext) context;
+            dsID =
+                    rContext
+                            .getRecoveryValue(Constants.RECOVERY.DATASTREAM_ID.uri);
+            if (dsID != null) {
+                LOG.debug("Using new dsID from recovery context");
+            }
+        }
+
+        // check for valid xml name for datastream ID
+        if (dsID != null) {
+            if (!XMLUtils.isWellFormedXMLName(dsID)) {
+                throw new InvalidXMLNameException("Invalid syntax for datastream ID. "
+                        + "The datastream ID of \""
+                        + dsID
+                        + "\" is"
+                        + "not a valid XML Name");
+            }
+        }
+
+        if (dsID != null
+                && (dsID.equals("AUDIT") || dsID.equals("FEDORA-AUDITTRAIL"))) {
+            throw new GeneralException("Creation of a datastream with an"
+                    + " identifier of 'AUDIT' or 'FEDORA-AUDITTRAIL' is not permitted.");
+        }
+        DOWriter w = null;
+        try {
+            m_authz.enforceAddDatastreamByValue(context,
+                    pid,
+                    dsID,
+                    altIDs,
+                    MIMEType,
+                    formatURI,
+                    controlGroup,
+                    dsState,
+                    checksumType,
+                    checksum);
+
+            checkDatastreamID(dsID);
+            checkDatastreamLabel(dsLabel);
+
+            w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
+            Datastream ds;
+            if (controlGroup.equals("X")) {
+                ds = new DatastreamXMLMetadata();
+                ds.DSInfoType = ""; // field is now deprecated
+
+                DatastreamXMLMetadata dsm = (DatastreamXMLMetadata) ds;
+                dsm.xmlContent = getEmbeddableXML(dsContent);
+                ValidationUtility.validateReservedDatastream(PID.getInstance(pid),
+                        dsID,
+                        dsm.getContentStream());
+
+            } else {
+                throw new GeneralException("Only content of inline XML datastreams may"
+                        + " be added by value.\n"
+                        + "Use addDatastreamByReference instead.");
+            }
+            ds.isNew = true;
+            ds.DSControlGrp = controlGroup;
+            ds.DSVersionable = versionable;
+            if (!dsState.equals("A") && !dsState.equals("D")
+                    && !dsState.equals("I")) {
+                throw new InvalidStateException("The datastream state of \""
+                        + dsState
+                        + "\" is invalid. The allowed values for state are: "
+                        + " A (active), D (deleted), and I (inactive).");
+            }
+            ds.DSState = dsState;
+            // set new datastream id if not provided...
+            if (dsID == null || dsID.length() == 0) {
+                ds.DatastreamID = w.newDatastreamID();
+            } else {
+                if (dsID.indexOf(" ") != -1) {
+                    throw new GeneralException("Datastream ids cannot contain spaces.");
+                }
+                if (dsID.indexOf("+") != -1) {
+                    throw new GeneralException("Datastream ids cannot contain plusses.");
+                }
+                if (dsID.indexOf(":") != -1) {
+                    throw new GeneralException("Datastream ids cannot contain colons.");
+                }
+                if (w.GetDatastream(dsID, null) != null) {
+                    throw new GeneralException("A datastream already exists with ID: "
+                            + dsID);
+                } else {
+                    ds.DatastreamID = dsID;
+                }
+            }
+            // add version level attributes and
+            // create new ds version id ...
+            ds.DSVersionID = ds.DatastreamID + ".0";
+            ds.DSLabel = dsLabel;
+            ds.DSFormatURI = formatURI;
+            ds.DatastreamAltIDs = altIDs;
+            ds.DSMIME = MIMEType;
+            ds.DSChecksumType = Datastream.validateChecksumType(checksumType);
+
+            if (checksum != null && checksumType != null) {
+                String check = ds.getChecksum();
+                if (!checksum.equals(check)) {
+                    throw new ValidationException("Checksum Mismatch: " + check);
+                }
+            }
+
+            // Update audit trail
+            Date nowUTC = Server.getCurrentDate(context);
+            addAuditRecord(context,
+                    w,
+                    "addDatastreamByValue",
+                    ds.DatastreamID,
+                    logMessage,
+                    nowUTC);
+
+            // Commit the updates
+            ds.DSCreateDT = nowUTC;
+            w.addDatastream(ds, true);
+            w.commit("Added a new datastream");
+
+            return ds.DatastreamID;
+        } finally {
+            // Log completion
+            if (LOG.isInfoEnabled()) {
+                StringBuilder logMsg =
+                        new StringBuilder("Completed addDatastreamByValue(");
+                logMsg.append("pid: ").append(pid);
+                logMsg.append(", dsID: ").append(dsID);
+                appendAltIDs(logMsg, altIDs);
+                logMsg.append(", dsLabel: ").append(dsLabel);
+                logMsg.append(", versionable: ").append(versionable);
+                logMsg.append(", MIMEType: ").append(MIMEType);
+                logMsg.append(", formatURI: ").append(formatURI);
+                logMsg.append(", dsContent: ").append(dsContent);
+                logMsg.append(", controlGroup: ").append(controlGroup);
+                logMsg.append(", dsState: ").append(dsState);
+                logMsg.append(", checksumType: ").append(checksumType);
+                logMsg.append(", checksum: ").append(checksum);
+                logMsg.append(", logMessage: ").append(logMessage);
+                logMsg.append(")");
+                LOG.info(logMsg.toString());
+            }
+
+            finishModification(w, "addDatastreamByValue");
+        }
+
     }
 
     public Date modifyDatastreamByReference(Context context,
@@ -587,14 +746,14 @@ public class DefaultManagement
             LOG.debug("Entered modifyDatastreamByReference");
             m_authz
                     .enforceModifyDatastreamByReference(context,
-                                                        pid,
-                                                        datastreamId,
-                                                        altIDs,
-                                                        mimeType,
-                                                        formatURI,
-                                                        dsLocation,
-                                                        checksumType,
-                                                        checksum);
+                            pid,
+                            datastreamId,
+                            altIDs,
+                            mimeType,
+                            formatURI,
+                            dsLocation,
+                            checksumType,
+                            checksum);
 
             checkDatastreamLabel(dsLabel);
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
@@ -705,11 +864,11 @@ public class DefaultManagement
 
             // Update audit trail
             addAuditRecord(context,
-                           w,
-                           "modifyDatastreamByReference",
-                           newds.DatastreamID,
-                           logMessage,
-                           nowUTC);
+                    w,
+                    "modifyDatastreamByReference",
+                    newds.DatastreamID,
+                    logMessage,
+                    nowUTC);
 
             // if all went ok, check if we need to validate, then commit.
             // if (oldValidationReports != null) { // mime changed and
@@ -778,13 +937,13 @@ public class DefaultManagement
         try {
             LOG.debug("Entered modifyDatastreamByValue");
             m_authz.enforceModifyDatastreamByValue(context,
-                                                               pid,
-                                                               datastreamId,
-                                                               altIDs,
-                                                               mimeType,
-                                                               formatURI,
-                                                               checksumType,
-                                                               checksum);
+                    pid,
+                    datastreamId,
+                    altIDs,
+                    mimeType,
+                    formatURI,
+                    checksumType,
+                    checksum);
 
             checkDatastreamLabel(dsLabel);
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
@@ -833,8 +992,8 @@ public class DefaultManagement
                 // set and validate the content
                 newds.xmlContent = getEmbeddableXML(dsContent);
                 ValidationUtility.validateReservedDatastream(PID.getInstance(pid),
-                                                             orig.DatastreamID,
-                                                             newds.getContentStream());
+                        orig.DatastreamID,
+                        newds.getContentStream());
             }
 
             // update ds attributes that are common to all versions...
@@ -873,11 +1032,11 @@ public class DefaultManagement
 
             // Update audit trail
             addAuditRecord(context,
-                           w,
-                           "modifyDatastreamByValue",
-                           newds.DatastreamID,
-                           logMessage,
-                           nowUTC);
+                    w,
+                    "modifyDatastreamByValue",
+                    newds.DatastreamID,
+                    logMessage,
+                    nowUTC);
 
             w.commit(logMessage);
 
@@ -922,9 +1081,9 @@ public class DefaultManagement
             LOG.debug("Entered purgeDatastream");
 
             m_authz.enforcePurgeDatastream(context,
-                                                       pid,
-                                                       datastreamID,
-                                                       endDT);
+                    pid,
+                    datastreamID,
+                    endDT);
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             Date[] deletedDates =
@@ -958,19 +1117,19 @@ public class DefaultManagement
             }
             logMessage +=
                     getPurgeLogMessage("datastream",
-                                       datastreamID,
-                                       startDT,
-                                       endDT,
-                                       deletedDates);
+                            datastreamID,
+                            startDT,
+                            endDT,
+                            deletedDates);
 
             // Update audit trail
             Date nowUTC = Server.getCurrentDate(context);
             addAuditRecord(context,
-                           w,
-                           "purgeDatastream",
-                           datastreamID,
-                           logMessage,
-                           nowUTC);
+                    w,
+                    "purgeDatastream",
+                    datastreamID,
+                    logMessage,
+                    nowUTC);
 
             // It looks like all went ok, so commit
             w.commit(logMessage);
@@ -1040,9 +1199,9 @@ public class DefaultManagement
             LOG.debug("Entered getDatastream");
 
             m_authz.enforceGetDatastream(context,
-                                                     pid,
-                                                     datastreamID,
-                                                     asOfDateTime);
+                    pid,
+                    datastreamID,
+                    asOfDateTime);
 
             DOReader r =
                     m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
@@ -1072,9 +1231,9 @@ public class DefaultManagement
             LOG.debug("Entered getDatastreams");
 
             m_authz.enforceGetDatastreams(context,
-                                                      pid,
-                                                      asOfDateTime,
-                                                      state);
+                    pid,
+                    asOfDateTime,
+                    state);
 
             DOReader r =
                     m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
@@ -1104,8 +1263,8 @@ public class DefaultManagement
             LOG.debug("Entered getDatastreamHistory");
 
             m_authz.enforceGetDatastreamHistory(context,
-                                                            pid,
-                                                            datastreamID);
+                    pid,
+                    datastreamID);
 
             DOReader r =
                     m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
@@ -1284,9 +1443,9 @@ public class DefaultManagement
             LOG.debug("Entered setDatastreamState");
 
             m_authz.enforceSetDatastreamState(context,
-                                                          pid,
-                                                          datastreamID,
-                                                          dsState);
+                    pid,
+                    datastreamID,
+                    dsState);
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             if (!dsState.equals("A") && !dsState.equals("D")
@@ -1301,11 +1460,11 @@ public class DefaultManagement
             // Update audit trail
             Date nowUTC = Server.getCurrentDate(context);
             addAuditRecord(context,
-                           w,
-                           "setDatastreamState",
-                           datastreamID,
-                           logMessage,
-                           nowUTC);
+                    w,
+                    "setDatastreamState",
+                    datastreamID,
+                    logMessage,
+                    nowUTC);
 
             // if all went ok, commit
             w.commit(logMessage);
@@ -1338,9 +1497,9 @@ public class DefaultManagement
             LOG.debug("Entered setDatastreamVersionable");
 
             m_authz.enforceSetDatastreamVersionable(context,
-                                                                pid,
-                                                                datastreamID,
-                                                                versionable);
+                    pid,
+                    datastreamID,
+                    versionable);
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             w.setDatastreamVersionable(datastreamID, versionable);
@@ -1348,11 +1507,11 @@ public class DefaultManagement
             // Update audit trail
             Date nowUTC = Server.getCurrentDate(context);
             addAuditRecord(context,
-                           w,
-                           "setDatastreamVersionable",
-                           datastreamID,
-                           logMessage,
-                           nowUTC);
+                    w,
+                    "setDatastreamVersionable",
+                    datastreamID,
+                    logMessage,
+                    nowUTC);
 
             // if all went ok, commit
             w.commit(logMessage);
@@ -1384,9 +1543,9 @@ public class DefaultManagement
             LOG.debug("Entered compareDatastreamChecksum");
 
             m_authz.enforceCompareDatastreamChecksum(context,
-                                                                 pid,
-                                                                 datastreamID,
-                                                                 versionDate);
+                    pid,
+                    datastreamID,
+                    versionDate);
 
             LOG.debug("Getting Reader");
             r = m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);
@@ -1457,25 +1616,52 @@ public class DefaultManagement
         }
     }
 
+    /**
+     * Get a byte array containing an xml chunk that is safe to embed in another
+     * UTF-8 xml document.
+     * <p>
+     * This will ensure that the xml is:
+     * <ul>
+     * <li> well-formed. If not, an exception will be raised.</li>
+     * <li> encoded in UTF-8. It will be converted otherwise.</li>
+     * <li> devoid of processing instructions. These will be stripped if
+     * present.</li>
+     * <li> devoid of DOCTYPE declarations. These will be stripped if present.</li>
+     * <li> devoid of internal entity references. These will be expanded if
+     * present.</li>
+     * </ul>
+     * </p>
+     */
+    private byte[] getEmbeddableXML(String in) throws GeneralException {
+        try {
+            InputStream instream = new ByteArrayInputStream(in.getBytes("UTF-8"));
+            return getEmbeddableXML(instream);
+        } catch (UnsupportedEncodingException e) {
+            throw new GeneralException("UTF-8 Charset not known",e);
+        }
+
+    }
+
+
     private void checkDatastreamID(String id) throws ValidationException {
         checkString(id,
-                    "Datastream id",
-                    ValidationConstants.DATASTREAM_ID_MAXLEN,
-                    ValidationConstants.DATASTREAM_ID_BADCHARS);
+                "Datastream id",
+                ValidationConstants.DATASTREAM_ID_MAXLEN,
+                ValidationConstants.DATASTREAM_ID_BADCHARS);
     }
 
     private void checkDatastreamLabel(String label) throws ValidationException {
         checkString(label,
-                    "Datastream label",
-                    ValidationConstants.DATASTREAM_LABEL_MAXLEN,
-                    null);
+                "Datastream label",
+                ValidationConstants.DATASTREAM_LABEL_MAXLEN,
+                null);
     }
 
     private void checkObjectLabel(String label) throws ValidationException {
         checkString(label,
-                    "Object label",
-                    ValidationConstants.OBJECT_LABEL_MAXLEN,
-                    null);
+                "Object label",
+                ValidationConstants.OBJECT_LABEL_MAXLEN,
+                null);
     }
 
     private void checkString(String string,
@@ -1544,8 +1730,8 @@ public class DefaultManagement
             pid = SubjectProcessor.getSubjectPID(subject);
 
             m_authz.enforceGetRelationships(context,
-                                                        pid,
-                                                        relationship);
+                    pid,
+                    relationship);
 
             r = m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);
             LOG.debug("Getting Relationships:  pid = " + pid + " predicate = "
@@ -1592,20 +1778,20 @@ public class DefaultManagement
             LOG.debug("Entered addRelationship");
             pid = SubjectProcessor.getSubjectPID(subject);
             m_authz.enforceAddRelationship(context,
-                                                       pid,
-                                                       relationship,
-                                                       object,
-                                                       isLiteral,
-                                                       datatype);
+                    pid,
+                    relationship,
+                    object,
+                    isLiteral,
+                    datatype);
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             boolean added =
                     w
                             .addRelationship(SubjectProcessor.getSubjectAsUri(subject),
-                                             relationship,
-                                             object,
-                                             isLiteral,
-                                             datatype);
+                                    relationship,
+                                    object,
+                                    isLiteral,
+                                    datatype);
 
             // if all went ok, commit
             if (added) {
@@ -1643,19 +1829,19 @@ public class DefaultManagement
             LOG.debug("Entered purgeRelationship");
             pid = SubjectProcessor.getSubjectPID(subject);
             m_authz.enforcePurgeRelationship(context,
-                                                         pid,
-                                                         relationship,
-                                                         object,
-                                                         isLiteral,
-                                                         datatype);
+                    pid,
+                    relationship,
+                    object,
+                    isLiteral,
+                    datatype);
 
             w = m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             boolean purged =
                     w.purgeRelationship(SubjectProcessor.getSubjectAsUri(subject),
-                                        relationship,
-                                        object,
-                                        isLiteral,
-                                        datatype);
+                            relationship,
+                            object,
+                            isLiteral,
+                            datatype);
 
             // if all went ok, commit
             if (purged) {
@@ -1727,14 +1913,14 @@ public class DefaultManagement
         // Do purge if purge delay is past before last purge
         // -------------------------------------------------
         long nextPurgeInMillis =
-          this.m_lastPurgeInMillis + this.m_purgeDelayInMillis;
+                this.m_lastPurgeInMillis + this.m_purgeDelayInMillis;
         if (nextPurgeInMillis < currentTimeMillis) {
             this.m_lastPurgeInMillis = currentTimeMillis;
 
             // Compute limit file time to purged
             // ---------------------------------
             long minStartTime =
-                currentTimeMillis - (this.m_uploadStorageMinutes * 60000);
+                    currentTimeMillis - (this.m_uploadStorageMinutes * 60000);
 
             // List files to purge and remove filename to map
             // This operation is synchronized to be thread-safe
@@ -1742,7 +1928,7 @@ public class DefaultManagement
             List<String> removeList = new ArrayList<String>();
             synchronized (this.m_uploadStartTime) {
                 for (Entry<String, Long> entry :
-                  m_uploadStartTime.entrySet()) {
+                        m_uploadStartTime.entrySet()) {
                     String filename = entry.getKey();
                     long startTime = entry.getValue().longValue();
                     if (startTime < minStartTime) {
@@ -1764,10 +1950,10 @@ public class DefaultManagement
                 if (file.exists()) {
                     if (file.delete()) {
                         LOG.info("Removed uploaded file '" + id
-                            + "' because it expired.");
+                                + "' because it expired.");
                     } else {
                         LOG.warn("Could not remove expired uploaded file '"
-                            + id + "'. Check permissions in management/upload/ directory.");
+                                + id + "'. Check permissions in management/upload/ directory.");
                     }
                 }
             }

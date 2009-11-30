@@ -103,6 +103,8 @@ public class DatastreamManagedContent
 
     @Override
     public InputStream getContentStream() throws StreamIOException {
+
+
         try {
             // For new or modified datastreams, the new bytestream hasn't yet been
             // committed. However, we need to access it in order to compute

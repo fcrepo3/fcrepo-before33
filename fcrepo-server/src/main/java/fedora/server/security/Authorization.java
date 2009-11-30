@@ -4,10 +4,10 @@
  */
 package fedora.server.security;
 
-import java.util.Date;
-
 import fedora.server.Context;
 import fedora.server.errors.authorization.AuthzException;
+
+import java.util.Date;
 
 /**
  * @author Bill Niebel
@@ -46,6 +46,7 @@ public interface Authorization {
 
     public void reloadPolicies(Context context) throws Exception;
 
+    @Deprecated
     public void enforceAddDatastream(Context context,
                                      String pid,
                                      String dsId,
@@ -246,4 +247,27 @@ public interface Authorization {
     public void enforceRetrieveFile(Context context, String fileURI)
             throws AuthzException;
 
+    public void enforceAddDatastreamByReference(Context context,
+                                         String pid,
+                                         String dsID,
+                                         String[] altIDs,
+                                         String mimeType,
+                                         String formatURI,
+                                         String dsLocation,
+                                         String controlGroup,
+                                         String dsState,
+                                         String checksumType,
+                                         String checksum)
+            throws AuthzException;
+
+    public void enforceAddDatastreamByValue(Context context,
+                                     String pid,
+                                     String dsID,
+                                     String[] altIDs,
+                                     String mimeType,
+                                     String formatURI,
+                                     String controlGroup,
+                                     String dsState,
+                                     String checksumType, String checksum)
+            throws AuthzException;
 }

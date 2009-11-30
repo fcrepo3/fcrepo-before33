@@ -4,14 +4,6 @@
  */
 package fedora.server.journal;
 
-import java.io.InputStream;
-
-import java.util.Date;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.log4j.Logger;
-
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
@@ -20,8 +12,15 @@ import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
 import fedora.server.management.Management;
 import fedora.server.management.ManagementDelegate;
+import fedora.server.messaging.PName;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.RelationshipTuple;
+import org.apache.log4j.Logger;
+
+import java.io.InputStream;
+import java.util.Date;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * A Management module that decorates a ManagementDelegate module with code that
@@ -174,6 +173,77 @@ public class Journaler
                                    label,
                                    ownerId,
                                    logMessage);
+    }
+
+    public String addDatastreamByReference(@PName("context") Context context,
+                                           @PName("pid") String pid,
+                                           @PName("dsID") String dsID,
+                                           @PName("altIDs") String[] altIDs,
+                                           @PName("dsLabel") String dsLabel,
+                                           @PName("versionable")
+                                           boolean versionable,
+                                           @PName("mimeType") String mimeType,
+                                           @PName("formatURI") String formatURI,
+                                           @PName("dsLocation")
+                                           String dsLocation,
+                                           @PName("controlGroup")
+                                           String controlGroup,
+                                           @PName("dsState") String dsState,
+                                           @PName("checksumType")
+                                           String checksumType,
+                                           @PName("checksum") String checksum,
+                                           @PName("logMessage")
+                                           String logMessage)
+            throws ServerException {
+        return worker.addDatastreamByReference(context,
+                                               pid,
+                                               dsID,
+                                               altIDs,
+                                               dsLabel,
+                                               versionable,
+                                               mimeType,
+                                               formatURI,
+                                               dsLocation,
+                                               controlGroup,
+                                               dsState,
+                                               checksumType,
+                                               checksum,
+                                               logMessage);
+    }
+
+    public String addDatastreamByValue(@PName("context") Context context,
+                                       @PName("pid") String pid,
+                                       @PName("dsID") String dsID,
+                                       @PName("altIDs") String[] altIDs,
+                                       @PName("dsLabel") String dsLabel,
+                                       @PName("versionable")
+                                       boolean versionable,
+                                       @PName("mimeType") String mimeType,
+                                       @PName("formatURI") String formatURI,
+                                       @PName("dsContent")
+                                       InputStream dsContent,
+                                       @PName("controlGroup")
+                                       String controlGroup,
+                                       @PName("dsState") String dsState,
+                                       @PName("checksumType")
+                                       String checksumType,
+                                       @PName("checksum") String checksum,
+                                       @PName("logMessage") String logMessage)
+            throws ServerException {
+        return worker.addDatastreamByValue(context,
+                                           pid,
+                                           dsID,
+                                           altIDs,
+                                           dsLabel,
+                                           versionable,
+                                           mimeType,
+                                           formatURI,
+                                           dsContent,
+                                           controlGroup,
+                                           dsState,
+                                           checksumType,
+                                           checksum,
+                                           logMessage);
     }
 
     /**

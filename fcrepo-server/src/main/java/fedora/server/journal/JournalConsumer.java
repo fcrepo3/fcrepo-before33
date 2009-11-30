@@ -4,11 +4,6 @@
  */
 package fedora.server.journal;
 
-import java.io.InputStream;
-
-import java.util.Date;
-import java.util.Map;
-
 import fedora.server.Context;
 import fedora.server.errors.InvalidStateException;
 import fedora.server.errors.ModuleInitializationException;
@@ -16,8 +11,13 @@ import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
 import fedora.server.journal.recoverylog.JournalRecoveryLog;
 import fedora.server.management.ManagementDelegate;
+import fedora.server.messaging.PName;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.RelationshipTuple;
+
+import java.io.InputStream;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * The JournalWorker class to use in recovery mode or in* following mode.
@@ -40,6 +40,7 @@ public class JournalConsumer
     private final JournalRecoveryLog recoveryLog;
 
     private ManagementDelegate delegate;
+
 
     /**
      * Get the appropriate JournalReader and JournalRecoveryLog, based on the
@@ -355,6 +356,78 @@ public class JournalConsumer
             throws ServerException {
         return delegate.getRelationships(context, pid, relationship);
     }
+
+    public String addDatastreamByReference(@PName("context") Context context,
+                                           @PName("pid") String pid,
+                                           @PName("dsID") String dsID,
+                                           @PName("altIDs") String[] altIDs,
+                                           @PName("dsLabel") String dsLabel,
+                                           @PName("versionable")
+                                           boolean versionable,
+                                           @PName("mimeType") String mimeType,
+                                           @PName("formatURI") String formatURI,
+                                           @PName("dsLocation")
+                                           String dsLocation,
+                                           @PName("controlGroup")
+                                           String controlGroup,
+                                           @PName("dsState") String dsState,
+                                           @PName("checksumType")
+                                           String checksumType,
+                                           @PName("checksum") String checksum,
+                                           @PName("logMessage")
+                                           String logMessage)
+            throws ServerException {
+        return delegate.addDatastreamByReference(context,
+                                                 pid,
+                                                 dsID,
+                                                 altIDs,
+                                                 dsLabel,
+                                                 versionable,
+                                                 mimeType,
+                                                 formatURI,
+                                                 dsLocation,
+                                                 controlGroup,
+                                                 dsState,
+                                                 checksumType,
+                                                 checksum,
+                                                 logMessage);
+    }
+
+    public String addDatastreamByValue(@PName("context") Context context,
+                                       @PName("pid") String pid,
+                                       @PName("dsID") String dsID,
+                                       @PName("altIDs") String[] altIDs,
+                                       @PName("dsLabel") String dsLabel,
+                                       @PName("versionable")
+                                       boolean versionable,
+                                       @PName("mimeType") String mimeType,
+                                       @PName("formatURI") String formatURI,
+                                       @PName("dsContent")
+                                       InputStream dsContent,
+                                       @PName("controlGroup")
+                                       String controlGroup,
+                                       @PName("dsState") String dsState,
+                                       @PName("checksumType")
+                                       String checksumType,
+                                       @PName("checksum") String checksum,
+                                       @PName("logMessage") String logMessage)
+            throws ServerException {
+        return delegate.addDatastreamByValue(context,
+                                             pid,
+                                             dsID,
+                                             altIDs,
+                                             dsLabel,
+                                             versionable,
+                                             mimeType,
+                                             formatURI,
+                                             dsContent,
+                                             controlGroup,
+                                             dsState,
+                                             checksumType,
+                                             checksum,
+                                             logMessage);
+    }
+    
 
     /**
      * Delegate to the ManagementDelegate. Note: Unlike other methods of the

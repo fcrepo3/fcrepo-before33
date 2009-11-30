@@ -4,23 +4,7 @@
  */
 package fedora.server.management;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import java.rmi.RemoteException;
-
-import java.util.Date;
-
-import org.apache.axis.types.NonNegativeInteger;
-
-import org.apache.log4j.Logger;
-
 import fedora.common.Constants;
-
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
@@ -29,6 +13,12 @@ import fedora.server.errors.StorageDeviceException;
 import fedora.server.utilities.AxisUtility;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.TypeUtility;
+import org.apache.axis.types.NonNegativeInteger;
+import org.apache.log4j.Logger;
+
+import java.io.*;
+import java.rmi.RemoteException;
+import java.util.Date;
 
 /**
  * Implements the Fedora management SOAP service.
@@ -234,6 +224,89 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             LOG.debug("end: addDatastream, " + pid + ", " + dsID);
         }
     }
+
+    public String addDatastreamByReference(String pid,
+                                String dsID,
+                                String[] altIds,
+                                String label,
+                                boolean versionable,
+                                String MIMEType,
+                                String formatURI,
+                                String location,
+                                String controlGroup,
+                                String dsState,
+                                String checksumType,
+                                String checksum,
+                                String logMessage) throws RemoteException {
+        LOG.debug("start: addDatastreamByReference, " + pid + ", " + dsID);
+        assertInitialized();
+        try {
+            return s_management.addDatastreamByReference(ReadOnlyContext.getSoapContext(),
+                                              pid,
+                                              dsID,
+                                              altIds,
+                                              label,
+                                              versionable,
+                                              MIMEType,
+                                              formatURI,
+                                              location,
+                                              controlGroup,
+                                              dsState,
+                                              checksumType,
+                                              checksum,
+                                              logMessage);
+        } catch (Throwable th) {
+            LOG.error("Error adding datastream", th);
+            throw AxisUtility.getFault(th);
+        } finally {
+            LOG.debug("end: addDatastreamByReferencce, " + pid + ", " + dsID);
+        }
+    }
+
+    public String addDatastreamByValue(String pid,
+                                String dsID,
+                                String[] altIds,
+                                String label,
+                                boolean versionable,
+                                String MIMEType,
+                                String formatURI,
+                                byte[] dsContent,
+                                String controlGroup,
+                                String dsState,
+                                String checksumType,
+                                String checksum,
+                                String logMessage) throws RemoteException {
+        LOG.debug("start: addDatastreamByReferencec, " + pid + ", " + dsID);
+        assertInitialized();
+        try {
+            ByteArrayInputStream byteStream = null;
+            if (dsContent != null && dsContent.length > 0) {
+                byteStream = new ByteArrayInputStream(dsContent);
+            }
+
+
+            return s_management.addDatastreamByValue(ReadOnlyContext.getSoapContext(),
+                                              pid,
+                                              dsID,
+                                              altIds,
+                                              label,
+                                              versionable,
+                                              MIMEType,
+                                              formatURI,
+                                              byteStream,
+                                              controlGroup,
+                                              dsState,
+                                              checksumType,
+                                              checksum,
+                                              logMessage);
+        } catch (Throwable th) {
+            LOG.error("Error adding datastream", th);
+            throw AxisUtility.getFault(th);
+        } finally {
+            LOG.debug("end: addDatastreamByReferencce, " + pid + ", " + dsID);
+        }
+    }
+
 
     public String modifyDatastreamByReference(String PID,
                                               String datastreamID,
