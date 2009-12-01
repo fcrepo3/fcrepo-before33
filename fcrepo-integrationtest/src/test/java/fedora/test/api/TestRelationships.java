@@ -4,7 +4,10 @@
  */
 package fedora.test.api;
 
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+
+import java.net.URLEncoder;
 
 import java.rmi.RemoteException;
 
@@ -15,9 +18,10 @@ import org.custommonkey.xmlunit.NamespaceContext;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
 
-import org.jrdf.graph.Node;
+import org.trippi.TripleIterator;
+import org.trippi.io.RIOTripleIterator;
 
-import org.trippi.TupleIterator;
+import org.openrdf.rio.ntriples.NTriplesParser;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -44,6 +48,10 @@ public class TestRelationships
         implements Constants {
 
     private FedoraAPIM apim;
+
+    private static final String RISEARCH_QUERY =
+            "/risearch?type=triples&lang=spo&format=NTriples&stream=on&"
+                    + "flush=true&query=";
 
     private static byte[] DEMO_888_FOXML;
 
@@ -377,32 +385,27 @@ public class TestRelationships
         if (isLiteral) {
             if (datatype != null) {
                 query =
-                        String
-                                .format("select $s from <#ri> where $s <%s> '%s'^^<%s>",
-                                        predicate,
-                                        object,
-                                        datatype);
+                        String.format("* <%s> '%s'^^%s",
+                                      predicate,
+                                      object,
+                                      datatype);
             } else {
-                query =
-                        String
-                                .format("select $s from <#ri> where $s <%s> '%s'",
-                                        predicate,
-                                        object);
+                query = String.format("* <%s> '%s'", predicate, object);
             }
         } else {
-            query =
-                    String.format("select $s from <#ri> where $s <%s> <%s>;",
-                                  predicate,
-                                  object);
+            query = String.format("* <%s> <%s>", predicate, object);
         }
 
-        TupleIterator tuples = queryRI(query);
-        assertTrue(tuples.hasNext());
-        Map<String, Node> row = tuples.next();
-        for (String key : row.keySet()) {
-            assertEquals(subjectAsURI(subject), row.get(key).toString());
+        TripleIterator triples = queryRI(query);
+        try {
+            assertTrue("Relationship not found in RI (query = " + query + ")", triples.hasNext());
+            while (triples.hasNext()) {
+                assertEquals(triples.next().getSubject().stringValue(),
+                             subjectAsURI(subject));
+            }
+        } finally {
+            triples.close();
         }
-
     }
 
     // FIXME: remove once pid no longer allowed as subject in relationships methods
@@ -445,13 +448,14 @@ public class TestRelationships
                                           datatype));
     }
 
-    private TupleIterator queryRI(String query) throws Exception {
+    private TripleIterator queryRI(String query) throws Exception {
         FedoraClient client = getFedoraClient();
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("lang", "itql");
-        params.put("flush", "true");
-        params.put("query", query);
-        return client.getTuples(params);
+        InputStream results =
+                client.get(RISEARCH_QUERY + URLEncoder.encode(query, "UTF-8"), true);
+        return new RIOTripleIterator(results,
+                                     new NTriplesParser(),
+                                     "info/fedora");
+
     }
 
     public static void main(String[] args) {
