@@ -23,8 +23,8 @@
             </tr>
           </table>
           <hr/>
-          <font size="+1" color="blue">Repository Name:       </font>
           <font size="+1">
+            <strong>Repository Name: </strong>
             <xsl:value-of select="repositoryName"/>
           </font>
           <hr/>
@@ -32,7 +32,7 @@
           <table width="784" border="1" cellpadding="5" cellspacing="5" bgcolor="silver">
             <tr>
               <td align="right">
-                <font color="blue">Base URL:</font>
+                <strong>Base URL:</strong>
               </td>
               <td align="left">
                 <xsl:value-of select="repositoryBaseURL"/>
@@ -40,7 +40,7 @@
             </tr>
             <tr>
               <td align="right">
-                <font color="blue">Version:</font>
+                <strong>Version:</strong>
               </td>
               <td align="left">
                 <xsl:value-of select="repositoryVersion"/>
@@ -48,7 +48,7 @@
             </tr>
             <tr>
               <td align="right">
-                <font color="blue">PID Namespace:</font>
+                <strong>PID Namespace:</strong>
               </td>
               <td align="left">
                 <xsl:value-of select="repositoryPID/PID-namespaceIdentifier"/>
@@ -56,7 +56,7 @@
             </tr>
             <tr>
               <td align="right">
-                <font color="blue">PID Delimiter:</font>
+                <strong>PID Delimiter:</strong>
               </td>
               <td align="left">
                 <xsl:value-of select="repositoryPID/PID-delimiter"/>
@@ -64,7 +64,7 @@
             </tr>
             <tr>
               <td align="right">
-                <font color="blue">Sample PID:</font>
+                <strong>Sample PID:</strong>
               </td>
               <td align="left">
                 <xsl:value-of select="repositoryPID/PID-sample"/>
@@ -73,7 +73,7 @@
             <xsl:for-each select="//retainPID">
             <tr>
               <td align="right">
-                <font color="blue">Retain PID Namespace: </font>
+                <strong>Retain PID Namespace: </strong>
               </td>
               <td align="left">
                 <xsl:value-of select="."/>
@@ -82,7 +82,7 @@
             </xsl:for-each>            
             <tr>
               <td align="right">
-                <font color="blue">OAI Namespace:</font>
+                <strong>OAI Namespace:</strong>
               </td>
               <td align="left">
                 <xsl:value-of select="repositoryOAI-identifier/OAI-namespaceIdentifier"/>
@@ -90,7 +90,7 @@
             </tr>
             <tr>
               <td align="right">
-                <font color="blue">OAI Delimiter:</font>
+                <strong>OAI Delimiter:</strong>
               </td>
               <td align="left">
                 <xsl:value-of select="repositoryOAI-identifier/OAI-delimiter"/>
@@ -98,7 +98,7 @@
             </tr>
             <tr>
               <td align="right">
-                <font color="blue">Sample OAI Identifier:</font>
+                <strong>Sample OAI Identifier:</strong>
               </td>
               <td align="left">
                 <xsl:value-of select="repositoryOAI-identifier/OAI-sample"/>
@@ -106,7 +106,7 @@
             </tr>
             <tr>
               <td align="right">
-                <font color="blue">Sample Search URL:</font>
+                <strong>Sample Search URL:</strong>
               </td>
               <td align="left">
                 <xsl:variable name="search-url">
@@ -117,7 +117,7 @@
             </tr>
             <tr>
               <td align="right">
-                <font color="blue">Sample Access URL:</font>
+                <strong>Sample Access URL:</strong>
               </td>
               <td align="left">
                 <xsl:variable name="access-url">
@@ -128,7 +128,7 @@
             </tr>
             <tr>
               <td align="right">
-                <font color="blue">Sample OAI URL:</font>
+                <strong>Sample OAI URL:</strong>
               </td>
               <td align="left">
                 <xsl:variable name="oai-url">
@@ -140,7 +140,7 @@
             <xsl:for-each select="//adminEmail">
             <tr>
               <td align="right">
-                <font color="blue">Admin Email: </font>
+                <strong>Admin Email: </strong>
               </td>
               <td align="left">
                 <xsl:value-of select="."/>

@@ -27,7 +27,7 @@
             <xsl:for-each select="//dc:title">
               <tr>
                 <td align="right">
-                  <font color="blue">Title: </font>
+                  <strong>Title: </strong>
                 </td>
                 <td align="left">
                   <xsl:value-of select="."/>
@@ -37,7 +37,7 @@
             <xsl:for-each select="//dc:creator">
               <tr>
                 <td align="right">
-                  <font color="blue">Creator: </font>
+                  <strong>Creator: </strong>
                 </td>
                 <td align="left">
                   <xsl:value-of select="."/>
@@ -47,7 +47,7 @@
             <xsl:for-each select="//dc:subject">
               <tr>
                 <td align="right">
-                  <font color="blue">Subject: </font>
+                  <strong>Subject: </strong>
                 </td>
                 <td align="left">
                   <xsl:value-of select="."/>
@@ -57,7 +57,7 @@
             <xsl:for-each select="//dc:description">
               <tr>
                 <td align="right">
-                  <font color="blue">Description: </font>
+                  <strong>Description: </strong>
                 </td>
                 <td align="left">
                   <xsl:value-of select="."/>
@@ -67,7 +67,7 @@
             <xsl:for-each select="//dc:publisher">
               <tr>
                 <td align="right">
-                  <font color="blue">Publisher: </font>
+                  <strong>Publisher: </strong>
                 </td>
                 <td align="left">
                   <xsl:value-of select="."/>
@@ -77,7 +77,7 @@
             <xsl:for-each select="//dc:contributor">
               <tr>
                 <td align="right">
-                  <font color="blue">Contributor: </font>
+                  <strong>Contributor: </strong>
                 </td>
                 <td align="left">
                   <xsl:value-of select="."/>
@@ -87,7 +87,7 @@
             <xsl:for-each select="//dc:date">
               <tr>
                 <td align="right">
-                  <font color="blue">Date: </font>
+                  <strong>Date: </strong>
                 </td>
                 <td align="left">
                   <xsl:value-of select="."/>
@@ -97,7 +97,7 @@
             <xsl:for-each select="//dc:type">
               <tr>
                 <td align="right">
-                  <font color="blue">Type: </font>
+                  <strong>Type: </strong>
                 </td>
                 <td align="left">
                   <xsl:value-of select="."/>
@@ -107,7 +107,7 @@
             <xsl:for-each select="//dc:format">
               <tr>
                 <td align="right">
-                  <font color="blue">Format: </font>
+                  <strong>Format: </strong>
                 </td>
                 <td align="left">
                   <xsl:value-of select="."/>
@@ -117,7 +117,7 @@
             <xsl:for-each select="//dc:identifier">
               <tr>
                 <td align="right">
-                  <font color="blue">Identifier: </font>
+                  <strong>Identifier: </strong>
                 </td>
                 <td align="left">
                   <xsl:value-of select="."/>
@@ -127,7 +127,7 @@
             <xsl:for-each select="//dc:source">
               <tr>
                 <td align="right">
-                  <font color="blue">Source: </font>
+                  <strong>Source: </strong>
                 </td>
                 <td align="left">
                   <xsl:value-of select="."/>
@@ -137,7 +137,7 @@
             <xsl:for-each select="//dc:language">
               <tr>
                 <td align="right">
-                  <font color="blue">Language: </font>
+                  <strong>Language: </strong>
                 </td>
                 <td align="left">
                   <xsl:value-of select="."/>
@@ -147,7 +147,7 @@
             <xsl:for-each select="//dc:relation">
               <tr>
                 <td align="right">
-                  <font color="blue">Relation: </font>
+                  <strong>Relation: </strong>
                 </td>
                 <td align="left">
                   <xsl:value-of select="."/>
@@ -157,7 +157,7 @@
             <xsl:for-each select="//dc:coverage">
               <tr>
                 <td align="right">
-                  <font color="blue">Coverage: </font>
+                  <strong>Coverage: </strong>
                 </td>
                 <td align="left">
                   <xsl:value-of select="."/>
@@ -167,7 +167,7 @@
             <xsl:for-each select="//dc:rights">
               <tr>
                 <td align="right">
-                  <font color="blue">Rights: </font>
+                  <strong>Rights: </strong>
                 </td>
                 <td align="left">
                   <xsl:value-of select="."/>

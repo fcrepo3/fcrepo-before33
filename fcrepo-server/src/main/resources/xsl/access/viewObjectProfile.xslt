@@ -26,14 +26,16 @@
           <hr />
           <xsl:choose>
             <xsl:when test="@dateTime">
-              <font size="+1" color="blue">Version Date: </font>
               <font size="+1">
+                <strong>Version Date: </strong>
                 <xsl:value-of select="@dateTime" />
               </font>
             </xsl:when>
             <xsl:otherwise>
-              <font size="+1" color="blue">Version Date: </font>
-              <font size="+1">current</font>
+              <font size="+1">
+                <strong>Version Date: </strong>
+                current
+              </font>
             </xsl:otherwise>
           </xsl:choose>
           <p />
@@ -69,7 +71,7 @@
             cellspacing="5" bgcolor="silver">
             <tr>
               <td align="right">
-                <font color="blue">Object Identifier (PID): </font>
+                <strong>Object Identifier (PID): </strong>
               </td>
               <td align="left">
                 <xsl:value-of select="@pid" />
@@ -77,7 +79,7 @@
             </tr>
             <tr>
               <td align="right">
-                <font color="blue">Object Label: </font>
+                <strong>Object Label: </strong>
               </td>
               <td align="left">
                 <xsl:value-of select="objLabel" />
@@ -85,7 +87,7 @@
             </tr>
             <tr>
               <td align="right" valign="top">
-                <font color="blue">Object Content Model(s): </font>
+                <strong>Object Content Model(s): </strong>
               </td>
               <td align="left">
                 <table border="0">
@@ -101,7 +103,7 @@
             </tr>
             <tr>
               <td align="right">
-                <font color="blue">Object Creation Date: </font>
+                <strong>Object Creation Date: </strong>
               </td>
               <td align="left">
                 <xsl:value-of select="objCreateDate" />
@@ -109,7 +111,7 @@
             </tr>
             <tr>
               <td align="right">
-                <font color="blue">Object Last Modified: </font>
+                <strong>Object Last Modified: </strong>
               </td>
               <td align="left">
                 <xsl:value-of select="objLastModDate" />
@@ -117,7 +119,7 @@
             </tr>
             <tr>
               <td align="right">
-                <font color="blue">Object Owner Identifier: </font>
+                <strong>Object Owner Identifier: </strong>
               </td>
               <td align="left">
                 <xsl:value-of select="objOwnerId" />
@@ -125,7 +127,7 @@
             </tr>
             <tr>
               <td align="right">
-                <font color="blue">Object State: </font>
+                <strong>Object State: </strong>
               </td>
               <td align="left">
                 <xsl:value-of select="objState" />

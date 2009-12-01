@@ -24,22 +24,23 @@
             </tr>
           </table>
           <hr />
-          <font size="+1" color="blue">Object Identifier (PID): 
-          </font>
           <font size="+1">
+            <strong>Object Identifier (PID): </strong>
             <xsl:value-of select="@pid" />
           </font>
           <p />
           <xsl:choose>
             <xsl:when test="@asOfDateTime">
-              <font size="+1" color="blue">Version Date: </font>
               <font size="+1">
+                <strong>Version Date: </strong>
                 <xsl:value-of select="@asOfDateTime" />
               </font>
             </xsl:when>
             <xsl:otherwise>
-              <font size="+1" color="blue">Version Date: </font>
-              <font size="+1">current</font>
+              <font size="+1">
+                <strong>Version Date: </strong>
+                current
+              </font>
             </xsl:otherwise>
           </xsl:choose>
           <hr />

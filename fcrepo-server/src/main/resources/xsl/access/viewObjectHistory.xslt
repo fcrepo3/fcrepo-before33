@@ -23,8 +23,8 @@
             </tr>
           </table>
           <hr/>
-          <font size="+1" color="blue">Object PID:       </font>
           <font size="+1">
+            <strong>Object PID: </strong>
             <xsl:value-of select="@pid"/>
           </font>
           <hr/>
@@ -32,7 +32,7 @@
           <table width="784" border="1" cellpadding="5" cellspacing="5" bgcolor="silver">
             <tr>
               <td>
-                <font color="blue">Object Component Creation/Modification Dates</font>
+                <strong>Object Component Creation/Modification Dates</strong>
               </td>
             </tr>
             <xsl:for-each select="objectChangeDate">

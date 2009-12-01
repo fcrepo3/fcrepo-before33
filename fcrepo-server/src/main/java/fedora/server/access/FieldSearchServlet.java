@@ -367,9 +367,9 @@ public class FieldSearchServlet
                     html.append("<tr>");
                     for (String element : fieldsArray) {
                         html
-                                .append("<td valign=\"top\"><font color=\"blue\"><b>");
+                                .append("<td valign=\"top\"><strong>");
                         html.append(element);
-                        html.append("</b></font></td>");
+                        html.append("</strong></td>");
                     }
                     html.append("</tr>");
                 }

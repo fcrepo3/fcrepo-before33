@@ -23,26 +23,30 @@
         </tr>
       </table>      
       <hr/>
-      <font size="+1" color="blue">Object Identifier (PID):   </font>
       <font size="+1">
+        <strong>Object Identifier (PID): </strong>
         <xsl:value-of select="@pid"/>
       </font>
       <p/>
       <xsl:if test="@sDef">
         <font size="+1">
-          <font color="blue">Service Definition: </font>
+          <strong>Service Definition: </strong>
           <xsl:value-of select="@sDef"/>
         </font>
         <p/>
       </xsl:if>
       <xsl:choose>
         <xsl:when test="@asOfDateTime">
-          <font size="+1" color="blue">Version Date:   </font>
-          <font size="+1"><xsl:value-of select="@asOfDateTime"/></font>
+          <font size="+1">
+            <strong>Version Date: </strong>
+            <xsl:value-of select="@asOfDateTime"/>
+          </font>
         </xsl:when>
         <xsl:otherwise>
-          <font size="+1" color="blue">Version Date:   </font>
-          <font size="+1">current</font>  
+          <font size="+1">
+            <strong>Version Date: </strong>
+            current
+          </font>  
         </xsl:otherwise>
       </xsl:choose>
       <hr/>
@@ -79,7 +83,7 @@
     <xsl:value-of select="@name"/>
   </xsl:attribute>
   <tr>
-    <td><font color="blue"><xsl:value-of select="../@pid"/></font></td>
+    <td><strong><xsl:value-of select="../@pid"/></strong></td>
     <td><font size="+1"><xsl:value-of select="@name"/></font></td>
     <td>
       <xsl:if test="../../@asOfDateTime">

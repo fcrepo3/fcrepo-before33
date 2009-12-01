@@ -121,11 +121,9 @@
 
   <xsl:template match="fieldName">
     <td valign="top">
-      <font color="blue">
-        <b>
-          <xsl:value-of select="./text()"/>
-        </b>
-      </font>
+      <strong>
+        <xsl:value-of select="./text()"/>
+      </strong>
     </td>
   </xsl:template>
   

@@ -25,12 +25,16 @@
           <hr/>
           <xsl:choose>
             <xsl:when test="@dateTime">
-              <font size="+1" color="blue">Version Date:   </font>
-              <font size="+1"><xsl:value-of select="@dateTime"/></font>
+              <font size="+1">
+                <strong>Version Date: </strong>
+                <xsl:value-of select="@dateTime"/>
+              </font>
             </xsl:when>
             <xsl:otherwise>
-              <font size="+1" color="blue">Version Date:   </font>
-              <font size="+1">current</font>  
+              <font size="+1">
+                <strong>Version Date: </strong>
+                current
+              </font>  
             </xsl:otherwise>
           </xsl:choose>
                     <p />
@@ -41,15 +45,15 @@
                         <xsl:value-of select="@dsID" />
                         <xsl:text>/content</xsl:text>
                     </xsl:variable>        
-                    <font size="+1" color="blue">
-                        <a href="/{$fedora}/{$content-url}">View the Content of this Datastream</a>
+                    <font size="+1">
+                      <a href="/{$fedora}/{$content-url}">View the Content of this Datastream</a>
                     </font>
           <p/>          
           <hr/>
           <table width="784" border="1" cellpadding="5" cellspacing="5" bgcolor="silver">
           <tr>
             <td align="right">
-              <font color="blue">Object Identifier (PID): </font>
+              <strong>Object Identifier (PID): </strong>
             </td>
             <td align="left">
               <xsl:value-of select="@pid"/>
@@ -57,7 +61,7 @@
           </tr>
                     <tr>
                         <td align="right">
-                            <font color="blue">Datastream Identifier (DSID): </font>
+                          <strong>Datastream Identifier (DSID): </strong>
                         </td>
                         <td align="left">
                             <xsl:value-of select="@dsID"/>
@@ -65,7 +69,7 @@
                     </tr>
           <tr>
             <td align="right">
-              <font color="blue">Datastream Label: </font>
+              <strong>Datastream Label: </strong>
             </td>
             <td align="left">
               <xsl:value-of select="dsLabel"/>
@@ -73,7 +77,7 @@
           </tr>
                     <tr>
                         <td align="right">
-                            <font color="blue">Datastream Version ID: </font>
+                            <strong>Datastream Version ID: </strong>
                         </td>
                         <td align="left">
                             <xsl:value-of select="dsVersionID"/>
@@ -81,7 +85,7 @@
                     </tr>
                     <tr>
                         <td align="right">
-                            <font color="blue">Datastream Creation Date: </font>
+                            <strong>Datastream Creation Date: </strong>
                         </td>
                         <td align="left">
                             <xsl:value-of select="dsCreateDate"/>
@@ -89,7 +93,7 @@
                     </tr>
                     <tr>
                         <td align="right">
-                            <font color="blue">Datastream State: </font>
+                            <strong>Datastream State: </strong>
                         </td>
                         <td align="left">
                             <xsl:value-of select="dsState"/>
@@ -97,7 +101,7 @@
                     </tr>          
                     <tr>
                         <td align="right">
-                            <font color="blue">Datastream MIME type: </font>
+                            <strong>Datastream MIME type: </strong>
                         </td>
                         <td align="left">
                             <xsl:value-of select="dsMIME"/>
@@ -105,7 +109,7 @@
                     </tr>          
                     <tr>
                         <td align="right">
-                            <font color="blue">Datastream Format URI: </font>
+                            <strong>Datastream Format URI: </strong>
                         </td>
                         <td align="left">
                             <xsl:value-of select="dsFormatURI"/>
@@ -113,7 +117,7 @@
                     </tr>
                     <tr>
                         <td align="right">
-                            <font color="blue">Datastream Control Group: </font>
+                            <strong>Datastream Control Group: </strong>
                         </td>
                         <td align="left">
                             <xsl:value-of select="dsControlGroup"/>
@@ -121,7 +125,7 @@
                     </tr>
                     <tr>
                         <td align="right">
-                            <font color="blue">Datastream Size: </font>
+                            <strong>Datastream Size: </strong>
                         </td>
                         <td align="left">
                             <xsl:value-of select="dsSize"/>
@@ -129,7 +133,7 @@
                     </tr>
                     <tr>
                         <td align="right">
-                            <font color="blue">Datastream Versionable: </font>
+                            <strong>Datastream Versionable: </strong>
                         </td>
                         <td align="left">
                             <xsl:value-of select="dsVersionable"/>
@@ -137,7 +141,7 @@
                     </tr>
                     <tr>
                         <td align="right">
-                            <font color="blue">Datastream Info Type: </font>
+                            <strong>Datastream Info Type: </strong>
                         </td>
                         <td align="left">
                             <xsl:value-of select="dsInfoType"/>
@@ -145,7 +149,7 @@
                     </tr>
                     <tr>
                         <td align="right">
-                            <font color="blue">Datastream Location: </font>
+                            <strong>Datastream Location: </strong>
                         </td>
                         <td align="left">
                             <xsl:value-of select="dsLocation"/>
@@ -153,7 +157,7 @@
                     </tr>
                     <tr>
                         <td align="right">
-                            <font color="blue">Datastream Location Type: </font>
+                            <strong>Datastream Location Type: </strong>
                         </td>
                         <td align="left">
                             <xsl:value-of select="dsLocationType"/>
@@ -161,7 +165,7 @@
                     </tr>                    
                     <tr>
                         <td align="right">
-                            <font color="blue">Datastream Checksum Type: </font>
+                            <strong>Datastream Checksum Type: </strong>
                         </td>
                         <td align="left">
                             <xsl:value-of select="dsChecksumType"/>
@@ -169,7 +173,7 @@
                     </tr>
                     <tr>
                         <td align="right">
-                            <font color="blue">Datastream Checksum: </font>
+                            <strong>Datastream Checksum: </strong>
                         </td>
                         <td align="left">
                             <xsl:value-of select="dsChecksum"/>
@@ -178,7 +182,7 @@
                     <xsl:if test="dsChecksumValid">
                         <tr>
                             <td align="right">
-                                <font color="blue">Datastream Checksum Valid: </font>
+                                <strong>Datastream Checksum Valid: </strong>
                             </td>
                             <td align="left">
                                 <xsl:value-of select="dsChecksumValid"/>
@@ -188,7 +192,7 @@
           <xsl:for-each select="dsAltID">
                         <tr>
                             <td align="right">
-                                <font color="blue">Datastream Alternate ID: </font>
+                                <strong>Datastream Alternate ID: </strong>
                             </td>
                             <td align="left">
                                 <xsl:value-of select="."/>

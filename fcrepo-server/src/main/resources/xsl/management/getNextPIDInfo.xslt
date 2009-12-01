@@ -24,13 +24,17 @@
             </tr>
           </table>
           <hr/>
-          <font size="+1" color="blue">Generated PID List for next: <xsl:value-of select="count(//pid)"/> PID(s)</font>
+          <font size="+1">
+            <strong>Generated PID List for next: </strong>
+            <xsl:value-of select="count(//pid)"/>
+            PID(s)
+          </font>
           <hr/>
           <p/>
           <table width="784" border="1" cellpadding="5" cellspacing="5" bgcolor="silver">
             <tr>
               <td align="center">
-                <font color="blue">PID</font>
+                <strong>PID</strong>
               </td>
             </tr>
             <xsl:for-each select="//pid">

@@ -340,9 +340,9 @@ public class DefaultSerializer {
             html.append("<center><table width=\"90%\" border=\"1\" cellpadding=\"5\" cellspacing=\"5\" bgcolor=\"silver\">\n");
             html.append("<tr>");
             for (int i = 0; i < wantedFields.length; i++) {
-                html.append("<td valign=\"top\"><font color=\"blue\"><b>");
+                html.append("<td valign=\"top\"><strong>");
                 html.append(wantedFields[i]);
-                html.append("</b></font></td>");
+                html.append("</strong></td>");
             }
             html.append("</tr>");
 
