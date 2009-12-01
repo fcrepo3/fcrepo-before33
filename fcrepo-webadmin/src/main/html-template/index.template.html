@@ -43,7 +43,7 @@ Learn more about Flex at http://flex.org
 
   // Provides multi-browser access to the Flex application
   function getFlexApp() {
-    var appName = "FedoraAdministrator";
+    var appName = "${application}";
     if (navigator.appName.indexOf("Microsoft") !=-1)
     {
       return window[appName];
