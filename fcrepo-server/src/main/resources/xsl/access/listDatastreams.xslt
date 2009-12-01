@@ -65,35 +65,24 @@
             <xsl:for-each select="//datastream">
               <tr>
                 <td>
-                  <xsl:value-of select="@dsid" />
-                </td>
-                <td>
-                  <xsl:choose>
-                    <xsl:when test="../@asOfDateTime">
-                      <xsl:variable name="datastream-url">
-                        <xsl:text>objects/</xsl:text>
-                        <xsl:value-of select="../@pid" />
-                        <xsl:text>/datastreams/</xsl:text>
-                        <xsl:value-of select="@dsid" />
+                  <a>
+                    <xsl:attribute name="href">
+                      <xsl:text>/</xsl:text>
+                      <xsl:value-of select="$fedora"/>
+                      <xsl:text>/objects/</xsl:text>
+                      <xsl:value-of select="../@pid"/>
+                      <xsl:text>/datastreams/</xsl:text>
+                      <xsl:value-of select="@dsid"/>
+                      <xsl:if test="../@asOfDateTime">
                         <xsl:text>/?asOfDateTime=</xsl:text>
                         <xsl:value-of select="../@asOfDateTime" />
-                      </xsl:variable>
-                      <a href="/{$fedora}/{$datastream-url}">
-                        <xsl:value-of select="@label" />
-                      </a>
-                    </xsl:when>
-                    <xsl:otherwise>
-                      <xsl:variable name="datastream-url">
-                        <xsl:text>objects/</xsl:text>
-                        <xsl:value-of select="../@pid" />
-                        <xsl:text>/datastreams/</xsl:text>
-                        <xsl:value-of select="@dsid" />
-                      </xsl:variable>
-                      <a href="/{$fedora}/{$datastream-url}">
-                        <xsl:value-of select="@label" />
-                      </a>
-                    </xsl:otherwise>
-                  </xsl:choose>
+                      </xsl:if>
+                    </xsl:attribute>
+                    <xsl:value-of select="@dsid"/>
+                  </a>
+                </td>
+                <td>
+                  <xsl:value-of select="@label" />
                 </td>
                 <td>
                   <xsl:value-of select="@mimeType" />
