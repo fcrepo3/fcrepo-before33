@@ -671,8 +671,8 @@ public class TestRESTAPI
     public void testAddDatastream() throws Exception {
         // inline (X) datastream
         String xmlData = "<foo>bar</foo>";
-        url = String.format("/objects/%s/datastreams/FOO?controlGroup=X&dsLabel=bar",
-                            pid.toString());
+        String dsPath = "/objects/" + pid + "/datastreams/FOO";
+        url = dsPath + "?controlGroup=X&dsLabel=bar";
         assertEquals(SC_UNAUTHORIZED, post(xmlData, false).getStatusCode());
         HttpResponse response = post(xmlData, true);
         assertEquals(SC_CREATED, response.getStatusCode());
@@ -680,11 +680,15 @@ public class TestRESTAPI
         assertNotNull(locationHeader);
         assertEquals(new URL(url.substring(0, url.indexOf('?'))).toString(),
                      locationHeader.getValue());
+        assertEquals("text/xml", response.getResponseHeader("Content-Type").getValue());
+        url = dsPath + "?format=xml";
+        assertEquals(response.getResponseBodyString(),
+                     get(true).getResponseBodyString());
 
         // managed (M) datastream
         String mimeType = "text/plain";
-        url = String.format("/objects/%s/datastreams/BAR?controlGroup=M&dsLabel=bar" +
-                            "&mimeType=%s", pid.toString(), mimeType);
+        dsPath = "/objects/" + pid + "/datastreams/BAR";
+        url = dsPath + "?controlGroup=M&dsLabel=bar&mimeType=" + mimeType;
         File temp = File.createTempFile("test", null);
         DataOutputStream os = new DataOutputStream(new FileOutputStream(temp));
         os.write(42);
@@ -696,15 +700,17 @@ public class TestRESTAPI
         assertNotNull(locationHeader);
         assertEquals(new URL(url.substring(0, url.indexOf('?'))).toString(),
                      locationHeader.getValue());
+        assertEquals("text/xml", response.getResponseHeader("Content-Type").getValue());
+        url = dsPath + "?format=xml";
+        assertEquals(response.getResponseBodyString(),
+                     get(true).getResponseBodyString());
         Datastream ds = apim.getDatastream(pid.toString(), "BAR", null);
         assertEquals(ds.getMIMEType(), mimeType);
     }
 
     public void testModifyDatastreamByReference() throws Exception {
         // Create BAR datastream
-        url =
-                String
-                        .format("/objects/%s/datastreams/BAR?controlGroup=M&dsLabel=bar",
+        url = String.format("/objects/%s/datastreams/BAR?controlGroup=M&dsLabel=bar",
                                 pid.toString());
         File temp = File.createTempFile("test", null);
         DataOutputStream os = new DataOutputStream(new FileOutputStream(temp));
@@ -713,14 +719,31 @@ public class TestRESTAPI
         assertEquals(SC_UNAUTHORIZED, post(temp, false).getStatusCode());
         assertEquals(SC_CREATED, post(temp, true).getStatusCode());
 
-        // Update the content of the BAR datastream
+        // Update the content of the BAR datastream (using PUT)
         url = String.format("/objects/%s/datastreams/BAR", pid.toString());
-        temp = File.createTempFile("test2", null);
-        os = new DataOutputStream(new FileOutputStream(temp));
-        os.write(42);
-        os.close();
         assertEquals(SC_UNAUTHORIZED, put(temp, false).getStatusCode());
-        assertEquals(SC_OK, put(temp, true).getStatusCode());
+        HttpResponse response = put(temp, true);
+        assertEquals(SC_OK, response.getStatusCode());
+        assertEquals("text/xml", response.getResponseHeader("Content-Type").getValue());
+        url = url + "?format=xml";
+        assertEquals(response.getResponseBodyString(),
+                     get(true).getResponseBodyString());
+
+        // Ensure 404 on attempt to update BOGUS_DS via PUT
+        url = "/objects/" + pid + "/datastreams/BOGUS_DS";
+        assertEquals(SC_NOT_FOUND, put(temp, true).getStatusCode());
+
+        // Update the content of the BAR datastream (using POST)
+        url = String.format("/objects/%s/datastreams/BAR", pid.toString());
+        response = post(temp, true);
+        assertEquals(SC_CREATED, response.getStatusCode());
+        Header locationHeader = response.getResponseHeader("location");
+        assertNotNull(locationHeader);
+        assertEquals(url, locationHeader.getValue());
+        assertEquals("text/xml", response.getResponseHeader("Content-Type").getValue());
+        url = url + "?format=xml";
+        assertEquals(response.getResponseBodyString(),
+                     get(true).getResponseBodyString());
 
         // Update the label of the BAR datastream
         String newLabel = "tikibar";
@@ -782,8 +805,7 @@ public class TestRESTAPI
 
     public void testModifyDatastreamNoContent() throws Exception {
         String label = "Label";
-        url =
-                String.format("/objects/%s/datastreams/DS1?dsLabel=%s", pid
+        url = String.format("/objects/%s/datastreams/DS1?dsLabel=%s", pid
                         .toString(), label);
 
         assertEquals(SC_UNAUTHORIZED, put("", false).getStatusCode());
@@ -1178,6 +1200,14 @@ public class TestRESTAPI
 
         public byte[] getResponseBody() {
             return responseBody;
+        }
+
+        public String getResponseBodyString() {
+            try {
+                return new String(responseBody, "UTF-8");
+            } catch (UnsupportedEncodingException wontHappen) {
+                throw new Error(wontHappen);
+            }
         }
 
         public Header[] getResponseHeaders() {

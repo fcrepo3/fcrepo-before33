@@ -23,6 +23,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import fedora.common.http.WebClient;
@@ -221,11 +222,16 @@ public class DatastreamResource extends BaseRestResource {
     }
 
     /**
-     * Invoke API-M.modifyDatastreamByReference or API-M.modifyDatastreamByValue
+     * Modify an existing datastream.
      *
      * PUT /objects/{pid}/datastreams/{dsID} ? dsLocation altIDs dsLabel versionable
      *                                         dsState formatURI checksumType checksum
      *                                         logMessage force
+     *
+     * Successful Response:
+     *   Status: 200 OK
+     *   Content-Type: text/xml
+     *   Body: XML datastream profile
      */
     @Path("/{dsID}")
     @PUT
@@ -268,11 +274,17 @@ public class DatastreamResource extends BaseRestResource {
     }
 
     /**
-     * Invoke API-M.addDatastream
+     * Add or modify a datastream.
      *
      * POST /objects/{pid}/datastreams/{dsID} ? controlGroup dsLocation altIDs dsLabel
      *                                          versionable dsState formatURI
      *                                          checksumType checksum logMessage
+     *
+     * Successful Response:
+     *   Status: 201 Created
+     *   Location: Datastream profile URL
+     *   Content-Type: text/xml
+     *   Body: XML datastream profile
      */
     @Path("/{dsID}")
     @POST
@@ -313,7 +325,7 @@ public class DatastreamResource extends BaseRestResource {
     }
 
     protected Response addOrUpdateDatastream(
-            boolean doCreate,
+            boolean posted,
             String pid,
             String dsID,
             MediaType mediaType,
@@ -383,17 +395,19 @@ public class DatastreamResource extends BaseRestResource {
                 controlGroup = "X";
             }
 
-            boolean add = (doCreate && existingDS == null);
-            if (add) {
-                if ((dsLocation == null || dsLocation.equals(""))
-                        && ("X".equals(controlGroup) || "M".equals(controlGroup))) {
-                    dsLocation = apiMService.putTempStream(context, is);
+            if (existingDS == null) {
+                if (posted) {
+                    if ((dsLocation == null || dsLocation.equals(""))
+                            && ("X".equals(controlGroup) || "M".equals(controlGroup))) {
+                        dsLocation = apiMService.putTempStream(context, is);
+                    }
+                    dsID = apiMService.addDatastream(context, pid, dsID, altIDs, dsLabel,
+                                                     versionable, mimeType, formatURI,
+                                                     dsLocation, controlGroup, dsState,
+                                                     checksumType, checksum, logMessage);
+                } else {
+                    return Response.status(Response.Status.NOT_FOUND).build();
                 }
-
-                dsID = apiMService.addDatastream(context, pid, dsID, altIDs, dsLabel,
-                                                 versionable, mimeType, formatURI,
-                                                 dsLocation, controlGroup, dsState,
-                                                 checksumType, checksum, logMessage);
             } else {
                 if ("X".equals(existingDS.DSControlGrp)) {
                     // Inline XML can only be modified by value. If there is no stream,
@@ -447,13 +461,20 @@ public class DatastreamResource extends BaseRestResource {
                 }
             }
 
-            if(add) {
-                return Response.created(uriInfo.getRequestUri().resolve(
-                                            URLEncoder.encode(dsID, DEFAULT_ENC))
-                                            ).build();
-            } else {
-                return Response.ok().build();
+            ResponseBuilder builder;
+            if (posted) {
+                builder = Response.created(uriInfo.getRequestUri().resolve(
+                        URLEncoder.encode(dsID, DEFAULT_ENC)));
+            } else { // put
+                builder = Response.ok();
             }
+            builder.header("Content-Type", MediaType.TEXT_XML);
+            Datastream dsProfile = apiMService
+                    .getDatastream(context, pid, dsID, null);
+            String xml = getSerializer(context)
+                    .datastreamProfileToXML(pid, dsID, dsProfile, null, false);
+            builder.entity(xml);
+            return builder.build();
         } catch (Exception ex) {
             return handleException(ex);
         }
