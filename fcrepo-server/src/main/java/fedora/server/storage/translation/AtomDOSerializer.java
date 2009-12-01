@@ -162,9 +162,8 @@ public class AtomDOSerializer
         m_feed.setUpdated(mdate);
         m_feed.addAuthor(ownerId == null ? "" : StreamUtility.enc(ownerId));
 
-        if (state != null && !state.equals("")) {
-            m_feed.addCategory(MODEL.STATE.uri, state, null);
-        }
+        m_feed.addCategory(MODEL.STATE.uri, state, null);
+
         if (cdate != null) {
             m_feed.addCategory(MODEL.CREATED_DATE.uri, DateUtility
                     .convertDateToString(cdate), null);

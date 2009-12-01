@@ -40,6 +40,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -785,18 +786,59 @@ public abstract class DOTranslationUtility
         return out.toString();
     }
 
-    protected static String getStateAttribute(DigitalObject obj) {
-        try {
-            char s = obj.getState().toUpperCase().charAt(0);
-            if (s == 'D') {
-                return MODEL.DELETED.localName;
-            } else if (s == 'I') {
-                return MODEL.INACTIVE.localName;
-            } else {
+    /** Reads the state attribute from a DigitalObject.
+     * <p>
+     * Null or empty strings are interpteted as "Active".
+     * </p>
+     * @param obj Object that potentially contains object state data.
+     * @return String containing full state value (Active, Inactive, or Deleted)
+     * @throws ObjectIntegrityException thrown when the state cannot be parsed.
+     */
+    public static String getStateAttribute(DigitalObject obj) throws ObjectIntegrityException {
+
+            if (obj.getState() == null || obj.getState().equals("")) {
                 return MODEL.ACTIVE.localName;
+            } else {
+                switch (obj.getState().charAt(0)) {
+                    case 'D':
+                        return MODEL.DELETED.localName;
+                    case 'I':
+                        return MODEL.INACTIVE.localName;
+                    case 'A':
+                        return MODEL.ACTIVE.localName;
+                    default:
+                        throw new ObjectIntegrityException("Could not determine "
+                                                   + "state attribute from '"
+                                                   + obj.getState() + "'");
+                }
             }
-        } catch (Throwable th) {
-            return null;
+    }
+
+    /** Parse and read the object state value from raw text.
+     * <p>
+     * Reads a text representation of object state, and returns a "state code"
+     * abbreviation corresponding to that state.  Null or empty values are interpreted
+     * as "Active".
+     * </p>
+     *
+     * XXX: It might clearer to nix state codes altogether and just use the full value
+     *
+     * @param rawValue Raw string to parse.  May be null
+     * @return String containing the state code (A, D, or I)
+     * @throws ParseException thrown when state value cannot be determined
+     */
+    public static String readStateAttribute(String rawValue) throws ParseException {
+        if (MODEL.DELETED.looselyMatches(rawValue, true)) {
+            return "D";
+        } else if (MODEL.INACTIVE.looselyMatches(rawValue, true)) {
+            return "I";
+        } else if (MODEL.ACTIVE.looselyMatches(rawValue, true)
+                    || rawValue == null
+                    || rawValue.equals("")) {
+            return "A";
+        } else {
+                throw new ParseException("Could not interpret state value of '"
+                                   + rawValue + "'", 0);
         }
     }
 

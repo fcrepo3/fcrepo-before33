@@ -219,7 +219,7 @@ public class FOXMLDOSerializer
                                        String value,
                                        PrintWriter writer,
                                        boolean extProperty) {
-        if (value != null && value.length() > 0) {
+        if (value != null) {
             writer.print("<");
             writer.print(FOXML.prefix);
             writer.print(':');

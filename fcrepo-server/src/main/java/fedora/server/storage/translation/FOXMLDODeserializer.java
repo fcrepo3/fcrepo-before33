@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
+import java.text.ParseException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,7 +47,6 @@ import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
-import fedora.server.storage.types.RelationshipTuple;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.validation.ValidationUtility;
@@ -240,6 +241,8 @@ public class FOXMLDODeserializer
         }
 
         m_obj = obj;
+        m_obj.setLabel("");
+        m_obj.setOwnerId("");
         m_characterEncoding = encoding;
         m_transContext = transContext;
         initialize();
@@ -250,7 +253,7 @@ public class FOXMLDODeserializer
                     + "while sax was parsing this object.");
         } catch (SAXException se) {
             throw new ObjectIntegrityException("FOXML IO stream was bad : "
-                    + se.getMessage());
+                    + se.getMessage(), se);
         }
         LOG.debug("Just finished parse.");
 
@@ -317,16 +320,12 @@ public class FOXMLDODeserializer
                     || localName.equals("extproperty")) {
                 m_objPropertyName = grab(a, FOXML.uri, "NAME");
                 if (m_objPropertyName.equals(MODEL.STATE.uri)) {
-                    String stateString = grab(a, FOXML.uri, "VALUE");
-                    String stateCode = null;
-                    if (MODEL.DELETED.looselyMatches(stateString, true)) {
-                        stateCode = "D";
-                    } else if (MODEL.INACTIVE.looselyMatches(stateString, true)) {
-                        stateCode = "I";
-                    } else if (MODEL.ACTIVE.looselyMatches(stateString, true)) {
-                        stateCode = "A";
+                    try {
+                        m_obj.setState(DOTranslationUtility
+                                       .readStateAttribute(grab(a, FOXML.uri, "VALUE")));
+                    } catch (ParseException e) {
+                        throw new SAXException("Could not read state", e);
                     }
-                    m_obj.setState(stateCode);
                 } else if (m_objPropertyName.equals(MODEL.LABEL.uri)) {
                     m_obj.setLabel(grab(a, FOXML.uri, "VALUE"));
                 } else if (m_objPropertyName.equals(MODEL.OWNER.uri)) {

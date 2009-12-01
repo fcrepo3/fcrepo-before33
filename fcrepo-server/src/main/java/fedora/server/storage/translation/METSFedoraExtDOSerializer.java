@@ -202,7 +202,7 @@ public class METSFedoraExtDOSerializer
         writer.print("\">\n");
     }
 
-    private void appendHdr(DigitalObject obj, PrintWriter writer) {
+    private void appendHdr(DigitalObject obj, PrintWriter writer) throws ObjectIntegrityException {
         writer.print("<");
         writer.print(METS.prefix);
         writer.print(":metsHdr");
@@ -218,12 +218,11 @@ public class METSFedoraExtDOSerializer
             writer.print(DateUtility.convertDateToString(mDate));
             writer.print("\"");
         }
-        String state = obj.getState();
-        if (state != null && !state.equals("")) {
-            writer.print(" RECORDSTATUS=\"");
-            writer.print(state);
-            writer.print("\"");
-        }
+
+        writer.print(" RECORDSTATUS=\"");
+        writer.print(DOTranslationUtility.getStateAttribute(obj));
+        writer.print("\"");
+
         writer.print(">\n");
         // use agent to identify the owner of the digital object
         String ownerId = obj.getOwnerId();

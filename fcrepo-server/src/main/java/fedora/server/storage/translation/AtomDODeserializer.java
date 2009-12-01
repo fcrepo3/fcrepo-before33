@@ -20,6 +20,8 @@ import java.io.UnsupportedEncodingException;
 
 import java.net.URISyntaxException;
 
+import java.text.ParseException;
+
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -193,15 +195,11 @@ public class AtomDODeserializer
 
         m_obj.setPid(pid.toString());
 
-        String stateCode = null;
-        if (MODEL.DELETED.looselyMatches(state, true)) {
-            stateCode = "D";
-        } else if (MODEL.INACTIVE.looselyMatches(state, true)) {
-            stateCode = "I";
-        } else if (MODEL.ACTIVE.looselyMatches(state, true)) {
-            stateCode = "A";
+        try {
+            m_obj.setState(DOTranslationUtility.readStateAttribute(state));
+        } catch (ParseException e) {
+            throw new ObjectIntegrityException("Could not read object state", e);
         }
-        m_obj.setState(stateCode);
 
         m_obj.setLabel(label);
         m_obj.setOwnerId(getOwnerId());

@@ -34,7 +34,6 @@ import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
 
-import static fedora.common.Constants.MODEL;
 import static fedora.common.Models.FEDORA_OBJECT_3_0;
 import static fedora.common.Models.SERVICE_DEFINITION_3_0;
 import static fedora.common.Models.SERVICE_DEPLOYMENT_3_0;
@@ -178,6 +177,76 @@ public abstract class TestXMLDODeserializer
         }
 
         temp.delete();
+    }
+
+    /** Tests the serializers/deserializers when faced with null object property values.
+     * <p>
+     * Currently, this test assures that null iproperty values are handled consistently
+     * among serializers and deserializers.   The expected behaviour is a bit un-intuitive,
+     * but represents the "status quo" that satisfies existing server code:
+     * <dl>
+     * <dt>CreatedDate, LastModifiedDate, External properties</dt>
+     * <dd>Null value should be interpreted as null</dd>
+     * <dt>Label, OwnerId</dt>
+     * <dd>Null value should be interpreted as an empty string ("")</dd>
+     * <dt>State</dt>
+     * <dd>Null value should be interpreted as "Active"</dd>
+     * </dl>
+     * </p>
+     */
+    @Test
+    public void testNullObjectProperties() {
+        final String EXT_PROP = "http://example.org/test";
+        DigitalObject input = createTestObject(FEDORA_OBJECT_3_0);
+        input.setCreateDate(null);
+        input.setLastModDate(null);
+        input.setLabel(null);
+        input.setOwnerId(null);
+        input.setState(null);
+        input.setExtProperty(EXT_PROP, null);
+
+        DigitalObject obj = doDeserializeOrFail(input);
+
+        assertNull("Create date should be null", obj.getCreateDate());
+        assertNull("LastMod date should be null", obj.getLastModDate());
+        assertEquals("Null label should be interpreted as empty string", "", obj.getLabel());
+        assertEquals("Null ownerid should be interpreted as empty string", "", obj.getOwnerId());
+        assertEquals("Null state should be interpreted as active", "A", obj.getState());
+        assertNull("Ext property should be null", obj.getExtProperty(EXT_PROP));
+    }
+
+    /** Tests the serializers/deserializers when faced with empty ("") object property values.
+     * <p>
+     * Currently, this test assures that empty string property values are handled consistently
+     * among serializers and deserializers.   The expected behaviour is as follows:
+     * <dl>
+     * <dt>Label, Ownerid, External properties</dt>
+     * <dd>Empty string value should be interpreted the empty string ("")</dd>
+     * <dt>State</dt>
+     * <dd>Empty string values should be interpreted as "Active"</dd>
+     * </dl>
+     * </p>
+     */
+    @Test
+    public void testEmptyObjectProperties() {
+        final String EXT_PROP_SUPPORTED = "http://example.org/ext-supported";
+        final String EXT_PROP = "http://example.org/test";
+        DigitalObject input = createTestObject(FEDORA_OBJECT_3_0);
+        input.setLabel("");
+        input.setOwnerId("");
+        //input.setState("");
+        input.setExtProperty(EXT_PROP_SUPPORTED, "true");
+        input.setExtProperty(EXT_PROP, "");
+        DigitalObject obj = doDeserializeOrFail(input);
+
+        assertEquals("Empty label should remain empty", "", obj.getLabel());
+        assertEquals("Empty Ownerid should remain empty", "", obj.getOwnerId());
+        assertEquals("Empty State should be interpreted as active", "A", obj.getState());
+
+        /* Some formats (METS) don't support ext. properties */
+        if ("true".equals(obj.getExtProperty(EXT_PROP_SUPPORTED))) {
+            assertEquals("Empty Ext property should remain empty", "", obj.getExtProperty(EXT_PROP));
+        }
     }
 
     @Test

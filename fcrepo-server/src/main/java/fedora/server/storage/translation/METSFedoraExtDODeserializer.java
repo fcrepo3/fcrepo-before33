@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
+import java.text.ParseException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -271,6 +273,8 @@ public class METSFedoraExtDODeserializer
         }
 
         m_obj = obj;
+        m_obj.setOwnerId("");
+        m_obj.setLabel("");
         m_characterEncoding = encoding;
         m_transContext = transContext;
         initialize();
@@ -369,7 +373,12 @@ public class METSFedoraExtDODeserializer
                         .convertStringToDate(grab(a, METS.uri, "CREATEDATE")));
                 m_obj.setLastModDate(DateUtility
                         .convertStringToDate(grab(a, METS.uri, "LASTMODDATE")));
-                m_obj.setState(grab(a, METS.uri, "RECORDSTATUS"));
+                try {
+                    m_obj.setState(DOTranslationUtility
+                        .readStateAttribute(grab(a, METS.uri, "RECORDSTATUS")));
+                } catch (ParseException e) {
+                    throw new SAXException("Could not read object state", e);
+                }
             } else if (localName.equals("agent")) {
                 m_agentRole = grab(a, METS.uri, "ROLE");
             } else if (localName.equals("name")
