@@ -78,7 +78,7 @@
 		<rdfs:comment>A generic descriptive relationship between fedora objects.  The subject is a fedora object that represents a descriptive entity and the predicate is a fedora object that is being described in some manner by the subject.</rdfs:comment>
 		<rdfs:subPropertyOf rdf:resource="#fedoraRelationship"/>
 	</rdf:Property>
-	<rdf:Property rdf:ID="HasDescription">
+	<rdf:Property rdf:ID="hasDescription">
 		<rdfs:label xml:lang="en-US">Has Description</rdfs:label>
 		<rdfs:comment>A generic descriptive relationship between fedora objects.  The subject is a fedora object that is being described in some manner and the predicate is a fedora object that represents a descriptive entity that is about the subject. </rdfs:comment>
 		<rdfs:subPropertyOf rdf:resource="#fedoraRelationship"/>
@@ -88,7 +88,7 @@
 		<rdfs:comment>A refinement of the generic descriptive relationship indicating a metadata relationship between fedora objects.  The subject is a fedora object that represents metadata and the predicate is a fedora object for which the subject serves as metadata.</rdfs:comment>
 		<rdfs:subPropertyOf rdf:resource="#isDescriptionOf"/>
 	</rdf:Property>
-	<rdf:Property rdf:ID="HasMetadata">
+	<rdf:Property rdf:ID="hasMetadata">
 		<rdfs:label xml:lang="en-US">Has Metadata</rdfs:label>
 		<rdfs:comment>A refinement of the generic descriptive relationship indicating a metadata relationship between fedora objects.  The subject is a fedora object and the predicate is a fedora object that represents metadata about the subject. </rdfs:comment>
 		<rdfs:subPropertyOf rdf:resource="#hasDescription"/>
@@ -98,7 +98,7 @@
 		<rdfs:comment>A refinement of the generic descriptive relationship indicating a commentary relationship between fedora objects.  The subject is a fedora object that represents an annotation or comment and the predicate is a fedora object that is being commented upon by the subject.</rdfs:comment>
 		<rdfs:subPropertyOf rdf:resource="#isDescriptionOf"/>
 	</rdf:Property>
-	<rdf:Property rdf:ID="HasAnnotation">
+	<rdf:Property rdf:ID="hasAnnotation">
 		<rdfs:label xml:lang="en-US">Has Annotation</rdfs:label>
 		<rdfs:comment>A refinement of the generic descriptive relationship indicating a commentary relationship between fedora objects.  The subject is a fedora object that is being commented on and the predicate is a fedora object that represents an annotation or comment about the subject. </rdfs:comment>
 		<rdfs:subPropertyOf rdf:resource="#hasDescription"/>
