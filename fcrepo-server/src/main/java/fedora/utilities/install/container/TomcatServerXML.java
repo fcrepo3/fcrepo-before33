@@ -17,6 +17,12 @@ import fedora.utilities.XMLDocument;
 import fedora.utilities.install.InstallOptions;
 import fedora.utilities.install.InstallationFailedException;
 
+/**
+ * This class models the server.xml that ships with Fedora's bundled Tomcat.
+ * 
+ * @author Edwin Shin
+ *
+ */
 public class TomcatServerXML
         extends XMLDocument {
 
@@ -55,6 +61,12 @@ public class TomcatServerXML
         setURIEncoding();
     }
 
+    /**
+     * Sets the http port and Fedora default http connector options.
+     * 
+     * @see http://tomcat.apache.org/tomcat-6.0-doc/config/http.html
+     * @throws InstallationFailedException
+     */
     public void setHTTPPort() throws InstallationFailedException {
         // Note this very significant assumption: this xpath will select exactly one connector
         Element httpConnector =
@@ -68,6 +80,10 @@ public class TomcatServerXML
         httpConnector.addAttribute("port", options
                 .getValue(InstallOptions.TOMCAT_HTTP_PORT));
         httpConnector.addAttribute("enableLookups", "true"); // supports client dns/fqdn in xacml authz policies
+        httpConnector.addAttribute("acceptCount", "100");
+        httpConnector.addAttribute("maxThreads", "150");
+        httpConnector.addAttribute("minSpareThreads", "25");
+        httpConnector.addAttribute("maxSpareThreads", "75");
     }
 
     public void setShutdownPort() throws InstallationFailedException {
@@ -100,16 +116,12 @@ public class TomcatServerXML
                         (Element) getDocument()
                                 .selectSingleNode("/Server/Service[@name='Catalina']");
                 httpsConnector = service.addElement("Connector");
-                httpsConnector.addAttribute("maxThreads", "150");
                 httpsConnector.addAttribute("minSpareThreads", "25");
                 httpsConnector.addAttribute("maxSpareThreads", "75");
-                httpsConnector.addAttribute("disableUploadTimeout", "true");
                 httpsConnector.addAttribute("acceptCount", "100");
-                httpsConnector.addAttribute("debug", "0");
                 httpsConnector.addAttribute("scheme", "https");
                 httpsConnector.addAttribute("secure", "true");
-                httpsConnector.addAttribute("clientAuth", "false");
-                httpsConnector.addAttribute("sslProtocol", "TLS");
+                httpsConnector.addAttribute("SSLEnabled", "true");
             }
             httpsConnector.addAttribute("port", options
                     .getValue(InstallOptions.TOMCAT_SSL_PORT));
@@ -135,7 +147,7 @@ public class TomcatServerXML
 
             // The redirectPort for the non-SSL connector should match the port on
             // the SSL connector, per:
-            // http://tomcat.apache.org/tomcat-5.0-doc/ssl-howto.html
+            // http://tomcat.apache.org/tomcat-6.0-doc/ssl-howto.html
             Element httpConnector =
                     (Element) getDocument()
                             .selectSingleNode(HTTP_CONNECTOR_XPATH);

@@ -28,7 +28,7 @@
       <directory>../resources/inc</directory>
       <outputDirectory>/resources</outputDirectory>
       <includes>
-        <include>apache-tomcat-5.5.26.zip</include>
+        <include>apache-tomcat-6.0.20.zip</include>
         <include>keystore</include>
       </includes>
     </fileSet>  

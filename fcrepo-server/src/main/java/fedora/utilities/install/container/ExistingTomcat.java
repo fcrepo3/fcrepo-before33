@@ -20,6 +20,7 @@ public class ExistingTomcat
         extends Tomcat {
 
     private final File installDir;
+    private File commonLib;
 
     public ExistingTomcat(Distribution dist, InstallOptions options) {
         super(dist, options);
@@ -86,4 +87,14 @@ public class ExistingTomcat
             throw new InstallationFailedException(e.getMessage(), e);
         }
     }
+
+	@Override
+	protected File getCommonLib() {
+		return commonLib;
+	}
+
+	@Override
+	protected void setCommonLib() {
+		new File(getTomcatHome(), "lib" + File.separator);
+	}
 }

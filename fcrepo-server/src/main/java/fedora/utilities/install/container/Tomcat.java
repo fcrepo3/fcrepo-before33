@@ -24,8 +24,6 @@ public abstract class Tomcat
 
     private final File conf;
 
-    private final File common_lib;
-
     /**
      * Target location of the included keystore file.
      */
@@ -37,9 +35,7 @@ public abstract class Tomcat
                 new File(getOptions().getValue(InstallOptions.TOMCAT_HOME));
         webapps = new File(tomcatHome, "webapps" + File.separator);
         conf = new File(tomcatHome, CONF + File.separator);
-        common_lib =
-                new File(tomcatHome, "common" + File.separator + "lib"
-                        + File.separator);
+        setCommonLib();
         includedKeystore = new File(conf, KEYSTORE);
     }
 
@@ -67,6 +63,10 @@ public abstract class Tomcat
 
     protected abstract void installIncludedKeystore()
             throws InstallationFailedException;
+    
+    protected abstract void setCommonLib();
+    
+    protected abstract File getCommonLib();
 
     protected final File getTomcatHome() {
         return tomcatHome;
@@ -80,11 +80,9 @@ public abstract class Tomcat
         return conf;
     }
 
-    protected final File getCommonLib() {
-        return common_lib;
-    }
-
     protected final File getIncludedKeystore() {
         return includedKeystore;
     }
+    
+    
 }

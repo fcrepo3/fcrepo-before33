@@ -11,12 +11,15 @@ Generate the client truststore
 When prompted for the truststore password, use "tomcat"
 
 References:
-http://tomcat.apache.org/tomcat-5.5-doc/ssl-howto.html
+http://tomcat.apache.org/tomcat-6.0-doc/ssl-howto.html
 
 Updating the Bundled Tomcat
 ---------------------------
-Replace inc/apache-tomcat-NEW-VERSION.zip
+Replace resources/inc/apache-tomcat-NEW-VERSION.zip
 Update src/properties/install.properties
+Update fcrepo-installer/src/main/resources/assemblies/fedora-installer.xml
+Update resources/server/fedora/utilities/install/OptionDefinition.properties
+Update fcrepo-server/src/main/java/fedora/utilities/install/container/BundledTomcat.java
 Update src/java/fedora/utilities/install/container as necessary (micro version
 updates should not require any code updates; major version updates, which, would
 correspond to updated servlet spec support will likely require updates to 

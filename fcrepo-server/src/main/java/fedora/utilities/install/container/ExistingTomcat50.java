@@ -10,7 +10,7 @@ import fedora.utilities.install.InstallationFailedException;
 import fedora.utilities.install.Installer;
 
 public class ExistingTomcat50
-        extends ExistingTomcat {
+        extends ExistingTomcat55 {
 
     public ExistingTomcat50(Distribution dist, InstallOptions options) {
         super(dist, options);

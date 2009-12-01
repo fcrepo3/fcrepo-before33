@@ -28,8 +28,10 @@ public class ContainerFactory {
             File dbcp55 =
                     new File(tomcatHome, "common/lib/naming-factory-dbcp.jar");
             File dbcp6 = new File(tomcatHome, "lib/tomcat-dbcp.jar");
-            if (dbcp55.exists() || dbcp6.exists()) {
-                return new ExistingTomcat(dist, options);
+            if (dbcp6.exists()) {
+            	return new ExistingTomcat(dist, options);
+            } else if (dbcp55.exists()) {
+                return new ExistingTomcat55(dist, options);
             } else {
                 return new ExistingTomcat50(dist, options);
             }
