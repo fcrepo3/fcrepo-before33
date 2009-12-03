@@ -11,7 +11,7 @@
 
   <artifactId>fcrepo-webapp-fedora</artifactId>
   <packaging>war</packaging>
-  <name>All Fedora Webapps</name>
+  <name>Fedora Webapp</name>
 
   <build>
     <plugins>
