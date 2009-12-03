@@ -64,7 +64,8 @@ public class FOPServlet
     /**
      * {@inheritDoc}
      */
-    public void init() throws ServletException {
+    @Override
+	public void init() throws ServletException {
         this.log = LogFactory.getLog(FOPServlet.class.getName());
         this.uriResolver = new RepositoryURIResolver();
         this.transFactory = TransformerFactory.newInstance();

@@ -229,7 +229,7 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-    
+
     <repository>
       <id>aduna</id>
       <name>Aduna Releases Maven Repository</name>
@@ -250,6 +250,16 @@
   </scm>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>2.1-beta-1</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    
     <resources>
       <resource>
         <directory>src/main/resources</directory>
