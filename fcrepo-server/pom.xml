@@ -388,7 +388,7 @@
                   <!-- 
                       Note: this execution has the following dependencies:
                           openrdf-sesame-2.2.1-onejar.jar
-                          mulgara-core-2.1.1.jar
+                          mulgara-core-2.1.4.jar
                           fedora-common.jar
                    -->
                 </configuration>
@@ -543,12 +543,6 @@
     </dependency>
     
     <dependency>
-        <groupId>commons-pool</groupId>
-        <artifactId>commons-pool</artifactId>
-        <version>1.2</version>
-    </dependency>
-    
-    <dependency>
       <groupId>dom4j</groupId>
       <artifactId>dom4j</artifactId>
       <version>1.6.1</version>
@@ -567,27 +561,8 @@
     </dependency>
 
     <dependency>
-      <groupId>howl</groupId>
-      <artifactId>howl-logger</artifactId>
-      <version>0.1.11</version>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.activation</groupId>
-      <artifactId>activation</artifactId>
-      <version>1.1.1</version>
-    </dependency> 
-
-    <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>mail</artifactId>
-      <version>1.4.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.persistence</groupId>
+      <groupId>org.fcrepo</groupId>
       <artifactId>persistence-api</artifactId>
-      <version>1.0.2</version>
     </dependency>
 
     <dependency>
@@ -644,12 +619,6 @@
     </dependency>
 
     <dependency>
-      <groupId>javax.xml.soap</groupId>
-      <artifactId>saaj-api</artifactId>
-      <version>1.3</version>
-    </dependency>
-
-    <dependency>
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
       <version>1.1.1</version>
@@ -665,44 +634,6 @@
       <groupId>jdom</groupId>
       <artifactId>jdom</artifactId>
       <version>1.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>1.5.2</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>jotm</groupId>
-      <artifactId>jotm</artifactId>
-      <version>2.0.10</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>jotm</groupId>
-      <artifactId>jotm_jrmp_stubs</artifactId>
-      <version>2.0.10</version>
-    </dependency>
-
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.15</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.sun.jdmk</groupId>
-          <artifactId>jmxtools</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.sun.jmx</groupId>
-          <artifactId>jmxri</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.jms</groupId>
-          <artifactId>jms</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!--
@@ -785,30 +716,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.codehaus.castor</groupId>
-      <artifactId>castor-codegen</artifactId>
-      <version>1.3.0.1</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.codehaus.castor</groupId>
-      <artifactId>castor-core</artifactId>
-      <version>1.3.0.1</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.codehaus.castor</groupId>
-      <artifactId>castor-xml</artifactId>
-      <version>1.3.0.1</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.codehaus.castor</groupId>
-      <artifactId>castor-xml-schema</artifactId>
-      <version>1.3.0.1</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.codehaus.jettison</groupId>
       <artifactId>jettison</artifactId>
       <version>1.0.1</version>
@@ -846,12 +753,6 @@
 
     <dependency>
       <groupId>org.fcrepo</groupId>
-      <artifactId>emory-util-remote</artifactId>
-      <version>2.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.fcrepo</groupId>
       <artifactId>GroboTestingJUnit-core</artifactId>
       <version>1.2.1</version>
       <scope>test</scope>
@@ -870,18 +771,6 @@
       <artifactId>one-jar-boot</artifactId>
       <version>0.96</version>
     </dependency>
-    
-    <dependency>
-      <groupId>org.fcrepo</groupId>
-      <artifactId>openrdf-sesame-onejar</artifactId>
-      <version>2.2.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.fcrepo</groupId>
-      <artifactId>mptstore</artifactId>
-      <version>0.9.1</version>
-    </dependency>
 
     <dependency>
       <groupId>org.fcrepo</groupId>
@@ -899,31 +788,19 @@
     <dependency>
       <groupId>org.fcrepo</groupId>
       <artifactId>trippi-core</artifactId>
-      <version>1.4.1</version>
+      <version>1.4.2</version>
     </dependency>
     
     <dependency>
       <groupId>org.fcrepo</groupId>
       <artifactId>trippi-mptstore</artifactId>
-      <version>1.4.1</version>
+      <version>1.4.2</version>
     </dependency>
    
     <dependency>
       <groupId>org.fcrepo</groupId>
       <artifactId>trippi-mulgara</artifactId>
-      <version>1.4.1</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.objectweb.carol</groupId>
-      <artifactId>carol</artifactId>
-      <version>2.0.5</version>
-    </dependency>
- 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.5.2</version>
+      <version>1.4.2</version>
     </dependency>
     
     <dependency>
@@ -987,12 +864,6 @@
 
     <dependency>
       <groupId>org.fcrepo</groupId>
-      <artifactId>openrdf-sesame-onejar</artifactId>
-      <version>2.2.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.fcrepo</groupId>
       <artifactId>sunxacml</artifactId>
       <version>1.2-PATCHED</version>
     </dependency>
@@ -1008,12 +879,6 @@
       <groupId>org.fcrepo</groupId>
       <artifactId>tt-bytecode</artifactId>
       <version>1.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>trove</groupId>
-      <artifactId>trove</artifactId>
-      <version>2.1.1</version>
     </dependency>
 
     <!--
@@ -1037,24 +902,11 @@
     </dependency>
 
     <dependency>
-      <groupId>xmlpull</groupId>
-      <artifactId>xmlpull</artifactId>
-      <version>1.1.3.4a</version>
-    </dependency>
-
-    <dependency>
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>
       <version>1.2</version>
       <scope>test</scope>
     </dependency>
-
-    <dependency>
-      <groupId>xpp3</groupId>
-      <artifactId>xpp3_min</artifactId>
-      <version>1.1.3.4.O</version>
-    </dependency>
-
   </dependencies>
 
 </project>

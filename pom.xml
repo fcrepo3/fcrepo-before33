@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.fcrepo</groupId>
@@ -131,11 +132,44 @@
         <artifactId>commons-logging</artifactId>
         <version>1.0.4</version>
       </dependency>
+      <dependency>
+        <groupId>org.fcrepo</groupId>
+        <artifactId>mulgara-core</artifactId>
+        <version>2.1.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.fcrepo</groupId>
+        <artifactId>trippi-core</artifactId>
+        <version>1.4.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.fcrepo</groupId>
+        <artifactId>persistence-api</artifactId>
+        <version>1.0.2</version>
+      </dependency>
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.15</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.sun.jdmk</groupId>
+            <artifactId>jmxtools</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.sun.jmx</groupId>
+            <artifactId>jmxri</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.jms</groupId>
+            <artifactId>jms</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
   <repositories>
-
     <repository>
       <id>duraspace-releases</id>
       <name>DuraSpace Releases Maven Repository</name>
@@ -173,26 +207,10 @@
     </repository>
 
     <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>central</id>
-      <name>Maven Repository Switchboard</name>
-      <url>http://repo1.maven.org/maven2</url>
-    </repository>
-
-    <repository>
       <id>maven2-repository.dev.java.net</id>
       <name>Java.net Repository for Maven</name>
       <url>http://download.java.net/maven/2/</url>
       <layout>default</layout>
-    </repository>
-
-    <repository>
-      <id>maven-repository.dev.java.net</id>
-      <name>Java.net Maven 1 Repository (legacy)</name>
-      <url>http://download.java.net/maven/1</url>
-      <layout>legacy</layout>
     </repository>
 
     <repository>
@@ -204,6 +222,18 @@
     <repository>
       <id>jboss</id>
       <url>http://repository.jboss.com/maven2/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    
+    <repository>
+      <id>aduna</id>
+      <name>Aduna Releases Maven Repository</name>
+      <url>http://repo.aduna-software.org/maven2/releases/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -325,9 +355,10 @@
             <version>2.2-beta-4</version>
             <dependencies>
               <dependency>
-                <!-- 
-                NOTE: The fix for PLXUTILS-120 is crucial for the assembly descriptor regex,
-                therefore we have to insist on plexus utils >= 2.0.1 for the time being
+                <!--
+                  NOTE: The fix for PLXUTILS-120 is crucial for the
+                  assembly descriptor regex, therefore we have to insist
+                  on plexus utils >= 2.0.1 for the time being
                 -->
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
@@ -342,10 +373,11 @@
                 <phase>package</phase>
                 <configuration>
                   <appendAssemblyId>true</appendAssemblyId>
-                  <finalName>fcrepo-src-${project.version}</finalName> 
+                  <finalName>fcrepo-src-${project.version}</finalName>
                   <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
                   <descriptors>
-                    <descriptor>src/main/resources/assemblies/fedora-source-release.xml</descriptor>
+                    <descriptor>src/main/resources/assemblies/fedora-source-release.xml
+                    </descriptor>
                   </descriptors>
                 </configuration>
               </execution>
@@ -375,7 +407,7 @@
               <createChecksum>true</createChecksum>
             </configuration>
           </plugin>
-          
+
           <!-- generate aggregate javadoc -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>

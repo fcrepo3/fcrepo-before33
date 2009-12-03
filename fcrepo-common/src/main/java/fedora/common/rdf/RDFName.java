@@ -97,4 +97,16 @@ public class RDFName
         return namespace.toString();
     }
 
+	public boolean isBlankNode() {
+		return false;
+	}
+
+	public boolean isLiteral() {
+		return false;
+	}
+
+	public boolean isURIReference() {
+		return true;
+	}
+
 }

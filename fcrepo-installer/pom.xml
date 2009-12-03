@@ -118,27 +118,17 @@
 
         <dependency>
           <groupId>org.fcrepo</groupId>
+          <artifactId>fcrepo-webapp-fedora</artifactId>
+          <version>${project.version}</version>
+          <type>war</type>
+        </dependency>
+        
+        <dependency>
+          <groupId>org.fcrepo</groupId>
           <artifactId>fcrepo-server</artifactId>
           <classifier>utilities-main</classifier>
           <version>${project.version}</version>
         </dependency> 
-
-        <dependency>
-          <groupId>org.fcrepo</groupId>
-          <artifactId>openrdf-sesame-onejar</artifactId>
-          <version>2.2.1</version>
-        </dependency>
-
-        <!--
-        <dependency>
-          <groupId>org.fcrepo</groupId>
-          <artifactId>server</artifactId>
-          <classifier>webapp</classifier>
-          <type>war</type>
-          <version>1.0.0</version>
-        </dependency>
-        -->
-        
       </dependencies>
 
     </profile>
@@ -171,21 +161,6 @@
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>1.2.15</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.sun.jdmk</groupId>
-          <artifactId>jmxtools</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.sun.jmx</groupId>
-          <artifactId>jmxri</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.jms</groupId>
-          <artifactId>jms</artifactId>
-        </exclusion>
-       </exclusions>
     </dependency>
     
     <dependency>
@@ -287,7 +262,6 @@
     <dependency>
       <groupId>org.fcrepo</groupId>
       <artifactId>mulgara-core</artifactId>
-      <version>2.1.1</version>
     </dependency>
 
     <dependency>
