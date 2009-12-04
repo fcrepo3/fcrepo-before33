@@ -16,7 +16,7 @@
  * the License.
  */
 
-package fedora.server.jaas.auth;
+package org.fcrepo.server.jaas.auth;
 
 import java.io.Serializable;
 

@@ -16,7 +16,7 @@
  * the License.
  */
 
-package fedora.server.jaas;
+package org.fcrepo.server.jaas;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -33,11 +33,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
+import org.fcrepo.server.jaas.util.SubjectUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import fedora.server.jaas.util.DataUtils;
-import fedora.server.jaas.util.SubjectUtils;
+import org.fcrepo.server.jaas.util.DataUtils;
 
 /**
  * This servlet produces an XML representation of a currently logged in user. The User is logged in

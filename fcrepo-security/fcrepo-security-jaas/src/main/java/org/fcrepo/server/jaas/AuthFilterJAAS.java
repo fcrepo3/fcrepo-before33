@@ -16,7 +16,7 @@
  * the License.
  */
 
-package fedora.server.jaas;
+package org.fcrepo.server.jaas;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,11 +43,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.fcrepo.server.jaas.util.SubjectUtils;
 
-import fedora.server.jaas.auth.AuthHttpServletRequestWrapper;
-import fedora.server.jaas.auth.handler.UsernamePasswordCallbackHandler;
-import fedora.server.jaas.util.Base64;
-import fedora.server.jaas.util.SubjectUtils;
+import org.fcrepo.server.jaas.auth.AuthHttpServletRequestWrapper;
+import org.fcrepo.server.jaas.auth.handler.UsernamePasswordCallbackHandler;
+import org.fcrepo.server.jaas.util.Base64;
 
 /**
  * A Servlet Filter for protecting resources. This filter uses JAAS for performing user

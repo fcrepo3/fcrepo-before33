@@ -1,4 +1,4 @@
-package fedora.server.jaas.util;
+package org.fcrepo.server.jaas.util;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

@@ -16,7 +16,7 @@
  * the License.
  */
 
-package fedora.server.jaas.util;
+package org.fcrepo.server.jaas.util;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;

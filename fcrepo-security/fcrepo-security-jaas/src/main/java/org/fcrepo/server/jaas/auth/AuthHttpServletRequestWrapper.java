@@ -16,7 +16,7 @@
  * the License.
  */
 
-package fedora.server.jaas.auth;
+package org.fcrepo.server.jaas.auth;
 
 import java.security.Principal;
 import java.util.Set;
@@ -25,38 +25,37 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
- * This class wraps a standard HttpServletRequest and adds the ability to set roles and principals.
+ * This class wraps a standard HttpServletRequest and adds the ability to set
+ * roles and principals.
  * 
  * @author nish.naidoo@gmail.com
  * 
  */
-public class AuthHttpServletRequestWrapper extends HttpServletRequestWrapper
-{
+public class AuthHttpServletRequestWrapper extends HttpServletRequestWrapper {
 	private Principal userPrincipal = null;
 	private Set<String> userRoles = null;
 
-	public AuthHttpServletRequestWrapper(HttpServletRequest request)
-	{
+	public AuthHttpServletRequestWrapper(HttpServletRequest request) {
 		super(request);
 	}
 
 	/**
 	 * Sets the userPrincipal attribute.
 	 * 
-	 * @param userPrincipal the userPrincipal to set.
+	 * @param userPrincipal
+	 *            the userPrincipal to set.
 	 */
-	public void setUserPrincipal(Principal userPrincipal)
-	{
+	public void setUserPrincipal(Principal userPrincipal) {
 		this.userPrincipal = userPrincipal;
 	}
 
 	/**
 	 * Sets the userRoles attribute.
 	 * 
-	 * @param userRoles the userRoles to set.
+	 * @param userRoles
+	 *            the userRoles to set.
 	 */
-	public void setUserRoles(Set<String> userRoles)
-	{
+	public void setUserRoles(Set<String> userRoles) {
 		this.userRoles = userRoles;
 	}
 
@@ -65,8 +64,8 @@ public class AuthHttpServletRequestWrapper extends HttpServletRequestWrapper
 	 * 
 	 * @see javax.servlet.http.HttpServletRequestWrapper#getUserPrincipal()
 	 */
-	public Principal getUserPrincipal()
-	{
+	@Override
+	public Principal getUserPrincipal() {
 		return userPrincipal;
 	}
 
@@ -75,8 +74,8 @@ public class AuthHttpServletRequestWrapper extends HttpServletRequestWrapper
 	 * 
 	 * @see javax.servlet.http.HttpServletRequestWrapper#getRemoteUser()
 	 */
-	public String getRemoteUser()
-	{
+	@Override
+	public String getRemoteUser() {
 		if (userPrincipal == null)
 			return null;
 
@@ -86,10 +85,12 @@ public class AuthHttpServletRequestWrapper extends HttpServletRequestWrapper
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see javax.servlet.http.HttpServletRequestWrapper#isUserInRole(java.lang.String)
+	 * @see
+	 * javax.servlet.http.HttpServletRequestWrapper#isUserInRole(java.lang.String
+	 * )
 	 */
-	public boolean isUserInRole(String role)
-	{
+	@Override
+	public boolean isUserInRole(String role) {
 		if (userRoles == null)
 			return false;
 

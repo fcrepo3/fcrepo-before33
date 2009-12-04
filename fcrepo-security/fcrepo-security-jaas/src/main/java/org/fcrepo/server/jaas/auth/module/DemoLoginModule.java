@@ -1,5 +1,5 @@
 /*
- * File: XmlUsersFileModule.java
+ * File: DemoLoginModule.java
  * 
  * Copyright 2009 Muradora
  * 
@@ -16,9 +16,8 @@
  * the License.
  */
 
-package fedora.server.jaas.auth.module;
+package org.fcrepo.server.jaas.auth.module;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,52 +34,36 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
 import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
-import fedora.server.jaas.auth.UserPrincipal;
-import fedora.server.jaas.util.DataUtils;
+import org.fcrepo.server.jaas.auth.UserPrincipal;
 
-public class XmlUsersFileModule implements LoginModule
+public class DemoLoginModule implements LoginModule
 {
-	private static final Logger log = Logger.getLogger(XmlUsersFileModule.class);
+	private static final Logger log = Logger.getLogger(DemoLoginModule.class);
 
 	private Subject subject = null;
 	private CallbackHandler handler = null;
-	// private Map<String, ?> sharedState = null;
+	private Map<String, ?> sharedState = null;
 	private Map<String, ?> options = null;
 
-	private String fedoraHome = null;
 	private String username = null;
-	private UserPrincipal principal = null;
+
 	private Map<String, Set<String>> attributes = null;
 
 	private boolean debug = false;
-
+	
 	private boolean successLogin = false;
 
 	public void initialize(Subject subject, CallbackHandler handler, Map<String, ?> sharedState, Map<String, ?> options)
 	{
 		this.subject = subject;
 		this.handler = handler;
-		// this.sharedState = sharedState;
+		this.sharedState = sharedState;
 		this.options = options;
 
 		String debugOption = (String) this.options.get("debug");
 		if (debugOption != null && "true".equalsIgnoreCase(debugOption))
 			debug = true;
-
-		fedoraHome = System.getenv("FEDORA_HOME");
-		if (fedoraHome == null || "".equals(fedoraHome))
-		{
-			log.error("FEDORA_HOME environment variable not set");
-		}
-		else
-		{
-			if (log.isDebugEnabled())
-				log.debug("using FEDORA_HOME: " + fedoraHome);
-		}
 
 		attributes = new HashMap<String, Set<String>>();
 
@@ -91,27 +74,27 @@ public class XmlUsersFileModule implements LoginModule
 	public boolean login() throws LoginException
 	{
 		if (debug)
-			log.debug(this.getClass().getName() + " login called.");
-
-		if (fedoraHome == null || "".equals(fedoraHome.trim()))
 		{
-			log.error("FEDORA_HOME environment variable not set");
-			return false;
+			log.debug("DemoLoginModule login called.");
+			for (String key : sharedState.keySet())
+			{
+				String value = sharedState.get(key).toString();
+				log.debug(key + ": " + value);
+			}
 		}
 
-		// The only 2 callback types that are supported.
 		Callback[] callbacks = new Callback[2];
 		callbacks[0] = new NameCallback("username");
 		callbacks[1] = new PasswordCallback("password", false);
 
-		String password = null;
 		try
 		{
-			// sets the username and password from the callback handler
 			handler.handle(callbacks);
 			username = ((NameCallback) callbacks[0]).getName();
 			char[] passwordCharArray = ((PasswordCallback) callbacks[1]).getPassword();
-			password = new String(passwordCharArray);
+			String password = new String(passwordCharArray);
+
+			successLogin = username.equals(password);
 		}
 		catch (IOException ioe)
 		{
@@ -124,8 +107,6 @@ public class XmlUsersFileModule implements LoginModule
 			throw new LoginException("UnsupportedCallbackException encountered: " + ucbe.getMessage());
 		}
 
-		successLogin = authenticate(username, password);
-
 		return successLogin;
 	}
 
@@ -133,10 +114,22 @@ public class XmlUsersFileModule implements LoginModule
 	{
 		if (!successLogin)
 			return false;
-
+		
 		try
 		{
-			subject.getPrincipals().add(principal);
+			UserPrincipal p = new UserPrincipal(username);
+			Set<String> roles = attributes.get("role");
+			if (roles == null)
+			{
+				roles = new HashSet<String>();
+				attributes.put("role", roles);
+			}
+
+			roles.add("test1");
+			roles.add("test2");
+			roles.add("test3");
+
+			subject.getPrincipals().add(p);
 			subject.getPublicCredentials().add(attributes);
 		}
 		catch (Exception e)
@@ -152,7 +145,10 @@ public class XmlUsersFileModule implements LoginModule
 	{
 		try
 		{
-			clear();
+			subject.getPrincipals().clear();
+			subject.getPublicCredentials().clear();
+			subject.getPrivateCredentials().clear();
+			username = null;
 		}
 		catch (Exception e)
 		{
@@ -167,7 +163,10 @@ public class XmlUsersFileModule implements LoginModule
 	{
 		try
 		{
-			clear();
+			subject.getPrincipals().clear();
+			subject.getPublicCredentials().clear();
+			subject.getPrivateCredentials().clear();
+			username = null;
 		}
 		catch (Exception e)
 		{
@@ -176,76 +175,5 @@ public class XmlUsersFileModule implements LoginModule
 		}
 
 		return true;
-	}
-
-	private void clear()
-	{
-		subject.getPrincipals().clear();
-		subject.getPublicCredentials().clear();
-		subject.getPrivateCredentials().clear();
-		principal = null;
-		username = null;
-	}
-
-	private boolean authenticate(String username, String password)
-	{
-		String xmlUsersFile = fedoraHome + "/server/config/fedora-users.xml";
-		File file = new File(xmlUsersFile);
-		if (!file.exists())
-		{
-			log.error("XmlUsersFile not found: " + file.getAbsolutePath());
-			return false;
-		}
-
-		Document doc = null;
-		try
-		{
-			doc = DataUtils.getDocumentFromFile(new File(xmlUsersFile));
-
-			// go through each user
-			NodeList userList = doc.getElementsByTagName("user");
-			for (int x = 0; x < userList.getLength(); x++)
-			{
-				Element user = (Element) userList.item(x);
-				String a_username = user.getAttribute("name");
-				String a_password = user.getAttribute("password");
-				if (!a_username.equals(username) || !a_password.equals(password))
-					continue;
-
-				principal = new UserPrincipal(username);
-
-				// for a matched user, go through each attribute
-				NodeList attributeList = user.getElementsByTagName("attribute");
-				for (int y = 0; y < attributeList.getLength(); y++)
-				{
-					Element attribute = (Element) attributeList.item(y);
-					String name = attribute.getAttribute("name");
-
-					// go through each value
-					NodeList valueList = attribute.getElementsByTagName("value");
-					for (int z = 0; z < valueList.getLength(); z++)
-					{
-						Element value = (Element) valueList.item(z);
-						String v = value.getFirstChild().getNodeValue();
-
-						Set<String> values = attributes.get(name);
-						if (values == null)
-						{
-							values = new HashSet<String>();
-							attributes.put(name, values);
-						}
-						values.add(v);
-					}
-				}
-
-				return true;
-			}
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage());
-		}
-
-		return false;
 	}
 }

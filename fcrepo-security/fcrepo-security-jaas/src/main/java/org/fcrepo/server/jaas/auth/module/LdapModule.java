@@ -16,7 +16,7 @@
  * the License.
  */
 
-package fedora.server.jaas.auth.module;
+package org.fcrepo.server.jaas.auth.module;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -51,8 +51,8 @@ import javax.security.auth.spi.LoginModule;
 
 import org.apache.log4j.Logger;
 
-import fedora.server.jaas.auth.UserPrincipal;
-import fedora.server.jaas.util.Base64;
+import org.fcrepo.server.jaas.auth.UserPrincipal;
+import org.fcrepo.server.jaas.util.Base64;
 
 public class LdapModule implements LoginModule
 {

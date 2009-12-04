@@ -16,7 +16,7 @@
  * the License.
  */
 
-package fedora.server.jaas.auth.handler;
+package org.fcrepo.server.jaas.auth.handler;
 
 import java.io.IOException;
 
