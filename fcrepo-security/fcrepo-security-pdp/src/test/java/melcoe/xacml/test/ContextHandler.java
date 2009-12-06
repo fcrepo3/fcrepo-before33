@@ -32,45 +32,39 @@ import com.sun.xacml.ctx.ResponseCtx;
  * 
  * @author nishen@melcoe.mq.edu.au
  */
-public class ContextHandler
-{
-	private static Logger log = Logger.getLogger(ContextHandler.class.getName());
+public class ContextHandler {
+	private static Logger log = Logger
+			.getLogger(ContextHandler.class.getName());
 	private static final ContextHandler contextHandler;
 	private static final ContextUtil contextUtil = ContextUtil.getInstance();
-	
+
 	private static MelcoePDP melcoePDPImpl;
 
-	static
-	{
+	static {
 		contextHandler = new ContextHandler();
 	}
 
-	private ContextHandler()
-	{
-		try
-		{
+	private ContextHandler() {
+		try {
 			melcoePDPImpl = new MelcoePDPImpl();
 			log.debug("created new PDP");
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			// test code...
 		}
 	}
 
-	public static ContextHandler getInstance()
-	{
+	public static ContextHandler getInstance() {
 		return contextHandler;
 	}
 
 	/**
-	 * @param reqCtx an XACML request context for resolution.
+	 * @param reqCtx
+	 *            an XACML request context for resolution.
 	 * 
 	 * @return an XACML response context based on the evaluation of the request
-	 * context.
+	 *         context.
 	 */
-	public ResponseCtx evaluate(RequestCtx reqCtx) throws Exception
-	{
+	public ResponseCtx evaluate(RequestCtx reqCtx) throws Exception {
 		log.debug("Resolving RequestCtx request!");
 
 		String request = contextUtil.makeRequestCtx(reqCtx);
@@ -81,12 +75,12 @@ public class ContextHandler
 	}
 
 	/**
-	 * @param req an XACML request context for resolution.
+	 * @param req
+	 *            an XACML request context for resolution.
 	 * @return an XACML response context based on the evaluation of the request
-	 * context.
+	 *         context.
 	 */
-	public String evaluate(String req) throws Exception
-	{
+	public String evaluate(String req) throws Exception {
 		String res = melcoePDPImpl.evaluate(req);
 		return res;
 	}

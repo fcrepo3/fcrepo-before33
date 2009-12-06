@@ -25,12 +25,12 @@ package melcoe.xacml.pdp;
  * @author nishen@melcoe.mq.edu.au
  * 
  */
-public interface MelcoePDP
-{
+public interface MelcoePDP {
 	/**
 	 * This method evaulates an XACML request and returns an XACML response.
 	 * 
-	 * @param request the XACML request
+	 * @param request
+	 *            the XACML request
 	 * @return the XACML response
 	 * @throws EvaluationException
 	 */
@@ -41,7 +41,8 @@ public interface MelcoePDP
 	 * This function takes an array of requests and evaluates them and returns a
 	 * single response that contains all the resource id's and results.
 	 * 
-	 * @param requests the String array of XACML requests
+	 * @param requests
+	 *            the String array of XACML requests
 	 * @return the XACML response
 	 * @throws EvaluationException
 	 */

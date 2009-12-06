@@ -111,9 +111,9 @@ import com.sun.xacml.cond.EvaluationResult;
  * @author nishen@melcoe.mq.edu.au
  * 
  */
-public class DbXmlPolicyDataManager implements PolicyDataManager
-{
-	private static final Logger log = Logger.getLogger(DbXmlPolicyDataManager.class.getName());
+public class DbXmlPolicyDataManager implements PolicyDataManager {
+	private static final Logger log = Logger
+			.getLogger(DbXmlPolicyDataManager.class.getName());
 	private static final String XACML20_POLICY_NS = "urn:oasis:names:tc:xacml:2.0:policy:schema:os";
 	private static final String METADATA_POLICY_NS = "metadata";
 	private static final String XACML_RESOURCE_ID = "urn:oasis:names:tc:xacml:1.0:resource:resource-id";
@@ -142,19 +142,15 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 	 * 
 	 * @throws PolicyDataManagerException
 	 */
-	public DbXmlPolicyDataManager() throws PolicyDataManagerException
-	{
+	public DbXmlPolicyDataManager() throws PolicyDataManagerException {
 		initConfig();
 
 		File envHome = new File(DB_HOME);
 		XmlTransaction txn = null;
-		try
-		{
-			try
-			{
+		try {
+			try {
 				EnvironmentConfig envCfg = new EnvironmentConfig();
-				if (log.isDebugEnabled())
-				{
+				if (log.isDebugEnabled()) {
 					log.debug("Lockers: " + envCfg.getMaxLockers());
 					log.debug("LockObjects: " + envCfg.getMaxLockObjects());
 					log.debug("Locks: " + envCfg.getMaxLocks());
@@ -186,13 +182,14 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 				updateContext = manager.createUpdateContext();
 
 				txn = manager.createTransaction();
-				if (manager.existsContainer(CONTAINER) == 0)
-				{
-					container = manager.createContainer(txn, CONTAINER, containerCfg);
+				if (manager.existsContainer(CONTAINER) == 0) {
+					container = manager.createContainer(txn, CONTAINER,
+							containerCfg);
 
 					// if we just created a container we also need to add an
 					// index
-					XmlIndexSpecification is = container.getIndexSpecification(txn);
+					XmlIndexSpecification is = container
+							.getIndexSpecification(txn);
 
 					int idxType = 0;
 					int syntaxType = 0;
@@ -202,7 +199,8 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 					idxType |= XmlIndexSpecification.NODE_ELEMENT;
 					idxType |= XmlIndexSpecification.KEY_EQUALITY;
 					syntaxType = XmlValue.STRING;
-					is.addIndex(XACML20_POLICY_NS, "AttributeValue", idxType, syntaxType);
+					is.addIndex(XACML20_POLICY_NS, "AttributeValue", idxType,
+							syntaxType);
 
 					// Add the metadata default index
 					idxType = 0;
@@ -213,10 +211,9 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 					is.addDefaultIndex(idxType, syntaxType);
 
 					container.setIndexSpecification(txn, is, updateContext);
-				}
-				else
-				{
-					container = manager.openContainer(txn, CONTAINER, containerCfg);
+				} else {
+					container = manager.openContainer(txn, CONTAINER,
+							containerCfg);
 				}
 
 				txn.commit();
@@ -227,18 +224,15 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 				searchQueries = new XmlQueryExpression[10];
 
 				setLastUpdate(System.currentTimeMillis());
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				log.fatal("Could not start database subsystem.", e);
 				txn.abort();
 				close();
 				throw new PolicyDataManagerException(e.getMessage(), e);
 			}
-		}
-		catch (XmlException xe)
-		{
-			throw new PolicyDataManagerException("Error aborting transaction: " + xe.getMessage(), xe);
+		} catch (XmlException xe) {
+			throw new PolicyDataManagerException("Error aborting transaction: "
+					+ xe.getMessage(), xe);
 		}
 	}
 
@@ -247,8 +241,7 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 	 * 
 	 * @see melcoe.xacml.pdp.data.PolicyDataManager#addPolicy(java.io.File)
 	 */
-	public String addPolicy(File f) throws PolicyDataManagerException
-	{
+	public String addPolicy(File f) throws PolicyDataManagerException {
 		return addPolicy(f, null);
 	}
 
@@ -256,26 +249,23 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 	 * (non-Javadoc)
 	 * 
 	 * @see melcoe.xacml.pdp.data.PolicyDataManager#addPolicy(java.io.File,
-	 *      java.lang.String)
+	 * java.lang.String)
 	 */
-	public String addPolicy(File f, String name) throws PolicyDataManagerException
-	{
+	public String addPolicy(File f, String name)
+			throws PolicyDataManagerException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		byte[] bytes = new byte[1024];
 
-		try
-		{
+		try {
 			FileInputStream fis = new FileInputStream(f);
 			int count = fis.read(bytes);
-			while (count > -1)
-			{
+			while (count > -1) {
 				out.write(bytes, 0, count);
 				count = fis.read(bytes);
 			}
-		}
-		catch (IOException e)
-		{
-			throw new PolicyDataManagerException("Error reading file: " + f.getName(), e);
+		} catch (IOException e) {
+			throw new PolicyDataManagerException("Error reading file: "
+					+ f.getName(), e);
 		}
 
 		return addPolicy(name, out.toString());
@@ -286,8 +276,7 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 	 * 
 	 * @see melcoe.xacml.pdp.data.PolicyDataManager#addPolicy(java.lang.String)
 	 */
-	public String addPolicy(String document) throws PolicyDataManagerException
-	{
+	public String addPolicy(String document) throws PolicyDataManagerException {
 		return addPolicy(document, null);
 	}
 
@@ -295,48 +284,43 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 	 * (non-Javadoc)
 	 * 
 	 * @see melcoe.xacml.pdp.data.PolicyDataManager#addPolicy(java.lang.String,
-	 *      java.lang.String)
+	 * java.lang.String)
 	 */
-	public String addPolicy(String document, String name) throws PolicyDataManagerException
-	{
-		try
-		{
-			if (validator != null)
-			{
+	public String addPolicy(String document, String name)
+			throws PolicyDataManagerException {
+		try {
+			if (validator != null) {
 				if (log.isDebugEnabled())
 					log.debug("validating document: " + name);
-				validator.validate(new StreamSource(new ByteArrayInputStream(document.getBytes())));
+				validator.validate(new StreamSource(new ByteArrayInputStream(
+						document.getBytes())));
 			}
-		}
-		catch (Exception e)
-		{
-			throw new PolicyDataManagerException("Could not validate policy: " + name, e);
+		} catch (Exception e) {
+			throw new PolicyDataManagerException("Could not validate policy: "
+					+ name, e);
 		}
 
 		String docName = null;
 		XmlTransaction txn = null;
-		try
-		{
-			try
-			{
+		try {
+			try {
 				XmlDocument doc = makeDocument(name, document);
 				docName = doc.getName();
 				txn = manager.createTransaction();
 				container.putDocument(txn, doc, updateContext);
 				txn.commit();
 				setLastUpdate(System.currentTimeMillis());
-			}
-			catch (XmlException xe)
-			{
+			} catch (XmlException xe) {
 				if (xe.getErrorCode() == XmlException.UNIQUE_ERROR)
-					throw new PolicyDataManagerException("Document already exists: " + docName);
+					throw new PolicyDataManagerException(
+							"Document already exists: " + docName);
 				txn.abort();
-				throw new PolicyDataManagerException("Error adding policy: " + xe.getMessage(), xe);
+				throw new PolicyDataManagerException("Error adding policy: "
+						+ xe.getMessage(), xe);
 			}
-		}
-		catch (XmlException xe)
-		{
-			throw new PolicyDataManagerException("Error aborting transaction: " + xe.getMessage(), xe);
+		} catch (XmlException xe) {
+			throw new PolicyDataManagerException("Error aborting transaction: "
+					+ xe.getMessage(), xe);
 		}
 
 		return docName;
@@ -345,29 +329,25 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see melcoe.xacml.pdp.data.PolicyDataManager#deletePolicy(java.lang.String)
+	 * @see
+	 * melcoe.xacml.pdp.data.PolicyDataManager#deletePolicy(java.lang.String)
 	 */
-	public boolean deletePolicy(String name) throws PolicyDataManagerException
-	{
+	public boolean deletePolicy(String name) throws PolicyDataManagerException {
 		XmlTransaction txn = null;
-		try
-		{
-			try
-			{
+		try {
+			try {
 				txn = manager.createTransaction();
 				container.deleteDocument(txn, name, updateContext);
 				txn.commit();
 				setLastUpdate(System.currentTimeMillis());
-			}
-			catch (XmlException xe)
-			{
+			} catch (XmlException xe) {
 				txn.abort();
-				throw new PolicyDataManagerException("Error deleting document: " + name, xe);
+				throw new PolicyDataManagerException(
+						"Error deleting document: " + name, xe);
 			}
-		}
-		catch (XmlException xe)
-		{
-			throw new PolicyDataManagerException("Error aborting transaction: " + xe.getMessage(), xe);
+		} catch (XmlException xe) {
+			throw new PolicyDataManagerException("Error aborting transaction: "
+					+ xe.getMessage(), xe);
 		}
 
 		return true;
@@ -376,46 +356,41 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see melcoe.xacml.pdp.data.PolicyDataManager#updatePolicy(java.lang.String,
-	 *      java.lang.String)
+	 * @see
+	 * melcoe.xacml.pdp.data.PolicyDataManager#updatePolicy(java.lang.String,
+	 * java.lang.String)
 	 */
-	public boolean updatePolicy(String name, String newDocument) throws PolicyDataManagerException
-	{
-		try
-		{
-			if (validator != null)
-			{
+	public boolean updatePolicy(String name, String newDocument)
+			throws PolicyDataManagerException {
+		try {
+			if (validator != null) {
 				if (log.isDebugEnabled())
 					log.debug("validating document: " + name);
-				validator.validate(new StreamSource(new ByteArrayInputStream(newDocument.getBytes())));
+				validator.validate(new StreamSource(new ByteArrayInputStream(
+						newDocument.getBytes())));
 			}
-		}
-		catch (Exception e)
-		{
-			throw new PolicyDataManagerException("Could not validate policy: " + name, e);
+		} catch (Exception e) {
+			throw new PolicyDataManagerException("Could not validate policy: "
+					+ name, e);
 		}
 
 		XmlTransaction txn = null;
 
-		try
-		{
-			try
-			{
+		try {
+			try {
 				txn = manager.createTransaction();
 				XmlDocument doc = makeDocument(name, newDocument);
 				container.updateDocument(txn, doc, updateContext);
 				txn.commit();
 				setLastUpdate(System.currentTimeMillis());
-			}
-			catch (XmlException xe)
-			{
+			} catch (XmlException xe) {
 				txn.abort();
-				throw new PolicyDataManagerException("Error updating document: " + name, xe);
+				throw new PolicyDataManagerException(
+						"Error updating document: " + name, xe);
 			}
-		}
-		catch (XmlException xe)
-		{
-			throw new PolicyDataManagerException("Error aborting transaction: " + xe.getMessage(), xe);
+		} catch (XmlException xe) {
+			throw new PolicyDataManagerException("Error aborting transaction: "
+					+ xe.getMessage(), xe);
 		}
 
 		return true;
@@ -426,34 +401,31 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 	 * 
 	 * @see melcoe.xacml.pdp.data.PolicyDataManager#getPolicy(java.lang.String)
 	 */
-	public byte[] getPolicy(String name) throws PolicyDataManagerException
-	{
-		try
-		{
+	public byte[] getPolicy(String name) throws PolicyDataManagerException {
+		try {
 			XmlDocument doc = container.getDocument(name);
 			return doc.getContent();
-		}
-		catch (XmlException xe)
-		{
-			throw new PolicyDataManagerException("Error retrieving document: " + name, xe);
+		} catch (XmlException xe) {
+			throw new PolicyDataManagerException("Error retrieving document: "
+					+ name, xe);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see melcoe.xacml.pdp.data.PolicyDataManager#getPolicies(com.sun.xacml.EvaluationCtx)
+	 * @seemelcoe.xacml.pdp.data.PolicyDataManager#getPolicies(com.sun.xacml.
+	 * EvaluationCtx)
 	 */
-	public Map<String, byte[]> getPolicies(EvaluationCtx eval) throws PolicyDataManagerException
-	{
+	public Map<String, byte[]> getPolicies(EvaluationCtx eval)
+			throws PolicyDataManagerException {
 		long a = 0;
 		long b = 0;
 		long total = 0;
 
 		Map<String, byte[]> documents = new HashMap<String, byte[]>();
 
-		try
-		{
+		try {
 			// Get the query (query gets prepared if necesary)
 			a = System.nanoTime();
 
@@ -465,55 +437,61 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 			context.setNamespace("m", METADATA_POLICY_NS);
 
 			// Set all the bind variables in the query context
-			String[] types = new String[] { "Subject", "Resource", "Action", "Environment" };
+			String[] types = new String[] { "Subject", "Resource", "Action",
+					"Environment" };
 			int resourceComponentCount = 0;
 
-			for (int x = 0; x < types.length; x++)
-			{
+			for (int x = 0; x < types.length; x++) {
 				String t = types[x];
 				int count = 0;
-				for (AttributeBean bean : attributeMap.get(t.toLowerCase() + "Attributes"))
-				{
-					if (bean.getId().equals(XACML_RESOURCE_ID))
-					{
-						context.setVariableValue("XacmlResourceId", new XmlValue(bean.getId()));
-						
+				for (AttributeBean bean : attributeMap.get(t.toLowerCase()
+						+ "Attributes")) {
+					if (bean.getId().equals(XACML_RESOURCE_ID)) {
+						context.setVariableValue("XacmlResourceId",
+								new XmlValue(bean.getId()));
+
 						int c = 0;
-						for (String value : bean.getValues())
-						{
+						for (String value : bean.getValues()) {
 							XmlValue component = new XmlValue(value);
-							context.setVariableValue("XacmlResourceIdValue" + c, component);
+							context.setVariableValue(
+									"XacmlResourceIdValue" + c, component);
 
 							if (log.isDebugEnabled())
-								log.debug("XacmlResourceIdValue" + resourceComponentCount + ": " + value);
-							
+								log
+										.debug("XacmlResourceIdValue"
+												+ resourceComponentCount + ": "
+												+ value);
+
 							resourceComponentCount++;
 							c++;
 						}
-					}
-					else
-					{
-						context.setVariableValue(t + "Id" + count, new XmlValue(bean.getId()));
-						
+					} else {
+						context.setVariableValue(t + "Id" + count,
+								new XmlValue(bean.getId()));
+
 						if (log.isDebugEnabled())
-							log.debug(t + "Id" + count + " = '" + bean.getId() + "'");
-						
+							log.debug(t + "Id" + count + " = '" + bean.getId()
+									+ "'");
+
 						int valueCount = 0;
-						for (String value : bean.getValues())
-						{
-							context.setVariableValue(t + "Id" + count + "-Value" + valueCount, new XmlValue(value));
+						for (String value : bean.getValues()) {
+							context.setVariableValue(t + "Id" + count
+									+ "-Value" + valueCount,
+									new XmlValue(value));
 							if (log.isDebugEnabled())
-								log.debug(t + "Id" + count + "-Value" + valueCount + " = '" + value + "'");
+								log.debug(t + "Id" + count + "-Value"
+										+ valueCount + " = '" + value + "'");
 
 							valueCount++;
 						}
-						
+
 						count++;
 					}
 				}
 			}
 
-			XmlQueryExpression qe = getQuery(attributeMap, context, resourceComponentCount);
+			XmlQueryExpression qe = getQuery(attributeMap, context,
+					resourceComponentCount);
 
 			b = System.nanoTime();
 			total += (b - a);
@@ -529,24 +507,22 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 				log.debug("Query exec. time: " + (b - a) + "ns");
 
 			// process results
-			while (results.hasNext())
-			{
+			while (results.hasNext()) {
 				XmlValue value = results.next();
 				if (log.isDebugEnabled())
-					log.debug("Retrieved Document: " + value.asDocument().getName());
-				documents.put(value.asDocument().getName(), value.asDocument().getContent());
+					log.debug("Retrieved Document: "
+							+ value.asDocument().getName());
+				documents.put(value.asDocument().getName(), value.asDocument()
+						.getContent());
 			}
 			results.delete();
 
 			if (log.isDebugEnabled())
 				log.debug("Total exec. time: " + total + "ns");
-		}
-		catch (XmlException xe)
-		{
-			throw new PolicyDataManagerException("Error getting policies from PolicyDataManager.", xe);
-		}
-		catch (URISyntaxException use)
-		{
+		} catch (XmlException xe) {
+			throw new PolicyDataManagerException(
+					"Error getting policies from PolicyDataManager.", xe);
+		} catch (URISyntaxException use) {
 			throw new PolicyDataManagerException("Error building query.", use);
 		}
 
@@ -558,35 +534,28 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 	 * 
 	 * @see melcoe.xacml.pdp.data.PolicyDataManager#listPolicies()
 	 */
-	public List<String> listPolicies() throws PolicyDataManagerException
-	{
+	public List<String> listPolicies() throws PolicyDataManagerException {
 		List<String> documents = new ArrayList<String>();
 		XmlTransaction txn = null;
 
-		try
-		{
-			try
-			{
+		try {
+			try {
 				txn = manager.createTransaction();
 				XmlDocumentConfig docConf = new XmlDocumentConfig();
 				XmlResults results = container.getAllDocuments(txn, docConf);
-				while (results.hasNext())
-				{
+				while (results.hasNext()) {
 					XmlValue value = results.next();
 					documents.add(value.asDocument().getName());
 				}
 				results.delete();
 				txn.commit();
-			}
-			catch (XmlException xe)
-			{
+			} catch (XmlException xe) {
 				txn.abort();
 				throw new PolicyDataManagerException(xe);
 			}
-		}
-		catch (XmlException xe)
-		{
-			throw new PolicyDataManagerException("Error aborting transaction: " + xe.getMessage(), xe);
+		} catch (XmlException xe) {
+			throw new PolicyDataManagerException("Error aborting transaction: "
+					+ xe.getMessage(), xe);
 		}
 
 		return documents;
@@ -595,26 +564,20 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 	/**
 	 * Closes the dbxml container and manager.
 	 */
-	private void close()
-	{
-		try
-		{
-			if (container != null)
-			{
+	private void close() {
+		try {
+			if (container != null) {
 				container.close();
 				container = null;
 				log.info("Closed container");
 			}
 
-			if (manager != null)
-			{
+			if (manager != null) {
 				manager.close();
 				manager = null;
 				log.info("Closed manager");
 			}
-		}
-		catch (Exception de)
-		{
+		} catch (Exception de) {
 			log.warn(de.getMessage());
 		}
 	}
@@ -622,17 +585,17 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 	/**
 	 * Obtains the metadata for the given document.
 	 * 
-	 * @param docIS the document as an InputStream
+	 * @param docIS
+	 *            the document as an InputStream
 	 * @return the document metadata as a Map
 	 */
-	private Map<String, String> getDocumentMetadata(InputStream docIS)
-	{
+	private Map<String, String> getDocumentMetadata(InputStream docIS) {
 		Map<String, String> metadata = new HashMap<String, String>();
 
-		try
-		{
+		try {
 			// Create instance of DocumentBuilderFactory
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
 			// Get the DocumentBuilder
 			DocumentBuilder docBuilder = factory.newDocumentBuilder();
 			// Create blank DOM Document and parse contents of input stream
@@ -640,7 +603,8 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 
 			NodeList nodes = null;
 
-			metadata.put("PolicyId", doc.getDocumentElement().getAttribute("PolicyId"));
+			metadata.put("PolicyId", doc.getDocumentElement().getAttribute(
+					"PolicyId"));
 
 			nodes = doc.getElementsByTagName("Subjects");
 			if (nodes.getLength() == 0)
@@ -657,9 +621,7 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 			nodes = doc.getElementsByTagName("Environments");
 			if (nodes.getLength() == 0)
 				metadata.put("anyEnvironment", "T");
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
 
@@ -669,15 +631,18 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 	/**
 	 * Creates an instance of an XmlDocument for storage in the database.
 	 * 
-	 * @param name the name of the document (policy)
-	 * @param document the document data as a String
+	 * @param name
+	 *            the name of the document (policy)
+	 * @param document
+	 *            the document data as a String
 	 * @return the XmlDocument instance
 	 * @throws XmlException
 	 * @throws PolicyDataManagerException
 	 */
-	private XmlDocument makeDocument(String name, String document) throws XmlException, PolicyDataManagerException
-	{
-		Map<String, String> metadata = getDocumentMetadata(new ByteArrayInputStream(document.getBytes()));
+	private XmlDocument makeDocument(String name, String document)
+			throws XmlException, PolicyDataManagerException {
+		Map<String, String> metadata = getDocumentMetadata(new ByteArrayInputStream(
+				document.getBytes()));
 		XmlDocument doc = manager.createDocument();
 		String docName = name;
 
@@ -685,28 +650,34 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 			docName = metadata.get("PolicyId");
 
 		if (docName == null || "".equals(docName))
-			throw new PolicyDataManagerException("Could not extract PolicyID from document.");
+			throw new PolicyDataManagerException(
+					"Could not extract PolicyID from document.");
 
-		doc.setMetaData("metadata", "PolicyId", new XmlValue(XmlValue.STRING, docName));
+		doc.setMetaData("metadata", "PolicyId", new XmlValue(XmlValue.STRING,
+				docName));
 		doc.setContent(document);
 		doc.setName(docName);
 
 		String item = null;
 		item = metadata.get("anySubject");
 		if (item != null)
-			doc.setMetaData("metadata", "anySubject", new XmlValue(XmlValue.STRING, item));
+			doc.setMetaData("metadata", "anySubject", new XmlValue(
+					XmlValue.STRING, item));
 
 		item = metadata.get("anyResource");
 		if (item != null)
-			doc.setMetaData("metadata", "anyResource", new XmlValue(XmlValue.STRING, item));
+			doc.setMetaData("metadata", "anyResource", new XmlValue(
+					XmlValue.STRING, item));
 
 		item = metadata.get("anyAction");
 		if (item != null)
-			doc.setMetaData("metadata", "anyAction", new XmlValue(XmlValue.STRING, item));
+			doc.setMetaData("metadata", "anyAction", new XmlValue(
+					XmlValue.STRING, item));
 
 		item = metadata.get("anyEnvironment");
 		if (item != null)
-			doc.setMetaData("metadata", "anyEnvironment", new XmlValue(XmlValue.STRING, item));
+			doc.setMetaData("metadata", "anyEnvironment", new XmlValue(
+					XmlValue.STRING, item));
 
 		return doc;
 	}
@@ -715,19 +686,20 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 	 * Either returns a query that has previously been generated, or generates a
 	 * new one if it has not.
 	 * 
-	 * @param attributeMap the Map of attributes, type and values upon which
-	 *        this query is based
-	 * @param context the context for the query
+	 * @param attributeMap
+	 *            the Map of attributes, type and values upon which this query
+	 *            is based
+	 * @param context
+	 *            the context for the query
 	 * @return an XmlQueryExpression that can be executed
 	 * @throws XmlException
 	 */
-	private XmlQueryExpression getQuery(Map<String, Set<AttributeBean>> attributeMap, XmlQueryContext context, int r)
-			throws XmlException
-	{
+	private XmlQueryExpression getQuery(
+			Map<String, Set<AttributeBean>> attributeMap,
+			XmlQueryContext context, int r) throws XmlException {
 		// The dimensions for this query.
 		StringBuilder sb = new StringBuilder();
-		for (Set<AttributeBean> attributeBeans  : attributeMap.values())
-		{
+		for (Set<AttributeBean> attributeBeans : attributeMap.values()) {
 			sb.append(attributeBeans.size() + ":");
 			for (AttributeBean bean : attributeBeans)
 				sb.append(bean.getValues().size() + "-");
@@ -758,21 +730,22 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 	 * Given a set of attributes this method generates a DBXML XPath query based
 	 * on those attributes to extract a subset of policies from the database.
 	 * 
-	 * @param attributeMap the Map of Attributes from which to generate the
-	 *        query
-	 * @param r the number of components in the resource id
+	 * @param attributeMap
+	 *            the Map of Attributes from which to generate the query
+	 * @param r
+	 *            the number of components in the resource id
 	 * @return the query as a String
 	 */
-	private String createQuery(Map<String, Set<AttributeBean>> attributeMap, int r)
-	{
+	private String createQuery(Map<String, Set<AttributeBean>> attributeMap,
+			int r) {
 		// The query contains these 4 sections.
-		String[] types = new String[] { "Subject", "Resource", "Action", "Environment" };
+		String[] types = new String[] { "Subject", "Resource", "Action",
+				"Environment" };
 
 		int sections = 0;
 		StringBuilder sb = new StringBuilder();
 		sb.append("collection('" + CONTAINER + "')/p:Policy/p:Target[");
-		for (int x = 0; x < types.length; x++)
-		{
+		for (int x = 0; x < types.length; x++) {
 			String t = types[x];
 
 			if (attributeMap.get(t.toLowerCase() + "Attributes").size() == 0)
@@ -787,28 +760,25 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 			// sb.append("((not('p:" + t + "s'))");
 
 			int count = 0;
-			for (AttributeBean bean : attributeMap.get(t.toLowerCase() + "Attributes"))
-			{
+			for (AttributeBean bean : attributeMap.get(t.toLowerCase()
+					+ "Attributes")) {
 				sb.append(" or ");
 				sb.append("(");
 
-				if (bean.getId().equals(XACML_RESOURCE_ID) && r > 0)
-				{
+				if (bean.getId().equals(XACML_RESOURCE_ID) && r > 0) {
 					sb.append("p:" + t + "s/p:" + t + "/p:" + t + "Match/");
 					sb.append("p:" + t + "AttributeDesignator/@AttributeId = ");
 					sb.append("$XacmlResourceId");
 					sb.append(" and ");
 
-					/* 
-					sb.append("p:" + t + "s/p:" + t + "/p:" + t + "Match/");
-					sb.append("p:" + t + "AttributeDesignator/@DataType = ");
-					sb.append("$XacmlResourceType");
-					sb.append(" and ");
-					*/
-					
+					/*
+					 * sb.append("p:" + t + "s/p:" + t + "/p:" + t + "Match/");
+					 * sb.append("p:" + t + "AttributeDesignator/@DataType = ");
+					 * sb.append("$XacmlResourceType"); sb.append(" and ");
+					 */
+
 					sb.append("(");
-					for (int i = 0; i < bean.getValues().size(); i++)
-					{						
+					for (int i = 0; i < bean.getValues().size(); i++) {
 						if (i > 0)
 							sb.append(" or ");
 
@@ -817,29 +787,27 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 						sb.append("$XacmlResourceIdValue" + i);
 					}
 					sb.append(")");
-				}
-				else
-				{
+				} else {
 					sb.append("p:" + t + "s/p:" + t + "/p:" + t + "Match/");
 					sb.append("p:" + t + "AttributeDesignator/@AttributeId = ");
 					sb.append("$" + t + "Id" + count);
 					sb.append(" and ");
 					sb.append("(");
 					/*
-					sb.append("p:" + t + "s/p:" + t + "/p:" + t + "Match/");
-					sb.append("p:" + t + "AttributeDesignator/@DataType = ");
-					sb.append("$" + t + "Type" + count);
-					sb.append(" and ");
-					*/
-					
-					for (int valueCount = 0; valueCount < bean.getValues().size(); valueCount++)
-					{
+					 * sb.append("p:" + t + "s/p:" + t + "/p:" + t + "Match/");
+					 * sb.append("p:" + t + "AttributeDesignator/@DataType = ");
+					 * sb.append("$" + t + "Type" + count); sb.append(" and ");
+					 */
+
+					for (int valueCount = 0; valueCount < bean.getValues()
+							.size(); valueCount++) {
 						if (valueCount > 0)
 							sb.append(" or ");
 
 						sb.append("p:" + t + "s/p:" + t + "/p:" + t + "Match/");
 						sb.append("p:AttributeValue = ");
-						sb.append("$" + t + "Id" + count + "-Value" + valueCount);
+						sb.append("$" + t + "Id" + count + "-Value"
+								+ valueCount);
 					}
 					sb.append(")");
 
@@ -858,15 +826,17 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 	 * This method extracts the attributes listed in the indexMap from the given
 	 * evaluation context.
 	 * 
-	 * @param eval the Evaluation Context from which to extract Attributes
+	 * @param eval
+	 *            the Evaluation Context from which to extract Attributes
 	 * @return a Map of Attributes for each category (Subject, Resource, Action,
 	 *         Environment)
 	 * @throws URISyntaxException
 	 */
 	@SuppressWarnings("unchecked")
-	private Map<String, Set<AttributeBean>> getAttributeMap(EvaluationCtx eval) throws URISyntaxException
-	{
-		URI defaultCategoryURI = new URI(AttributeDesignator.SUBJECT_CATEGORY_DEFAULT);
+	private Map<String, Set<AttributeBean>> getAttributeMap(EvaluationCtx eval)
+			throws URISyntaxException {
+		URI defaultCategoryURI = new URI(
+				AttributeDesignator.SUBJECT_CATEGORY_DEFAULT);
 
 		Map<String, String> im = null;
 		Map<String, Set<AttributeBean>> attributeMap = new HashMap<String, Set<AttributeBean>>();
@@ -874,163 +844,146 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 
 		im = indexMap.get("subjectAttributes");
 		attributeBeans = new HashMap<String, AttributeBean>();
-		for (String attributeId : im.keySet())
-		{
-			EvaluationResult result = eval.getSubjectAttribute(new URI(im.get(attributeId)), new URI(attributeId),
-				defaultCategoryURI);
-			if (result.getStatus() == null && !result.indeterminate())
-			{
+		for (String attributeId : im.keySet()) {
+			EvaluationResult result = eval.getSubjectAttribute(new URI(im
+					.get(attributeId)), new URI(attributeId),
+					defaultCategoryURI);
+			if (result.getStatus() == null && !result.indeterminate()) {
 				AttributeValue attr = result.getAttributeValue();
-				if (attr.returnsBag())
-				{
-					Iterator<AttributeValue> i = ((BagAttribute) attr).iterator();
-					if (i.hasNext())
-					{
-						while (i.hasNext())
-						{
+				if (attr.returnsBag()) {
+					Iterator<AttributeValue> i = ((BagAttribute) attr)
+							.iterator();
+					if (i.hasNext()) {
+						while (i.hasNext()) {
 							AttributeValue value = i.next();
 							String attributeType = im.get(attributeId);
-							
+
 							AttributeBean ab = attributeBeans.get(attributeId);
-							if (ab == null)
-							{
+							if (ab == null) {
 								ab = new AttributeBean();
 								ab.setId(attributeId);
 								ab.setType(attributeType);
 								attributeBeans.put(attributeId, ab);
 							}
-							
+
 							ab.addValue(value.encode());
 						}
 					}
 				}
 			}
 		}
-		attributeMap.put("subjectAttributes", new HashSet(attributeBeans.values()));
+		attributeMap.put("subjectAttributes", new HashSet(attributeBeans
+				.values()));
 
 		im = indexMap.get("resourceAttributes");
 		attributeBeans = new HashMap<String, AttributeBean>();
-		for (String attributeId : im.keySet())
-		{
-			EvaluationResult result = eval.getResourceAttribute(new URI(im.get(attributeId)), new URI(attributeId),
-				null);
-			if (result.getStatus() == null && !result.indeterminate())
-			{
+		for (String attributeId : im.keySet()) {
+			EvaluationResult result = eval.getResourceAttribute(new URI(im
+					.get(attributeId)), new URI(attributeId), null);
+			if (result.getStatus() == null && !result.indeterminate()) {
 				AttributeValue attr = result.getAttributeValue();
-				if (attr.returnsBag())
-				{
-					Iterator<AttributeValue> i = ((BagAttribute) attr).iterator();
-					if (i.hasNext())
-					{
-						while (i.hasNext())
-						{
+				if (attr.returnsBag()) {
+					Iterator<AttributeValue> i = ((BagAttribute) attr)
+							.iterator();
+					if (i.hasNext()) {
+						while (i.hasNext()) {
 							AttributeValue value = i.next();
 							String attributeType = im.get(attributeId);
 
 							AttributeBean ab = attributeBeans.get(attributeId);
-							if (ab == null)
-							{
+							if (ab == null) {
 								ab = new AttributeBean();
 								ab.setId(attributeId);
 								ab.setType(attributeType);
 								attributeBeans.put(attributeId, ab);
 							}
-							
-							if (attributeId.equals(XACML_RESOURCE_ID) && value.encode().startsWith("/"))
-							{
-								String[] components = makeComponents(value.encode());
-								if (components != null && components.length > 0)
-								{
+
+							if (attributeId.equals(XACML_RESOURCE_ID)
+									&& value.encode().startsWith("/")) {
+								String[] components = makeComponents(value
+										.encode());
+								if (components != null && components.length > 0) {
 									for (String c : components)
 										ab.addValue(c);
+								} else {
+									ab.addValue(value.encode());
 								}
-								else
-								{
-									ab.addValue(value.encode());									
-								}
-							}
-							else
-							{
+							} else {
 								ab.addValue(value.encode());
-							}							
+							}
 						}
 					}
 				}
 			}
 		}
-		attributeMap.put("resourceAttributes", new HashSet(attributeBeans.values()));
+		attributeMap.put("resourceAttributes", new HashSet(attributeBeans
+				.values()));
 
 		im = indexMap.get("actionAttributes");
 		attributeBeans = new HashMap<String, AttributeBean>();
-		for (String attributeId : im.keySet())
-		{
-			EvaluationResult result = eval.getActionAttribute(new URI(im.get(attributeId)), new URI(attributeId), null);
-			if (result.getStatus() == null && !result.indeterminate())
-			{
+		for (String attributeId : im.keySet()) {
+			EvaluationResult result = eval.getActionAttribute(new URI(im
+					.get(attributeId)), new URI(attributeId), null);
+			if (result.getStatus() == null && !result.indeterminate()) {
 				AttributeValue attr = result.getAttributeValue();
-				if (attr.returnsBag())
-				{
-					Iterator<AttributeValue> i = ((BagAttribute) attr).iterator();
-					if (i.hasNext())
-					{
-						while (i.hasNext())
-						{
+				if (attr.returnsBag()) {
+					Iterator<AttributeValue> i = ((BagAttribute) attr)
+							.iterator();
+					if (i.hasNext()) {
+						while (i.hasNext()) {
 							AttributeValue value = i.next();
 							String attributeType = im.get(attributeId);
-							
+
 							AttributeBean ab = attributeBeans.get(attributeId);
-							if (ab == null)
-							{
+							if (ab == null) {
 								ab = new AttributeBean();
 								ab.setId(attributeId);
 								ab.setType(attributeType);
 								attributeBeans.put(attributeId, ab);
 							}
-							
+
 							ab.addValue(value.encode());
 						}
 					}
 				}
 			}
 		}
-		attributeMap.put("actionAttributes", new HashSet(attributeBeans.values()));
+		attributeMap.put("actionAttributes", new HashSet(attributeBeans
+				.values()));
 
 		im = indexMap.get("environmentAttributes");
 		attributeBeans = new HashMap<String, AttributeBean>();
-		for (String attributeId : im.keySet())
-		{
+		for (String attributeId : im.keySet()) {
 			URI imAttrId = new URI(im.get(attributeId));
 			URI attrId = new URI(attributeId);
-			EvaluationResult result = eval.getEnvironmentAttribute(imAttrId, attrId, null);
-			if (result.getStatus() == null && !result.indeterminate())
-			{
+			EvaluationResult result = eval.getEnvironmentAttribute(imAttrId,
+					attrId, null);
+			if (result.getStatus() == null && !result.indeterminate()) {
 				AttributeValue attr = result.getAttributeValue();
-				if (attr.returnsBag())
-				{
-					Iterator<AttributeValue> i = ((BagAttribute) attr).iterator();
-					if (i.hasNext())
-					{
-						while (i.hasNext())
-						{
+				if (attr.returnsBag()) {
+					Iterator<AttributeValue> i = ((BagAttribute) attr)
+							.iterator();
+					if (i.hasNext()) {
+						while (i.hasNext()) {
 							AttributeValue value = i.next();
 							String attributeType = im.get(attributeId);
 
 							AttributeBean ab = attributeBeans.get(attributeId);
-							if (ab == null)
-							{
+							if (ab == null) {
 								ab = new AttributeBean();
 								ab.setId(attributeId);
 								ab.setType(attributeType);
 								attributeBeans.put(attributeId, ab);
 							}
-							
+
 							ab.addValue(value.encode());
 						}
 					}
 				}
 			}
 		}
-		attributeMap.put("environmentAttributes", new HashSet(attributeBeans.values()));
+		attributeMap.put("environmentAttributes", new HashSet(attributeBeans
+				.values()));
 
 		return attributeMap;
 	}
@@ -1041,97 +994,95 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 	 * 
 	 * @throws PolicyDataManagerException
 	 */
-	private void initConfig() throws PolicyDataManagerException
-	{
-		if (log.isDebugEnabled())
-		{
+	private void initConfig() throws PolicyDataManagerException {
+		if (log.isDebugEnabled()) {
 			Runtime runtime = Runtime.getRuntime();
 			log.debug("Total memory: " + runtime.totalMemory() / 1024);
 			log.debug("Free memory: " + runtime.freeMemory() / 1024);
 			log.debug("Max memory: " + runtime.maxMemory() / 1024);
 		}
-		
-		try
-		{
+
+		try {
 			String home = System.getenv("MELCOEPDP_HOME");
 			if (home == null || "".equals(home))
-				throw new MelcoePDPException("Environment home (MELCOEPDP_HOME) is not set.");
+				throw new MelcoePDPException(
+						"Environment home (MELCOEPDP_HOME) is not set.");
 
 			String filename = home + "/conf/config-dbxml.xml";
 			File f = new File(filename);
 			if (!f.exists())
-				throw new PolicyDataManagerException("Could not locate config file: " + f.getAbsolutePath());
+				throw new PolicyDataManagerException(
+						"Could not locate config file: " + f.getAbsolutePath());
 
 			log.info("Loading config file: " + f.getAbsolutePath());
 
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
 			DocumentBuilder docBuilder = factory.newDocumentBuilder();
 			Document doc = docBuilder.parse(new FileInputStream(f));
 
 			NodeList nodes = null;
 
 			// get database information
-			nodes = doc.getElementsByTagName("database").item(0).getChildNodes();
-			for (int x = 0; x < nodes.getLength(); x++)
-			{
+			nodes = doc.getElementsByTagName("database").item(0)
+					.getChildNodes();
+			for (int x = 0; x < nodes.getLength(); x++) {
 				Node node = nodes.item(x);
-				if (node.getNodeName().equals("directory"))
-				{
+				if (node.getNodeName().equals("directory")) {
 					DB_HOME = System.getenv("MELCOEPDP_HOME")
-							+ node.getAttributes().getNamedItem("name").getNodeValue();
+							+ node.getAttributes().getNamedItem("name")
+									.getNodeValue();
 					File db_home = new File(DB_HOME);
-					if (!db_home.exists())
-					{
-						try
-						{
+					if (!db_home.exists()) {
+						try {
 							db_home.mkdirs();
-						}
-						catch (Exception e)
-						{
-							throw new PolicyDataManagerException("Could not create DB directory: "
-									+ db_home.getAbsolutePath());
+						} catch (Exception e) {
+							throw new PolicyDataManagerException(
+									"Could not create DB directory: "
+											+ db_home.getAbsolutePath());
 						}
 					}
 
 					if (log.isDebugEnabled())
-						log.debug("[config] " + node.getNodeName() + ": " + db_home.getAbsolutePath());
+						log.debug("[config] " + node.getNodeName() + ": "
+								+ db_home.getAbsolutePath());
 				}
-				if (node.getNodeName().equals("container"))
-				{
-					CONTAINER = node.getAttributes().getNamedItem("name").getNodeValue();
+				if (node.getNodeName().equals("container")) {
+					CONTAINER = node.getAttributes().getNamedItem("name")
+							.getNodeValue();
 					File conFile = new File(DB_HOME + "/" + CONTAINER);
 					if (log.isDebugEnabled())
-						log.debug("[config] " + node.getNodeName() + ": " + conFile.getAbsolutePath());
+						log.debug("[config] " + node.getNodeName() + ": "
+								+ conFile.getAbsolutePath());
 				}
 			}
 
 			// get index map information
-			String[] indexMapElements = { "subjectAttributes", "resourceAttributes", "actionAttributes",
+			String[] indexMapElements = { "subjectAttributes",
+					"resourceAttributes", "actionAttributes",
 					"environmentAttributes" };
 
 			indexMap = new HashMap<String, Map<String, String>>();
 			for (String s : indexMapElements)
 				indexMap.put(s, new HashMap<String, String>());
 
-			nodes = doc.getElementsByTagName("indexMap").item(0).getChildNodes();
-			for (int x = 0; x < nodes.getLength(); x++)
-			{
+			nodes = doc.getElementsByTagName("indexMap").item(0)
+					.getChildNodes();
+			for (int x = 0; x < nodes.getLength(); x++) {
 				Node node = nodes.item(x);
-				if (node.getNodeType() == Node.ELEMENT_NODE)
-				{
-					if (log.isDebugEnabled())
-					{
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					if (log.isDebugEnabled()) {
 						log.debug("Node name: " + node.getNodeName());
 					}
 
 					NodeList attrs = node.getChildNodes();
-					for (int y = 0; y < attrs.getLength(); y++)
-					{
+					for (int y = 0; y < attrs.getLength(); y++) {
 						Node attr = attrs.item(y);
-						if (attr.getNodeType() == Node.ELEMENT_NODE)
-						{
-							String name = attr.getAttributes().getNamedItem("name").getNodeValue();
-							String type = attr.getAttributes().getNamedItem("type").getNodeValue();
+						if (attr.getNodeType() == Node.ELEMENT_NODE) {
+							String name = attr.getAttributes().getNamedItem(
+									"name").getNodeValue();
+							String type = attr.getAttributes().getNamedItem(
+									"type").getNodeValue();
 							indexMap.get(node.getNodeName()).put(name, type);
 						}
 					}
@@ -1139,35 +1090,36 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 			}
 
 			// get validation information
-			Node schemaConfig = doc.getElementsByTagName("schemaConfig").item(0);
+			Node schemaConfig = doc.getElementsByTagName("schemaConfig")
+					.item(0);
 			nodes = schemaConfig.getChildNodes();
-			if ("true".equals(schemaConfig.getAttributes().getNamedItem("validation").getNodeValue()))
-			{
+			if ("true".equals(schemaConfig.getAttributes().getNamedItem(
+					"validation").getNodeValue())) {
 				log.info("Initialising validation");
 
-				for (int x = 0; x < nodes.getLength(); x++)
-				{
+				for (int x = 0; x < nodes.getLength(); x++) {
 					Node schemaNode = nodes.item(x);
-					if (schemaNode.getNodeType() == Node.ELEMENT_NODE)
-					{
-						if (XACML20_POLICY_NS.equals(schemaNode.getAttributes().getNamedItem("namespace")
-								.getNodeValue()))
-						{
+					if (schemaNode.getNodeType() == Node.ELEMENT_NODE) {
+						if (XACML20_POLICY_NS.equals(schemaNode.getAttributes()
+								.getNamedItem("namespace").getNodeValue())) {
 							if (log.isDebugEnabled())
-								log.debug("found valid schema. Creating validator");
-							String loc = schemaNode.getAttributes().getNamedItem("location").getNodeValue();
-							SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-							Schema schema = schemaFactory.newSchema(new URL(loc));
+								log
+										.debug("found valid schema. Creating validator");
+							String loc = schemaNode.getAttributes()
+									.getNamedItem("location").getNodeValue();
+							SchemaFactory schemaFactory = SchemaFactory
+									.newInstance("http://www.w3.org/2001/XMLSchema");
+							Schema schema = schemaFactory
+									.newSchema(new URL(loc));
 							validator = schema.newValidator();
 						}
 					}
 				}
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			log.fatal("Could not initialise DBXML: " + e.getMessage(), e);
-			throw new PolicyDataManagerException("Could not initialise DBXML: " + e.getMessage(), e);
+			throw new PolicyDataManagerException("Could not initialise DBXML: "
+					+ e.getMessage(), e);
 		}
 	}
 
@@ -1176,33 +1128,34 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 	 * 
 	 * @see melcoe.xacml.pdp.data.PolicyDataManager#getLastUpdate()
 	 */
-	public long getLastUpdate()
-	{
+	public long getLastUpdate() {
 		return lastUpdate;
 	}
 
 	/**
-	 * @param lastUpdate the lastUpdate to set
+	 * @param lastUpdate
+	 *            the lastUpdate to set
 	 */
-	public void setLastUpdate(long lastUpdate)
-	{
+	public void setLastUpdate(long lastUpdate) {
 		this.lastUpdate = lastUpdate;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see melcoe.xacml.pdp.data.PolicyDataManager#findPolicies(melcoe.xacml.util.AttributeBean[])
+	 * @see
+	 * melcoe.xacml.pdp.data.PolicyDataManager#findPolicies(melcoe.xacml.util
+	 * .AttributeBean[])
 	 */
-	public Map<String, byte[]> findPolicies(AttributeBean[] attributes) throws PolicyDataManagerException
-	{
+	public Map<String, byte[]> findPolicies(AttributeBean[] attributes)
+			throws PolicyDataManagerException {
 		if (attributes == null || attributes.length == 0)
-			throw new PolicyDataManagerException("attribute array cannot be null or zero length");
+			throw new PolicyDataManagerException(
+					"attribute array cannot be null or zero length");
 
 		long a, b, total = 0;
 		Map<String, byte[]> documents = new TreeMap<String, byte[]>();
-		try
-		{
+		try {
 			a = System.nanoTime();
 
 			XmlQueryContext context = manager.createQueryContext();
@@ -1210,16 +1163,16 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 			context.setNamespace("p", XACML20_POLICY_NS);
 			context.setNamespace("m", METADATA_POLICY_NS);
 
-			for (int x = 0; attributes.length < 0; x++)
-			{
-				context.setVariableValue("id" + x, new XmlValue(attributes[x].getId()));
+			for (int x = 0; attributes.length < 0; x++) {
+				context.setVariableValue("id" + x, new XmlValue(attributes[x]
+						.getId()));
 				// context.setVariableValue("type" + x, new
 				// XmlValue(attributes[x].getType()));
-				//context.setVariableValue("value" + x, new XmlValue(attributes[x].getValue()));
+				// context.setVariableValue("value" + x, new
+				// XmlValue(attributes[x].getValue()));
 			}
 
-			if (searchQueries[attributes.length] == null)
-			{
+			if (searchQueries[attributes.length] == null) {
 				StringBuilder sb = new StringBuilder();
 
 				sb.append("for $doc in ");
@@ -1227,14 +1180,14 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 				sb.append("let $value := $doc//p:AttributeValue ");
 				sb.append("let $id := $value/..//@AttributeId ");
 				sb.append("where 1 = 1 ");
-				for (int x = 0; x < attributes.length; x++)
-				{
+				for (int x = 0; x < attributes.length; x++) {
 					sb.append("and $value = $value" + x + " ");
 					sb.append("and $id = $id" + x + " ");
 				}
 				sb.append("return $doc");
 
-				searchQueries[attributes.length] = manager.prepare(sb.toString(), context);
+				searchQueries[attributes.length] = manager.prepare(sb
+						.toString(), context);
 			}
 
 			b = System.nanoTime();
@@ -1243,7 +1196,8 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 				log.debug("Query prep. time: " + (b - a) + "ns");
 
 			a = System.nanoTime();
-			XmlResults results = searchQueries[attributes.length].execute(context);
+			XmlResults results = searchQueries[attributes.length]
+					.execute(context);
 			b = System.nanoTime();
 			total += (b - a);
 			if (log.isDebugEnabled())
@@ -1251,12 +1205,13 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 
 			a = System.nanoTime();
 
-			while (results.hasNext())
-			{
+			while (results.hasNext()) {
 				XmlValue value = results.next();
 				if (log.isDebugEnabled())
-					log.debug("Found search result: " + value.asDocument().getName());
-				documents.put(value.asDocument().getName(), value.asDocument().getContent());
+					log.debug("Found search result: "
+							+ value.asDocument().getName());
+				documents.put(value.asDocument().getName(), value.asDocument()
+						.getContent());
 			}
 			results.delete();
 
@@ -1266,30 +1221,27 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 				log.debug("Result proc. time: " + (b - a) + "ns");
 
 			log.info("Total time: " + total + "ns");
-		}
-		catch (XmlException xe)
-		{
+		} catch (XmlException xe) {
 			log.error("Exception during findPolicies: " + xe.getMessage(), xe);
-			throw new PolicyDataManagerException("Exception during findPolicies: " + xe.getMessage(), xe);
+			throw new PolicyDataManagerException(
+					"Exception during findPolicies: " + xe.getMessage(), xe);
 		}
 
 		return documents;
 	}
 
-	private String[] makeComponents(String resourceId)
-	{
-		if (resourceId == null || resourceId.equals("") || !resourceId.startsWith("/"))
+	private String[] makeComponents(String resourceId) {
+		if (resourceId == null || resourceId.equals("")
+				|| !resourceId.startsWith("/"))
 			return null;
 
 		List<String> components = new ArrayList<String>();
 
 		String[] parts = resourceId.split("\\/");
 
-		for (int x = 1; x < parts.length; x++)
-		{
+		for (int x = 1; x < parts.length; x++) {
 			StringBuilder sb = new StringBuilder();
-			for (int y = 0; y < x; y++)
-			{
+			for (int y = 0; y < x; y++) {
 				sb.append("/");
 				sb.append(parts[y + 1]);
 			}
@@ -1310,14 +1262,10 @@ public class DbXmlPolicyDataManager implements PolicyDataManager
 	 * 
 	 * @see java.lang.Object#finalize()
 	 */
-	protected void finalize() throws Throwable
-	{
-		try
-		{
+	protected void finalize() throws Throwable {
+		try {
 			close(); // close open files
-		}
-		finally
-		{
+		} finally {
 			super.finalize();
 		}
 	}

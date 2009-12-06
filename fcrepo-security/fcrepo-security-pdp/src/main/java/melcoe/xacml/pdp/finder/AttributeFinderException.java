@@ -16,33 +16,29 @@
  * limitations under the License.
  */
 
-
 package melcoe.xacml.pdp.finder;
 
 import org.apache.log4j.Logger;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- *
+ * 
  */
-public class AttributeFinderException extends Exception
-{
-	private static final Logger log = Logger.getLogger(AttributeFinderException.class.getName());
+public class AttributeFinderException extends Exception {
+	private static final Logger log = Logger
+			.getLogger(AttributeFinderException.class.getName());
 
-	public AttributeFinderException()
-	{
+	public AttributeFinderException() {
 		super();
 		log.error("No message provided");
 	}
 
-	public AttributeFinderException(String msg)
-	{
+	public AttributeFinderException(String msg) {
 		super(msg);
 		log.error(msg);
 	}
 
-	public AttributeFinderException(String msg, Throwable t)
-	{
+	public AttributeFinderException(String msg, Throwable t) {
 		super(msg);
 		log.error(msg, t);
 	}

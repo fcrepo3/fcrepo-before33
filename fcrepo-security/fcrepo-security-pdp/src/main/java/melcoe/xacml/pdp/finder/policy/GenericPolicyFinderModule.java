@@ -41,14 +41,13 @@ import com.sun.xacml.finder.PolicyFinderResult;
  * @author nishen@melcoe.mq.edu.au
  * 
  */
-public class GenericPolicyFinderModule extends PolicyFinderModule
-{
-	private static final Logger log = Logger.getLogger(GenericPolicyFinderModule.class.getName());
+public class GenericPolicyFinderModule extends PolicyFinderModule {
+	private static final Logger log = Logger
+			.getLogger(GenericPolicyFinderModule.class.getName());
 
 	private PolicyManager policyManager = null;
 
-	public GenericPolicyFinderModule()
-	{
+	public GenericPolicyFinderModule() {
 		super();
 	}
 
@@ -58,8 +57,8 @@ public class GenericPolicyFinderModule extends PolicyFinderModule
 	 * 
 	 * @return true
 	 */
-	public boolean isRequestSupported()
-	{
+	@Override
+	public boolean isRequestSupported() {
 		return true;
 	}
 
@@ -67,20 +66,19 @@ public class GenericPolicyFinderModule extends PolicyFinderModule
 	 * Initialize this module. Typically this is called by
 	 * <code>PolicyFinder</code> when a PDP is created.
 	 * 
-	 * @param finder the <code>PolicyFinder</code> using this module
+	 * @param finder
+	 *            the <code>PolicyFinder</code> using this module
 	 */
-	public void init(PolicyFinder finder)
-	{
-		try
-		{
+	@Override
+	public void init(PolicyFinder finder) {
+		try {
 			policyManager = new PolicyManager(finder);
-		}
-		catch (URISyntaxException use)
-		{
-			log.fatal("Error initialising DBPolicyFinderModule due to improper URI:", use);
-		}
-		catch (PolicyDataManagerException pdme)
-		{
+		} catch (URISyntaxException use) {
+			log
+					.fatal(
+							"Error initialising DBPolicyFinderModule due to improper URI:",
+							use);
+		} catch (PolicyDataManagerException pdme) {
 			log.fatal("Error initialising DBPolicyFinderModule:", pdme);
 		}
 	}
@@ -91,27 +89,23 @@ public class GenericPolicyFinderModule extends PolicyFinderModule
 	 * multiple policies (depending on which constructor was used to construct
 	 * this instance).
 	 * 
-	 * @param context the representation of the request data
+	 * @param context
+	 *            the representation of the request data
 	 * 
 	 * @return the result of trying to find an applicable policy
 	 */
-	public PolicyFinderResult findPolicy(EvaluationCtx context)
-	{
-		try
-		{
+	@Override
+	public PolicyFinderResult findPolicy(EvaluationCtx context) {
+		try {
 			AbstractPolicy policy = policyManager.getPolicy(context);
 
 			if (policy == null)
 				return new PolicyFinderResult();
 
 			return new PolicyFinderResult(policy);
-		}
-		catch (TopLevelPolicyException tlpe)
-		{
+		} catch (TopLevelPolicyException tlpe) {
 			return new PolicyFinderResult(tlpe.getStatus());
-		}
-		catch (PolicyDataManagerException pdme)
-		{
+		} catch (PolicyDataManagerException pdme) {
 			if (log.isDebugEnabled())
 				log.debug("problem processing policy", pdme);
 

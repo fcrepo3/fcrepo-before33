@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-
 package melcoe.xacml.util;
 
 import java.io.ByteArrayOutputStream;
@@ -49,10 +48,9 @@ import org.w3c.dom.Element;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- *
+ * 
  */
-public class GenerateSamplePolicies
-{
+public class GenerateSamplePolicies {
 	private static final String POLICY_HOME = "C:/Code/policies";
 
 	private static final String XACML20_CONTEXT_NS = "urn:oasis:names:tc:xacml:2.0:context:schema:os";
@@ -68,20 +66,19 @@ public class GenerateSamplePolicies
 	private static List<String> resourceList = null;
 	private static Map<String, List<String>> actionList = null;
 
-	public static void main(String[] args) throws Exception
-	{
+	public static void main(String[] args) throws Exception {
 		nameList = loadStrings(POLICY_HOME + "/names.txt");
 		resourceList = loadStrings(POLICY_HOME + "/resources.txt");
 		actionList = loadActions(POLICY_HOME + "/actions.txt");
 
-		SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+		SchemaFactory schemaFactory = SchemaFactory
+				.newInstance("http://www.w3.org/2001/XMLSchema");
 		Schema schema = schemaFactory.newSchema(new URL(XACML20_POLICY_LOC));
 		validator = schema.newValidator();
 
 		System.out.println("Starting clock!");
 		long time1 = System.currentTimeMillis();
-		for (int x = 20; x <= 10000; x++)
-		{
+		for (int x = 20; x <= 10000; x++) {
 			int level = 0;
 			if (x > 5500)
 				level = 1;
@@ -92,7 +89,8 @@ public class GenerateSamplePolicies
 			if (x > 9750)
 				level = 4;
 
-			String filename = POLICY_HOME + "/policies/policy-" + prePad(5, String.valueOf(x), '0') + ".xml";
+			String filename = POLICY_HOME + "/policies/policy-"
+					+ prePad(5, String.valueOf(x), '0') + ".xml";
 			byte[] bytes = generatePolicy(level, x);
 			File f = new File(filename);
 			FileOutputStream fos = new FileOutputStream(f);
@@ -105,24 +103,20 @@ public class GenerateSamplePolicies
 		System.out.println("Time taken: " + (time2 - time1));
 	}
 
-	public static List<String> loadStrings(String filename)
-	{
+	public static List<String> loadStrings(String filename) {
 		List<String> strings = new ArrayList<String>();
 		File file = new File(filename);
 		Scanner scanner = null;
 
-		try
-		{
+		try {
 			scanner = new Scanner(file);
-		}
-		catch (FileNotFoundException fe)
-		{
-			System.err.println("Could not location the file: " + file.getName());
+		} catch (FileNotFoundException fe) {
+			System.err
+					.println("Could not location the file: " + file.getName());
 			return null;
 		}
 
-		while (scanner.hasNextLine())
-		{
+		while (scanner.hasNextLine()) {
 			String item = scanner.nextLine().trim();
 			if (!strings.contains(item))
 				strings.add(item);
@@ -133,31 +127,25 @@ public class GenerateSamplePolicies
 		return strings;
 	}
 
-	public static Map<String, List<String>> loadActions(String filename)
-	{
+	public static Map<String, List<String>> loadActions(String filename) {
 		Map<String, List<String>> actions = new HashMap<String, List<String>>();
 		File file = new File(filename);
 		Scanner scanner = null;
 
-		try
-		{
+		try {
 			scanner = new Scanner(file);
-		}
-		catch (FileNotFoundException fe)
-		{
-			System.err.println("Could not location the file: " + file.getName());
+		} catch (FileNotFoundException fe) {
+			System.err
+					.println("Could not location the file: " + file.getName());
 			return null;
 		}
 
-		while (scanner.hasNextLine())
-		{
+		while (scanner.hasNextLine()) {
 			String line = scanner.nextLine().trim();
 			String[] result = line.split("--");
-			if (result.length == 2)
-			{
+			if (result.length == 2) {
 				List<String> action = actions.get(result[0]);
-				if (action == null)
-				{
+				if (action == null) {
 					action = new ArrayList<String>();
 					actions.put(result[0], action);
 				}
@@ -172,11 +160,10 @@ public class GenerateSamplePolicies
 		return actions;
 	}
 
-	public static byte[] generatePolicy(int level, int id) throws Exception
-	{
+	public static byte[] generatePolicy(int level, int id) throws Exception {
 		// Create instance of DocumentBuilderFactory
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		
+
 		// Get the DocumentBuilder
 		DocumentBuilder docBuilder = factory.newDocumentBuilder();
 		// Create blank DOM Document
@@ -189,11 +176,15 @@ public class GenerateSamplePolicies
 		root.setAttribute("RuleCombiningAlgId", RULE_COMB_ALG_ID);
 		root.setAttribute("xmlns:xacl-context", XACML20_CONTEXT_NS);
 		root.setAttribute("xmlns:xsi", XSI_NS);
-		root.setAttributeNS(XSI_NS, "xsi:schemaLocation", XACML20_POLICY_NS + " " + XACML20_POLICY_LOC + " " + XACML20_CONTEXT_NS + " " + XACML20_CONTEXT_LOC);
+		root.setAttributeNS(XSI_NS, "xsi:schemaLocation", XACML20_POLICY_NS
+				+ " " + XACML20_POLICY_LOC + " " + XACML20_CONTEXT_NS + " "
+				+ XACML20_CONTEXT_LOC);
 
 		Element desc = doc.createElement("Description");
 		root.appendChild(desc);
-		desc.appendChild(doc.createTextNode("This is one of many sample policies that has been auto-generated."));
+		desc
+				.appendChild(doc
+						.createTextNode("This is one of many sample policies that has been auto-generated."));
 
 		Element target = doc.createElement("Target");
 		root.appendChild(target);
@@ -204,13 +195,15 @@ public class GenerateSamplePolicies
 		Element rule = doc.createElement("Rule");
 		root.appendChild(rule);
 		rule.setAttribute("Effect", "Permit");
-		rule.setAttribute("RuleId", "au:edu:mq:melcoe:ramp:fedora:xacml:2.0:rule:generic-permit");
+		rule.setAttribute("RuleId",
+				"au:edu:mq:melcoe:ramp:fedora:xacml:2.0:rule:generic-permit");
 
 		TransformerFactory xFactory = TransformerFactory.newInstance();
 		xFactory.setAttribute("indent-number", new Integer(2));
 		Transformer aTransformer = xFactory.newTransformer();
 		aTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		aTransformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+		aTransformer.setOutputProperty(
+				"{http://xml.apache.org/xslt}indent-amount", "4");
 
 		Source src = new DOMSource(doc);
 
@@ -224,31 +217,35 @@ public class GenerateSamplePolicies
 		return bDoc.toByteArray();
 	}
 
-	public static Element generateSubjects(Document doc)
-	{
+	public static Element generateSubjects(Document doc) {
 		int max = (int) Math.round(Math.random() * 10);
 		if (max == 0)
 			max = 1;
-		List<String> mySubjects = getStrings(max, GenerateSamplePolicies.nameList);
+		List<String> mySubjects = getStrings(max,
+				GenerateSamplePolicies.nameList);
 
 		Element subjects = doc.createElement("Subjects");
 
-		for (int x = 0; x < max; x++)
-		{
+		for (int x = 0; x < max; x++) {
 			Element subject = doc.createElement("Subject");
 
 			Element subjectMatch = doc.createElement("SubjectMatch");
-			subjectMatch.setAttribute("MatchId", "urn:oasis:names:tc:xacml:1.0:function:string-equal");
+			subjectMatch.setAttribute("MatchId",
+					"urn:oasis:names:tc:xacml:1.0:function:string-equal");
 			subject.appendChild(subjectMatch);
 
 			Element attributeValue = doc.createElement("AttributeValue");
-			attributeValue.setAttribute("DataType", "http://www.w3.org/2001/XMLSchema#string");
+			attributeValue.setAttribute("DataType",
+					"http://www.w3.org/2001/XMLSchema#string");
 			attributeValue.appendChild(doc.createTextNode(mySubjects.get(x)));
 			subjectMatch.appendChild(attributeValue);
 
-			Element subjectAttributeDesignator = doc.createElement("SubjectAttributeDesignator");
-			subjectAttributeDesignator.setAttribute("AttributeId", "urn:oasis:names:tc:xacml:1.0:subject:subject-id");
-			subjectAttributeDesignator.setAttribute("DataType", "http://www.w3.org/2001/XMLSchema#string");
+			Element subjectAttributeDesignator = doc
+					.createElement("SubjectAttributeDesignator");
+			subjectAttributeDesignator.setAttribute("AttributeId",
+					"urn:oasis:names:tc:xacml:1.0:subject:subject-id");
+			subjectAttributeDesignator.setAttribute("DataType",
+					"http://www.w3.org/2001/XMLSchema#string");
 			subjectMatch.appendChild(subjectAttributeDesignator);
 
 			subjects.appendChild(subject);
@@ -257,31 +254,35 @@ public class GenerateSamplePolicies
 		return subjects;
 	}
 
-	public static Element generateResources(Document doc)
-	{
+	public static Element generateResources(Document doc) {
 		int max = (int) Math.round(Math.random() * 10);
 		if (max == 0)
 			max = 1;
-		List<String> myResources = getStrings(max, GenerateSamplePolicies.resourceList);
+		List<String> myResources = getStrings(max,
+				GenerateSamplePolicies.resourceList);
 
 		Element resources = doc.createElement("Resources");
 
-		for (int x = 0; x < max; x++)
-		{
+		for (int x = 0; x < max; x++) {
 			Element resource = doc.createElement("Resource");
 
 			Element resourceMatch = doc.createElement("ResourceMatch");
-			resourceMatch.setAttribute("MatchId", "urn:oasis:names:tc:xacml:1.0:function:anyURI-equal");
+			resourceMatch.setAttribute("MatchId",
+					"urn:oasis:names:tc:xacml:1.0:function:anyURI-equal");
 			resource.appendChild(resourceMatch);
 
 			Element attributeValue = doc.createElement("AttributeValue");
-			attributeValue.setAttribute("DataType", "http://www.w3.org/2001/XMLSchema#anyURI");
+			attributeValue.setAttribute("DataType",
+					"http://www.w3.org/2001/XMLSchema#anyURI");
 			attributeValue.appendChild(doc.createTextNode(myResources.get(x)));
 			resourceMatch.appendChild(attributeValue);
 
-			Element resourceAttributeDesignator = doc.createElement("ResourceAttributeDesignator");
-			resourceAttributeDesignator.setAttribute("AttributeId", "urn:oasis:names:tc:xacml:1.0:resource:resource-id");
-			resourceAttributeDesignator.setAttribute("DataType", "http://www.w3.org/2001/XMLSchema#anyURI");
+			Element resourceAttributeDesignator = doc
+					.createElement("ResourceAttributeDesignator");
+			resourceAttributeDesignator.setAttribute("AttributeId",
+					"urn:oasis:names:tc:xacml:1.0:resource:resource-id");
+			resourceAttributeDesignator.setAttribute("DataType",
+					"http://www.w3.org/2001/XMLSchema#anyURI");
 			resourceMatch.appendChild(resourceAttributeDesignator);
 
 			resources.appendChild(resource);
@@ -290,33 +291,37 @@ public class GenerateSamplePolicies
 		return resources;
 	}
 
-	public static Element generateActions(int level, Document doc)
-	{
+	public static Element generateActions(int level, Document doc) {
 		Element actionElement = doc.createElement("Actions");
 
 		// Each gets the previous in order: 0 read, 1 update, 2 create, 3
 		// delete, 4 admin
-		String[] myActions = new String[] { "read", "update", "create", "delete", "admin" };
+		String[] myActions = new String[] { "read", "update", "create",
+				"delete", "admin" };
 
-		for (int x = 0; x <= level; x++)
-		{
-			List<String> actions = GenerateSamplePolicies.actionList.get(myActions[x]);
-			for (String a : actions)
-			{
+		for (int x = 0; x <= level; x++) {
+			List<String> actions = GenerateSamplePolicies.actionList
+					.get(myActions[x]);
+			for (String a : actions) {
 				Element action = doc.createElement("Action");
 
 				Element actionMatch = doc.createElement("ActionMatch");
-				actionMatch.setAttribute("MatchId", "urn:oasis:names:tc:xacml:1.0:function:string-equal");
+				actionMatch.setAttribute("MatchId",
+						"urn:oasis:names:tc:xacml:1.0:function:string-equal");
 				action.appendChild(actionMatch);
 
 				Element attributeValue = doc.createElement("AttributeValue");
-				attributeValue.setAttribute("DataType", "http://www.w3.org/2001/XMLSchema#string");
+				attributeValue.setAttribute("DataType",
+						"http://www.w3.org/2001/XMLSchema#string");
 				attributeValue.appendChild(doc.createTextNode(a));
 				actionMatch.appendChild(attributeValue);
 
-				Element actionAttributeDesignator = doc.createElement("ActionAttributeDesignator");
-				actionAttributeDesignator.setAttribute("AttributeId", "urn:fedora:names:fedora:2.1:action:id");
-				actionAttributeDesignator.setAttribute("DataType", "http://www.w3.org/2001/XMLSchema#string");
+				Element actionAttributeDesignator = doc
+						.createElement("ActionAttributeDesignator");
+				actionAttributeDesignator.setAttribute("AttributeId",
+						"urn:fedora:names:fedora:2.1:action:id");
+				actionAttributeDesignator.setAttribute("DataType",
+						"http://www.w3.org/2001/XMLSchema#string");
 				actionMatch.appendChild(actionAttributeDesignator);
 
 				actionElement.appendChild(action);
@@ -326,16 +331,13 @@ public class GenerateSamplePolicies
 		return actionElement;
 	}
 
-	public static List<String> getStrings(int max, List<String> strings)
-	{
+	public static List<String> getStrings(int max, List<String> strings) {
 		List<String> myStrings = new ArrayList<String>();
 		int x = 0;
 
-		while (x < max)
-		{
+		while (x < max) {
 			int r = (int) Math.round(Math.random() * (strings.size() - 1));
-			if (!myStrings.contains(strings.get(r)))
-			{
+			if (!myStrings.contains(strings.get(r))) {
 				myStrings.add(strings.get(r));
 				x++;
 			}
@@ -344,11 +346,9 @@ public class GenerateSamplePolicies
 		return myStrings;
 	}
 
-	private static String prePad(int length, String str, char c)
-	{
+	private static String prePad(int length, String str, char c) {
 		StringBuffer sb = new StringBuffer();
-		for (int x = 0; x < (length - str.length()); x++)
-		{
+		for (int x = 0; x < (length - str.length()); x++) {
 			sb.append(c);
 		}
 

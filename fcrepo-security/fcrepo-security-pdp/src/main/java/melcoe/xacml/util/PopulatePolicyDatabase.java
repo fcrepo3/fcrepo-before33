@@ -35,19 +35,20 @@ import org.apache.log4j.Logger;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- *
+ * 
  */
-public class PopulatePolicyDatabase
-{
-	private static final Logger log = Logger.getLogger(PopulatePolicyDatabase.class);
+public class PopulatePolicyDatabase {
+	private static final Logger log = Logger
+			.getLogger(PopulatePolicyDatabase.class);
 
-	private static final String POLICY_HOME = System.getenv("MELCOEPDP_HOME") + "/policies";
+	private static final String POLICY_HOME = System.getenv("MELCOEPDP_HOME")
+			+ "/policies";
 	private static DbXmlPolicyDataManager dbXmlPolicyDataManager;
 
 	private static Set<String> policyNames = new HashSet<String>();
 
-	public static void main(String[] args) throws PolicyDataManagerException, FileNotFoundException
-	{
+	public static void main(String[] args) throws PolicyDataManagerException,
+			FileNotFoundException {
 		BasicConfigurator.configure();
 		dbXmlPolicyDataManager = new DbXmlPolicyDataManager();
 		log.info("Adding");
@@ -56,8 +57,8 @@ public class PopulatePolicyDatabase
 		list();
 	}
 
-	public static void add() throws PolicyDataManagerException, FileNotFoundException
-	{
+	public static void add() throws PolicyDataManagerException,
+			FileNotFoundException {
 		log.info("Starting clock!");
 		long time1 = System.nanoTime();
 		addDocuments();
@@ -66,31 +67,26 @@ public class PopulatePolicyDatabase
 		log.info("Time taken: " + (time2 - time1));
 	}
 
-	public static void addDocuments() throws PolicyDataManagerException, FileNotFoundException
-	{
+	public static void addDocuments() throws PolicyDataManagerException,
+			FileNotFoundException {
 		File[] files = getPolicyFiles();
 		if (files.length == 0)
 			return;
 
-		for (File f : files)
-		{
+		for (File f : files) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			byte[] bytes = new byte[1024];
 			FileInputStream fis = new FileInputStream(f);
 
 			log.info("Adding: " + f.getName());
 
-			try
-			{
+			try {
 				int count = fis.read(bytes);
-				while (count > -1)
-				{
+				while (count > -1) {
 					out.write(bytes, 0, count);
 					count = fis.read(bytes);
 				}
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 				log.error("Error reading file: " + f.getName(), e);
 			}
 
@@ -98,17 +94,14 @@ public class PopulatePolicyDatabase
 		}
 	}
 
-	public static void list() throws PolicyDataManagerException
-	{
+	public static void list() throws PolicyDataManagerException {
 		List<String> docNames = dbXmlPolicyDataManager.listPolicies();
-		for (String s : docNames)
-		{
+		for (String s : docNames) {
 			log.info("doc: " + s);
 		}
 	}
 
-	public static File[] getPolicyFiles()
-	{
+	public static File[] getPolicyFiles() {
 		File policyHome = new File(POLICY_HOME);
 		File[] policies = policyHome.listFiles(new PolicyFileFilter());
 		return policies;

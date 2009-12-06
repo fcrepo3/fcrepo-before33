@@ -40,20 +40,17 @@ import com.sun.xacml.ctx.RequestCtx;
 /**
  * @author nishen@melcoe.mq.edu.au
  */
-public class TestXacmlRequest
-{
+public class TestXacmlRequest {
 	private static final Logger log = Logger.getLogger(TestXacmlRequest.class);
-	
+
 	private static ContextHandler contextHandler = null;
 	private static ContextUtil contextUtil = null;
 
-	public static void main(String[] args) throws Exception
-	{
+	public static void main(String[] args) throws Exception {
 		contextHandler = ContextHandler.getInstance();
 		contextUtil = ContextUtil.getInstance();
 		StringBuilder request = new StringBuilder();
-		if (args.length > 0)
-		{
+		if (args.length > 0) {
 			File reqFile = new File(args[0]);
 			if (log.isDebugEnabled())
 				log.debug("Using request file: " + reqFile.getAbsolutePath());
@@ -61,27 +58,24 @@ public class TestXacmlRequest
 			Scanner scanner = new Scanner(new FileInputStream(reqFile));
 			while (scanner.hasNextLine())
 				request.append(scanner.nextLine());
-			
+
 			testRequest(request.toString());
-		}
-		else
-		{
+		} else {
 			testRequest(null);
 		}
 	}
 
-	public static void testRequest(String request) throws Exception
-	{
+	public static void testRequest(String request) throws Exception {
 		String reqs = null;
 
-		if (request == null)
-		{
-			//RequestCtx req = makeRequest("public", "read", "demo:SmileyBeerGlass");
-			RequestCtx req = makeRequest("administrator", "urn:fedora:names:fedora:2.1:action:id-ingestObject", "/coll:accg806/coll:acst305");
+		if (request == null) {
+			// RequestCtx req = makeRequest("public", "read",
+			// "demo:SmileyBeerGlass");
+			RequestCtx req = makeRequest("administrator",
+					"urn:fedora:names:fedora:2.1:action:id-ingestObject",
+					"/coll:accg806/coll:acst305");
 			reqs = contextUtil.makeRequestCtx(req);
-		}
-		else
-		{
+		} else {
 			reqs = request;
 		}
 
@@ -93,7 +87,7 @@ public class TestXacmlRequest
 
 		System.out.println("Total Time (ns): " + (b - a));
 		System.out.println(response);
-		
+
 		a = System.nanoTime();
 		response = contextHandler.evaluate(reqs);
 		b = System.nanoTime();
@@ -109,8 +103,8 @@ public class TestXacmlRequest
 		System.out.println(response);
 	}
 
-	public static List<Map<URI, List<AttributeValue>>> getSubjects(String subject)
-	{
+	public static List<Map<URI, List<AttributeValue>>> getSubjects(
+			String subject) {
 		// setup the id and value for the requesting subject
 		List<Map<URI, List<AttributeValue>>> subjects = new ArrayList<Map<URI, List<AttributeValue>>>();
 
@@ -118,32 +112,30 @@ public class TestXacmlRequest
 			return subjects;
 
 		Map<URI, List<AttributeValue>> subAttr = new HashMap<URI, List<AttributeValue>>();
-		try
-		{
+		try {
 			List<AttributeValue> attrList = new ArrayList<AttributeValue>();
 			attrList.add(new StringAttribute(subject));
-			subAttr.put(new URI("urn:fedora:names:fedora:2.1:subject:loginId"), attrList);
-			
+			subAttr.put(new URI("urn:fedora:names:fedora:2.1:subject:loginId"),
+					attrList);
+
 			attrList = new ArrayList<AttributeValue>();
 			for (int x = 0; x < 10; x++)
 				attrList.add(new StringAttribute("role" + x));
-			subAttr.put(new URI("urn:fedora:names:fedora:2.1:subject:role"), attrList); 
-		}
-		catch (URISyntaxException use)
-		{
+			subAttr.put(new URI("urn:fedora:names:fedora:2.1:subject:role"),
+					attrList);
+		} catch (URISyntaxException use) {
 			System.out.println(use.getMessage());
 		}
 		subjects.add(subAttr);
 
 		subAttr = new HashMap<URI, List<AttributeValue>>();
-		try
-		{
+		try {
 			List<AttributeValue> attrList = new ArrayList<AttributeValue>();
 			attrList.add(new StringAttribute(subject));
-			subAttr.put(new URI("urn:oasis:names:tc:xacml:1.0:subject:subject-id"), attrList);
-		}
-		catch (URISyntaxException use)
-		{
+			subAttr.put(new URI(
+					"urn:oasis:names:tc:xacml:1.0:subject:subject-id"),
+					attrList);
+		} catch (URISyntaxException use) {
 			System.out.println(use.getMessage());
 		}
 		subjects.add(subAttr);
@@ -151,43 +143,42 @@ public class TestXacmlRequest
 		return subjects;
 	}
 
-	public static Map<URI, AttributeValue> getEnvironment()
-	{
+	public static Map<URI, AttributeValue> getEnvironment() {
 		return new HashMap<URI, AttributeValue>();
 	}
 
-	public static RequestCtx makeRequest(String user, String action, String pid)
-	{
+	public static RequestCtx makeRequest(String user, String action, String pid) {
 		RequestCtx req = null;
 
 		Map<URI, AttributeValue> resAttr = new HashMap<URI, AttributeValue>();
 		Map<URI, AttributeValue> actionAttr = new HashMap<URI, AttributeValue>();
-	
-		try
-		{
-			if (pid != null && !pid.equals(""))
-			{
-				resAttr.put(new URI("urn:fedora:names:fedora:2.1:resource:object:pid"), new StringAttribute(pid));
-				resAttr.put(new URI("urn:oasis:names:tc:xacml:1.0:resource:resource-id"), new AnyURIAttribute(new URI(pid)));
+
+		try {
+			if (pid != null && !pid.equals("")) {
+				resAttr.put(new URI(
+						"urn:fedora:names:fedora:2.1:resource:object:pid"),
+						new StringAttribute(pid));
+				resAttr.put(new URI(
+						"urn:oasis:names:tc:xacml:1.0:resource:resource-id"),
+						new AnyURIAttribute(new URI(pid)));
 			}
-			
-			if (action != null && !action.equals(""))
-			{
-				actionAttr.put(new URI("urn:fedora:names:fedora:2.1:action:id"), new StringAttribute(action));
-				actionAttr.put(new URI("urn:oasis:names:tc:xacml:1.0:action:action-id"), new StringAttribute(action));
+
+			if (action != null && !action.equals("")) {
+				actionAttr.put(
+						new URI("urn:fedora:names:fedora:2.1:action:id"),
+						new StringAttribute(action));
+				actionAttr.put(new URI(
+						"urn:oasis:names:tc:xacml:1.0:action:action-id"),
+						new StringAttribute(action));
 			}
-		}
-		catch (URISyntaxException use)
-		{
+		} catch (URISyntaxException use) {
 			System.out.println(use.getMessage());
 		}
 
-		try
-		{
-			req = contextUtil.buildRequest(getSubjects(user), actionAttr, resAttr, getEnvironment());
-		}
-		catch (Exception e)
-		{
+		try {
+			req = contextUtil.buildRequest(getSubjects(user), actionAttr,
+					resAttr, getEnvironment());
+		} catch (Exception e) {
 			System.out.print(e.getMessage());
 		}
 

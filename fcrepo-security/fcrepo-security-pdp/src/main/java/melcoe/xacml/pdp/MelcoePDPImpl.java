@@ -43,9 +43,9 @@ import com.sun.xacml.ctx.Result;
  * @author nishen@melcoe.mq.edu.au
  * 
  */
-public class MelcoePDPImpl implements MelcoePDP
-{
-	private static final Logger log = Logger.getLogger(MelcoePDPImpl.class.getName());
+public class MelcoePDPImpl implements MelcoePDP {
+	private static final Logger log = Logger.getLogger(MelcoePDPImpl.class
+			.getName());
 	private PDP pdp;
 
 	/**
@@ -54,14 +54,13 @@ public class MelcoePDPImpl implements MelcoePDP
 	 * 
 	 * @throws MelcoePDPException
 	 */
-	public MelcoePDPImpl() throws MelcoePDPException
-	{
+	public MelcoePDPImpl() throws MelcoePDPException {
 		ConfigurationStore config = null;
-		try
-		{
+		try {
 			String home = System.getenv("MELCOEPDP_HOME");
 			if (home == null || "".equals(home))
-				throw new MelcoePDPException("Environment home (MELCOEPDP_HOME) is not set.");
+				throw new MelcoePDPException(
+						"Environment home (MELCOEPDP_HOME) is not set.");
 
 			File f = null;
 			String filename = null;
@@ -69,10 +68,10 @@ public class MelcoePDPImpl implements MelcoePDP
 			// Setup logging.
 			filename = home + "/conf/log4j.properties";
 			f = new File(filename);
-			if (!f.exists())
-			{
+			if (!f.exists()) {
 				BasicConfigurator.configure();
-				log.warn("Could not locate log configuration file: " + f.getAbsolutePath());
+				log.warn("Could not locate log configuration file: "
+						+ f.getAbsolutePath());
 				log.warn("Using default Basic Configuration");
 			}
 			PropertyConfigurator.configure(filename);
@@ -81,7 +80,8 @@ public class MelcoePDPImpl implements MelcoePDP
 			filename = home + "/conf/config-pdp.xml";
 			f = new File(filename);
 			if (!f.exists())
-				throw new MelcoePDPException("Could not locate config file: " + f.getAbsolutePath());
+				throw new MelcoePDPException("Could not locate config file: "
+						+ f.getAbsolutePath());
 
 			log.info("Loading config file: " + f.getAbsolutePath());
 
@@ -89,11 +89,10 @@ public class MelcoePDPImpl implements MelcoePDP
 			pdp = new PDP(config.getDefaultPDPConfig());
 
 			log.info("PDP Instantiated and initialised!");
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			log.fatal("Could not initialise PDP: " + e.getMessage(), e);
-			throw new MelcoePDPException("Could not initialise PDP: " + e.getMessage(), e);
+			throw new MelcoePDPException("Could not initialise PDP: "
+					+ e.getMessage(), e);
 		}
 	}
 
@@ -102,20 +101,16 @@ public class MelcoePDPImpl implements MelcoePDP
 	 * 
 	 * @see melcoe.xacml.pdp.MelcoePDP#evaluate(java.lang.String)
 	 */
-	public String evaluate(String request) throws EvaluationException
-	{
+	public String evaluate(String request) throws EvaluationException {
 		if (log.isDebugEnabled())
 			log.debug("evaluating request");
 
 		RequestCtx req = null;
 		ByteArrayInputStream is = new ByteArrayInputStream(request.getBytes());
 
-		try
-		{
+		try {
 			req = RequestCtx.getInstance(is);
-		}
-		catch (ParsingException pe)
-		{
+		} catch (ParsingException pe) {
 			log.error("Error parsing request:\n" + request, pe);
 			throw new EvaluationException("Error parsing request:\n" + request);
 		}
@@ -132,26 +127,23 @@ public class MelcoePDPImpl implements MelcoePDP
 	 * 
 	 * @see melcoe.xacml.pdp.MelcoePDP#evaluateBatch(java.lang.String[])
 	 */
-	public String evaluateBatch(String[] requests) throws EvaluationException
-	{
+	public String evaluateBatch(String[] requests) throws EvaluationException {
 		if (log.isDebugEnabled())
 			log.debug("evaluating request batch");
 
 		Set<Result> results = new HashSet<Result>();
 
-		for (String req : requests)
-		{
+		for (String req : requests) {
 			ResponseCtx resCtx = null;
 			String response = evaluate(req);
-			ByteArrayInputStream is = new ByteArrayInputStream(response.getBytes());
-			try
-			{
+			ByteArrayInputStream is = new ByteArrayInputStream(response
+					.getBytes());
+			try {
 				resCtx = ResponseCtx.getInstance(is);
-			}
-			catch (ParsingException pe)
-			{
+			} catch (ParsingException pe) {
 				log.error("Error parsing response:\n" + response, pe);
-				throw new EvaluationException("Error parsing response:\n" + response);
+				throw new EvaluationException("Error parsing response:\n"
+						+ response);
 			}
 
 			@SuppressWarnings("unchecked")

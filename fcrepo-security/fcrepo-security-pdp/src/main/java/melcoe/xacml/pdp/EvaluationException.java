@@ -16,27 +16,22 @@
  * limitations under the License.
  */
 
-
 package melcoe.xacml.pdp;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- *
+ * 
  */
-public class EvaluationException extends MelcoePDPException
-{
-	public EvaluationException()
-	{
+public class EvaluationException extends MelcoePDPException {
+	public EvaluationException() {
 		super();
 	}
 
-	public EvaluationException(String msg)
-	{
+	public EvaluationException(String msg) {
 		super(msg);
 	}
 
-	public EvaluationException(String msg, Throwable t)
-	{
+	public EvaluationException(String msg, Throwable t) {
 		super(msg, t);
 	}
 }

@@ -16,33 +16,29 @@
  * limitations under the License.
  */
 
-
 package melcoe.xacml.pdp;
 
 import org.apache.log4j.Logger;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- *
+ * 
  */
-public class MelcoePDPException extends Exception
-{
-	private static final Logger log = Logger.getLogger(MelcoePDPException.class.getName());
+public class MelcoePDPException extends Exception {
+	private static final Logger log = Logger.getLogger(MelcoePDPException.class
+			.getName());
 
-	public MelcoePDPException()
-	{
+	public MelcoePDPException() {
 		super();
 		log.error("No message provided");
 	}
 
-	public MelcoePDPException(String msg)
-	{
+	public MelcoePDPException(String msg) {
 		super(msg);
 		log.error(msg);
 	}
 
-	public MelcoePDPException(String msg, Throwable t)
-	{
+	public MelcoePDPException(String msg, Throwable t) {
 		super(msg);
 		log.error(msg, t);
 	}

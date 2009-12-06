@@ -48,25 +48,23 @@ import org.trippi.TrippiException;
  * @author nishen@melcoe.mq.edu.au
  */
 
-public class RelationshipResolverHttpImpl implements RelationshipResolver
-{
-	private static Logger log = Logger.getLogger(RelationshipResolverHttpImpl.class.getName());
+public class RelationshipResolverHttpImpl implements RelationshipResolver {
+	private static Logger log = Logger
+			.getLogger(RelationshipResolverHttpImpl.class.getName());
 
 	private URL baseURL = null;
 	private String username = null;
 	private String password = null;
 
-	public RelationshipResolverHttpImpl(String url, String username, String password) throws AttributeFinderException
-	{
-		try
-		{
+	public RelationshipResolverHttpImpl(String url, String username,
+			String password) throws AttributeFinderException {
+		try {
 			if (log.isDebugEnabled())
 				log.debug("Resolver URL: " + url);
 			this.baseURL = new URL(url);
-		}
-		catch (MalformedURLException mue)
-		{
-			throw new AttributeFinderException("Resolver URL is not a valid URL", mue);
+		} catch (MalformedURLException mue) {
+			throw new AttributeFinderException(
+					"Resolver URL is not a valid URL", mue);
 		}
 		this.username = username;
 		this.password = password;
@@ -75,117 +73,114 @@ public class RelationshipResolverHttpImpl implements RelationshipResolver
 	/**
 	 * Get an HTTP resource with the response as an InputStream, given a URL.
 	 * 
-	 * Note that if the HTTP response has no body, the InputStream will be empty. The success of a request can
-	 * be checked with getResponseCode(). Usually you'll want to see a 200. See
+	 * Note that if the HTTP response has no body, the InputStream will be
+	 * empty. The success of a request can be checked with getResponseCode().
+	 * Usually you'll want to see a 200. See
 	 * http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for other codes.
 	 * 
-	 * @param url A URL that we want to do an HTTP GET upon
-	 * @param failIfNotOK boolean value indicating if an exception should be thrown if we do NOT receive an
-	 *        HTTP 200 response (OK)
-	 * @param followRedirects boolean value indicating whether HTTP redirects should be handled in this
-	 *        method, or be passed along so that they can be handled later.
+	 * @param url
+	 *            A URL that we want to do an HTTP GET upon
+	 * @param failIfNotOK
+	 *            boolean value indicating if an exception should be thrown if
+	 *            we do NOT receive an HTTP 200 response (OK)
+	 * @param followRedirects
+	 *            boolean value indicating whether HTTP redirects should be
+	 *            handled in this method, or be passed along so that they can be
+	 *            handled later.
 	 * @return HttpInputStream the HTTP response
 	 * @throws IOException
 	 */
-	private InputStream get(URL url, boolean failIfNotOK, boolean followRedirects) throws IOException
-	{
+	private InputStream get(URL url, boolean failIfNotOK,
+			boolean followRedirects) throws IOException {
 		String urlString = url.toString();
 		log.debug("FedoraClient is getting " + urlString);
 
 		HttpClient client = new HttpClient();
-		Credentials credentials = new UsernamePasswordCredentials(username, password);
+		Credentials credentials = new UsernamePasswordCredentials(username,
+				password);
 		client.getParams().setAuthenticationPreemptive(true);
-		client.getState().setCredentials(new AuthScope(baseURL.getHost(), baseURL.getPort(), AuthScope.ANY_REALM),
-											credentials);
+		client.getState().setCredentials(
+				new AuthScope(baseURL.getHost(), baseURL.getPort(),
+						AuthScope.ANY_REALM), credentials);
 		GetMethod getMethod = new GetMethod(urlString);
 		getMethod.setDoAuthentication(true);
 		getMethod.setFollowRedirects(followRedirects);
 
 		int status = client.executeMethod(getMethod);
 
-		if (failIfNotOK)
-		{
-			if (status != 200)
-			{
+		if (failIfNotOK) {
+			if (status != 200) {
 				// if (followRedirects && in.getStatusCode() == 302){
-				if (followRedirects && ((300 <= status) && (status <= 399)))
-				{
+				if (followRedirects && ((300 <= status) && (status <= 399))) {
 					// Handle the redirect here !
-					log.debug("FedoraClient is handling redirect for HTTP STATUS=" + status);
+					log
+							.debug("FedoraClient is handling redirect for HTTP STATUS="
+									+ status);
 
 					Header hLoc = getMethod.getResponseHeader("location");
-					if (hLoc != null)
-					{
-						log.debug("FedoraClient is trying redirect location: " + hLoc.getValue());
+					if (hLoc != null) {
+						log.debug("FedoraClient is trying redirect location: "
+								+ hLoc.getValue());
 						return get(new URL(hLoc.getValue()), true, false);
 					}
 				}
 
-				throw new IOException("Request failed [" + getMethod.getStatusCode() + " " + getMethod.getStatusText()
-						+ "]");
+				throw new IOException("Request failed ["
+						+ getMethod.getStatusCode() + " "
+						+ getMethod.getStatusText() + "]");
 			}
 		}
 
 		return getMethod.getResponseBodyAsStream();
 	}
 
-	private TripleIterator getTriples(String query) throws IOException
-	{
+	private TripleIterator getTriples(String query) throws IOException {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("type", "triples");
 		params.put("format", RDFFormat.N_TRIPLES.getName());
 		params.put("lang", "spo");
 		params.put("query", query);
 
-		try
-		{
+		try {
 			String url = getRIQueryURL(params);
 
-			return TripleIterator.fromStream(get(new URL(url), true, true), RDFFormat.N_TRIPLES);
-		}
-		catch (TrippiException e)
-		{
-			throw new IOException("Error getting triple iterator: " + e.getMessage());
+			return TripleIterator.fromStream(get(new URL(url), true, true),
+					RDFFormat.N_TRIPLES);
+		} catch (TrippiException e) {
+			throw new IOException("Error getting triple iterator: "
+					+ e.getMessage());
 		}
 	}
 
-	private String getRIQueryURL(Map params) throws IOException
-	{
-		if (params.get("type") == null)
-		{
+	private String getRIQueryURL(Map params) throws IOException {
+		if (params.get("type") == null) {
 			throw new IOException("'type' parameter is required");
 		}
 
-		if (params.get("lang") == null)
-		{
+		if (params.get("lang") == null) {
 			throw new IOException("'lang' parameter is required");
 		}
 
-		if (params.get("query") == null)
-		{
+		if (params.get("query") == null) {
 			throw new IOException("'query' parameter is required");
 		}
 
-		if (params.get("format") == null)
-		{
+		if (params.get("format") == null) {
 			throw new IOException("'format' parameter is required");
 		}
 
 		return baseURL.toString() + "?" + encodeParameters(params);
 	}
 
-	private String encodeParameters(Map params)
-	{
+	private String encodeParameters(Map params) {
 		StringBuffer encoded = new StringBuffer();
 		Iterator iter = params.keySet().iterator();
 		int n = 0;
 
-		while (iter.hasNext())
-		{
+		while (iter.hasNext()) {
 			String name = (String) iter.next();
 
-			if (n > 0)
-			{
+			if (n > 0) {
 				encoded.append("&");
 			}
 
@@ -193,12 +188,10 @@ public class RelationshipResolverHttpImpl implements RelationshipResolver
 			encoded.append(name);
 			encoded.append('=');
 
-			try
-			{
-				encoded.append(URLEncoder.encode((String) params.get(name), "UTF-8"));
-			}
-			catch (UnsupportedEncodingException e)
-			{ // UTF-8 won't fail
+			try {
+				encoded.append(URLEncoder.encode((String) params.get(name),
+						"UTF-8"));
+			} catch (UnsupportedEncodingException e) { // UTF-8 won't fail
 			}
 		}
 
@@ -210,35 +203,27 @@ public class RelationshipResolverHttpImpl implements RelationshipResolver
 	 * 
 	 * @see melcoe.fedora.pep.RelationshipResolver#getParents(java.lang.String)
 	 */
-	public Set<String> getParents(String pid) throws AttributeFinderException
-	{
+	public Set<String> getParents(String pid) throws AttributeFinderException {
 		String pidDN = "<info:fedora/" + pid + ">";
 		String relationship = "<info:fedora/fedora-system:def/relations-external#isMemberOf>";
 		TripleIterator i = null;
-		try
-		{
+		try {
 			String query = pidDN + " " + relationship + " *";
 			if (log.isDebugEnabled())
 				log.debug("triplestore query: " + query);
 			i = getTriples(query);
-		}
-		catch (IOException ioe)
-		{
+		} catch (IOException ioe) {
 			throw new AttributeFinderException("Error obraining parents.", ioe);
 		}
 
 		Set<String> parents = new HashSet<String>();
-		try
-		{
-			while (i.hasNext())
-			{
+		try {
+			while (i.hasNext()) {
 				Triple t = i.next();
 				String parentPid = t.getObject().toString();
 				parents.add(parentPid.substring(12));
 			}
-		}
-		catch (TrippiException te)
-		{
+		} catch (TrippiException te) {
 			throw new AttributeFinderException("Error retrieving triple.", te);
 		}
 
@@ -248,10 +233,12 @@ public class RelationshipResolverHttpImpl implements RelationshipResolver
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see melcoe.fedora.util.RelationshipResolver#buildRESTParentHierarchy(java.lang.String)
+	 * @see
+	 * melcoe.fedora.util.RelationshipResolver#buildRESTParentHierarchy(java
+	 * .lang.String)
 	 */
-	public String buildRESTParentHierarchy(String pid) throws AttributeFinderException
-	{
+	public String buildRESTParentHierarchy(String pid)
+			throws AttributeFinderException {
 		Set<String> parents = getParents(pid);
 		if (parents == null || parents.size() == 0)
 			return "/" + pid;
@@ -260,64 +247,53 @@ public class RelationshipResolverHttpImpl implements RelationshipResolver
 
 		return buildRESTParentHierarchy(parentArray[0]) + "/" + pid;
 	}
-	
-	public Map<String, Set<String>> getRelationships(String pid) throws AttributeFinderException
-	{
+
+	public Map<String, Set<String>> getRelationships(String pid)
+			throws AttributeFinderException {
 		String pidDN = pid;
-		if (pid.startsWith("/"))
-		{
+		if (pid.startsWith("/")) {
 			String[] parts = pid.split("\\/");
-			if (parts.length > 2)
-			{
-				if (parts[parts.length - 1].indexOf(':') != -1)
-				{
+			if (parts.length > 2) {
+				if (parts[parts.length - 1].indexOf(':') != -1) {
 					// is an object, not a datastream
 					pidDN = parts[parts.length - 1];
-				}
-				else
-				{
+				} else {
 					// is a datastream
-					pidDN = parts[parts.length - 2] + "/" + parts[parts.length - 1];
+					pidDN = parts[parts.length - 2] + "/"
+							+ parts[parts.length - 1];
 				}
 			}
-			
+
 			if (pidDN.startsWith("/"))
 				pidDN = pidDN.substring(1);
 		}
 
 		TripleIterator i = null;
-		try
-		{
+		try {
 			String query = "<info:fedora/" + pidDN + "> * *";
 			if (log.isDebugEnabled())
 				log.debug("triplestore query: " + query);
 			i = getTriples(query);
-		}
-		catch (IOException ioe)
-		{
-			throw new AttributeFinderException("Error obraining relationships.", ioe);
+		} catch (IOException ioe) {
+			throw new AttributeFinderException(
+					"Error obraining relationships.", ioe);
 		}
 
 		Map<String, Set<String>> relationships = new HashMap<String, Set<String>>();
-		try
-		{
-			while (i.hasNext())
-			{
+		try {
+			while (i.hasNext()) {
 				Triple t = i.next();
 				String p = t.getPredicate().toString();
 				String o = t.getObject().toString();
-				
+
 				Set<String> values = relationships.get(p);
-				if (values == null)
-				{
+				if (values == null) {
 					values = new HashSet<String>();
 					relationships.put(p, values);
 				}
 				values.add(o);
 			}
-		}
-		catch (TrippiException te)
-		{
+		} catch (TrippiException te) {
 			throw new AttributeFinderException("Error retrieving triple.", te);
 		}
 

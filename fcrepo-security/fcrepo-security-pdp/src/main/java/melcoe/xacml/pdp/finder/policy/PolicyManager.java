@@ -53,15 +53,16 @@ import com.sun.xacml.ctx.Status;
 import com.sun.xacml.finder.PolicyFinder;
 
 /**
- * This class interacts with the policy store on behalf of the PolicyFinder modules. It also does the matching
- * of the policies and creation of policy sets.
+ * This class interacts with the policy store on behalf of the PolicyFinder
+ * modules. It also does the matching of the policies and creation of policy
+ * sets.
  * 
  * @author nishen@melcoe.mq.edu.au
  * 
  */
-public class PolicyManager
-{
-	private static final Logger log = Logger.getLogger(PolicyManager.class.getName());
+public class PolicyManager {
+	private static final Logger log = Logger.getLogger(PolicyManager.class
+			.getName());
 
 	private PolicyDataManager policyDataManager = null;
 	private PolicyCombiningAlgorithm combiningAlg = null;
@@ -74,77 +75,89 @@ public class PolicyManager
 	private static URI parentPolicyId = null;
 
 	/**
-	 * This constructor creates a PolicyManager instance. It takes a PolicyFinder its argument. Its purpose is
-	 * to obtain a set of policies from the Policy Store, match them against the evaluation context and return
-	 * a policy or policy set that conforms to the evaluation context.
+	 * This constructor creates a PolicyManager instance. It takes a
+	 * PolicyFinder its argument. Its purpose is to obtain a set of policies
+	 * from the Policy Store, match them against the evaluation context and
+	 * return a policy or policy set that conforms to the evaluation context.
 	 * 
-	 * @param polFinder the policy finder
+	 * @param polFinder
+	 *            the policy finder
 	 * @throws URISyntaxException
 	 * @throws {@link PolicyDataManagerException}
 	 */
-	public PolicyManager(PolicyFinder polFinder) throws URISyntaxException, PolicyDataManagerException
-	{
+	public PolicyManager(PolicyFinder polFinder) throws URISyntaxException,
+			PolicyDataManagerException {
 		String home = System.getenv("MELCOEPDP_HOME");
 		if (home == null || "".equals(home))
-			throw new PolicyDataManagerException("Environment home (MELCOEPDP_HOME) is not set.");
+			throw new PolicyDataManagerException(
+					"Environment home (MELCOEPDP_HOME) is not set.");
 
 		String filename = home + "/conf/config-policy-manager.xml";
 		File f = new File(filename);
 		if (!f.exists())
-			throw new PolicyDataManagerException("Could not locate config file: " + f.getAbsolutePath());
+			throw new PolicyDataManagerException(
+					"Could not locate config file: " + f.getAbsolutePath());
 
-		try
-		{
+		try {
 			String policyDataManagerClassname = null;
 			String policyCombiningAlgorithmClassname = null;
 
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
 			DocumentBuilder docBuilder = factory.newDocumentBuilder();
 			Document doc = docBuilder.parse(new FileInputStream(f));
 
-			NodeList nodes = doc.getElementsByTagName("PolicyManager").item(0).getChildNodes();
+			NodeList nodes = doc.getElementsByTagName("PolicyManager").item(0)
+					.getChildNodes();
 
-			for (int x = 0; x < nodes.getLength(); x++)
-			{
+			for (int x = 0; x < nodes.getLength(); x++) {
 				Node node = nodes.item(x);
-				if (node.getNodeType() == Node.ELEMENT_NODE)
-				{
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
 					if (node.getNodeName().equals("PolicyDataManager"))
-						policyDataManagerClassname = node.getFirstChild().getNodeValue();
-					else if (node.getNodeName().equals("PolicyCombiningAlgorithm"))
-						policyCombiningAlgorithmClassname = node.getFirstChild().getNodeValue();
+						policyDataManagerClassname = node.getFirstChild()
+								.getNodeValue();
+					else if (node.getNodeName().equals(
+							"PolicyCombiningAlgorithm"))
+						policyCombiningAlgorithmClassname = node
+								.getFirstChild().getNodeValue();
 				}
 			}
 
-			policyDataManager = (PolicyDataManager) Class.forName(policyDataManagerClassname).newInstance();
-			combiningAlg = (PolicyCombiningAlgorithm) Class.forName(policyCombiningAlgorithmClassname).newInstance();
-		}
-		catch (Exception e)
-		{
+			policyDataManager = (PolicyDataManager) Class.forName(
+					policyDataManagerClassname).newInstance();
+			combiningAlg = (PolicyCombiningAlgorithm) Class.forName(
+					policyCombiningAlgorithmClassname).newInstance();
+		} catch (Exception e) {
 			throw new PolicyDataManagerException(e);
 		}
 
 		policyReader = new PolicyReader(polFinder, null);
 		parentPolicyId = new URI(PARENT_POLICY_ID);
 
-		target = new Target(new TargetSection(null, TargetMatch.SUBJECT, PolicyMetaData.XACML_VERSION_2_0),
-				new TargetSection(null, TargetMatch.RESOURCE, PolicyMetaData.XACML_VERSION_2_0), new TargetSection(
-						null, TargetMatch.ACTION, PolicyMetaData.XACML_VERSION_2_0), new TargetSection(null,
-						TargetMatch.ENVIRONMENT, PolicyMetaData.XACML_VERSION_2_0));
+		target = new Target(new TargetSection(null, TargetMatch.SUBJECT,
+				PolicyMetaData.XACML_VERSION_2_0), new TargetSection(null,
+				TargetMatch.RESOURCE, PolicyMetaData.XACML_VERSION_2_0),
+				new TargetSection(null, TargetMatch.ACTION,
+						PolicyMetaData.XACML_VERSION_2_0), new TargetSection(
+						null, TargetMatch.ENVIRONMENT,
+						PolicyMetaData.XACML_VERSION_2_0));
 	}
 
 	/**
-	 * Obtains a policy or policy set of matching policies from the policy store. If more than one policy is
-	 * returned it creates a dynamic policy set that contains all the applicable policies.
+	 * Obtains a policy or policy set of matching policies from the policy
+	 * store. If more than one policy is returned it creates a dynamic policy
+	 * set that contains all the applicable policies.
 	 * 
-	 * @param eval the Evaluation Context
+	 * @param eval
+	 *            the Evaluation Context
 	 * @return the Policy/PolicySet that applies to this EvaluationCtx
 	 * @throws TopLevelPolicyException
 	 * @throws {@link PolicyDataManagerException}
 	 */
-	public AbstractPolicy getPolicy(EvaluationCtx eval) throws TopLevelPolicyException, PolicyDataManagerException
-	{
-		Map<String, byte[]> potentialPolicies = policyDataManager.getPolicies(eval);
+	public AbstractPolicy getPolicy(EvaluationCtx eval)
+			throws TopLevelPolicyException, PolicyDataManagerException {
+		Map<String, byte[]> potentialPolicies = policyDataManager
+				.getPolicies(eval);
 		log.debug("Obtained policies: " + potentialPolicies.size());
 
 		AbstractPolicy policy = matchPolicies(eval, potentialPolicies);
@@ -154,29 +167,31 @@ public class PolicyManager
 	}
 
 	/**
-	 * Given and Evaluation Context and a list of potential policies, this method matches each policy against
-	 * the Evaluation Context and extracts only the ones that match. If there is more than one policy, a new
-	 * dynamic policy set is created and returned. Otherwise the policy that is found is returned.
+	 * Given and Evaluation Context and a list of potential policies, this
+	 * method matches each policy against the Evaluation Context and extracts
+	 * only the ones that match. If there is more than one policy, a new dynamic
+	 * policy set is created and returned. Otherwise the policy that is found is
+	 * returned.
 	 * 
-	 * @param eval the Evaluation Context
-	 * @param policyList the list of policies as a map with PolicyId as key and policy as a byte array as the
-	 *        value
+	 * @param eval
+	 *            the Evaluation Context
+	 * @param policyList
+	 *            the list of policies as a map with PolicyId as key and policy
+	 *            as a byte array as the value
 	 * @return the Policy/PolicySet that applies to this EvaluationCtx
 	 * @throws {@link TopLevelPolicyException}
 	 */
-	private AbstractPolicy matchPolicies(EvaluationCtx eval, Map<String, byte[]> policyList)
-			throws TopLevelPolicyException
-	{
+	private AbstractPolicy matchPolicies(EvaluationCtx eval,
+			Map<String, byte[]> policyList) throws TopLevelPolicyException {
 		// setup a list of matching policies
 		Map<String, AbstractPolicy> list = new HashMap<String, AbstractPolicy>();
 
 		// get an iterator over all the identifiers
-		for (String policyId : policyList.keySet())
-		{
-			try
-			{
+		for (String policyId : policyList.keySet()) {
+			try {
 				byte[] pol = policyList.get(policyId);
-				AbstractPolicy policy = policyReader.readPolicy(new ByteArrayInputStream(pol));
+				AbstractPolicy policy = policyReader
+						.readPolicy(new ByteArrayInputStream(pol));
 
 				MatchResult match = policy.match(eval);
 
@@ -185,15 +200,14 @@ public class PolicyManager
 					throw new TopLevelPolicyException(match.getStatus());
 
 				// if we matched, we keep track of the matching policy...
-				if (result == MatchResult.MATCH)
-				{
+				if (result == MatchResult.MATCH) {
 					// ...first checking if this is the first match and if
 					// we automaticlly nest policies
-					if ((combiningAlg == null) && (list.size() > 0))
-					{
+					if ((combiningAlg == null) && (list.size() > 0)) {
 						ArrayList<String> code = new ArrayList<String>();
 						code.add(Status.STATUS_PROCESSING_ERROR);
-						Status status = new Status(code, "too many applicable" + " top-level policies");
+						Status status = new Status(code, "too many applicable"
+								+ " top-level policies");
 						throw new TopLevelPolicyException(status);
 					}
 
@@ -202,25 +216,24 @@ public class PolicyManager
 
 					list.put(policyId, policy);
 				}
-			}
-			catch (ParsingException pe)
-			{
-				log.error("Error parsing policy: " + policyId + " (" + pe.getMessage() + ")");
+			} catch (ParsingException pe) {
+				log.error("Error parsing policy: " + policyId + " ("
+						+ pe.getMessage() + ")");
 			}
 		}
 
 		// no errors happened during the search, so now take the right
 		// action based on how many policies we found
-		switch (list.size())
-		{
-			case 0:
-				return null;
-			case 1:
-				Iterator<AbstractPolicy> i = list.values().iterator();
-				AbstractPolicy p = i.next();
-				return p;
-			default:
-				return new PolicySet(parentPolicyId, combiningAlg, target, new ArrayList<AbstractPolicy>(list.values()));
+		switch (list.size()) {
+		case 0:
+			return null;
+		case 1:
+			Iterator<AbstractPolicy> i = list.values().iterator();
+			AbstractPolicy p = i.next();
+			return p;
+		default:
+			return new PolicySet(parentPolicyId, combiningAlg, target,
+					new ArrayList<AbstractPolicy>(list.values()));
 		}
 	}
 }

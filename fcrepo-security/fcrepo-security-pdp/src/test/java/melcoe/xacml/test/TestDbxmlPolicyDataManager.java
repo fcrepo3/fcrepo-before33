@@ -4,17 +4,16 @@ import melcoe.xacml.pdp.data.DbXmlPolicyDataManager;
 import melcoe.xacml.pdp.data.PolicyDataManager;
 import melcoe.xacml.pdp.data.PolicyDataManagerException;
 
-public class TestDbxmlPolicyDataManager
-{
+public class TestDbxmlPolicyDataManager {
 	private static PolicyDataManager pdm = null;
+
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) throws PolicyDataManagerException
-	{
+	public static void main(String[] args) throws PolicyDataManagerException {
 		String str = "<test/>";
 		String str2 = "<testing/>";
-		
+
 		pdm = new DbXmlPolicyDataManager();
 
 		pdm.addPolicy(str, "test-nish");

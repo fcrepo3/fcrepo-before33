@@ -18,25 +18,20 @@
 
 package melcoe.xacml.pdp.data;
 
-public class PolicyDataManagerException extends Exception
-{
-	public PolicyDataManagerException()
-	{
+public class PolicyDataManagerException extends Exception {
+	public PolicyDataManagerException() {
 		super();
 	}
 
-	public PolicyDataManagerException(String message)
-	{
+	public PolicyDataManagerException(String message) {
 		super(message);
 	}
 
-	public PolicyDataManagerException(Throwable cause)
-	{
+	public PolicyDataManagerException(Throwable cause) {
 		super(cause);
 	}
 
-	public PolicyDataManagerException(String message, Throwable cause)
-	{
+	public PolicyDataManagerException(String message, Throwable cause) {
 		super(message, cause);
 	}
 }

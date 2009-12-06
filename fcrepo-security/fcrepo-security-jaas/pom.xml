@@ -10,7 +10,6 @@
   </parent>
 
   <artifactId>fcrepo-security-jaas</artifactId>
-  <packaging>war</packaging>
   <name>Fedora JAAS Authentication</name>
 
   <dependencies>
@@ -23,10 +22,9 @@
       <artifactId>jsp-api</artifactId>
     </dependency>
     <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
     </dependency>
-
   </dependencies>
 
 </project>

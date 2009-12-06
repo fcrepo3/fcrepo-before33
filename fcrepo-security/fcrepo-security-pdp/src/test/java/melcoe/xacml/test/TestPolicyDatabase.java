@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-
 package melcoe.xacml.test;
 
 import java.io.ByteArrayOutputStream;
@@ -36,19 +35,19 @@ import org.apache.log4j.Logger;
 
 /**
  * @author nishen@melcoe.mq.edu.au
- *
+ * 
  */
-public class TestPolicyDatabase
-{
-	private static final Logger log = Logger.getLogger(TestPolicyDatabase.class);
+public class TestPolicyDatabase {
+	private static final Logger log = Logger
+			.getLogger(TestPolicyDatabase.class);
 
 	private static final String POLICY_HOME = "C:/Code/policies";
 	private static DbXmlPolicyDataManager dbXmlPolicyDataManager;
-	
+
 	private static Set<String> policyNames = new HashSet<String>();
 
-	public static void main(String[] args) throws PolicyDataManagerException, FileNotFoundException
-	{
+	public static void main(String[] args) throws PolicyDataManagerException,
+			FileNotFoundException {
 		dbXmlPolicyDataManager = new DbXmlPolicyDataManager();
 		log.info("Adding");
 		add();
@@ -68,8 +67,8 @@ public class TestPolicyDatabase
 		list();
 	}
 
-	public static void add() throws PolicyDataManagerException, FileNotFoundException
-	{
+	public static void add() throws PolicyDataManagerException,
+			FileNotFoundException {
 		log.info("Starting clock!");
 		long time1 = System.nanoTime();
 		addDocuments();
@@ -78,47 +77,39 @@ public class TestPolicyDatabase
 		log.info("Time taken: " + (time2 - time1));
 	}
 
-	public static void delete(String name) throws PolicyDataManagerException
-	{
+	public static void delete(String name) throws PolicyDataManagerException {
 		dbXmlPolicyDataManager.deletePolicy(name);
 		policyNames.remove(name);
 	}
 
-	public static void update() throws PolicyDataManagerException
-	{
+	public static void update() throws PolicyDataManagerException {
 		String name = "au:edu:mq:melcoe:ramp:fedora:xacml:2.0:policy:3";
 		byte[] doc = dbXmlPolicyDataManager.getPolicy(name);
 		dbXmlPolicyDataManager.updatePolicy(name, new String(doc));
 	}
 
-	public static void get(String name) throws PolicyDataManagerException
-	{
+	public static void get(String name) throws PolicyDataManagerException {
 		byte[] doc = dbXmlPolicyDataManager.getPolicy(name);
 		log.info(new String(doc));
 	}
 
-	public static void addDocuments() throws PolicyDataManagerException, FileNotFoundException
-	{
+	public static void addDocuments() throws PolicyDataManagerException,
+			FileNotFoundException {
 		File[] files = getPolicyFiles();
-		for (File f : files)
-		{
+		for (File f : files) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			byte[] bytes = new byte[1024];
 			FileInputStream fis = new FileInputStream(f);
 
 			log.info("Adding: " + f.getName());
 
-			try
-			{
+			try {
 				int count = fis.read(bytes);
-				while (count > -1)
-				{
+				while (count > -1) {
 					out.write(bytes, 0, count);
 					count = fis.read(bytes);
 				}
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 				log.error("Error reading file: " + f.getName(), e);
 			}
 
@@ -126,28 +117,23 @@ public class TestPolicyDatabase
 		}
 	}
 
-	public static void list() throws PolicyDataManagerException
-	{
+	public static void list() throws PolicyDataManagerException {
 		List<String> docNames = dbXmlPolicyDataManager.listPolicies();
-		for (String s : docNames)
-		{
+		for (String s : docNames) {
 			log.info("doc: " + s);
 		}
 	}
-	
-	public static void clean() throws PolicyDataManagerException
-	{
+
+	public static void clean() throws PolicyDataManagerException {
 		Set<String> pn = new HashSet<String>(policyNames);
 
-		for (String s : pn)
-		{
+		for (String s : pn) {
 			log.info("removing: " + s);
 			delete(new String(s));
 		}
 	}
 
-	public static File[] getPolicyFiles()
-	{
+	public static File[] getPolicyFiles() {
 		File policyHome = new File(POLICY_HOME + "/policies");
 		File[] policies = policyHome.listFiles(new PolicyFileFilter());
 		return policies;
