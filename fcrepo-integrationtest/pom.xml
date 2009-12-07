@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -26,8 +27,10 @@
     <org.apache.activemq.default.directory.prefix>${project.build.directory}</org.apache.activemq.default.directory.prefix>
   </properties>
 
-  <!-- By default no unit or integrations tests are run in this pom.
-       Tests are only run by specifying a profile (configA/B/Q) -->
+  <!--
+    By default no unit or integrations tests are run in this pom. Tests
+    are only run by specifying a profile (configA/B/Q)
+  -->
   <build>
     <plugins>
       <plugin>
@@ -136,13 +139,15 @@
 
                     <include>**/AtomAPIMMessageTest.class</include>
 
-                    <!-- Hangs intermittently
-                    <include>**/NotificationInvocationHandlerTest.class</include>
-                     -->
+                    <!--
+                      Hangs intermittently
+                      <include>**/NotificationInvocationHandlerTest.class</include>
+                    -->
 
-                    <!-- Has bug in source-code
-                    <include>**/SimpleDeploymentTests.class</include>
-                     -->
+                    <!--
+                      Has bug in source-code
+                      <include>**/SimpleDeploymentTests.class</include>
+                    -->
 
                     <include>**/DOTranslationUtilityTest.class</include>
                     <include>**/TestIngest.class</include>
@@ -253,13 +258,15 @@
 
                   <includes>
 
-                    <!-- Hangs intermititently
-                    <include>**/NotificationInvocationHandlerTest.class</include>
-                     -->
+                    <!--
+                      Hangs intermititently
+                      <include>**/NotificationInvocationHandlerTest.class</include>
+                    -->
 
-                    <!-- Has bug in source-code
-                    <include>**/SimpleDeploymentTests.class</include>
-                     -->
+                    <!--
+                      Has bug in source-code
+                      <include>**/SimpleDeploymentTests.class</include>
+                    -->
 
                     <include>**/AtomAPIMMessageTest.class</include>
                     <include>**/DOTranslationUtilityTest.class</include>
@@ -371,13 +378,15 @@
 
                   <includes>
 
-                    <!-- Hangs intermittently
-                    <include>**/NotificationInvocationHandlerTest.class</include>
-                     -->
+                    <!--
+                      Hangs intermittently
+                      <include>**/NotificationInvocationHandlerTest.class</include>
+                    -->
 
-                    <!-- Has bug in source-code
-                    <include>**/SimpleDeploymentTests.class</include>
-                     -->
+                    <!--
+                      Has bug in source-code
+                      <include>**/SimpleDeploymentTests.class</include>
+                    -->
 
                     <include>**/AtomAPIMMessageTest.class</include>
                     <include>**/DOTranslationUtilityTest.class</include>
@@ -492,13 +501,15 @@
 
                   <includes>
 
-                    <!-- Hangs intermittently
-                    <include>**/NotificationInvocationHandlerTest.class</include>
-                     -->
+                    <!--
+                      Hangs intermittently
+                      <include>**/NotificationInvocationHandlerTest.class</include>
+                    -->
 
-                    <!-- Has bug in source-code
-                    <include>**/SimpleDeploymentTests.class</include>
-                     -->
+                    <!--
+                      Has bug in source-code
+                      <include>**/SimpleDeploymentTests.class</include>
+                    -->
 
                     <include>**/AtomAPIMMessageTest.class</include>
                     <include>**/DOTranslationUtilityTest.class</include>
@@ -543,14 +554,6 @@
 
   <dependencies>
 
-    <!--
-    <dependency>
-      <groupId>org.fcrepo</groupId>
-      <artifactId>common</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-    -->
-
     <dependency>
       <groupId>org.fcrepo</groupId>
       <artifactId>fcrepo-common</artifactId>
@@ -558,14 +561,6 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-
-    <!--
-    <dependency>
-      <groupId>org.fcrepo</groupId>
-      <artifactId>server</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-    -->
 
     <dependency>
       <groupId>org.fcrepo</groupId>
@@ -581,15 +576,6 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!--
-    <dependency>
-      <groupId>org.fcrepo</groupId>
-      <artifactId>client</artifactId>
-      <version>1.0.0</version>
-      <classifier>fedora</classifier>
-    </dependency>
-    -->
-
     <dependency>
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>
@@ -597,19 +583,26 @@
       <scope>test</scope>
     </dependency>
 
-	<dependency>
-	   <groupId>org.apache.axis2</groupId>
-	   <artifactId>axis2</artifactId>
-	   <version>1.4.1</version>
-       <scope>test</scope>
-	</dependency>
+    <dependency>
+      <groupId>org.apache.axis2</groupId>
+      <artifactId>axis2</artifactId>
+      <version>1.4.1</version>
+      <scope>test</scope>
+    </dependency>
 
-	<dependency>
-		<groupId>org.apache.httpcomponents</groupId>
-		<artifactId>httpclient</artifactId>
-		<version>4.0</version>
-      	<scope>test</scope>
-	</dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.0</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>net.jcip</groupId>
+      <artifactId>jcip-annotations</artifactId>
+      <version>1.0</version>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 </project>
