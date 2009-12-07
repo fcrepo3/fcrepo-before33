@@ -257,11 +257,13 @@ public class InstallOptions {
             }
         }
 
-        inputOption(XACML_ENABLED);
         inputOption(FESL_ENABLED);
         if (getValue(FESL_ENABLED).equals(Boolean.toString(true))) {
             inputOption(FESL_DBXML_HOME);
+        } else {
+        	inputOption(XACML_ENABLED);
         }
+        
         inputOption(RI_ENABLED);
         inputOption(MESSAGING_ENABLED);
         if (getValue(MESSAGING_ENABLED).equals(Boolean.toString(true))) {
