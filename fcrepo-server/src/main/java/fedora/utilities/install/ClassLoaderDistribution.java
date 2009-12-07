@@ -29,7 +29,9 @@ public class ClassLoaderDistribution
     }
 
     /**
-     * Requested resources will automatically be prefixed with "resources/".
+     * {@inheritDoc}
+     * 
+     * Note: requested resources will automatically be prefixed with "resources/".
      */
     @Override
     public InputStream get(String path) throws IOException {
@@ -47,13 +49,16 @@ public class ClassLoaderDistribution
     }
 
     /**
+     * Rewrites the requested path to remove leading slashes and prefix with 
+     * "resources/"
+     * 
      * Note: we don't check for backtracking.
      * 
-     * @param path
-     * @return
+     * @param path the requested path (e.g. "/foo/bar")
+     * @return the rewritten path (e.g. "resources/foo/bar")
      */
     private static String rewritePath(String path) {
-        if (path.startsWith("/")) {
+        while (path.startsWith("/")) {
             path = path.substring(1);
         }
         // Note, ClassLoader paths are always absolute, so , so no leading slash

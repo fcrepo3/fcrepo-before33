@@ -93,6 +93,13 @@ public class ExistingTomcat
 		return commonLib;
 	}
 
+
+	/**
+	 * Tomcat 6 merged the common, shared and server lib directories of 
+	 * Tomcat 5.x into a single lib directory. Unless otherwise configured in
+	 * conf/catalina.properties, the lib directory is located at 
+	 * $CATALINA_HOME/lib
+	 */
 	@Override
 	protected void setCommonLib() {
 		new File(getTomcatHome(), "lib" + File.separator);

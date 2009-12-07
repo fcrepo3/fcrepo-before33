@@ -16,7 +16,7 @@ http://tomcat.apache.org/tomcat-6.0-doc/ssl-howto.html
 Updating the Bundled Tomcat
 ---------------------------
 Replace resources/inc/apache-tomcat-NEW-VERSION.zip
-Update src/properties/install.properties
+Update fcrepo-server/src/main/properties/resources/install.properties
 Update fcrepo-installer/src/main/resources/assemblies/fedora-installer.xml
 Update resources/server/fedora/utilities/install/OptionDefinition.properties
 Update fcrepo-server/src/main/java/fedora/utilities/install/container/BundledTomcat.java

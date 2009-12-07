@@ -175,6 +175,9 @@ public class Installer {
                             .equals("true")) {
                 new File(webinfLib, Distribution.LOG4J).delete();
             }
+            
+            // Add FeSL jars, if using FeSL
+            //TODO
 
             File fedoraWar = new File(installDir, fedoraWarName + ".war");
             Zip.zip(fedoraWar, warStage.listFiles());
@@ -253,7 +256,6 @@ public class Installer {
      * Command-line entry point.
      */
     public static void main(String[] args) {
-
         try {
             Distribution dist = new ClassLoaderDistribution();
             InstallOptions opts = null;

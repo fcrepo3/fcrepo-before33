@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -70,6 +70,10 @@ public class InstallOptions {
     public static final String DATABASE_PASSWORD = "database.password";
 
     public static final String XACML_ENABLED = "xacml.enabled";
+    
+    public static final String FESL_ENABLED = "fesl.enabled";
+    
+    public static final String FESL_DBXML_HOME = "fesl.dbxml.home";
 
     public static final String RI_ENABLED = "ri.enabled";
 
@@ -179,6 +183,7 @@ public class InstallOptions {
             _map.put(DATABASE_JDBCURL, includedJDBCURL);
             _map.put(DATABASE_DRIVERCLASS, EMBEDDED_DATABASE_DRIVERCLASSNAME);
             _map.put(XACML_ENABLED, Boolean.toString(false));
+            _map.put(FESL_ENABLED, Boolean.toString(false));
             _map.put(RI_ENABLED, null); // false
             _map.put(MESSAGING_ENABLED, null); // false
             _map.put(DEPLOY_LOCAL_SERVICES, null); // true
@@ -253,6 +258,10 @@ public class InstallOptions {
         }
 
         inputOption(XACML_ENABLED);
+        inputOption(FESL_ENABLED);
+        if (getValue(FESL_ENABLED).equals(Boolean.toString(true))) {
+            inputOption(FESL_DBXML_HOME);
+        }
         inputOption(RI_ENABLED);
         inputOption(MESSAGING_ENABLED);
         if (getValue(MESSAGING_ENABLED).equals(Boolean.toString(true))) {
@@ -341,7 +350,6 @@ public class InstallOptions {
                 System.out.println("Error: " + e.getMessage());
             }
         }
-
     }
 
     private String readLine() {
@@ -418,19 +426,17 @@ public class InstallOptions {
     /**
      * Get an iterator of the names of all specified options.
      */
-    public Iterator<String> getOptionNames() {
-        return _map.keySet().iterator();
+    public Collection<String> getOptionNames() {
+    	return _map.keySet();
     }
-
+    
     /**
      * Apply defaults to the options, where possible.
      */
     private void applyDefaults() {
-        Iterator<String> names = getOptionNames();
-        while (names.hasNext()) {
-            String name = names.next();
-            String val = _map.get(name);
-            if (val == null || val.length() == 0) {
+        for (String name : getOptionNames()) {
+        	String val = _map.get(name);
+        	if (val == null || val.length() == 0) {
                 OptionDefinition opt = OptionDefinition.get(name, this);
                 _map.put(name, opt.getDefaultValue());
             }
@@ -441,12 +447,11 @@ public class InstallOptions {
      * Validate the options, assuming defaults have already been applied.
      * Validation for a given option might entail more than a syntax check. It
      * might check whether a given directory exists, for example.
+     * 
      */
     private void validateAll() throws OptionValidationException {
         boolean unattended = getBooleanValue(UNATTENDED, false);
-        Iterator<String> keys = getOptionNames();
-        while (keys.hasNext()) {
-            String optionId = keys.next();
+        for (String optionId : getOptionNames()) {
             OptionDefinition opt = OptionDefinition.get(optionId, this);
             opt.validateValue(getValue(optionId), unattended);
         }

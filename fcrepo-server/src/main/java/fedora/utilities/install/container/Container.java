@@ -15,6 +15,8 @@ import fedora.utilities.install.InstallOptions;
 import fedora.utilities.install.InstallationFailedException;
 
 /**
+ * Abstract class representing a servlet container.
+ * 
  * @author Edwin Shin
  */
 public abstract class Container {
@@ -23,6 +25,11 @@ public abstract class Container {
 
     private final InstallOptions options;
 
+    /**
+     * 
+     * @param dist
+     * @param options
+     */
     public Container(Distribution dist, InstallOptions options) {
         this.dist = dist;
         this.options = options;

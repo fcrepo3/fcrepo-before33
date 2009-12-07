@@ -69,6 +69,13 @@ public class OptionDefinition {
         String description = _PROPS.getProperty(id + ".description");
         String[] validValues = getArray(id + ".validValues");
         String defaultValue = _PROPS.getProperty(id + ".defaultValue");
+        
+        // If label, description, validValues and defaultValue are all null,
+        // assume that no definition for the id exists.
+        if (label == null && description == null && validValues == null && 
+        		defaultValue == null) {
+        	return null;
+        }
 
         // Use the environment variable FEDORA_HOME as the default, if defined
         if (id.equals(InstallOptions.FEDORA_HOME)) {
@@ -90,6 +97,15 @@ public class OptionDefinition {
                                 + File.separator + "tomcat";
             }
         }
+        
+        // USE DBXML_HOME as the default, if defined
+        if (id.equals(InstallOptions.FESL_DBXML_HOME)) {
+            String eDH = System.getenv("DBXML_HOME");
+            if (eDH != null && eDH.length() != 0) {
+                defaultValue = eDH;
+            }
+        }
+        
         return new OptionDefinition(id,
                                     label,
                                     description,
@@ -219,6 +235,30 @@ public class OptionDefinition {
                     && _id.endsWith(".driver")) {
                 if (!value.equals(InstallOptions.INCLUDED)) {
                     validateExistingFile(value);
+                }
+            } else if (_id.equals(InstallOptions.FESL_DBXML_HOME)) {
+                File dir = new File(value);
+                if (dir.exists()) {
+                    // must have lib subdir
+                    File lib = new File(dir, "lib");
+                    if (lib.exists()) {
+                    	File db_jar = new File(lib, "db.jar");
+                    	File dbxml_jar = new File(lib, "dbxml.jar");
+                    	if (!db_jar.exists()) {
+                    		throw new OptionValidationException(db_jar.getAbsolutePath() + " is missing.",
+                    				_id);
+                    	}
+                    	if (!dbxml_jar.exists()) {
+                    		throw new OptionValidationException(dbxml_jar.getAbsolutePath() + " is missing.",
+                    				_id);
+                    	}
+                    } else {
+                    	throw new OptionValidationException(lib.getAbsolutePath() + " is missing.",
+                				_id);
+                    }
+                } else {
+                	throw new OptionValidationException(dir.getAbsolutePath() + " is missing.",
+            				_id);
                 }
             }
         }

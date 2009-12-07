@@ -8,7 +8,7 @@
   
     <!-- Server entries -->
     <fileSet>
-      <directory>../fcrepo-server/src/main/resources/properties</directory>
+      <directory>../fcrepo-server/src/main/resources/properties/resources</directory>
       <outputDirectory>/resources</outputDirectory>
       <includes>
         <include>install.properties</include>

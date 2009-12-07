@@ -11,6 +11,10 @@ import java.net.URL;
 
 import java.util.Properties;
 
+/**
+ * Abstract class representing the contents of the software installer package.
+ *
+ */
 public abstract class Distribution {
 
     public static final String FEDORA_WAR = "fedora.war";
@@ -82,10 +86,30 @@ public abstract class Distribution {
         LOG4J = PROPS.getProperty("install.log4j");
     }
 
+    /**
+     * Tests whether the distribution contains the resource identified by
+     * the provided path.
+     * 
+     * @param path The path to the resource (e.g. /foo/bar)
+     * @return true iff the distribution contains the resource
+     */
     public abstract boolean contains(String path);
 
+    /**
+     * Get the requested resource.
+     * 
+     * @param path path of the requested resource
+     * @return the requested resource as an InputStream
+     * @throws IOException
+     */
     public abstract InputStream get(String path) throws IOException;
 
+    /**
+     * Get the URL of the resource identified by the provided path.
+     * 
+     * @param path the path for the requested resource
+     * @return a URL for the requested resource or null if not found
+     */
     public abstract URL getURL(String path);
 
 }
