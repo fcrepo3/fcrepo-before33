@@ -524,6 +524,7 @@
                     <include>**/ContentModelDSInputTest.class</include>
                     <include>**/TestCommandLineUtilities.class</include>
                     <include>**/TestMisplacedNamespace.class</include>
+                    <include>**/TestREST.class</include>
 
                   </includes>
                   <excludes>
