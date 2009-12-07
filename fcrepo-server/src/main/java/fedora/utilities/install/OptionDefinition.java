@@ -72,10 +72,10 @@ public class OptionDefinition {
         
         // If label, description, validValues and defaultValue are all null,
         // assume that no definition for the id exists.
-        if (label == null && description == null && validValues == null && 
-        		defaultValue == null) {
-        	return null;
-        }
+        //if (label == null && description == null && validValues == null && 
+        // 		defaultValue == null) {
+        // 	return null;
+        //}
 
         // Use the environment variable FEDORA_HOME as the default, if defined
         if (id.equals(InstallOptions.FEDORA_HOME)) {
