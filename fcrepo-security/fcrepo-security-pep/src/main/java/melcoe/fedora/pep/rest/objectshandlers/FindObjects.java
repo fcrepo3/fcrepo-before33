@@ -337,7 +337,7 @@ public class FindObjects extends AbstractFilter
 		// ensure we have 'pid' in the list and also that it exists
 		for (int x = 0; x < numHeaders; x++)
 		{
-			String header = headers.item(x).getFirstChild().getFirstChild().getFirstChild().getNodeValue();
+			String header = headers.item(x).getFirstChild().getFirstChild().getNodeValue();
 			if ("pid".equals(header))
 				pidHeader = x;
 		}
