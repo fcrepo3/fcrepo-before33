@@ -26,7 +26,7 @@
     <org.apache.activemq.default.directory.prefix>${project.build.directory}</org.apache.activemq.default.directory.prefix>
   </properties>
 
-  <!-- By default no unit or integrations tests are run in this pom. 
+  <!-- By default no unit or integrations tests are run in this pom.
        Tests are only run by specifying a profile (configA/B/Q) -->
   <build>
     <plugins>
@@ -34,7 +34,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.4.2</version>
-        
+
         <!-- skip unit tests -->
         <configuration>
           <skip>true</skip>
@@ -162,11 +162,12 @@
                     <include>**/SharedDeploymentTests.class</include>
                     <include>**/TestCommandLineUtilities.class</include>
                     <include>**/ContentModelDSInputTest.class</include>
+                    <include>**/TestREST.class</include>
 
                   </includes>
                   <excludes>
                     <exclude>${instrumentedTests}</exclude>
-                    <exclude>${nestedClassTests}</exclude>                    
+                    <exclude>${nestedClassTests}</exclude>
                   </excludes>
 
                 </configuration>
@@ -262,7 +263,7 @@
 
                     <include>**/AtomAPIMMessageTest.class</include>
                     <include>**/DOTranslationUtilityTest.class</include>
-                    <include>**/TestIngest.class</include>  
+                    <include>**/TestIngest.class</include>
                     <include>**/TestAPIA.class</include>
                     <include>**/TestAPIAConfigA.class</include>
                     <include>**/TestAPIALite.class</include>
@@ -284,7 +285,7 @@
                   </includes>
                   <excludes>
                     <exclude>${instrumentedTests}</exclude>
-                    <exclude>${nestedClassTests}</exclude>                    
+                    <exclude>${nestedClassTests}</exclude>
                   </excludes>
 
                 </configuration>
@@ -344,7 +345,7 @@
                       <name>demo.format</name>
                       <value></value>
                     </property>
- 
+
                     <property>
                       <name>fedora.hostname</name>
                       <value>${fedora.hostname}</value>
@@ -369,7 +370,7 @@
                   </systemProperties>
 
                   <includes>
-                    
+
                     <!-- Hangs intermittently
                     <include>**/NotificationInvocationHandlerTest.class</include>
                      -->
@@ -406,7 +407,128 @@
                   </includes>
                   <excludes>
                     <exclude>${instrumentedTests}</exclude>
-                    <exclude>${nestedClassTests}</exclude>                    
+                    <exclude>${nestedClassTests}</exclude>
+                  </excludes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>configC</id>
+      <activation>
+        <property>
+          <name>config</name>
+          <value>C</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.4.2</version>
+
+            <executions>
+
+              <execution>
+                <id>int-test-C</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+
+
+                <configuration>
+                  <skip>${integration.test.skip}</skip>
+
+                  <systemProperties>
+                    <property>
+                      <name>fedora.home</name>
+                      <value>${fedora.home}</value>
+                    </property>
+                    <property>
+                      <name>javax.net.ssl.trustStore</name>
+                      <value>${javax.net.ssl.trustStore}</value>
+                    </property>
+                    <property>
+                      <name>fedora.username</name>
+                      <value>${fedora.username}</value>
+                    </property>
+                    <property>
+                      <name>fedora.password</name>
+                      <value>${fedora.password}</value>
+                    </property>
+                    <property>
+                      <name>demo.format</name>
+                      <value></value>
+                    </property>
+
+                    <property>
+                      <name>fedora.hostname</name>
+                      <value>${fedora.hostname}</value>
+                    </property>
+                    <property>
+                      <name>fedora.port</name>
+                      <value>${fedora.port}</value>
+                    </property>
+                    <property>
+                      <name>fedora.appServerContext</name>
+                      <value>${fedora.appServerContext}</value>
+                    </property>
+                    <property>
+                      <name>fedora.baseURL</name>
+                      <value>${fedora.baseURL}</value>
+                    </property>
+
+                    <property>
+                      <name>org.apache.activemq.default.directory.prefix</name>
+                      <value>${org.apache.activemq.default.directory.prefix}</value>
+                    </property>
+                  </systemProperties>
+
+                  <includes>
+
+                    <!-- Hangs intermittently
+                    <include>**/NotificationInvocationHandlerTest.class</include>
+                     -->
+
+                    <!-- Has bug in source-code
+                    <include>**/SimpleDeploymentTests.class</include>
+                     -->
+
+                    <include>**/AtomAPIMMessageTest.class</include>
+                    <include>**/DOTranslationUtilityTest.class</include>
+                    <include>**/TestIngest.class</include>
+                    <include>**/TestAPIA.class</include>
+                    <include>**/TestAPIALite.class</include>
+                    <include>**/TestAPIM.class</include>
+                    <include>**/TestAPIMLite.class</include>
+                    <include>**/TestAuthentication.class</include>
+                    <include>**/TestHTTPStatusCodes.class</include>
+                    <include>**/TestHTTPStatusCodesConfigB.class</include>
+                    <include>**/TestManagedDatastreams.class</include>
+                    <include>**/TestManagementNotifications.class</include>
+                    <include>**/TestRelationships.class</include>
+                    <include>**/TestRESTAPI.class</include>
+                    <include>**/TestRISearch.class</include>
+                    <include>**/TestOAIService.class</include>
+                    <include>**/TestCommandLineFormats.class</include>
+                    <include>**/TestServerConfiguration.class</include>
+                    <include>**/ConflictingDeploymentTests.class</include>
+                    <include>**/SharedDeploymentTests.class</include>
+                    <include>**/TestXACMLPolicies.class</include>
+                    <include>**/ContentModelDSInputTest.class</include>
+                    <include>**/TestCommandLineUtilities.class</include>
+                    <include>**/TestMisplacedNamespace.class</include>
+
+                  </includes>
+                  <excludes>
+                    <exclude>${instrumentedTests}</exclude>
+                    <exclude>${nestedClassTests}</exclude>
                   </excludes>
                 </configuration>
               </execution>
@@ -417,7 +539,7 @@
     </profile>
 
   </profiles>
-   
+
   <dependencies>
 
     <!--
@@ -426,7 +548,7 @@
       <artifactId>common</artifactId>
       <version>1.0.0</version>
     </dependency>
-    --> 
+    -->
 
     <dependency>
       <groupId>org.fcrepo</groupId>
@@ -434,15 +556,15 @@
       <classifier>tests</classifier>
       <version>${project.version}</version>
       <scope>test</scope>
-    </dependency> 
-    
+    </dependency>
+
     <!--
     <dependency>
       <groupId>org.fcrepo</groupId>
       <artifactId>server</artifactId>
       <version>1.0.0</version>
     </dependency>
-    --> 
+    -->
 
     <dependency>
       <groupId>org.fcrepo</groupId>
@@ -450,13 +572,13 @@
       <classifier>tests</classifier>
       <version>${project.version}</version>
       <scope>test</scope>
-    </dependency> 
+    </dependency>
 
     <dependency>
       <groupId>org.fcrepo</groupId>
       <artifactId>fcrepo-client-admin</artifactId>
       <version>${project.version}</version>
-    </dependency> 
+    </dependency>
 
     <!--
     <dependency>
@@ -466,13 +588,27 @@
       <classifier>fedora</classifier>
     </dependency>
     -->
-    
+
     <dependency>
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>
       <version>1.2</version>
       <scope>test</scope>
     </dependency>
+
+	<dependency>
+	   <groupId>org.apache.axis2</groupId>
+	   <artifactId>axis2</artifactId>
+	   <version>1.4.1</version>
+       <scope>test</scope>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.httpcomponents</groupId>
+		<artifactId>httpclient</artifactId>
+		<version>4.0</version>
+      	<scope>test</scope>
+	</dependency>
 
   </dependencies>
 </project>
