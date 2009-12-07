@@ -309,6 +309,10 @@
         <url-pattern>/objects/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>RestServlet</servlet-name>
+        <url-pattern>/objects/nextPID</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>RISearchServlet</servlet-name>
         <url-pattern>/risearch</url-pattern>
     </servlet-mapping>
