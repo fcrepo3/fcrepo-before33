@@ -453,6 +453,9 @@ public class InstallOptions {
         boolean unattended = getBooleanValue(UNATTENDED, false);
         for (String optionId : getOptionNames()) {
             OptionDefinition opt = OptionDefinition.get(optionId, this);
+            if (opt == null) {
+                throw new OptionValidationException("Option is not defined", optionId);
+            }
             opt.validateValue(getValue(optionId), unattended);
         }
     }
