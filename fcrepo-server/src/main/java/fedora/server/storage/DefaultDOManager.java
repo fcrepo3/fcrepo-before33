@@ -1079,6 +1079,14 @@ public class DefaultDOManager
                 LOG.warn("Object wasn't found in permanent low level "
                         + "store, but that might be ok; continuing with purge");
             }
+
+            // INVALIDATE DOREADER CACHE:
+            // now that the object xml is removed, make sure future requests
+            // for the object will not use a stale copy
+            if (m_readerCache != null) {
+                m_readerCache.remove(obj.getPid());
+            }
+
             // REGISTRY:
             // Remove digital object from the registry
             try {

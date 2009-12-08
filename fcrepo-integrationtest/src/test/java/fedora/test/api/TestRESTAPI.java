@@ -589,6 +589,9 @@ public class TestRESTAPI
         assertEquals(SC_UNAUTHORIZED, delete(false).getStatusCode());
         assertEquals(SC_NO_CONTENT, delete(true).getStatusCode());
 
+        // Ensure that GETs of the deleted object immediately give 404s (See FCREPO-594)
+        assertEquals(SC_NOT_FOUND, get(true).getStatusCode());
+
         // Create new empty object with a PID namespace specified
         url = String.format("/objects/new?namespace=test");
         assertEquals(SC_UNAUTHORIZED, post("", false).getStatusCode());
