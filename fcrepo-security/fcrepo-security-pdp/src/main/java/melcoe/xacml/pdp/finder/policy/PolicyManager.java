@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import melcoe.xacml.pdp.MelcoePDP;
 import melcoe.xacml.pdp.data.PolicyDataManager;
 import melcoe.xacml.pdp.data.PolicyDataManagerException;
 
@@ -87,10 +88,7 @@ public class PolicyManager {
 	 */
 	public PolicyManager(PolicyFinder polFinder) throws URISyntaxException,
 			PolicyDataManagerException {
-		String home = System.getenv("MELCOEPDP_HOME");
-		if (home == null || "".equals(home))
-			throw new PolicyDataManagerException(
-					"Environment home (MELCOEPDP_HOME) is not set.");
+		String home = MelcoePDP.PDP_HOME.getAbsolutePath();
 
 		String filename = home + "/conf/config-policy-manager.xml";
 		File f = new File(filename);

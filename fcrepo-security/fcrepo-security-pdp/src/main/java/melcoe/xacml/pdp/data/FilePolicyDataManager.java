@@ -46,7 +46,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import melcoe.xacml.pdp.MelcoePDPException;
+import melcoe.xacml.pdp.MelcoePDP;
 import melcoe.xacml.util.AttributeBean;
 import melcoe.xacml.util.DataFileUtils;
 
@@ -671,10 +671,7 @@ public class FilePolicyDataManager implements PolicyDataManager {
 		}
 
 		try {
-			String home = System.getenv("MELCOEPDP_HOME");
-			if (home == null || "".equals(home))
-				throw new MelcoePDPException(
-						"Environment home (MELCOEPDP_HOME) is not set.");
+			String home = MelcoePDP.PDP_HOME.getAbsolutePath();
 
 			String filename = home + "/conf/config-pdm-file.xml";
 			File f = new File(filename);
@@ -694,7 +691,7 @@ public class FilePolicyDataManager implements PolicyDataManager {
 			for (int x = 0; x < nodes.getLength(); x++) {
 				Node node = nodes.item(x);
 				if (node.getNodeName().equals("directory")) {
-					DB_HOME = System.getenv("MELCOEPDP_HOME")
+					DB_HOME = MelcoePDP.PDP_HOME.getAbsolutePath()
 							+ node.getAttributes().getNamedItem("name")
 									.getNodeValue();
 					DB_RCYL = DB_HOME + "recycle";

@@ -18,6 +18,10 @@
 
 package melcoe.xacml.pdp;
 
+import java.io.File;
+
+import fedora.common.Constants;
+
 /**
  * The interface for the MelcoePDP. The PDP simply evaluates requests and
  * returns responses.
@@ -26,6 +30,8 @@ package melcoe.xacml.pdp;
  * 
  */
 public interface MelcoePDP {
+	public static File PDP_HOME = new File(Constants.FEDORA_HOME, "pdp/");
+	
 	/**
 	 * This method evaulates an XACML request and returns an XACML response.
 	 * 

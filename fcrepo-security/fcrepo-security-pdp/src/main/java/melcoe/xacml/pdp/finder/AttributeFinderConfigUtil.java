@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import melcoe.xacml.pdp.MelcoePDP;
 import melcoe.xacml.pdp.MelcoePDPException;
 import melcoe.xacml.pdp.data.PolicyDataManagerException;
 
@@ -36,10 +37,7 @@ public class AttributeFinderConfigUtil {
 		designatorTable.add("environment");
 
 		try {
-			String home = System.getenv("MELCOEPDP_HOME");
-			if (home == null || "".equals(home))
-				throw new MelcoePDPException(
-						"Environment home (MELCOEPDP_HOME) is not set.");
+			String home = MelcoePDP.PDP_HOME.getAbsolutePath();
 
 			String filename = home + "/conf/config-attribute-finder.xml";
 			File f = new File(filename);
@@ -173,10 +171,7 @@ public class AttributeFinderConfigUtil {
 
 	private static Element getAttributeFinder(String className)
 			throws Exception {
-		String home = System.getenv("MELCOEPDP_HOME");
-		if (home == null || "".equals(home))
-			throw new MelcoePDPException(
-					"Environment home (MELCOEPDP_HOME) is not set.");
+		String home = MelcoePDP.PDP_HOME.getAbsolutePath();
 
 		String filename = home + "/conf/config-attribute-finder.xml";
 		File f = new File(filename);

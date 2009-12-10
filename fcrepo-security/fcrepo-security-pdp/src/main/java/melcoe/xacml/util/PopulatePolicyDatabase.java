@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import melcoe.xacml.pdp.MelcoePDP;
 import melcoe.xacml.pdp.data.DbXmlPolicyDataManager;
 import melcoe.xacml.pdp.data.PolicyDataManagerException;
 
@@ -41,7 +42,7 @@ public class PopulatePolicyDatabase {
 	private static final Logger log = Logger
 			.getLogger(PopulatePolicyDatabase.class);
 
-	private static final String POLICY_HOME = System.getenv("MELCOEPDP_HOME")
+	private static final String POLICY_HOME = MelcoePDP.PDP_HOME.getAbsolutePath()
 			+ "/policies";
 	private static DbXmlPolicyDataManager dbXmlPolicyDataManager;
 

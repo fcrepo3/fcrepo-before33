@@ -57,11 +57,7 @@ public class MelcoePDPImpl implements MelcoePDP {
 	public MelcoePDPImpl() throws MelcoePDPException {
 		ConfigurationStore config = null;
 		try {
-			String home = System.getenv("MELCOEPDP_HOME");
-			if (home == null || "".equals(home))
-				throw new MelcoePDPException(
-						"Environment home (MELCOEPDP_HOME) is not set.");
-
+			String home = PDP_HOME.getAbsolutePath();
 			File f = null;
 			String filename = null;
 
