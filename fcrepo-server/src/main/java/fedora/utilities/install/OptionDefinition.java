@@ -170,10 +170,17 @@ public class OptionDefinition {
                 File dir = new File(value);
                 if (dir.isDirectory()) {
                     if (dir.listFiles().length != 0) {
+                    	// check if we're on a Mac
+                    	String lcOSName = System.getProperty("os.name").toLowerCase();
+                    	boolean MAC_OS_X = lcOSName.startsWith("mac os x");
+                    	File dsStore = new File(dir, ".DS_Store");
+                    	
                         if (unattended) {
                             System.out
                                     .println("WARNING: Overwriting existing directory: "
                                             + dir.getAbsolutePath());
+                        } else if (dir.listFiles().length == 1 && dsStore.exists() && MAC_OS_X) {
+                        	// assume we are on Mac OS X and can safely ignore
                         } else {
                             System.out.println("WARNING: "
                                     + dir.getAbsolutePath() + " is not empty.");
