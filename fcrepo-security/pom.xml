@@ -14,7 +14,9 @@
 
   <modules>
     <module>fcrepo-security-jaas</module>
+    <!-- 
     <module>fcrepo-security-pdp</module>
+    -->
     <module>fcrepo-security-pep</module>
   </modules>
 </project>
