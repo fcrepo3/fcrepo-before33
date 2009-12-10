@@ -65,20 +65,37 @@
                 <include>server-config.wsdd</include>
               </includes>
             </resource>
+            <resource>
+              <!-- this is terrible. brittle. FIXME -->
+              <directory>${project.basedir}/../../fcrepo-security/fcrepo-security-pep/src/main/resources</directory>
+              <targetPath>WEB-INF/classes</targetPath>
+              <includes>
+                <include>config-melcoe-pep.xml</include>
+                <include>config-melcoe-pep-mapping.xml</include>
+              </includes>
+            </resource>
+            <resource>
+              <!-- this is terrible. brittle. FIXME -->
+              <directory>${project.basedir}/../../fcrepo-security/fcrepo-security-pep/src/main/resources</directory>
+              <targetPath>WEB-INF</targetPath>
+              <includes>
+                <include>melcoe-pep-server-config.wsdd</include>
+              </includes>
+            </resource>
           </webResources>
           <archive>
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
             <manifest>
-                      <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                    </manifest>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+            </manifest>
 
-                    <!-- 
-                      Note: The version and build need to be generated.
-                      -->
-                    <manifestEntries>
-                      <Version>${buildNumber}</Version>
-                      <Build>${timestamp}</Build>
-                    </manifestEntries>
+            <!--
+              Note: The version and build need to be generated.
+            -->
+            <manifestEntries>
+              <Version>${buildNumber}</Version>
+              <Build>${timestamp}</Build>
+            </manifestEntries>
           </archive>
 
         </configuration>
@@ -159,6 +176,26 @@
     <dependency>
       <groupId>org.fcrepo</groupId>
       <artifactId>fcrepo-server</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.fcrepo</groupId>
+      <artifactId>fcrepo-security-jaas</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    <!--
+    <dependency>
+      <groupId>org.fcrepo</groupId>
+      <artifactId>fcrepo-security-pdp</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    -->
+    
+    <dependency>
+      <groupId>org.fcrepo</groupId>
+      <artifactId>fcrepo-security-pep</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

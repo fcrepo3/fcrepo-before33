@@ -8,11 +8,14 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import fedora.server.config.webxml.ContextParam;
@@ -27,51 +30,64 @@ import fedora.server.config.webxml.WebXML;
 import fedora.utilities.install.InstallOptions;
 
 /**
- * Configures the web.xml for Fedora. This class does not create a complete
+ * Configures the web.xml for Fedora. This class does not create a complete 
  * web.xml document from scratch. It assumes that the constructor-provided
  * webXML file has already defined the base set of servlets, servlet-mapping,
- * etc (specifically, the web.xml located in src/war/fedora/WEB-INF/web.xml).
+ * etc. Specifically, we expect the web.xml located in 
+ * fcrepo-webapp-fedora/main/webapp/WEB-INF/web.xml.
  *
  * @author Edwin Shin
  */
 public class FedoraWebXML {
 
-    protected static final String FEDORA_GENERATED =
+    protected final String FEDORA_GENERATED =
             "Fedora-generated security-constraint";
 
-    private static final String CONFIDENTIAL = "CONFIDENTIAL";
+    private final String CONFIDENTIAL = "CONFIDENTIAL";
 
-    private static final String FILTER_AUTHN = "EnforceAuthnFilter";
-    private static final String FILTER_RESTAPI = "RestApiAuthnFilter";
+    private final String FILTER_AUTHN = "EnforceAuthnFilter";
+    private final String FILTER_RESTAPI = "RestApiAuthnFilter";
+    private final String FILTER_PEP = "PEPFilter";
+    private final String FILTER_SETUP = "SetupFilter";
+    private final String FILTER_XMLUSERFILE = "XmlUserfileFilter";
+    private final String FILTER_FINALIZE = "FinalizeFilter";
+    private final String FILTER_JAAS = "AuthFilterJAAS";
 
-    private static final String[] FILTER_APIA_SERVLET_NAMES =
+    private final String[] FILTER_APIA_SERVLET_NAMES =
             new String[] {"AccessServlet", "DescribeRepositoryServlet",
                     "FieldSearchServlet", "GetObjectHistoryServlet",
                     "ListDatastreamsServlet", "ListMethodsServlet",
                     "MethodParameterResolverServlet", "OAIProviderServlet",
                     "ReportServlet", "RISearchServlet"};
 
-    private static final String[] FILTER_APIA_URL_PATTERNS =
+    private final String[] FILTER_APIA_URL_PATTERNS =
             new String[] {"/services/access"};
 
-    private static final String[] FILTER_APIM_SERVLET_NAMES =
+    private final String[] FILTER_APIM_SERVLET_NAMES =
             new String[] {"AxisServlet", "ControlServlet", "GetNextPIDServlet",
                     "UploadServlet"};
 
-    private static final String[] FILTER_APIM_URL_PATTERNS =
+    private final String[] FILTER_APIM_URL_PATTERNS =
             new String[] {"/getDSAuthenticated", "/index.html",
                     "/services/management"};
 
-    private static final String[] SC_APIA_URL_PATTERNS =
+    private final String[] SC_APIA_URL_PATTERNS =
             new String[] {"/", "/describe", "/get/*", "/getAccessParmResolver",
                     "/getObjectHistory/*", "/listDatastreams/*",
                     "/listMethods/*", "/oai", "/report", "/risearch",
                     "/search", "/services/access", "/wsdl", "*.jsp"};
 
-    private static final String[] SC_APIM_URL_PATTERNS =
+    private final String[] SC_APIM_URL_PATTERNS =
             new String[] {"/index.html", "/getDSAuthenticated",
                     "/management/getNextPID", "/management/upload",
                     "/services/management", "*.jws"};
+    
+    private final Map<String,String> FESL_SERVLET_MAPPINGS = 
+    	new HashMap<String,String>() {
+			private static final long serialVersionUID = 1L;
+			{put("UserServlet", "/user");
+			}
+    	};
 
     private final WebXMLOptions options;
 
@@ -86,12 +102,28 @@ public class FedoraWebXML {
         fedoraWebXML = fedora.server.config.webxml.WebXML.getInstance(webXML);
 
         setFedoraHome();
+        setServletMappings();
         setFilterMappings();
         Collections.sort(fedoraWebXML.getFilterMappings(),
                          new FilterMappingComparator());
         setSecurityConstraints();
     }
 
+    /**
+     * Set the servlet-mappings.
+     */
+    private void setServletMappings() {
+    	if (options.requireFesl()) {
+    		for (String servletName : FESL_SERVLET_MAPPINGS.keySet()) {
+    			addServletMapping(servletName, FESL_SERVLET_MAPPINGS.get(servletName));
+    		}
+    	} else {
+    		for (String servletName : FESL_SERVLET_MAPPINGS.keySet()) {
+    			removeServletMapping(servletName, FESL_SERVLET_MAPPINGS.get(servletName));
+    		}
+    	}
+    }
+    
     /**
      * Set the filter-mappings. The filter-mappings for APIM are always set.
      */
@@ -116,6 +148,11 @@ public class FedoraWebXML {
             removeFilterMappings(FILTER_APIA_SERVLET_NAMES,
                                  FILTER_APIA_URL_PATTERNS);
             fedoraWebXML.addFilterMapping(fmAPIM);
+        }
+        
+        // FeSL
+        if (options.requireFesl()) {
+        	setFeslFilterMappings();
         }
     }
 
@@ -274,7 +311,7 @@ public class FedoraWebXML {
                 }
             }
         }
-
+        
         for (String servletName : servlets) {
             FilterMapping fm = new FilterMapping();
             fm.setFilterName(FILTER_AUTHN);
@@ -317,6 +354,45 @@ public class FedoraWebXML {
         }
     }
 
+    /**
+     * Set the filter mappings required by FeSL.
+     * This involves replacing the legacy policy enforcement filter, FILTER_AUTHN,
+     * with PEP_FILTER as well as removing some unneeded filters and adding the
+     * FILTER_JAAS filter.
+     * It is assumed that the actual servlets or url-patterns that need filter
+     * mapping have already been declared previously, with the exception of 
+     * FILTER_JAAS.
+     */
+    private void setFeslFilterMappings() {
+    	Collection<String> toDelete = new HashSet<String>();
+    	toDelete.add(FILTER_SETUP);
+    	toDelete.add(FILTER_XMLUSERFILE);
+    	toDelete.add(FILTER_FINALIZE);
+    	
+    	Collection<String> toReplace = new HashSet<String>();
+    	toReplace.add(FILTER_AUTHN);
+    	toReplace.add(FILTER_RESTAPI);
+    	
+    	String filterName;    	
+    	FilterMapping fMap;
+        Iterator<FilterMapping> filterMappings =
+                fedoraWebXML.getFilterMappings().iterator();
+        while (filterMappings.hasNext()) {
+        	fMap = filterMappings.next();
+        	filterName = fMap.getFilterName();
+        	if (toReplace.contains(filterName)) {
+            	fMap.setFilterName(FILTER_PEP);
+            } else if (toDelete.contains(filterName)) {
+            	filterMappings.remove();
+            }
+        }
+        
+        fMap = new FilterMapping();
+        fMap.setFilterName(FILTER_JAAS);
+        fMap.addUrlPattern("/*");
+        fedoraWebXML.addFilterMapping(fMap);
+    }
+    
     /**
      * Sets all context-param/param-value and init-param/param-value elements
      * where param-name=fedora.home

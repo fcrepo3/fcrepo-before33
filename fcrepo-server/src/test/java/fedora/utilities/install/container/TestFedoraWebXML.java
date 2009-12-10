@@ -4,14 +4,14 @@
  */
 package fedora.utilities.install.container;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Edwin Shin
@@ -48,25 +48,46 @@ public class TestFedoraWebXML {
                 new FedoraWebXML(webXMLFilePath, getOptions(false,
                                                             true,
                                                             true,
+                                                            false,
                                                             ""));
         assertNotNull(webXML);
 
         // TestConfigB
         webXML =
                 new FedoraWebXML(webXMLFilePath, getOptions(true,
+                                                            false,
                                                             true,
-                                                            true,
+                                                            false,
                                                             ""));
+        
+        // TestConfigC
+        webXML =
+            new FedoraWebXML(webXMLFilePath, getOptions(true,
+                                                        false,
+                                                        true,
+                                                        true,
+                                                        ""));
+
+        // TestConfigQ
+        webXML = 
+        	new FedoraWebXML(webXMLFilePath, getOptions(false, 
+        												false, 
+        												false, 
+        												false, 
+        												""));
+        
     }
 
     private WebXMLOptions getOptions(boolean apiaA,
                                      boolean apiaS,
                                      boolean apimS,
+                                     boolean fesl,
                                      String fedoraHome) {
         WebXMLOptions options = new WebXMLOptions();
         options.setApiaAuth(apiaA);
         options.setApiaSSL(apiaS);
         options.setApimSSL(apimS);
+        options.setFesl(fesl);
         options.setFedoraHome(new File(fedoraHome));
         return options;
     }

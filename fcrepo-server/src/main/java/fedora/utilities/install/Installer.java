@@ -176,9 +176,18 @@ public class Installer {
                 new File(webinfLib, Distribution.LOG4J).delete();
             }
             
-            // Add FeSL jars, if using FeSL
-            //TODO
-
+            // FeSL configuration
+            if (_opts.getBooleanValue(InstallOptions.FESL_ENABLED, false)) {
+            	File originalWsdd = new File(warStage, "WEB-INF/server-config.wsdd");
+            	originalWsdd.renameTo(new File(warStage, "WEB-INF/server-config.wsdd.backup.original"));
+            	
+            	File feslWsdd = new File(warStage, "WEB-INF/melcoe-pep-server-config.wsdd");
+            	feslWsdd.renameTo(new File(warStage, "WEB-INF/server-config.wsdd"));
+            }
+            
+            // FIXME need to change url for pdp-client in WEB-INF/classes/config-melcoe-pep.xml
+            // to reflect install options for host & port
+            
             File fedoraWar = new File(installDir, fedoraWarName + ".war");
             Zip.zip(fedoraWar, warStage.listFiles());
             return fedoraWar;

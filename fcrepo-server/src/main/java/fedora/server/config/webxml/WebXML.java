@@ -237,7 +237,7 @@ public class WebXML
         nspm.setPrefix("http://java.sun.com/xml/ns/j2ee", "xmlns");
         //
 
-        outputWriter.write("<?xml version=\"1.0\" ?>\n");
+        outputWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 
         BeanWriter beanWriter = new BeanWriter(outputWriter);
         beanWriter.getBindingConfiguration().setMapIDs(false);

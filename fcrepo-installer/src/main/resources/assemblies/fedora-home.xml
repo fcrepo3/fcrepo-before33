@@ -82,7 +82,15 @@
       <includes>
         <include>fedora-users.xml</include>
       </includes>
-    </fileSet>  
+    </fileSet>
+    
+    <fileSet>
+      <directory>../fcrepo-security/fcrepo-security-jaas/src/main/resources</directory>
+      <outputDirectory>/server/config</outputDirectory>
+      <includes>
+        <include>jaas.conf</include>
+      </includes>
+    </fileSet>
 
     <fileSet>
       <directory>../fcrepo-server/src/main/resources/xsl/management</directory>
