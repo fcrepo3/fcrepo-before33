@@ -222,7 +222,7 @@
     <dependency>
       <groupId>org.fcrepo</groupId>
       <artifactId>sunxacml</artifactId>
-      <version>1.2-PATCHED</version>
+      <classifier>melcoe</classifier>
     </dependency>
     <dependency>
       <groupId>org.fcrepo</groupId>

@@ -156,18 +156,18 @@
 
         <!-- <include>org.duraspace.fedora:common:jar</include> -->
         <!-- <include>org.duraspace.fedora:server:jar</include> -->
-        <include>com.sun.xml.stream:sjsxp:jar:1.0.1</include>
-        <include>dom4j:dom4j:jar:1.6.1</include>
-        <include>javax.activation:activation:jar:1.1.1</include>
-        <include>javax.xml:jsr173:jar:1.0</include>
-        <include>jaxen:jaxen:jar:1.1.1</include>
-        <include>log4j:log4j:jar:1.2.15</include>
-        <include>org.apache.abdera:abdera-core:jar:0.4.0-incubating</include>
-        <include>org.apache.abdera:abdera-i18n:jar:0.4.0-incubating</include>
-        <include>org.apache.abdera:abdera-parser:jar:0.4.0-incubating</include>
-        <include>org.apache.activemq:activemq-all:jar:5.1.0</include>
-        <include>org.apache.ws.commons.axiom:axiom-api:jar:1.2.5</include>
-        <include>org.apache.ws.commons.axiom:axiom-impl:jar:1.2.5</include>
+        <include>com.sun.xml.stream:sjsxp:jar:*</include>
+        <include>dom4j:dom4j:jar:*</include>
+        <include>javax.activation:activation:jar:*</include>
+        <include>javax.xml:jsr173:jar:*</include>
+        <include>jaxen:jaxen:jar:*</include>
+        <include>log4j:log4j:jar:*</include>
+        <include>org.apache.abdera:abdera-core:jar:*</include>
+        <include>org.apache.abdera:abdera-i18n:jar:*</include>
+        <include>org.apache.abdera:abdera-parser:jar:*</include>
+        <include>org.apache.activemq:activemq-all:jar:*</include>
+        <include>org.apache.ws.commons.axiom:axiom-api:jar:*</include>
+        <include>org.apache.ws.commons.axiom:axiom-impl:jar:*</include>
 
       </includes>
       <!-- <useProjectAttachments>true</useProjectAttachments> -->
