@@ -18,11 +18,8 @@
 
 package melcoe.xacml.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,7 +44,14 @@ public class PopulatePolicyDatabase {
 	private static DbXmlPolicyDataManager dbXmlPolicyDataManager;
 
 	private static Set<String> policyNames = new HashSet<String>();
-
+	
+	static {
+		try {
+			dbXmlPolicyDataManager = new DbXmlPolicyDataManager();
+		} catch (PolicyDataManagerException e) {
+			e.printStackTrace();
+		}
+	}
 	public static void main(String[] args) throws PolicyDataManagerException,
 			FileNotFoundException {
 		BasicConfigurator.configure();
@@ -75,23 +79,7 @@ public class PopulatePolicyDatabase {
 			return;
 
 		for (File f : files) {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			byte[] bytes = new byte[1024];
-			FileInputStream fis = new FileInputStream(f);
-
-			log.info("Adding: " + f.getName());
-
-			try {
-				int count = fis.read(bytes);
-				while (count > -1) {
-					out.write(bytes, 0, count);
-					count = fis.read(bytes);
-				}
-			} catch (IOException e) {
-				log.error("Error reading file: " + f.getName(), e);
-			}
-
-			policyNames.add(dbXmlPolicyDataManager.addPolicy(out.toString()));
+			policyNames.add(dbXmlPolicyDataManager.addPolicy(f));
 		}
 	}
 
