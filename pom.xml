@@ -315,6 +315,16 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
+
+    <!-- disabled bad repo: maven-repository.dev.java.net -->
+    <!-- see http://jira.codehaus.org/browse/MEV-649      -->
+    <repository>
+      <id>java.net</id>
+      <url>https://maven-repository.dev.java.net/nonav/repository</url>
+      <releases><enabled>false</enabled></releases>
+      <snapshots><enabled>false</enabled></snapshots>
+    </repository>
+
   </repositories>
 
   <scm>
