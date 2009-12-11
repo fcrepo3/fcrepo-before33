@@ -143,7 +143,6 @@ public class PolicyFinderModule
             PolicySet policySet =
                     new PolicySet(new URI(""),
                                   policyCombiningAlgorithm,
-                                  "",
                                   null /*
                                    * no general target beyond those of
                                    * multiplexed individual policies

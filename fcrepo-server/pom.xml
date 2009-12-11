@@ -605,17 +605,6 @@
     <dependency>
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
-      <version>2.1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.xml.stream</groupId>
-          <artifactId>stax-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.activation</groupId>
-          <artifactId>activation</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -705,14 +694,12 @@
     <dependency>
       <groupId>org.apache.ws.commons.axiom</groupId>
       <artifactId>axiom-api</artifactId>
-      <version>1.2.5</version>
     </dependency>
 
     <!-- Note: Used by messaging. DWD 9/9/2009 -->
     <dependency>
       <groupId>org.apache.ws.commons.axiom</groupId>
       <artifactId>axiom-impl</artifactId>
-      <version>1.2.5</version>
     </dependency>
 
     <dependency>
@@ -865,7 +852,7 @@
     <dependency>
       <groupId>org.fcrepo</groupId>
       <artifactId>sunxacml</artifactId>
-      <version>1.2-PATCHED</version>
+      <classifier>melcoe</classifier>
     </dependency>
     
     <dependency>

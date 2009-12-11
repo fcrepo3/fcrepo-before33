@@ -244,6 +244,7 @@ public class OptionDefinition {
                     validateExistingFile(value);
                 }
             } else if (_id.equals(InstallOptions.FESL_DBXML_HOME)) {
+            	printEnvWarning("DBXML_HOME", value);
                 File dir = new File(value);
                 if (dir.exists()) {
                     // must have lib subdir

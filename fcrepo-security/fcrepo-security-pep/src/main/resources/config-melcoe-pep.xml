@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
 	<!--
-		The pdp-client class is responsible for the PEP communicating with a PDP. By substitiuting
-		in different classses for the client you can communicate with virtually any PDP.
+		The pdp-client class is responsible for the PEP communicating with a PDP. By substituting
+		in different classes for the client you can communicate with virtually any PDP.
 		
 		The WebServicesPDPClient communicates with the MelcoePDP which has a web services interface.
 		The option is the location of the service.
 	-->
 	<pdp-client class="melcoe.fedora.pep.WebServicesPDPClient">
-		<option name="ServiceEndpoint">http://localhost:8080/axis2/services/MelcoePDP</option>
+		<option name="ServiceEndpoint">http://localhost:8080/fedora/pdp/MelcoePDP</option>
 	</pdp-client>
 	
 	<!--

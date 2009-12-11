@@ -112,19 +112,6 @@
 
     <dependencySet>
       <includes>
-        <include>org.fcrepo:fcrepo-security-pdp:war</include>
-      </includes>
-      <useProjectArtifact>false</useProjectArtifact>
-      <!--
-        Note: Output file is hard-coded here because it is also in java
-        files. May want to consider refactoring both.
-      -->
-      <outputDirectory>/resources</outputDirectory>
-      <outputFileNameMapping>fedora-pdp.war</outputFileNameMapping>
-    </dependencySet>
-
-    <dependencySet>
-      <includes>
         <include>org.fcrepo:fcrepo-webapp-fedora:war</include>
       </includes>
       <useProjectArtifact>false</useProjectArtifact>
@@ -159,6 +146,10 @@
           catch properly defined (i.e. maven-central) dependencies. See
           installer/pom.xml for exact dependency list.
         -->
+        <include>javax.xml.bind:jaxb-api:jar:*</include>
+        <include>com.sun.xml.bind:jaxb-impl:jar:*</include>
+        <include>javax.activation:activation:jar:*</include>
+        <include>javax.xml.stream:stax-api:jar:*</include>
         <include>commons-beanutils:commons-beanutils:*</include>
         <include>commons-betwixt:commons-betwixt:*</include>
         <include>commons-collections:commons-collections:jar:*</include>

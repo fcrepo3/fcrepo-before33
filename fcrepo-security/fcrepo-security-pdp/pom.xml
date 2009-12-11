@@ -10,8 +10,7 @@
   </parent>
 
   <artifactId>fcrepo-security-pdp</artifactId>
-  <packaging>war</packaging>
-  <name>Fedora JAAS Authentication</name>
+  <name>Fedora Security PDP</name>
 
   <dependencies>
     <dependency>
@@ -65,12 +64,10 @@
     <dependency>
       <groupId>org.apache.ws.commons.axiom</groupId>
       <artifactId>axiom-api</artifactId>
-      <version>1.2.8</version>
     </dependency>
     <dependency>
       <groupId>org.apache.ws.commons.axiom</groupId>
       <artifactId>axiom-impl</artifactId>
-      <version>1.2.8</version>
     </dependency>
     <dependency>
       <groupId>org.apache.ws.commons.schema</groupId>
@@ -101,222 +98,15 @@
       <groupId>org.fcrepo</groupId>
       <artifactId>fcrepo-common</artifactId>
       <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.fcrepo</groupId>
-          <artifactId>axis</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.hp.hpl.jena</groupId>
-          <artifactId>iri</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.hp.hpl.jena</groupId>
-          <artifactId>jena</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-codec</groupId>
-          <artifactId>commons-codec</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-discovery</groupId>
-          <artifactId>commons-discovery</artifactId>
-
-        </exclusion>
-        <exclusion>
-          <groupId>commons-httpclient</groupId>
-          <artifactId>commons-httpclient</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>howl</groupId>
-          <artifactId>howl-logger</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.activation</groupId>
-          <artifactId>activation</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.mail</groupId>
-          <artifactId>mail</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.resource</groupId>
-          <artifactId>connector-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.xml.soap</groupId>
-          <artifactId>saaj-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>joda-time</groupId>
-          <artifactId>joda-time</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jotm</groupId>
-          <artifactId>jotm</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jotm</groupId>
-          <artifactId>jotm_jrmp_stubs</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.lucene</groupId>
-          <artifactId>lucene-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.codehaus.castor</groupId>
-          <artifactId>castor-codegen</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.codehaus.castor</groupId>
-          <artifactId>castor-xml</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.codehaus.castor</groupId>
-          <artifactId>castor-xml-schema</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.fcrepo</groupId>
-          <artifactId>emory-util-remote</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.mod4j.com.ibm</groupId>
-          <artifactId>icu</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.fcrepo</groupId>
-          <artifactId>jta</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.fcrepo</groupId>
-          <artifactId>trove</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.objectweb.carol</groupId>
-          <artifactId>carol</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.openrdf.sesame</groupId>
-          <artifactId>sesame-model</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.fcrepo</groupId>
-          <artifactId>sunxacml</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.fcrepo</groupId>
       <artifactId>sunxacml</artifactId>
-      <version>1.2</version>
       <classifier>melcoe</classifier>
     </dependency>
     <dependency>
       <groupId>org.fcrepo</groupId>
       <artifactId>trippi-core</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.fcrepo</groupId>
-          <artifactId>axis</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.hp.hpl.jena</groupId>
-          <artifactId>iri</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.hp.hpl.jena</groupId>
-          <artifactId>jena</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-codec</groupId>
-          <artifactId>commons-codec</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-discovery</groupId>
-          <artifactId>commons-discovery</artifactId>
-
-        </exclusion>
-        <exclusion>
-          <groupId>commons-httpclient</groupId>
-          <artifactId>commons-httpclient</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>howl</groupId>
-          <artifactId>howl-logger</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.activation</groupId>
-          <artifactId>activation</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.mail</groupId>
-          <artifactId>mail</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.resource</groupId>
-          <artifactId>connector-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.xml.soap</groupId>
-          <artifactId>saaj-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>joda-time</groupId>
-          <artifactId>joda-time</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jotm</groupId>
-          <artifactId>jotm</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jotm</groupId>
-          <artifactId>jotm_jrmp_stubs</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.lucene</groupId>
-          <artifactId>lucene-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.codehaus.castor</groupId>
-          <artifactId>castor-codegen</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.codehaus.castor</groupId>
-          <artifactId>castor-xml</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.codehaus.castor</groupId>
-          <artifactId>castor-xml-schema</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.fcrepo</groupId>
-          <artifactId>emory-util-remote</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.mod4j.com.ibm</groupId>
-          <artifactId>icu</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.fcrepo</groupId>
-          <artifactId>jta</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.fcrepo</groupId>
-          <artifactId>trove</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.objectweb.carol</groupId>
-          <artifactId>carol</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
   </dependencies>
 </project>

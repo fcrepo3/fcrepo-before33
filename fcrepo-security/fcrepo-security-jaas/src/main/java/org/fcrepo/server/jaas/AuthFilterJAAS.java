@@ -49,6 +49,8 @@ import org.fcrepo.server.jaas.auth.AuthHttpServletRequestWrapper;
 import org.fcrepo.server.jaas.auth.handler.UsernamePasswordCallbackHandler;
 import org.fcrepo.server.jaas.util.Base64;
 
+import fedora.common.Constants;
+
 /**
  * A Servlet Filter for protecting resources. This filter uses JAAS for performing user
  * authentication. Once a user is authenticated, a user principal object that is returned from the
@@ -98,7 +100,7 @@ public class AuthFilterJAAS implements Filter
 	public void init(FilterConfig filterConfig) throws ServletException
 	{
 		// get FEDORA_HOME. This being set is mandatory.
-		String fedoraHome = System.getenv("FEDORA_HOME");
+		String fedoraHome = Constants.FEDORA_HOME;
 		if (fedoraHome == null || "".equals(fedoraHome))
 		{
 			String msg = "FEDORA_HOME environment variable not set";
