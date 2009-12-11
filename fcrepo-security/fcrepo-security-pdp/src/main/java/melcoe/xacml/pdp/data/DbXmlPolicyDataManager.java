@@ -268,7 +268,7 @@ public class DbXmlPolicyDataManager implements PolicyDataManager {
 					+ f.getName(), e);
 		}
 
-		return addPolicy(name, out.toString());
+		return addPolicy(out.toString(), name);
 	}
 
 	/*
