@@ -24,6 +24,8 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import melcoe.xacml.util.PopulatePolicyDatabase;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -72,6 +74,11 @@ public class MelcoePDPImpl implements MelcoePDP {
 			}
 			PropertyConfigurator.configure(filename);
 
+			// FIXME initial load of policies
+			PopulatePolicyDatabase.add();
+			PopulatePolicyDatabase.list();
+			//
+			
 			// Ensure we have the configuration file.
 			filename = home + "/conf/config-pdp.xml";
 			f = new File(filename);
