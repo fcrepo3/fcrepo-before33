@@ -156,7 +156,8 @@
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
-        <version>1.2.15</version>
+        <!-- Why not 1.2.15?  See http://jira.codehaus.org/browse/MEV-649 -->
+        <version>1.2.14</version>
         <exclusions>
           <exclusion>
             <groupId>com.sun.jdmk</groupId>
