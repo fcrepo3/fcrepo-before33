@@ -182,6 +182,12 @@
       <directory>../fcrepo-server/target/client/demo</directory>
       <outputDirectory>/client/demo</outputDirectory>
     </fileSet>  
+    
+    <!--  FeSL -->
+    <fileSet>
+      <directory>../fcrepo-security/fcrepo-security-pdp/src/pdp_home</directory>
+      <outputDirectory>pdp</outputDirectory>
+    </fileSet>  
 
     <!-- Do these files really need to be copied to client/lib? --> 
     <fileSet>

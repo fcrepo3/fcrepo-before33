@@ -5,23 +5,25 @@
   </formats>
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
-  
+
     <!-- Server entries -->
     <fileSet>
-      <directory>../fcrepo-server/src/main/resources/properties/resources</directory>
+      <directory>../fcrepo-server/src/main/resources/properties/resources
+      </directory>
       <outputDirectory>/resources</outputDirectory>
       <includes>
         <include>install.properties</include>
       </includes>
-    </fileSet>  
+    </fileSet>
 
     <fileSet>
-      <directory>../fcrepo-server/src/main/resources/dbspec/server/fedora/server/storage/resources</directory>
+      <directory>../fcrepo-server/src/main/resources/dbspec/server/fedora/server/storage/resources
+      </directory>
       <outputDirectory>/resources</outputDirectory>
       <includes>
         <include>DefaultDOManager.dbspec</include>
       </includes>
-    </fileSet>  
+    </fileSet>
 
     <!-- Top-level entries -->
     <fileSet>
@@ -31,7 +33,7 @@
         <include>apache-tomcat-6.0.20.zip</include>
         <include>keystore</include>
       </includes>
-    </fileSet>  
+    </fileSet>
 
   </fileSets>
 
@@ -47,47 +49,50 @@
       </includes>
       <useProjectArtifact>false</useProjectArtifact>
       <outputDirectory>/resources</outputDirectory>
-      <!-- 
-        Note: Output file is hard-coded here because it is also in java files.
-              May want to consider refactoring both.
-        -->
+      <!--
+        Note: Output file is hard-coded here because it is also in java
+        files. May want to consider refactoring both.
+      -->
     </dependencySet>
-    
+
     <dependencySet>
       <includes>
-        <include>org.fcrepo:fcrepo-webapp-fop:war:${project.version}</include>
+        <include>org.fcrepo:fcrepo-webapp-fop:war:${project.version}
+        </include>
       </includes>
       <useProjectArtifact>false</useProjectArtifact>
-      <!-- 
-        Note: Output file is hard-coded here because it is also in java files.
-              May want to consider refactoring both.
-        -->
+      <!--
+        Note: Output file is hard-coded here because it is also in java
+        files. May want to consider refactoring both.
+      -->
       <outputDirectory>/resources</outputDirectory>
       <outputFileNameMapping>fop.war</outputFileNameMapping>
     </dependencySet>
 
     <dependencySet>
       <includes>
-        <include>org.fcrepo:fcrepo-webapp-saxon:war:${project.version}</include>
+        <include>org.fcrepo:fcrepo-webapp-saxon:war:${project.version}
+        </include>
       </includes>
       <useProjectArtifact>false</useProjectArtifact>
-      <!-- 
-        Note: Output file is hard-coded here because it is also in java files.
-              May want to consider refactoring both.
-        -->
+      <!--
+        Note: Output file is hard-coded here because it is also in java
+        files. May want to consider refactoring both.
+      -->
       <outputDirectory>/resources</outputDirectory>
       <outputFileNameMapping>saxon.war</outputFileNameMapping>
     </dependencySet>
 
     <dependencySet>
       <includes>
-        <include>org.fcrepo:fcrepo-webapp-imagemanip:war:${project.version}</include>
+        <include>org.fcrepo:fcrepo-webapp-imagemanip:war:${project.version}
+        </include>
       </includes>
       <useProjectArtifact>false</useProjectArtifact>
-      <!-- 
-        Note: Output file is hard-coded here because it is also in java files.
-              May want to consider refactoring both.
-        -->
+      <!--
+        Note: Output file is hard-coded here because it is also in java
+        files. May want to consider refactoring both.
+      -->
       <outputDirectory>/resources</outputDirectory>
       <outputFileNameMapping>imagemanip.war</outputFileNameMapping>
     </dependencySet>
@@ -97,37 +102,50 @@
         <include>org.fcrepo:fcrepo-webapp-democontent:war</include>
       </includes>
       <useProjectArtifact>false</useProjectArtifact>
-      <!-- 
-        Note: Output file is hard-coded here because it is also in java files.
-              May want to consider refactoring both.
-        -->
+      <!--
+        Note: Output file is hard-coded here because it is also in java
+        files. May want to consider refactoring both.
+      -->
       <outputDirectory>/resources</outputDirectory>
       <outputFileNameMapping>fedora-demo.war</outputFileNameMapping>
     </dependencySet>
 
-   <dependencySet>
+    <dependencySet>
+      <includes>
+        <include>org.fcrepo:fcrepo-security-pdp:war</include>
+      </includes>
+      <useProjectArtifact>false</useProjectArtifact>
+      <!--
+        Note: Output file is hard-coded here because it is also in java
+        files. May want to consider refactoring both.
+      -->
+      <outputDirectory>/resources</outputDirectory>
+      <outputFileNameMapping>fedora-pdp.war</outputFileNameMapping>
+    </dependencySet>
+
+    <dependencySet>
       <includes>
         <include>org.fcrepo:fcrepo-webapp-fedora:war</include>
       </includes>
       <useProjectArtifact>false</useProjectArtifact>
-      <!-- 
-        Note: Output file is hard-coded here because it is also in java files.
-              May want to consider refactoring both.
-        -->
+      <!--
+        Note: Output file is hard-coded here because it is also in java
+        files. May want to consider refactoring both.
+      -->
       <outputDirectory>/resources</outputDirectory>
       <outputFileNameMapping>fedora.war</outputFileNameMapping>
     </dependencySet>
 
-   <dependencySet>
+    <dependencySet>
       <includes>
         <include>org.fcrepo:fcrepo-installer:zip*</include>
       </includes>
       <useProjectArtifact>false</useProjectArtifact>
       <outputDirectory>/resources</outputDirectory>
-      <!-- 
-        Note: Output file is hard-coded here because it is also in java files.
-              May want to consider refactoring both.
-        -->
+      <!--
+        Note: Output file is hard-coded here because it is also in java
+        files. May want to consider refactoring both.
+      -->
       <useProjectAttachments>true</useProjectAttachments>
       <outputFileNameMapping>fedorahome.zip</outputFileNameMapping>
     </dependencySet>
@@ -136,11 +154,11 @@
       <includes>
         <include>org.fcrepo:fcrepo-common</include>
 
-        <!-- 
+        <!--
           Note: The include statement below will need to be expanded to
-                catch properly defined (i.e. maven-central) dependencies.
-                See installer/pom.xml for exact dependency list.
-         -->
+          catch properly defined (i.e. maven-central) dependencies. See
+          installer/pom.xml for exact dependency list.
+        -->
         <include>commons-beanutils:commons-beanutils:*</include>
         <include>commons-betwixt:commons-betwixt:*</include>
         <include>commons-collections:commons-collections:jar:*</include>
@@ -149,7 +167,7 @@
         <include>dom4j:dom4j:jar:*</include>
         <include>org.fcrepo:mulgara-core:jar:*</include>
         <include>org.fcrepo:openrdf-sesame-onejar:jar:*</include>
-        <include>jaxen:jaxen:jar:*</include>                        
+        <include>jaxen:jaxen:jar:*</include>
         <include>log4j:log4j:jar:*</include>
 
       </includes>
@@ -166,10 +184,10 @@
       </includes>
       <useProjectArtifact>false</useProjectArtifact>
       <outputDirectory>/main</outputDirectory>
-      <!-- 
-        Note: Output file is hard-coded here because it is also in java files.
-              May want to consider refactoring both.
-        -->
+      <!--
+        Note: Output file is hard-coded here because it is also in java
+        files. May want to consider refactoring both.
+      -->
       <outputFileNameMapping>main.jar</outputFileNameMapping>
     </dependencySet>
 
@@ -183,5 +201,5 @@
     </dependencySet>
 
   </dependencySets>
-  
+
 </assembly>
