@@ -103,8 +103,8 @@ import com.sun.xacml.cond.EvaluationResult;
  * requirements that need to be met:
  * <ul>
  * <li>All the requirements for installation of the MelcoePDP are met.</li>
- * <li>DBXML 2.3.10+ is installed.</li>
- * <li>The config-dbxml.xml configuration file located in $MELCOEPDP_HOME/conf</li>
+ * <li>DBXML 2.5.13+ is installed.</li>
+ * <li>The config-dbxml.xml configuration file located in $FEDORA_HOME/pdp/conf</li>
  * </ul>
  * </p>
  * 
@@ -528,6 +528,48 @@ public class DbXmlPolicyDataManager implements PolicyDataManager {
 
 		return documents;
 	}
+	
+	/**
+	 * Check if the policy identified by policyName exists.
+	 * 
+	 * @param policyName
+	 * @return true iff the policy store contains a policy identified as policyName
+	 * @throws PolicyDataManagerException
+	 */
+	public boolean contains(String policyName) throws PolicyDataManagerException {
+	    try {
+	        container.getDocument(policyName, new XmlDocumentConfig().setLazyDocs(true));
+	    } catch (XmlException e) {
+	        if (e.getErrorCode() == XmlException.DOCUMENT_NOT_FOUND) {
+	            return false;
+	        } else {
+	            throw new PolicyDataManagerException(e.getMessage(), e);
+	        }
+	    }
+	    return true;
+	}
+	
+	/**
+	 * Check if the policy identified by policyName exists.
+	 * 
+	 * @param policy
+	 * @return true iff the policy store contains a policy with the same PolicyId
+	 * @throws PolicyDataManagerException
+	 */
+	public boolean contains(File policy) throws PolicyDataManagerException {
+		InputStream is;
+		String policyName;
+		try {
+			is = new FileInputStream(policy);
+			Map<String, String> metadata = getDocumentMetadata(is);
+			is.close();
+			policyName = metadata.get("PolicyId");
+		} catch (IOException e) {
+			throw new PolicyDataManagerException(e.getMessage(), e);
+		}
+		return contains(policyName);
+	}
+
 
 	/*
 	 * (non-Javadoc)

@@ -75,8 +75,7 @@ public class MelcoePDPImpl implements MelcoePDP {
 			PropertyConfigurator.configure(filename);
 
 			// FIXME initial load of policies
-			PopulatePolicyDatabase.add();
-			PopulatePolicyDatabase.list();
+			PopulatePolicyDatabase.addDocuments();
 			//
 			
 			// Ensure we have the configuration file.

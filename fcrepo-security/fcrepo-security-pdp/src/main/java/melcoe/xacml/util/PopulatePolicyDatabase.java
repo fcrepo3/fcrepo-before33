@@ -79,7 +79,13 @@ public class PopulatePolicyDatabase {
 			return;
 
 		for (File f : files) {
-			policyNames.add(dbXmlPolicyDataManager.addPolicy(f));
+			if (dbXmlPolicyDataManager.contains(f)) {
+				if (log.isDebugEnabled()) {
+					log.debug("Policy database already contains " + f.getName() + ". Skipping.");
+				}
+			} else {
+				policyNames.add(dbXmlPolicyDataManager.addPolicy(f));
+			}
 		}
 	}
 
