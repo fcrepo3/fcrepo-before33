@@ -282,71 +282,12 @@
     <dependencySet>
       <useProjectArtifact>false</useProjectArtifact>
       <includes>
-      
-        <!-- <include>org.duraspace.fedora:fedora-client-admin</include> -->
         <include>org.fcrepo:fcrepo-common</include>
         <include>org.fcrepo:fcrepo-server</include>
-
         <!-- 
           Note: The include statement below needs catch properly defined
                 (i.e. maven-central) dependencies or they will not be
                 included in the assembly.
-         -->
-        <include>batik:*</include>
-        <include>commons-codec:commons-codec:jar:*</include>
-        <include>commons-discovery:commons-discovery:jar:0.2</include>
-        <include>commons-httpclient:commons-httpclient:jar:*</include>
-        <include>commons-logging:commons-logging:jar:*</include>
-        <include>commons-pool:commons-pool:jar:*</include>
-        <include>gnu.getopt:java-getopt:jar:*</include>
-        <include>javax.activation:activation:jar:*</include>
-        <include>javax.mail:mail:jar:*</include>
-        <include>javax.xml:jaxrpc-api:jar:*</include>
-        <include>com.sun.woodstock.dependlibs:jhbasic:jar:*</include>
-        <include>javax.xml.soap:saaj-api:jar:*</include>
-        <include>log4j:log4j:jar:*</include>
-        <include>org.fcrepo:axis:jar:*</include>
-        <include>org.fcrepo:jai_codec:jar:*</include>        
-        <include>org.fcrepo:jai_core:jar:*</include>
-        <include>org.fcrepo:mulgara-core:jar:*</include>
-        <include>org.fcrepo:openrdf-sesame-onejar:*</include>
-        <include>org.fcrepo:saxon:jar:*</include>
-        <include>org.fcrepo:sunxacml:jar:*</include>
-        <include>org.fcrepo:trippi-core:jar:*</include>
-        <include>org.slf4j:slf4j-api:jar:*</include>
-        <include>org.slf4j:slf4j-log4j12:jar:*</include>
-        <include>wsdl4j:wsdl4j:jar:*</include>
-        <include>xerces:xercesImpl:jar:*</include>
-        <include>xmlpull:xmlpull:jar:*</include>
-        <include>xpp3:xpp3_min:jar:*</include>
-                        
-      </includes>
-      <!--
-      <excludes>
-        <exclude>org.duraspace.fedora:fedora-client-admin:jar</exclude>
-      </excludes>
-      -->
-      <outputDirectory>/client/lib</outputDirectory>
-    </dependencySet>
-
-    <dependencySet>
-      <useProjectArtifact>false</useProjectArtifact>
-      <includes>
-        <include>org.fcrepo:fcrepo-client-admin:jar:${project.version}</include>
-      </includes>
-      <outputDirectory>/client</outputDirectory>
-    </dependencySet>
-
-    <dependencySet>
-      <useProjectArtifact>false</useProjectArtifact>
-      <includes>
-
-        <include>org.fcrepo:fcrepo-common</include>
-        <include>org.fcrepo:fcrepo-server</include>
-
-        <!-- 
-          Note: The include statement below will need to be expanded to
-                catch properly defined (i.e. maven-central) dependencies.
          -->
         <include>batik:*</include>
         <include>commons-codec:commons-codec:jar:*</include>
@@ -373,12 +314,18 @@
         <include>org.slf4j:slf4j-log4j12:jar:*</include>
         <include>wsdl4j:wsdl4j:jar:*</include>
         <include>xerces:xercesImpl:jar:*</include>
-        <!--
-        <include>xml-apis:*</include>
-        -->
-                        
+        <include>xmlpull:xmlpull:jar:*</include>
+        <include>xpp3:xpp3_min:jar:*</include>
       </includes>
       <outputDirectory>/client/lib</outputDirectory>
+    </dependencySet>
+
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>org.fcrepo:fcrepo-client-admin:jar:${project.version}</include>
+      </includes>
+      <outputDirectory>/client</outputDirectory>
     </dependencySet>
 
     <dependencySet>
