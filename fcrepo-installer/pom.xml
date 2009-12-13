@@ -203,7 +203,6 @@
     <dependency>
       <groupId>org.fcrepo</groupId>
       <artifactId>fcrepo-security-pdp</artifactId>
-      <type>war</type>
       <version>${project.version}</version>
     </dependency> 
     
