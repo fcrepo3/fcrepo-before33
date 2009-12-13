@@ -3,13 +3,8 @@
 	<!--
 		The pdp-client class is responsible for the PEP communicating with a PDP. By substituting
 		in different classes for the client you can communicate with virtually any PDP.
-		
-		The WebServicesPDPClient communicates with the MelcoePDP which has a web services interface.
-		The option is the location of the service.
 	-->
-	<pdp-client class="melcoe.fedora.pep.WebServicesPDPClient">
-		<option name="ServiceEndpoint">http://localhost:8080/fedora/pdp/MelcoePDP</option>
-	</pdp-client>
+	<pdp-client class="melcoe.fedora.pep.DirectPDPClient" />
 	
 	<!--
 		The response cache, as its name suggests, caches XACML responses based on a hash of an
