@@ -13,18 +13,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
-
 import java.util.Map;
 import java.util.Properties;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
 import org.apache.log4j.PropertyConfigurator;
 
-import fedora.server.config.pep.PEPConfig;
 import fedora.utilities.FileUtils;
 import fedora.utilities.Zip;
 import fedora.utilities.install.container.Container;
@@ -191,23 +184,6 @@ public class Installer {
             	feslWsdd.renameTo(new File(warStage, "WEB-INF/server-config.wsdd"));
             }
             
-            // set the url for pdp-client service in WEB-INF/classes/config-melcoe-pep.xml
-            // to reflect install options for host & port
-            String host = _opts.getValue(InstallOptions.FEDORA_SERVERHOST);
-            String port = _opts.getValue(InstallOptions.TOMCAT_HTTP_PORT);
-            String app = _opts.getValue(InstallOptions.FEDORA_APP_SERVER_CONTEXT);
-            String pdpClient = "http://" + host + ":" + port + "/" + app + "/pdp/MelcoePDP";
-            JAXBContext jaxbContext = JAXBContext.newInstance(PEPConfig.class);
-    		Unmarshaller u = jaxbContext.createUnmarshaller();
-    		File configMelcoePep = new File(warStage, "WEB-INF/classes/config-melcoe-pep.xml");
-    		PEPConfig pepCfg = (PEPConfig)u.unmarshal(configMelcoePep);
-    		
-    		pepCfg.getPdpClient().getOption().setValue(pdpClient);
-    		
-    		Marshaller m = jaxbContext.createMarshaller();
-    		m.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE );
-    		m.marshal(pepCfg, new FileOutputStream(configMelcoePep));
-            
             File fedoraWar = new File(installDir, fedoraWarName + ".war");
             Zip.zip(fedoraWar, warStage.listFiles());
             return fedoraWar;
@@ -216,8 +192,6 @@ public class Installer {
             throw new InstallationFailedException(e.getMessage(), e);
         } catch (IOException e) {
             throw new InstallationFailedException(e.getMessage(), e);
-        } catch (JAXBException e) {
-        	throw new InstallationFailedException(e.getMessage(), e);
 		}
     }
 
