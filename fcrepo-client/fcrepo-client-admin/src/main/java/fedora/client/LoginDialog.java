@@ -257,8 +257,6 @@ public class LoginDialog
             // so point them to the new one.
             JOptionPane.showMessageDialog(Administrator.getDesktop(),
                     "Check out the new, web-based Fedora Administrator.\n"
-                  + "If you're running Fedora 3.2, it's already available\n"
-                  + "on your server at the following URL (or similar):\n"
                   + "\n       http://localhost:8080/fedora/admin\n\n"
                   + "NOTE: The web-based Fedora Admin GUI will completely\n"
                   + "replace this one in future releases of Fedora.",
