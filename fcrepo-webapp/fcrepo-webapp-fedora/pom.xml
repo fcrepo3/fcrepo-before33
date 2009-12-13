@@ -82,11 +82,6 @@
                 <include>melcoe-pep-server-config.wsdd</include>
               </includes>
             </resource>
-            <resource>
-              <!-- this is terrible. brittle. FIXME -->
-              <directory>${project.basedir}/../../fcrepo-security/fcrepo-security-pdp/src/main/webapp/WEB-INF/services</directory>
-              <targetPath>WEB-INF/services</targetPath>
-            </resource>
           </webResources>
           <archive>
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
