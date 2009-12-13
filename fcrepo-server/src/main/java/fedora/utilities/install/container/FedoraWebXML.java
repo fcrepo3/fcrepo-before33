@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import fedora.server.config.webxml.ContextParam;
+import fedora.server.config.webxml.Filter;
 import fedora.server.config.webxml.FilterMapping;
 import fedora.server.config.webxml.InitParam;
 import fedora.server.config.webxml.SecurityConstraint;
@@ -48,6 +49,7 @@ public class FedoraWebXML {
     private final String FILTER_AUTHN = "EnforceAuthnFilter";
     private final String FILTER_RESTAPI = "RestApiAuthnFilter";
     private final String FILTER_PEP = "PEPFilter";
+    private final String FILTER_PEP_CLASS = "melcoe.fedora.pep.rest.PEP";
     private final String FILTER_SETUP = "SetupFilter";
     private final String FILTER_XMLUSERFILE = "XmlUserfileFilter";
     private final String FILTER_FINALIZE = "FinalizeFilter";
@@ -105,11 +107,23 @@ public class FedoraWebXML {
         fedoraWebXML = fedora.server.config.webxml.WebXML.getInstance(webXML);
 
         setFedoraHome();
+        setFilters();
         setServletMappings();
         setFilterMappings();
         Collections.sort(fedoraWebXML.getFilterMappings(),
                          new FilterMappingComparator());
         setSecurityConstraints();
+    }
+    
+    private void setFilters() {
+    	Filter f = new Filter();
+		f.setFilterName(FILTER_PEP);
+		f.setFilterClass(FILTER_PEP_CLASS);
+    	if (options.requireFesl()) {
+    		fedoraWebXML.addFilter(f);
+    	} else {
+    		fedoraWebXML.removeFilter(f);
+    	}
     }
 
     /**

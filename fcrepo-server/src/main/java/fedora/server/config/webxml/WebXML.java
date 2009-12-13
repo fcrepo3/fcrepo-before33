@@ -181,6 +181,10 @@ public class WebXML
     public void addFilterMapping(FilterMapping filterMapping) {
         filterMappings.add(filterMapping);
     }
+    
+    public void removeFilter(Filter filter) {
+    	filters.remove(filter);
+    }
 
     public void removeFilterMapping(FilterMapping filterMapping) {
         filterMappings.remove(filterMapping);
