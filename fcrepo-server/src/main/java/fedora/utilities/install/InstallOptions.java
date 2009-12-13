@@ -260,6 +260,8 @@ public class InstallOptions {
         inputOption(FESL_ENABLED);
         if (getValue(FESL_ENABLED).equals(Boolean.toString(true))) {
             inputOption(FESL_DBXML_HOME);
+            // Disable legacy authz if FeSL is enabled
+            _map.put(XACML_ENABLED, Boolean.toString(false));
         } else {
         	inputOption(XACML_ENABLED);
         }
