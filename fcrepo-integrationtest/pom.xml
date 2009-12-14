@@ -167,7 +167,6 @@
                     <include>**/SharedDeploymentTests.class</include>
                     <include>**/TestCommandLineUtilities.class</include>
                     <include>**/ContentModelDSInputTest.class</include>
-                    <include>**/TestREST.class</include>
 
                   </includes>
                   <excludes>
