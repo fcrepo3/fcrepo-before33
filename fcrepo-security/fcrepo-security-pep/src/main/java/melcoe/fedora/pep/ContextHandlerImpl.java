@@ -132,6 +132,11 @@ public class ContextHandlerImpl implements ContextHandler {
 		return evaluationEngine.evaluate(requests);
 	}
 
+	public ResponseCache getResponseCache()
+	{
+		return responseCache;
+	}
+
 	/**
 	 * Reads a configuration file and configures this instance of the
 	 * ContextHandler. It can instantiate a client (that communicates with the

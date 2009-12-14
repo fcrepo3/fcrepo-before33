@@ -80,4 +80,9 @@ public interface ContextHandler
 	 * @throws PEPException
 	 */
 	public String evaluateBatch(String[] requests) throws PEPException;
+	
+	/**
+	 * @return a reference to the response cache.
+	 */
+	public ResponseCache getResponseCache();
 }
