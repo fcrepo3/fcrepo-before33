@@ -519,7 +519,9 @@
                     <include>**/TestAPIMLite.class</include>
                     <include>**/TestAuthentication.class</include>
                     <include>**/TestHTTPStatusCodes.class</include>
+					<!--
                     <include>**/TestHTTPStatusCodesConfigB.class</include>
+                    -->
                     <include>**/TestManagedDatastreams.class</include>
                     <include>**/TestManagementNotifications.class</include>
                     <include>**/TestRelationships.class</include>
@@ -535,6 +537,7 @@
                     <include>**/TestCommandLineUtilities.class</include>
                     <include>**/TestMisplacedNamespace.class</include>
                     <include>**/TestREST.class</include>
+                    <include>**/TestPolicies.class</include>
 
                   </includes>
                   <excludes>
