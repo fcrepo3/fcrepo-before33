@@ -603,5 +603,11 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.fcrepo</groupId>
+      <artifactId>fcrepo-security-pdp</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
   </dependencies>
 </project>
