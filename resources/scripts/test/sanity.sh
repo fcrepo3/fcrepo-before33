@@ -137,6 +137,51 @@ mv $FEDORA_HOME/tomcat/logs/catalina.out $BUILD_HOME/build/server-logs/catalina.
 # End of Config A Tests
 #
 
+#
+# Config Q Tests
+#
+
+$SCRIPTDIR/install-fedora.sh $1 ConfigQ.properties
+
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "ERROR: Failed while installing Fedora for ConfigQ tests; see above"
+  exit 1
+fi
+
+$CATALINA_HOME/bin/startup.sh
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "ERROR: Failed while starting Fedora for ConfigQ tests; see above"
+  exit 1
+fi
+echo "Waiting 20 seconds for Fedora to start..."
+sleep 20
+echo ""
+echo "[Running ConfigQ Tests...]"
+
+cd $BUILD_HOME/fcrepo-integrationtest
+$M2_HOME/bin/mvn integration-test -P configQ -Dfedora.baseURL=http://fedcommdevsrv1.nsdlib.org:9080/fedora -Dfedora.hostname=fedcommdevsrv1.nsdlib.org -Dfedora.port=9080
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "ERROR: Failed ConfigQ tests; see above"
+  echo "Shutting down Tomcat..."
+  $CATALINA_HOME/bin/shutdown.sh
+  sleep 5
+  mv $FEDORA_HOME/server/logs $BUILD_HOME/build/server-logs/fedora.test.AllSystemTestsConfigQ
+  mv $FEDORA_HOME/tomcat/logs/catalina.out $BUILD_HOME/build/server-logs/catalina.out.AllSystemTestsConfigQ.log
+  exit 1
+fi
+echo "Shutting down tomcat..."
+$CATALINA_HOME/bin/shutdown.sh
+sleep 5
+mv $FEDORA_HOME/server/logs $BUILD_HOME/build/server-logs/fedora.test.AllSystemTestsConfigQ
+mv $FEDORA_HOME/tomcat/logs/catalina.out $BUILD_HOME/build/server-logs/catalina.out.AllSystemTestsConfigQ.log
+
+#
+# End of Config Q Tests
+#
+
 echo ""
 echo "===================================="
 echo "Completed sanity tests successfully!"

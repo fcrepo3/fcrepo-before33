@@ -37,15 +37,14 @@ Scripts:
 
     sanity.sh          Runs a series of "sanity" tests using the given
                        version of java (java5 or java6) as a parameter.
-                       As of this writing, this includes the following
-                       test suites:
+                       As of this writing, this includes all unit tests
+                       and the following integration tests:
 
-                         fedora.test.AllOfflineTests
-                         fedora.test.AllSystemTestsConfigA
-                         fedora.test.AllSystemTestsConfigB
-                         fedora.test.AllSystemTestsConfigC
+                         configA
+                         configB
+                         configQ
 
-                       For the system tests, it automatically installs Fedora
+                       For the integration tests, it automatically installs Fedora
                        with the proper configuration and starts Tomcat
                        before commencing with the test, and shuts down Tomcat
                        when the tests complete (whether successful or not).
