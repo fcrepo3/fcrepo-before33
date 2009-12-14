@@ -29,7 +29,7 @@ public class MelcoeXacmlException extends Exception {
 	}
 
 	public MelcoeXacmlException(String msg, Throwable t) {
-		super(msg);
+		super(msg, t);
 		log.error(msg, t);
 	}
 }
