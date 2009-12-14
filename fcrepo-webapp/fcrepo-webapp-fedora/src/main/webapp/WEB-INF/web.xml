@@ -285,6 +285,11 @@
       <param-name>userClassNames</param-name>
       <param-value>org.fcrepo.server.jaas.auth.UserPrincipal</param-value>
     </init-param>
+    <init-param>
+      <description>OPTIONAL. A comma separated list of url-patterns to ignore</description>
+      <param-name>excludeUris</param-name>
+      <param-value>/getDS</param-value>
+    </init-param>
   </filter>
 
   <!-- among security filters, map this one first. -->
