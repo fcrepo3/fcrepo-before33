@@ -22,6 +22,7 @@ import fedora.common.PID;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
+import fedora.server.errors.ObjectNotInLowlevelStorageException;
 import fedora.server.errors.ServerException;
 import fedora.server.management.Management;
 import fedora.server.storage.types.RelationshipTuple;
@@ -106,11 +107,32 @@ public class RelationshipResolverImpl implements RelationshipResolver {
 		if (pid.equalsIgnoreCase(REPOSITORY)) {
 			return parentPIDs;
 		}
-
+		
+		query:
 		for (String relationship : relationships) {
 			if (log.isDebugEnabled())
 				log.debug("relationship query: " + pid + ", " + relationship);
-			Map<String,Set<String>> mapping = getRelationships(pid, relationship);
+			
+			Map<String,Set<String>> mapping;
+			try {
+				mapping = getRelationships(pid, relationship);
+			} catch(MelcoeXacmlException e) {
+				Throwable t = e.getCause();
+				// An object X, may legitimately declare a parent relation to
+				// another object, Y which does not exist. Therefore, we don't 
+				// want to continue querying for Y's parents.
+				while (t != null) {
+					if (t instanceof ObjectNotInLowlevelStorageException) {
+						if (log.isDebugEnabled()) {
+							log.debug("Parent, " + pid + ", not found.");
+						}
+						break query;
+					}
+				}
+				// Unexpected error, so we throw back the original
+				throw e;
+			}
+			
 			Set<String> parents = mapping.get(relationship);
 			if (parents != null) {
 				for (String parent : parents) {
@@ -136,6 +158,9 @@ public class RelationshipResolverImpl implements RelationshipResolver {
 		RelationshipTuple[] tuples;
 		try {
 			tuples = getApiM().getRelationships(getContext(), subject.toURI(), relationship);
+			// Anticipating searches which fail because the object identified by 
+			// pid may not exist in the Fedora repository, since objects can 
+			// declare parent relationships to objects that do not exist
 		} catch (ServerException e) {
 			throw new MelcoeXacmlException(e.getMessage(), e);
 		}
