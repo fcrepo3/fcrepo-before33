@@ -28,16 +28,17 @@ executed against a running Fedora server.  These tests are divided
 into top-level suites, where each suite is intended to be run with
 the Fedora server configured in a specific way.
 
-  [fedora.test.AllSystemTestsConfigA]
+  [configA]
     When running this suite, the server should be configured
-    with API-A authentication turned OFF.
+    with API-A authentication turned OFF, SSL required for API-M,
+    XACML enabled, and the Resource Index disabled.
 
-  [fedora.test.AllSystemTestsConfigB]
+  [configB]
     When running this suite, the server should be configured
     with API-A authentication turned ON, with the
     Resource Index, REST api, and Messaging modules enabled.
     
-  [fedora.test.AllSystemTestsConfigQ]
+  [configQ]
     When running this suite, the server should be configured
     with the default options provided by 'quick install'.
     It can be used to verify the successful installation of 'quick install'.
