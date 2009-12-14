@@ -96,6 +96,7 @@ public class AuthFilterJAAS implements Filter
 	private Set<String> userClassNames = null;
 	private Set<String> roleClassNames = null;
 	private Set<String> roleAttributeNames = null;
+	private Set<String> excludedUris = null;
 
 	public void init(FilterConfig filterConfig) throws ServletException
 	{
@@ -141,6 +142,16 @@ public class AuthFilterJAAS implements Filter
 			jaasConfigName = tmp;
 			if (log.isDebugEnabled())
 				log.debug("using name from init file: " + jaasConfigName);
+		}
+
+		tmp = filterConfig.getInitParameter("excludeUris");
+		excludedUris = new HashSet<String>();
+		if (tmp != null)
+		{
+			String[] names = tmp.split(" *, *");
+			if (names != null && names.length > 0)
+				for (String n : names)
+					excludedUris.add(n);
 		}
 
 		tmp = filterConfig.getInitParameter("userClassNames");
@@ -200,6 +211,19 @@ public class AuthFilterJAAS implements Filter
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
 
+		// if the servlet is in our excluded list, just continue the
+		// chain and return after processing the chain.
+		if (excludedUris != null && excludedUris.size() > 0)
+			if (excludedUris.contains(req.getServletPath()))
+			{
+				if (log.isDebugEnabled())
+					log.debug("skipping authentication on servlet: " + req.getServletPath());
+
+				chain.doFilter(request, response);
+				
+				return;
+			}
+		
 		if (log.isDebugEnabled())
 		{
 			log.debug("incoming filter: " + this.getClass().getName());
