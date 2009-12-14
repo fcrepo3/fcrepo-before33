@@ -30,9 +30,9 @@ public class MsSQLDDLConverter
     }
 
     public List<String> getDDL(TableSpec spec) {
+        List<String> list = new ArrayList<String>();
         StringBuffer out = new StringBuffer();
         StringBuffer end = new StringBuffer();
-        StringBuffer indexes = new StringBuffer();
         out.append("CREATE TABLE " + spec.getName() + " (\n");
         Iterator<ColumnSpec> csi = spec.columnSpecIterator();
         int csNum = 0;
@@ -51,6 +51,10 @@ public class MsSQLDDLConverter
                 } else {
                     out.append(cs.getType());
                 }
+            } else if (cs.getType().toLowerCase().startsWith("int(")) {
+                out.append("int");
+            } else if (cs.getType().toLowerCase().startsWith("smallint(")) {
+                out.append("smallint");
             } else {
                 out.append(cs.getType());
             }
@@ -69,20 +73,15 @@ public class MsSQLDDLConverter
                 if (!end.toString().equals("")) {
                     end.append(",\n");
                 }
-                end.append(" CONSTRAINT");
+                end.append(" CONSTRAINT ");
                 end.append(cs.getName());
-                end.append("_unique UNIQUE KEY NONCLUSTERED (");
+                end.append("_unique UNIQUE NONCLUSTERED (");
                 end.append(cs.getName());
-                end.append(" ON PRIMARY)");
+                end.append(")");
             }
             if (cs.getIndexName() != null) {
-                indexes.append(" CREATE INDEX ");
-                indexes.append(cs.getIndexName());
-                indexes.append("ON ");
-                indexes.append(spec.getName());
-                indexes.append(" (");
-                indexes.append(cs.getName());
-                indexes.append(") ON PRIMARY GO");
+                list.add("CREATE INDEX " + cs.getIndexName() + " ON " 
+                        + spec.getName() + " (" + cs.getName() + ")");
             }
             if (cs.getForeignTableName() != null) {
                 if (!end.toString().equals("")) {
@@ -104,26 +103,20 @@ public class MsSQLDDLConverter
             }
         }
         if (spec.getPrimaryColumnName() != null) {
-            end.append(",\n CONSTRAINT ");
-            end.append(spec.getName() + "_fk");
+            if (!end.toString().equals("")) {
+                end.append(",\n");
+            }
+            end.append(" CONSTRAINT ");
+            end.append(spec.getName() + "_pk");
             end.append(" PRIMARY KEY CLUSTERED (");
             end.append(spec.getPrimaryColumnName());
             end.append(")");
         }
-        out.append("\n");
-        out.append(") ON PRIMARY GO");
+        out.append(")");
+	list.add(0, out.toString());
         if (!end.toString().equals("")) {
-            out.append("\n ALTER TABLE ");
-            out.append(spec.getName());
-            out.append(" ADD \n");
-            out.append(end);
-            out.append(" GO ");
+            list.add(1, "ALTER TABLE " + spec.getName() + " ADD" + end.toString());
         }
-        if (!indexes.toString().equals("")) {
-            out.append(indexes);
-        }
-        ArrayList<String> l = new ArrayList<String>();
-        l.add(out.toString());
-        return l;
+        return list;
     }
 }
