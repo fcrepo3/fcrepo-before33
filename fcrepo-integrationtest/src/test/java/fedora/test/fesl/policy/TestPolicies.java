@@ -55,6 +55,8 @@ public class TestPolicies
 			String policyId = addPolicy("test-access-admin.xml");
 
 			LoadDataset.main(null);
+			
+			httpUtils.get("/fedora/risearch?flush=true");
 
 			// Now that objects are loaded, remove the policy
 			delPolicy(policyId);
@@ -94,14 +96,29 @@ public class TestPolicies
 	@Test(expected = AuthorizationDeniedException.class)
 	public void testAdminGetDeny() throws Exception
 	{
-		// getting object test:1000007
-		String url = "/fedora/objects/test:1000007?format=xml";
-		String response = httpUtils.get(url);
-		if (log.isDebugEnabled())
-			log.debug("http response:\n" + response);
+		// getting object test:1000007 but applying policy
+		// to parent object (test:1000006) first
 
-		// If we get here, we fail... should have thrown exception
-		Assert.fail();
+		String policyId = addPolicy("test-policy-00.xml");
+
+		try
+		{
+			String url = "/fedora/objects/test:1000007?format=xml";
+			String response = httpUtils.get(url);
+			if (log.isDebugEnabled())
+				log.debug("http response:\n" + response);
+	
+			// If we get here, we fail... should have thrown exception
+			Assert.fail();
+		}
+		catch (Exception e)
+		{
+			throw e;
+		}
+		finally
+		{
+			delPolicy(policyId);
+		}
 	}
 
 	@Test
@@ -144,7 +161,7 @@ public class TestPolicies
 	{
 		byte[] policy = DataUtils.loadFile(RESOURCEBASE + "/xacml/" + policyName);
 		String policyId = getPolicyId(policy);
-		polMan.addPolicy(policyId, new String(policy));
+		polMan.addPolicy(new String(policy), policyId);
 		Thread.sleep(1000);
 
 		return policyId;
