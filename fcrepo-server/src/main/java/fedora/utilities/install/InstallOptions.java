@@ -262,13 +262,11 @@ public class InstallOptions {
             inputOption(FESL_DBXML_HOME);
             // Disable legacy authz if FeSL is enabled
             _map.put(XACML_ENABLED, Boolean.toString(false));
-            // FeSL requires the RI
-            _map.put(RI_ENABLED, Boolean.toString(true));
         } else {
         	inputOption(XACML_ENABLED);
-        	inputOption(RI_ENABLED);
         }
         
+        inputOption(RI_ENABLED);
         inputOption(MESSAGING_ENABLED);
         if (getValue(MESSAGING_ENABLED).equals(Boolean.toString(true))) {
             inputOption(MESSAGING_URI);

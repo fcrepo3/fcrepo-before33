@@ -5,10 +5,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import melcoe.xacml.MelcoeXacmlException;
 import melcoe.xacml.pdp.finder.AttributeFinderConfigUtil;
 import melcoe.xacml.pdp.finder.AttributeFinderException;
-import melcoe.xacml.pdp.finder.support.RelationshipResolver;
-import melcoe.xacml.pdp.finder.support.RelationshipResolverHttpImpl;
+import melcoe.xacml.util.ContextUtil;
+import melcoe.xacml.util.RelationshipResolver;
 
 import org.apache.log4j.Logger;
 
@@ -49,9 +50,7 @@ public class FedoraRIAttributeFinder extends AttributeFinderModule {
 				for (String s : resolverConfig.keySet())
 					log.debug(s + ": " + resolverConfig.get(s));
 
-			relationshipResolver = new RelationshipResolverHttpImpl(
-					resolverConfig.get("url"), resolverConfig.get("username"),
-					resolverConfig.get("password"));
+			relationshipResolver = ContextUtil.getInstance().getRelationshipResolver();
 
 			attributeFactory = StandardAttributeFactory.getFactory();
 		} catch (AttributeFinderException afe) {
@@ -155,8 +154,13 @@ public class FedoraRIAttributeFinder extends AttributeFinderModule {
 
 	private EvaluationResult getEvaluationResult(String pid, String attribute,
 			URI type) throws AttributeFinderException {
-		Map<String, Set<String>> relationships = relationshipResolver
-				.getRelationships(pid);
+		Map<String, Set<String>> relationships;
+		try {
+			relationships = relationshipResolver
+					.getRelationships(pid);
+		} catch (MelcoeXacmlException e) {
+			throw new AttributeFinderException(e.getMessage(), e);
+		}
 		Set<String> results = relationships.get(attribute);
 		if (results == null || results.size() == 0)
 			return new EvaluationResult(BagAttribute.createEmptyBag(type));

@@ -21,8 +21,8 @@ package melcoe.fedora.pep;
 import java.util.HashSet;
 import java.util.Set;
 
-import melcoe.fedora.util.ContextUtil;
-import melcoe.fedora.util.RelationshipResolverTrippiImpl;
+import melcoe.xacml.MelcoeXacmlException;
+import melcoe.xacml.util.ContextUtil;
 
 import org.apache.log4j.Logger;
 
@@ -38,7 +38,7 @@ public class EvaluationEngineImpl implements EvaluationEngine
 {
 	private static Logger log = Logger.getLogger(EvaluationEngineImpl.class.getName());
 
-	private ContextUtil contextUtil = new ContextUtil(new RelationshipResolverTrippiImpl());
+	private ContextUtil contextUtil = new ContextUtil();
 	private PDPClient client = null;
 	private ResponseCache responseCache = null;
 
@@ -54,8 +54,12 @@ public class EvaluationEngineImpl implements EvaluationEngine
 
 		String request = contextUtil.makeRequestCtx(reqCtx);
 		String response = evaluate(request);
-		ResponseCtx resCtx = contextUtil.makeResponseCtx(response);
-
+		ResponseCtx resCtx;
+		try {
+			resCtx = contextUtil.makeResponseCtx(response);
+		} catch (MelcoeXacmlException e) {
+			throw new PEPException(e);
+		}
 		return resCtx;
 	}
 
@@ -112,7 +116,12 @@ public class EvaluationEngineImpl implements EvaluationEngine
 			if (log.isDebugEnabled())
 				log.debug("Time taken for XACML Evaluation: " + (b - a) + "ms");
 
-			ResponseCtx resCtx = contextUtil.makeResponseCtx(response);
+			ResponseCtx resCtx;
+			try {
+				resCtx = contextUtil.makeResponseCtx(response);
+			} catch (MelcoeXacmlException e) {
+				throw new PEPException(e);
+			}
 
 			@SuppressWarnings("unchecked")
 			Set<Result> results = resCtx.getResults();

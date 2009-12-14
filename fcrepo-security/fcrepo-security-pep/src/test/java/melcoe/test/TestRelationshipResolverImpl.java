@@ -3,21 +3,21 @@ package melcoe.test;
 import java.util.HashMap;
 import java.util.Map;
 
-import melcoe.fedora.util.RelationshipResolverHttpImpl;
+import melcoe.xacml.util.RelationshipResolverImpl;
 
-public class TestRelationshipResolverHttpImpl
+public class TestRelationshipResolverImpl
 {
-	private RelationshipResolverHttpImpl rels = null;
+	private RelationshipResolverImpl rels = null;
 	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args)
 	{
-		TestRelationshipResolverHttpImpl app = null;
+		TestRelationshipResolverImpl app = null;
 		try
 		{
-			app = new TestRelationshipResolverHttpImpl();
+			app = new TestRelationshipResolverImpl();
 			app.test01();
 		}
 		catch(Exception e)
@@ -26,13 +26,13 @@ public class TestRelationshipResolverHttpImpl
 		}
 	}
 	
-	public TestRelationshipResolverHttpImpl() throws Exception
+	public TestRelationshipResolverImpl() throws Exception
 	{
 		Map<String, String> options = new HashMap<String, String>();
 		options.put("url", "http://localhost:8080/fedora/melcoerisearch");
 		options.put("username", "");
 		options.put("password", "");
-		rels = new RelationshipResolverHttpImpl(options);
+		rels = new RelationshipResolverImpl(options);
 	}
 	
 	public void test01() throws Exception

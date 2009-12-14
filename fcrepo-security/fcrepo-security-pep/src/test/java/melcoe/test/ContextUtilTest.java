@@ -9,8 +9,8 @@ import java.util.Map;
 
 import melcoe.fedora.pep.PDPClient;
 import melcoe.fedora.pep.WebServicesPDPClient;
-import melcoe.fedora.util.ContextUtil;
-import melcoe.fedora.util.RelationshipResolverHttpImpl;
+import melcoe.xacml.util.ContextUtil;
+import melcoe.xacml.util.RelationshipResolverImpl;
 
 import org.apache.axis.AxisFault;
 
@@ -31,7 +31,7 @@ public class ContextUtilTest
 		options.put("url", "http://localhost:8080/fedora/melcoerisearch");
 		options.put("username", "");
 		options.put("password", "");
-		ContextUtil contextUtil = new ContextUtil(new RelationshipResolverHttpImpl(options));
+		ContextUtil contextUtil = new ContextUtil(new RelationshipResolverImpl(options));
 		RequestCtx req = contextUtil.buildRequest(getSubjects("public"), getActions(), getResources().get(0),
 			getEnvironment());
 

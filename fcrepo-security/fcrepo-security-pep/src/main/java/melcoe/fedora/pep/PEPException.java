@@ -19,11 +19,13 @@
 
 package melcoe.fedora.pep;
 
+import melcoe.xacml.MelcoeXacmlException;
+
 /**
  * @author nishen@melcoe.mq.edu.au
  *
  */
-public class PEPException extends Exception
+public class PEPException extends MelcoeXacmlException
 {
 	private static final long serialVersionUID = 2167100768360635796L;
 

@@ -1,0 +1,206 @@
+/**
+ * 
+ */
+package melcoe.xacml.util;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import melcoe.xacml.MelcoeXacmlException;
+import melcoe.xacml.pdp.MelcoePDPException;
+
+import org.apache.log4j.Logger;
+
+import fedora.common.Constants;
+import fedora.common.PID;
+import fedora.server.Context;
+import fedora.server.ReadOnlyContext;
+import fedora.server.Server;
+import fedora.server.errors.ServerException;
+import fedora.server.management.Management;
+import fedora.server.storage.types.RelationshipTuple;
+
+/**
+ * A RelationshipResolver that resolves relationships via 
+ * {@link Management#getRelationships(fedora.server.Context, String, String)}.
+ * 
+ * @author Edwin Shin
+ * 
+ */
+public class RelationshipResolverImpl implements RelationshipResolver {
+	private static Logger log = Logger.getLogger(RelationshipResolverImpl.class
+			.getName());
+
+	/**
+	 * Designates the repository itself. Policies can apply to the repository,
+	 * but it is a special case, as it is not represented by a PID, and by
+	 * definition, has no parents.
+	 */
+	private final static String REPOSITORY = "FedoraRepository";
+	private static String DEFAULT_RELATIONSHIP = "info:fedora/fedora-system:def/relations-external#isMemberOf";
+	private List<String> relationships;
+	private Management apim;
+	private Context fedoraCtx;
+
+	public RelationshipResolverImpl() {
+		this(new HashMap<String, String>());
+	}
+
+	/**
+	 * Constructor that takes a map of parent-child predicates (relationships).
+	 * {@link ContextHandlerImpl} builds the map from the relationship-resolver 
+	 * section of config-melcoe-pep.xml (in WEB-INF/classes).
+	 * 
+	 * @param options
+	 * @throws MelcoePDPException
+	 */
+	public RelationshipResolverImpl(Map<String, String> options) {
+		relationships = new ArrayList<String>();
+		if (options.isEmpty()) {
+			relationships.add(DEFAULT_RELATIONSHIP);
+		} else {
+			List<String> keys = new ArrayList<String>(options.keySet());
+			Collections.sort(keys);
+			for (String s : keys)
+				if (s.startsWith("parent-child-relationship"))
+					relationships.add(options.get(s));
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * melcoe.xacml.pdp.finder.support.RelationshipResolver#buildRESTParentHierarchy
+	 * (java.lang.String)
+	 */
+	public String buildRESTParentHierarchy(String pid)
+			throws MelcoeXacmlException {
+		Set<String> parents = getParents(pid);
+		if (parents == null || parents.size() == 0)
+			return "/" + pid;
+
+		String[] parentArray = parents.toArray(new String[parents.size()]);
+
+		return buildRESTParentHierarchy(parentArray[0]) + "/" + pid;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * melcoe.xacml.pdp.finder.support.RelationshipResolver#getParents(java.
+	 * lang.String)
+	 */
+	public Set<String> getParents(String pid) throws MelcoeXacmlException {
+		if (log.isDebugEnabled())
+			log.debug("Obtaining parents for: " + pid);
+
+		Set<String> parentPIDs = new HashSet<String>();
+		if (pid.equalsIgnoreCase(REPOSITORY)) {
+			return parentPIDs;
+		}
+
+		for (String relationship : relationships) {
+			if (log.isDebugEnabled())
+				log.debug("relationship query: " + pid + ", " + relationship);
+			Map<String,Set<String>> mapping = getRelationships(pid, relationship);
+			Set<String> parents = mapping.get(relationship);
+			if (parents != null) {
+				for (String parent : parents) {
+					PID parentPID = PID.getInstance(parent);
+					// we want the parents in demo:123 form, not info:fedora/demo:123
+					parentPIDs.add(parentPID.toString());
+					if (log.isDebugEnabled()) {
+						log.debug("added parent " + parentPID.toString());
+					}
+				}
+			}
+		}
+		return parentPIDs;
+	}
+
+	public Map<String, Set<String>> getRelationships(String pid)
+			throws MelcoeXacmlException {
+		return getRelationships(pid, null);
+	}
+	
+	private Map<String, Set<String>> getRelationships(String pid, String relationship) throws MelcoeXacmlException {
+		PID subject = getNormalizedPID(pid);
+		RelationshipTuple[] tuples;
+		try {
+			tuples = getApiM().getRelationships(getContext(), subject.toURI(), relationship);
+		} catch (ServerException e) {
+			throw new MelcoeXacmlException(e.getMessage(), e);
+		}
+			
+		Map<String, Set<String>> relationships = new HashMap<String, Set<String>>();
+		for (RelationshipTuple t : tuples) {
+			String p = t.predicate;
+			String o = t.object;
+
+			Set<String> values = relationships.get(p);
+			if (values == null) {
+				values = new HashSet<String>();
+			}
+			values.add(o);
+			relationships.put(p, values);
+		}
+		return relationships;
+	}
+	
+	private Management getApiM() {
+		if (apim != null) {
+			return apim;
+		}
+		Server server;
+		try {
+			server = Server.getInstance(new File(Constants.FEDORA_HOME), false);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			throw new RuntimeException("Failed getting instance of Fedora", e);
+		}
+		apim = (Management)server.getModule("fedora.server.management.Management");
+		return apim;
+	}
+	
+	private Context getContext() throws MelcoeXacmlException  {
+		if (fedoraCtx != null) {
+			return fedoraCtx;
+		}
+		try {
+			fedoraCtx = ReadOnlyContext.getContext(null, null, null, ReadOnlyContext.DO_OP);
+		} catch (Exception e) {
+			throw new MelcoeXacmlException(e.getMessage(), e);
+		}
+		return fedoraCtx;
+	}
+	
+	private PID getNormalizedPID(String pid) {
+		// evidently, we are to expect strings that only begin with pids
+		String pidDN = pid;
+		if (pid.startsWith("/")) {
+			String[] parts = pid.split("\\/");
+			if (parts.length > 2) {
+				if (parts[parts.length - 1].indexOf(':') != -1) {
+					// is an object, not a datastream
+					pidDN = parts[parts.length - 1];
+				} else {
+					// is a datastream
+					pidDN = parts[parts.length - 2] + "/"
+							+ parts[parts.length - 1];
+				}
+			}
+
+			if (pidDN.startsWith("/"))
+				pidDN = pidDN.substring(1);
+		}
+		return PID.getInstance(pidDN);
+	}
+}

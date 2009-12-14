@@ -48,12 +48,13 @@
     </dependency>
     <dependency>
       <groupId>org.fcrepo</groupId>
-      <artifactId>sunxacml</artifactId>
-      <classifier>melcoe</classifier>
+      <artifactId>fcrepo-server</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.fcrepo</groupId>
-      <artifactId>trippi-core</artifactId>
+      <artifactId>sunxacml</artifactId>
+      <classifier>melcoe</classifier>
     </dependency>
   </dependencies>
 </project>

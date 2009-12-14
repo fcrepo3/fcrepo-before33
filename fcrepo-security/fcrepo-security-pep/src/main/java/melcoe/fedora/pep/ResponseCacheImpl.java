@@ -27,9 +27,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import melcoe.fedora.util.AttributeComparator;
-import melcoe.fedora.util.ContextUtil;
-import melcoe.fedora.util.RelationshipResolverTrippiImpl;
 import melcoe.fedora.util.SubjectComparator;
+import melcoe.xacml.MelcoeXacmlException;
+import melcoe.xacml.util.ContextUtil;
 
 import org.apache.log4j.Logger;
 
@@ -45,7 +45,7 @@ public class ResponseCacheImpl implements ResponseCache
 {
 	private static final Logger log = Logger.getLogger(ResponseCacheImpl.class.getName());
 
-	private ContextUtil contextUtil = new ContextUtil(new RelationshipResolverTrippiImpl());
+	private ContextUtil contextUtil = new ContextUtil();
 	
 	private static final int DEFAULT_CACHE_SIZE = 1000;
 	private static final long DEFAULT_TTL = 10 * 60 * 1000;
@@ -208,7 +208,7 @@ public class ResponseCacheImpl implements ResponseCache
 		{
 			reqCtx = contextUtil.makeRequestCtx(request);
 		}
-		catch (PEPException pe)
+		catch (MelcoeXacmlException pe)
 		{
 			throw new CacheException("Error converting request", pe);
 		}

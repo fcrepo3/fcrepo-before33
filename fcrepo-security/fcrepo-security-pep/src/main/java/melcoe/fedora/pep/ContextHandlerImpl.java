@@ -30,14 +30,13 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import melcoe.fedora.util.ContextUtil;
-import melcoe.fedora.util.RelationshipResolver;
+import melcoe.xacml.MelcoeXacmlException;
+import melcoe.xacml.util.ContextUtil;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -100,8 +99,12 @@ public class ContextHandlerImpl implements ContextHandler {
 			Map<URI, AttributeValue> actions,
 			Map<URI, AttributeValue> resources,
 			Map<URI, AttributeValue> environment) throws PEPException {
-		return contextUtil.buildRequest(subjects, actions, resources,
-				environment);
+		try {
+			return contextUtil.buildRequest(subjects, actions, resources,
+					environment);
+		} catch (MelcoeXacmlException e) {
+			throw new PEPException(e);
+		}
 	}
 
 	/*
@@ -260,48 +263,7 @@ public class ContextHandlerImpl implements ContextHandler {
 			if (log.isDebugEnabled())
 				log.debug("Instantiated EvaluationEngine: " + className);
 
-			// Get the relationship resolver
-			RelationshipResolver relationshipResolver = null;
-			nodes = doc.getElementsByTagName("relationship-resolver");
-			if (nodes.getLength() != 1)
-				throw new PEPException(
-						"Config file needs to contain exactly 1 'relationship-resolver' section.");
-
-			Element relationshipResolverElement = (Element) nodes.item(0);
-			className = relationshipResolverElement.getAttributes()
-					.getNamedItem("class").getNodeValue();
-
-			NodeList optionList = relationshipResolverElement
-					.getElementsByTagName("option");
-			if (optionList == null || optionList.getLength() == 0) {
-				if (log.isDebugEnabled())
-					log.debug("creating relationship resolver WITHOUT options");
-
-				relationshipResolver = (RelationshipResolver) Class.forName(
-						className).newInstance();
-			} else {
-				if (log.isDebugEnabled())
-					log.debug("creating relationship resolver WITH options");
-
-				options = new HashMap<String, String>();
-				for (int x = 0; x < optionList.getLength(); x++) {
-					Node n = optionList.item(x);
-					String key = n.getAttributes().getNamedItem("name")
-							.getNodeValue();
-					String value = n.getFirstChild().getNodeValue();
-					options.put(key, value);
-					if (log.isDebugEnabled())
-						log.debug("Node [name]: " + key + ": " + value);
-				}
-				c = Class.forName(className).getConstructor(
-						new Class[] { Map.class });
-				relationshipResolver = (RelationshipResolver) c
-						.newInstance(new Object[] { options });
-			}
-			if (log.isDebugEnabled())
-				log.debug("Instantiated RelationshipResolver: " + className);
-
-			contextUtil = new ContextUtil(relationshipResolver);
+			contextUtil = new ContextUtil();
 
 			if (log.isDebugEnabled())
 				log.debug("Instantiated ContextUtil.");

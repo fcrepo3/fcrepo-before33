@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.Set;
 
 import melcoe.fedora.pep.PEPException;
-import melcoe.fedora.util.ContextUtil;
-import melcoe.fedora.util.RelationshipResolverTrippiImpl;
+import melcoe.xacml.MelcoeXacmlException;
+import melcoe.xacml.util.ContextUtil;
 
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.RPCParam;
@@ -56,7 +56,7 @@ public class FieldSearchResultHandler extends AbstractOperationHandler
 {
 	private static Logger log = Logger.getLogger(FieldSearchResultHandler.class.getName());
 
-	private ContextUtil contextUtil = new ContextUtil(new RelationshipResolverTrippiImpl());
+	private ContextUtil contextUtil = new ContextUtil();
 
 	/**
 	 * Default constructor.
@@ -120,7 +120,12 @@ public class FieldSearchResultHandler extends AbstractOperationHandler
 		}
 
 		String response = getContextHandler().evaluateBatch(requests.toArray(new String[requests.size()]));
-		ResponseCtx resCtx = contextUtil.makeResponseCtx(response);
+		ResponseCtx resCtx;
+		try {
+			resCtx = contextUtil.makeResponseCtx(response);
+		} catch (MelcoeXacmlException e) {
+			throw new PEPException(e);
+		}
 
 		@SuppressWarnings("unchecked")
 		Set<Result> results = resCtx.getResults();

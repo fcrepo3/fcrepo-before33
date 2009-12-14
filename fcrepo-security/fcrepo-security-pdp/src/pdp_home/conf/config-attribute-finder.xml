@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <AttributeFinders>
 	<AttributeFinder name="melcoe.xacml.pdp.finder.attribute.FedoraRIAttributeFinder">
-		<resolver url="http://localhost:8080/fedora/melcoerisearch" username="" password="" />
+		<resolver url="http://localhost:5743/fedora/melcoerisearch" username="" password="" />
 		<!--  designator: subject, action, resource, environment -->
 		<attribute designator="resource" name="info:fedora/fedora-system:def/view#mimeType" />
 		<attribute designator="resource" name="info:fedora/fedora-system:def/model#ownerId" />

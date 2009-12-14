@@ -29,7 +29,7 @@
 		This class handles the identification of relationships between objects. It currently
 		just resolves parents. It makes use of the ResourceIndexModule of Fedora.
 	-->
-	<relationship-resolver class="melcoe.fedora.util.RelationshipResolverTrippiImpl">
+	<relationship-resolver class="melcoe.xacml.util.RelationshipResolverImpl">
 		<option name="parent-child-relationship-1">info:fedora/fedora-system:def/relations-external#isMemberOf</option>
 		<option name="parent-child-relationship-2">info:fedora/fedora-system:def/relations-external#isMemberOfCollection</option>
 		<option name="parent-child-relationship-3">info:fedora/fedora-system:def/relations-external#isPartOf</option>
@@ -37,7 +37,7 @@
 
 	<!-- Relationship module that works via HTTP... sloooowwwer -->
 	<!--
-	<relationship-resolver class="melcoe.fedora.pep.RelationshipResolverImpl">
+	<relationship-resolver class="melcoe.fedora.pep.RelationshipResolverHttpImpl">
 		<option name="url">http://localhost:8080/fedora/risearch</option>
 		<option name="username">admin</option>
 		<option name="password">test</option>

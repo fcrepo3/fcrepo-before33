@@ -21,6 +21,7 @@ package melcoe.xacml.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -29,17 +30,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import melcoe.xacml.MelcoeXacmlException;
+
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.sun.xacml.Indenter;
 import com.sun.xacml.ParsingException;
+import com.sun.xacml.attr.AnyURIAttribute;
 import com.sun.xacml.attr.AttributeValue;
 import com.sun.xacml.attr.StringAttribute;
 import com.sun.xacml.ctx.Attribute;
@@ -47,6 +53,8 @@ import com.sun.xacml.ctx.RequestCtx;
 import com.sun.xacml.ctx.ResponseCtx;
 import com.sun.xacml.ctx.Result;
 import com.sun.xacml.ctx.Subject;
+
+import fedora.common.Constants;
 
 /**
  * Utility class that provides various methods for creating/converting contexts.
@@ -61,14 +69,38 @@ import com.sun.xacml.ctx.Subject;
 
 public class ContextUtil {
 	private static Logger log = Logger.getLogger(ContextUtil.class.getName());
-	private static ContextUtil contextUtil = null;
-
-	private Map<URI, URI> actionMap = null;
-	private Map<String, String> actionValueMap = null;
-
-	private ContextUtil() {
+	private static final URI XACML_RESOURCE_ID = URI.create("urn:oasis:names:tc:xacml:1.0:resource:resource-id");
+	private static final Map<URI, URI> actionMap = new ConcurrentHashMap<URI,URI>();
+	private static final Map<String, String> actionValueMap = new ConcurrentHashMap<String,String>();
+	private static RelationshipResolver DEFAULT_RELATIONSHIP_RESOLVER;
+	private RelationshipResolver relationshipResolver;
+	
+	/**
+	 * We only read and parse the config files once.
+	 */
+	static {
+		initMappings();
+		initRelationshipResolver();
+	}
+	
+	public ContextUtil() {
+		this(DEFAULT_RELATIONSHIP_RESOLVER);
+	}
+	
+	public ContextUtil(RelationshipResolver relationshipResolver) {
+		if (relationshipResolver == null) {
+			relationshipResolver = DEFAULT_RELATIONSHIP_RESOLVER;
+		}
+		this.relationshipResolver = relationshipResolver;
+	}
+	
+	public static ContextUtil getInstance() {
+		return new ContextUtil();
+	}
+	
+	private static void initMappings() {
 		// get the mapping information
-		InputStream is = this.getClass().getClassLoader().getResourceAsStream(
+		InputStream is = ContextUtil.class.getClassLoader().getResourceAsStream(
 				"config-melcoe-pep-mapping.xml");
 		if (is != null) {
 			log
@@ -82,7 +114,6 @@ public class ContextUtil {
 
 				nodes = doc.getElementsByTagName("actionAttribute");
 				if (nodes != null && nodes.getLength() > 0) {
-					actionMap = new HashMap<URI, URI>();
 
 					for (int x = 0; x < nodes.getLength(); x++) {
 						if (nodes.item(x).getNodeType() == Node.ELEMENT_NODE) {
@@ -104,7 +135,6 @@ public class ContextUtil {
 
 				nodes = doc.getElementsByTagName("actionAttributeValue");
 				if (nodes != null && nodes.getLength() > 0) {
-					actionValueMap = new HashMap<String, String>();
 
 					for (int x = 0; x < nodes.getLength(); x++) {
 						if (nodes.item(x).getNodeType() == Node.ELEMENT_NODE) {
@@ -117,21 +147,86 @@ public class ContextUtil {
 					}
 				}
 			} catch (Exception e) {
-				log
-						.warn(
-								"An error occurred while trying to load the mapping file. Mappings will not be used.",
-								e);
+				log.warn("Error occurred loading the mapping file. " +
+						"Mappings will not be used.", e);
 			}
 		} else {
-			log.info("Mapping file not found. Not using mapping.");
+			log.info("Mapping file, config-melcoe-pep-mapping.xml, " +
+					"not found on classpath. Not using mapping.");
 		}
 	}
+	
+	private static void initRelationshipResolver() {
+		RelationshipResolver rr;
+		try {
+			// get the PEP configuration
+			InputStream is = ContextUtil.class.getClassLoader().getResourceAsStream("config-melcoe-pep.xml");
+			if (is == null) {
+				throw new MelcoeXacmlException("Could not locate config file: config-melcoe-pep.xml");
+			}
+	
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
+			DocumentBuilder docBuilder;
+			Document doc;
+			docBuilder = factory.newDocumentBuilder();
+			doc = docBuilder.parse(is);
+	
+			NodeList nodes = null;
+	
+			Map<String, String> options = new HashMap<String, String>();
+			String className = null;
+			Constructor<?> c = null;
+			nodes = doc.getElementsByTagName("relationship-resolver");
+			if (nodes.getLength() != 1)
+				throw new MelcoeXacmlException(
+						"Config file needs to contain exactly 1 'relationship-resolver' section.");
+	
+			Element relationshipResolverElement = (Element) nodes.item(0);
+			className = relationshipResolverElement.getAttributes()
+					.getNamedItem("class").getNodeValue();
+	
+			NodeList optionList = relationshipResolverElement
+					.getElementsByTagName("option");
 
-	public static ContextUtil getInstance() {
-		if (contextUtil == null)
-			contextUtil = new ContextUtil();
-
-		return contextUtil;
+			if (optionList == null || optionList.getLength() == 0) {
+				if (log.isDebugEnabled())
+					log.debug("creating relationship resolver WITHOUT options");
+	
+				
+					rr = (RelationshipResolver) Class.forName(
+							className).newInstance();
+				
+			} else {
+				if (log.isDebugEnabled())
+					log.debug("creating relationship resolver WITH options");
+	
+				options = new HashMap<String, String>();
+				for (int x = 0; x < optionList.getLength(); x++) {
+					Node n = optionList.item(x);
+					String key = n.getAttributes().getNamedItem("name")
+							.getNodeValue();
+					String value = n.getFirstChild().getNodeValue();
+					options.put(key, value);
+					if (log.isDebugEnabled())
+						log.debug("Node [name]: " + key + ": " + value);
+				}
+				c = Class.forName(className).getConstructor(
+						new Class[] { Map.class });
+				rr = (RelationshipResolver) c
+						.newInstance(new Object[] { options });
+			}
+		} catch (Exception e) {
+			log.info("Failed to get configured RelationshipResolver, will try " +
+					"fallback.");
+			log.debug(e.getMessage());
+			rr = new RelationshipResolverImpl();
+		}
+		DEFAULT_RELATIONSHIP_RESOLVER = rr;
+	}
+	
+	public RelationshipResolver getRelationshipResolver() {
+		return relationshipResolver;
 	}
 
 	/**
@@ -145,7 +240,7 @@ public class ContextUtil {
 		Set<Subject> subjects = new HashSet<Subject>();
 
 		if (subjs == null || subjs.size() == 0) {
-			subjects.add(new Subject(new HashSet()));
+			subjects.add(new Subject(new HashSet<Attribute>()));
 			return subjects;
 		}
 
@@ -174,11 +269,35 @@ public class ContextUtil {
 	 * 
 	 * @return a Set of Attributes for inclusion in a Request
 	 */
-	public Set<Attribute> setupResources(Map<URI, AttributeValue> res) {
+	public Set<Attribute> setupResources(Map<URI, AttributeValue> res)
+			throws MelcoeXacmlException {
 		Set<Attribute> attributes = new HashSet<Attribute>();
 
 		if (res == null || res.size() == 0)
 			return attributes;
+
+		try {
+			String pid = null;
+			AttributeValue pidAttr = res.get(XACML_RESOURCE_ID);
+			if (pidAttr != null) {
+				pid = pidAttr.encode();
+				pid = relationshipResolver.buildRESTParentHierarchy(pid);
+
+				String dsid = null;
+				AttributeValue dsidAttr = res.get(Constants.DATASTREAM.ID
+						.getURI());
+				if (dsidAttr != null) {
+					dsid = dsidAttr.encode();
+					if (!dsid.equals(""))
+						pid += "/" + dsid;
+				}
+
+				res.put(XACML_RESOURCE_ID, new AnyURIAttribute(new URI(pid)));
+			}
+		} catch (Exception e) {
+			log.error("Error finding parents.", e);
+			throw new MelcoeXacmlException("Error finding parents.", e);
+		}
 
 		for (URI uri : res.keySet())
 			attributes.add(new Attribute(uri, null, null, res.get(uri)));
@@ -251,15 +370,19 @@ public class ContextUtil {
 	 * @param environment
 	 *            list of environment Attributes
 	 * @return the RequestCtx object
-	 * @throws Exception
+	 * @throws MelcoeXacmlException
 	 */
 	public RequestCtx buildRequest(
 			List<Map<URI, List<AttributeValue>>> subjects,
 			Map<URI, AttributeValue> actions,
 			Map<URI, AttributeValue> resources,
-			Map<URI, AttributeValue> environment) throws Exception {
+			Map<URI, AttributeValue> environment) throws MelcoeXacmlException {
 		if (log.isDebugEnabled())
 			log.debug("Building request!");
+
+		if (relationshipResolver == null) {
+			throw new MelcoeXacmlException("Valid relationship resolver not found.");
+		}
 
 		RequestCtx request = null;
 
@@ -272,7 +395,7 @@ public class ContextUtil {
 					setupEnvironment(environment));
 		} catch (Exception e) {
 			log.error("Error creating request.", e);
-			throw new Exception("Error creating request", e);
+			throw new MelcoeXacmlException("Error creating request", e);
 		}
 
 		return request;
@@ -284,9 +407,9 @@ public class ContextUtil {
 	 * @param response
 	 *            the string response
 	 * @return the ResponseCtx object
-	 * @throws Exception
+	 * @throws MelcoeXacmlException
 	 */
-	public ResponseCtx makeResponseCtx(String response) throws Exception {
+	public ResponseCtx makeResponseCtx(String response) throws MelcoeXacmlException {
 		ResponseCtx resCtx = null;
 		try {
 			// sunxacml 1.2 bug. ResponseCtx.getInstance looks for
@@ -297,7 +420,7 @@ public class ContextUtil {
 					.getBytes());
 			resCtx = ResponseCtx.getInstance(is);
 		} catch (ParsingException pe) {
-			throw new Exception("Error parsing response.", pe);
+			throw new MelcoeXacmlException("Error parsing response.", pe);
 		}
 		return resCtx;
 	}
@@ -308,16 +431,16 @@ public class ContextUtil {
 	 * @param request
 	 *            the string request
 	 * @return the RequestCtx object
-	 * @throws Exception
+	 * @throws MelcoeXacmlException
 	 */
-	public RequestCtx makeRequestCtx(String request) throws Exception {
+	public RequestCtx makeRequestCtx(String request) throws MelcoeXacmlException {
 		RequestCtx reqCtx = null;
 		try {
 			ByteArrayInputStream is = new ByteArrayInputStream(request
 					.getBytes());
 			reqCtx = RequestCtx.getInstance(is);
 		} catch (ParsingException pe) {
-			throw new Exception("Error parsing response.", pe);
+			throw new MelcoeXacmlException("Error parsing response.", pe);
 		}
 		return reqCtx;
 	}

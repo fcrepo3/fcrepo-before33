@@ -46,9 +46,9 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import melcoe.fedora.pep.PEPException;
-import melcoe.fedora.util.ContextUtil;
 import melcoe.fedora.util.LogUtil;
-import melcoe.fedora.util.RelationshipResolverTrippiImpl;
+import melcoe.xacml.MelcoeXacmlException;
+import melcoe.xacml.util.ContextUtil;
 
 import org.apache.axis.AxisFault;
 import org.apache.log4j.Logger;
@@ -90,7 +90,7 @@ public class SearchFilter extends AbstractFilter
 	{
 		super();
 
-		contextUtil = new ContextUtil(new RelationshipResolverTrippiImpl());
+		contextUtil = new ContextUtil();
 
 		try
 		{
@@ -446,7 +446,7 @@ public class SearchFilter extends AbstractFilter
 
 			resCtx = contextUtil.makeResponseCtx(res);
 		}
-		catch (PEPException pe)
+		catch (MelcoeXacmlException pe)
 		{
 			throw new ServletException("Error evaluating pids: " + pe.getMessage(), pe);
 		}

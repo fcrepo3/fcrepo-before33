@@ -92,7 +92,7 @@ public class FedoraWebXML {
 			}
     	};
     	
-    //FIXME for FeSL, what about UserServlet, Axis2Servlet and /user /pdp/* url-patterns?
+    //FIXME for FeSL, what about UserServlet and /user url-pattern?
 
     private final WebXMLOptions options;
 

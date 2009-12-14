@@ -26,9 +26,9 @@ import java.util.Map;
 import java.util.Set;
 
 import melcoe.fedora.pep.PEPException;
-import melcoe.fedora.util.ContextUtil;
 import melcoe.fedora.util.LogUtil;
-import melcoe.fedora.util.RelationshipResolverTrippiImpl;
+import melcoe.xacml.MelcoeXacmlException;
+import melcoe.xacml.util.ContextUtil;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
@@ -55,7 +55,7 @@ public class ListDatastreamsHandler extends AbstractOperationHandler
 {
 	private static Logger log = Logger.getLogger(ListDatastreamsHandler.class.getName());
 
-	private ContextUtil contextUtil = new ContextUtil(new RelationshipResolverTrippiImpl());
+	private ContextUtil contextUtil = new ContextUtil();
 
 	public ListDatastreamsHandler() throws PEPException
 	{
@@ -201,7 +201,12 @@ public class ListDatastreamsHandler extends AbstractOperationHandler
 		}
 		
 		String response = getContextHandler().evaluateBatch(requests.toArray(new String[requests.size()]));
-		ResponseCtx resCtx = contextUtil.makeResponseCtx(response);
+		ResponseCtx resCtx;
+		try {
+			resCtx = contextUtil.makeResponseCtx(response);
+		} catch (MelcoeXacmlException e) {
+			throw new PEPException(e);
+		}
 
 		@SuppressWarnings("unchecked")
 		Set<Result> results = resCtx.getResults();
