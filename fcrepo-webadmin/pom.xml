@@ -5,7 +5,7 @@
   <groupId>org.fcrepo</groupId>
   <artifactId>fcrepo-webadmin</artifactId>
   <packaging>swf</packaging>
-  <version>3.3-SNAPSHOT</version>
+  <version>3.3</version>
   <name>Fedora Web Administrator</name>
 
   <!--
