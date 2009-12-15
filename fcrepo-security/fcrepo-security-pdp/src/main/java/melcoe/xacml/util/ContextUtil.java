@@ -168,7 +168,6 @@ public class ContextUtil {
 		RelationshipResolver rr;
 		try {
 			// get the PEP configuration
-			// get the PEP configuration
 			File configPEPFile = new File(Constants.FEDORA_HOME,
 					"server/config/config-melcoe-pep.xml");
 			InputStream is = new FileInputStream(configPEPFile);

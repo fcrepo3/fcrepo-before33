@@ -108,12 +108,6 @@ public class AuthFilterJAAS implements Filter
 			throw new ServletException(msg);
 		}
 		
-		File logConfig = new File(fedoraHome + "/server/config/log4j.properties");
-		if (logConfig.exists())
-			PropertyConfigurator.configure(logConfig.getAbsolutePath());
-		else
-			BasicConfigurator.configure();
-		
 		this.filterConfig = filterConfig;
 		if (this.filterConfig == null)
 			log.info("No configuration for: " + this.getClass().getName());

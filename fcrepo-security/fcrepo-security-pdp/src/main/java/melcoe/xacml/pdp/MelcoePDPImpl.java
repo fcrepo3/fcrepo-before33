@@ -51,8 +51,7 @@ public class MelcoePDPImpl implements MelcoePDP {
 	private static final Logger log = Logger.getLogger(MelcoePDPImpl.class
 			.getName());
 	private PDP pdp;
-	private final File LOG_CFG = new File(Constants.FEDORA_HOME, "server/config/log4j.properties");
-	
+
 	/**
 	 * The default constructor. This reads in the configuration file and
 	 * instantiates a PDP based on it.
@@ -65,16 +64,6 @@ public class MelcoePDPImpl implements MelcoePDP {
 			String home = PDP_HOME.getAbsolutePath();
 			File f = null;
 			String filename = null;
-
-			// Setup logging.
-			f = LOG_CFG;
-			if (!f.exists()) {
-				BasicConfigurator.configure();
-				log.warn("Could not locate log configuration file: "
-						+ f.getAbsolutePath());
-				log.warn("Using default Basic Configuration");
-			}
-			PropertyConfigurator.configure(f.getAbsolutePath());
 
 			// Loads the policies in PDP_HOME/policies
 			// Does not monitor the directory for changes, nor will 

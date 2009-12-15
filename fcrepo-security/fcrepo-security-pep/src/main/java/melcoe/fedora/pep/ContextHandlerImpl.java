@@ -152,17 +152,6 @@ public class ContextHandlerImpl implements ContextHandler {
 	 */
 	private void init() throws PEPException {
 		try {
-			// get the log configuration
-			URL filenameURL = new File(Constants.FEDORA_HOME,
-					"server/config/log4j.properties").toURI().toURL();
-			if (filenameURL != null) {
-				PropertyConfigurator.configure(filenameURL);
-				log.info("Logging configured using: " + filenameURL);
-			} else {
-				BasicConfigurator.configure();
-				log.info("Logging configured using default configuration.");
-			}
-
 			// get the PEP configuration
 			File configPEPFile = new File(Constants.FEDORA_HOME,
 					"server/config/config-melcoe-pep.xml");
