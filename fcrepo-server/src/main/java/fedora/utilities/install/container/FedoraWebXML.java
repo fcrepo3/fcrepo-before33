@@ -88,7 +88,6 @@ public class FedoraWebXML {
     	new HashMap<String,String>() {
 			private static final long serialVersionUID = 1L;
 			{put("UserServlet", "/user");
-			put("Axis2Servlet", "/pdp/*");
 			}
     	};
     	

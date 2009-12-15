@@ -34,13 +34,6 @@
     <servlet-class>org.apache.axis.transport.http.AxisServlet</servlet-class>
     <load-on-startup>3</load-on-startup>
   </servlet>
-  <!-- FeSL Servlets -->
-  <servlet>
-    <display-name>Apache-Axis2 Servlet</display-name>
-    <servlet-name>Axis2Servlet</servlet-name>
-    <servlet-class>org.apache.axis2.transport.http.AxisServlet</servlet-class>
-    <load-on-startup>4</load-on-startup>
-  </servlet>
   <!--
     Servlets for REST-based interfaces to the Fedora Repository Server
   -->
