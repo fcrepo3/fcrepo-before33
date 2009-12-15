@@ -56,8 +56,8 @@ execWithCmdlineArgs() {
 execWithTheseArgs() {
     common="$CATALINA_HOME"/common
     exec_cmd="exec \"$java\" -server -Xmn64m -Xms256m -Xmx256m \
-            -cp \"$webinf\"/classes \
-            -Djava.endorsed.dirs=\"$webinf\"/lib:\"$common\"/endorsed:\"$common\"/lib \
+            -cp \"$webinf\"/classes:\"$FEDORA_HOME\"/server/bin/${fedora-cli-loader-jar} \
+            -Djava.endorsed.dirs=\"$common\"/endorsed:\"$common\"/lib \
             -Djavax.net.ssl.trustStore=\"$FEDORA_HOME\"/server/truststore \
             -Djavax.net.ssl.trustStorePassword=tomcat \
             -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
@@ -66,7 +66,8 @@ execWithTheseArgs() {
             -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4jLogger \
             -Dcom.sun.xacml.PolicySchema=\"$FEDORA_HOME\"/server/xsd/cs-xacml-schema-policy-01.xsd \
             -Dfedora.home=\"$FEDORA_HOME\" \
-            $1 $2"
+            -Dfedora.web.inf.lib=\"$webinf\"/lib \
+            fedora.server.utilities.rebuild.cli.CLILoader $1 $2"
     eval $exec_cmd
     return $?
 }

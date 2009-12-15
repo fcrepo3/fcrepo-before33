@@ -129,6 +129,13 @@
           <classifier>utilities-main</classifier>
           <version>${project.version}</version>
         </dependency> 
+        
+        <dependency>
+          <groupId>org.fcrepo</groupId>
+          <artifactId>fcrepo-server</artifactId>
+          <classifier>cli-loader-main</classifier>
+          <version>${project.version}</version>
+        </dependency> 
       </dependencies>
 
     </profile>
@@ -213,6 +220,13 @@
       <groupId>org.fcrepo</groupId>
       <artifactId>fcrepo-webapp-saxon</artifactId>
       <type>war</type>
+      <version>${project.version}</version>
+    </dependency> 
+
+    <dependency>
+      <groupId>org.fcrepo</groupId>
+      <artifactId>fcrepo-server</artifactId>
+      <classifier>cli-loader-main</classifier>
       <version>${project.version}</version>
     </dependency> 
 

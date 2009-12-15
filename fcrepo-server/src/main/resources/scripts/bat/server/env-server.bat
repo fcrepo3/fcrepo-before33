@@ -46,8 +46,8 @@ set JAVA="%JAVA_HOME%\bin\java"
 :gotJava
 
 set COMMON="%CATALINA_HOME%\common"
-set CP="%WEBINF%\classes"
-set OPTS=-Djava.endorsed.dirs="%WEBINF%\lib;%COMMON%\endorsed;%COMMON%\lib"
+set CP="%FEDORA_HOME%\server\bin\${fedora-cli-loader-jar};%WEBINF%\classes"
+set OPTS=-Djava.endorsed.dirs="%COMMON%\endorsed;%COMMON%\lib"
 set OPTS=%OPTS% -Djavax.net.ssl.trustStore="%FEDORA_HOME%\server\truststore"
 set OPTS=%OPTS% -Djavax.net.ssl.trustStorePassword=tomcat
 set OPTS=%OPTS% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl
@@ -56,5 +56,6 @@ set OPTS=%OPTS% -Dorg.apache.commons.logging.LogFactory=org.apache.commons.loggi
 set OPTS=%OPTS% -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4jLogger
 set OPTS=%OPTS% -Dcom.sun.xacml.PolicySchema="%FEDORA_HOME%\server\xsd\cs-xacml-schema-policy-01.xsd"
 set OPTS=%OPTS% -Dfedora.home="%FEDORA_HOME%"
+set OPTS=%OPTS% -Dfedora.web.inf.lib="%WEBINF%\lib%"
 
-%JAVA% -server -Xmn64m -Xms256m -Xmx256m -cp %CP% %OPTS% %*
+%JAVA% -server -Xmn64m -Xms256m -Xmx256m -cp %CP% %OPTS% fedora.server.utilities.rebuild.cli.CLILoader %*

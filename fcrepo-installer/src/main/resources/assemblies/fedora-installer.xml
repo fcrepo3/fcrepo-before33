@@ -166,6 +166,14 @@
     </dependencySet>
 
     <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>org.fcrepo:fcrepo-server:jar:cli-loader-main:*</include>
+      </includes>
+      <outputDirectory>/server/bin</outputDirectory>
+    </dependencySet>
+
+    <dependencySet>
       <includes>
         <include>org.fcrepo:fcrepo-server:jar:utilities-main:*</include>
       </includes>

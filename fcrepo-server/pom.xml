@@ -223,7 +223,33 @@
               </includes>
             </configuration> 
           </execution>
- 
+
+          <execution>
+            <id>cli-loader-main</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+
+            <configuration>   
+              <classifier>cli-loader-main</classifier>
+              
+              <archive>
+                <manifest>
+                  <mainClass>fedora.server.utilities.rebuild.cli.CLILoader</mainClass>
+                  <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                </manifest>
+
+                <manifestEntries>
+                  <Version>${buildNumber}</Version>
+                  <Build>${timestamp}</Build>
+                </manifestEntries>
+              </archive>
+              <includes>
+                <include>fedora/server/utilities/rebuild/cli/**</include>
+              </includes>
+            </configuration> 
+          </execution> 
         </executions>
       </plugin>
 
@@ -277,9 +303,10 @@
               </descriptors>
             </configuration>
           </execution>
+          
         </executions>
-      </plugin>
 
+      </plugin>
 
     </plugins>
 
@@ -508,7 +535,7 @@
       <artifactId>commons-dbcp</artifactId>
       <version>1.2.1</version>
     </dependency>
-
+    
     <dependency>
       <groupId>commons-discovery</groupId>
       <artifactId>commons-discovery</artifactId>

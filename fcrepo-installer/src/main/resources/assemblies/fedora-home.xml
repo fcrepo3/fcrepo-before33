@@ -69,11 +69,13 @@
     <fileSet>
       <directory>../fcrepo-server/src/main/resources/scripts/bat/server</directory>
       <outputDirectory>/server/bin</outputDirectory>
+      <filtered>true</filtered>
     </fileSet>  
     <fileSet>
       <directory>../fcrepo-server/src/main/resources/scripts/sh/server</directory>
       <outputDirectory>/server/bin</outputDirectory>
       <fileMode>0755</fileMode>
+      <filtered>true</filtered>
     </fileSet>  
 
     <fileSet>
@@ -344,6 +346,14 @@
         <include>org.fcrepo:fcrepo-client-messaging-${project.version}:zip:*</include>
       </includes>
       <outputDirectory>/client/fedora-client-messaging</outputDirectory>
+    </dependencySet>
+
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>org.fcrepo:fcrepo-server:jar:cli-loader-main:*</include>
+      </includes>
+      <outputDirectory>/server/bin</outputDirectory>
     </dependencySet>
 
   </dependencySets>
