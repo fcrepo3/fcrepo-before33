@@ -39,7 +39,7 @@ public class DirectPDPClient implements PDPClient
 	private MelcoePDP client = null;
 
 	/**
-	 * Initialises the WebServicesPEPClient class.
+	 * Initialises the DirectPDPClient class.
 	 * 
 	 * @param options a Map of options for this class
 	 * @throws PEPException

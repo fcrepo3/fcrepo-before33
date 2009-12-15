@@ -20,6 +20,9 @@ package melcoe.xacml.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URI;
@@ -100,11 +103,19 @@ public class ContextUtil {
 	
 	private static void initMappings() {
 		// get the mapping information
-		InputStream is = ContextUtil.class.getClassLoader().getResourceAsStream(
-				"config-melcoe-pep-mapping.xml");
+		// get the PEP configuration
+		File configPEPFile = new File(Constants.FEDORA_HOME,
+				"server/config/config-melcoe-pep-mapping.xml");
+		InputStream is = null;
+		try {
+			is = new FileInputStream(configPEPFile);
+		}
+		catch (FileNotFoundException e) {
+			log.info("Mapping file, config-melcoe-pep-mapping.xml, not found.");
+		}
+		
 		if (is != null) {
-			log
-					.info("Mapping file found (config-melcoe-pep-mapping.xml). Loading maps");
+			log.info("Mapping file found (config-melcoe-pep-mapping.xml). Loading maps");
 			try {
 				DocumentBuilderFactory factory = DocumentBuilderFactory
 						.newInstance();
@@ -150,9 +161,6 @@ public class ContextUtil {
 				log.warn("Error occurred loading the mapping file. " +
 						"Mappings will not be used.", e);
 			}
-		} else {
-			log.info("Mapping file, config-melcoe-pep-mapping.xml, " +
-					"not found on classpath. Not using mapping.");
 		}
 	}
 	
@@ -160,7 +168,10 @@ public class ContextUtil {
 		RelationshipResolver rr;
 		try {
 			// get the PEP configuration
-			InputStream is = ContextUtil.class.getClassLoader().getResourceAsStream("config-melcoe-pep.xml");
+			// get the PEP configuration
+			File configPEPFile = new File(Constants.FEDORA_HOME,
+					"server/config/config-melcoe-pep.xml");
+			InputStream is = new FileInputStream(configPEPFile);
 			if (is == null) {
 				throw new MelcoeXacmlException("Could not locate config file: config-melcoe-pep.xml");
 			}

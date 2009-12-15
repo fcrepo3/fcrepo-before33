@@ -18,6 +18,8 @@
 
 package melcoe.fedora.pep.ws;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,6 +49,8 @@ import org.w3c.dom.NodeList;
 import com.sun.xacml.ctx.RequestCtx;
 import com.sun.xacml.ctx.ResponseCtx;
 import com.sun.xacml.ctx.Result;
+
+import fedora.common.Constants;
 
 /**
  * This class is an Apache Axis handler. It is used as a handler on both the
@@ -184,7 +188,9 @@ public class PEP extends BasicHandler
 		try
 		{
 			// get the PEP configuration
-			InputStream is = this.getClass().getClassLoader().getResourceAsStream("config-melcoe-pep.xml");
+			File configPEPFile = new File(Constants.FEDORA_HOME, 
+					"server/config/config-melcoe-pep.xml");
+			InputStream is = new FileInputStream(configPEPFile);
 			if (is == null)
 				throw new PEPException("Could not locate config file: config-melcoe-pep.xml");
 			
@@ -229,7 +235,7 @@ public class PEP extends BasicHandler
 						{
 							try
 							{
-								Class handlerClass = Class.forName(cls);
+								Class<?> handlerClass = Class.forName(cls);
 								handler = (OperationHandler) handlerClass.newInstance();
 								handlerMap.put(cls, handler);
 							}

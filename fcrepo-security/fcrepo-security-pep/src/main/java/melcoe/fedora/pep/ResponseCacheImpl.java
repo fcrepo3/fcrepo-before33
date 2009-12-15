@@ -77,9 +77,19 @@ public class ResponseCacheImpl implements ResponseCache
 	 */
 	public ResponseCacheImpl(Integer size, Long ttl) throws PEPException
 	{
+		String noCache = System.getenv("PEP_NOCACHE");
+		if (noCache != null && noCache.toLowerCase().startsWith("t"))
+		{
+			TTL = 0;
+			log.info("PEP_NOCACHE: TTL on responseCache set to 0");
+		}
+		else
+		{
+			TTL = ttl.longValue();
+		}
+		
 		CACHE_SIZE = size.intValue();
-		TTL = ttl.longValue();
-
+		
 		requestCache = new HashMap<String, String>(CACHE_SIZE);
 		requestCacheTimeTracker = new HashMap<String, Long>(CACHE_SIZE);
 		requestCacheUsageTracker = new ArrayList<String>(CACHE_SIZE);

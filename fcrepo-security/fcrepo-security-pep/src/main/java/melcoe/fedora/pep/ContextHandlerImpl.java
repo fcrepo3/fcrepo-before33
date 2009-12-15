@@ -19,6 +19,7 @@
 package melcoe.fedora.pep;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URI;
@@ -153,7 +154,7 @@ public class ContextHandlerImpl implements ContextHandler {
 		try {
 			// get the log configuration
 			URL filenameURL = new File(Constants.FEDORA_HOME,
-					"server/config/log4j.properties").toURL();
+					"server/config/log4j.properties").toURI().toURL();
 			if (filenameURL != null) {
 				PropertyConfigurator.configure(filenameURL);
 				log.info("Logging configured using: " + filenameURL);
@@ -163,8 +164,9 @@ public class ContextHandlerImpl implements ContextHandler {
 			}
 
 			// get the PEP configuration
-			InputStream is = this.getClass().getClassLoader()
-					.getResourceAsStream("config-melcoe-pep.xml");
+			File configPEPFile = new File(Constants.FEDORA_HOME,
+					"server/config/config-melcoe-pep.xml");
+			InputStream is = new FileInputStream(configPEPFile);
 			if (is == null)
 				throw new PEPException(
 						"Could not locate config file: config-melcoe-pep.xml");

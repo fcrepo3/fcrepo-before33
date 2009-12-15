@@ -18,6 +18,8 @@
 
 package melcoe.fedora.pep.rest.filters;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -38,6 +40,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.sun.xacml.ctx.RequestCtx;
+
+import fedora.common.Constants;
 
 /**
  * Handles the get operations.
@@ -214,7 +218,9 @@ public class ObjectsFilter extends AbstractFilter
 		try
 		{
 			// get the PEP configuration
-			InputStream is = this.getClass().getClassLoader().getResourceAsStream("config-melcoe-pep.xml");
+			File configPEPFile = new File(Constants.FEDORA_HOME,
+					"server/config/config-melcoe-pep.xml");
+			InputStream is = new FileInputStream(configPEPFile);
 			if (is == null)
 				throw new PEPException("Could not locate config file: config-melcoe-pep.xml");
 

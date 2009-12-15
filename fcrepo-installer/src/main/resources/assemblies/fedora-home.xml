@@ -189,6 +189,15 @@
       <outputDirectory>pdp</outputDirectory>
     </fileSet>  
 
+    <fileSet>
+      <directory>../fcrepo-security/fcrepo-security-pep/src/main/config</directory>
+      <outputDirectory>/server/config</outputDirectory>
+      <includes>
+        <include>config-melcoe-pep.xml</include>
+        <include>config-melcoe-pep-mapping.xml</include>
+      </includes>
+    </fileSet>  
+
     <!-- Do these files really need to be copied to client/lib? --> 
     <fileSet>
       <directory>../fcrepo-server/src/main/resources/xsl/batchtool</directory>
