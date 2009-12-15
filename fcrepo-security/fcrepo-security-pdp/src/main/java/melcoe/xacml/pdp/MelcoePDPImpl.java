@@ -38,6 +38,8 @@ import com.sun.xacml.ctx.RequestCtx;
 import com.sun.xacml.ctx.ResponseCtx;
 import com.sun.xacml.ctx.Result;
 
+import fedora.common.Constants;
+
 /**
  * This is an implementation of the MelcoePDP interface. It provides for the
  * evaluation of requests. It uses
@@ -49,7 +51,8 @@ public class MelcoePDPImpl implements MelcoePDP {
 	private static final Logger log = Logger.getLogger(MelcoePDPImpl.class
 			.getName());
 	private PDP pdp;
-
+	private final File LOG_CFG = new File(Constants.FEDORA_HOME, "server/config/log4j.properties");
+	
 	/**
 	 * The default constructor. This reads in the configuration file and
 	 * instantiates a PDP based on it.
@@ -64,17 +67,18 @@ public class MelcoePDPImpl implements MelcoePDP {
 			String filename = null;
 
 			// Setup logging.
-			filename = home + "/conf/log4j.properties";
-			f = new File(filename);
+			f = LOG_CFG;
 			if (!f.exists()) {
 				BasicConfigurator.configure();
 				log.warn("Could not locate log configuration file: "
 						+ f.getAbsolutePath());
 				log.warn("Using default Basic Configuration");
 			}
-			PropertyConfigurator.configure(filename);
+			PropertyConfigurator.configure(f.getAbsolutePath());
 
-			// FIXME initial load of policies
+			// Loads the policies in PDP_HOME/policies
+			// Does not monitor the directory for changes, nor will 
+			// subsequently deleted policies be removed from the policy store
 			PopulatePolicyDatabase.addDocuments();
 			//
 			
