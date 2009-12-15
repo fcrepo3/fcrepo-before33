@@ -33,7 +33,7 @@ public interface MelcoePDP {
 	public static File PDP_HOME = new File(Constants.FEDORA_HOME, "pdp/");
 	
 	/**
-	 * This method evaulates an XACML request and returns an XACML response.
+	 * This method evaluates an XACML request and returns an XACML response.
 	 * 
 	 * @param request
 	 *            the XACML request

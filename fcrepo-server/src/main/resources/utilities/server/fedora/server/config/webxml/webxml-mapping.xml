@@ -69,8 +69,10 @@
 	
 	<class name="fedora.server.config.webxml.Filter">
 		<element name="filter">
+            <element name="description" property="descriptions" />
 			<element name="filter-name" property="filterName" />
 			<element name="filter-class" property="filterClass" />
+            <element name="init-param" property="initParams" />
 			<addDefaults/>
 		</element>
 	</class>

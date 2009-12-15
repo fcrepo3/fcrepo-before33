@@ -4,12 +4,36 @@
  */
 package fedora.server.config.webxml;
 
-public class Filter {
+import java.util.ArrayList;
+import java.util.List;
 
+public class Filter {
+	
+	private final List<String> descriptions;
+	
     private String filterName;
 
     private String filterClass;
+    
+    private final List<InitParam> initParams;
 
+    public Filter() {
+    	descriptions = new ArrayList<String>();
+        initParams = new ArrayList<InitParam>();
+    }
+    
+    public List<String> getDescriptions() {
+        return descriptions;
+    }
+
+    public void addDescription(String description) {
+        descriptions.add(description);
+    }
+
+    public void removeDescription(String description) {
+        descriptions.remove(description);
+    }
+    
     public String getFilterClass() {
         return filterClass;
     }
@@ -25,8 +49,12 @@ public class Filter {
     public void setFilterName(String filterName) {
         this.filterName = filterName;
     }
-
-    public Filter() {
+    
+    public List<InitParam> getInitParams() {
+        return initParams;
     }
 
+    public void addInitParam(InitParam initParam) {
+        initParams.add(initParam);
+    }
 }

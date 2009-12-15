@@ -102,6 +102,11 @@ public class FedoraWebXML {
         this(webXML, new WebXMLOptions(options));
     }
 
+    /**
+     * 
+     * @param webXML path to the webXML file
+     * @param options
+     */
     public FedoraWebXML(String webXML, WebXMLOptions options) {
         this.options = options;
         fedoraWebXML = fedora.server.config.webxml.WebXML.getInstance(webXML);
