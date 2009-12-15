@@ -48,22 +48,30 @@
  */
 package fedora.localservices.imagemanip;
 
+import ij.ImagePlus;
+import ij.io.FileInfo;
+import ij.io.GifEncoder;
+import ij.process.ImageProcessor;
+import ij.process.MedianCut;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.media.jai.JAI;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.methods.GetMethod;
 
 import com.sun.media.jai.codec.BMPEncodeParam;
 import com.sun.media.jai.codec.ImageCodec;
@@ -72,18 +80,6 @@ import com.sun.media.jai.codec.JPEGEncodeParam;
 import com.sun.media.jai.codec.MemoryCacheSeekableStream;
 import com.sun.media.jai.codec.PNGEncodeParam;
 import com.sun.media.jai.codec.TIFFEncodeParam;
-
-import ij.io.FileInfo;
-import ij.io.GifEncoder;
-
-import ij.process.ImageProcessor;
-import ij.process.MedianCut;
-
-import ij.ImagePlus;
-
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.methods.GetMethod;
 
 /**
  * ImageManipulation is a Java servlet that takes a URL of an image as a param
@@ -120,7 +116,7 @@ public class ImageManipulation
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-
+    	System.setProperty("java.awt.headless", "true");
         // collect all possible parameters for servlet
         String url = req.getParameter("url");
         String op = req.getParameter("op");
