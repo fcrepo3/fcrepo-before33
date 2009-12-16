@@ -20,6 +20,7 @@ package org.fcrepo.server.jaas;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -283,12 +284,16 @@ public class AuthFilterJAAS
      * @param response
      *        the response to set the headers and status
      */
-    private void loginForm(HttpServletResponse response) {
+    private void loginForm(HttpServletResponse response) throws IOException {
         response.reset();
         response.addHeader("WWW-Authenticate",
                            "Basic realm=\"!!Fedora Repository Server\"");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-    }
+		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		OutputStream out = response.getOutputStream();
+		out.write("Fedora: 401 ".getBytes());
+		out.flush();
+		out.close();
+	}
 
     /**
      * Performs the authentication. Once a Subject is obtained, it is stored in
