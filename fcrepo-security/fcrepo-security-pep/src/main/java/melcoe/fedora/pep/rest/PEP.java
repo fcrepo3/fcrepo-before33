@@ -111,13 +111,14 @@ public final class PEP
         ResponseCtx resCtx = null;
 
         String uri = ((HttpServletRequest) request).getRequestURI();
-
+        String servletPath = ((HttpServletRequest) request).getServletPath();
         if (log.isDebugEnabled()) {
             log.debug("Incoming URI: " + uri);
+            log.debug("Incoming servletPath: " + servletPath);
         }
 
         // get the filter (or null if no filter)
-        RESTFilter filter = getFilter(uri);
+        RESTFilter filter = getFilter(servletPath);
         try {
             // handle the request if we have a filter
             if (filter != null) {
@@ -286,27 +287,16 @@ public final class PEP
      * filter map, then an attempt to create the required filter is made and if
      * successful it is added to the filter map.
      * 
-     * @param uri
-     *        the uri used to determine which filter to use
+     * @param servletPath
+     *        the servletPath of incoming servlet request
      * @return the filter to use
      * @throws ServletException
      */
-    private RESTFilter getFilter(String uri) throws ServletException {
-        String[] parts = uri.split("/");
-        // parts[0] = ""
-        // parts[1] = "fedora"
-        // parts[2] = operation (e.g. "get", "describe", "getObjectHistory" etc.)
+    private RESTFilter getFilter(String servletPath) throws ServletException {
+        RESTFilter filter = filters.get(servletPath);
 
-        if (parts.length < 3) {
-            log.info("Not enough components on the URI.");
-            throw new ServletException("Not enough components on the URI.");
-        }
-
-        String operation = parts[2];
-        for (int x = 3; x < parts.length; x++)
-        	operation += "/" + parts[x];
-        	
-        RESTFilter filter = filters.get(operation);
+        if (filter != null && log.isDebugEnabled())
+        	log.debug("obtaining filter: " + filter.getClass().getName());
 
         return filter;
     }

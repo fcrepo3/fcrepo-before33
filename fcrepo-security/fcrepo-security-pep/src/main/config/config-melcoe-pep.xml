@@ -63,18 +63,18 @@
 		in the case of 'search'.
 	-->
 	<handlers-rest>
-		<handler operation="describe" class="melcoe.fedora.pep.rest.filters.DescribeFilter" />
-		<handler operation="get" class="melcoe.fedora.pep.rest.filters.GetFilter" />
-		<handler operation="getObjectHistory" class="melcoe.fedora.pep.rest.filters.GetObjectHistoryFilter" />
-		<handler operation="listDatastreams" class="melcoe.fedora.pep.rest.filters.ListDatastreamsFilter" />
-		<handler operation="listMethods" class="melcoe.fedora.pep.rest.filters.ListMethodsFilter" />
-		<handler operation="search" class="melcoe.fedora.pep.rest.filters.SearchFilter" />
-		<handler operation="management/getNextPID" class="melcoe.fedora.pep.rest.filters.GetNextPIDFilter" />
+		<handler operation="/describe" class="melcoe.fedora.pep.rest.filters.DescribeFilter" />
+		<handler operation="/get" class="melcoe.fedora.pep.rest.filters.GetFilter" />
+		<handler operation="/getObjectHistory" class="melcoe.fedora.pep.rest.filters.GetObjectHistoryFilter" />
+		<handler operation="/listDatastreams" class="melcoe.fedora.pep.rest.filters.ListDatastreamsFilter" />
+		<handler operation="/listMethods" class="melcoe.fedora.pep.rest.filters.ListMethodsFilter" />
+		<handler operation="/search" class="melcoe.fedora.pep.rest.filters.SearchFilter" />
+		<handler operation="/management/getNextPID" class="melcoe.fedora.pep.rest.filters.GetNextPIDFilter" />
 		<!-- 
         Filters risearch results, but with a significant performance penalty. 
         <handler operation="risearch" class="melcoe.fedora.pep.rest.filters.RISearchFilter" />
 		-->
-        <handler operation="objects" class="melcoe.fedora.pep.rest.filters.ObjectsFilter" />
+        <handler operation="/objects" class="melcoe.fedora.pep.rest.filters.ObjectsFilter" />
 	</handlers-rest>
 	
 	<!--
