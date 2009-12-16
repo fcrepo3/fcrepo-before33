@@ -91,6 +91,7 @@ public class AutoFinder {
     }
 
     public static void main(String[] args) throws Exception {
+        System.setProperty("java.awt.headless", "true");
 
         if (args.length < 7 || args.length > 8) {
             AutoFinder.showUsage("Seven or eight arguments required.");

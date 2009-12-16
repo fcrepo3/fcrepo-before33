@@ -379,6 +379,7 @@ public class Ingest
      * Command-line interface for doing ingests.
      */
     public static void main(String[] args) {
+        System.setProperty("java.awt.headless", "true");
         try {
             if (args.length < 1) {
                 Ingest.badArgs("No arguments entered!");

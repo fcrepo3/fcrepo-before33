@@ -57,6 +57,7 @@ public class AutoBatchBuildIngest
     }
 
     public static final void main(String[] args) throws Exception {
+        System.setProperty("java.awt.headless", "true");
         boolean errors = false;
         String context = "/" + Constants.FEDORA_DEFAULT_APP_CONTEXT;
         String objectFormat = null;

@@ -196,6 +196,7 @@ public class Export
      * Command-line interface for doing exports.
      */
     public static void main(String[] args) {
+        System.setProperty("java.awt.headless", "true");
         try {
             // USAGE: fedora-export host:port user password pid|ftyps format econtext path protocol [context]
             if (args.length < 8 || args.length > 9) {

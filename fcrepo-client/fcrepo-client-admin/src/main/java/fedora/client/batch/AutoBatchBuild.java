@@ -44,6 +44,7 @@ public class AutoBatchBuild
     }
 
     public static final void main(String[] args) throws Exception {
+        System.setProperty("java.awt.headless", "true");
         boolean errors = false;
         String objectFormat = null;
         if (args.length == 5) {

@@ -382,6 +382,7 @@ public class AutoModify {
     }
 
     public static void main(String[] args) {
+        System.setProperty("java.awt.headless", "true");
 
         String logFilePath = null;
         String directivesFilePath = null;

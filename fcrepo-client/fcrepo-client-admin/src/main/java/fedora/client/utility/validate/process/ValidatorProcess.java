@@ -57,6 +57,7 @@ public class ValidatorProcess {
     }
 
     public static void main(String[] args) throws ObjectSourceException {
+        System.setProperty("java.awt.headless", "true");
         try {
             // Parse the parameters.
             ValidatorProcessParameters parms =

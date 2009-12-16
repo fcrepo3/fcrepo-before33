@@ -50,6 +50,7 @@ public class AutoBatchIngest
     }
 
     public static final void main(String[] args) throws Exception {
+        System.setProperty("java.awt.headless", "true");
         String context = Constants.FEDORA_DEFAULT_APP_CONTEXT;
         boolean errors = false;
         if (args.length == 8 || args.length == 9) {

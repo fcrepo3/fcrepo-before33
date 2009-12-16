@@ -83,6 +83,7 @@ public class MassIngest {
     }
 
     public static void main(String[] args) throws Exception {
+        System.setProperty("java.awt.headless", "true");
         try {
             if (args.length < 9 || args.length > 10) {
                 MassIngest.showUsage("You must provide nine or ten arguments.");
