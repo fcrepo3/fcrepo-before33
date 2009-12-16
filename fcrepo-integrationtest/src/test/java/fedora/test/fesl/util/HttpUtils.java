@@ -1,3 +1,4 @@
+
 package fedora.test.fesl.util;
 
 import java.io.ByteArrayOutputStream;
@@ -31,242 +32,262 @@ import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.log4j.Logger;
 
-public class HttpUtils
-{
-	private static final Logger log = Logger.getLogger(HttpUtils.class);
+public class HttpUtils {
 
-	private DefaultHttpClient client = null;
-	private HttpHost httpHost = null;
-	private BasicHttpContext httpContext = null;
-	private BasicScheme basicAuth = null;
+    private static final Logger log = Logger.getLogger(HttpUtils.class);
 
-	public HttpUtils(String baseURL, String username, String password) throws Exception
-	{
-		try
-		{
-			URL url = new URL(baseURL);
-			
-			client = new DefaultHttpClient();
-			basicAuth = new BasicScheme();
-			httpContext = new BasicHttpContext();
-			httpHost = new HttpHost(url.getHost(), url.getPort(), url.getProtocol());
+    private DefaultHttpClient client = null;
 
-			if (username != null && password != null)
-			{
-				httpContext.setAttribute("preemptive-auth", basicAuth);
+    private HttpHost httpHost = null;
 
-				// Add as the first request interceptor
-				client.addRequestInterceptor(new PreemptiveAuth(), 0);
-				AuthScope authScope = new AuthScope(url.getHost(), url.getPort(), AuthScope.ANY_REALM);
-				Credentials credentials = new UsernamePasswordCredentials(username, password);
-				client.getCredentialsProvider().setCredentials(authScope, credentials);
-			}
-		}
-		catch (Exception e)
-		{
-			log.error("Failed to instantiate HttpUtils.");
-			throw e;
-		}
-	}
+    private BasicHttpContext httpContext = null;
 
-	public String get(String url) throws ClientProtocolException, IOException, AuthorizationDeniedException
-	{
-		return get(url, null);
-	}
+    private BasicScheme basicAuth = null;
 
-	public String get(String url, Map<String, String> headers) throws ClientProtocolException, IOException,
-			AuthorizationDeniedException
-	{
-		// create request
-		HttpGet request = new HttpGet(url);
+    public HttpUtils(String baseURL, String username, String password)
+            throws Exception {
+        try {
+            URL url = new URL(baseURL);
 
-		if (log.isDebugEnabled())
-			log.debug("getting url: " + url);
+            client = new DefaultHttpClient();
+            basicAuth = new BasicScheme();
+            httpContext = new BasicHttpContext();
+            httpHost =
+                    new HttpHost(url.getHost(), url.getPort(), url
+                            .getProtocol());
 
-		// add headers to request
-		if (headers != null && headers.size() > 0)
-		{
-			for (String header : headers.keySet())
-			{
-				String value = headers.get(header);
-				request.addHeader(header, value);
+            if (username != null && password != null) {
+                httpContext.setAttribute("preemptive-auth", basicAuth);
 
-				if (log.isDebugEnabled())
-					log.debug("adding header: " + header + " = " + value);
-			}
-		}
+                // Add as the first request interceptor
+                client.addRequestInterceptor(new PreemptiveAuth(), 0);
+                AuthScope authScope =
+                        new AuthScope(url.getHost(),
+                                      url.getPort(),
+                                      AuthScope.ANY_REALM);
+                Credentials credentials =
+                        new UsernamePasswordCredentials(username, password);
+                client.getCredentialsProvider().setCredentials(authScope,
+                                                               credentials);
+            }
+        } catch (Exception e) {
+            log.error("Failed to instantiate HttpUtils.");
+            throw e;
+        }
+    }
 
-		return process(request);
-	}
+    public String get(String url) throws ClientProtocolException, IOException,
+            AuthorizationDeniedException {
+        return get(url, null);
+    }
 
-	public String post(String url) throws ClientProtocolException, IOException, AuthorizationDeniedException
-	{
-		return post(url, null, null);
-	}
+    public String get(String url, Map<String, String> headers)
+            throws ClientProtocolException, IOException,
+            AuthorizationDeniedException {
+        // create request
+        HttpGet request = new HttpGet(url);
 
-	public String post(String url, Map<String, String> headers) throws ClientProtocolException, IOException,
-			AuthorizationDeniedException
-	{
-		return post(url, headers, null);
-	}
+        if (log.isDebugEnabled()) {
+            log.debug("getting url: " + url);
+        }
 
-	public String post(String url, Map<String, String> headers, byte[] data) throws ClientProtocolException,
-			IOException, AuthorizationDeniedException
-	{
-		// create request
-		HttpPost request = new HttpPost(url);
+        // add headers to request
+        if (headers != null && headers.size() > 0) {
+            for (String header : headers.keySet()) {
+                String value = headers.get(header);
+                request.addHeader(header, value);
 
-		// add data to request if necessary
-		if (data != null)
-		{
-			ByteArrayEntity entity = new ByteArrayEntity(data);
-			entity.setChunked(true);
-			entity.setContentType("text/xml");
-			request.setEntity(entity);
-		}
+                if (log.isDebugEnabled()) {
+                    log.debug("adding header: " + header + " = " + value);
+                }
+            }
+        }
 
-		if (log.isDebugEnabled())
-			log.debug("getting url: " + url);
+        return process(request);
+    }
 
-		// add headers to request if necessary
-		if (headers != null && headers.size() > 0)
-		{
-			for (String header : headers.keySet())
-			{
-				String value = headers.get(header);
-				request.addHeader(header, value);
+    public String post(String url) throws ClientProtocolException, IOException,
+            AuthorizationDeniedException {
+        return post(url, null, null);
+    }
 
-				if (log.isDebugEnabled())
-					log.debug("adding header: " + header + " = " + value);
-			}
-		}
+    public String post(String url, Map<String, String> headers)
+            throws ClientProtocolException, IOException,
+            AuthorizationDeniedException {
+        return post(url, headers, null);
+    }
 
-		return process(request);
-	}
+    public String post(String url, Map<String, String> headers, byte[] data)
+            throws ClientProtocolException, IOException,
+            AuthorizationDeniedException {
+        // create request
+        HttpPost request = new HttpPost(url);
 
-	public String put(String url) throws ClientProtocolException, IOException, AuthorizationDeniedException
-	{
-		return put(url, null, null);
-	}
+        // add data to request if necessary
+        if (data != null) {
+            ByteArrayEntity entity = new ByteArrayEntity(data);
+            entity.setChunked(true);
+            entity.setContentType("text/xml");
+            request.setEntity(entity);
+        }
 
-	public String put(String url, Map<String, String> headers) throws ClientProtocolException, IOException,
-			AuthorizationDeniedException
-	{
-		return put(url, headers, null);
-	}
+        if (log.isDebugEnabled()) {
+            log.debug("getting url: " + url);
+        }
 
-	public String put(String url, Map<String, String> headers, byte[] data) throws ClientProtocolException,
-			IOException, AuthorizationDeniedException
-	{
-		// create request
-		HttpPut request = new HttpPut(url);
+        // add headers to request if necessary
+        if (headers != null && headers.size() > 0) {
+            for (String header : headers.keySet()) {
+                String value = headers.get(header);
+                request.addHeader(header, value);
 
-		// add data to request if necessary
-		if (data != null)
-		{
-			ByteArrayEntity entity = new ByteArrayEntity(data);
-			entity.setChunked(true);
-			entity.setContentType("text/xml");
-			request.setEntity(entity);
-		}
+                if (log.isDebugEnabled()) {
+                    log.debug("adding header: " + header + " = " + value);
+                }
+            }
+        }
 
-		if (log.isDebugEnabled())
-			log.debug("getting url: " + url);
+        return process(request);
+    }
 
-		// add headers to request if necessary
-		if (headers != null && headers.size() > 0)
-		{
-			for (String header : headers.keySet())
-			{
-				String value = headers.get(header);
-				request.addHeader(header, value);
+    public String put(String url) throws ClientProtocolException, IOException,
+            AuthorizationDeniedException {
+        return put(url, null, null);
+    }
 
-				if (log.isDebugEnabled())
-					log.debug("adding header: " + header + " = " + value);
-			}
-		}
-		
-		return process(request);
-	}
+    public String put(String url, Map<String, String> headers)
+            throws ClientProtocolException, IOException,
+            AuthorizationDeniedException {
+        return put(url, headers, null);
+    }
 
-	public String delete(String url, Map<String, String> headers) throws ClientProtocolException, IOException,
-			AuthorizationDeniedException
-	{
-		// create request
-		HttpDelete request = new HttpDelete(url);
+    public String put(String url, Map<String, String> headers, byte[] data)
+            throws ClientProtocolException, IOException,
+            AuthorizationDeniedException {
+        // create request
+        HttpPut request = new HttpPut(url);
 
-		if (log.isDebugEnabled())
-			log.debug("getting url: " + url);
+        // add data to request if necessary
+        if (data != null) {
+            ByteArrayEntity entity = new ByteArrayEntity(data);
+            entity.setChunked(true);
+            entity.setContentType("text/xml");
+            request.setEntity(entity);
+        }
 
-		// add headers to request
-		if (headers != null && headers.size() > 0)
-		{
-			for (String header : headers.keySet())
-			{
-				String value = headers.get(header);
-				request.addHeader(header, value);
+        if (log.isDebugEnabled()) {
+            log.debug("getting url: " + url);
+        }
 
-				if (log.isDebugEnabled())
-					log.debug("adding header: " + header + " = " + value);
-			}
-		}
-		
-		return process(request);
-	}
+        // add headers to request if necessary
+        if (headers != null && headers.size() > 0) {
+            for (String header : headers.keySet()) {
+                String value = headers.get(header);
+                request.addHeader(header, value);
 
-	private String process(HttpRequest request) throws IOException, AuthorizationDeniedException,
-			ClientProtocolException
-	{
-		if (log.isDebugEnabled())
-			log.debug("request line: " + request.getRequestLine());
+                if (log.isDebugEnabled()) {
+                    log.debug("adding header: " + header + " = " + value);
+                }
+            }
+        }
 
-		HttpResponse response = client.execute(httpHost, request, httpContext);
-		int sc = response.getStatusLine().getStatusCode();
-		String phrase = response.getStatusLine().getReasonPhrase();
+        return process(request);
+    }
 
-		String body = "";
-		if (response.getEntity() != null)
-		{
-			InputStream is = response.getEntity().getContent();
-			
-			ByteArrayOutputStream res = new ByteArrayOutputStream();
-			int len = 0;
-			byte[] buf = new byte[1024];
-			while ((len = is.read(buf)) >= 0)
-				res.write(buf, 0, len);
-			
-			body = new String(res.toByteArray());
-			if (body.contains("Authorization Denied"))
-				throw new AuthorizationDeniedException("Authorization Denied");
-		}
-		
-		if (sc < 200 || sc >= 400)
-			throw new ClientProtocolException("Error [Status Code = " + sc + "]" + ": " + phrase);
+    public String delete(String url, Map<String, String> headers)
+            throws ClientProtocolException, IOException,
+            AuthorizationDeniedException {
+        // create request
+        HttpDelete request = new HttpDelete(url);
 
-		return body;
-	}
+        if (log.isDebugEnabled()) {
+            log.debug("getting url: " + url);
+        }
 
-	private class PreemptiveAuth implements HttpRequestInterceptor
-	{
-		public void process(final HttpRequest request, final HttpContext context) throws HttpException, IOException
-		{
-			AuthState authState = (AuthState) context.getAttribute(ClientContext.TARGET_AUTH_STATE);
-			if (authState.getAuthScheme() != null)
-				return;
+        // add headers to request
+        if (headers != null && headers.size() > 0) {
+            for (String header : headers.keySet()) {
+                String value = headers.get(header);
+                request.addHeader(header, value);
 
-			AuthScheme authScheme = (AuthScheme) context.getAttribute("preemptive-auth");
-			if (authScheme == null)
-				return;
+                if (log.isDebugEnabled()) {
+                    log.debug("adding header: " + header + " = " + value);
+                }
+            }
+        }
 
-			CredentialsProvider credsProvider = (CredentialsProvider) context.getAttribute(ClientContext.CREDS_PROVIDER);
-			HttpHost targetHost = (HttpHost) context.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
+        return process(request);
+    }
 
-			Credentials creds = credsProvider.getCredentials(new AuthScope(targetHost.getHostName(), targetHost.getPort()));
-			if (creds == null)
-				return;
+    private String process(HttpRequest request) throws IOException,
+            AuthorizationDeniedException, ClientProtocolException {
+        if (log.isDebugEnabled()) {
+            log.debug("request line: " + request.getRequestLine());
+        }
 
-			authState.setAuthScheme(authScheme);
-			authState.setCredentials(creds);
-		}
-	}
+        HttpResponse response = client.execute(httpHost, request, httpContext);
+        int sc = response.getStatusLine().getStatusCode();
+        String phrase = response.getStatusLine().getReasonPhrase();
+
+        String body = "";
+        if (response.getEntity() != null) {
+            InputStream is = response.getEntity().getContent();
+
+            ByteArrayOutputStream res = new ByteArrayOutputStream();
+            int len = 0;
+            byte[] buf = new byte[1024];
+            while ((len = is.read(buf)) >= 0) {
+                res.write(buf, 0, len);
+            }
+
+            body = new String(res.toByteArray());
+            if (body.contains("Authorization Denied")) {
+                throw new AuthorizationDeniedException("Authorization Denied");
+            }
+        }
+
+        if (sc < 200 || sc >= 400) {
+            throw new ClientProtocolException("Error [Status Code = " + sc
+                    + "]" + ": " + phrase);
+        }
+
+        return body;
+    }
+
+    private class PreemptiveAuth
+            implements HttpRequestInterceptor {
+
+        public void process(final HttpRequest request, final HttpContext context)
+                throws HttpException, IOException {
+            AuthState authState =
+                    (AuthState) context
+                            .getAttribute(ClientContext.TARGET_AUTH_STATE);
+            if (authState.getAuthScheme() != null) {
+                return;
+            }
+
+            AuthScheme authScheme =
+                    (AuthScheme) context.getAttribute("preemptive-auth");
+            if (authScheme == null) {
+                return;
+            }
+
+            CredentialsProvider credsProvider =
+                    (CredentialsProvider) context
+                            .getAttribute(ClientContext.CREDS_PROVIDER);
+            HttpHost targetHost =
+                    (HttpHost) context
+                            .getAttribute(ExecutionContext.HTTP_TARGET_HOST);
+
+            Credentials creds =
+                    credsProvider.getCredentials(new AuthScope(targetHost
+                            .getHostName(), targetHost.getPort()));
+            if (creds == null) {
+                return;
+            }
+
+            authState.setAuthScheme(authScheme);
+            authState.setCredentials(creds);
+        }
+    }
 }

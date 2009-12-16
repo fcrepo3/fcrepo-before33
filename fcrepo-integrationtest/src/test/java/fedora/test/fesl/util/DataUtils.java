@@ -36,133 +36,139 @@ import org.w3c.dom.Document;
  * 
  * @author nishen@melcoe.mq.edu.au
  */
-public class DataUtils
-{
-	private static final Logger log = Logger.getLogger(DataUtils.class);
+public class DataUtils {
 
-	/**
-	 * Creates an XML document object from a file.
-	 * 
-	 * @param file the filename of the file to load.
-	 * @return the XML document object.
-	 * @throws Exception
-	 */
-	public static Document getDocumentFromFile(String filename) throws Exception
-	{
-		File file = new File(filename);
-		return getDocumentFromFile(file);
-	}
+    private static final Logger log = Logger.getLogger(DataUtils.class);
 
-	/**
-	 * Creates an XML document object from a file.
-	 * 
-	 * @param file the file to load.
-	 * @return the XML document object.
-	 * @throws Exception
-	 */
-	public static Document getDocumentFromFile(File file) throws Exception
-	{
-		byte[] document = loadFile(file);
-		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-		documentBuilderFactory.setNamespaceAware(true);
-		DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
+    /**
+     * Creates an XML document object from a file.
+     * 
+     * @param file
+     *        the filename of the file to load.
+     * @return the XML document object.
+     * @throws Exception
+     */
+    public static Document getDocumentFromFile(String filename)
+            throws Exception {
+        File file = new File(filename);
+        return getDocumentFromFile(file);
+    }
 
-		Document doc = docBuilder.parse(new ByteArrayInputStream(document));
+    /**
+     * Creates an XML document object from a file.
+     * 
+     * @param file
+     *        the file to load.
+     * @return the XML document object.
+     * @throws Exception
+     */
+    public static Document getDocumentFromFile(File file) throws Exception {
+        byte[] document = loadFile(file);
+        DocumentBuilderFactory documentBuilderFactory =
+                DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setNamespaceAware(true);
+        DocumentBuilder docBuilder =
+                documentBuilderFactory.newDocumentBuilder();
 
-		return doc;
-	}
+        Document doc = docBuilder.parse(new ByteArrayInputStream(document));
 
-	/**
-	 * Creates an XML document object from a byte array.
-	 * 
-	 * @param file the file to load.
-	 * @return the XML document object.
-	 * @throws Exception
-	 */
-	public static Document getDocumentFromBytes(byte[] data) throws Exception
-	{
-		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-		documentBuilderFactory.setNamespaceAware(true);
-		DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
+        return doc;
+    }
 
-		Document doc = docBuilder.parse(new ByteArrayInputStream(data));
+    /**
+     * Creates an XML document object from a byte array.
+     * 
+     * @param file
+     *        the file to load.
+     * @return the XML document object.
+     * @throws Exception
+     */
+    public static Document getDocumentFromBytes(byte[] data) throws Exception {
+        DocumentBuilderFactory documentBuilderFactory =
+                DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setNamespaceAware(true);
+        DocumentBuilder docBuilder =
+                documentBuilderFactory.newDocumentBuilder();
 
-		return doc;
-	}
+        Document doc = docBuilder.parse(new ByteArrayInputStream(data));
 
-	/**
-	 * Loads a file into a byte array.
-	 * 
-	 * @param filename name of file to load.
-	 * @return byte array containing the data file.
-	 * @throws Exception
-	 */
-	public static byte[] loadFile(String filename) throws Exception
-	{
-		File file = new File(filename.trim());
-		return loadFile(file);
-	}
+        return doc;
+    }
 
-	/**
-	 * Loads a file into a byte array.
-	 * 
-	 * @param File to load.
-	 * @return byte array containing the data file.
-	 * @throws Exception
-	 */
-	public static byte[] loadFile(File file) throws Exception
-	{
-		if (!file.exists() || !file.canRead())
-		{
-			String message = "Cannot read file: " + file.getCanonicalPath();
-			log.error(message);
-			throw new Exception(message);
-		}
+    /**
+     * Loads a file into a byte array.
+     * 
+     * @param filename
+     *        name of file to load.
+     * @return byte array containing the data file.
+     * @throws Exception
+     */
+    public static byte[] loadFile(String filename) throws Exception {
+        File file = new File(filename.trim());
+        return loadFile(file);
+    }
 
-		FileInputStream fis = new FileInputStream(file);
-		ByteArrayOutputStream data = new ByteArrayOutputStream();
-		int len = 0;
-		byte[] buf = new byte[1024];
-		while ((len = fis.read(buf)) >= 0)
-			data.write(buf, 0, len);
+    /**
+     * Loads a file into a byte array.
+     * 
+     * @param File
+     *        to load.
+     * @return byte array containing the data file.
+     * @throws Exception
+     */
+    public static byte[] loadFile(File file) throws Exception {
+        if (!file.exists() || !file.canRead()) {
+            String message = "Cannot read file: " + file.getCanonicalPath();
+            log.error(message);
+            throw new Exception(message);
+        }
 
-		return data.toByteArray();
-	}
+        FileInputStream fis = new FileInputStream(file);
+        ByteArrayOutputStream data = new ByteArrayOutputStream();
+        int len = 0;
+        byte[] buf = new byte[1024];
+        while ((len = fis.read(buf)) >= 0) {
+            data.write(buf, 0, len);
+        }
 
-	/**
-	 * Generates an MD5 checksum of a series of bytes.
-	 * 
-	 * @param data the byte array on which to compute the hash.
-	 * @return the MD5 hash.
-	 * @throws NoSuchAlgorithmException
-	 */
-	public static String getHash(byte[] data) throws NoSuchAlgorithmException
-	{
-		MessageDigest digest = MessageDigest.getInstance("MD5");
-		byte[] hash = digest.digest(data);
+        return data.toByteArray();
+    }
 
-		String hexHash = byte2hex(hash);
+    /**
+     * Generates an MD5 checksum of a series of bytes.
+     * 
+     * @param data
+     *        the byte array on which to compute the hash.
+     * @return the MD5 hash.
+     * @throws NoSuchAlgorithmException
+     */
+    public static String getHash(byte[] data) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("MD5");
+        byte[] hash = digest.digest(data);
 
-		return hexHash;
-	}
+        String hexHash = byte2hex(hash);
 
-	/**
-	 * Converts a hash into its hexadecimal string representation.
-	 * 
-	 * @param bytes the byte array to convert
-	 * @return the hexadecimal string representation
-	 */
-	private static String byte2hex(byte[] bytes)
-	{
-		char[] hexChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+        return hexHash;
+    }
 
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < bytes.length; i++)
-		{
-			sb.append(hexChars[(bytes[i] >> 4) & 0xf]);
-			sb.append(hexChars[bytes[i] & 0xf]);
-		}
+    /**
+     * Converts a hash into its hexadecimal string representation.
+     * 
+     * @param bytes
+     *        the byte array to convert
+     * @return the hexadecimal string representation
+     */
+    private static String byte2hex(byte[] bytes) {
+        char[] hexChars =
+                {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b',
+                        'c', 'd', 'e', 'f'};
 
-		return new String(sb);
-	}
+        StringBuffer sb = new StringBuffer();
+        for (byte b : bytes) {
+            sb.append(hexChars[b >> 4 & 0xf]);
+            sb.append(hexChars[b & 0xf]);
+        }
+
+        return new String(sb);
+    }
 }

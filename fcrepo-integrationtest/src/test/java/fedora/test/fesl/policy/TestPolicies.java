@@ -1,3 +1,4 @@
+
 package fedora.test.fesl.policy;
 
 import java.util.PropertyResourceBundle;
@@ -20,156 +21,141 @@ import fedora.test.fesl.util.HttpUtils;
 import fedora.test.fesl.util.LoadDataset;
 import fedora.test.fesl.util.RemoveDataset;
 
-public class TestPolicies
-{
-	private static final Logger log = Logger.getLogger(TestPolicies.class);
+public class TestPolicies {
 
-	private static final String PROPERTIES = "fedora";
-	private static final String RESOURCEBASE = "src/test/resources/test-objects";
+    private static final Logger log = Logger.getLogger(TestPolicies.class);
 
-	private static HttpUtils httpUtils = null;
-	private static PolicyDataManager polMan = null;
+    private static final String PROPERTIES = "fedora";
 
-	public static junit.framework.Test suite()
-	{
-		return new JUnit4TestAdapter(TestPolicies.class);
-	}
+    private static final String RESOURCEBASE =
+            "src/test/resources/test-objects";
 
-	@BeforeClass
-	public static void setup()
-	{
-		PropertyResourceBundle prop = (PropertyResourceBundle) ResourceBundle.getBundle(PROPERTIES);
-		String username = prop.getString("fedora.admin.username");
-		String password = prop.getString("fedora.admin.password");
-		String fedoraUrl = prop.getString("fedora.url");
+    private static HttpUtils httpUtils = null;
 
-		try
-		{
-			if (log.isDebugEnabled())
-				log.debug("Setting up...");
+    private static PolicyDataManager polMan = null;
 
-			polMan = new DbXmlPolicyDataManager();
-			httpUtils = new HttpUtils(fedoraUrl, username, password);
+    public static junit.framework.Test suite() {
+        return new JUnit4TestAdapter(TestPolicies.class);
+    }
 
-			// Load the admin policy to give us rights to add objects
-			String policyId = addPolicy("test-access-admin.xml");
+    @BeforeClass
+    public static void setup() {
+        PropertyResourceBundle prop =
+                (PropertyResourceBundle) ResourceBundle.getBundle(PROPERTIES);
+        String username = prop.getString("fedora.admin.username");
+        String password = prop.getString("fedora.admin.password");
+        String fedoraUrl = prop.getString("fedora.url");
 
-			LoadDataset.main(null);
-			
-			httpUtils.get("/fedora/risearch?flush=true");
+        try {
+            if (log.isDebugEnabled()) {
+                log.debug("Setting up...");
+            }
 
-			// Now that objects are loaded, remove the policy
-			delPolicy(policyId);
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e) ;
-			Assert.fail(e.getMessage());
-		}
-	}
+            polMan = new DbXmlPolicyDataManager();
+            httpUtils = new HttpUtils(fedoraUrl, username, password);
 
-	@AfterClass
-	public static void teardown()
-	{
-		try
-		{
-			if (log.isDebugEnabled())
-				log.debug("Tearing down...");
+            // Load the admin policy to give us rights to add objects
+            String policyId = addPolicy("test-access-admin.xml");
 
-			polMan = new DbXmlPolicyDataManager();
+            LoadDataset.main(null);
 
-			// Load the admin policy to give us rights to remove objects
-			String policyId = addPolicy("test-access-admin.xml");
+            httpUtils.get("/fedora/risearch?flush=true");
 
-			RemoveDataset.main(null);
+            // Now that objects are loaded, remove the policy
+            delPolicy(policyId);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            Assert.fail(e.getMessage());
+        }
+    }
 
-			// Now that objects are loaded, remove the policy
-			delPolicy(policyId);
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			Assert.fail(e.getMessage());
-		}
-	}
+    @AfterClass
+    public static void teardown() {
+        try {
+            if (log.isDebugEnabled()) {
+                log.debug("Tearing down...");
+            }
 
-	@Test(expected = AuthorizationDeniedException.class)
-	public void testAdminGetDeny() throws Exception
-	{
-		// getting object test:1000007 but applying policy
-		// to parent object (test:1000006) first
+            polMan = new DbXmlPolicyDataManager();
 
-		String policyId = addPolicy("test-policy-00.xml");
+            // Load the admin policy to give us rights to remove objects
+            String policyId = addPolicy("test-access-admin.xml");
 
-		try
-		{
-			String url = "/fedora/objects/test:1000007?format=xml";
-			String response = httpUtils.get(url);
-			if (log.isDebugEnabled())
-				log.debug("http response:\n" + response);
-	
-			// If we get here, we fail... should have thrown exception
-			Assert.fail();
-		}
-		catch (Exception e)
-		{
-			throw e;
-		}
-		finally
-		{
-			delPolicy(policyId);
-		}
-	}
+            RemoveDataset.main(null);
 
-	@Test
-	public void testAdminGetPermit() throws Exception
-	{
-		// getting object test:1000007 but applying policy
-		// to parent object (test:1000006) first
+            // Now that objects are loaded, remove the policy
+            delPolicy(policyId);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            Assert.fail(e.getMessage());
+        }
+    }
 
-		String policyId = addPolicy("test-policy-01.xml");
+    @Test(expected = AuthorizationDeniedException.class)
+    public void testAdminGetDeny() throws Exception {
+        // getting object test:1000007 but applying policy
+        // to parent object (test:1000006) first
 
-		try
-		{
-			String url = "/fedora/objects/test:1000007?format=xml";
-			String response = httpUtils.get(url);
-			if (log.isDebugEnabled())
-				log.debug("http response:\n" + response);
+        String policyId = addPolicy("test-policy-00.xml");
 
-			boolean check = response.contains("<objLabel>Dexter</objLabel>");
-			Assert.assertTrue("Expected object data not found", check);
-		}
-		catch (Exception e)
-		{
-			throw e;
-		}
-		finally
-		{
-			delPolicy(policyId);
-		}
-	}
+        try {
+            String url = "/fedora/objects/test:1000007?format=xml";
+            String response = httpUtils.get(url);
+            if (log.isDebugEnabled()) {
+                log.debug("http response:\n" + response);
+            }
 
-	private static String getPolicyId(byte[] data) throws Exception
-	{
-		Document doc = DataUtils.getDocumentFromBytes(data);
-		String pid = doc.getDocumentElement().getAttribute("PolicyId");
+            // If we get here, we fail... should have thrown exception
+            Assert.fail();
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            delPolicy(policyId);
+        }
+    }
 
-		return pid;
-	}
+    @Test
+    public void testAdminGetPermit() throws Exception {
+        // getting object test:1000007 but applying policy
+        // to parent object (test:1000006) first
 
-	private static String addPolicy(String policyName) throws Exception
-	{
-		byte[] policy = DataUtils.loadFile(RESOURCEBASE + "/xacml/" + policyName);
-		String policyId = getPolicyId(policy);
-		polMan.addPolicy(new String(policy), policyId);
-		Thread.sleep(1000);
+        String policyId = addPolicy("test-policy-01.xml");
 
-		return policyId;
-	}
+        try {
+            String url = "/fedora/objects/test:1000007?format=xml";
+            String response = httpUtils.get(url);
+            if (log.isDebugEnabled()) {
+                log.debug("http response:\n" + response);
+            }
 
-	private static void delPolicy(String policyId) throws Exception
-	{
-		polMan.deletePolicy(policyId);
-		Thread.sleep(1000);
-	}
+            boolean check = response.contains("<objLabel>Dexter</objLabel>");
+            Assert.assertTrue("Expected object data not found", check);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            delPolicy(policyId);
+        }
+    }
+
+    private static String getPolicyId(byte[] data) throws Exception {
+        Document doc = DataUtils.getDocumentFromBytes(data);
+        String pid = doc.getDocumentElement().getAttribute("PolicyId");
+
+        return pid;
+    }
+
+    private static String addPolicy(String policyName) throws Exception {
+        byte[] policy =
+                DataUtils.loadFile(RESOURCEBASE + "/xacml/" + policyName);
+        String policyId = getPolicyId(policy);
+        polMan.addPolicy(new String(policy), policyId);
+        Thread.sleep(1000);
+
+        return policyId;
+    }
+
+    private static void delPolicy(String policyId) throws Exception {
+        polMan.deletePolicy(policyId);
+        Thread.sleep(1000);
+    }
 }
